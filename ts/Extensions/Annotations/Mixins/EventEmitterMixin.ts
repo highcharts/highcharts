@@ -131,7 +131,6 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
             addEvent(emitter, 'drag', emitter.onDrag);
 
-
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {
                     cursor: ({
@@ -216,12 +215,23 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             H.doc,
             H.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
+                // Sometimes the target is the annotation and sometimes its the
+                // controllable
+                const annotation = pick(
+                    emitter.target && emitter.target.annotation,
+                    emitter.target
+                );
+                if (annotation) {
+                    // Keep annotation selected after dragging control point
+                    (annotation as Annotation).cancelClick = emitter.hasDragged;
+                }
+
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
                 // ControlPoints vs Annotation:
                 fireEvent(pick(
-                    emitter.target && emitter.target.annotation, // #15952
+                    annotation, // #15952
                     emitter
                 ), 'afterUpdate');
                 emitter.onMouseUp(e);

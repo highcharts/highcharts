@@ -20,7 +20,7 @@ import type ScrollbarOptions from './ScrollbarOptions';
 
 import H from './Globals.js';
 const { isTouchDevice } = H;
-import Palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
 
 /* *
  *
@@ -117,6 +117,9 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @since 1.2.5
      */
     minWidth: 6,
+
+    /** @ignore-option */
+    opposite: true,
 
     /**
      * Whether to show or hide the scrollbar when the scrolled content is

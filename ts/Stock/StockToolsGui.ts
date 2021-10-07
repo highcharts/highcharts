@@ -215,9 +215,13 @@ setOptions({
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
+                typeHLC: 'HLC',
+                typeHollowCandlestick: 'Hollow Candlestick',
+                typeHeikinAshi: 'Heikin Ashi',
 
                 // Basic shapes:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 label: 'Label',
                 rectangle: 'Rectangle',
 
@@ -238,7 +242,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 infinityLine: 'Infinity line',
@@ -256,6 +260,7 @@ setOptions({
 
                 // Advanced:
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel'
             }
@@ -264,6 +269,7 @@ setOptions({
             popup: {
                 // Annotations:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 segment: 'Segment',
@@ -271,7 +277,7 @@ setOptions({
                 ray: 'Ray',
                 arrowRay: 'Arrow ray',
                 line: 'Line',
-                arrowLine: 'Arrow line',
+                arrowInfinityLine: 'Arrow line',
                 horizontalLine: 'Horizontal line',
                 verticalLine: 'Vertical line',
                 crooked3: 'Crooked 3 line',
@@ -282,6 +288,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -453,6 +460,7 @@ setOptions({
                      * @default [
                      *   'label',
                      *   'circle',
+                     *   'ellipse',
                      *   'rectangle'
                      * ]
                      *
@@ -460,6 +468,7 @@ setOptions({
                     items: [
                         'label',
                         'circle',
+                        'ellipse',
                         'rectangle'
                     ],
                     circle: {
@@ -470,6 +479,15 @@ setOptions({
                          *
                          */
                         symbol: 'circle.svg'
+                    },
+                    ellipse: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'ellipse.svg'
                     },
                     rectangle: {
                         /**
@@ -557,7 +575,7 @@ setOptions({
                      *   'ray',
                      *   'arrowRay',
                      *   'line',
-                     *   'arrowLine',
+                     *   'arrowInfinityLine',
                      *   'horizontalLine',
                      *   'verticalLine'
                      * ]
@@ -568,7 +586,7 @@ setOptions({
                         'ray',
                         'arrowRay',
                         'line',
-                        'arrowLine',
+                        'arrowInfinityLine',
                         'horizontalLine',
                         'verticalLine'
                     ],
@@ -612,7 +630,7 @@ setOptions({
                          */
                         symbol: 'line.svg'
                     },
-                    arrowLine: {
+                    arrowInfinityLine: {
                         /**
                          * A predefined background symbol for the button.
                          *
@@ -740,12 +758,14 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
+                     *   'fibonacciTimeZones',
                      *   'pitchfork',
                      *   'parallelChannel'
                      * ]
                      */
                     items: [
                         'fibonacci',
+                        'fibonacciTimeZones',
                         'pitchfork',
                         'parallelChannel'
                     ],
@@ -764,6 +784,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'fibonacci.svg'
+                    },
+                    fibonacciTimeZones: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci-timezone.svg'
                     },
                     parallelChannel: {
                         /**
@@ -892,12 +920,16 @@ setOptions({
                      *   'typeOHLC',
                      *   'typeLine',
                      *   'typeCandlestick'
+                     *   'typeHollowCandlestick'
                      * ]
                      */
                     items: [
                         'typeOHLC',
                         'typeLine',
-                        'typeCandlestick'
+                        'typeCandlestick',
+                        'typeHollowCandlestick',
+                        'typeHLC',
+                        'typeHeikinAshi'
                     ],
                     typeOHLC: {
                         /**
@@ -922,6 +954,30 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'series-candlestick.svg'
+                    },
+                    typeHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hlc.svg'
+                    },
+                    typeHeikinAshi: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-heikin-ashi.svg'
+                    },
+                    typeHollowCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-hollow-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -1552,7 +1608,7 @@ class Toolbar {
         redraw?: boolean
     ): void {
         const buttonWrapper = button.parentNode,
-            buttonWrapperClass = buttonWrapper.classList.value,
+            buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
@@ -1671,6 +1727,7 @@ interface Toolbar {
  */
 Toolbar.prototype.classMapping = {
     circle: PREFIX + 'circle-annotation',
+    ellipse: PREFIX + 'ellipse-annotation',
     rectangle: PREFIX + 'rectangle-annotation',
     label: PREFIX + 'label-annotation',
     segment: PREFIX + 'segment',
@@ -1678,7 +1735,7 @@ Toolbar.prototype.classMapping = {
     ray: PREFIX + 'ray',
     arrowRay: PREFIX + 'arrow-ray',
     line: PREFIX + 'infinity-line',
-    arrowLine: PREFIX + 'arrow-infinity-line',
+    arrowInfinityLine: PREFIX + 'arrow-infinity-line',
     verticalLine: PREFIX + 'vertical-line',
     horizontalLine: PREFIX + 'horizontal-line',
     crooked3: PREFIX + 'crooked3',
@@ -1687,6 +1744,7 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
+    fibonacciTimeZones: PREFIX + 'fibonacci-time-zones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
@@ -1705,7 +1763,10 @@ Toolbar.prototype.classMapping = {
     zoomXY: PREFIX + 'zoom-xy',
     typeLine: PREFIX + 'series-type-line',
     typeOHLC: PREFIX + 'series-type-ohlc',
+    typeHLC: PREFIX + 'series-type-hlc',
     typeCandlestick: PREFIX + 'series-type-candlestick',
+    typeHollowCandlestick: PREFIX + 'series-type-hollowcandlestick',
+    typeHeikinAshi: PREFIX + 'series-type-heikinashi',
     fullScreen: PREFIX + 'full-screen',
     toggleAnnotations: PREFIX + 'toggle-annotations',
     saveChart: PREFIX + 'save-chart',

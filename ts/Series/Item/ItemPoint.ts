@@ -55,7 +55,7 @@ class ItemPoint extends PieSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

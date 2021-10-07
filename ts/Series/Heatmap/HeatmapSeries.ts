@@ -24,12 +24,13 @@ import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapComposition from '../ColorMapComposition.js';
+const { colorMapSeriesMixin } = ColorMapComposition;
 import HeatmapPoint from './HeatmapPoint.js';
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -191,7 +192,7 @@ class HeatmapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        nullColor: palette.neutralColor3,
+        nullColor: Palette.neutralColor3,
 
         dataLabels: {
             formatter: function (): string { // #2945
@@ -433,11 +434,26 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
+                    // @todo
+                    // Applying the border radius here is not optimal. It should
+                    // be set in the shapeArgs or returned from `markerAttribs`.
+                    // However, Series.drawPoints does not pick up markerAttribs
+                    // to be passed over to `renderer.symbol`. Also, image
+                    // symbols are not positioned by their top left corner like
+                    // other symbols are. This should be refactored, then we
+                    // could save ourselves some tests for .hasImage etc. And
+                    // the evaluation of borderRadius would be moved to
+                    // `markerAttribs`.
                     if (this.options.borderRadius) {
                         point.graphic.attr({
                             r: this.options.borderRadius
                         });
                     }
+
+                    // Saving option for reapplying later
+                    // when changing point's states (#16165)
+                    (point.shapeArgs || {}).r = this.options.borderRadius;
+                    (point.shapeArgs || {}).d = point.graphic.pathArray;
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
@@ -715,15 +731,13 @@ class HeatmapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface HeatmapSeries {
+interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     axisTypes: typeof colorMapSeriesMixin.axisTypes;
-    colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
-    colorKey: typeof colorMapSeriesMixin.colorKey;
-    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
     pointArrayMap: Array<string>;
@@ -739,16 +753,14 @@ extend(HeatmapSeries.prototype, {
 
     axisTypes: colorMapSeriesMixin.axisTypes,
 
-    colorAttribs: colorMapSeriesMixin.colorAttribs,
-
-    colorKey: colorMapSeriesMixin.colorKey,
+    colorKey: 'value',
 
     directTouch: true,
 
     /**
      * @private
      */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
 
     getExtremesFromAll: true,
 
@@ -763,6 +775,8 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: colorMapSeriesMixin.trackerGroups
 
 });
+
+ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

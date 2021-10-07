@@ -12,128 +12,34 @@
 
 'use strict';
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type {
-    DOMElementType,
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from './Accessibility';
+import type EventCallback from '../Core/EventCallback';
+import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import ChartUtilities from './Utils/ChartUtilities.js';
-const { unhideChartElementFromAT } = ChartUtilities;
+import type ProxyProvider from './ProxyProvider';
+
+import CU from './Utils/ChartUtilities.js';
+const { fireEventOnWrappedOrUnwrappedElement } = CU;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
-import H from '../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const {
-    removeElement,
-    getFakeMouseEvent
-} = HTMLUtilities;
+import HU from './Utils/HTMLUtilities.js';
+const { getFakeMouseEvent } = HU;
 import U from '../Core/Utilities.js';
-const {
-    extend,
-    fireEvent,
-    merge
-} = U;
+const { extend } = U;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class AccessibilityComponent {
-            public constructor();
-            public chart: AccessibilityChart;
-            public domElementProvider: DOMElementProvider;
-            public eventProvider: EventProvider;
-            public keyCodes: Record<string, number>;
-            public addEvent: EventProvider['addEvent'];
-            public createElement: DOMElementProvider['createElement'];
-            public addProxyGroup(attrs?: HTMLAttributes): HTMLDOMElement;
-            public destroy(): void;
-            public destroyBase(): void;
-            public cloneMouseEvent(e: MouseEvent): MouseEvent;
-            public cloneTouchEvent(e: TouchEvent): TouchEvent;
-            public createOrUpdateProxyContainer(): void;
-            public createProxyButton(
-                svgElement: SVGElement,
-                parentGroup: HTMLDOMElement,
-                attributes?: SVGAttributes,
-                posElement?: SVGElement,
-                preClickEvent?: Function
-            ): HTMLDOMElement;
-            public createProxyContainerElement(): HTMLDOMElement;
-            public fakeClickEvent(element: DOMElementType): void;
-            public getElementPosition(element: SVGElement): BBoxObject;
-            public getKeyboardNavigation(): (
-                KeyboardNavigationHandler|Array<KeyboardNavigationHandler>
-            );
-            public init(): void;
-            public initBase(chart: AccessibilityChart): void;
-            public onChartRender(): void;
-            public onChartUpdate(): void;
-            public proxyMouseEventsForButton(
-                source: (SVGElement|HTMLElement|DOMElementType),
-                button: HTMLDOMElement
-            ): void;
-            public fireEventOnWrappedOrUnwrappedElement(
-                el: (SVGElement|HTMLElement|DOMElementType),
-                eventObject: Event
-            ): void;
-            public setProxyButtonStyle(button: HTMLDOMElement): void;
-            public updateProxyButtonPosition(
-                proxy: HTMLDOMElement,
-                posElement: SVGElement
-            ): void;
-        }
-        interface AccessibilityChart {
-            a11yProxyContainer?: HTMLDOMElement;
-        }
-    }
-}
-
-
-/* eslint-disable valid-jsdoc */
-
-/** @lends Highcharts.AccessibilityComponent */
-const functionsToOverrideByDerivedClasses: (
-    Partial<Highcharts.AccessibilityComponent>
-) = {
-    /**
-     * Called on component initialization.
-     */
-    init: function (): void {},
-
-    /**
-     * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
-     */
-    getKeyboardNavigation: function (): void {} as any,
-
-    /**
-     * Called on updates to the chart, including options changes.
-     * Note that this is also called on first render of chart.
-     */
-    onChartUpdate: function (): void {},
-
-    /**
-     * Called on every chart render.
-     */
-    onChartRender: function (): void {},
-
-    /**
-     * Called when accessibility is disabled or chart is destroyed.
-     */
-    destroy: function (): void {}
-};
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
@@ -151,25 +57,43 @@ const functionsToOverrideByDerivedClasses: (
  * @class
  * @name Highcharts.AccessibilityComponent
  */
-function AccessibilityComponent(): void {}
-/**
- * @lends Highcharts.AccessibilityComponent
- */
-AccessibilityComponent.prototype = {
+class AccessibilityComponent {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Accessibility.ChartComposition = void 0 as any;
+    public domElementProvider: DOMElementProvider = void 0 as any;
+    public eventProvider: EventProvider = void 0 as any;
+    public keyCodes: Record<string, number> = void 0 as any;
+    public proxyProvider: ProxyProvider = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
     /**
      * Initialize the class
      * @private
-     * @param {Highcharts.Chart} chart
-     *        Chart object
+     * @param {Highcharts.Chart} chart The chart object
+     * @param {Highcharts.ProxyProvider} proxyProvider The proxy provider of the accessibility module
      */
-    initBase: function (
-        this: Highcharts.AccessibilityComponent,
-        chart: Highcharts.AccessibilityChart
+    public initBase(
+        chart: Accessibility.ChartComposition,
+        proxyProvider: ProxyProvider
     ): void {
         this.chart = chart;
 
         this.eventProvider = new EventProvider();
         this.domElementProvider = new DOMElementProvider();
+        this.proxyProvider = proxyProvider;
 
         // Key code enum for common keys
         this.keyCodes = {
@@ -180,9 +104,13 @@ AccessibilityComponent.prototype = {
             enter: 13,
             space: 32,
             esc: 27,
-            tab: 9
+            tab: 9,
+            pageUp: 33,
+            pageDown: 34,
+            end: 35,
+            home: 36
         };
-    },
+    }
 
 
     /**
@@ -190,10 +118,14 @@ AccessibilityComponent.prototype = {
      * See EventProvider for details.
      * @private
      */
-    addEvent: function (this: Highcharts.AccessibilityComponent): Function {
-        return (this.eventProvider as any).addEvent
-            .apply(this.eventProvider, arguments);
-    },
+    public addEvent<T>(
+        el: (T|U.Class<T>),
+        type: string,
+        fn: (Function|EventCallback<T>),
+        options?: U.EventOptions
+    ): Function {
+        return this.eventProvider.addEvent<T>(el, type, fn, options);
+    }
 
 
     /**
@@ -201,391 +133,88 @@ AccessibilityComponent.prototype = {
      * See DOMElementProvider for details.
      * @private
      */
-    createElement: function (
-        this: Highcharts.AccessibilityComponent
-    ): HTMLDOMElement {
-        return (this.domElementProvider as any).createElement.apply(
-            this.domElementProvider, arguments
-        );
-    },
+    public createElement<K extends keyof HTMLElementTagNameMap>(
+        tagName: K,
+        options?: ElementCreationOptions
+    ): HTMLElementTagNameMap[K] {
+        return this.domElementProvider.createElement(tagName, options);
+    }
 
 
     /**
-     * Fire an event on an element that is either wrapped by Highcharts,
-     * or a DOM element
-     * @private
-     * @param {Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
-     *  Highcharts.SVGDOMElement|Highcharts.SVGElement} el
-     * @param {Event} eventObject
+     * Fire a fake click event on an element. It is useful to have this on
+     * AccessibilityComponent for users of custom components.
      */
-    fireEventOnWrappedOrUnwrappedElement: function (
-        el: (HTMLElement|SVGElement|DOMElementType),
-        eventObject: Event
+    public fakeClickEvent(
+        el: (HTMLElement|SVGElement|DOMElementType)
     ): void {
-        const type = eventObject.type;
-
-        if (doc.createEvent && ((el as any).dispatchEvent || (el as any).fireEvent)) {
-            if ((el as any).dispatchEvent) {
-                (el as any).dispatchEvent(eventObject);
-            } else {
-                (el as any).fireEvent(type, eventObject);
-            }
-        } else {
-            fireEvent(el, type, eventObject);
-        }
-    },
-
-
-    /**
-     * Utility function to attempt to fake a click event on an element.
-     * @private
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
-     */
-    fakeClickEvent: function (element: DOMElementType): void {
-        if (element) {
-            const fakeEventObject = getFakeMouseEvent('click');
-            this.fireEventOnWrappedOrUnwrappedElement(element, fakeEventObject);
-        }
-    },
-
-
-    /**
-     * Add a new proxy group to the proxy container. Creates the proxy container
-     * if it does not exist.
-     * @private
-     * @param {Highcharts.HTMLAttributes} [attrs]
-     * The attributes to set on the new group div.
-     * @return {Highcharts.HTMLDOMElement}
-     * The new proxy group element.
-     */
-    addProxyGroup: function (
-        this: Highcharts.AccessibilityComponent,
-        attrs?: HTMLAttributes
-    ): HTMLDOMElement {
-        this.createOrUpdateProxyContainer();
-
-        const groupDiv = this.createElement('div');
-
-        Object.keys(attrs || {}).forEach(function (prop: string): void {
-            if ((attrs as any)[prop] !== null) {
-                groupDiv.setAttribute(prop, (attrs as any)[prop]);
-            }
-        });
-        (this.chart as any).a11yProxyContainer.appendChild(groupDiv);
-
-        return groupDiv;
-    },
-
-
-    /**
-     * Creates and updates DOM position of proxy container
-     * @private
-     */
-    createOrUpdateProxyContainer: function (
-        this: Highcharts.AccessibilityComponent
-    ): void {
-        const chart = this.chart,
-            rendererSVGEl = chart.renderer.box;
-
-        chart.a11yProxyContainer = chart.a11yProxyContainer ||
-            this.createProxyContainerElement();
-
-        if (rendererSVGEl.nextSibling !== chart.a11yProxyContainer) {
-            chart.container.insertBefore(
-                chart.a11yProxyContainer,
-                rendererSVGEl.nextSibling
-            );
-        }
-    },
-
-
-    /**
-     * @private
-     * @return {Highcharts.HTMLDOMElement} element
-     */
-    createProxyContainerElement: function (): HTMLDOMElement {
-        const pc = doc.createElement('div');
-        pc.className = 'highcharts-a11y-proxy-container';
-        return pc;
-    },
-
-
-    /**
-     * Create an invisible proxy HTML button in the same position as an SVG
-     * element
-     * @private
-     * @param {Highcharts.SVGElement} svgElement
-     * The wrapped svg el to proxy.
-     * @param {Highcharts.HTMLDOMElement} parentGroup
-     * The proxy group element in the proxy container to add this button to.
-     * @param {Highcharts.SVGAttributes} [attributes]
-     * Additional attributes to set.
-     * @param {Highcharts.SVGElement} [posElement]
-     * Element to use for positioning instead of svgElement.
-     * @param {Function} [preClickEvent]
-     * Function to call before click event fires.
-     *
-     * @return {Highcharts.HTMLDOMElement} The proxy button.
-     */
-    createProxyButton: function (
-        this: Highcharts.AccessibilityComponent,
-        svgElement: SVGElement,
-        parentGroup: HTMLDOMElement,
-        attributes?: SVGAttributes,
-        posElement?: SVGElement,
-        preClickEvent?: Function
-    ): HTMLDOMElement {
-        const svgEl = svgElement.element,
-            proxy = this.createElement('button'),
-            attrs = merge({
-                'aria-label': svgEl.getAttribute('aria-label')
-            }, attributes);
-
-        Object.keys(attrs).forEach(function (prop: string): void {
-            if ((attrs as any)[prop] !== null) {
-                proxy.setAttribute(prop, (attrs as any)[prop]);
-            }
-        });
-
-        proxy.className = 'highcharts-a11y-proxy-button';
-
-        if (svgElement.hasClass('highcharts-no-tooltip')) {
-            proxy.className += ' highcharts-no-tooltip';
-        }
-
-        if (preClickEvent) {
-            this.addEvent(proxy, 'click', preClickEvent);
-        }
-
-        this.setProxyButtonStyle(proxy);
-        this.updateProxyButtonPosition(proxy, posElement || svgElement);
-        this.proxyMouseEventsForButton(svgEl, proxy);
-
-        // Add to chart div and unhide from screen readers
-        parentGroup.appendChild(proxy);
-        if (!attrs['aria-hidden']) {
-            unhideChartElementFromAT(this.chart as any, proxy);
-        }
-
-        return proxy;
-    },
-
-
-    /**
-     * Get the position relative to chart container for a wrapped SVG element.
-     * @private
-     * @param {Highcharts.SVGElement} element
-     * The element to calculate position for.
-     * @return {Highcharts.BBoxObject}
-     * Object with x and y props for the position.
-     */
-    getElementPosition: function (
-        this: Highcharts.AccessibilityComponent,
-        element: SVGElement
-    ): BBoxObject {
-        const el = element.element,
-            div: HTMLDOMElement = (this.chart as any).renderTo;
-
-        if (div && el && el.getBoundingClientRect) {
-            const rectEl = el.getBoundingClientRect(),
-                rectDiv = div.getBoundingClientRect();
-
-            return {
-                x: rectEl.left - rectDiv.left,
-                y: rectEl.top - rectDiv.top,
-                width: rectEl.right - rectEl.left,
-                height: rectEl.bottom - rectEl.top
-            };
-        }
-
-        return { x: 0, y: 0, width: 1, height: 1 };
-    },
-
-
-    /**
-     * @private
-     * @param {Highcharts.HTMLElement} button The proxy element.
-     */
-    setProxyButtonStyle: function (button: HTMLDOMElement): void {
-        merge(true, button.style, {
-            borderWidth: '0',
-            backgroundColor: 'transparent',
-            cursor: 'pointer',
-            outline: 'none',
-            opacity: '0.001',
-            filter: 'alpha(opacity=1)',
-            zIndex: '999',
-            overflow: 'hidden',
-            padding: '0',
-            margin: '0',
-            display: 'block',
-            position: 'absolute'
-        });
-        (button.style as any)['-ms-filter'] =
-            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
-    },
-
-
-    /**
-     * @private
-     * @param {Highcharts.HTMLElement} proxy The proxy to update position of.
-     * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
-     */
-    updateProxyButtonPosition: function (
-        proxy: HTMLDOMElement,
-        posElement: SVGElement
-    ): void {
-        const bBox = this.getElementPosition(posElement);
-        merge(true, proxy.style, {
-            width: (bBox.width || 1) + 'px',
-            height: (bBox.height || 1) + 'px',
-            left: (Math.round(bBox.x) || 0) + 'px',
-            top: (Math.round(bBox.y) || 0) + 'px'
-        });
-    },
-
-
-    /**
-     * @private
-     * @param {Highcharts.HTMLElement|Highcharts.HTMLDOMElement|
-     *  Highcharts.SVGDOMElement|Highcharts.SVGElement} source
-     * @param {Highcharts.HTMLElement} button
-     */
-    proxyMouseEventsForButton: function (
-        this: Highcharts.AccessibilityComponent,
-        source: (
-            HTMLElement|SVGElement|DOMElementType
-        ),
-        button: HTMLDOMElement
-    ): void {
-        const component = this;
-
-        [
-            'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
-            'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
-        ].forEach(function (evtType: string): void {
-            const isTouchEvent = evtType.indexOf('touch') === 0;
-
-            component.addEvent(button, evtType, function (e: MouseEvent | TouchEvent): void {
-                const clonedEvent = isTouchEvent ?
-                    component.cloneTouchEvent(e as TouchEvent) :
-                    component.cloneMouseEvent(e as MouseEvent);
-
-                if (source) {
-                    component.fireEventOnWrappedOrUnwrappedElement(source, clonedEvent);
-                }
-
-                e.stopPropagation();
-
-                // #9682, #15318: Touch scrolling didnt work when touching a
-                // component
-                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-        });
-    },
-
-
-    /**
-     * Utility function to clone a mouse event for re-dispatching.
-     * @private
-     * @param {global.MouseEvent} e The event to clone.
-     * @return {global.MouseEvent} The cloned event
-     */
-    cloneMouseEvent: function (e: MouseEvent): MouseEvent {
-        if (typeof win.MouseEvent === 'function') {
-            return new win.MouseEvent(e.type, e);
-        }
-
-        // No MouseEvent support, try using initMouseEvent
-        if (doc.createEvent) {
-            const evt = doc.createEvent('MouseEvent');
-            if (evt.initMouseEvent) {
-                evt.initMouseEvent(
-                    e.type,
-                    e.bubbles, // #10561, #12161
-                    e.cancelable,
-                    e.view || win,
-                    e.detail,
-                    e.screenX,
-                    e.screenY,
-                    e.clientX,
-                    e.clientY,
-                    e.ctrlKey,
-                    e.altKey,
-                    e.shiftKey,
-                    e.metaKey,
-                    e.button,
-                    e.relatedTarget
-                );
-                return evt;
-            }
-        }
-
-        return getFakeMouseEvent(e.type);
-    },
-
-
-    /**
-     * Utility function to clone a touch event for re-dispatching.
-     * @private
-     * @param {global.TouchEvent} e The event to clone.
-     * @return {global.TouchEvent} The cloned event
-     */
-    cloneTouchEvent: function (e: TouchEvent): TouchEvent {
-        const touchListToTouchArray = (l: TouchList): Touch[] => {
-            const touchArray = [];
-            for (let i = 0; i < l.length; ++i) {
-                const item = l.item(i);
-                if (item) {
-                    touchArray.push(item);
-                }
-            }
-            return touchArray;
-        };
-
-        if (typeof win.TouchEvent === 'function') {
-            const newEvent = new win.TouchEvent(e.type, {
-                touches: touchListToTouchArray(e.touches),
-                targetTouches: touchListToTouchArray(e.targetTouches),
-                changedTouches: touchListToTouchArray(e.changedTouches),
-                ctrlKey: e.ctrlKey,
-                shiftKey: e.shiftKey,
-                altKey: e.altKey,
-                metaKey: e.metaKey,
-                bubbles: e.bubbles,
-                cancelable: e.cancelable,
-                composed: e.composed,
-                detail: e.detail,
-                view: e.view
-            });
-            if (e.defaultPrevented) {
-                newEvent.preventDefault();
-            }
-            return newEvent;
-        }
-
-        // Fallback to mouse event
-        const fakeEvt = this.cloneMouseEvent(e as unknown as MouseEvent);
-        fakeEvt.touches = e.touches;
-        fakeEvt.changedTouches = e.changedTouches;
-        fakeEvt.targetTouches = e.targetTouches;
-        return fakeEvt;
-    },
+        const fakeEvent = getFakeMouseEvent('click');
+        fireEventOnWrappedOrUnwrappedElement(el, fakeEvent);
+    }
 
 
     /**
      * Remove traces of the component.
      * @private
      */
-    destroyBase: function (): void {
-        removeElement(this.chart.a11yProxyContainer);
+    public destroyBase(): void {
         this.domElementProvider.destroyCreatedElements();
         this.eventProvider.removeAddedEvents();
     }
-};
 
-extend(AccessibilityComponent.prototype, functionsToOverrideByDerivedClasses);
+}
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface AccessibilityComponent {
+    destroy(): void;
+    getKeyboardNavigation(): (KeyboardNavigationHandler|Array<KeyboardNavigationHandler>);
+    init(): void;
+    onChartRender(): void;
+    onChartUpdate(): void;
+}
+
+extend(
+    AccessibilityComponent.prototype,
+    /** @lends Highcharts.AccessibilityComponent */
+    {
+        /**
+         * Called on component initialization.
+         */
+        init(): void {},
+
+        /**
+         * Get keyboard navigation handler for this component.
+         * @return {Highcharts.KeyboardNavigationHandler}
+         */
+        getKeyboardNavigation: function (): void {} as any,
+
+        /**
+         * Called on updates to the chart, including options changes.
+         * Note that this is also called on first render of chart.
+         */
+        onChartUpdate(): void {},
+
+        /**
+         * Called on every chart render.
+         */
+        onChartRender(): void {},
+
+        /**
+         * Called when accessibility is disabled or chart is destroyed.
+         */
+        destroy(): void {}
+    }
+);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default AccessibilityComponent;

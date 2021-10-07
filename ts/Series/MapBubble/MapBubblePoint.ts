@@ -90,19 +90,6 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
 
 /* *
  *
- *  Prototype Properties
- *
- * */
-
-interface MapBubblePoint {
-    ttBelow: boolean;
-}
-extend(MapBubblePoint.prototype, {
-    ttBelow: false
-});
-
-/* *
- *
  *  Default Export
  *
  * */

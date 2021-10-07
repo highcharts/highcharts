@@ -50,13 +50,13 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 import Color from '../Color/Color.js';
-import Palette from '../Color/Palette.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const { deg2rad } = H;
+import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -1235,7 +1235,12 @@ class Axis {
             !log
         ) {
 
-            if (defined(options.min) || defined(options.max)) {
+            if (
+                defined(options.min) ||
+                defined(options.max) ||
+                defined(options.floor) ||
+                defined(options.ceiling)
+            ) {
                 axis.minRange = null; // don't do this again
 
             } else {
@@ -1611,7 +1616,10 @@ class Axis {
             minPadding = options.minPadding,
             length,
             linkedParentExtremes,
-            tickIntervalOption = options.tickInterval,
+            // Only non-negative tickInterval is valid, #12961
+            tickIntervalOption =
+                isNumber(options.tickInterval) && options.tickInterval >= 0 ?
+                    options.tickInterval : void 0,
             threshold = isNumber(axis.threshold) ? axis.threshold : null,
             thresholdMin,
             thresholdMax,
@@ -1832,18 +1840,20 @@ class Axis {
         // This is in turn needed in order to find tick positions in ordinal
         // axes.
         if (isXAxis && !secondPass) {
+            const hasExtemesChanged = axis.min !== (axis.old && axis.old.min) ||
+                axis.max !== (axis.old && axis.old.max);
+
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
                 series.forceCrop = series.forceCropping && series.forceCropping();
-
-                series.processData(
-                    axis.min !== (axis.old && axis.old.min) ||
-                    axis.max !== (axis.old && axis.old.max)
-                );
+                series.processData(hasExtemesChanged);
             });
+
             // Then apply grouping if needed.
-            fireEvent(this, 'postProcessData');
+            // The hasExtemesChanged helps to decide if the data grouping should
+            // be skipped in the further calculations #16319.
+            fireEvent(this, 'postProcessData', { hasExtemesChanged });
         }
 
         // set the translation factor used in translate function
@@ -3198,13 +3208,17 @@ class Axis {
      */
     public getOffset(): void {
         const axis = this,
-            chart = axis.chart,
+            {
+                chart,
+                horiz,
+                options,
+                side,
+                ticks,
+                tickPositions,
+                coll,
+                axisParent // Used in color axis
+            } = axis,
             renderer = chart.renderer,
-            options = axis.options,
-            tickPositions = axis.tickPositions,
-            ticks = axis.ticks,
-            horiz = axis.horiz,
-            side = axis.side,
             invertedSide = (
                 chart.inverted && !axis.isZAxis ?
                     [1, 0, 3, 2][side] :
@@ -3216,8 +3230,7 @@ class Axis {
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
-            className = options.className,
-            axisParent = axis.axisParent; // Used in color axis
+            className = options.className;
 
         let showAxis,
             titleOffset = 0,
@@ -3242,7 +3255,7 @@ class Axis {
             ): SVGElement => renderer.g(name)
                 .attr({ zIndex })
                 .addClass(
-                    `highcharts-${this.coll.toLowerCase()}${suffix} ` +
+                    `highcharts-${coll.toLowerCase()}${suffix} ` +
                     (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
                     (className || '')
                 )
@@ -3371,26 +3384,28 @@ class Axis {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        const tickSize = this.tickSize('tick');
+        if (coll !== 'colorAxis') {
+            const tickSize = this.tickSize('tick');
 
-        axisOffset[side] = Math.max(
-            axisOffset[side],
-            (axis.axisTitleMargin || 0) + titleOffset +
-            directionFactor * axis.offset,
-            labelOffsetPadded, // #3027
-            tickPositions && tickPositions.length && tickSize ?
-                tickSize[0] + directionFactor * axis.offset :
-                0 // #4866
-        );
+            axisOffset[side] = Math.max(
+                axisOffset[side],
+                (axis.axisTitleMargin || 0) + titleOffset +
+                directionFactor * axis.offset,
+                labelOffsetPadded, // #3027
+                tickPositions && tickPositions.length && tickSize ?
+                    tickSize[0] + directionFactor * axis.offset :
+                    0 // #4866
+            );
 
-        // Decide the clipping needed to keep the graph inside
-        // the plot area and axis lines
-        const clip = options.offset ?
-            0 :
-            // #4308, #4371:
-            Math.floor((axis.axisLine as any).strokeWidth() / 2) * 2;
-        (clipOffset as any)[invertedSide] =
-            Math.max((clipOffset as any)[invertedSide], clip);
+            // Decide the clipping needed to keep the graph inside
+            // the plot area and axis lines
+            const clip = !axis.axisLine || options.offset ?
+                0 :
+                // #4308, #4371:
+                Math.floor(axis.axisLine.strokeWidth() / 2) * 2;
+            (clipOffset as any)[invertedSide] =
+                Math.max((clipOffset as any)[invertedSide], clip);
+        }
 
         fireEvent(this, 'afterGetOffset');
     }

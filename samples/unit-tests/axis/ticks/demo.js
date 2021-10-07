@@ -104,6 +104,15 @@ QUnit.test(
             1,
             'Actual tick interval is as option'
         );
+
+        chart.xAxis[0].update({
+            tickInterval: -1
+        });
+
+        assert.ok(
+            true,
+            'No errors should occur when tickInterval has a negative value.'
+        );
     }
 );
 QUnit.test('Prevent dense ticks(#4477)', function (assert) {
@@ -1078,6 +1087,22 @@ QUnit.test(
         assert.ok(
             chart.yAxis[0].min <= 22,
             'Min must be 22 to prevent showing parts of chart'
+        );
+    }
+);
+
+QUnit.test(
+    'Checking if ticks are displayed when the numbers are very high. (#16275).',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                data: [238863224762451, 238863224762452, 238863224762453]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].tickPositions.length > 1,
+            'Number of ticks on the axis must be greater than one.'
         );
     }
 );

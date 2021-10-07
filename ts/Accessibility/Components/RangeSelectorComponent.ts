@@ -17,6 +17,7 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import RangeSelector from '../../Extensions/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
@@ -25,15 +26,11 @@ const {
 } = ChartUtilities;
 import Announcer from '../Utils/Announcer.js';
 import Chart from '../../Core/Chart/Chart.js';
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    setElAttrs
-} = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
-import RangeSelector from '../../Extensions/RangeSelector.js';
 const {
     addEvent,
+    attr,
     extend
 } = U;
 
@@ -94,8 +91,7 @@ function shouldRunInputNavigation(chart: Chart): boolean {
     return Boolean(
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
-        chart.rangeSelector.inputGroup.element
-            .getAttribute('visibility') !== 'hidden' &&
+        chart.rangeSelector.inputGroup.element.style.visibility !== 'hidden' &&
         (chart.options.rangeSelector as any).inputEnabled !== false &&
         chart.rangeSelector.minInput &&
         chart.rangeSelector.maxInput
@@ -294,7 +290,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         button: SVGElement
     ): void {
-        setElAttrs(button.element, {
+        attr(button.element, {
             tabindex: -1,
             role: 'button'
         });
@@ -311,7 +307,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
     ): void {
         const chart = this.chart;
 
-        setElAttrs(input, {
+        attr(input, {
             tabindex: -1,
             'aria-label': chart.langFormat(langKey, { chart: chart })
         });
@@ -326,7 +322,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     onButtonNavKbdArrowKey: function (
         this: Highcharts.RangeSelectorComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
+        keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const response = keyboardNavigationHandler.response,
@@ -358,7 +354,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     onButtonNavKbdClick: function (
         this: Highcharts.RangeSelectorComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const response = keyboardNavigationHandler.response,
             chart = this.chart,
@@ -538,7 +534,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     getRangeSelectorButtonNavigation: function (
         this: Highcharts.RangeSelectorComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const chart = this.chart;
         const keys = this.keyCodes;
         const component = this;
@@ -548,7 +544,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 [
                     [keys.left, keys.right, keys.up, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return component.onButtonNavKbdArrowKey(this, keyCode);
@@ -557,7 +553,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: KeyboardNavigationHandler
                     ): number {
                         return component.onButtonNavKbdClick(this);
                     }
@@ -602,7 +598,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     getRangeSelectorInputNavigation: function (
         this: Highcharts.RangeSelectorComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const chart = this.chart;
         const component = this;
 
@@ -631,7 +627,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      */
     getKeyboardNavigation: function (
         this: Highcharts.RangeSelectorComponent
-    ): Array<Highcharts.KeyboardNavigationHandler> {
+    ): Array<KeyboardNavigationHandler> {
         return [
             this.getRangeSelectorButtonNavigation(),
             this.getRangeSelectorInputNavigation()

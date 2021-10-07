@@ -14,6 +14,7 @@ import type PointerEvent from '../Core/PointerEvent';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
+    defined,
     extend,
     pick,
     wrap
@@ -96,7 +97,9 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
         e = this.normalize(e);
 
         // Firefox uses e.deltaY or e.detail, WebKit and IE uses wheelDelta
-        const delta = e.deltaY || e.detail || -((e.wheelDelta as any) / 120);
+        // try wheelDelta first #15656
+        const delta = (defined(e.wheelDelta) && -(e.wheelDelta as any) / 120) ||
+            e.deltaY || e.detail;
 
         // Wheel zooming on trackpads have different behaviours in Firefox vs
         // WebKit. In Firefox the delta increments in steps by 1, so it is not

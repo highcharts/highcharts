@@ -21,11 +21,11 @@ import type NavigationOptions from './NavigationOptions';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
- *  Constants
+ *  API Options
  *
  * */
 
@@ -585,12 +585,6 @@ const lang = {
 
 };
 
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module.
- *
- * @optionparent navigation
- */
 const navigation: NavigationOptions = {
 
     /**

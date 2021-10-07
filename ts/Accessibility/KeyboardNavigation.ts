@@ -12,10 +12,18 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from './Accessibility';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -29,94 +37,15 @@ const {
     fireEvent
 } = U;
 
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const getElement = HTMLUtilities.getElement;
-
 import EventProvider from './Utils/EventProvider.js';
+import HTMLUtilities from './Utils/HTMLUtilities.js';
+const { getElement } = HTMLUtilities;
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        /** @requires modules/accessibility */
-        dismissPopupContent(): void;
-    }
-}
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class KeyboardNavigation {
-            public constructor(
-                chart: Chart,
-                components: AccessibilityComponentsObject
-            );
-            public chart: Chart;
-            public components: AccessibilityComponentsObject;
-            public currentModuleIx: number;
-            public eventProvider: EventProvider;
-            public exitAnchor: DOMElementType;
-            public exiting?: boolean;
-            public isClickingChart?: boolean;
-            public keyboardReset?: boolean;
-            public modules: Array<KeyboardNavigationHandler>;
-            public pointerIsOverChart?: boolean;
-            public tabindexContainer: HTMLDOMElement;
-            public tabbingInBackwards?: boolean;
-            public addExitAnchorEventsToEl(element: DOMElementType): void;
-            public createExitAnchor(): void;
-            public destroy(): void;
-            public init(
-                chart: Chart,
-                components: AccessibilityComponentsObject
-            ): void;
-            public makeElementAnExitAnchor(el: DOMElementType): void;
-            public move(direction: number): boolean;
-            public next(): boolean;
-            public onFocus(e: FocusEvent): void;
-            public onKeydown(ev: KeyboardEvent): void;
-            public onMouseUp(): void;
-            public prev(): boolean;
-            public removeExitAnchor(): void;
-            public update(order?: Array<string>): void;
-            public updateExitAnchor(): void;
-            public updateContainerTabindex(): void;
-        }
-    }
-}
-
-/* eslint-disable valid-jsdoc */
-
-// Add event listener to document to detect ESC key press and dismiss
-// hover/popup content.
-addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
-    const keycode = e.which || e.keyCode;
-    const esc = 27;
-    if (keycode === esc && H.charts) {
-        H.charts.forEach((chart): void => {
-            if (chart && chart.dismissPopupContent) {
-                chart.dismissPopupContent();
-            }
-        });
-    }
-});
-
-
-/**
- * Dismiss popup content in chart, including export menu and tooltip.
- */
-Chart.prototype.dismissPopupContent = function (): void {
-    const chart = this;
-
-    fireEvent(this, 'dismissPopupContent', {}, function (): void {
-        if (chart.tooltip) {
-            chart.tooltip.hide(0);
-        }
-        chart.hideExportMenu();
-    });
-};
-
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
@@ -132,14 +61,48 @@ Chart.prototype.dismissPopupContent = function (): void {
  *        Map of component names to AccessibilityComponent objects.
  * @name Highcharts.KeyboardNavigation
  */
-function KeyboardNavigation(
-    this: Highcharts.KeyboardNavigation,
-    chart: Chart,
-    components: Highcharts.AccessibilityComponentsObject
-): void {
-    this.init(chart, components);
-}
-KeyboardNavigation.prototype = {
+class KeyboardNavigation {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        chart: Chart,
+        components: Accessibility.ComponentsObject
+    ) {
+        this.init(chart, components);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Chart = void 0 as any;
+    public components: Accessibility.ComponentsObject = void 0 as any;
+    public currentModuleIx: number = NaN;
+    public eventProvider: EventProvider = void 0 as any;
+    public exitAnchor: DOMElementType = void 0 as any;
+    public exiting?: boolean;
+    public isClickingChart?: boolean;
+    public keyboardReset?: boolean;
+    public modules: Array<KeyboardNavigationHandler> = [];
+    public pointerIsOverChart?: boolean;
+    public tabindexContainer: HTMLDOMElement = void 0 as any;
+    public tabbingInBackwards?: boolean;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Initialize the class
@@ -149,10 +112,9 @@ KeyboardNavigation.prototype = {
      * @param {object} components
      *        Map of component names to AccessibilityComponent objects.
      */
-    init: function (
-        this: Highcharts.KeyboardNavigation,
+    public init(
         chart: Chart,
-        components: Highcharts.AccessibilityComponentsObject
+        components: Accessibility.ComponentsObject
     ): void {
         const ep = this.eventProvider = new EventProvider();
 
@@ -161,7 +123,6 @@ KeyboardNavigation.prototype = {
         this.modules = [];
         this.currentModuleIx = 0;
 
-        // Run an update to get all modules
         this.update();
 
         ep.addEvent(this.tabindexContainer, 'keydown',
@@ -187,12 +148,7 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'mouseout', (): void => {
             this.pointerIsOverChart = false;
         });
-
-        // Init first module
-        if (this.modules.length) {
-            this.modules[0].init(1);
-        }
-    },
+    }
 
 
     /**
@@ -200,9 +156,8 @@ KeyboardNavigation.prototype = {
      * @param {Array<string>} [order]
      *        Array specifying the tab order of the components.
      */
-    update: function (
-        this: Highcharts.KeyboardNavigation,
-        order?: Array<(keyof Highcharts.AccessibilityComponentsObject)>
+    public update(
+        order?: Array<(keyof Accessibility.ComponentsObject)>
     ): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
@@ -218,9 +173,9 @@ KeyboardNavigation.prototype = {
         ) {
             // We (still) have keyboard navigation. Update module list
             this.modules = order.reduce(function (
-                modules: Array<Highcharts.KeyboardNavigationHandler>,
-                componentName: keyof Highcharts.AccessibilityComponentsObject
-            ): Array<Highcharts.KeyboardNavigationHandler> {
+                modules: Array<KeyboardNavigationHandler>,
+                componentName: keyof Accessibility.ComponentsObject
+            ): Array<KeyboardNavigationHandler> {
                 const navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
@@ -232,7 +187,7 @@ KeyboardNavigation.prototype = {
             this.currentModuleIx = 0;
             this.removeExitAnchor();
         }
-    },
+    }
 
 
     /**
@@ -240,7 +195,7 @@ KeyboardNavigation.prototype = {
      * @private
      * @param {global.FocusEvent} e Browser focus event.
      */
-    onFocus: function (e: FocusEvent): void {
+    public onFocus(e: FocusEvent): void {
         const chart = this.chart;
         const focusComesFromChart = (
             e.relatedTarget &&
@@ -259,7 +214,7 @@ KeyboardNavigation.prototype = {
         }
 
         this.exiting = false;
-    },
+    }
 
 
     /**
@@ -267,7 +222,7 @@ KeyboardNavigation.prototype = {
      * not already reset.
      * @private
      */
-    onMouseUp: function (this: Highcharts.KeyboardNavigation): void {
+    public onMouseUp(): void {
         delete this.isClickingChart;
 
         if (!this.keyboardReset && !this.pointerIsOverChart) {
@@ -284,7 +239,7 @@ KeyboardNavigation.prototype = {
             this.currentModuleIx = 0;
             this.keyboardReset = true;
         }
-    },
+    }
 
 
     /**
@@ -292,14 +247,17 @@ KeyboardNavigation.prototype = {
      * @private
      * @param {global.KeyboardEvent} ev Browser keydown event.
      */
-    onKeydown: function (
-        this: Highcharts.KeyboardNavigation,
+    public onKeydown(
         ev: KeyboardEvent
     ): void {
-        let e = ev || win.event,
-            preventDefault,
-            curNavModule = this.modules && this.modules.length &&
-                this.modules[this.currentModuleIx];
+        const e = ev || win.event,
+            curNavModule = (
+                this.modules &&
+                this.modules.length &&
+                this.modules[this.currentModuleIx]
+            );
+
+        let preventDefault;
 
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
@@ -323,25 +281,25 @@ KeyboardNavigation.prototype = {
                 e.stopPropagation();
             }
         }
-    },
+    }
 
 
     /**
      * Go to previous module.
      * @private
      */
-    prev: function (this: Highcharts.KeyboardNavigation): boolean {
+    public prev(): boolean {
         return this.move(-1);
-    },
+    }
 
 
     /**
      * Go to next module.
      * @private
      */
-    next: function (this: Highcharts.KeyboardNavigation): boolean {
+    public next(): boolean {
         return this.move(1);
-    },
+    }
 
 
     /**
@@ -352,8 +310,7 @@ KeyboardNavigation.prototype = {
      * @return {boolean}
      * True if there was a valid module in direction.
      */
-    move: function (
-        this: Highcharts.KeyboardNavigation,
+    public move(
         direction: number
     ): boolean {
         const curModule = this.modules && this.modules[this.currentModuleIx];
@@ -390,7 +347,7 @@ KeyboardNavigation.prototype = {
         }
 
         return false;
-    },
+    }
 
 
     /**
@@ -400,7 +357,7 @@ KeyboardNavigation.prototype = {
      * order to navigate from the end of the chart.
      * @private
      */
-    updateExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
+    public updateExitAnchor(): void {
         const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
             endMarker = getElement(endMarkerId);
 
@@ -412,14 +369,14 @@ KeyboardNavigation.prototype = {
         } else {
             this.createExitAnchor();
         }
-    },
+    }
 
 
     /**
      * Chart container should have tabindex if navigation is enabled.
      * @private
      */
-    updateContainerTabindex: function (this: Highcharts.KeyboardNavigation): void {
+    public updateContainerTabindex(): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
             shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false),
@@ -442,14 +399,13 @@ KeyboardNavigation.prototype = {
         } else if (!shouldHaveTabindex) {
             chart.container.removeAttribute('tabindex');
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    makeElementAnExitAnchor: function (
-        this: Highcharts.KeyboardNavigation,
+    public makeElementAnExitAnchor(
         el: DOMElementType
     ): void {
         const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
@@ -459,7 +415,7 @@ KeyboardNavigation.prototype = {
 
         // Handle focus
         this.addExitAnchorEventsToEl(el);
-    },
+    }
 
 
     /**
@@ -467,33 +423,32 @@ KeyboardNavigation.prototype = {
      *
      * @private
      */
-    createExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
+    public createExitAnchor(): void {
         const chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div');
 
         chart.renderTo.appendChild(exitAnchor);
         this.makeElementAnExitAnchor(exitAnchor);
-    },
+    }
 
 
     /**
      * @private
      */
-    removeExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
+    public removeExitAnchor(): void {
         if (this.exitAnchor && this.exitAnchor.parentNode) {
             this.exitAnchor.parentNode
                 .removeChild(this.exitAnchor);
             delete this.exitAnchor;
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    addExitAnchorEventsToEl: function (
-        this: Highcharts.KeyboardNavigation,
-        element: HTMLDOMElement
+    public addExitAnchorEventsToEl(
+        element: DOMElementType
     ): void {
         const chart = this.chart,
             keyboardNavigation = this;
@@ -502,8 +457,7 @@ KeyboardNavigation.prototype = {
             element,
             'focus',
             function (ev: MouseEvent): void {
-                let e = ev || win.event,
-                    curModule,
+                const e = ev || win.event,
                     focusComesFromChart = (
                         e.relatedTarget &&
                         chart.container.contains(e.relatedTarget as any)
@@ -527,7 +481,7 @@ KeyboardNavigation.prototype = {
                     ) {
                         keyboardNavigation.currentModuleIx =
                             keyboardNavigation.modules.length - 1;
-                        curModule = keyboardNavigation.modules[
+                        const curModule = keyboardNavigation.modules[
                             keyboardNavigation.currentModuleIx
                         ];
 
@@ -549,18 +503,119 @@ KeyboardNavigation.prototype = {
                 }
             }
         );
-    },
+    }
 
 
     /**
      * Remove all traces of keyboard navigation.
      * @private
      */
-    destroy: function (this: Highcharts.KeyboardNavigation): void {
+    public destroy(): void {
         this.removeExitAnchor();
         this.eventProvider.removeAddedEvents();
         this.chart.container.removeAttribute('tabindex');
     }
-};
+
+}
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace KeyboardNavigation {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class ChartComposition extends Chart {
+        dismissPopupContent(): void;
+    }
+
+    /* *
+     *
+     *  Construction
+     *
+     * */
+
+    const composedItems: Array<(Document|Function)> = [];
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Chart>(
+        ChartClass: T
+    ): (T&typeof ChartComposition) {
+
+        if (composedItems.indexOf(ChartClass) === -1) {
+            composedItems.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.dismissPopupContent = chartDismissPopupContent;
+        }
+
+        if (composedItems.indexOf(doc) === -1) {
+            composedItems.push(doc);
+
+            addEvent(doc, 'keydown', documentOnKeydown);
+        }
+
+        return ChartClass as (T&typeof ChartComposition);
+    }
+
+    /**
+     * Dismiss popup content in chart, including export menu and tooltip.
+     * @private
+     */
+    function chartDismissPopupContent(
+        this: ChartComposition
+    ): void {
+        const chart = this;
+
+        fireEvent(this, 'dismissPopupContent', {}, function (): void {
+            if (chart.tooltip) {
+                chart.tooltip.hide(0);
+            }
+            chart.hideExportMenu();
+        });
+    }
+
+    /**
+     * Add event listener to document to detect ESC key press and dismiss
+     * hover/popup content.
+     * @private
+     */
+    function documentOnKeydown(e: KeyboardEvent): void {
+        const keycode = e.which || e.keyCode;
+        const esc = 27;
+        if (keycode === esc && H.charts) {
+            H.charts.forEach((chart): void => {
+                if (chart && (chart as ChartComposition).dismissPopupContent) {
+                    (chart as ChartComposition).dismissPopupContent();
+                }
+            });
+        }
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default KeyboardNavigation;

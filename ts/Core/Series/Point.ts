@@ -39,11 +39,10 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import F from '../FormatUtilities.js';
-const { format } = F;
-import H from '../Globals.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
+import F from '../FormatUtilities.js';
+const { format } = F;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -91,6 +90,12 @@ declare module './PointLike' {
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -716,13 +721,14 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
@@ -978,7 +984,6 @@ class Point {
         function update(): void {
 
             point.applyOptions(options);
-            point.resolveColor();
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1438,7 +1443,9 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic) {
+                if (!chart.styledMode && stateMarkerGraphic &&
+                    point.state !== 'inactive'
+                ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
             }
@@ -1533,11 +1540,27 @@ class Point {
 
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Point extends PointLike {
     // merge extensions with point class
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace Point {
+    export interface GraphicalProps {
+        singular: Array<string>;
+        plural: Array<string>;
+    }
     export interface PointLabelObject {
         x?: string;
         y?: (number|null);
@@ -1548,13 +1571,6 @@ namespace Point {
         point: Point;
         percentage?: number;
         total?: number;
-    }
-}
-
-namespace Point {
-    export interface GraphicalProps {
-        singular: Array<string>;
-        plural: Array<string>;
     }
     export interface SeriesPointsOptions {
         events?: Highcharts.PointEventsOptionsObject;
@@ -1567,7 +1583,19 @@ namespace Point {
     }
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 export default Point;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * Function callback when a series point is clicked. Return false to cancel the
@@ -1778,4 +1806,4 @@ export default Point;
  *        Event that occured.
  */
 
-''; // detach doclet above
+''; // keeps doclets above in JS file.

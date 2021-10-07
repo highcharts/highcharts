@@ -196,3 +196,23 @@ QUnit.test('Square/rect', assert => {
         );
     });
 });
+
+QUnit.test('Image', assert => {
+    const renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        300
+    );
+
+    renderer.image(
+        'https://www.highcharts.com/samples/graphics/sun.png',
+        100,
+        null,
+        ''
+    ).add();
+
+    assert.ok(
+        true,
+        'No errors after adding an image without optional parameters, #11756.'
+    );
+});

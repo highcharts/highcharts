@@ -21,7 +21,8 @@ import type {
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -246,34 +247,26 @@ class ABandsIndicator extends SMAIndicator {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface ABandsIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
+interface ABandsIndicator extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
     pointValKey: string;
     pointClass: typeof ABandsPoint;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(ABandsIndicator.prototype, {
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],
     pointArrayMap: ['top', 'middle', 'bottom'],
-    pointValKey: 'middle',
-    toYData: MultipleLinesMixin.toYData,
-    translate: MultipleLinesMixin.translate
+    pointValKey: 'middle'
 });
+MultipleLinesComposition.compose(ABandsIndicator);
 
 /* *
  *

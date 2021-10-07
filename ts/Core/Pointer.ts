@@ -19,6 +19,7 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
+import type NodesComposition from '../Series/NodesComposition';
 import type Options from './Options';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
@@ -32,7 +33,7 @@ const {
     charts,
     noop
 } = H;
-import Palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
@@ -634,7 +635,7 @@ class Pointer {
             let y = point.plotY || 0;
 
             if (
-                (point as Highcharts.NodesPoint).isNode &&
+                (point as NodesComposition.PointComposition).isNode &&
                 shapeArgs &&
                 isNumber(shapeArgs.x) &&
                 isNumber(shapeArgs.y)
@@ -1120,6 +1121,14 @@ class Pointer {
         const chart = charts[pick(Pointer.hoverChartIndex, -1)];
         const tooltip = this.chart.tooltip;
 
+        // #14434: tooltip.options.outside
+        if (tooltip && tooltip.shouldStickOnContact() && this.inClass(
+            e.relatedTarget as any,
+            'highcharts-tooltip-container'
+        )) {
+            return;
+        }
+
         e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
@@ -1305,6 +1314,10 @@ class Pointer {
         // (#4210).
         if (touchesLength > 1) {
             self.initiated = true;
+        } else if (touchesLength === 1 && this.followTouchMove) {
+            // #16119: Prevent blocking scroll when single-finger panning is
+            // not enabled
+            self.initiated = false;
         }
 
         // On touch devices, only proceed to trigger click if a handler is

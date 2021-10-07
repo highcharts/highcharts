@@ -1,0 +1,7 @@
+---
+ name: Stock Calendar demo
+ authors:
+   - Rafal Sebestjanski
+ skipTest: true
+ js_wrap: b
+...

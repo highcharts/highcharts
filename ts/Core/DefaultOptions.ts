@@ -10,20 +10,26 @@
 
 'use strict';
 
-import type ColorType from './Color/ColorType';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { Options } from './Options';
 import type Point from './Series/Point';
 import type Series from './Series/Series';
 
+import ChartDefaults from './Chart/ChartDefaults.js';
+import Color from './Color/Color.js';
+const { parse: color } = Color;
 import H from './Globals.js';
 const {
     isTouchDevice,
     svg
 } = H;
-import ChartDefaults from './Chart/ChartDefaults.js';
-import Color from './Color/Color.js';
-const { parse: color } = Color;
-import palette from './Color/Palette.js';
+import { Palette } from './Color/Palettes.js';
+import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const { merge } = U;
@@ -64,192 +70,6 @@ declare module './LangOptions'{
         zoomOut?: string;
     }
 }
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
- */
-
-/**
- * Gets fired when a series is added to the chart after load time, using the
- * `addSeries` method. Returning `false` prevents the series from being added.
- *
- * @callback Highcharts.ChartAddSeriesCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {Highcharts.ChartAddSeriesEventObject} event
- *        The event that occured.
- */
-
-/**
- * Contains common event information. Through the `options` property you can
- * access the series options that were passed to the `addSeries` method.
- *
- * @interface Highcharts.ChartAddSeriesEventObject
- *//**
- * The series options that were passed to the `addSeries` method.
- * @name Highcharts.ChartAddSeriesEventObject#options
- * @type {Highcharts.SeriesOptionsType}
- *//**
- * Prevents the default behaviour of the event.
- * @name Highcharts.ChartAddSeriesEventObject#preventDefault
- * @type {Function}
- *//**
- * The event target.
- * @name Highcharts.ChartAddSeriesEventObject#target
- * @type {Highcharts.Chart}
- *//**
- * The event type.
- * @name Highcharts.ChartAddSeriesEventObject#type
- * @type {"addSeries"}
- */
-
-/**
- * Gets fired when clicking on the plot background.
- *
- * @callback Highcharts.ChartClickCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {Highcharts.PointerEventObject} event
- *        The event that occured.
- */
-
-/**
- * Contains an axes of the clicked spot.
- *
- * @interface Highcharts.ChartClickEventAxisObject
- *//**
- * Axis at the clicked spot.
- * @name Highcharts.ChartClickEventAxisObject#axis
- * @type {Highcharts.Axis}
- *//**
- * Axis value at the clicked spot.
- * @name Highcharts.ChartClickEventAxisObject#value
- * @type {number}
- */
-
-/**
- * Contains information about the clicked spot on the chart. Remember the unit
- * of a datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartClickEventObject
- * @extends Highcharts.PointerEventObject
- *//**
- * Information about the x-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#xAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
- * Information about the y-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#yAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
- * Information about the z-axis on the clicked spot.
- * @name Highcharts.ChartClickEventObject#zAxis
- * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
- */
-
-/**
- * Gets fired when the chart is finished loading.
- *
- * @callback Highcharts.ChartLoadCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
- * after an axis, series or point is modified with the `redraw` option set to
- * `true`.
- *
- * @callback Highcharts.ChartRedrawCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired after initial load of the chart (directly after the `load` event),
- * and after each redraw (directly after the `redraw` event).
- *
- * @callback Highcharts.ChartRenderCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.Event} event
- *        The event that occured.
- */
-
-/**
- * Gets fired when an area of the chart has been selected. The default action
- * for the selection event is to zoom the chart to the selected area. It can be
- * prevented by calling `event.preventDefault()` or return false.
- *
- * @callback Highcharts.ChartSelectionCallbackFunction
- *
- * @param {Highcharts.Chart} this
- *        The chart on which the event occured.
- *
- * @param {global.ChartSelectionContextObject} event
- *        Event informations
- *
- * @return {boolean|undefined}
- *         Return false to prevent the default action, usually zoom.
- */
-
-/**
- * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
- * datetime axis is milliseconds since 1970-01-01 00:00:00.
- *
- * @interface Highcharts.ChartSelectionContextObject
- * @extends global.Event
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#xAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- *//**
- * Arrays containing the axes of each dimension and each axis' min and max
- * values.
- * @name Highcharts.ChartSelectionContextObject#yAxis
- * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- */
-
-/**
- * Axis context of the selection.
- *
- * @interface Highcharts.ChartSelectionAxisContextObject
- *//**
- * The selected Axis.
- * @name Highcharts.ChartSelectionAxisContextObject#axis
- * @type {Highcharts.Axis}
- *//**
- * The maximum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually.
- * @name Highcharts.ChartSelectionAxisContextObject#min
- * @type {number}
- */
-
-(''); // detach doclets above
 
 /* *
  *
@@ -301,7 +121,7 @@ const defaultOptions: Options = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: palette.colors,
+    colors: Palettes.colors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -1187,7 +1007,7 @@ const defaultOptions: Options = {
             /**
              * @ignore-option
              */
-            color: palette.neutralColor80
+            color: Palette.neutralColor80
         }
     },
 
@@ -1488,7 +1308,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: palette.neutralColor40,
+        borderColor: Palette.neutralColor40,
 
         /**
          * The border corner radius of the legend.
@@ -1589,7 +1409,7 @@ const defaultOptions: Options = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: palette.highlightColor100,
+            activeColor: Palette.highlightColor100,
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -1606,7 +1426,7 @@ const defaultOptions: Options = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: palette.neutralColor20
+            inactiveColor: Palette.neutralColor20
         },
 
         /**
@@ -1687,7 +1507,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
             /**
              * @ignore
              */
@@ -1726,7 +1546,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor100
+            color: Palette.neutralColor100
         },
 
         /**
@@ -1748,7 +1568,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            color: palette.neutralColor20
+            color: Palette.neutralColor20
         },
 
         /**
@@ -2073,7 +1893,7 @@ const defaultOptions: Options = {
             /**
              * @ignore
              */
-            backgroundColor: palette.backgroundColor,
+            backgroundColor: Palette.backgroundColor,
             /**
              * @ignore
              */
@@ -2438,11 +2258,13 @@ const defaultOptions: Options = {
          */
 
         /**
-         * How many decimals to show for the `point.change` value when the
-         * `series.compare` option is set. This is overridable in each series'
-         * tooltip options object. The default is to preserve all decimals.
+         * How many decimals to show for the `point.change`
+         * or the `point.cumulativeSum` value when the `series.compare`
+         * or the `series.cumulative` option is set.
+         * This is overridable in each series' tooltip options object.
          *
          * @type      {number}
+         * @default   2
          * @since     1.0.1
          * @product   highstock
          * @apioption tooltip.changeDecimals
@@ -2484,7 +2306,7 @@ const defaultOptions: Options = {
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#.dateFormat).
+         * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
@@ -2699,7 +2521,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color(palette.neutralColor3)
+        backgroundColor: color(Palette.neutralColor3)
             // @todo: Disallow undefined as input for colors
             .setOpacity(0.85).get() as any,
 
@@ -2766,7 +2588,7 @@ const defaultOptions: Options = {
          */
         style: {
             /** @internal */
-            color: palette.neutralColor80,
+            color: Palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -2890,7 +2712,7 @@ const defaultOptions: Options = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: palette.neutralColor40,
+            color: Palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },
@@ -3002,3 +2824,189 @@ const DefaultOptions = {
 };
 
 export default DefaultOptions;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
+ */
+
+/**
+ * Gets fired when a series is added to the chart after load time, using the
+ * `addSeries` method. Returning `false` prevents the series from being added.
+ *
+ * @callback Highcharts.ChartAddSeriesCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.ChartAddSeriesEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Contains common event information. Through the `options` property you can
+ * access the series options that were passed to the `addSeries` method.
+ *
+ * @interface Highcharts.ChartAddSeriesEventObject
+ *//**
+ * The series options that were passed to the `addSeries` method.
+ * @name Highcharts.ChartAddSeriesEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.ChartAddSeriesEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.ChartAddSeriesEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.ChartAddSeriesEventObject#type
+ * @type {"addSeries"}
+ */
+
+/**
+ * Gets fired when clicking on the plot background.
+ *
+ * @callback Highcharts.ChartClickCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.PointerEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Contains an axes of the clicked spot.
+ *
+ * @interface Highcharts.ChartClickEventAxisObject
+ *//**
+ * Axis at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Axis value at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#value
+ * @type {number}
+ */
+
+/**
+ * Contains information about the clicked spot on the chart. Remember the unit
+ * of a datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartClickEventObject
+ * @extends Highcharts.PointerEventObject
+ *//**
+ * Information about the x-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#xAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the y-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#yAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the z-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#zAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
+ */
+
+/**
+ * Gets fired when the chart is finished loading.
+ *
+ * @callback Highcharts.ChartLoadCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
+ * after an axis, series or point is modified with the `redraw` option set to
+ * `true`.
+ *
+ * @callback Highcharts.ChartRedrawCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired after initial load of the chart (directly after the `load` event),
+ * and after each redraw (directly after the `redraw` event).
+ *
+ * @callback Highcharts.ChartRenderCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired when an area of the chart has been selected. The default action
+ * for the selection event is to zoom the chart to the selected area. It can be
+ * prevented by calling `event.preventDefault()` or return false.
+ *
+ * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.ChartSelectionContextObject} event
+ *        Event informations
+ *
+ * @return {boolean|undefined}
+ *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartSelectionContextObject
+ * @extends global.Event
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#xAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#yAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ */
+
+/**
+ * Axis context of the selection.
+ *
+ * @interface Highcharts.ChartSelectionAxisContextObject
+ *//**
+ * The selected Axis.
+ * @name Highcharts.ChartSelectionAxisContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The maximum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#min
+ * @type {number}
+ */
+
+(''); // detach doclets above
