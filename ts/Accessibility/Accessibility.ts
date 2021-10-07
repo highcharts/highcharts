@@ -328,7 +328,7 @@ namespace Accessibility {
         legend: Highcharts.LegendComponent;
         chartMenu: Highcharts.MenuComponent;
         rangeSelector: Highcharts.RangeSelectorComponent;
-        series: Highcharts.SeriesComponent;
+        series: SeriesComponent;
         zoom: Highcharts.ZoomComponent;
     }
 
@@ -472,6 +472,7 @@ namespace Accessibility {
         FocusBorder.compose(ChartClass, SVGElementClass);
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
+        SeriesComponent.compose(SeriesClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
