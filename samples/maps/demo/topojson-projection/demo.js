@@ -992,7 +992,7 @@ Highcharts.getJSON(
             },
 
             subtitle: {
-                text: 'Source: <a href="http://www.citypopulation.de/en/world/bymap/airports/">citypopylation.de</a><br>' +
+                text: 'Source: <a href="http://www.citypopulation.de/en/world/bymap/airports/">citypopulation.de</a><br>' +
                     'Click and drag to rotate globe<br>',
                 floating: true,
                 y: 34,
@@ -1032,7 +1032,8 @@ Highcharts.getJSON(
 
             plotOptions: {
                 series: {
-                    animation: true
+                    animation: true,
+                    clip: false
                 }
             },
 
@@ -1055,8 +1056,7 @@ Highcharts.getJSON(
                 dataLabels: {
                     enabled: false,
                     format: '{point.name}'
-                },
-                clip: false
+                }
             }]
         });
 
@@ -1116,13 +1116,20 @@ Highcharts.getJSON(
                     .add(chart.get('graticule').group);
                 verb = 'attr';
             }
-            const zoomScale =  Math.pow(2, chart.mapView.zoom) /
-                Math.pow(2, chart.mapView.minZoom);
 
+            const bounds = chart.get('graticule').bounds,
+                p1 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x1,
+                    y: bounds.y1
+                }),
+                p2 = chart.mapView.projectedUnitsToPixels({
+                    x: bounds.x2,
+                    y: bounds.y2
+                });
             chart.sea[verb]({
-                cx: chart.plotWidth / 2,
-                cy: chart.plotHeight / 2,
-                r: Math.min(chart.plotWidth, chart.plotHeight) * zoomScale / 2
+                cx: (p1.x + p2.x) / 2,
+                cy: (p1.y + p2.y) / 2,
+                r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
             });
         };
         renderSea();
