@@ -15,7 +15,6 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
@@ -333,7 +332,9 @@ class NavigationBindings {
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available
     public static annotationsNonEditable = {
-        rectangle: ['crosshairX', 'crosshairY', 'label']
+        rectangle: ['crosshairX', 'crosshairY', 'labelOptions'],
+        ellipse: ['labelOptions'],
+        circle: ['labelOptions']
     };
 
     /* *

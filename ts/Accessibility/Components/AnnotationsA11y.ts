@@ -15,7 +15,6 @@
 import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotations';
 import type Point from '../../Core/Series/Point';
-import type SeriesDescriber from './SeriesComponent/SeriesDescriber';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
@@ -102,7 +101,7 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
         point.graphic.element.getAttribute('aria-label') ||
         ''
     );
-    const getValueDesc = (point: SeriesDescriber.PointComposition): string => {
+    const getValueDesc = (point: Accessibility.PointComposition): string => {
         const valDesc = (
             point.accessibility &&
             point.accessibility.valueDescription ||

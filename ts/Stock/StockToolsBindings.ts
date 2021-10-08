@@ -24,6 +24,7 @@ import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
@@ -112,6 +113,7 @@ declare global {
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
+
         interface StockToolsFieldsObject {
             [key: string]: any;
         }
@@ -250,34 +252,38 @@ bindingsUtils.addFlagFromForm = function (
 };
 
 bindingsUtils.indicatorsWithAxes = [
+    'apo',
     'ad',
-    'atr',
-    'cci',
-    'cmf',
-    'disparityindex',
-    'cmo',
-    'dmi',
-    'macd',
-    'mfi',
-    'roc',
-    'rsi',
-    'ao',
     'aroon',
     'aroonoscillator',
-    'trix',
-    'apo',
+    'atr',
+    'ao',
+    'cci',
+    'chaikin',
+    'cmf',
+
+    'cmo',
+    'disparityindex',
+    'dmi',
     'dpo',
-    'ppo',
+    'linearRegressionAngle',
+    'linearRegressionIntercept',
+    'linearRegressionSlope',
+    'klinger',
+    'macd',
+    'mfi',
+    'momentum',
+
     'natr',
     'obv',
-    'williamsr',
-    'stochastic',
+    'ppo',
+    'roc',
+    'rsi',
     'slowstochastic',
-    'linearRegression',
-    'linearRegressionSlope',
-    'linearRegressionIntercept',
-    'linearRegressionAngle',
-    'klinger'
+    'stochastic',
+    'trix',
+    'williamsr'
+
 ];
 
 bindingsUtils.manageIndicators = function (
@@ -543,6 +549,7 @@ bindingsUtils.updateNthPoint = function (
         const options = annotation.options.typeOptions,
             xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
             yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
+
 
         if (xAxis && yAxis) {
             (options.points as any).forEach(function (
