@@ -9,7 +9,12 @@
  * */
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
-import type ProjectionOptions from './ProjectionOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    MapViewOptions,
+    ProjectedXY
+} from './MapViewOptions';
 
 import Chart from '../Core/Chart/Chart.js';
 import Projection from './Projection.js';
@@ -21,38 +26,6 @@ const {
     merge
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type LonLatArray = [number, number];
-        type ProjectedXY = { x: number; y: number };
-        type MapBounds = {
-            midX?: number;
-            midY?: number;
-            x1: number;
-            y1: number;
-            x2: number;
-            y2: number;
-        };
-
-        interface MapViewOptions {
-            center: LonLatArray;
-            maxZoom?: number;
-            projection?: ProjectionOptions;
-            zoom: number;
-        }
-
-    }
-}
-
-declare module '../Core/Options'{
-    interface Options {
-        mapView?: DeepPartial<Highcharts.MapViewOptions>;
-    }
-}
 
 /**
  * The world size equals meters in the Web Mercator projection, to match a
@@ -67,12 +40,12 @@ class MapView {
      * Return the composite bounding box of a collection of bounding boxes
      */
     public static compositeBounds = (
-        arrayOfBounds: Highcharts.MapBounds[]
-    ): Highcharts.MapBounds|undefined => {
+        arrayOfBounds: MapBounds[]
+    ): MapBounds|undefined => {
         if (arrayOfBounds.length) {
             return arrayOfBounds
                 .slice(1)
-                .reduce((acc, cur): Highcharts.MapBounds => {
+                .reduce((acc, cur): MapBounds => {
                     acc.x1 = Math.min(acc.x1, cur.x1);
                     acc.y1 = Math.min(acc.y1, cur.y1);
                     acc.x2 = Math.max(acc.x2, cur.x2);
@@ -85,7 +58,7 @@ class MapView {
 
     public constructor(
         chart: Chart,
-        userOptions?: DeepPartial<Highcharts.MapViewOptions>
+        userOptions?: DeepPartial<MapViewOptions>
     ) {
         const options = merge(true, {
             center: [0, 0],
@@ -107,11 +80,11 @@ class MapView {
         });
     }
 
-    public center: Highcharts.LonLatArray;
+    public center: LonLatArray;
     public minZoom?: number;
-    public options: Highcharts.MapViewOptions;
+    public options: MapViewOptions;
     public projection: Projection;
-    public userOptions: DeepPartial<Highcharts.MapViewOptions>;
+    public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
 
     private chart: Chart;
@@ -125,7 +98,7 @@ class MapView {
      * @param animation
      */
     public fitToBounds(
-        bounds?: Highcharts.MapBounds,
+        bounds?: MapBounds,
         // @todo: Implement. Decide either for pixels or relative like
         // axis.minPadding/maxPadding
         padding = 0,
@@ -158,16 +131,16 @@ class MapView {
         }
     }
 
-    public getProjectedBounds(): Highcharts.MapBounds|undefined {
+    public getProjectedBounds(): MapBounds|undefined {
         const allBounds = this.chart.series.reduce(
-            (acc, s): Highcharts.MapBounds[] => {
+            (acc, s): MapBounds[] => {
                 const bounds = s.getProjectedBounds && s.getProjectedBounds();
                 if (bounds) {
                     acc.push(bounds);
                 }
                 return acc;
             },
-            [] as Highcharts.MapBounds[]
+            [] as MapBounds[]
         );
         return MapView.compositeBounds(allBounds);
     }
@@ -189,7 +162,7 @@ class MapView {
     }
 
     public setView(
-        center?: Highcharts.LonLatArray,
+        center?: LonLatArray,
         zoom?: number,
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
@@ -279,7 +252,7 @@ class MapView {
         }
     }
 
-    public projectedUnitsToPixels(pos: Highcharts.ProjectedXY): PositionObject {
+    public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
         const scale = this.getScale();
         const projectedCenter = this.projection.forward(this.center);
         const centerPxX = this.chart.plotWidth / 2;
@@ -291,7 +264,7 @@ class MapView {
         return { x, y };
     }
 
-    public pixelsToProjectedUnits(pos: PositionObject): Highcharts.ProjectedXY {
+    public pixelsToProjectedUnits(pos: PositionObject): ProjectedXY {
         const { x, y } = pos;
         const scale = this.getScale();
         const projectedCenter = this.projection.forward(this.center);
@@ -305,7 +278,7 @@ class MapView {
     }
 
     public update(
-        userOptions: DeepPartial<Highcharts.MapViewOptions>,
+        userOptions: DeepPartial<MapViewOptions>,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
@@ -349,7 +322,7 @@ class MapView {
 
     public zoomBy(
         howMuch?: number,
-        coords?: Highcharts.LonLatArray,
+        coords?: LonLatArray,
         chartCoords?: [number, number],
         animation?: boolean|Partial<AnimationOptions>
     ): void {
@@ -363,7 +336,7 @@ class MapView {
         if (typeof howMuch === 'number') {
             const zoom = this.zoom + howMuch;
 
-            let center: Highcharts.LonLatArray|undefined;
+            let center: LonLatArray|undefined;
 
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {

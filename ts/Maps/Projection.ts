@@ -10,16 +10,18 @@
 
 'use strict';
 
-import type { GeoJSONGeometry, LonLatArray } from 'GeoJSON';
+import type {
+    GeoJSONGeometry
+} from 'GeoJSON';
+import type {
+    LonLatArray
+} from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionTypes';
 import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
-const {
-    erase,
-    pick
-} = U;
+const { erase } = U;
 
 
 const deg2rad = Math.PI * 2 / 360;
@@ -186,76 +188,6 @@ export default class Projection {
             this.forward = rotator.forward;
             this.inverse = rotator.inverse;
         }
-
-        /*
-        // Set up proj4 based projection
-        } else if (proj4) {
-            const projString = Projection.toString(options);
-
-            if (projString) {
-                const projection = proj4(projString);
-
-                this.forward = projection.forward;
-                this.inverse = projection.inverse;
-
-                if (this.options.projString === 'EPSG:3857') {
-                    this.maxLatitude = 85.0511287798;
-                } else if (this.options.projectionName === 'eqc') {
-                    this.maxLatitude = 89.9999999999;
-                }
-
-                this.isNorthPositive = true;
-            }
-
-        // Set up d3-geo based projection
-        } else if (d3) {
-            const {
-                lat0 = 0,
-                lon0 = 0,
-                projectionName,
-                projString
-            } = this.options;
-
-            let projection = d3.geoEquirectangular();
-            if (projectionName === 'mill') {
-                projection = d3.geoMiller();
-            } else if (projectionName === 'ortho') {
-                projection = d3.geoOrthographic();
-            } else if (projectionName === 'robin') {
-                projection = d3.geoRobinson();
-            } else if (
-                projectionName === 'webmerc' ||
-                projString === 'EPSG:3857'
-            ) {
-                projection = d3.geoMercator();
-            } else {
-                error('Projection unknown to d3 adapter,
-                    falling back to equirectangular', false);
-            }
-            projection.rotate([-lon0, -lat0]);
-
-            this.isNorthPositive = false;
-
-            // Overrides
-            this.forward = (lonLat: LonLatArray): [number, number] =>
-                projection(lonLat);
-            this.inverse = (p: [number, number]): LonLatArray =>
-                projection.invert(p);
-
-            const geoPath = d3.geoPath(projection);
-            this.path = (geometry: GeoJSONGeometry): SVGPath => {
-
-                const path = geoPath({
-                    type: 'Feature',
-                    geometry
-                });
-
-                // @todo: Why can't I imp\ort splitPath directly from MapChart?
-                return path ? (H as any).MapChart.splitPath(path) : [];
-            };
-
-        }
-        */
     }
 
     /*
@@ -345,18 +277,18 @@ export default class Projection {
     public maxLatitude = 90;
 
     private clipOnAntimeridian(
-        poly: Highcharts.LonLatArray[],
+        poly: LonLatArray[],
         isPolygon: boolean
-    ): Highcharts.LonLatArray[][] {
+    ): LonLatArray[][] {
         const antimeridian = 180;
         const intersections: {
             i: number;
             lat: number;
             direction: (-1|1);
-            previousLonLat: Highcharts.LonLatArray;
-            lonLat: Highcharts.LonLatArray;
+            previousLonLat: LonLatArray;
+            lonLat: LonLatArray;
         }[] = [];
-        const polygons: Highcharts.LonLatArray[][] = [poly];
+        const polygons: LonLatArray[][] = [poly];
 
         poly.forEach((lonLat, i): void => {
             let previousLonLat = poly[i - 1];
@@ -560,7 +492,7 @@ export default class Projection {
             // prevent the points to be projected to the wrong side of the
             // plane. Float errors in topojson or in the projection may cause
             // that.
-            const poly = polygon.map((lonLat): Highcharts.LonLatArray => {
+            const poly = polygon.map((lonLat): LonLatArray => {
                 if (projectingToPlane) {
 
                     if (preclip) {

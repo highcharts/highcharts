@@ -18,14 +18,13 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { LonLatArray } from '../../Maps/MapViewOptions';
 
 /* *
  *
  *  Declarations
  *
  * */
-
-type LonLatArray = [number, number];
 
 export interface MapPointOptions extends ScatterPointOptions {
     color?: ColorType;

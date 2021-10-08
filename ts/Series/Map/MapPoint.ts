@@ -19,6 +19,7 @@
 import type ColorMapComposition from '../ColorMapComposition';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 
 import Projection from '../../Maps/Projection.js';
@@ -177,7 +178,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPoint extends ColorMapComposition.PointComposition {
-    bounds?: Highcharts.MapBounds;
+    bounds?: MapBounds;
     dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
@@ -190,7 +191,7 @@ interface MapPoint extends ColorMapComposition.PointComposition {
 
 namespace MapPoint {
     export interface CacheObject {
-        bounds?: Highcharts.MapBounds;
+        bounds?: MapBounds;
     }
 }
 

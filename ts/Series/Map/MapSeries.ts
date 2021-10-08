@@ -21,6 +21,7 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -84,7 +85,7 @@ type SVGTransformType = {
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
-        getProjectedBounds?(): Highcharts.MapBounds|undefined;
+        getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
         svgTransform?: SVGTransformType;
         valueMax?: number;
@@ -425,7 +426,7 @@ class MapSeries extends ScatterSeries {
 
     // public baseView?: { center: Highcharts.LonLatArray; zoom: number };
 
-    public bounds?: Highcharts.MapBounds;
+    public bounds?: MapBounds;
 
     public chart: MapChart = void 0 as any;
 
@@ -757,13 +758,13 @@ class MapSeries extends ScatterSeries {
      * Get the bounding box of all paths in the map combined.
      *
      */
-    public getProjectedBounds(): Highcharts.MapBounds|undefined {
+    public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds) {
 
             const MAX_VALUE = Number.MAX_VALUE;
             const projection = this.chart.mapView &&
                 this.chart.mapView.projection;
-            const allBounds: Highcharts.MapBounds[] = [];
+            const allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
             (this.points || []).forEach(function (point): void {

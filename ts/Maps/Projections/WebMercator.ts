@@ -2,6 +2,7 @@
  * Web Mercator projection, used for most online map tile services
  * */
 
+import type { LonLatArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionTypes';
 
 'use strict';
@@ -25,7 +26,7 @@ const WebMercator: ProjectionDefinition = {
         ];
     },
 
-    inverse: (xy): Highcharts.LonLatArray => [
+    inverse: (xy): LonLatArray => [
         xy[0] / (r * deg2rad),
         (2 * Math.atan(Math.exp(xy[1] / r)) - (Math.PI / 2)) / deg2rad
     ],

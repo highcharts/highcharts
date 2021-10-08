@@ -14,6 +14,7 @@
  *
  * */
 
+import type { LonLatArray } from '../../Maps/MapViewOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -21,7 +22,6 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  *  Declarations
  *
  * */
-type LonLatArray = [number, number];
 
 export interface MapPointPointOptions extends ScatterPointOptions {
     coordinates?: LonLatArray;

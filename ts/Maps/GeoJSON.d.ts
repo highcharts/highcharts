@@ -8,7 +8,7 @@
  *
  * */
 
-export type LonLatArray = [number, number];
+import type { LonLatArray } from './MapViewOptions';
 
 type GeoJSONGeometryLineString = {
     type: 'LineString';
