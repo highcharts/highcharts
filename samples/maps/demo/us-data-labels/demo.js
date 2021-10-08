@@ -19,7 +19,7 @@ Highcharts.data({
 
 // Process mapdata
 mapData.forEach(function (p) {
-    const { coordinates } = p;
+    const coordinates = p.geometry.coordinates;
 
     // This point has a square legend to the right
     // @todo: Add hs-middle-x and hs-middle-y to the geojson map data instead of
