@@ -12,13 +12,15 @@ describe('Stock tools rectangle annotatation.', () => {
         cy.get('.highcharts-container')
             .click(250, 200, { force: true })
             .click(350, 100, { force: true });
-        cy.chart().then(chart => {
-            const path = chart.annotations[0].shapes[0].graphic.d;
-            assert.equal(
-                path.slice(-1), // last char of the string
-                'Z',
-                'Shape should be closed'
-            );
-        });
+        let path = cy
+            .get('.highcharts-annotation-shapes>path')
+            .first()
+            .invoke('attr', 'd').then(d => {
+                assert.equal(
+                    d.slice(-1), // last char of the string
+                    'Z',
+                    'Shape should be closed'
+                );
+            });
     });
 });
