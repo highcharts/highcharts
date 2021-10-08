@@ -41,6 +41,7 @@ const {
     addEvent,
     arrayMax,
     arrayMin,
+    clamp,
     extend,
     isNumber,
     merge,
@@ -653,20 +654,18 @@ class BubbleSeries extends ScatterSeries {
 
     public getZExtremes(): BubbleZExtremes|undefined {
 
-        const zData = (this.zData || []).filter(isNumber);
+        const options = this.options,
+            zData = (this.zData || []).filter(isNumber);
+
         if (zData.length) {
-            const zMin = pick(
-                this.options.zMin, Math.min(
-                    arrayMin(zData),
-                    this.options.displayNegative === false ?
-                        (this.options.zThreshold || 0) :
-                        Number.MAX_VALUE
-                )
-            );
-            const zMax = pick(
-                this.options.zMax,
-                arrayMax(zData)
-            );
+            const zMin = pick(options.zMin, clamp(
+                arrayMin(zData),
+                options.displayNegative === false ?
+                    (options.zThreshold || 0) :
+                    -Number.MAX_VALUE,
+                Number.MAX_VALUE
+            ));
+            const zMax = pick(options.zMax, arrayMax(zData));
 
             if (isNumber(zMin) && isNumber(zMax)) {
                 return { zMin, zMax };
