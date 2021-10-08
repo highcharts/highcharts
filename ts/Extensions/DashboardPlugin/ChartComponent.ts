@@ -1,3 +1,19 @@
+/* *
+ *
+ *  (c) 2012-2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Gøran Slettemark
+ *  - Wojciech Chmiel
+ *  - Sebastian Bochan
+ *  - Sophie Bremer
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -12,10 +28,10 @@ import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type Options from '../../Core/Options';
 
-import Component from './Component.js';
+import Component from '../../Dashboard/Component/Component.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataTable from '../../Data/DataTable.js';
-import defaultHandlers from './Sync/ChartSyncHandlers.js';
+import defaultHandlers from './ChartSyncHandlers.js';
 import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -44,6 +60,13 @@ declare module '../../Core/GlobalsLike' {
  *  Class
  *
  * */
+
+/**
+ * Highcharts component for the Highsoft Dashboard.
+ * @private
+ * @class
+ * @name Highcharts.DashboardComponent
+ */
 class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
     /* *
@@ -112,7 +135,7 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
     public charter: typeof G;
-    public chartConstructor: ChartComponent.constructorType;
+    public chartConstructor: ChartComponent.ConstructorType;
 
     public sync: Component['sync'];
     /* *
@@ -457,14 +480,15 @@ class ChartComponent extends Component<ChartComponent.ChartComponentEvents> {
 
 /* *
  *
- *  Namespace
+ *  Class Namespace
  *
  * */
+
 namespace ChartComponent {
 
     export type ComponentType = ChartComponent;
-    export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
 
+    export type ConstructorType = 'chart' | 'stock' | 'map' | 'gantt';
 
     export type ChartComponentEvents =
         JSONEvent |
@@ -475,7 +499,7 @@ namespace ChartComponent {
     }>;
 
     export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
-        chartConstructor: ChartComponent.constructorType;
+        chartConstructor: ChartComponent.ConstructorType;
     }
 
     export interface EditableOptions extends Component.EditableOptions {
@@ -489,7 +513,7 @@ namespace ChartComponent {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
-        chartConstructor: ChartComponent.constructorType;
+        chartConstructor: ChartComponent.ConstructorType;
     }
 
 

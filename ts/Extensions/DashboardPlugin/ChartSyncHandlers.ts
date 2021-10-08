@@ -1,3 +1,17 @@
+/* *
+ *
+ *  (c) 2012-2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
+
 /* eslint-disable require-jsdoc, max-len */
 
 'use strict';
@@ -8,17 +22,17 @@
  *
  * */
 
-import type Chart from '../../../Core/Chart/Chart';
-import type Point from '../../../Core/Series/Point';
-import type SharedState from '../SharedComponentState';
-import type Sync from './Sync';
+import type Chart from '../../Core/Chart/Chart';
+import type Point from '../../Core/Series/Point';
+import type SharedState from '../../Dashboard/Component/SharedComponentState';
+import type Sync from '../../Dashboard/Component/Sync/Sync';
 
-import ComponentGroup from '../ComponentGroup.js';
-import U from '../../../Core/Utilities.js';
+import ChartComponent from './ChartComponent.js';
+import ComponentGroup from '../../Dashboard/Component/ComponentGroup.js';
+import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
-import ChartComponent from '../ChartComponent.js';
-import ComponentTypes from '../ComponentType';
+import ComponentTypes from '../../Dashboard/Component/ComponentType';
 
 
 function getAxisMinMaxMap(chart: Chart): Array<{

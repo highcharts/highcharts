@@ -16,9 +16,9 @@
  *
  * */
 
-import ChartComponent from '../Dashboard/Component/ChartComponent.js';
 import Dashboard from '../Dashboard/Dashboard.js';
 import DashboardGlobals from '../Dashboard/DashboardGlobals.js';
+import Sync from '../Dashboard/Component/Sync/Sync.js';
 
 /* *
  *
@@ -43,8 +43,8 @@ declare global {
 const D = {
     ...DashboardGlobals,
     _modules,
-    ChartComponent,
-    Dashboard
+    Dashboard,
+    Sync
 };
 
 /* *

@@ -10,7 +10,7 @@
  *
  * */
 
-import type ChartComponent from './ChartComponent';
+import type ChartComponent from '../../Extensions/DashboardPlugin/ChartComponent';
 import type HTMLComponent from './HTMLComponent';
 
 /* *

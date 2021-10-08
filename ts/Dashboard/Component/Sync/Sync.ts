@@ -1,6 +1,5 @@
 import type ComponentTypes from '../ComponentType';
 
-import defaultHandlers from './ChartSyncHandlers.js';
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
 
@@ -23,7 +22,7 @@ namespace Sync {
  * */
 class Sync {
 
-    public static defaultHandlers = defaultHandlers;
+    public static defaultHandlers = {};
 
     public registerSyncEmitter(emitter: SyncEmitter): void {
         const { id } = emitter;

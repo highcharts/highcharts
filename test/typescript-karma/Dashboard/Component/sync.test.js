@@ -4,7 +4,8 @@ import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 
 const { test, only, skip } = QUnit;
 
-test('Both components should work', (assert) => {
+// @todo test after plugin refactoring
+skip('Both components should work', (assert) => {
 
     const store = new CSVStore(undefined, {
         csv: 'a,b,c\n1,2,3',

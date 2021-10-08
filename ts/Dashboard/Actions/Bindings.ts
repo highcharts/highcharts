@@ -1,11 +1,10 @@
 /* eslint-disable */
 import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
+import type HighchartsComponent from '../../Extensions/DashboardPlugin/ChartComponent';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 import Cell from '../Layout/Cell.js';
-import ChartComponent from './../Component/ChartComponent.js';
-import G from '../../Core/Globals.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
@@ -47,12 +46,12 @@ class Bindings {
         // add elements to containers
         if (compontentContainer) {
             switch (options.type) {
-                case 'chart':
-                    component = Bindings.chartComponent(
-                        compontentContainer,
-                        options
-                    );
-                    break;
+                // case 'chart':
+                //     component = Bindings.chartComponent(
+                //         compontentContainer,
+                //         options
+                //     );
+                //     break;
                 case 'html':
                     component = Bindings.htmlComponent(
                         compontentContainer,
@@ -84,14 +83,15 @@ class Bindings {
     }
 
     public static componentFromJSON(
-        json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON,
+        json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
         cellContainer: HTMLDOMElement|undefined
     ): ComponentTypes | undefined {
-        let component: HTMLComponent|ChartComponent|undefined;
+        let component: HTMLComponent|HighchartsComponent|undefined;
 
         switch (json.$class) {
             case 'Chart':
-                component = ChartComponent.fromJSON(G, json as ChartComponent.ClassJSON);
+                // @todo access component via registry
+                // component = HighchartsComponent.fromJSON(G, json as HighchartsComponent.ClassJSON);
                 break;
             case 'HTML':
                 component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
@@ -125,22 +125,23 @@ class Bindings {
         return layout instanceof Layout ? layout : void 0;
     }
 
-    public static chartComponent(
-        compontentContainer: HTMLDOMElement,
-        options: Bindings.ComponentOptions
-    ): ChartComponent {
-        return new ChartComponent(
-            G,
-            merge(
-                options,
-                {
-                    parentElement: compontentContainer as HTMLDOMElement,
-                    chartOptions: options.chartOptions,
-                    dimensions: options.dimensions
-                }
-            )
-        );
-    }
+    // @todo access via registry
+    // public static chartComponent(
+    //     compontentContainer: HTMLDOMElement,
+    //     options: Bindings.ComponentOptions
+    // ): HighchartsComponent {
+    //     return new HighchartsComponent(
+    //         G,
+    //         merge(
+    //             options,
+    //             {
+    //                 parentElement: compontentContainer as HTMLDOMElement,
+    //                 chartOptions: options.chartOptions,
+    //                 dimensions: options.dimensions
+    //             }
+    //         )
+    //     );
+    // }
 
     public static htmlComponent(
         compontentContainer: HTMLDOMElement,
@@ -173,7 +174,7 @@ namespace Bindings {
     }
     export interface MountedComponentsOptions {
         options: any;
-        component: ChartComponent|HTMLComponent|undefined;
+        component: HighchartsComponent|HTMLComponent|undefined;
         cell: Cell;
     }
 }
