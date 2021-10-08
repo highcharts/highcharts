@@ -3,32 +3,29 @@
 .hero-container {
 	background: rgb(79,70,90);
 	background: linear-gradient(0deg, rgba(79,70,90,1) 0%, rgba(43,27,54,1) 100%); 
-  width:100%;
-  height: 450px;
+  	width:100%;
+  	height: 450px;
 }
-
 .chart-container .highcharts-container {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height:430px;
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height:430px;
 	max-height: 430px;
 	opacity:1;
-  text-align: left;
-  line-height: normal;
-  z-index: 0;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
-  user-select: none;
-  touch-action: manipulation;
-  outline: none;
+	text-align: left;
+	line-height: normal;
+	z-index: 0;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	font-family: 'IBM Plex Sans', sans-serif;
+	font-size: 12px;
+	user-select: none;
+	touch-action: manipulation;
+	outline: none;
 }
-
 #hero{
 	width:100%;
 }
-
 #hero .highcharts-background{
   fill:#1f1836;
 	fill:transparent;
@@ -83,13 +80,11 @@
 	font-size: 14px;
 	font-weight: 500;
 }
-
 #hero .highcharts-bubble-series .highcharts-point.transparent,
 #hero .highcharts-data-label-color-0{
 	fill:transparent;
 	stroke:transparent
 }
-
 #hero .highcharts-bubble-legend-symbol {
     fill: #e4d354;
 }
@@ -192,7 +187,6 @@
 	transform-origin: center;
 	transition:transform 1s;
 }
-
 #hero .highcharts-bubble-series.bubble2-gray .highcharts-point.transparent,
 #hero .highcharts-bubble-series.bubble2-dgray .highcharts-point.transparent{
 	fill:transparent;
@@ -255,7 +249,6 @@
 	fill-opacity:.6;
 	stroke:#fff;
 }
-
 #hero .highcharts-link.highcharts-color-0,
 #hero .highcharts-link.highcharts-color-1,
 #hero .highcharts-link.highcharts-color-2,
@@ -268,16 +261,17 @@
 #hero .highcharts-link.highcharts-color-9
  {
 	fill: url(#sankey-gradient);
-  stroke:transparent;
+  	stroke:transparent;
+	transition:opacity 2s;
+	opacity: 1;
 }
 #hero .highcharts-node{
 	fill:#364B63;
-  stroke:transparent;
+  	stroke:transparent;
 }
-
 #hero .highcharts-node:nth-of-type(4),
 #hero .highcharts-node:nth-of-type(6){
-fill:#005195;
+	fill:#005195;
 }
 #hero .highcharts-node:nth-of-type(5){
 	fill:#006bb8;
@@ -306,7 +300,6 @@ fill:#005195;
 #hero .highcharts-node:nth-of-type(14){
 	fill:#acf3e3;
 }
-
 #hero .highcharts-sankey-series .highcharts-data-label text {
 	fill: white;
 	text-shadow: none;
@@ -319,7 +312,6 @@ fill:#005195;
 #hero .highcharts-button{
 	transition:none;
 }
-
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(2) text,
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(9) text,
 #hero .highcharts-sankey-series .highcharts-data-label:nth-of-type(12) text,
@@ -330,8 +322,6 @@ fill:#005195;
 	font-size:1.4em;
 	transform: translateX(-30px);
 }
-
-
 #hero .highcharts-candlestick-series .highcharts-point {
 	stroke: #8187E2;
 	fill:#8187E2;
@@ -342,24 +332,17 @@ fill:#005195;
 	fill: #DA6D85;
 	fill-opacity:0;
 }
-
+#hero .highcharts-navigator-series {
+    fill: #acf3e3;
+    stroke: #acf3e3;
+}
 #hero .highcharts-candlestick-series.candlestick{
 	transform-origin: center;
-transform: scaleX(20) rotate(90deg);
-transition: transform 1s !important;
+	transform: scaleX(20) rotate(90deg);
+	transition: transform 1s;
 }
-
 #hero .highcharts-candlestick-series.candlestick.h{
 	transform: rotate(0deg);
-}
-
-#stopLink{
-	color:#fff;
-	opacity:.7;
-}
-#stopLink:hover{
-	color:#fff;
-	opacity:1;
 }
 
 @media (prefers-reduced-motion: reduce) {

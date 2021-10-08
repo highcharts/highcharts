@@ -22,8 +22,9 @@ Math.easeOutBounce = pos => {
 let heroChart;
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const big = window.matchMedia("(min-width: 500px)").matches;
 
-const bubbleData = [
+const bubbleData0 = [
     { x: 0, y: 3, z: 200, className: 'transparent', dataLabels: { enabled: false } },
     { x: 0.5, y: 16, z: 120000, className: 'bubble-black', zIndex: 1  },
     { x: 0.5, y: 18, z: 12000, className: 'bubble-green' },
@@ -33,8 +34,10 @@ const bubbleData = [
     { x: 0.5, y: 7.65, z: 50, className: 'bubble-orange' },
     { x: 0.5, y: 5.32, z: 40000, className: 'bubble-dpurple' },
     { x: 0.5, y: 2.6, z: 3000, className: 'bubble-gray' },
-    { x: 0.5, y: 3.7, z: 9000, className: 'bubble-purple' },
+    { x: 0.5, y: 3.7, z: 9000, className: 'bubble-purple' }
+];
 
+const bubbleData1 = [
     { x: 1.6, y: 19, z: 100, className: 'bubble-orange' },
     { x: 1.6, y: 17, z: 24000, className: 'bubble-black' },
     { x: 1.6, y: 15.32, z: 3000, className: 'bubble-black' },
@@ -42,8 +45,10 @@ const bubbleData = [
     { x: 1.6, y: 12.67, z: 22000, className: 'bubble-brown' },
     { x: 1.6, y: 11.32, z: 9000, className: 'bubble-purple' },
     { x: 1.6, y: 8.32, z: 9000, className: 'bubble-green' },
-    { x: 1.6, y: 7.32, z: 3000, className: 'bubble-green' },
+    { x: 1.6, y: 7.32, z: 3000, className: 'bubble-green' }
+];
 
+const bubbleData2 = [
     { x: 2.6, y: 18.5, z: 10, className: 'bubble-orange' },
     { x: 2.6, y: 17, z: 2000, className: 'bubble-gray' },
     { x: 2.6, y: 13.5, z: 50, className: 'bubble-orange' },
@@ -51,8 +56,10 @@ const bubbleData = [
     { x: 2.6, y: 7, z: 80000, className: 'bubble-purple' },
     { x: 2.6, y: 5.8, z: 2000, className: 'bubble-purple' },
     { x: 2.6, y: 4.5, z: 9000, className: 'bubble-purple' },
-    { x: 2.6, y: 3, z: 9000, className: 'bubble-green' },
+    { x: 2.6, y: 3, z: 9000, className: 'bubble-green' }
+];
 
+const bubbleData3 = [
     { x: 3.84, y: 18, z: 9000, className: 'bubble-green' },
     { x: 3.84, y: 15.6, z: 6000, className: 'bubble-green' },
     { x: 3.84, y: 14.78, z: 40000, className: 'bubble-green' },
@@ -60,8 +67,10 @@ const bubbleData = [
     { x: 3.84, y: 6.7, z: 130000, className: 'bubble-gray' },
     { x: 3.84, y: 8.9, z: 9000, className: 'bubble-orange' },
     { x: 3.84, y: 3.8, z: 9000, className: 'bubble-black' },
-    { x: 3.84, y: 2.6, z: 3000, className: 'bubble-green' },
+    { x: 3.84, y: 2.6, z: 3000, className: 'bubble-green' }
+];
 
+const bubbleData4 = [
     { x: 4.75, y: 17, z: 2000, className: 'bubble-black' },
     { x: 4.75, y: 11.5, z: 12000, className: 'bubble-brown' },
     { x: 4.75, y: 10.38, z: 3000, className: 'bubble-black' },
@@ -69,8 +78,10 @@ const bubbleData = [
     { x: 4.75, y: 7.2, z: 22000, className: 'bubble-black' },
     { x: 4.75, y: 6, z: 9000, className: 'bubble-green' },
     { x: 4.75, y: 4.9, z: 200, className: 'bubble-orange' },
-    { x: 4.75, y: 3.8, z: 2000, className: 'bubble-green' },
+    { x: 4.75, y: 3.8, z: 2000, className: 'bubble-green' }
+];
 
+const bubbleData5 = [
     { x: 5.64, y: 18.25, z: 10000, className: 'bubble-purple' },
     { x: 5.64, y: 16.2, z: 40000, className: 'bubble-green' },
     { x: 5.64, y: 14.3, z: 10000, className: 'bubble-green' },
@@ -79,8 +90,11 @@ const bubbleData = [
     { x: 5.64, y: 9.3, z: 6000, className: 'bubble-gray' },
     { x: 5.64, y: 8.2, z: 24000, className: 'bubble-gray' },
     { x: 5.64, y: 5, z: 120000, className: 'bubble-black' },
-    { x: 5.64, y: 7.25, z: 200, className: 'bubble-orange' },
+    { x: 5.64, y: 7.25, z: 200, className: 'bubble-orange' }
 
+];
+
+const bubbleData6 = [
     { x: 6.58, y: 17.9, z: 200, className: 'bubble-orange' },
     { x: 6.58, y: 15.9, z: 2000, className: 'bubble-gray' },
     { x: 6.58, y: 14.75, z: 5, className: 'bubble-orange' },
@@ -90,6 +104,18 @@ const bubbleData = [
     { x: 6.58, y: 3.2, z: 3000, className: 'bubble-purple' }
 
 ];
+
+const updateStyle = function (selector, property, value, duration) {
+    [].forEach.call(
+        document.querySelectorAll('.' + selector),
+        function (elem) {
+            elem.style.transition = property + ' ' + duration;
+            elem.style[property] = value;
+        }
+    );
+};
+const bubbleData = [bubbleData0, bubbleData1, bubbleData2, bubbleData3,
+    bubbleData4, bubbleData5, bubbleData6];
 
 const bubble = {
     chart: {
@@ -105,201 +131,92 @@ const bubble = {
         events: {
             load: function () {
                 const chart = this;
-                $('.highcharts-bubble-series').css({ opacity: 0 });
-                if (reduced) {
-                    setTimeout(function () {
-                        chart.series[0].update({
-                            visible: false,
-                            data: bubbleData
-                        });
-                        chart.series[0].update({ visible: true });
-                        $('.highcharts-bubble-series').animate({ opacity: 1 }, 1000);
-                        //show the plot lines
-                        $('.highcharts-plot-line').animate({ opacity: 1 }, 1000);
-                    }, 100);
-                    setTimeout(function () {
-                        ///moves all the bubbles down, fades them out
-                        chart.yAxis[0].setExtremes(-2, 1000);
-                        const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
-                        $('.highcharts-data-labels').animate({ opacity: 0 }, 1000);
-                        $('.highcharts-plot-line').animate({ opacity: 0 }, 1000);
-                        for (let ii = 0; ii < bubbleClasses.length; ++ii) {
-                            $('.highcharts-point.bubble-' + bubbleClasses[ii]).css({
-                                opacity: 0
-                            });
-                        }
-                    }, 4500);
-
-                } else {
-                    chart.series[0].update({
-                        visible: false,
-                        data: [
-                            //0-9
-                            { x: 0, y: 18, z: 200, className: 'transparent', dataLabels: { enabled: false } },
-                            { x: 0.5, y: 18, z: 120000, className: 'bubble-black', zIndex: 1  },
-                            { x: 0.5, y: 18, z: 12000, className: 'bubble-green' },
-                            { x: 0.5, y: 18, z: 80000, className: 'bubble-brown', zIndex: 1 },
-                            { x: 0.5, y: 18, z: 2000, className: 'bubble-gray', zIndex: 10 },
-                            { x: 0.5, y: 18, z: 28000, className: 'bubble-gray' },
-                            { x: 0.5, y: 18, z: 50, className: 'bubble-orange' },
-                            { x: 0.5, y: 18, z: 40000, className: 'bubble-dpurple' },
-                            { x: 0.5, y: 18, z: 3000, className: 'bubble-gray' },
-                            { x: 0.5, y: 18, z: 9000, className: 'bubble-purple' },
-                            //10-17
-                            { x: 1.6, y: 11.32, z: 100, className: 'bubble-orange' },
-                            { x: 1.6, y: 11.32, z: 24000, className: 'bubble-black' },
-                            { x: 1.6, y: 11.32, z: 3000, className: 'bubble-black' },
-                            { x: 1.6, y: 11.32, z: 2000, className: 'bubble-black' },
-                            { x: 1.6, y: 11.32, z: 22000, className: 'bubble-brown' },
-                            { x: 1.6, y: 11.32, z: 9000, className: 'bubble-purple' },
-                            { x: 1.6, y: 11.32, z: 9000, className: 'bubble-green' },
-                            { x: 1.6, y: 11.32, z: 3000, className: 'bubble-green' },
-
-                            //18-25
-                            { x: 2.6, y: 3, z: 10, className: 'bubble-orange' },
-                            { x: 2.6, y: 3, z: 2000, className: 'bubble-gray' },
-                            { x: 2.6, y: 3, z: 50, className: 'bubble-orange' },
-                            { x: 2.6, y: 3, z: 40000, className: 'bubble-green' },
-                            { x: 2.6, y: 3, z: 80000, className: 'bubble-purple' },
-                            { x: 2.6, y: 3, z: 2000, className: 'bubble-purple' },
-                            { x: 2.6, y: 3, z: 9000, className: 'bubble-purple' },
-                            { x: 2.6, y: 3, z: 9000, className: 'bubble-green' },
-
-                            //26-33
-                            { x: 3.84, y: 8.9, z: 9000, className: 'bubble-green' },
-                            { x: 3.84, y: 8.9, z: 6000, className: 'bubble-green' },
-                            { x: 3.84, y: 8.9, z: 40000, className: 'bubble-green' },
-                            { x: 3.84, y: 8.9, z: 80000, className: 'bubble-green' },
-                            { x: 3.84, y: 8.9, z: 130000, className: 'bubble-gray' },
-                            { x: 3.84, y: 8.9, z: 9000, className: 'bubble-orange' },
-                            { x: 3.84, y: 8.9, z: 9000, className: 'bubble-black' },
-                            { x: 3.84, y: 8.9, z: 3000, className: 'bubble-green' },
-
-                            //34-41
-                            { x: 4.75, y: 17, z: 2000, className: 'bubble-black' },
-                            { x: 4.75, y: 17, z: 12000, className: 'bubble-brown' },
-                            { x: 4.75, y: 17, z: 3000, className: 'bubble-black' },
-                            { x: 4.75, y: 17, z: 10000, className: 'bubble-purple' },
-                            { x: 4.75, y: 17, z: 22000, className: 'bubble-black' },
-                            { x: 4.75, y: 17, z: 9000, className: 'bubble-green' },
-                            { x: 4.75, y: 17, z: 200, className: 'bubble-orange' },
-                            { x: 4.75, y: 17, z: 2000, className: 'bubble-green' },
-
-                            //42-50
-                            { x: 5.64, y: 9.3, z: 10000, className: 'bubble-purple' },
-                            { x: 5.64, y: 9.3, z: 40000, className: 'bubble-green' },
-                            { x: 5.64, y: 9.3, z: 10000, className: 'bubble-green' },
-                            { x: 5.64, y: 9.3, z: 3000, className: 'bubble-gray' },
-                            { x: 5.64, y: 9.3, z: 80000, className: 'bubble-brown' },
-                            { x: 5.64, y: 9.3, z: 6000, className: 'bubble-gray' },
-                            { x: 5.64, y: 9.3, z: 24000, className: 'bubble-gray' },
-                            { x: 5.64, y: 9.3, z: 120000, className: 'bubble-black' },
-                            { x: 5.64, y: 9.3, z: 200, className: 'bubble-orange' },
-
-                            //51-57
-                            { x: 6.58, y: 3.2, z: 200, className: 'bubble-orange' },
-                            { x: 6.58, y: 3.2, z: 2000, className: 'bubble-gray' },
-                            { x: 6.58, y: 3.2, z: 5, className: 'bubble-orange' },
-                            { x: 6.58, y: 3.2, z: 22000, className: 'bubble-green' },
-                            { x: 6.58, y: 3.2, z: 10000, className: 'bubble-green' },
-                            { x: 6.58, y: 3.2, z: 12000, className: 'bubble-purple' },
-                            { x: 6.58, y: 3.2, z: 3000, className: 'bubble-purple' }
-
-                        ]
+                let yaxis = 0;
+                for (let ii = 0; ii < bubbleData.length; ++ii) {
+                    chart.addSeries({
+                        type: 'bubble',
+                        data: bubbleData[ii],
+                        yAxis: yaxis
                     });
-                    setTimeout(function () {
-                        chart.series[0].update({ visible: true });
-                        $('.highcharts-bubble-series').animate({ opacity: 1 }, 1000);
-                    }, 100);
+                    if (yaxis === 0) {
+                        yaxis = 1;
+                    } else {
+                        yaxis = 0;
+                    }
+                }
 
+                if (reduced) {
+                    chart.series[0].update({ visible: true });
+                    updateStyle('highcharts-bubble-series', 'opacity',  1, '0s');
                     setTimeout(function () {
-                        //show the plot lines
-                        $('.highcharts-plot-line').animate({ opacity: 1 }, 1000);
-                        //the first bubble point in each column
-                        let count1 = 0;
-                        const count2 = 10;
-                        let count3 = 18;
-                        const count4 = 26;
-                        let count5 = 34;
-                        const count6 = 42;
-                        let count7 = 51;
-                        const count8 = 58;
-                        if (chart.series) {
-                            //raises/lowers the bubbles in the ODD columns
-                            const drop = setInterval(function () {
-                                if (count1 < count2) {
-                                    chart.series[0].data[count1].update({
-                                        y: bubbleData[count1].y
-                                    });
-                                    count1 = count1 + 1;
-                                } else if (count3 < count4) {
-                                    chart.series[0].data[count3].update({
-                                        y: bubbleData[count3].y
-                                    });
-                                    count3 = count3 + 1;
-                                } else if (count5 < count6) {
-                                    chart.series[0].data[count5].update({
-                                        y: bubbleData[count5].y
-                                    });
-                                    count5 = count5 + 1;
-                                } else if (count7 < count8) {
-                                    chart.series[0].data[count7].update({
-                                        y: bubbleData[count7].y
-                                    });
-                                    count7 = count7 + 1;
-                                } else {
-                                    clearInterval(drop);
-                                }
-                            }, 50);
-                        }
-                    }, 500);
-
-                    setTimeout(function () {
-                        let count2 = 10;
-                        const count3 = 18;
-                        let count4 = 26;
-                        const count5 = 34;
-                        let count6 = 42;
-                        const count7 = 51;
-                        if (chart.series) {
-                            //raises/lowers the bubbles in the EVEN columns
-                            const drop = setInterval(function () {
-                                if (count2 < count3) {
-                                    chart.series[0].data[count2].update({
-                                        y: bubbleData[count2].y
-                                    });
-                                    count2 = count2 + 1;
-                                } else if (count4 < count5) {
-                                    chart.series[0].data[count4].update({
-                                        y: bubbleData[count4].y
-                                    });
-                                    count4 = count4 + 1;
-                                } else if (count6 < count7) {
-                                    chart.series[0].data[count6].update({
-                                        y: bubbleData[count6].y
-                                    });
-                                    count6 = count6 + 1;
-                                } else {
-                                    clearInterval(drop);
-                                }
-                            }, 50);
-                        }
-
+                        chart.yAxis[0].setExtremes(0, 24);
+                        chart.yAxis[1].setExtremes(0, 24);
+                        updateStyle('highcharts-plot-line', 'opacity', 1, '1s');
                     }, 1500);
 
                     setTimeout(function () {
                         ///moves all the bubbles down, fades them out
-                        chart.yAxis[0].setExtremes(-2, 1000);
                         const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
-                        $('.highcharts-data-labels').animate({ opacity: 0 }, 1000);
-                        $('.highcharts-plot-line').animate({ opacity: 0 }, 1000);
+
+                        updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+
+                        updateStyle('highcharts-plot-line', 'opacity', 0, '1s');
+
                         for (let ii = 0; ii < bubbleClasses.length; ++ii) {
-                            $('.highcharts-point.bubble-' + bubbleClasses[ii]).css({
-                                opacity: 0
-                            });
+                            const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
+                            updateStyle(bubbleSelector, 'opacity', 0, '300ms');
                         }
-                        $('highcharts-bubble-series').animate({ opacity: 0 }, 1000);
-                    }, 4500);
+                    }, 3500);
+
+                } else {
+                    updateStyle('highcharts-bubble-series', 'opacity', 0, '0s');
+                    setTimeout(function () {
+                        chart.series[0].update({ visible: true });
+                        updateStyle('highcharts-bubble-series', 'opacity', 1, '1s');
+                        updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
+                    }, 100);
+
+                    setTimeout(function () {
+                        updateStyle('highcharts-plot-line', 'opacity', 1, '1s');
+                        chart.yAxis[0].setExtremes(0, 24);
+                        [].forEach.call(
+                            document.querySelectorAll('.highcharts-data-labels'),
+                            function (elem, index) {
+                                if (index % 2 === 0) {
+                                    elem.style.opacity = 1;
+                                }
+                            }
+                        );
+
+                    }, 1500);
+                    setTimeout(function () {
+                        chart.yAxis[1].setExtremes(0, 24);
+
+                        [].forEach.call(
+                            document.querySelectorAll('.highcharts-data-labels'),
+                            function (elem, index) {
+                                if (index % 2 !== 0) {
+                                    elem.style.opacity = 1;
+                                }
+                            }
+                        );
+
+                    }, 3000);
+
+                    setTimeout(function () {
+                        ///moves all the bubbles down, fades them out
+                        chart.yAxis[0].setExtremes(-2, 1000);
+                        chart.yAxis[1].setExtremes(-2, 1000);
+                        const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
+
+                        for (let ii = 0; ii < bubbleClasses.length; ++ii) {
+                            const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
+                            updateStyle(bubbleSelector, 'opacity', 0, '0s');
+                        }
+                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
+                        updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+                        updateStyle('highcharts-plot-line', 'opacity', 0, '1s');
+                    }, 5500);
 
                 }
             }
@@ -323,7 +240,6 @@ const bubble = {
     xAxis: [
         {
             offset: 0,
-            tickInterval: 1,
             labels: {
                 style: {
                     color: '#fff'
@@ -355,11 +271,21 @@ const bubble = {
         }],
 
     yAxis: [{
-        tickInterval: 1,
         visible: false,
         offest: 0,
-        min: -2,
-        max: 24,
+        min: -250,
+        max: 250,
+        labels: {
+            style: {
+                color: '#fff'
+            }
+        }
+    },
+    {
+        visible: false,
+        offest: 0,
+        min: -250,
+        max: 250,
         labels: {
             style: {
                 color: '#fff'
@@ -386,26 +312,15 @@ const bubble = {
     plotOptions: {
         series: {
             animation: false,
-            dragDrop: {
-                draggableX: true,
-                draggableY: true,
-                dragMaxX: 7,
-                dragMinX: 0,
-                dragMaxY: 21,
-                dragMinY: 0
+            maxSize: 160,
+            name: 'Highcharts Bubble Chart',
+            minSize: 20,
+            allowOverlap: true,
+            dataLabels: {
+                enabled: true
             }
         }
-    },
-    series: [{
-        maxSize: 160,
-        name: 'Highcharts Bubble Chart',
-        minSize: 20,
-        allowOverlap: true,
-        dataLabels: {
-            enabled: true
-        },
-        data: []
-    }]
+    }
 };
 
 const sankeyData = [
@@ -472,9 +387,10 @@ const sankey = {
         events: {
             load: function () {
                 const chart = this;
-                $('.highcharts-title').css({ opacity: 0 });
-                $('.highcharts-data-labels').css({ opacity: 0 });
-                $('.highcharts-data-labels').animate({ opacity: 1 }, 400);
+                updateStyle('highcharts-title', 'opacity', 0, '0s');
+                updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
+                updateStyle('highcharts-data-labels', 'opacity', 1, '400ms');
+
                 chart.series[0].update({
                     data: []
                 });
@@ -491,11 +407,6 @@ const sankey = {
                             count = count + 1;
                         } else {
                             clearInterval(sankey);
-                            //$('.highcharts-title').animate({opacity:1},500);
-
-                            chart.series[0].update({
-                                curveFactor: 0.33
-                            });
                         }
                     }, 10);
                 };
@@ -504,27 +415,23 @@ const sankey = {
                 const p2 = function () {
                     //makes the node connections very thin
                     //makes the nodes super curvy
-                    $('.highcharts-data-labels').animate({ opacity: 0 }, 1000);
+                    updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
                     chart.series[0].update({
                         nodePadding: 130
                     });
                     chart.series[0].update({
                         curveFactor: 2
                     });
-                    $('.highcharts-data-labels').animate({ opacity: 0 }, 1000);
+                    updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
                 };
                 ///if it's not reduced motion, execute p2
                 if (!reduced) {
-                    setTimeout(p2, 3500);
+                    setTimeout(p2, 4000);
                 }
                 const p22 = function () {
-                    //$('.highcharts-title').animate({opacity:0},500);
-
-                    $('.highcharts-sankey-series').css({
-                        transformOrigin: 'bottom',
-                        opacity: 0,
-                        transition: 'all 1500ms'
-                    });
+                    updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+                    updateStyle('highcharts-link', 'opacity', 0, '2s');
+                    updateStyle('highcharts-node', 'opacity', 0, '2s');
                 };
                 setTimeout(p22, 4500);
 
@@ -571,7 +478,7 @@ const sankey = {
         centerInCategory: true,
         linkOpacity: 1,
         data: [],
-        curveFactor: 1,
+        curveFactor: 0.33,
         nodes: [{
             id: '',
             colorIndex: 0
@@ -648,17 +555,17 @@ const bubble2 = {
         events: {
             load: function () {
                 const chart = this;
-                $('.bubble2-purple').css({ transform: 'none' });
-                $('.highcharts-title').css({ opacity: 0 });
-                $('.highcharts-data-labels').css({ opacity: 0 });
+                updateStyle('bubble2-purple', 'transform', 'none', '0s');
+                updateStyle('highcharts-title', 'opacity', 0, '0s');
+                updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
 
                 if (reduced) {
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
-                        $('.highcharts-data-labels').animate({ opacity: 1 }, 1000);
+                        updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
                     }, 200);
                     setTimeout(function () {
-                        $('.highcharts-bubble-series').animate({ opacity: 0 }, 1000);
+                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
                     }, 5000);
                 } else {
                     setTimeout(function () {
@@ -666,10 +573,10 @@ const bubble2 = {
                     }, 1000);
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
-                        $('.highcharts-data-labels').animate({ opacity: 1 }, 1000);
+                        updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
                     }, 2600);
                     setTimeout(function () {
-                        $('.highcharts-bubble-series').animate({ opacity: 0 }, 1000);
+                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
                         chart.yAxis[0].setExtremes(-2000, 2000);
                     }, 5000);
                 }
@@ -1135,49 +1042,59 @@ const candlestick = function (type) {
                 events: {
                     load: function () {
                         const chart = this;
-                        $('.highcharts-title').css({ opacity: 0 });
-                        $('.highcharts-candlestick-series.candlestick').css({ opacity: 0 });
-                        $('.highcharts-yaxis-labels').css({ opacity: 0 });
 
-                        if (reduced || type === 'static') {
-                            $(' .highcharts-candlestick-series.candlestick').css({ transform: 'rotate(0deg)' });
-                            chart.rangeSelector.clickButton(3);
+                        updateStyle('highcharts-title', 'opacity', 0, '0s');
+                        updateStyle('candlestick', 'opacity', 0, '0s');
+                        updateStyle('highcharts-yaxis-labels', 'opacity', 0, '0s');
+
+                        if (type === 'static') {
+                            chart.update({
+                                navigator: {
+                                    enabled: true
+                                }
+                            });
+                            updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
+                            if (big) {
+                                chart.rangeSelector.clickButton(3);
+                            } else {
+                                chart.rangeSelector.clickButton(1);
+                            }
                         }
 
                         const p1 = function () {
-                            $('.highcharts-axis-labels').animate({ opacity: 1 }, 800);
                             chart.xAxis[0].update({ visible: true });
-                            $('.highcharts-candlestick-series.candlestick').animate({ opacity: 1 }, 800);
-                            $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
-                            $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
-                            $('.highcharts-range-selector-buttons').animate({ opacity: 1 }, 1000);
-
+                            updateStyle('highcharts-axis-labels', 'opacity', 1, '800ms');
+                            updateStyle('candlestick', 'opacity', 0, '0s');
+                            updateStyle('candlestick', 'opacity', 1, '1s');
+                            updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
+                            updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
+                            updateStyle('highcharts-range-selector-buttons', 'opacity', 1, '1s');
                             if (!reduced) {
-                                $(' .highcharts-candlestick-series.candlestick').css({ transform: 'rotate(0deg)' });
+                                updateStyle('candlestick', 'transform', 'rotate(0deg)', '1s');
                             }
 
                         };
                         setTimeout(p1, 700);
 
                         if (type === 'animated') {
-
                             const p2 = function () {
-                                chart.rangeSelector.clickButton(3);
+                                if (big) {
+                                    chart.rangeSelector.clickButton(3);
+                                } else {
+                                    chart.rangeSelector.clickButton(1);
+                                }
+
                             };
                             setTimeout(p2, 3000);
 
                             const p21 = function () {
-                                $('.highcharts-range-selector-buttons').animate({ opacity: 0 }, 1000);
-                                $('.highcharts-axis-labels').animate({ opacity: 0 }, 800);
-                                $('.highcharts-xaxis').animate({ opacity: 0 }, 800);
-                                $('.highcharts-candlestick-series.candlestick').css({ stroke: 'transparent' });
+                                updateStyle('highcharts-range-selector-buttons', 'opacity', 0, '1s');
+                                updateStyle('highcharts-axis-labels', 'opacity', 0, '800ms');
+                                updateStyle('highcharts-xaxis', 'opacity', 0, '800ms');
+                                updateStyle('candlestick', 'stroke', 'transparent', '800ms');
+                                updateStyle('candlestick', 'opacity', 0, '1s');
                             };
                             setTimeout(p21, 5500);
-
-                            const p3 = function () {
-                                $('.highcharts-candlestick-series.candlestick').animate({ opacity: 0 }, 900);
-                            };
-                            setTimeout(p3, 5600);
                         }
                     }
                 }
@@ -1201,8 +1118,8 @@ const candlestick = function (type) {
             },
             rangeSelector: {
                 enabled: true,
-                selected: 0,
                 inputEnabled: false,
+                selected: 0,
                 buttons: [{
                     type: 'week',
                     count: 1,
@@ -1245,9 +1162,9 @@ const candlestick = function (type) {
                 offset: -30,
                 events: {
                     afterSetExtremes: function () {
-                        $('.highcharts-candlestick-series.candlestick').addClass('h');
-                        $(' .highcharts-candlestick-series .highcharts-point-up').css({ fillOpacity: 1 });
-                        $(' .highcharts-candlestick-series .highcharts-point-down').css({ fillOpacity: 1 });
+                        // document.querySelector('.highcharts-candlestick-series.candlestick').classList.add('h');
+                        updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
+                        updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
                     }
                 }
             }],
@@ -1283,9 +1200,9 @@ const candlestick = function (type) {
 };
 
 //bubble, sankey, candlestick, bubble2, clear intervals
-const loops = [0, 5500, 10500, 18000, 23010];
+const loops = [0, 7000, 13000, 21000];
 
-///bubble chart
+///bubble char
 const createBubble = function () {
     if (heroChart) {
         heroChart.destroy();
@@ -1295,19 +1212,25 @@ const createBubble = function () {
 
 ///sankey chart
 const createSankey = function () {
-    heroChart.destroy();
+    if (heroChart) {
+        heroChart.destroy();
+    }
     heroChart = Highcharts.chart('hero', sankey); //5500
 };
 
 ///candlestick
 const createStick = function () {
-    heroChart.destroy();
+    if (heroChart) {
+        heroChart.destroy();
+    }
     candlestick('animated');
 };
 
 ///bubble2
 const createBubble2 = function () {
-    heroChart.destroy();
+    if (heroChart) {
+        heroChart.destroy();
+    }
     heroChart = Highcharts.chart('hero', bubble2); //5000
 };
 
@@ -1322,4 +1245,4 @@ const loopCharts = function () {
 loopCharts();
 
 //loop
-window.setInterval(loopCharts, 24500);
+window.setInterval(loopCharts, 27500);
