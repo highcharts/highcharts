@@ -23,4 +23,4 @@ Doubleclick by default zooms in, focused on the point under the mouse. Following
 
 ### Programmatic
 
-The map may be zoomed programmatically through the [Chart.mapZoom](https://api.highcharts.com/class-reference/Highcharts.Chart#mapZoom) or [Point.zoomTo](https://api.highcharts.com/class-reference/Highcharts.Point#zoomTo) methods.
+The map may be zoomed programmatically through the [Chart.mapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy) or [Point.zoomTo](https://api.highcharts.com/class-reference/Highcharts.Point#zoomTo) methods.

@@ -19,6 +19,7 @@ import type {
 import Chart from '../Core/Chart/Chart.js';
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
+import defaultOptions from './MapViewOptionsDefault.js';
 const {
     addEvent,
     fireEvent,
@@ -34,6 +35,20 @@ const {
 const worldSize = 40097932.2;
 const tileSize = 256;
 
+/**
+ * The map view handles zooming and centering on the map, and various
+ * client-side projection capabilities.
+ *
+ * On a chart instance, the map view is available as `chart.mapView`.
+ *
+ * @class
+ * @name Highcharts.MapView
+ *
+ * @param {Highcharts.Chart} chart
+ *        The Chart instance
+ * @param {DeepPartial<MapViewOptions>} options
+ *        MapView options
+ */
 class MapView {
 
     /* *
@@ -58,19 +73,17 @@ class MapView {
 
     public constructor(
         chart: Chart,
-        userOptions?: DeepPartial<MapViewOptions>
+        options?: DeepPartial<MapViewOptions>
     ) {
-        const options = merge(true, {
-            center: [0, 0],
-            zoom: 0
-        }, userOptions);
+        this.userOptions = options || {};
+
+        const o = merge(defaultOptions, options);
 
         this.chart = chart;
-        this.center = options.center;
-        this.options = options;
-        this.projection = new Projection(options.projection);
-        this.userOptions = userOptions || {};
-        this.zoom = options.zoom;
+        this.center = o.center;
+        this.options = o;
+        this.projection = new Projection(o.projection);
+        this.zoom = o.zoom;
 
         // On resize, fit to the bounds unless the zoom has been user set
         addEvent(chart, 'resize', (): void => {
@@ -80,22 +93,38 @@ class MapView {
         });
     }
 
+    /**
+     * The current center of the view in terms of `[longitude, latitude]`.
+     * @name Highcharts.MapView#center
+     * @readonly
+     * @type {LonLatArray}
+     */
     public center: LonLatArray;
     public minZoom?: number;
     public options: MapViewOptions;
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
+    /**
+     * The current zoom level of the view.
+     * @name Highcharts.MapView#zoom
+     * @readonly
+     * @type {number}
+     */
     public zoom: number;
 
     private chart: Chart;
 
-    /*
+    /**
      * Fit the view to given bounds
-     * @param bounds Bounds in terms of projected units. If not set, fit to the
-     *               bounds of the current data set
-     * @param padding Padding inside the bounds
-     * @param redraw
-     * @param animation
+     * @param {MapBounds} bounds
+     *        Bounds in terms of projected units. If not set, fit to the bounds
+     *        of the current data set
+     * @param {number} padding
+     *        [Not yet implemented]. Padding inside the bounds
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart immediately
+     * @param {boolean|Partial<AnimationOptions>} [animation]
+     *        What animation to use for redraw
      */
     public fitToBounds(
         bounds?: MapBounds,
@@ -161,6 +190,20 @@ class MapView {
         this.chart.redraw(animation);
     }
 
+    /**
+     * Set the view to given center and zoom values.
+     * @param {Highcharts.LonLatArray|undefined} center
+     *        The center point
+     * @param {number} zoom
+     *        The zoom level
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw immediately
+     * @param {boolean|Partial<AnimationOptions>} [animation]
+     *        Animation options for the redraw
+     *
+     * @sample maps/mapview/setview
+     *        Set the view programmatically
+     */
     public setView(
         center?: LonLatArray,
         zoom?: number,
@@ -277,12 +320,22 @@ class MapView {
         return { x: projectedX, y: projectedY };
     }
 
+    /**
+     * Update the view with given options
+     *
+     * @param {DeepPartial<MapViewOptions>} options
+     *        The new map view options to apply
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw immediately
+     * @param {boolean|Partial<AnimationOptions>} [animation]
+     *        The animation to apply to a the redraw
+     */
     public update(
-        userOptions: DeepPartial<MapViewOptions>,
+        options: DeepPartial<MapViewOptions>,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
-        const newProjection = userOptions.projection;
+        const newProjection = options.projection;
         const isDirtyProjection = newProjection && (
             (
                 Projection.toString(newProjection) !==
@@ -290,8 +343,8 @@ class MapView {
             )
         );
 
-        merge(true, this.userOptions, userOptions);
-        merge(true, this.options, userOptions);
+        merge(true, this.userOptions, options);
+        merge(true, this.options, options);
 
         if (isDirtyProjection) {
             this.chart.series.forEach((series): void => {
@@ -305,13 +358,13 @@ class MapView {
             this.projection = new Projection(this.options.projection);
 
             // Fit to natural bounds if center/zoom are not explicitly given
-            if (!userOptions.center && !isNumber(userOptions.zoom)) {
+            if (!options.center && !isNumber(options.zoom)) {
                 this.fitToBounds(void 0, 0, false);
             }
         }
 
-        if (userOptions.center || isNumber(userOptions.zoom)) {
-            this.setView(this.options.center, userOptions.zoom, false);
+        if (options.center || isNumber(options.zoom)) {
+            this.setView(this.options.center, options.zoom, false);
         }
 
         if (redraw) {
@@ -320,6 +373,20 @@ class MapView {
 
     }
 
+    /**
+     * Zoom the map view by a given number
+     *
+     * @param {number|undefined} [howMuch]
+     *        The amount of zoom to apply. 1 zooms in on half the current view,
+     *        -1 zooms out. Pass `undefined` to zoom to the full bounds of the
+     *        map.
+     * @param {LonLatArray} [coords]
+     *        Optional map coordinates to keep fixed
+     * @param {Array<number>} [chartCoords]
+     *        Optional chart coordinates to keep fixed, in terms of pixels
+     * @param {boolean|Partial<AnimationOptions>} [animation]
+     *        The animation to apply to a the redraw
+     */
     public zoomBy(
         howMuch?: number,
         coords?: LonLatArray,

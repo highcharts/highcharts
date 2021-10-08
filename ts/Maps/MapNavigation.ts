@@ -373,9 +373,11 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
     },
 
     /**
-     * Highmaps only. Zoom in or out of the map. See also {@link Point#zoomTo}.
-     * See {@link Chart#fromLatLonToPoint} for how to get the `centerX` and
-     * `centerY` parameters for a geographic location.
+     * Highcharts Maps only. Zoom in or out of the map. See also
+     * {@link Point#zoomTo}. See {@link Chart#fromLatLonToPoint} for how to get
+     * the `centerX` and `centerY` parameters for a geographic location.
+     *
+     * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
      * @function Highcharts.Chart#mapZoom
      *
