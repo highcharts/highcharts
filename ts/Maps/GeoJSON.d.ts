@@ -10,29 +10,39 @@
 
 import type { LonLatArray } from './MapViewOptions';
 
-type GeoJSONGeometryLineString = {
+interface GeoJSONGeometryPoint {
+    type: 'Point';
+    coordinates: LonLatArray;
+}
+
+interface GeoJSONGeometryLineString {
     type: 'LineString';
     coordinates: LonLatArray[];
 }
 
-type GeoJSONGeometryPolygon = {
+interface GeoJSONGeometryPolygon {
     type: 'Polygon';
     coordinates: LonLatArray[][];
 }
 
-type GeoJSONGeometryMultiLineString = {
+interface GeoJSONGeometryMultiLineString {
     type: 'MultiLineString';
     coordinates: LonLatArray[][];
 }
 
-type GeoJSONGeometryMultiPolygon = {
+interface GeoJSONGeometryMultiPolygon {
     type: 'MultiPolygon';
     coordinates: LonLatArray[][][];
 }
 
-export type GeoJSONGeometry = (
-    GeoJSONGeometryLineString|
-    GeoJSONGeometryPolygon|
-    GeoJSONGeometryMultiLineString|
-    GeoJSONGeometryMultiPolygon
-);
+export interface GeoJSONGeometryRegistry {
+    GeoJSONGeometryPoint: GeoJSONGeometryPoint;
+    GeoJSONGeometryLineString: GeoJSONGeometryLineString;
+    GeoJSONGeometryPolygon: GeoJSONGeometryPolygon;
+    GeoJSONGeometryMultiLineString: GeoJSONGeometryMultiLineString;
+    GeoJSONGeometryMultiPolygon: GeoJSONGeometryMultiPolygon;
+}
+
+export type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
+
+export default GeoJSONGeometry;

@@ -14,7 +14,7 @@
  *
  * */
 
-import type { LonLatArray } from '../../Maps/MapViewOptions';
+import GeoJSONGeometry from '../../Maps/GeoJSON';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
@@ -24,7 +24,8 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * */
 
 export interface MapPointPointOptions extends ScatterPointOptions {
-    coordinates?: LonLatArray;
+    // coordinates?: LonLatArray;
+    geometry?: GeoJSONGeometry;
     lat?: number;
     lon?: number;
     type?: 'Point';

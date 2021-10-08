@@ -18,7 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type { LonLatArray } from '../../Maps/MapViewOptions';
+import type GeoJSONGeometry from '../../Maps/GeoJSON';
 
 /* *
  *
@@ -28,9 +28,10 @@ import type { LonLatArray } from '../../Maps/MapViewOptions';
 
 export interface MapPointOptions extends ScatterPointOptions {
     color?: ColorType;
-    coordinates?: LonLatArray[]|LonLatArray[][]|LonLatArray[][][];
+    // coordinates?: LonLatArray[]|LonLatArray[][]|LonLatArray[][][];
     dataLabels?: DataLabelOptions;
     drilldown?: string;
+    geometry?: GeoJSONGeometry;
     id?: string;
     labelrank?: number;
     middleX?: number;
@@ -38,7 +39,7 @@ export interface MapPointOptions extends ScatterPointOptions {
     name?: string;
     path?: (string|SVGPath);
     properties?: AnyRecord;
-    type?: 'LineString'|'Polygon'|'MultiLineString'|'MultiPolygon';
+    // type?: 'LineString'|'Polygon'|'MultiLineString'|'MultiPolygon';
     value?: (number|null);
 }
 

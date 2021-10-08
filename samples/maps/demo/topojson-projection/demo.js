@@ -935,15 +935,17 @@ const getGraticule = () => {
     // Meridians
     for (let x = -180; x <= 180; x += 15) {
         data.push({
-            type: 'LineString',
-            coordinates: x % 90 === 0 ? [
-                [x, -90],
-                [x, 0],
-                [x, 90]
-            ] : [
-                [x, -80],
-                [x, 80]
-            ]
+            geometry: {
+                type: 'LineString',
+                coordinates: x % 90 === 0 ? [
+                    [x, -90],
+                    [x, 0],
+                    [x, 90]
+                ] : [
+                    [x, -80],
+                    [x, 80]
+                ]
+            }
         });
     }
 
@@ -954,8 +956,10 @@ const getGraticule = () => {
             coordinates.push([x, y]);
         }
         data.push({
-            type: 'LineString',
-            coordinates,
+            geometry: {
+                type: 'LineString',
+                coordinates
+            },
             lineWidth: y === 0 ? 2 : undefined
         });
     }
@@ -970,11 +974,13 @@ const afterAnimate = e => {
         type: 'mapline',
         animation: false,
         data: [{
-            type: 'LineString',
-            coordinates: [
-                [4.90, 53.38], // Amsterdam
-                [-118.24, 34.05] // Los Angeles
-            ],
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    [4.90, 53.38], // Amsterdam
+                    [-118.24, 34.05] // Los Angeles
+                ]
+            },
             color: '#3030d0'
         }],
         lineWidth: 2
@@ -983,13 +989,17 @@ const afterAnimate = e => {
         type: 'mappoint',
         animation: false,
         data: [{
-            type: 'Point',
             name: 'Amsterdam',
-            coordinates: [4.90, 53.38]
+            geometry: {
+                type: 'Point',
+                coordinates: [4.90, 53.38]
+            }
         }, {
-            type: 'Point',
             name: 'LA',
-            coordinates: [-118.24, 34.05]
+            geometry: {
+                type: 'Point',
+                coordinates: [-118.24, 34.05]
+            }
         }],
         color: '#3030d0'
     }, false);

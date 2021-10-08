@@ -587,7 +587,7 @@ H.geojson = function (
             (type === 'Polygon' || type === 'MultiPolygon')
         ) {
             if (coordinates.length) {
-                pointOptions = { coordinates, type };
+                pointOptions = { geometry: { coordinates, type } };
             }
 
         } else if (
@@ -598,12 +598,12 @@ H.geojson = function (
             )
         ) {
             if (coordinates.length) {
-                pointOptions = { coordinates, type };
+                pointOptions = { geometry: { coordinates, type } };
             }
 
         } else if (hType === 'mappoint' && type === 'Point') {
             if (coordinates.length) {
-                pointOptions = { coordinates, type };
+                pointOptions = { geometry: { coordinates, type } };
             }
         }
         if (pointOptions) {

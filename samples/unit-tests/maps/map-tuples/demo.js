@@ -21,7 +21,7 @@ QUnit.test('Basic map tuple', function (assert) {
     assert.strictEqual(chart.series[0].points[0].value, 5, 'value is set');
 
     assert.ok(
-        chart.series[0].points[0].coordinates.length,
+        chart.series[0].points[0].geometry.coordinates.length,
         'Coordinates should be set'
     );
 });
@@ -56,7 +56,7 @@ QUnit.test('Map tuple with keys', function (assert) {
     );
 
     assert.ok(
-        chart.series[0].points[0].coordinates.length,
+        chart.series[0].points[0].geometry.coordinates.length,
         'Coordinates should be set'
     );
 });
@@ -94,7 +94,7 @@ QUnit.test('Map tuple with keys in other order', function (assert) {
     );
 
     assert.ok(
-        chart.series[0].points[0].coordinates.length,
+        chart.series[0].points[0].geometry.coordinates.length,
         'Coordinates should be set'
     );
 });

@@ -21,7 +21,7 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type { MapBounds } from '../../Maps/MapViewOptions';
+import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -769,7 +769,7 @@ class MapSeries extends ScatterSeries {
             // Find the bounding box of each point
             (this.points || []).forEach(function (point): void {
 
-                if (point.path || (point as any).coordinates) {
+                if (point.path || point.geometry) {
 
                     // @todo Try to puth these two conversions in
                     // MapPoint.applyOptions
@@ -1288,8 +1288,8 @@ export default MapSeries;
  * */
 
 /**
- * A map data object containing a `path` definition and optionally additional
- * properties to join in the data as per the `joinBy` option.
+ * A map data object containing a `geometry` or `path` definition and optionally
+ * additional properties to join in the `data` as per the `joinBy` option.
  *
  * @sample maps/demo/category-map/
  *         Map data and joinBy
@@ -1384,6 +1384,47 @@ export default MapSeries;
  * @type      {string}
  * @product   highmaps
  * @apioption series.map.data.drilldown
+ */
+
+/**
+ * For map and mapline series types, the geometry of a point.
+ *
+ * To achieve a better separation between the structure and the data,
+ * it is recommended to use `mapData` to define the geometry instead
+ * of defining it on the data points themselves.
+ *
+ * The geometry object is compatible to that of a `feature` in geoJSON, so
+ * features of geoJSON can be passed directly into the `data`, optionally
+ * after first filtering and processing it.
+ *
+ * @sample maps/series/data-geometry/
+ *         geometry defined in data
+ *
+ * @type      {GeoJSONGeometry}
+ * @since next
+ * @product   highmaps
+ * @apioption series.map.data.geometry
+ */
+
+/**
+ * The geometry type.
+ *
+ * @type      {string}
+ * @since next
+ * @product   highmaps
+ * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
+ * @apioption series.map.data.geometry.type
+ */
+
+/**
+ * The geometry coordinates in terms of arrays of `[longitude, latitude]`, or
+ * a two dimensional array of the same. The dimensionality must comply with the
+ * `type`.
+ *
+ * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
+ * @since next
+ * @product   highmaps
+ * @apioption series.map.data.geometry.coordinates
  */
 
 /**

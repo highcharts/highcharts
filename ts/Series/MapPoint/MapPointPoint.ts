@@ -75,7 +75,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
     public isValid(): boolean {
         return Boolean(
-            this.options.coordinates ||
+            this.options.geometry ||
             (isNumber(this.x) && isNumber(this.y))
         );
     }

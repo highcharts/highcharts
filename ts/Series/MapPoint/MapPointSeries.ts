@@ -131,7 +131,12 @@ class MapPointSeries extends ScatterSeries {
 
                 let { x = void 0, y = void 0 } = p;
 
-                const coordinates = p.options.coordinates;
+                const geometry = p.options.geometry,
+                    coordinates = (
+                        geometry &&
+                        geometry.type === 'Point' &&
+                        geometry.coordinates
+                    );
                 if (coordinates) {
                     const xy = forward(coordinates);
                     x = xy[0];
@@ -268,6 +273,45 @@ export default MapPointSeries;
  * @excluding labelrank, middleX, middleY, path, value
  * @product   highmaps
  * @apioption series.mappoint.data
+ */
+
+/**
+ * The geometry of a point.
+ *
+ * To achieve a better separation between the structure and the data,
+ * it is recommended to use `mapData` to define the geometry instead
+ * of defining it on the data points themselves.
+ *
+ * The geometry object is compatible to that of a `feature` in geoJSON, so
+ * features of geoJSON can be passed directly into the `data`, optionally
+ * after first filtering and processing it.
+ *
+ * @sample maps/series/data-geometry/
+ *         geometry defined in data
+ *
+ * @type      {GeoJSONGeometry}
+ * @since next
+ * @product   highmaps
+ * @apioption series.mappoint.data.geometry
+ */
+
+/**
+ * The geometry type, which in case of the `mappoint` series is always `Point`.
+ *
+ * @type      {string}
+ * @since next
+ * @product   highmaps
+ * @validvalue ["Point"]
+ * @apioption series.mappoint.data.geometry.type
+ */
+
+/**
+ * The geometry coordinates in terms of `[longitude, latitude]`.
+ *
+ * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
+ * @since next
+ * @product   highmaps
+ * @apioption series.mappoint.data.geometry.coordinates
  */
 
 /**
