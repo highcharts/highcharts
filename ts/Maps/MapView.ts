@@ -46,7 +46,7 @@ const tileSize = 256;
  *
  * @param {Highcharts.Chart} chart
  *        The Chart instance
- * @param {DeepPartial<MapViewOptions>} options
+ * @param {DeepPartial<Highcharts.MapViewOptions>} options
  *        MapView options
  */
 class MapView {
@@ -80,9 +80,23 @@ class MapView {
         const o = merge(defaultOptions, options);
 
         this.chart = chart;
+
+        /**
+         * The current center of the view in terms of `[longitude, latitude]`.
+         * @name Highcharts.MapView#center
+         * @readonly
+         * @type {LonLatArray}
+         */
         this.center = o.center;
         this.options = o;
         this.projection = new Projection(o.projection);
+
+        /**
+         * The current zoom level of the view.
+         * @name Highcharts.MapView#zoom
+         * @readonly
+         * @type {number}
+         */
         this.zoom = o.zoom;
 
         // On resize, fit to the bounds unless the zoom has been user set
@@ -93,37 +107,27 @@ class MapView {
         });
     }
 
-    /**
-     * The current center of the view in terms of `[longitude, latitude]`.
-     * @name Highcharts.MapView#center
-     * @readonly
-     * @type {LonLatArray}
-     */
     public center: LonLatArray;
     public minZoom?: number;
     public options: MapViewOptions;
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
-    /**
-     * The current zoom level of the view.
-     * @name Highcharts.MapView#zoom
-     * @readonly
-     * @type {number}
-     */
     public zoom: number;
 
     private chart: Chart;
 
     /**
      * Fit the view to given bounds
-     * @param {MapBounds} bounds
+     *
+     * @function Highcharts.MapView#fitToBounds
+     * @param {Highcharts.MapBounds} bounds
      *        Bounds in terms of projected units. If not set, fit to the bounds
      *        of the current data set
      * @param {number} padding
      *        [Not yet implemented]. Padding inside the bounds
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart immediately
-     * @param {boolean|Partial<AnimationOptions>} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
      *        What animation to use for redraw
      */
     public fitToBounds(
@@ -192,13 +196,14 @@ class MapView {
 
     /**
      * Set the view to given center and zoom values.
+     * @function Highcharts.MapView#setView
      * @param {Highcharts.LonLatArray|undefined} center
      *        The center point
      * @param {number} zoom
      *        The zoom level
      * @param {boolean} [redraw=true]
      *        Whether to redraw immediately
-     * @param {boolean|Partial<AnimationOptions>} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
      *        Animation options for the redraw
      *
      * @sample maps/mapview/setview
@@ -323,11 +328,13 @@ class MapView {
     /**
      * Update the view with given options
      *
-     * @param {DeepPartial<MapViewOptions>} options
+     * @function Highcharts.MapView#update
+     *
+     * @param {DeepPartial<Highcharts.MapViewOptions>} options
      *        The new map view options to apply
      * @param {boolean} [redraw=true]
      *        Whether to redraw immediately
-     * @param {boolean|Partial<AnimationOptions>} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
      *        The animation to apply to a the redraw
      */
     public update(
@@ -376,15 +383,17 @@ class MapView {
     /**
      * Zoom the map view by a given number
      *
+     * @function Highcharts.MapView#zoomBy
+     *
      * @param {number|undefined} [howMuch]
      *        The amount of zoom to apply. 1 zooms in on half the current view,
      *        -1 zooms out. Pass `undefined` to zoom to the full bounds of the
      *        map.
-     * @param {LonLatArray} [coords]
+     * @param {Highcharts.LonLatArray} [coords]
      *        Optional map coordinates to keep fixed
      * @param {Array<number>} [chartCoords]
      *        Optional chart coordinates to keep fixed, in terms of pixels
-     * @param {boolean|Partial<AnimationOptions>} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
      *        The animation to apply to a the redraw
      */
     public zoomBy(
