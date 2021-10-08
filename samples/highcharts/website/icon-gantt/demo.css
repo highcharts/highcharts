@@ -232,6 +232,15 @@
 	height:250px;
 }
 
+
+#gantt .hide{
+	opacity: 0;
+}
+#gantt .show{
+	opacity: 1;
+}
+
+
 #gantt .highcharts-plot-background{
 	fill:#45445d;
 	stroke:transparent;
