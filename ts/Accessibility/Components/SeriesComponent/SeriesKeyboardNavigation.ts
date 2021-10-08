@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Accessibility from '../../Accessibility';
 
 import Chart from '../../../Core/Chart/Chart.js';
@@ -29,6 +35,12 @@ const {
     extend,
     fireEvent
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -58,50 +70,6 @@ declare module '../../../Core/Series/SeriesLike' {
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class SeriesKeyboardNavigation {
-            public constructor(
-                chart: Accessibility.ChartComposition,
-                keyCodes: Record<string, number>
-            );
-            public chart: Accessibility.ChartComposition;
-            public eventProvider?: EventProvider;
-            public keyCodes: Record<string, number>;
-            public lastDrilledDownPoint?: (
-                SeriesKeyboardNavigationDrilldownObject
-            );
-            public attemptHighlightAdjacentPoint(
-                handler: KeyboardNavigationHandler,
-                directionIsNext: boolean
-            ): number;
-            public destroy(): void;
-            public getKeyboardNavigationHandler(): KeyboardNavigationHandler;
-            public init(): void;
-            public onDrillupAll(): void;
-            public onHandlerTerminate(): void;
-            public onKbdSideways(
-                handler: KeyboardNavigationHandler,
-                keyCode: number
-            ): number;
-            public onKbdVertical(
-                handler: KeyboardNavigationHandler,
-                keyCode: number
-            ): number;
-            public onSeriesDestroy(series: Series): void;
-        }
-        interface SeriesKeyboardNavigationDrilldownObject {
-            x: (number|null);
-            y: (number|null|undefined);
-            seriesName: string;
-        }
-    }
-}
-
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -111,10 +79,7 @@ const {
     scrollToPoint
 } = ChartUtilities;
 
-import '../../../Series/Column/ColumnSeries.js';
-import '../../../Series/Pie/PieSeries.js';
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /*
  * Set for which series types it makes sense to move to the closest point with
@@ -614,25 +579,58 @@ function updateChartFocusAfterDrilling(chart: Chart): void {
 }
 
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
  * @name Highcharts.SeriesKeyboardNavigation
  */
-function SeriesKeyboardNavigation(
-    this: Highcharts.SeriesKeyboardNavigation,
-    chart: Accessibility.ChartComposition,
-    keyCodes: Record<string, number>
-): void {
-    this.keyCodes = keyCodes;
-    this.chart = chart;
-}
-extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardNavigation */ { // eslint-disable-line
+class SeriesKeyboardNavigation {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        chart: Accessibility.ChartComposition,
+        keyCodes: Record<string, number>
+    ) {
+        this.keyCodes = keyCodes;
+        this.chart = chart;
+    }
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Accessibility.ChartComposition;
+    public eventProvider?: EventProvider;
+    public keyCodes: Record<string, number>;
+    public lastDrilledDownPoint?: SeriesKeyboardNavigation.DrilldownObject;
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
 
     /**
      * Init the keyboard navigation
      */
-    init: function (this: Highcharts.SeriesKeyboardNavigation): void {
+    public init(): void {
         const keyboardNavigation = this,
             chart = this.chart,
             e = this.eventProvider = new EventProvider();
@@ -688,10 +686,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 pointEl.focus();
             }
         });
-    },
+    }
 
 
-    onDrillupAll: function (this: Highcharts.SeriesKeyboardNavigation): void {
+    /**
+     * @private
+     */
+    public onDrillupAll(): void {
         // After drillup we want to find the point that was drilled down to and
         // highlight it.
         const last = this.lastDrilledDownPoint,
@@ -715,15 +716,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         if (chart.focusElement) {
             chart.focusElement.removeFocusBorder();
         }
-    },
+    }
 
 
     /**
      * @return {Highcharts.KeyboardNavigationHandler}
      */
-    getKeyboardNavigationHandler: function (
-        this: Highcharts.SeriesKeyboardNavigation
-    ): KeyboardNavigationHandler {
+    public getKeyboardNavigationHandler(): KeyboardNavigationHandler {
         const keyboardNavigation = this,
             keys = this.keyCodes,
             chart = this.chart,
@@ -795,7 +794,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 return keyboardNavigation.onHandlerTerminate();
             }
         });
-    },
+    }
 
 
     /**
@@ -805,8 +804,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * @return {number}
      * response
      */
-    onKbdSideways: function (
-        this: Highcharts.SeriesKeyboardNavigation,
+    public onKbdSideways(
         handler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
@@ -814,7 +812,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             isNext = keyCode === keys.right || keyCode === keys.down;
 
         return this.attemptHighlightAdjacentPoint(handler, isNext);
-    },
+    }
 
 
     /**
@@ -824,8 +822,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * @return {number}
      * response
      */
-    onKbdVertical: function (
-        this: Highcharts.SeriesKeyboardNavigation,
+    public onKbdVertical(
         handler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
@@ -856,15 +853,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         chart[highlightMethod](isNext);
 
         return handler.response.success;
-    },
+    }
 
 
     /**
      * @private
      */
-    onHandlerTerminate: function (
-        this: Highcharts.SeriesKeyboardNavigation
-    ): void {
+    public onHandlerTerminate(): void {
         const chart = this.chart;
 
         if (chart.tooltip) {
@@ -881,7 +876,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         }
 
         delete chart.highlightedPoint;
-    },
+    }
 
 
     /**
@@ -892,8 +887,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * @return {number}
      * response
      */
-    attemptHighlightAdjacentPoint: function (
-        this: Highcharts.SeriesKeyboardNavigation,
+    public attemptHighlightAdjacentPoint(
         handler: KeyboardNavigationHandler,
         directionIsNext: boolean
     ): number {
@@ -910,14 +904,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         }
 
         return handler.response.success;
-    },
+    }
 
 
     /**
      * @private
      */
-    onSeriesDestroy: function (
-        this: Highcharts.SeriesKeyboardNavigation,
+    public onSeriesDestroy(
         series: Series
     ): void {
         const chart = this.chart,
@@ -930,16 +923,45 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                 chart.focusElement.removeFocusBorder();
             }
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    destroy: function (this: Highcharts.SeriesKeyboardNavigation): void {
+    public destroy(): void {
         (this.eventProvider as any).removeAddedEvents();
     }
 
-});
+}
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace SeriesKeyboardNavigation {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface DrilldownObject {
+        x: (number|null);
+        y: (number|null|undefined);
+        seriesName: string;
+    }
+
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SeriesKeyboardNavigation;
