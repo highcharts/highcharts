@@ -75,7 +75,7 @@ class SeriesComponent extends AccessibilityComponent {
      *
      * */
 
-    public keyboardNavigation?: Highcharts.SeriesKeyboardNavigation;
+    public keyboardNavigation?: SeriesKeyboardNavigation;
     public newDataAnnouncer?: NewDataAnnouncer;
 
 
@@ -92,7 +92,7 @@ class SeriesComponent extends AccessibilityComponent {
         this.newDataAnnouncer = new NewDataAnnouncer(this.chart);
         (this.newDataAnnouncer as any).init();
 
-        this.keyboardNavigation = new (SeriesKeyboardNavigation as any)(
+        this.keyboardNavigation = new SeriesKeyboardNavigation(
             this.chart, this.keyCodes
         );
         (this.keyboardNavigation as any).init();
