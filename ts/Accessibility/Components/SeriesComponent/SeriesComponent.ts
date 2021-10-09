@@ -20,7 +20,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type Chart from '../../../Core/Chart/Chart';
 import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
+import type Point from '../../../Core/Series/Point';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -62,10 +64,13 @@ class SeriesComponent extends AccessibilityComponent {
      * @private
      */
     public static compose(
+        ChartClass: typeof Chart,
+        PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
         // Handle forcing markers
         ForcedMarkers.compose(SeriesClass);
+        SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
 
 
@@ -178,6 +183,17 @@ class SeriesComponent extends AccessibilityComponent {
         (this as any).keyboardNavigation.destroy();
     }
 
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface SeriesComponent {
+    chart: SeriesKeyboardNavigation.ChartComposition;
 }
 
 

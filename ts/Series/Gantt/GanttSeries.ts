@@ -269,9 +269,6 @@ interface GanttSeries{
 }
 extend(GanttSeries.prototype, { // props - series member overrides
 
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
-
     pointArrayMap: ['start', 'end', 'y'],
 
     pointClass: GanttPoint,
