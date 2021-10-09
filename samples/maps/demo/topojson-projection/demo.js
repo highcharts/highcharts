@@ -970,40 +970,44 @@ const getGraticule = () => {
 // Add flight route after initial animation
 const afterAnimate = e => {
     const chart = e.target.chart;
-    chart.addSeries({
-        type: 'mapline',
-        animation: false,
-        data: [{
-            geometry: {
-                type: 'LineString',
-                coordinates: [
-                    [4.90, 53.38], // Amsterdam
-                    [-118.24, 34.05] // Los Angeles
-                ]
-            },
+
+    if (!chart.get('flight-route')) {
+        chart.addSeries({
+            type: 'mapline',
+            animation: false,
+            id: 'flight-route',
+            data: [{
+                geometry: {
+                    type: 'LineString',
+                    coordinates: [
+                        [4.90, 53.38], // Amsterdam
+                        [-118.24, 34.05] // Los Angeles
+                    ]
+                },
+                color: '#3030d0'
+            }],
+            lineWidth: 2
+        }, false);
+        chart.addSeries({
+            type: 'mappoint',
+            animation: false,
+            data: [{
+                name: 'Amsterdam',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [4.90, 53.38]
+                }
+            }, {
+                name: 'LA',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [-118.24, 34.05]
+                }
+            }],
             color: '#3030d0'
-        }],
-        lineWidth: 2
-    }, false);
-    chart.addSeries({
-        type: 'mappoint',
-        animation: false,
-        data: [{
-            name: 'Amsterdam',
-            geometry: {
-                type: 'Point',
-                coordinates: [4.90, 53.38]
-            }
-        }, {
-            name: 'LA',
-            geometry: {
-                type: 'Point',
-                coordinates: [-118.24, 34.05]
-            }
-        }],
-        color: '#3030d0'
-    }, false);
-    chart.redraw(false);
+        }, false);
+        chart.redraw(false);
+    }
 };
 
 
