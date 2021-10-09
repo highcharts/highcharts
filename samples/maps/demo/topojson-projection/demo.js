@@ -1008,8 +1008,8 @@ const afterAnimate = e => {
 
 
 Highcharts.getJSON(
-    'https://rawgit.com/deldersveld/topojson/master/world-countries.json',
-    function (topology) {
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e7e836a23f96aa8a41407751c222a3d00f07fde9/samples/data/world-countries.topo.json',
+    topology => {
 
         // Convert the topoJSON feature into geoJSON
         const geojson = window.topojson.feature(
@@ -1017,8 +1017,8 @@ Highcharts.getJSON(
             // For this demo, get the first of the named objects
             topology.objects[Object.keys(topology.objects)[0]]
         );
-        geojson.copyrightUrl = 'https://github.com/deldersveld/topojson';
-        geojson.copyrightShort = 'TopoJSON Collection';
+        geojson.copyrightUrl = topology.copyrightURL;
+        geojson.copyrightShort = topology.copyrightShort;
 
         const chart = Highcharts.mapChart('container', {
             chart: {
