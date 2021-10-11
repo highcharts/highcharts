@@ -172,7 +172,7 @@ class Cell extends GUIElement {
     /**
      * Component mounted in the cell.
      */
-    public mountedComponent?: ComponentType;
+    public mountedComponent?: Component;
 
     /**
      * Layout nested in the cell.

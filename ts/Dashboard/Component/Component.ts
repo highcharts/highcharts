@@ -43,161 +43,6 @@ import Sync from './Sync/Sync.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
 
-    /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
-    private static registry: Record<string, ComponentType>
-
-    /**
-     *
-     * Record of component instances
-     *
-     */
-    public static instanceRegistry: Record<string, ComponentType> = {};
-
-    /**
-     * Regular expression to extract the  name (group 1) from the
-     * stringified class type.
-     */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
-
-    public static addComponent(componentClass: ComponentType): boolean {
-        const name = Component.getName(componentClass),
-            registry = Component.registry;
-
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
-            return false;
-        }
-
-        registry[name] = componentClass;
-
-        return true;
-    }
-
-    public static getAllComponentNames(): Array<string> {
-        return Object.keys(Component.registry);
-    }
-
-    public static getAllComponents(): Record<string, ComponentType> {
-        return merge(Component.registry);
-    }
-
-    /**
-     * Extracts the name from a given component class.
-     *
-     * @param {DataStore} component
-     * Component class to extract the name from.
-     *
-     * @return {string}
-     * Component name, if the extraction was successful, otherwise an empty
-     * string.
-     */
-    private static getName(component: (NewableFunction | ComponentType)): string {
-        return (
-            component.toString().match(Component.nameRegExp) ||
-            ['', '']
-        )[1];
-    }
-
-    /**
-     * Adds a component instance to the registry
-     * @param {Component} component
-     * The component to add
-     */
-    public static addInstance(component: ComponentType): void {
-        Component.instanceRegistry[component.id] = component;
-
-    }
-
-    /**
-     * Removes a component instance from the registry
-     * @param {Component} component
-     * The component to remove
-     */
-    public static removeInstance(component: Component<any>): void {
-        delete Component.instanceRegistry[component.id];
-    }
-
-    /**
-     * Retrieves the IDs of the registered component instances
-     * @return {string[]}
-     * Array of component IDs
-     */
-    public static getAllInstanceIDs(): string[] {
-        return Object.keys(this.instanceRegistry);
-    }
-
-    /**
-     * Retrieves all registered component instances
-     * @return {ComponentType[]}
-     * Array of components
-     */
-    public static getAllInstances(): Component<any>[] {
-        const ids = this.getAllInstanceIDs();
-        return ids.map((id): Component<any> => this.instanceRegistry[id]);
-    }
-
-    public static getInstanceById(id: string): ComponentType | undefined {
-        return this.instanceRegistry[id];
-    }
-
-    public static relayMessage(
-        sender: ComponentType | ComponentGroup, // Are there cases where a group should be the sender?
-        message: Component.MessageEvent['message'],
-        targetObj: Component.MessageTarget
-    ): void {
-        const emit = (component: ComponentType): void =>
-            component.emit({
-                type: 'message',
-                detail: {
-                    sender: sender.id,
-                    target: targetObj.target
-                },
-                message,
-                target: component
-            });
-
-        const handlers: Record<Component.MessageTarget['type'], Function> = {
-            'componentID': (recipient: Component.MessageTarget['target']): void => {
-                const component = this.getInstanceById(recipient);
-                if (component) {
-                    emit(component);
-                }
-            },
-            'componentType': (recipient: Component.MessageTarget['target']): void => {
-                this.getAllInstanceIDs()
-                    .forEach((instanceID): void => {
-                        const component = this.getInstanceById(instanceID);
-                        if (component && component.id !== sender.id) {
-                            if (component.type === recipient || recipient === 'all') {
-                                emit(component);
-                            }
-                        }
-                    });
-            },
-            'group': (recipient: Component.MessageTarget['target']): void => {
-                // Send a message to a whole group
-                const group = ComponentGroup.getComponentGroup(recipient);
-                if (group) {
-                    group.components.forEach((id): void => {
-                        const component = this.getInstanceById(id);
-                        if (component && component.id !== sender.id) {
-                            emit(component);
-                        }
-                    });
-                }
-            }
-        };
-
-        handlers[targetObj.type](targetObj.target);
-    }
-
     protected static getUUID(): string {
         return 'dashboard-component-' + uniqueKey();
     }
@@ -882,6 +727,179 @@ namespace Component {
 
     export type MessageType = string | {
         callback: Function;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    /**
+     *
+     * Record of component instances
+     *
+     */
+    export const instanceRegistry: Record<string, ComponentType> = {};
+
+    /**
+     * Regular expression to extract the  name (group 1) from the
+     * stringified class type.
+     */
+    const nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
+
+    /**
+     *
+     * Record of component classes
+     * @todo
+     *
+     */
+    export const registry: Record<string, Class<Component>> = {};
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    export function addComponent<T extends Class<Component>>(
+        componentClass: T
+    ): boolean {
+        const name = Component.getName(componentClass);
+
+        if (
+            typeof name === 'undefined' ||
+            registry[name]
+        ) {
+            return false;
+        }
+
+        registry[name] = componentClass;
+
+        return true;
+    }
+
+    export function getAllComponentNames(): Array<string> {
+        return Object.keys(Component.registry);
+    }
+
+    export function getAllComponents(): Record<string, Class<Component>> {
+        return merge(Component.registry);
+    }
+
+    /**
+     * Extracts the name from a given component class.
+     *
+     * @param {DataStore} component
+     * Component class to extract the name from.
+     *
+     * @return {string}
+     * Component name, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    export function getName(component: (NewableFunction | ComponentType)): string {
+        return (
+            component.toString().match(nameRegExp) ||
+            ['', '']
+        )[1];
+    }
+
+    /**
+     * Adds a component instance to the registry
+     * @param {Component} component
+     * The component to add
+     */
+    export function addInstance(component: ComponentType): void {
+        Component.instanceRegistry[component.id] = component;
+
+    }
+
+    /**
+     * Removes a component instance from the registry
+     * @param {Component} component
+     * The component to remove
+     */
+    export function removeInstance(component: Component<any>): void {
+        delete Component.instanceRegistry[component.id];
+    }
+
+    /**
+     * Retrieves the IDs of the registered component instances
+     * @return {string[]}
+     * Array of component IDs
+     */
+    export function getAllInstanceIDs(): string[] {
+        return Object.keys(instanceRegistry);
+    }
+
+    /**
+     * Retrieves all registered component instances
+     * @return {ComponentType[]}
+     * Array of components
+     */
+    export function getAllInstances(): Component<any>[] {
+        const ids = getAllInstanceIDs();
+        return ids.map((id): Component<any> => instanceRegistry[id]);
+    }
+
+    export function getComponent<T extends Class<Component>>(
+        key: string
+    ): (T|undefined) {
+        return registry[key] as T;
+    }
+
+    export function getInstanceById(id: string): ComponentType | undefined {
+        return instanceRegistry[id];
+    }
+    export function relayMessage(
+        sender: ComponentType | ComponentGroup, // Are there cases where a group should be the sender?
+        message: Component.MessageEvent['message'],
+        targetObj: Component.MessageTarget
+    ): void {
+        const emit = (component: ComponentType): void =>
+            component.emit({
+                type: 'message',
+                detail: {
+                    sender: sender.id,
+                    target: targetObj.target
+                },
+                message,
+                target: component
+            });
+
+        const handlers: Record<Component.MessageTarget['type'], Function> = {
+            'componentID': (recipient: Component.MessageTarget['target']): void => {
+                const component = getInstanceById(recipient);
+                if (component) {
+                    emit(component);
+                }
+            },
+            'componentType': (recipient: Component.MessageTarget['target']): void => {
+                getAllInstanceIDs()
+                    .forEach((instanceID): void => {
+                        const component = getInstanceById(instanceID);
+                        if (component && component.id !== sender.id) {
+                            if (component.type === recipient || recipient === 'all') {
+                                emit(component);
+                            }
+                        }
+                    });
+            },
+            'group': (recipient: Component.MessageTarget['target']): void => {
+                // Send a message to a whole group
+                const group = ComponentGroup.getComponentGroup(recipient);
+                if (group) {
+                    group.components.forEach((id): void => {
+                        const component = getInstanceById(id);
+                        if (component && component.id !== sender.id) {
+                            emit(component);
+                        }
+                    });
+                }
+            }
+        };
+
+        handlers[targetObj.type](targetObj.target);
     }
 
 }

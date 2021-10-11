@@ -28,9 +28,7 @@ import Bindings from './Actions/Bindings.js';
 import DashboardGlobals from './DashboardGlobals.js';
 import EditMode from './EditMode/EditMode.js';
 import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import Layout from './Layout/Layout.js';
 import Serializable from './Serializable.js';
 import U from '../Core/Utilities.js';
@@ -57,63 +55,6 @@ const {
  * @name Dashboard.Dashboard
  */
 class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    protected static readonly defaultOptions: Dashboard.Options = {
-        gui: {
-            enabled: true,
-            layoutOptions: {
-                rowClassName: void 0,
-                cellClassName: void 0
-            },
-            layouts: []
-        },
-        componentOptions: {
-            isResizable: true
-        },
-        components: [],
-        respoBreakpoints: {
-            small: 576,
-            medium: 992,
-            large: 1200
-        }
-    };
-
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Import layouts from the local storage
-     *
-     * @return {Dashboard|undefined}
-     */
-    public static importLocal(): (Dashboard|undefined) {
-        const dashboardJSON = localStorage.getItem(
-            // Dashboard.prefix + this.id,
-            DashboardGlobals.classNamePrefix + '1' // temporary for demo test
-        );
-
-        if (dashboardJSON) {
-            try {
-                return Serializable.fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
-            } catch (e) {
-                // nothing to do
-            }
-        }
-    }
-
-    public static getCopyId(): string {
-        // Remove highcharts- prefix - temporary solution.
-        return uniqueKey().substring(11);
-    }
 
     /* *
      *
@@ -459,6 +400,59 @@ namespace Dashboard {
 
     export interface JSON extends Serializable.JSON<'Dashboard'> {
         options: OptionsJSON;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    export const defaultOptions: Dashboard.Options = {
+        gui: {
+            enabled: true,
+            layoutOptions: {
+                rowClassName: void 0,
+                cellClassName: void 0
+            },
+            layouts: []
+        },
+        componentOptions: {
+            isResizable: true
+        },
+        components: [],
+        respoBreakpoints: {
+            small: 576,
+            medium: 992,
+            large: 1200
+        }
+    };
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Import layouts from the local storage
+     *
+     * @return {Dashboard.Dashboard|undefined}
+     */
+    export function importLocal(): (Dashboard|undefined) {
+        const dashboardJSON = localStorage.getItem(
+            // Dashboard.prefix + this.id,
+            DashboardGlobals.classNamePrefix + '1' // temporary for demo test
+        );
+
+        if (dashboardJSON) {
+            try {
+                return Serializable.fromJSON(JSON.parse(dashboardJSON)) as Dashboard;
+            } catch (e) {
+                // nothing to do
+            }
+        }
     }
 
 }

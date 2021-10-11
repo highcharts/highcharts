@@ -199,7 +199,7 @@ namespace Serializable {
     /**
      * Registers a class prototype for the given JSON $class.
      *
-     * @function Serializable.register
+     * @function Serializable.registerClassPrototype
      *
      * @param {string} $class
      * JSON $class to register for.
@@ -222,7 +222,7 @@ namespace Serializable {
     /**
      * Registers helper functions for the given JSON $class.
      *
-     * @function Serializable.register
+     * @function Serializable.registerSerializer
      *
      * @param {string} $class
      * JSON $class to register for.
@@ -251,7 +251,7 @@ namespace Serializable {
     /**
      * Creates JSON from a class instance.
      *
-     * @function Serializable.serialize
+     * @function Serializable.toJSON
      *
      * @param {AnyRecord} obj
      * Class instance or object to serialize as JSON.

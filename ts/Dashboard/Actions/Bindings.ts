@@ -1,10 +1,12 @@
 /* eslint-disable */
 import type ComponentTypes from '../Component/ComponentType';
 import type GUIElement from '../Layout/GUIElement';
-import type HighchartsComponent from '../../Extensions/DashboardPlugin/ChartComponent';
+import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Serializable from '../Serializable';
 
 import Cell from '../Layout/Cell.js';
+import Component from '../Component/Component.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import Layout from '../Layout/Layout.js';
 import Row from '../Layout/Row.js';
@@ -46,12 +48,6 @@ class Bindings {
         // add elements to containers
         if (compontentContainer) {
             switch (options.type) {
-                // case 'chart':
-                //     component = Bindings.chartComponent(
-                //         compontentContainer,
-                //         options
-                //     );
-                //     break;
                 case 'html':
                     component = Bindings.htmlComponent(
                         compontentContainer,
@@ -65,7 +61,18 @@ class Bindings {
                 //     );
                 //     break;
                 default:
-                    component = void 0;
+                    const ComponentClass = Component.getComponent(options.type);
+                    if (ComponentClass) {
+                        component = new ComponentClass(merge(
+                            options,
+                            {
+                                parentElement: compontentContainer as HTMLDOMElement,
+                                chartOptions: options.chartOptions,
+                                dimensions: options.dimensions
+                            }
+                        )) as HighchartsComponent;
+                    }
+                    break;
             }
 
             component?.render();
@@ -85,19 +92,19 @@ class Bindings {
     public static componentFromJSON(
         json: HTMLComponent.ClassJSON|HighchartsComponent.ClassJSON,
         cellContainer: HTMLDOMElement|undefined
-    ): ComponentTypes | undefined {
-        let component: HTMLComponent|HighchartsComponent|undefined;
+    ): (Component|undefined) {
+        let component: (Component|undefined);
 
         switch (json.$class) {
-            case 'Chart':
-                // @todo access component via registry
-                // component = HighchartsComponent.fromJSON(G, json as HighchartsComponent.ClassJSON);
-                break;
             case 'HTML':
                 component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON);
                 break;
             default:
-                component = void 0;
+                const componentClass = Component.getComponent(json.$class);
+                if (componentClass) {
+                    component = (componentClass as unknown as Serializable<Component, typeof json>).fromJSON(json);
+                }
+                break;
         }
 
         component?.render();
@@ -124,24 +131,6 @@ class Bindings {
         const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
     }
-
-    // @todo access via registry
-    // public static chartComponent(
-    //     compontentContainer: HTMLDOMElement,
-    //     options: Bindings.ComponentOptions
-    // ): HighchartsComponent {
-    //     return new HighchartsComponent(
-    //         G,
-    //         merge(
-    //             options,
-    //             {
-    //                 parentElement: compontentContainer as HTMLDOMElement,
-    //                 chartOptions: options.chartOptions,
-    //                 dimensions: options.dimensions
-    //             }
-    //         )
-    //     );
-    // }
 
     public static htmlComponent(
         compontentContainer: HTMLDOMElement,

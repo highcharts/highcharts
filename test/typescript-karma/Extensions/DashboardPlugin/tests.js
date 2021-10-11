@@ -1,6 +1,11 @@
-import ChartComponent from '/base/code/es-modules/Dashboard/Component/ChartComponent.js';
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
+import DashboardPlugin from '/base/code/es-modules/Dashboard/DashboardPlugin.js';
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
+import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
+import HighchartsPlugin from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardPlugin.addPlugin(HighchartsPlugin);
 
 const { test, only, skip } = QUnit;
 
@@ -15,11 +20,11 @@ skip('Both components should work', (assert) => {
     store.load();
 
     const components = [
-        new ChartComponent(Highcharts, {
+        new HighchartsComponent({
             store,
             syncEvents: ['visibility']
         }),
-        new ChartComponent(Highcharts, {
+        new HighchartsComponent({
             store,
             syncEvents: ['visibility']
         })

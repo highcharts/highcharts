@@ -1,8 +1,11 @@
 /* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import type Dashboard from '../Dashboard.js';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
+import DU from '../DashboardUtilities.js';
+const { uniqueKey } = DU;
 import U from '../../Core/Utilities.js';
 const {
     pick,
@@ -10,7 +13,6 @@ const {
 } = U;
 
 import Cell from './Cell.js';
-import Dashboard from '../Dashboard.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import DashboardGlobals from './../DashboardGlobals.js';
@@ -26,33 +28,27 @@ class Layout extends GUIElement {
         json: Layout.JSON,
         dashboard: Dashboard
     ): Layout|undefined {
-        if (dashboard instanceof Dashboard) {
-            const options = json.options,
-                // Check if layout container exists.
-                container = document.getElementById(json.options.containerId),
-                layout = new Layout(
-                    dashboard,
-                    {
-                        id: options.containerId,
-                        copyId: container ? Dashboard.getCopyId() : '',
-                        parentContainerId: dashboard.container.id ||
-                            options.parentContainerId,
-                        rowsJSON: options.rows,
-                        style: options.style
-                    }
-                );
+        const options = json.options,
+            // Check if layout container exists.
+            container = document.getElementById(json.options.containerId),
+            layout = new Layout(
+                dashboard,
+                {
+                    id: options.containerId,
+                    copyId: container ? uniqueKey() : '',
+                    parentContainerId: dashboard.container.id ||
+                        options.parentContainerId,
+                    rowsJSON: options.rows,
+                    style: options.style
+                }
+            );
 
-            // Save layout in the dashboard.
-            if (layout) {
-                dashboard.layouts.push(layout);
-            }
-
-            return layout;
+        // Save layout in the dashboard.
+        if (layout) {
+            dashboard.layouts.push(layout);
         }
 
-        // Error - dashboard not found
-
-        return void 0;
+        return layout;
     }
 
     public static importLocal(

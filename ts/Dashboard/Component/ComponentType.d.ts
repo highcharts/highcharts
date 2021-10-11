@@ -10,7 +10,7 @@
  *
  * */
 
-import type ChartComponent from '../../Extensions/DashboardPlugin/ChartComponent';
+import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
 import type HTMLComponent from './HTMLComponent';
 
 /* *
@@ -26,7 +26,7 @@ import type HTMLComponent from './HTMLComponent';
 // ComponentTypeRegistry[keyof ComponentTypeRegistry];
 
 export type ComponentTypes =
-    ChartComponent.ComponentType |
+    HighchartsComponent.ComponentType |
     HTMLComponent.ComponentType;
 
 /**

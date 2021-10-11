@@ -18,6 +18,7 @@
 
 import Dashboard from '../Dashboard/Dashboard.js';
 import DashboardGlobals from '../Dashboard/DashboardGlobals.js';
+import DashboardPlugin from '../Dashboard/DashboardPlugin.js';
 import Sync from '../Dashboard/Component/Sync/Sync.js';
 
 /* *
@@ -42,6 +43,7 @@ declare global {
 
 const D = {
     ...DashboardGlobals,
+    ...DashboardPlugin,
     _modules,
     Dashboard,
     Sync
@@ -55,11 +57,6 @@ const D = {
 
 if (!D.win.Dashboard) {
     D.win.Dashboard = D;
-}
-
-// eslint-disable-next-line highcharts/no-highcharts-object
-if (D.win.Highcharts) {
-    D.win.Highcharts.Dashboard = D;
 }
 
 export default DashboardGlobals;

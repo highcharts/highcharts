@@ -22,7 +22,7 @@ namespace Sync {
  * */
 class Sync {
 
-    public static defaultHandlers = {};
+    public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
 
     public registerSyncEmitter(emitter: SyncEmitter): void {
         const { id } = emitter;

@@ -1,13 +1,17 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import DashboardPlugin from  '../../../../code/es-modules/Dashboard/DashboardPlugin.js';
 import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
-import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardPlugin.addPlugin(HighchartsPlugin);
 
 let exportedLayoutId;
 
 const chartDemo = {
-    type: 'chart',
+    type: 'Highcharts',
     chartOptions: {
         type: 'line',
         series: [{
@@ -31,7 +35,7 @@ let dashboard = new Dashboard('container', {
                 id: 'saveLocal',
                 className: 'test-test-test',
                 events: {
-                    click: function() {
+                    click: function () {
                         console.log('save local');
                     }
                 }
@@ -269,7 +273,7 @@ let dashboard = new Dashboard('container', {
     components: [{
         cell: 'dashboard-col-0',
         isResizable: true,
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             series: [{
                 name: 'Series from options',
@@ -308,7 +312,7 @@ let dashboard = new Dashboard('container', {
         }]
     }, {
         cell: 'dashboard-col-2',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -330,7 +334,7 @@ let dashboard = new Dashboard('container', {
         }
     }, {
         cell: 'dashboard-col-21',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -353,7 +357,7 @@ let dashboard = new Dashboard('container', {
         }
     }, {
         cell: 'dashboard-col-22',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -403,7 +407,7 @@ let dashboard = new Dashboard('container', {
         }]
     }, {
         cell: 'dashboard-col-5',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'line',
             series: [{
@@ -422,7 +426,7 @@ let dashboard = new Dashboard('container', {
         }
     }, {
         cell: 'dashboard-col-add-component',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'line',
             series: [{
@@ -548,7 +552,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
     },
     components: [{
         cell: 'chart-1',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'cell',
             series: [{
@@ -807,7 +811,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     },
     components: [{
         cell: 'dashboard-col-nolayout-0',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             chart: {
                 animation: false

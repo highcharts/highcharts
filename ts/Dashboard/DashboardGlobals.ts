@@ -1,3 +1,19 @@
+/* *
+ *
+ *  (c) 2020 - 2021 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ *  Authors:
+ *  - Sebastian Bochan
+ *  - Wojciech Chmiel
+ *  - Gøran Slettemark
+ *  - Sophie Bremer
+ *
+ * */
+
 'use strict';
 
 /* *
@@ -6,6 +22,7 @@
  *
  * */
 
+import type DashboardType from './Dashboard';
 import type GUIElement from './Layout/GUIElement';
 
 /* *
@@ -15,6 +32,18 @@ import type GUIElement from './Layout/GUIElement';
  * */
 
 namespace DashboardGlobals {
+
+    /* *
+    *
+    *  Declarations
+    *
+    * */
+
+    /**
+     * @deprecated
+     * @requires dashboard
+     */
+    export let Dashboard: (typeof DashboardType|undefined);
 
     /* *
      *

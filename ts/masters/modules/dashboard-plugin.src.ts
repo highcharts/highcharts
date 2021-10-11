@@ -21,17 +21,12 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import ChartComponent from '../../Extensions/DashboardPlugin/ChartComponent.js';
-import ChartSyncHandlers from '../../Extensions/DashboardPlugin/ChartSyncHandlers.js';
+import HighchartsPlugin from '../../Extensions/DashboardPlugin/HighchartsPlugin.js';
 
 const G: AnyRecord = Highcharts;
-G.DashboardComponent = ChartComponent;
+G.DashboardPlugin = HighchartsPlugin;
 
-function plugin(dashboard: AnyRecord): void {
-    dashboard.Sync.defaultHandlers = {
-        ...dashboard.Sync.defaultHandlers,
-        ...ChartSyncHandlers
-    };
+if (G.win.Dashboard) {
+    HighchartsPlugin.custom.connectHighcharts(Highcharts);
+    G.win.Dashboard.addPlugin(HighchartsPlugin);
 }
-
-export default plugin;

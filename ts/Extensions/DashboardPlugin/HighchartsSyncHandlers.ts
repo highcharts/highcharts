@@ -27,7 +27,7 @@ import type Point from '../../Core/Series/Point';
 import type SharedState from '../../Dashboard/Component/SharedComponentState';
 import type Sync from '../../Dashboard/Component/Sync/Sync';
 
-import ChartComponent from './ChartComponent.js';
+import HighchartsComponent from './HighchartsComponent.js';
 import ComponentGroup from '../../Dashboard/Component/ComponentGroup.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
@@ -94,7 +94,7 @@ const configs: {
         tooltipEmitter: [
             'tooltipEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof ChartComponent) {
+                if (this instanceof HighchartsComponent) {
                     const { chart, id } = this;
                     const groups = ComponentGroup.getGroupsFromComponent(this.id);
 
@@ -155,7 +155,7 @@ const configs: {
         seriesVisibilityEmitter: [
             'seriesVisibilityEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof ChartComponent) {
+                if (this instanceof HighchartsComponent) {
                     const component = this;
                     return addEvent(component.chart, 'redraw', function (): void {
                         const { chart, store, id, activeGroup } = component;
@@ -186,7 +186,7 @@ const configs: {
         panEmitter: [
             'panEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof ChartComponent) {
+                if (this instanceof HighchartsComponent) {
                     const { store, chart, id } = this;
                     if (store && chart) {
                         const ticks: number[] = [];
@@ -223,7 +223,7 @@ const configs: {
         selectionEmitter: [
             'selectionEmitter',
             function (this: ComponentTypes): Function | void {
-                if (this instanceof ChartComponent) {
+                if (this instanceof HighchartsComponent) {
                     const {
                         chart,
                         store,
@@ -298,7 +298,7 @@ const configs: {
         seriesVisibilityHandler: [
             'seriesVisibilityHandler',
             'afterColumnVisibilityChange',
-            function (this: ChartComponent, e: SharedState.ColumnVisibilityEvent): void {
+            function (this: HighchartsComponent, e: SharedState.ColumnVisibilityEvent): void {
                 const { chart, store } = this;
                 if (store && chart) {
                     chart.series.forEach((series): void => {
@@ -313,7 +313,7 @@ const configs: {
         tooltipHandler: [
             'tooltipHandler',
             'afterHoverPointChange',
-            function (this: ChartComponent, e: SharedState.PointHoverEvent): void {
+            function (this: HighchartsComponent, e: SharedState.PointHoverEvent): void {
                 const { chart } = this;
                 const { hoverPoint } = e;
 
@@ -333,7 +333,7 @@ const configs: {
         selectionHandler: [
             'selectionHandler',
             'afterSelectionChange',
-            function (this: ChartComponent, e: SharedState.SelectionEvent): void {
+            function (this: HighchartsComponent, e: SharedState.SelectionEvent): void {
                 const { chart } = this;
                 if (chart) {
                     // Reset the zoom if the source is the reset button
