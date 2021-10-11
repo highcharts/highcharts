@@ -35,12 +35,17 @@ function getTurnover() {
             }
         ));
 }
+
+const imgPath = 'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b24489bf476f8baecc218e1/samples/graphics/homepage/';
 const options = {
     chart: {
         height: 600,
         styledMode: (true)
     },
     credits: {
+        enabled: false
+    },
+    exporting: {
         enabled: false
     },
     xAxis: {
@@ -59,6 +64,7 @@ const options = {
             className: 'time-1',
             label: {
                 text: 'Torstein\'s<br>basement',
+                useHTML: true,
                 style: {
                     color: '#000'
                 },
@@ -324,7 +330,7 @@ const options = {
             },
             chartOptions: {
                 chart: {
-                    margin: [50, 50, 80, 30]
+                    margin: [50, 50, 80, 0]
                 },
                 legend: {
                     enabled: true
@@ -341,7 +347,7 @@ if (Highcharts.seriesTypes.flags) {
             name: 'Highmaps',
             className: 'product',
             color: '#333333',
-            shape: 'url(product.png)',
+            shape: 'url(' + imgPath + 'product.png)',
             tooltip: {
                 distance: 60
             },
@@ -360,7 +366,7 @@ if (Highcharts.seriesTypes.flags) {
             tooltip: {
                 distance: 40
             },
-            shape: 'url(cloud.png)',
+            shape: 'url(' + imgPath + 'cloud.png)',
             data: [{
                 x: Date.UTC(2014, 4, 1),
                 text: 'Highcharts Cloud Beta',
@@ -383,7 +389,7 @@ if (Highcharts.seriesTypes.flags) {
             type: 'flags',
             name: 'Highcharts',
             color: '#333333',
-            shape: 'url(version.png)',
+            shape: 'url(' + imgPath + 'version.png)',
             className: 'product',
             point: {
                 events: {
@@ -424,7 +430,7 @@ if (Highcharts.seriesTypes.flags) {
                 x: Date.UTC(2011, 9, 18),
                 text: 'Highcharts Stock version 1.0 released',
                 title: 'Stock',
-                shape: 'url(product.png)'
+                shape: 'url(' + imgPath + 'product.png)'
             },
             {
                 x: Date.UTC(2012, 7, 24),
@@ -462,13 +468,13 @@ if (Highcharts.seriesTypes.flags) {
         {
             type: 'flags',
             name: 'logo',
-            shape: 'url(https://www.highcharts.com/favicon.ico)',
+            shape: 'url(https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico)',
             data: [{
                 x: Date.UTC(2014, 4, 21),
                 text: 'New logo',
                 title: ' '
             }],
-            y: -200,
+            y: -250,
             showInLegend: false
 
         },
@@ -477,7 +483,7 @@ if (Highcharts.seriesTypes.flags) {
             useHTML: true,
             name: 'Events',
             className: 'award',
-            shape: 'url(award.png)',
+            shape: 'url(' + imgPath + 'award.png)',
             data: [{
                 x: Date.UTC(2012, 10, 1),
                 text: 'Highsoft won "Entrepeneur of the Year" in Sogn og Fjordane, Norway',
