@@ -25,6 +25,7 @@ const {
     fireEvent,
     isNumber,
     merge,
+    pick,
     relativeLength
 } = U;
 
@@ -118,6 +119,10 @@ class MapView {
      * @param {Highcharts.MapBounds} bounds
      *        Bounds in terms of projected units. If not set, fit to the bounds
      *        of the current data set
+     * @param {number|string} [padding=0]
+     *        Padding inside the bounds. A number signifies pixels, while a
+     *        percentage string (like `5%`) can be used as a fraction of the
+     *        plot area size.
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart immediately
      * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
@@ -125,6 +130,7 @@ class MapView {
      */
     public fitToBounds(
         bounds?: MapBounds,
+        padding?: (number|string),
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
     ): void {
@@ -133,10 +139,9 @@ class MapView {
 
         if (b) {
             const { plotWidth, plotHeight } = this.chart,
-                padding = this.options.padding,
-                paddingX = bounds ? 0 : relativeLength(padding, plotWidth),
-                paddingY = bounds ? 0 : relativeLength(padding, plotHeight);
-
+                pad = pick(padding, bounds ? 0 : this.options.padding),
+                paddingX = relativeLength(pad, plotWidth),
+                paddingY = relativeLength(pad, plotHeight);
 
             const scaleToPlotArea = Math.max(
                 (b.x2 - b.x1) / ((plotWidth - paddingX) / tileSize),
@@ -360,7 +365,7 @@ class MapView {
 
             // Fit to natural bounds if center/zoom are not explicitly given
             if (!options.center && !isNumber(options.zoom)) {
-                this.fitToBounds(void 0, false);
+                this.fitToBounds(void 0, void 0, false);
             }
         }
 
@@ -438,7 +443,7 @@ class MapView {
 
         // Undefined howMuch => reset zoom
         } else {
-            this.fitToBounds(void 0, void 0, animation);
+            this.fitToBounds(void 0, void 0, void 0, animation);
         }
 
     }
