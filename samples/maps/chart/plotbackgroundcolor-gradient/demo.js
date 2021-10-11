@@ -25,6 +25,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         },
 
+        mapView: {
+            padding: '5%'
+        },
+
         colorAxis: {
             min: 1,
             max: 1000,

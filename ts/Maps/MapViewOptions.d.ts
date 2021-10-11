@@ -46,6 +46,7 @@ export interface MapBounds {
 export interface MapViewOptions {
     center: LonLatArray;
     maxZoom?: number;
+    padding: (number|string);
     projection?: ProjectionOptions;
     zoom: number;
 }

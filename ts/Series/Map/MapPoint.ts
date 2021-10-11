@@ -160,7 +160,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         const chart = point.series.chart;
 
         if (chart.mapView && point.bounds) {
-            chart.mapView.fitToBounds(point.bounds, 0, false);
+            chart.mapView.fitToBounds(point.bounds, false);
 
             point.series.isDirty = true;
             chart.redraw();

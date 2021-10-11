@@ -17,14 +17,15 @@ import type {
 } from './MapViewOptions';
 
 import Chart from '../Core/Chart/Chart.js';
+import defaultOptions from './MapViewOptionsDefault.js';
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-import defaultOptions from './MapViewOptionsDefault.js';
 const {
     addEvent,
     fireEvent,
     isNumber,
-    merge
+    merge,
+    relativeLength
 } = U;
 
 
@@ -123,8 +124,6 @@ class MapView {
      * @param {Highcharts.MapBounds} bounds
      *        Bounds in terms of projected units. If not set, fit to the bounds
      *        of the current data set
-     * @param {number} padding
-     *        [Not yet implemented]. Padding inside the bounds
      * @param {boolean} [redraw=true]
      *        Whether to redraw the chart immediately
      * @param {boolean|Partial<Highcharts.AnimationOptions>} [animation]
@@ -132,9 +131,6 @@ class MapView {
      */
     public fitToBounds(
         bounds?: MapBounds,
-        // @todo: Implement. Decide either for pixels or relative like
-        // axis.minPadding/maxPadding
-        padding = 0,
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
     ): void {
@@ -142,11 +138,15 @@ class MapView {
         const b = bounds || this.getProjectedBounds();
 
         if (b) {
-            const { plotWidth, plotHeight } = this.chart;
+            const { plotWidth, plotHeight } = this.chart,
+                padding = this.options.padding,
+                paddingX = bounds ? 0 : relativeLength(padding, plotWidth),
+                paddingY = bounds ? 0 : relativeLength(padding, plotHeight);
+
 
             const scaleToPlotArea = Math.max(
-                (b.x2 - b.x1) / (plotWidth / tileSize),
-                (b.y2 - b.y1) / (plotHeight / tileSize)
+                (b.x2 - b.x1) / ((plotWidth - paddingX) / tileSize),
+                (b.y2 - b.y1) / ((plotHeight - paddingY) / tileSize)
             );
             const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
 
@@ -366,7 +366,7 @@ class MapView {
 
             // Fit to natural bounds if center/zoom are not explicitly given
             if (!options.center && !isNumber(options.zoom)) {
-                this.fitToBounds(void 0, 0, false);
+                this.fitToBounds(void 0, false);
             }
         }
 
@@ -444,7 +444,7 @@ class MapView {
 
         // Undefined howMuch => reset zoom
         } else {
-            this.fitToBounds(void 0, 0, void 0, animation);
+            this.fitToBounds(void 0, void 0, animation);
         }
 
     }

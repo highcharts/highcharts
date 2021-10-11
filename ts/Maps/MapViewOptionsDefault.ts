@@ -55,6 +55,16 @@ const defaultOptions: MapViewOptions = {
     maxZoom: void 0,
 
     /**
+     * The padding inside the plot area when auto fitting to the map bounds. A
+     * number signifies pixels, and a percentage is relative to the plot area
+     * size.
+     *
+     * @sample {highmaps} maps/chart/plotbackgroundcolor-color
+     *         Visible plot area and percentage padding
+     */
+    padding: 0,
+
+    /**
      * Beta feature in v9.3. The projection options allow applying client side
      * projection to a map given in coordinates, typically from topoJSON or
      * geoJSON.
