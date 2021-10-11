@@ -100,12 +100,6 @@ class MapView {
          */
         this.zoom = o.zoom;
 
-        // On resize, fit to the bounds unless the zoom has been user set
-        addEvent(chart, 'resize', (): void => {
-            if (this.zoom === this.minZoom) {
-                this.fitToBounds();
-            }
-        });
     }
 
     public center: LonLatArray;

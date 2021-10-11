@@ -231,8 +231,13 @@ addEvent(Chart, 'afterInit', function (): void {
 
 addEvent(Chart, 'afterSetChartSize', function (): void {
     const mapView = this.mapView;
-
-    if (mapView && mapView.minZoom === void 0) {
+    if (
+        mapView &&
+        (
+            mapView.minZoom === void 0 || // When initializing the chart
+            mapView.minZoom === mapView.zoom // When resizing the chart
+        )
+    ) {
 
         mapView.fitToBounds(void 0, false);
 
