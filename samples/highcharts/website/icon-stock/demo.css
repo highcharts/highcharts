@@ -138,8 +138,12 @@
 
 #stock .highcharts-range-selector-group{
 	opacity:0;
+}
+#stock .highcharts-range-selector-group.fade-in{
+	opacity:1;
 	transition: opacity 1s;
 }
+
 
 #stock .highcharts-title{
 	font-weight: 700;
@@ -202,71 +206,6 @@
 	stroke-width: 3px;
 }
 
-#stock .purple-line .highcharts-graph
-{
-	fill:transparent;
-	stroke-width:18px;
-	stroke:#8087E8;
-}
-
-#stock .purple-line .highcharts-point{
-	clip-path: polygon(14.29% 84.28%, 85.73% 11.45%, 88.58% 85%);
-	fill:#8087E8;
-	fill:transparent;
-	transform: translate(50px, 50px) scale(.1);
-	transform-origin: center;
-	transition: all 1s;
-}
-
-#stock .green-line .highcharts-point{
-	clip-path: polygon(12.14% 16.43%, 82.86% 17.14%, 82.86% 89.29%);
-	fill:#8bf2b6;
-	fill:transparent;
-	transform: translate(50px, -50px) scale(.1);
-	transform-origin: center;
-	transition: all 1s;
-
-}
-
-#stock .stick{
-	opacity:0;
-}
-
-#stock .stick .highcharts-point{
-	stroke:#8087E8;
-	fill:#8087E8;
-}
-
-#stock  .stick .highcharts-point-down{
-	fill:#EA6484;
-	stroke:#EA6484;
-}
-
-#stock .green-line .highcharts-graph
-{
-	fill:transparent;
-	stroke-width:18px;
-	stroke:#8bf2b6;
-}
-
-#stock .highcharts-navigator-series {
-	fill: transparent;
-	stroke: #6F9CCD;
-}
-
-#stock .column .highcharts-point{
-	fill:#8bf2b6;
-	stroke:transparent;
-	opacity:1;
-}
-
-#stock .white-line .highcharts-graph
-{
-	fill:transparent;
-	stroke-width:18px;
-	stroke:#fff;
-}
-
 #stock .green{
 	fill:#8bf2b6;
 	stroke:transparent;
@@ -284,10 +223,151 @@
 	opacity:0;
 }
 
+/*line*/
+#stock .purple-line .highcharts-graph
+{
+	fill:transparent;
+	stroke-width:18px;
+	stroke:#8087E8;
+}
+
+#stock .purple-line.fade-out .highcharts-graph{
+	opacity:0;
+	transition: 1s;
+}
+
+/*arrow*/
+#stock .purple-line .highcharts-point:nth-of-type(3){
+	clip-path: polygon(14.29% 84.28%, 85.73% 11.45%, 88.58% 85%);
+	fill:transparent;
+	stroke:transparent;
+	transform: translate(50px, 50px) scale(.1);
+	transform-origin: center;
+	transition: all 1s;
+}
+#stock .purple-line.static .highcharts-point:nth-of-type(1),
+#stock .purple-line.static .highcharts-point:nth-of-type(2){
+	fill:transparent;
+	stroke:transparent;
+	transform:none;
+	transition:none;
+}
+.highcharts-color-3{
+	stroke:transparent;
+	fill:transparent;
+}
+/*static arrow*/
+#stock .purple-line.static .highcharts-point:nth-of-type(3){
+	fill:#8087E8;
+	transform:none;
+	transition:none;
+}
+#stock .purple-line.grow .highcharts-point:nth-of-type(3){
+	fill:#8087E8;
+	transform:none;
+}
+
+/*line*/
+#stock .green-line .highcharts-graph
+{
+	fill:transparent;
+	stroke-width:18px;
+	stroke:#8bf2b6;
+}
+#stock .green-line.fade-out .highcharts-graph{
+	opacity: 0;
+	transition: opacity 1s;
+}
+
+
+/*arrow*/
+#stock .green-line .highcharts-point:nth-of-type(3){
+	clip-path: polygon(12.14% 16.43%, 82.86% 17.14%, 82.86% 89.29%);
+	fill:#8bf2b6;
+	fill:transparent;
+	transform: translate(50px, -50px) scale(.1);
+	transform-origin: center;
+	transition: all 1s;
+}
+
+#stock .green-line.static .highcharts-point:nth-of-type(3){
+	fill:#8bf2b6;
+	transform:none;
+	transition:none;
+}
+
+#stock .green-line.grow .highcharts-point:nth-of-type(3){
+	fill:#8bf2b6;
+	transform:none;
+}
+
+
+#stock .green-line.hide .highcharts-point,
+#stock .green-line.hide .highcharts-graph,
+#stock .purple-line.hide .highcharts-point,
+#stock .purple-line.hide .highcharts-graph{
+opacity:0;
+transition:none;
+}
+
+#stock .stick{
+	opacity:0;
+}
+#stock .stick.fade-in{
+	opacity:1;
+	transition: opacity 1s;
+}
+
+#stock .stick .highcharts-point{
+	stroke:#8087E8;
+	fill:#8087E8;
+}
+
+#stock  .stick .highcharts-point-down{
+	fill:#EA6484;
+	stroke:#EA6484;
+}
+
+
+
+#stock .highcharts-navigator-series {
+	fill: transparent;
+	stroke: #6F9CCD;
+}
+
+#stock .column .highcharts-point{
+	fill:#8bf2b6;
+	stroke:transparent;
+	opacity:0;
+}
+#stock .column.fade-in .highcharts-point{
+	transition: opacity 1s ;
+	opacity:1;
+}
+
+#stock .white-line .highcharts-graph
+{
+	fill:transparent;
+	stroke-width:18px;
+	stroke:#fff;
+}
+
+
+
 #stock .stock-top,
 #stock .stock-bottom{
 	fill:#46445d;
 	stroke:transparent;
+}
+#stock .stock-top.hide,
+#stock .stock-bottom.hide{
+	opacity:0;
+}
+
+#stock .stock-top.fade-out,
+#stock .stock-bottom.fade-out{
+	opacity:0;
+	transition:300ms;
 }
 
 #stock .particles image{
@@ -301,6 +381,70 @@
 #stock .particle-5,
 #stock .particle-6{
 	opacity:0;
+}
+#stock .particle-1.move,
+#stock .particle-2.move,
+#stock .particle-3.move,
+#stock .particle-4.move,
+#stock .particle-5.move,
+#stock .particle-6.move{
+	opacity:1;
+}
+#stock .particle-1.move{
+	transform: translate(500px, -50px);
+}
+#stock .particle-2.move{
+	transform: translate(500px, -150px);
+}
+#stock .particle-3.move{
+	transform: translate(500px, -250px);
+}
+#stock .particle-4.move{
+	transform: translate(500px, 30px);
+}
+#stock .particle-5.move{
+	transform: translate(500px, 230px);
+}
+#stock .particle-6.move{
+	transform: translate(500px, 100px);
+}
+
+#stock .particle-1.static,
+#stock .particle-2.static,
+#stock .particle-3.static,
+#stock .particle-4.static,
+#stock .particle-5.static,
+#stock .particle-6.static{
+	opacity:1;
+	transition:none;
+}
+#stock .particle-1.static.fade,
+#stock .particle-2.static.fade,
+#stock .particle-3.static.fade,
+#stock .particle-4.static.fade,
+#stock .particle-5.static.fade,
+#stock .particle-6.static.fade{
+	opacity:0;
+	transition:opacity 500ms;
+}
+
+#stock .particle-1.static{
+	transform: translate(70px, -30px);
+}
+#stock .particle-2.static{
+	transform: translate(130px, 0px);
+}
+#stock .particle-3.static{
+	transform: translate(180px, -20px);
+}
+#stock .particle-4.static{
+	transform: translate(130px, -40px);
+}
+#stock .particle-5.static{
+	transform: translate(180px, -80px);
+}
+#stock .particle-6.static{
+	transform: translate(180px, 30px);
 }
 
 /* at least 500px wide*/
