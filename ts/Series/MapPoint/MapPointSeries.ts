@@ -289,7 +289,7 @@ export default MapPointSeries;
  * @sample maps/series/data-geometry/
  *         geometry defined in data
  *
- * @type      {GeoJSONGeometry}
+ * @type      {Object}
  * @since next
  * @product   highmaps
  * @apioption series.mappoint.data.geometry
@@ -308,7 +308,7 @@ export default MapPointSeries;
 /**
  * The geometry coordinates in terms of `[longitude, latitude]`.
  *
- * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
+ * @type      {Highcharts.LonLatArray}
  * @since next
  * @product   highmaps
  * @apioption series.mappoint.data.geometry.coordinates

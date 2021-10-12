@@ -256,6 +256,12 @@ declare global {
  * @type {number}
  */
 
+/**
+ * An array of longitude, latitude.
+ *
+ * @typedef {Array<number>} Highcharts.LonLatArray
+ */
+
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

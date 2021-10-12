@@ -1398,9 +1398,9 @@ export default MapSeries;
  * after first filtering and processing it.
  *
  * @sample maps/series/data-geometry/
- *         geometry defined in data
+ *         Geometry defined in data
  *
- * @type      {GeoJSONGeometry}
+ * @type      {Object}
  * @since next
  * @product   highmaps
  * @apioption series.map.data.geometry
