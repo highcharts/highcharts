@@ -85,10 +85,11 @@ Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) 
     if(parentClassName) {
         cy.get(`.${parentClassName}`).children().eq(1).click();
     }
+    cy.get(`.${annotationClassName}`).click();
+})
+
 Cypress.Commands.add('selectRange', (range) =>
     cy.get('.highcharts-range-selector-group')
         .contains(range)
         .click()
 );
-    cy.get(`.${annotationClassName}`).click();
-})
