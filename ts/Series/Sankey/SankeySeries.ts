@@ -748,47 +748,6 @@ class SankeySeries extends ColumnSeries {
      */
     public translate(): void {
 
-        // Get the translation factor needed for each column to fill up the
-        // plot height
-        const getColumnTranslationFactor = (column: SankeySeries.ColumnArray): number => {
-            const nodes = column.slice();
-            const minLinkWidth = this.options.minLinkWidth || 0;
-            let exceedsMinLinkWidth: boolean;
-            let factor = 0;
-            let i: number;
-            let maxRadius: number = 0;
-
-            let remainingHeight = (chart.plotSizeY as any) -
-                (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
-
-            // Because the minLinkWidth option doesn't obey the direct
-            // translation, we need to run translation iteratively, check
-            // node heights, remove those nodes affected by minLinkWidth,
-            // check again, etc.
-            while (column.length) {
-                factor = remainingHeight / column.sum();
-                exceedsMinLinkWidth = false;
-                i = column.length;
-                while (i--) {
-                    if (column[i].getSum() * factor < minLinkWidth) {
-                        column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
-                        exceedsMinLinkWidth = true;
-                    }
-                    maxRadius = Math.max(maxRadius, column[i].getSum() * factor);
-                }
-                if (!exceedsMinLinkWidth) {
-                    break;
-                }
-            }
-
-            // Re-insert original nodes
-            column.length = 0;
-            nodes.forEach((node): number => column.push(node));
-            (column as any).maxRadius = maxRadius;
-            return factor;
-        };
-
         if (!this.processedXData) {
             this.processData();
         }
@@ -816,7 +775,7 @@ class SankeySeries extends ColumnSeries {
                 column: SankeySeries.ColumnArray
             ): number => Math.min(
                 translationFactor,
-                getColumnTranslationFactor(column)
+                column.getTranslationFactor(series)
             ),
             Infinity
         );
@@ -1184,6 +1143,7 @@ extend(SankeySeries.prototype, {
 
 namespace SankeySeries {
     export interface ColumnArray<T = SankeyPoint> extends Array<T> {
+        getTranslationFactor(this: SankeySeries.ColumnArray, series: SankeySeries): number;
         offset(node: T, factor: number): (Record<string, number>|undefined);
         sum(): number;
         top(factor: number): number;

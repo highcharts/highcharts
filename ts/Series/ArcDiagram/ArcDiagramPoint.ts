@@ -32,6 +32,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ArcDiagramSeries from './ArcDiagramSeries';
 const { extend } = U;
 
 /* *
@@ -60,7 +61,7 @@ class ArcDiagramPoint extends SankeySeries.prototype.pointClass {
 
     public options: DependencyWheelPointOptions = void 0 as any;
 
-    public series: DependencyWheelSeries = void 0 as any;
+    public series: ArcDiagramSeries = void 0 as any;
 
     public shapeArgs: SVGAttributes = void 0 as any;
 

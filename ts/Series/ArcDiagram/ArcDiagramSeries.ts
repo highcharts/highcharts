@@ -20,19 +20,17 @@
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
 import DependencyWheelPoint from '../DependencyWheel/DependencyWheelPoint.js';
-import H from '../../Core/Globals.js';
-const { deg2rad } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        pie: PieSeries,
         sankey: SankeySeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ArcDiagramPoint from './ArcDiagramPoint';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+const { getLevelOptions } = TreeSeriesMixin;
 const {
     extend,
     merge,
@@ -62,8 +60,11 @@ class ArcDiagramSeries extends SankeySeries {
      * */
 
     /**
-     * A dependency wheel chart is a type of flow diagram, where all nodes are
-     * laid out in a circle, and the flow between the are drawn as link bands.
+     *  Arc diagram series is a chart drawing style in which
+     *  the vertices of the chart are positioned along a line
+     *  on the Euclidean plane and the edges are drawn as a semicircle
+     *  in one of the two half-planes delimited by the line,
+     *  or as smooth curves formed by sequences of semicircles.
      *
      * @sample highcharts/demo/dependency-wheel/
      *         Dependency wheel
@@ -102,15 +103,15 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<DependencyWheelPoint> = void 0 as any;
+    public data: Array<ArcDiagramPoint> = void 0 as any;
 
     public options: ArcDiagramSeriesOptions = void 0 as any;
 
     public nodeColumns: Array<ArcDiagramSeries.ColumnArray> = void 0 as any;
 
-    public nodes: Array<DependencyWheelPoint> = void 0 as any;
+    public nodes: Array<ArcDiagramPoint> = void 0 as any;
 
-    public points: Array<DependencyWheelPoint> = void 0 as any;
+    public points: Array<ArcDiagramPoint> = void 0 as any;
 
     /* *
      *
@@ -119,64 +120,102 @@ class ArcDiagramSeries extends SankeySeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-
-    public createNode(id: string): DependencyWheelPoint {
-        const node = SankeySeries.prototype.createNode.call(
-            this,
-            id
-        ) as DependencyWheelPoint;
-
-        return node;
-    }
-
-    /**
-     * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
-     */
-    public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
-        const columns = [this.createNodeColumn()];
-        this.nodes.forEach(function (
-            node: DependencyWheelPoint
-        ): void {
-            node.column = 0;
-            columns[0].push(node);
-        });
-        return columns;
-    }
-
-    public createNodeColumn(): ArcDiagramSeries.ColumnArray {
+    public createNodeColumns(): ArcDiagramSeries.ColumnArray[] {
         const series = this,
-            chart = this.chart,
+            chart = series.chart,
+            // column needs casting, to much methods required at the same time
             column: ArcDiagramSeries.ColumnArray = [] as any;
+
+        column.maxLength = chart.inverted ? chart.plotHeight : chart.plotWidth;
+
+        // Get the translation factor needed for each column to fill up the
+        // plot height
+        column.getTranslationFactor = (series: ArcDiagramSeries): number => {
+            const nodes = column.slice(),
+                minLinkWidth = this.options.minLinkWidth || 0;
+
+            let skipPoint: boolean,
+                factor = 0,
+                i: number,
+                radius,
+                maxRadius: number = 0,
+                scale = 1,
+                additionalSpace = 0,
+                remainingWidth =
+                    (chart.plotSizeX as any) -
+                    (series.options.borderWidth as any) -
+                    (column.length - 1) *
+                    series.nodePadding;
+
+            // Because the minLinkWidth option doesn't obey the direct
+            // translation, we need to run translation iteratively, check
+            // node heights, remove those nodes affected by minLinkWidth,
+            // check again, etc.
+            while (column.length) {
+                factor = remainingWidth / column.sum();
+                skipPoint = false;
+                i = column.length;
+                while (i--) {
+                    radius = (column[i].getSum()) * factor * scale;
+
+                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
+
+                    if (radius > plotArea) {
+                        scale = Math.min(plotArea / radius, scale);
+                    } else if (radius < minLinkWidth) {
+                        column.splice(i, 1);
+                        remainingWidth -= minLinkWidth;
+                        radius = minLinkWidth;
+                        skipPoint = true;
+                    }
+                    additionalSpace += radius * (1 - scale) / 2;
+                    maxRadius = Math.max(maxRadius, radius);
+                }
+                if (!skipPoint) {
+                    break;
+                }
+            }
+
+            // Re-insert original nodes
+            column.length = 0;
+            nodes.forEach((node): void => {
+                (node as any).scale = scale;
+                column.push(node);
+            });
+            (column as any).maxRadius = maxRadius;
+            (column as any).scale = scale;
+            (column as any).additionalSpace = additionalSpace;
+            return factor;
+        };
 
         column.sum = function (this: ArcDiagramSeries.ColumnArray): number {
             return this.reduce(function (
                 sum: number,
-                node: DependencyWheelPoint
+                node: ArcDiagramPoint
             ): number {
                 return sum + node.getSum();
             }, 0);
         };
+
         // Get the offset in pixels of a node inside the column.
         column.offset = function (
             this: ArcDiagramSeries.ColumnArray,
-            node: DependencyWheelPoint,
+            node: ArcDiagramPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const equalNodes = (node.series.options as any).equalNodes;
-            const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight;
-            let offset = 0,
+            const equalNodes = node.series.options.equalNodes;
+            let offset = (column as any).additionalSpace,
                 totalNodeOffset,
                 nodePadding = series.nodePadding,
                 maxRadius = Math.min(
                     chart.plotWidth,
                     chart.plotHeight,
-                    maxNodesLength / series.nodes.length - nodePadding
+                    column.maxLength / series.nodes.length - nodePadding
                 );
 
             for (let i = 0; i < column.length; i++) {
-                const sum = column[i].getSum();
-                const height = equalNodes ?
+                const sum = column[i].getSum() * (column as any).scale;
+                const width = equalNodes ?
                     maxRadius :
                     Math.max(
                         sum * factor,
@@ -184,14 +223,14 @@ class ArcDiagramSeries extends SankeySeries {
                     );
 
                 if (sum) {
-                    totalNodeOffset = height + nodePadding;
+                    totalNodeOffset = width + nodePadding;
                 } else {
                     // If node sum equals 0 nodePadding is missed #12453
                     totalNodeOffset = 0;
                 }
                 if (column[i] === node) {
                     return {
-                        relativeTop: offset + relativeLength(
+                        relativeLeft: offset + relativeLength(
                             node.options.offset || 0,
                             totalNodeOffset
                         )
@@ -202,157 +241,135 @@ class ArcDiagramSeries extends SankeySeries {
         };
 
         // Get the top position of the column in pixels.
-        column.top = function (
+        (column as any).left = function (
             this: ArcDiagramSeries.ColumnArray,
             factor: number
         ): number {
             const equalNodes = (series.options as any).equalNodes;
-            const maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
+            const maxNodesLength = chart.inverted ? chart.plotHeight : chart.plotWidth,
                 nodePadding = series.nodePadding;
-            const height = this.reduce(function (
-                height: number,
-                node: DependencyWheelPoint
+            const width = this.reduce(function (
+                width: number,
+                node: ArcDiagramPoint
             ): number {
-                if (height > 0) {
-                    height += nodePadding;
+                if (width > 0) {
+                    width += nodePadding;
                 }
-                const nodeHeight = equalNodes ?
+                const nodeWidth = equalNodes ?
                     maxNodesLength / node.series.nodes.length - nodePadding :
                     Math.max(
                         node.getSum() * factor,
                         series.options.minLinkWidth as any
                     );
-                height += nodeHeight;
-                return height;
+                width += nodeWidth;
+                return width;
             }, 0);
-            return ((chart.plotSizeY as any) - Math.round(height)) / 2;
+            return ((chart.plotSizeX as any) - Math.round(width)) / 2;
         };
-        return column;
-    }
 
-    /**
-     * @private
-     * @todo Override the refactored sankey translateLink and translateNode
-     * functions instead of the whole translate function.
-     */
-    public translate(): void {
-
-        SankeySeries.prototype.translate.call(this);
-
+        // Add nodes directly to the column right after it's creation
+        series.nodes.forEach(function (
+            node: ArcDiagramPoint
+        ): void {
+            node.column = 0;
+            column.push(node);
+        });
+        return [column];
     }
 
     /**
      * Run translation operations for one link.
      * @private
      */
-    public translateLink(point: DependencyWheelPoint): void {
-
-        const getY = (
-            node: DependencyWheelPoint,
+    public translateLink(point: ArcDiagramPoint): void {
+        const getX = (
+            node: ArcDiagramPoint,
             fromOrTo: string
         ): number => {
-            const linkTop = (
+            const linkLeft = (
                 (node.offset(point, fromOrTo) as any) *
                 translationFactor
             );
-            const y = Math.min(
-                node.nodeY + linkTop,
+            const x = Math.min(
+                node.nodeX + linkLeft,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
+                node.nodeX + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
             );
-            return y;
+            return x;
         };
 
-        let fromNode = point.fromNode,
+        const fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
             translationFactor = this.translationFactor,
             linkHeight = pick((point.series.options as any).linkHeight, Math.max(
-                (point.weight as any) * translationFactor,
+                (point.weight as any) * translationFactor * (fromNode as any).scale,
                 (this.options.minLinkWidth as any)
-            ));
+            )),
+            centeredLinks = (point.series.options as any).centeredLinks,
+            nodeTop = fromNode.nodeY;
 
-        let centeredLinks = (point.series.options as any).centeredLinks,
-            fromY = centeredLinks ?
-                fromNode.nodeY +
+        let fromX = centeredLinks ?
+                fromNode.nodeX +
                     ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
-                getY(fromNode, 'linksFrom'),
-            toY = centeredLinks ? toNode.nodeY +
+                getX(fromNode, 'linksFrom'),
+            toX = centeredLinks ? toNode.nodeX +
                 ((toNode.shapeArgs.height || 0) - linkHeight) / 2 :
-                getY(toNode, 'linksTo'),
-            nodeLeft = fromNode.nodeX,
-            nodeW = this.nodeWidth,
-            right = nodeLeft + nodeW,
-            majorRadius,
+                getX(toNode, 'linksTo'),
+            bottom = nodeTop,
             linkWidth = linkHeight;
 
-        if (fromY > toY) {
-            [fromY, toY] = [toY, fromY];
-        }
-
-        if (chart.inverted) {
-            fromY = (chart.plotSizeY as any) - fromY;
-            toY = (chart.plotSizeY || 0) - toY;
-            right = right - 2 * nodeW;
-            nodeW = -nodeW;
-            linkHeight = -linkHeight;
-        }
-
-        if (!chart.inverted && !(chart as any).options.chart.reversed) {
-            right -= nodeW / 2;
+        if (fromX > toX) {
+            [fromX, toX] = [toX, fromX];
         }
 
         if ((chart as any).options.chart.reversed) {
-            [fromY, toY] = [toY, fromY];
-            right = (chart.plotSizeX as any) - right;
-            if (chart.inverted) {
-                right -= nodeW / 2;
-            }
+            [fromX, toX] = [toX, fromX];
+            bottom = (chart.plotSizeY as any) - bottom;
             linkWidth = -linkWidth;
         }
 
         point.shapeType = 'path';
         point.linkBase = [
-            fromY,
-            fromY + linkHeight,
-            toY,
-            toY + linkHeight
+            fromX,
+            fromX + linkHeight,
+            toX,
+            toX + linkHeight
         ];
 
-        majorRadius = (
-            (toY + linkHeight - fromY) / Math.abs(toY + linkHeight - fromY)
+        const majorRadius = (
+            (toX + linkHeight - fromX) / Math.abs(toX + linkHeight - fromX)
         ) * pick(
             (point.series.options as any).majorRadius,
-            Math.min(Math.abs(toY + linkHeight - fromY) / 2,
-                chart.inverted ?
-                    fromNode.nodeX - Math.abs(linkHeight) - chart.plotTop :
-                    (chart.plotWidth - fromNode.nodeX) - Math.abs(linkHeight) - chart.plotLeft
+            Math.min(
+                Math.abs(toX + linkHeight - fromX) / 2,
+                fromNode.nodeY - Math.abs(linkHeight)
             )
         );
 
         point.shapeArgs = {
             d: [
-                ['M', right, fromY],
+                ['M', fromX, bottom],
                 [
                     'A',
+                    (toX + linkHeight - fromX) / 2,
                     majorRadius,
-                    (toY + linkHeight - fromY) / 2,
                     0,
                     0,
                     1,
-                    right,
-                    toY + linkHeight
+                    toX + linkHeight,
+                    bottom
                 ],
-                ['L', right, toY],
+                ['L', toX, bottom],
                 [
                     'A',
+                    (toX - fromX - linkHeight) / 2,
                     majorRadius - linkHeight,
-                    (toY - fromY - linkHeight) / 2,
                     0,
                     0,
                     0,
-                    right,
-                    fromY + linkHeight
+                    fromX + linkHeight,
+                    bottom
                 ],
                 ['Z']
             ]
@@ -361,15 +378,15 @@ class ArcDiagramSeries extends SankeySeries {
         // Place data labels in the middle
         if ((point.series.options as any).nodeShape === 'circle') {
             point.dlBox = {
-                x: nodeLeft + (right - nodeLeft + nodeW) / 2,
-                y: fromY + (toY - fromY) / 2,
+                x: nodeTop + (bottom - nodeTop) / 2,
+                y: fromX + (toX - fromX) / 2,
                 height: linkHeight,
                 width: 0
             };
         } else {
             point.dlBox = {
-                x: nodeLeft + (right - nodeLeft + nodeW) / 2,
-                y: fromY + (toY - fromY) / 2,
+                x: nodeTop + (bottom - nodeTop) / 2,
+                y: fromX + (toX - fromX) / 2,
                 height: linkHeight,
                 width: 0
             };
@@ -398,7 +415,7 @@ class ArcDiagramSeries extends SankeySeries {
      * @private
      */
     public translateNode(
-        node: DependencyWheelPoint,
+        node: ArcDiagramPoint,
         column: ArcDiagramSeries.ColumnArray
     ): void {
         const translationFactor = this.translationFactor,
@@ -410,65 +427,59 @@ class ArcDiagramSeries extends SankeySeries {
                 chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
-            sum = node.getSum();
-        let equalNodes = (node.series.options as any).equalNodes;
-
-        const nodeHeight = equalNodes ?
-            maxRadius :
-            Math.max(
-                sum * translationFactor,
-                this.options.minLinkWidth as any
-            );
-
-        let crisp = Math.round(options.borderWidth as any) % 2 / 2,
+            sum = node.getSum() * (column as any).scale,
+            equalNodes = (node.series.options as any).equalNodes,
+            nodeHeight = equalNodes ?
+                maxRadius :
+                Math.max(
+                    sum * translationFactor,
+                    this.options.minLinkWidth as any
+                ),
+            crisp = Math.round(options.borderWidth || 0) % 2 / 2,
             nodeOffset = column.offset(node, translationFactor),
-            fromNodeTop = Math.floor(pick(
-                (nodeOffset as any).absoluteTop,
+            fromNodeLeft = Math.floor(pick(
+                (nodeOffset as any).absoluteLeft,
                 (
-                    column.top(translationFactor) +
-                    (nodeOffset as any).relativeTop
+                    (column as any).left(translationFactor) +
+                    (nodeOffset as any).relativeLeft
                 )
             )) + crisp,
-            left = (options as any).centerPos ? // POC for centering the nodes
+            top = (options as any).centerPos ? // POC for centering the nodes
                 parseInt((options as any).centerPos, 10) *
+                (
+                    (
+                        chart.inverted ?
+                            chart.plotWidth : chart.plotHeight
+                    ) -
+                    Math.min(maxRadius / 2, (column as any).scale * (column as any).maxRadius / 2)
+                ) / 100 :
                 (chart.inverted ?
-                    chart.plotHeight : chart.plotWidth -
-                    (column as any).maxRadius) / 100 :
-                Math.floor(
+                    chart.plotWidth : chart.plotHeight) - (Math.floor(
                     this.colDistance * (node.column as any) +
                     (options.borderWidth as any) / 2
-                ) + crisp + (column as any).maxRadius / 2;
-
-        let nodeWidth = Math.round(this.nodeWidth);
-
-        let nodeLeft = chart.inverted ?
-            (chart.plotSizeX as any) - left :
-            left;
-
+                ) + crisp + (column as any).scale * (column as any).maxRadius / 2
+                );
         node.sum = sum;
         // If node sum is 0, don’t render the rect #12453
         if (sum) {
             // Draw the node
             node.shapeType = (node.series.options as any).nodeShape;
 
-            node.nodeX = nodeLeft;
-            node.nodeY = fromNodeTop;
+            node.nodeX = fromNodeLeft;
+            node.nodeY = top;
 
-            let x = nodeLeft,
-                y = fromNodeTop,
-                width = node.options.width || options.width || nodeWidth,
+            let x = fromNodeLeft,
+                y = top,
+                width = node.options.width || options.width || nodeHeight,
                 height = node.options.height || options.height || nodeHeight;
 
-            if (chart.inverted) {
-                x = nodeLeft - nodeWidth;
-                y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
-                width = node.options.height || options.height || nodeWidth;
-                height = node.options.width || options.width || nodeHeight;
-                nodeWidth = -nodeWidth;
-            }
             if ((chart as any).options.chart.reversed) {
-                x = (chart.plotSizeX as any) - nodeLeft - nodeWidth;
+                y = (chart.plotSizeY as any) - top;
+                if (chart.inverted) {
+                    y = (chart.plotSizeY as any) - top;
+                }
             }
+
             // Calculate data label options for the point
             node.dlOptions = SankeySeries.getDLOptions({
                 level: (this.mapOptionsToLevel as any)[node.level],
@@ -488,14 +499,10 @@ class ArcDiagramSeries extends SankeySeries {
                 y + height / 2
             ];
             if (node.shapeType === 'circle') {
-                // logical XOR for checking if one of two booleans is true
-                if ((chart as any).options.chart.reversed ? !chart.inverted : chart.inverted) {
-                    width = 0;
-                } // (a || b) ^ !(a && b)
 
                 node.shapeArgs = {
                     x: x + width / 2,
-                    y: y + height / 2,
+                    y: y,
                     r: height / 2,
                     width: width,
                     height,
@@ -504,7 +511,7 @@ class ArcDiagramSeries extends SankeySeries {
 
                 node.dlBox = {
                     x: x + width / 2,
-                    y: y + height / 2,
+                    y: y,
                     height: 0,
                     width: 0
                 };
@@ -549,8 +556,10 @@ extend(ArcDiagramSeries.prototype, {
  * */
 
 namespace ArcDiagramSeries {
-    export interface ColumnArray<T = DependencyWheelPoint> extends SankeySeriesType.ColumnArray<T> {
+    export interface ColumnArray<T = ArcDiagramPoint> extends SankeySeriesType.ColumnArray<T> {
         // nothing here yets
+        maxLength: number;
+        getTranslationFactor(this: ArcDiagramSeries.ColumnArray, series: ArcDiagramSeries): number;
     }
 }
 
