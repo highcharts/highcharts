@@ -982,18 +982,7 @@ namespace OrdinalAxis {
                             ordinalPositions = uniqueOrdinalPositions;
                         }
                     }
-
-                    // Enable boost for the ordinal axis, #14055.
-                    // if (series.isSeriesBoosting) {
-                    //     hasBoostedSeries = true;
-                    // }
-
                 });
-
-                // Enable boost for the ordinal axis, #14055.
-                // if (hasBoostedSeries) {
-                //     ordinalPositions.length = 0;
-                // }
 
                 // cache the length
                 len = ordinalPositions.length;
