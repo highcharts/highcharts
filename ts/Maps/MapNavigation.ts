@@ -67,8 +67,8 @@ declare global {
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
             mapZoom(
                 howMuch?: number,
-                lat?: number,
-                lng?: number,
+                xProjected?: number,
+                yProjected?: number,
                 chartX?: number,
                 chartY?: number
             ): void;
@@ -386,11 +386,13 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *        in to half the current view. 2 zooms to twice the current view. If
      *        omitted, the zoom is reset.
      *
-     * @param {number} [lat]
-     *        The latitude to keep stationary when zooming if available space.
+     * @param {number} [xProjected]
+     *        The projected x position to keep stationary when zooming, if
+     *        available space.
      *
-     * @param {number} [lng]
-     *        The longitude to keep stationary when zooming if available space.
+     * @param {number} [yProjected]
+     *        The projected y position to keep stationary when zooming, if
+     *        available space.
      *
      * @param {number} [chartX]
      *        Keep this chart position stationary if possible. This is used for
