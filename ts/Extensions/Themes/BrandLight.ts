@@ -267,7 +267,7 @@ namespace BrandLightTheme {
     export function apply(): void {
         // Load the fonts
         createElement('link', {
-            href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
+            href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:200,300,400,600,700',
             rel: 'stylesheet',
             type: 'text/css'
         }, null as any, document.getElementsByTagName('head')[0]);
