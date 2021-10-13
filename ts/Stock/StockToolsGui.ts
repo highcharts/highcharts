@@ -161,7 +161,7 @@ declare global {
             public init(): void;
             public redraw(): void;
             public scrollButtons(): void;
-            public selectButton(button: HTMLDOMElement): void;
+            public toggleButtonAciveClass(button: HTMLDOMElement): void;
             public showHideNavigatorion(): void;
             public showHideToolbar(): void;
             public switchSymbol(button: HTMLDOMElement, redraw?: boolean): void;
@@ -1630,7 +1630,7 @@ class Toolbar {
 
         // set active class
         if (redraw) {
-            this.selectButton(mainNavButton);
+            this.toggleButtonAciveClass(mainNavButton);
         }
     }
     /*
@@ -1639,7 +1639,7 @@ class Toolbar {
      * @param {HTMLDOMElement} - button
      *
      */
-    public selectButton(button: HTMLDOMElement): void {
+    public toggleButtonAciveClass(button: HTMLDOMElement): void {
         if (button.className.indexOf(activeClass) >= 0) {
             button.classList.remove(activeClass);
         } else {
@@ -1816,7 +1816,7 @@ addEvent(NavigationBindings, 'selectButton', function (
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        gui.selectButton(button);
+        gui.toggleButtonAciveClass(button);
     }
 });
 
@@ -1832,7 +1832,7 @@ addEvent(NavigationBindings, 'deselectButton', function (
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        gui.selectButton(button);
+        gui.toggleButtonAciveClass(button);
     }
 });
 
