@@ -302,7 +302,7 @@ declare global {
 
 import Axis from '../Core/Axis/Axis.js';
 
-const Scatter: (typeof seriesTypes.scatter|typeof seriesTypes.map) = seriesTypes.scatter,
+const Scatter = seriesTypes.scatter,
     baseGeneratePoints = Series.prototype.generatePoints;
 
 // Points that ids are included in the oldPointsStateId array
