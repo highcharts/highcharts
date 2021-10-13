@@ -18,6 +18,7 @@
 
 import type Point from '../../Core/Series/Point';
 import type SMAPoint from './SMA/SMAPoint';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -26,6 +27,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import AreaRangeSeries from '../../Series/AreaRange/AreaRangeSeries.js';
+import AreaSeries from '../../Series/Area/AreaSeries.js';
 const {
     defined,
     error,
@@ -70,6 +73,7 @@ namespace MultipleLinesComposition {
 
     export declare class Composition extends SMAIndicator {
         linesApiNames: Array<string>;
+        areaElement: SVGElement;
         options: Options;
         pointArrayMap: Array<string>;
         pointValKey: string;
@@ -255,8 +259,33 @@ namespace MultipleLinesComposition {
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
         SMAIndicator.prototype.drawGraph.call(indicator);
+        drawArea(indicator);
+
     }
 
+    /**
+     * Function, that draws and updates the area between lines in the indicator.
+     * @param indicator indicator
+     */
+    function drawArea(indicator: MultipleLinesComposition.Composition): void {
+
+
+        const options = (indicator as any).options.areaOptions;
+        if (options) {
+            const bottomPath = (indicator as any).graphbottomLine.pathArray,
+                highPath = (indicator as any).graphtopLine.pathArray.reverse();
+            highPath[0][0] = 'L';
+            const path = bottomPath.concat(highPath);
+
+            if (indicator.areaElement) {
+                indicator.areaElement.animate({ d: path });
+            } else {
+                indicator.areaElement = indicator.chart.renderer
+                    .path({ d: path, fill: 'rgba(255, 0, 0, 0.2)' })
+                    .add(indicator.group);
+            }
+        }
+    }
     /**
      * Create translatedLines Collection based on pointArrayMap.
      *
