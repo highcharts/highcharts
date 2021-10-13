@@ -4,15 +4,15 @@
  *
  * */
 
-import type ProjectionDefinition from '../ProjectionTypes';
+'use strict';
+
+import type ProjectionDefinition from '../ProjectionDefinition';
 
 import EqualEarth from './EqualEarth.js';
 import Miller from './Miller.js';
 import Orthographic from './Orthographic.js';
 import WebMercator from './WebMercator.js';
 
-
-'use strict';
 
 const registry: Record<string, ProjectionDefinition> = {
     EqualEarth,

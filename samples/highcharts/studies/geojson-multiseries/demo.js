@@ -38,48 +38,13 @@ const getGeoJSON = async url => {
             }
         },
 
-        colorAxis: {
-            tickPixelInterval: 100
-        },
-
         plotOptions: {
             map: {
-                keys: ['code_hasc', 'value'],
-                joinBy: 'code_hasc',
-                name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
-                dataLabels: {
-                    enabled: true
-                }
+                showInLegend: false
             }
         },
 
-        series: [/*{
-            name: 'Graticule',
-            type: 'mapline',
-            data: [{
-                type: 'LineString',
-                coordinates: [
-                    [-179, 88],
-                    [179, 88],
-                    [179, -60],
-                    [-179, -60]
-                ]
-            }, {
-                type: 'LineString',
-                coordinates: [
-                    [-179, 89],
-                    [0, 89],
-                    [179, 89]
-                ]
-            }],
-            nullColor: '#e8e8e8',
-            color: '#e8e8e8'
-        },*/ {
+        series: [{
             data: [],
             mapData: norway
         }, {

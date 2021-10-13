@@ -8,9 +8,9 @@
  *
  * */
 
-import type ProjectionDefinition from '../ProjectionTypes';
-
 'use strict';
+
+import type ProjectionDefinition from '../ProjectionDefinition';
 
 const A1 = 1.340264,
     A2 = -0.081106,

@@ -280,7 +280,13 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
             ).slice();
         }
 
-        if (mapView.projection.options.projectionName === 'Orthographic') {
+        // Panning rotates the globe
+        if (
+            mapView.projection.options.projectionName === 'Orthographic' &&
+
+            // ... but don't rotate if we're loading only a part of the world
+            (mapView.minZoom || Infinity) < 25.2
+        ) {
 
             // Empirical ratio where the globe rotates roughly the same speed
             // as moving the pointer across the center of the projection

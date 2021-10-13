@@ -2,9 +2,9 @@
  * Orthographic projection
  * */
 
-import type ProjectionDefinition from '../ProjectionTypes';
-
 'use strict';
+
+import type ProjectionDefinition from '../ProjectionDefinition';
 
 const deg2rad = Math.PI / 180;
 

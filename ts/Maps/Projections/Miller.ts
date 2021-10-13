@@ -2,9 +2,9 @@
  * Miller projection
  * */
 
-import type ProjectionDefinition from '../ProjectionTypes';
-
 'use strict';
+
+import type ProjectionDefinition from '../ProjectionDefinition';
 
 const quarterPI = Math.PI / 4;
 const deg2rad = Math.PI / 180;

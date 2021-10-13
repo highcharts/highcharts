@@ -2,10 +2,10 @@
  * Web Mercator projection, used for most online map tile services
  * */
 
-import type { LonLatArray } from '../MapViewOptions';
-import type ProjectionDefinition from '../ProjectionTypes';
-
 'use strict';
+
+import type { LonLatArray } from '../MapViewOptions';
+import type ProjectionDefinition from '../ProjectionDefinition';
 
 const maxLatitude = 85.0511287798; // The latitude that defines a square
 const r = 6378137;
