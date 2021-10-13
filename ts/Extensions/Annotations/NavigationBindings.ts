@@ -472,13 +472,9 @@ class NavigationBindings {
                         {
                             visiblePlotOnly: true
                         }
-                    ) &&
-                    navigation.selectedButtonElement &&
-                    navigation.selectedButtonElement.className.indexOf('highcharts-active') > -1
+                    )
                 ) {
                     navigation.bindingsChartClick(this as any, e);
-                } else {
-                    navigation.selectedButtonElement = null;
                 }
             })
         );
@@ -548,10 +544,11 @@ class NavigationBindings {
                 navigation.mouseMoveEvent = navigation.nextEvent = false;
             }
         }
-        fireEvent(navigation, 'selectButton', { button: button });
 
         navigation.selectedButton = events;
+        navigation.selectedButtonElement = button;
 
+        fireEvent(navigation, 'selectButton', { button: button });
         // Call "init" event, for example to open modal window
         if (events.init) {
             events.init.call(navigation, button, clickEvent);
