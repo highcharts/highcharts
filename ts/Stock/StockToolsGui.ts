@@ -1817,6 +1817,7 @@ addEvent(NavigationBindings, 'selectButton', function (
         }
         // Set active class on the current button
         gui.selectButton(button);
+        this.selectedButtonElement = button; // #16371
     }
 });
 
