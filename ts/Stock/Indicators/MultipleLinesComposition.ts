@@ -29,6 +29,8 @@ const {
 import U from '../../Core/Utilities.js';
 import AreaRangeSeries from '../../Series/AreaRange/AreaRangeSeries.js';
 import AreaSeries from '../../Series/Area/AreaSeries.js';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import SVGPath from '../../Core/Renderer/SVG/SVGPath';
 const {
     defined,
     error,
@@ -84,7 +86,12 @@ namespace MultipleLinesComposition {
     }
 
     export interface Options {
+        areaOptions?: AreaBackgroundOptions;
         gapSize?: number;
+    }
+    interface AreaBackgroundOptions {
+        lineNames: Array<string>;
+        styles: SVGAttributes;
     }
 
     /* *
@@ -265,15 +272,19 @@ namespace MultipleLinesComposition {
 
     /**
      * Function, that draws and updates the area between lines in the indicator.
-     * @param indicator indicator
+     * @param indicator multiline indicator
      */
     function drawArea(indicator: MultipleLinesComposition.Composition): void {
+        const options = indicator.options.areaOptions;
 
-
-        const options = (indicator as any).options.areaOptions;
-        if (options) {
-            const bottomPath = (indicator as any).graphbottomLine.pathArray,
-                highPath = (indicator as any).graphtopLine.pathArray.reverse();
+        if (options && indicator.graph) {
+            const lineNames = options.lineNames;
+            const firstLine = (indicator as any)[`graph${lineNames[0]}`];
+            const secondLine = (indicator as any)[`graph${lineNames[1]}`];
+            const bottomPath = firstLine ? firstLine.pathArray : indicator.graph.pathArray;
+            const highPath = (secondLine ? secondLine.pathArray : indicator.graph.pathArray).reverse();
+            const test = indicator.graph.pathArray;
+            const test2 = (test as SVGPath).reverse();
             highPath[0][0] = 'L';
             const path = bottomPath.concat(highPath);
 
@@ -281,7 +292,8 @@ namespace MultipleLinesComposition {
                 indicator.areaElement.animate({ d: path });
             } else {
                 indicator.areaElement = indicator.chart.renderer
-                    .path({ d: path, fill: 'rgba(255, 0, 0, 0.2)' })
+                    .path({ d: path })
+                    .attr(options.styles)
                     .add(indicator.group);
             }
         }
