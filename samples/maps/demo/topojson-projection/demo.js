@@ -1021,7 +1021,7 @@ Highcharts.getJSON(
             // For this demo, get the first of the named objects
             topology.objects[Object.keys(topology.objects)[0]]
         );
-        geojson.copyrightUrl = topology.copyrightURL;
+        geojson.copyrightUrl = topology.copyrightUrl;
         geojson.copyrightShort = topology.copyrightShort;
 
         const chart = Highcharts.mapChart('container', {
