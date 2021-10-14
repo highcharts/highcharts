@@ -57,7 +57,8 @@ module.exports = {
             'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
-            'maps/latlon'
+            'maps/latlon',
+            'maps/tilemap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -104,7 +105,6 @@ module.exports = {
             'chart-and-series-types/spline-chart',
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
-            'chart-and-series-types/tilemap-series',
             'chart-and-series-types/timeline-series',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
