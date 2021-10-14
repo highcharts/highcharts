@@ -58,6 +58,7 @@ module.exports = {
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
             'maps/latlon',
+            'maps/map-series',
             'maps/tilemap-series'
         ],
         'Gantt': [
