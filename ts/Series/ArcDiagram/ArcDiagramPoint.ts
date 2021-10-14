@@ -67,6 +67,7 @@ class ArcDiagramPoint extends SankeySeries.prototype.pointClass {
 
     public toNode: ArcDiagramPoint = void 0 as any;
 
+
     /* *
      *
      *  Functions

@@ -282,6 +282,18 @@ class ArcDiagramSeries extends SankeySeries {
      * @private
      */
     public translateLink(point: ArcDiagramPoint): void {
+        const fromNode = point.fromNode,
+            toNode = point.toNode,
+            chart = this.chart,
+            translationFactor = this.translationFactor,
+            pointOptions = point.options,
+            linkWeight = pick(pointOptions.linkWeight, Math.max(
+                (point.weight || 0) * translationFactor * (fromNode as any).scale,
+                (this.options.minLinkWidth || 0)
+            )),
+            centeredLinks = (point.series.options as any).centeredLinks,
+            nodeTop = fromNode.nodeY;
+
         const getX = (
             node: ArcDiagramPoint,
             fromOrTo: string
@@ -293,31 +305,20 @@ class ArcDiagramSeries extends SankeySeries {
             const x = Math.min(
                 node.nodeX + linkLeft,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeX + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
+                node.nodeX + (node.shapeArgs && node.shapeArgs.height || 0) - linkWeight
             );
             return x;
         };
 
-        const fromNode = point.fromNode,
-            toNode = point.toNode,
-            chart = this.chart,
-            translationFactor = this.translationFactor,
-            linkHeight = pick((point.series.options as any).linkHeight, Math.max(
-                (point.weight as any) * translationFactor * (fromNode as any).scale,
-                (this.options.minLinkWidth as any)
-            )),
-            centeredLinks = (point.series.options as any).centeredLinks,
-            nodeTop = fromNode.nodeY;
-
         let fromX = centeredLinks ?
                 fromNode.nodeX +
-                    ((fromNode.shapeArgs.height || 0) - linkHeight) / 2 :
+                    ((fromNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(fromNode, 'linksFrom'),
             toX = centeredLinks ? toNode.nodeX +
-                ((toNode.shapeArgs.height || 0) - linkHeight) / 2 :
+                ((toNode.shapeArgs.height || 0) - linkWeight) / 2 :
                 getX(toNode, 'linksTo'),
             bottom = nodeTop,
-            linkWidth = linkHeight;
+            linkWidth = linkWeight;
 
         if (fromX > toX) {
             [fromX, toX] = [toX, fromX];
@@ -332,18 +333,18 @@ class ArcDiagramSeries extends SankeySeries {
         point.shapeType = 'path';
         point.linkBase = [
             fromX,
-            fromX + linkHeight,
+            fromX + linkWeight,
             toX,
-            toX + linkHeight
+            toX + linkWeight
         ];
 
         const majorRadius = (
-            (toX + linkHeight - fromX) / Math.abs(toX + linkHeight - fromX)
+            (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
         ) * pick(
             (point.series.options as any).majorRadius,
             Math.min(
-                Math.abs(toX + linkHeight - fromX) / 2,
-                fromNode.nodeY - Math.abs(linkHeight)
+                Math.abs(toX + linkWeight - fromX) / 2,
+                fromNode.nodeY - Math.abs(linkWeight)
             )
         );
 
@@ -352,53 +353,43 @@ class ArcDiagramSeries extends SankeySeries {
                 ['M', fromX, bottom],
                 [
                     'A',
-                    (toX + linkHeight - fromX) / 2,
+                    (toX + linkWeight - fromX) / 2,
                     majorRadius,
                     0,
                     0,
                     1,
-                    toX + linkHeight,
+                    toX + linkWeight,
                     bottom
                 ],
                 ['L', toX, bottom],
                 [
                     'A',
-                    (toX - fromX - linkHeight) / 2,
-                    majorRadius - linkHeight,
+                    (toX - fromX - linkWeight) / 2,
+                    majorRadius - linkWeight,
                     0,
                     0,
                     0,
-                    fromX + linkHeight,
+                    fromX + linkWeight,
                     bottom
                 ],
                 ['Z']
             ]
         } as any;
 
-        // Place data labels in the middle
-        if ((point.series.options as any).nodeShape === 'circle') {
-            point.dlBox = {
-                x: nodeTop + (bottom - nodeTop) / 2,
-                y: fromX + (toX - fromX) / 2,
-                height: linkHeight,
-                width: 0
-            };
-        } else {
-            point.dlBox = {
-                x: nodeTop + (bottom - nodeTop) / 2,
-                y: fromX + (toX - fromX) / 2,
-                height: linkHeight,
-                width: 0
-            };
-        }
+        point.dlBox = {
+            x: nodeTop + (bottom - nodeTop) / 2,
+            y: fromX + (toX - fromX) / 2,
+            height: linkWeight,
+            width: 0
+        };
 
         // And set the tooltip anchor in the middle
         point.tooltipPos = chart.inverted ? [
-            (chart.plotSizeY as any) - point.dlBox.y - linkHeight / 2,
-            (chart.plotSizeX as any) - point.dlBox.x
+            (chart.plotSizeY || 0) - point.dlBox.y - linkWeight / 2,
+            (chart.plotSizeX || 0) - point.dlBox.x
         ] : [
             point.dlBox.x,
-            point.dlBox.y + linkHeight / 2
+            point.dlBox.y + linkWeight / 2
         ];
 
         // Pass test in drawPoints
@@ -464,7 +455,6 @@ class ArcDiagramSeries extends SankeySeries {
         if (sum) {
             // Draw the node
             node.shapeType = (node.series.options as any).nodeShape;
-
             node.nodeX = fromNodeLeft;
             node.nodeY = top;
 
@@ -498,8 +488,8 @@ class ArcDiagramSeries extends SankeySeries {
                 x + width / 2,
                 y + height / 2
             ];
-            if (node.shapeType === 'circle') {
 
+            if (node.shapeType === 'circle') {
                 node.shapeArgs = {
                     x: x + width / 2,
                     y: y,
@@ -525,6 +515,7 @@ class ArcDiagramSeries extends SankeySeries {
                     display: node.hasShape() ? '' : 'none'
                 };
             }
+
         } else {
             node.dlOptions = {
                 enabled: false
@@ -557,7 +548,6 @@ extend(ArcDiagramSeries.prototype, {
 
 namespace ArcDiagramSeries {
     export interface ColumnArray<T = ArcDiagramPoint> extends SankeySeriesType.ColumnArray<T> {
-        // nothing here yets
         maxLength: number;
         getTranslationFactor(this: ArcDiagramSeries.ColumnArray, series: ArcDiagramSeries): number;
     }

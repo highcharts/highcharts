@@ -31,6 +31,11 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     startAngle?: number;
     states?: SeriesStatesOptions<DependencyWheelSeries>;
     equalNodes?: boolean;
+    centeredLinks?: boolean;
+    majorRadius?: number;
+    scale?: number;
+    nodeShape?: string; // experimental
+    centerPos?: boolean;
 }
 
 export default ArcDiagramSeriesOptions;
