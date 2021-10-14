@@ -281,15 +281,14 @@ namespace MultipleLinesComposition {
             const lineNames = options.lineNames;
             const firstLine = (indicator as any)[`graph${lineNames[0]}`];
             const secondLine = (indicator as any)[`graph${lineNames[1]}`];
-            const bottomPath = firstLine ? firstLine.pathArray : indicator.graph.pathArray;
-            const highPath = (secondLine ? secondLine.pathArray : indicator.graph.pathArray).reverse();
-            const test = indicator.graph.pathArray;
-            const test2 = (test as SVGPath).reverse();
-            highPath[0][0] = 'L';
-            const path = bottomPath.concat(highPath);
+            const firstPath = firstLine ? firstLine.pathArray : indicator.graph.pathArray;
+            const secondPath = (secondLine ? secondLine.pathArray.reverse() : indicator.graph.pathArray);
+            secondPath[0][0] = 'L';
+            const path = firstPath.concat(secondPath);
 
+            // animation doesn't work :(
             if (indicator.areaElement) {
-                indicator.areaElement.animate({ d: path });
+                indicator.areaElement.attr({ d: path });
             } else {
                 indicator.areaElement = indicator.chart.renderer
                     .path({ d: path })
