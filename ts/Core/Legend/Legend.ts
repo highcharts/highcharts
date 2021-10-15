@@ -802,7 +802,9 @@ class Legend {
         );
         legend.totalItemWidth += item.itemWidth as any;
         legend.itemHeight = item.itemHeight = Math.round(
-            item.legendItemHeight || bBox.height || legend.symbolHeight
+            item.legendItemHeight ||
+            (legend.fontMetrics && legend.fontMetrics.h) ||
+            bBox.height
         );
     }
 
