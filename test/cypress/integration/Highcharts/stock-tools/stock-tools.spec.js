@@ -7,6 +7,24 @@ describe('Stock Tools', () => {
         cy.visit('/stock/demo/stock-tools-gui');
     });
 
+    it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
+        cy.get('.highcharts-label-annotation')
+            .first()
+            .click();
+        cy.get('.highcharts-label-annotation')
+            .first()
+            .click();
+        cy.get('.highcharts-container')
+            .click(100, 210)
+
+    cy.chart().should(chart =>
+            assert.notOk(
+                chart.annotations.length,
+                'Annotation should not be added.'
+            )
+        );
+    });
+
     it('#15730: Should close popup after hiding annotation', () => {
         cy.get('.highcharts-label-annotation').first().click();
         cy.get('.highcharts-container').click();
@@ -80,39 +98,5 @@ describe('Stock Tools', () => {
         cy.get('#highcharts-select-params\\.average')
             .select('ema')
         cy.addIndicator();
-    });
-});
-
-
-describe('Measure annotation, #15696.', () => {
-    beforeEach(() => {
-        cy.viewport(1000, 800);
-    });
-
-    before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
-    });
-    it('#15725: Should use the same axis for all points in multi-step annotation', () => {
-        cy.get('.highcharts-range-selector-group')
-            .contains('3m')
-            .click()
-
-        cy.get('.highcharts-measure-xy')
-            .children()
-            .eq(1)
-            .click();
-        cy.get('.highcharts-measure-y')
-            .click();
-
-        cy.get('.highcharts-container')
-            .click(250, 200, { force: true })
-            .click(350, 100, { force: true })
-
-        cy.chart().then(chart =>
-            assert.ok(
-                chart.annotations[0].startXMax,
-                'The startXMax property should be calculated.'
-            )
-        );
     });
 });
