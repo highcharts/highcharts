@@ -28,7 +28,6 @@ const {
     addEvent,
     objectEach,
     isFunction,
-    uniqueKey,
     getStyle,
     relativeLength
 } = U;
@@ -39,13 +38,11 @@ const {
     getPaddings
 } = CU;
 import ComponentGroup from './ComponentGroup.js';
+import DU from '../DashboardUtilities.js';
+const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 
 abstract class Component<TEventObject extends Component.EventTypes = Component.EventTypes> {
-
-    protected static getUUID(): string {
-        return 'dashboard-component-' + uniqueKey();
-    }
 
     public static createTextElement(
         tagName: string,
@@ -132,7 +129,7 @@ abstract class Component<TEventObject extends Component.EventTypes = Component.E
         this.options = merge(Component.defaultOptions, options);
         this.id = this.options.id && this.options.id.length ?
             this.options.id :
-            Component.getUUID();
+            uniqueKey();
 
         // Todo: we might want to handle this later
         if (typeof this.options.parentElement === 'string') {

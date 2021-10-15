@@ -88,3 +88,22 @@ skip('Both components should work', (assert) => {
     components.forEach(comp => comp.destroy());
 });
 
+test('HighchartsComponent constructors', function (assert) {
+    const constructorMap = {
+        '': Highcharts.chart,
+        'stock': Highcharts.stockChart,
+        'map': Highcharts.mapChart,
+        'gantt': Highcharts.ganttChart
+    }
+
+    Object.keys(constructorMap).forEach(HCType =>{
+        const component = new HighchartsComponent({
+            chartConstructor: constructorMap[HCType],
+            chartOptions: {}
+        }).render();
+        // Test that the constructor creates a chart
+        assert.ok(component.chart, `Able to create a ${HCType} chart`);
+
+    })
+});
+

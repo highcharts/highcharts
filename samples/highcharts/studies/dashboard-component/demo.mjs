@@ -1,4 +1,4 @@
-import ChartComponent from  '../../../../code/es-modules/Dashboard/Component/ChartComponent.js';
+import HighchartsComponent from  '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
 import DOMComponent from  '../../../../code/es-modules/Dashboard/Component/HTMLComponent.js';
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 
@@ -31,9 +31,8 @@ store.table.setColumns(
 
 const components = [];
 
-components.push(new ChartComponent({
+components.push(new HighchartsComponent({
     id: 'stockChartComponent',
-    Highcharts,
     parentElement: target,
     store,
     tableAxisMap: {
@@ -106,9 +105,8 @@ components.map(comp => {
     console.log(mapData);
     Highcharts.maps['custom/europe'] = Highcharts.geojson(mapData);
 
-    const component = new ChartComponent({
+    const component = new HighchartsComponent({
         parentElement: target,
-        Highcharts: Maps,
         chartConstructor: 'map',
         store,
         title: {
