@@ -74,20 +74,7 @@ class MapChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        const hiddenAxis = {
-                endOnTick: false,
-                visible: false,
-                minPadding: 0,
-                maxPadding: 0,
-                startOnTick: false
-            },
-            defaultCreditsOptions = getOptions().credits;
-
-        /* For visual testing
-        hiddenAxis.gridLineWidth = 1;
-        hiddenAxis.gridZIndex = 10;
-        hiddenAxis.tickPositions = undefined;
-        // */
+        const defaultCreditsOptions = getOptions().credits;
 
         const options = merge(
             {
@@ -112,18 +99,9 @@ class MapChart extends Chart {
                 mapView: {}, // Required to enable Chart.mapView
                 tooltip: {
                     followTouchMove: false
-                },
-                xAxis: hiddenAxis,
-                yAxis: merge(hiddenAxis, { reversed: true })
-            },
-            userOptions, // user's options
-
-            { // forced options
-                chart: {
-                    inverted: false,
-                    alignTicks: false
                 }
-            }
+            },
+            userOptions // user's options
         );
 
         super.init(options, callback);

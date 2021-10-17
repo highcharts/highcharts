@@ -183,6 +183,7 @@ extend(MapPointSeries.prototype, {
     type: 'mappoint',
     axisTypes: ['colorAxis'],
     forceDL: true,
+    isCartesian: false,
     pointClass: MapPointPoint,
     searchPoint: noop as any
 });
