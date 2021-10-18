@@ -73,6 +73,12 @@ Cypress.Commands.add('openIndicators', () =>
         .click()
 );
 
+Cypress.Commands.add('selectIndicator', (indicator) =>
+    cy.get('.highcharts-indicator-list')
+        .contains(indicator)
+        .click()
+);
+
 Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) => {
 
     if(parentClassName) {
