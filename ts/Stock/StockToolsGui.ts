@@ -262,7 +262,8 @@ setOptions({
                 fibonacci: 'Fibonacci',
                 fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
-                parallelChannel: 'Parallel channel'
+                parallelChannel: 'Parallel channel',
+                timeCycles: 'Time Cycles'
             }
         },
         navigation: {
@@ -296,6 +297,7 @@ setOptions({
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
+                timeCycles: 'Time Cycles',
 
                 // Flags:
                 flags: 'Flags',
@@ -760,14 +762,16 @@ setOptions({
                      *   'fibonacci',
                      *   'fibonacciTimeZones',
                      *   'pitchfork',
-                     *   'parallelChannel'
+                     *   'parallelChannel',
+                     *   'timeCycles'
                      * ]
                      */
                     items: [
                         'fibonacci',
                         'fibonacciTimeZones',
                         'pitchfork',
-                        'parallelChannel'
+                        'parallelChannel',
+                        'timeCycles'
                     ],
                     pitchfork: {
                         /**
@@ -800,6 +804,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'parallel-channel.svg'
+                    },
+                    timeCycles: {
+                        /**
+                         * A predefined backgroud symbol for the button.
+                         *
+                         * @type {string}
+                         */
+                        symbol: 'time-cycles.svg'
                     }
                 },
                 measure: {
@@ -1749,6 +1761,7 @@ Toolbar.prototype.classMapping = {
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
     measureXY: PREFIX + 'measure-xy',
+    timeCycles: PREFIX + 'time-cycles',
     verticalCounter: PREFIX + 'vertical-counter',
     verticalLabel: PREFIX + 'vertical-label',
     verticalArrow: PREFIX + 'vertical-arrow',

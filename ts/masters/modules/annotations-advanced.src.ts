@@ -16,6 +16,7 @@ import '../../Extensions/Annotations/Types/CrookedLine.js';
 import '../../Extensions/Annotations/Types/ElliottWave.js';
 import '../../Extensions/Annotations/Types/Tunnel.js';
 import '../../Extensions/Annotations/Types/InfinityLine.js';
+import '../../Extensions/Annotations/Types/TimeCycles.js';
 import '../../Extensions/Annotations/Types/Fibonacci.js';
 import '../../Extensions/Annotations/Types/FibonacciTimeZones.js';
 import '../../Extensions/Annotations/Types/Pitchfork.js';

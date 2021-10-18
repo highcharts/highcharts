@@ -8,8 +8,10 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
     });
 
     it('Should create Ellipse annotation via stock tools and test its params.', () => {
-        cy.get('.highcharts-label-annotation').children().eq(1).click();
-        cy.get('.highcharts-ellipse-annotation').click();
+        cy.selectAnnotation(
+            'highcharts-ellipse-annotation',
+            'highcharts-label-annotation'
+        );
 
         cy.get('.highcharts-container')
             .click(250, 200, { force: true })

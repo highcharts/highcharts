@@ -530,6 +530,21 @@ QUnit.test(
             'bottomYAxis',
             'Y coord on the bottom yAxis - the bottom yAxis should be found.'
         );
+
+        chart.yAxis[0].update({
+            type: 'logarithmic'
+        });
+
+        const cords = [{
+            axis: chart.yAxis[0],
+            value: 2.2
+        }];
+
+        assert.ok(
+            getAssignedAxis(cords),
+            `The getAssignedAxis method should also work
+            for logarithmic axes, #16451.`
+        );
     });
 
 QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
