@@ -27,7 +27,7 @@ Highcharts.getJSON(
 
             mapView: {
                 projection: {
-                    projectionName: 'Orthographic',
+                    name: 'Orthographic',
                     rotation: [-15, -40]
                 }
             },

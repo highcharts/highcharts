@@ -33,7 +33,7 @@ const getGeoJSON = async url => {
 
         mapView: {
             projection: {
-                projectionName: 'Orthographic',
+                name: 'Orthographic',
                 rotation: [-16, -63]
             }
         },

@@ -28,15 +28,15 @@ QUnit.module('Projection', function () {
         });
     };
 
-    Object.keys(Projection.registry).forEach(projectionName => {
-        QUnit.test(projectionName, function (assert) {
+    Object.keys(Projection.registry).forEach(name => {
+        QUnit.test(name, function (assert) {
             testPoints(
                 assert,
-                new Projection({ projectionName })
+                new Projection({ name })
             );
             testPoints(
                 assert,
-                new Projection({ projectionName, rotation: [30, 30] })
+                new Projection({ name, rotation: [30, 30] })
             );
         });
     });

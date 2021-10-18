@@ -63,7 +63,7 @@ const drawMap = projectionKey => {
 
     // Apply projection using Proj4
     const projection = Highcharts.merge({
-        projectionName: undefined,
+        name: undefined,
         projString: undefined,
         rotation: [
             parseInt(document.getElementById('rotation-lambda').value, 10),
@@ -73,55 +73,55 @@ const drawMap = projectionKey => {
     }, {
         /*
         'gall-peters': {
-            projectionName: 'cea',
+            name: 'cea',
             lon0: 0,
             latTS: 45
         },
         eqc: {
-            projectionName: 'eqc'
+            name: 'eqc'
         },
         */
         equalearth: {
-            projectionName: 'EqualEarth'
+            name: 'EqualEarth'
         },
         miller: {
-            projectionName: 'Miller'
+            name: 'Miller'
         },
         'ortho-africa': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [-15, 0]
         },
         'ortho-antarctica': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [0, 90]
         },
         'ortho-asia': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [-90, -40]
         },
         'ortho-australia': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [-140, 30]
         },
         'ortho-europe': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [-15, -40]
         },
         'ortho-north-america': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [100, -45]
         },
         'ortho-south-america': {
-            projectionName: 'Orthographic',
+            name: 'Orthographic',
             rotation: [60, 10]
         },
         /*
         robin: {
-            projectionName: 'robin'
+            name: 'robin'
         },
         */
         webmerc: {
-            projectionName: 'WebMercator'
+            name: 'WebMercator'
         }
     }[projectionKey] || {});
 
@@ -164,7 +164,7 @@ const drawMap = projectionKey => {
                 projection
                 /*
                 projection: {
-                    projectionName: 'WebMercator'
+                    name: 'WebMercator'
                 },
                 zoom: 4,
                 center: [6.5, 61]
@@ -264,8 +264,8 @@ const drawMap = projectionKey => {
         */
 
     /* else if (
-        projection.projectionName === 'ortho' &&
-        chart.mapView.projection.options.projectionName === 'ortho'
+        projection.name === 'ortho' &&
+        chart.mapView.projection.options.name === 'ortho'
     ) {
         let lon0 = chart.mapView.projection.options.lon0,
             lat0 = chart.mapView.projection.options.lat0;
