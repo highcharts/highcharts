@@ -98,7 +98,14 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Record<string, string>;
+            popup?: PopupOptions;
+        }
+        interface PopupOptions {
+            [key: string]: string | IndicatorAliases | undefined;
+            indicatorAliases?: IndicatorAliases;
+        }
+        interface IndicatorAliases {
+            [key: string]: Array<string>;
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -1202,7 +1209,6 @@ setOptions({
          * Configure the Popup strings in the chart. Requires the
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
-         *
          * @since   7.0.0
          * @product highcharts highstock
          */
