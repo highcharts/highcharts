@@ -323,7 +323,7 @@ namespace Accessibility {
 
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
-        container: Highcharts.ContainerComponent;
+        container: ContainerComponent;
         infoRegions: Highcharts.InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
         chartMenu: Highcharts.MenuComponent;

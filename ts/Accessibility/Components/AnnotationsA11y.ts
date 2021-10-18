@@ -12,6 +12,14 @@
 
 'use strict';
 
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
 import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotations';
 import type Point from '../../Core/Series/Point';
@@ -21,6 +29,13 @@ const {
     escapeStringForHTML,
     stripHTMLTagsFromString
 } = HTMLUtilities;
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 
 /**
@@ -192,6 +207,13 @@ function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<strin
 
     return pointLabels.map((label): string => `${getLabelText(label)}`);
 }
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 
 const AnnotationsA11y = {
