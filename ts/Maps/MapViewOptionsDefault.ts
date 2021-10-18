@@ -37,6 +37,7 @@ const defaultOptions: MapViewOptions = {
      * x and y units.
      *
      * @default [0, 0]
+     * @type   {Highcharts.LonLatArray}
      *
      * @sample {highmaps} maps/mapview/center-zoom
      *         Custom view of a world map
@@ -48,6 +49,8 @@ const defaultOptions: MapViewOptions = {
     /**
      * Prevents the end user from zooming too far in on the map. See
      * [zoom](#mapView.zoom).
+     *
+     * @type   {number|undefined}
      *
      * @sample {highmaps} maps/mapview/maxzoom
      *         Prevent zooming in too far
@@ -66,17 +69,17 @@ const defaultOptions: MapViewOptions = {
 
     /**
      * Beta feature in v9.3. The projection options allow applying client side
-     * projection to a map given in coordinates, typically from topoJSON or
-     * geoJSON.
+     * projection to a map given in coordinates, typically from TopoJSON or
+     * GeoJSON.
      *
      * Sub-options are:
-     * * `projection.projectionName`, which as of v9.3 can be `EqualEarth`,
-     * `Miller`, `Orthographic` or `WebMercator`.
+     * * `projection.name`, which as of v9.3 can be `EqualEarth`, `Miller`,
+     * `Orthographic` or `WebMercator`.
      * * `rotation`, a three-axis rotation of the globe prior to projection,
      * which in practice can be used for example to render a world map with the
-     * Americas centered (`lambda: 90`), or to rotate an orthographic
-     * projection.
+     * Americas centered (`[90, 0]`), or to rotate an orthographic projection.
      *
+     * @type   {object}
      * @sample {highmaps} maps/demo/topojson-projection
      *         Orthographic projection
      */
@@ -85,18 +88,19 @@ const defaultOptions: MapViewOptions = {
     /**
      * The zoom level of a map. Higher zoom levels means more zoomed in. An
      * increase of 1 zooms in to a quarter of the viewed area (half the width
-     * and height).
+     * and height). Defaults to fitting to the map bounds.
      *
      * In a `WebMercator` projection, a zoom level of 0 represents
      * the world in a 256x256 pixel square. This is a common concept for WMS
      * tiling software.
      *
+     * @type   {number|undefined}
      * @sample {highmaps} maps/mapview/center-zoom
      *         Custom view of a world map
      * @sample {highmaps} maps/mapview/get-view
      *         Report the current view of a preprojected map
      */
-    zoom: 0
+    zoom: void 0
 };
 
 /* *

@@ -48,7 +48,7 @@ export interface MapViewOptions {
     maxZoom?: number;
     padding: (number|string);
     projection?: ProjectionOptions;
-    zoom: number;
+    zoom?: number;
 }
 
 export default MapViewOptions;

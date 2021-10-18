@@ -151,20 +151,19 @@ export default class Projection {
         options?: DeepPartial<ProjectionOptions>
     ): string|undefined {
         const {
-            projectionName,
+            name,
             rotation
         } = options || {};
 
-        return [projectionName, rotation && rotation.join(',')].join(';');
+        return [name, rotation && rotation.join(',')].join(';');
     }
 
     public constructor(options: ProjectionOptions = {}) {
         this.options = options;
-        const { projectionName, rotation } = options;
+        const { name, rotation } = options;
 
         this.rotator = rotation ? this.getRotator(rotation) : void 0;
-        this.def = projectionName ?
-            Projection.registry[projectionName] : void 0;
+        this.def = name ? Projection.registry[name] : void 0;
         const { def, rotator } = this;
 
         if (def) {
@@ -477,7 +476,7 @@ export default class Projection {
         const hasGeoProjection = this.hasGeoProjection;
 
         // @todo better test for when to do this
-        const projectingToPlane = this.options.projectionName !== 'Orthographic';
+        const projectingToPlane = this.options.name !== 'Orthographic';
         // We need to rotate in a separate step before applying antimeridian
         // clipping
         const preclip = projectingToPlane ? rotator : void 0;

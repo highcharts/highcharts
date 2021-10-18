@@ -103,7 +103,7 @@ class MapView {
          * @readonly
          * @type {number}
          */
-        this.zoom = o.zoom;
+        this.zoom = o.zoom || 0;
 
 
         // Initialize and respond to chart size changes
@@ -157,7 +157,7 @@ class MapView {
 
                 // Panning rotates the globe
                 if (
-                    this.projection.options.projectionName === 'Orthographic' &&
+                    this.projection.options.name === 'Orthographic' &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
