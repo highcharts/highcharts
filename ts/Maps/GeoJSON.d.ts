@@ -10,7 +10,7 @@
 
 import type { LonLatArray } from './MapViewOptions';
 
-interface Point {
+export interface GeoJSONGeometryPoint {
     type: 'Point';
     coordinates: LonLatArray;
 }
@@ -35,14 +35,13 @@ interface MultiPolygon {
     coordinates: LonLatArray[][][];
 }
 
-export interface GeoJSONGeometryRegistry {
-    Point: Point;
+export interface GeoJSONGeometryMultiPointRegistry {
     LineString: LineString;
     Polygon: Polygon;
     MultiLineString: MultiLineString;
     MultiPolygon: MultiPolygon;
 }
 
-export type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
+export type GeoJSONGeometryMultiPoint = GeoJSONGeometryMultiPointRegistry[keyof GeoJSONGeometryMultiPointRegistry];
 
-export default GeoJSONGeometry;
+export default GeoJSONGeometryMultiPoint;

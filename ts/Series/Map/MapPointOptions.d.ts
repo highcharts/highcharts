@@ -18,7 +18,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type GeoJSONGeometry from '../../Maps/GeoJSON';
+import type GeoJSONGeometryMultiPoint from '../../Maps/GeoJSON';
 
 /* *
  *
@@ -31,7 +31,7 @@ export interface MapPointOptions extends ScatterPointOptions {
     // coordinates?: LonLatArray[]|LonLatArray[][]|LonLatArray[][][];
     dataLabels?: DataLabelOptions;
     drilldown?: string;
-    geometry?: GeoJSONGeometry;
+    geometry?: GeoJSONGeometryMultiPoint;
     id?: string;
     labelrank?: number;
     middleX?: number;

@@ -11,7 +11,7 @@
 'use strict';
 
 import type {
-    GeoJSONGeometry
+    GeoJSONGeometryMultiPoint
 } from 'GeoJSON';
 import type {
     LonLatArray
@@ -455,7 +455,7 @@ export default class Projection {
 
 
     // Take a GeoJSON geometry and return a translated SVGPath
-    public path(geometry: GeoJSONGeometry): SVGPath {
+    public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
 
         const { def, rotator } = this;
         const antimeridian = 180;

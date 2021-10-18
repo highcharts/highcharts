@@ -442,6 +442,14 @@ class MapView {
         }
     }
 
+    /**
+     * Convert projected units to pixel position
+     *
+     * @function Highcharts.MapView#projectedUnitsToPixels
+     * @param {Highcharts.PositionObject} pos
+     *        The position in projected units
+     * @return {Highcharts.PositionObject} The position in pixels
+     */
     public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
         const scale = this.getScale();
         const projectedCenter = this.projection.forward(this.center);
@@ -454,6 +462,14 @@ class MapView {
         return { x, y };
     }
 
+    /**
+     * Convert pixel position to projected units
+     *
+     * @function Highcharts.MapView#pixelsToProjectedUnits
+     * @param {Highcharts.PositionObject} pos
+     *        The position in pixels
+     * @return {Highcharts.PositionObject} The position in projected units
+     */
     public pixelsToProjectedUnits(pos: PositionObject): ProjectedXY {
         const { x, y } = pos;
         const scale = this.getScale();

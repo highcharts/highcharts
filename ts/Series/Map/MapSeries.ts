@@ -1400,7 +1400,8 @@ export default MapSeries;
  */
 
 /**
- * The geometry type.
+ * The geometry type. Can be one of `LineString`, `Polygon`, `MultiLineString`
+ * or `MultiPolygon`.
  *
  * @type      {string}
  * @since next
