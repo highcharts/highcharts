@@ -152,7 +152,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
         this.options = options as HighchartsComponent.ComponentOptions;
 
         this.chartConstructor = this.options.chartConstructor;
-        this.type = 'chart';
+        this.type = 'Highcharts';
 
         this.chartContainer = createElement(
             'figure',

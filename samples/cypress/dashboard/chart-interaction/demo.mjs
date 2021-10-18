@@ -1,5 +1,12 @@
-import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
+import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import DashboardPlugin from  '../../../../code/es-modules/Dashboard/DashboardPlugin.js';
+import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
+import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardPlugin.addPlugin(HighchartsPlugin);
+
 // A shared store
 const store = new CSVStore(undefined, {
     csv: `$GME,$AMC,$NOK
@@ -52,7 +59,7 @@ const dashboard = new Dashboard('container', {
     components: [{
         cell: 'dashboard-col-0',
         isResizable: true,
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             series: [{
                 name: 'Series from options',
@@ -68,7 +75,7 @@ const dashboard = new Dashboard('container', {
         syncEvents: ['visibility', 'tooltip']
     }, {
         cell: 'dashboard-col-1',
-        type: 'chart',
+        type: 'Highcharts',
         chartOptions: {
             type: 'column',
             series: [{

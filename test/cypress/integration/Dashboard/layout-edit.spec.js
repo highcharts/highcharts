@@ -4,14 +4,14 @@ function isWithinParent(element){
 }
 
 function checkCells() {
-    cy.get('.hcd-cell').each(cell => {
+    cy.get('.hd-cell').each(cell => {
         isWithinParent(cell)
     });
 }
 
 function checkRowsAndCells() {
     cy.wait(100) // wait a bit for the DOM to settle
-    cy.get('.hcd-row').within(row => {
+    cy.get('.hd-row').within(row => {
         // Row is within parent
         isWithinParent(row);
         checkCells();
@@ -43,26 +43,26 @@ describe('layout resize on window changes', () => {
 
     // TODO: update when resizer is cemented
     it.skip('should resize cells and components when dragging the handles', () => {
-        cy.get('.hcd-row').first().next().as('secondRow').within(() => {
-            cy.get('.hcd-edit-resize-snap-x').first().as('dragger')
+        cy.get('.hd-row').first().next().as('secondRow').within(() => {
+            cy.get('.hd-edit-resize-snap-x').first().as('dragger')
                 .trigger('mousedown')
             cy.get('@secondRow')
                 .trigger('mousemove', { clientX: 600 })
                 .trigger('mouseup')
 
             checkCells()
-            cy.get('.hcd-component').each((component) => {
+            cy.get('.hd-component').each((component) => {
                 isWithinParent(component)
             });
 
-            cy.get('.hcd-edit-resize-snap-y').first().as('dragger')
+            cy.get('.hd-edit-resize-snap-y').first().as('dragger')
                 .trigger('mousedown')
             cy.get('@secondRow')
                 .trigger('mousemove', { clientY: 600 })
                 .trigger('mouseup')
 
             checkCells()
-            cy.get('.hcd-component').each((component) => {
+            cy.get('.hd-component').each((component) => {
                 isWithinParent(component)
             });
         });

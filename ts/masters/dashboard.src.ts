@@ -44,7 +44,7 @@ declare global {
 const D = {
     ...DashboardGlobals,
     ...DashboardPlugin,
-    _modules,
+    _modules: (typeof _modules === 'undefined' ? {} : _modules),
     Dashboard,
     Sync
 };
@@ -59,4 +59,4 @@ if (!D.win.Dashboard) {
     D.win.Dashboard = D;
 }
 
-export default DashboardGlobals;
+export default D;
