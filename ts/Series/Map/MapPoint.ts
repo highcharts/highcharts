@@ -77,28 +77,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     /* eslint-disable valid-jsdoc */
 
-    /* @todo: Doesn't need to be static, it is always used with instance. And
-    consider not returning the path, and not calling it get* */
-    public static getProjectedPath(
-        point: MapPoint,
-        projection?: Projection
-    ): SVGPath {
-        if (!point.projectedPath) {
-            if (projection && point.geometry) {
-
-                // Always true when given GeoJSON coordinates
-                projection.hasCoordinates = true;
-
-                point.projectedPath = projection.path(point.geometry);
-
-            // SVG path given directly in point options
-            } else {
-                point.projectedPath = point.path;
-            }
-        }
-        return point.projectedPath || [];
-    }
-
     /**
      * Extend the Point object to split paths.
      * @private
@@ -108,18 +86,18 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         x?: number
     ): MapPoint {
 
-        let series = this.series,
+        const series = this.series,
             point: MapPoint = (
                 super.applyOptions.call(this, options, x) as any
             ),
-            joinBy = series.joinBy,
-            mapPoint;
+            joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
-            const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(point, joinKey) as string;
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
+            const joinKey = joinBy[1],
+                mapKey = super.getNestedProperty.call(point, joinKey) as string,
+                mapPoint = typeof mapKey !== 'undefined' &&
+                    series.mapMap[mapKey];
+
             if (mapPoint) {
                 extend(point, mapPoint); // copy over properties
             } else {
@@ -128,6 +106,23 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
 
         return point;
+    }
+
+    public getProjectedPath(projection?: Projection): SVGPath {
+        if (!this.projectedPath) {
+            if (projection && this.geometry) {
+
+                // Always true when given GeoJSON coordinates
+                projection.hasCoordinates = true;
+
+                this.projectedPath = projection.path(this.geometry);
+
+            // SVG path given directly in point options
+            } else {
+                this.projectedPath = this.path;
+            }
+        }
+        return this.projectedPath || [];
     }
 
     /**

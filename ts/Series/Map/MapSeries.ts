@@ -785,9 +785,7 @@ class MapSeries extends ScatterSeries {
                     // The first time a map point is used, analyze its box
                     if (!point.bounds) {
                         // const path = point.path || [],
-                        const path = MapPoint.getProjectedPath(
-                                point, projection
-                            ),
+                        const path = point.getProjectedPath(projection),
                             properties = (point as any).properties;
 
                         let x2 = -MAX_VALUE,
@@ -1169,7 +1167,7 @@ class MapSeries extends ScatterSeries {
 
                 point.shapeType = 'path';
                 point.shapeArgs = {
-                    d: MapPoint.getProjectedPath(point as any, projection)
+                    d: point.getProjectedPath(projection)
                 };
             }
         });
