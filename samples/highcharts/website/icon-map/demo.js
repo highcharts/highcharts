@@ -611,7 +611,7 @@ const finalMap = function () {
             data.forEach(function (p) {
                 p.id = p.code;
             });
-            // Initiate the chart
+            // Initialize the chart
             Highcharts.mapChart('maps', {
                 chart: {
                     styledMode: (true),

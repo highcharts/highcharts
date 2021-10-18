@@ -803,7 +803,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         }
     ];
 
-    // Initiate the chart
+    // Initialize the chart
     $('#container').highcharts('Map', {
         title: {
             text: 'Highmaps basic demo'

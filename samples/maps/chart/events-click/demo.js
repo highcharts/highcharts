@@ -20,7 +20,7 @@ Highcharts.getJSON(
             chart.get('clicks').addPoint(p);
         };
 
-        // Initiate the chart
+        // Initialize the chart
         Highcharts.mapChart('container', {
 
             chart: {

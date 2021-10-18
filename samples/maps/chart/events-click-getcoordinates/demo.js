@@ -10,7 +10,7 @@ function getScript(url, cb) {
 function showMap(mapKey) {
     const supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
-    // Initiate the chart
+    // Initialize the chart
     chart = Highcharts.mapChart('container', {
         chart: {
             events: {

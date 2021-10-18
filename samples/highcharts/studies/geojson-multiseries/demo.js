@@ -18,7 +18,7 @@ const getGeoJSON = async url => {
     );
 
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
         title: {
             text: 'Highcharts, multiple GeoJSON'

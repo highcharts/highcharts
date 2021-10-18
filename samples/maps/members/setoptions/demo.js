@@ -31,14 +31,19 @@ Highcharts.setOptions({
     },
     colorAxis: {
         minColor: '#373832',
-        maxColor: '#baFF55'
+        maxColor: '#baFF55',
+        labels: {
+            style: {
+                color: 'white'
+            }
+        }
     }
 
 });
 
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
 
         title: {

@@ -3,7 +3,7 @@ var transforms = {
     custom: Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland']
 };
 
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
     chart: {
         map: Highcharts.maps['countries/gb/gb-all'],

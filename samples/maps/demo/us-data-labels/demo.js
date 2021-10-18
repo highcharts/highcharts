@@ -55,7 +55,7 @@ mapData.forEach(function (p) {
     p.ucName = p.name.toUpperCase();
 });
 
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {
