@@ -160,6 +160,9 @@ class MapPointSeries extends ScatterSeries {
                 }
 
                 p.isInside = this.isPointInside(p);
+
+                // Find point zone
+                p.zone = this.zones.length ? p.getZone() : void 0;
             });
         }
 

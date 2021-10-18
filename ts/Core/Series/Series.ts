@@ -2332,7 +2332,7 @@ class Series {
             }
 
             // Find point zone
-            point.zone = (this.zones.length && point.getZone() as any);
+            point.zone = this.zones.length ? point.getZone() : void 0;
 
             // Animate new points with data sorting
             if (!point.graphic && series.group && enabledDataSorting) {
