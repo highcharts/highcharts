@@ -1494,7 +1494,8 @@ setOptions({
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
-                                        { xAxis, yAxis, x, y }
+                                        { xAxis, yAxis, x, y },
+                                        { command: 'Z' }
                                     ]
                                 }]
                             },

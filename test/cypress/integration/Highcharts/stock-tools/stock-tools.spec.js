@@ -83,7 +83,6 @@ describe('Stock Tools', () => {
     });
 });
 
-
 describe('Measure annotation, #15696.', () => {
     beforeEach(() => {
         cy.viewport(1000, 800);
