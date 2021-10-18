@@ -19,6 +19,7 @@
 import type Point from '../../Core/Series/Point';
 import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type LinePoint from '../../Series/Line/LinePoint';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -27,10 +28,11 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import AreaRangeSeries from '../../Series/AreaRange/AreaRangeSeries.js';
-import AreaSeries from '../../Series/Area/AreaSeries.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import { support } from 'jquery';
+import Color from '../../Core/Color/Color';
+import GradientColor from '../../Core/Color/GradientColor';
 const {
     defined,
     error,
@@ -75,10 +77,10 @@ namespace MultipleLinesComposition {
 
     export declare class Composition extends SMAIndicator {
         linesApiNames: Array<string>;
-        areaElement: SVGElement;
         options: Options;
         pointArrayMap: Array<string>;
         pointValKey: string;
+        nextPoints: any[];
         drawGraph(): void;
         getTranslatedLinesNames(excludedValue?: string): Array<string>;
         translate(): void;
@@ -86,12 +88,22 @@ namespace MultipleLinesComposition {
     }
 
     export interface Options {
+        fillColor?: SVGAttributes['fill'];
         areaOptions?: AreaBackgroundOptions;
         gapSize?: number;
     }
     interface AreaBackgroundOptions {
         lineNames: Array<string>;
         styles: SVGAttributes;
+    }
+    interface IndicatorSpanObject {
+        indicator: Composition;
+        points: Array<any>;
+        nextPoints: Array<any>;
+        color: SVGAttributes['fill'];
+        options: any;
+        gap: any;
+        graph: SVGElement | undefined;
     }
 
     /* *
@@ -136,6 +148,11 @@ namespace MultipleLinesComposition {
      */
     const pointValKey = 'top';
 
+    /**
+     * Lines ids. Required to plot the area between those lines.
+     */
+    const areaLinesApiNames = ['bottomLine', 'topLine'];
+
     /* *
      *
      *  Functions
@@ -170,12 +187,53 @@ namespace MultipleLinesComposition {
             );
 
             proto.drawGraph = drawGraph;
+            proto.getGraphPath = getGraphPath;
             proto.toYData = toYData;
             proto.translate = translate;
             proto.getTranslatedLinesNames = getTranslatedLinesNames;
         }
 
         return IndicatorClass as (T&typeof Composition);
+    }
+
+
+    /**
+     * function to create the path based on the points
+     * @param this Indicator
+     * @param points Points on which the path should be created
+     */
+    function getGraphPath(this: Composition, points: Array<LinePoint>): SVGPath {
+        let indicator = this,
+            path: SVGPath = [],
+            spanA: SVGPath,
+            spanAarr: SVGPath = [];
+
+        points = points || this.points;
+
+        // Render Span
+        if (indicator.fillGraph && indicator.nextPoints) {
+            spanA = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                indicator,
+                // Reverse points, so Senkou Span A will start from the end:
+                indicator.nextPoints
+            );
+
+            if (spanA && spanA.length) {
+                spanA[0][0] = 'L';
+
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+
+                spanAarr = spanA.slice(0, path.length);
+
+                for (let i = spanAarr.length - 1; i >= 0; i--) {
+                    path.push(spanAarr[i]);
+                }
+            }
+        } else {
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+        }
+
+        return path;
     }
 
     /**
@@ -261,41 +319,51 @@ namespace MultipleLinesComposition {
             }
         });
 
+        // Modify options and generate area fill:
+        if (this.userOptions.fillColor) {
+            drawArea({
+                indicator: indicator,
+                points: secondaryLines[0],
+                nextPoints: secondaryLines[1],
+                color: 'rgba(255, 0, 0, 0.2)',
+                options: mainLineOptions,
+                gap: gappedExtend,
+                graph: (indicator as any).area
+            });
+
+            indicator.area = indicator.graph;
+            // Clean temporary properties:
+            delete indicator.nextPoints;
+            delete indicator.fillGraph;
+        }
+
+
         // Restore options and draw a main line:
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
         SMAIndicator.prototype.drawGraph.call(indicator);
-        drawArea(indicator);
+        // drawArea(indicator);
 
     }
 
     /**
-     * Function, that draws and updates the area between lines in the indicator.
-     * @param indicator multiline indicator
+     * draw the area between two lines
+     * @param options options to draw the area
      */
-    function drawArea(indicator: MultipleLinesComposition.Composition): void {
-        const options = indicator.options.areaOptions;
+    function drawArea(options: IndicatorSpanObject): void {
+        const indicator = options.indicator;
+        indicator.points = options.points;
+        indicator.nextPoints = options.nextPoints;
+        indicator.color = options.color;
+        indicator.options = merge(
+            (options.options.topLine as any).styles,
+            options.gap
+        ) as any;
+        indicator.graph = options.graph;
+        indicator.fillGraph = true;
+        SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 
-        if (options && indicator.graph) {
-            const lineNames = options.lineNames;
-            const firstLine = (indicator as any)[`graph${lineNames[0]}`];
-            const secondLine = (indicator as any)[`graph${lineNames[1]}`];
-            const firstPath = firstLine ? firstLine.pathArray : indicator.graph.pathArray;
-            const secondPath = (secondLine ? secondLine.pathArray.reverse() : indicator.graph.pathArray);
-            secondPath[0][0] = 'L';
-            const path = firstPath.concat(secondPath);
-
-            // animation doesn't work :(
-            if (indicator.areaElement) {
-                indicator.areaElement.attr({ d: path });
-            } else {
-                indicator.areaElement = indicator.chart.renderer
-                    .path({ d: path })
-                    .attr(options.styles)
-                    .add(indicator.group);
-            }
-        }
     }
     /**
      * Create translatedLines Collection based on pointArrayMap.
