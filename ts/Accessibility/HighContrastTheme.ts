@@ -12,14 +12,32 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorType from '../Core/Color/ColorType';
 import type Options from '../Core/Options';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
         connectorColor?: ColorType;
     }
 }
+
+/* *
+ *
+ *  Theme
+ *
+ * */
 
 const theme: DeepPartial<Options> = {
     chart: {
@@ -219,5 +237,11 @@ const theme: DeepPartial<Options> = {
         trackBorderColor: 'windowText'
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default theme;

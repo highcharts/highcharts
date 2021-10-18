@@ -15,7 +15,6 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
@@ -25,6 +24,7 @@ import H from '../../Core/Globals.js';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
+import ControllableEllipse from './Controllables/ControllableEllipse';
 const {
     addEvent,
     attr,
@@ -80,6 +80,7 @@ declare global {
         interface AnnotationEditableObject {
             basicAnnotation: Array<string>;
             circle: Array<string>;
+            ellipse: Array<string>;
             crookedLine: Array<string>;
             fibonacci: Array<string>;
             label: Array<string>;
@@ -271,8 +272,9 @@ const bindingsUtils = {
         coords: Array<Pointer.AxisCoordinateObject>
     ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
-            const axisMin = coord.axis.min,
-                axisMax = coord.axis.max,
+            const extremes = coord.axis.getExtremes(),
+                axisMin = extremes.min,
+                axisMax = extremes.max,
                 // Correct axis edges when axis has series
                 // with pointRange (like column)
                 minPointOffset = pick(coord.axis.minPointOffset, 0);
@@ -320,6 +322,7 @@ class NavigationBindings {
         } as Record<string, Array<string>>,
         // Simple shapes:
         circle: ['shapes'],
+        ellipse: ['shapes'],
         verticalLine: [],
         label: ['labelOptions'],
         // Measure
@@ -337,7 +340,9 @@ class NavigationBindings {
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available
     public static annotationsNonEditable = {
-        rectangle: ['crosshairX', 'crosshairY', 'label']
+        rectangle: ['crosshairX', 'crosshairY', 'labelOptions'],
+        ellipse: ['labelOptions'],
+        circle: ['labelOptions']
     };
 
     /* *
@@ -1203,6 +1208,7 @@ setOptions({
                 simpleShapes: 'Simple shapes',
                 lines: 'Lines',
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 shapeOptions: 'Shape options',
@@ -1263,9 +1269,16 @@ setOptions({
          * - `end`: last event to be called after last step event
          *
          * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>|*}
-         * @sample       stock/stocktools/stocktools-thresholds
-         *               Custom bindings in Highcharts Stock
+         *
+         * @sample {highstock} stock/stocktools/stocktools-thresholds
+         *               Custom bindings
+         * @sample {highcharts} highcharts/annotations/bindings/
+         *               Simple binding
+         * @sample {highcharts} highcharts/annotations/bindings-custom-annotation/
+         *               Custom annotation binding
+         *
          * @since        7.0.0
+         * @requires     modules/annotations
          * @product      highcharts highstock
          */
         bindings: {
@@ -1310,12 +1323,8 @@ setOptions({
                                     r: 5
                                 }]
                             },
-                            navigation
-                                .annotationsOptions,
-                            (navigation
-                                .bindings as any)
-                                .circleAnnotation
-                                .annotationsOptions
+                            navigation.annotationsOptions,
+                            (navigation.bindings as any).circleAnnotation.annotationsOptions
                         )
                     );
                 },
@@ -1328,20 +1337,17 @@ setOptions({
                     ): void {
                         let mockPointOpts = annotation.options.shapes[0]
                                 .point as MockPointOptions,
-                            inverted = this.chart.inverted,
-                            x,
-                            y,
                             distance;
 
                         if (
                             isNumber(mockPointOpts.xAxis) &&
                             isNumber(mockPointOpts.yAxis)
                         ) {
-                            x = this.chart.xAxis[mockPointOpts.xAxis]
-                                .toPixels(mockPointOpts.x);
-
-                            y = this.chart.yAxis[mockPointOpts.yAxis]
-                                .toPixels(mockPointOpts.y);
+                            const inverted = this.chart.inverted,
+                                x = this.chart.xAxis[mockPointOpts.xAxis]
+                                    .toPixels(mockPointOpts.x),
+                                y = this.chart.yAxis[mockPointOpts.yAxis]
+                                    .toPixels(mockPointOpts.y);
 
                             distance = Math.max(
                                 Math.sqrt(
@@ -1363,6 +1369,93 @@ setOptions({
                                 r: distance
                             }]
                         });
+                    }
+                ]
+            },
+            ellipseAnnotation: {
+                className: 'highcharts-ellipse-annotation',
+                start: function (
+                    this: NavigationBindings,
+                    e: PointerEvent
+                ): Annotation|void {
+                    const coords = this.chart.pointer.getCoordinates(e),
+                        coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                        coordsY = this.utils.getAssignedAxis(coords.yAxis),
+                        navigation = this.chart.options.navigation;
+
+                    if (!coordsX || !coordsY) {
+                        return;
+                    }
+
+                    return this.chart.addAnnotation(
+                        merge(
+                            {
+                                langKey: 'ellipse',
+                                type: 'basicAnnotation',
+                                shapes: [
+                                    {
+                                        type: 'ellipse',
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
+                                        points: [{
+                                            x: coordsX.value,
+                                            y: coordsY.value
+                                        }, {
+                                            x: coordsX.value,
+                                            y: coordsY.value
+                                        }],
+                                        ry: 1
+                                    }
+                                ]
+                            },
+                            navigation.annotationsOptions,
+                            (navigation.bindings as any).ellipseAnnotation.annotationOptions
+                        )
+                    );
+                },
+                steps: [
+                    function (
+                        this: NavigationBindings,
+                        e: PointerEvent,
+                        annotation: Annotation
+                    ): void {
+                        const target = annotation.shapes[0] as ControllableEllipse,
+                            position = target.getAbsolutePosition(
+                                target.points[1]
+                            );
+
+                        target.translatePoint(
+                            e.chartX - position.x,
+                            e.chartY - position.y,
+                            1
+                        );
+
+                        target.redraw(false);
+                    },
+                    function (
+                        this: NavigationBindings,
+                        e: PointerEvent,
+                        annotation: Annotation
+                    ): void {
+                        const target =
+                                annotation.shapes[0] as ControllableEllipse,
+                            position =
+                                target.getAbsolutePosition(target.points[0]),
+                            position2 =
+                                target.getAbsolutePosition(target.points[1]),
+                            newR = target.getDistanceFromLine(
+                                position,
+                                position2,
+                                e.chartX,
+                                e.chartY
+                            ),
+                            yAxis = target.getYAxis(),
+                            newRY = Math.abs(
+                                yAxis.toValue(0) - yAxis.toValue(newR)
+                            );
+
+                        target.setYRadius(newRY);
+                        target.redraw(false);
                     }
                 ]
             },
@@ -1407,7 +1500,8 @@ setOptions({
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
-                                        { xAxis, yAxis, x, y }
+                                        { xAxis, yAxis, x, y },
+                                        { command: 'Z' }
                                     ]
                                 }]
                             },
@@ -1575,6 +1669,7 @@ setOptions({
          * @extends   annotations
          * @exclude   crookedLine, elliottWave, fibonacci, infinityLine,
          *            measure, pitchfork, tunnel, verticalLine, basicAnnotation
+         * @requires     modules/annotations
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {

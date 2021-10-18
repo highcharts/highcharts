@@ -97,15 +97,15 @@ class CrookedLine extends Annotation {
                     points: this.points.map(function (
                         _point: Highcharts.AnnotationPointType,
                         i: number
-                    ): any {
+                    ): Function {
                         return function (
                             target: Highcharts.AnnotationControllable
                         ): Highcharts.AnnotationPointType {
                             return target.annotation.points[i];
-                        } as any;
+                        };
                     })
                 }),
-                false as any
+                0
             );
 
         typeOptions.line = shape.options;

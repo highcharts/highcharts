@@ -434,11 +434,26 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
+                    // @todo
+                    // Applying the border radius here is not optimal. It should
+                    // be set in the shapeArgs or returned from `markerAttribs`.
+                    // However, Series.drawPoints does not pick up markerAttribs
+                    // to be passed over to `renderer.symbol`. Also, image
+                    // symbols are not positioned by their top left corner like
+                    // other symbols are. This should be refactored, then we
+                    // could save ourselves some tests for .hasImage etc. And
+                    // the evaluation of borderRadius would be moved to
+                    // `markerAttribs`.
                     if (this.options.borderRadius) {
                         point.graphic.attr({
                             r: this.options.borderRadius
                         });
                     }
+
+                    // Saving option for reapplying later
+                    // when changing point's states (#16165)
+                    (point.shapeArgs || {}).r = this.options.borderRadius;
+                    (point.shapeArgs || {}).d = point.graphic.pathArray;
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');

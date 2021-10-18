@@ -61,6 +61,12 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         params: {
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             */
+            index: 0,
             period: 20,
             /**
              * The ATR period.

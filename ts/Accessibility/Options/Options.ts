@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type OptionsType from '../../Core/Options';
@@ -173,7 +174,7 @@ declare global {
             enabled?: boolean;
         }
         interface ScreenReaderClickCallbackFunction {
-            (evt: MouseEvent, chart?: AccessibilityChart): void;
+            (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
         }
         interface ScreenReaderFormatterCallbackFunction<T> {
             (context: T): string;

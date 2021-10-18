@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from '../Accessibility';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -188,7 +189,7 @@ addEvent(Legend, 'afterColorizeItem', function (
         visible: (boolean|undefined);
     }
 ): void {
-    const chart: Highcharts.AccessibilityChart = this.chart as any,
+    const chart: Accessibility.ChartComposition = this.chart as any,
         a11yOptions = chart.options.accessibility,
         legendItem = e.item;
 
@@ -343,9 +344,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
 
     /**
-     * @private
      * Returns false if legend a11y is disabled and proxies were not created,
      * true otherwise.
+     * @private
      */
     recreateProxies: function (this: Highcharts.LegendComponent): boolean {
         this.removeProxies();
@@ -469,7 +470,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.LegendComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const keys = this.keyCodes,
             component = this,
             chart = this.chart;
@@ -479,7 +480,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.left, keys.right, keys.up, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return component.onKbdArrowKey(this, keyCode);
@@ -488,7 +489,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         if (H.isFirefox && keyCode === keys.space) { // #15520
@@ -500,7 +501,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.pageDown, keys.pageUp],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         const direction = keyCode === keys.pageDown ? 1 : -1;
@@ -536,7 +537,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     onKbdArrowKey: function (
         this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
+        keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const keys = this.keyCodes,
@@ -574,7 +575,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     onKbdClick: function (
         this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const legendItem: LegendItem = this.chart.legend.allItems[
             this.highlightedLegendItemIx

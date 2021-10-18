@@ -404,7 +404,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    ): KeyboardNavigationHandler {
         const keys = this.keyCodes,
             chart = this.chart,
             component = this;
@@ -415,7 +415,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 [
                     [keys.left, keys.up],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: KeyboardNavigationHandler
                     ): number {
                         return component.onKbdPrevious(this);
                     }
@@ -425,7 +425,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 [
                     [keys.right, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: KeyboardNavigationHandler
                     ): number {
                         return component.onKbdNext(this);
                     }
@@ -435,7 +435,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: KeyboardNavigationHandler
                     ): number {
                         return component.onKbdClick(this);
                     }
@@ -475,7 +475,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     onKbdPrevious: function (
         this: Highcharts.MenuComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
         const a11yOptions = chart.options.accessibility;
@@ -506,7 +506,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     onKbdNext: function (
         this: Highcharts.MenuComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
         const a11yOptions = chart.options.accessibility;
@@ -540,7 +540,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     onKbdClick: function (
         this: Highcharts.MenuComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
         const curHighlightedItem = (chart.exportDivElements as any)[

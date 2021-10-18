@@ -221,6 +221,7 @@ setOptions({
 
                 // Basic shapes:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 label: 'Label',
                 rectangle: 'Rectangle',
 
@@ -259,14 +260,17 @@ setOptions({
 
                 // Advanced:
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
-                parallelChannel: 'Parallel channel'
+                parallelChannel: 'Parallel channel',
+                timeCycles: 'Time Cycles'
             }
         },
         navigation: {
             popup: {
                 // Annotations:
                 circle: 'Circle',
+                ellipse: 'Ellipse',
                 rectangle: 'Rectangle',
                 label: 'Label',
                 segment: 'Segment',
@@ -285,6 +289,7 @@ setOptions({
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
                 fibonacci: 'Fibonacci',
+                fibonacciTimeZones: 'Fibonacci Time Zones',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
@@ -292,6 +297,7 @@ setOptions({
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
+                timeCycles: 'Time Cycles',
 
                 // Flags:
                 flags: 'Flags',
@@ -853,6 +859,7 @@ setOptions({
                      * @default [
                      *   'label',
                      *   'circle',
+                     *   'ellipse',
                      *   'rectangle'
                      * ]
                      *
@@ -860,6 +867,7 @@ setOptions({
                     items: [
                         'label',
                         'circle',
+                        'ellipse',
                         'rectangle'
                     ],
                     circle: {
@@ -870,6 +878,15 @@ setOptions({
                          *
                          */
                         symbol: 'circle.svg'
+                    },
+                    ellipse: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'ellipse.svg'
                     },
                     rectangle: {
                         /**
@@ -1140,14 +1157,18 @@ setOptions({
                      * @type {array}
                      * @default [
                      *   'fibonacci',
+                     *   'fibonacciTimeZones',
                      *   'pitchfork',
-                     *   'parallelChannel'
+                     *   'parallelChannel',
+                     *   'timeCycles'
                      * ]
                      */
                     items: [
                         'fibonacci',
+                        'fibonacciTimeZones',
                         'pitchfork',
-                        'parallelChannel'
+                        'parallelChannel',
+                        'timeCycles'
                     ],
                     pitchfork: {
                         /**
@@ -1165,6 +1186,14 @@ setOptions({
                          */
                         symbol: 'fibonacci.svg'
                     },
+                    fibonacciTimeZones: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci-timezone.svg'
+                    },
                     parallelChannel: {
                         /**
                          * A predefined background symbol for the button.
@@ -1172,6 +1201,14 @@ setOptions({
                          * @type   {string}
                          */
                         symbol: 'parallel-channel.svg'
+                    },
+                    timeCycles: {
+                        /**
+                         * A predefined backgroud symbol for the button.
+                         *
+                         * @type {string}
+                         */
+                        symbol: 'time-cycles.svg'
                     }
                 },
                 measure: {
@@ -2099,6 +2136,7 @@ interface Toolbar {
  */
 Toolbar.prototype.classMapping = {
     circle: PREFIX + 'circle-annotation',
+    ellipse: PREFIX + 'ellipse-annotation',
     rectangle: PREFIX + 'rectangle-annotation',
     label: PREFIX + 'label-annotation',
     segment: PREFIX + 'segment',
@@ -2115,10 +2153,12 @@ Toolbar.prototype.classMapping = {
     elliott5: PREFIX + 'elliott5',
     pitchfork: PREFIX + 'pitchfork',
     fibonacci: PREFIX + 'fibonacci',
+    fibonacciTimeZones: PREFIX + 'fibonacci-time-zones',
     parallelChannel: PREFIX + 'parallel-channel',
     measureX: PREFIX + 'measure-x',
     measureY: PREFIX + 'measure-y',
     measureXY: PREFIX + 'measure-xy',
+    timeCycles: PREFIX + 'time-cycles',
     verticalCounter: PREFIX + 'vertical-counter',
     verticalLabel: PREFIX + 'vertical-label',
     verticalArrow: PREFIX + 'vertical-arrow',

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Accessibility from '../Accessibility';
 import type Annotation from '../../Extensions/Annotations/Annotations';
 import type Point from '../../Core/Series/Point';
 
@@ -93,14 +94,14 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
 
     const chart = label.chart;
     const labelText = getLabelText(label);
-    const points = label.points as Array<Highcharts.AccessibilityPoint>;
+    const points = label.points as Array<Accessibility.PointComposition>;
     const getAriaLabel = (point: Point): string => (
         point.graphic &&
         point.graphic.element &&
         point.graphic.element.getAttribute('aria-label') ||
         ''
     );
-    const getValueDesc = (point: Highcharts.AccessibilityPoint): string => {
+    const getValueDesc = (point: Accessibility.PointComposition): string => {
         const valDesc = (
             point.accessibility &&
             point.accessibility.valueDescription ||

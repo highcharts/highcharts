@@ -83,53 +83,7 @@ describe('Stock Tools annotation popup, #15725', () => {
     });
 });
 
-describe('Adding custom indicator on a separate axis through indicator popup, #15804.', () => {
-    beforeEach(() => {
-        cy.viewport(1000, 500);
-    });
-
-    before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
-    });
-
-    it('#15730: Should close popup after hiding annotation', () => {
-        // Add custom indicator which should use another axis.
-        cy.window().then((win) => {
-            const H = win.Highcharts,
-                bindingsUtils = H._modules['Extensions/Annotations/NavigationBindings.js'].prototype.utils;
-            
-            H.seriesType(
-                'customIndicatorBasedOnRSI',
-                'rsi', {
-                name: 'Custom Indicator',
-                color: 'red'
-                }, {
-
-                }
-            );
-            bindingsUtils.indicatorsWithAxes.push('customIndicatorBasedOnRSI');
-        });
-
-        cy.get('.highcharts-indicators')
-            .click();
-
-        cy.get('.highcharts-indicator-list')
-            .contains('CUSTOMINDICATORBASEDONRSI')
-            .click();
-        cy.addIndicator();
-
-        cy.chart().should(chart =>
-            assert.strictEqual(
-                chart.yAxis.length,
-                4,
-                `After adding a custom indicator that is based on other oscillators,
-                another axis should be added.`
-            )
-        );
-    });
-});
-
-describe('An indicator on indicator, #15696.', () => {
+describe('Measure annotation, #15696.', () => {
     beforeEach(() => {
         cy.viewport(1000, 800);
     });
@@ -137,52 +91,28 @@ describe('An indicator on indicator, #15696.', () => {
     before(() => {
         cy.visit('/stock/demo/stock-tools-gui');
     });
+    it('#15725: Should use the same axis for all points in multi-step annotation', () => {
+        cy.get('.highcharts-range-selector-group')
+            .contains('3m')
+            .click()
 
-    it('There should be a possibility to add indicators based on other indicator, #15696.', () => {
-        cy.openIndicators();
+        cy.get('.highcharts-measure-xy')
+            .children()
+            .eq(1)
+            .click();
+        cy.get('.highcharts-measure-y')
+            .click();
 
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('sma');
-        cy.addIndicator(); // Add SMA indicator.
+        cy.get('.highcharts-container')
+            .click(250, 200, { force: true })
+            .click(350, 100, { force: true })
 
-        cy.openIndicators();
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('sma');
-
-        cy.get('#highcharts-select-series')
-            .contains('SMA (14)')
-        
-        cy.get('#highcharts-select-series')
-            .select('SMA (14)')
-
-        cy.get('input[name="highcharts-sma-period"]')
-            .eq(0)
-            .clear()
-            .type('20');
-
-        cy.addIndicator(); // Add SMA indicator with period 20.
-
-        cy.chart().should(chart =>
-            assert.strictEqual(
-                chart.series[2].xData.length - chart.series[3].xData.length,
-                19,
-                `The second SMA indicator which is based on the previous SMA indicator
-                should be shifted by period (19) thus data should have 19 fewer points.`
+        cy.chart().then(chart =>
+            assert.ok(
+                chart.annotations[0].startXMax,
+                'The startXMax property should be calculated.'
             )
         );
-
-        cy.openIndicators();
-
-        cy.get('#highcharts-select-series')
-            .contains('SMA (20)')
-
-        cy.get('.highcharts-tab-item')
-            .eq(1)
-            .click(); // Open EDIT bookmark.
-
-        cy.get('#highcharts-select-series')
-            .contains('SMA (20)')
-            .should('not.contain', 'SMA (14)')
     });
 });
 
