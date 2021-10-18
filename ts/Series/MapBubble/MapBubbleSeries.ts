@@ -18,7 +18,6 @@
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
 
-import BubbleLegendComposition from '../Bubble/BubbleSeries.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -238,6 +237,8 @@ extend(MapBubbleSeries.prototype, {
     axisTypes: ['colorAxis'],
 
     getProjectedBounds: MapSeries.prototype.getProjectedBounds,
+
+    isCartesian: false,
 
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
