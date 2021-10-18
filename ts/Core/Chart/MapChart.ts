@@ -74,6 +74,12 @@ class MapChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
+
+        // Initialize the MapView after initialization, but before firstRender
+        addEvent(this, 'afterInit', function (): void {
+            this.mapView = new MapView(this, this.options.mapView);
+        });
+
         const defaultCreditsOptions = getOptions().credits;
 
         const options = merge(
@@ -199,14 +205,6 @@ namespace MapChart {
         return SVGRenderer.prototype.pathToSegments(arr);
     }
 }
-
-/* eslint-disable no-invalid-this */
-addEvent(Chart, 'afterInit', function (): void {
-    if (this.options.mapView) {
-        this.mapView = new MapView(this, this.options.mapView);
-    }
-});
-
 
 /* *
  *
