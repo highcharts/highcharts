@@ -319,7 +319,12 @@ setOptions({
                 tunnel: 'Tunnel',
                 background: 'Background',
 
+                // Indicators' searchbox (#16019):
+                noFilterMatch: 'No match',
+
                 // Indicators' params (#15170):
+                searchIndicators: 'Search Indicators',
+                clearFilter: '\u2715 clear filter',
                 index: 'Index',
                 period: 'Period',
                 periods: 'Periods',
@@ -347,7 +352,399 @@ setOptions({
                 factor: 'Factor',
                 fastAvgPeriod: 'Fast average period',
                 slowAvgPeriod: 'Slow average period',
-                average: 'Average'
+                average: 'Average',
+
+                /**
+                 * Configure the aliases for indicator names.
+                 *
+                 * @product highstock
+                 * @since   next
+                 */
+                indicatorAliases: {
+                    // Overlays
+
+                    /**
+                     * Acceleration Bands alias.
+                     *
+                     * @default ['Acceleration Bands']
+                     * @type    {Array<string>}
+                     */
+                    abands: ['Acceleration Bands'],
+
+                    /**
+                     * Bollinger Bands alias.
+                     *
+                     * @default ['Bollinger Bands']
+                     * @type    {Array<string>}
+                     */
+                    bb: ['Bollinger Bands'],
+
+                    /**
+                     * Double Exponential Moving Average alias.
+                     *
+                     * @default ['Double Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    dema: ['Double Exponential Moving Average'],
+
+                    /**
+                     *  Exponential Moving Average alias.
+                     *
+                     * @default ['Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    ema: ['Exponential Moving Average'],
+
+                    /**
+                     *  Ichimoku Kinko Hyo alias.
+                     *
+                     * @default ['Ichimoku Kinko Hyo']
+                     * @type    {Array<string>}
+                     */
+                    ikh: ['Ichimoku Kinko Hyo'],
+
+                    /**
+                     *  Keltner Channels alias.
+                     *
+                     * @default ['Keltner Channels']
+                     * @type    {Array<string>}
+                     */
+                    keltnerchannels: ['Keltner Channels'],
+
+                    /**
+                     *  Linear Regression alias.
+                     *
+                     * @default ['Linear Regression']
+                     * @type    {Array<string>}
+                     */
+                    linearRegression: ['Linear Regression'],
+
+                    /**
+                     *  Pivot Points alias.
+                     *
+                     * @default ['Pivot Points']
+                     * @type    {Array<string>}
+                     */
+                    pivotpoints: ['Pivot Points'],
+
+                    /**
+                     *  Price Channel alias.
+                     *
+                     * @default ['Price Channel']
+                     * @type    {Array<string>}
+                     */
+                    pc: ['Price Channel'],
+
+                    /**
+                     *  Price Envelopes alias.
+                     *
+                     * @default ['Price Envelopes']
+                     * @type    {Array<string>}
+                     */
+                    priceenvelopes: ['Price Envelopes'],
+
+                    /**
+                     *  Parabolic SAR alias.
+                     *
+                     * @default ['Parabolic SAR']
+                     * @type    {Array<string>}
+                     */
+                    psar: ['Parabolic SAR'],
+
+                    /**
+                     *  Simple Moving Average alias.
+                     *
+                     * @default ['Simple Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    sma: ['Simple Moving Average'],
+
+                    /**
+                     *  Super Trend alias.
+                     *
+                     * @default ['Super Trend']
+                     * @type    {Array<string>}
+                     */
+                    supertrend: ['Super Trend'],
+
+                    /**
+                     *  Triple Exponential Moving Average alias.
+                     *
+                     * @default ['Triple Exponential Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    tema: ['Triple Exponential Moving Average'],
+
+                    /**
+                     *  Volume by Price alias.
+                     *
+                     * @default ['Volume by Price']
+                     * @type    {Array<string>}
+                     */
+                    vbp: ['Volume by Price'],
+
+                    /**
+                     *  Volume Weighted Moving Average alias.
+                     *
+                     * @default ['Volume Weighted Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    vwap: ['Volume Weighted Moving Average'],
+
+                    /**
+                     *  Weighted Moving Average alias.
+                     *
+                     * @default ['Weighted Moving Average']
+                     * @type    {Array<string>}
+                     */
+                    wma: ['Weighted Moving Average'],
+
+                    /**
+                     *  Zig Zagalias.
+                     *
+                     * @default ['Zig Zag']
+                     * @type    {Array<string>}
+                     */
+                    zigzag: ['Zig Zag'],
+
+                    // Oscilators
+                    /**
+                     *  Absolute price indicator alias.
+                     *
+                     * @default ['Absolute price indicator']
+                     * @type    {Array<string>}
+                     */
+                    apo: ['Absolute price indicator'],
+
+                    /**
+                     * Accumulation/Distribution alias.
+                     *
+                     * @default ['Accumulation/Distribution’]
+                     * @type    {Array<string>}
+                     */
+                    ad: ['Accumulation/Distribution'],
+
+                    /**
+                     *  Aroon alias.
+                     *
+                     * @default ['Aroon']
+                     * @type    {Array<string>}
+                     */
+                    aroon: ['Aroon'],
+
+                    /**
+                     *  Aroon oscillator alias.
+                     *
+                     * @default ['Aroon oscillator']
+                     * @type    {Array<string>}
+                     */
+                    aroonoscillator: ['Aroon oscillator'],
+
+                    /**
+                     *  Average True Range alias.
+                     *
+                     * @default ['Average True Range’]
+                     * @type    {Array<string>}
+                     */
+
+                    atr: ['Average True Range'],
+
+                    /**
+                     *  Awesome oscillator alias.
+                     *
+                     * @default ['Awesome oscillator’]
+                     * @type    {Array<string>}
+                     */
+
+                    ao: ['Awesome oscillator'],
+
+                    /**
+                     *  Commodity Channel Index alias.
+                     *
+                     * @default ['Commodity Channel Index’]
+                     * @type    {Array<string>}
+                     */
+
+                    cci: ['Commodity Channel Index'],
+
+                    /**
+                     *  Chaikin alias.
+                     *
+                     * @default ['Chaikin’]
+                     * @type    {Array<string>}
+                     */
+                    chaikin: ['Chaikin'],
+
+                    /**
+                     *  Chaikin Money Flow alias.
+                     *
+                     * @default ['Chaikin Money Flow’]
+                     * @type    {Array<string>}
+                     */
+                    cmf: ['Chaikin Money Flow'],
+
+                    /**
+                     *  Chande Momentum Oscillator alias.
+                     *
+                     * @default ['Chande Momentum Oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    cmo: ['Chande Momentum Oscillator'],
+
+                    /**
+                     *  Disparity Index alias.
+                     *
+                     * @default ['Disparity Index’]
+                     * @type    {Array<string>}
+                     */
+                    disparityindex: ['Disparity Index'],
+
+                    /**
+                     *  Directional Movement Index alias.
+                     *
+                     * @default ['Directional Movement Index’]
+                     * @type    {Array<string>}
+                     */
+                    dmi: ['Directional Movement Index'],
+
+                    /**
+                     *  Detrended price oscillator alias.
+                     *
+                     * @default ['Detrended price oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    dpo: ['Detrended price oscillator'],
+
+                    /**
+                     *  Klinger Oscillator alias.
+                     *
+                     * @default [‘Klinger Oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    klinger: ['Klinger Oscillator'],
+
+                    /**
+                     *  Linear Regression Angle alias.
+                     *
+                     * @default [‘Linear Regression Angle’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionAngle: ['Linear Regression Angle'],
+
+                    /**
+                     *  Linear Regression Intercept alias.
+                     *
+                     * @default [‘Linear Regression Intercept’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionIntercept: ['Linear Regression Intercept'],
+
+                    /**
+                     *  Linear Regression Slope alias.
+                     *
+                     * @default [‘Linear Regression Slope’]
+                     * @type    {Array<string>}
+                     */
+                    linearRegressionSlope: ['Linear Regression Slope'],
+
+
+                    /**
+                     *  Moving Average Convergence Divergence alias.
+                     *
+                     * @default ['Moving Average Convergence Divergence’]
+                     * @type    {Array<string>}
+                     */
+                    macd: ['Moving Average Convergence Divergence'],
+
+                    /**
+                     *  Money Flow Index alias.
+                     *
+                     * @default ['Money Flow Index’]
+                     * @type    {Array<string>}
+                     */
+                    mfi: ['Money Flow Index'],
+
+                    /**
+                     *  Momentum alias.
+                     *
+                     * @default [‘Momentum’]
+                     * @type    {Array<string>}
+                     */
+                    momentum: ['Momentum'],
+
+                    /**
+                     *  Normalized Average True Range alias.
+                     *
+                     * @default ['Normalized Average True Range’]
+                     * @type    {Array<string>}
+                     */
+
+                    natr: ['Normalized Average True Range'],
+
+                    /**
+                     *  On-Balance Volume alias.
+                     *
+                     * @default ['On-Balance Volume’]
+                     * @type    {Array<string>}
+                     */
+                    obv: ['On-Balance Volume'],
+
+                    /**
+                     * Percentage Price oscillator alias.
+                     *
+                     * @default ['Percentage Price oscillator’]
+                     * @type    {Array<string>}
+                     */
+                    ppo: ['Percentage Price oscillator'],
+
+                    /**
+                     *  Rate of Change alias.
+                     *
+                     * @default ['Rate of Change’]
+                     * @type    {Array<string>}
+                     */
+                    roc: ['Rate of Change'],
+
+                    /**
+                     *  Relative Strength Index alias.
+                     *
+                     * @default ['Relative Strength Index’]
+                     * @type    {Array<string>}
+                     */
+                    rsi: ['Relative Strength Index'],
+
+                    /**
+                     *  Slow Stochastic alias.
+                     *
+                     * @default [‘Slow Stochastic’]
+                     * @type    {Array<string>}
+                     */
+                    slowstochastic: ['Slow Stochastic'],
+
+                    /**
+                     *  Stochastic alias.
+                     *
+                     * @default [‘Stochastic’]
+                     * @type    {Array<string>}
+                     */
+                    stochastic: ['Stochastic'],
+
+                    /**
+                     *  TRIX alias.
+                     *
+                     * @default [‘TRIX’]
+                     * @type    {Array<string>}
+                     */
+                    trix: ['TRIX'],
+
+                    /**
+                     *  Williams %R alias.
+                     *
+                     * @default [‘Williams %R’]
+                     * @type    {Array<string>}
+                     */
+                    williamsr: ['Williams %R']
+                }
             }
         }
     },
