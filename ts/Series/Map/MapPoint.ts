@@ -65,8 +65,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public projectedPath: SVGPath|undefined;
 
-    public properties?: object;
-
     public series: MapSeries = void 0 as any;
 
     /* *
@@ -171,10 +169,17 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
+interface MapPointProperties {
+    [key: string]: number|string;
+}
+
 interface MapPoint extends ColorMapComposition.PointComposition {
     bounds?: MapBounds;
     dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
     isValid: ColorMapComposition.PointComposition['isValid'];
+    middleX?: number;
+    middleY?: number;
+    properties?: MapPointProperties;
 }
 
 /* *

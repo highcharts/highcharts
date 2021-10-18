@@ -757,10 +757,10 @@ class MapSeries extends ScatterSeries {
     public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds) {
 
-            const MAX_VALUE = Number.MAX_VALUE;
-            const projection = this.chart.mapView &&
-                this.chart.mapView.projection;
-            const allBounds: MapBounds[] = [];
+            const MAX_VALUE = Number.MAX_VALUE,
+                projection = this.chart.mapView &&
+                    this.chart.mapView.projection,
+                allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
             (this.points || []).forEach(function (point): void {
@@ -786,7 +786,7 @@ class MapSeries extends ScatterSeries {
                     if (!point.bounds) {
                         // const path = point.path || [],
                         const path = point.getProjectedPath(projection),
-                            properties = (point as any).properties;
+                            properties = point.properties;
 
                         let x2 = -MAX_VALUE,
                             x1 = MAX_VALUE,
@@ -813,23 +813,26 @@ class MapSeries extends ScatterSeries {
 
                             // Cache point bounding box for use to position data
                             // labels, bubbles etc
-                            const midX = (
-                                x1 + (x2 - x1) * pick(
-                                    (point as any).middleX,
-                                    properties && (properties as any)['hc-middle-x'],
-                                    0.5
-                                )
-                            );
+                            const propMiddleX = properties && properties['hc-middle-x'],
+                                midX = (
+                                    x1 + (x2 - x1) * pick(
+                                        point.middleX,
+                                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                                    )
+                                ),
+                                propMiddleY = properties && properties['hc-middle-y'];
 
-                            const midY = (
-                                // Note the sign. We may have to flip this with
-                                // unprojected maps
-                                y2 - (y2 - y1) * pick(
-                                    (point as any).middleY,
-                                    properties && (properties as any)['hc-middle-y'],
-                                    0.5
-                                )
+                            let middleYFraction = pick(
+                                point.middleY,
+                                isNumber(propMiddleY) ? propMiddleY : 0.5
                             );
+                            // No geographic geometry, only path given => flip
+                            if (!point.geometry) {
+                                middleYFraction = 1 - middleYFraction;
+                            }
+
+                            const midY = y2 - (y2 - y1) * middleYFraction;
+
                             point.bounds = { midX, midY, x1, y1, x2, y2 };
 
                             point.labelrank = pick(
