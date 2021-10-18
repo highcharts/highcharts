@@ -38,8 +38,6 @@
 .chart-container .highcharts-container {
   position: relative;
   overflow: hidden;
-  width: 500px;
-  height: 500px;
   text-align: left;
   line-height: normal;
   z-index: 0;
@@ -114,9 +112,8 @@
 
 #charts{
 	width:250px;
-	height:250px;
+	height:250px
 }
-
 #charts .highcharts-plot-background,
 #charts .highcharts-background
 {

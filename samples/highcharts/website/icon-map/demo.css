@@ -3,8 +3,6 @@
 .chart-container .highcharts-container {
   position: relative;
   overflow: hidden;
-  width: 500px;
-  height: 500px;
   text-align: left;
   line-height: normal;
 	fill:#fff;
