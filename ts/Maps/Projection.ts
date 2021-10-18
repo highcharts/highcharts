@@ -256,21 +256,15 @@ export default class Projection {
     }
 
     // Project a lonlat coordinate position to xy. Dynamically overridden when
-    // projection is set
+    // projection is set.
     public forward(lonLat: [number, number]): [number, number] {
         return lonLat;
-        // Flips y because the path option uses the SVG coordinate system with
-        // origin in top left, while geo coordinates use origin in bottom left.
-        // return [lonLat[0], -lonLat[1]];
     }
 
     // Project an xy chart coordinate position to lonlat. Dynamically overridden
-    // when projection is set
+    // when projection is set.
     public inverse(xy: [number, number]): [number, number] {
         return xy;
-        // Flips y because the path option uses the SVG coordinate system with
-        // origin in top left, while geo coordinates use origin in bottom left.
-        // return [xy[0], -xy[1]];
     }
 
     public maxLatitude = 90;

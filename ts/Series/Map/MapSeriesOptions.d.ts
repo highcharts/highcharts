@@ -34,7 +34,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface MapSeriesOptions extends ColorAxisComposition.SeriesCompositionOptions, ScatterSeriesOptions
 {
-    center?: [(number|string|null), (number|string|null)];
     data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
     nullColor?: ColorType;
     nullInteraction?: boolean;

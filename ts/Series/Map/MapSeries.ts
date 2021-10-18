@@ -88,8 +88,6 @@ declare module '../../Core/Series/SeriesLike' {
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
         svgTransform?: SVGTransformType;
-        valueMax?: number;
-        valueMin?: number;
         useMapGeometry?: boolean;
     }
 }
@@ -162,8 +160,6 @@ class MapSeries extends ScatterSeries {
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         animation: false, // makes the complex shapes slow
-
-        center: [null, null],
 
         dataLabels: {
             crop: false,
@@ -1196,7 +1192,6 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
     trackerGroups: typeof colorMapSeriesMixin['trackerGroups'];
-    useMapGeometry?: boolean;
     animate(init?: boolean): void;
     animateDrilldown(init?: boolean): void;
     animateDrillupTo(init?: boolean): void;
