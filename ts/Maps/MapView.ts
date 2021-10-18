@@ -25,6 +25,7 @@ import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    clamp,
     fireEvent,
     isNumber,
     merge,
@@ -103,6 +104,145 @@ class MapView {
          * @type {number}
          */
         this.zoom = o.zoom;
+
+
+        // Initialize and respond to chart size changes
+        addEvent(chart, 'afterSetChartSize', (): void => {
+            if (
+                this.minZoom === void 0 || // When initializing the chart
+                this.minZoom === this.zoom // When resizing the chart
+            ) {
+
+                this.fitToBounds(void 0, void 0, false);
+
+                if (isNumber(this.userOptions.zoom)) {
+                    this.zoom = this.userOptions.zoom;
+                }
+                if (this.userOptions.center) {
+                    merge(true, this.center, this.userOptions.center);
+                }
+            }
+        });
+
+
+        // Set up panning for maps. In orthographic projections the globe will
+        // rotate, otherwise adjust the map center.
+        let mouseDownCenterProjected: [number, number];
+        let mouseDownKey: string;
+        let mouseDownRotation: number[]|undefined;
+        addEvent(chart, 'pan', (e: PointerEvent): void => {
+            const {
+                mouseDownX,
+                mouseDownY
+            } = chart;
+
+            if (
+                typeof mouseDownX === 'number' &&
+                typeof mouseDownY === 'number'
+            ) {
+                const key = `${mouseDownX},${mouseDownY}`;
+                const { chartX, chartY } = (e as any).originalEvent;
+
+                // Reset starting position
+                if (key !== mouseDownKey) {
+                    mouseDownKey = key;
+
+                    mouseDownCenterProjected = this.projection
+                        .forward(this.center);
+
+                    mouseDownRotation = (
+                        this.projection.options.rotation || [0, 0]
+                    ).slice();
+                }
+
+                // Panning rotates the globe
+                if (
+                    this.projection.options.projectionName === 'Orthographic' &&
+
+                    // ... but don't rotate if we're loading only a part of the
+                    // world
+                    (this.minZoom || Infinity) < 25.2
+                ) {
+
+                    // Empirical ratio where the globe rotates roughly the same
+                    // speed as moving the pointer across the center of the
+                    // projection
+                    const ratio = 28000 / (this.getScale() * Math.min(
+                        chart.plotWidth,
+                        chart.plotHeight
+                    ));
+
+                    if (mouseDownRotation) {
+                        const lon = (mouseDownX - chartX) * ratio -
+                            mouseDownRotation[0];
+                        const lat = clamp(
+                            -mouseDownRotation[1] -
+                                (mouseDownY - chartY) * ratio,
+                            -80,
+                            80
+                        );
+                        this.update({
+                            projection: {
+                                rotation: [-lon, -lat]
+                            },
+                            center: [lon, lat],
+                            zoom: this.zoom
+                        }, true, false);
+
+                    }
+
+
+                } else {
+
+                    const scale = this.getScale();
+
+                    const newCenter = this.projection.inverse([
+                        mouseDownCenterProjected[0] +
+                            (mouseDownX - chartX) / scale,
+                        mouseDownCenterProjected[1] -
+                            (mouseDownY - chartY) / scale
+                    ]);
+
+                    this.setView(newCenter, void 0, true, false);
+
+                }
+
+                e.preventDefault();
+            }
+        });
+
+
+        // Perform the map zoom by selection
+        addEvent(chart, 'selection', (evt: PointerEvent): void => {
+            // Zoom in
+            if (!(evt as any).resetSelection) {
+                const x = evt.x - chart.plotLeft;
+                const y = evt.y - chart.plotTop;
+                const { y: y1, x: x1 } = this.pixelsToProjectedUnits({ x, y });
+                const { y: y2, x: x2 } = this.pixelsToProjectedUnits(
+                    { x: x + evt.width, y: y + evt.height }
+                );
+                this.fitToBounds(
+                    { x1, y1, x2, y2 },
+                    void 0,
+                    true,
+                    (evt as any).originalEvent.touches ?
+                        // On touch zoom, don't animate, since we're already in
+                        // transformed zoom preview
+                        false :
+                        // On mouse zoom, obey the chart-level animation
+                        void 0
+                );
+
+                chart.showResetZoom();
+
+                evt.preventDefault();
+
+            // Reset zoom
+            } else {
+                this.zoomBy();
+            }
+        });
 
     }
 
