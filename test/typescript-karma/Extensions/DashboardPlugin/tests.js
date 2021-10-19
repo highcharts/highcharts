@@ -1,11 +1,11 @@
 import CSVStore from '/base/code/es-modules/Data/Stores/CSVStore.js';
-import DashboardPlugin from '/base/code/es-modules/Dashboard/DashboardPlugin.js';
+import PluginHandler from '/base/code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
 import HighchartsComponent from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsComponent.js';
 import HighchartsPlugin from '/base/code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardPlugin.addPlugin(HighchartsPlugin);
+PluginHandler.addPlugin(HighchartsPlugin);
 
 const { test, only, skip } = QUnit;
 

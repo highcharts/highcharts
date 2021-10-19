@@ -17,7 +17,7 @@
  *
  * */
 
-import type DashboardPlugin from '../../Dashboard/DashboardPlugin';
+import type PluginHandler from '../../Dashboard/PluginHandler';
 import type G from '../../Core/Globals';
 
 import HighchartsComponent from './HighchartsComponent.js';
@@ -48,7 +48,7 @@ function connectHighcharts(
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
-    e: DashboardPlugin.Event
+    e: PluginHandler.Event
 ): void {
     const {
         Component,
@@ -67,11 +67,11 @@ function onRegister(
 /**
  * Callback function of the Dashboard plugin.
  *
- * @param {Dashboard.DashboardPlugin.Event} e
+ * @param {Dashboard.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
 function onUnregister(
-    e: DashboardPlugin.Event
+    e: PluginHandler.Event
 ): void {
     const {
         Sync
@@ -97,7 +97,7 @@ const HighchartsCustom = {
     connectHighcharts
 };
 
-const HighchartsPlugin: DashboardPlugin<typeof HighchartsCustom> = {
+const HighchartsPlugin: PluginHandler.DashboardPlugin<typeof HighchartsCustom> = {
     custom: HighchartsCustom,
     name: 'Highcharts.DashboardPlugin',
     onRegister,

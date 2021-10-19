@@ -25,32 +25,26 @@ import Sync from './Component/Sync/Sync.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-interface DashboardPlugin<T = (AnyRecord|undefined)> {
-    custom: T;
-    maxRevision?: number;
-    minRevision?: number;
-    name: string;
-    onRegister: DashboardPlugin.EventCallback;
-    onUnregister: DashboardPlugin.EventCallback;
-}
-
-/* *
- *
  *  Namespace
  *
  * */
 
-namespace DashboardPlugin {
+namespace PluginHandler {
 
     /* *
      *
      *  Declarations
      *
      * */
+
+    export interface DashboardPlugin<T = (AnyRecord|undefined)> {
+        custom: T;
+        maxRevision?: number;
+        minRevision?: number;
+        name: string;
+        onRegister: PluginHandler.EventCallback;
+        onUnregister: PluginHandler.EventCallback;
+    }
 
     export interface Event {
         Component: typeof Component;
@@ -154,4 +148,4 @@ namespace DashboardPlugin {
  *
  * */
 
-export default DashboardPlugin;
+export default PluginHandler;

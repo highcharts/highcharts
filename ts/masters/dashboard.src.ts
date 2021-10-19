@@ -18,7 +18,7 @@
 
 import Dashboard from '../Dashboard/Dashboard.js';
 import DashboardGlobals from '../Dashboard/DashboardGlobals.js';
-import DashboardPlugin from '../Dashboard/DashboardPlugin.js';
+import PluginHandler from '../Dashboard/PluginHandler.js';
 import Sync from '../Dashboard/Component/Sync/Sync.js';
 
 /* *
@@ -43,9 +43,9 @@ declare global {
 
 const D = {
     ...DashboardGlobals,
-    ...DashboardPlugin,
     _modules: (typeof _modules === 'undefined' ? {} : _modules),
     Dashboard,
+    PluginHandler,
     Sync
 };
 

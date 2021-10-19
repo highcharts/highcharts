@@ -8,12 +8,12 @@ import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifie
 import DataStore from '../../../../code/es-modules/Data/Stores/DataStore.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
 
-import DashboardPlugin from '../../../../code/es-modules/Dashboard/DashboardPlugin.js';
+import PluginHandler from '../../../../code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardPlugin.addPlugin(HighchartsPlugin);
+PluginHandler.addPlugin(HighchartsPlugin);
 
 const defaultstyle = {};
 

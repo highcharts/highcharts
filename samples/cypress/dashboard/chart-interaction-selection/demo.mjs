@@ -1,11 +1,11 @@
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
-import DashboardPlugin from  '../../../../code/es-modules/Dashboard/DashboardPlugin.js';
+import PluginHandler from  '../../../../code/es-modules/Dashboard/PluginHandler.js';
 import Highcharts from  '../../../../code/es-modules/masters/highcharts.src.js';
 import HighchartsPlugin from  '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
 
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
-DashboardPlugin.addPlugin(HighchartsPlugin);
+PluginHandler.addPlugin(HighchartsPlugin);
 
 // A shared store
 const store = new CSVStore(undefined, {
