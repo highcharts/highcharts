@@ -7,7 +7,13 @@ import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModif
 import SortModifier from '../../../../code/es-modules/Data/Modifiers/SortModifier.js';
 import DataStore from '../../../../code/es-modules/Data/Stores/DataStore.js';
 import DataTable from '../../../../code/es-modules/Data/DataTable.js';
-import ChartSyncHandler from '../../../../code/es-modules/Dashboard/Component/Sync/Handler.js';
+
+import DashboardPlugin from '../../../../code/es-modules/Dashboard/DashboardPlugin.js';
+import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import HighchartsPlugin from '../../../../code/es-modules/Extensions/DashboardPlugin/HighchartsPlugin.js';
+
+HighchartsPlugin.custom.connectHighcharts(Highcharts);
+DashboardPlugin.addPlugin(HighchartsPlugin);
 
 const defaultstyle = {};
 
@@ -451,7 +457,7 @@ const components = state => [
     {
         cell: "columnchart",
         isResizable: true,
-        type: "chart",
+        type: "Highcharts",
         store,
         presentationModifier: new SortModifier({
             direction: 'asc',
@@ -491,7 +497,7 @@ const components = state => [
     {
         cell: "piechart",
         isResizable: true,
-        type: "chart",
+        type: "Highcharts",
         store,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
@@ -527,7 +533,7 @@ const components = state => [
     {
         cell: "totals",
         isResizable: true,
-        type: "chart",
+        type: "Highcharts",
         store,
         presentationModifier: new GroupModifier({
             groupColumn: 'Activity Type'
