@@ -9,8 +9,7 @@ DashboardPlugin.addPlugin(HighchartsPlugin);
 
 const { test, only, skip } = QUnit;
 
-// @todo test after plugin refactoring
-skip('Both components should work', (assert) => {
+test('Both components should work', (assert) => {
 
     const store = new CSVStore(undefined, {
         csv: 'a,b,c\n1,2,3',
