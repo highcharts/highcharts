@@ -94,6 +94,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
                 'chartClassName',
                 'chartID'
             ],
+            syncHandlers: HighchartsSyncHandlers,
             tableAxisMap: {}
         });
 
@@ -170,7 +171,7 @@ class HighchartsComponent extends Component<HighchartsComponent.ChartComponentEv
             this.chartContainer.id = this.options.chartID;
         }
 
-        this.sync = new Component.Sync(this, this.options.syncEvents, this.options.syncHandlers);
+        this.sync = new HighchartsComponent.Sync(this, this.options.syncEvents, this.options.syncHandlers);
         this.chartOptions = this.options.chartOptions || { chart: {} };
 
         if (this.store) {
