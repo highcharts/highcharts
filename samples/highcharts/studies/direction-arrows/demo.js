@@ -86,25 +86,26 @@ Highcharts.mapChart('map-container', {
                 x: 15
             },
             x: 0,
-            y: -4500
+            y: 4500
         }, {
             name: 'Point2',
             x: 2000,
-            y: -8000
+            y: 88000
         }]
     }, {
-        // Specify the lines here. The design of the arrowheads is defined in SVG (see HTML). Which line gets which marker is set with CSS.
+        // Specify the lines here. The design of the arrowheads is defined in
+        // SVG (see HTML). Which line gets which marker is set with CSS.
         type: 'mapline',
         colorAxis: false,
         name: 'Lines',
         color: 'black',
         data: [{
             name: 'line1',
-            path: 'M 0 -4500 L 2000 -8000',
+            path: 'M 0 4500 L 2000 8000',
             lineWidth: 3
         }, {
             name: 'line2',
-            path: 'M 2200 -4200 L 0 -4500',
+            path: 'M 2200 4200 L 0 4500',
             lineWidth: 1
         }]
     }]

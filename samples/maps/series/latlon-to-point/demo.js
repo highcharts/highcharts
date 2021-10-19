@@ -45,10 +45,15 @@ const chart = Highcharts.mapChart('container', {
 });
 
 document.getElementById('addCircle').onclick = () => {
-    const pos = chart.fromLatLonToPoint({ lat: 51.507222, lon: -0.1275 });
+    const projectedPos = chart.fromLatLonToPoint({
+            lat: 51.507222,
+            lon: -0.1275
+        }),
+        pixelPos = chart.mapView.projectedUnitsToPixels(projectedPos);
+
     chart.renderer.circle(
-        chart.xAxis[0].toPixels(pos.x),
-        chart.yAxis[0].toPixels(pos.y),
+        chart.plotLeft + pixelPos.x,
+        chart.plotTop + pixelPos.y,
         28
     ).attr({
         zIndex: 100,
