@@ -1,13 +1,14 @@
-var H = Highcharts,
-    map = H.maps['countries/us/us-all'],
-    chart;
+const H = Highcharts,
+    map = H.maps['countries/us/us-all'];
+
+let chart;
 
 // Add series with state capital bubbles
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json', function (json) {
-    var data = [];
-    json.forEach(function (p) {
+
+    const data = json.map(p => {
         p.z = p.population;
-        data.push(p);
+        return p;
     });
 
     chart = Highcharts.mapChart('container', {
@@ -69,10 +70,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
 // Display custom label with lat/lon next to crosshairs
 document.getElementById('container').addEventListener('mousemove', function (e) {
-    var position;
     if (chart) {
-        if (!chart.lab) {
-            chart.lab = chart.renderer.text('', 0, 0)
+        if (!chart.lbl) {
+            chart.lbl = chart.renderer.text('', 0, 0)
                 .attr({
                     zIndex: 5
                 })
@@ -83,12 +83,13 @@ document.getElementById('container').addEventListener('mousemove', function (e) 
         }
 
         e = chart.pointer.normalize(e);
-        position = chart.fromPointToLatLon({
-            x: chart.xAxis[0].toValue(e.chartX),
-            y: chart.yAxis[0].toValue(e.chartY)
+        const projectedPosition = chart.mapView.pixelsToProjectedUnits({
+            x: Math.round(e.chartX - chart.plotLeft),
+            y: Math.round(e.chartY - chart.plotTop)
         });
+        const position = chart.fromPointToLatLon(projectedPosition);
 
-        chart.lab.attr({
+        chart.lbl.attr({
             x: e.chartX + 5,
             y: e.chartY - 22,
             text: 'Lat: ' + position.lat.toFixed(2) + '<br>Lon: ' + position.lon.toFixed(2)
@@ -97,8 +98,7 @@ document.getElementById('container').addEventListener('mousemove', function (e) 
 });
 
 document.getElementById('container').addEventListener('mouseout', function () {
-    if (chart && chart.lab) {
-        chart.lab.destroy();
-        chart.lab = null;
+    if (chart && chart.lbl) {
+        chart.lbl = chart.lbl.destroy();
     }
 });

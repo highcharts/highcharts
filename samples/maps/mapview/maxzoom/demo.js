@@ -1,14 +1,10 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
-        chart: {
-            width: 600,
-            height: 500
-        },
 
         title: {
-            text: 'Predefined axis min/max to define zoomed area'
+            text: 'Map view maxZoom prevents zooming in too far'
         },
 
         mapNavigation: {
@@ -18,20 +14,14 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         },
 
-        xAxis: {
-            min: 3330,
-            max: 6044
-        },
-
-        yAxis: {
-            min: -9130,
-            max: -7440
-        },
-
         colorAxis: {
             min: 1,
             max: 1000,
             type: 'logarithmic'
+        },
+
+        mapView: {
+            maxZoom: 16
         },
 
         legend: {

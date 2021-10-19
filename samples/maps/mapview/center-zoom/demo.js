@@ -1,22 +1,38 @@
-let chart;
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
-    chart = Highcharts.mapChart('container', {
-
+    // Initialize the chart
+    Highcharts.mapChart('container', {
         chart: {
             width: 600,
             height: 500
         },
 
         title: {
-            text: 'Set axis extremes'
+            text: 'Predefined zoomed area'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        mapView: {
+            center: [4500, 8300], // In terms of pre-projected units
+            zoom: 15
         },
 
         colorAxis: {
             min: 1,
             max: 1000,
             type: 'logarithmic'
+        },
+
+        legend: {
+            title: {
+                text: 'Population density per km²'
+            }
         },
 
         series: [{
@@ -35,13 +51,3 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }]
     });
 });
-
-const zoomToEurope = () => {
-    chart.xAxis[0].setExtremes(4800, 4800, false);
-    chart.yAxis[0].setExtremes(-9300, -7500, false);
-    chart.redraw();
-};
-
-document.getElementById('setextremes').onclick = () => {
-    zoomToEurope();
-};
