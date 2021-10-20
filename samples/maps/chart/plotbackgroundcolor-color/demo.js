@@ -1,6 +1,6 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
 
         chart: {
@@ -19,6 +19,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         },
 
+        mapView: {
+            padding: '5%'
+        },
+
         colorAxis: {
             min: 1,
             max: 1000,
@@ -32,16 +36,6 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                 text: 'Population per km²'
             },
             backgroundColor: 'rgba(255,255,255,0.85)'
-        },
-
-        // Add some padding inside the plot box
-        xAxis: {
-            minPadding: 0.02,
-            maxPadding: 0.02
-        },
-        yAxis: {
-            minPadding: 0.02,
-            maxPadding: 0.02
         },
 
         // The map series

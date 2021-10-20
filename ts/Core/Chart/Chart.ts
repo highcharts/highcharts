@@ -1881,11 +1881,7 @@ class Chart {
         }
 
         chart.setChartSize(true);
-        renderer.setSize(
-            (chart.chartWidth as any),
-            (chart.chartHeight as any),
-            globalAnimation
-        );
+        renderer.setSize(chart.chartWidth, chart.chartHeight, globalAnimation);
 
         // handle axes
         chart.axes.forEach(function (axis): void {

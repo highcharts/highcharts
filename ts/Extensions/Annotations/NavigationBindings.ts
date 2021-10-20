@@ -15,7 +15,6 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
@@ -99,7 +98,14 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Record<string, string>;
+            popup?: PopupOptions;
+        }
+        interface PopupOptions {
+            [key: string]: string | IndicatorAliases | undefined;
+            indicatorAliases?: IndicatorAliases;
+        }
+        interface IndicatorAliases {
+            [key: string]: Array<string>;
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -266,8 +272,9 @@ const bindingsUtils = {
         coords: Array<Pointer.AxisCoordinateObject>
     ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
-            const axisMin = coord.axis.min,
-                axisMax = coord.axis.max,
+            const extremes = coord.axis.getExtremes(),
+                axisMin = extremes.min,
+                axisMax = extremes.max,
                 // Correct axis edges when axis has series
                 // with pointRange (like column)
                 minPointOffset = pick(coord.axis.minPointOffset, 0);
@@ -1188,7 +1195,6 @@ setOptions({
          * Configure the Popup strings in the chart. Requires the
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
-         *
          * @since   7.0.0
          * @product highcharts highstock
          */
@@ -1494,7 +1500,8 @@ setOptions({
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
-                                        { xAxis, yAxis, x, y }
+                                        { xAxis, yAxis, x, y },
+                                        { command: 'Z' }
                                     ]
                                 }]
                             },

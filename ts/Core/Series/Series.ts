@@ -2332,7 +2332,7 @@ class Series {
             }
 
             // Find point zone
-            point.zone = (this.zones.length && point.getZone() as any);
+            point.zone = this.zones.length ? point.getZone() : void 0;
 
             // Animate new points with data sorting
             if (!point.graphic && series.group && enabledDataSorting) {
@@ -2577,8 +2577,8 @@ class Series {
             }
         });
 
-        fireEvent(this, 'afterAnimate');
         this.finishedAnimating = true;
+        fireEvent(this, 'afterAnimate');
     }
 
     /**
@@ -3763,13 +3763,15 @@ class Series {
      * @function Highcharts.Series#isPointInside
      */
     public isPointInside(point: (Record<string, number>|Point)): boolean {
-        const isInside =
-            typeof point.plotY !== 'undefined' &&
-            typeof point.plotX !== 'undefined' &&
-            point.plotY >= 0 &&
-            point.plotY <= this.yAxis.len && // #3519
-            point.plotX >= 0 &&
-            point.plotX <= this.xAxis.len;
+        const { chart, xAxis, yAxis } = this,
+            isInside = (
+                typeof point.plotY !== 'undefined' &&
+                typeof point.plotX !== 'undefined' &&
+                point.plotY >= 0 &&
+                point.plotY <= (yAxis ? yAxis.len : chart.plotHeight) &&
+                point.plotX >= 0 &&
+                point.plotX <= (xAxis ? xAxis.len : chart.plotWidth)
+            );
 
         return isInside;
     }

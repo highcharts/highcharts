@@ -486,7 +486,10 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             zMin = Number.MAX_VALUE,
             zMax = -Number.MAX_VALUE;
 
-        if (gl && shaderProgram && series.type === 'bubble') {
+        if (gl && shaderProgram && series.is('bubble')) {
+
+            const pxSizes = series.getPxExtremes();
+
             zMin = pick(seriesOptions.zMin, clamp(
                 zCalcMin,
                 seriesOptions.displayNegative === false ?
@@ -511,8 +514,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             setUniform('bubbleZMin', zMin);
             setUniform('bubbleZMax', zMax);
             setUniform('bubbleZThreshold', series.options.zThreshold as any);
-            setUniform('bubbleMinSize', series.minPxSize as any);
-            setUniform('bubbleMaxSize', series.maxPxSize as any);
+            setUniform('bubbleMinSize', pxSizes.minPxSize);
+            setUniform('bubbleMaxSize', pxSizes.maxPxSize);
         }
     }
 

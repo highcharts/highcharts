@@ -3,7 +3,12 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.mapChart('container', {
             chart: {
-                plotBorderWidth: 1
+                plotBorderWidth: 1,
+
+                // Square plot area
+                width: 400,
+                height: 400,
+                margin: 40
             },
 
             mapNavigation: {
@@ -16,16 +21,6 @@ QUnit.test(
                 type: 'logarithmic',
                 minColor: '#e6e696',
                 maxColor: '#003700'
-            },
-
-            // Add some padding inside the plot box
-            xAxis: {
-                minPadding: 0.2,
-                maxPadding: 0.2
-            },
-            yAxis: {
-                minPadding: 0.2,
-                maxPadding: 0.2
             },
 
             // The map series
@@ -45,9 +40,7 @@ QUnit.test(
             ]
         });
 
-        var xExtremes = chart.xAxis[0].getExtremes(),
-            yExtremes,
-            plotLeft = chart.plotLeft,
+        var plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             controller = new TestController(chart);
 
@@ -61,25 +54,26 @@ QUnit.test(
             'Reset zoom button should not appear while panning and chart is not zoomed.'
         );
 
+        const zoomBefore = chart.mapView.zoom;
         chart.mapZoom(0.5);
 
         assert.notEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Zoomed in'
+            chart.mapView.zoom,
+            zoomBefore,
+            'The chart should have zoomed in'
         );
 
         chart.mapZoom(2);
         assert.strictEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Zoomed out including padding'
+            chart.mapView.zoom,
+            zoomBefore,
+            'The chart should be zoomed out to original state'
         );
 
         chart.mapZoom(0.2);
 
-        xExtremes = chart.xAxis[0].getExtremes();
-        yExtremes = chart.yAxis[0].getExtremes();
+
+        const [lon, lat] = chart.mapView.center;
 
         controller.pan(
             [plotLeft + 50, plotTop + 50],
@@ -87,15 +81,15 @@ QUnit.test(
         );
 
         assert.notEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Correctly panned in horizontal direction'
+            chart.mapView.center[0],
+            lon,
+            'The chart should pan horizontally'
         );
 
         assert.notEqual(
-            chart.yAxis[0].getExtremes().min,
-            yExtremes.min,
-            'Correctly panned in vertical direction'
+            chart.mapView.center[1],
+            lat,
+            'The chart should pan vertically'
         );
     }
 );

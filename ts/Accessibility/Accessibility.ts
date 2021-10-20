@@ -323,7 +323,7 @@ namespace Accessibility {
 
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
-        container: Highcharts.ContainerComponent;
+        container: ContainerComponent;
         infoRegions: Highcharts.InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
         chartMenu: Highcharts.MenuComponent;
@@ -333,7 +333,6 @@ namespace Accessibility {
     }
 
     export declare class ChartComposition extends Chart {
-        highlightedPoint?: PointComposition;
         options: Required<Options>;
         series: Array<SeriesComposition>;
     }
@@ -478,7 +477,7 @@ namespace Accessibility {
         FocusBorder.compose(ChartClass, SVGElementClass);
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
-        SeriesComponent.compose(SeriesClass);
+        SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);

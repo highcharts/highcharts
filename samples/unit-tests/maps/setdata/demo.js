@@ -1,4 +1,4 @@
-QUnit.test('Stacked box plot (#3894)', function (assert) {
+QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // Prepare demo data
     var data = [
         {
@@ -803,7 +803,7 @@ QUnit.test('Stacked box plot (#3894)', function (assert) {
         }
     ];
 
-    // Initiate the chart
+    // Initialize the chart
     $('#container').highcharts('Map', {
         title: {
             text: 'Highmaps basic demo'
@@ -845,11 +845,26 @@ QUnit.test('Stacked box plot (#3894)', function (assert) {
     });
 
     data[148].value = 1;
+
+    const mapView = $('#container').highcharts().mapView;
+
+    const before = Object.assign(
+        {},
+        mapView.center,
+        mapView.zoom
+    );
+
     Highcharts.charts[0].series[0].setData(data);
 
-    assert.equal(
-        typeof $('#container').highcharts().yAxis[0].min,
-        'number',
-        'Y axis min is number'
+    const after = Object.assign(
+        {},
+        mapView.center,
+        mapView.zoom
+    );
+
+    assert.deepEqual(
+        after,
+        before,
+        'The view should not change after updating data values'
     );
 });

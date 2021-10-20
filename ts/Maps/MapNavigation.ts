@@ -67,11 +67,10 @@ declare global {
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
             mapZoom(
                 howMuch?: number,
-                centerXArg?: number,
-                centerYArg?: number,
-                mouseX?: number,
-                mouseY?: number,
-                animation?: false
+                xProjected?: number,
+                yProjected?: number,
+                chartX?: number,
+                chartY?: number
             ): void;
         }
         class MapNavigation {
@@ -374,9 +373,11 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
     },
 
     /**
-     * Highmaps only. Zoom in or out of the map. See also {@link Point#zoomTo}.
-     * See {@link Chart#fromLatLonToPoint} for how to get the `centerX` and
-     * `centerY` parameters for a geographic location.
+     * Highcharts Maps only. Zoom in or out of the map. See also
+     * {@link Point#zoomTo}. See {@link Chart#fromLatLonToPoint} for how to get
+     * the `centerX` and `centerY` parameters for a geographic location.
+     *
+     * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
      * @function Highcharts.Chart#mapZoom
      *
@@ -385,104 +386,50 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *        in to half the current view. 2 zooms to twice the current view. If
      *        omitted, the zoom is reset.
      *
-     * @param {number} [centerX]
-     *        The X axis position to center around if available space.
+     * @param {number} [xProjected]
+     *        The projected x position to keep stationary when zooming, if
+     *        available space.
      *
-     * @param {number} [centerY]
-     *        The Y axis position to center around if available space.
+     * @param {number} [yProjected]
+     *        The projected y position to keep stationary when zooming, if
+     *        available space.
      *
-     * @param {number} [mouseX]
-     *        Fix the zoom to this position if possible. This is used for
+     * @param {number} [chartX]
+     *        Keep this chart position stationary if possible. This is used for
      *        example in mousewheel events, where the area under the mouse
      *        should be fixed as we zoom in.
      *
-     * @param {number} [mouseY]
-     *        Fix the zoom to this position if possible.
+     * @param {number} [chartY]
+     *        Keep this chart position stationary if possible.
      *
+     * @deprecated
      * @return {void}
      */
     mapZoom: function (
         this: Highcharts.MapNavigationChart,
         howMuch?: number,
-        centerXArg?: number,
-        centerYArg?: number,
-        mouseX?: number,
-        mouseY?: number,
-        animation?: false
+        xProjected?: number,
+        yProjected?: number,
+        chartX?: number,
+        chartY?: number
     ): void {
-        const chart = this,
-            xAxis = chart.xAxis[0],
-            xRange = (xAxis.max as any) - (xAxis.min as any),
-            centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),
-            newXRange = xRange * (howMuch as any),
-            yAxis = chart.yAxis[0],
-            yRange = (yAxis.max as any) - (yAxis.min as any),
-            centerY = pick(centerYArg, (yAxis.min as any) + yRange / 2),
-            newYRange = yRange * (howMuch as any),
-            fixToX = mouseX ? ((mouseX - (xAxis.pos as any)) / xAxis.len) : 0.5,
-            fixToY = mouseY ? ((mouseY - (yAxis.pos as any)) / yAxis.len) : 0.5,
-            newXMin = centerX - newXRange * fixToX,
-            newYMin = centerY - newYRange * fixToY,
-            newExt = chart.fitToBox({
-                x: newXMin,
-                y: newYMin,
-                width: newXRange,
-                height: newYRange
-            }, {
-                x: xAxis.dataMin,
-                y: yAxis.dataMin,
-                width: (xAxis.dataMax as any) - (xAxis.dataMin as any),
-                height: (yAxis.dataMax as any) - (yAxis.dataMin as any)
-            } as any),
-            zoomOut = (
-                newExt.x <= (xAxis.dataMin as any) &&
-                newExt.width >=
-                    (xAxis.dataMax as any) - (xAxis.dataMin as any) &&
-                newExt.y <= (yAxis.dataMin as any) &&
-                newExt.height >= (yAxis.dataMax as any) - (yAxis.dataMin as any)
+        if (this.mapView) {
+
+            if (typeof howMuch === 'number') {
+                // Compliance, mapView.zoomBy uses different values
+                howMuch = Math.log(howMuch) / Math.log(0.5);
+            }
+
+            this.mapView.zoomBy(
+                howMuch,
+                typeof xProjected === 'number' && typeof yProjected === 'number' ?
+                    this.mapView.projection.inverse([xProjected, yProjected]) :
+                    void 0,
+                typeof chartX === 'number' && typeof chartY === 'number' ?
+                    [chartX, chartY] :
+                    void 0
             );
-
-        // When mousewheel zooming, fix the point under the mouse
-        if (mouseX && xAxis.mapAxis) {
-            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any), (centerXArg as any)];
         }
-        if (mouseY && yAxis.mapAxis) {
-            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any), (centerYArg as any)];
-        }
-
-        // Zoom
-        if (typeof howMuch !== 'undefined' && !zoomOut) {
-            xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
-            yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-
-        // Reset zoom
-        } else {
-            xAxis.setExtremes(void 0, void 0, false);
-            yAxis.setExtremes(void 0, void 0, false);
-        }
-
-        // Prevent zooming until this one is finished animating
-        /*
-        chart.holdMapZoom = true;
-        setTimeout(function () {
-            chart.holdMapZoom = false;
-        }, 200);
-        */
-        /*
-        delay = animation ? animation.duration || 500 : 0;
-        if (delay) {
-            chart.isMapZooming = true;
-            setTimeout(function () {
-                chart.isMapZooming = false;
-                if (chart.mapZoomQueue) {
-                    chart.mapZoom.apply(chart, chart.mapZoomQueue);
-                }
-                chart.mapZoomQueue = null;
-            }, delay);
-        }
-        */
-
-        chart.redraw(animation);
     }
 });
 

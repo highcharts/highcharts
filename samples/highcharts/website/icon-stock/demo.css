@@ -36,21 +36,19 @@
 }
 
 .chart-container .highcharts-container {
-  position: relative;
-  overflow: hidden;
-  width: 500px;
-  height: 500px;
-  text-align: left;
-  line-height: normal;
-  z-index: 0;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'IBM Plex Sans', sans-serif;
+	position: relative;
+	overflow: hidden;
+	text-align: left;
+	line-height: normal;
+	z-index: 0;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	font-family: 'IBM Plex Sans', sans-serif;
 	font-weight: 300;
 	fill:#fff;
-  font-size: 12px;
-  user-select: none;
-  touch-action: manipulation;
-  outline: none;
+	font-size: 12px;
+	user-select: none;
+	touch-action: manipulation;
+	outline: none;
 }
 
 .chart-container .highcharts-xaxis-grid .highcharts-grid-line {
@@ -113,8 +111,8 @@
 /* Styles for Stock */
 
 #stock{
-	width:300px;
-	height:300px;
+	width:250px;
+	height:250px;
 }
 
 #stock .transparent{
