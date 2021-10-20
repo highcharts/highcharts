@@ -612,7 +612,7 @@ function getCurrentPoints(
             path: string
         ): any {
             // Get the event objects under cursor for each path
-            return cursorObj[path].eventObject;
+            return cursorObj[path].options.eventObject;
         }).filter(function (eventObj: any): boolean {
             // Return the events that are points
             return eventObj instanceof Point;
