@@ -3381,12 +3381,7 @@ class Series {
         );
 
         // Initial clipping, applies to columns etc. (#3839).
-        if (
-            options.clip !== false // &&
-            // !series.sharedClipKey &&
-            // !hasRendered
-        ) {
-            // group.clip(chart.clipRect);
+        if (options.clip !== false) {
             series.setClip();
         }
 
@@ -3410,12 +3405,6 @@ class Series {
         if (series.visible) {
             series.drawPoints();
         }
-
-        /* series.points.forEach(function (point) {
-            if (point.redraw) {
-                point.redraw();
-            }
-        }); */
 
         // Draw the data labels
         if (series.drawDataLabels) {
