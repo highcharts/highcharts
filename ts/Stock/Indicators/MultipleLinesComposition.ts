@@ -86,12 +86,7 @@ namespace MultipleLinesComposition {
     }
 
     export interface Options {
-        areaOptions?: AreaBackgroundOptions;
         gapSize?: number;
-    }
-    interface AreaBackgroundOptions {
-        lineNames: Array<string>;
-        styles: SVGAttributes;
     }
     interface IndicatorSpanObject {
         indicator: Composition;
@@ -136,6 +131,15 @@ namespace MultipleLinesComposition {
      */
     const pointArrayMap = ['top', 'bottom'];
 
+    /**
+     * Names of the lines, bewteen which the area should be plotted. If the area
+     * should be drawn between main line and one secondary line, put only 1 name
+     * of the secondary line into this array. If the drawing of the area should
+     * be disabled for some indicators, leave this option as an empty array.
+     * @private
+     * @name multipleLinesMixin.pointArrayMap
+     * @type {Array<string>}
+     */
     const areaLinesNames = ['topLine', 'bottomLine'];
     /**
      * Main line id.
@@ -145,11 +149,6 @@ namespace MultipleLinesComposition {
      * @type {string}
      */
     const pointValKey = 'top';
-
-    /**
-     * Lines ids. Required to plot the area between those lines.
-     */
-
 
     /* *
      *
