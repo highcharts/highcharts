@@ -819,7 +819,6 @@ namespace VBPIndicator {
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
-    calculateOn: string;
     pointClass: typeof VBPPoint;
 
     crispCol: ColumnSeries['crispCol'];
@@ -830,7 +829,6 @@ extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
     nameComponents: ['ranges'],
     calculateOnExtremesChange: true,
-    calculateOn: 'render',
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
