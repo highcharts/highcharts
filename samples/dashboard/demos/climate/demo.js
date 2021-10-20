@@ -1,6 +1,4 @@
 function createDashboard(worldMapJSON) {
-    console.log('map loaded');
-    console.log(Dashboard.PluginHandler.registry);
     const dashboard = new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',

@@ -5,6 +5,7 @@ const projectPath = path.resolve(__dirname, '..', '..');
 const ResolveTypeScriptPlugin = require("resolve-typescript-plugin").default;
 
 module.exports = {
+    devtool: false,
     entry: path.resolve(projectPath, 'ts', 'masters.off', 'dashboard.src.ts'),
     mode: 'development',
     module: {
