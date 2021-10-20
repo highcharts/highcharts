@@ -326,7 +326,7 @@ class SMAIndicator extends LineSeries {
                 }
 
                 // Most indicators are being calculated on chart's init.
-                if (indicator.calculateOn === 'init') {
+                if (!indicator.calculateOnExtremesChange) {
                     if (!indicator.processedYData) {
                         indicator.recalculateValues();
                     }
@@ -335,7 +335,7 @@ class SMAIndicator extends LineSeries {
                     // values after other chart's events (render).
                     const unbinder = addEvent(
                         indicator.chart,
-                        indicator.calculateOn,
+                        'render',
                         function (): void {
                             indicator.recalculateValues();
                             // Call this just once.
@@ -505,7 +505,6 @@ class SMAIndicator extends LineSeries {
 
 interface SMAIndicator extends IndicatorLike {
     calculateOnExtremesChange: boolean;
-    calculateOn: string;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -514,7 +513,6 @@ interface SMAIndicator extends IndicatorLike {
 }
 extend(SMAIndicator.prototype, {
     calculateOnExtremesChange: false,
-    calculateOn: 'init',
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
