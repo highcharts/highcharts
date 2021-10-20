@@ -163,7 +163,7 @@ namespace Bindings {
     }
     export interface MountedComponentsOptions {
         options: any;
-        component: HighchartsComponent|HTMLComponent|undefined;
+        component?: ComponentTypes;
         cell: Cell;
     }
 }

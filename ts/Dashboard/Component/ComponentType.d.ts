@@ -12,6 +12,8 @@
 
 import type HighchartsComponent from '../../Extensions/DashboardPlugin/HighchartsComponent';
 import type HTMLComponent from './HTMLComponent';
+import type KPIComponent from './KPIComponent';
+import type ThresholdComponent from './ThresholdComponent';
 
 /* *
  *
@@ -27,7 +29,9 @@ import type HTMLComponent from './HTMLComponent';
 
 export type ComponentTypes =
     HighchartsComponent.ComponentType |
-    HTMLComponent.ComponentType;
+    HTMLComponent.ComponentType |
+    KPIComponent.ComponentType |
+    ThresholdComponent.ComponentType;
 
 /**
  * Describes the class registry as a record object with class name and their
