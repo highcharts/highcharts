@@ -249,6 +249,8 @@ extend(MapBubbleSeries.prototype, {
 
     setOptions: MapSeries.prototype.setOptions,
 
+    useMapGeometry: true,
+
     xyFromShape: true
 });
 
