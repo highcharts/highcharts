@@ -715,12 +715,10 @@ class MapSeries extends ScatterSeries {
                         scaleY: scaleStep * flipFactor
                     });
 
-                    if (!chart.styledMode) {
-                        group.element.setAttribute(
-                            'stroke-width',
-                            strokeWidth / scaleStep
-                        );
-                    }
+                    group.element.setAttribute(
+                        'stroke-width',
+                        strokeWidth / scaleStep
+                    );
                 };
 
                 transformGroup
@@ -735,12 +733,10 @@ class MapSeries extends ScatterSeries {
                 // children inherit it. We need to use setAttribute directly,
                 // because the stroke-widthSetter method expects a stroke color
                 // also to be set.
-                if (!chart.styledMode) {
-                    group.element.setAttribute(
-                        'stroke-width',
-                        strokeWidth / scale
-                    );
-                }
+                group.element.setAttribute(
+                    'stroke-width',
+                    strokeWidth / scale
+                );
             }
 
 

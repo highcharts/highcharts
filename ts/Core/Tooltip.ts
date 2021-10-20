@@ -692,6 +692,7 @@ class Tooltip {
         // Handle negative points or reversed axis (#13780)
         let flipped = !!point.negative;
         if (
+            !chart.polar &&
             chart.hoverSeries &&
             chart.hoverSeries.yAxis &&
             chart.hoverSeries.yAxis.reversed
