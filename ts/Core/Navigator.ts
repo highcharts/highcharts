@@ -2593,7 +2593,7 @@ class Navigator {
             // If range declared, stick to the minimum only if the range
             // is smaller than the data set range.
             if (range && max - xDataMin > 0) {
-                stickToMin = max - xDataMin < range && (!this.chart.fixedRange);
+                stickToMin = max - xDataMin < range;
             } else {
                 // If the current axis minimum falls outside the new
                 // updated dataset, we must adjust.
