@@ -32,7 +32,10 @@ const topoJSONDecode = (topology, object) => {
     };
 
     const geojson = {
-        type: 'FeatureCollection'
+        type: 'FeatureCollection',
+        copyright: topology.copyright,
+        copyrightShort: topology.copyrightShort,
+        copyrightUrl: topology.copyrightUrl
     };
     geojson.features = topology.objects[object].geometries
         .map(geometry => ({
