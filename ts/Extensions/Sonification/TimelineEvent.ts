@@ -149,7 +149,7 @@ class TimelineEvent {
     public cancel(fadeOut?: boolean): void {
         const eventObject = this.options.eventObject;
 
-        if (eventObject && eventObject.cancelSonify) {
+        if (eventObject) {
             eventObject.cancelSonify(fadeOut);
         }
     }
