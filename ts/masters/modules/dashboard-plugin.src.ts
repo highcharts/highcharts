@@ -28,5 +28,5 @@ G.DashboardPlugin = HighchartsPlugin;
 
 if (G.win.Dashboard) {
     HighchartsPlugin.custom.connectHighcharts(Highcharts);
-    G.win.Dashboard.addPlugin(HighchartsPlugin);
+    G.win.Dashboard.PluginHandler.addPlugin(HighchartsPlugin);
 }

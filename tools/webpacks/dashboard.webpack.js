@@ -5,7 +5,7 @@ const projectPath = path.resolve(__dirname, '..', '..');
 const ResolveTypeScriptPlugin = require("resolve-typescript-plugin").default;
 
 module.exports = {
-    entry: path.resolve(projectPath, 'ts', 'masters', 'dashboard.src.ts'),
+    entry: path.resolve(projectPath, 'ts', 'masters.off', 'dashboard.src.ts'),
     mode: 'development',
     module: {
         rules: [
@@ -24,7 +24,13 @@ module.exports = {
         ],
     },
     output: {
-        filename: 'dashboard.min.js',
+        chunkFormat: 'module',
+        filename: 'dashboard.src.js',
         path: path.resolve(projectPath, 'code'),
+        uniqueName: 'dashboard',
+        library: {
+            name: 'Dashboard',
+            type: 'umd',
+        }
     },
 };
