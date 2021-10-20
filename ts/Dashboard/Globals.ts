@@ -22,7 +22,6 @@
  *
  * */
 
-import type DashboardType from './Dashboard';
 import type GUIElement from './Layout/GUIElement';
 
 /* *
@@ -31,19 +30,12 @@ import type GUIElement from './Layout/GUIElement';
  *
  * */
 
-namespace DashboardGlobals {
-
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /**
-     * @deprecated
-     * @requires dashboard
-     */
-    export let Dashboard: (typeof DashboardType|undefined);
+/**
+ * Global Dashboard namespace in classic `<scripts>`-based implementations.
+ *
+ * @namespace Dashboard
+ */
+namespace Globals {
 
     /* *
      *
@@ -87,4 +79,4 @@ namespace DashboardGlobals {
  *
  * */
 
-export default DashboardGlobals;
+export default Globals;

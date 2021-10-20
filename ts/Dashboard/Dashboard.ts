@@ -25,7 +25,7 @@
 import type JSON from '../Core/JSON';
 
 import Bindings from './Actions/Bindings.js';
-import DashboardGlobals from './DashboardGlobals.js';
+import Globals from './Globals.js';
 import EditMode from './EditMode/EditMode.js';
 import H from '../Core/Globals.js';
 const { doc } = H;
@@ -77,7 +77,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
         // Create layouts wrapper.
         this.layoutsWrapper = createElement(
             'div', {
-                className: DashboardGlobals.classNames.layoutsWrapper
+                className: Globals.classNames.layoutsWrapper
             }, {},
             this.container
         );
@@ -249,7 +249,7 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
     public exportLocal(): void {
         localStorage.setItem(
             // Dashboard.prefix + this.id,
-            DashboardGlobals.classNamePrefix + '1', // temporary for demo test
+            Globals.classNamePrefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }
@@ -263,13 +263,13 @@ class Dashboard implements Serializable<Dashboard, Dashboard.JSON> {
             respoOptions = dashboard.options.respoBreakpoints,
             cntWidth = (dashboard.layoutsWrapper || {}).clientWidth;
 
-        let size = DashboardGlobals.respoBreakpoints.large;
+        let size = Globals.respoBreakpoints.large;
 
         if (respoOptions) {
             if (cntWidth <= respoOptions.small) {
-                size = DashboardGlobals.respoBreakpoints.small;
+                size = Globals.respoBreakpoints.small;
             } else if (cntWidth > respoOptions.small && cntWidth <= respoOptions.medium) {
-                size = DashboardGlobals.respoBreakpoints.medium;
+                size = Globals.respoBreakpoints.medium;
             }
         }
 
@@ -408,6 +408,15 @@ namespace Dashboard {
      *
      * */
 
+    /**
+     * Global Dashboard settings.
+     *
+     * @name Dashboard.Dashboard.defaultOptions
+     * @type {Dashboard.Options}
+     *//**
+     * @product dashboard
+     * @optionparent
+     */
     export const defaultOptions: Dashboard.Options = {
         gui: {
             enabled: true,
@@ -443,7 +452,7 @@ namespace Dashboard {
     export function importLocal(): (Dashboard|undefined) {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
-            DashboardGlobals.classNamePrefix + '1' // temporary for demo test
+            Globals.classNamePrefix + '1' // temporary for demo test
         );
 
         if (dashboardJSON) {

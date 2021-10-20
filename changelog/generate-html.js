@@ -36,6 +36,11 @@ function generateHTML() {
             name: 'highcharts-gantt',
             changelogId: 'hg-changelog',
             offset: 'hg-'
+        }, {
+            header: 'Highsoft Dashboard',
+            name: 'highsoft-dashboard',
+            cangelogId: 'hd-changelog',
+            offset: 'hd-'
         }];
 
         var changelog = {

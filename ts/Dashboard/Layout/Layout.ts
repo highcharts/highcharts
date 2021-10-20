@@ -4,7 +4,7 @@ import type Dashboard from '../Dashboard.js';
 import type JSON from '../../Core/JSON';
 import type Serializable from '../Serializable';
 
-import DU from '../DashboardUtilities.js';
+import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import U from '../../Core/Utilities.js';
 const {
@@ -15,7 +15,7 @@ const {
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
-import DashboardGlobals from './../DashboardGlobals.js';
+import Globals from '../Globals.js';
 
 class Layout extends GUIElement {
     /* *
@@ -56,7 +56,7 @@ class Layout extends GUIElement {
         dashboard: Dashboard
     ): Layout|undefined {
         const layoutOptions = localStorage.getItem(
-            DashboardGlobals.classNamePrefix + id
+            Globals.classNamePrefix + id
         );
 
         let layout;
@@ -90,7 +90,7 @@ class Layout extends GUIElement {
     ) {
         super();
 
-        this.type = DashboardGlobals.guiElementType.layout;
+        this.type = Globals.guiElementType.layout;
         this.dashboard = dashboard;
         this.rows = [];
         this.options = options;
@@ -123,7 +123,7 @@ class Layout extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id + (options.copyId ? '_' + options.copyId : ''),
-                    className: DashboardGlobals.classNames.layout + ' ' +
+                    className: Globals.classNames.layout + ' ' +
                         layoutClassName
                 },
                 elementId: options.id,
@@ -274,7 +274,7 @@ class Layout extends GUIElement {
      */
     public exportLocal(): void {
         localStorage.setItem(
-            DashboardGlobals.classNamePrefix + this.options.id,
+            Globals.classNamePrefix + this.options.id,
             JSON.stringify(this.toJSON())
         );
     }

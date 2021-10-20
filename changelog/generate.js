@@ -162,7 +162,8 @@ const childProcess = require('child_process');
                 Highcharts: 'highcharts',
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
-                'Highcharts Gantt': 'gantt'
+                'Highcharts Gantt': 'gantt',
+                'Highsoft Dashboard': 'dashboard'
             }[name];
 
         log = washPRLog(name, log);

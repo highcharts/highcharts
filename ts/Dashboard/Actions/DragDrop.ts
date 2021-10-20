@@ -1,7 +1,7 @@
 import U from './../../Core/Utilities.js';
 import type Row from './../Layout/Row.js';
 import type Cell from './../Layout/Cell.js';
-import DashboardGlobals from './../DashboardGlobals.js';
+import Globals from '../Globals.js';
 import EditGlobals from './../EditMode/EditGlobals.js';
 import EditMode from './../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
@@ -240,7 +240,7 @@ class DragDrop {
             this.context = context;
             context.hide();
 
-            if (context.getType() === DashboardGlobals.guiElementType.cell) {
+            if (context.getType() === Globals.guiElementType.cell) {
                 const draggedCell = context as Cell;
 
                 // Call cellResize dashboard event.
@@ -270,9 +270,9 @@ class DragDrop {
             dragDrop.setMockElementPosition(e);
 
             if (dragDrop.context) {
-                if (dragDrop.context.getType() === DashboardGlobals.guiElementType.cell) {
+                if (dragDrop.context.getType() === Globals.guiElementType.cell) {
                     dragDrop.onCellDrag(e);
-                } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
+                } else if (dragDrop.context.getType() === Globals.guiElementType.row) {
                     dragDrop.onRowDrag(e);
                 }
             } else if (dragDrop.dragEndCallback) {
@@ -295,9 +295,9 @@ class DragDrop {
             });
 
             if (dragDrop.context) {
-                if (dragDrop.context.getType() === DashboardGlobals.guiElementType.cell) {
+                if (dragDrop.context.getType() === Globals.guiElementType.cell) {
                     dragDrop.onCellDragEnd();
-                } else if (dragDrop.context.getType() === DashboardGlobals.guiElementType.row) {
+                } else if (dragDrop.context.getType() === Globals.guiElementType.row) {
                     dragDrop.onRowDragEnd();
                 }
 
@@ -617,7 +617,7 @@ class DragDrop {
             if (
                 (dragDrop.dropPointer.align === 'top' ||
                 dragDrop.dropPointer.align === 'bottom') &&
-                dropContext.getType() === DashboardGlobals.guiElementType.row
+                dropContext.getType() === Globals.guiElementType.row
             ) {
                 dropContext = dropContext as Row;
                 const newRow = dropContext.layout.addRow(
@@ -630,7 +630,7 @@ class DragDrop {
                 newRow.mountCell(draggedCell, 0);
             } else if (
                 dragDrop.dropPointer.align === 'nestedBottom' &&
-                dropContext.getType() === DashboardGlobals.guiElementType.cell
+                dropContext.getType() === Globals.guiElementType.cell
             ) {
                 // Create nesting.
                 const dropContextCell = dropContext as Cell;
@@ -661,7 +661,7 @@ class DragDrop {
                     newCell.nestedLayout.rows[0].mountCell(dropContextCell);
                     newCell.nestedLayout.rows[1].mountCell(draggedCell);
                 }
-            } else if (dropContext.getType() === DashboardGlobals.guiElementType.cell) {
+            } else if (dropContext.getType() === Globals.guiElementType.cell) {
                 dropContext = dropContext as Cell;
 
                 // @ToDo temp dimensions - improve when responsive grid.

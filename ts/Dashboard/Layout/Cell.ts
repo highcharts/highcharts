@@ -10,7 +10,7 @@ import type LayoutType from './Layout.js';
 import type Row from './Row.js';
 import type Serializable from '../Serializable';
 
-import DashboardGlobals from './../DashboardGlobals.js';
+import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
@@ -81,7 +81,7 @@ class Cell extends GUIElement {
     ) {
         super();
 
-        this.type = DashboardGlobals.guiElementType.cell;
+        this.type = Globals.guiElementType.cell;
         this.id = options.id;
         this.options = options;
         this.row = row;
@@ -102,7 +102,7 @@ class Cell extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: DashboardGlobals.classNames.cell + ' ' +
+                    className: Globals.classNames.cell + ' ' +
                         cellClassName
                 },
                 element: cellElement,

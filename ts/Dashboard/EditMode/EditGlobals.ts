@@ -1,6 +1,6 @@
 'use strict';
 
-import DG from '../DashboardGlobals.js';
+import DG from '../Globals.js';
 
 const PREFIX = DG.classNamePrefix + 'edit-';
 

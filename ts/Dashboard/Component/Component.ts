@@ -14,7 +14,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
 import type Row from '../Layout/Row';
 import CallbackRegistry from '../CallbackRegistry.js';
-import DG from '../DashboardGlobals.js';
+import DG from '../Globals.js';
 const {
     classNamePrefix
 } = DG;
@@ -38,7 +38,7 @@ const {
     getPaddings
 } = CU;
 import ComponentGroup from './ComponentGroup.js';
-import DU from '../DashboardUtilities.js';
+import DU from '../Utilities.js';
 const { uniqueKey } = DU;
 import Sync from './Sync/Sync.js';
 

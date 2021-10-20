@@ -9,12 +9,14 @@
 'use strict';
 
 import _Dashboard from '../Dashboard/Dashboard.js';
-import _Globals from '../Dashboard/DashboardGlobals.js';
+import _Globals from '../Dashboard/Globals.js';
 import _PluginHandler from '../Dashboard/PluginHandler.js';
 import _Sync from '../Dashboard/Component/Sync/Sync.js';
+import _Utilities from '../Dashboard/Utilities.js';
 
 export const classNamePrefix = _Globals.classNamePrefix;
 export const guiElementType = _Globals.guiElementType;
+export const uniqueKey = _Utilities.uniqueKey;
 export const win = _Globals.win;
 
 export const Dashboard = _Dashboard;

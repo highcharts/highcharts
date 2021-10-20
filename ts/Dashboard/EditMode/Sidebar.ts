@@ -5,7 +5,7 @@ import Row from '../Layout/Row.js';
 import EditGlobals from './EditGlobals.js';
 import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
-import DashboardGlobals from '../DashboardGlobals.js';
+import Globals from '../Globals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
 import Bindings from '../Actions/Bindings.js';
@@ -187,7 +187,7 @@ class Sidebar {
                     const inputValue = +(input as any).value,
                         cell = this.menu.parent.context;
 
-                    if (cell.getType() === DashboardGlobals.guiElementType.cell) {
+                    if (cell.getType() === Globals.guiElementType.cell) {
                         cell.setSize({ width: inputValue });
                     }
                 },
@@ -196,7 +196,7 @@ class Sidebar {
                         cell = this.menu.parent.context;
 
                     if (cell &&
-                        cell.getType() === DashboardGlobals.guiElementType.cell &&
+                        cell.getType() === Globals.guiElementType.cell &&
                         cell.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT' &&
@@ -225,7 +225,7 @@ class Sidebar {
                     const inputValue = +(input as any).value,
                         row = this.menu.parent.context;
 
-                    if (row.getType() === DashboardGlobals.guiElementType.row) {
+                    if (row.getType() === Globals.guiElementType.row) {
                         row.setSize(inputValue);
                     }
                 },
@@ -234,7 +234,7 @@ class Sidebar {
                         row = this.menu.parent.context;
 
                     if (
-                        row.getType() === DashboardGlobals.guiElementType.row &&
+                        row.getType() === Globals.guiElementType.row &&
                         row.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT' &&
@@ -449,7 +449,7 @@ class Sidebar {
                                     sidebar.activeTab.content.activeItems[0].innerElement as any
                                 ).value;
 
-                                if (sidebar.context.getType() === DashboardGlobals.guiElementType.cell) {
+                                if (sidebar.context.getType() === Globals.guiElementType.cell) {
                                     const ctxCell = sidebar.context as Cell;
 
                                     value = value === 'auto' ? value : value + '%';

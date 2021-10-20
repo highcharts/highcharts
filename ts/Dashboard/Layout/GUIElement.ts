@@ -6,7 +6,7 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
-import DashboardGlobals from '../DashboardGlobals.js';
+import Globals from '../Globals.js';
 
 const {
     addEvent,
@@ -59,7 +59,7 @@ abstract class GUIElement {
     public static createElementId(
         elementType: string // col, row, layout
     ): string {
-        return DashboardGlobals.classNamePrefix + elementType + '-' + uniqueKey().slice(11);
+        return Globals.classNamePrefix + elementType + '-' + uniqueKey().slice(11);
     }
 
     // Get width in percentages (0% - 100%).

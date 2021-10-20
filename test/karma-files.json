@@ -82,6 +82,7 @@
 	"samples/data/usdeur.js",
 	"samples/data/ohlc.js",
 	"samples/data/three-series-1000-points.js",
-	"samples/data/large-dataset.js"
+	"samples/data/large-dataset.js",
 
+	"code/dashboard.src.js"
 ]
