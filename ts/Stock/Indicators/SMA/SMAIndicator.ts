@@ -312,7 +312,7 @@ class SMAIndicator extends LineSeries {
 
                     // Some indicators (like VBP) requires an additional
                     // event (afterSetExtremes) to properly show the data.
-                    if (indicator.calculateOnExtremesChange) {
+                    if (indicator.useAdditionalEvents) {
                         indicator.dataEventsToUnbind.push(
                             addEvent<AxisType>(
                                 indicator.linkedParent.xAxis,
@@ -326,7 +326,7 @@ class SMAIndicator extends LineSeries {
                 }
 
                 // Most indicators are being calculated on chart's init.
-                if (!indicator.calculateOnExtremesChange) {
+                if (!indicator.useAdditionalEvents) {
                     if (!indicator.processedYData) {
                         indicator.recalculateValues();
                     }
@@ -460,7 +460,7 @@ class SMAIndicator extends LineSeries {
 
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
-        if (indicator.calculateOnExtremesChange) {
+        if (indicator.useAdditionalEvents) {
             delete indicator.processedXData;
 
             indicator.isDirty = true;
@@ -504,7 +504,7 @@ class SMAIndicator extends LineSeries {
  * */
 
 interface SMAIndicator extends IndicatorLike {
-    calculateOnExtremesChange: boolean;
+    useAdditionalEvents: boolean;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -512,7 +512,7 @@ interface SMAIndicator extends IndicatorLike {
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
-    calculateOnExtremesChange: false,
+    useAdditionalEvents: false,
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
