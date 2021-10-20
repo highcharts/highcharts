@@ -66,6 +66,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-ts',
     'scripts-vendor',
     'scripts-watch',
+    'scripts-webpacks',
     'test',
     'test-tree',
     'test-ts',

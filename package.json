@@ -100,13 +100,15 @@
     "pretty": "^2.0.0",
     "qunit": "^2.16.0",
     "request": "^2.88.2",
+    "resolve-typescript-plugin": "^1.1.1",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
+    "ts-loader": "^9.2.6",
     "ts-node": "^10.2.1",
     "tsutils": "^3.21.0",
     "typescript": "~3.9.10",
     "undertaker-forward-reference": "^1.0.2",
-    "webpack": "^5.28.0",
+    "webpack": "^5.59.0",
     "yargs": "^16.2.0"
   },
   "engines": {
