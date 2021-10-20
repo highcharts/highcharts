@@ -312,7 +312,7 @@ class SMAIndicator extends LineSeries {
 
                     // Some indicators (like VBP) requires an additional
                     // event (afterSetExtremes) to properly show the data.
-                    if (indicator.calculateOnExtremesChagne) {
+                    if (indicator.calculateOnExtremesChange) {
                         indicator.dataEventsToUnbind.push(
                             addEvent<AxisType>(
                                 indicator.linkedParent.xAxis,
@@ -460,7 +460,7 @@ class SMAIndicator extends LineSeries {
 
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
-        if (indicator.calculateOnExtremesChagne) {
+        if (indicator.calculateOnExtremesChange) {
             delete indicator.processedXData;
 
             indicator.isDirty = true;
@@ -504,7 +504,7 @@ class SMAIndicator extends LineSeries {
  * */
 
 interface SMAIndicator extends IndicatorLike {
-    calculateOnExtremesChagne: boolean;
+    calculateOnExtremesChange: boolean;
     calculateOn: string;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
@@ -513,7 +513,7 @@ interface SMAIndicator extends IndicatorLike {
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
-    calculateOnExtremesChagne: false,
+    calculateOnExtremesChange: false,
     calculateOn: 'init',
     hasDerivedData: true,
     nameComponents: ['period'],
