@@ -30,9 +30,6 @@ const {
 import U from '../../Core/Utilities.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import { support } from 'jquery';
-import Color from '../../Core/Color/Color';
-import GradientColor from '../../Core/Color/GradientColor';
 const {
     defined,
     error,
@@ -79,6 +76,7 @@ namespace MultipleLinesComposition {
         linesApiNames: Array<string>;
         options: Options;
         pointArrayMap: Array<string>;
+        areaLinesNames: Array<string>;
         pointValKey: string;
         nextPoints: any[];
         drawGraph(): void;
@@ -88,7 +86,6 @@ namespace MultipleLinesComposition {
     }
 
     export interface Options {
-        fillColor?: SVGAttributes['fill'];
         areaOptions?: AreaBackgroundOptions;
         gapSize?: number;
     }
@@ -139,6 +136,7 @@ namespace MultipleLinesComposition {
      */
     const pointArrayMap = ['top', 'bottom'];
 
+    const areaLinesNames = ['topLine', 'bottomLine'];
     /**
      * Main line id.
      *
@@ -151,7 +149,7 @@ namespace MultipleLinesComposition {
     /**
      * Lines ids. Required to plot the area between those lines.
      */
-    const areaLinesApiNames = ['bottomLine', 'topLine'];
+
 
     /* *
      *
@@ -184,6 +182,11 @@ namespace MultipleLinesComposition {
             proto.pointValKey = (
                 proto.pointValKey ||
                 pointValKey
+            );
+
+            proto.areaLinesNames = (
+                proto.areaLinesNames ||
+                areaLinesNames.slice()
             );
 
             proto.drawGraph = drawGraph;
@@ -247,6 +250,7 @@ namespace MultipleLinesComposition {
         const indicator = this,
             pointValKey = indicator.pointValKey,
             linesApiNames = indicator.linesApiNames,
+            areaLinesNames = indicator.areaLinesNames,
             mainLinePoints = indicator.points,
             mainLineOptions = indicator.options,
             mainLinePath = indicator.graph,
@@ -310,6 +314,10 @@ namespace MultipleLinesComposition {
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
+                // Save points as well when areaFill is available.
+                if (areaLinesNames.length !== 0) {
+                    (indicator as any)['graph' + lineName].points = secondaryLines[i];
+                }
             } else {
                 error(
                     'Error: "' + lineName + ' doesn\'t have equivalent ' +
@@ -319,32 +327,38 @@ namespace MultipleLinesComposition {
             }
         });
 
+        // Restore options and draw a main line:
+        indicator.points = mainLinePoints;
+        indicator.options = mainLineOptions;
+        indicator.graph = mainLinePath;
+        SMAIndicator.prototype.drawGraph.call(indicator);
+
         // Modify options and generate area fill:
-        if (this.userOptions.fillColor) {
+        if (this.userOptions.fillColor && areaLinesNames.length !== 0) {
+            const secondLinePoints =
+                areaLinesNames.length === 1 ?
+                    indicator.points :
+                    (indicator as any)['graph' + areaLinesNames[1]].points;
+            const fristLinePoints = (indicator as any)['graph' + areaLinesNames[0]].points;
+
             drawArea({
                 indicator: indicator,
-                points: secondaryLines[0],
-                nextPoints: secondaryLines[1],
-                color: 'rgba(255, 0, 0, 0.2)',
+                points: fristLinePoints,
+                nextPoints: secondLinePoints,
+                color: this.userOptions.fillColor as SVGAttributes['fill'],
                 options: mainLineOptions,
                 gap: gappedExtend,
-                graph: (indicator as any).area
+                graph: indicator.area
             });
 
             indicator.area = indicator.graph;
             // Clean temporary properties:
             delete indicator.nextPoints;
             delete indicator.fillGraph;
+            indicator.points = mainLinePoints;
+            indicator.options = mainLineOptions;
+            indicator.graph = mainLinePath;
         }
-
-
-        // Restore options and draw a main line:
-        indicator.points = mainLinePoints;
-        indicator.options = mainLineOptions;
-        indicator.graph = mainLinePath;
-        SMAIndicator.prototype.drawGraph.call(indicator);
-        // drawArea(indicator);
-
     }
 
     /**
@@ -357,9 +371,10 @@ namespace MultipleLinesComposition {
         indicator.nextPoints = options.nextPoints;
         indicator.color = options.color;
         indicator.options = merge(
-            (options.options.topLine as any).styles,
+            options.options.styles,
             options.gap
         ) as any;
+
         indicator.graph = options.graph;
         indicator.fillGraph = true;
         SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);

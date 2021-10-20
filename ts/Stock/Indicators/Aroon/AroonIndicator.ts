@@ -216,6 +216,7 @@ interface AroonIndicator extends MultipleLinesComposition.Composition {
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
+    areaLinesNames: Array<string>;
     pointClass: typeof AroonPoint;
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
@@ -223,7 +224,8 @@ extend(AroonIndicator.prototype, {
     linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
-    pointValKey: 'y'
+    pointValKey: 'y',
+    areaLinesNames: []
 });
 MultipleLinesComposition.compose(AroonIndicator);
 
