@@ -1,0 +1,107 @@
+$grid-color: #ddd !default;
+$background-color: #fff !default;
+$header-background-color: #eee !default;
+$highlight-color: rgba(255, 0, 0, 0.5) !default;
+
+.hc-dg-container {
+    position: relative;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid $grid-color;
+}
+
+.hc-dg-outer-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    overflow: scroll;
+    z-index: 0;
+}
+
+.hc-dg-scroll-container {
+    height: 1000px;
+}
+
+.hc-dg-inner-container {
+    display: flex;
+    flex-direction: column;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+}
+
+.hc-dg-cell {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid $grid-color;
+    border-top: 1px solid $grid-color;
+    overflow: hidden;
+    padding: 0 8px;
+    flex: 1;
+    box-sizing: border-box;
+}
+
+.hc-dg-cell:first-child {
+    border-left: none;
+}
+
+.hc-dg-cell-input {
+    width: calc(100% + 16px);
+    margin: 0 -8px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    border: 2px solid $highlight-color;
+    outline: none;
+    font: inherit;
+}
+
+.hc-dg-row {
+    display: flex;
+    background: $background-color;
+    width: 100%;
+}
+
+.hc-dg-row:first-child .hc-dg-cell {
+    border-top: none;
+}
+
+.hc-dg-column-header {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid $grid-color;
+    border-bottom: 1px solid $grid-color;
+    overflow: hidden;
+    padding: 0 8px;
+    flex: 1;
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.hc-dg-column-header:first-child {
+    border-left: none;
+}
+
+.hc-dg-column-headers {
+    display: flex;
+    background-color: $header-background-color;
+    width: 100%;
+}
+
+.hc-dg-col-resize-handle {
+    cursor: ew-resize;
+    opacity: 0;
+    background-color: $highlight-color;
+    position: absolute;
+    top: 0;
+    width: 5px;
+}
+
+.hc-dg-col-resize-crosshair {
+    position: absolute;
+    background-color: $highlight-color;
+    width: 3px;
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}

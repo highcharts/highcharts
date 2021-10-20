@@ -36,7 +36,7 @@ QUnit.module('XSS', function () {
 
             text = ren
                 .text(
-                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`,
+                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`, // eslint-disable-line
                     x,
                     y += lineHeight,
                     useHTML

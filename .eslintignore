@@ -3,6 +3,7 @@ js/**/*.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/highcharts/esm/async-await/demo.js
+samples/data-grid/**/*.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 samples/highcharts/studies/data-layer/**/*.js
