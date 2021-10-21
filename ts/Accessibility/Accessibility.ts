@@ -20,6 +20,7 @@
 
 import type AccessibilityComponent from './AccessibilityComponent';
 import type Chart from '../Core/Chart/Chart';
+import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type Series from '../Core/Series/Series';
@@ -325,7 +326,7 @@ namespace Accessibility {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
         infoRegions: Highcharts.InfoRegionsComponent;
-        legend: Highcharts.LegendComponent;
+        legend: LegendComponent;
         chartMenu: Highcharts.MenuComponent;
         rangeSelector: Highcharts.RangeSelectorComponent;
         series: SeriesComponent;
@@ -469,6 +470,7 @@ namespace Accessibility {
      */
     export function compose(
         ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
         PointClass: typeof Point,
         SeriesClass: typeof Series,
         SVGElementClass: typeof SVGElement
@@ -477,6 +479,7 @@ namespace Accessibility {
         FocusBorder.compose(ChartClass, SVGElementClass);
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
+        LegendComponent.compose(ChartClass, LegendClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
 
         if (composedClasses.indexOf(ChartClass) === -1) {
