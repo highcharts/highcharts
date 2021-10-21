@@ -358,7 +358,7 @@ setOptions({
                  * Configure the aliases for indicator names.
                  *
                  * @product highstock
-                 * @since   next
+                 * @since 9.3.0
                  */
                 indicatorAliases: {
                     // Overlays

@@ -205,7 +205,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                  * The color of the lines.
                  *
                  * @type      {string}
-                 * @since     next
+                 * @since 9.3.0
                  * @default   'rgba(0, 0, 0, 0.75)'
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.stroke
                  */
@@ -214,7 +214,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
                  * The width of the lines.
                  *
                  * @type      {number}
-                 * @since     next
+                 * @since 9.3.0
                  * @default   1
                  * @apioption annotations.fibonacciTimeZones.typeOptions.line.strokeWidth
                  */
@@ -326,14 +326,14 @@ export default FibonacciTimeZones;
  *         Fibonacci Time Zones
  *
  * @extends   annotations.crookedLine
- * @since     next
+ * @since 9.3.0
  * @product   highstock
  * @apioption annotations.fibonacciTimeZones
  */
 
 /**
  * @exclude   y
- * @since     next
+ * @since 9.3.0
  * @product   highstock
  * @apioption annotations.fibonacciTimeZones.typeOptions.points
  */

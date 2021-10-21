@@ -294,7 +294,7 @@ export default MapPointSeries;
  *         geometry defined in data
  *
  * @type      {Object}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.mappoint.data.geometry
  */
@@ -303,7 +303,7 @@ export default MapPointSeries;
  * The geometry type, which in case of the `mappoint` series is always `Point`.
  *
  * @type      {string}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @validvalue ["Point"]
  * @apioption series.mappoint.data.geometry.type
@@ -313,7 +313,7 @@ export default MapPointSeries;
  * The geometry coordinates in terms of `[longitude, latitude]`.
  *
  * @type      {Highcharts.LonLatArray}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.mappoint.data.geometry.coordinates
  */
