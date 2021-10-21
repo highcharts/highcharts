@@ -40,7 +40,11 @@ const imgPath = 'https://cdn.rawgit.com/highcharts/highcharts/0b81a74ecd2fbd2e9b
 const options = {
     chart: {
         height: 600,
-        styledMode: (true)
+        styledMode: (true),
+        scrollablePlotArea: {
+            minWidth: 700,
+            scrollPositionX: 1
+        }
     },
     credits: {
         enabled: false
@@ -160,7 +164,7 @@ const options = {
             tooltip: {
                 xDateFormat: '%B %e, %Y'
             },
-            allowOverlapX: true
+            allowOverlapX: false
         }
     },
     series: [{
