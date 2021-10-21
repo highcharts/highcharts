@@ -12,11 +12,13 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
+
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
@@ -32,7 +34,6 @@ import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend,
     fireEvent,
     isNumber,
     pick,
@@ -53,11 +54,13 @@ const {
     removeClass
 } = HU;
 
+
 /* *
  *
  *  Declarations
  *
  * */
+
 
 declare module '../../Core/Legend/LegendItemObject' {
     interface LegendItemObject {
@@ -77,43 +80,15 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-// /**
-//  * Internal types.
-//  * @private
-//  */
-// declare global {
-//     namespace Highcharts {
-//         class LegendComponent extends AccessibilityComponent {
-//             public constructor();
-//             public chart: LegendComponent.ChartComposition
-//             public highlightedLegendItemIx: number;
-//             public addLegendProxyGroup(): void;
-//             public getKeyboardNavigation(): KeyboardNavigationHandler;
-//             public init(): void;
-//             public onChartRender(): void;
-//             public onKbdArrowKey(
-//                 keyboardNavigationHandler: KeyboardNavigationHandler,
-//                 keyCode: number
-//             ): number;
-//             public onKbdClick(
-//                 keyboardNavigationHandler: KeyboardNavigationHandler
-//             ): number;
-//             public onKbdNavigationInit(direction: number): void;
-//             public highlightAdjacentLegendPage(direction: number): void;
-//             public proxyLegendItem(item: Legend.Item): void;
-//             public proxyLegendItems(): void;
-//             public recreateProxies(): boolean;
-//             public removeProxies(): void;
-//             public shouldHaveLegendNavigation(): (boolean);
-//             public updateLegendItemProxyVisibility(): void;
-//             public updateLegendTitle(): void;
-//             public updateProxyPositionForItem(item: Legend.Item): void;
-//         }
-//     }
-// }
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * @private
@@ -144,6 +119,14 @@ function shouldDoLegendA11y(chart: Chart): boolean {
     );
 }
 
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+
 /**
  * The LegendComponent class
  *
@@ -153,7 +136,25 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  */
 class LegendComponent extends AccessibilityComponent {
 
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+
     public highlightedLegendItemIx: number = NaN;
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Init the component
@@ -568,15 +569,18 @@ class LegendComponent extends AccessibilityComponent {
 
 }
 
+
 /* *
  *
  *  Class Prototype
  *
  * */
 
+
 interface LegendComponent {
     chart: LegendComponent.ChartComposition;
 }
+
 
 /* *
  *
@@ -584,13 +588,16 @@ interface LegendComponent {
  *
  * */
 
+
 namespace LegendComponent {
+
 
     /* *
      *
      *  Declarations
      *
      * */
+
 
     export declare class ChartComposition extends Accessibility.ChartComposition {
         highlightedLegendItemIx?: number;
@@ -602,13 +609,16 @@ namespace LegendComponent {
         chart: ChartComposition;
     }
 
+
     /* *
      *
      *  Constants
      *
      * */
 
+
     const composedClasses: Array<Function> = [];
+
 
     /* *
      *
@@ -617,6 +627,7 @@ namespace LegendComponent {
      * */
 
     /* eslint-disable valid-jsdoc */
+
 
     /**
      * Highlight legend item by index.
@@ -651,6 +662,7 @@ namespace LegendComponent {
         }
         return false;
     }
+
 
     /**
      * @private
@@ -704,10 +716,12 @@ namespace LegendComponent {
 
 }
 
+
 /* *
  *
  *  Default Export
  *
  * */
+
 
 export default LegendComponent;
