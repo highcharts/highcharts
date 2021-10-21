@@ -130,18 +130,26 @@ class MapView {
         let mouseDownCenterProjected: [number, number];
         let mouseDownKey: string;
         let mouseDownRotation: number[]|undefined;
-        addEvent(chart, 'pan', (e: PointerEvent): void => {
-            const {
+        const onPan = (e: PointerEvent): void => {
+
+            const pinchDown = chart.pointer.pinchDown;
+
+            let {
                 mouseDownX,
                 mouseDownY
             } = chart;
+
+            if (pinchDown.length === 1) {
+                mouseDownX = pinchDown[0].chartX;
+                mouseDownY = pinchDown[0].chartY;
+            }
 
             if (
                 typeof mouseDownX === 'number' &&
                 typeof mouseDownY === 'number'
             ) {
-                const key = `${mouseDownX},${mouseDownY}`;
-                const { chartX, chartY } = (e as any).originalEvent;
+                const key = `${mouseDownX},${mouseDownY}`,
+                    { chartX, chartY } = (e as any).originalEvent;
 
                 // Reset starting position
                 if (key !== mouseDownKey) {
@@ -209,7 +217,9 @@ class MapView {
 
                 e.preventDefault();
             }
-        });
+        };
+        addEvent(chart, 'pan', onPan);
+        addEvent(chart, 'touchpan', onPan);
 
 
         // Perform the map zoom by selection
@@ -234,7 +244,10 @@ class MapView {
                         void 0
                 );
 
-                chart.showResetZoom();
+                // Only for mouse. Touch users can pinch out.
+                if (!/^touch/.test(((evt as any).originalEvent.type))) {
+                    chart.showResetZoom();
+                }
 
                 evt.preventDefault();
 
