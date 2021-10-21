@@ -182,16 +182,17 @@ export default MapPointSeries;
  *    data: [0, 5, 3, 5]
  *    ```
  *
- * 2. An array of arrays with 2 values. In this case, the values correspond to
- *    `x,y`. If the first value is a string, it is applied as the name of the
- *    point, and the `x` value is inferred.
- *    ```js
- *        data: [
- *            [0, 1],
- *            [1, 8],
- *            [2, 7]
- *        ]
- *    ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond
+ * to `[hc-key, value]`. Example:
+ *
+ *  ```js
+ *     data: [
+ *         ['us-ny', 0],
+ *         ['us-mi', 5],
+ *         ['us-tx', 3],
+ *         ['us-ak', 5]
+ *     ]
+ *  ```
  *
  * 3. An array of objects with named values. The following snippet shows only a
  *    few settings, see the complete options set below. If the total number of
