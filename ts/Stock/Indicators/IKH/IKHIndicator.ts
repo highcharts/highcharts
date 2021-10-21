@@ -143,7 +143,7 @@ function drawSenkouSpan(
     indicator.options = merge(
         (opt.options.senkouSpan as any).styles,
         opt.gap
-    ) as any;
+    );
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);

@@ -20,6 +20,10 @@ import type Point from '../../Core/Series/Point';
 import type SMAPoint from './SMA/SMAPoint';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type LinePoint from '../../Series/Line/LinePoint';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -28,8 +32,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import SVGPath from '../../Core/Renderer/SVG/SVGPath';
 const {
     defined,
     error,
@@ -78,7 +80,7 @@ namespace MultipleLinesComposition {
         pointArrayMap: Array<string>;
         areaLinesNames: Array<string>;
         pointValKey: string;
-        nextPoints: any[];
+        nextPoints: Array<SMAPoint>;
         drawGraph(): void;
         getTranslatedLinesNames(excludedValue?: string): Array<string>;
         translate(): void;
@@ -87,14 +89,20 @@ namespace MultipleLinesComposition {
 
     export interface Options {
         gapSize?: number;
+        styles?: any;
+    }
+    interface GapOptions {
+        options: {
+            gapSize?: number;
+        };
     }
     interface IndicatorSpanObject {
         indicator: Composition;
-        points: Array<any>;
-        nextPoints: Array<any>;
+        points: Array<SMAPoint>;
+        nextPoints: Array<SMAPoint>;
         color: SVGAttributes['fill'];
-        options: any;
-        gap: any;
+        options: Options;
+        gap: GapOptions;
         graph: SVGElement | undefined;
     }
 
@@ -137,7 +145,7 @@ namespace MultipleLinesComposition {
      * of the secondary line into this array. If the drawing of the area should
      * be disabled for some indicators, leave this option as an empty array.
      * @private
-     * @name multipleLinesMixin.pointArrayMap
+     * @name multipleLinesMixin.areaLinesNames
      * @type {Array<string>}
      */
     const areaLinesNames = ['topLine', 'bottomLine'];
@@ -200,41 +208,41 @@ namespace MultipleLinesComposition {
 
 
     /**
-     * function to create the path based on the points
-     * @param this Indicator
+     * Create the path based on points provided as argument.
+     * If indicator.nextPoints option is defined, create the areaFill.
+     *
      * @param points Points on which the path should be created
      */
     function getGraphPath(this: Composition, points: Array<LinePoint>): SVGPath {
-        let indicator = this,
+        const indicator = this;
+        let areaPath: SVGPath,
             path: SVGPath = [],
-            spanA: SVGPath,
-            spanAarr: SVGPath = [];
+            higherAreaPath: SVGPath = [];
 
         points = points || this.points;
 
         // Render Span
         if (indicator.fillGraph && indicator.nextPoints) {
-            spanA = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+            areaPath = SMAIndicator.prototype.getGraphPath.call(
                 indicator,
-                // Reverse points, so Senkou Span A will start from the end:
+                // Reverse points, so that the areaFill will start from the end:
                 indicator.nextPoints
             );
 
-            if (spanA && spanA.length) {
-                spanA[0][0] = 'L';
+            if (areaPath && areaPath.length) {
+                areaPath[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SMAIndicator.prototype.getGraphPath.call(indicator, points);
 
-                spanAarr = spanA.slice(0, path.length);
+                higherAreaPath = areaPath.slice(0, path.length);
 
-                for (let i = spanAarr.length - 1; i >= 0; i--) {
-                    path.push(spanAarr[i]);
+                for (let i = higherAreaPath.length - 1; i >= 0; i--) {
+                    path.push(higherAreaPath[i]);
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SMAIndicator.prototype.getGraphPath.apply(indicator, arguments);
         }
-
         return path;
     }
 
@@ -333,7 +341,7 @@ namespace MultipleLinesComposition {
         SMAIndicator.prototype.drawGraph.call(indicator);
 
         // Modify options and generate area fill:
-        if (this.userOptions.fillColor && areaLinesNames.length !== 0) {
+        if (this.userOptions.fillColor && areaLinesNames.length) {
             const secondLinePoints =
                 areaLinesNames.length === 1 ?
                     indicator.points :
@@ -361,7 +369,7 @@ namespace MultipleLinesComposition {
     }
 
     /**
-     * draw the area between two lines
+     * Draw the area between two lines.
      * @param options options to draw the area
      */
     function drawArea(options: IndicatorSpanObject): void {
