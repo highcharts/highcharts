@@ -36,6 +36,7 @@ import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
+import Axis from '../Core/Axis/Axis';
 const {
     correctFloat,
     defined,
@@ -617,6 +618,12 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
+            let fixedAxis = false;
+
+            // Check if axis has fixed possition.
+            if ((yAxis.options as any).fixedPosition && (yAxis.options as any).fixedPosition.top) {
+                fixedAxis = true;
+            }
             let height = correctFloat(isPercentage(yAxis.options.height) ?
                     parseFloat(yAxis.options.height as any) / 100 :
                     yAxis.height / plotHeight),
@@ -645,14 +652,17 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 if (top <= allAxesHeight) {
                     allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
                 } else {
-                    top = correctFloat(top - removedHeight);
+                    top = fixedAxis ?
+                        top :
+                        correctFloat(parseFloat(yAxis.userOptions.top as any) / 100 || top - removedHeight);
                     allAxesHeight = correctFloat(allAxesHeight + height);
                 }
             }
 
             return {
                 height: height * 100,
-                top: top * 100
+                top: top * 100,
+                fixed: fixedAxis as any
             };
         });
 
@@ -752,9 +762,18 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
         } else {
+            let removedHeight: number;
+            if (removedYAxisHeight) {
+                removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
+            }
+
             positions.forEach(function (position: Record<string, number>): void {
-                position.height = (position.height / (allAxesHeight * 100)) * 100;
-                position.top = (position.top / (allAxesHeight * 100)) * 100;
+                position.height = position.fixed ?
+                    removedYAxisHeight ?
+                        (allAxesHeight + removedHeight) * 100 :
+                        (position.height / (allAxesHeight * 120)) * 100 :
+                    (position.height / (allAxesHeight * 100)) * 100;
+                position.top = position.fixed ? position.top : (position.top / (allAxesHeight * 100)) * 100;
             });
         }
 
