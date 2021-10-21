@@ -984,7 +984,7 @@ const afterAnimate = e => {
                         [-118.24, 34.05] // Los Angeles
                     ]
                 },
-                color: '#3030d0'
+                color: '#313f77'
             }],
             lineWidth: 2
         }, false);
@@ -1004,7 +1004,7 @@ const afterAnimate = e => {
                     coordinates: [-118.24, 34.05]
                 }
             }],
-            color: '#3030d0'
+            color: '#313f77'
         }, false);
         chart.redraw(false);
     }

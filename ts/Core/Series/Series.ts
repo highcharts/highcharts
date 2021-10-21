@@ -2492,10 +2492,10 @@ class Series {
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
+            const clipBox = this.getClipBox();
 
             // Create temporary animation clips
             if (!animationClipRect) {
-                const clipBox = this.getClipBox();
                 clipBox.width = 0;
                 if (inverted) {
                     clipBox.x = chart.plotHeight;
@@ -2512,6 +2512,10 @@ class Series {
                 };
                 markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
                 chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+            } else {
+                // When height changes during animation, typically due to
+                // responsive settings
+                animationClipRect.attr('height', clipBox.height);
             }
 
             group.clip(animationClipRect);
@@ -2549,7 +2553,6 @@ class Series {
                     }
                 };
             }
-
             animationClipRect
                 .addClass('highcharts-animating')
                 .animate(finalBox, animation);
