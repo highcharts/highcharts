@@ -792,6 +792,7 @@ class Legend {
 
         // calculate the positions for the next line
         const bBox = li.getBBox();
+        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
@@ -803,8 +804,8 @@ class Legend {
         legend.totalItemWidth += item.itemWidth as any;
         legend.itemHeight = item.itemHeight = Math.round(
             item.legendItemHeight ||
-            (legend.fontMetrics && legend.fontMetrics.h) ||
-            bBox.height
+            // use bBox for multiline (#16398)
+            (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );
     }
 
