@@ -1382,31 +1382,33 @@ class Pointer {
         } else if (pinchDown.length) { // can be 0 when releasing, if touchend
             // fires first
 
+            fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
-            // Set the marker
-            if (!selectionMarker) {
-                // @todo It's a mock object, so maybe we need a separate
-                // interface
-                self.selectionMarker = selectionMarker = extend({
-                    destroy: noop,
-                    touch: true
-                }, chart.plotBox as any) as any;
-            }
+                // Set the marker
+                if (!selectionMarker) {
+                    // @todo It's a mock object, so maybe we need a separate
+                    // interface
+                    self.selectionMarker = selectionMarker = extend({
+                        destroy: noop,
+                        touch: true
+                    }, chart.plotBox as any) as any;
+                }
 
-            self.pinchTranslate(
-                pinchDown,
-                touches as any,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch
-            );
+                self.pinchTranslate(
+                    pinchDown,
+                    touches as any,
+                    transform,
+                    selectionMarker,
+                    clip,
+                    lastValidTouch
+                );
 
-            self.hasPinched = hasZoom;
+                self.hasPinched = hasZoom;
 
-            // Scale and translate the groups to provide visual feedback during
-            // pinching
-            self.scaleGroups(transform, clip as any);
+                // Scale and translate the groups to provide visual feedback
+                // during pinching
+                self.scaleGroups(transform, clip as any);
+            });
 
             if (self.res) {
                 self.res = false;
