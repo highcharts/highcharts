@@ -299,6 +299,35 @@ namespace MultipleLinesComposition {
         });
 
         // Modify options and generate additional lines:
+
+
+        // Modify options and generate area fill:
+        if (this.userOptions.fillColor && areaLinesNames.length) {
+            const fristLinePoints = secondaryLines[0];
+            const secondLinePoints = secondaryLines[1];
+            const originalColor = indicator.color;
+
+            indicator.points = fristLinePoints;
+            indicator.nextPoints = secondLinePoints;
+            indicator.color = this.userOptions.fillColor as SVGAttributes['fill'];
+            indicator.options = merge(
+                mainLinePoints,
+                gappedExtend
+            ) as any;
+
+            indicator.graph = indicator.area;
+            indicator.fillGraph = true;
+            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+
+
+            indicator.area = indicator.graph;
+            // Clean temporary properties:
+            delete indicator.nextPoints;
+            delete indicator.fillGraph;
+            indicator.color = originalColor;
+        }
+        // Restore options and draw a main line:
+
         linesApiNames.forEach(function (lineName: string, i: number): void {
             if (secondaryLines[i]) {
                 indicator.points = secondaryLines[i];
@@ -333,39 +362,10 @@ namespace MultipleLinesComposition {
                 );
             }
         });
-
-        // Restore options and draw a main line:
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
         SMAIndicator.prototype.drawGraph.call(indicator);
-
-        // Modify options and generate area fill:
-        if (this.userOptions.fillColor && areaLinesNames.length) {
-            const secondLinePoints =
-                areaLinesNames.length === 1 ?
-                    indicator.points :
-                    (indicator as any)['graph' + areaLinesNames[1]].points;
-            const fristLinePoints = (indicator as any)['graph' + areaLinesNames[0]].points;
-
-            drawArea({
-                indicator: indicator,
-                points: fristLinePoints,
-                nextPoints: secondLinePoints,
-                color: this.userOptions.fillColor as SVGAttributes['fill'],
-                options: mainLineOptions,
-                gap: gappedExtend,
-                graph: indicator.area
-            });
-
-            indicator.area = indicator.graph;
-            // Clean temporary properties:
-            delete indicator.nextPoints;
-            delete indicator.fillGraph;
-            indicator.points = mainLinePoints;
-            indicator.options = mainLineOptions;
-            indicator.graph = mainLinePath;
-        }
     }
 
     /**
