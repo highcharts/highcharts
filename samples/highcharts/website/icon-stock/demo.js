@@ -345,6 +345,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 greenLine.classList.add('fade-out');
                             }, 6000);
 
+
+                            setTimeout(function () {
+                                bottomArea.classList.add('fade-out');
+                                topArea.classList.add('fade-out');
+                            }, 6300);
+
+                            setTimeout(function () {
+                                bottomArea.classList.add('hide');
+                                topArea.classList.add('hide');
+                                chart.series[2].hide();
+                            }, 6500);
+
                             setTimeout(function () {
                                 ///get the margins ready for the real chart
                                 let margins = [50, 10, 30, 10];
@@ -356,23 +368,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                         margin: margins
                                     }
                                 });
-                                bottomArea.classList.add('fade-out');
-                                topArea.classList.add('fade-out');
-                            }, 6300);
+                            }, 6800);
 
                             setTimeout(function () {
+
                                 chart.series[12].update({
                                     visible: true
                                 });
                                 chart.series[13].update({
                                     visible: true
                                 });
-                                bottomArea.classList.add('fade-out');
-                                topArea.classList.add('fade-out');
-
-                            }, 6500);
-
-                            setTimeout(function () {
+                                candlestick.classList.add('hide');
+                                column.classList.add('hide');
                                 ///fade in the candlestick and the column series, axis labels, title
                                 candlestick.classList.add('fade-in');
                                 title.style.opacity = 1;
@@ -380,7 +387,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     subtitle.style.opacity = 1;
                                 }
                                 column.classList.add('fade-in');
-                            }, 6800);
+                            }, 7000);
 
                             setTimeout(function () {
                                 //turn on the axes
@@ -449,7 +456,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }]
             },
             title: {
-                text: 'Two panes, candlestick and volume',
+                text: 'Candlestick and Volume',
                 y: 30
             },
             subtitle: {
@@ -964,8 +971,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             dropdown: 'always',
                             inputEnabled: false,
                             buttonPosition: {
-                                x: 120,
-                                y: -60
+                                x: 90,
+                                y: -70
                             }
                         },
                         plotOptions: {

@@ -328,7 +328,7 @@ class Pointer {
 
             // make a selection
             if (
-                chart.hasCartesianSeries &&
+                (chart.hasCartesianSeries || chart.mapView) &&
                 (this.zoomX || this.zoomY) &&
                 clickedInside &&
                 !panKey
@@ -413,26 +413,27 @@ class Pointer {
             hasPinched = this.hasPinched;
 
         if (this.selectionMarker) {
-            const selectionData = {
-                    originalEvent: e, // #4890
-                    xAxis: [],
-                    yAxis: []
-                },
-                selectionBox = this.selectionMarker,
-                selectionLeft = selectionBox.attr ?
-                    selectionBox.attr('x') :
-                    selectionBox.x,
-                selectionTop = selectionBox.attr ?
-                    selectionBox.attr('y') :
-                    selectionBox.y,
-                selectionWidth = selectionBox.attr ?
+            let selectionBox = this.selectionMarker,
+                x = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
+                y = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
+                width = selectionBox.attr ?
                     selectionBox.attr('width') :
                     selectionBox.width,
-                selectionHeight = selectionBox.attr ?
+                height = selectionBox.attr ?
                     selectionBox.attr('height') :
-                    selectionBox.height;
-
-            let runZoom;
+                    selectionBox.height,
+                selectionData = {
+                    originalEvent: e, // #4890
+                    xAxis: [],
+                    yAxis: [],
+                    x,
+                    y,
+                    width,
+                    height
+                },
+                // Start by false runZoom, unless when we have a mapView, in
+                // which case the zoom will be handled in the selection event.
+                runZoom = Boolean(chart.mapView);
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -452,23 +453,19 @@ class Pointer {
                                 'zoomY'
                             )>)[axis.coll]]
                         ) &&
-                        isNumber(selectionLeft) &&
-                        isNumber(selectionTop)
+                        isNumber(x) &&
+                        isNumber(y)
                     ) { // #859, #3569
                         const horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
                                 0, // #1207, #3075
                             selectionMin = axis.toValue(
-                                (horiz ? selectionLeft : selectionTop) +
-                                minPixelPadding
+                                (horiz ? x : y) + minPixelPadding
                             ),
                             selectionMax = axis.toValue(
-                                (
-                                    horiz ?
-                                        selectionLeft + selectionWidth :
-                                        selectionTop + selectionHeight
-                                ) - minPixelPadding
+                                (horiz ? x + width : y + height) -
+                                minPixelPadding
                             );
 
                         (selectionData as any)[axis.coll].push({
@@ -1385,31 +1382,33 @@ class Pointer {
         } else if (pinchDown.length) { // can be 0 when releasing, if touchend
             // fires first
 
+            fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
-            // Set the marker
-            if (!selectionMarker) {
-                // @todo It's a mock object, so maybe we need a separate
-                // interface
-                self.selectionMarker = selectionMarker = extend({
-                    destroy: noop,
-                    touch: true
-                }, chart.plotBox as any) as any;
-            }
+                // Set the marker
+                if (!selectionMarker) {
+                    // @todo It's a mock object, so maybe we need a separate
+                    // interface
+                    self.selectionMarker = selectionMarker = extend({
+                        destroy: noop,
+                        touch: true
+                    }, chart.plotBox as any) as any;
+                }
 
-            self.pinchTranslate(
-                pinchDown,
-                touches as any,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch
-            );
+                self.pinchTranslate(
+                    pinchDown,
+                    touches as any,
+                    transform,
+                    selectionMarker,
+                    clip,
+                    lastValidTouch
+                );
 
-            self.hasPinched = hasZoom;
+                self.hasPinched = hasZoom;
 
-            // Scale and translate the groups to provide visual feedback during
-            // pinching
-            self.scaleGroups(transform, clip as any);
+                // Scale and translate the groups to provide visual feedback
+                // during pinching
+                self.scaleGroups(transform, clip as any);
+            });
 
             if (self.res) {
                 self.res = false;
@@ -1851,7 +1850,13 @@ class Pointer {
         // Scale each series
         chart.series.forEach(function (series): void {
             const seriesAttribs = attribs || series.getPlotBox(); // #1701
-            if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
+            if (
+                series.group &&
+                (
+                    (series.xAxis && series.xAxis.zoomEnabled) ||
+                    chart.mapView
+                )
+            ) {
                 series.group.attr(seriesAttribs);
                 if (series.markerGroup) {
                     series.markerGroup.attr(seriesAttribs);

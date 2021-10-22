@@ -73,10 +73,9 @@ Cypress.Commands.add('openIndicators', () =>
         .click()
 );
 
-Cypress.Commands.add('addIndicator', () =>
-    cy.get('.highcharts-popup-rhs-col')
-        .children('.highcharts-popup button')
-        .eq(0)
+Cypress.Commands.add('selectIndicator', (indicator) =>
+    cy.get('.highcharts-indicator-list')
+        .contains(indicator)
         .click()
 );
 

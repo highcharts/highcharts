@@ -2332,7 +2332,7 @@ class Series {
             }
 
             // Find point zone
-            point.zone = (this.zones.length && point.getZone() as any);
+            point.zone = this.zones.length ? point.getZone() : void 0;
 
             // Animate new points with data sorting
             if (!point.graphic && series.group && enabledDataSorting) {
@@ -2492,10 +2492,10 @@ class Series {
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
+            const clipBox = this.getClipBox();
 
             // Create temporary animation clips
             if (!animationClipRect) {
-                const clipBox = this.getClipBox();
                 clipBox.width = 0;
                 if (inverted) {
                     clipBox.x = chart.plotHeight;
@@ -2512,6 +2512,10 @@ class Series {
                 };
                 markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
                 chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+            } else {
+                // When height changes during animation, typically due to
+                // responsive settings
+                animationClipRect.attr('height', clipBox.height);
             }
 
             group.clip(animationClipRect);
@@ -2549,7 +2553,6 @@ class Series {
                     }
                 };
             }
-
             animationClipRect
                 .addClass('highcharts-animating')
                 .animate(finalBox, animation);
@@ -2577,8 +2580,8 @@ class Series {
             }
         });
 
-        fireEvent(this, 'afterAnimate');
         this.finishedAnimating = true;
+        fireEvent(this, 'afterAnimate');
     }
 
     /**
@@ -3381,12 +3384,7 @@ class Series {
         );
 
         // Initial clipping, applies to columns etc. (#3839).
-        if (
-            options.clip !== false // &&
-            // !series.sharedClipKey &&
-            // !hasRendered
-        ) {
-            // group.clip(chart.clipRect);
+        if (options.clip !== false) {
             series.setClip();
         }
 
@@ -3410,12 +3408,6 @@ class Series {
         if (series.visible) {
             series.drawPoints();
         }
-
-        /* series.points.forEach(function (point) {
-            if (point.redraw) {
-                point.redraw();
-            }
-        }); */
 
         // Draw the data labels
         if (series.drawDataLabels) {
@@ -3763,13 +3755,15 @@ class Series {
      * @function Highcharts.Series#isPointInside
      */
     public isPointInside(point: (Record<string, number>|Point)): boolean {
-        const isInside =
-            typeof point.plotY !== 'undefined' &&
-            typeof point.plotX !== 'undefined' &&
-            point.plotY >= 0 &&
-            point.plotY <= this.yAxis.len && // #3519
-            point.plotX >= 0 &&
-            point.plotX <= this.xAxis.len;
+        const { chart, xAxis, yAxis } = this,
+            isInside = (
+                typeof point.plotY !== 'undefined' &&
+                typeof point.plotX !== 'undefined' &&
+                point.plotY >= 0 &&
+                point.plotY <= (yAxis ? yAxis.len : chart.plotHeight) &&
+                point.plotX >= 0 &&
+                point.plotX <= (xAxis ? xAxis.len : chart.plotWidth)
+            );
 
         return isInside;
     }

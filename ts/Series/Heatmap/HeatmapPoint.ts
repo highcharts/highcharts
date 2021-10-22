@@ -243,7 +243,8 @@ interface HeatmapPoint {
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: true,
-    moveToTopOnHover: true
+    moveToTopOnHover: true,
+    ttBelow: false
 });
 
 /* *

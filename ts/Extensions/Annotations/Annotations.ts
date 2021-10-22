@@ -1093,7 +1093,7 @@ merge<Annotation>(
                  * @sample highcharts/annotations/label-crop-overflow/
                  *         Crop line annotation
                  * @type  {boolean}
-                 * @since next
+                 * @since 9.3.0
                  */
                 crop: true,
 

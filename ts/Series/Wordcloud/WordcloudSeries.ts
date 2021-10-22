@@ -528,7 +528,7 @@ interface WordcloudSeries {
 }
 
 extend(WordcloudSeries.prototype, {
-    animate: Series.prototype.animate,
+    animate: noop,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     pointClass: WordcloudPoint,

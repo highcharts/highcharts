@@ -19,10 +19,14 @@
 import type ColorMapComposition from '../ColorMapComposition';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
+
+import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import GeoJSONGeometry from '../../Maps/GeoJSON';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -31,7 +35,9 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { extend } = U;
+const {
+    extend
+} = U;
 
 /* *
  *
@@ -49,11 +55,15 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
+    public geometry?: GeoJSONGeometry;
+
+    public labelrank?: number;
+
     public options: MapPointOptions = void 0 as any;
 
     public path: SVGPath = void 0 as any;
 
-    public properties?: object;
+    public projectedPath: SVGPath|undefined;
 
     public series: MapSeries = void 0 as any;
 
@@ -64,6 +74,28 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    // Get the projected path based on the geometry. May also be called on
+    // mapData options (not point instances), hence static.
+    public static getProjectedPath(
+        point: MapPoint,
+        projection?: Projection
+    ): SVGPath {
+        if (!point.projectedPath) {
+            if (projection && point.geometry) {
+
+                // Always true when given GeoJSON coordinates
+                projection.hasCoordinates = true;
+
+                point.projectedPath = projection.path(point.geometry);
+
+            // SVG path given directly in point options
+            } else {
+                point.projectedPath = point.path;
+            }
+        }
+        return point.projectedPath || [];
+    }
 
     /**
      * Extend the Point object to split paths.
@@ -87,11 +119,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {
-                // This applies only to bubbles
-                if ((series as any).xyFromShape) {
-                    point.x = mapPoint._midX;
-                    point.y = mapPoint._midY;
-                }
                 extend(point, mapPoint); // copy over properties
             } else {
                 point.value = point.value || null;
@@ -126,20 +153,15 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point: (MapPoint&MapPoint.CacheObject) = this,
-            series = point.series;
+        const point = this as (MapPoint&MapPoint.CacheObject);
+        const chart = point.series.chart;
 
-        series.xAxis.setExtremes(
-            point._minX,
-            point._maxX,
-            false
-        );
-        series.yAxis.setExtremes(
-            point._minY,
-            point._maxY,
-            false
-        );
-        series.chart.redraw();
+        if (chart.mapView && point.bounds) {
+            chart.mapView.fitToBounds(point.bounds, void 0, false);
+
+            point.series.isDirty = true;
+            chart.redraw();
+        }
     }
 
     /* eslint-enable valid-jsdoc */
@@ -152,9 +174,17 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
+interface MapPointProperties {
+    [key: string]: number|string;
+}
+
 interface MapPoint extends ColorMapComposition.PointComposition {
+    bounds?: MapBounds;
     dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
     isValid: ColorMapComposition.PointComposition['isValid'];
+    middleX?: number;
+    middleY?: number;
+    properties?: MapPointProperties;
 }
 
 /* *
@@ -165,14 +195,7 @@ interface MapPoint extends ColorMapComposition.PointComposition {
 
 namespace MapPoint {
     export interface CacheObject {
-        _foundBox?: boolean;
-        _i?: number;
-        _maxX?: number;
-        _maxY?: number;
-        _midX?: number;
-        _midY?: number;
-        _minX?: number;
-        _minY?: number;
+        bounds?: MapBounds;
     }
 }
 

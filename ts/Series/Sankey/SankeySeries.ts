@@ -1301,7 +1301,7 @@ export default SankeySeries;
  *
  * @name Highcharts.SankeyNodeObject#offsetHorizontal
  * @type {number|string}
- * @since next
+ * @since 9.3.0
  *//**
  * The vertical offset of a node. Positive values shift the node down,
  * negative shift it up.
@@ -1314,7 +1314,7 @@ export default SankeySeries;
  *
  * @name Highcharts.SankeyNodeObject#offsetVertical
  * @type {number|string}
- * @since next
+ * @since 9.3.0
  */
 
 /**
@@ -1485,7 +1485,7 @@ export default SankeySeries;
  *         Specified node offset
  *
  * @type      {number|string}
- * @since     next
+ * @since 9.3.0
  * @product   highcharts
  * @apioption series.sankey.nodes.offsetHorizontal
  */
@@ -1501,7 +1501,7 @@ export default SankeySeries;
  *         Specified node offset
  *
  * @type      {number|string}
- * @since     next
+ * @since 9.3.0
  * @product   highcharts
  * @apioption series.sankey.nodes.offsetVertical
  */
