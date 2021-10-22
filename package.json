@@ -76,8 +76,8 @@
     "highcharts-utils": "github:highcharts/highcharts-utils",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "4.3.6",
-    "jsdom": "^17.0.0",
     "js-yaml": "^3.14.1",
+    "jsdom": "^17.0.0",
     "karma": "4.3.0",
     "karma-browserstack-launcher": "1.6.0",
     "karma-chrome-launcher": "^3.1.0",
@@ -116,11 +116,17 @@
     "*.js": [
       "eslint",
       "git add"
+    ],
+    "*.css": [
+      "stylelint",
+      "git add"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
     "jspdf-yworks": "^2.0.1",
+    "stylelint": "^14.0.0",
+    "stylelint-config-standard": "^23.0.0",
     "svg2pdf.js": "^1.3.3"
   }
 }
