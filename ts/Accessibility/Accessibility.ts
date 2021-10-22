@@ -324,7 +324,7 @@ namespace Accessibility {
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
-        infoRegions: Highcharts.InfoRegionsComponent;
+        infoRegions: InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
         chartMenu: Highcharts.MenuComponent;
         rangeSelector: Highcharts.RangeSelectorComponent;
