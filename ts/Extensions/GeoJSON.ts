@@ -10,6 +10,11 @@
 
 'use strict';
 
+import type {
+    GeoJSON,
+    GeoJSONFeature,
+    TopoJSON
+} from '../Maps/GeoJSON';
 import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type Series from '../Core/Series/Series';
@@ -82,32 +87,7 @@ declare global {
             lat: number;
             lon: number;
         }
-        interface GeoJSON {
-            copyright?: string;
-            copyrightShort?: string;
-            crs?: AnyRecord;
-            features: Array<GeoJSONFeature>;
-            'hc-transform'?: Record<string, GeoJSONTransform>;
-            title?: string;
-            type?: string;
-            version?: string;
-        }
-        interface GeoJSONFeature extends AnyRecord {
-            type: string;
-        }
-        interface GeoJSONTransform {
-            crs?: string;
-            hitZone?: AnyRecord;
-            jsonmarginX?: number;
-            jsonmarginY?: number;
-            jsonres?: number;
-            rotation?: number;
-            scale?: number;
-            xoffset?: number;
-            xpan?: number;
-            yoffset?: number;
-            ypan?: number;
-        }
+
         /** @requires modules/maps */
         function geojson(
             geojson: GeoJSON,
@@ -539,11 +519,91 @@ Chart.prototype.fromLatLonToPoint = function (
     );
 };
 
+// Based on https://github.com/topojson/topojson-specification
+/*
+@todo
+- How to deal with multiple objects?
+- Document that TopoJSON is possible type for chart.map and series.mapData
+- Update demos using TopoJSON-client
+- Test/set up sample using GeoJSON features or TopoJSON geometries directly as
+  series.mapData
+*/
+const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
+
+    // Decode first object/feature as default
+    if (!objectName) {
+        objectName = Object.keys(topology.objects)[0];
+    }
+    const object = topology.objects[objectName];
+
+    // Already decoded => return cache
+    if (object['hc-decoded-geojson']) {
+        return object['hc-decoded-geojson'];
+    }
+
+    // Do the initial transform
+    let arcsArray = topology.arcs as any[];
+    if (topology.transform) {
+        const { scale, translate } = topology.transform;
+        arcsArray = topology.arcs.map((arc): any => {
+            let x = 0,
+                y = 0;
+            return arc.map((position): number[] => {
+                position = position.slice();
+                position[0] = (x += position[0]) * scale[0] + translate[0];
+                position[1] = (y += position[1]) * scale[1] + translate[1];
+                return position;
+            });
+        });
+    }
+
+    // Recurse down any depth of multi-dimentional arrays of arcs and insert
+    // the coordinates
+    const arcsToCoordinates = (
+        arcs: any
+    ): number[] => {
+        if (typeof arcs[0] === 'number') {
+            return arcs.reduce(
+                (coordinates: number[], arc: number, i: number): number[] =>
+                    coordinates.concat(
+                        (arc < 0 ? arcsArray[~arc].reverse() : arcsArray[arc])
+                            .slice(i === 0 ? 0 : 1)
+                    ),
+                []
+            );
+        }
+        return arcs.map(arcsToCoordinates);
+    };
+
+    const features = object.geometries
+        .map((geometry): GeoJSONFeature => ({
+            type: 'Feature',
+            properties: geometry.properties,
+            geometry: {
+                type: geometry.type,
+                coordinates: geometry.coordinates ||
+                    arcsToCoordinates(geometry.arcs)
+            } as any
+        }));
+
+    const geojson: GeoJSON = {
+        type: 'FeatureCollection',
+        copyright: topology.copyright,
+        copyrightShort: topology.copyrightShort,
+        copyrightUrl: topology.copyrightUrl,
+        features
+    };
+
+    object['hc-decoded-geojson'] = geojson;
+
+    return geojson;
+};
+
 /**
- * Highmaps only. Restructure a GeoJSON object in preparation to be read
- * directly by the
+ * Highcharts Maps only. Restructure a GeoJSON or TopoJSON object in preparation
+ * to be read directly by the
  * {@link https://api.highcharts.com/highmaps/plotOptions.series.mapData|series.mapData}
- * option. The GeoJSON will be broken down to fit a specific Highcharts type,
+ * option. The object will be broken down to fit a specific Highcharts type,
  * either `map`, `mapline` or `mappoint`. Meta data in GeoJSON's properties
  * object will be copied directly over to {@link Point.properties} in Highmaps.
  *
@@ -556,9 +616,9 @@ Chart.prototype.fromLatLonToPoint = function (
  *
  * @function Highcharts.geojson
  *
- * @param {Highcharts.GeoJSON} geojson
- *        The GeoJSON structure to parse, represented as a JavaScript object
- *        rather than a JSON string.
+ * @param {Highcharts.GeoJSON} json
+ *        The GeoJSON or TopoJSON structure to parse, represented as a
+ *        JavaScript object.
  *
  * @param {string} [hType=map]
  *        The Highmaps series type to prepare for. Setting "map" will return
@@ -570,23 +630,22 @@ Chart.prototype.fromLatLonToPoint = function (
  *         An object ready for the `mapData` option.
  */
 H.geojson = function (
-    geojson: Highcharts.GeoJSON,
+    json: GeoJSON|TopoJSON,
     hType: string = 'map',
     series?: Series
 ): Array<any> {
     const mapData = [] as Array<any>;
 
-    let path: SVGPath = [];
+    const geojson = json.type === 'Topology' ? topo2geo(json) : json;
 
     geojson.features.forEach(function (feature): void {
 
-        let geometry = feature.geometry || {},
-            type = geometry.type,
-            coordinates = geometry.coordinates,
-            properties = feature.properties,
-            pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
+        const geometry = feature.geometry || {},
+            type = geometry.type as any,
+            coordinates = geometry.coordinates as any,
+            properties = feature.properties;
 
-        path = [];
+        let pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
 
         if (
             (hType === 'map' || hType === 'mapbubble') &&
@@ -613,8 +672,9 @@ H.geojson = function (
             }
         }
         if (pointOptions) {
+            const name = properties && (properties.name || properties.NAME);
             mapData.push(extend(pointOptions, {
-                name: properties.name || properties.NAME,
+                name: typeof name === 'string' ? name : void 0,
 
                 /**
                  * In Highmaps, when data is loaded from GeoJSON, the GeoJSON

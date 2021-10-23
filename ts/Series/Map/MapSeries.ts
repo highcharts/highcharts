@@ -1004,7 +1004,10 @@ class MapSeries extends ScatterSeries {
         }
 
         if (mapData) {
-            if (mapData.type === 'FeatureCollection') {
+            if (
+                mapData.type === 'FeatureCollection' ||
+                mapData.type === 'Topology'
+            ) {
                 this.mapTitle = mapData.title;
                 mapData = H.geojson(mapData, this.type, this);
             }
