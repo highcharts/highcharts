@@ -173,12 +173,13 @@ class TreemapSeries extends ScatterSeries {
          * additional properties `newRootId`, `previousRootId`, `redraw` and
          * `trigger`.
          *
-         * @type {function}
-         * @default undefined
          * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
          *         Alert update information on setRootNode event.
-         * @since 7.0.3
-         * @product highcharts
+         *
+         * @type      {Function}
+         * @default   undefined
+         * @since     7.0.3
+         * @product   highcharts
          * @apioption plotOptions.treemap.events.setRootNode
          */
 
@@ -1608,7 +1609,7 @@ class TreemapSeries extends ScatterSeries {
      * The action which triggered the event. Undefined if the setRootNode is
      * called directly.
      *
-     * @fires Highcharts.Series#event:setRootNode
+     * @emits Highcharts.Series#event:setRootNode
      */
     public setRootNode(
         id: string,

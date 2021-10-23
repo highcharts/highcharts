@@ -2421,6 +2421,7 @@ class SVGElement implements SVGElementLike {
      *        The y value.
      *
      * @return {Highcharts.SVGElement}
+     *         Moved SVGElement.
      */
     public translate(
         x: number,
@@ -2565,10 +2566,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#xGetter
-     *
-     * @param {string} key
-     *
-     * @return {number|string|null}
      */
     public xGetter(key: string): (number|string|null) {
         if (this.element.nodeName === 'circle') {
@@ -2584,9 +2581,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#zIndexSetter
-     * @param {number} [value]
-     * @param {string} [key]
-     * @return {boolean}
      */
     public zIndexSetter(
         value?: number,

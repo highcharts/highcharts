@@ -333,7 +333,7 @@ Chart.prototype.transformFromLatLon = function (
      * In case of loading the library from a `script` tag,
      * this option is not needed, it will be loaded from there by default.
      *
-     * @type       {function}
+     * @type       {Function}
      * @product    highmaps
      * @apioption  chart.proj4
      */

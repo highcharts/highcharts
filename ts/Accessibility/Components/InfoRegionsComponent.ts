@@ -467,7 +467,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public defaultBeforeChartFormatter(): string {
         const chart = this.chart;
@@ -518,7 +517,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public defaultAfterChartFormatter(): string {
         const chart = this.chart;
@@ -537,7 +535,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getLinkedDescription(): string {
         const el = this.linkedDescriptionElement,
@@ -549,7 +546,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getLongdescText(): string {
         const chartOptions = this.chart.options,
@@ -568,7 +564,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getTypeDescriptionText(): string {
         const chart = this.chart;
@@ -580,8 +575,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} buttonId
-     * @return {string}
      */
     public getDataTableButtonText(
         buttonId: string
@@ -598,8 +591,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} buttonId
-     * @return {string}
      */
     public getSonifyButtonText(
         buttonId: string
@@ -624,7 +615,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getSubtitleText(): string {
         const subtitle = (
@@ -636,7 +626,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getEndOfChartMarkerText(): string {
         const chart = this.chart,
@@ -652,7 +641,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {Highcharts.Dictionary<string>} e
      */
     public onDataTableCreated(
         e: { tree: AST.Node }
@@ -687,7 +675,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} sonifyButtonId
      */
     public initSonifyButton(
         sonifyButtonId: string
@@ -740,7 +727,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
     /**
      * Set attribs and handlers for default viewAsDataTable button if exists.
      * @private
-     * @param {string} tableButtonId
      */
     public initDataTableButton(
         tableButtonId: string
@@ -767,7 +753,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
     /**
      * Return object with text description of each of the chart's axes.
      * @private
-     * @return {Highcharts.Dictionary<string>}
      */
     public getAxesDescription(): Record<string, string> {
         const chart = this.chart,
@@ -807,8 +792,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} collectionKey
-     * @return {string}
      */
     public getAxisDescriptionText(
         collectionKey: ('xAxis'|'yAxis')

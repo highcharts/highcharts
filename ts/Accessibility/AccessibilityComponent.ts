@@ -189,7 +189,6 @@ extend(
 
         /**
          * Get keyboard navigation handler for this component.
-         * @return {Highcharts.KeyboardNavigationHandler}
          */
         getKeyboardNavigation: function (): void {} as any,
 

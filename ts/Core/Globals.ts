@@ -97,7 +97,7 @@ declare global {
     /**
      * @private
      * @deprecated
-     * @todo: Rename UMD argument `win` to `window`
+     * @todo Rename UMD argument `win` to `window`
      */
     const win: Window|undefined;
 
@@ -129,9 +129,7 @@ const w = (
  *
  * */
 
-/**
- * Shared Highcharts properties.
- */
+// Shared Highcharts properties.
 namespace Globals {
 
     /* *

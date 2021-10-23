@@ -365,9 +365,6 @@ class Fx {
         /**
          * If shifting points, prepend a dummy point to the end path.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function prepend(
             arr: SVGPath,
@@ -410,9 +407,6 @@ class Fx {
         /**
          * Copy and append last point until the length matches the end length.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function append(
             arr: SVGPath,

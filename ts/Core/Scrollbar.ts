@@ -823,8 +823,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#shouldUpdateExtremes
-     * @param {string} [eventType]
-     * @return {boolean}
      */
     public shouldUpdateExtremes(eventType?: string): boolean {
         return (

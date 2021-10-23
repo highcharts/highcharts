@@ -28,7 +28,7 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 // Utils:
 function toFixed(a: number, n: number): number {

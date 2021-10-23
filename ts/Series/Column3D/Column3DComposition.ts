@@ -99,11 +99,6 @@ declare module '../../Core/Series/SeriesOptions' {
 
 /**
  * @private
- * @param {Highcharts.Chart} chart
- * Chart with stacks
- * @param {string} stacking
- * Stacking option
- * @return {Highcharts.Stack3DDictionary}
  */
 function retrieveStacks(
     chart: Chart,

@@ -119,7 +119,7 @@ namespace Funnel3DComposition {
      *
      * */
 
-    /* eslint-disable require-jsdoc, valid-jsdoc */
+    /* eslint-disable jsdoc/require-jsdoc, valid-jsdoc */
 
     export function compose(SVGRendererClass: typeof SVGRenderer): void {
         SVGRenderer3D.compose(SVGRendererClass);

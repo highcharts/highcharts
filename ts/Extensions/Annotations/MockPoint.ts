@@ -411,7 +411,7 @@ class MockPoint {
      * @private
      * @return {Array<number>}
      * A quadruple of numbers which denotes x, y, width and height of the box
-     **/
+     */
     public toAnchor(): Array<number> {
         const anchor = [this.plotX, this.plotY, 0, 0];
 
@@ -514,7 +514,7 @@ class MockPoint {
      *
      * @param {number} dy
      * Translation for y coordinate.
-     **/
+     */
     public translate(
         _cx: (number|undefined),
         _cy: (number|undefined),

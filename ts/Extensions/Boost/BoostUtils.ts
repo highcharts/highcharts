@@ -278,8 +278,6 @@ function eachAsync(
  *
  * @private
  * @function hasWebGLSupport
- *
- * @return {boolean}
  */
 function hasWebGLSupport(): boolean {
     let i = 0,
@@ -312,10 +310,6 @@ function hasWebGLSupport(): boolean {
  *
  * @private
  * @function pointDrawHandler
- *
- * @param {Function} proceed
- *
- * @return {*}
  */
 function pointDrawHandler(this: Series, proceed: Function): void {
     let enabled = true,

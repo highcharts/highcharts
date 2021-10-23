@@ -477,7 +477,7 @@ class Point {
      * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} [defaultFunction]
      *        Default event handler.
      *
-     * @fires Highcharts.Point#event:*
+     * @emits Highcharts.Point#event:*
      */
     public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
@@ -545,8 +545,6 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#getGraphicalProps
-     * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {Highcharts.PointGraphicalProps}
      */
     public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
         const point = this,
@@ -658,7 +656,8 @@ class Point {
      * Utility to check if point has new shape type. Used in column series and
      * all others that are based on column series.
      *
-     * @return boolean|undefined
+     * @return {boolean|undefined}
+     * True, if point has a new shape type.
      */
     public hasNewShapeType(): boolean|undefined {
         const point = this;
@@ -685,7 +684,7 @@ class Point {
      * @return {Highcharts.Point}
      *         The Point instance.
      *
-     * @fires Highcharts.Point#event:afterInit
+     * @emits Highcharts.Point#event:afterInit
      */
     public init(
         series: Series,
@@ -962,7 +961,7 @@ class Point {
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
-     * @fires Highcharts.Point#event:update
+     * @emits Highcharts.Point#event:update
      */
     public update(
         options: (PointOptions|PointShortOptions),
@@ -1109,8 +1108,8 @@ class Point {
      * is `true`, selected points are accumulated on Control, Shift or Cmd
      * clicking the point.
      *
-     * @fires Highcharts.Point#event:select
-     * @fires Highcharts.Point#event:unselect
+     * @emits Highcharts.Point#event:select
+     * @emits Highcharts.Point#event:unselect
      */
     public select(
         selected?: boolean,
@@ -1204,7 +1203,7 @@ class Point {
      * events.
      *
      * @function Highcharts.Point#onMouseOut
-     * @fires Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
         const point = this,
@@ -1266,7 +1265,7 @@ class Point {
      * @param {boolean} [move]
      *        State for animation.
      *
-     * @fires Highcharts.Point#event:afterSetState
+     * @emits Highcharts.Point#event:afterSetState
      */
     public setState(
         state?: (StatesOptionsKey|''),

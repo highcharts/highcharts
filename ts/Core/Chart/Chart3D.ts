@@ -573,7 +573,7 @@ namespace Chart3D {
          * Calculate scale of the 3D view. That is required to fit chart's 3D
          * projection into the actual plotting area. Reported as #4933.
          *
-         * @notice
+         * NOTE:
          * This function should ideally take the plot values instead of a chart
          * object, but since the chart object is needed for perspective it is
          * not practical. Possible to make both getScale and perspective more

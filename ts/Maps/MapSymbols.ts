@@ -28,7 +28,7 @@ const { prototype: { symbols } } = SVGRenderer;
  *
  * */
 
-/* eslint-disable require-jsdoc, valid-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, valid-jsdoc */
 
 function bottomButton(
     x: number,

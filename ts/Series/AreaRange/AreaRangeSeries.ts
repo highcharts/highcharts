@@ -77,7 +77,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      * @extends      plotOptions.area
      * @product      highcharts highstock
-     * @excluding    stack, stacking
+     * @exclude      stack, stacking
      * @requires     highcharts-more
      * @optionparent plotOptions.arearange
      */

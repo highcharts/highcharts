@@ -496,12 +496,13 @@ H.Popup.prototype = {
      * @private
      *
      * @param {Highcharts.HTMLDOMElement} parentDiv
-     *        The container where inputs and selections are created.
+     * The container where inputs and selections are created.
      *
      * @param {string} type
-     *         Type of the popup bookmark (add|edit|remove).
+     * Type of the popup bookmark (add|edit|remove).
      *
      * @return {Highcharts.PopupFieldsObject}
+     * Object of fields values.
      */
     getFields: function (
         parentDiv: HTMLDOMElement,
@@ -1378,6 +1379,7 @@ H.Popup.prototype = {
          *        HTML parent element.
          *
          * @return {HTMLSelectElement}
+         *         HTML element
          */
         addSelection: function (
             this: Highcharts.Popup,
@@ -1418,6 +1420,7 @@ H.Popup.prototype = {
 
             return selectBox;
         },
+
         /**
          * Get and add selection options.
          *
@@ -1519,8 +1522,8 @@ H.Popup.prototype = {
          * @param {string} [IndicatorType]
          *        Type of the indicator i.e. sma, ema...
          *
-         * @return Highcharts.Dictionary<string>
-         *        Full name and series type.
+         * @return {Highcharts.Dictionary<string>}
+         *         Full name and series type.
          */
         getNameType: function (
             series: Series,

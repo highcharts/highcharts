@@ -115,7 +115,7 @@ declare module './AxisType' {
  *
  * */
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 function argsToArray(args: IArguments): Array<any> {
     return Array.prototype.slice.call(args, 1);
@@ -1352,13 +1352,14 @@ namespace GridAxis {
 
         /**
          * Add extra border based on the provided path.
-         *  *
+         *
          * @private
          *
          * @param {SVGPath} path
          * The path of the border.
          *
          * @return {Highcharts.SVGElement}
+         * Border line.
          */
         public renderBorder(path: SVGPath): SVGElement {
             const axis = this.axis,

@@ -299,6 +299,7 @@ namespace PlotLineOrBandAxis {
          * @param {"plotBands"|"plotLines"} [coll]
          *
          * @return {Highcharts.PlotLineOrBand|undefined}
+         * Added plot band/line.
          */
         public addPlotBandOrLine<T extends PlotBandOptions|PlotLineOptions>(
             this: Composition,

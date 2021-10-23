@@ -141,9 +141,12 @@ class Tunnel extends CrookedLine {
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {boolean} [end] - whether to translate start or end side
+     * @param {number} dx
+     * The amount of x translation
+     * @param {number} dy
+     * The amount of y translation
+     * @param {boolean} [end]
+     * Whether to translate start or end side
      */
     public translateSide(dx: number, dy: number, end?: boolean): void {
         const topIndex = Number(end),
@@ -156,7 +159,8 @@ class Tunnel extends CrookedLine {
     /**
      * Translate height of the tunnel.
      * @private
-     * @param {number} dh - the amount of height translation
+     * @param {number} dh
+     * The amount of height translation
      */
     public translateHeight(dh: number): void {
         this.translatePoint(0, dh, 2);

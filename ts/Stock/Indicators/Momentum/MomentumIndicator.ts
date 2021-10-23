@@ -25,7 +25,7 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 function populateAverage(
     xVal: Array<number>,

@@ -704,7 +704,7 @@ export default OrganizationSeries;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.organization
- * @exclude   dataSorting, boostThreshold, boostBlending
+ * @excluding dataSorting, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/sankey
  * @requires  modules/organization

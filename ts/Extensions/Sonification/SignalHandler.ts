@@ -80,7 +80,6 @@ class SignalHandler {
      * @return {void}
      */
     public registerSignalCallbacks(
-        this: SignalHandler,
         signals: Record<string, (Function|undefined)>
     ): void {
         const signalHandler = this;
@@ -101,12 +100,11 @@ class SignalHandler {
     /**
      * Clear signal callbacks, optionally by name.
      * @private
-     * @param {Array<string>} [signalNames] - A list of signal names to clear. If
-     * not supplied, all signal callbacks are removed.
-     * @return {void}
+     * @param {Array<string>} [signalNames]
+     * A list of signal names to clear. If not supplied, all signal callbacks
+     * are removed.
      */
     public clearSignalCallbacks(
-        this: SignalHandler,
         signalNames?: Array<string>
     ): void {
         const signalHandler = this;
@@ -131,9 +129,9 @@ class SignalHandler {
      * @param {*} [data]
      * Data to pass to the callback.
      * @return {*}
+     * Signal result.
      */
     public emitSignal(
-        this: SignalHandler,
         signalName: string,
         data?: unknown
     ): (unknown|undefined) {

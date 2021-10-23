@@ -103,11 +103,6 @@ function getPointIndex(point: Point): (number|undefined) {
  * Determine if series navigation should be skipped
  *
  * @private
- * @function isSkipSeries
- *
- * @param {Highcharts.Series} series
- *
- * @return {boolean|number|undefined}
  */
 function isSkipSeries(
     series: Accessibility.SeriesComposition
@@ -135,11 +130,6 @@ function isSkipSeries(
  * Determine if navigation for a point should be skipped
  *
  * @private
- * @function isSkipPoint
- *
- * @param {Highcharts.Point} point
- *
- * @return {boolean|number|undefined}
  */
 function isSkipPoint(
     point: Accessibility.PointComposition
@@ -360,7 +350,7 @@ class SeriesKeyboardNavigation {
 
 
     /**
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigationHandler(): KeyboardNavigationHandler {
         const keyboardNavigation = this,
@@ -977,8 +967,6 @@ namespace SeriesKeyboardNavigation {
      *
      * @private
      * @function Highcharts.Series#highlightFirstValidPoint
-     *
-     * @return {boolean|Highcharts.Point}
      */
     function seriesHighlightFirstValidPoint(
         this: SeriesComposition

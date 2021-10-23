@@ -46,7 +46,7 @@ declare module '../../../Core/Series/SeriesLike' {
     }
 }
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 // Utils:
 function maxHigh(arr: Array<Array<number>>): number {

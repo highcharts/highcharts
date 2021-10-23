@@ -662,7 +662,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#hasData
-     * @return {boolean}
      */
     public hasData(): boolean {
         return ((
@@ -683,7 +682,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#autoIncrement
-     * @return {number}
      */
     public autoIncrement(x?: number): number {
 
@@ -777,8 +775,9 @@ class Series {
      * The series options.
      *
      * @return {Highcharts.SeriesOptionsType}
+     * Merged series options.
      *
-     * @fires Highcharts.Series#event:afterSetOptions
+     * @emits Highcharts.Series#event:afterSetOptions
      */
     public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
         const chart = this.chart,
@@ -986,7 +985,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getPointsCollection
-     * @return {Array<Highcharts.Point>}
      */
     public getPointsCollection(): Array<Point> {
         return (this.hasGroupedData ? this.points : this.data) || [];
@@ -1021,7 +1019,7 @@ class Series {
      * @param    {number} fromIndex
      *           The index to start searching from, used for optimizing
      *           series with required sorting.
-     * @returns  {number|undefined}
+     * @return   {number|undefined}
      *           Returns the index of a matching point, or undefined if no
      *           match is found.
      */
@@ -1492,6 +1490,7 @@ class Series {
      * Force data grouping.
      *
      * @return {Array<Highcharts.PointOptionsObject>}
+     * Sorted data points.
      */
     public sortData(
         data: Array<(PointOptions|PointShortOptions)>
@@ -1566,8 +1565,9 @@ class Series {
      * @private
      * @function Highcharts.Series#getProcessedData
      * @param {boolean} [forceExtremesFromAll]
-     *        Force getting extremes of a total series data range.
+     * Force getting extremes of a total series data range.
      * @return {Highcharts.SeriesProcessedDataObject}
+     * Cropped data.
      */
     public getProcessedData(
         forceExtremesFromAll?: boolean
@@ -1694,8 +1694,9 @@ class Series {
      * @private
      * @function Highcharts.Series#processData
      * @param {boolean} [force]
-     *        Force data grouping.
+     * Force data grouping.
      * @return {boolean|undefined}
+     * False, if not processed.
      */
     public processData(force?: boolean): (boolean|undefined) {
         const series = this,
@@ -1732,12 +1733,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#cropData
-     * @param {Array<number>} xData
-     * @param {Array<number>} yData
-     * @param {number} min
-     * @param {number} max
-     * @param {number} [cropShoulder]
-     * @return {Highcharts.SeriesCropDataObject}
      */
     public cropData(
         xData: Array<number>,
@@ -1960,6 +1955,7 @@ class Series {
      * range.
      *
      * @return {Highcharts.RangeObject}
+     * X extremes.
      */
     public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         return {
@@ -1982,6 +1978,7 @@ class Series {
      * Force getting extremes of a total series data range.
      *
      * @return {Highcharts.DataExtremesObject}
+     * Y extremes.
      */
     public getExtremes(
         yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
@@ -2109,6 +2106,7 @@ class Series {
      * Array of options for points
      *
      * @return {Highcharts.PointOptionsType}
+     * First regular data point.
      */
     public getFirstValidPoint(
         data: Array<(PointOptions|PointShortOptions)>
@@ -2133,7 +2131,7 @@ class Series {
      *
      * @function Highcharts.Series#translate
      *
-     * @fires Highcharts.Series#events:translate
+     * @emits Highcharts.Series#events:translate
      */
     public translate(): void {
         if (!this.processedXData) { // hidden series
@@ -2385,14 +2383,14 @@ class Series {
     }
 
     /**
-     * Get the clipping for the series. Could be called for a series to
-     * initiate animating the clip or to set the final clip (only width
-     * and x).
+     * Get the clipping for the series. Could be called for a series to initiate
+     * animating the clip or to set the final clip (only width and x).
      *
      * @private
      * @function Highcharts.Series#getClip
      *
      * @return {Highcharts.Dictionary<number>}
+     * Clip box.
      */
     public getClipBox(): BBoxObject {
         const { chart, xAxis, yAxis } = this;
@@ -2565,7 +2563,7 @@ class Series {
      * @private
      * @function Highcharts.Series#afterAnimate
      *
-     * @fires Highcharts.Series#event:afterAnimate
+     * @emits Highcharts.Series#event:afterAnimate
      */
     public afterAnimate(): void {
         this.setClip();
@@ -2917,7 +2915,7 @@ class Series {
      * @private
      * @function Highcharts.Series#destroy
      *
-     * @fires Highcharts.Series#event:destroy
+     * @emits Highcharts.Series#event:destroy
      */
     public destroy(keepEventsForUpdate?: boolean): void {
 
@@ -3295,6 +3293,7 @@ class Series {
      * @function Highcharts.Series#getPlotBox
      *
      * @return {Highcharts.SeriesPlotBoxObject}
+     * Translation plot box.
      */
     public getPlotBox(): Series.PlotBoxObject {
         const chart = this.chart;
@@ -3346,7 +3345,7 @@ class Series {
      *
      * @function Highcharts.Series#render
      *
-     * @fires Highcharts.Series#event:afterRender
+     * @emits Highcharts.Series#event:afterRender
      */
     public render(): void {
         const series = this,
@@ -3916,7 +3915,7 @@ class Series {
      * @param {boolean} [withEvent=true]
      *        Used internally, whether to fire the series `addPoint` event.
      *
-     * @fires Highcharts.Series#event:addPoint
+     * @emits Highcharts.Series#event:addPoint
      */
     public addPoint(
         options: (PointOptions|PointShortOptions),
@@ -4026,7 +4025,7 @@ class Series {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and optionally how the series should be animated.
      *
-     * @fires Highcharts.Point#event:remove
+     * @emits Highcharts.Point#event:remove
      */
     public removePoint(
         i: number,
@@ -4095,7 +4094,7 @@ class Series {
      * @param {boolean} [withEvent=true]
      *        Used internally, whether to fire the series `remove` event.
      *
-     * @fires Highcharts.Series#event:remove
+     * @emits Highcharts.Series#event:remove
      */
     public remove(
         redraw?: boolean,
@@ -4155,8 +4154,8 @@ class Series {
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw} after.
      *
-     * @fires Highcharts.Series#event:update
-     * @fires Highcharts.Series#event:afterUpdate
+     * @emits Highcharts.Series#event:update
+     * @emits Highcharts.Series#event:afterUpdate
      */
     public update(
         options: DeepPartial<SeriesTypeOptions>,
@@ -4447,7 +4446,7 @@ class Series {
      * Runs on mouse over the series graphical items.
      *
      * @function Highcharts.Series#onMouseOver
-     * @fires Highcharts.Series#event:mouseOver
+     * @emits Highcharts.Series#event:mouseOver
      */
     public onMouseOver(): void {
         const series = this,
@@ -4485,7 +4484,7 @@ class Series {
      *
      * @function Highcharts.Series#onMouseOut
      *
-     * @fires Highcharts.Series#event:mouseOut
+     * @emits Highcharts.Series#event:mouseOut
      */
     public onMouseOut(): void {
         // trigger the event only if listeners exist
@@ -4692,8 +4691,8 @@ class Series {
      * operations on the chart, it is a good idea to set redraw to false and
      * call {@link Chart#redraw|chart.redraw()} after.
      *
-     * @fires Highcharts.Series#event:hide
-     * @fires Highcharts.Series#event:show
+     * @emits Highcharts.Series#event:hide
+     * @emits Highcharts.Series#event:show
      */
     public setVisible(
         vis?: boolean,
@@ -4775,7 +4774,7 @@ class Series {
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#show
-     * @fires Highcharts.Series#event:show
+     * @emits Highcharts.Series#event:show
      */
     public show(): void {
         this.setVisible(true);
@@ -4790,7 +4789,7 @@ class Series {
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#hide
-     * @fires Highcharts.Series#event:hide
+     * @emits Highcharts.Series#event:hide
      */
     public hide(): void {
         this.setVisible(false);
@@ -4813,8 +4812,8 @@ class Series {
      * True to select the series, false to unselect. If undefined, the selection
      * state is toggled.
      *
-     * @fires Highcharts.Series#event:select
-     * @fires Highcharts.Series#event:unselect
+     * @emits Highcharts.Series#event:select
+     * @emits Highcharts.Series#event:unselect
      */
     public select(selected?: boolean): void {
         const series = this;
@@ -4838,10 +4837,6 @@ class Series {
      * Checks if a tooltip should be shown for a given point.
      *
      * @private
-     * @param {number} plotX
-     * @param {number} plotY
-     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
-     * @return {boolean}
      */
     public shouldShowTooltip(
         plotX: number,

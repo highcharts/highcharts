@@ -104,10 +104,6 @@ function shouldRunInputNavigation(chart: Chart): boolean {
  *
  * @private
  * @function Highcharts.Chart#highlightRangeSelectorButton
- *
- * @param {number} ix
- *
- * @return {boolean}
  */
 Chart.prototype.highlightRangeSelectorButton = function (
     ix: number

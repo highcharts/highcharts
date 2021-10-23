@@ -855,7 +855,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'label',
                      *   'circle',
@@ -912,7 +912,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'flagCirclepin',
                      *   'flagDiamondpin',
@@ -967,7 +967,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'segment',
                      *   'arrowSegment',
@@ -1059,7 +1059,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'elliott3',
                      *   'elliott5',
@@ -1112,7 +1112,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'verticalCounter',
                      *   'verticalLabel',
@@ -1154,7 +1154,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'fibonacci',
                      *   'fibonacciTimeZones',
@@ -1216,7 +1216,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'measureXY',
                      *   'measureX',
@@ -1282,7 +1282,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'zoomX',
                      *   'zoomY',
@@ -1324,7 +1324,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'typeOHLC',
                      *   'typeLine',
@@ -1489,11 +1489,10 @@ addEvent(Chart, 'redraw', function (): void {
 /**
  * Toolbar Class
  * @private
- * @constructor
+ * @class
  * @param {Object} - options of toolbar
  * @param {Chart} - Reference to chart
  */
-
 class Toolbar {
     public constructor(
         options: Highcharts.StockToolsGuiOptions,
@@ -1587,9 +1586,9 @@ class Toolbar {
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
      * @private
-     * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>}
+     * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>} parentBtn
      * button which has submenu
-     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions}
+     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions} button
      * list of all buttons
      */
     public addSubmenu(
@@ -1667,9 +1666,9 @@ class Toolbar {
     /**
      * Create buttons in submenu
      * @private
-     * @param {Highcharts.HTMLDOMElement}
+     * @param {Highcharts.HTMLDOMElement} buttonWrapper
      * button where submenu is placed
-     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions}
+     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions} button
      * list of all buttons options
      *
      */
@@ -2187,7 +2186,8 @@ extend(Chart.prototype, {
     /**
      * Verify if Toolbar should be added.
      * @private
-     * @param {Highcharts.StockToolsOptions} - chart options
+     * @param {Highcharts.StockToolsOptions} options
+     * chart options
      */
     setStockTools: function (
         this: Chart,

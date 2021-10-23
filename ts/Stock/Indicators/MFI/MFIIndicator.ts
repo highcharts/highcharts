@@ -34,7 +34,7 @@ const {
     isArray
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 // Utils:
 function sumArray(array: Array<number>): number {

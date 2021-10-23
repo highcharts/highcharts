@@ -1192,7 +1192,6 @@ extend(NetworkgraphPoint.prototype, {
      * Return degree of a node. If node has no connections, it still has
      * deg=1.
      * @private
-     * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
         const deg = this.isNode ?
@@ -1205,7 +1204,6 @@ extend(NetworkgraphPoint.prototype, {
     /**
      * Get presentational attributes of link connecting two nodes.
      * @private
-     * @return {Highcharts.SVGAttributes}
      */
     getLinkAttributes: function (
         this: Highcharts.NetworkgraphPoint
@@ -1559,7 +1557,7 @@ export default NetworkgraphSeries;
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array|Number>}
+ * @type      {Array<number|object|Array>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,draDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/

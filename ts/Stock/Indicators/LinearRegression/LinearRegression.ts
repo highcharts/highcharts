@@ -137,15 +137,15 @@ class LinearRegressionIndicator extends SMAIndicator {
     /**
      * Return the slope and intercept of a straight line function.
      * @private
-     * @param {Highcharts.LinearRegressionIndicator} this indicator to use
-     * @param {Array<number>} xData -  list of all x coordinates in a period
-     * @param {Array<number>} yData - list of all y coordinates in a period
+     * @param {Array<number>} xData
+     * list of all x coordinates in a period
+     * @param {Array<number>} yData
+     * list of all y coordinates in a period
      * @return {Highcharts.RegressionLineParametersObject}
-     *          object that contains the slope and the intercept
-     *          of a straight line function
+     * object that contains the slope and the intercept of a straight line
+     * function
      */
     public getRegressionLineParameters(
-        this: LinearRegressionIndicator,
         xData: Array<number>,
         yData: Array<number>
     ): RegressionLineParametersObject {
@@ -198,10 +198,12 @@ class LinearRegressionIndicator extends SMAIndicator {
      * Return the y value on a straight line.
      * @private
      * @param {Highcharts.RegressionLineParametersObject} lineParameters
-     *          object that contains the slope and the intercept
-     *          of a straight line function
-     * @param {number} endPointX - x coordinate of the point
-     * @return {number} - y value of the point that lies on the line
+     * object that contains the slope and the intercept of a straight line
+     * function
+     * @param {number} endPointX
+     * x coordinate of the point
+     * @return {number}
+     * y value of the point that lies on the line
      */
     public getEndPointY(
         lineParameters: RegressionLineParametersObject,
@@ -214,9 +216,12 @@ class LinearRegressionIndicator extends SMAIndicator {
      * Transform the coordinate system so that x values start at 0 and
      * apply xAxisUnit.
      * @private
-     * @param {Array<number>} xData - list of all x coordinates in a period
-     * @param {number} xAxisUnit - option (see the API)
-     * @return {Array<number>} - array of transformed x data
+     * @param {Array<number>} xData
+     * list of all x coordinates in a period
+     * @param {number} xAxisUnit
+     * option (see the API)
+     * @return {Array<number>}
+     * array of transformed x data
      */
     public transformXData(
         xData: Array<number>,

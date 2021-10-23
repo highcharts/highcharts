@@ -2082,6 +2082,7 @@ class Navigator {
      * @param {boolean} [returnFalseOnNoBaseSeries]
      *        as the param says.
      * @return {Highcharts.Dictionary<(number|undefined)>|undefined}
+     *         Union data extremes.
      */
     public getUnionExtremes(
         returnFalseOnNoBaseSeries?: boolean

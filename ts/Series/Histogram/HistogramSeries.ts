@@ -47,7 +47,7 @@ const {
 /**
  * A dictionary with formulas for calculating number of bins based on the
  * base series
- **/
+ */
 const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (baseSeries: Series): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
@@ -69,9 +69,11 @@ const binsNumberFormulas: Record<string, Function> = {
 /**
  * Returns a function for mapping number to the closed (right opened) bins
  * @private
- * @param {Array<number>} bins - Width of the bins
+ * @param {Array<number>} bins
+ * Width of the bins
  * @return {Function}
- **/
+ * Mapping function
+ */
 function fitToBinLeftClosed(bins: Array<number>): Function {
     return function (y: number): number {
         let i = 1;
@@ -129,7 +131,7 @@ class HistogramSeries extends ColumnSeries {
          * which takes a `baseSeries` as a parameter and should return a
          * positive integer.
          *
-         * @type {"square-root"|"sturges"|"rice"|number|function}
+         * @type {"square-root"|"sturges"|"rice"|number|Function}
          */
         binsNumber: 'square-root',
 

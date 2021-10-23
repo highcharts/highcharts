@@ -30,6 +30,7 @@ import { Palette } from '../Color/Palettes.js';
  * General options for the chart.
  *
  * @optionparent chart
+ * @private
  */
 const ChartDefaults: ChartOptions = {
 

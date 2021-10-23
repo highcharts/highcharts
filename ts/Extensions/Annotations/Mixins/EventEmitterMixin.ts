@@ -78,7 +78,6 @@ const {
  *
  * @private
  * @mixin
- * @memberOf Annotation
  */
 const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
@@ -353,7 +352,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * @param {Object} e event
      * @param {number} cx center x
      * @param {number} cy center y
-     **/
+     */
     mouseMoveToScale: function (
         this: Highcharts.AnnotationEventEmitter,
         e: Highcharts.AnnotationEventObject,

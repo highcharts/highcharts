@@ -298,8 +298,6 @@ H.networkgraphIntegrations = {
          * readable.
          *
          * @private
-         * @param {Highcharts.NetworkgraphLayout} layout layout object
-         * @return {number}
          */
         getK: function (layout: Highcharts.NetworkgraphLayout): number {
             return Math.pow(
@@ -517,8 +515,6 @@ H.networkgraphIntegrations = {
          * readable.
          *
          * @private
-         * @param {object} layout layout object
-         * @return {number}
          */
         getK: function (layout: Highcharts.NetworkgraphLayout): number {
             return Math.pow(

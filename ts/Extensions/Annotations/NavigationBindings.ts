@@ -938,7 +938,7 @@ class NavigationBindings {
      *
      * @function Highcharts.NavigationBindings#getClickedClassNames
      *
-     * @param {Highcharts.HTMLDOMElement}
+     * @param {Highcharts.HTMLDOMElement} container
      *        Container that event is bound to.
      *
      * @param {global.Event} event

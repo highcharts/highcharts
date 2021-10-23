@@ -55,21 +55,21 @@ function destroyExtraLabels(
 
 class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
 
-    /**
+    /* *
      *
      * Properties
      *
-     */
+     * */
 
     public P: number = void 0 as any;
     public pivotLine: string = void 0 as any;
     public series: PivotPointsIndicator = void 0 as any;
 
-    /**
-      *
-      * Functions
-      *
-      */
+    /* *
+     *
+     * Functions
+     *
+     * */
 
     public destroyElements(
         this: PivotPointsPoint

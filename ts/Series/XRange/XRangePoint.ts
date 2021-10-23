@@ -150,8 +150,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      *
      * @private
      * @function Highcharts.Point#init
-     *
-     * @return {Highcharts.Point}
      */
     public init(): XRangePoint {
         Point.prototype.init.apply(this, arguments as any);
@@ -176,8 +174,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      * @function Highcharts.Point#getLabelConfig
-     *
-     * @return {Highcharts.PointLabelObject}
      */
     // Add x2 and yCategory to the available properties for tooltip formats
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
@@ -194,8 +190,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      * @function Highcharts.Point#isValid
-     *
-     * @return {boolean}
      */
     public isValid(): boolean {
         return typeof this.x === 'number' &&

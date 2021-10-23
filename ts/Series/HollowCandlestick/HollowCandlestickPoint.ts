@@ -53,9 +53,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      * Update class name if needed.
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getClassName
-     *
-     * @return {string}
-     *
      */
     public getClassName(): string {
         let className = super.getClassName.apply(this);

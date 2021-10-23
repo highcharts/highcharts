@@ -519,10 +519,6 @@ class Pane {
 /**
  * Check whether element is inside or outside pane.
  * @private
- * @param  {number} x Element's x coordinate
- * @param  {number} y Element's y coordinate
- * @param  {Array<number>} center Pane's center (x, y) and diameter
- * @return {boolean}
  */
 function isInsidePane(
     x: number,

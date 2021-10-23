@@ -492,7 +492,7 @@ namespace Exporting {
      *        Chart that was (or suppose to be) printed
      * @return {void}
      *
-     * @fires Highcharts.Chart#event:afterPrint
+     * @emits Highcharts.Chart#event:afterPrint
      */
     function afterPrint(
         this: ChartComposition
@@ -544,7 +544,7 @@ namespace Exporting {
      *
      * @return {void}
      *
-     * @fires Highcharts.Chart#event:beforePrint
+     * @emits Highcharts.Chart#event:beforePrint
      */
     function beforePrint(
         this: ChartComposition
@@ -1045,8 +1045,8 @@ namespace Exporting {
      *
      * @function Highcharts.Chart#getChartHTML
      *
-     * @returns {string}
-     *          The unfiltered SVG of the chart.
+     * @return {string}
+     * The unfiltered SVG of the chart.
      *
      * @requires modules/exporting
      */
@@ -1116,7 +1116,7 @@ namespace Exporting {
      * @return {string}
      *         The SVG representation of the rendered chart.
      *
-     * @fires Highcharts.Chart#event:getSVG
+     * @emits Highcharts.Chart#event:getSVG
      *
      * @requires modules/exporting
      */
@@ -1266,9 +1266,6 @@ namespace Exporting {
     /**
      * @private
      * @function Highcharts.Chart#getSVGForExport
-     * @param {Highcharts.ExportingOptions} options
-     * @param {Highcharts.Options} chartOptions
-     * @return {string}
      * @requires modules/exporting
      */
     function getSVGForExport(
@@ -1320,11 +1317,10 @@ namespace Exporting {
      *
      * @private
      * @function Highcharts.Chart#inlineStyles
-     * @return {void}
      *
-     * @todo: What are the border styles for text about? In general, text has a
-     * lot of properties.
-     * @todo: Make it work with IE9 and IE10.
+     * @todo What are the border styles for text about? In general, text has a
+     *       lot of properties.
+     * @todo Make it work with IE9 and IE10.
      *
      * @requires modules/exporting
      */
@@ -1608,8 +1604,8 @@ namespace Exporting {
      *
      * @return {void}
      *
-     * @fires Highcharts.Chart#event:beforePrint
-     * @fires Highcharts.Chart#event:afterPrint
+     * @emits Highcharts.Chart#event:beforePrint
+     * @emits Highcharts.Chart#event:afterPrint
      *
      * @requires modules/exporting
      */

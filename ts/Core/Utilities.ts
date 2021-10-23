@@ -171,20 +171,20 @@ function merge<
  * @function Highcharts.merge<T>
  *
  * @param {boolean} extend
- *        Whether to extend the left-side object (a) or return a whole new
- *        object.
+ * Whether to extend the left-side object (a) or return a whole new object.
  *
  * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
+ * The first object to extend. When only this is given, the function returns a
+ * deep copy.
  *
  * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
+ * An object to merge into the previous one.
  *
  * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- *//**
+ * The merged object. If the first argument is true, the return is the same as
+ * the second argument.
+ */
+/**
  * Utility function to deep merge two or more objects and return a third object.
  * The merge function can also be used with a single object argument to create a
  * deep copy of an object.
@@ -192,15 +192,15 @@ function merge<
  * @function Highcharts.merge<T>
  *
  * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
+ * The first object to extend. When only this is given, the function returns a
+ * deep copy.
  *
  * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
+ * An object to merge into the previous one.
  *
  * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
+ * The merged object. If the first argument is true, the return is the same as
+ * the second argument.
  */
 function merge<T>(): T {
     /* eslint-enable valid-jsdoc */
@@ -1393,7 +1393,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -1679,7 +1679,6 @@ function addEvent<T>(
     };
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
  *
@@ -1695,22 +1694,13 @@ function addEvent<T>(
  * @param {Highcharts.EventCallbackFunction<T>} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
- *
- * @return {void}
  */
 function removeEvent<T>(
     el: (Utilities.Class<T>|T),
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
-    /* eslint-enable valid-jsdoc */
 
-    /**
-     * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
-     */
     function removeOneEvent(
         type: string,
         fn: (EventCallback<T>|Function)
@@ -1724,11 +1714,6 @@ function removeEvent<T>(
         }
     }
 
-    /**
-     * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
-     */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,
             len;

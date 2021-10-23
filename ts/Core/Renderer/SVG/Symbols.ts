@@ -33,7 +33,7 @@ const {
  *
  * */
 
-/* eslint-disable require-jsdoc, valid-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, valid-jsdoc */
 
 function arc(
     x: number,

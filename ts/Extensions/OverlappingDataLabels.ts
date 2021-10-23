@@ -293,10 +293,11 @@ Chart.prototype.hideOverlappingLabels = function (
  * @private
  * @function hideOrShow
  * @param {Highcharts.SVGElement} label
- *        The label.
+ * The label.
  * @param {Highcharts.Chart} chart
- *        The chart that contains the label.
+ * The chart that contains the label.
  * @return {boolean}
+ * True, if label is affected.
  */
 function hideOrShow(label: SVGElement, chart: Chart): boolean {
     let complete: (Function|undefined),

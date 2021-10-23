@@ -820,8 +820,6 @@ namespace OfflineExporting {
      *
      * @private
      * @function Highcharts.svgToDataURL
-     * @param {string} svg
-     * @return {string}
      */
     export function svgToDataUrl(svg: string): string {
         // Webkit and not chrome

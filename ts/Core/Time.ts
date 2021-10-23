@@ -593,8 +593,10 @@ class Time {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
-     * @return {Highcharts.Dictionary<T>} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f
+     * General format description
+     * @return {Highcharts.Dictionary<T>}
+     * The object definition
      */
     public resolveDTLFormat<T>(
         f: (string|Array<T>|Record<string, T>)
@@ -618,17 +620,18 @@ class Time {
      * @function Highcharts.Time#getTimeTicks
      *
      * @param {Highcharts.TimeNormalizedObject} normalizedInterval
-     *        The interval in axis values (ms) and the count
+     * The interval in axis values (ms) and the count
      *
      * @param {number} [min]
-     *        The minimum in axis values
+     * The minimum in axis values
      *
      * @param {number} [max]
-     *        The maximum in axis values
+     * The maximum in axis values
      *
      * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Time ticks.
      */
     public getTimeTicks(
         normalizedInterval: Time.TimeNormalizedObject,
@@ -1047,8 +1050,8 @@ export default Time;
  * In case of loading the library from a `script` tag,
  * this option is not needed, it will be loaded from there by default.
  *
- * @type {function}
- * @since 8.2.0
+ * @type      {Function}
+ * @since     8.2.0
  * @apioption time.moment
  */
 

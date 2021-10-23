@@ -67,7 +67,7 @@ class DependencyWheelSeries extends SankeySeries {
      *         Dependency wheel
      *
      * @extends      plotOptions.sankey
-     * @exclude      dataSorting
+     * @excluding    dataSorting
      * @since        7.1.0
      * @product      highcharts
      * @requires     modules/dependency-wheel
@@ -434,7 +434,7 @@ export default DependencyWheelSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.dependencywheel
- * @exclude   dataSorting
+ * @excluding dataSorting
  * @product   highcharts
  * @requires  modules/sankey
  * @requires  modules/dependency-wheel

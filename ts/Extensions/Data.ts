@@ -771,6 +771,8 @@ class Data {
      *
      * */
 
+    /* eslint-disable jsdoc/require-returns-description */
+
     /**
      * Initialize the Data object with the given options
      *
@@ -2701,7 +2703,7 @@ class SeriesBuilder {
      *
      * @param {Array<number>} freeIndexes
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     public populateColumns(freeIndexes: Array<number>): boolean {
         let builder = this,
@@ -2742,7 +2744,7 @@ class SeriesBuilder {
      *
      * @param {number} rowIndex
      *
-     * @returns {Array<T>|Highcharts.Dictionary<T>}
+     * @return {Array<T>|Highcharts.Dictionary<T>}
      */
     public read <T>(
         columns: Array<Array<T>>,
@@ -2830,7 +2832,7 @@ class SeriesBuilder {
      *
      * @function SeriesBuilder#getReferencedColumnIndexes
      *
-     * @returns {Array<number>}
+     * @return {Array<number>}
      */
     public getReferencedColumnIndexes(): Array<number> {
         let i,
@@ -2854,7 +2856,7 @@ class SeriesBuilder {
      *
      * @param {string} configName
      *
-     * @returns {boolean|undefined}
+     * @return {boolean|undefined}
      */
     public hasReader(configName: string): (boolean|undefined) {
         let i, columnReader;

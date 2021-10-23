@@ -83,9 +83,12 @@ const SonificationUtilities = {
     /**
      * Calculate the extreme values in a chart for a data prop.
      * @private
-     * @param {Highcharts.Chart} chart - The chart
-     * @param {string} prop - The data prop to find extremes for
-     * @return {Highcharts.RangeObject} Object with min and max properties
+     * @param {Highcharts.Chart} chart
+     * The chart
+     * @param {string} prop
+     * The data prop to find extremes for
+     * @return {Highcharts.RangeObject}
+     * Object with min and max properties
      */
     calculateDataExtremes: function (
         chart: Chart,
@@ -117,7 +120,7 @@ const SonificationUtilities = {
      * @private
      * @param {number} value
      * The relative data value to translate.
-     * @param {Highcharts.RangeObject} DataExtremesObject
+     * @param {Highcharts.RangeObject} dataExtremes
      * The possible extremes for this value.
      * @param {object} limits
      * Limits for the virtual axis.

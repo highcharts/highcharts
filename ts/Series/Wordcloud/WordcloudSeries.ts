@@ -153,7 +153,7 @@ class WordcloudSeries extends ColumnSeries {
          * cloud. Read more about it in our
          * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
          *
-         * @validvalue: ["center", "random"]
+         * @validvalue ["center", "random"]
          */
         placementStrategy: 'center',
         /**
@@ -186,7 +186,7 @@ class WordcloudSeries extends ColumnSeries {
          * algorithms for use in word cloud. Read more about it in our
          * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
          *
-         * @validvalue: ["archimedean", "rectangular", "square"]
+         * @validvalue ["archimedean", "rectangular", "square"]
          */
         spiral: 'rectangular',
         /**
@@ -657,7 +657,7 @@ export default WordcloudSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.wordcloud
- * @exclude   dataSorting, boostThreshold, boostBlending
+ * @excluding dataSorting, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/wordcloud
  * @apioption series.wordcloud

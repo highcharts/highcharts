@@ -115,7 +115,6 @@ class Instrument {
     * */
 
     public init(
-        this: Instrument,
         options: Instrument.Options
     ): void {
         if (!this.initAudioContext()) {
@@ -170,7 +169,6 @@ class Instrument {
      *         A new Instrument instance with the same options.
      */
     public copy(
-        this: Instrument,
         options?: Instrument.Options
     ): Instrument {
         return new (Instrument as any)(
@@ -180,12 +178,12 @@ class Instrument {
 
     /**
      * Init the audio context, if we do not have one.
+     *
      * @private
+     *
      * @return {boolean} True if successful, false if not.
      */
-    public initAudioContext(
-        this: Instrument
-    ): boolean {
+    public initAudioContext(): boolean {
         const Context = win.AudioContext || win.webkitAudioContext,
             hasOldContext = !!Instrument.audioContext;
 
@@ -209,13 +207,13 @@ class Instrument {
 
     /**
      * Init an oscillator instrument.
+     *
      * @private
+     *
      * @param {Highcharts.OscillatorOptionsObject} oscillatorOptions
      * The oscillator options passed to Highcharts.Instrument#init.
-     * @return {void}
      */
     public initOscillator(
-        this: Instrument,
         options: Instrument.OscillatorOptions
     ): void {
         const ctx = Instrument.audioContext;
@@ -228,13 +226,13 @@ class Instrument {
 
     /**
      * Set pan position.
+     *
      * @private
+     *
      * @param {number} panValue
      * The pan position to set for the instrument.
-     * @return {void}
      */
     public setPan(
-        this: Instrument,
         panValue: number
     ): void {
         if (this.panNode) {
@@ -246,15 +244,16 @@ class Instrument {
      * Set gain level. A maximum of 1.2 is allowed before we emit a warning. The
      * actual volume is not set above this level regardless of input. This
      * function also handles the Instrument's master volume.
+     *
      * @private
+     *
      * @param {number} gainValue
      * The gain level to set for the instrument.
+     *
      * @param {number} [rampTime=0]
      * Gradually change the gain level, time given in milliseconds.
-     * @return {void}
      */
     public setGain(
-        this: Instrument,
         gainValue: number,
         rampTime?: number
     ): void {
@@ -286,12 +285,10 @@ class Instrument {
 
     /**
      * Cancel ongoing gain ramps.
+     *
      * @private
-     * @return {void}
      */
-    public cancelGainRamp(
-        this: Instrument
-    ): void {
+    public cancelGainRamp(): void {
         if (this.gainNode) {
             this.gainNode.gain.cancelScheduledValues(0);
         }
@@ -299,12 +296,11 @@ class Instrument {
 
     /**
      * Set the master volume multiplier of the instrument after creation.
+     *
      * @param {number} volumeMultiplier
      * The gain level to set for the instrument.
-     * @return {void}
      */
     public setMasterVolume(
-        this: Instrument,
         volumeMultiplier: number
     ): void {
         this.masterVolume = volumeMultiplier || 0;
@@ -312,14 +308,22 @@ class Instrument {
 
     /**
      * Get the closest valid frequency for this instrument.
+     *
      * @private
-     * @param {number} frequency - The target frequency.
-     * @param {number} [min] - Minimum frequency to return.
-     * @param {number} [max] - Maximum frequency to return.
-     * @return {number} The closest valid frequency to the input frequency.
+     *
+     * @param {number} frequency
+     * The target frequency.
+     *
+     * @param {number} [min]
+     * Minimum frequency to return.
+     *
+     * @param {number} [max]
+     * Maximum frequency to return.
+     *
+     * @return {number}
+     * The closest valid frequency to the input frequency.
      */
     public getValidFrequency(
-        this: Instrument,
         frequency: number,
         min?: number,
         max?: number
@@ -343,12 +347,10 @@ class Instrument {
 
     /**
      * Clear existing play callback timers.
+     *
      * @private
-     * @return {void}
      */
-    public clearPlayCallbackTimers(
-        this: Instrument
-    ): void {
+    public clearPlayCallbackTimers(): void {
         this.playCallbackTimers.forEach(function (timer: number): void {
             clearInterval(timer);
         });
@@ -359,14 +361,14 @@ class Instrument {
     /**
      * Set the current frequency being played by the instrument. The closest
      * valid frequency between the frequency limits is used.
+     *
      * @param {number} frequency
      * The frequency to set.
+     *
      * @param {Highcharts.Dictionary<number>} [frequencyLimits]
      * Object with maxFrequency and minFrequency
-     * @return {void}
      */
     public setFrequency(
-        this: Instrument,
         frequency: number,
         frequencyLimits?: Record<string, number>
     ): void {
@@ -382,11 +384,13 @@ class Instrument {
 
     /**
      * Play oscillator instrument.
+     *
      * @private
-     * @param {number} frequency - The frequency to play.
+     *
+     * @param {number} frequency
+     * The frequency to play.
      */
     public oscillatorPlay(
-        this: Instrument,
         frequency: number
     ): void {
         if (!this.oscillatorStarted) {
@@ -403,11 +407,10 @@ class Instrument {
     /**
      * Prepare instrument before playing. Resumes the audio context and starts
      * the oscillator.
+     *
      * @private
      */
-    public preparePlay(
-        this: Instrument
-    ): void {
+    public preparePlay(): void {
         this.setGain(0.001);
         if (Instrument.audioContext.state === 'suspended') {
             Instrument.audioContext.resume();
@@ -430,12 +433,9 @@ class Instrument {
      * @function Highcharts.Instrument#play
      *
      * @param {Highcharts.InstrumentPlayOptionsObject} options
-     *        Options for the playback of the instrument.
-     *
-     * @return {void}
+     * Options for the playback of the instrument.
      */
     public play(
-        this: Instrument,
         options: Instrument.PlayOptions
     ): void {
         const instrument = this,

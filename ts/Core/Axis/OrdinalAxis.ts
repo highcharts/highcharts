@@ -409,6 +409,7 @@ namespace OrdinalAxis {
      *        The index value of searched point
      *
      * @return {number}
+     *         Axis position.
      */
     function index2val(this: OrdinalAxis.Composition, index: number): number {
         const axis = this,
@@ -453,6 +454,7 @@ namespace OrdinalAxis {
      *        The linear abstracted value.
      *
      * @return {number}
+     *         Axis value.
      */
     function lin2val(this: OrdinalAxis.Composition, val: number): number {
         const axis = this,
@@ -757,6 +759,7 @@ namespace OrdinalAxis {
      * Whether to return the index in the ordinalPositions or the new value.
      *
      * @return {number}
+     * Axis position.
      */
     function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
         const axis = this,
@@ -1333,6 +1336,7 @@ namespace OrdinalAxis {
          *        or extendedOrdinalPositions if not.
          *
          * @return {number}
+         *         Point index.
          */
         public getIndexOfPoint(
             val: number,

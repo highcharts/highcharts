@@ -109,6 +109,7 @@ class HTMLRenderer extends SVGRenderer {
      *        The y position of the text's lower left corner.
      *
      * @return {Highcharts.HTMLDOMElement}
+     *         HTML span element with text.
      */
     public html(
         this: HTMLRenderer,

@@ -53,7 +53,7 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 // Utils
 function arrayExtremesOHLC(
@@ -146,11 +146,11 @@ class VBPIndicator extends SMAIndicator {
              * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
              */
             styles: {
-                /** @ignore-options */
+                /** @ignore-option */
                 color: '#0A9AC9',
-                /** @ignore-options */
+                /** @ignore-option */
                 dashStyle: 'LongDash',
-                /** @ignore-options */
+                /** @ignore-option */
                 lineWidth: 1
             }
         },
@@ -247,7 +247,7 @@ class VBPIndicator extends SMAIndicator {
     ): VBPIndicator {
         const indicator = this;
 
-        /* eslint-disable require-jsdoc */
+        /* eslint-disable jsdoc/require-jsdoc */
         function toEmptyIndicator(): void {
             indicator.chart.redraw();
 

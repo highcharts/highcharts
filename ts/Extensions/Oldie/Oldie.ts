@@ -573,9 +573,6 @@ if (!svg) {
      *
      * @ignore
      * @function Highcharts.Pointer#normalize
-     * @param {global.PointerEvent} e
-     * @param {boolean} [chartPosition=false]
-     * @return {Highcharts.PointerEventObject}
      */
     Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
@@ -742,8 +739,6 @@ if (!svg) {
          * string to minimize DOM traffic.
          *
          * @function Highcharts.VMLElement#init
-         * @param {Highcharts.VMLRenderer} renderer
-         * @param {string} nodeName
          */
         init: function (
             this: Highcharts.VMLElement,
@@ -777,9 +772,7 @@ if (!svg) {
         /**
          * Add the node to the given parent
          *
-         * @function Highcharts.VMLElement
-         * @param {Highcharts.VMLElement} parent
-         * @return {Highcharts.VMLElement}
+         * @function Highcharts.VMLElement#add
          */
         add: function (
             this: Highcharts.VMLElement,
@@ -970,8 +963,6 @@ if (!svg) {
          * Set the element's clipping to a predefined rectangle
          *
          * @function Highcharts.VMLElement#clip
-         * @param {Highcharts.VMLClipRectObject} clipRect
-         * @return {Highcharts.VMLElement}
          */
         clip: function (
             this: Highcharts.VMLElement,
@@ -1009,8 +1000,6 @@ if (!svg) {
          * Set styles for the element
          *
          * @function Highcharts.VMLElement#css
-         * @param {Highcharts.CSSObject} styles
-         * @return {Highcharts.VMLElement}
          */
         css: SVGElement.prototype.htmlCss as any,
 
@@ -1020,8 +1009,6 @@ if (!svg) {
          * sIEve, discardElement does not.
          *
          * @function Highcharts.VMLElement#safeRemoveChild
-         * @param {Highcharts.HTMLDOMElement} element
-         * @return {void}
          */
         safeRemoveChild: function (
             this: Highcharts.VMLElement,
@@ -1052,9 +1039,6 @@ if (!svg) {
          * Add an event listener. VML override for normalizing event parameters.
          *
          * @function Highcharts.VMLElement#on
-         * @param {string} eventType
-         * @param {Function} handler
-         * @return {Highcharts.VMLElement}
          */
         on: function (
             this: Highcharts.VMLElement,
@@ -1075,9 +1059,6 @@ if (!svg) {
          * In stacked columns, cut off the shadows so that they don't overlap
          *
          * @function Highcharts.VMLElement#cutOffPath
-         * @param {string} path
-         * @param {number} length
-         * @return {string}
          */
         cutOffPath: function (
             this: Highcharts.VMLElement,
@@ -1104,10 +1085,6 @@ if (!svg) {
          * strokes.
          *
          * @function Highcharts.VMLElement#shadow
-         * @param {Highcharts.ShadowOptionsObject} shadowOptions
-         * @param {Highcharts.VMLElement} group
-         * @param {boolean} cutOff
-         * @return {Highcharts.VMLElement}
          */
         shadow: function (
             this: Highcharts.VMLElement,
@@ -1476,10 +1453,6 @@ if (!svg) {
          * Initialize the VMLRenderer.
          *
          * @function Highcharts.VMLRenderer#init
-         * @param {Highcharts.HTMLDOMElement} container
-         * @param {number} width
-         * @param {number} height
-         * @return {void}
          */
         init: function (
             this: Highcharts.VMLRenderer,
@@ -1553,11 +1526,6 @@ if (!svg) {
          * values for setting the CSS style to all associated members.
          *
          * @function Highcharts.VMLRenderer#clipRect
-         * @param {number|Highcharts.SizeObject} x
-         * @param {number} y
-         * @param {number} width
-         * @param {number} height
-         * @return {Highcharts.VMLElement}
          */
         clipRect: function (
             this: Highcharts.VMLRenderer,
@@ -1635,11 +1603,6 @@ if (!svg) {
          * it's a gradient configuration object, and apply opacity.
          *
          * @function Highcharts.VMLRenderer#color<T>
-         *
-         * @param {T} color
-         *        The color or config object
-         *
-         * @return {T}
          */
         color: function<T extends ColorType> (
             this: Highcharts.VMLRenderer,
@@ -1861,9 +1824,10 @@ if (!svg) {
          * @function Highcharts.VMLRenderer#prepVML
          *
          * @param {Array<(number|string)>} markup
-         *        A string array of the VML markup to prepare
+         * A string array of the VML markup to prepare
          *
          * @return {string}
+         * Prepared string
          */
         prepVML: function (
             this: Highcharts.VMLRenderer,
@@ -1941,10 +1905,6 @@ if (!svg) {
          * shapes, which is faster than v:oval
          *
          * @function Highcharts.VMLRenderer#circle
-         * @param {number|Highcharts.Dictionary<number>} x
-         * @param {number} [y]
-         * @param {number} [r]
-         * @return {Highcharts.VMLElement}
          */
         circle: function (
             this: Highcharts.VMLRenderer,
@@ -1972,9 +1932,10 @@ if (!svg) {
          * @function Highcharts.VMLRenderer#g
          *
          * @param {string} name
-         *        The name of the group
+         * The name of the group
          *
          * @return {Highcharts.VMLElement}
+         * Group element
          */
         g: function (
             this: Highcharts.VMLRenderer,
@@ -2001,17 +1962,6 @@ if (!svg) {
          * VML override to create a regular HTML image.
          *
          * @function Highcharts.VMLRenderer#image
-         *
-         * @param {string} src
-         *
-         * @param {number} x
-         *
-         * @param {number} y
-         *
-         * @param {number} width
-         *
-         * @param {number} height
-         * @return {Highcharts.VMLElement}
          */
         image: function (
             this: Highcharts.VMLRenderer,
@@ -2039,8 +1989,6 @@ if (!svg) {
          * rotation problems
          *
          * @function Highcharts.VMLRenderer#createElement
-         * @param {string} nodeName
-         * @return {Highcharts.VMLElement}
          */
         createElement: function (
             this: Highcharts.VMLRenderer,
@@ -2056,10 +2004,6 @@ if (!svg) {
          * inverted
          *
          * @function Highcharts.VMLRenderer#invertChild
-         *
-         * @param {Highcharts.HTMLDOMElement} element
-         *
-         * @param {Highcharts.HTMLDOMElement} parentNode
          */
         invertChild: function (
             this: Highcharts.VMLRenderer,

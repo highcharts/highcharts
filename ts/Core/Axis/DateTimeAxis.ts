@@ -170,6 +170,7 @@ namespace DateTimeAxis{
      * @param {number} startOfWeek
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Tick positions.
      */
     function getTimeTicks(
         this: Axis
@@ -328,12 +329,6 @@ namespace DateTimeAxis{
          * point range on the axis.
          *
          * @private
-         *
-         * @param {number} x
-         *
-         * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
-         *
-         * @return {string}
          */
         public getXDateFormat(
             x: number,

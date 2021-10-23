@@ -28,8 +28,6 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
     addEvent,
-    clamp,
-    isNumber,
     merge,
     pick
 } = U;
@@ -67,8 +65,8 @@ class MapChart extends Chart {
      *
      * @return {void}
      *
-     * @fires Highcharts.MapChart#event:init
-     * @fires Highcharts.MapChart#event:afterInit
+     * @emits Highcharts.MapChart#event:init
+     * @emits Highcharts.MapChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -172,11 +170,13 @@ namespace MapChart {
      * @function Highcharts.splitPath
      *
      * @param {string|Array<string|number>} path
+     * SVG path to split.
      *
      * @return {Highcharts.SVGPathArray}
+     * Splitted SVG path.
      */
     export function splitPath(
-        path: string|Array<string|number>
+        path: (string|Array<string|number>)
     ): SVGPath {
         let arr: Array<string|number>;
 

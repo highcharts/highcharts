@@ -90,8 +90,6 @@ declare global {
  * Get the wrapped export button element of a chart.
  *
  * @private
- * @param {Highcharts.Chart} chart
- * @returns {Highcharts.SVGElement}
  */
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
@@ -149,10 +147,6 @@ Chart.prototype.hideExportMenu = function (): void {
  *
  * @private
  * @function Highcharts.Chart#highlightExportItem
- *
- * @param {number} ix
- *
- * @return {boolean}
  */
 Chart.prototype.highlightExportItem = function (
     ix: number
@@ -193,10 +187,7 @@ Chart.prototype.highlightExportItem = function (
 
 /**
  * Try to highlight the last valid export menu item.
- *
  * @private
- * @function Highcharts.Chart#highlightLastExportItem
- * @return {boolean}
  */
 Chart.prototype.highlightLastExportItem = function (): boolean {
     const chart = this;
@@ -214,7 +205,6 @@ Chart.prototype.highlightLastExportItem = function (): boolean {
 
 /**
  * @private
- * @param {Highcharts.Chart} chart
  */
 function exportingShouldHaveA11y(chart: Chart): boolean {
     const exportingOpts = chart.options.exporting,
@@ -400,7 +390,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
      */
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent

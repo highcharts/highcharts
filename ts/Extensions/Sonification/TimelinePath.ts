@@ -88,7 +88,6 @@ class TimelinePath {
      * */
 
     public init(
-        this: TimelinePath,
         options: TimelinePath.Options
     ): void {
         this.options = options;
@@ -127,9 +126,7 @@ class TimelinePath {
      * Sort the internal event list by time.
      * @private
      */
-    public sortEvents(
-        this: TimelinePath
-    ): void {
+    public sortEvents(): void {
         this.events = this.events.sort(function (
             a: TimelineEvent,
             b: TimelineEvent
@@ -142,9 +139,7 @@ class TimelinePath {
      * Update the internal eventId to index map.
      * @private
      */
-    public updateEventIdMap(
-        this: TimelinePath
-    ): void {
+    public updateEventIdMap(): void {
         this.eventIdMap = this.events.reduce(function (
             acc: Record<string, number>,
             cur: TimelineEvent,
@@ -159,11 +154,10 @@ class TimelinePath {
      * Add events to the path. Should not be done while the path is playing.
      * The new events are inserted according to their time property.
      * @private
-     * @param {Array<Highcharts.TimelineEvent>} newEvents - The new timeline events
-     * to add.
+     * @param {Array<Highcharts.TimelineEvent>} newEvents
+     * The new timeline events to add.
      */
     public addTimelineEvents(
-        this: TimelinePath,
         newEvents: Array<TimelineEvent>
     ): void {
         this.events = this.events.concat(newEvents);
@@ -176,9 +170,7 @@ class TimelinePath {
      * @private
      * @return {Highcharts.TimelineEvent} The current timeline event.
      */
-    public getCursor(
-        this: TimelinePath
-    ): TimelineEvent {
+    public getCursor(): TimelineEvent {
         return this.events[this.cursor];
     }
 
@@ -191,7 +183,6 @@ class TimelinePath {
      * True if there is an event with this ID in the path. False otherwise.
      */
     public setCursor(
-        this: TimelinePath,
         eventId: string
     ): boolean {
         const ix = this.eventIdMap[eventId];
@@ -209,9 +200,10 @@ class TimelinePath {
      * @param {Function} onEnd
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
-    public play(onEnd: Function): void {
+    public play(
+        onEnd: Function
+    ): void {
         this.pause();
         this.signalHandler.emitSignal('onStart');
         this.signalHandler.clearSignalCallbacks(['playOnEnd']);
@@ -225,9 +217,10 @@ class TimelinePath {
      * @param {Function} onEnd
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
-    public rewind(onEnd: Function): void {
+    public rewind(
+        onEnd: Function
+    ): void {
         this.pause();
         this.signalHandler.emitSignal('onStart');
         this.signalHandler.clearSignalCallbacks(['playOnEnd']);
@@ -239,9 +232,7 @@ class TimelinePath {
      * Reset the cursor to the beginning.
      * @private
      */
-    public resetCursor(
-        this: TimelinePath
-    ): void {
+    public resetCursor(): void {
         this.cursor = 0;
     }
 
@@ -249,20 +240,18 @@ class TimelinePath {
      * Reset the cursor to the end.
      * @private
      */
-    public resetCursorEnd(
-        this: TimelinePath
-    ): void {
+    public resetCursorEnd(): void {
         this.cursor = this.events.length - 1;
     }
 
     /**
      * Cancel current playing. Leaves the cursor intact.
      * @private
-     * @param {boolean} [fadeOut=false] - Whether or not to fade out as we stop. If
-     * false, the path is cancelled synchronously.
+     * @param {boolean} [fadeOut=false]
+     * Whether or not to fade out as we stop. If false, the path is cancelled
+     * synchronously.
      */
     public pause(
-        this: TimelinePath,
         fadeOut?: boolean
     ): void {
         const timelinePath = this;
@@ -287,10 +276,8 @@ class TimelinePath {
      * @private
      * @param {number} direction
      * The direction to play, 1 for forwards and -1 for backwards.
-     * @return {void}
      */
     public playEvents(
-        this: TimelinePath,
         direction: number
     ): void {
         const timelinePath = this,

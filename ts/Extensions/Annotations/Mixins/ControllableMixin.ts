@@ -495,7 +495,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
-     **/
+     */
     translate: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
         this.transform('translate', null, null, dx, dy);
     },
@@ -506,7 +506,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
      * @param {number} i index of the point
-     **/
+     */
     translatePoint: function (this: Highcharts.AnnotationControllable, dx: number, dy: number, i: number): void {
         this.transformPoint('translate', null, null, dx, dy, i);
     },
@@ -553,7 +553,7 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} cx origin x rotation
      * @param {number} cy origin y rotation
      * @param {number} radians
-     **/
+     */
     rotate: function (this: Highcharts.AnnotationControllable, cx: number, cy: number, radians: number): void {
         this.transform('rotate', cx, cy, radians);
     },

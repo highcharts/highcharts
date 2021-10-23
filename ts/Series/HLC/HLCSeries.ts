@@ -224,12 +224,7 @@ class HLCSeries extends ColumnSeries {
     /**
      * Function to create SVGPath of the point based on the
      * plot positions of this point.
-     *
-     * @param {SVGPath} point
-     * @param {SVGElement} graphic
-     * @returns {SVGPath}
      */
-
     protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
         // crisp vector coordinates
         const strokeWidth = graphic.strokeWidth(),

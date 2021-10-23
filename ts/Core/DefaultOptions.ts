@@ -84,6 +84,7 @@ declare module './LangOptions'{
  * @type {Highcharts.Options}
  *//**
  * @optionparent
+ * @private
  */
 const defaultOptions: Options = {
 
@@ -2757,6 +2758,7 @@ const defaultTime = new Time(merge(
  * @function Highcharts.getOptions
  *
  * @return {Highcharts.Options}
+ * Default Options.
  */
 function getOptions(): Options {
     return defaultOptions;

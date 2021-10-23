@@ -80,9 +80,10 @@ function ajax(
 
     /**
      * @private
-     * @param {XMLHttpRequest} xhr - Internal request object.
-     * @param {string|Error} err - Occured error.
-     * @return {void}
+     * @param {XMLHttpRequest} xhr
+     * Internal request object.
+     * @param {string|Error} err
+     * Occured error.
      */
     function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
         if (options.error) {

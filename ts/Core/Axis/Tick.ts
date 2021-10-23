@@ -438,7 +438,7 @@ class Tick {
      * @return {Highcharts.PositionObject}
      * The tick position.
      *
-     * @fires Highcharts.Tick#event:afterGetPosition
+     * @emits Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
         horiz: boolean|undefined,
@@ -503,7 +503,6 @@ class Tick {
      * Get the x, y position of the tick label
      *
      * @private
-     * @return {Highcharts.PositionObject}
      */
     public getLabelPosition(
         x: number,

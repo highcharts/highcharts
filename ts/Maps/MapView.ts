@@ -34,10 +34,8 @@ const {
 } = U;
 
 
-/**
- * The world size equals meters in the Web Mercator projection, to match a
- * 256 square tile to zoom level 0
- */
+// The world size equals meters in the Web Mercator projection, to match a
+// 256 square tile to zoom level 0
 const worldSize = 40097932.2;
 const tileSize = 256;
 

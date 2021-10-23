@@ -683,7 +683,7 @@ export default ItemSeries;
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
- * @excludes  sliced
+ * @excluding sliced
  * @product   highcharts
  * @apioption series.item.data
  */

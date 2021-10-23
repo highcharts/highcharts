@@ -144,15 +144,20 @@ class VWAPIndicator extends SMAIndicator {
      * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
      * values
      * @private
-     * @param {boolean} isOHLC - says if data has OHLC format
-     * @param {Array<number>} xValues - array of timestamps
-     * @param {Array<number|Array<number,number,number,number>>} yValues -
+     * @param {boolean} isOHLC
+     * says if data has OHLC format
+     * @param {Array<number>} xValues
+     * array of timestamps
+     * @param {Array<number|Array<number,number,number,number>>} yValues
      * array of yValues, can be an array of a four arrays (OHLC) or array of
      * values (line)
-     * @param {Array<*>} volumeSeries - volume series
-     * @param {number} period - number of points to be calculated
-     * @return {object} - Object contains computed VWAP
-     **/
+     * @param {Array<*>} volumeSeries
+     * volume series
+     * @param {number} period
+     * number of points to be calculated
+     * @return {object}
+     * Object contains computed VWAP
+     */
     public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
         xValues: Array<number>,

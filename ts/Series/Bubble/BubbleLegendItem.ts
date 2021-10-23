@@ -170,9 +170,8 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#addToLegend
-     * @param {Array<(Highcharts.Point|Highcharts.Series)>}
-     *        All legend items
-     * @return {void}
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
+     * All legend items
      */
     public addToLegend(items: Array<(Series|Point)>): void {
         // Insert bubbleLegend into legend items
@@ -520,7 +519,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#getMaxLabelSize
-     * @return {Highcharts.BBoxObject}
      */
     public getMaxLabelSize(): BBoxObject {
         const labels = this.symbols.labels;
@@ -547,9 +545,9 @@ class BubbleLegendItem {
      * @private
      * @function Highcharts.BubbleLegend#formatLabel
      * @param {Highcharts.LegendBubbleLegendRangesOptions} range
-     *        Range options
+     * Range options
      * @return {string}
-     *         Range label text
+     * Range label text
      */
     public formatLabel(range: BubbleLegendItem.RangesOptions): string {
         const options = this.options,
@@ -568,7 +566,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#hideOverlappingLabels
-     * @return {void}
      */
     public hideOverlappingLabels(): void {
         const chart = this.chart,

@@ -402,8 +402,6 @@ namespace RadialAxis {
      * anti-collision.
      *
      * @private
-     *
-     * @return {Highcharts.ChartLabelCollectorFunction}
      */
     function createLabelCollector(
         this: AxisComposition
@@ -512,6 +510,7 @@ namespace RadialAxis {
      * Inner radius of radial path.
      *
      * @return {Highcharts.RadialAxisPath}
+     * Radial path.
      */
     function getLinePath(
         this: AxisComposition,
@@ -598,6 +597,7 @@ namespace RadialAxis {
      * Band options.
      *
      * @return {Highcharts.RadialAxisPath}
+     * Radial path.
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -877,6 +877,7 @@ namespace RadialAxis {
      * Distance from center.
      *
      * @return {Highcharts.PositionObject}
+     * Translated position.
      */
     function getPosition(
         this: AxisComposition,
@@ -1330,6 +1331,7 @@ namespace RadialAxis {
      * Translation radius.
      *
      * @return {Highcharts.PositionObject}
+     * Final position.
      */
     function postTranslate(
         this: AxisComposition,

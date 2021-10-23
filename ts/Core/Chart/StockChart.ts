@@ -29,10 +29,6 @@ import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
@@ -136,8 +132,8 @@ class StockChart extends Chart {
      *
      * @return {void}
      *
-     * @fires Highcharts.StockChart#event:init
-     * @fires Highcharts.StockChart#event:afterInit
+     * @emits Highcharts.StockChart#event:init
+     * @emits Highcharts.StockChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -247,6 +243,7 @@ class StockChart extends Chart {
      *        The axis creation options.
      *
      * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     *         Created axis.
      */
     public createAxis(
         type: string,
@@ -314,9 +311,6 @@ namespace StockChart {
  *
  * @private
  * @function getDefaultAxisOptions
- * @param {string} type
- * @param {Highcharts.AxisOptions} options
- * @return {Highcharts.AxisOptions}
  */
 function getDefaultAxisOptions(
     type: string,
@@ -370,9 +364,6 @@ function getDefaultAxisOptions(
  *
  * @private
  * @function getForcedAxisOptions
- * @param {string} type
- * @param {Highcharts.Options} chartOptions
- * @return {Highcharts.AxisOptions}
  */
 function getForcedAxisOptions(
     type: string,
@@ -653,9 +644,6 @@ addEvent(Axis, 'getPlotLinePath', function (
  *
  * @private
  * @function Highcharts.SVGRenderer#crispPolyLine
- * @param {Highcharts.SVGPathArray} points
- * @param {number} width
- * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: SVGRenderer,

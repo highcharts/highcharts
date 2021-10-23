@@ -80,8 +80,8 @@ class GanttChart extends Chart {
      *
      * @return {void}
      *
-     * @fires Highcharts.GanttChart#event:init
-     * @fires Highcharts.GanttChart#event:afterInit
+     * @emits Highcharts.GanttChart#event:init
+     * @emits Highcharts.GanttChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,

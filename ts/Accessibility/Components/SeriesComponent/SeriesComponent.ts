@@ -168,7 +168,6 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();

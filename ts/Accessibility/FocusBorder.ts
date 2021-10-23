@@ -284,13 +284,10 @@ namespace FocusBorderComposition {
         // For text elements, apply x and y offset, #11397.
         /**
          * @private
-         * @function
-         *
-         * @param {Highcharts.SVGElement} text
-         *
-         * @return {TextAnchorCorrectionObject}
          */
-        function getTextAnchorCorrection(text: SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(
+            text: SVGElement
+        ): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 

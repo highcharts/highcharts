@@ -661,7 +661,7 @@ const valuesToPixels = (
     };
 };
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 function getClusterPosition(
     points: Array<PositionObject>
 ): PositionObject {

@@ -187,7 +187,6 @@ class XRangeSeries extends ColumnSeries {
     /**
      * @private
      * @function Highcarts.seriesTypes.xrange#init
-     * @return {void}
      */
     public init(): void {
         ColumnSeries.prototype.init.apply(this, arguments as any);
@@ -200,8 +199,6 @@ class XRangeSeries extends ColumnSeries {
      *
      * @private
      * @function Highcharts.Series#getColumnMetrics
-     *
-     * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
         let metrics,
@@ -234,18 +231,6 @@ class XRangeSeries extends ColumnSeries {
      *
      * @private
      * @function Highcharts.Series#cropData
-     *
-     * @param {Array<number>} xData
-     *
-     * @param {Array<number>} yData
-     *
-     * @param {number} min
-     *
-     * @param {number} max
-     *
-     * @param {number} [cropShoulder]
-     *
-     * @return {*}
      */
     public cropData(
         xData: Array<number>,
@@ -270,9 +255,11 @@ class XRangeSeries extends ColumnSeries {
      *
      * @private
      * @function Highcharts.Series#findPointIndex
-     * @param {object} options The options of the point.
-     * @returns {number|undefined} Returns index of a matching point,
-     * returns undefined if no match is found.
+     * @param {object} options
+     * The options of the point.
+     * @return {number|undefined}
+     * Returns index of a matching point, returns undefined if no match is
+     * found.
      */
     public findPointIndex(options: XRangePointOptions): (number|undefined) {
         const { cropped, cropStart, points } = this;
@@ -648,8 +635,6 @@ class XRangeSeries extends ColumnSeries {
      *
      * @private
      * @function Highcharts.Series#getAnimationVerb
-     *
-     * @return {string}
      */
     public getAnimationVerb(): string {
         return (

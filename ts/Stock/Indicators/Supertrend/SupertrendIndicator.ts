@@ -43,7 +43,7 @@ const {
     objectEach
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 // Utils:
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,

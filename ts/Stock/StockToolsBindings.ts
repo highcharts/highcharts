@@ -510,11 +510,11 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  * @private
  * @function bindingsUtils.isLastPriceEnabled
  *
- * @param {array} series
- *        Array of series.
+ * @param {Array} series
+ * Array of series.
  *
  * @return {boolean}
- *         Tells which indicator is enabled.
+ * Tells which indicator is enabled.
  */
 bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
 

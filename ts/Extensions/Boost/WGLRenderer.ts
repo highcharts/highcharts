@@ -140,10 +140,6 @@ declare global {
  *
  * @private
  * @function GLRenderer
- *
- * @param {Function} postRenderCallback
- *
- * @return {*}
  */
 function GLRenderer(
     postRenderCallback: Function
@@ -284,8 +280,10 @@ function GLRenderer(
     /**
      * Returns an orthographic perspective matrix
      * @private
-     * @param {number} width - the width of the viewport in pixels
-     * @param {number} height - the height of the viewport in pixels
+     * @param {number} width
+     * the width of the viewport in pixels
+     * @param {number} height
+     * the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
         const near = 0,
@@ -310,7 +308,6 @@ function GLRenderer(
     /**
      * Get the WebGL context
      * @private
-     * @returns {WebGLContext} - the context
      */
     function getGL(): WebGLRenderingContext {
         return gl;
@@ -1653,7 +1650,8 @@ function GLRenderer(
     /**
      * Check if we have a valid OGL context
      * @private
-     * @returns {Boolean} - true if the context is valid
+     * @return {boolean}
+     * true if the context is valid
      */
     function valid(): boolean {
         return (gl as any) !== false;
@@ -1662,7 +1660,8 @@ function GLRenderer(
     /**
      * Check if the renderer has been initialized
      * @private
-     * @returns {Boolean} - true if it has, false if not
+     * @return {boolean}
+     * true if it has, false if not
      */
     function inited(): boolean {
         return isInited;

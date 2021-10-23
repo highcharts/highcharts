@@ -1254,8 +1254,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#computeButtonRange
-     * @param {Highcharts.RangeSelectorButtonsOptions} rangeOptions
-     * @return {void}
      */
     public computeButtonRange(
         rangeOptions: Highcharts.RangeSelectorButtonsOptions
@@ -1295,8 +1293,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#getInputValue
-     * @param {string} name
-     * @return {number}
      */
     public getInputValue(name: string): number {
         const input = name === 'min' ? this.minInput : this.maxInput;
@@ -1317,9 +1313,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#setInputValue
-     * @param {string} name
-     * @param {number} [inputTime]
-     * @return {void}
      */
     public setInputValue(
         name: string,
@@ -1502,8 +1495,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#drawInput
-     * @param {string} name
-     * @return {RangeSelectorInputElements}
      */
     public drawInput(name: ('min'|'max')): Highcharts.RangeSelectorInputElements {
         const {
@@ -1703,8 +1694,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#getPosition
-     *
-     * @return {Highcharts.Dictionary<number>}
      */
     public getPosition(): Record<string, number> {
         const chart = this.chart,
@@ -2558,7 +2547,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#currentButtonIndex
-     * @return {number}
      */
     public currentButtonIndex(): number {
         const { dropdown } = this;
@@ -2574,7 +2562,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#showDropdown
-     * @return {void}
      */
     public showDropdown(): void {
         const {
@@ -2600,7 +2587,6 @@ class RangeSelector {
     /**
      * @private
      * @function Highcharts.RangeSelector#hideDropdown
-     * @return {void}
      */
     public hideDropdown(): void {
         const { dropdown } = this;
@@ -2621,7 +2607,7 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#getHeight
      * @return {number}
-     *         Returns rangeSelector height
+     * Returns rangeSelector height
      */
     public getHeight(): number {
         let rangeSelector = this,
@@ -2665,11 +2651,10 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#titleCollision
-     *
      * @param {Highcharts.Chart} chart
-     *
+     * Chart to check
      * @return {boolean}
-     *         Returns collision status
+     * Returns collision status
      */
     public titleCollision(
         chart: Chart
@@ -2685,8 +2670,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#update
-     * @param {Highcharts.RangeSelectorOptions} options
-     * @return {void}
      */
     public update(
         this: Highcharts.RangeSelector,
@@ -2803,8 +2786,6 @@ RangeSelector.prototype.inputTypeFormats = {
  *
  * @private
  * @function preferredInputType
- * @param {string} format
- * @return {string}
  */
 function preferredInputType(format: string): string {
     const ms = format.indexOf('%L') !== -1;
@@ -2841,7 +2822,7 @@ function preferredInputType(format: string): string {
  * @private
  * @function Highcharts.Axis#minFromRange
  * @return {number|undefined}
- *         The new minimum value.
+ * The new minimum value.
  */
 Axis.prototype.minFromRange = function (): (number|undefined) {
     let rangeOptions = this.range,

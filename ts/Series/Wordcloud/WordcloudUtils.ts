@@ -140,10 +140,11 @@ function getAxesFromPolygon(
  * @private
  * @function project
  * @param {Highcharts.PolygonObject} polygon
- *        Array of points in a polygon.
+ * Array of points in a polygon.
  * @param {Highcharts.PolygonPointObject} target
- *        The coordinate of pr
+ * The coordinate of pr
  * @return {Highcharts.RangeObject}
+ * Range
  */
 function project(
     this: unknown,
@@ -836,9 +837,6 @@ function updateFieldBoundaries(
  *
  * @private
  * @function correctFloat
- * @param {number} number
- * @param {number} [precision]
- * @return {number}
  */
 function correctFloat(number: number, precision?: number): number {
     const p = isNumber(precision) ? precision : 14,

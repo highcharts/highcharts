@@ -186,8 +186,6 @@ class DataConverter {
 
     /**
      * Getter for a date format.
-     *
-     * @return {string|undefined}
      */
     public getDateFormat(): (string|undefined) {
         return this.options.dateFormat;
@@ -389,7 +387,7 @@ class DataConverter {
     }
 
     /**
-     * Parse a date and return it as a number.
+     * Parse a date and return it as a epoc timestamp.
      *
      * @function Highcharts.Data#parseDate
      *
@@ -401,6 +399,7 @@ class DataConverter {
      * to use to parse date values.
      *
      * @return {number}
+     * Epoc timestamp
      */
     public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this;
@@ -480,8 +479,8 @@ class DataConverter {
      *  - Check if either month candidate exceeds 12
      *  - Check if year is missing (use current year)
      *  - Check if a shortened year format is used (e.g. 1/1/99)
-     *  - If no guess can be made, the user must be prompted
-     * data is the data to deduce a format based on
+     *  - If no guess can be made, the user must be prompted data is the data to
+     *    deduce a format based on
      * @private
      *
      * @param {Array<string>} data
@@ -494,6 +493,7 @@ class DataConverter {
      * Whether to save the date format in the converter options.
      *
      * @return {string}
+     * Format string.
      */
     public deduceDateFormat(
         data: Array<string>,

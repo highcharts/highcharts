@@ -32,7 +32,7 @@ const {
     extend
 } = U;
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 
 // Utils:
 function populateAverage(

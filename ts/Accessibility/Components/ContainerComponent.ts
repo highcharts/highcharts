@@ -181,7 +181,6 @@ class ContainerComponent extends AccessibilityComponent {
 
     /**
      * Empty handler to just set focus on chart
-     * @return {Highcharts.KeyboardNavigationHandler}
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const chart = this.chart;

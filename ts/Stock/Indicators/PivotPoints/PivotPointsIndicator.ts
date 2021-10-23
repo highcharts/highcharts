@@ -32,11 +32,11 @@ const {
     isArray
 } = U;
 
-/**
+/* *
  *
  *  Class
  *
- **/
+ * */
 
 /**
  * The Pivot Points series type.

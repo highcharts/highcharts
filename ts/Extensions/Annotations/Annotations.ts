@@ -863,10 +863,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * Initialisation of a single shape
      * @private
-     * @param {Object} shapeOptions - a confg object for a single shape
-     * @param {number} index - annotation may have many shapes,
-     * this is the shape's index saved in shapes.index.
-
+     * @param {Object} shapeOptions
+     * A confg object for a single shape
+     * @param {number} index
+     * Annotation may have many shapes, this is the shape's index saved in
+     * shapes.index.
      */
     public initShape(
         shapeOptions: Partial<Highcharts.AnnotationsShapesOptions>,
@@ -1501,7 +1502,7 @@ merge<Annotation>(
                      *
                      * @type      {number}
                      * @apioption annotations.shapeOptions.ry
-                     **/
+                     */
 
                     /**
                      *
@@ -1510,7 +1511,7 @@ merge<Annotation>(
                      *
                      * @type      {number}
                      * @apioption annotations.shapeOptions.xAxis
-                     **/
+                     */
 
                     /**
                      * The yAxis index to which the points should be attached.
@@ -1518,7 +1519,7 @@ merge<Annotation>(
                      *
                      * @type      {number}
                      * @apioption annotations.shapeOptions.yAxis
-                     **/
+                     */
 
 
                     /**
@@ -1529,7 +1530,7 @@ merge<Annotation>(
                      *
                      * @type      {number}
                      * @apioption annotations.shapeOptions.width
-                     **/
+                     */
 
                     /**
                      * The height of the shape.

@@ -124,6 +124,7 @@ namespace A11yI18nComposition {
      * Context to apply to the format string.
      *
      * @return {string}
+     * Formatted statement.
      */
     function formatExtendedStatement(
         statement: string,

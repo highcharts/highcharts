@@ -62,7 +62,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * Extend the parent method by adding up or down to the class name.
      * @private
      * @function Highcharts.seriesTypes.ohlc#getClassName
-     * @return {string}
      */
     public getClassName(): string {
         return super.getClassName.call(this) +
@@ -104,7 +103,7 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * @function Highcharts.seriesTypes.ohlc#getZone
      *
      * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * The zone item.
      */
     public getZone(): SeriesZonesOptions {
         const zone = super.getZone();
@@ -116,7 +115,7 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
     /**
      * Extend the parent method by resolving up/down colors (#15849)
      * @private
-     **/
+     */
     public applyOptions(): Point {
         super.applyOptions.apply(this, arguments);
         if (this.resolveColor) {
