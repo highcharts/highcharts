@@ -1,12 +1,15 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
+
+    const mapData = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
 
     // Initialize the chart
     Highcharts.mapChart('container', {
-        chart: {
-            width: 600,
-            height: 500
-        },
-
         title: {
             text: 'Predefined zoomed area'
         },
@@ -19,8 +22,11 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         mapView: {
-            center: [4500, 8300], // In terms of pre-projected units
-            zoom: 15
+            projection: {
+                name: 'WebMercator'
+            },
+            center: [10, 58],
+            zoom: 2.8
         },
 
         colorAxis: {
@@ -36,8 +42,8 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
+            data,
+            mapData,
             joinBy: ['iso-a2', 'code'],
             name: 'Population density',
             states: {
@@ -50,4 +56,4 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             }
         }]
     });
-});
+})();
