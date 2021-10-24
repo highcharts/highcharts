@@ -46,7 +46,7 @@ const ChartDefaults: ChartOptions = {
      * @sample    maps/chart/topojson
      *            Loading TopoJSON data
      *
-     * @type      {string|Array<*>|Highcharts.GeoJSON}
+     * @type      {string|Array<*>|Highcharts.GeoJSON|Highcharts.TopoJSON}
      * @since     5.0.0
      * @product   highmaps
      * @apioption chart.map

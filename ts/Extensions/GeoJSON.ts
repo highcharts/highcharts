@@ -242,6 +242,12 @@ declare global {
  * @typedef {Array<number>} Highcharts.LonLatArray
  */
 
+/**
+ * A TopoJSON object, see description on the
+ * [project's GitHub page](https://github.com/topojson/topojson).
+ *
+ * @typedef {Object} Highcharts.TopoJSON
+ */
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -519,10 +525,10 @@ Chart.prototype.fromLatLonToPoint = function (
     );
 };
 
-// Based on https://github.com/topojson/topojson-specification
 /*
-@todo
-- See if mapData can take topology directly (mapdata-multiple)
+ * Convert a TopoJSON topology to GeoJSON. By default the first object is
+ * handled.
+ * Based on https://github.com/topojson/topojson-specification
 */
 const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
 

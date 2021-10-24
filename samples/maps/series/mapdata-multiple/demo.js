@@ -3,12 +3,10 @@
     const norway = await fetch(
         'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json'
     ).then(response => response.json());
-    const norwayMapData = Highcharts.geojson(norway);
 
     const sweden = await fetch(
         'https://code.highcharts.com/mapdata/countries/se/se-all.topo.json'
     ).then(response => response.json());
-    const swedenMapData = Highcharts.geojson(sweden);
 
 
     // Initialize the chart
@@ -39,10 +37,10 @@
 
         series: [{
             data: [],
-            mapData: norwayMapData
+            mapData: norway
         }, {
             data: [],
-            mapData: swedenMapData
+            mapData: sweden
         }]
     });
 })();
