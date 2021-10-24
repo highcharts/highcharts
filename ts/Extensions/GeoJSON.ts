@@ -522,11 +522,8 @@ Chart.prototype.fromLatLonToPoint = function (
 // Based on https://github.com/topojson/topojson-specification
 /*
 @todo
-- How to deal with multiple objects?
-- Document that TopoJSON is possible type for chart.map and series.mapData
-- Update demos using TopoJSON-client
-- Test/set up sample using GeoJSON features or TopoJSON geometries directly as
-  series.mapData
+- Update demos currently using TopoJSON-client
+- General docs
 */
 const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
 
@@ -613,6 +610,8 @@ const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
  *         Simple areas
  * @sample maps/demo/geojson-multiple-types/
  *         Multiple types
+ * @sample maps/series/mapdata-multiple/
+ *         Multiple map sources
  *
  * @function Highcharts.geojson
  *

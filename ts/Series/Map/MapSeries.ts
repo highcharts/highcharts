@@ -1284,11 +1284,14 @@ export default MapSeries;
  * */
 
 /**
- * A map data object containing a `geometry` or `path` definition and optionally
- * additional properties to join in the `data` as per the `joinBy` option.
+ * An array of objects containing a `geometry` or `path` definition and
+ * optionally additional properties to join in the `data` as per the `joinBy`
+ * option.
  *
  * @sample maps/demo/category-map/
  *         Map data and joinBy
+ * @sample maps/series/mapdata-multiple/
+ *         Multiple map sources
  *
  * @type      {Array<Highcharts.SeriesMapDataOptions>|*}
  * @product   highmaps
