@@ -522,7 +522,7 @@ Chart.prototype.fromLatLonToPoint = function (
 // Based on https://github.com/topojson/topojson-specification
 /*
 @todo
-- General docs
+- See if mapData can take topology directly (mapdata-multiple)
 */
 const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
 

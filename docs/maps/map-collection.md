@@ -1,14 +1,14 @@
 Map collection
 ===
 
-For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundreds of pre-generated maps of countries, regions and other administration levels.
+For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON/TopoJSON maps. Instead, you can choose between hundreds of pre-generated maps of countries, regions and other administration levels.
 
 License
 -------
 
 The Highcharts Maps Map Collection comes with the license of the source data. For Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions etc), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is [Public Domain](https://en.wikipedia.org/wiki/Public_domain). For Admin2, we have only compiled selected countries, and these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps. 
 
-For maps loaded using the default GeoJSON input into the mapData option, a short version of the copyright will be printed in the chart's credits label.
+For maps loaded using the default TopoJSON or GeoJSON input into the `mapData` option, a short version of the copyright will be printed in the chart's credits label.
 
 Using the map collection
 ------------------------
@@ -37,7 +37,7 @@ map: 'custom/world'
 ```
 
 3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key` property of the map collection, allowing you to define your data like this:
-```js 
+```js
 data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
 ```
 For other data joining options, see the [`series.joinBy`](https://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](https://api.highcharts.com/highcharts/plotOptions.series.keys) options.
@@ -51,18 +51,18 @@ npm i @highcharts/map-collection
 
 To load a map in Node.js and use it in Highcharts Maps you can do the following:
 
-```js    
-var Highcharts = require('highcharts/highmaps.js'),
-    map = require('@highcharts/map-collection/custom/world.geo.json');
-    
+```js
+const Highcharts = require('highcharts/highmaps.js'),
+    map = require('@highcharts/map-collection/custom/world.topo.json');
+
 Highcharts.mapChart('container', {
     chart: {
-    map: geojson
+        map: geojson
     },
     // ...
 });
 ```
-    
+
 
 Map properties
 --------------
@@ -108,6 +108,11 @@ Using parts of a map
 --------------------
 
 If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/).
+
+Combine maps
+____________
+
+Another way to approach the same problem, is to combine two or more map sources into the same chart. This is supported since Highcharts v9.3, where client-side projection is available. To achive this, the unprojected TopoJSON maps must be used. See the [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/mapdata-multiple/).
 
 Modify our maps
 ---------------
