@@ -522,7 +522,6 @@ Chart.prototype.fromLatLonToPoint = function (
 // Based on https://github.com/topojson/topojson-specification
 /*
 @todo
-- Update demos currently using TopoJSON-client
 - General docs
 */
 const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {

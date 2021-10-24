@@ -6,8 +6,9 @@ delete window.d3;
 delete window.proj4;
 
 // Get random data for this sample
-function getRandomData(geojson) {
-    return geojson.features.map(() => Math.round(Math.random() * 100));
+function getRandomData(topology) {
+    return topology.objects.default.geometries.map(() =>
+        Math.round(Math.random() * 100));
 }
 
 function getGraticule() {
@@ -49,7 +50,7 @@ function getGraticule() {
 }
 
 const static = {
-    geojson: undefined,
+    topology: undefined,
     data: undefined
 };
 
@@ -57,9 +58,7 @@ let chart;
 
 const drawMap = projectionKey => {
 
-    const geojson = JSON.parse(static.geojson);
-
-    // geojson.features = geojson.features.filter(f => f.properties.name === 'Antarctica');
+    const topology = JSON.parse(static.topology);
 
     // Apply projection using Proj4
     const projection = Highcharts.merge({
@@ -136,7 +135,7 @@ const drawMap = projectionKey => {
 
         chart = Highcharts.mapChart('container', {
             chart: {
-                map: geojson
+                map: topology
             },
 
             title: {
@@ -376,21 +375,12 @@ const enableInputs = () => {
 };
 
 Highcharts.getJSON(
-    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2e11000c966a20f08afc4e0927b91df99821de99/samples/data/world-countries.topo.json',
+    'https://code.highcharts.com/mapdata/custom/world.topo.json',
     topology => {
 
-        // Convert the topoJSON feature into geoJSON
-        const geojson = window.topojson.feature(
-            topology,
-            // For this demo, get the first of the named objects
-            topology.objects[Object.keys(topology.objects)[0]]
-        );
-        geojson.copyrightUrl = topology.copyrightUrl;
-        geojson.copyrightShort = topology.copyrightShort;
+        const data = getRandomData(topology);
 
-        const data = getRandomData(geojson);
-
-        static.geojson = JSON.stringify(geojson);
+        static.topology = JSON.stringify(topology);
         static.data = data;
 
         drawMap('equalearth');
