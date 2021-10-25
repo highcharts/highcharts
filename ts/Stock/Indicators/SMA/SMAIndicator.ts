@@ -49,6 +49,11 @@ import './SMAComposition.js';
  *  Declarations
  *
  * */
+interface CalculateOnObject {
+    chart: string;
+    xAxis?: string;
+}
+
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
@@ -312,11 +317,11 @@ class SMAIndicator extends LineSeries {
 
                     // Some indicators (like VBP) requires an additional
                     // event (afterSetExtremes) to properly show the data.
-                    if (indicator.useAdditionalEvents) {
+                    if (indicator.calculateOn.xAxis) {
                         indicator.dataEventsToUnbind.push(
                             addEvent<AxisType>(
                                 indicator.linkedParent.xAxis,
-                                'afterSetExtremes',
+                                indicator.calculateOn.xAxis,
                                 function (): void {
                                     indicator.recalculateValues();
                                 }
@@ -326,7 +331,7 @@ class SMAIndicator extends LineSeries {
                 }
 
                 // Most indicators are being calculated on chart's init.
-                if (!indicator.useAdditionalEvents) {
+                if (indicator.calculateOn.chart === 'init') {
                     if (!indicator.processedYData) {
                         indicator.recalculateValues();
                     }
@@ -335,7 +340,7 @@ class SMAIndicator extends LineSeries {
                     // values after other chart's events (render).
                     const unbinder = addEvent(
                         indicator.chart,
-                        'render',
+                        indicator.calculateOn.chart,
                         function (): void {
                             indicator.recalculateValues();
                             // Call this just once.
@@ -460,7 +465,7 @@ class SMAIndicator extends LineSeries {
 
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
-        if (indicator.useAdditionalEvents) {
+        if (indicator.calculateOn.xAxis && indicator.processedXData) {
             delete indicator.processedXData;
 
             indicator.isDirty = true;
@@ -504,7 +509,7 @@ class SMAIndicator extends LineSeries {
  * */
 
 interface SMAIndicator extends IndicatorLike {
-    useAdditionalEvents: boolean;
+    calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -512,7 +517,9 @@ interface SMAIndicator extends IndicatorLike {
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
-    useAdditionalEvents: false,
+    calculateOn: {
+        chart: 'init'
+    },
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name

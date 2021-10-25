@@ -828,7 +828,10 @@ interface VBPIndicator {
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
     nameComponents: ['ranges'],
-    useAdditionalEvents: true,
+    calculateOn: {
+        chart: 'render',
+        xAxis: 'afterSetExtremes'
+    },
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
