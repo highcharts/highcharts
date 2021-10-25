@@ -141,12 +141,15 @@ function handleDetails(path) {
     return true;
 }
 
-const browserStackBrowsers = require('./karma-bs.json');
-
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
+    const browserStackBrowsers = require(
+        argv.oldie ?
+            './karma-bs-oldie.json' :
+            './karma-bs.json'
+    );
 
     if (argv.ts) {
         const ChildProcess = require('child_process');
@@ -177,14 +180,12 @@ module.exports = function (config) {
     }
 
     // Browsers
-    let browsers = argv.browsers ?
-        argv.browsers.split(',') :
-        ['ChromeHeadless'];
-    if (argv.oldie) {
-        browsers = ['Win.IE8'];
-    } else if (argv.browsers === 'all') {
-        browsers = Object.keys(browserStackBrowsers);
-    }
+    let browsers = (
+        argv.browsers === 'all' ||
+        argv.oldie ?
+            Object.keys(browserStackBrowsers) :
+            (argv.browsers || 'ChromeHeadless').split(',')
+    );
 
     const browserCount = argv.browsercount || (Math.max(1, os.cpus().length - 2));
     if (!argv.browsers && browserCount && !isNaN(browserCount)  && browserCount > 1) {
@@ -204,7 +205,7 @@ module.exports = function (config) {
         }
     }
 
-    const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+    const needsTranspiling = browsers.some(browser => browser.indexOf('Win.IE') === 0);
 
     // The tests to run by default
     const defaultTests = argv.oldie ?
@@ -550,26 +551,16 @@ module.exports = function (config) {
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
             'browserstack.timezone': argv.timezone || 'UTC'
         };
-        options.customLaunchers = argv.oldie ?
-            {
-                'Win.IE8': {
-                    base: 'BrowserStack',
-                    browser: 'ie',
-                    browser_version: '8.0',
-                    os: 'Windows',
-                    os_version: 'XP'
-                }
-            } :
-            browserStackBrowsers;
+        options.customLaunchers = browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 2;
-        options.browserDisconnectTimeout = 30000; // default 2000
+        options.browserDisconnectTimeout = 10000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
-        options.browserSocketTimeout = 30000;
-        options.captureTimeout = 120000;
+        options.browserSocketTimeout = 10000;
+        options.captureTimeout = 1 * 60 * 1000;
 
         options.plugins = [
             'karma-browserstack-launcher',

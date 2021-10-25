@@ -1,0 +1,34 @@
+{
+    "Win.IE8": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "8.0",
+        "ie.arch": "x32",
+        "os": "Windows",
+        "os_version": "7"
+    },
+    "Win.IE9": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "9.0",
+        "ie.arch": "x32",
+        "os": "Windows",
+        "os_version": "7"
+    },
+    "Win.IE10": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "10.0",
+        "ie.arch": "x32",
+        "os": "Windows",
+        "os_version": "7"
+    },
+    "Win.IE11": {
+        "base": "BrowserStack",
+        "browser": "ie",
+        "browser_version": "11.0",
+        "ie.arch": "x32",
+        "os": "Windows",
+        "os_version": "7"
+    }
+}

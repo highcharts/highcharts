@@ -15,6 +15,18 @@
 
 var results = [];
 
+/**
+ * Simple validation function.
+ * @function ok
+ *
+ * @param {string} description
+ * Test description.
+ *
+ * @param {boolean} success
+ * Test result
+ *
+ * @returns {void}
+ */
 function ok(description, success) {
     results.push({
         description: description,
@@ -53,10 +65,13 @@ for (var type in types) {
         );
 
         chart.series[0].points[0].onMouseOver();
+
+        var label = chart.tooltip.getLabel().element;
         ok(
             'The tooltip should be displayed',
-            chart.tooltip.getLabel().element.innerHTML.indexOf('<SPAN') !== -1
+            label.innerHTML && label.innerHTML.indexOf('<SPAN') !== -1
         );
+
         chart.destroy();
     }
 }
