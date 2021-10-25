@@ -260,7 +260,7 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
-      - run: sudo apt-get install -y rsync
+      - run: sudo apt-get update -y && sudo apt-get install -y rsync
       - run: > # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
           git checkout $(git merge-base master ${CIRCLE_BRANCH}) && git log --oneline -5 &&
