@@ -53,7 +53,7 @@ add_gh_user_config: &add_gh_user_config
 executors:
   node_image:
     docker:
-      - image: circleci/node:16.11.1-browsers
+      - image: cimg/node:16.11.1-browsers
 
 commands:
   generate_references_command:
