@@ -326,7 +326,7 @@ namespace Accessibility {
         container: ContainerComponent;
         infoRegions: InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
-        chartMenu: Highcharts.MenuComponent;
+        chartMenu: MenuComponent;
         rangeSelector: Highcharts.RangeSelectorComponent;
         series: SeriesComponent;
         zoom: Highcharts.ZoomComponent;

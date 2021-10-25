@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Exporting from '../../Extensions/Exporting/Exporting';
 import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -51,39 +57,9 @@ declare module '../../Core/Chart/ChartLike' {
         showExportMenu(): void;
     }
 }
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class MenuComponent extends AccessibilityComponent {
-            public constructor();
-            public exportButtonProxy?: ProxyElement;
-            public addAccessibleContextMenuAttribs(): void;
-            public proxyMenuButton(): void;
-            public createProxyGroup(): void;
-            public getKeyboardNavigation(): KeyboardNavigationHandler;
-            public onChartRender(): void;
-            public onKbdClick(
-                keyboardNavigationHandler: KeyboardNavigationHandler
-            ): number;
-            public onKbdNext(
-                keyboardNavigationHandler: KeyboardNavigationHandler
-            ): number;
-            public onKbdPrevious(
-                keyboardNavigationHandler: KeyboardNavigationHandler
-            ): number;
-            public onMenuHidden(): void;
-            public onMenuShown(): void;
-            public setExportButtonExpandedState(stateStr: string): void;
-            isExportMenuShown: boolean;
-        }
-    }
-}
 
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 
 /**
@@ -230,6 +206,11 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
     );
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The MenuComponent class
@@ -238,15 +219,32 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
  * @class
  * @name Highcharts.MenuComponent
  */
-const MenuComponent: typeof Highcharts.MenuComponent =
-    function (): void {} as any;
-MenuComponent.prototype = new (AccessibilityComponent as any)();
-extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
+class MenuComponent extends AccessibilityComponent {
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public exportButtonProxy?: ProxyElement;
+
+    public isExportMenuShown?: boolean;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Init the component
      */
-    init: function (this: Highcharts.MenuComponent): void {
+    public init(): void {
         const chart = this.chart,
             component = this;
 
@@ -259,13 +257,13 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         });
 
         this.createProxyGroup();
-    },
+    }
 
 
     /**
      * @private
      */
-    onMenuHidden: function (this: Highcharts.MenuComponent): void {
+    public onMenuHidden(): void {
         const menu: Exporting.DivElement =
             (this.chart as any).exportContextMenu;
         if (menu) {
@@ -274,13 +272,13 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
         this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
-    },
+    }
 
 
     /**
      * @private
      */
-    onMenuShown: function (this: Highcharts.MenuComponent): void {
+    public onMenuShown(): void {
         const chart = this.chart,
             menu = chart.exportContextMenu;
 
@@ -291,39 +289,36 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
         this.isExportMenuShown = true;
         this.setExportButtonExpandedState('true');
-    },
+    }
 
 
     /**
      * @private
      * @param {string} stateStr
      */
-    setExportButtonExpandedState: function (
-        this: Highcharts.MenuComponent,
+    public setExportButtonExpandedState(
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
             this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
         }
-    },
+    }
 
 
     /**
      * Called on each render of the chart. We need to update positioning of the
      * proxy overlay.
      */
-    onChartRender: function (this: Highcharts.MenuComponent): void {
+    public onChartRender(): void {
         this.proxyProvider.clearGroup('chartMenu');
         this.proxyMenuButton();
-    },
+    }
 
 
     /**
      * @private
      */
-    proxyMenuButton: function (
-        this: Highcharts.MenuComponent
-    ): void {
+    public proxyMenuButton(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
         const buttonEl = getExportMenuButtonElement(chart);
@@ -344,28 +339,24 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 }
             );
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    createProxyGroup: function (
-        this: Highcharts.MenuComponent
-    ): void {
+    public createProxyGroup(): void {
         const chart = this.chart;
         if (chart && this.proxyProvider) {
             this.proxyProvider.addGroup('chartMenu', 'div');
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    addAccessibleContextMenuAttribs: function (
-        this: Highcharts.MenuComponent
-    ): void {
+    public addAccessibleContextMenuAttribs(): void {
         const chart = this.chart,
             exportList = chart.exportDivElements;
 
@@ -395,16 +386,14 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 });
             }
         }
-    },
+    }
 
 
     /**
      * Get keyboard navigation handler for this component.
      * @return {Highcharts.KeyboardNavigationHandler}
      */
-    getKeyboardNavigation: function (
-        this: Highcharts.MenuComponent
-    ): KeyboardNavigationHandler {
+    public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
             chart = this.chart,
             component = this;
@@ -465,7 +454,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 chart.hideExportMenu();
             }
         });
-    },
+    }
 
 
     /**
@@ -473,8 +462,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
      */
-    onKbdPrevious: function (
-        this: Highcharts.MenuComponent,
+    public onKbdPrevious(
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
@@ -496,7 +484,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             return response.success;
         }
         return response.prev;
-    },
+    }
 
 
     /**
@@ -504,8 +492,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
      */
-    onKbdNext: function (
-        this: Highcharts.MenuComponent,
+    public onKbdNext(
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
@@ -530,7 +517,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             return response.success;
         }
         return response.next;
-    },
+    }
 
 
     /**
@@ -538,8 +525,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
      */
-    onKbdClick: function (
-        this: Highcharts.MenuComponent,
+    public onKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const chart = this.chart;
@@ -558,6 +544,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         return keyboardNavigationHandler.response.success;
     }
 
-});
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default MenuComponent;
