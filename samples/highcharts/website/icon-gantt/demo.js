@@ -315,6 +315,56 @@ const ganttChart = function () {
             },
             {
                 condition: {
+                    maxWidth: 300,
+                    minWidth: 251
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: false,
+                                y: 15
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 400,
+                    minWidth: 301
+                },
+                chartOptions: {
+                    chart: {
+                        height: 400
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                y: 20
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
                     minWidth: 499
                 },
                 chartOptions: {

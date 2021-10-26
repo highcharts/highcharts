@@ -482,7 +482,7 @@
 #gantt .particle-2{
 	transform-origin: center;
 	opacity: 0;
-	transform: translate(-10px,-10px) scale(.2);
+	transform: translate(-10px,-30px) scale(.2);
 	transition: all 1s;
 }
 
@@ -495,7 +495,7 @@
 #gantt .particle-3{
 	transform-origin: center;
 	opacity: 0;
-	transform: translate(0px,-40px) scale(.2);
+	transform: translate(0px,-70px) scale(.2);
 	transition: all 1s;
 }
 
@@ -508,7 +508,7 @@
 #gantt .particle-5{
 	transform-origin: center;
 	opacity: 0;
-	transform: translate(-20px,-38px) scale(.2);
+	transform: translate(-20px,-68px) scale(.2);
 	transition: all 1s;
 }
 
@@ -521,7 +521,7 @@
 #gantt .particle-6{
 	transform-origin: center;
 	opacity: 0;
-	transform: translate(-20px,-15px) scale(.2);
+	transform: translate(-20px,-45px) scale(.2);
 	transition: all 1s;
 }
 
@@ -555,7 +555,61 @@
 	font-size:0.7rem;
 }
 
+@media screen  and (min-width: 300px) {
+	#gantt{
+		width:300px;
+		height:300px;
+	}
+	#gantt .particle-3.grow{
+		transform: translate(0px,-50px) scale(.6);
+	}
+	
+}
+@media screen  and (min-width: 400px) {
+	#gantt{
+		width:400px;
+		height:400px;
+	}
+
+	#gantt .particle-2{
+		transform: translate(-10px,-60px) scale(.2);
+	}
+
+	#gantt .particle-2.grow{
+		transform: translate(-10px,-30px) scale(.5);
+	}
+
+	#gantt .particle-3{
+		transform: translate(0px,-80px) scale(.2);
+	}
+
+	#gantt .particle-3.grow{
+		transform: translate(0px,-60px) scale(.6);
+	}
+
+	#gantt .particle-5{
+		transform: translate(-20px,-88px) scale(.2);
+	}
+
+	#gantt .particle-5.grow{
+		transform: translate(-20px,-58px) scale(.6);
+	}
+
+	#gantt .particle-6{
+		transform: translate(-20px,-55px) scale(.2);
+	}
+
+	#gantt .particle-6.grow{
+		transform: translate(-20px,-35px) scale(.6);
+	}
+}
+
+
 @media screen  and (min-width: 500px) {
+	#gantt{
+		width:500px;
+		height:500px;
+	}
 
 	.main-container .modal-dialog {
 		max-width: 500px;
@@ -576,10 +630,7 @@
 		width:500px;
 	}
 
-	#gantt{
-		width:500px;
-		height:500px;
-	}
+	
 
 	#gantt .particle-2{
 		transform-origin: center;
