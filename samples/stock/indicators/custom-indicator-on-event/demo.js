@@ -31,9 +31,9 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
             series.processedYData || series.yData
         );
     },
-    bindTo: {
-        series: false,
-        eventName: 'afterSetExtremes'
+    calculateOn: {
+        chart: 'init',
+        xAxis: 'afterSetExtremes'
     },
     getSum: getSum
 });

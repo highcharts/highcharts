@@ -289,13 +289,13 @@ _For more detailed samples and documentation check the [API](https://api.highcha
 
 ### 4. Indicators calculated on events.
 
-The idea behind creating a custom indicator that is calculated after some chart evet (for example `afterSetExtremes`) is similar to the ones previously mentioned with a few additions.
+The idea behind creating a custom indicator that is calculated after some chart event (for example `afterSetExtremes`) is similar to the ones previously mentioned with a few additions.
 
-The most important object to add while creating the indicators is `bindTo` where inside are specified two properties:
-*   `series` - whether the indicator should be calculated together with the linked main series,
-*   `eventName` - on which event the indicator should be calculated,
+The most important object to add while creating the indicators is `calculateOn` where inside are specified two properties:
+*   `chart` - on which chart's event the indicator should be calculated, mainly you can choose from `init` (before the linked series is processed) and `render` (after processing the linked series).
+*   `xAxis` - on which xAxis' event the indicator should be recalculated,
 
-The indicator code should look like: 
+Example configuration should look like:
 ``` JS
 Highcharts.seriesType('customIndicator', 'sma', {}, {
     getValues: function (series) {
@@ -304,9 +304,9 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
             series.processedYData || series.yData
         );
     },
-    bindTo: {
-        series: false,
-        eventName: 'afterSetExtremes'
+    calculateOn: {
+        chart: 'init',
+        xAxis: 'afterSetExtremes'
     },
     getSum: getSum
 });
