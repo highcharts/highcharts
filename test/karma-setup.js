@@ -180,21 +180,25 @@ XMLHttpRequest.prototype.send = function () {
     }
 }
 
-// Hijack fetch to run local sources
-var fetch = url => new Promise((resolve, reject) => {
-    var localData = url && window.JSONSources[url];
-    if (localData) {
-        // Fake the return
-        resolve({
-            ok: true,
-            json: function () {
-                return localData;
+// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+if (window.Promise) {
+    window.fetch = function (url) {
+        return new Promise(function (resolve, reject) {
+            var localData = url && window.JSONSources[url];
+            if (localData) {
+                // Fake the return
+                resolve({
+                    ok: true,
+                    json: function () {
+                        return localData;
+                    }
+                });
+            } else {
+                reject('Sample error, URL "' + url + '" missing in JSONSources (trying to fetch)');
             }
         });
-    } else {
-        reject(`Sample error, URL "${url}" missing in JSONSources (trying to fetch)`);
-    }
-});
+    };
+}
 
 function resetDefaultOptions(testName) {
 
