@@ -188,7 +188,8 @@ extend(MapPointSeries.prototype, {
     forceDL: true,
     isCartesian: false,
     pointClass: MapPointPoint,
-    searchPoint: noop as any
+    searchPoint: noop as any,
+    useMapGeometry: true // #16534
 });
 
 /* *

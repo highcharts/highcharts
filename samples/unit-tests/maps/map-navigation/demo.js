@@ -159,3 +159,39 @@ QUnit.test('Map navigation button alignment', assert => {
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
     );
 });
+
+QUnit.test('Map navigation (zoom): mappoint', assert => {
+    const chart = Highcharts.mapChart('container', {
+
+        chart: {
+            map: 'countries/gb/gb-all'
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+
+        series: [{
+
+        }, {
+            type: 'mappoint',
+            data: [{
+                name: 'Glasgow',
+                lat: 55.858,
+                lon: -4.259
+            }]
+        }]
+    });
+
+    const pointPositionBeforeZoom = chart.series[1].points[0].plotX;
+
+    chart.mapZoom(0.5);
+
+    const pointPositionAfterZoom = chart.series[1].points[0].plotX;
+
+    assert.notEqual(
+        pointPositionBeforeZoom,
+        pointPositionAfterZoom,
+        'The map point should update its position on zooming, #16534.'
+    );
+});
