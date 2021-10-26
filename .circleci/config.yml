@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@3.0.0
+  browser-tools: circleci/browser-tools@1.2.3
   slack: circleci/slack@3.4.1
 
 parameters:
@@ -74,38 +75,38 @@ jobs:
     steps:
       # rather than using the checkout keyword we checkout via commandline
       # to avoid a huge and slow checkout depth
-     - <<: *add_gh_keys
-     - <<: *add_to_ssh_config
-     - << : *load_source_from_cache
-     # Temporary workaround for https://discuss.circleci.com/t/22437
-     - run: |
-        if [ -n "$CIRCLE_TAG" ]
-        then
-          git fetch --force origin "refs/tags/${CIRCLE_TAG}:refs/tags/${CIRCLE_TAG}"
-        fi
-     - checkout
-     - save_cache:
-         key: source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
-         paths:
-           - ".git"
-     - run: node --version && npm --version
-     - restore_cache:
-         keys:
-           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
-           - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
-     - run: npm ci --quiet --cache .npm --prefer-offline
-     - save_cache:
-         paths:
-           - /home/circleci/repo/highcharts/.npm
-         key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
-     - run: npm run gulp scripts
-     - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
-     - <<: *persist_workspace
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
+      - <<: *load_source_from_cache
+      # Temporary workaround for https://discuss.circleci.com/t/22437
+      - run: |
+          if [ -n "$CIRCLE_TAG" ]
+          then
+            git fetch --force origin "refs/tags/${CIRCLE_TAG}:refs/tags/${CIRCLE_TAG}"
+          fi
+      - checkout
+      - save_cache:
+          key: source-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+      - run: node --version && npm --version
+      - restore_cache:
+          keys:
+            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
+      - run: npm ci --quiet --cache .npm --prefer-offline
+      - save_cache:
+          paths:
+            - /home/circleci/repo/highcharts/.npm
+          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm run gulp scripts
+      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
+      - <<: *persist_workspace
 
   generate_ts_declarations:
     <<: *defaults
     steps:
-      - << : *load_workspace
+      - <<: *load_workspace
       - run:
           name: Generate highcharts ts declarations
           command: npx gulp jsdoc-dts && npx gulp lint-dts
@@ -113,7 +114,7 @@ jobs:
   lint:
     <<: *defaults
     steps:
-      - << : *load_workspace
+      - <<: *load_workspace
       - run:
           name: Execute linting
           command: npx gulp lint
@@ -121,6 +122,8 @@ jobs:
   test_browsers:
     <<: *defaults
     description: Run tests with different browser configs at BrowserStack
+    environment:
+      CHROME_BIN: /usr/bin/google-chrome
     parameters:
       browsers:
         description: "Which browser to test?"
@@ -134,7 +137,13 @@ jobs:
         type: boolean
         default: false
     steps:
-      - << : *load_workspace
+      - <<: *load_workspace
+      - browser-tools/install-chrome
+      - run:
+          name: Check Chrome installation
+          command: |
+            whereis google-chrome
+            google-chrome --version
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
@@ -147,6 +156,8 @@ jobs:
   test_timezones:
     <<: *defaults
     description: Run tests with different browser configs at BrowserStack
+    environment:
+      CHROME_BIN: /usr/bin/google-chrome
     parameters:
       browsers:
         description: "Which browser to test?"
@@ -154,13 +165,27 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
+      - browser-tools/install-chrome
+      - run:
+          name: Check Chrome installation
+          command: |
+            whereis google-chrome
+            google-chrome --version
       - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
   test_cypress:
     <<: *defaults
     description: Run Cypress tests
+    environment:
+      CHROME_BIN: /usr/bin/google-chrome
     steps:
-      - << : *load_workspace
+      - <<: *load_workspace
+      - browser-tools/install-chrome
+      - run:
+          name: Check Chrome installation
+          command: |
+            whereis google-chrome
+            google-chrome --version
       - restore_cache:
           name: Restore cached Cypress binary
           key: cypress-cache-{{ checksum "package-lock.json" }}
@@ -260,6 +285,12 @@ jobs:
             circleci step halt
           fi
       - <<: *load_workspace
+      - browser-tools/install-chrome
+      - run:
+          name: Check Chrome installation
+          command: |
+            whereis google-chrome
+            google-chrome --version
       - run: sudo apt-get update -y && sudo apt-get install -y rsync
       - run: > # checkout master at diverge point of current branch and install
           git checkout master && git fetch origin master && git reset --hard origin/master &&
