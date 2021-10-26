@@ -1210,7 +1210,7 @@ namespace Exporting {
         });
 
         // Generate the chart copy
-        const chartCopy = new (chart.constructor as any)(
+        const chartCopy = new (chart.constructor as typeof Chart)(
             options,
             chart.callback
         ) as ChartComposition;
