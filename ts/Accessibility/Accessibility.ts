@@ -327,7 +327,7 @@ namespace Accessibility {
         infoRegions: InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
         chartMenu: Highcharts.MenuComponent;
-        rangeSelector: Highcharts.RangeSelectorComponent;
+        rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
         zoom: Highcharts.ZoomComponent;
     }
