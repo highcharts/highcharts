@@ -49,7 +49,7 @@ function fromJSON(
     const table = DataTableHelper.fromJSON(json.table),
         store = new GoogleSheetsStore(
             table,
-            json.options || { googleSpreadsheetKey: '' }
+            json.options || { googleAPIKey: '', googleSpreadsheetKey: '' }
         );
 
     merge(true, store.metadata, json.metadata);
@@ -117,6 +117,7 @@ namespace GoogleSheetsStoreHelper {
         dataRefreshRate: number;
         enablePolling: boolean;
         firstRowAsNames: boolean;
+        googleAPIKey: GoogleSheetsStore.Options['googleAPIKey'];
         googleSpreadsheetKey: GoogleSheetsStore.Options['googleSpreadsheetKey'];
         worksheet?: number;
     }

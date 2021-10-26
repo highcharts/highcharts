@@ -37,12 +37,11 @@ const { merge } = U;
  *
  *  Class
  *
- * *7
-
-/* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
+ * */
 
 /**
  * @private
+ * @todo implement save, requires oauth2
  */
 class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
 
@@ -53,6 +52,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
      * */
 
     protected static readonly defaultOptions: GoogleSheetsStore.Options = {
+        googleAPIKey: '',
         googleSpreadsheetKey: '',
         worksheet: 1,
         enablePolling: false,
@@ -82,7 +82,10 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         table: DataTable,
         options: (
             Partial<GoogleSheetsStore.Options>&
-            { googleSpreadsheetKey: string }
+            {
+                googleAPIKey: string;
+                googleSpreadsheetKey: string;
+            }
         ),
         parser?: GoogleSheetsParser
     ) {
@@ -110,24 +113,39 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
      *
      * */
 
+    /* eslint-disable valid-jsdoc */
+
     /**
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    private fetchSheet(eventDetail?: DataEventEmitter.EventDetail): void {
+    public load(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
             {
-                enablePolling,
                 dataRefreshRate,
+                enablePolling,
+                firstRowAsNames,
+                googleAPIKey,
                 googleSpreadsheetKey,
                 worksheet
             } = store.options,
-            url = [
-                'https://spreadsheets.google.com/feeds/cells',
+            handleError = (
+                xhr: XMLHttpRequest,
+                error: (string|Error)
+            ): void => {
+                store.emit({
+                    type: 'loadError',
+                    detail: eventDetail,
+                    error,
+                    table: store.table,
+                    xhr
+                });
+            },
+            url = GoogleSheetsStore.getFetchURL(
+                googleAPIKey,
                 googleSpreadsheetKey,
-                worksheet,
-                'public/values?alt=json'
-            ].join('/');
+                store.options
+            );
 
         // If already loaded, clear the current table
         store.table.deleteColumns();
@@ -140,75 +158,61 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         });
 
         ajax({
-            url: url,
-            dataType: 'json',
-            success: function (json: Highcharts.JSONType): void {
-                store.parser.parse(json);
-                store.table.setColumns(store.parser.getTable().getColumns());
+            url: GoogleSheetsStore.getFetchURL(
+                googleAPIKey,
+                googleSpreadsheetKey,
+                { onlyColumnNames: true }
+            ),
+            error: handleError,
+            success: (
+                headerJSON: GoogleSheetsParser.GoogleSpreadsheetJSON
+            ): (false|void) => ajax({
+                url,
+                error: handleError,
+                success: (
+                    json: GoogleSheetsParser.GoogleSpreadsheetJSON
+                ): void => {
+                    store.parser.parse({
+                        columns: json,
+                        firstRowAsNames,
+                        header: headerJSON
+                    });
+                    store.table.setColumns(store.parser.getTable().getColumns());
 
-                // Polling
-                if (enablePolling) {
-                    setTimeout(
-                        function (): void {
-                            store.fetchSheet();
-                        },
-                        dataRefreshRate * 1000
-                    );
+                    // Polling
+                    if (enablePolling) {
+                        setTimeout(
+                            (): void => store.load(),
+                            dataRefreshRate * 1000
+                        );
+                    }
+
+                    store.emit({
+                        type: 'afterLoad',
+                        detail: eventDetail,
+                        table: store.table,
+                        url
+                    });
                 }
-
-                store.emit({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table: store.table,
-                    url
-                });
-            },
-            error: function (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void {
-                /* *
-                 * TODO:
-                 * catch error
-                 * ...
-                 *
-                 * */
-                // console.log(text);
-
-                store.emit({
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error,
-                    table: store.table,
-                    xhr
-                });
-            }
+            })
         });
-
-        // return true;
     }
 
-    /**
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     */
-    public load(eventDetail?: DataEventEmitter.EventDetail): void {
-        if (this.options.googleSpreadsheetKey) {
-            this.fetchSheet(eventDetail);
-        }
-    }
-
-    /* *
-     * TODO:
-     * public save() {}
-     * ...
-     *
-     * requires oAuth2 auth
-     *
-     * */
 }
 
+/* *
+ *
+ *  Class Name
+ *
+ * */
+
 namespace GoogleSheetsStore {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
 
     export type Event = (ErrorEvent|LoadEvent);
 
@@ -218,17 +222,96 @@ namespace GoogleSheetsStore {
         readonly xhr: XMLHttpRequest;
     }
 
+    export interface FetchURLOptions {
+        onlyColumnNames?: boolean;
+    }
+
     export interface LoadEvent extends DataStore.Event {
         readonly type: ('load'|'afterLoad');
         readonly url: string;
     }
 
     export interface Options extends JSON.Object {
-        googleSpreadsheetKey: string;
-        worksheet?: number;
-        enablePolling: boolean;
         dataRefreshRate: number;
+        enablePolling: boolean;
+        endColumn?: number;
+        endRow?: number;
         firstRowAsNames: boolean;
+        googleAPIKey: string;
+        googleSpreadsheetKey: string;
+        googleSpreadsheetRange?: string;
+        startColumn?: number;
+        startRow?: number;
+        worksheet?: number;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function getFetchURL(
+        apiKey: string,
+        sheetKey: string,
+        options: Partial<(FetchURLOptions|Options)> = {}
+    ): string {
+        return (
+            `https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/` +
+            (
+                options.onlyColumnNames ?
+                    'A1:Z1' :
+                    getRange(options)
+            ) +
+            '?alt=json' +
+            (
+                options.onlyColumnNames ?
+                    '' :
+                    '&dateTimeRenderOption=FORMATTED_STRING' +
+                    '&majorDimension=COLUMNS' +
+                    '&valueRenderOption=UNFORMATTED_VALUE'
+            ) +
+            '&prettyPrint=false' +
+            `&key=${apiKey}`
+        );
+    }
+
+    /**
+     * @private
+     */
+    export function getRange(
+        options: Partial<Options> = {}
+    ): string {
+        const {
+            endColumn,
+            endRow,
+            googleSpreadsheetRange,
+            startColumn,
+            startRow
+        } = options;
+
+        return googleSpreadsheetRange || (
+            (alphabet[startColumn || 0] || 'A') +
+            (Math.max((startRow || 0), 0) + 1) +
+            ':' +
+            (alphabet[endColumn ?? 25] || 'Z') +
+            (
+                endRow ?
+                    Math.max(endRow, 0) :
+                    'Z'
+            )
+        );
     }
 
 }
