@@ -14,14 +14,14 @@ QUnit.module('Projection', function () {
             assert.close(
                 result[0],
                 coordinates[0],
-                0.0000001,
+                0.0001,
                 `Roundtrip projection of ${coordinates} should result in the ` +
                     'same longitude'
             );
             assert.close(
                 result[1],
                 coordinates[1],
-                0.0000001,
+                0.0001,
                 `Roundtrip projection of ${coordinates} should result in the ` +
                     'same latitude'
             );
