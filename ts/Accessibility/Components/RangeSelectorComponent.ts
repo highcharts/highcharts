@@ -20,6 +20,7 @@
  * */
 
 
+import type Accessibility from '../Accessibility';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -38,24 +39,6 @@ const {
     addEvent,
     attr
 } = U;
-
-
-/* *
- *
- *  Declarations
- *
- * */
-
-
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
-        highlightedInputRangeIx?: number;
-        highlightedRangeSelectorItemIx?: number;
-        oldRangeSelectorItemState?: number;
-        /** @requires modules/accessibility */
-        highlightRangeSelectorButton(ix: number): boolean;
-    }
-}
 
 
 /* *
@@ -588,67 +571,154 @@ class RangeSelectorComponent extends AccessibilityComponent {
 }
 
 
-/**
- * Highlight range selector button by index.
+/* *
  *
- * @private
- * @function Highcharts.Chart#highlightRangeSelectorButton
+ *  Class Prototype
  *
- * @param {number} ix
- *
- * @return {boolean}
- */
-Chart.prototype.highlightRangeSelectorButton = function (
-    ix: number
-): boolean {
-    const buttons: Array<SVGElement> = (
-        this.rangeSelector &&
-        this.rangeSelector.buttons ||
-        []
-    );
-    const curHighlightedIx = this.highlightedRangeSelectorItemIx;
-    const curSelectedIx = (
-        this.rangeSelector &&
-        this.rangeSelector.selected
-    );
+ * */
 
-    // Deselect old
-    if (
-        typeof curHighlightedIx !== 'undefined' &&
-        buttons[curHighlightedIx] &&
-        curHighlightedIx !== curSelectedIx
-    ) {
-        buttons[curHighlightedIx].setState(
-            this.oldRangeSelectorItemState || 0
-        );
+
+interface RangeSelectorComponent {
+    chart: RangeSelectorComponent.ChartComposition;
+}
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+
+namespace RangeSelectorComponent {
+
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+
+    export declare class ChartComposition extends Accessibility.ChartComposition {
+        highlightedInputRangeIx?: number;
+        highlightedRangeSelectorItemIx?: number;
+        oldRangeSelectorItemState?: number;
+        /** @requires modules/accessibility */
+        highlightRangeSelectorButton(ix: number): boolean;
     }
 
-    // Select new
-    this.highlightedRangeSelectorItemIx = ix;
-    if (buttons[ix]) {
-        this.setFocusToElement(buttons[ix].box, buttons[ix].element);
 
-        if (ix !== curSelectedIx) {
-            this.oldRangeSelectorItemState = buttons[ix].state;
-            buttons[ix].setState(1);
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+
+    const composedClasses: Array<Function> = [];
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+
+    /**
+     * Highlight range selector button by index.
+     *
+     * @private
+     * @function Highcharts.Chart#highlightRangeSelectorButton
+     *
+     * @param {number} ix
+     *
+     * @return {boolean}
+     */
+    function chartHighlightRangeSelectorButton(
+        this: ChartComposition,
+        ix: number
+    ): boolean {
+        const buttons: Array<SVGElement> = (
+            this.rangeSelector &&
+            this.rangeSelector.buttons ||
+            []
+        );
+        const curHighlightedIx = this.highlightedRangeSelectorItemIx;
+        const curSelectedIx = (
+            this.rangeSelector &&
+            this.rangeSelector.selected
+        );
+
+        // Deselect old
+        if (
+            typeof curHighlightedIx !== 'undefined' &&
+            buttons[curHighlightedIx] &&
+            curHighlightedIx !== curSelectedIx
+        ) {
+            buttons[curHighlightedIx].setState(
+                this.oldRangeSelectorItemState || 0
+            );
         }
 
-        return true;
+        // Select new
+        this.highlightedRangeSelectorItemIx = ix;
+        if (buttons[ix]) {
+            this.setFocusToElement(buttons[ix].box, buttons[ix].element);
+
+            if (ix !== curSelectedIx) {
+                this.oldRangeSelectorItemState = buttons[ix].state;
+                buttons[ix].setState(1);
+            }
+
+            return true;
+        }
+        return false;
     }
-    return false;
-};
 
 
-// Range selector does not have destroy-setup for class instance events - so
-// we set it on the class and call the component from here.
-addEvent(RangeSelector, 'afterBtnClick', function (): void {
-    if (
-        this.chart.accessibility &&
-        this.chart.accessibility.components.rangeSelector
-    ) {
-        return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        RangeSelectorClass: typeof RangeSelector
+    ): void {
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.highlightRangeSelectorButton = chartHighlightRangeSelectorButton;
+        }
+        if (composedClasses.indexOf(RangeSelectorClass) === -1) {
+            composedClasses.push(RangeSelectorClass);
+
+            addEvent(RangeSelector, 'afterBtnClick', rangeSelectorAfterBtnClick);
+        }
     }
-});
+
+
+    /**
+     * Range selector does not have destroy-setup for class instance events - so
+     * we set it on the class and call the component from here.
+     * @private
+     */
+    function rangeSelectorAfterBtnClick(
+        this: RangeSelector
+    ): void {
+        if (
+            this.chart.accessibility &&
+            this.chart.accessibility.components.rangeSelector
+        ) {
+            return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
+        }
+    }
+
+}
 
 
 /* *
