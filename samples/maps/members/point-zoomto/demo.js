@@ -5,7 +5,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         p.id = p.code;
     });
 
-    // Initiate the chart
+    // Initialize the chart
     var chart = Highcharts.mapChart('container', {
 
         title: {

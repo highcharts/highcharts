@@ -18,24 +18,14 @@
  *
  * */
 
-import type ChartSonify from './ChartSonify';
-import type SeriesSonify from './SeriesSonify';
-import type SignalHandler from './SignalHandler';
-
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import Point from '../../Core/Series/Point.js';
-import PointSonify from './PointSonify.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
 } = U;
 import Instrument from './Instrument.js';
-import Earcon from './Earcon.js';
 import SU from './SonificationUtilities.js';
-import Timeline from './Timeline.js';
-import TimelineEvent from './TimelineEvent.js';
-import TimelinePath from './TimelinePath.js';
 import sonificationOptions from './Options.js';
 
 /* *
@@ -57,13 +47,7 @@ const Sonification = {
     fadeOutDuration: 20,
 
     // Classes and functions
-    utilities: SU,
-    Instrument: Instrument as any,
-    instruments: Instrument.definitions,
-    Earcon: Earcon as any,
-    TimelineEvent: TimelineEvent,
-    TimelinePath: TimelinePath,
-    Timeline: Timeline
+    utilities: SU
 };
 
 /* *

@@ -1,0 +1,7 @@
+---
+ name: Highcharts Webiste Homepage Animation
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+ skipTest: true
+...

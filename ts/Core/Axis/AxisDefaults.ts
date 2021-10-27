@@ -1120,8 +1120,6 @@ namespace AxisDefaults {
          *         Y axis max on logarithmic axis
          * @sample {highstock} stock/xaxis/min-max/
          *         Fixed min and max on X axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @type      {number|null}
          * @apioption xAxis.max
@@ -1179,8 +1177,6 @@ namespace AxisDefaults {
          *         -50 with startOnTick true by default
          * @sample {highstock} stock/xaxis/min-max/
          *         Set min and max on X axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @type      {number|null}
          * @apioption xAxis.min
@@ -1340,8 +1336,6 @@ namespace AxisDefaults {
          *         Minimum range of 5
          * @sample {highstock} stock/xaxis/minrange/
          *         Max zoom of 6 months overrides user selections
-         * @sample {highmaps} maps/axis/minrange/
-         *         Minimum range of 1000
          *
          * @type      {number}
          * @apioption xAxis.minRange
@@ -2559,8 +2553,6 @@ namespace AxisDefaults {
          *         Y axis max on logarithmic axis
          * @sample {highstock} stock/yaxis/min-max/
          *         Fixed min and max on Y axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @apioption yAxis.max
          */
@@ -2572,8 +2564,6 @@ namespace AxisDefaults {
          *         -50 with startOnTick true by default
          * @sample {highstock} stock/yaxis/min-max/
          *         Fixed min and max on Y axis
-         * @sample {highmaps} maps/axis/min-max/
-         *         Pre-zoomed to a specific area
          *
          * @apioption yAxis.min
          */
@@ -2635,7 +2625,7 @@ namespace AxisDefaults {
          *
          * @type      {boolean}
          * @default   true
-         * @since     next
+         * @since 9.3.0
          *
          * @apioption yAxis.scrollbar.opposite
          * @apioption xAxis.scrollbar.opposite

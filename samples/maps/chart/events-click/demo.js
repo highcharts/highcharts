@@ -1,60 +1,74 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
+    data => {
 
-    // Initiate the chart
-    Highcharts.mapChart('container', {
+        const click = function (e) {
+            // `this` is either Series or Chart
+            const chart = this.chart || this;
 
-        chart: {
-            events: {
-                click: function (e) {
-                    var x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value),
-                        latLon = this.fromPointToLatLon({ x: x, y: y });
+            // Get position in pre-projected units
+            const pos = chart.mapView.pixelsToProjectedUnits({
+                x: Math.round(e.chartX - chart.plotLeft),
+                y: Math.round(e.chartY - chart.plotTop)
+            });
 
-                    this.get('clicks').addPoint({
-                        x: x,
-                        y: y,
-                        name: '[N' + latLon.lat.toFixed(2) + ', E' + latLon.lon.toFixed(2) + ']'
-                    });
-                }
-            }
-        },
+            // Convert to latLon
+            const p = chart.fromPointToLatLon(pos);
+            p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
 
-        title: {
-            text: 'Add points on chart click'
-        },
+            // Add point
+            chart.get('clicks').addPoint(p);
+        };
 
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
+        // Initialize the chart
+        Highcharts.mapChart('container', {
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            chart: {
+                events: {
+                    click
                 }
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }, {
-            colorAxis: false,
-            type: 'mappoint',
-            id: 'clicks',
-            name: 'Clicks',
-            data: []
-        }]
-    });
-});
+
+            title: {
+                text: 'Add points on chart click'
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                },
+                events: {
+                    click
+                }
+            }, {
+                colorAxis: false,
+                type: 'mappoint',
+                id: 'clicks',
+                name: 'Clicks',
+                data: []
+            }]
+        });
+    }
+);

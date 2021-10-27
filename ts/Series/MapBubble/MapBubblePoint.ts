@@ -17,6 +17,7 @@
  * */
 
 import type MapBubblePointOptions from './MapBubblePointOptions';
+import MapPoint from '../Map/MapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

@@ -619,6 +619,14 @@
 		width: 95%;
 	}
 
+	.main-container .modal-dialog {
+		max-width: 500px;
+		margin: 1.75rem auto;
+	}
+	.main-container .form-control {
+		width: 95%;
+	}
+
 	#gantt .highcharts-title{
 		font-size:1.4em;
 	}

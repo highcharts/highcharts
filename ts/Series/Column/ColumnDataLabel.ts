@@ -71,12 +71,14 @@ namespace ColumnDataLabel {
     ): void {
         let inverted = this.chart.inverted,
             series = point.series,
+            xLen = (series.xAxis ? series.xAxis.len : this.chart.plotSizeX) || 0,
+            yLen = (series.yAxis ? series.yAxis.len : this.chart.plotSizeY) || 0,
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
                 (point as AreaRangePoint).below, // range series
                 (point.plotY as any) >
-                    pick(this.translatedThreshold, series.yAxis.len)
+                    pick(this.translatedThreshold, yLen)
             ),
             // draw it inside the box?
             inside = pick(options.inside, !!this.options.stacking),
@@ -92,15 +94,15 @@ namespace ColumnDataLabel {
 
             // If parts of the box overshoots outside the plot area, modify the
             // box to center the label inside
-            overshoot = alignTo.y + alignTo.height - series.yAxis.len;
+            overshoot = alignTo.y + alignTo.height - yLen;
             if (overshoot > 0 && overshoot < alignTo.height) {
                 alignTo.height -= overshoot;
             }
 
             if (inverted) {
                 alignTo = {
-                    x: series.yAxis.len - alignTo.y - alignTo.height,
-                    y: series.xAxis.len - alignTo.x - alignTo.width,
+                    x: yLen - alignTo.y - alignTo.height,
+                    y: xLen - alignTo.x - alignTo.width,
                     width: alignTo.height,
                     height: alignTo.width
                 };

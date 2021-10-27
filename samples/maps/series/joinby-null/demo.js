@@ -1,7 +1,7 @@
 var data = [1, 3, 5, 2, 4, 1, 3];
 
 
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {
