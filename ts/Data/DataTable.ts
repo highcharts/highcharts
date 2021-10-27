@@ -1371,19 +1371,14 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                 tableColumns[columnName] = column.slice();
                 table.rowCount = column.length;
             } else {
-                const tableColumn = (
+                const tableColumn: DataTable.Column = (
                     tableColumns[columnName] ?
                         tableColumns[columnName] :
                         tableColumns[columnName] = new Array(table.rowCount)
                 );
 
-                rowIndex = (rowIndex || 0);
-
-                if (rowIndex > tableRowCount) {
-                    tableColumn.length = rowIndex;
-                    tableColumn.push(...column);
-                } else {
-                    tableColumn.splice(rowIndex, (column.length - rowIndex), ...column);
+                for (let i = (rowIndex || 0), iEnd = column.length; i < iEnd; ++i) {
+                    tableColumn[i] = column[i];
                 }
 
                 table.rowCount = Math.max(table.rowCount, tableColumn.length);
