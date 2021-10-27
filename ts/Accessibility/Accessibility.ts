@@ -476,6 +476,7 @@ namespace Accessibility {
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
         KeyboardNavigation.compose(ChartClass);
+        MenuComponent.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
 

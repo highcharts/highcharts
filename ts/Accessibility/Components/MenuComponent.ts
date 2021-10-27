@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Exporting from '../../Extensions/Exporting/Exporting';
 import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -25,10 +26,7 @@ import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
-const {
-    attr,
-    extend
-} = U;
+const { attr } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -44,20 +42,12 @@ const {
     getFakeMouseEvent
 } = HTMLUtilities;
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        highlightedExportItemIx?: number;
-        /** @requires modules/accessibility */
-        hideExportMenu(): void;
-        /** @requires modules/accessibility */
-        highlightExportItem(ix: number): (boolean|undefined);
-        /** @requires modules/accessibility */
-        highlightLastExportItem(): boolean;
-        /** @requires modules/accessibility */
-        showExportMenu(): void;
-    }
-}
 
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /* eslint-disable valid-jsdoc */
 
@@ -72,120 +62,6 @@ declare module '../../Core/Chart/ChartLike' {
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
-
-
-/**
- * Show the export menu and focus the first item (if exists).
- *
- * @private
- * @function Highcharts.Chart#showExportMenu
- */
-Chart.prototype.showExportMenu = function (): void {
-    const exportButton = getExportMenuButtonElement(this);
-
-    if (exportButton) {
-        const el = exportButton.element;
-        if (el.onclick) {
-            el.onclick(getFakeMouseEvent('click'));
-        }
-    }
-};
-
-
-/**
- * @private
- * @function Highcharts.Chart#hideExportMenu
- */
-Chart.prototype.hideExportMenu = function (): void {
-    const chart = this,
-        exportList = chart.exportDivElements;
-
-    if (exportList && chart.exportContextMenu) {
-        // Reset hover states etc.
-        exportList.forEach((el): void => {
-            if (
-                el &&
-                el.className === 'highcharts-menu-item' &&
-                el.onmouseout
-            ) {
-                el.onmouseout(getFakeMouseEvent('mouseout'));
-            }
-        });
-        chart.highlightedExportItemIx = 0;
-        // Hide the menu div
-        chart.exportContextMenu.hideMenu();
-        // Make sure the chart has focus and can capture keyboard events
-        chart.container.focus();
-    }
-};
-
-
-/**
- * Highlight export menu item by index.
- *
- * @private
- * @function Highcharts.Chart#highlightExportItem
- *
- * @param {number} ix
- *
- * @return {boolean}
- */
-Chart.prototype.highlightExportItem = function (
-    ix: number
-): boolean {
-    const listItem = this.exportDivElements && this.exportDivElements[ix];
-    const curHighlighted =
-            this.exportDivElements &&
-            this.exportDivElements[this.highlightedExportItemIx as any];
-
-    if (
-        listItem &&
-        listItem.tagName === 'LI' &&
-        !(listItem.children && listItem.children.length)
-    ) {
-        // Test if we have focus support for SVG elements
-        const hasSVGFocusSupport = !!(
-            this.renderTo.getElementsByTagName('g')[0] || {}
-        ).focus;
-
-        // Only focus if we can set focus back to the elements after
-        // destroying the menu (#7422)
-        if (listItem.focus && hasSVGFocusSupport) {
-            listItem.focus();
-        }
-        if (curHighlighted && curHighlighted.onmouseout) {
-            curHighlighted.onmouseout(getFakeMouseEvent('mouseout'));
-        }
-        if (listItem.onmouseover) {
-            listItem.onmouseover(getFakeMouseEvent('mouseover'));
-        }
-        this.highlightedExportItemIx = ix;
-        return true;
-    }
-
-    return false;
-};
-
-
-/**
- * Try to highlight the last valid export menu item.
- *
- * @private
- * @function Highcharts.Chart#highlightLastExportItem
- * @return {boolean}
- */
-Chart.prototype.highlightLastExportItem = function (): boolean {
-    const chart = this;
-    if (chart.exportDivElements) {
-        let i = chart.exportDivElements.length;
-        while (i--) {
-            if (chart.highlightExportItem(i)) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
 
 
 /**
@@ -206,11 +82,13 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
     );
 }
 
+
 /* *
  *
  *  Class
  *
  * */
+
 
 /**
  * The MenuComponent class
@@ -228,9 +106,11 @@ class MenuComponent extends AccessibilityComponent {
      *
      * */
 
+
     public exportButtonProxy?: ProxyElement;
 
     public isExportMenuShown?: boolean;
+
 
     /* *
      *
@@ -543,6 +423,209 @@ class MenuComponent extends AccessibilityComponent {
 
         return keyboardNavigationHandler.response.success;
     }
+
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+
+interface MenuComponent {
+    chart: MenuComponent.ChartComposition;
+}
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace MenuComponent {
+
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+
+    export declare class ChartComposition extends Accessibility.ChartComposition {
+        public highlightedExportItemIx?: number;
+        /** @requires modules/accessibility */
+        public hideExportMenu(): void;
+        /** @requires modules/accessibility */
+        public highlightExportItem(ix: number): (boolean|undefined);
+        /** @requires modules/accessibility */
+        public highlightLastExportItem(): boolean;
+        /** @requires modules/accessibility */
+        public showExportMenu(): void;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+
+    const composedClasses: Array<Function> = [];
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = Chart.prototype as ChartComposition;
+
+            chartProto.hideExportMenu = chartHideExportMenu;
+            chartProto.highlightExportItem = chartHighlightExportItem;
+            chartProto.highlightLastExportItem = chartHighlightLastExportItem;
+            chartProto.showExportMenu = chartShowExportMenu;
+        }
+    }
+
+    /**
+     * Show the export menu and focus the first item (if exists).
+     *
+     * @private
+     * @function Highcharts.Chart#showExportMenu
+     */
+    function chartShowExportMenu(
+        this: ChartComposition
+    ): void {
+        const exportButton = getExportMenuButtonElement(this);
+
+        if (exportButton) {
+            const el = exportButton.element;
+            if (el.onclick) {
+                el.onclick(getFakeMouseEvent('click'));
+            }
+        }
+    }
+
+
+    /**
+     * @private
+     * @function Highcharts.Chart#hideExportMenu
+     */
+    function chartHideExportMenu(
+        this: ChartComposition
+    ): void {
+        const chart = this,
+            exportList = chart.exportDivElements;
+
+        if (exportList && chart.exportContextMenu) {
+            // Reset hover states etc.
+            exportList.forEach((el): void => {
+                if (
+                    el &&
+                    el.className === 'highcharts-menu-item' &&
+                    el.onmouseout
+                ) {
+                    el.onmouseout(getFakeMouseEvent('mouseout'));
+                }
+            });
+            chart.highlightedExportItemIx = 0;
+            // Hide the menu div
+            chart.exportContextMenu.hideMenu();
+            // Make sure the chart has focus and can capture keyboard events
+            chart.container.focus();
+        }
+    }
+
+
+    /**
+     * Highlight export menu item by index.
+     *
+     * @private
+     * @function Highcharts.Chart#highlightExportItem
+     *
+     * @param {number} ix
+     *
+     * @return {boolean}
+     */
+    function chartHighlightExportItem(
+        this: ChartComposition,
+        ix: number
+    ): boolean {
+        const listItem = this.exportDivElements && this.exportDivElements[ix];
+        const curHighlighted =
+                this.exportDivElements &&
+                this.exportDivElements[this.highlightedExportItemIx as any];
+
+        if (
+            listItem &&
+            listItem.tagName === 'LI' &&
+            !(listItem.children && listItem.children.length)
+        ) {
+            // Test if we have focus support for SVG elements
+            const hasSVGFocusSupport = !!(
+                this.renderTo.getElementsByTagName('g')[0] || {}
+            ).focus;
+
+            // Only focus if we can set focus back to the elements after
+            // destroying the menu (#7422)
+            if (listItem.focus && hasSVGFocusSupport) {
+                listItem.focus();
+            }
+            if (curHighlighted && curHighlighted.onmouseout) {
+                curHighlighted.onmouseout(getFakeMouseEvent('mouseout'));
+            }
+            if (listItem.onmouseover) {
+                listItem.onmouseover(getFakeMouseEvent('mouseover'));
+            }
+            this.highlightedExportItemIx = ix;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Try to highlight the last valid export menu item.
+     *
+     * @private
+     * @function Highcharts.Chart#highlightLastExportItem
+     * @return {boolean}
+     */
+    function chartHighlightLastExportItem(
+        this: ChartComposition
+    ): boolean {
+        const chart = this;
+        if (chart.exportDivElements) {
+            let i = chart.exportDivElements.length;
+            while (i--) {
+                if (chart.highlightExportItem(i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
 }
 
