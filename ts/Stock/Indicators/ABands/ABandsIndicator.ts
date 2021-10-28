@@ -260,6 +260,7 @@ interface ABandsIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(ABandsIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],

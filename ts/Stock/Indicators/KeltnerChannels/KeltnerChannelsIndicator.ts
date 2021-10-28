@@ -221,6 +221,7 @@ interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition 
 }
 extend(KeltnerChannelsIndicator.prototype, {
     nameBase: 'Keltner Channels',
+    areaLinesNames: ['top', 'bottom'],
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
     pointArrayMap: ['top', 'middle', 'bottom'],

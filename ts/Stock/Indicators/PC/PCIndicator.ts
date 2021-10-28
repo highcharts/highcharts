@@ -194,6 +194,7 @@ interface PCIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(PCIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],

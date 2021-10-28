@@ -284,6 +284,7 @@ interface BBIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(BBIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],

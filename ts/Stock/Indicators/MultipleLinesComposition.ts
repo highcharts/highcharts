@@ -22,8 +22,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type LinePoint from '../../Series/Line/LinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -144,11 +142,12 @@ namespace MultipleLinesComposition {
      * Names of the lines, bewteen which the area should be plotted.
      * If the drawing of the area should
      * be disabled for some indicators, leave this option as an empty array.
+     * Names should be the same as the names in the pointArrayMap.
      * @private
      * @name multipleLinesMixin.areaLinesNames
      * @type {Array<string>}
      */
-    const areaLinesNames = ['topLine', 'bottomLine'];
+    const areaLinesNames: Array<string> = ['top'];
     /**
      * Main line id.
      *
@@ -300,12 +299,12 @@ namespace MultipleLinesComposition {
 
         // Modify options and generate area fill:
         if (this.userOptions.fillColor && areaLinesNames.length) {
-            const index = secondaryLinesNames.indexOf(areaLinesNames[0]),
+            const index = secondaryLinesNames.indexOf(getLineName(areaLinesNames[0])),
                 secondLinePoints = secondaryLines[index],
                 firstLinePoints =
                     areaLinesNames.length === 1 ?
                         mainLinePoints :
-                        secondaryLines[secondaryLinesNames.indexOf(areaLinesNames[1])],
+                        secondaryLines[secondaryLinesNames.indexOf(getLineName(areaLinesNames[1]))],
                 originalColor = indicator.color;
             indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;
@@ -383,16 +382,20 @@ namespace MultipleLinesComposition {
         (this.pointArrayMap || []).forEach(
             function (propertyName: string): void {
                 if (propertyName !== excludedValue) {
-                    translatedLines.push(
-                        'plot' +
-                        propertyName.charAt(0).toUpperCase() +
-                        propertyName.slice(1)
-                    );
+                    translatedLines.push(getLineName(propertyName));
                 }
             }
         );
 
         return translatedLines;
+    }
+
+    /**
+     * Generate the API name of the line
+     * @param propertyName name of the line
+     */
+    function getLineName(propertyName: string): string {
+        return 'plot' + propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
     }
 
     /**
