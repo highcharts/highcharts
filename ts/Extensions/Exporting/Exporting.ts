@@ -1209,8 +1209,11 @@ namespace Exporting {
             }
         });
 
-        // generate the chart copy
-        const chartCopy = new Chart(options, chart.callback) as ChartComposition;
+        // Generate the chart copy
+        const chartCopy = new (chart.constructor as typeof Chart)(
+            options,
+            chart.callback
+        ) as ChartComposition;
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {

@@ -1494,6 +1494,9 @@ export default MapSeries;
  * it is recommended to use `mapData` to define that paths instead
  * of defining them on the data points themselves.
  *
+ * For providing true geographical shapes based on longitude and latitude, use
+ * the `geometry` option instead.
+ *
  * @sample maps/series/data-path/
  *         Paths defined in data
  *
