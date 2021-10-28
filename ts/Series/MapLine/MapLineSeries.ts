@@ -230,6 +230,8 @@ export default MapLineSeries;
  *  ```
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @extends   series.map.data
+ * @excluding drilldown
  * @product   highmaps
  * @apioption series.mapline.data
  */

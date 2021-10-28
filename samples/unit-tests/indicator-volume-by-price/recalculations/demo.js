@@ -26,9 +26,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 type: 'candlestick',
                 id: 'main',
                 name: 'AAPL',
-                params: {
-                    volumeSeriesID: 'volume'
-                },
                 data: [
                     [0, 37.86, 38.07, 37.56, 37.58],
                     [1, 37.6, 37.79, 37.34, 37.63],
@@ -111,8 +108,54 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ]
     });
 
+    // Testing VBP indicator when `compare` mode is on the main series, #16277
+
+    const VBPIndicator = chart.series[2],
+        correctFloat = Highcharts.correctFloat,
+        ranges = VBPIndicator.options.params.ranges,
+        lowRange = 37.58,
+        highRange = 45.43,
+        rangeStep = correctFloat(highRange - lowRange) / ranges;
+
+    assert.strictEqual(
+        VBPIndicator.rangeStep,
+        rangeStep,
+        'The basic rangeStep should be correct based on the above data, #16277.'
+    );
+
+    chart.series[0].setCompare('percent');
+
+    const compareLowRange =
+            VBPIndicator.linkedParent.dataModify.modifyValue(lowRange),
+        compareHighRange =
+            VBPIndicator.linkedParent.dataModify.modifyValue(highRange),
+        compareRangeStep =
+            correctFloat(compareHighRange - compareLowRange) / ranges;
+
+    assert.strictEqual(
+        VBPIndicator.rangeStep,
+        compareRangeStep,
+        `The rangeStep should be updated and correct based on the above data
+        in the compare mode, #16277.`
+    );
+
+    // Change the above 3 lines to only 1 line: "chart.series[0].setCompare();"
+    // after the #16397 is fixed
+    chart.series[0].setCompare(null, false);
+    VBPIndicator.recalculateValues();
+    chart.redraw();
+
+    assert.strictEqual(
+        VBPIndicator.rangeStep,
+        rangeStep,
+        `The basic rangeStep should be correct based on the above data after
+        disabling the compare mode, #16277.`
+    );
+
+    // End of #16277 testing, start other tests
+
     function round(array) {
-        return Highcharts.map(array, function (value) {
+        return array.map(function (value) {
             return value === null ? null : Number(value.toFixed(2));
         });
     }

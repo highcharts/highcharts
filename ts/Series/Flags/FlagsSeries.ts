@@ -24,7 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -673,59 +673,36 @@ class FlagsSeries extends ColumnSeries {
  *
  * */
 
-interface FlagsSeries {
+interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
-    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
-    init: typeof Series.prototype['init'];
+    group: typeof ColumnSeries.prototype.group;
     pointClass: typeof FlagsPoint;
     takeOrdinalPosition: boolean;
-    translate: typeof OnSeriesMixin['translate'];
+    init: typeof Series.prototype['init'];
+    remove: typeof ColumnSeries.prototype.remove;
 }
+
+OnSeriesComposition.compose(FlagsSeries);
 extend(FlagsSeries.prototype, {
-
     allowDG: false,
-
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
-     */
-    buildKDTree: noop,
-
     forceCrop: true,
-
-    getPlotBox: OnSeriesMixin.getPlotBox,
-
+    invertible: false, // Flags series group should not be invertible (#14063).
+    noSharedTooltip: true,
+    pointClass: FlagsPoint,
+    sorted: false,
+    takeOrdinalPosition: false, // #1074
+    trackerGroups: ['markerGroup'],
+    buildKDTree: noop,
     /**
      * Inherit the initialization from base Series.
-     *
      * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
     init: Series.prototype.init,
-
     /**
      * Don't invert the flag marker group (#4960).
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop,
-
-    // Flags series group should not be invertible (#14063).
-    invertible: false,
-
-    noSharedTooltip: true,
-
-    pointClass: FlagsPoint,
-
-    sorted: false,
-
-    takeOrdinalPosition: false, // #1074
-
-    trackerGroups: ['markerGroup'],
-
-    translate: OnSeriesMixin.translate
-
+    invertGroups: noop
 });
 
 /* *

@@ -33,7 +33,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -610,7 +610,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public generatePoints(): void {
-        NodesMixin.generatePoints.apply(this, arguments as any);
+        NodesComposition.generatePoints.apply(this, arguments as any);
 
         /**
          * Order the nodes, starting with the root node(s). (#9818)
@@ -1153,10 +1153,10 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
-interface SankeySeries extends Highcharts.NodesSeries {
+interface SankeySeries extends NodesComposition.SeriesComposition {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
-    destroy: Highcharts.NodesMixin['destroy'];
+    destroy: NodesComposition.SeriesComposition['destroy'];
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
     invertible: boolean;
@@ -1166,14 +1166,15 @@ interface SankeySeries extends Highcharts.NodesSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof SankeyPoint;
     remove: typeof ColumnSeries.prototype.remove;
-    setData: Highcharts.NodesMixin['setData'];
+    setData: NodesComposition.SeriesComposition['setData'];
 }
+
+NodesComposition.compose(SankeyPoint, SankeySeries);
 extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode as any,
-    destroy: NodesMixin.destroy,
+    createNode: NodesComposition.createNode as any,
     forceDL: true,
     invertible: true,
     isCartesian: false,
@@ -1181,8 +1182,7 @@ extend(SankeySeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any,
-    setData: NodesMixin.setData
+    searchPoint: H.noop as any
 });
 
 /* *
@@ -1301,7 +1301,7 @@ export default SankeySeries;
  *
  * @name Highcharts.SankeyNodeObject#offsetHorizontal
  * @type {number|string}
- * @since next
+ * @since 9.3.0
  *//**
  * The vertical offset of a node. Positive values shift the node down,
  * negative shift it up.
@@ -1314,7 +1314,7 @@ export default SankeySeries;
  *
  * @name Highcharts.SankeyNodeObject#offsetVertical
  * @type {number|string}
- * @since next
+ * @since 9.3.0
  */
 
 /**
@@ -1485,7 +1485,7 @@ export default SankeySeries;
  *         Specified node offset
  *
  * @type      {number|string}
- * @since     next
+ * @since 9.3.0
  * @product   highcharts
  * @apioption series.sankey.nodes.offsetHorizontal
  */
@@ -1501,7 +1501,7 @@ export default SankeySeries;
  *         Specified node offset
  *
  * @type      {number|string}
- * @since     next
+ * @since 9.3.0
  * @product   highcharts
  * @apioption series.sankey.nodes.offsetVertical
  */

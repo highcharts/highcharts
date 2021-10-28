@@ -12,23 +12,25 @@
 
 'use strict';
 
-import type { Options } from '../Core/Options';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+/* *
+ *
+ *  Import
+ *
+ * */
 
-import Chart from '../Core/Chart/Chart.js';
-import ChartUtilities from './Utils/ChartUtilities.js';
-import ProxyProvider from './ProxyProvider.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import type AccessibilityComponent from './AccessibilityComponent';
+import type Chart from '../Core/Chart/Chart';
+import type { Options } from '../Core/Options';
+import type Point from '../Core/Series/Point';
+import type RangeSelector from '../Extensions/RangeSelector';
+import type Series from '../Core/Series/Series';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
 import D from '../Core/DefaultOptions.js';
-const {
-    defaultOptions
-} = D;
-import Point from '../Core/Series/Point.js';
-import Series from '../Core/Series/Series.js';
+const { defaultOptions } = D;
+import H from '../Core/Globals.js';
+const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -37,103 +39,46 @@ const {
     merge
 } = U;
 
+import A11yI18n from './A11yI18n.js';
+import ContainerComponent from './Components/ContainerComponent.js';
+import FocusBorder from './FocusBorder.js';
+import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
+import KeyboardNavigation from './KeyboardNavigation.js';
+import LegendComponent from './Components/LegendComponent.js';
+import MenuComponent from './Components/MenuComponent.js';
+import NewDataAnnouncer from './Components/SeriesComponent/NewDataAnnouncer.js';
+import ProxyProvider from './ProxyProvider.js';
+import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
+import SeriesComponent from './Components/SeriesComponent/SeriesComponent.js';
+import ZoomComponent from './Components/ZoomComponent.js';
+
+import whcm from './HighContrastMode.js';
+import highContrastTheme from './HighContrastTheme.js';
+import defaultOptionsA11Y from './Options/Options.js';
+import defaultLangOptions from './Options/LangOptions.js';
+import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         a11yDirty?: boolean;
-        accessibility?: Highcharts.Accessibility;
+        accessibility?: Accessibility;
         types?: Array<string>;
         /** @require modules/accessibility */
         updateA11yEnabled(): void;
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class Accessibility {
-            public constructor(chart: AccessibilityChart);
-            public chart: AccessibilityChart;
-            public components: AccessibilityComponentsObject;
-            public keyboardNavigation: KeyboardNavigation;
-            public proxyProvider: ProxyProvider;
-            public zombie?: boolean; // Zombie object on old browsers
-            public destroy(): void;
-            public getChartTypes(): Array<string>;
-            public init(chart: Chart): void;
-            public initComponents(): void;
-            public getComponentOrder(): Array<string>;
-            public update(): void;
-        }
-        interface AccessibilityComponentsObject {
-            [key: string]: AccessibilityComponent;
-            container: ContainerComponent;
-            infoRegions: InfoRegionsComponent;
-            legend: LegendComponent;
-            chartMenu: MenuComponent;
-            rangeSelector: RangeSelectorComponent;
-            series: SeriesComponent;
-            zoom: ZoomComponent;
-        }
-        interface AccessibilityChart extends Chart {
-            options: Required<Options>;
-            series: Array<AccessibilitySeries>;
-        }
-        interface AccessibilityPoint extends Point {
-            series: AccessibilitySeries;
-        }
-        interface AccessibilitySeries extends Series {
-            chart: AccessibilityChart;
-            options: Required<SeriesOptions>;
-            points: Array<AccessibilityPoint>;
-        }
-        let A11yChartUtilities: typeof ChartUtilities;
-        let A11yHTMLUtilities: typeof HTMLUtilities;
-    }
-}
-
-import AccessibilityComponent from './AccessibilityComponent.js';
-import KeyboardNavigation from './KeyboardNavigation.js';
-import LegendComponent from './Components/LegendComponent.js';
-import MenuComponent from './Components/MenuComponent.js';
-import SeriesComponent from './Components/SeriesComponent/SeriesComponent.js';
-import ZoomComponent from './Components/ZoomComponent.js';
-import RangeSelectorComponent from './Components/RangeSelectorComponent.js';
-import InfoRegionsComponent from './Components/InfoRegionsComponent.js';
-import ContainerComponent from './Components/ContainerComponent.js';
-import whcm from './HighContrastMode.js';
-import highContrastTheme from './HighContrastTheme.js';
-import defaultOptionsA11Y from './Options/Options.js';
-import defaultLangOptions from './Options/LangOptions.js';
-import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-import './A11yI18n.js';
-import './FocusBorder.js';
-
-
-// Add default options
-merge(
-    true,
-    defaultOptions,
-    defaultOptionsA11Y,
-    {
-        accessibility: {
-            highContrastTheme: highContrastTheme
-        },
-        lang: defaultLangOptions
-    }
-);
-
-
-// Expose functionality on Highcharts namespace
-H.A11yChartUtilities = ChartUtilities;
-H.A11yHTMLUtilities = HTMLUtilities;
-H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
-H.AccessibilityComponent = AccessibilityComponent as any;
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The Accessibility class
@@ -145,16 +90,45 @@ H.AccessibilityComponent = AccessibilityComponent as any;
  * @name Highcharts.Accessibility
  *
  * @param {Highcharts.Chart} chart
- *        Chart object
+ * Chart object
  */
-function Accessibility(
-    this: Highcharts.Accessibility,
-    chart: Chart
-): void {
-    this.init(chart);
-}
+class Accessibility {
 
-Accessibility.prototype = {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(
+        chart: Chart
+    ) {
+        this.init(chart);
+    }
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public chart: Accessibility.ChartComposition = void 0 as any;
+    public components: Accessibility.ComponentsObject = void 0 as any;
+    public keyboardNavigation: KeyboardNavigation = void 0 as any;
+    public proxyProvider: ProxyProvider = void 0 as any;
+    public zombie?: boolean; // Zombie object on old browsers
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Initialize the accessibility class
@@ -162,16 +136,15 @@ Accessibility.prototype = {
      * @param {Highcharts.Chart} chart
      *        Chart object
      */
-    init: function (
-        this: Highcharts.Accessibility,
+    public init(
         chart: Chart
     ): void {
-        this.chart = chart as Highcharts.AccessibilityChart;
+        this.chart = chart as Accessibility.ChartComposition;
 
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
             this.zombie = true;
-            this.components = {} as Highcharts.AccessibilityComponentsObject;
+            this.components = {} as Accessibility.ComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
@@ -186,13 +159,13 @@ Accessibility.prototype = {
             chart, this.components
         );
         this.update();
-    },
+    }
 
 
     /**
      * @private
      */
-    initComponents: function (this: Highcharts.Accessibility): void {
+    public initComponents(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
         const a11yOptions = chart.options.accessibility;
@@ -216,14 +189,14 @@ Accessibility.prototype = {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
-    },
+    }
 
 
     /**
      * Get order to update components in.
      * @private
      */
-    getComponentOrder: function (this: Highcharts.Accessibility): string[] {
+    public getComponentOrder(): string[] {
         if (!this.components) {
             return []; // For zombie accessibility object on old browsers
         }
@@ -238,13 +211,13 @@ Accessibility.prototype = {
         // Update series first, so that other components can read accessibility
         // info on points.
         return ['series'].concat(componentsExceptSeries);
-    },
+    }
 
 
     /**
      * Update all components.
      */
-    update: function (this: Highcharts.Accessibility): void {
+    public update(): void {
         const components = this.components,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
@@ -283,13 +256,13 @@ Accessibility.prototype = {
         fireEvent(chart, 'afterA11yUpdate', {
             accessibility: this
         });
-    },
+    }
 
 
     /**
      * Destroy all elements.
      */
-    destroy: function (): void {
+    public destroy(): void {
         const chart: Chart = this.chart || {};
 
         // Destroy components
@@ -318,127 +291,313 @@ Accessibility.prototype = {
         if (chart.focusElement) {
             chart.focusElement.removeFocusBorder();
         }
-    },
+    }
 
 
     /**
      * Return a list of the types of series we have in the chart.
      * @private
      */
-    getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
+    public getChartTypes(): Array<string> {
         const types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
         return Object.keys(types);
     }
-};
 
+}
 
-/**
- * @private
- */
-Chart.prototype.updateA11yEnabled = function (): void {
-    let a11y = this.accessibility;
-    const accessibilityOptions = this.options.accessibility;
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
-    if (accessibilityOptions && accessibilityOptions.enabled) {
-        if (a11y && !a11y.zombie) {
-            a11y.update();
-        } else {
-            this.accessibility = a11y = new (Accessibility as any)(this);
-        }
-    } else if (a11y) {
-        // Destroy if after update we have a11y and it is disabled
-        if (a11y.destroy) {
-            a11y.destroy();
-        }
-        delete this.accessibility;
-    } else {
-        // Just hide container
-        this.renderTo.setAttribute('aria-hidden', true);
-    }
-};
+namespace Accessibility {
 
-// Handle updates to the module and send render updates to components
-addEvent(Chart, 'render', function (): void {
-    // Update/destroy
-    if (this.a11yDirty && this.renderTo) {
-        delete this.a11yDirty;
-        this.updateA11yEnabled();
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface ComponentsObject {
+        [key: string]: AccessibilityComponent;
+        container: ContainerComponent;
+        infoRegions: InfoRegionsComponent;
+        legend: Highcharts.LegendComponent;
+        chartMenu: MenuComponent;
+        rangeSelector: RangeSelectorComponent;
+        series: SeriesComponent;
+        zoom: Highcharts.ZoomComponent;
     }
 
-    const a11y = this.accessibility;
-    if (a11y && !a11y.zombie) {
-        a11y.proxyProvider.updateProxyElementPositions();
-        a11y.getComponentOrder().forEach(function (
-            componentName: string
-        ): void {
-            a11y.components[componentName].onChartRender();
-        });
+    export declare class ChartComposition extends Chart {
+        options: Required<Options>;
+        series: Array<SeriesComposition>;
     }
-});
 
-// Update with chart/series/point updates
-addEvent(Chart as any, 'update', function (
-    this: Highcharts.AccessibilityChart,
-    e: { options: Options }
-): void {
-    // Merge new options
-    const newOptions = e.options.accessibility;
-    if (newOptions) {
-        // Handle custom component updating specifically
-        if (newOptions.customComponents) {
-            this.options.accessibility.customComponents =
-                newOptions.customComponents;
-            delete newOptions.customComponents;
-        }
-        merge(true, this.options.accessibility, newOptions);
-        // Recreate from scratch
-        if (this.accessibility && this.accessibility.destroy) {
+    export declare class PointComposition extends Point {
+        accessibility?: PointStateObject;
+        series: SeriesComposition;
+        value?: (number|null);
+    }
+
+    export interface PointStateObject {
+        valueDescription?: string;
+    }
+
+    export declare class SeriesComposition extends Series {
+        chart: ChartComposition;
+        newDataAnnouncer?: NewDataAnnouncer;
+        options: Required<SeriesOptions>;
+        points: Array<PointComposition>;
+    }
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
+
+    export const i18nFormat = A11yI18n.i18nFormat;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Destroy with chart.
+     * @private
+     */
+    function chartOnDestroy(
+        this: ChartComposition
+    ): void {
+        if (this.accessibility) {
             this.accessibility.destroy();
-            delete this.accessibility;
         }
     }
 
-    // Mark dirty for update
-    this.a11yDirty = true;
-});
-
-// Mark dirty for update
-addEvent(Point, 'update', function (): void {
-    if (this.series.chart.accessibility) {
-        this.series.chart.a11yDirty = true;
-    }
-});
-['addSeries', 'init'].forEach(function (event: string): void {
-    addEvent(Chart, event, function (): void {
-        this.a11yDirty = true;
-    });
-});
-['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(Series, event, function (): void {
-        if (this.chart.accessibility) {
-            this.chart.a11yDirty = true;
+    /**
+     * Handle updates to the module and send render updates to components.
+     * @private
+     */
+    function chartOnRender(
+        this: ChartComposition
+    ): void {
+        // Update/destroy
+        if (this.a11yDirty && this.renderTo) {
+            delete this.a11yDirty;
+            this.updateA11yEnabled();
         }
-    });
-});
 
-// Direct updates (events happen after render)
-[
-    'afterDrilldown', 'drillupall'
-].forEach(function (event: string): void {
-    addEvent(Chart, event, function (): void {
         const a11y = this.accessibility;
         if (a11y && !a11y.zombie) {
-            a11y.update();
+            a11y.proxyProvider.updateProxyElementPositions();
+            a11y.getComponentOrder().forEach(function (
+                componentName: string
+            ): void {
+                a11y.components[componentName].onChartRender();
+            });
         }
-    });
-});
-
-// Destroy with chart
-addEvent(Chart, 'destroy', function (): void {
-    if (this.accessibility) {
-        this.accessibility.destroy();
     }
-});
+
+    /**
+     * Update with chart/series/point updates.
+     * @private
+     */
+    function chartOnUpdate(
+        this: ChartComposition,
+        e: { options: Options }
+    ): void {
+        // Merge new options
+        const newOptions = e.options.accessibility;
+        if (newOptions) {
+            // Handle custom component updating specifically
+            if (newOptions.customComponents) {
+                this.options.accessibility.customComponents =
+                    newOptions.customComponents;
+                delete newOptions.customComponents;
+            }
+            merge(true, this.options.accessibility, newOptions);
+            // Recreate from scratch
+            if (this.accessibility && this.accessibility.destroy) {
+                this.accessibility.destroy();
+                delete this.accessibility;
+            }
+        }
+
+        // Mark dirty for update
+        this.a11yDirty = true;
+    }
+
+    /**
+     * @private
+     */
+    function chartUpdateA11yEnabled(
+        this: ChartComposition
+    ): void {
+        let a11y = this.accessibility;
+        const accessibilityOptions = this.options.accessibility;
+
+        if (accessibilityOptions && accessibilityOptions.enabled) {
+            if (a11y && !a11y.zombie) {
+                a11y.update();
+            } else {
+                this.accessibility = a11y = new (Accessibility as any)(this);
+            }
+        } else if (a11y) {
+            // Destroy if after update we have a11y and it is disabled
+            if (a11y.destroy) {
+                a11y.destroy();
+            }
+            delete this.accessibility;
+        } else {
+            // Just hide container
+            this.renderTo.setAttribute('aria-hidden', true);
+        }
+    }
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        PointClass: typeof Point,
+        SeriesClass: typeof Series,
+        SVGElementClass: typeof SVGElement,
+        RangeSelectorClass?: typeof RangeSelector
+    ): void {
+        A11yI18n.compose(ChartClass);
+        FocusBorder.compose(ChartClass, SVGElementClass);
+        KeyboardNavigation.compose(ChartClass);
+        MenuComponent.compose(ChartClass);
+        NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
+        SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
+
+        if (RangeSelectorClass) {
+            RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
+        }
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = ChartClass.prototype;
+
+            chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'destroy',
+                chartOnDestroy
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'render',
+                chartOnRender
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'update',
+                chartOnUpdate
+            );
+
+            // Mark dirty for update
+            ['addSeries', 'init'].forEach((event): void => {
+                addEvent(
+                    ChartClass as typeof ChartComposition,
+                    event,
+                    function (): void {
+                        this.a11yDirty = true;
+                    });
+            });
+
+            // Direct updates (events happen after render)
+            ['afterDrilldown', 'drillupall'].forEach((event): void => {
+                addEvent(
+                    ChartClass as typeof ChartComposition,
+                    event,
+                    function chartOnAfterDrilldown(): void {
+                        const a11y = this.accessibility;
+                        if (a11y && !a11y.zombie) {
+                            a11y.update();
+                        }
+                    }
+                );
+            });
+        }
+
+        if (composedClasses.indexOf(PointClass) === -1) {
+            composedClasses.push(PointClass);
+
+            addEvent(
+                PointClass as typeof PointComposition,
+                'update',
+                pointOnUpdate
+            );
+        }
+
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            // Mark dirty for update
+            ['update', 'updatedData', 'remove'].forEach((event): void => {
+                addEvent(
+                    SeriesClass as typeof SeriesComposition,
+                    event,
+                    function (): void {
+                        if (this.chart.accessibility) {
+                            this.chart.a11yDirty = true;
+                        }
+                    }
+                );
+            });
+        }
+    }
+
+    /**
+     * Mark dirty for update.
+     * @private
+     */
+    function pointOnUpdate(
+        this: PointComposition
+    ): void {
+        if (this.series.chart.accessibility) {
+            this.series.chart.a11yDirty = true;
+        }
+    }
+
+}
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+// Add default options
+merge(
+    true,
+    defaultOptions,
+    defaultOptionsA11Y,
+    {
+        accessibility: {
+            highContrastTheme: highContrastTheme
+        },
+        lang: defaultLangOptions
+    }
+);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default Accessibility;

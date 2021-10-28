@@ -21,6 +21,7 @@ import type GaugeSeries from './GaugeSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
@@ -71,7 +72,7 @@ class GaugePoint extends Point {
 
 /* *
  *
- *  Default export
+ *  Default Export
  *
  * */
 

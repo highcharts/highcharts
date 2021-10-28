@@ -131,7 +131,6 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
             addEvent(emitter, 'drag', emitter.onDrag);
 
-
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {
                     cursor: ({

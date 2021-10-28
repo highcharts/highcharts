@@ -49,7 +49,7 @@ declare global {
             allowForce?: boolean;
             debug?: BoostDebugOptions;
             enabled?: boolean;
-            seriesThreshold?: (number|null);
+            seriesThreshold?: number;
             useGPUTranslations?: boolean;
             usePreallocated?: boolean;
         }
@@ -112,8 +112,8 @@ declare global {
  * a significant speed improvment in charts with a very high
  * amount of series.
  *
- * @type      {number|null}
- * @default   null
+ * @type      {number}
+ * @default   50
  * @apioption boost.seriesThreshold
  */
 

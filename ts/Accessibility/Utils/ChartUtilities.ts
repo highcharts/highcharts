@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
 import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
@@ -73,7 +74,7 @@ function fireEventOnWrappedOrUnwrappedElement(
 /**
  * @return {string}
  */
-function getChartTitle(chart: Highcharts.AccessibilityChart): string {
+function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
         chart.options.title.text ||
         chart.langFormat(
@@ -322,10 +323,10 @@ function hideSeriesFromAT(series: Series): void {
  * @param {string} name
  * @return {Array<Highcharts.Series>}
  */
-function getSeriesFromName(
-    chart: Chart,
+function getSeriesFromName<T extends Chart>(
+    chart: T,
     name: string
-): Array<Series> {
+): T['series'] {
     if (!name) {
         return chart.series;
     }
@@ -344,11 +345,11 @@ function getSeriesFromName(
  * @param {number} y
  * @return {Highcharts.Point|undefined}
  */
-function getPointFromXY(
-    series: Array<Series>,
+function getPointFromXY<T extends Series>(
+    series: Array<T>,
     x: number,
     y: number
-): (Point|undefined) {
+): (T['points'][0]|undefined) {
     let i = series.length,
         res;
 

@@ -1,0 +1,6 @@
+---
+ name: Logarithmic / linear scale switch button
+ authors:
+   - Karol Kolodziej
+ js_wrap: b
+...

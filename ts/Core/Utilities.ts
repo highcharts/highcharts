@@ -1013,10 +1013,11 @@ function normalizeTickInterval(
  *
  * @param {Function} sortFunction
  *        The function to sort it with, like with regular Array.prototype.sort.
- *
- * @return {void}
  */
-function stableSort(arr: Array<any>, sortFunction: Function): void {
+function stableSort<T>(
+    arr: Array<T>,
+    sortFunction: (a: T, b: T) => number
+): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -1027,7 +1028,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        arr[i].safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1037,7 +1038,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete arr[i].safeI; // stable sort index
+        delete (arr[i] as any).safeI; // stable sort index
     }
 }
 
@@ -1157,7 +1158,9 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-    return parseFloat(
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
         num.toPrecision(prec || 14)
     );
 }

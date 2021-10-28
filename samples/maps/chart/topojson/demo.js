@@ -1,31 +1,7 @@
-// Project the data using Proj4
-function project(geojson, projection) {
-    const p = window.proj4(projection);
-    const projectPolygon = coordinate => {
-        coordinate.forEach((lonLat, i) => {
-            coordinate[i] = p.forward(lonLat);
-        });
-    };
-    geojson.features.forEach(function (feature) {
-        if (feature.geometry.type === 'Polygon') {
-            feature.geometry.coordinates.forEach(projectPolygon);
-        } else if (feature.geometry.type === 'MultiPolygon') {
-            feature.geometry.coordinates.forEach(items => {
-                items.forEach(projectPolygon);
-            });
-        }
-    });
-}
-
-// Get random data for this sample
-function getRandomData(geojson) {
-    return geojson.features.map(() => Math.round(Math.random() * 100));
-}
-
 // Source: https://github.com/leakyMirror/map-of-europe
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v9.2.0/samples/data/europe.topo.json',
-    function (topology) {
+    topology => {
 
         // Convert the topoJSON feature into geoJSON
         const geojson = window.topojson.feature(
@@ -36,16 +12,8 @@ Highcharts.getJSON(
         geojson.copyrightUrl = 'https://github.com/leakyMirror/map-of-europe';
         geojson.copyrightShort = 'leakyMirror';
 
-        const data = getRandomData(geojson);
-
-        // Optionally project the data using Proj4. This costs performance, and
-        // when performance is crucial, should be done on the server. In this
-        // case we're using a Lambert Conformal Conic projection for Europe,
-        // with a projection center in the middle of the map.
-        project(
-            geojson,
-            '+proj=lcc +lat_1=43 +lat_2=62 +lat_0=30 +lon_0=10'
-        );
+        // Create a dummy data value for each feature
+        const data = geojson.features.map((f, i) => i % 5);
 
         // Initialize the chart
         Highcharts.mapChart('container', {
@@ -54,13 +22,13 @@ Highcharts.getJSON(
             },
 
             title: {
-                text: 'TopoJSON in Highmaps'
+                text: 'TopoJSON in Highcharts Maps'
             },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
+            mapView: {
+                projection: {
+                    name: 'Orthographic',
+                    rotation: [-15, -40]
                 }
             },
 
@@ -75,7 +43,7 @@ Highcharts.getJSON(
             },
 
             series: [{
-                data: data,
+                data,
                 joinBy: null,
                 name: 'Random data',
                 states: {

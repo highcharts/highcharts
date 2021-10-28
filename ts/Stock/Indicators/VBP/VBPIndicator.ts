@@ -46,6 +46,7 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    defined,
     error,
     extend,
     isArray,
@@ -590,7 +591,18 @@ class VBPIndicator extends SMAIndicator {
             rangeStep: number,
             zoneStartsLength: number;
 
-        if (!lowRange || !highRange) {
+        // If the compare mode is set on the main series, change the VBP
+        // zones to fit new extremes, #16277.
+        const mainSeries = indicator.linkedParent;
+        if (
+            !indicator.options.compareToMain &&
+            mainSeries.dataModify
+        ) {
+            lowRange = mainSeries.dataModify.modifyValue(lowRange);
+            highRange = mainSeries.dataModify.modifyValue(highRange);
+        }
+
+        if (!defined(lowRange) || !defined(highRange)) {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
@@ -690,6 +702,18 @@ class VBPIndicator extends SMAIndicator {
                                 (yValues[i - 1] as any)
                         ) :
                         value;
+
+                    // If the compare mode is set on the main series,
+                    // change the VBP zones to fit new extremes, #16277.
+                    const mainSeries = indicator.linkedParent;
+                    if (
+                        !indicator.options.compareToMain &&
+                        mainSeries.dataModify
+                    ) {
+                        value = mainSeries.dataModify.modifyValue(value);
+                        previousValue = mainSeries.dataModify
+                            .modifyValue(previousValue);
+                    }
 
                     // Checks if this is the point with the
                     // lowest close value and if so, adds it calculations
@@ -839,7 +863,7 @@ export default VBPIndicator;
  * @extends   series,plotOptions.vbp
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, compare, compareBase, compareStart
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/volume-by-price
  * @apioption series.vbp

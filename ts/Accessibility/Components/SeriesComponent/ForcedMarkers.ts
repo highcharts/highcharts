@@ -18,12 +18,14 @@
  *
  * */
 
+import type Accessibility from '../../Accessibility';
 import type {
     PointMarkerOptions,
     PointOptions
 } from '../../../Core/Series/PointOptions';
+import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
-import Series from '../../../Core/Series/Series.js';
+
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -32,207 +34,163 @@ const {
 
 /* *
  *
- *  Declarations
+ *  Composition
  *
  * */
 
-declare module '../../../Core/Series/PointLike' {
-    interface PointLike {
+namespace ForcedMarkersComposition {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export declare class PointComposition extends Accessibility.PointComposition {
         hasForcedA11yMarker?: boolean;
     }
-}
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+
+    export declare class SeriesComposition extends Accessibility.SeriesComposition {
         a11yMarkersForced?: boolean;
+        points: Array<PointComposition>;
         resetA11yMarkerOptions?: PointMarkerOptions;
-        resetMarkerOptions?: unknown;
     }
-}
 
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+    /* *
+     *
+     *  Compositions
+     *
+     * */
+
+    const composedClasses: Array<Function> = [];
 
 
-/**
- * @private
- */
-function isWithinDescriptionThreshold(
-    series: Highcharts.AccessibilitySeries
-): boolean {
-    const a11yOptions = series.chart.options.accessibility;
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-    return series.points.length <
-        (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
-        (a11yOptions.series as any).pointDescriptionEnabledThreshold === false;
-}
+    /* eslint-disable valid-jsdoc */
 
 
-/**
- * @private
- */
-function shouldForceMarkers(
-    series: Highcharts.AccessibilitySeries
-): boolean {
-    const chart = series.chart,
-        chartA11yEnabled = chart.options.accessibility.enabled,
-        seriesA11yEnabled = (series.options.accessibility &&
-            series.options.accessibility.enabled) !== false;
+    /**
+     * @private
+     */
+    export function compose<T extends typeof Series>(
+        SeriesClass: T
+    ): void {
 
-    return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
-}
+        if (composedClasses.indexOf(SeriesClass) === -1) {
+            composedClasses.push(SeriesClass);
+
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'afterSetOptions',
+                seriesOnAfterSetOptions
+            );
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'render',
+                seriesOnRender
+            );
+
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'afterRender',
+                seriesOnAfterRender
+            );
+        }
+
+    }
 
 
-/**
- * @private
- */
-function hasIndividualPointMarkerOptions(series: Series): boolean {
-    return !!(series._hasPointMarkers && series.points && series.points.length);
-}
-
-
-/**
- * @private
- */
-function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): void {
-    const resetMarkerOptions = series.resetA11yMarkerOptions;
-
-    if (resetMarkerOptions) {
-        merge(true, series.options, {
+    /**
+     * @private
+     */
+    function forceZeroOpacityMarkerOptions(
+        options: (PointOptions|SeriesOptions)
+    ): void {
+        merge(true, options, {
             marker: {
-                enabled: resetMarkerOptions.enabled,
+                enabled: true,
                 states: {
                     normal: {
-                        opacity: resetMarkerOptions.states &&
-                            resetMarkerOptions.states.normal &&
-                            resetMarkerOptions.states.normal.opacity
+                        opacity: 0
                     }
                 }
             }
         });
     }
-}
 
 
-/**
- * @private
- */
-function forceZeroOpacityMarkerOptions(
-    options: (PointOptions|SeriesOptions)
-): void {
-    merge(true, options, {
-        marker: {
-            enabled: true,
-            states: {
-                normal: {
-                    opacity: 0
+    /**
+     * @private
+     */
+    function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
+        return (pointOptions.marker as any).states &&
+            (pointOptions.marker as any).states.normal &&
+            (pointOptions.marker as any).states.normal.opacity;
+    }
+
+
+    /**
+     * @private
+     */
+    function handleForcePointMarkers(series: SeriesComposition): void {
+        let i = series.points.length;
+
+        while (i--) {
+            const point = series.points[i];
+            const pointOptions = point.options;
+            const hadForcedMarker = point.hasForcedA11yMarker;
+            delete point.hasForcedA11yMarker;
+
+            if (pointOptions.marker) {
+                const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+
+                if (pointOptions.marker.enabled && !isStillForcedMarker) {
+                    unforcePointMarkerOptions(pointOptions);
+                    point.hasForcedA11yMarker = false;
+                } else if (pointOptions.marker.enabled === false) {
+                    forceZeroOpacityMarkerOptions(pointOptions);
+                    point.hasForcedA11yMarker = true;
                 }
             }
         }
-    });
-}
-
-
-/**
- * @private
- */
-function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
-    return (pointOptions.marker as any).states &&
-        (pointOptions.marker as any).states.normal &&
-        (pointOptions.marker as any).states.normal.opacity;
-}
-
-
-/**
- * @private
- */
-function unforcePointMarkerOptions(pointOptions: PointOptions): void {
-    merge(true, pointOptions.marker, {
-        states: {
-            normal: {
-                opacity: getPointMarkerOpacity(pointOptions) || 1
-            }
-        }
-    });
-}
-
-
-/**
- * @private
- */
-function handleForcePointMarkers(series: Series): void {
-    let i = series.points.length;
-
-    while (i--) {
-        const point = series.points[i];
-        const pointOptions = point.options;
-        const hadForcedMarker = point.hasForcedA11yMarker;
-        delete point.hasForcedA11yMarker;
-
-        if (pointOptions.marker) {
-            const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
-
-            if (pointOptions.marker.enabled && !isStillForcedMarker) {
-                unforcePointMarkerOptions(pointOptions);
-                point.hasForcedA11yMarker = false;
-            } else if (pointOptions.marker.enabled === false) {
-                forceZeroOpacityMarkerOptions(pointOptions);
-                point.hasForcedA11yMarker = true;
-            }
-        }
     }
-}
-
-
-/**
- * @private
- */
-function addForceMarkersEvents(): void {
-
-    /**
-     * Keep track of forcing markers.
-     * @private
-     */
-    addEvent(Series, 'render', function (): void {
-        const series = this as Highcharts.AccessibilitySeries,
-            options = series.options;
-
-        if (shouldForceMarkers(series)) {
-            if (options.marker && options.marker.enabled === false) {
-                series.a11yMarkersForced = true;
-                forceZeroOpacityMarkerOptions(series.options);
-            }
-
-            if (hasIndividualPointMarkerOptions(series)) {
-                handleForcePointMarkers(series);
-            }
-
-        } else if (series.a11yMarkersForced) {
-            delete series.a11yMarkersForced;
-            unforceSeriesMarkerOptions(series);
-        }
-    });
 
 
     /**
-     * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(Series, 'afterSetOptions', function (
-        e: { options: SeriesOptions }
-    ): void {
-        this.resetA11yMarkerOptions = merge(
-            e.options.marker || {}, this.userOptions.marker || {}
-        );
-    });
+    function hasIndividualPointMarkerOptions(series: Series): boolean {
+        return !!(series._hasPointMarkers && series.points && series.points.length);
+    }
+
+
+    /**
+     * @private
+     */
+    function isWithinDescriptionThreshold(
+        series: Accessibility.SeriesComposition
+    ): boolean {
+        const a11yOptions = series.chart.options.accessibility;
+
+        return series.points.length <
+            (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
+            (a11yOptions.series as any).pointDescriptionEnabledThreshold === false;
+    }
 
 
     /**
      * Process marker graphics after render
      * @private
      */
-    addEvent(Series as any, 'afterRender', function (
-        this: Highcharts.AccessibilitySeries
+    function seriesOnAfterRender(
+        this: SeriesComposition
     ): void {
         const series = this;
 
@@ -259,8 +217,107 @@ function addForceMarkersEvents(): void {
                 });
             }
         }
-    });
+    }
+
+
+    /**
+     * Keep track of options to reset markers to if no longer forced.
+     * @private
+     */
+    function seriesOnAfterSetOptions(
+        this: SeriesComposition,
+        e: { options: SeriesOptions }
+    ): void {
+        this.resetA11yMarkerOptions = merge(
+            e.options.marker || {}, this.userOptions.marker || {}
+        );
+    }
+
+
+    /**
+     * Keep track of forcing markers.
+     * @private
+     */
+    function seriesOnRender(
+        this: SeriesComposition
+    ): void {
+        const series = this,
+            options = series.options;
+
+        if (shouldForceMarkers(series)) {
+            if (options.marker && options.marker.enabled === false) {
+                series.a11yMarkersForced = true;
+                forceZeroOpacityMarkerOptions(series.options);
+            }
+
+            if (hasIndividualPointMarkerOptions(series)) {
+                handleForcePointMarkers(series);
+            }
+
+        } else if (series.a11yMarkersForced) {
+            delete series.a11yMarkersForced;
+            unforceSeriesMarkerOptions(series);
+        }
+    }
+
+
+    /**
+     * @private
+     */
+    function shouldForceMarkers(
+        series: Accessibility.SeriesComposition
+    ): boolean {
+        const chart = series.chart,
+            chartA11yEnabled = chart.options.accessibility.enabled,
+            seriesA11yEnabled = (series.options.accessibility &&
+                series.options.accessibility.enabled) !== false;
+
+        return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
+    }
+
+
+    /**
+     * @private
+     */
+    function unforcePointMarkerOptions(pointOptions: PointOptions): void {
+        merge(true, pointOptions.marker, {
+            states: {
+                normal: {
+                    opacity: getPointMarkerOpacity(pointOptions) || 1
+                }
+            }
+        });
+    }
+
+
+    /**
+     * @private
+     */
+    function unforceSeriesMarkerOptions(series: SeriesComposition): void {
+        const resetMarkerOptions = series.resetA11yMarkerOptions;
+
+        if (resetMarkerOptions) {
+            merge(true, series.options, {
+                marker: {
+                    enabled: resetMarkerOptions.enabled,
+                    states: {
+                        normal: {
+                            opacity: resetMarkerOptions.states &&
+                                resetMarkerOptions.states.normal &&
+                                resetMarkerOptions.states.normal.opacity
+                        }
+                    }
+                }
+            });
+        }
+    }
 
 }
 
-export default addForceMarkersEvents;
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default ForcedMarkersComposition;

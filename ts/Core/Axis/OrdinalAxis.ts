@@ -490,7 +490,7 @@ namespace OrdinalAxis {
 
             // Check if the index is inside position array.
             // If true, read/approximate value for that exact index.
-            if (index >= 0 && index < positions.length) {
+            if (index >= 0 && index < positions.length - 1) {
                 const leftNeighbour = positions[Math.floor(index)],
                     rightNeighbour = positions[Math.ceil(index)],
                     distance = rightNeighbour - leftNeighbour;
@@ -603,9 +603,8 @@ namespace OrdinalAxis {
     }
 
     /**
-     * @private
-     *
      * Extending the Chart.pan method for ordinal axes
+     * @private
      */
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,
@@ -916,7 +915,6 @@ namespace OrdinalAxis {
                 maxIndex,
                 slope,
                 i,
-                hasBoostedSeries,
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
                 useOrdinal = false;
@@ -984,16 +982,7 @@ namespace OrdinalAxis {
                             ordinalPositions = uniqueOrdinalPositions;
                         }
                     }
-
-                    if (series.isSeriesBoosting) {
-                        hasBoostedSeries = true;
-                    }
-
                 });
-
-                if (hasBoostedSeries) {
-                    ordinalPositions.length = 0;
-                }
 
                 // cache the length
                 len = ordinalPositions.length;
@@ -1238,7 +1227,12 @@ namespace OrdinalAxis {
                 });
 
                 // Apply grouping if needed.
-                axis.applyGrouping.call(fakeAxis);
+                axis.applyGrouping.call(
+                    fakeAxis,
+                    {
+                        hasExtemesChanged: false
+                    }
+                );
 
                 // Force to use the ordinal when points are evenly spaced
                 // (e.g. weeks), #3825.

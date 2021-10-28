@@ -1209,8 +1209,11 @@ namespace Exporting {
             }
         });
 
-        // generate the chart copy
-        const chartCopy = new Chart(options, chart.callback) as ChartComposition;
+        // Generate the chart copy
+        const chartCopy = new (chart.constructor as typeof Chart)(
+            options,
+            chart.callback
+        ) as ChartComposition;
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
@@ -1771,7 +1774,7 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 // zoom and pan right click menus.
 /**
  * A collection of options for buttons and menus appearing in the exporting
- * module.
+ * module or in Stock Tools.
  *
  * @requires     modules/exporting
  * @optionparent navigation

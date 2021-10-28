@@ -679,8 +679,9 @@ class BubbleLegendItem {
             plotSizeX = chart.plotSizeX,
             plotSizeY = chart.plotSizeY,
             bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
-            minSize = Math.ceil(bubbleSeries.minPxSize),
-            maxPxSize = Math.ceil(bubbleSeries.maxPxSize),
+            pxSizes = bubbleSeries.getPxExtremes(),
+            minSize = Math.ceil(pxSizes.minPxSize),
+            maxPxSize = Math.ceil(pxSizes.maxPxSize),
             plotSize = Math.min(plotSizeY as any, plotSizeX as any);
         let calculatedSize,
             maxSize = bubbleSeries.options.maxSize;
@@ -739,7 +740,8 @@ class BubbleLegendItem {
         const legend = this.legend,
             chart = this.chart,
             bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
-            bubbleSeriesSize = bubbleSeries.maxPxSize,
+            pxSizes = bubbleSeries.getPxExtremes(),
+            bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
         if (Math.abs(Math.ceil(bubbleSeriesSize) - (bubbleLegendSize as any)) >
@@ -747,7 +749,7 @@ class BubbleLegendItem {
         ) {
             this.updateRanges(
                 this.options.minSize as any,
-                bubbleSeries.maxPxSize
+                pxSizes.maxPxSize
             );
             legend.render();
         }

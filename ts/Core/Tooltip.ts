@@ -688,10 +688,22 @@ class Tooltip {
         let first = buildDimensionArray('y'),
             second = buildDimensionArray('x'),
             swapped: (boolean|undefined);
+
+        // Handle negative points or reversed axis (#13780)
+        let flipped = !!point.negative;
+        if (
+            !chart.polar &&
+            chart.hoverSeries &&
+            chart.hoverSeries.yAxis &&
+            chart.hoverSeries.yAxis.reversed
+        ) {
+            flipped = !flipped;
+        }
         // The far side is right or bottom
-        const preferFarSide = !this.followPointer && pick(
+        const preferFarSide = !this.followPointer &&
+            pick(
                 point.ttBelow,
-                !chart.inverted === !!point.negative
+                !chart.inverted === flipped
             ), // #4984
 
             /*
