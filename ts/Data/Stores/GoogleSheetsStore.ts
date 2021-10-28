@@ -31,7 +31,10 @@ import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
 import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const {
+    merge,
+    pick
+} = U;
 
 /* *
  *
@@ -158,43 +161,29 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
         });
 
         ajax({
-            url: GoogleSheetsStore.getFetchURL(
-                googleAPIKey,
-                googleSpreadsheetKey,
-                { onlyColumnNames: true }
-            ),
+            url,
             error: handleError,
             success: (
-                headerJSON: GoogleSheetsParser.GoogleSpreadsheetJSON
-            ): (false|void) => ajax({
-                url,
-                error: handleError,
-                success: (
-                    json: GoogleSheetsParser.GoogleSpreadsheetJSON
-                ): void => {
-                    store.parser.parse({
-                        columns: json,
-                        firstRowAsNames,
-                        header: headerJSON
-                    });
-                    store.table.setColumns(store.parser.getTable().getColumns());
+                json: GoogleSheetsParser.GoogleSpreadsheetJSON
+            ): void => {
+                store.parser.parse({ firstRowAsNames, json });
+                store.table.setColumns(store.parser.getTable().getColumns());
 
-                    // Polling
-                    if (enablePolling) {
-                        setTimeout(
-                            (): void => store.load(),
-                            dataRefreshRate * 1000
-                        );
-                    }
-
-                    store.emit({
-                        type: 'afterLoad',
-                        detail: eventDetail,
-                        table: store.table,
-                        url
-                    });
+                // Polling
+                if (enablePolling) {
+                    setTimeout(
+                        (): void => store.load(),
+                        dataRefreshRate * 1000
+                    );
                 }
-            })
+
+                store.emit({
+                    type: 'afterLoad',
+                    detail: eventDetail,
+                    table: store.table,
+                    url
+                });
+            }
         });
     }
 
@@ -305,7 +294,7 @@ namespace GoogleSheetsStore {
             (alphabet[startColumn || 0] || 'A') +
             (Math.max((startRow || 0), 0) + 1) +
             ':' +
-            (alphabet[endColumn ?? 25] || 'Z') +
+            (alphabet[pick(endColumn, 25)] || 'Z') +
             (
                 endRow ?
                     Math.max(endRow, 0) :

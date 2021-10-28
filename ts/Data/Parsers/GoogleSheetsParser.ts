@@ -117,7 +117,6 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
      * @emits GoogleSheetsParser#parse
      * @emits GoogleSheetsParser#afterParse
      */
-
     public parse(
         json: Partial<GoogleSheetsParser.ClassJSONOptions>,
         eventDetail?: DataEventEmitter.EventDetail
@@ -125,10 +124,12 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
         const parser = this,
             parserOptions = merge(parser.options, json),
             converter = parser.converter,
-            headerJSON = parserOptions.header,
-            columnsJSON = parserOptions.columns,
-            header = (headerJSON && headerJSON.values || []).slice(),
-            columns = (columnsJSON && columnsJSON.values || []).slice();
+            columns = ((
+                parserOptions.json &&
+                parserOptions.json.values
+            ) || []).map(
+                (column): DataTable.Column => column.slice()
+            );
 
         if (columns.length === 0) {
             return false;
@@ -152,7 +153,7 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
             column = columns[i];
             parser.header[i] = (
                 parserOptions.firstRowAsNames ?
-                    `${header[i]}` :
+                    `${column.shift()}` :
                     uniqueKey()
             );
 
@@ -204,8 +205,7 @@ namespace GoogleSheetsParser {
      * Options for the parser compatible with ClassJSON
      */
     export interface ClassJSONOptions extends DataParser.Options {
-        header?: GoogleSpreadsheetJSON;
-        columns?: GoogleSpreadsheetJSON;
+        json?: GoogleSpreadsheetJSON;
     }
 
     export interface GoogleSpreadsheetJSON extends JSON.Object {
