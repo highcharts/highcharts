@@ -61,6 +61,8 @@ const maps = {
 
                     leftSide.classList.add('fade');
                     rightSide.classList.add('fade');
+                    bottom.classList.add('fade');
+                    top.classList.add('fade');
                     leftSide.style.transition = 'all 1s';
                     rightSide.style.transition = 'all 1s';
                     mapPointPoint.classList.add('hide');
@@ -149,53 +151,6 @@ const maps = {
                     finalHide();
                 }, 4000);
 
-                setTimeout(function () {
-                    ///hide the top, animate the bottom fill
-                    ///if reduced, do not animate the bottom fill
-                    top.style.opacity = 0;
-                    top.style.transition = 'none';
-                    if (reduced) {
-                        bottom.style.opacity = 0;
-                    } else {
-                        bottom.style.fill = '#45445d';
-                        bottom.style.transition = 'fill  1s';
-                    }
-                }, 4200);
-
-                setTimeout(function () {
-                    chart.update({
-                        animation: {
-                            duration: 1000
-                        }
-                    });
-                    ////move the final area into place
-                    if (!reduced) {
-                        bottom.style.transform = 'translateY(4px)';
-                        chart.series[12].data[0].update({
-                            y: 15.7
-                        });
-                        chart.series[12].data[1].update({
-                            y: 15.7
-                        });
-                        chart.series[12].data[2].update({
-                            x: 18,
-                            y: 15.7
-                        });
-                        finalHide();
-                    }
-                }, 5200);
-                setTimeout(function () {
-                    ////move the final area into place
-                    if (!reduced) {
-                        chart.series[12].data[2].update({
-                            x: 20
-                        });
-                        chart.series[12].data[0].update({
-                            x: 0
-                        });
-                    }
-                    finalHide();
-                }, 5300);
             }
         }
     },
@@ -454,7 +409,6 @@ const maps = {
             name: 'bottom',
             animation: false,
             className: 'bottom',
-
             data: [
                 { x: 4, y: 2 },
                 { x: 10, y: 2 },
@@ -644,7 +598,7 @@ const finalMap = function () {
 
                             const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
                             const title = document.getElementsByClassName('highcharts-title')[0];
-                            const subtitle = document.getElementsByClassName('highcharts-subtitle')[0];
+                            const subtitle = document.querySelector('.highcharts-subtitle');
                             mapSeries.style.opacity = 0;
                             setTimeout(function () {
                                 chart.mapZoom(0.01, 4540, -8600);
@@ -755,7 +709,7 @@ const finalMap = function () {
                 responsive: {
                     rules: [{
                         condition: {
-                            maxWidth: 250
+                            maxWidth: 400
                         },
                         chartOptions: {
                             subtitle: {
@@ -768,7 +722,7 @@ const finalMap = function () {
                     },
                     {
                         condition: {
-                            minWidth: 499
+                            minWidth: 401
                         },
                         chartOptions: {
                             subtitle: {
@@ -785,10 +739,9 @@ const finalMap = function () {
         });
 };
 
-
 document.addEventListener("DOMContentLoaded", function () {
     Highcharts.mapChart('maps', maps);
-    let dtime = 7000;
+    let dtime = 5000;
 
     if (reduced) {
         dtime = 5500;
