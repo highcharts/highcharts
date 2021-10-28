@@ -91,6 +91,37 @@ QUnit.test(
             lat,
             'The chart should pan vertically'
         );
+
+        chart.series[0].remove(false);
+
+        chart.update({
+            chart: {
+                map: 'countries/gb/gb-all'
+            }
+        }, false);
+
+        chart.addSeries({}, false);
+
+        chart.addSeries({
+            type: 'mappoint',
+            data: [{
+                name: 'Glasgow',
+                lat: 55.858,
+                lon: -4.259
+            }]
+        });
+
+        const pointPositionBeforeZoom = chart.series[1].points[0].plotX;
+
+        chart.mapZoom(0.5);
+
+        const pointPositionAfterZoom = chart.series[1].points[0].plotX;
+
+        assert.notEqual(
+            pointPositionBeforeZoom,
+            pointPositionAfterZoom,
+            'The map point should update its position on zooming, #16534.'
+        );
     }
 );
 

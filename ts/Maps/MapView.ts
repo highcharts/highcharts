@@ -169,13 +169,13 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < 25.2
+                    (this.minZoom || Infinity) < 3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
                     // speed as moving the pointer across the center of the
                     // projection
-                    const ratio = 28000 / (this.getScale() * Math.min(
+                    const ratio = 0.0044 / (this.getScale() * Math.min(
                         chart.plotWidth,
                         chart.plotHeight
                     ));

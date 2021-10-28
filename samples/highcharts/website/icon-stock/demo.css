@@ -445,12 +445,42 @@ transition:none;
 	transform: translate(180px, 30px);
 }
 
+@media screen  and (min-width: 300px) {
+	#stock{
+		width:300px;
+		height:300px;
+	}
+}
+
+@media screen  and (min-width: 400px) {
+	#stock{
+		width:400px;
+		height:400px;
+	}
+	#stock .highcharts-input-group{
+		transform: translate(230px, -70px);
+	}
+	#stock .highcharts-subtitle{
+		font-weight: 400;
+		font-size:.9em;
+		opacity:0;
+		transition:opacity 1s;
+	}
+	#stock .purple-line .highcharts-graph,
+	#stock .green-line .highcharts-graph {
+		stroke-width: 24px;
+	}
+}
+
 /* at least 500px wide*/
 @media screen  and (min-width: 500px) {
 
 	#stock{
 		width:500px;
 		height:500px;
+	}
+	#stock .highcharts-input-group{
+		transform: none;
 	}
 
 	#stock .purple-line .highcharts-graph

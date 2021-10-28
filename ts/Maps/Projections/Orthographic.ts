@@ -6,7 +6,8 @@
 
 import type ProjectionDefinition from '../ProjectionDefinition';
 
-const deg2rad = Math.PI / 180;
+const deg2rad = Math.PI / 180,
+    scale = 6378460.826781007;
 
 const Orthographic: ProjectionDefinition = {
 
@@ -20,14 +21,14 @@ const Orthographic: ProjectionDefinition = {
         }
         const lat = latDeg * deg2rad;
         return [
-            Math.cos(lat) * Math.sin(lonDeg * deg2rad),
-            Math.sin(lat)
+            Math.cos(lat) * Math.sin(lonDeg * deg2rad) * scale,
+            Math.sin(lat) * scale
         ];
     },
 
     inverse: (xy): [number, number] => {
-        const x = xy[0],
-            y = xy[1],
+        const x = xy[0] / scale,
+            y = xy[1] / scale,
             z = Math.sqrt(x * x + y * y),
             c = Math.asin(z),
             cSin = Math.sin(c),
