@@ -22,6 +22,7 @@ import type AccessibilityComponent from './AccessibilityComponent';
 import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
+import type RangeSelector from '../Extensions/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -327,7 +328,7 @@ namespace Accessibility {
         infoRegions: InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
         chartMenu: MenuComponent;
-        rangeSelector: Highcharts.RangeSelectorComponent;
+        rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
         zoom: Highcharts.ZoomComponent;
     }
@@ -471,7 +472,8 @@ namespace Accessibility {
         ChartClass: typeof Chart,
         PointClass: typeof Point,
         SeriesClass: typeof Series,
-        SVGElementClass: typeof SVGElement
+        SVGElementClass: typeof SVGElement,
+        RangeSelectorClass?: typeof RangeSelector
     ): void {
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
@@ -479,6 +481,10 @@ namespace Accessibility {
         MenuComponent.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
+
+        if (RangeSelectorClass) {
+            RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
+        }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
