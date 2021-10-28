@@ -88,6 +88,7 @@ namespace MultipleLinesComposition {
     }
 
     export interface Options {
+        fillColor?: SVGAttributes['fill'];
         gapSize?: number;
         styles?: any;
     }
@@ -140,9 +141,8 @@ namespace MultipleLinesComposition {
     const pointArrayMap = ['top', 'bottom'];
 
     /**
-     * Names of the lines, bewteen which the area should be plotted. If the area
-     * should be drawn between main line and one secondary line, put only 1 name
-     * of the secondary line into this array. If the drawing of the area should
+     * Names of the lines, bewteen which the area should be plotted.
+     * If the drawing of the area should
      * be disabled for some indicators, leave this option as an empty array.
      * @private
      * @name multipleLinesMixin.areaLinesNames
@@ -298,27 +298,25 @@ namespace MultipleLinesComposition {
             pointsLength = mainLinePoints.length;
         });
 
-        // Modify options and generate additional lines:
-
-
         // Modify options and generate area fill:
         if (this.userOptions.fillColor && areaLinesNames.length) {
-            const fristLinePoints = secondaryLines[0];
-            const secondLinePoints = secondaryLines[1];
-            const originalColor = indicator.color;
-
-            indicator.points = fristLinePoints;
+            const index = secondaryLinesNames.indexOf(areaLinesNames[0]),
+                secondLinePoints = secondaryLines[index],
+                firstLinePoints =
+                    areaLinesNames.length === 1 ?
+                        mainLinePoints :
+                        secondaryLines[secondaryLinesNames.indexOf(areaLinesNames[1])],
+                originalColor = indicator.color;
+            indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;
             indicator.color = this.userOptions.fillColor as SVGAttributes['fill'];
             indicator.options = merge(
                 mainLinePoints,
                 gappedExtend
             ) as any;
-
             indicator.graph = indicator.area;
             indicator.fillGraph = true;
             SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
-
 
             indicator.area = indicator.graph;
             // Clean temporary properties:
@@ -326,8 +324,8 @@ namespace MultipleLinesComposition {
             delete indicator.fillGraph;
             indicator.color = originalColor;
         }
-        // Restore options and draw a main line:
 
+        // Modify options and generate additional lines:
         linesApiNames.forEach(function (lineName: string, i: number): void {
             if (secondaryLines[i]) {
                 indicator.points = secondaryLines[i];
@@ -344,16 +342,12 @@ namespace MultipleLinesComposition {
                         ' at mixin/multiple-line.js:34'
                     );
                 }
-
                 indicator.graph = (indicator as any)['graph' + lineName];
                 SMAIndicator.prototype.drawGraph.call(indicator);
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
                 // Save points as well when areaFill is available.
-                if (areaLinesNames.length !== 0) {
-                    (indicator as any)['graph' + lineName].points = secondaryLines[i];
-                }
             } else {
                 error(
                     'Error: "' + lineName + ' doesn\'t have equivalent ' +
@@ -362,31 +356,14 @@ namespace MultipleLinesComposition {
                 );
             }
         });
+
+        // Restore options and draw a main line:
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
         SMAIndicator.prototype.drawGraph.call(indicator);
     }
 
-    /**
-     * Draw the area between two lines.
-     * @param options options to draw the area
-     */
-    function drawArea(options: IndicatorSpanObject): void {
-        const indicator = options.indicator;
-        indicator.points = options.points;
-        indicator.nextPoints = options.nextPoints;
-        indicator.color = options.color;
-        indicator.options = merge(
-            options.options.styles,
-            options.gap
-        ) as any;
-
-        indicator.graph = options.graph;
-        indicator.fillGraph = true;
-        SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
-
-    }
     /**
      * Create translatedLines Collection based on pointArrayMap.
      *
