@@ -397,7 +397,7 @@ transition: opacity 1500ms;
 	fill:#201735;
 	opacity:0;
 	stroke-dasharray: 2px;
-	transition: opacity 2s;
+	transition: opacity 1s;
 	stroke-width:1px;
 }
 #charts .berg-depth:hover{
@@ -405,11 +405,8 @@ transition: opacity 1500ms;
 }
 
 #charts .berg-label{
-	position:absolute;
-	z-index:100;
-	width:50px;
-	height:50px;
 	opacity:0;
+	transition: opacity 1s;
 }
 
 
@@ -424,34 +421,37 @@ transition: opacity 1500ms;
 	stroke-width:2px;
 	cursor:pointer;
 }
-#charts .berg-depth-0.highcharts-series-hover{
+#charts .berg-depth-0.highcharts-series-hover,
+#charts .berg-depth-2{
 	fill:#8087E8;
 	filter:none;
 	cursor:pointer;
 }
-#charts .berg-depth-2.highcharts-series-hover{
+#charts .berg-depth-4.highcharts-series-hover,
+#charts .berg-depth-6{
 	fill:#8bf2b6;
 	filter:none;
 	cursor:pointer;
 }
-#charts .berg-depth-4.highcharts-series-hover{
+ #charts .berg-depth-8.highcharts-series-hover,
+ #charts .berg-depth-10{
 	fill:#6699A1;
 	filter:none;
 	cursor:pointer;
 }
-#charts .berg-depth-6.highcharts-series-hover{
+#charts .berg-depth-12.highcharts-series-hover,
+#charts .berg-depth-14{
 	fill:#78748C;
 	filter:none;
 	cursor:pointer;
 }
 
-#charts .berg-depth-8.highcharts-series-hover{
+#charts .berg-depth-16.highcharts-series-hover,
+#charts .berg-depth-18{
 	fill:#d6c7a5;
 	cursor:pointer;
 
 }
-
-
 #charts .chart-container .highcharts-tooltip-box {
 	stroke-width: 0px;
 	border: none;
@@ -519,7 +519,7 @@ transition: opacity 1500ms;
 	
 }
 #charts .highcharts-subtitle{
-	font-size: .9em;
+	font-size: 0.9em;
 	transform:translateY(-20px);
 	font-weight: 400;
 	transition: opacity 300ms;
@@ -530,7 +530,6 @@ transition: opacity 1500ms;
 
 #charts .highcharts-subtitle .iceberg-subtitle{
 	opacity:0;
-	
 }
 #charts .highcharts-subtitle .iceberg-subtitle.show{
 	opacity:1 !important
@@ -538,14 +537,100 @@ transition: opacity 1500ms;
 
 #charts .label-title{
 	font-size:0.8em;
+	margin: 0px;
 }
 #charts .label-percent{
 	color:#000;
-	font-size:1em;
+	font-size:0.9em;
 	font-weight:300;
+	margin: 0px;
 }
 #charts .highcharts-axis-labels{
 	font-size: 0.6em;
+}
+
+#charts .highcharts-axis-title{
+	transform: translateY(0px);
+}
+
+#charts .highcharts-data-label-color-5 .berg-label{
+	transform: translateY(-10px)
+}
+
+@media screen  and (min-width: 300px) {
+	#charts{
+		width:300px;
+		height:300px;
+	}
+	#charts .highcharts-axis-title{
+		transform: translateY(-10px);
+	}
+	#charts .highcharts-subtitle{
+		width:180px;
+	}
+}
+
+@media screen  and (min-width: 400px) {
+	#charts{
+		width:400px;
+		height:400px;
+	}
+
+	#charts .particles{
+		position:absolute;
+		width:300px;
+		height:300px;
+		left:-198px;
+		top:-85px;
+		transform:scale(1);
+	}
+	#charts .highcharts-title{
+		font-size: 1.4em;
+		transform:translateY(20px);
+		font-weight: 700;
+		opacity:0;
+		transition: opacity 1s;
+	}
+	#charts .highcharts-subtitle{
+		font-size: 1.1em;
+		line-height:1.5em;
+		transform:translateY(20px);
+		font-weight: 400;
+		color:#fff;
+		transition: opacity 1s;
+		width:300px;
+	}
+	#charts .highcharts-subtitle .iceberg-subtitle{
+		color:#fff;
+		width:300px;
+		white-space:normal;
+		opacity:0;
+	}
+	#charts .highcharts-subtitle .iceberg-subtitle{
+		color:#fff;
+		width:300px;
+		white-space:normal;
+		font-size:1.1em;
+	}
+	#charts .label-title{
+		font-size:1em;
+	}
+	#charts .berg-tip{
+		width:300px;
+		color:#fff;
+		white-space:normal;
+		font-size:1.1em;
+		font-weight:500;
+	}
+	
+	#charts .highcharts-data-label-color-5 .berg-label{
+		transform: translate(5px, 0px)
+	}
+	#charts .highcharts-axis-title{
+		transform: translateY(-35px);
+	}
+	
+
 }
 
 @media screen  and (min-width: 500px) {
@@ -555,7 +640,7 @@ transition: opacity 1500ms;
 	}
 
 	#charts .label-percent{
-		font-size:1.6em;
+		font-size:1.4em;
 	}
 
 	#charts .particles{
@@ -612,9 +697,7 @@ transition: opacity 1500ms;
 		transform: rotate(90deg) scale(.8) ;
 	}
 
-	#charts .label-title{
-		font-size:1.1em;
-	}
+	
 
 	#charts .particles .particle.rotate{
 		background-repeat:no-repeat;
@@ -622,39 +705,7 @@ transition: opacity 1500ms;
 		position:absolute;
 		transform: rotate(90deg) scale(1.5) ;
 	}
-	#charts .highcharts-title{
-		font-size: 1.4em;
-		transform:translateY(40px);
-		font-weight: 700;
-		opacity:0;
-		transition: opacity 1s;
-	}
-	#charts .highcharts-subtitle{
-		font-size: 1.1em;
-		line-height:1.5em;
-		transform:translateY(20px);
-		font-weight: 400;
-		color:#fff;
-		transition: opacity 1s;
-		width:300px;
-	}
-
-
-	#charts .highcharts-subtitle .iceberg-subtitle{
-		color:#fff;
-		width:300px;
-		white-space:normal;
-		opacity:0;
-	}
-
-
-
-	#charts .iceberg-subtitle{
-		color:#fff;
-		width:300px;
-		white-space:normal
-	}
-
+	
 
 	#charts .highcharts-axis-labels{
 		font-size: 0.9em;;
@@ -668,14 +719,7 @@ transition: opacity 1500ms;
 		transform:translate(-10px,-70px);
 		font-size: 0.8em;
 	}
-
-	#charts .berg-tip{
-		width:300px;
-		color:#fff;
-		white-space:normal;
-		font-size:1.1em;
-		font-weight:500;
-	}
+	
 }
 
 

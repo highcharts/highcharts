@@ -68,7 +68,6 @@ class TimelineEvent {
      *
      * */
 
-    public eventObject?: any;
     public id: string = void 0 as any;
     public options: TimelineEvent.Options = void 0 as any;
     public time: number = void 0 as any;
@@ -150,8 +149,8 @@ class TimelineEvent {
     public cancel(fadeOut?: boolean): void {
         const eventObject = this.options.eventObject;
 
-        if (eventObject && eventObject.cancelSonify) {
-            this.eventObject.cancelSonify(fadeOut);
+        if (eventObject) {
+            eventObject.cancelSonify(fadeOut);
         }
     }
 

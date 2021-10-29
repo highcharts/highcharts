@@ -926,7 +926,7 @@ const Options: DeepPartial<OptionsType> = {
      * Point accessibility options for a series.
      *
      * @extends    accessibility.point
-     * @since      next
+     * @since 9.3.0
      * @requires   modules/accessibility
      * @apioption  plotOptions.series.accessibility.point
      */
@@ -945,7 +945,7 @@ const Options: DeepPartial<OptionsType> = {
      * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
      *
      * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-     * @since     next
+     * @since 9.3.0
      * @apioption plotOptions.series.accessibility.point.descriptionFormatter
      */
 

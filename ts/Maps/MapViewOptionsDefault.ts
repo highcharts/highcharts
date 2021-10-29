@@ -26,7 +26,7 @@ import D from '../Core/DefaultOptions.js';
  * To set the view dynamically after chart generation, see
  * [mapView.setView](/class-reference/Highcharts.MapView#setView).
  *
- * @since next
+ * @since 9.3.0
  * @product      highmaps
  * @optionparent mapView
  */

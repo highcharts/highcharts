@@ -1394,7 +1394,7 @@ export default MapSeries;
  *         Geometry defined in data
  *
  * @type      {Object}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.map.data.geometry
  */
@@ -1404,7 +1404,7 @@ export default MapSeries;
  * or `MultiPolygon`.
  *
  * @type      {string}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @validvalue ["LineString", "Polygon", "MultiLineString", "MultiPolygon"]
  * @apioption series.map.data.geometry.type
@@ -1416,7 +1416,7 @@ export default MapSeries;
  * `type`.
  *
  * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.map.data.geometry.coordinates
  */
@@ -1486,6 +1486,9 @@ export default MapSeries;
  * To achieve a better separation between the structure and the data,
  * it is recommended to use `mapData` to define that paths instead
  * of defining them on the data points themselves.
+ *
+ * For providing true geographical shapes based on longitude and latitude, use
+ * the `geometry` option instead.
  *
  * @sample maps/series/data-path/
  *         Paths defined in data

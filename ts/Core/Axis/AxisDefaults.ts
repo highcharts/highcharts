@@ -2625,7 +2625,7 @@ namespace AxisDefaults {
          *
          * @type      {boolean}
          * @default   true
-         * @since     next
+         * @since 9.3.0
          *
          * @apioption yAxis.scrollbar.opposite
          * @apioption xAxis.scrollbar.opposite

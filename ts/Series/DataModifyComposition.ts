@@ -789,7 +789,7 @@ export default DataModifyComposition;
  *
  * @type      {boolean}
  * @default   false
- * @since     next
+ * @since 9.3.0
  * @product   highstock
  * @apioption plotOptions.series.cumulative
  */
