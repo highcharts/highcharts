@@ -108,6 +108,18 @@ class BBIndicator extends SMAIndicator {
      * @optionparent plotOptions.bb
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
+
+        /**
+         * Option for fill color between lines in BoiligerBands Indicator.
+         *
+         * @type      {Highcharts.Color}
+         * @apioption plotOptions.bb.fillColor
+         * @since     6.0.0
+         *
+         * @sample    {highstock} stock/indicators/indicator-area-fill
+         *      background fill between lines
+         */
+
         params: {
             period: 20,
             /**
