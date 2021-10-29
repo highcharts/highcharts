@@ -306,7 +306,7 @@ class SMAIndicator extends LineSeries {
                     // No matter which indicator,
                     // always recalculate after updating the data.
                     indicator.dataEventsToUnbind.push(
-                        addEvent<SeriesType>(
+                        addEvent(
                             indicator.linkedParent,
                             'updatedData',
                             function (): void {
@@ -319,7 +319,7 @@ class SMAIndicator extends LineSeries {
                     // event (afterSetExtremes) to properly show the data.
                     if (indicator.calculateOn.xAxis) {
                         indicator.dataEventsToUnbind.push(
-                            addEvent<AxisType>(
+                            addEvent(
                                 indicator.linkedParent.xAxis,
                                 indicator.calculateOn.xAxis,
                                 function (): void {
