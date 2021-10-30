@@ -3,16 +3,14 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "prettier"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": "./tsconfig.json"
     },
-    "plugins": [
-        "highcharts",
-        "@typescript-eslint"
-    ],
+    "plugins": ["highcharts", "@typescript-eslint"],
     "rules": {
         "camelcase": [
             2,
@@ -21,10 +19,7 @@
             }
         ],
         "class-methods-use-this": 0, // @todo
-        "comma-dangle": [
-            2,
-            "never"
-        ],
+        "comma-dangle": [2, "never"],
         "consistent-return": 0,
         "default-case": 0,
         "dot-notation": 0,
@@ -37,7 +32,7 @@
                 "code": 120,
                 "comments": 80,
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
         "no-dupe-class-members": 0,
@@ -56,8 +51,13 @@
         "prefer-const": 1, // @todo
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
-        "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
-        "valid-jsdoc": [ // @todo EOL 2018-11
+        "quote-props": [
+            2,
+            "as-needed",
+            { "keywords": true, "unnecessary": false }
+        ],
+        "valid-jsdoc": [
+            // @todo EOL 2018-11
             "error",
             {
                 "prefer": {
@@ -73,14 +73,6 @@
             {
                 "allowExpressions": false,
                 "allowTypedFunctionExpressions": false
-            }
-        ],
-        "@typescript-eslint/indent": [
-            "error",
-            4,
-            {
-                "FunctionExpression": { "parameters": 1 },
-                "SwitchCase": 1
             }
         ],
         "@typescript-eslint/no-empty-function": 0, // @todo
@@ -107,6 +99,6 @@
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,
         "node/no-missing-import": 0, // @todo
-        "node/no-unsupported-features/es-syntax": 0, // @todo
+        "node/no-unsupported-features/es-syntax": 0 // @todo
     }
 }

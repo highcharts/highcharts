@@ -25,10 +25,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisOptions from '../Axis/AxisOptions';
 import type AxisType from '../Axis/AxisType';
 import type BBoxObject from '../Renderer/BBoxObject';
-import type {
-    CSSObject,
-    CursorValue
-} from '../Renderer/CSSObject';
+import type { CSSObject, CursorValue } from '../Renderer/CSSObject';
 import type { EventCallback } from '../Callback';
 import type {
     LabelsItemsOptions,
@@ -53,31 +50,18 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import A from '../Animation/AnimationUtilities.js';
-const {
-    animate,
-    animObject,
-    setAnimation
-} = A;
+const { animate, animObject, setAnimation } = A;
 import Axis from '../Axis/Axis.js';
 import FormatUtilities from '../FormatUtilities.js';
 const { numberFormat } = FormatUtilities;
 import Foundation from '../Foundation.js';
 const { registerEventOptions } = Foundation;
 import H from '../Globals.js';
-const {
-    charts,
-    doc,
-    marginNames,
-    svg,
-    win
-} = H;
+const { charts, doc, marginNames, svg, win } = H;
 import Legend from '../Legend/Legend.js';
 import MSPointer from '../MSPointer.js';
 import D from '../DefaultOptions.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
+const { defaultOptions, defaultTime } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
@@ -140,7 +124,7 @@ declare module '../Axis/AxisOptions' {
 declare module './ChartLike' {
     interface ChartLike {
         resetZoomButton?: SVGElement;
-        pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
+        pan(e: PointerEvent, panning: boolean | ChartPanningOptions): void;
         showResetZoom(): void;
         zoom(event: Pointer.SelectEventObject): void;
         zoomOut(): void;
@@ -216,7 +200,6 @@ declare module '../Series/SeriesLike' {
  *        handler is equivalent.
  */
 class Chart {
-
     /* *
      *
      *  Static Functions
@@ -228,7 +211,7 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): Chart;
     public static chart(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: string | globalThis.HTMLElement,
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
@@ -264,8 +247,8 @@ class Chart {
      * Returns the Chart object.
      */
     public static chart(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
+        a: string | globalThis.HTMLElement | Partial<Options>,
+        b?: Chart.CallbackFunction | Partial<Options>,
         c?: Chart.CallbackFunction
     ): Chart {
         return new Chart(a as any, b as any, c);
@@ -282,13 +265,13 @@ class Chart {
         callback?: Chart.CallbackFunction
     );
     public constructor(
-        renderTo: (string|globalThis.HTMLElement),
+        renderTo: string | globalThis.HTMLElement,
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     );
     public constructor(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
+        a: string | globalThis.HTMLElement | Partial<Options>,
+        b?: Chart.CallbackFunction | Partial<Options>,
         c?: Chart.CallbackFunction
     ) {
         this.getArgs(a, b, c);
@@ -300,7 +283,7 @@ class Chart {
      *
      * */
 
-    public _cursor?: (CursorValue|null);
+    public _cursor?: CursorValue | null;
     public axes: Array<AxisType> = void 0 as any;
     public axisOffset: Array<number> = void 0 as any;
     public bounds: Record<string, Record<string, number>> = void 0 as any;
@@ -317,7 +300,8 @@ class Chart {
     public containerWidth?: string;
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public eventOptions: Record<string, EventCallback<Series, Event>> = void 0 as any;
+    public eventOptions: Record<string, EventCallback<Series, Event>> =
+        void 0 as any;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
     public hasRendered?: boolean;
@@ -354,7 +338,7 @@ class Chart {
     public renderTo: globalThis.HTMLElement = void 0 as any;
     public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
-    public sharedClips: Record<string, (SVGElement|undefined)> = {};
+    public sharedClips: Record<string, SVGElement | undefined> = {};
     public spacing: Array<number> = void 0 as any;
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;
@@ -387,8 +371,8 @@ class Chart {
      * @fires Highcharts.Chart#event:afterInit
      */
     public getArgs(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
+        a: string | globalThis.HTMLElement | Partial<Options>,
+        b?: Chart.CallbackFunction | Partial<Options>,
         c?: Chart.CallbackFunction
     ): void {
         // Remove the optional first argument, renderTo, and
@@ -423,39 +407,40 @@ class Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-
         // Handle regular options
         const userPlotOptions =
-            userOptions.plotOptions || {} as SeriesTypePlotOptions;
+            userOptions.plotOptions || ({} as SeriesTypePlotOptions);
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
-
             const options = merge(defaultOptions, userOptions); // do the merge
 
             const optionsChart = options.chart;
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
-            objectEach(options.plotOptions, function (
-                typeOptions: AnyRecord,
-                type: string
-            ): void {
-                if (isObject(typeOptions)) { // #8766
-                    typeOptions.tooltip = (
-                        userPlotOptions[type] && // override by copy:
-                        merge((userPlotOptions[type] as any).tooltip)
-                    ) || void 0; // or clear
+            objectEach(
+                options.plotOptions,
+                function (typeOptions: AnyRecord, type: string): void {
+                    if (isObject(typeOptions)) {
+                        // #8766
+                        typeOptions.tooltip =
+                            (userPlotOptions[type] && // override by copy:
+                                merge(
+                                    (userPlotOptions[type] as any).tooltip
+                                )) ||
+                            void 0; // or clear
+                    }
                 }
-            });
+            );
 
             // User options have higher priority than default options
             // (#6218). In case of exporting: path is changed
-            (options.tooltip as any).userOptions = (
-                userOptions.chart &&
-                userOptions.chart.forExport &&
-                (userOptions.tooltip as any).userOptions
-            ) || userOptions.tooltip;
+            (options.tooltip as any).userOptions =
+                (userOptions.chart &&
+                    userOptions.chart.forExport &&
+                    (userOptions.tooltip as any).userOptions) ||
+                userOptions.tooltip;
 
             /**
              * The original options given to the constructor or a chart factory
@@ -518,9 +503,9 @@ class Chart {
              * @type {Highcharts.Time}
              */
             this.time =
-                userOptions.time && Object.keys(userOptions.time).length ?
-                    new Time(userOptions.time) :
-                    H.time;
+                userOptions.time && Object.keys(userOptions.time).length
+                    ? new Time(userOptions.time)
+                    : H.time;
 
             /**
              * Callback function to override the default function that formats
@@ -598,11 +583,9 @@ class Chart {
     public initSeries(options: SeriesOptions): Series {
         const chart = this,
             optionsChart = chart.options.chart,
-            type = (
-                options.type ||
+            type = (options.type ||
                 optionsChart.type ||
-                optionsChart.defaultSeriesType
-            ) as string,
+                optionsChart.defaultSeriesType) as string,
             SeriesClass = seriesTypes[type];
 
         // No such series type
@@ -663,7 +646,7 @@ class Chart {
     public orderSeries(fromIndex?: number): void {
         const series = this.series;
 
-        for (let i = (fromIndex || 0), iEnd = series.length; i < iEnd; ++i) {
+        for (let i = fromIndex || 0, iEnd = series.length; i < iEnd; ++i) {
             if (series[i]) {
                 /**
                  * Contains the series' index in the `Chart.series` array.
@@ -700,13 +683,8 @@ class Chart {
         plotY: number,
         options: Chart.IsInsideOptionsObject = {}
     ): boolean {
-        const {
-            inverted,
-            plotBox,
-            plotLeft,
-            plotTop,
-            scrollablePlotBox
-        } = this;
+        const { inverted, plotBox, plotLeft, plotTop, scrollablePlotBox } =
+            this;
 
         let scrollLeft = 0,
             scrollTop = 0;
@@ -726,45 +704,51 @@ class Chart {
             };
 
         if (!options.ignoreX) {
-            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+            const xAxis = (series &&
+                (inverted ? series.yAxis : series.xAxis)) || {
                 pos: plotLeft,
                 len: Infinity
             };
 
-            const chartX = options.paneCoordinates ? xAxis.pos + x : plotLeft + x;
+            const chartX = options.paneCoordinates
+                ? xAxis.pos + x
+                : plotLeft + x;
 
-            if (!(
-                chartX >= Math.max(
-                    scrollLeft + plotLeft,
-                    xAxis.pos
-                ) &&
-                chartX <= Math.min(
-                    scrollLeft + plotLeft + box.width,
-                    xAxis.pos + xAxis.len
+            if (
+                !(
+                    chartX >= Math.max(scrollLeft + plotLeft, xAxis.pos) &&
+                    chartX <=
+                        Math.min(
+                            scrollLeft + plotLeft + box.width,
+                            xAxis.pos + xAxis.len
+                        )
                 )
-            )) {
+            ) {
                 e.isInsidePlot = false;
             }
         }
 
         if (!options.ignoreY && e.isInsidePlot) {
-            const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+            const yAxis = (series &&
+                (inverted ? series.xAxis : series.yAxis)) || {
                 pos: plotTop,
                 len: Infinity
             };
 
-            const chartY = options.paneCoordinates ? yAxis.pos + y : plotTop + y;
+            const chartY = options.paneCoordinates
+                ? yAxis.pos + y
+                : plotTop + y;
 
-            if (!(
-                chartY >= Math.max(
-                    scrollTop + plotTop,
-                    yAxis.pos
-                ) &&
-                chartY <= Math.min(
-                    scrollTop + plotTop + box.height,
-                    yAxis.pos + yAxis.len
+            if (
+                !(
+                    chartY >= Math.max(scrollTop + plotTop, yAxis.pos) &&
+                    chartY <=
+                        Math.min(
+                            scrollTop + plotTop + box.height,
+                            yAxis.pos + yAxis.len
+                        )
                 )
-            )) {
+            ) {
                 e.isInsidePlot = false;
             }
         }
@@ -795,12 +779,13 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    public redraw(animation?: (boolean|Partial<AnimationOptions>)): void {
-
+    public redraw(animation?: boolean | Partial<AnimationOptions>): void {
         fireEvent(this, 'beforeRedraw');
 
         const chart = this,
-            axes: Array<Axis> = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [],
+            axes: Array<Axis> = chart.hasCartesianSeries
+                ? chart.axes
+                : chart.colorAxis || [],
             series = chart.series,
             pointer = chart.pointer,
             legend = chart.legend,
@@ -809,8 +794,8 @@ class Chart {
             isHiddenChart = renderer.isHidden(),
             afterRedraw = [] as Array<Function>;
 
-        let hasDirtyStacks: (boolean|undefined),
-            hasStackedSeries: (boolean|undefined),
+        let hasDirtyStacks: boolean | undefined,
+            hasStackedSeries: boolean | undefined,
             i: number,
             isDirtyBox = chart.isDirtyBox,
             redrawLegend = chart.isDirtyLegend,
@@ -847,7 +832,8 @@ class Chart {
                 }
             }
         }
-        if (hasDirtyStacks) { // mark others as dirty
+        if (hasDirtyStacks) {
+            // mark others as dirty
             i = series.length;
             while (i--) {
                 serie = series[i];
@@ -867,10 +853,8 @@ class Chart {
                     redrawLegend = true;
                 } else if (
                     legendUserOptions &&
-                    (
-                        legendUserOptions.labelFormatter ||
-                        legendUserOptions.labelFormat
-                    )
+                    (legendUserOptions.labelFormatter ||
+                        legendUserOptions.labelFormat)
                 ) {
                     redrawLegend = true; // #2165
                 }
@@ -893,7 +877,6 @@ class Chart {
             chart.getStacks();
         }
 
-
         // set axes scales
         axes.forEach(function (axis): void {
             axis.updateNames();
@@ -911,11 +894,11 @@ class Chart {
 
         // redraw axes
         axes.forEach(function (axis): void {
-
             // Fire 'afterSetExtremes' only if extremes are set
             const key = axis.min + ',' + axis.max;
 
-            if (axis.extKey !== key) { // #821, #4452
+            if (axis.extKey !== key) {
+                // #821, #4452
                 axis.extKey = key;
 
                 // prevent a recursive call to chart.redraw() (#1119)
@@ -989,7 +972,7 @@ class Chart {
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      * The retrieved item.
      */
-    public get(id: string): (Axis|Series|Point|undefined) {
+    public get(id: string): Axis | Series | Point | undefined {
         const series = this.series;
 
         /**
@@ -997,17 +980,16 @@ class Chart {
          * @param {Highcharts.Axis|Highcharts.Series} item
          * @return {boolean}
          */
-        function itemById(item: (Axis|Series)): boolean {
+        function itemById(item: Axis | Series): boolean {
             return (
                 (item as Series).id === id ||
                 (item.options && item.options.id === id)
             );
         }
 
-        let ret: (Axis|Series|Point|undefined) =
+        let ret: Axis | Series | Point | undefined =
             // Search axes
             find(this.axes, itemById) ||
-
             // Search series
             find(this.series, itemById);
 
@@ -1030,8 +1012,8 @@ class Chart {
     public getAxes(): void {
         const chart = this,
             options = this.options,
-            xAxisOptions = options.xAxis = splat(options.xAxis || {}),
-            yAxisOptions = options.yAxis = splat(options.yAxis || {});
+            xAxisOptions = (options.xAxis = splat(options.xAxis || {})),
+            yAxisOptions = (options.yAxis = splat(options.yAxis || {}));
 
         fireEvent(this, 'getAxes');
 
@@ -1048,9 +1030,7 @@ class Chart {
         // concatenate all axis options into one array
         const optionsArray = xAxisOptions.concat(yAxisOptions);
 
-        optionsArray.forEach(function (
-            axisOptions: AxisOptions
-        ): void {
+        optionsArray.forEach(function (axisOptions: AxisOptions): void {
             new Axis(chart, axisOptions); // eslint-disable-line no-new
         });
 
@@ -1076,12 +1056,11 @@ class Chart {
             // For one-to-one points inspect series.data in order to retrieve
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
-            series.getPointsCollection()
-                .forEach((point): void => {
-                    if (pick(point.selectedStaging, point.selected)) {
-                        acc.push(point);
-                    }
-                });
+            series.getPointsCollection().forEach((point): void => {
+                if (pick(point.selectedStaging, point.selected)) {
+                    acc.push(point);
+                }
+            });
             return acc;
         }, []);
     }
@@ -1103,7 +1082,7 @@ class Chart {
      *         The currently selected series.
      */
     public getSelectedSeries(): Array<Series> {
-        return this.series.filter(function (serie): (boolean|undefined) {
+        return this.series.filter(function (serie): boolean | undefined {
             return serie.selected;
         });
     }
@@ -1133,7 +1112,6 @@ class Chart {
         subtitleOptions?: Chart.SubtitleOptions,
         redraw?: boolean
     ): void {
-
         this.applyDescription('title', titleOptions);
         this.applyDescription('subtitle', subtitleOptions);
 
@@ -1155,26 +1133,29 @@ class Chart {
      * The options to set, will be merged with default options.
      */
     public applyDescription(
-        name: ('title'|'subtitle'|'caption'),
+        name: 'title' | 'subtitle' | 'caption',
         explicitOptions?: Chart.DescriptionOptionsType
     ): void {
         const chart = this;
 
         // Default style
-        const style = name === 'title' ? {
-            color: Palette.neutralColor80,
-            fontSize: this.options.isStock ? '16px' : '18px' // #2944
-        } : {
-            color: Palette.neutralColor60
-        };
+        const style =
+            name === 'title'
+                ? {
+                      color: Palette.neutralColor80,
+                      fontSize: this.options.isStock ? '16px' : '18px' // #2944
+                  }
+                : {
+                      color: Palette.neutralColor60
+                  };
 
         // Merge default options with explicit options
-        const options = this.options[name] = merge(
+        const options = (this.options[name] = merge(
             // Default styles
             (!this.styledMode && { style }) as Chart.DescriptionOptionsType,
             this.options[name],
             explicitOptions
-        );
+        ));
 
         let elem = this[name];
 
@@ -1183,14 +1164,11 @@ class Chart {
         }
 
         if (options && !elem) {
-            elem = this.renderer.text(
-                options.text as any,
-                0,
-                0,
-                options.useHTML
-            )
+            elem = this.renderer
+                .text(options.text as any, 0, 0, options.useHTML)
                 .attr({
                     align: options.align,
+                    // prettier-ignore
                     'class': 'highcharts-' + name,
                     zIndex: (options as any).zIndex || 4
                 })
@@ -1199,7 +1177,7 @@ class Chart {
             // Update methods, shortcut to Chart.setTitle, Chart.setSubtitle and
             // Chart.setCaption
             elem.update = function (
-                updateOptions: (Chart.DescriptionOptionsType)
+                updateOptions: Chart.DescriptionOptionsType
             ): void {
                 const fn = {
                     title: 'setTitle',
@@ -1236,7 +1214,6 @@ class Chart {
              */
             this[name] = elem;
         }
-
     }
 
     /**
@@ -1258,51 +1235,57 @@ class Chart {
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
             const title = (this as any)[key],
-                titleOptions: Chart.DescriptionOptionsType = (this as any).options[key],
+                titleOptions: Chart.DescriptionOptionsType = (this as any)
+                    .options[key],
                 verticalAlign = titleOptions.verticalAlign || 'top',
-                offset = key === 'title' ?
-                    verticalAlign === 'top' ? -3 : 0 :
-                    // Floating subtitle (#6574)
-                    verticalAlign === 'top' ? titleOffset[0] + 2 : 0;
+                offset =
+                    key === 'title'
+                        ? verticalAlign === 'top'
+                            ? -3
+                            : 0
+                        : // Floating subtitle (#6574)
+                        verticalAlign === 'top'
+                        ? titleOffset[0] + 2
+                        : 0;
 
-            let titleSize,
-                height;
+            let titleSize, height;
 
             if (title) {
-
                 if (!this.styledMode) {
-                    titleSize = titleOptions.style && titleOptions.style.fontSize;
+                    titleSize =
+                        titleOptions.style && titleOptions.style.fontSize;
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
-                title
-                    .css({
-                        width: (
-                            (titleOptions as any).width ||
-                            spacingBox.width + (titleOptions.widthAdjust || 0)
-                        ) + 'px'
-                    });
+                title.css({
+                    width:
+                        ((titleOptions as any).width ||
+                            spacingBox.width +
+                                (titleOptions.widthAdjust || 0)) + 'px'
+                });
 
                 // Skip the cache for HTML (#3481, #11666)
                 height = Math.round(title.getBBox(titleOptions.useHTML).height);
 
-                title.align(extend({
-                    y: verticalAlign === 'bottom' ?
-                        titleSize :
-                        offset + titleSize,
-                    height
-                }, titleOptions), false, 'spacingBox');
+                title.align(
+                    extend(
+                        {
+                            y:
+                                verticalAlign === 'bottom'
+                                    ? titleSize
+                                    : offset + titleSize,
+                            height
+                        },
+                        titleOptions
+                    ),
+                    false,
+                    'spacingBox'
+                );
 
                 if (!titleOptions.floating) {
                     if (verticalAlign === 'top') {
-                        titleOffset[0] = Math.ceil(
-                            titleOffset[0] +
-                            height
-                        );
+                        titleOffset[0] = Math.ceil(titleOffset[0] + height);
                     } else if (verticalAlign === 'bottom') {
-                        titleOffset[2] = Math.ceil(
-                            titleOffset[2] +
-                            height
-                        );
+                        titleOffset[2] = Math.ceil(titleOffset[2] + height);
                     }
                 }
             }
@@ -1322,10 +1305,9 @@ class Chart {
             titleOffset[2] += (this.options.caption as any).margin;
         }
 
-        const requiresDirtyBox = (
+        const requiresDirtyBox =
             !this.titleOffset ||
-            this.titleOffset.join(',') !== titleOffset.join(',')
-        );
+            this.titleOffset.join(',') !== titleOffset.join(',');
 
         // Used in getMargins
         this.titleOffset = titleOffset;
@@ -1370,7 +1352,8 @@ class Chart {
          * @name Highcharts.Chart#chartWidth
          * @type {number}
          */
-        chart.chartWidth = Math.max( // #1393
+        chart.chartWidth = Math.max(
+            // #1393
             0,
             widthOption || (chart.containerWidth as any) || 600 // #1460
         );
@@ -1382,15 +1365,10 @@ class Chart {
          */
         chart.chartHeight = Math.max(
             0,
-            relativeLength(
-                heightOption as any,
-                chart.chartWidth
-            ) ||
-            (
-                (chart.containerHeight as any) > 1 ?
-                    (chart.containerHeight as any) :
-                    400
-            )
+            relativeLength(heightOption as any, chart.chartWidth) ||
+                ((chart.containerHeight as any) > 1
+                    ? (chart.containerHeight as any)
+                    : 400)
         );
     }
 
@@ -1412,7 +1390,6 @@ class Chart {
 
         if (!revert) {
             while (node && node.style) {
-
                 // When rendering to a detached node, it needs to be temporarily
                 // attached in order to read styling and bounding boxes (#5783,
                 // #7024).
@@ -1495,17 +1472,17 @@ class Chart {
             indexAttrName = 'data-highcharts-chart',
             containerId = uniqueKey();
 
-        let containerStyle: (CSSObject|undefined),
+        let containerStyle: CSSObject | undefined,
             renderTo = chart.renderTo;
 
         if (!renderTo) {
-            chart.renderTo = renderTo =
-                optionsChart.renderTo as HTMLDOMElement;
+            chart.renderTo = renderTo = optionsChart.renderTo as HTMLDOMElement;
         }
 
         if (isString(renderTo)) {
-            chart.renderTo = renderTo =
-                doc.getElementById(renderTo as any) as any;
+            chart.renderTo = renderTo = doc.getElementById(
+                renderTo as any
+            ) as any;
         }
 
         // Display an error if the renderTo is wrong
@@ -1553,21 +1530,24 @@ class Chart {
 
         // Create the inner container
         if (!chart.styledMode) {
-            containerStyle = extend<CSSObject>({
-                position: 'relative',
-                // needed for context menu (avoidscrollbars) and content
-                // overflow in IE
-                overflow: 'hidden',
-                width: chartWidth + 'px',
-                height: chartHeight + 'px',
-                textAlign: 'left',
-                lineHeight: 'normal', // #427
-                zIndex: 0, // #1072
-                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
-                userSelect: 'none', // #13503
-                'touch-action': 'manipulation',
-                outline: 'none'
-            }, optionsChart.style || {});
+            containerStyle = extend<CSSObject>(
+                {
+                    position: 'relative',
+                    // needed for context menu (avoidscrollbars) and content
+                    // overflow in IE
+                    overflow: 'hidden',
+                    width: chartWidth + 'px',
+                    height: chartHeight + 'px',
+                    textAlign: 'left',
+                    lineHeight: 'normal', // #427
+                    zIndex: 0, // #1072
+                    '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
+                    userSelect: 'none', // #13503
+                    'touch-action': 'manipulation',
+                    outline: 'none'
+                },
+                optionsChart.style || {}
+            );
         }
 
         /**
@@ -1592,9 +1572,10 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = optionsChart.renderer || !svg ?
-            RendererRegistry.getRendererType(optionsChart.renderer) :
-            SVGRenderer;
+        const Renderer =
+            optionsChart.renderer || !svg
+                ? RendererRegistry.getRendererType(optionsChart.renderer)
+                : SVGRenderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -1615,14 +1596,15 @@ class Chart {
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
-
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style as any);
         } else {
             // Initialize definitions
-            for (const key in options.defs) { // eslint-disable-line guard-for-in
-                this.renderer.definition((options.defs as any)[key]);
+            for (const key in options.defs) {
+                if (Object.hasOwnProperty.call(options.defs, key)) {
+                    this.renderer.definition((options.defs as any)[key]);
+                }
             }
         }
 
@@ -1648,10 +1630,7 @@ class Chart {
 
         // Adjust for title and subtitle
         if (titleOffset[0] && !defined(margin[0])) {
-            this.plotTop = Math.max(
-                this.plotTop,
-                titleOffset[0] + spacing[0]
-            );
+            this.plotTop = Math.max(this.plotTop, titleOffset[0] + spacing[0]);
         }
 
         if (titleOffset[2] && !defined(margin[2])) {
@@ -1680,7 +1659,7 @@ class Chart {
     public getAxisMargins(): void {
         const chart = this,
             // [top, right, bottom, left]
-            axisOffset = chart.axisOffset = [0, 0, 0, 0],
+            axisOffset = (chart.axisOffset = [0, 0, 0, 0]),
             colorAxis = chart.colorAxis,
             margin = chart.margin,
             getOffset = function (axes: Array<Axis>): void {
@@ -1694,7 +1673,6 @@ class Chart {
         // pre-render axes to get labels offset width
         if (chart.hasCartesianSeries) {
             getOffset(chart.axes);
-
         } else if (colorAxis && colorAxis.length) {
             getOffset(colorAxis);
         }
@@ -1707,7 +1685,6 @@ class Chart {
         });
 
         chart.setChartSize();
-
     }
 
     /**
@@ -1733,10 +1710,8 @@ class Chart {
         const chart = this,
             optionsChart = chart.options.chart,
             renderTo = chart.renderTo,
-            hasUserSize = (
-                defined(optionsChart.width) &&
-                defined(optionsChart.height)
-            ),
+            hasUserSize =
+                defined(optionsChart.width) && defined(optionsChart.height),
             width = optionsChart.width || getStyle(renderTo, 'width'),
             height = optionsChart.height || getStyle(renderTo, 'height'),
             target = e ? e.target : win;
@@ -1759,13 +1734,16 @@ class Chart {
                 U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
-                chart.reflowTimeout = syncTimeout(function (): void {
-                    // Set size, it may have been destroyed in the meantime
-                    // (#1257)
-                    if (chart.container) {
-                        chart.setSize(void 0, void 0, false);
-                    }
-                }, e ? 100 : 0);
+                chart.reflowTimeout = syncTimeout(
+                    function (): void {
+                        // Set size, it may have been destroyed in the meantime
+                        // (#1257)
+                        if (chart.container) {
+                            chart.setSize(void 0, void 0, false);
+                        }
+                    },
+                    e ? 100 : 0
+                );
             }
             chart.containerWidth = width as any;
             chart.containerHeight = height as any;
@@ -1783,20 +1761,20 @@ class Chart {
         const chart = this;
 
         if (reflow !== false && !this.unbindReflow) {
-            this.unbindReflow = addEvent(win, 'resize', function (
-                e: Event
-            ): void {
-                // a removed event listener still runs in Edge and IE if the
-                // listener was removed while the event runs, so check if the
-                // chart is not destroyed (#11609)
-                if (chart.options) {
-                    chart.reflow(e);
+            this.unbindReflow = addEvent(
+                win,
+                'resize',
+                function (e: Event): void {
+                    // a removed event listener still runs in Edge and IE if the
+                    // listener was removed while the event runs, so check if
+                    // the chart is not destroyed (#11609)
+                    if (chart.options) {
+                        chart.reflow(e);
+                    }
                 }
-            });
+            );
             addEvent(this, 'destroy', this.unbindReflow);
-
         } else if (reflow === false && this.unbindReflow) {
-
             // Unbind and unset
             this.unbindReflow = this.unbindReflow();
         }
@@ -1847,9 +1825,9 @@ class Chart {
      * @fires Highcharts.Chart#event:resize
      */
     public setSize(
-        width?: (number|null),
-        height?: (number|null),
-        animation?: (boolean|Partial<AnimationOptions>)
+        width?: number | null,
+        height?: number | null,
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         const chart = this,
             renderer = chart.renderer;
@@ -1874,10 +1852,14 @@ class Chart {
         // Resize the container with the global animation applied if enabled
         // (#2503)
         if (!chart.styledMode) {
-            (globalAnimation ? animate : css)(chart.container, {
-                width: chart.chartWidth + 'px',
-                height: chart.chartHeight + 'px'
-            }, globalAnimation);
+            (globalAnimation ? animate : css)(
+                chart.container,
+                {
+                    width: chart.chartWidth + 'px',
+                    height: chart.chartHeight + 'px'
+                },
+                globalAnimation
+            );
         }
 
         chart.setChartSize(true);
@@ -1896,7 +1878,6 @@ class Chart {
         chart.getMargins();
 
         chart.redraw(globalAnimation);
-
 
         chart.oldChartHeight = null as any;
         fireEvent(chart, 'resize');
@@ -1930,10 +1911,7 @@ class Chart {
             spacing = chart.spacing,
             clipOffset = chart.clipOffset;
 
-        let plotLeft,
-            plotTop,
-            plotWidth,
-            plotHeight;
+        let plotLeft, plotTop, plotWidth, plotHeight;
 
         /**
          * The current left position of the plot area in pixels.
@@ -1997,23 +1975,27 @@ class Chart {
         };
 
         const plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2),
-            clipX = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2),
-            clipY = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2);
+            clipX = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2
+            ),
+            clipY = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2
+            );
 
         chart.clipBox = {
             x: clipX,
             y: clipY,
             width: Math.floor(
                 chart.plotSizeX -
-                Math.max(plotBorderWidth, (clipOffset as any)[1]) / 2 -
-                clipX
+                    Math.max(plotBorderWidth, (clipOffset as any)[1]) / 2 -
+                    clipX
             ),
             height: Math.max(
                 0,
                 Math.floor(
                     chart.plotSizeY -
-                    Math.max(plotBorderWidth, (clipOffset as any)[2]) / 2 -
-                    clipY
+                        Math.max(plotBorderWidth, (clipOffset as any)[2]) / 2 -
+                        clipY
                 )
             )
         };
@@ -2036,7 +2018,6 @@ class Chart {
      * @function Highcharts.Chart#resetMargins
      */
     public resetMargins(): void {
-
         fireEvent(this, 'resetMargins');
 
         const chart = this,
@@ -2049,12 +2030,10 @@ class Chart {
             const value = (chartOptions as any)[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            [
-                'Top',
-                'Right',
-                'Bottom',
-                'Left'
-            ].forEach(function (sideName: string, side: number): void {
+            ['Top', 'Right', 'Bottom', 'Left'].forEach(function (
+                sideName: string,
+                side: number
+            ): void {
                 (chart as any)[target][side] = pick(
                     (chartOptions as any)[target + sideName],
                     values[side]
@@ -2108,7 +2087,8 @@ class Chart {
 
         // Chart area
         if (!chartBackground) {
-            chart.chartBackground = chartBackground = renderer.rect()
+            chart.chartBackground = chartBackground = renderer
+                .rect()
                 .addClass('highcharts-background')
                 .add();
             verb = 'attr';
@@ -2123,23 +2103,21 @@ class Chart {
                 fill: chartBackgroundColor || 'none'
             };
 
-            if (chartBorderWidth || chartBackground['stroke-width']) { // #980
+            if (chartBorderWidth || chartBackground['stroke-width']) {
+                // #980
                 bgAttr.stroke = optionsChart.borderColor;
                 bgAttr['stroke-width'] = chartBorderWidth;
             }
-            chartBackground
-                .attr(bgAttr)
-                .shadow(optionsChart.shadow);
+            chartBackground.attr(bgAttr).shadow(optionsChart.shadow);
         } else {
             chartBorderWidth = mgn = chartBackground.strokeWidth();
         }
 
-
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
-            width: (chartWidth as any) - mgn - chartBorderWidth % 2,
-            height: (chartHeight as any) - mgn - chartBorderWidth % 2,
+            width: (chartWidth as any) - mgn - (chartBorderWidth % 2),
+            height: (chartHeight as any) - mgn - (chartBorderWidth % 2),
             r: optionsChart.borderRadius
         });
 
@@ -2147,7 +2125,8 @@ class Chart {
         verb = 'animate';
         if (!plotBackground) {
             verb = 'attr';
-            chart.plotBackground = plotBackground = renderer.rect()
+            chart.plotBackground = plotBackground = renderer
+                .rect()
                 .addClass('highcharts-plot-background')
                 .add();
         }
@@ -2164,13 +2143,15 @@ class Chart {
             // Create the background image
             if (plotBackgroundImage) {
                 if (!plotBGImage) {
-                    chart.plotBGImage = renderer.image(
-                        plotBackgroundImage,
-                        plotLeft,
-                        plotTop,
-                        plotWidth,
-                        plotHeight
-                    ).add();
+                    chart.plotBGImage = renderer
+                        .image(
+                            plotBackgroundImage,
+                            plotLeft,
+                            plotTop,
+                            plotWidth,
+                            plotHeight
+                        )
+                        .add();
                 } else {
                     if (plotBackgroundImage !== plotBGImage.attr('href')) {
                         plotBGImage.attr('href', plotBackgroundImage);
@@ -2195,7 +2176,8 @@ class Chart {
         verb = 'animate';
         if (!plotBorder) {
             verb = 'attr';
-            chart.plotBorder = plotBorder = renderer.rect()
+            chart.plotBorder = plotBorder = renderer
+                .rect()
                 .addClass('highcharts-plot-border')
                 .attr({
                     zIndex: 1 // Above the grid
@@ -2212,12 +2194,17 @@ class Chart {
             });
         }
 
-        plotBorder[verb](plotBorder.crisp({
-            x: plotLeft,
-            y: plotTop,
-            width: plotWidth,
-            height: plotHeight
-        }, -plotBorder.strokeWidth())); // #3282 plotBorder should be negative;
+        plotBorder[verb](
+            plotBorder.crisp(
+                {
+                    x: plotLeft,
+                    y: plotTop,
+                    width: plotWidth,
+                    height: plotHeight
+                },
+                -plotBorder.strokeWidth()
+            )
+        ); // #3282 plotBorder should be negative;
 
         // reset
         chart.isDirtyBox = false;
@@ -2239,9 +2226,7 @@ class Chart {
             optionsChart = chart.options.chart,
             seriesOptions: Array<SeriesOptions> = chart.options.series as any;
 
-        let i,
-            klass,
-            value;
+        let i, klass, value;
 
         /**
          * The flag is set to `true` if a series of the chart is inverted.
@@ -2250,9 +2235,11 @@ class Chart {
          * @type {boolean|undefined}
          */
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
-
             // The default series type's class
-            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType) as any];
+            klass =
+                seriesTypes[
+                    (optionsChart.type || optionsChart.defaultSeriesType) as any
+                ];
 
             // Get the value from available chart-wide properties
             value =
@@ -2274,7 +2261,6 @@ class Chart {
             // Set the chart property
             (chart as any)[key] = value;
         });
-
     }
 
     /**
@@ -2350,9 +2336,7 @@ class Chart {
             labels = chart.options.labels as Oldie.LabelsOptions;
 
         if (labels.items) {
-            labels.items.forEach(function (
-                label: LabelsItemsOptions
-            ): void {
+            labels.items.forEach(function (label: LabelsItemsOptions): void {
                 const style = extend(labels.style as any, label.style as any),
                     x = pInt(style.left) + chart.plotLeft,
                     y = pInt(style.top) + chart.plotTop + 12;
@@ -2361,15 +2345,11 @@ class Chart {
                 delete style.left;
                 delete style.top;
 
-                chart.renderer.text(
-                    label.html as any,
-                    x,
-                    y
-                )
+                chart.renderer
+                    .text(label.html as any, x, y)
                     .attr({ zIndex: 2 })
                     .css(style)
                     .add();
-
             });
         }
     }
@@ -2419,7 +2399,7 @@ class Chart {
         // Record preliminary dimensions for later comparison
         const tempWidth = chart.plotWidth;
 
-        axes.some(function (axis: Axis): (boolean|undefined) {
+        axes.some(function (axis: Axis): boolean | undefined {
             if (
                 axis.horiz &&
                 axis.visible &&
@@ -2449,7 +2429,6 @@ class Chart {
         const redoVertical = tempHeight / chart.plotHeight > 1.05;
 
         if (redoHorizontal || redoVertical) {
-
             axes.forEach(function (axis): void {
                 if (
                     (axis.horiz && redoHorizontal) ||
@@ -2465,18 +2444,17 @@ class Chart {
         // Draw the borders and backgrounds
         chart.drawChartBox();
 
-
         // Axes
         if (chart.hasCartesianSeries) {
             renderAxes(axes);
-
         } else if (colorAxis && colorAxis.length) {
             renderAxes(colorAxis);
         }
 
         // The series
         if (!chart.seriesGroup) {
-            chart.seriesGroup = renderer.g('series-group')
+            chart.seriesGroup = renderer
+                .g('series-group')
                 .attr({ zIndex: 3 })
                 .add();
         }
@@ -2495,7 +2473,6 @@ class Chart {
 
         // Set flag
         chart.hasRendered = true;
-
     }
 
     /**
@@ -2512,10 +2489,11 @@ class Chart {
     public addCredits(credits?: Chart.CreditsOptions): void {
         const chart = this,
             creds = merge(
-                true, this.options.credits as Chart.CreditsOptions, credits
+                true,
+                this.options.credits as Chart.CreditsOptions,
+                credits
             );
         if (creds.enabled && !this.credits) {
-
             /**
              * The chart's credits label. The label has an `update` method that
              * allows setting new options as per the
@@ -2524,11 +2502,8 @@ class Chart {
              * @name Highcharts.Chart#credits
              * @type {Highcharts.SVGElement}
              */
-            this.credits = this.renderer.text(
-                creds.text + (this.mapCredits || ''),
-                0,
-                0
-            )
+            this.credits = this.renderer
+                .text(creds.text + (this.mapCredits || ''), 0, 0)
                 .addClass('highcharts-credits')
                 .on('click', function (): void {
                     if (creds.href) {
@@ -2540,14 +2515,11 @@ class Chart {
                     zIndex: 8
                 });
 
-
             if (!chart.styledMode) {
                 this.credits.css(creds.style as any);
             }
 
-            this.credits
-                .add()
-                .align(creds.position);
+            this.credits.add().align(creds.position);
 
             // Dynamically update
             this.credits.update = function (
@@ -2617,9 +2589,20 @@ class Chart {
 
         // ==== Destroy chart properties:
         [
-            'title', 'subtitle', 'chartBackground', 'plotBackground',
-            'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
-            'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
+            'title',
+            'subtitle',
+            'chartBackground',
+            'plotBackground',
+            'plotBGImage',
+            'plotBorder',
+            'seriesGroup',
+            'clipRect',
+            'credits',
+            'pointer',
+            'rangeSelector',
+            'legend',
+            'resetZoomButton',
+            'tooltip',
             'renderer'
         ].forEach(function (name: string): void {
             const prop = (chart as any)[name];
@@ -2637,14 +2620,12 @@ class Chart {
             if (parentNode) {
                 discardElement(container);
             }
-
         }
 
         // clean it all up
         objectEach(chart, function (val: any, key: string): void {
             delete (chart as any)[key];
         });
-
     }
 
     /**
@@ -2720,7 +2701,6 @@ class Chart {
         // If the chart was rendered outside the top container, put it back in
         // (#3679)
         chart.temporaryDisplay(true);
-
     }
 
     /**
@@ -2734,21 +2714,22 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      */
     public onload(): void {
-
         // Run callbacks, first the ones registered by modules, then user's one
-        this.callbacks.concat([this.callback as any]).forEach(function (
-            this: Chart,
-            fn: (Chart.CallbackFunction|undefined)
-        ): void {
-            // Chart destroyed in its own callback (#3600)
-            if (fn && typeof this.index !== 'undefined') {
-                fn.apply(this, [this]);
-            }
-        }, this);
+        this.callbacks
+            .concat([this.callback as any])
+            .forEach(function (
+                this: Chart,
+                fn: Chart.CallbackFunction | undefined
+            ): void {
+                // Chart destroyed in its own callback (#3600)
+                if (fn && typeof this.index !== 'undefined') {
+                    fn.apply(this, [this]);
+                }
+            },
+            this);
 
         fireEvent(this, 'load');
         fireEvent(this, 'render');
-
 
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
@@ -2792,13 +2773,14 @@ class Chart {
     public addSeries(
         options: SeriesTypeOptions,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>)
+        animation?: boolean | Partial<AnimationOptions>
     ): Series {
         const chart = this;
 
-        let series: (Series|undefined);
+        let series: Series | undefined;
 
-        if (options) { // <- not necessary
+        if (options) {
+            // <- not necessary
             redraw = pick(redraw, true); // defaults to true
 
             fireEvent(
@@ -2861,10 +2843,11 @@ class Chart {
         redraw?: boolean,
         animation?: boolean
     ): Axis {
-        return this.createAxis(
-            isX ? 'xAxis' : 'yAxis',
-            { axis: options, redraw: redraw, animation: animation }
-        );
+        return this.createAxis(isX ? 'xAxis' : 'yAxis', {
+            axis: options,
+            redraw: redraw,
+            animation: animation
+        });
     }
 
     /**
@@ -2896,10 +2879,11 @@ class Chart {
         redraw?: boolean,
         animation?: boolean
     ): Axis {
-        return this.createAxis(
-            'colorAxis',
-            { axis: options, redraw: redraw, animation: animation }
-        );
+        return this.createAxis('colorAxis', {
+            axis: options,
+            redraw: redraw,
+            animation: animation
+        });
     }
 
     /**
@@ -2921,10 +2905,13 @@ class Chart {
         type: string,
         options: Chart.CreateAxisOptionsObject
     ): Axis {
-        const axis = new Axis(this, merge(options.axis, {
-            index: (this as AnyRecord)[type].length,
-            isX: type === 'xAxis'
-        }));
+        const axis = new Axis(
+            this,
+            merge(options.axis, {
+                index: (this as AnyRecord)[type].length,
+                isX: type === 'xAxis'
+            })
+        );
 
         if (pick(options.redraw, true)) {
             this.redraw(options.animation);
@@ -2972,9 +2959,14 @@ class Chart {
 
         // create the layer at the first call
         if (!loadingDiv) {
-            chart.loadingDiv = loadingDiv = createElement('div', {
-                className: 'highcharts-loading highcharts-loading-hidden'
-            }, null as any, chart.container);
+            chart.loadingDiv = loadingDiv = createElement(
+                'div',
+                {
+                    className: 'highcharts-loading highcharts-loading-hidden'
+                },
+                null as any,
+                chart.container
+            );
         }
 
         if (!loadingSpan) {
@@ -2990,16 +2982,16 @@ class Chart {
         loadingDiv.className = 'highcharts-loading';
 
         // Update text
-        AST.setElementHTML(
-            loadingSpan,
-            pick(str, options.lang.loading, '')
-        );
+        AST.setElementHTML(loadingSpan, pick(str, options.lang.loading, ''));
 
         if (!chart.styledMode) {
             // Update visuals
-            css(loadingDiv, extend((loadingOptions as any).style, {
-                zIndex: 10
-            }));
+            css(
+                loadingDiv,
+                extend((loadingOptions as any).style, {
+                    zIndex: 10
+                })
+            );
             css(loadingSpan, (loadingOptions as any).labelStyle);
 
             // Show it
@@ -3008,11 +3000,15 @@ class Chart {
                     opacity: 0,
                     display: ''
                 });
-                animate(loadingDiv, {
-                    opacity: (loadingOptions as any).style.opacity || 0.5
-                }, {
-                    duration: (loadingOptions as any).showDuration || 0
-                });
+                animate(
+                    loadingDiv,
+                    {
+                        opacity: (loadingOptions as any).style.opacity || 0.5
+                    },
+                    {
+                        duration: (loadingOptions as any).showDuration || 0
+                    }
+                );
             }
         }
 
@@ -3041,14 +3037,18 @@ class Chart {
                 'highcharts-loading highcharts-loading-hidden';
 
             if (!this.styledMode) {
-                animate(loadingDiv, {
-                    opacity: 0
-                }, {
-                    duration: (options.loading as any).hideDuration || 100,
-                    complete: function (): void {
-                        css(loadingDiv as any, { display: 'none' });
+                animate(
+                    loadingDiv,
+                    {
+                        opacity: 0
+                    },
+                    {
+                        duration: (options.loading as any).hideDuration || 100,
+                        complete: function (): void {
+                            css(loadingDiv as any, { display: 'none' });
+                        }
                     }
-                });
+                );
             }
         }
 
@@ -3114,7 +3114,7 @@ class Chart {
         options: Partial<Options>,
         redraw?: boolean,
         oneToOne?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>)
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         const chart = this,
             adders = {
@@ -3126,9 +3126,7 @@ class Chart {
             isResponsiveOptions = options.isResponsiveOptions,
             itemsForRemoval = [] as Array<string>;
 
-        let updateAllAxes,
-            updateAllSeries,
-            runSetSize;
+        let updateAllAxes, updateAllSeries, runSetSize;
 
         fireEvent(chart, 'update', { options: options });
 
@@ -3148,7 +3146,6 @@ class Chart {
         const optionsChart = options.chart;
 
         if (optionsChart) {
-
             merge(true, chart.options.chart, optionsChart);
 
             // Setter function
@@ -3171,7 +3168,8 @@ class Chart {
                 updateAllAxes = true;
             }
 
-            if ('alignTicks' in optionsChart) { // #6452
+            if ('alignTicks' in optionsChart) {
+                // #6452
                 updateAllAxes = true;
             }
 
@@ -3192,9 +3190,7 @@ class Chart {
                     chart.isDirtyBox = true;
                 }
                 // Chart setSize
-                if (
-                    chart.propsRequireReflow.indexOf(key) !== -1
-                ) {
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
                     if (isResponsiveOptions) {
                         chart.isDirtyBox = true;
                     } else {
@@ -3241,17 +3237,19 @@ class Chart {
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
         objectEach(options, function (val, key): void {
-            if ((chart as any)[key] &&
+            if (
+                (chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
                 (chart as any)[key].update(val, false);
 
-            // If a one-to-one object does not exist, look for an adder function
+                // If a one-to-one object does not exist, look for an adder
+                // function
             } else if (typeof (chart as any)[adders[key]] === 'function') {
                 (chart as any)[adders[key]](val);
 
-            // Else, just merge the options. For nodes like loading, noData,
-            // plotOptions
+                // Else, just merge the options. For nodes like loading, noData,
+                // plotOptions
             } else if (
                 key !== 'colors' &&
                 chart.collectionsWithUpdate.indexOf(key) === -1
@@ -3277,20 +3275,25 @@ class Chart {
             let indexMap: Array<number>;
 
             if ((options as any)[coll]) {
-
                 // In stock charts, the navigator series are also part of the
                 // chart.series array, but those series should not be handled
                 // here (#8196) and neither should the navigator axis (#9671).
                 indexMap = [];
-                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
+                (chart as any)[coll].forEach(function (
+                    s: Series | Axis,
+                    i: number
+                ): void {
                     if (!s.options.isInternal) {
                         indexMap.push(pick(s.options.index, i));
                     }
                 });
 
-                splat((options as any)[coll]).forEach(function (newOptions, i): void {
+                splat((options as any)[coll]).forEach(function (
+                    newOptions,
+                    i
+                ): void {
                     const hasId = defined(newOptions.id);
-                    let item: (Axis|Series|Point|undefined);
+                    let item: Axis | Series | Point | undefined;
 
                     // Match by id
                     if (hasId) {
@@ -3321,17 +3324,14 @@ class Chart {
                         chart.collectionsWithInit[coll][0].apply(
                             chart,
                             // [newOptions, ...extraArguments, redraw=false]
-                            [
-                                newOptions
-                            ].concat(
-                                // Not all initializers require extra args
-                                chart.collectionsWithInit[coll][1] || []
-                            ).concat([
-                                false
-                            ])
+                            [newOptions]
+                                .concat(
+                                    // Not all initializers require extra args
+                                    chart.collectionsWithInit[coll][1] || []
+                                )
+                                .concat([false])
                         ).touched = true;
                     }
-
                 });
 
                 // Add items for removal
@@ -3344,13 +3344,12 @@ class Chart {
                         }
                     });
                 }
-
-
             }
         });
 
         itemsForRemoval.forEach(function (item: any): void {
-            if (item.chart && item.remove) { // #9097, avoid removing twice
+            if (item.chart && item.remove) {
+                // #9097, avoid removing twice
                 item.remove(false);
             }
         });
@@ -3374,18 +3373,20 @@ class Chart {
 
         // Update size. Redraw is forced.
         const newWidth = optionsChart && optionsChart.width;
-        const newHeight = optionsChart && (
-            isString(optionsChart.height) ?
-                relativeLength(optionsChart.height, newWidth || chart.chartWidth) :
-                optionsChart.height
-        );
+        const newHeight =
+            optionsChart &&
+            (isString(optionsChart.height)
+                ? relativeLength(
+                      optionsChart.height,
+                      newWidth || chart.chartWidth
+                  )
+                : optionsChart.height);
 
         if (
             // In this case, run chart.setSize with newWidth and newHeight which
             // are undefined, only for reflowing chart elements because margin
             // or spacing has been set (#8190)
             runSetSize ||
-
             // In this case, the size is actually set
             (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
@@ -3400,7 +3401,6 @@ class Chart {
             redraw: redraw,
             animation: animation
         });
-
     }
 
     /**
@@ -3413,10 +3413,7 @@ class Chart {
      *        New subtitle options. The subtitle text itself is set by the
      *        `options.text` property.
      */
-    public setSubtitle(
-        options: Chart.SubtitleOptions,
-        redraw?: boolean
-    ): void {
+    public setSubtitle(options: Chart.SubtitleOptions, redraw?: boolean): void {
         this.applyDescription('subtitle', options);
         this.layOutTitles(redraw);
     }
@@ -3431,10 +3428,7 @@ class Chart {
      *        New caption options. The caption text itself is set by the
      *        `options.text` property.
      */
-    public setCaption(
-        options: Chart.CaptionOptions,
-        redraw?: boolean
-    ): void {
+    public setCaption(options: Chart.CaptionOptions, redraw?: boolean): void {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
     }
@@ -3454,12 +3448,11 @@ class Chart {
             btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,
             states = theme.states,
-            alignTo = (
+            alignTo =
                 btnOptions.relativeTo === 'chart' ||
-                btnOptions.relativeTo === 'spacingBox' ?
-                    null :
-                    'scrollablePlotBox'
-            );
+                btnOptions.relativeTo === 'spacingBox'
+                    ? null
+                    : 'scrollablePlotBox';
 
         /**
          * @private
@@ -3512,7 +3505,9 @@ class Chart {
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer,
-            mouseDownPos = (chart.inverted ? pointer.mouseDownX : pointer.mouseDownY);
+            mouseDownPos = chart.inverted
+                ? pointer.mouseDownX
+                : pointer.mouseDownY;
 
         let displayButton = false,
             hasZoomed;
@@ -3523,41 +3518,40 @@ class Chart {
                 hasZoomed = (axis.zoom as any)();
             });
             pointer.initiated = false; // #6804
+        } else {
+            // else, zoom in on all axes
+            event.xAxis
+                .concat(event.yAxis)
+                .forEach(function (axisData: Pointer.SelectDataObject): void {
+                    const axis = axisData.axis,
+                        axisStartPos = chart.inverted ? axis.left : axis.top,
+                        axisEndPos = chart.inverted
+                            ? axisStartPos + axis.width
+                            : axisStartPos + axis.height,
+                        isXAxis = axis.isXAxis;
 
-        } else { // else, zoom in on all axes
-            event.xAxis.concat(event.yAxis).forEach(function (
-                axisData: Pointer.SelectDataObject
-            ): void {
-                const axis = axisData.axis,
-                    axisStartPos = chart.inverted ? axis.left : axis.top,
-                    axisEndPos = chart.inverted ?
-                        axisStartPos + axis.width : axisStartPos + axis.height,
-                    isXAxis = axis.isXAxis;
+                    let isWithinPane = false;
 
-                let isWithinPane = false;
-
-                // Check if zoomed area is within the pane (#1289).
-                // In case of multiple panes only one pane should be zoomed.
-                if (
-                    (
-                        !isXAxis &&
-                        (mouseDownPos as any) >= axisStartPos &&
-                        (mouseDownPos as any) <= axisEndPos
-                    ) ||
-                    isXAxis ||
-                    !defined(mouseDownPos)
-                ) {
-                    isWithinPane = true;
-                }
-
-                // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
-                    hasZoomed = axis.zoom(axisData.min, axisData.max);
-                    if (axis.displayBtn) {
-                        displayButton = true;
+                    // Check if zoomed area is within the pane (#1289).
+                    // In case of multiple panes only one pane should be zoomed.
+                    if (
+                        (!isXAxis &&
+                            (mouseDownPos as any) >= axisStartPos &&
+                            (mouseDownPos as any) <= axisEndPos) ||
+                        isXAxis ||
+                        !defined(mouseDownPos)
+                    ) {
+                        isWithinPane = true;
                     }
-                }
-            });
+
+                    // don't zoom more than minRange
+                    if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                        hasZoomed = axis.zoom(axisData.min, axisData.max);
+                        if (axis.displayBtn) {
+                            displayButton = true;
+                        }
+                    }
+                });
         }
 
         // Show or hide the Reset zoom button
@@ -3567,7 +3561,6 @@ class Chart {
         } else if (!displayButton && isObject(resetZoomButton)) {
             chart.resetZoomButton = resetZoomButton.destroy();
         }
-
 
         // Redraw
         if (hasZoomed) {
@@ -3591,22 +3584,19 @@ class Chart {
      * @param {Highcharts.PointerEventObject} e
      * @param {string} panning
      */
-    public pan(
-        e: PointerEvent,
-        panning: ChartPanningOptions|boolean
-    ): void {
+    public pan(e: PointerEvent, panning: ChartPanningOptions | boolean): void {
         const chart = this,
             hoverPoints = chart.hoverPoints,
-            panningOptions: ChartPanningOptions = (
-                typeof panning === 'object' ?
-                    panning :
-                    {
-                        enabled: panning,
-                        type: 'x'
-                    }
-            ),
+            panningOptions: ChartPanningOptions =
+                typeof panning === 'object'
+                    ? panning
+                    : {
+                          enabled: panning,
+                          type: 'x'
+                      },
             chartOptions = chart.options.chart,
-            hasMapNavigation = chart.options.mapNavigation &&
+            hasMapNavigation =
+                chart.options.mapNavigation &&
                 chart.options.mapNavigation.enabled;
 
         if (chartOptions && chartOptions.panning) {
@@ -3618,7 +3608,6 @@ class Chart {
         let doRedraw: boolean;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
-
             // remove active points for shared tooltip
             if (hoverPoints) {
                 hoverPoints.forEach(function (point): void {
@@ -3636,9 +3625,7 @@ class Chart {
 
             const nextMousePos: Record<string, number> = {};
 
-            axes.forEach(function (
-                axis: Axis
-            ): void {
+            axes.forEach(function (axis: Axis): void {
                 if (!axis.options.panningEnabled || axis.options.isInternal) {
                     return;
                 }
@@ -3650,21 +3637,18 @@ class Chart {
                     halfPointRange = axis.minPointOffset || 0,
                     pointRangeDirection =
                         (axis.reversed && !chart.inverted) ||
-                        (!axis.reversed && chart.inverted) ?
-                            -1 :
-                            1,
+                        (!axis.reversed && chart.inverted)
+                            ? -1
+                            : 1,
                     extremes = axis.getExtremes(),
-                    panMin = axis.toValue(startPos - mousePos, true) +
+                    panMin =
+                        axis.toValue(startPos - mousePos, true) +
                         halfPointRange * pointRangeDirection,
                     panMax =
-                        axis.toValue(
-                            startPos + axis.len - mousePos, true
-                        ) -
-                        (
-                            (halfPointRange * pointRangeDirection) ||
+                        axis.toValue(startPos + axis.len - mousePos, true) -
+                        (halfPointRange * pointRangeDirection ||
                             (axis.isXAxis && axis.pointRangePadding) ||
-                            0
-                        ),
+                            0),
                     flipped = panMax < panMin,
                     hasVerticalPanning = axis.hasVerticalPanning();
 
@@ -3677,14 +3661,14 @@ class Chart {
                 // This is related to using vertical panning. (#11315).
                 if (
                     hasVerticalPanning &&
-                    !axis.isXAxis && (
-                        !panningState || panningState.isDirty
-                    )
+                    !axis.isXAxis &&
+                    (!panningState || panningState.isDirty)
                 ) {
                     axis.series.forEach(function (series): void {
                         const processedData = series.getProcessedData(true),
                             dataExtremes = series.getExtremes(
-                                processedData.yData, true
+                                processedData.yData,
+                                true
                             );
 
                         if (!panningState) {
@@ -3713,22 +3697,26 @@ class Chart {
                 }
 
                 const paddedMin = Math.min(
-                    pick(panningState && panningState.startMin, extremes.dataMin),
-                    halfPointRange ?
-                        extremes.min :
-                        axis.toValue(
-                            axis.toPixels(extremes.min) -
-                            axis.minPixelPadding
-                        )
+                    pick(
+                        panningState && panningState.startMin,
+                        extremes.dataMin
+                    ),
+                    halfPointRange
+                        ? extremes.min
+                        : axis.toValue(
+                              axis.toPixels(extremes.min) - axis.minPixelPadding
+                          )
                 );
                 const paddedMax = Math.max(
-                    pick(panningState && panningState.startMax, extremes.dataMax),
-                    halfPointRange ?
-                        extremes.max :
-                        axis.toValue(
-                            axis.toPixels(extremes.max) +
-                            axis.minPixelPadding
-                        )
+                    pick(
+                        panningState && panningState.startMax,
+                        extremes.dataMax
+                    ),
+                    halfPointRange
+                        ? extremes.max
+                        : axis.toValue(
+                              axis.toPixels(extremes.max) + axis.minPixelPadding
+                          )
                 );
 
                 axis.panningState = panningState;
@@ -3759,13 +3747,9 @@ class Chart {
                         newMin >= paddedMin &&
                         newMax <= paddedMax
                     ) {
-                        axis.setExtremes(
-                            newMin,
-                            newMax,
-                            false,
-                            false,
-                            { trigger: 'pan' }
-                        );
+                        axis.setExtremes(newMin, newMax, false, false, {
+                            trigger: 'pan'
+                        });
 
                         if (
                             !chart.resetZoomButton &&
@@ -3798,7 +3782,6 @@ class Chart {
             css(chart.container, { cursor: 'move' });
         });
     }
-
 }
 
 /* *
@@ -3838,11 +3821,7 @@ extend(Chart.prototype, {
      * These collections (arrays) implement update() methods with support for
      * one-to-one option.
      */
-    collectionsWithUpdate: [
-        'xAxis',
-        'yAxis',
-        'series'
-    ],
+    collectionsWithUpdate: ['xAxis', 'yAxis', 'series'],
 
     /**
      * These properties cause isDirtyBox to be set to true when updating. Can be
@@ -3902,9 +3881,8 @@ extend(Chart.prototype, {
  * */
 
 namespace Chart {
-
     export interface AfterUpdateEventObject {
-        animation: (boolean|Partial<AnimationOptions>);
+        animation: boolean | Partial<AnimationOptions>;
         options: Options;
         redraw: boolean;
     }
@@ -3927,9 +3905,9 @@ namespace Chart {
     }
 
     export interface CreateAxisOptionsObject {
-        animation: (undefined|boolean|Partial<AnimationOptions>);
-        axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
-        redraw: (undefined|boolean);
+        animation: undefined | boolean | Partial<AnimationOptions>;
+        axis: DeepPartial<AxisOptions> | DeepPartial<ColorAxis.Options>;
+        redraw: undefined | boolean;
     }
 
     export interface CreditsOptions {
@@ -3942,7 +3920,10 @@ namespace Chart {
         text?: string;
     }
 
-    export type DescriptionOptionsType = (TitleOptions|SubtitleOptions|CaptionOptions);
+    export type DescriptionOptionsType =
+        | TitleOptions
+        | SubtitleOptions
+        | CaptionOptions;
 
     export interface IsInsideOptionsObject {
         ignoreX?: boolean;
@@ -3954,7 +3935,7 @@ namespace Chart {
     }
 
     export interface LabelCollectorFunction {
-        (): (Array<(SVGElement|undefined)>|undefined);
+        (): Array<SVGElement | undefined> | undefined;
     }
 
     export interface Renderer extends SVGRenderer {
@@ -4040,7 +4021,7 @@ export default Chart;
  *
  * @interface Highcharts.TitleObject
  * @extends Highcharts.SVGElement
- *//**
+ */ /**
  * Modify options for the title.
  *
  * @function Highcharts.TitleObject#update
@@ -4061,7 +4042,7 @@ export default Chart;
  *
  * @interface Highcharts.SubtitleObject
  * @extends Highcharts.SVGElement
- *//**
+ */ /**
  * Modify options for the subtitle.
  *
  * @function Highcharts.SubtitleObject#update
@@ -4082,7 +4063,7 @@ export default Chart;
  *
  * @interface Highcharts.CaptionObject
  * @extends Highcharts.SVGElement
- *//**
+ */ /**
  * Modify options for the caption.
  *
  * @function Highcharts.CaptionObject#update
@@ -4098,24 +4079,24 @@ export default Chart;
 
 /**
  * @interface Highcharts.ChartIsInsideOptionsObject
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreX
  * @type {boolean|undefined}
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#ignoreY
  * @type {boolean|undefined}
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#inverted
  * @type {boolean|undefined}
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#paneCoordinates
  * @type {boolean|undefined}
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#series
  * @type {Highcharts.Series|undefined}
- *//**
+ */ /**
  * @name Highcharts.ChartIsInsideOptionsObject#visiblePlotOnly
  * @type {boolean|undefined}
  */
 
-''; // keeps doclets above in JS file
+(''); // keeps doclets above in JS file
