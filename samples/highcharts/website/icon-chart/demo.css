@@ -1,5 +1,8 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
+body{
+	margin:opx;
+}
 .chart-container .thick{
 	stroke-width:1;
 	stroke:white;
