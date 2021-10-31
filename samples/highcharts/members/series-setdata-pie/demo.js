@@ -2,9 +2,11 @@ const chart = Highcharts.chart('container', {
     chart: {
         type: 'pie'
     },
-    series: [{
-        data: [29.9, 71.5, 106.4]
-    }]
+    series: [
+        {
+            data: [29.9, 71.5, 106.4]
+        }
+    ]
 });
 
 document.getElementById('button').addEventListener('click', () => {

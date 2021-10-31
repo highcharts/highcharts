@@ -9,8 +9,20 @@ Highcharts.chart('container', {
         text: 'Demo of image marker width and height'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
     yAxis: {
         title: {
@@ -26,14 +38,18 @@ Highcharts.chart('container', {
         crosshairs: true,
         shared: true
     },
-    series: [{
-        name: 'Tokyo',
-        marker: {
-            symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)',
-            width: 16,
-            height: 16
-        },
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-
-    }]
+    series: [
+        {
+            name: 'Tokyo',
+            marker: {
+                symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)',
+                width: 16,
+                height: 16
+            },
+            data: [
+                7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9,
+                9.6
+            ]
+        }
+    ]
 });

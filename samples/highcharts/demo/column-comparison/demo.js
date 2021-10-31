@@ -104,40 +104,48 @@ var data = {
     ]
 };
 
-var countries = [{
-    name: 'South Korea',
-    flag: 197582,
-    color: 'rgb(201, 36, 39)'
-}, {
-    name: 'Japan',
-    flag: 197604,
-    color: 'rgb(201, 36, 39)'
-}, {
-    name: 'Australia',
-    flag: 197507,
-    color: 'rgb(0, 82, 180)'
-}, {
-    name: 'Germany',
-    flag: 197571,
-    color: 'rgb(0, 0, 0)'
-}, {
-    name: 'Russia',
-    flag: 197408,
-    color: 'rgb(240, 240, 240)'
-}, {
-    name: 'China',
-    flag: 197375,
-    color: 'rgb(255, 217, 68)'
-}, {
-    name: 'Great Britain',
-    flag: 197374,
-    color: 'rgb(0, 82, 180)'
-}, {
-    name: 'United States',
-    flag: 197484,
-    color: 'rgb(215, 0, 38)'
-}];
-
+var countries = [
+    {
+        name: 'South Korea',
+        flag: 197582,
+        color: 'rgb(201, 36, 39)'
+    },
+    {
+        name: 'Japan',
+        flag: 197604,
+        color: 'rgb(201, 36, 39)'
+    },
+    {
+        name: 'Australia',
+        flag: 197507,
+        color: 'rgb(0, 82, 180)'
+    },
+    {
+        name: 'Germany',
+        flag: 197571,
+        color: 'rgb(0, 0, 0)'
+    },
+    {
+        name: 'Russia',
+        flag: 197408,
+        color: 'rgb(240, 240, 240)'
+    },
+    {
+        name: 'China',
+        flag: 197375,
+        color: 'rgb(255, 217, 68)'
+    },
+    {
+        name: 'Great Britain',
+        flag: 197374,
+        color: 'rgb(0, 82, 180)'
+    },
+    {
+        name: 'United States',
+        flag: 197484,
+        color: 'rgb(215, 0, 38)'
+    }
+];
 
 function getData(data) {
     return data.map(function (country, i) {
@@ -172,8 +180,10 @@ var chart = Highcharts.chart('container', {
     },
     tooltip: {
         shared: true,
-        headerFormat: '<span style="font-size: 15px">{point.point.name}</span><br/>',
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y} medals</b><br/>'
+        headerFormat:
+            '<span style="font-size: 15px">{point.point.name}</span><br/>',
+        pointFormat:
+            '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y} medals</b><br/>'
     },
     xAxis: {
         type: 'category',
@@ -191,38 +201,49 @@ var chart = Highcharts.chart('container', {
                     }
                 });
 
-                return '<span><img src="https://image.flaticon.com/icons/svg/197/' + output + '.svg" style="width: 40px; height: 40px;"/><br></span>';
+                return (
+                    '<span><img src="https://image.flaticon.com/icons/svg/197/' +
+                    output +
+                    '.svg" style="width: 40px; height: 40px;"/><br></span>'
+                );
             }
         }
     },
-    yAxis: [{
-        title: {
-            text: 'Gold medals'
+    yAxis: [
+        {
+            title: {
+                text: 'Gold medals'
+            },
+            showFirstLabel: false
+        }
+    ],
+    series: [
+        {
+            color: 'rgb(158, 159, 163)',
+            pointPlacement: -0.2,
+            linkedTo: 'main',
+            data: dataPrev[2016].slice(),
+            name: '2012'
         },
-        showFirstLabel: false
-    }],
-    series: [{
-        color: 'rgb(158, 159, 163)',
-        pointPlacement: -0.2,
-        linkedTo: 'main',
-        data: dataPrev[2016].slice(),
-        name: '2012'
-    }, {
-        name: '2016',
-        id: 'main',
-        dataSorting: {
-            enabled: true,
-            matchByName: true
-        },
-        dataLabels: [{
-            enabled: true,
-            inside: true,
-            style: {
-                fontSize: '16px'
-            }
-        }],
-        data: getData(data[2016]).slice()
-    }],
+        {
+            name: '2016',
+            id: 'main',
+            dataSorting: {
+                enabled: true,
+                matchByName: true
+            },
+            dataLabels: [
+                {
+                    enabled: true,
+                    inside: true,
+                    style: {
+                        fontSize: '16px'
+                    }
+                }
+            ],
+            data: getData(data[2016]).slice()
+        }
+    ],
     exporting: {
         allowHTML: true
     }
@@ -234,28 +255,45 @@ years.forEach(function (year) {
     var btn = document.getElementById(year);
 
     btn.addEventListener('click', function () {
-
-        document.querySelectorAll('.buttons button.active').forEach(function (active) {
-            active.className = '';
-        });
+        document
+            .querySelectorAll('.buttons button.active')
+            .forEach(function (active) {
+                active.className = '';
+            });
         btn.className = 'active';
 
-        chart.update({
-            title: {
-                text: 'Summer Olympics ' + year + ' - Top 5 countries by Gold medals'
+        chart.update(
+            {
+                title: {
+                    text:
+                        'Summer Olympics ' +
+                        year +
+                        ' - Top 5 countries by Gold medals'
+                },
+                subtitle: {
+                    text:
+                        'Comparing to results from Summer Olympics ' +
+                        (year - 4) +
+                        ' - Source: <a href="https://en.wikipedia.org/wiki/' +
+                        year +
+                        '_Summer_Olympics_medal_table">Wikipedia</a>'
+                },
+                series: [
+                    {
+                        name: year - 4,
+                        data: dataPrev[year].slice()
+                    },
+                    {
+                        name: year,
+                        data: getData(data[year]).slice()
+                    }
+                ]
             },
-            subtitle: {
-                text: 'Comparing to results from Summer Olympics ' + (year - 4) + ' - Source: <a href="https://en.wikipedia.org/wiki/' + (year) + '_Summer_Olympics_medal_table">Wikipedia</a>'
-            },
-            series: [{
-                name: year - 4,
-                data: dataPrev[year].slice()
-            }, {
-                name: year,
-                data: getData(data[year]).slice()
-            }]
-        }, true, false, {
-            duration: 800
-        });
+            true,
+            false,
+            {
+                duration: 800
+            }
+        );
     });
 });

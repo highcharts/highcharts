@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Tooltip footer format demo'
     },
@@ -16,7 +15,8 @@ Highcharts.chart('container', {
         shared: true,
         useHTML: true,
         headerFormat: '<table><tr><th colspan="2">{point.key}</th></tr>',
-        pointFormat: '<tr><td style="color: {series.color}">{series.name} </td>' +
+        pointFormat:
+            '<tr><td style="color: {series.color}">{series.name} </td>' +
             '<td style="text-align: right"><b>{point.y} EUR</b></td></tr>',
         footerFormat: '</table>',
         valueDecimals: 2
@@ -29,14 +29,20 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Short',
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
-            194.1, 95.6, 54.4]
-    }, {
-        name: 'Long named series',
-        data: [106.4, 171.5, 129.9, 154.4, 195.6, 194.1, 216.4, 148.5, 135.6,
-            176, 144, 129.2]
-    }]
-
+    series: [
+        {
+            name: 'Short',
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ]
+        },
+        {
+            name: 'Long named series',
+            data: [
+                106.4, 171.5, 129.9, 154.4, 195.6, 194.1, 216.4, 148.5, 135.6,
+                176, 144, 129.2
+            ]
+        }
+    ]
 });

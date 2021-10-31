@@ -17,13 +17,11 @@
                 negative impact on the relations of the whole grid.
     */
 
-
     var each = H.each,
         map = H.map,
         filter = H.grep,
         reduce = H.reduce,
         extend = H.extend;
-
 
     // Sort array of areas by x or y center value
     // Dimension can be 'x' or 'y'. If unassigned, 'x' is assumed.
@@ -34,18 +32,15 @@
         });
     }
 
-
     // Utility function to check if a string ends with a substring
     function endsWith(str, search) {
         return str.substr(str.length - search.length) === search;
     }
 
-
     // Utility function to check if a string starts with a substring
     function startsWith(str, search) {
         return str.lastIndexOf(search, 0) === 0;
     }
-
 
     // Explode one dimensional array of areas into a 2D grid, where a threshold
     // value determines how far from the lowest area's center an area's center
@@ -98,7 +93,6 @@
         return grid;
     }
 
-
     // Shift a grid to the left and up one row/col by adding null elements.
     function shiftGrid(grid) {
         grid.unshift(null);
@@ -108,7 +102,6 @@
             }
         });
     }
-
 
     // Compress grid columns into tiles of size "tilesize". Each tile is an
     // array and may contain multiple areas.
@@ -165,7 +158,6 @@
         return tiles;
     }
 
-
     // Compute 2D deviation value for a grid. The deviation value is the sum
     // of the differences between each area's ideal distance to each area in the
     // grid and its actual distance (euclidean).
@@ -174,13 +166,17 @@
             getTileDeviation = function (aCoords, bCoords) {
                 var a = grid[aCoords.row][aCoords.col],
                     b = grid[bCoords.row][bCoords.col],
-                    centerXDistance = (a.center.x - b.center.x) / tilesize.width,
-                    centerYDistance = (a.center.y - b.center.y) / tilesize.height,
+                    centerXDistance =
+                        (a.center.x - b.center.x) / tilesize.width,
+                    centerYDistance =
+                        (a.center.y - b.center.y) / tilesize.height,
                     actualXDistance = aCoords.col - bCoords.col,
                     actualYDistance = aCoords.row - bCoords.row,
-                    idealEuclidean = centerXDistance * centerXDistance +
+                    idealEuclidean =
+                        centerXDistance * centerXDistance +
                         centerYDistance * centerYDistance,
-                    actualEuclidean = actualXDistance * actualXDistance +
+                    actualEuclidean =
+                        actualXDistance * actualXDistance +
                         actualYDistance * actualYDistance;
 
                 return Math.abs(actualEuclidean - idealEuclidean);
@@ -200,9 +196,11 @@
                     if (!grid[dRow]) {
                         continue;
                     }
-                    for (var dCol = dRow === row ? col + 1 : 0,
-                        dColLen = grid[dRow].length;
-                        dCol < dColLen; ++dCol
+                    for (
+                        var dCol = dRow === row ? col + 1 : 0,
+                            dColLen = grid[dRow].length;
+                        dCol < dColLen;
+                        ++dCol
                     ) {
                         if (grid[dRow][dCol]) {
                             deviation += getTileDeviation(
@@ -225,22 +223,23 @@
         return deviation;
     }
 
-
     // Get the index of the largest area in an array of areas
     function getLargestAreaIx(areas) {
         var i = areas.length,
             largestIx = 0,
             largestArea = 0;
         while (i--) {
-            if (areas[i].extremes.width * areas[i].extremes.height >
-                largestArea) {
+            if (
+                areas[i].extremes.width * areas[i].extremes.height >
+                largestArea
+            ) {
                 largestIx = i;
-                largestArea = areas[i].extremes.width * areas[i].extremes.height;
+                largestArea =
+                    areas[i].extremes.width * areas[i].extremes.height;
             }
         }
         return largestIx;
     }
-
 
     // Insert an area into a grid, shifting the existing areas accordingly.
     // Returns new grid with area inserted.
@@ -265,9 +264,11 @@
         }
 
         // Determine if we need to shift the row horizontally
-        if (direction === 'left' ||
+        if (
+            direction === 'left' ||
             direction === 'leftTop' ||
-            direction === 'leftBottom') {
+            direction === 'leftBottom'
+        ) {
             shift = true;
         }
 
@@ -331,36 +332,57 @@
         return grid;
     }
 
-
     // Create an array of grids, where an overflow area has been inserted in
     // each possible position around a point. Assumes the baseGrid has a margin
     // of at least 1 to left and bottom to allow for shifts.
     function getInsertionGrids(baseGrid, overflow) {
         var insertionGrids = [],
             baseTile = baseGrid[overflow.row][overflow.col];
-        each(filter(['left', 'leftTop', 'centerTop', 'rightTop', 'right',
-            'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
-            // Filter out positions we don't want to use for this overflow
-            return !startsWith(dir,
-                baseTile.center.x > overflow.area.center.x ?
-                    'right' : // Base tile should be to the right or center
-                    'left') && // Base tile should be to the left or center
-                   !endsWith(dir,
-                       baseTile.center.y > overflow.area.center.y ?
-                           'Top' : // Base tile should be on top or center
-                           'Bottom'); // Base tile should be below or center
-        }),
-        function (dir) {
-            // Get insertion grids for each position
-            insertionGrids.push({
-                grid: insertInGrid(baseGrid, overflow.area,
-                    [overflow.row, overflow.col], dir),
-                dir: dir
-            });
-        });
+        each(
+            filter(
+                [
+                    'left',
+                    'leftTop',
+                    'centerTop',
+                    'rightTop',
+                    'right',
+                    'rightBottom',
+                    'centerBottom',
+                    'leftBottom'
+                ],
+                function (dir) {
+                    // Filter out positions we don't want to use for this overflow
+                    return (
+                        !startsWith(
+                            dir,
+                            baseTile.center.x > overflow.area.center.x
+                                ? 'right' // Base tile should be to the right or center
+                                : 'left'
+                        ) && // Base tile should be to the left or center
+                        !endsWith(
+                            dir,
+                            baseTile.center.y > overflow.area.center.y
+                                ? 'Top' // Base tile should be on top or center
+                                : 'Bottom'
+                        )
+                    ); // Base tile should be below or center
+                }
+            ),
+            function (dir) {
+                // Get insertion grids for each position
+                insertionGrids.push({
+                    grid: insertInGrid(
+                        baseGrid,
+                        overflow.area,
+                        [overflow.row, overflow.col],
+                        dir
+                    ),
+                    dir: dir
+                });
+            }
+        );
         return insertionGrids;
     }
-
 
     // Remove empty rows and columns at the beginning of a grid
     function trimGrid(grid) {
@@ -383,7 +405,6 @@
             return row.slice(minCol);
         });
     }
-
 
     // Insert overflows into a grid using deviationValue computation to find
     // best position. Returns new grid with overflows inserted or old grid if
@@ -435,38 +456,38 @@
             rowShift = 0;
             colShift = 0;
             switch (grids[optimalGridIx].dir) {
-            case 'left':
-                rowShiftIx = of.row;
-                rowShift = -1;
-                break;
-            case 'right':
-                rowShiftIx = of.row;
-                rowShift = 1;
-                break;
-            case 'centerTop':
-                colShift = 1;
-                break;
-            case 'leftTop':
-                rowShiftIx = of.row + 1;
-                rowShift = -1;
-                break;
-            case 'rightTop':
-                rowShiftIx = of.row + 1;
-                rowShift = 1;
-                break;
-            case 'centerBottom':
-                colShift = -1;
-                break;
-            case 'rightBottom':
-                rowShiftIx = of.row - 1;
-                rowShift = 1;
-                break;
-            case 'leftBottom':
-                rowShiftIx = of.row - 1;
-                rowShift = -1;
-                break;
-            default:
-                return;
+                case 'left':
+                    rowShiftIx = of.row;
+                    rowShift = -1;
+                    break;
+                case 'right':
+                    rowShiftIx = of.row;
+                    rowShift = 1;
+                    break;
+                case 'centerTop':
+                    colShift = 1;
+                    break;
+                case 'leftTop':
+                    rowShiftIx = of.row + 1;
+                    rowShift = -1;
+                    break;
+                case 'rightTop':
+                    rowShiftIx = of.row + 1;
+                    rowShift = 1;
+                    break;
+                case 'centerBottom':
+                    colShift = -1;
+                    break;
+                case 'rightBottom':
+                    rowShiftIx = of.row - 1;
+                    rowShift = 1;
+                    break;
+                case 'leftBottom':
+                    rowShiftIx = of.row - 1;
+                    rowShift = -1;
+                    break;
+                default:
+                    return;
             }
             // colShift now holds the amount that the column has shifted.
             // rowShift holds the same for the row, and rowShiftIx specifies
@@ -474,17 +495,19 @@
 
             // Loop over all remaining overflows and change them.
             for (var j = i + 1; j < oLen; ++j) {
-                if (overflows[j].row === rowShiftIx &&
+                if (
+                    overflows[j].row === rowShiftIx &&
                     ((overflows[j].col < of.col && rowShift < 0) ||
-                    (overflows[j].col > of.col && rowShift > 0))
+                        (overflows[j].col > of.col && rowShift > 0))
                 ) {
                     // This row has shifted horizontally, change overflow col to
                     // follow
                     overflows[j].col += rowShift;
                 }
-                if (overflows[j].col === of.col &&
+                if (
+                    overflows[j].col === of.col &&
                     ((overflows[j].row < of.row && colShift < 0) ||
-                    (overflows[j].row > of.row && colShift > 0))
+                        (overflows[j].row > of.row && colShift > 0))
                 ) {
                     // This column has shifted horizontally, change overflow row
                     // to follow
@@ -496,7 +519,6 @@
         // Remove excessive margins caused by shifts
         return trimGrid(crushed);
     }
-
 
     // Deflate a compressed 3D tile grid so that no tiles contain more than one
     // area. This is done by overflowing the stacked tiles and expanding the
@@ -521,8 +543,10 @@
                 continue;
             }
             crushed[row] = [];
-            for (var col = 0, colLen = grid[row].length, numAreas;
-                col < colLen; ++col
+            for (
+                var col = 0, colLen = grid[row].length, numAreas;
+                col < colLen;
+                ++col
             ) {
                 if (!grid[row][col]) {
                     continue;
@@ -557,7 +581,6 @@
         );
     }
 
-
     // Get average boundary box size in x and y dimensions
     // Discards outliers using interquartile ranges (Tukey's alg)
     function getAverageAreaSize(areas) {
@@ -571,7 +594,7 @@
                 return area.extremes.height;
             }).sort(compareNumbers),
             q1 = Math.floor(areas.length / 4),
-            q3 = Math.floor(areas.length / 4 * 3),
+            q3 = Math.floor((areas.length / 4) * 3),
             xIQR = xSizes[q3] - xSizes[q1],
             xMin = xSizes[q1] - 1.5 * xIQR,
             xMax = xSizes[q3] + 1.5 * xIQR,
@@ -587,16 +610,25 @@
             });
 
         return {
-            width: reduce(xProcessed, function (a, b) {
-                return a + b;
-            }, 0) / xProcessed.length,
+            width:
+                reduce(
+                    xProcessed,
+                    function (a, b) {
+                        return a + b;
+                    },
+                    0
+                ) / xProcessed.length,
 
-            height: reduce(yProcessed, function (a, b) {
-                return a + b;
-            }, 0) / yProcessed.length
+            height:
+                reduce(
+                    yProcessed,
+                    function (a, b) {
+                        return a + b;
+                    },
+                    0
+                ) / yProcessed.length
         };
     }
-
 
     // Get the extremes and center point of a GeoJSON feature.
     // labelCenter specifies whether to use the data label as center if possible
@@ -614,26 +646,26 @@
 
         // Flatten feature into list of coordinates
         switch (type) {
-        case 'MultiPolygon':
-            each(coords, function (polygon) {
-                each(polygon, function (ring) {
+            case 'MultiPolygon':
+                each(coords, function (polygon) {
+                    each(polygon, function (ring) {
+                        each(ring, function (pair) {
+                            flattened.push(pair);
+                        });
+                    });
+                });
+                break;
+
+            case 'Polygon':
+                each(coords, function (ring) {
                     each(ring, function (pair) {
                         flattened.push(pair);
                     });
                 });
-            });
-            break;
+                break;
 
-        case 'Polygon':
-            each(coords, function (ring) {
-                each(ring, function (pair) {
-                    flattened.push(pair);
-                });
-            });
-            break;
-
-        default:
-            return;
+            default:
+                return;
         }
 
         // Find extremes of coordinates
@@ -659,16 +691,18 @@
         // Get label point and use it as center
         if (feature.properties['hc-middle-x'] && labelCenter) {
             center.push(
-                extremes.xMin + (extremes.xMax - extremes.xMin) *
-                feature.properties['hc-middle-x']
+                extremes.xMin +
+                    (extremes.xMax - extremes.xMin) *
+                        feature.properties['hc-middle-x']
             );
         } else {
             center.push((extremes.xMax + extremes.xMin) / 2);
         }
         if (feature.properties['hc-middle-y'] && labelCenter) {
             center.push(
-                extremes.yMin + (extremes.yMax - extremes.yMin) *
-                (1 - feature.properties['hc-middle-y']) // y is reversed
+                extremes.yMin +
+                    (extremes.yMax - extremes.yMin) *
+                        (1 - feature.properties['hc-middle-y']) // y is reversed
             );
         } else {
             center.push((extremes.yMax + extremes.yMin) / 2);
@@ -679,7 +713,6 @@
             extremes: extremes
         };
     }
-
 
     // Create tilemap data structure from GeoJSON map
     // A resolution factor parameter can be passed in for each dimension to
@@ -692,37 +725,52 @@
     // The excludeList parameter allows for exclusion of a set of areas by their
     //  ids.
     H.geojsonToTilemapData = function (
-        geojson, xResolutionFactor, yResolutionFactor, reverseAlg,
-        useLabelCenter, excludeList
+        geojson,
+        xResolutionFactor,
+        yResolutionFactor,
+        reverseAlg,
+        useLabelCenter,
+        excludeList
     ) {
         var areas = sortAreasByCenter(
-            // Reduce geojson to objects with center, bounding box, and metadata
-            // sorted by center X position.
-                filter(map(geojson.features, function (area) {
-                    var metrics = getFeatureMetrics(
-                        area, H.pick(useLabelCenter, true)
-                    );
-                    return metrics && extend({
-                        center: {
-                            x: metrics.center[0],
-                            y: metrics.center[1]
-                        },
-                        extremes: metrics.extremes,
-                        id: area.id
-                    }, area.properties) || null;
-                }), function (area) {
-                    // Remove areas that don't have metrics (line geom etc.),
-                    // as well as excluded areas.
-                    var excluded = false,
-                        i = excludeList.length;
-                    while (i--) {
-                        if (area.id === excludeList[i]) {
-                            excluded = true;
-                            break;
+                // Reduce geojson to objects with center, bounding box, and metadata
+                // sorted by center X position.
+                filter(
+                    map(geojson.features, function (area) {
+                        var metrics = getFeatureMetrics(
+                            area,
+                            H.pick(useLabelCenter, true)
+                        );
+                        return (
+                            (metrics &&
+                                extend(
+                                    {
+                                        center: {
+                                            x: metrics.center[0],
+                                            y: metrics.center[1]
+                                        },
+                                        extremes: metrics.extremes,
+                                        id: area.id
+                                    },
+                                    area.properties
+                                )) ||
+                            null
+                        );
+                    }),
+                    function (area) {
+                        // Remove areas that don't have metrics (line geom etc.),
+                        // as well as excluded areas.
+                        var excluded = false,
+                            i = excludeList.length;
+                        while (i--) {
+                            if (area.id === excludeList[i]) {
+                                excluded = true;
+                                break;
+                            }
                         }
+                        return area !== null && !excluded;
                     }
-                    return area !== null && !excluded;
-                })
+                )
             ),
             // Find average tile size to use for creating a grid
             tilesize = getAverageAreaSize(areas),
@@ -744,34 +792,43 @@
 
         // We have to flatten the grid into a one dimensional array with x/y
         // axis coordinates for Highcharts
-        return filter(reduce(grid, function (accumulator, row, y) {
-            // Reduce the grid into a flat array with x/y
-            return accumulator.concat(
-                row && map(row, function (cell, x) {
-                    return cell && extend(cell, {
-                        x: x,
-                        y: y
-                    }) || null;
-                }) || []
-            );
-        }, []), function (point) {
-            // Remove null points
-            return point !== null;
-        });
+        return filter(
+            reduce(
+                grid,
+                function (accumulator, row, y) {
+                    // Reduce the grid into a flat array with x/y
+                    return accumulator.concat(
+                        (row &&
+                            map(row, function (cell, x) {
+                                return (
+                                    (cell &&
+                                        extend(cell, {
+                                            x: x,
+                                            y: y
+                                        })) ||
+                                    null
+                                );
+                            })) ||
+                            []
+                    );
+                },
+                []
+            ),
+            function (point) {
+                // Remove null points
+                return point !== null;
+            }
+        );
     };
-
-}(Highcharts));
-
+})(Highcharts);
 
 // -----------------------------------------------------------------------------
 // End tilemap generator plugin
 // -----------------------------------------------------------------------------
 
-
 /* UI below, partially based on all-maps demo */
 
-
-var baseMapPath = "https://code.highcharts.com/mapdata/",
+var baseMapPath = 'https://code.highcharts.com/mapdata/',
     showDataLabels = true,
     mapCount = 0,
     searchText,
@@ -783,32 +840,40 @@ var baseMapPath = "https://code.highcharts.com/mapdata/",
     dataAltered,
     selectedPoint;
 
-
 // Create/update tile chart. Called on changes to alg params or map load.
 function generateTileChart() {
     var shapeType = $('#shapeType').val(),
         xRes = $('#xRes').val(),
         yRes = $('#yRes').val(),
-        invert = $("#invert").prop('checked'),
-        reverseAlg = $("#reverse").prop('checked'),
-        labelCenter = $("#labelCenter").prop('checked'),
+        invert = $('#invert').prop('checked'),
+        reverseAlg = $('#reverse').prop('checked'),
+        labelCenter = $('#labelCenter').prop('checked'),
         excludeList = $('#exclude').val(),
         data,
         options,
         maxY,
         mapLen = Highcharts.maps[currentMapKey].features.length,
         outputData = function () {
-            $('#outputData').val(JSON.stringify(
-                Highcharts.map(currentData, function (point) {
-                    var filterProps = ['center', 'extremes', 'hc-middle-y',
-                        'hc-middle-x', 'selected', 'color'];
-                    Highcharts.each(filterProps, function (prop) {
-                        delete point[prop];
-                    });
-                    return point;
-                }), null,
-                $("#prettyprint").prop('checked') ? 2 : null
-            ));
+            $('#outputData').val(
+                JSON.stringify(
+                    Highcharts.map(currentData, function (point) {
+                        var filterProps = [
+                            'center',
+                            'extremes',
+                            'hc-middle-y',
+                            'hc-middle-x',
+                            'selected',
+                            'color'
+                        ];
+                        Highcharts.each(filterProps, function (prop) {
+                            delete point[prop];
+                        });
+                        return point;
+                    }),
+                    null,
+                    $('#prettyprint').prop('checked') ? 2 : null
+                )
+            );
         },
         swapPoints = function (a, b) {
             var bX = b.x,
@@ -836,7 +901,8 @@ function generateTileChart() {
             a.update({
                 color: Highcharts.getOptions().colors[0]
             });
-            if (b.update) { // b is a point
+            if (b.update) {
+                // b is a point
                 b.update({
                     x: a.x,
                     y: a.y
@@ -844,8 +910,10 @@ function generateTileChart() {
             } else {
                 // Should b be a point?
                 for (var i = 0, pLen = a.series.points.length; i < pLen; ++i) {
-                    if (a.series.points[i].x === b.x &&
-                        a.series.points[i].y === b.y) {
+                    if (
+                        a.series.points[i].x === b.x &&
+                        a.series.points[i].y === b.y
+                    ) {
                         a.series.points[i].update({
                             x: a.x,
                             y: a.y
@@ -863,33 +931,44 @@ function generateTileChart() {
         };
 
     if (excludeList) {
-        excludeList = excludeList.split(",").map(function (item) {
+        excludeList = excludeList.split(',').map(function (item) {
             return item.trim();
         });
     }
 
     // Warn for data loss
-    if (dataAltered && !window.confirm(
-        'This will discard data changes. Proceed?'
-    )) {
+    if (
+        dataAltered &&
+        !window.confirm('This will discard data changes. Proceed?')
+    ) {
         return;
     }
 
     // Warn for huge maps
-    if (mapLen > 300 && !window.confirm("This map contains " + mapLen +
-        " areas. Converting this much data could take a while. Continue?")) {
+    if (
+        mapLen > 300 &&
+        !window.confirm(
+            'This map contains ' +
+                mapLen +
+                ' areas. Converting this much data could take a while. Continue?'
+        )
+    ) {
         return;
     }
 
     data = Highcharts.geojsonToTilemapData(
         Highcharts.maps[currentMapKey],
-        xRes, yRes, reverseAlg, labelCenter, excludeList
+        xRes,
+        yRes,
+        reverseAlg,
+        labelCenter,
+        excludeList
     );
 
     if (invert) {
         // Find max Y, since Y axis must be reversed
         maxY = Highcharts.reduce(data, function (a, b) {
-            return Math.max(a && a.y || 0, b && b.y || 0);
+            return Math.max((a && a.y) || 0, (b && b.y) || 0);
         });
         Highcharts.each(data, function (point) {
             var temp = point.x;
@@ -934,33 +1013,35 @@ function generateTileChart() {
         tooltip: {
             pointFormat: '{point.id}: {point.name}'
         },
-        series: [{
-            data: data,
-            tileShape: shapeType,
-            allowPointSelect: true,
-            dataLabels: {
-                enabled: showDataLabels,
-                format: '{point.name}'
-            },
-            cursor: 'pointer',
-            point: {
-                events: {
-                    click: function () {
-                        var point = this;
-                        if (selectedPoint) {
-                            swapPoints(selectedPoint, point);
-                            selectedPoint = null;
-                        } else {
-                            point.select(true);
-                            point.update({
-                                color: '#601010'
-                            });
-                            selectedPoint = point;
+        series: [
+            {
+                data: data,
+                tileShape: shapeType,
+                allowPointSelect: true,
+                dataLabels: {
+                    enabled: showDataLabels,
+                    format: '{point.name}'
+                },
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function () {
+                            var point = this;
+                            if (selectedPoint) {
+                                swapPoints(selectedPoint, point);
+                                selectedPoint = null;
+                            } else {
+                                point.select(true);
+                                point.update({
+                                    color: '#601010'
+                                });
+                                selectedPoint = point;
+                            }
                         }
                     }
                 }
             }
-        }]
+        ]
     };
 
     // Don't use chart.update since we're altering axis extremes outside of
@@ -979,10 +1060,9 @@ function generateTileChart() {
     outputData();
 }
 
-
 // Populate dropdown menu and turn into jQuery UI widgets
 $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
-    if (mapGroup !== "version") {
+    if (mapGroup !== 'version') {
         mapOptions += '<option class="option-header">' + mapGroup + '</option>';
         $.each(maps, function (desc, path) {
             mapOptions += '<option value="' + path + '">' + desc + '</option>';
@@ -991,13 +1071,13 @@ $.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
     }
 });
 searchText = 'Search ' + mapCount + ' maps';
-mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
-$("#mapDropdown").append(mapOptions).combobox();
-
+mapOptions =
+    '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
+$('#mapDropdown').append(mapOptions).combobox();
 
 // Change map when item selected in dropdown
-$("#mapDropdown").change(function () {
-    var $selectedItem = $("option:selected", this),
+$('#mapDropdown').change(function () {
+    var $selectedItem = $('option:selected', this),
         mapDesc = $selectedItem.text(),
         mapKey = this.value.slice(0, -3),
         javascriptPath = baseMapPath + this.value,
@@ -1018,7 +1098,9 @@ $("#mapDropdown").change(function () {
 
     // Show loading
     if (Highcharts.charts[0]) {
-        Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+        Highcharts.charts[0].showLoading(
+            '<i class="fa fa-spinner fa-spin fa-2x"></i>'
+        );
     }
 
     // When the map is loaded or ready from cache...
@@ -1069,7 +1151,12 @@ $("#mapDropdown").change(function () {
                 stops: [
                     [0, '#EFEFFF'],
                     [0.5, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                    [
+                        1,
+                        Highcharts.color(Highcharts.getOptions().colors[0])
+                            .brighten(-0.5)
+                            .get()
+                    ]
                 ]
             },
 
@@ -1077,32 +1164,37 @@ $("#mapDropdown").change(function () {
                 enabled: false
             },
 
-            series: [{
-                data: data,
-                mapData: mapGeoJSON,
-                joinBy: ['hc-key', 'key'],
-                name: 'Random data',
-                states: {
-                    hover: {
-                        color: Highcharts.getOptions().colors[2]
+            series: [
+                {
+                    data: data,
+                    mapData: mapGeoJSON,
+                    joinBy: ['hc-key', 'key'],
+                    name: 'Random data',
+                    states: {
+                        hover: {
+                            color: Highcharts.getOptions().colors[2]
+                        }
+                    },
+                    dataLabels: {
+                        enabled: showDataLabels,
+                        formatter: function () {
+                            return mapKey === 'custom/world' ||
+                                mapKey === 'countries/us/us-all'
+                                ? this.point.properties &&
+                                      this.point.properties['hc-a2']
+                                : this.point.name;
+                        }
                     }
                 },
-                dataLabels: {
-                    enabled: showDataLabels,
-                    formatter: function () {
-                        return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                            (this.point.properties && this.point.properties['hc-a2']) :
-                            this.point.name;
-                    }
+                {
+                    type: 'mapline',
+                    name: 'Separators',
+                    data: Highcharts.geojson(mapGeoJSON, 'mapline'),
+                    nullColor: 'gray',
+                    showInLegend: false,
+                    enableMouseTracking: false
                 }
-            }, {
-                type: 'mapline',
-                name: "Separators",
-                data: Highcharts.geojson(mapGeoJSON, 'mapline'),
-                nullColor: 'gray',
-                showInLegend: false,
-                enableMouseTracking: false
-            }]
+            ]
         });
 
         generateTileChart(mapKey);
@@ -1117,18 +1209,19 @@ $("#mapDropdown").change(function () {
     }
 });
 
-
 // Toggle pretty print
-$("#prettyprint").change(function () {
-    $('#outputData').val(JSON.stringify(
-        currentData, null, $("#prettyprint").prop('checked') ? 2 : null)
+$('#prettyprint').change(function () {
+    $('#outputData').val(
+        JSON.stringify(
+            currentData,
+            null,
+            $('#prettyprint').prop('checked') ? 2 : null
+        )
     );
 });
 
-
 // Add excluded areas
 $('#exclude').change(generateTileChart);
-
 
 // Select view mode
 $('#shapeType').change(function () {
@@ -1137,18 +1230,14 @@ $('#shapeType').change(function () {
     });
 });
 
-
 // Toggle algorithm reverse
 $('#reverse').change(generateTileChart);
-
 
 // Toggle data label as center
 $('#labelCenter').change(generateTileChart);
 
-
 // Toggle chart invert
 $('#invert').change(generateTileChart);
-
 
 // Zoom out tile chart
 $('#zoomOut').click(function () {
@@ -1159,28 +1248,31 @@ $('#zoomOut').click(function () {
     dataAltered = true;
 });
 
-
 // xResolution change
 $('#xRes').change(generateTileChart);
 $('#xRes').on('input', function () {
     var val = $('#xRes').val();
-    $('#xResLabel').text(val === '1' ? 'X resolution factor' :
-        'X resolution factor (' + val + ')');
+    $('#xResLabel').text(
+        val === '1'
+            ? 'X resolution factor'
+            : 'X resolution factor (' + val + ')'
+    );
 });
-
 
 // yResolution change
 $('#yRes').change(generateTileChart);
 $('#yRes').on('input', function () {
     var val = $('#yRes').val();
-    $('#yResLabel').text(val === '1' ? 'Y resolution factor' :
-        'Y resolution factor (' + val + ')');
+    $('#yResLabel').text(
+        val === '1'
+            ? 'Y resolution factor'
+            : 'Y resolution factor (' + val + ')'
+    );
 });
-
 
 // Toggle enlarge charts
 $('#enlarge').change(function () {
-    if ($("#enlarge").prop('checked')) {
+    if ($('#enlarge').prop('checked')) {
         $('.verticalLine').hide();
         $('#mapContainer').addClass('container-expanded');
         $('#tileContainer').addClass('container-expanded');
@@ -1195,10 +1287,9 @@ $('#enlarge').change(function () {
     }
 });
 
-
 // Toggle data labels
-$("#dataLabels").change(function () {
-    showDataLabels = $("#dataLabels").prop('checked');
+$('#dataLabels').change(function () {
+    showDataLabels = $('#dataLabels').prop('checked');
     mapChart.series[0].update({
         dataLabels: {
             enabled: showDataLabels
@@ -1211,11 +1302,11 @@ $("#dataLabels").change(function () {
     });
 });
 
-
 // Trigger change event to load map on startup
 if (location.hash) {
     $('#mapDropdown').val(location.hash.substr(1) + '.js');
-} else { // for IE9
+} else {
+    // for IE9
     $($('#mapDropdown option')[0]).attr('selected', 'selected');
 }
 $('#mapDropdown').change();

@@ -35,7 +35,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         headerFormat: '<b>{point.key}</b><br>',
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
+        pointFormat:
+            '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
     },
 
     plotOptions: {
@@ -45,21 +46,26 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2],
-        stack: 'male'
-    }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5],
-        stack: 'male'
-    }, {
-        name: 'Jane',
-        data: [2, 5, 6, 2, 1],
-        stack: 'female'
-    }, {
-        name: 'Janet',
-        data: [3, 0, 4, 4, 3],
-        stack: 'female'
-    }]
+    series: [
+        {
+            name: 'John',
+            data: [5, 3, 4, 7, 2],
+            stack: 'male'
+        },
+        {
+            name: 'Joe',
+            data: [3, 4, 4, 2, 5],
+            stack: 'male'
+        },
+        {
+            name: 'Jane',
+            data: [2, 5, 6, 2, 1],
+            stack: 'female'
+        },
+        {
+            name: 'Janet',
+            data: [3, 0, 4, 4, 3],
+            stack: 'female'
+        }
+    ]
 });

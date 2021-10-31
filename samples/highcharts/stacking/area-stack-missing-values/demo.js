@@ -11,12 +11,15 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [1, 1, 1, 1]
-    }, {
-        data: [2, 2]
-    }, {
-        data: [3, 3, 3, 3]
-    }]
-
+    series: [
+        {
+            data: [1, 1, 1, 1]
+        },
+        {
+            data: [2, 2]
+        },
+        {
+            data: [3, 3, 3, 3]
+        }
+    ]
 });

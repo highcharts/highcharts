@@ -18,25 +18,33 @@ var pick = H.pick,
     columnProto = H.seriesTypes.column.prototype;
 
 H.SVGRenderer.prototype.symbols.target = function (
-    x, y, w, h, bh, i, inverted
+    x,
+    y,
+    w,
+    h,
+    bh,
+    i,
+    inverted
 ) {
-    return inverted ? [
-        ['M', x, y],
-        ['L', -w / 2, -h + bh],
-        ['L', -w / 2, -h],
-        ['L', x, -h + i],
-        ['L', w / 2, -h],
-        ['L', w / 2, -h + bh],
-        ['Z']
-    ] : [
-        ['M', x, y],
-        ['L', -h + bh, w / 2],
-        ['L', -h, w / 2],
-        ['L', -h + i, y],
-        ['L', -h, -w / 2],
-        ['L', -h + bh, -w / 2],
-        ['Z']
-    ];
+    return inverted
+        ? [
+              ['M', x, y],
+              ['L', -w / 2, -h + bh],
+              ['L', -w / 2, -h],
+              ['L', x, -h + i],
+              ['L', w / 2, -h],
+              ['L', w / 2, -h + bh],
+              ['Z']
+          ]
+        : [
+              ['M', x, y],
+              ['L', -h + bh, w / 2],
+              ['L', -h, w / 2],
+              ['L', -h + i, y],
+              ['L', -h, -w / 2],
+              ['L', -h + bh, -w / 2],
+              ['Z']
+          ];
 };
 
 /**
@@ -45,7 +53,9 @@ H.SVGRenderer.prototype.symbols.target = function (
  * @constructor seriesTypes.lineargauge
  * @augments seriesTypes.column
  */
-seriesType('lineargauge', 'column',
+seriesType(
+    'lineargauge',
+    'column',
     /**
      * A lineargauge graph is used for visualizing data on linear scale
      * within the specific range. It uses special pointers (targets).
@@ -228,19 +238,26 @@ seriesType('lineargauge', 'column',
              */
             zIndex: 3
         }
-    }, {
+    },
+    {
         /**
          * Function responsible for creating or updating target symbol and target line.
          */
         createUpdateGraphic: function (
-            graphic, path, xPosition, yPosition, beginningAtrr, endAttr
+            graphic,
+            path,
+            xPosition,
+            yPosition,
+            beginningAtrr,
+            endAttr
         ) {
             var series = this,
                 chart = series.chart,
                 seriesOptions = series.options,
-                updateGraphic = chart.pointCount < (
-                    seriesOptions.animationLimit || 250
-                ) ? 'animate' : 'attr';
+                updateGraphic =
+                    chart.pointCount < (seriesOptions.animationLimit || 250)
+                        ? 'animate'
+                        : 'attr';
 
             if (graphic) {
                 graphic[updateGraphic]({
@@ -249,9 +266,7 @@ seriesType('lineargauge', 'column',
                     translateY: yPosition
                 });
             } else {
-                graphic = chart.renderer.path(path)
-                    .attr(beginningAtrr)
-                    .add();
+                graphic = chart.renderer.path(path).attr(beginningAtrr).add();
 
                 graphic[updateGraphic](
                     endAttr,
@@ -283,8 +298,9 @@ seriesType('lineargauge', 'column',
                 seriesOptions = series.options,
                 minPointLength = seriesOptions.minPointLength,
                 seriesTargetOptions = seriesOptions.targetOptions,
-                shape = seriesTypes[series.type].prototype.pointClass.prototype
-                    .shape;
+                shape =
+                    seriesTypes[series.type].prototype.pointClass.prototype
+                        .shape;
 
             columnProto.drawPoints.apply(series);
 
@@ -332,24 +348,24 @@ seriesType('lineargauge', 'column',
                     pPlotY = point.plotY;
                     barX = point.barX;
 
-                    pixelX = inverted ?
-                        xAxisLength - barX - halfPointWidth + plotTop :
-                        barX + halfPointWidth + plotLeft;
-                    pixelY = target ?
-                        yAxis.toPixels(target, false) :
-                        yAxis.toPixels(valueY, false);
+                    pixelX = inverted
+                        ? xAxisLength - barX - halfPointWidth + plotTop
+                        : barX + halfPointWidth + plotLeft;
+                    pixelY = target
+                        ? yAxis.toPixels(target, false)
+                        : yAxis.toPixels(valueY, false);
 
                     if (inverted) {
                         // Considering minPointLength when chart is inverted
                         if (minPointLength) {
                             if (!yAxisReversed) {
-                                if (pixelY < (minPointLength + plotLeft)) {
+                                if (pixelY < minPointLength + plotLeft) {
                                     pixelY = minPointLength + plotLeft;
                                 }
                             } else {
                                 if (pPlotY < minPointLength) {
-                                    pixelY = yAxisLength - minPointLength +
-                                        plotLeft;
+                                    pixelY =
+                                        yAxisLength - minPointLength + plotLeft;
                                 }
                             }
                         }
@@ -358,12 +374,11 @@ seriesType('lineargauge', 'column',
                         if (minPointLength) {
                             if (!yAxisReversed) {
                                 if (
-                                    (yAxisLength - pixelY) < (
-                                        minPointLength - plotTop
-                                    )
+                                    yAxisLength - pixelY <
+                                    minPointLength - plotTop
                                 ) {
-                                    pixelY = yAxisLength - minPointLength +
-                                        plotTop;
+                                    pixelY =
+                                        yAxisLength - minPointLength + plotTop;
                                 }
                             } else {
                                 if (pPlotY < minPointLength) {
@@ -469,13 +484,19 @@ seriesType('lineargauge', 'column',
                             symbolPath,
                             borderWidth || 1
                         );
-                    } else if (shape === 'rectangle') { // Shape for bullet series
+                    } else if (shape === 'rectangle') {
+                        // Shape for bullet series
                         onPoint = true;
                         showLine = false;
                         showColumn = true;
 
-                        symbolPath = renderer
-                            .symbols[shape](0, 0, width, length, inverted);
+                        symbolPath = renderer.symbols[shape](
+                            0,
+                            0,
+                            width,
+                            length,
+                            inverted
+                        );
                     }
 
                     if (inverted) {
@@ -485,8 +506,10 @@ seriesType('lineargauge', 'column',
                         xPosition = onPoint ? pixelX : xAxis.left;
                         yPosition = pixelY;
                     }
-                    columnStart = yAxis
-                        .toPixels(series.options.threshold, false);
+                    columnStart = yAxis.toPixels(
+                        series.options.threshold,
+                        false
+                    );
 
                     xAttr = {
                         translateX: xPosition
@@ -505,44 +528,45 @@ seriesType('lineargauge', 'column',
                     beginningAtrr.zIndex = zIndex;
 
                     // Creating/updating target symbol
-                    point.targetSymGraphic = targetSymGraphic = series
-                        .createUpdateGraphic(
+                    point.targetSymGraphic = targetSymGraphic =
+                        series.createUpdateGraphic(
                             targetSymGraphic,
                             symbolPath,
                             xPosition,
                             yPosition,
                             beginningAtrr,
-                            (inverted ? xAttr : yAttr)
+                            inverted ? xAttr : yAttr
                         );
 
                     if (showLine) {
-                        offsetOnPoint = xAxisLength -
-                            (
-                                onPoint ?
-                                    pixelX - (inverted ? plotTop : plotLeft) :
-                                    0
-                            );
+                        offsetOnPoint =
+                            xAxisLength -
+                            (onPoint
+                                ? pixelX - (inverted ? plotTop : plotLeft)
+                                : 0);
 
-                        linePath = inverted ? [
-                            ['M', 0, 0],
-                            ['L', 0, offsetOnPoint]
-                        ] : [
-                            ['M', 0, 0],
-                            ['L', offsetOnPoint, 0]
-                        ];
+                        linePath = inverted
+                            ? [
+                                  ['M', 0, 0],
+                                  ['L', 0, offsetOnPoint]
+                              ]
+                            : [
+                                  ['M', 0, 0],
+                                  ['L', offsetOnPoint, 0]
+                              ];
                         // linePath = renderer.crispLine(linePath, lineWidth || 1);
 
                         beginningAtrr.zIndex = lineZIndex;
 
                         // Creating/updating target line
-                        point.targetLinGraphic = targetLinGraphic = series
-                            .createUpdateGraphic(
+                        point.targetLinGraphic = targetLinGraphic =
+                            series.createUpdateGraphic(
                                 targetLinGraphic,
                                 linePath,
                                 xPosition,
                                 yPosition,
                                 beginningAtrr,
-                                (inverted ? xAttr : yAttr)
+                                inverted ? xAttr : yAttr
                             );
                     }
 
@@ -552,57 +576,69 @@ seriesType('lineargauge', 'column',
                         if (!onPoint && dataLabel) {
                             dataLabelBox = dataLabel.getBBox();
 
-                            dataLabel.attr(inverted ? {
-                                x: yAxis.toPixels(valueY, true) -
-                                    dataLabelBox.width / 2,
-                                y: 0
-                            } : {
-                                x: 0,
-                                y: yAxis.toPixels(valueY, true) -
-                                    dataLabelBox.height / 2
-                            });
+                            dataLabel.attr(
+                                inverted
+                                    ? {
+                                          x:
+                                              yAxis.toPixels(valueY, true) -
+                                              dataLabelBox.width / 2,
+                                          y: 0
+                                      }
+                                    : {
+                                          x: 0,
+                                          y:
+                                              yAxis.toPixels(valueY, true) -
+                                              dataLabelBox.height / 2
+                                      }
+                            );
                         }
                     }
 
                     // Adding event to target symbol for handling tooltip
                     if (tooltip) {
-                        targetEvents.push(addEvent(
-                            targetSymGraphic.element,
-                            'mouseover',
-                            function () {
-                                point.setState('hover');
+                        targetEvents.push(
+                            addEvent(
+                                targetSymGraphic.element,
+                                'mouseover',
+                                function () {
+                                    point.setState('hover');
 
-                                if (!onPoint) {
-                                    tooltip.refresh({
-                                        plotX: inverted ? xAxisLength : 0,
-                                        plotY: point.shapeArgs.y,
-                                        series: point.series,
-                                        x: valueX,
-                                        y: valueY,
-                                        category: point.category,
-                                        color: point.color,
-                                        colorIndex: point.colorIndex,
-                                        name: point.name,
-                                        percentage: point.percentage,
-                                        total: point.total,
-                                        stackTotal: point.stackTotal,
-                                        getLabelConfig: point.getLabelConfig,
-                                        tooltipFormatter: point.tooltipFormatter
-                                    });
-                                } else {
-                                    tooltip.refresh(point);
+                                    if (!onPoint) {
+                                        tooltip.refresh({
+                                            plotX: inverted ? xAxisLength : 0,
+                                            plotY: point.shapeArgs.y,
+                                            series: point.series,
+                                            x: valueX,
+                                            y: valueY,
+                                            category: point.category,
+                                            color: point.color,
+                                            colorIndex: point.colorIndex,
+                                            name: point.name,
+                                            percentage: point.percentage,
+                                            total: point.total,
+                                            stackTotal: point.stackTotal,
+                                            getLabelConfig:
+                                                point.getLabelConfig,
+                                            tooltipFormatter:
+                                                point.tooltipFormatter
+                                        });
+                                    } else {
+                                        tooltip.refresh(point);
+                                    }
                                 }
-                            }
-                        ));
+                            )
+                        );
 
-                        targetEvents.push(addEvent(
-                            targetSymGraphic.element,
-                            'mouseout',
-                            function () {
-                                point.setState('normal');
-                                tooltip.hide();
-                            }
-                        ));
+                        targetEvents.push(
+                            addEvent(
+                                targetSymGraphic.element,
+                                'mouseout',
+                                function () {
+                                    point.setState('normal');
+                                    tooltip.hide();
+                                }
+                            )
+                        );
 
                         series.targetEvents = targetEvents;
                     }
@@ -614,12 +650,15 @@ seriesType('lineargauge', 'column',
                             pointTargetOptions.color,
                             seriesTargetOptions.color,
                             pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: valueX,
-                                y: valueY,
-                                options: {}
-                            }).color || series.color)) || undefined,
+                            (series.zones.length &&
+                                (point.getZone.call({
+                                    series: series,
+                                    x: valueX,
+                                    y: valueY,
+                                    options: {}
+                                }).color ||
+                                    series.color)) ||
+                                undefined,
                             point.color,
                             series.color
                         ),
@@ -654,8 +693,10 @@ seriesType('lineargauge', 'column',
                     // Add styles
                     if (targetSymGraphic) {
                         targetSymGraphic.addClass(
-                            point.getClassName() + ' highcharts-' +
-                                series.type + '-target',
+                            point.getClassName() +
+                                ' highcharts-' +
+                                series.type +
+                                '-target',
                             true
                         );
                     }
@@ -676,7 +717,8 @@ seriesType('lineargauge', 'column',
                 }
             });
         }
-    }, {
+    },
+    {
         /**
          * Lineargauge shape
          */
@@ -704,7 +746,8 @@ seriesType('lineargauge', 'column',
 
             columnProto.pointClass.prototype.destroy.apply(point, arguments);
         }
-    });
+    }
+);
 
 /**
  * A `lineargauge` series. If the [type](#series.lineargauge.type) option is not
@@ -934,83 +977,110 @@ var commonOptions = {
     }
 };
 
-Highcharts.chart('container1', Highcharts.merge(commonOptions, {
-    title: {
-        text: 'Target on axis, with line enabled, column disabled'
-    },
-    yAxis: {
-        plotBands: [{
-            from: 0,
-            to: 20,
-            color: '#666'
-        }, {
-            from: 20,
-            to: 70,
-            color: '#999'
-        }, {
-            from: 70,
-            to: 100,
-            color: '#bbb'
-        }]
-    },
-    series: [{
-        onPoint: false,
-        showColumn: false,
-        showLine: true,
-        data: [85]
-    }]
-}));
+Highcharts.chart(
+    'container1',
+    Highcharts.merge(commonOptions, {
+        title: {
+            text: 'Target on axis, with line enabled, column disabled'
+        },
+        yAxis: {
+            plotBands: [
+                {
+                    from: 0,
+                    to: 20,
+                    color: '#666'
+                },
+                {
+                    from: 20,
+                    to: 70,
+                    color: '#999'
+                },
+                {
+                    from: 70,
+                    to: 100,
+                    color: '#bbb'
+                }
+            ]
+        },
+        series: [
+            {
+                onPoint: false,
+                showColumn: false,
+                showLine: true,
+                data: [85]
+            }
+        ]
+    })
+);
 
-Highcharts.chart('container2', Highcharts.merge(commonOptions, {
-    title: {
-        text: 'Target on point, with line disabled, column disabled'
-    },
-    yAxis: {
-        plotBands: [{
-            from: 0,
-            to: 20,
-            color: '#666'
-        }, {
-            from: 20,
-            to: 70,
-            color: '#999'
-        }, {
-            from: 70,
-            to: 100,
-            color: '#bbb'
-        }]
-    },
-    series: [{
-        onPoint: true,
-        showColumn: false,
-        showLine: false,
-        data: [36]
-    }]
-}));
+Highcharts.chart(
+    'container2',
+    Highcharts.merge(commonOptions, {
+        title: {
+            text: 'Target on point, with line disabled, column disabled'
+        },
+        yAxis: {
+            plotBands: [
+                {
+                    from: 0,
+                    to: 20,
+                    color: '#666'
+                },
+                {
+                    from: 20,
+                    to: 70,
+                    color: '#999'
+                },
+                {
+                    from: 70,
+                    to: 100,
+                    color: '#bbb'
+                }
+            ]
+        },
+        series: [
+            {
+                onPoint: true,
+                showColumn: false,
+                showLine: false,
+                data: [36]
+            }
+        ]
+    })
+);
 
-Highcharts.chart('container3', Highcharts.merge(commonOptions, {
-    title: {
-        text: 'Target on point, with line disabled, column enabled'
-    },
-    yAxis: {
-        plotBands: [{
-            from: 0,
-            to: 20,
-            color: '#666'
-        }, {
-            from: 20,
-            to: 70,
-            color: '#999'
-        }, {
-            from: 70,
-            to: 100,
-            color: '#bbb'
-        }]
-    },
-    series: [{
-        onPoint: true,
-        showColumn: true,
-        showLine: false,
-        data: [73]
-    }]
-}));
+Highcharts.chart(
+    'container3',
+    Highcharts.merge(commonOptions, {
+        title: {
+            text: 'Target on point, with line disabled, column enabled'
+        },
+        yAxis: {
+            plotBands: [
+                {
+                    from: 0,
+                    to: 20,
+                    color: '#666'
+                },
+                {
+                    from: 20,
+                    to: 70,
+                    color: '#999'
+                },
+                {
+                    from: 70,
+                    to: 100,
+                    color: '#bbb'
+                }
+            ]
+        },
+        series: [
+            {
+                onPoint: true,
+                showColumn: true,
+                showLine: false,
+                data: [73]
+            }
+        ]
+    })
+);

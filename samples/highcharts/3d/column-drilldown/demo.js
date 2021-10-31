@@ -17,73 +17,98 @@ Highcharts.chart('container', {
             depth: 35
         }
     },
-    series: [{
-        colorByPoint: true,
-        name: 'Things',
-        data: [{
-            name: 'Animals',
-            y: 6,
-            drilldown: 'animals'
-        }, {
-            name: 'Cars',
-            y: 18,
-            drilldown: 'cars'
-        }, {
-            name: 'Fruits',
-            y: 12,
-            drilldown: 'fruits'
-        }],
-        stack: 0
-    }],
+    series: [
+        {
+            colorByPoint: true,
+            name: 'Things',
+            data: [
+                {
+                    name: 'Animals',
+                    y: 6,
+                    drilldown: 'animals'
+                },
+                {
+                    name: 'Cars',
+                    y: 18,
+                    drilldown: 'cars'
+                },
+                {
+                    name: 'Fruits',
+                    y: 12,
+                    drilldown: 'fruits'
+                }
+            ],
+            stack: 0
+        }
+    ],
     drilldown: {
-        series: [{
-            id: 'animals',
-            name: 'Animals',
-            data: [{
-                name: 'Hamsters',
-                y: 2
-            }, {
-                name: 'Rabbits',
-                y: 3
-            }, {
-                name: 'Squirrels',
-                y: 1
-            }]
-        }, {
-            id: 'cars',
-            name: 'Cars',
-            data: [{
-                name: 'Skoda',
-                y: 5
-            }, {
-                name: 'Toyota',
-                y: 3
-            }, {
-                name: 'Ford',
-                y: 4
-            }, {
-                name: 'Subaru',
-                y: 6
-            }]
-        }, {
-            id: 'fruits',
-            name: 'Fruits',
-            data: [{
-                name: 'Bananas',
-                y: 4
-            }, {
-                name: 'Apples',
-                y: 3
-            }, {
-                name: 'Oranges',
-                y: 2
-            }, {
-                name: 'Mango',
-                y: 0
-            }, {
-                name: 'Pears',
-                y: 3
-            }]
-        }]
+        series: [
+            {
+                id: 'animals',
+                name: 'Animals',
+                data: [
+                    {
+                        name: 'Hamsters',
+                        y: 2
+                    },
+                    {
+                        name: 'Rabbits',
+                        y: 3
+                    },
+                    {
+                        name: 'Squirrels',
+                        y: 1
+                    }
+                ]
+            },
+            {
+                id: 'cars',
+                name: 'Cars',
+                data: [
+                    {
+                        name: 'Skoda',
+                        y: 5
+                    },
+                    {
+                        name: 'Toyota',
+                        y: 3
+                    },
+                    {
+                        name: 'Ford',
+                        y: 4
+                    },
+                    {
+                        name: 'Subaru',
+                        y: 6
+                    }
+                ]
+            },
+            {
+                id: 'fruits',
+                name: 'Fruits',
+                data: [
+                    {
+                        name: 'Bananas',
+                        y: 4
+                    },
+                    {
+                        name: 'Apples',
+                        y: 3
+                    },
+                    {
+                        name: 'Oranges',
+                        y: 2
+                    },
+                    {
+                        name: 'Mango',
+                        y: 0
+                    },
+                    {
+                        name: 'Pears',
+                        y: 3
+                    }
+                ]
+            }
+        ]
     }
 });

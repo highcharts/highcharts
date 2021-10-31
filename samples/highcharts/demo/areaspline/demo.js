@@ -26,11 +26,14 @@ Highcharts.chart('container', {
             'Saturday',
             'Sunday'
         ],
-        plotBands: [{ // visualize the weekend
-            from: 4.5,
-            to: 6.5,
-            color: 'rgba(68, 170, 213, .2)'
-        }]
+        plotBands: [
+            {
+                // visualize the weekend
+                from: 4.5,
+                to: 6.5,
+                color: 'rgba(68, 170, 213, .2)'
+            }
+        ]
     },
     yAxis: {
         title: {
@@ -49,11 +52,14 @@ Highcharts.chart('container', {
             fillOpacity: 0.5
         }
     },
-    series: [{
-        name: 'John',
-        data: [3, 4, 3, 5, 4, 10, 12]
-    }, {
-        name: 'Jane',
-        data: [1, 3, 4, 3, 3, 5, 4]
-    }]
+    series: [
+        {
+            name: 'John',
+            data: [3, 4, 3, 5, 4, 10, 12]
+        },
+        {
+            name: 'Jane',
+            data: [1, 3, 4, 3, 3, 5, 4]
+        }
+    ]
 });

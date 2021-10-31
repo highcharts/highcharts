@@ -257,32 +257,37 @@ function makeArray(length, populate) {
 }
 
 function makeChart(constructor, type, series) {
-    const capitalizeString = s => s.charAt(0).toUpperCase() + s.slice(1);
-    return Highcharts[constructor](`container-${type}`, Highcharts.merge(({
-        chart: {
-            type: type
-        },
-        exporting: {
-            enabled: false
-        },
-        title: {
-            text: `${capitalizeString(type)} chart`
-        },
-        legend: {
-            enabled: false
-        },
-        credits: {
-            enabled: false
-        },
-        accessibility: {
-            screenReaderSection: {
-                beforeChartFormat: `${capitalizeString(type)} chart showing a 
-                selected high contrast theme.`
+    const capitalizeString = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    return Highcharts[constructor](
+        `container-${type}`,
+        Highcharts.merge({
+            chart: {
+                type: type
             },
-            landmarkVerbosity: 'one'
-        },
-        series: series
-    })));
+            exporting: {
+                enabled: false
+            },
+            title: {
+                text: `${capitalizeString(type)} chart`
+            },
+            legend: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            accessibility: {
+                screenReaderSection: {
+                    beforeChartFormat: `${capitalizeString(
+                        type
+                    )} chart showing a 
+                selected high contrast theme.`
+                },
+                landmarkVerbosity: 'one'
+            },
+            series: series
+        })
+    );
 }
 
 // Initializing the chartLayout array
@@ -294,29 +299,50 @@ Highcharts.setOptions(lightTheme);
 // Loop over the regular charts and create them
 const createChartLayout = () => {
     [
-        ['column', [{
-            data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
-        }, {
-            colorByPoint: true,
-            data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
-        }]],
-        ['pie', [{
-            dataLabels: {
-                enabled: false
-            },
-            data: makeArray(10, () => 1)
-        }]]
-    ].forEach(c => chartLayout.push(makeChart('chart', c[0], c[1])));
+        [
+            'column',
+            [
+                {
+                    data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+                },
+                {
+                    colorByPoint: true,
+                    data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+                }
+            ]
+        ],
+        [
+            'pie',
+            [
+                {
+                    dataLabels: {
+                        enabled: false
+                    },
+                    data: makeArray(10, () => 1)
+                }
+            ]
+        ]
+    ].forEach((c) => chartLayout.push(makeChart('chart', c[0], c[1])));
     // Create map and stock charts
-    chartLayout.push(makeChart('stockChart', 'spline', makeArray(10, (_, i) => ({
-        data: makeArray(100, () => i + Math.random())
-    }))));
-    chartLayout.push(makeChart('mapChart', 'map', [{
-        joinBy: null,
-        mapData: Highcharts.maps['custom/europe'],
-        colorByPoint: true,
-        data: makeArray(30, () => 1)
-    }]));
+    chartLayout.push(
+        makeChart(
+            'stockChart',
+            'spline',
+            makeArray(10, (_, i) => ({
+                data: makeArray(100, () => i + Math.random())
+            }))
+        )
+    );
+    chartLayout.push(
+        makeChart('mapChart', 'map', [
+            {
+                joinBy: null,
+                mapData: Highcharts.maps['custom/europe'],
+                colorByPoint: true,
+                data: makeArray(30, () => 1)
+            }
+        ])
+    );
     return chartLayout;
 };
 createChartLayout();

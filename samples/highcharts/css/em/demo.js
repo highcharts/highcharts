@@ -12,15 +12,18 @@ const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Rain', 'Snow', 'Sun', 'Wind']
     },
-    series: [{
-        data: [324, 124, 547, 221],
-        type: 'column'
-    }, {
-        data: [698, 675, 453, 543]
-    }]
+    series: [
+        {
+            data: [324, 124, 547, 221],
+            type: 'column'
+        },
+        {
+            data: [698, 675, 453, 543]
+        }
+    ]
 });
 
-document.getElementById('em').addEventListener('input', e =>  {
+document.getElementById('em').addEventListener('input', (e) => {
     chart.container.style.fontSize = e.target.value + 'em';
 
     // Update layout based on new font and line sizes

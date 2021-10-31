@@ -5,7 +5,6 @@ Highcharts.chart('container', {
         events: {
             drilldown: function (e) {
                 if (!e.seriesOptions) {
-
                     var chart = this,
                         drilldowns = {
                             Animals: {
@@ -42,7 +41,6 @@ Highcharts.chart('container', {
                         chart.addSeriesAsDrilldown(e.point, series);
                     }, 1000);
                 }
-
             }
         }
     },
@@ -66,23 +64,29 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Things',
-        colorByPoint: true,
-        data: [{
-            name: 'Animals',
-            y: 5,
-            drilldown: true
-        }, {
-            name: 'Fruits',
-            y: 2,
-            drilldown: true
-        }, {
-            name: 'Cars',
-            y: 4,
-            drilldown: true
-        }]
-    }],
+    series: [
+        {
+            name: 'Things',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Animals',
+                    y: 5,
+                    drilldown: true
+                },
+                {
+                    name: 'Fruits',
+                    y: 2,
+                    drilldown: true
+                },
+                {
+                    name: 'Cars',
+                    y: 4,
+                    drilldown: true
+                }
+            ]
+        }
+    ],
 
     drilldown: {
         series: []

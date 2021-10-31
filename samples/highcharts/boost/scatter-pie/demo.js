@@ -16,7 +16,6 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 console.time('scatter');
 console.time('asyncRender');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'xy'
     },
@@ -41,7 +40,10 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text:
+            'Scatter chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') +
+            ' points'
     },
 
     subtitle: {
@@ -52,33 +54,34 @@ Highcharts.chart('container', {
         enabled: false
     },
 
-    series: [{
-        boostThreshold: 1,
-        type: 'scatter',
-        color: 'rgb(152, 0, 67)',
-        fillOpacity: 0.1,
-        data: data,
-        marker: {
-            radius: 0.1
-        },
-        tooltip: {
-            followPointer: false,
-            pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
-        },
-        events: {
-            renderedCanvas: function () {
-                console.timeEnd('asyncRender');
+    series: [
+        {
+            boostThreshold: 1,
+            type: 'scatter',
+            color: 'rgb(152, 0, 67)',
+            fillOpacity: 0.1,
+            data: data,
+            marker: {
+                radius: 0.1
+            },
+            tooltip: {
+                followPointer: false,
+                pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+            },
+            events: {
+                renderedCanvas: function () {
+                    console.timeEnd('asyncRender');
+                }
             }
+        },
+        {
+            type: 'pie',
+            size: '30%',
+            data: [
+                ['Lobsters', 50],
+                ['Canaries', 50]
+            ]
         }
-    },
-    {
-        type: 'pie',
-        size: '30%',
-        data: [
-            ['Lobsters', 50],
-            ['Canaries', 50]
-        ]
-    }]
-
+    ]
 });
 console.timeEnd('scatter');

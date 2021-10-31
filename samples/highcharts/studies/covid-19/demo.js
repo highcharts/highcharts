@@ -4,23 +4,23 @@ let population;
 let mapChart;
 let countryChart;
 
-const getConfig = type => ({
-    confirmed: {
-        day0Value: 200,
-        header: 'Confirmed Covid-19 Cases',
-        name: 'Confirmed cases',
-        valueSuffix: 'confirmed cases'
-    },
-    deaths: {
-        day0Value: 10,
-        header: 'Deaths caused by Covid-19',
-        name: 'Deaths',
-        valueSuffix: 'deaths'
-    }
-}[type]);
+const getConfig = (type) =>
+    ({
+        confirmed: {
+            day0Value: 200,
+            header: 'Confirmed Covid-19 Cases',
+            name: 'Confirmed cases',
+            valueSuffix: 'confirmed cases'
+        },
+        deaths: {
+            day0Value: 10,
+            header: 'Deaths caused by Covid-19',
+            name: 'Deaths',
+            valueSuffix: 'deaths'
+        }
+    }[type]);
 
 const createMap = (type = 'confirmed') => {
-
     const config = getConfig(type);
 
     document.getElementById('map-header').innerHTML = config.header;
@@ -33,9 +33,9 @@ const createMap = (type = 'confirmed') => {
         country.flag = country.id.replace('UK', 'GB').toLowerCase();
 
         const pop = population.find(
-            c => country.properties['hc-key'].toUpperCase() === c.code
+            (c) => country.properties['hc-key'].toUpperCase() === c.code
         );
-        populationByName[country.name] = pop && pop.z || null;
+        populationByName[country.name] = (pop && pop.z) || null;
     });
 
     // Names used in Highcharts Map Collection
@@ -44,7 +44,7 @@ const createMap = (type = 'confirmed') => {
     countries['Czech Republic'] = countries.Czechia;
 
     let maxValue = 0;
-    const data = Object.keys(countries).map(name => {
+    const data = Object.keys(countries).map((name) => {
         const country = countries[name];
         const total = country[country.length - 1][type];
         if (populationByName[name]) {
@@ -57,11 +57,9 @@ const createMap = (type = 'confirmed') => {
         return { name, value: null };
     });
 
-
     // Initiate the map chart
     if (!mapChart) {
         mapChart = Highcharts.mapChart('container', {
-
             chart: {
                 spacingLeft: 1,
                 spacingRight: 1
@@ -85,7 +83,8 @@ const createMap = (type = 'confirmed') => {
 
             tooltip: {
                 headerFormat: '<b>{point.point.name}</b><br>',
-                footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
+                footerFormat:
+                    '<span style="font-size: 10px">(Click for details)</span>'
             },
 
             legend: {
@@ -97,39 +96,49 @@ const createMap = (type = 'confirmed') => {
                 }
             },
 
-            series: [{
-                id: 'map',
-                mapData,
-                joinBy: ['name', 'name'],
-                cursor: 'pointer',
-                states: {
-                    select: {
-                        color: undefined,
-                        borderColor: '#333'
-                    }
-                },
-                borderWidth: 1,
-                borderColor: 'rgba(0, 0, 0, 0.05)'
-            }]
+            series: [
+                {
+                    id: 'map',
+                    mapData,
+                    joinBy: ['name', 'name'],
+                    cursor: 'pointer',
+                    states: {
+                        select: {
+                            color: undefined,
+                            borderColor: '#333'
+                        }
+                    },
+                    borderWidth: 1,
+                    borderColor: 'rgba(0, 0, 0, 0.05)'
+                }
+            ]
         });
     }
-    mapChart.update({
-        colorAxis: {
-            max: maxValue
+    mapChart.update(
+        {
+            colorAxis: {
+                max: maxValue
+            },
+            tooltip: {
+                pointFormat:
+                    '<b>{point.total}</b> ' +
+                    config.valueSuffix +
+                    '<br>' +
+                    '<b>{point.value:.2f}</b> per 1000 inhabitants<br>'
+            },
+            series: [
+                {
+                    data,
+                    name: config.name
+                }
+            ]
         },
-        tooltip: {
-            pointFormat: '<b>{point.total}</b> ' + config.valueSuffix + '<br>' +
-                '<b>{point.value:.2f}</b> per 1000 inhabitants<br>'
-        },
-        series: [{
-            data,
-            name: config.name
-        }]
-    }, true, true);
+        true,
+        true
+    );
 
     // Wrap point.select to get to the total selected points
-    const onCountryClick = e => {
-
+    const onCountryClick = (e) => {
         // Accumulate using modifier keys, or on touch
         if (e && e.target && e.target.point) {
             e.preventDefault();
@@ -149,29 +158,34 @@ const createMap = (type = 'confirmed') => {
             }
 
             if (points.length === 1) {
-
                 document.querySelector('#info #flag').style.display = 'block';
-                document.querySelector('#info #flag')
-                    .className = 'flag ' + points[0].flag;
-                document.querySelector('#info .header-text').style.paddingLeft = '40px';
-                document.querySelector('#info .header-text').innerHTML = points[0].name;
-                document.querySelector('#info .subheader')
-                    .innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
+                document.querySelector('#info #flag').className =
+                    'flag ' + points[0].flag;
+                document.querySelector('#info .header-text').style.paddingLeft =
+                    '40px';
+                document.querySelector('#info .header-text').innerHTML =
+                    points[0].name;
+                document.querySelector(
+                    '#info .subheader'
+                ).innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
 
                 if (e && e.type === 'touchstart') {
-                    document.querySelector('#info .subheader')
-                        .innerHTML += '<small><em>Tap on map to compare multiple countries</em></small>';
+                    document.querySelector('#info .subheader').innerHTML +=
+                        '<small><em>Tap on map to compare multiple countries</em></small>';
                 } else {
-                    document.querySelector('#info .subheader')
-                        .innerHTML += '<small><em>Shift+Click on map to compare multiple countries</em></small>';
+                    document.querySelector('#info .subheader').innerHTML +=
+                        '<small><em>Shift+Click on map to compare multiple countries</em></small>';
                 }
-
             } else {
                 document.querySelector('#info #flag').style.display = 'none';
-                document.querySelector('#info .header-text').style.paddingLeft = 0;
-                document.querySelector('#info .header-text').innerHTML = 'Comparing countries';
-                document.querySelector('#info .subheader')
-                    .innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
+                document.querySelector(
+                    '#info .header-text'
+                ).style.paddingLeft = 0;
+                document.querySelector('#info .header-text').innerHTML =
+                    'Comparing countries';
+                document.querySelector(
+                    '#info .subheader'
+                ).innerHTML = `${config.name}, starting the day of the ${config.day0Value}th case<br>`;
             }
 
             if (!countryChart) {
@@ -201,7 +215,9 @@ const createMap = (type = 'confirmed') => {
                     },
                     tooltip: {
                         headerFormat: '<small>{series.name}</small><br>',
-                        pointFormat: '<b>Day {point.x}: {point.date:%b %e, %Y}</b><br>{point.y} ' + config.valueSuffix
+                        pointFormat:
+                            '<b>Day {point.x}: {point.date:%b %e, %Y}</b><br>{point.y} ' +
+                            config.valueSuffix
                     },
                     legend: {
                         enabled: false
@@ -225,13 +241,12 @@ const createMap = (type = 'confirmed') => {
 
             const store = [];
             const series = points
-                .filter(p => countries[p.name])
-                .map(p => {
-
+                .filter((p) => countries[p.name])
+                .map((p) => {
                     store.push(p.id);
 
                     const firstDayAbove200 = countries[p.name].findIndex(
-                        point => point[type] >= config.day0Value
+                        (point) => point[type] >= config.day0Value
                     );
                     const data = countries[p.name]
                         .slice(Math.max(firstDayAbove200 - 1, 0))
@@ -258,7 +273,7 @@ const createMap = (type = 'confirmed') => {
             countryChart.update({ series }, true, true);
             location.hash = store.join(',');
 
-        // No selected points
+            // No selected points
         } else {
             //document.querySelector('#reset').style.display = 'none';
             document.querySelector('#info #flag').className = '';
@@ -269,19 +284,19 @@ const createMap = (type = 'confirmed') => {
             }
         }
     };
-    mapChart.container.querySelectorAll('.highcharts-point').forEach(
-        graphic => {
+    mapChart.container
+        .querySelectorAll('.highcharts-point')
+        .forEach((graphic) => {
             graphic.addEventListener('click', onCountryClick);
             graphic.addEventListener('touchstart', onCountryClick);
-        }
-    );
+        });
 
     // Pre-select countries
     let selected = 'cn,it,us';
     if (location.hash) {
         selected = location.hash.replace('#', '');
     }
-    selected.split(',').forEach(id => {
+    selected.split(',').forEach((id) => {
         if (/^[a-z]{2}$/.test(id)) {
             const country = mapChart.get(id);
             if (country) {
@@ -290,16 +305,15 @@ const createMap = (type = 'confirmed') => {
         }
     });
     onCountryClick();
-
 };
 
 const activateButtons = () => {
     const buttons = document.querySelectorAll('input[name="source"]');
-    buttons.forEach(button => {
+    buttons.forEach((button) => {
         button.addEventListener('click', () => {
             button.parentNode.classList.add('active');
 
-            buttons.forEach(otherButton => {
+            buttons.forEach((otherButton) => {
                 if (otherButton !== button) {
                     otherButton.parentNode.classList.remove('active');
                 }
@@ -311,9 +325,13 @@ const activateButtons = () => {
 };
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const countriesResp = await fetch("https://pomber.github.io/covid19/timeseries.json");
+    const countriesResp = await fetch(
+        'https://pomber.github.io/covid19/timeseries.json'
+    );
     countries = await countriesResp.json();
-    const populationResp = await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json');
+    const populationResp = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json'
+    );
     population = await populationResp.json();
 
     activateButtons();

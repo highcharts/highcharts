@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         inverted: true
     },
@@ -23,9 +22,10 @@ Highcharts.chart('container', {
         reversed: true
     },
 
-    series: [{
-        type: 'scatter',
-        data: [0, 1, 12, 3, 14, 5]
-    }]
-
+    series: [
+        {
+            type: 'scatter',
+            data: [0, 1, 12, 3, 14, 5]
+        }
+    ]
 });

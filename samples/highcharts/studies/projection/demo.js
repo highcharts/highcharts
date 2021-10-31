@@ -18,14 +18,17 @@ function getGraticule() {
         data.push({
             geometry: {
                 type: 'LineString',
-                coordinates: x % 90 === 0 ? [
-                    [x, -90],
-                    [x, 0],
-                    [x, 90]
-                ] : [
-                    [x, -80],
-                    [x, 80]
-                ]
+                coordinates:
+                    x % 90 === 0
+                        ? [
+                              [x, -90],
+                              [x, 0],
+                              [x, 90]
+                          ]
+                        : [
+                              [x, -80],
+                              [x, 80]
+                          ]
             }
         });
     }
@@ -55,23 +58,24 @@ const static = {
 
 let chart;
 
-const drawMap = projectionKey => {
-
+const drawMap = (projectionKey) => {
     const geojson = JSON.parse(static.geojson);
 
     // geojson.features = geojson.features.filter(f => f.properties.name === 'Antarctica');
 
     // Apply projection using Proj4
-    const projection = Highcharts.merge({
-        name: undefined,
-        projString: undefined,
-        rotation: [
-            parseInt(document.getElementById('rotation-lambda').value, 10),
-            parseInt(document.getElementById('rotation-phi').value, 10),
-            parseInt(document.getElementById('rotation-gamma').value, 10)
-        ]
-    }, {
-        /*
+    const projection = Highcharts.merge(
+        {
+            name: undefined,
+            projString: undefined,
+            rotation: [
+                parseInt(document.getElementById('rotation-lambda').value, 10),
+                parseInt(document.getElementById('rotation-phi').value, 10),
+                parseInt(document.getElementById('rotation-gamma').value, 10)
+            ]
+        },
+        {
+            /*
         'gall-peters': {
             name: 'cea',
             lon0: 0,
@@ -81,54 +85,53 @@ const drawMap = projectionKey => {
             name: 'eqc'
         },
         */
-        equalearth: {
-            name: 'EqualEarth'
-        },
-        miller: {
-            name: 'Miller'
-        },
-        'ortho-africa': {
-            name: 'Orthographic',
-            rotation: [-15, 0]
-        },
-        'ortho-antarctica': {
-            name: 'Orthographic',
-            rotation: [0, 90]
-        },
-        'ortho-asia': {
-            name: 'Orthographic',
-            rotation: [-90, -40]
-        },
-        'ortho-australia': {
-            name: 'Orthographic',
-            rotation: [-140, 30]
-        },
-        'ortho-europe': {
-            name: 'Orthographic',
-            rotation: [-15, -40]
-        },
-        'ortho-north-america': {
-            name: 'Orthographic',
-            rotation: [100, -45]
-        },
-        'ortho-south-america': {
-            name: 'Orthographic',
-            rotation: [60, 10]
-        },
-        /*
+            equalearth: {
+                name: 'EqualEarth'
+            },
+            miller: {
+                name: 'Miller'
+            },
+            'ortho-africa': {
+                name: 'Orthographic',
+                rotation: [-15, 0]
+            },
+            'ortho-antarctica': {
+                name: 'Orthographic',
+                rotation: [0, 90]
+            },
+            'ortho-asia': {
+                name: 'Orthographic',
+                rotation: [-90, -40]
+            },
+            'ortho-australia': {
+                name: 'Orthographic',
+                rotation: [-140, 30]
+            },
+            'ortho-europe': {
+                name: 'Orthographic',
+                rotation: [-15, -40]
+            },
+            'ortho-north-america': {
+                name: 'Orthographic',
+                rotation: [100, -45]
+            },
+            'ortho-south-america': {
+                name: 'Orthographic',
+                rotation: [60, 10]
+            },
+            /*
         robin: {
             name: 'robin'
         },
         */
-        webmerc: {
-            name: 'WebMercator'
-        }
-    }[projectionKey] || {});
+            webmerc: {
+                name: 'WebMercator'
+            }
+        }[projectionKey] || {}
+    );
 
     // Initialize the chart
     if (!chart) {
-
-
         // projection.proj4 = libs.proj4;
         // projection.d3 = libs.d3;
 
@@ -181,14 +184,15 @@ const drawMap = projectionKey => {
                 pointFormat: '{point.name}: {point.value}'
             },
 
-            series: [{
-                name: 'Graticule',
-                type: 'mapline',
-                data: getGraticule(),
-                nullColor: '#e8e8e8',
-                color: '#e8e8e8'
-            },
-            /*
+            series: [
+                {
+                    name: 'Graticule',
+                    type: 'mapline',
+                    data: getGraticule(),
+                    nullColor: '#e8e8e8',
+                    color: '#e8e8e8'
+                },
+                /*
             {
                 type: 'mapline',
                 data: [{
@@ -205,53 +209,60 @@ const drawMap = projectionKey => {
             },
             // */
 
-            //*
-            {
-                data: static.data,
-                joinBy: null,
-                name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba',
-                        borderColor: '#333333'
-                    }
-                },
-                dataLabels: {
-                    enabled: false,
-                    format: '{point.name}'
-                },
-                clip: false
-            }, {
-                type: 'mapline',
-                data: [{
-                    geometry: {
-                        type: 'LineString',
-                        coordinates: [
-                            [4.90, 53.38], // Amsterdam
-                            [-118.24, 34.05] // Los Angeles
-                        ]
+                //*
+                {
+                    data: static.data,
+                    joinBy: null,
+                    name: 'Random data',
+                    states: {
+                        hover: {
+                            color: '#a4edba',
+                            borderColor: '#333333'
+                        }
                     },
+                    dataLabels: {
+                        enabled: false,
+                        format: '{point.name}'
+                    },
+                    clip: false
+                },
+                {
+                    type: 'mapline',
+                    data: [
+                        {
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: [
+                                    [4.9, 53.38], // Amsterdam
+                                    [-118.24, 34.05] // Los Angeles
+                                ]
+                            },
+                            color: '#3030d0'
+                        }
+                    ],
+                    lineWidth: 2
+                },
+                {
+                    type: 'mappoint',
+                    data: [
+                        {
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [4.9, 53.38]
+                            },
+                            name: 'Amsterdam'
+                        },
+                        {
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [-118.24, 34.05]
+                            },
+                            name: 'LA'
+                        }
+                    ],
                     color: '#3030d0'
-                }],
-                lineWidth: 2
-            }, {
-                type: 'mappoint',
-                data: [{
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [4.90, 53.38]
-                    },
-                    name: 'Amsterdam'
-                }, {
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [-118.24, 34.05]
-                    },
-                    name: 'LA'
-                }],
-                color: '#3030d0'
-            }
-            //*/
+                }
+                //*/
             ]
         });
         console.timeEnd('@mapChart');
@@ -263,7 +274,7 @@ const drawMap = projectionKey => {
         }, 1200);
         */
 
-    /* else if (
+        /* else if (
         projection.name === 'ortho' &&
         chart.mapView.projection.options.name === 'ortho'
     ) {
@@ -315,10 +326,12 @@ const drawMap = projectionKey => {
         */
     }
 
-    document.querySelectorAll('#projection-buttons button').forEach(btn =>
-        btn.classList.remove('active')
-    );
-    document.querySelector(`#projection-buttons #${projectionKey}`).classList.add('active');
+    document
+        .querySelectorAll('#projection-buttons button')
+        .forEach((btn) => btn.classList.remove('active'));
+    document
+        .querySelector(`#projection-buttons #${projectionKey}`)
+        .classList.add('active');
 };
 
 function setLibrary(btnId) {
@@ -338,47 +351,57 @@ function setLibrary(btnId) {
         }
     });
 
-    document.querySelectorAll('#library-buttons button').forEach(btn =>
-        btn.classList.remove('active')
-    );
-    document.querySelector(`#library-buttons #${btnId}`).classList.add('active');
+    document
+        .querySelectorAll('#library-buttons button')
+        .forEach((btn) => btn.classList.remove('active'));
+    document
+        .querySelector(`#library-buttons #${btnId}`)
+        .classList.add('active');
 }
 
 const enableInputs = () => {
-    document.querySelectorAll('#projection-buttons button').forEach(btn =>
-        btn.addEventListener('click', e => drawMap(e.target.id))
-    );
-    document.querySelectorAll('#library-buttons button').forEach(btn =>
-        btn.addEventListener('click', e => setLibrary(e.target.id))
-    );
-    document.querySelectorAll('.rotation').forEach(input => {
+    document
+        .querySelectorAll('#projection-buttons button')
+        .forEach((btn) =>
+            btn.addEventListener('click', (e) => drawMap(e.target.id))
+        );
+    document
+        .querySelectorAll('#library-buttons button')
+        .forEach((btn) =>
+            btn.addEventListener('click', (e) => setLibrary(e.target.id))
+        );
+    document.querySelectorAll('.rotation').forEach((input) => {
         input.addEventListener('input', () => {
             const lambda = document.getElementById('rotation-lambda').value;
             const phi = document.getElementById('rotation-phi').value;
             const gamma = document.getElementById('rotation-gamma').value;
-            document.getElementById('rotation-lambda-output')
-                .innerText = lambda;
+            document.getElementById('rotation-lambda-output').innerText =
+                lambda;
             document.getElementById('rotation-phi-output').innerText = phi;
             document.getElementById('rotation-gamma-output').innerText = gamma;
 
-            const rotation = chart.mapView.projection.options.rotation ||
-                [0, 0];
+            const rotation = chart.mapView.projection.options.rotation || [
+                0, 0
+            ];
             rotation[0] = parseInt(lambda, 10);
             rotation[1] = parseInt(phi, 10);
             rotation[2] = parseInt(gamma, 10);
-            chart.mapView.update({
-                projection: {
-                    rotation
-                }
-            }, true, false);
+            chart.mapView.update(
+                {
+                    projection: {
+                        rotation
+                    }
+                },
+                true,
+                false
+            );
         });
     });
 };
 
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2e11000c966a20f08afc4e0927b91df99821de99/samples/data/world-countries.topo.json',
-    topology => {
-
+    (topology) => {
         // Convert the topoJSON feature into geoJSON
         const geojson = window.topojson.feature(
             topology,
@@ -396,6 +419,5 @@ Highcharts.getJSON(
         drawMap('equalearth');
 
         enableInputs();
-
     }
 );

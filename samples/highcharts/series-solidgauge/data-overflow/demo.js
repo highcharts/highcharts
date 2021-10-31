@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'solidgauge'
     },
@@ -23,8 +22,9 @@ Highcharts.chart('container', {
         max: 5
     },
 
-    series: [{
-        data: [38]
-    }]
-
+    series: [
+        {
+            data: [38]
+        }
+    ]
 });

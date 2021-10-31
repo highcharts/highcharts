@@ -7,10 +7,14 @@ var pieColors = (function () {
     for (i = 0; i < 10; i += 1) {
         // Start out with a darkened base color (negative brighten), and end
         // up with a much brighter color
-        colors.push(Highcharts.color(base).brighten((i - 3) / 7).get());
+        colors.push(
+            Highcharts.color(base)
+                .brighten((i - 3) / 7)
+                .get()
+        );
     }
     return colors;
-}());
+})();
 
 // Build the chart
 Highcharts.chart('container', {
@@ -48,15 +52,17 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        name: 'Share',
-        data: [
-            { name: 'Chrome', y: 61.41 },
-            { name: 'Internet Explorer', y: 11.84 },
-            { name: 'Firefox', y: 10.85 },
-            { name: 'Edge', y: 4.67 },
-            { name: 'Safari', y: 4.18 },
-            { name: 'Other', y: 7.05 }
-        ]
-    }]
+    series: [
+        {
+            name: 'Share',
+            data: [
+                { name: 'Chrome', y: 61.41 },
+                { name: 'Internet Explorer', y: 11.84 },
+                { name: 'Firefox', y: 10.85 },
+                { name: 'Edge', y: 4.67 },
+                { name: 'Safari', y: 4.18 },
+                { name: 'Other', y: 7.05 }
+            ]
+        }
+    ]
 });

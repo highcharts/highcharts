@@ -3,7 +3,8 @@ Highcharts.chart('container', {
     chart: {
         events: {
             load: function () {
-                var label = this.renderer.label('Chart loaded', 100, 120)
+                var label = this.renderer
+                    .label('Chart loaded', 100, 120)
                     .attr({
                         fill: Highcharts.getOptions().colors[0],
                         padding: 10,
@@ -22,8 +23,13 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        animation: false,
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    }]
+    series: [
+        {
+            animation: false,
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ]
+        }
+    ]
 });

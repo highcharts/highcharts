@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge'
     },
@@ -12,16 +11,20 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         max: 100,
-        plotBands: [{
-            from: 0,
-            to: 60,
-            color: '#89A54E',
-            outerRadius: '105%',
-            thickness: '5%'
-        }]
+        plotBands: [
+            {
+                from: 0,
+                to: 60,
+                color: '#89A54E',
+                outerRadius: '105%',
+                thickness: '5%'
+            }
+        ]
     },
 
-    series: [{
-        data: [80]
-    }]
+    series: [
+        {
+            data: [80]
+        }
+    ]
 });

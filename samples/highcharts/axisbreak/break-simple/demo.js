@@ -7,21 +7,25 @@ Highcharts.chart('container', {
     },
     xAxis: {
         tickInterval: 1,
-        breaks: [{
-            from: 5,
-            to: 10,
-            breakSize: 1
-        }]
-    },
-    series: [{
-        gapSize: 1,
-        data: (function () {
-            var data = [],
-                i;
-            for (i = 0; i < 20; i = i + 1) {
-                data.push(i);
+        breaks: [
+            {
+                from: 5,
+                to: 10,
+                breakSize: 1
             }
-            return data;
-        }())
-    }]
+        ]
+    },
+    series: [
+        {
+            gapSize: 1,
+            data: (function () {
+                var data = [],
+                    i;
+                for (i = 0; i < 20; i = i + 1) {
+                    data.push(i);
+                }
+                return data;
+            })()
+        }
+    ]
 });

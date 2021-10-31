@@ -1,10 +1,15 @@
-Highcharts.setOptions({ // Apply the exporting height to print as well
+Highcharts.setOptions({
+    // Apply the exporting height to print as well
     chart: {
         events: {
             beforePrint: function () {
                 var height = this.options.exporting.chartOptions.chart.height;
                 if (height) {
-                    this.resetParams = [this.chartWidth, this.chartHeight, false];
+                    this.resetParams = [
+                        this.chartWidth,
+                        this.chartHeight,
+                        false
+                    ];
                     this.setSize(this.chartWidth, height, false);
                 }
             },
@@ -18,7 +23,6 @@ Highcharts.setOptions({ // Apply the exporting height to print as well
 });
 
 Highcharts.chart('container', {
-
     chart: {
         type: 'pie',
         width: 500,
@@ -51,23 +55,26 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: (function () {
-            var names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
-                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
-                arr = [];
+    series: [
+        {
+            data: (function () {
+                var names =
+                        'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
+                        'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
+                    arr = [];
 
-            Highcharts.each(names.split(','), function (name) {
-                arr.push({
-                    name: name,
-                    y: Math.round(Math.random() * 100)
+                Highcharts.each(names.split(','), function (name) {
+                    arr.push({
+                        name: name,
+                        y: Math.round(Math.random() * 100)
+                    });
                 });
-            });
 
-            return arr;
-        }()),
-        showInLegend: true
-    }],
+                return arr;
+            })(),
+            showInLegend: true
+        }
+    ],
 
     // In export, increase the chart height to disable navigation
     exporting: {
@@ -77,5 +84,4 @@ Highcharts.chart('container', {
             }
         }
     }
-
 });

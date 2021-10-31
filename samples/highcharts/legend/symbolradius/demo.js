@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },
@@ -18,12 +17,15 @@ Highcharts.chart('container', {
         symbolRadius: 6
     },
 
-    series: [{
-        data: [1, 3, 2, 4]
-    }, {
-        data: [6, 4, 5, 3]
-    }, {
-        data: [2, 7, 6, 5]
-    }]
-
+    series: [
+        {
+            data: [1, 3, 2, 4]
+        },
+        {
+            data: [6, 4, 5, 3]
+        },
+        {
+            data: [2, 7, 6, 5]
+        }
+    ]
 });

@@ -1,7 +1,6 @@
 var start;
 
 Highcharts.chart('container', {
-
     data: {
         csv: document.getElementById('csv').innerHTML,
         parsed: function () {
@@ -78,18 +77,20 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        boostThreshold: 100,
-        borderWidth: 0,
-        nullColor: '#EFEFEF',
-        colsize: 24 * 36e5, // one day
-        tooltip: {
-            headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        },
-        turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
-    }]
-
+    series: [
+        {
+            boostThreshold: 100,
+            borderWidth: 0,
+            nullColor: '#EFEFEF',
+            colsize: 24 * 36e5, // one day
+            tooltip: {
+                headerFormat: 'Temperature<br/>',
+                pointFormat:
+                    '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+            },
+            turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
+        }
+    ]
 });
 
 console.log('Rendered in ' + (new Date() - start) + ' ms'); // eslint-disable-line no-console

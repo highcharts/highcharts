@@ -25,27 +25,31 @@ Highcharts.chart('container', {
             distance: '75%',
             align: 'auto',
             style: {
-                fontSize: "20px"
+                fontSize: '20px'
             }
         },
-        plotLines: [{
-            value: 35,
-            zIndex: 5,
-            width: 2,
-            color: '#ff0000'
-        }]
+        plotLines: [
+            {
+                value: 35,
+                zIndex: 5,
+                width: 2,
+                color: '#ff0000'
+            }
+        ]
     },
-    series: [{
-        innerRadius: '50%',
-        radius: '100%',
-        dataLabels: {
-            borderWidth: 0,
-            verticalAlign: 'bottom',
-            style: {
-                fontSize: '30px'
+    series: [
+        {
+            innerRadius: '50%',
+            radius: '100%',
+            dataLabels: {
+                borderWidth: 0,
+                verticalAlign: 'bottom',
+                style: {
+                    fontSize: '30px'
+                },
+                y: 13
             },
-            y: 13
-        },
-        data: [63]
-    }]
+            data: [63]
+        }
+    ]
 });

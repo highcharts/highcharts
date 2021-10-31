@@ -29,22 +29,28 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Things',
-        colorByPoint: true,
-        data: [{
-            name: 'Dieren',
-            y: 5,
-            drilldown: 'animals'
-        }, {
-            name: 'Fruit',
-            y: 2,
-            drilldown: 'fruits'
-        }, {
-            name: 'Auto\'s',
-            y: 4
-        }]
-    }],
+    series: [
+        {
+            name: 'Things',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Dieren',
+                    y: 5,
+                    drilldown: 'animals'
+                },
+                {
+                    name: 'Fruit',
+                    y: 2,
+                    drilldown: 'fruits'
+                },
+                {
+                    name: "Auto's",
+                    y: 4
+                }
+            ]
+        }
+    ],
     drilldown: {
         drillUpButton: {
             relativeTo: 'spacingBox',
@@ -67,23 +73,25 @@ Highcharts.chart('container', {
                     }
                 }
             }
-
         },
-        series: [{
-            id: 'animals',
-            data: [
-                ['Katten', 4],
-                ['Honden', 2],
-                ['Koeien', 1],
-                ['Schapen', 2],
-                ['Varkens', 1]
-            ]
-        }, {
-            id: 'fruits',
-            data: [
-                ['Appels', 4],
-                ['Sinaasappels', 2]
-            ]
-        }]
+        series: [
+            {
+                id: 'animals',
+                data: [
+                    ['Katten', 4],
+                    ['Honden', 2],
+                    ['Koeien', 1],
+                    ['Schapen', 2],
+                    ['Varkens', 1]
+                ]
+            },
+            {
+                id: 'fruits',
+                data: [
+                    ['Appels', 4],
+                    ['Sinaasappels', 2]
+                ]
+            }
+        ]
     }
 });

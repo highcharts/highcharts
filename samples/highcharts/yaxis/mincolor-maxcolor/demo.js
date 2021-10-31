@@ -45,58 +45,68 @@ const gaugeOptions = {
 };
 
 // The speed gauge
-Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 200,
-        title: {
-            text: 'Speed'
-        }
-    },
-    credits: {
-        enabled: false
-    },
-    series: [{
-        name: 'Speed',
-        data: [30],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px;color:black">{y}</span><br/>' +
-                '<span style="font-size:12px;color:silver">km/h</span>' +
-                '</div>'
+Highcharts.chart(
+    'container-speed',
+    Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 200,
+            title: {
+                text: 'Speed'
+            }
         },
-        tooltip: {
-            valueSuffix: ' km/h'
-        }
-    }]
-}));
+        credits: {
+            enabled: false
+        },
+        series: [
+            {
+                name: 'Speed',
+                data: [30],
+                dataLabels: {
+                    format:
+                        '<div style="text-align:center">' +
+                        '<span style="font-size:25px;color:black">{y}</span><br/>' +
+                        '<span style="font-size:12px;color:silver">km/h</span>' +
+                        '</div>'
+                },
+                tooltip: {
+                    valueSuffix: ' km/h'
+                }
+            }
+        ]
+    })
+);
 
 // The RPM gauge
-Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 5,
-        title: {
-            text: 'RPM'
-        }
-    },
-    series: [{
-        name: 'RPM',
-        data: [4],
-        dataLabels: {
-            format:
-                '<div style="text-align:center">' +
-                '<span style="font-size:25px;color:black">' +
-                '{y:.1f}' +
-                '</span><br/>' +
-                '<span style="font-size:12px;color:silver">' +
-                '* 1000 / min' +
-                '</span>' +
-                '</div>'
+Highcharts.chart(
+    'container-rpm',
+    Highcharts.merge(gaugeOptions, {
+        yAxis: {
+            min: 0,
+            max: 5,
+            title: {
+                text: 'RPM'
+            }
         },
-        tooltip: {
-            valueSuffix: ' revolutions/min'
-        }
-    }]
-}));
+        series: [
+            {
+                name: 'RPM',
+                data: [4],
+                dataLabels: {
+                    format:
+                        '<div style="text-align:center">' +
+                        '<span style="font-size:25px;color:black">' +
+                        '{y:.1f}' +
+                        '</span><br/>' +
+                        '<span style="font-size:12px;color:silver">' +
+                        '* 1000 / min' +
+                        '</span>' +
+                        '</div>'
+                },
+                tooltip: {
+                    valueSuffix: ' revolutions/min'
+                }
+            }
+        ]
+    })
+);

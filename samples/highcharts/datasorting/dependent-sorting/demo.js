@@ -1,4 +1,15 @@
-var names = ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
+var names = [
+    'Alexander',
+    'Marie',
+    'Maximilian',
+    'Sophia',
+    'Lukas',
+    'Maria',
+    'Leon',
+    'Anna',
+    'Tim',
+    'Laura'
+];
 
 function getRandomData(row) {
     var data = [];
@@ -14,7 +25,6 @@ function getRandomData(row) {
 }
 
 var chart = Highcharts.chart('container', {
-
     chart: {
         type: 'heatmap',
         plotBorderWidth: 1
@@ -36,31 +46,36 @@ var chart = Highcharts.chart('container', {
         title: null
     },
 
-    colorAxis: [{
-        min: 0,
-        max: 40,
-        visible: false,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[0]
-    }, {
-        min: 0,
-        max: 10,
-        visible: false,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[1]
-    }, {
-        min: 0,
-        max: 10,
-        visible: false,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[2]
-    }, {
-        min: 0,
-        max: 10,
-        visible: false,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[3]
-    }],
+    colorAxis: [
+        {
+            min: 0,
+            max: 40,
+            visible: false,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[0]
+        },
+        {
+            min: 0,
+            max: 10,
+            visible: false,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[1]
+        },
+        {
+            min: 0,
+            max: 10,
+            visible: false,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[2]
+        },
+        {
+            min: 0,
+            max: 10,
+            visible: false,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[3]
+        }
+    ],
 
     plotOptions: {
         series: {
@@ -75,44 +90,58 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        borderWidth: 1,
-        id: 'mainSeries',
-        keys: ['name', 'y', 'value'],
-        dataSorting: {
-            enabled: true,
-            sortKey: 'value'
+    series: [
+        {
+            borderWidth: 1,
+            id: 'mainSeries',
+            keys: ['name', 'y', 'value'],
+            dataSorting: {
+                enabled: true,
+                sortKey: 'value'
+            },
+            data: getRandomData(0)
         },
-        data: getRandomData(0)
-    }, {
-        borderWidth: 1,
-        linkedTo: 'mainSeries',
-        data: getRandomData(1),
-        colorAxis: 1
-    }, {
-        borderWidth: 1,
-        linkedTo: 'mainSeries',
-        data: getRandomData(2),
-        colorAxis: 2
-    }, {
-        borderWidth: 1,
-        linkedTo: 'mainSeries',
-        data: getRandomData(3),
-        colorAxis: 3
-    }]
-
+        {
+            borderWidth: 1,
+            linkedTo: 'mainSeries',
+            data: getRandomData(1),
+            colorAxis: 1
+        },
+        {
+            borderWidth: 1,
+            linkedTo: 'mainSeries',
+            data: getRandomData(2),
+            colorAxis: 2
+        },
+        {
+            borderWidth: 1,
+            linkedTo: 'mainSeries',
+            data: getRandomData(3),
+            colorAxis: 3
+        }
+    ]
 });
 
 setInterval(function () {
-    chart.update({
-        series: [{
-            data: getRandomData(0)
-        }, {
-            data: getRandomData(1)
-        }, {
-            data: getRandomData(2)
-        }, {
-            data: getRandomData(3)
-        }]
-    }, true, false, { duration: 2000 });
+    chart.update(
+        {
+            series: [
+                {
+                    data: getRandomData(0)
+                },
+                {
+                    data: getRandomData(1)
+                },
+                {
+                    data: getRandomData(2)
+                },
+                {
+                    data: getRandomData(3)
+                }
+            ]
+        },
+        true,
+        false,
+        { duration: 2000 }
+    );
 }, 3000);

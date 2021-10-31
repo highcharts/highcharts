@@ -68,15 +68,17 @@ var chart = Highcharts.chart({
     legend: {
         enabled: false
     },
-    series: [{
-        keys: ['y', 'z'],
-        dataSorting: {
-            enabled: true,
-            sortKey: 'y'
-        },
-        colorByPoint: true,
-        data: getRandomData()
-    }]
+    series: [
+        {
+            keys: ['y', 'z'],
+            dataSorting: {
+                enabled: true,
+                sortKey: 'y'
+            },
+            colorByPoint: true,
+            data: getRandomData()
+        }
+    ]
 });
 
 setInterval(function () {

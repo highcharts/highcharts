@@ -14,7 +14,8 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        headerFormat: '<span style="font-size: 10px">{point.yCategory}</span><br/>',
+        headerFormat:
+            '<span style="font-size: 10px">{point.yCategory}</span><br/>',
         pointFormat: '{point.name}'
     },
 
@@ -38,12 +39,16 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     dragStart: function (e) {
-                        setDragStatus('Drag started at page coordinates ' +
-                                e.chartX + '/' + e.chartY + (
-                            e.updateProp ?
-                                '. Updating ' + e.updateProp :
-                                ''
-                        ) + '. ');
+                        setDragStatus(
+                            'Drag started at page coordinates ' +
+                                e.chartX +
+                                '/' +
+                                e.chartY +
+                                (e.updateProp
+                                    ? '. Updating ' + e.updateProp
+                                    : '') +
+                                '. '
+                        );
                     },
                     drag: function (e) {
                         // Returning false stops the drag and drops. Example:
@@ -52,16 +57,24 @@ Highcharts.chart('container', {
                             return false;
                         }
                         */
-                        var status = 'Dragging "' +
-                            (this.name || this.id) + '". ' + e.numNewPoints +
+                        var status =
+                            'Dragging "' +
+                            (this.name || this.id) +
+                            '". ' +
+                            e.numNewPoints +
                             ' point(s) selected.';
 
                         // If more than one point is being updated, see
                         // e.newPoints for a hashmap of these. Here we just add
                         // info if there is a single point.
                         if (e.newPoint) {
-                            status += ' New x/x2/y: ' + e.newPoint.x +
-                                '/' + e.newPoint.x2 + '/' + e.newPoint.y;
+                            status +=
+                                ' New x/x2/y: ' +
+                                e.newPoint.x +
+                                '/' +
+                                e.newPoint.x2 +
+                                '/' +
+                                e.newPoint.y;
                         }
 
                         setDragStatus(status);
@@ -101,84 +114,96 @@ Highcharts.chart('container', {
         categories: ['Prototyping', 'Development', 'Testing']
     },
 
-    series: [{
-        name: 'Project 1',
-        cursor: 'move',
-        data: [{
-            x: Date.UTC(2014, 11, 1),
-            x2: Date.UTC(2014, 11, 4),
-            y: 0,
-            name: 'Task 1'
-        }, {
-            x: Date.UTC(2014, 11, 2),
-            x2: Date.UTC(2014, 11, 5),
-            y: 1,
-            name: 'Task 2'
-        }, {
-            x: Date.UTC(2014, 11, 9),
-            x2: Date.UTC(2014, 11, 19),
-            y: 1,
-            name: 'No drag Y',
-            // Disable draggable Y for this point
-            dragDrop: {
-                draggableY: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 8),
-            x2: Date.UTC(2014, 11, 9),
-            y: 2,
-            groupId: 'Group A',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 10),
-            x2: Date.UTC(2014, 11, 23),
-            y: 2,
-            name: 'Grouped, no prototyping',
-            groupId: 'Group A',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 25),
-            x2: Date.UTC(2014, 11, 26),
-            y: 2,
-            groupId: 'Group A',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 24),
-            x2: Date.UTC(2014, 11, 26),
-            y: 1,
-            groupId: 'Group B',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 26),
-            x2: Date.UTC(2014, 11, 28),
-            y: 1,
-            name: 'Grouped',
-            groupId: 'Group B',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }, {
-            x: Date.UTC(2014, 11, 28),
-            x2: Date.UTC(2014, 11, 30),
-            y: 1,
-            groupId: 'Group B',
-            dragDrop: {
-                draggableX1: false,
-                draggableX2: false
-            }
-        }]
-    }]
+    series: [
+        {
+            name: 'Project 1',
+            cursor: 'move',
+            data: [
+                {
+                    x: Date.UTC(2014, 11, 1),
+                    x2: Date.UTC(2014, 11, 4),
+                    y: 0,
+                    name: 'Task 1'
+                },
+                {
+                    x: Date.UTC(2014, 11, 2),
+                    x2: Date.UTC(2014, 11, 5),
+                    y: 1,
+                    name: 'Task 2'
+                },
+                {
+                    x: Date.UTC(2014, 11, 9),
+                    x2: Date.UTC(2014, 11, 19),
+                    y: 1,
+                    name: 'No drag Y',
+                    // Disable draggable Y for this point
+                    dragDrop: {
+                        draggableY: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 8),
+                    x2: Date.UTC(2014, 11, 9),
+                    y: 2,
+                    groupId: 'Group A',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 10),
+                    x2: Date.UTC(2014, 11, 23),
+                    y: 2,
+                    name: 'Grouped, no prototyping',
+                    groupId: 'Group A',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 25),
+                    x2: Date.UTC(2014, 11, 26),
+                    y: 2,
+                    groupId: 'Group A',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 24),
+                    x2: Date.UTC(2014, 11, 26),
+                    y: 1,
+                    groupId: 'Group B',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 26),
+                    x2: Date.UTC(2014, 11, 28),
+                    y: 1,
+                    name: 'Grouped',
+                    groupId: 'Group B',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                },
+                {
+                    x: Date.UTC(2014, 11, 28),
+                    x2: Date.UTC(2014, 11, 30),
+                    y: 1,
+                    groupId: 'Group B',
+                    dragDrop: {
+                        draggableX1: false,
+                        draggableX2: false
+                    }
+                }
+            ]
+        }
+    ]
 });

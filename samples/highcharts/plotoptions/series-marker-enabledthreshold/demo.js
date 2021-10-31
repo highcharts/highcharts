@@ -1,14 +1,10 @@
 // Create some smooth demo data
 var sine = [];
 for (var x = 0; x <= 60; x++) {
-    sine.push([
-        x,
-        Math.sin(x * Highcharts.deg2rad)
-    ]);
+    sine.push([x, Math.sin(x * Highcharts.deg2rad)]);
 }
 
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'x'
     },
@@ -40,8 +36,10 @@ Highcharts.chart('container', {
         headerFormat: '<b>{point.x} degrees</b><br>'
     },
 
-    series: [{
-        data: sine,
-        name: 'Sine'
-    }]
+    series: [
+        {
+            data: sine,
+            name: 'Sine'
+        }
+    ]
 });

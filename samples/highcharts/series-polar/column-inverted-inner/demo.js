@@ -6,7 +6,7 @@ Highcharts.chart('container', {
         marginTop: 40
     },
     title: {
-        text: 'Pane\'s innerSize'
+        text: "Pane's innerSize"
     },
     subtitle: {
         text: 'The innerSize option is set to 15%'
@@ -27,7 +27,9 @@ Highcharts.chart('container', {
         lineWidth: 0,
         showLastLabel: true
     },
-    series: [{
-        data: [29, 106, 144, 135, 216, 95]
-    }]
+    series: [
+        {
+            data: [29, 106, 144, 135, 216, 95]
+        }
+    ]
 });

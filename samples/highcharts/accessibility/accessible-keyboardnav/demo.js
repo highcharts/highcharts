@@ -13,9 +13,12 @@ Highcharts.chart('container', {
         align: 'right'
     },
 
-    series: [{
-        data: [74, 69.6, 63.7, 43.7]
-    }, {
-        data: [74, 63.7, 23.9, 13.7]
-    }]
+    series: [
+        {
+            data: [74, 69.6, 63.7, 43.7]
+        },
+        {
+            data: [74, 63.7, 23.9, 13.7]
+        }
+    ]
 });

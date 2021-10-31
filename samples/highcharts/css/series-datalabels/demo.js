@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         styledMode: true
     },
@@ -23,24 +22,30 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [{
-            y: 100,
-            dataLabels: {
-                align: 'right',
-                rotation: 45,
-                shape: null
-            }
-        }, {
-            y: 300
-        }, {
-            y: 500,
-            dataLabels: {
-                className: 'highlight'
-            }
-        }, {
-            y: 400
-        }]
-    }]
-
+    series: [
+        {
+            data: [
+                {
+                    y: 100,
+                    dataLabels: {
+                        align: 'right',
+                        rotation: 45,
+                        shape: null
+                    }
+                },
+                {
+                    y: 300
+                },
+                {
+                    y: 500,
+                    dataLabels: {
+                        className: 'highlight'
+                    }
+                },
+                {
+                    y: 400
+                }
+            ]
+        }
+    ]
 });

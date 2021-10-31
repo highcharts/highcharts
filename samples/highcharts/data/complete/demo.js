@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Global temperature change'
     },
@@ -14,7 +13,10 @@ Highcharts.chart('container', {
             // Add another series to the output
             options.series.push({
                 name: 'Trend',
-                data: [{ x: 1880, y: -0.4 }, { x: 2014, y: 0.52 }],
+                data: [
+                    { x: 1880, y: -0.4 },
+                    { x: 2014, y: 0.52 }
+                ],
                 dashStyle: 'dash'
             });
         }
@@ -28,12 +30,15 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        lineWidth: 1
-    }, {
-        type: 'areaspline',
-        color: '#c4392d',
-        negativeColor: '#5679c4',
-        fillOpacity: 0.5
-    }]
+    series: [
+        {
+            lineWidth: 1
+        },
+        {
+            type: 'areaspline',
+            color: '#c4392d',
+            negativeColor: '#5679c4',
+            fillOpacity: 0.5
+        }
+    ]
 });

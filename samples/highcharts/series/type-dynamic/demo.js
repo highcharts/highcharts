@@ -10,16 +10,18 @@ var chart = Highcharts.chart('container', {
             text: null
         }
     },
-    series: [{
-        type: 'line',
-        data: [
-            ['Apples', 3],
-            ['Pears', 5],
-            ['Bananas', 8],
-            ['Oranges', 2]
-        ],
-        name: 'Fruits'
-    }]
+    series: [
+        {
+            type: 'line',
+            data: [
+                ['Apples', 3],
+                ['Pears', 5],
+                ['Bananas', 8],
+                ['Oranges', 2]
+            ],
+            name: 'Fruits'
+        }
+    ]
 });
 
 document.querySelectorAll('#button-row button').forEach(function (button) {

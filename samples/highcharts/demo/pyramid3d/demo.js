@@ -26,14 +26,16 @@ Highcharts.chart('container', {
             center: ['50%', '45%']
         }
     },
-    series: [{
-        name: 'Unique users',
-        data: [
-            ['Website visits', 15654],
-            ['Downloads', 4064],
-            ['Requested price list', 1987],
-            ['Invoice sent', 976],
-            ['Finalized', 846]
-        ]
-    }]
+    series: [
+        {
+            name: 'Unique users',
+            data: [
+                ['Website visits', 15654],
+                ['Downloads', 4064],
+                ['Requested price list', 1987],
+                ['Invoice sent', 976],
+                ['Finalized', 846]
+            ]
+        }
+    ]
 });

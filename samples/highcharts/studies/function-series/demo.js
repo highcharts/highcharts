@@ -31,7 +31,7 @@
                     i;
 
                 for (i = 0; i < points; i += 1) {
-                    x = min + (i * ((max - min) / points));
+                    x = min + i * ((max - min) / points);
                     y = dataFunction(x);
                     data.push([x, y]);
                 }
@@ -45,13 +45,14 @@
                 var series = this,
                     xAxis = this.xAxis;
 
-                xAxis.setExtremes = function ()  {
-                    Highcharts.Axis.prototype.setExtremes
-                        .apply(this, arguments);
+                xAxis.setExtremes = function () {
+                    Highcharts.Axis.prototype.setExtremes.apply(
+                        this,
+                        arguments
+                    );
                     series.setData([]);
                 };
             }
-
         }
     );
 
@@ -63,9 +64,8 @@
                 serie.setData([]);
             }
         });
-
     });
-}(Highcharts));
+})(Highcharts);
 /// END OF FUNCTION SERIES
 
 var scatterData = [],
@@ -85,20 +85,23 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'y = sin(x)'
     },
-    series: [{
-        type: 'scatter',
-        name: 'Measured',
-        data: scatterData,
-        marker: {
-            radius: 1
+    series: [
+        {
+            type: 'scatter',
+            name: 'Measured',
+            data: scatterData,
+            marker: {
+                radius: 1
+            }
+        },
+        {
+            type: 'functionseries',
+            name: 'Expected',
+            min: 0,
+            max: 100,
+            dataFunction: function (x) {
+                return Math.sin(x / 10);
+            }
         }
-    }, {
-        type: 'functionseries',
-        name: 'Expected',
-        min: 0,
-        max: 100,
-        dataFunction: function (x) {
-            return Math.sin(x / 10);
-        }
-    }]
+    ]
 });

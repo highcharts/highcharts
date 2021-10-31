@@ -48,16 +48,14 @@ var n = 1000,
     s = 600,
     series = getSeries(n, s);
 
-
 console.time('line');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'x'
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text: 'Highcharts drawing ' + n * s + ' points across ' + s + ' series'
     },
 
     legend: {
@@ -96,6 +94,5 @@ Highcharts.chart('container', {
     },
 
     series: series
-
 });
 console.timeEnd('line');

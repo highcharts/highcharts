@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         styledMode: true,
         type: 'column'
@@ -9,18 +8,21 @@ Highcharts.chart('container', {
         text: 'Styling axes'
     },
 
-    yAxis: [{
-        className: 'highcharts-color-0',
-        title: {
-            text: 'Primary axis'
+    yAxis: [
+        {
+            className: 'highcharts-color-0',
+            title: {
+                text: 'Primary axis'
+            }
+        },
+        {
+            className: 'highcharts-color-1',
+            opposite: true,
+            title: {
+                text: 'Secondary axis'
+            }
         }
-    }, {
-        className: 'highcharts-color-1',
-        opposite: true,
-        title: {
-            text: 'Secondary axis'
-        }
-    }],
+    ],
 
     plotOptions: {
         column: {
@@ -28,11 +30,13 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [1, 3, 2, 4]
-    }, {
-        data: [324, 124, 547, 221],
-        yAxis: 1
-    }]
-
+    series: [
+        {
+            data: [1, 3, 2, 4]
+        },
+        {
+            data: [324, 124, 547, 221],
+            yAxis: 1
+        }
+    ]
 });

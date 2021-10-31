@@ -20,17 +20,19 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        lineWidth: 0.5,
-        connectNulls: false,
-        data: [
-            [0, 1],
-            [1, 5],
-            [2, null],
-            [3, 3],
-            [4, 0]
-        ]
-    }]
+    series: [
+        {
+            lineWidth: 0.5,
+            connectNulls: false,
+            data: [
+                [0, 1],
+                [1, 5],
+                [2, null],
+                [3, 3],
+                [4, 0]
+            ]
+        }
+    ]
 });
 
 Highcharts.chart('container-2', {
@@ -53,17 +55,19 @@ Highcharts.chart('container-2', {
         valueDecimals: 2
     },
 
-    series: [{
-        lineWidth: 0.5,
-        connectNulls: true,
-        data: [
-            [0, 1],
-            [1, 5],
-            [2, null],
-            [3, 3],
-            [4, 0]
-        ]
-    }]
+    series: [
+        {
+            lineWidth: 0.5,
+            connectNulls: true,
+            data: [
+                [0, 1],
+                [1, 5],
+                [2, null],
+                [3, 3],
+                [4, 0]
+            ]
+        }
+    ]
 });
 
 console.timeEnd('line');

@@ -11,37 +11,46 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'The inside option is set to true'
     },
-    pane: [{
-        size: '80%',
-        startAngle: 225,
-        endAngle: 405,
-        center: ['50%', '48%']
-    }, {
-        size: '80%',
-        startAngle: 45,
-        endAngle: 225,
-        center: ['50%', '52%']
-    }],
-    xAxis: [{
-        tickInterval: 1,
-        labels: {
-            enabled: false
+    pane: [
+        {
+            size: '80%',
+            startAngle: 225,
+            endAngle: 405,
+            center: ['50%', '48%']
+        },
+        {
+            size: '80%',
+            startAngle: 45,
+            endAngle: 225,
+            center: ['50%', '52%']
         }
-    }, {
-        pane: 1,
-        tickInterval: 1,
-        labels: {
-            enabled: false
+    ],
+    xAxis: [
+        {
+            tickInterval: 1,
+            labels: {
+                enabled: false
+            }
+        },
+        {
+            pane: 1,
+            tickInterval: 1,
+            labels: {
+                enabled: false
+            }
         }
-    }],
-    yAxis: [{
-        tickInterval: 1,
-        showEmpty: false
-    }, {
-        pane: 1,
-        tickInterval: 1,
-        showEmpty: false
-    }],
+    ],
+    yAxis: [
+        {
+            tickInterval: 1,
+            showEmpty: false
+        },
+        {
+            pane: 1,
+            tickInterval: 1,
+            showEmpty: false
+        }
+    ],
     plotOptions: {
         series: {
             grouping: false,
@@ -51,11 +60,14 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        data: [10, 9, 8, 7, 6]
-    }, {
-        xAxis: 1,
-        yAxis: 1,
-        data: [10, 9, 8, 7, 6]
-    }]
+    series: [
+        {
+            data: [10, 9, 8, 7, 6]
+        },
+        {
+            xAxis: 1,
+            yAxis: 1,
+            data: [10, 9, 8, 7, 6]
+        }
+    ]
 });

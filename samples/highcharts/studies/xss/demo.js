@@ -2,16 +2,17 @@ const getOptions = () => ({
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
     },
-    series: [{
-        data: [1, 4, 3, 5],
-        type: 'line'
-    }]
+    series: [
+        {
+            data: [1, 4, 3, 5],
+            type: 'line'
+        }
+    ]
 });
 
 Highcharts.chart('container', getOptions());
 
-document.getElementById('form').addEventListener('submit', e => {
-
+document.getElementById('form').addEventListener('submit', (e) => {
     console.clear();
     e.preventDefault();
 
@@ -26,5 +27,4 @@ document.getElementById('form').addEventListener('submit', e => {
     };
 
     Highcharts.chart('container', options);
-
 });

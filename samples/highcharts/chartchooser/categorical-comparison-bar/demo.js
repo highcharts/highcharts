@@ -7,8 +7,7 @@ Highcharts.chart('container', {
         text: 'Top 10 EU countries in organic farming area (2018)'
     },
     subtitle: {
-        text:
-        'Source: <a href="https://ec.europa.eu/eurostat/statistics-explained/index.php/Organic_farming_statistics">Eurostat</a>'
+        text: 'Source: <a href="https://ec.europa.eu/eurostat/statistics-explained/index.php/Organic_farming_statistics">Eurostat</a>'
     },
     xAxis: {
         categories: [

@@ -5,7 +5,6 @@
     var iconSize = 32;
 
     H.wrap(H.Tick.prototype, 'renderLabel', function addImages(proceed) {
-
         proceed.apply(this, [].slice.call(arguments, 1));
 
         var tick = this,
@@ -14,28 +13,26 @@
             xy = this.label && this.label.xy;
 
         if (image && xy) {
-
             // xy is bottom center of the label. Put the image to the left.
             xy.x -= this.label.getBBox().width / 2 + iconSize + 10;
             xy.y -= (iconSize + this.label.getBBox().height) / 2;
 
             if (!tick.image) {
-                tick.image = axis.chart.renderer.image(image, xy.x, xy.y, iconSize, iconSize)
+                tick.image = axis.chart.renderer
+                    .image(image, xy.x, xy.y, iconSize, iconSize)
                     .add();
-            } else { // Update existing
+            } else {
+                // Update existing
                 tick.image.animate({
                     x: xy.x,
                     y: xy.y
                 });
             }
-
         }
     });
-}(Highcharts));
-
+})(Highcharts);
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Highcharts snippet to add images to axis labels'
     },
@@ -52,8 +49,9 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4]
-    }]
-
+    series: [
+        {
+            data: [29.9, 71.5, 106.4]
+        }
+    ]
 });

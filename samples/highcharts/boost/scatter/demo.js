@@ -15,7 +15,6 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 
 console.time('scatter');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'xy',
         height: '100%'
@@ -44,26 +43,30 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text:
+            'Scatter chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') +
+            ' points'
     },
 
     legend: {
         enabled: false
     },
 
-    series: [{
-        type: 'scatter',
-        color: 'rgb(152, 0, 67)',
-        fillOpacity: 0.1,
-        data: data,
-        marker: {
-            radius: 1
-        },
-        tooltip: {
-            followPointer: false,
-            pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+    series: [
+        {
+            type: 'scatter',
+            color: 'rgb(152, 0, 67)',
+            fillOpacity: 0.1,
+            data: data,
+            marker: {
+                radius: 1
+            },
+            tooltip: {
+                followPointer: false,
+                pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+            }
         }
-    }]
-
+    ]
 });
 console.timeEnd('scatter');

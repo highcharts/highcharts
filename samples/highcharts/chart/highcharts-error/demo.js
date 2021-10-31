@@ -1,23 +1,29 @@
-var removeEvent = Highcharts.addEvent(Highcharts, 'displayError', function (event) {
-    // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
-    // for error id's
-    Highcharts.charts[0].renderer
-        .text('Chart error ' + event.code)
-        .attr({
-            fill: 'red',
-            zIndex: 20
-        })
-        .add()
-        .align({
-            align: 'center',
-            verticalAlign: 'middle'
-        }, null, 'plotBox');
-    removeEvent();
-});
-
+var removeEvent = Highcharts.addEvent(
+    Highcharts,
+    'displayError',
+    function (event) {
+        // See https://github.com/highcharts/highcharts/blob/master/errors/errors.xml
+        // for error id's
+        Highcharts.charts[0].renderer
+            .text('Chart error ' + event.code)
+            .attr({
+                fill: 'red',
+                zIndex: 20
+            })
+            .add()
+            .align(
+                {
+                    align: 'center',
+                    verticalAlign: 'middle'
+                },
+                null,
+                'plotBox'
+            );
+        removeEvent();
+    }
+);
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Demo of Highcharts error handling'
     },
@@ -31,9 +37,10 @@ Highcharts.chart('container', {
         min: 0
     },
 
-    series: [{
-        data: [1, 3, 2, -4, 3],
-        type: 'column'
-    }]
-
+    series: [
+        {
+            data: [1, 3, 2, -4, 3],
+            type: 'column'
+        }
+    ]
 });

@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },
@@ -12,9 +11,10 @@ Highcharts.chart('container', {
         categories: ['One', 'Two', 'Three']
     },
 
-    series: [{
-        data: [1, 2, 3],
-        maxPointWidth: 50
-    }]
-
+    series: [
+        {
+            data: [1, 2, 3],
+            maxPointWidth: 50
+        }
+    ]
 });

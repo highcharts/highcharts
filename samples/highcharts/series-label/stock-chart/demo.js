@@ -7,9 +7,7 @@ var seriesOptions = [],
  * @returns {undefined}
  */
 function createChart() {
-
     Highcharts.stockChart('container', {
-
         rangeSelector: {
             selected: 4
         },
@@ -20,11 +18,13 @@ function createChart() {
                     return (this.value > 0 ? ' + ' : '') + this.value + '%';
                 }
             },
-            plotLines: [{
-                value: 0,
-                width: 2,
-                color: 'silver'
-            }]
+            plotLines: [
+                {
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }
+            ]
         },
 
         xAxis: {
@@ -46,7 +46,8 @@ function createChart() {
         },
 
         tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+            pointFormat:
+                '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
             valueDecimals: 2
         },
 

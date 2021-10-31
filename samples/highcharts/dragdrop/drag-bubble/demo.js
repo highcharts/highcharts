@@ -11,19 +11,21 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        type: 'bubble',
-        cursor: 'move',
-        dragDrop: {
-            draggableX: true,
-            draggableY: true
-        },
-        data: [
-            [100, 240, 3],
-            [200, 130, 10],
-            [450, 290, 15]
-        ]
-    }],
+    series: [
+        {
+            type: 'bubble',
+            cursor: 'move',
+            dragDrop: {
+                draggableX: true,
+                draggableY: true
+            },
+            data: [
+                [100, 240, 3],
+                [200, 130, 10],
+                [450, 290, 15]
+            ]
+        }
+    ],
 
     yAxis: {
         softMin: 0,

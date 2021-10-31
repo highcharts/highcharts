@@ -4,7 +4,8 @@ const renderer = new Highcharts.Renderer(
     300
 );
 
-const rect = renderer.rect(100, 100, 100, 100, 5)
+const rect = renderer
+    .rect(100, 100, 100, 100, 5)
     .attr({
         'stroke-width': 2,
         stroke: 'red',
@@ -12,7 +13,8 @@ const rect = renderer.rect(100, 100, 100, 100, 5)
     })
     .add();
 
-const circ = renderer.circle(200, 200, 50)
+const circ = renderer
+    .circle(200, 200, 50)
     .attr({
         'stroke-width': 2,
         stroke: 'red',

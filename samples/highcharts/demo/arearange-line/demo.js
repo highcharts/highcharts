@@ -65,9 +65,7 @@ var ranges = [
         [1248998400000, 13.6]
     ];
 
-
 Highcharts.chart('container', {
-
     title: {
         text: 'July temperatures'
     },
@@ -91,26 +89,29 @@ Highcharts.chart('container', {
         valueSuffix: '°C'
     },
 
-    series: [{
-        name: 'Temperature',
-        data: averages,
-        zIndex: 1,
-        marker: {
-            fillColor: 'white',
-            lineWidth: 2,
-            lineColor: Highcharts.getOptions().colors[0]
+    series: [
+        {
+            name: 'Temperature',
+            data: averages,
+            zIndex: 1,
+            marker: {
+                fillColor: 'white',
+                lineWidth: 2,
+                lineColor: Highcharts.getOptions().colors[0]
+            }
+        },
+        {
+            name: 'Range',
+            data: ranges,
+            type: 'arearange',
+            lineWidth: 0,
+            linkedTo: ':previous',
+            color: Highcharts.getOptions().colors[0],
+            fillOpacity: 0.3,
+            zIndex: 0,
+            marker: {
+                enabled: false
+            }
         }
-    }, {
-        name: 'Range',
-        data: ranges,
-        type: 'arearange',
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: Highcharts.getOptions().colors[0],
-        fillOpacity: 0.3,
-        zIndex: 0,
-        marker: {
-            enabled: false
-        }
-    }]
+    ]
 });

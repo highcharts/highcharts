@@ -3,29 +3,29 @@ Math.easeInSine = function (pos) {
 };
 
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
+Math.easeOutBounce = (pos) => {
+    if (pos < 1 / 2.75) {
+        return 7.5625 * pos * pos;
     }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    if (pos < 2 / 2.75) {
+        return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
     }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+    if (pos < 2.5 / 2.75) {
+        return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
     }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
 };
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const countOffset = 2;
-const  icebergLabels = [180, 160, 140, 120, 100, 80, 60, 40, 20,
-    10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180];
-
+const icebergLabels = [
+    180, 160, 140, 120, 100, 80, 60, 40, 20, 10, 0, 20, 40, 60, 80, 100, 120,
+    140, 160, 180
+];
 
 let done = false;
 
@@ -36,18 +36,24 @@ const charts = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         plotBackgroundImage: 'highcharts.png',
         events: {
             load: function () {
                 const chart = this;
-                const particles = document.getElementsByClassName('particles')[0];
+                const particles =
+                    document.getElementsByClassName('particles')[0];
                 const cover = document.getElementsByClassName('cover')[0];
-                const title = document.getElementsByClassName('highcharts-title')[0];
-                const background = document.getElementsByClassName('highcharts-background')[0];
-                const plotBackground = document.getElementsByClassName('highcharts-plot-background')[0];
+                const title =
+                    document.getElementsByClassName('highcharts-title')[0];
+                const background = document.getElementsByClassName(
+                    'highcharts-background'
+                )[0];
+                const plotBackground = document.getElementsByClassName(
+                    'highcharts-plot-background'
+                )[0];
 
                 ///if reduced motion, hide the particles while they rotate
                 if (reduced) {
@@ -66,7 +72,7 @@ const charts = {
                     ///fade out the grid lines
                     [].forEach.call(
                         document.querySelectorAll('.highcharts-grid'),
-                        g => g.classList.add('fade-out')
+                        (g) => g.classList.add('fade-out')
                     );
                     ///if reduced motion, keep the particles hidden
                     if (reduced) {
@@ -85,7 +91,7 @@ const charts = {
                     ///add rotate classes to each individual particle
                     [].forEach.call(
                         document.querySelectorAll('.particle'),
-                        p => p.classList.add('rotate')
+                        (p) => p.classList.add('rotate')
                     );
                     ///update the left and right areas
                     chart.series[8].data[1].update({
@@ -155,7 +161,7 @@ const charts = {
                     );
 
                     ///update the chart and plot background
-                    cover.style.fill =  '#30426B';
+                    cover.style.fill = '#30426B';
                     background.style.fill = '#f0f0f0';
                     plotBackground.style.transition = 'fill 2s';
                     plotBackground.style.fill = '#f0f0f0';
@@ -163,12 +169,10 @@ const charts = {
                     ///add the iceberg class to each particle
                     [].forEach.call(
                         document.querySelectorAll('.particle'),
-                        p => p.classList.add('iceberg')
+                        (p) => p.classList.add('iceberg')
                     );
-
                 }, 5000);
                 setTimeout(function () {
-
                     [].forEach.call(
                         document.querySelectorAll('.berg-label'),
                         function (l) {
@@ -180,7 +184,7 @@ const charts = {
                     ///clips off their bottoms
                     [].forEach.call(
                         document.querySelectorAll('.particle'),
-                        p => p.classList.add('clip')
+                        (p) => p.classList.add('clip')
                     );
                     //show the iceberg series
                     for (let hh = 14; hh <= 22; ++hh) {
@@ -218,12 +222,9 @@ const charts = {
 
                     ///for use in redraw function
                     done = true;
-
-
                 }, 8500);
 
                 setTimeout(function () {
-
                     ///show the title
                     title.style.opacity = 1;
                 }, 9000);
@@ -241,12 +242,11 @@ const charts = {
                         }
                     });
                     particles.style.visiblity = 'hidden';
-
-
                 }, 10000);
             },
             redraw: function () {
-                const particles = document.getElementsByClassName('particles')[0];
+                const particles =
+                    document.getElementsByClassName('particles')[0];
 
                 particles.style.visiblity = 'hidden';
                 ///ensures that the added styles for the bergs stays in place
@@ -256,17 +256,16 @@ const charts = {
                         b.classList.add('berg-depth-' + i + '');
                     }
                 );
-                const subtitle = document.querySelector('#charts .highcharts-subtitle .iceberg-subtitle');
+                const subtitle = document.querySelector(
+                    '#charts .highcharts-subtitle .iceberg-subtitle'
+                );
                 ///toggles the subtitle
                 if (!done) {
                     subtitle.style.opacity = 0;
                 } else {
-                    subtitle.style.transition = "opacity 1s";
+                    subtitle.style.transition = 'opacity 1s';
                     subtitle.style.opacity = 1;
-
-
                 }
-
             }
         }
     },
@@ -279,7 +278,6 @@ const charts = {
         useHTML: true,
         floating: true,
         y: 0
-
     },
     subtitle: {
         text: '<p class="iceberg-subtitle">Above-water characterization and distribution of icebergs in "Iceberg Alley," Newfoundland, Canada</p>',
@@ -287,7 +285,7 @@ const charts = {
         floating: true
     },
     xAxis: [
-    //0 -
+        //0 -
         {
             min: 0,
             max: 20,
@@ -315,53 +313,56 @@ const charts = {
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
-        }],
-    yAxis: [{
-        min: -2,
-        max: 18,
-        gridZIndex: 20,
-        title: {
-            text: 'Meters',
-            x: -12,
-            y: -75,
-            rotation: 0
-        },
-        tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-        zIndex: 1,
-        offset: -15,
-        opposite: true,
-        tickInterval: 1,
-        startOnTick: false,
-        endOnTick: false,
-        labels: {
-            useHTML: true,
-            align: 'right',
-            formatter: function () {
-                const labelPos = this.pos;
-                const index = labelPos + countOffset;
-                const label = icebergLabels[index];
-                let color = '#fff';
-                if (labelPos > 7) {
-                    color = '#000';
-                }
-                return `
+        }
+    ],
+    yAxis: [
+        {
+            min: -2,
+            max: 18,
+            gridZIndex: 20,
+            title: {
+                text: 'Meters',
+                x: -12,
+                y: -75,
+                rotation: 0
+            },
+            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+            zIndex: 1,
+            offset: -15,
+            opposite: true,
+            tickInterval: 1,
+            startOnTick: false,
+            endOnTick: false,
+            labels: {
+                useHTML: true,
+                align: 'right',
+                formatter: function () {
+                    const labelPos = this.pos;
+                    const index = labelPos + countOffset;
+                    const label = icebergLabels[index];
+                    let color = '#fff';
+                    if (labelPos > 7) {
+                        color = '#000';
+                    }
+                    return `
                 <p style="color:${color}">${label}</p>
               `;
-            }
+                }
+            },
+            visible: false
         },
-        visible: false
-    },
-    {
-        min: -2,
-        max: 18,
-        gridZIndex: 20,
-        tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-        gridLineColor: 'transparent',
-        tickInterval: 1,
-        startOnTick: false,
-        endOnTick: false,
-        reversed: true
-    }],
+        {
+            min: -2,
+            max: 18,
+            gridZIndex: 20,
+            tickPositions: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+            gridLineColor: 'transparent',
+            tickInterval: 1,
+            startOnTick: false,
+            endOnTick: false,
+            reversed: true
+        }
+    ],
     legend: {
         enabled: false
     },
@@ -391,14 +392,18 @@ const charts = {
                 events: {
                     mouseOver: function () {
                         if (done) {
-                            const subtitle = document.querySelector('#charts .highcharts-subtitle .iceberg-subtitle');
+                            const subtitle = document.querySelector(
+                                '#charts .highcharts-subtitle .iceberg-subtitle'
+                            );
                             subtitle.style.transition = 'none';
                             subtitle.style.opacity = 0;
                         }
                     },
                     mouseOut: function () {
                         if (done) {
-                            const subtitle = document.querySelector('#charts .highcharts-subtitle .iceberg-subtitle');
+                            const subtitle = document.querySelector(
+                                '#charts .highcharts-subtitle .iceberg-subtitle'
+                            );
                             subtitle.style.transition = 'none';
                             subtitle.style.opacity = 1;
                         }
@@ -418,12 +423,10 @@ const charts = {
             animation: false
         },
         line: {
-
             animation: false,
             marker: {
                 enabled: false,
                 symbol: 'circle'
-
             },
             tooltip: {
                 pointFormatter: function () {
@@ -443,9 +446,7 @@ const charts = {
                 enabled: false
             },
             animation: false
-
         }
-
     },
     series: [
         //0 -  line
@@ -479,7 +480,6 @@ const charts = {
                 { x: 20, y: 1 }
             ],
             zIndex: 23
-
         },
         //3 - line
         {
@@ -491,7 +491,6 @@ const charts = {
                 { x: 20, y: 2 }
             ],
             zIndex: 23
-
         },
         //4 - line
         {
@@ -527,7 +526,6 @@ const charts = {
             ],
             zIndex: 23,
             yAxis: 1
-
         },
         //7 - line
         {
@@ -550,8 +548,6 @@ const charts = {
             data: [
                 { x: 0, low: -2, high: 18 },
                 { x: 0.1, low: -2, high: 18 }
-
-
             ],
             zIndex: 24,
             visible: true
@@ -565,8 +561,6 @@ const charts = {
             data: [
                 { x: 0, low: -2, high: 18 },
                 { x: 0.1, low: -2, high: 18 }
-
-
             ],
             xAxis: 1,
             zIndex: 24,
@@ -605,7 +599,6 @@ const charts = {
             ],
             zIndex: 22,
             visible: true
-
         },
         // 12- particles
         {
@@ -690,22 +683,18 @@ const charts = {
                 {
                     x: 5,
                     y: 12
-
                 },
                 {
                     x: 9.5,
                     y: 13
-
                 },
                 {
                     x: 13,
                     y: 13
-
                 },
                 {
                     x: 16,
                     y: 13
-
                 }
             ],
             zIndex: 150,
@@ -762,8 +751,7 @@ const charts = {
                         x: 25,
                         y: 50,
                         formatter: function () {
-                            const htmlString =
-                            `<div class="berg-label">
+                            const htmlString = `<div class="berg-label">
                                 <p class="label-title" 
                                 style="font-weight:700;">Pinnacle</p>
                                 <p  class="label-percent">33%</p>
@@ -841,8 +829,7 @@ const charts = {
                         x: 35,
                         y: 10,
                         formatter: function () {
-                            const htmlString =
-                            `<div class="berg-label">
+                            const htmlString = `<div class="berg-label">
                                 <p class="label-title" 
                                 style="font-weight:700;">Tabular</p>
                                 <p  class="label-percent">23%</p>
@@ -931,8 +918,7 @@ const charts = {
                         x: 35,
                         y: 15,
                         formatter: function () {
-                            const htmlString =
-                            `<div class="berg-label">
+                            const htmlString = `<div class="berg-label">
                                 <p class="label-title" 
                                 style="font-weight:700;">Dry Dock</p>
                                 <p  class="label-percent">19%</p>
@@ -973,26 +959,27 @@ const charts = {
                             smooth, rounded tops.</p>`;
                 }
             },
-            data: [{
-                x: 12.5,
-                y: 8
-            },
-            {
-                x: 13.8,
-                y: 5.3
-            },
-            {
-                x: 14,
-                y: 5.2
-            },
-            {
-                x: 14.2,
-                y: 5.3
-            },
-            {
-                x: 14.8,
-                y: 8
-            }
+            data: [
+                {
+                    x: 12.5,
+                    y: 8
+                },
+                {
+                    x: 13.8,
+                    y: 5.3
+                },
+                {
+                    x: 14,
+                    y: 5.2
+                },
+                {
+                    x: 14.2,
+                    y: 5.3
+                },
+                {
+                    x: 14.8,
+                    y: 8
+                }
             ]
         },
         //21 berg 4 top
@@ -1007,44 +994,45 @@ const charts = {
             marker: {
                 enabled: false
             },
-            data: [{
-                x: 12.5,
-                y: 8
-            },
-            {
-                x: 13.8,
-                y: 5.3,
-                dataLabels: {
-                    enabled: true,
-                    useHTML: true,
-                    x: 5,
-                    y: 0,
-                    formatter: function () {
-                        const htmlString =
-                        `<div class="berg-label">
+            data: [
+                {
+                    x: 12.5,
+                    y: 8
+                },
+                {
+                    x: 13.8,
+                    y: 5.3,
+                    dataLabels: {
+                        enabled: true,
+                        useHTML: true,
+                        x: 5,
+                        y: 0,
+                        formatter: function () {
+                            const htmlString = `<div class="berg-label">
                             <p class="label-title" 
                             style="font-weight:700;">Dome</p>
                             <p  class="label-percent">15%</p>
                         </div>`;
-                        return htmlString;
+                            return htmlString;
+                        }
                     }
+                },
+                {
+                    x: 14,
+                    y: 5.2
+                },
+                {
+                    x: 14.2,
+                    y: 5.3
+                },
+                {
+                    x: 14.8,
+                    y: 8
                 }
-            },
-            {
-                x: 14,
-                y: 5.2
-            },
-            {
-                x: 14.2,
-                y: 5.3
-            },
-            {
-                x: 14.8,
-                y: 8
-            }
             ]
         },
-        { //22 berg 5 bottom
+        {
+            //22 berg 5 bottom
             type: 'line',
             name: 'berg-depth-5',
             className: 'berg-depth',
@@ -1065,20 +1053,23 @@ const charts = {
                     }
                 }
             },
-            data: [{
-                x: 16.12,
-                y: 8
-            },
-            {
-                x: 16.32,
-                y: 7.5
-            },
-            {
-                x: 17.27,
-                y: 8
-            }]
+            data: [
+                {
+                    x: 16.12,
+                    y: 8
+                },
+                {
+                    x: 16.32,
+                    y: 7.5
+                },
+                {
+                    x: 17.27,
+                    y: 8
+                }
+            ]
         },
-        { //23 berg 5 top
+        {
+            //23 berg 5 top
             type: 'line',
             name: 'berg-depth-5',
             className: 'berg-depth',
@@ -1089,104 +1080,106 @@ const charts = {
             marker: {
                 enabled: false
             },
-            data: [{
-                x: 16.12,
-                y: 8
-            },
-            {
-                x: 16.32,
-                y: 7.5,
-                dataLabels: {
-                    enabled: true,
-                    useHTML: true,
-                    x: 5,
-                    y: -5,
-                    formatter: function () {
-                        const htmlString =
-                        `<div class="berg-label">
+            data: [
+                {
+                    x: 16.12,
+                    y: 8
+                },
+                {
+                    x: 16.32,
+                    y: 7.5,
+                    dataLabels: {
+                        enabled: true,
+                        useHTML: true,
+                        x: 5,
+                        y: -5,
+                        formatter: function () {
+                            const htmlString = `<div class="berg-label">
                             <p class="label-title" 
                             style="font-weight:700;">Wedge</p>
                             <p  class="label-percent">10%</p>
                         </div>`;
-                        return htmlString;
+                            return htmlString;
+                        }
+                    }
+                },
+                {
+                    x: 17.27,
+                    y: 8
+                }
+            ]
+        }
+    ],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 250
+                },
+                chartOptions: {
+                    tooltip: {
+                        positioner: function () {
+                            //return { x: 130, y: 365 };
+                            return { x: 50, y: 155 };
+                        }
+                    },
+                    subtitle: {
+                        y: 200,
+                        x: 0
                     }
                 }
             },
             {
-                x: 17.27,
-                y: 8
-            }]
-        }
-    ],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 250
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        //return { x: 130, y: 365 };
-                        return { x: 50, y: 155 };
-                    }
+                condition: {
+                    minWidth: 251,
+                    maxWidth: 300 ///up to 300
                 },
-                subtitle: {
-                    y: 200,
-                    x: 0
+                chartOptions: {
+                    tooltip: {
+                        positioner: function () {
+                            return { x: 50, y: 200 };
+                        }
+                    },
+                    subtitle: {
+                        y: 240,
+                        x: 0
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 301,
+                    maxWidth: 499
+                },
+                chartOptions: {
+                    tooltip: {
+                        positioner: function () {
+                            //return { x: 130, y: 365 };
+                            return { x: 70, y: 265 };
+                        }
+                    },
+                    subtitle: {
+                        y: 280,
+                        x: 20
+                    }
+                }
+            },
+            {
+                condition: {
+                    minWidth: 500
+                },
+                chartOptions: {
+                    tooltip: {
+                        positioner: function () {
+                            return { x: 105, y: 360 };
+                        }
+                    },
+                    subtitle: {
+                        y: 360,
+                        x: 10
+                    }
                 }
             }
-        },
-        {
-            condition: {
-                minWidth: 251,
-                maxWidth: 300 ///up to 300
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        return { x: 50, y: 200 };
-                    }
-                },
-                subtitle: {
-                    y: 240,
-                    x: 0
-                }
-            }
-        },
-        {
-            condition: {
-                minWidth: 301,
-                maxWidth: 499
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        //return { x: 130, y: 365 };
-                        return { x: 70, y: 265 };
-                    }
-                },
-                subtitle: {
-                    y: 280,
-                    x: 20
-                }
-            }
-        },
-        {
-            condition: {
-                minWidth: 500
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        return { x: 105, y: 360 };
-                    }
-                },
-                subtitle: {
-                    y: 360,
-                    x: 10
-                }
-            }
-        }
         ]
     }
 };

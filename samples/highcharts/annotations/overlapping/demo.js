@@ -9,41 +9,45 @@ Highcharts.chart('container', {
         text: 'Labels should not overlap'
     },
 
-    series: [{
-        type: 'scatter',
-        keys: ['x', 'y', 'id'],
-        data: (function () {
-            var data = [],
-                i;
+    series: [
+        {
+            type: 'scatter',
+            keys: ['x', 'y', 'id'],
+            data: (function () {
+                var data = [],
+                    i;
 
-            for (i = 0; i <= labelsNumber; i++) {
-                data.push([i / labelsNumber * 2, i, 'id' + i]);
-            }
+                for (i = 0; i <= labelsNumber; i++) {
+                    data.push([(i / labelsNumber) * 2, i, 'id' + i]);
+                }
 
-            return data;
-        }())
-    }],
+                return data;
+            })()
+        }
+    ],
 
     xAxis: {
         min: 0,
         max: 2
     },
 
-    annotations: [{
-        labels: (function () {
-            var labels = [],
-                i;
+    annotations: [
+        {
+            labels: (function () {
+                var labels = [],
+                    i;
 
-            for (i = 0; i <= labelsNumber; i++) {
-                labels.push({
-                    point: 'id' + i
-                });
+                for (i = 0; i <= labelsNumber; i++) {
+                    labels.push({
+                        point: 'id' + i
+                    });
+                }
+
+                return labels;
+            })(),
+            labelOptions: {
+                //  allowOverlap: false
             }
-
-            return labels;
-        }()),
-        labelOptions: {
-            //  allowOverlap: false
         }
-    }]
+    ]
 });

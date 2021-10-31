@@ -31,33 +31,44 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        name: 'Teams',
-        colorByPoint: true,
-        data: [{
-            name: 'Brazil',
-            y: 5
-        }, {
-            name: 'Germany',
-            y: 4
-        }, {
-            name: 'Italy',
-            y: 4
-        }, {
-            name: 'Uruguay',
-            y: 2
-        }, {
-            name: 'Argentina',
-            y: 2
-        }, {
-            name: 'France',
-            y: 2
-        }, {
-            name: 'England',
-            y: 1
-        }, {
-            name: 'Spain',
-            y: 1
-        }]
-    }]
+    series: [
+        {
+            name: 'Teams',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Brazil',
+                    y: 5
+                },
+                {
+                    name: 'Germany',
+                    y: 4
+                },
+                {
+                    name: 'Italy',
+                    y: 4
+                },
+                {
+                    name: 'Uruguay',
+                    y: 2
+                },
+                {
+                    name: 'Argentina',
+                    y: 2
+                },
+                {
+                    name: 'France',
+                    y: 2
+                },
+                {
+                    name: 'England',
+                    y: 1
+                },
+                {
+                    name: 'Spain',
+                    y: 1
+                }
+            ]
+        }
+    ]
 });

@@ -21,11 +21,14 @@ var chart = Highcharts.chart('container', {
     accessibility: {
         landmarkVerbosity: 'one'
     },
-    series: [{
-        data: [1, 2, 4, 5, 7, 9, 11, 13]
-    }, {
-        data: [4, 5, 7, 9]
-    }]
+    series: [
+        {
+            data: [1, 2, 4, 5, 7, 9, 11, 13]
+        },
+        {
+            data: [4, 5, 7, 9]
+        }
+    ]
 });
 
 // Click button to call chart.sonify()
@@ -37,20 +40,22 @@ document.getElementById('sonify').onclick = function () {
         duration: 3000,
         order: 'sequential',
         afterSeriesWait: 1000,
-        instruments: [{
-            instrument: 'triangleMajor',
-            instrumentMapping: {
-                volume: 0.8,
-                duration: 250,
-                pan: 'x',
-                frequency: 'y'
-            },
-            // Start at C5 note, end at C6
-            instrumentOptions: {
-                minFrequency: 520,
-                maxFrequency: 1050
+        instruments: [
+            {
+                instrument: 'triangleMajor',
+                instrumentMapping: {
+                    volume: 0.8,
+                    duration: 250,
+                    pan: 'x',
+                    frequency: 'y'
+                },
+                // Start at C5 note, end at C6
+                instrumentOptions: {
+                    minFrequency: 520,
+                    maxFrequency: 1050
+                }
             }
-        }]
+        ]
     });
     document.getElementById('stop').focus();
 };

@@ -1,5 +1,5 @@
 function getGradientColors() {
-    return ["#7cb5ec", "#434348"].map(function (color) {
+    return ['#7cb5ec', '#434348'].map(function (color) {
         return {
             radialGradient: {
                 cx: 0.4,
@@ -25,7 +25,6 @@ function getRandomData() {
 }
 
 var chart = Highcharts.chart('container', {
-
     chart: {
         type: 'bubble',
         plotBorderWidth: 1
@@ -51,24 +50,18 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: getRandomData()
-    }, {
-        data: getRandomData()
-    }]
-
+    series: [
+        {
+            data: getRandomData()
+        },
+        {
+            data: getRandomData()
+        }
+    ]
 });
 
 setInterval(function () {
-    chart.series[0].setData(
-        getRandomData(),
-        false,
-        { duration: 2000 }
-    );
+    chart.series[0].setData(getRandomData(), false, { duration: 2000 });
 
-    chart.series[1].setData(
-        getRandomData(),
-        true,
-        { duration: 2000 }
-    );
+    chart.series[1].setData(getRandomData(), true, { duration: 2000 });
 }, 3000);

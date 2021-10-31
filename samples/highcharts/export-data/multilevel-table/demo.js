@@ -67,15 +67,18 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Temperature',
-        data: averages
-    }, {
-        name: 'Range',
-        data: ranges,
-        color: Highcharts.getOptions().colors[0],
-        type: 'arearange',
-        linkedTo: ':previous',
-        fillOpacity: 0.3
-    }]
+    series: [
+        {
+            name: 'Temperature',
+            data: averages
+        },
+        {
+            name: 'Range',
+            data: ranges,
+            color: Highcharts.getOptions().colors[0],
+            type: 'arearange',
+            linkedTo: ':previous',
+            fillOpacity: 0.3
+        }
+    ]
 });

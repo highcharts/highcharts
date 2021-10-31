@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },

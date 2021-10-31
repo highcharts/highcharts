@@ -24,14 +24,18 @@ Highcharts.chart('container', {
     accessibility: {
         landmarkVerobsity: 'one'
     },
-    series: [{
-        name: 'John',
-        data: [5, 3, 4, 7, 2]
-    }, {
-        name: 'Jane',
-        data: [2, 2, 3, 2, 1]
-    }, {
-        name: 'Joe',
-        data: [3, 4, 4, 2, 5]
-    }]
+    series: [
+        {
+            name: 'John',
+            data: [5, 3, 4, 7, 2]
+        },
+        {
+            name: 'Jane',
+            data: [2, 2, 3, 2, 1]
+        },
+        {
+            name: 'Joe',
+            data: [3, 4, 4, 2, 5]
+        }
+    ]
 });

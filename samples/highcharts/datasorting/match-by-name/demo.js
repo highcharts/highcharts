@@ -71,18 +71,20 @@ var chart = Highcharts.chart('container', {
     credits: {
         enabled: false
     },
-    series: [{
-        colorByPoint: true,
-        dataSorting: {
-            enabled: true,
-            matchByName: true
-        },
-        dataLabels: {
-            enabled: true
-        },
-        name: 'Year 1800',
-        data: getYear1800()
-    }]
+    series: [
+        {
+            colorByPoint: true,
+            dataSorting: {
+                enabled: true,
+                matchByName: true
+            },
+            dataLabels: {
+                enabled: true
+            },
+            name: 'Year 1800',
+            data: getYear1800()
+        }
+    ]
 });
 
 document.getElementById('y1800').addEventListener('click', function () {

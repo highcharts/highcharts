@@ -4,5 +4,12 @@ const renderer = new Highcharts.Renderer(
     300
 );
 
-renderer.image('https://www.highcharts.com/samples/graphics/sun.png', 100, 100, 30, 30)
+renderer
+    .image(
+        'https://www.highcharts.com/samples/graphics/sun.png',
+        100,
+        100,
+        30,
+        30
+    )
     .add();

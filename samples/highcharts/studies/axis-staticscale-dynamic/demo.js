@@ -1,5 +1,4 @@
 var chart = Highcharts.chart('container', {
-
     chart: {
         backgroundColor: '#efe',
         inverted: true
@@ -18,18 +17,17 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Readings'
-    }]
-
+    series: [
+        {
+            name: 'Readings'
+        }
+    ]
 });
 
 setInterval(function () {
-
     chart.series[0].addPoint(
         Math.random(),
         true, // redraw
         chart.series[0].points.length > 20 // shift if enough points
     );
-
 }, 1000);

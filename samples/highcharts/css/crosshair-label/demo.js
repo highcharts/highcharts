@@ -3,7 +3,6 @@ Highcharts.getJSON(
     function (data) {
         // Create the chart
         Highcharts.stockChart('container', {
-
             chart: {
                 marginRight: 50,
                 styledMode: true
@@ -37,13 +36,15 @@ Highcharts.getJSON(
                 }
             },
 
-            series: [{
-                name: 'AAPL',
-                data: data,
-                tooltip: {
-                    valueDecimals: 2
+            series: [
+                {
+                    name: 'AAPL',
+                    data: data,
+                    tooltip: {
+                        valueDecimals: 2
+                    }
                 }
-            }]
+            ]
         });
     }
 );

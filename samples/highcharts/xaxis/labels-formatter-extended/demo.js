@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Demo of reusing but modifying default X axis label formatter'
     },
@@ -22,10 +21,14 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        pointStart: 9000,
-        type: 'column'
-    }]
-
+    series: [
+        {
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ],
+            pointStart: 9000,
+            type: 'column'
+        }
+    ]
 });

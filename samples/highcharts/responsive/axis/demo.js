@@ -9,8 +9,20 @@ const chart = Highcharts.chart('container', {
         text: 'Resize the frame to see the axes change'
     },
     xAxis: {
-        categories: ['January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December']
+        categories: [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
+        ]
     },
     yAxis: {
         labels: {
@@ -20,36 +32,40 @@ const chart = Highcharts.chart('container', {
             text: 'Items'
         }
     },
-    series: [{
-        name: 'Sales',
-        data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
-    }],
+    series: [
+        {
+            name: 'Sales',
+            data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
+        }
+    ],
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            // Make the labels less space demanding on mobile
-            chartOptions: {
-                xAxis: {
-                    labels: {
-                        formatter: function () {
-                            return this.value.charAt(0);
-                        }
-                    }
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
                 },
-                yAxis: {
-                    labels: {
-                        align: 'left',
-                        x: 0,
-                        y: -2
+                // Make the labels less space demanding on mobile
+                chartOptions: {
+                    xAxis: {
+                        labels: {
+                            formatter: function () {
+                                return this.value.charAt(0);
+                            }
+                        }
                     },
-                    title: {
-                        text: ''
+                    yAxis: {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -2
+                        },
+                        title: {
+                            text: ''
+                        }
                     }
                 }
             }
-        }]
+        ]
     }
 });
 

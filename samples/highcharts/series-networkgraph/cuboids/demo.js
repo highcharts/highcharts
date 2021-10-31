@@ -43,14 +43,16 @@ Highcharts.chart('container', {
                     return Math.max(-(d * d) / (k * 300), -100);
                 },
                 repulsiveForce: function (d, k) {
-                    return Math.min((k * k) / (d), 100);
+                    return Math.min((k * k) / d, 100);
                 }
             },
             keys: ['from', 'to']
         }
     },
 
-    series: [{
-        data: generateConnectedCuboids(7)
-    }]
+    series: [
+        {
+            data: generateConnectedCuboids(7)
+        }
+    ]
 });

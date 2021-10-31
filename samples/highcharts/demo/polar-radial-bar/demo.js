@@ -31,15 +31,15 @@ Highcharts.chart('container', {
         lineWidth: 0,
         categories: [
             'Norway <span class="f16"><span id="flag" class="flag no">' +
-            '</span></span>',
+                '</span></span>',
             'United States <span class="f16"><span id="flag" class="flag us">' +
-            '</span></span>',
+                '</span></span>',
             'Germany <span class="f16"><span id="flag" class="flag de">' +
-            '</span></span>',
+                '</span></span>',
             'Canada <span class="f16"><span id="flag" class="flag ca">' +
-            '</span></span>',
+                '</span></span>',
             'Austria <span class="f16"><span id="flag" class="flag at">' +
-            '</span></span>'
+                '</span></span>'
         ]
     },
     yAxis: {
@@ -61,14 +61,18 @@ Highcharts.chart('container', {
             groupPadding: 0.15
         }
     },
-    series: [{
-        name: 'Gold medals',
-        data: [132, 105, 92, 73, 64]
-    }, {
-        name: 'Silver medals',
-        data: [125, 110, 86, 64, 81]
-    }, {
-        name: 'Bronze medals',
-        data: [111, 90, 60, 62, 87]
-    }]
+    series: [
+        {
+            name: 'Gold medals',
+            data: [132, 105, 92, 73, 64]
+        },
+        {
+            name: 'Silver medals',
+            data: [125, 110, 86, 64, 81]
+        },
+        {
+            name: 'Bronze medals',
+            data: [111, 90, 60, 62, 87]
+        }
+    ]
 });

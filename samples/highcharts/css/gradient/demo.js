@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         styledMode: true
     },
@@ -9,7 +8,20 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     defs: {
@@ -20,13 +32,16 @@ Highcharts.chart('container', {
             y1: 0,
             x2: 0,
             y2: 1,
-            children: [{
-                tagName: 'stop',
-                offset: 0
-            }, {
-                tagName: 'stop',
-                offset: 1
-            }]
+            children: [
+                {
+                    tagName: 'stop',
+                    offset: 0
+                },
+                {
+                    tagName: 'stop',
+                    offset: 1
+                }
+            ]
         },
         gradient1: {
             tagName: 'linearGradient',
@@ -35,32 +50,37 @@ Highcharts.chart('container', {
             y1: 0,
             x2: 0,
             y2: 1,
-            children: [{
-                tagName: 'stop',
-                offset: 0
-            }, {
-                tagName: 'stop',
-                offset: 1
-            }]
+            children: [
+                {
+                    tagName: 'stop',
+                    offset: 0
+                },
+                {
+                    tagName: 'stop',
+                    offset: 1
+                }
+            ]
         }
     },
 
-    series: [{
-        type: 'area',
-        keys: ['y', 'selected'],
-        data: [
-            [29.9, false],
-            [71.5, false],
-            [106.4, false],
-            [129.2, false],
-            [144.0, false],
-            [176.0, false],
-            [135.6, false],
-            [148.5, false],
-            [216.4, true],
-            [194.1, false],
-            [95.6, false],
-            [54.4, false]
-        ]
-    }]
+    series: [
+        {
+            type: 'area',
+            keys: ['y', 'selected'],
+            data: [
+                [29.9, false],
+                [71.5, false],
+                [106.4, false],
+                [129.2, false],
+                [144.0, false],
+                [176.0, false],
+                [135.6, false],
+                [148.5, false],
+                [216.4, true],
+                [194.1, false],
+                [95.6, false],
+                [54.4, false]
+            ]
+        }
+    ]
 });

@@ -1,6 +1,15 @@
 Highcharts.theme = {
-    colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
-        '#FF9655', '#FFF263', '#6AF9C4'],
+    colors: [
+        '#058DC7',
+        '#50B432',
+        '#ED561B',
+        '#DDDF00',
+        '#24CBE5',
+        '#64E572',
+        '#FF9655',
+        '#FFF263',
+        '#6AF9C4'
+    ],
     chart: {
         backgroundColor: 'transparent'
     },
@@ -31,15 +40,15 @@ Highcharts.setOptions(Highcharts.theme);
 
 //easing functions
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
-Math.easeOutElastic = x => {
+Math.easeOutElastic = (x) => {
     const c4 = (2 * Math.PI) / 3;
-    return x === 0 ?
-        0 :
-        x === 1 ?
-            1 :
-            Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+    return x === 0
+        ? 0
+        : x === 1
+        ? 1
+        : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
 };
 
 let demoChart, areaChart;
@@ -116,16 +125,31 @@ const chartHeight = 300;
 ///for the ranges
 let rmin, rmax, activeSlider;
 let rvalue = -100;
-const itemRanges = [[-100, 100], [-100, 100], [0, 100], [0, 200]];
-const variablePieRanges = [[0, 6], [0, 100], [0, 200], [0, 10]];
-const columnRanges = [[1, 100], [0, 6], [0, 4], [0, 100]];
-const areaRanges = [[0, 30], [-100, 100], [1, 10], [80, 500]];
-const ranges = [
-    itemRanges,
-    variablePieRanges,
-    columnRanges,
-    areaRanges
+const itemRanges = [
+    [-100, 100],
+    [-100, 100],
+    [0, 100],
+    [0, 200]
 ];
+const variablePieRanges = [
+    [0, 6],
+    [0, 100],
+    [0, 200],
+    [0, 10]
+];
+const columnRanges = [
+    [1, 100],
+    [0, 6],
+    [0, 4],
+    [0, 100]
+];
+const areaRanges = [
+    [0, 30],
+    [-100, 100],
+    [1, 10],
+    [80, 500]
+];
+const ranges = [itemRanges, variablePieRanges, columnRanges, areaRanges];
 
 ///series controls
 const seriesTypes = ['item', 'variablepie', 'column', 'area'];
@@ -134,7 +158,7 @@ let seriesType = 'item';
 const controls = [
     ['startAngle', 'endAngle', 'innerSize', 'size'],
     ['variwide', 'innerSize', 'size', 'slices'],
-    ['width', 'plotBands', 'zones',  'radial'],
+    ['width', 'plotBands', 'zones', 'radial'],
     ['alpha', 'beta', 'viewDistance', 'depth']
 ];
 const controlLabels = [
@@ -144,22 +168,30 @@ const controlLabels = [
     ['alpha', 'beta', 'view distance', 'depth']
 ];
 const controlText = [
-    ['Adjust the start angle',
+    [
+        'Adjust the start angle',
         'Adjust the end angle',
         'Adjust the inner size',
-        'Adjust the size'],
-    ['Use the slider to adjust the slices',
+        'Adjust the size'
+    ],
+    [
+        'Use the slider to adjust the slices',
         'Adjust the inner size',
         'Adjust the size',
-        'Add/remove slices'],
-    ['Adjust the point width',
+        'Add/remove slices'
+    ],
+    [
+        'Adjust the point width',
         'Slide to +/- plot bands on the x axis',
         'Slide to move the columns through the zones',
-        'Adjust the y axis max'],
-    ['Adjust the alpha angle',
+        'Adjust the y axis max'
+    ],
+    [
+        'Adjust the alpha angle',
         'Adjust the beta angle',
         'Adjust the view distance',
-        'Adjust the fill opacity']
+        'Adjust the fill opacity'
+    ]
 ];
 
 let controlIndex = 0;
@@ -167,7 +199,7 @@ let seriesIndex = 0;
 let controlsToUse = controls[0];
 let thingToChange = 'startAngle';
 let controlElementActive = '.controls #controlType1';
-let labelElementActive  = controlElementActive + ' ~ .form-check-label';
+let labelElementActive = controlElementActive + ' ~ .form-check-label';
 
 ///stand-alone 3d area chart
 const areaChartOptions = {
@@ -197,7 +229,6 @@ const areaChartOptions = {
                         }
                     });
                 }, 1000);
-
             }
         }
     },
@@ -221,13 +252,17 @@ const areaChartOptions = {
         gridLineDashStyle: 'Dash',
         gridLineColor: '#999'
     },
-    xAxis: [{
-        visible: false
-    }, {
-        visible: false
-    }, {
-        visible: false
-    }],
+    xAxis: [
+        {
+            visible: false
+        },
+        {
+            visible: false
+        },
+        {
+            visible: false
+        }
+    ],
     plotOptions: {
         area: {
             depth: 70,
@@ -246,112 +281,116 @@ const areaChartOptions = {
     tooltip: {
         valueSuffix: ' MAMSL'
     },
-    series: [{
-        name: "Tatra Mountains visible from Rusinowa polana",
-        data: [
-            ['Murań', 1890],
-            ['Nowy Wierch', 2009],
-            ['Hawrań', 2152],
-            ['Płaczliwa Skała', 2142],
-            ['Szalony Wierch', 2061],
-            ['Karczmarski Wierch', 1438],
-            ['Jagnięcy Szczyt', 2230],
-            ['Czerwona Turnia', 2284],
-            ['Kołowy Szczyt', 2418],
-            ['Czarny Szczyt', 2429],
-            ['Baranie Rogi', 2526],
-            ['Śnieżny Szczyt', 2465],
-            ['Lodowy Szczyt', 2627],
-            ['Lodowa Kopa', 2602],
-            ['Szeroka Jaworzyńska', 2210],
-            ['Horwacki Wierch', 1902],
-            ['Spismichałowa Czuba', 2012],
-            ['Zielona Czuba', 2130],
-            ['Wielicki Szczyt', 2318],
-            ['Gerlach', 2655],
-            ['Batyżowiecki Szczyt', 2448],
-            ['Kaczy Szczyt', 2395],
-            ['Zmarzły Szczyt', 2390],
-            ['Kończysta', 2538],
-            ['Młynarz', 2170],
-            ['Ganek', 2462],
-            ['Wysoka', 2547],
-            ['Ciężki Szczyt', 2520],
-            ['Rysy', 2503],
-            ['Żabi Mnich', 2146],
-            ['Żabi Koń', 2291],
-            ['Żabia Turnia Mięguszowiecka', 2335],
-            ['Wołowa Turnia', 2373]
-        ]
-    }, {
-        xAxis: 1,
-        name: "Dachstein panorama seen from Krippenstein",
-        data: [
-            ['Kufstein', 2049],
-            ['Hohe Wildstelle', 2746],
-            ['Kleiner Miesberg', 2173],
-            ['Großer Miesberg', 2202],
-            ['Hochstein', 2543],
-            ['Lackner Miesberg', 2232],
-            ['Wasenspitze', 2257],
-            ['Sinabell', 2349],
-            ['Feister Scharte', 2198],
-            ['Eselstein', 2556],
-            ['Landfriedstein', 2536],
-            ['Scheichenspitz', 2667],
-            ['Schmiedstock', 2634],
-            ['Gamsfeldspitze', 2611],
-            ['Edelgriess', 2305],
-            ['Koppenkarstein', 2863],
-            ['Niederer Gjaidstein', 2483],
-            ['Hoher Gjaidstein', 2794],
-            ['Hoher Dachstein', 2995],
-            ['Niederer Dachstein', 2934],
-            ['Hohes Kreuz', 2837],
-            ['Hoher Ochsenkogel', 2513]
-        ]
-    }, {
-        xAxis: 2,
-        name: "Panorama from Col Des Mines",
-        data: [
-            ['Combin de la Tsessette', 4141],
-            ['Grand Combin de Grafeneire', 4314],
-            ['Combin de Corbassière', 3716],
-            ['Petit Combin', 3672],
-            ['Pointe de Boveire', 3212],
-            ['Grand Aget', 3133],
-            ['Mont Rogneux', 3084],
-            ['Dents du Grand Lé', 2884],
-            ['Monts Telliers', 2951],
-            ['Grand Golliat', 3238],
-            ['Mont Grande Rochère', 3326],
-            ['Mont de la Fouly', 2871],
-            ['Tête de la Payanne', 2452],
-            ['Pointe Allobrogia', 3172],
-            ['Six Blanc', 2334],
-            ['Mont Dolent', 3820],
-            ['Aiguille de Triolet', 3870],
-            ['Le Tour Noir', 3836],
-            ["Aiguille de l'A Neuve", 3753],
-            ["Aiguille d'Argentière", 3900],
-            ["Aiguille du Chardonnet", 3824],
-            ["Aiguille du Tour", 3540],
-            ["Aiguille du Pissoir", 3440],
-            ["Le Catogne", 2598],
-            ["Pointe de Prosom", 2762],
-            ["Pointe Ronde", 2700],
-            ["Mont Buet", 3096],
-            ["Le Cheval Blanc", 2831],
-            ["Pointe de la Finive", 2838],
-            ["Pic de Tenneverge", 2985],
-            ["Pointe d'Aboillon", 2819],
-            ["Tour Sallière", 3220],
-            ["Le Dôme", 3138],
-            ["Haute Cime", 3257],
-            ["Pierre Avoi", 2473],
-            ["Cime de l'Est", 3178]
-        ]
-    }]
+    series: [
+        {
+            name: 'Tatra Mountains visible from Rusinowa polana',
+            data: [
+                ['Murań', 1890],
+                ['Nowy Wierch', 2009],
+                ['Hawrań', 2152],
+                ['Płaczliwa Skała', 2142],
+                ['Szalony Wierch', 2061],
+                ['Karczmarski Wierch', 1438],
+                ['Jagnięcy Szczyt', 2230],
+                ['Czerwona Turnia', 2284],
+                ['Kołowy Szczyt', 2418],
+                ['Czarny Szczyt', 2429],
+                ['Baranie Rogi', 2526],
+                ['Śnieżny Szczyt', 2465],
+                ['Lodowy Szczyt', 2627],
+                ['Lodowa Kopa', 2602],
+                ['Szeroka Jaworzyńska', 2210],
+                ['Horwacki Wierch', 1902],
+                ['Spismichałowa Czuba', 2012],
+                ['Zielona Czuba', 2130],
+                ['Wielicki Szczyt', 2318],
+                ['Gerlach', 2655],
+                ['Batyżowiecki Szczyt', 2448],
+                ['Kaczy Szczyt', 2395],
+                ['Zmarzły Szczyt', 2390],
+                ['Kończysta', 2538],
+                ['Młynarz', 2170],
+                ['Ganek', 2462],
+                ['Wysoka', 2547],
+                ['Ciężki Szczyt', 2520],
+                ['Rysy', 2503],
+                ['Żabi Mnich', 2146],
+                ['Żabi Koń', 2291],
+                ['Żabia Turnia Mięguszowiecka', 2335],
+                ['Wołowa Turnia', 2373]
+            ]
+        },
+        {
+            xAxis: 1,
+            name: 'Dachstein panorama seen from Krippenstein',
+            data: [
+                ['Kufstein', 2049],
+                ['Hohe Wildstelle', 2746],
+                ['Kleiner Miesberg', 2173],
+                ['Großer Miesberg', 2202],
+                ['Hochstein', 2543],
+                ['Lackner Miesberg', 2232],
+                ['Wasenspitze', 2257],
+                ['Sinabell', 2349],
+                ['Feister Scharte', 2198],
+                ['Eselstein', 2556],
+                ['Landfriedstein', 2536],
+                ['Scheichenspitz', 2667],
+                ['Schmiedstock', 2634],
+                ['Gamsfeldspitze', 2611],
+                ['Edelgriess', 2305],
+                ['Koppenkarstein', 2863],
+                ['Niederer Gjaidstein', 2483],
+                ['Hoher Gjaidstein', 2794],
+                ['Hoher Dachstein', 2995],
+                ['Niederer Dachstein', 2934],
+                ['Hohes Kreuz', 2837],
+                ['Hoher Ochsenkogel', 2513]
+            ]
+        },
+        {
+            xAxis: 2,
+            name: 'Panorama from Col Des Mines',
+            data: [
+                ['Combin de la Tsessette', 4141],
+                ['Grand Combin de Grafeneire', 4314],
+                ['Combin de Corbassière', 3716],
+                ['Petit Combin', 3672],
+                ['Pointe de Boveire', 3212],
+                ['Grand Aget', 3133],
+                ['Mont Rogneux', 3084],
+                ['Dents du Grand Lé', 2884],
+                ['Monts Telliers', 2951],
+                ['Grand Golliat', 3238],
+                ['Mont Grande Rochère', 3326],
+                ['Mont de la Fouly', 2871],
+                ['Tête de la Payanne', 2452],
+                ['Pointe Allobrogia', 3172],
+                ['Six Blanc', 2334],
+                ['Mont Dolent', 3820],
+                ['Aiguille de Triolet', 3870],
+                ['Le Tour Noir', 3836],
+                ["Aiguille de l'A Neuve", 3753],
+                ["Aiguille d'Argentière", 3900],
+                ['Aiguille du Chardonnet', 3824],
+                ['Aiguille du Tour', 3540],
+                ['Aiguille du Pissoir', 3440],
+                ['Le Catogne', 2598],
+                ['Pointe de Prosom', 2762],
+                ['Pointe Ronde', 2700],
+                ['Mont Buet', 3096],
+                ['Le Cheval Blanc', 2831],
+                ['Pointe de la Finive', 2838],
+                ['Pic de Tenneverge', 2985],
+                ["Pointe d'Aboillon", 2819],
+                ['Tour Sallière', 3220],
+                ['Le Dôme', 3138],
+                ['Haute Cime', 3257],
+                ['Pierre Avoi', 2473],
+                ["Cime de l'Est", 3178]
+            ]
+        }
+    ]
 };
 
 //chart for the other demos
@@ -360,13 +399,11 @@ const resizer = function () {
     const chartWidth = demoChart.chartWidth;
     if (chartWidth > 410) {
         $('.highcharts-item-series').css({
-            transform:
-        'translateX(-70px) scale(1.2)'
+            transform: 'translateX(-70px) scale(1.2)'
         });
     } else {
         $('.highcharts-item-series').css({
-            transform:
-        'translateX(0px) scale(1)'
+            transform: 'translateX(0px) scale(1)'
         });
     }
 };
@@ -408,14 +445,16 @@ const demoChartOptions = {
             visible: true
         }
     ],
-    yAxis: [{
-        title: '',
-        visible: axisVisible,
-        gridLineDashStyle: 'dash',
-        plotLines: [],
-        min: 0,
-        max: 50
-    }],
+    yAxis: [
+        {
+            title: '',
+            visible: axisVisible,
+            gridLineDashStyle: 'dash',
+            plotLines: [],
+            min: 0,
+            max: 50
+        }
+    ],
     series: [
         {
             type: seriesType,
@@ -458,9 +497,13 @@ function populateLabel(control, label) {
         valueToShow = Math.abs(valueToShow);
     }
     if (control === 'opacity' || control === 'pointPadding') {
-        valueToShow = parseFloat((valueToShow * 0.1), 10).toFixed(1);
+        valueToShow = parseFloat(valueToShow * 0.1, 10).toFixed(1);
     }
-    if (control === 'zones' || control === 'plotBands' || control === 'variwide') {
+    if (
+        control === 'zones' ||
+        control === 'plotBands' ||
+        control === 'variwide'
+    ) {
         $(label + ' span').html('');
         $(label).addClass('font-weight-bold');
     } else {
@@ -491,7 +534,6 @@ function innerSizeChange(value) {
         });
     }
     populateLabel(thingToChange, labelElementActive);
-
 }
 //for item
 function startAngleChange(value) {
@@ -503,7 +545,6 @@ function startAngleChange(value) {
         }
     });
     populateLabel(thingToChange, labelElementActive);
-
 }
 //for item
 function endAngleChange(value) {
@@ -515,7 +556,6 @@ function endAngleChange(value) {
         }
     });
     populateLabel(thingToChange, labelElementActive);
-
 }
 //for item and pie
 function sizeChange(value) {
@@ -537,7 +577,6 @@ function sizeChange(value) {
         });
     }
     populateLabel(thingToChange, labelElementActive);
-
 }
 //for pie
 function slicesChange(value) {
@@ -690,7 +729,6 @@ function depthChange(value) {
 }
 
 $('document').ready(function () {
-
     ///build the charts, the area is hidden
     demoChart = Highcharts.chart('container', demoChartOptions);
     areaChart = Highcharts.chart('container-area', areaChartOptions);
@@ -736,7 +774,6 @@ $('document').ready(function () {
         }
     }
 
-
     ///reset the series/chart options
     const resetCharts = function () {
         ///destroy the chart
@@ -761,8 +798,8 @@ $('document').ready(function () {
             { y: 15 }
         ];
         ///reset stuff
-        demoChartOptions.chart.spacing =  chartSpacing;
-        demoChartOptions.chart.margin =  chartMargin;
+        demoChartOptions.chart.spacing = chartSpacing;
+        demoChartOptions.chart.margin = chartMargin;
         demoChartOptions.xAxis[0].plotBands = [];
         demoChartOptions.xAxis[0].visible = axisVisible;
         demoChartOptions.yAxis[0].visible = axisVisible;
@@ -776,7 +813,6 @@ $('document').ready(function () {
             $('#container-area').removeClass('d-flex');
             $('#container-area').addClass('d-none');
             $('#container').removeClass('d-none');
-
         } else {
             $('#container-area').addClass('d-flex');
             $('#container-area').removeClass('d-none');
@@ -786,7 +822,6 @@ $('document').ready(function () {
 
     ///initialize series controls
     const initControls = function () {
-
         ///single option to change
         thingToChange = controls[seriesIndex][controlIndex]; //string
 
@@ -809,7 +844,7 @@ $('document').ready(function () {
         for (let ii = 0; ii < controlsToUse.length; ++ii) {
             //the radio
             controlElement = '.controls #controlType' + (ii + 1);
-            labelElement  = controlElement + ' ~ .form-check-label';
+            labelElement = controlElement + ' ~ .form-check-label';
             $(labelElement).css({ textAlign: 'center', marginLeft: '0px' });
 
             ///apply the min, max to the range, set the range value
@@ -835,9 +870,11 @@ $('document').ready(function () {
             if (ii === controlIndex) {
                 $(controlElement).parent().addClass('active');
                 $(controlElement).parent().addClass('flex-grow-1');
-                const valueSpan = '<span>' +  initialValues[seriesIndex][ii] + '</span>';
+                const valueSpan =
+                    '<span>' + initialValues[seriesIndex][ii] + '</span>';
                 $(labelElement).html(
-                    controlLabels[seriesIndex][ii] + ': ' + valueSpan);
+                    controlLabels[seriesIndex][ii] + ': ' + valueSpan
+                );
                 populateLabel(controlsToUse[ii], labelElement);
                 controlElementActive = controlElement;
                 labelElementActive = labelElement;
@@ -849,7 +886,11 @@ $('document').ready(function () {
         ///configure chart for individual cases
 
         ///FOR COLUMN: disable polar, inverted, enabled animation
-        if (thingToChange === 'width' || thingToChange === 'plotBands' || thingToChange === 'zones') {
+        if (
+            thingToChange === 'width' ||
+            thingToChange === 'plotBands' ||
+            thingToChange === 'zones'
+        ) {
             demoChart.update({
                 chart: {
                     polar: false,
@@ -902,11 +943,18 @@ $('document').ready(function () {
                     label: {
                         useHTML: true,
                         formatter: function () {
-                            return '<div style="' + display + '"><img height=15 style="border:1px solid #ccc" src="https://www.highcharts.com/samples/graphics/homepage/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
+                            return (
+                                '<div style="' +
+                                display +
+                                '"><img height=15 style="border:1px solid #ccc" src="https://www.highcharts.com/samples/graphics/homepage/p' +
+                                (ii + 1) +
+                                '.png"> Zone' +
+                                ii +
+                                '</div>'
+                            );
                         }
                     },
                     align: 'left'
-
                 });
             }
             demoChart.series[0].update({
@@ -918,10 +966,8 @@ $('document').ready(function () {
         }
     };
 
-
     ///series buttons (item, pie, column, area)
     $('.series-types button').click(function () {
-
         //deactivate all buttons
         $('.series-types button').each(function () {
             $(this).removeClass('active');
@@ -933,7 +979,9 @@ $('document').ready(function () {
         seriesType = this.id;
 
         //find the right items to manipulate
-        seriesIndex = seriesTypes.findIndex(element => element === seriesType);
+        seriesIndex = seriesTypes.findIndex(
+            (element) => element === seriesType
+        );
         controlsToUse = controls[seriesIndex];
         controlIndex = 0;
 
@@ -943,7 +991,6 @@ $('document').ready(function () {
         ///check first radio for the series
         $('#controlType1').trigger('click');
         initControls();
-
     });
 
     ///the radio buttons
@@ -964,7 +1011,6 @@ $('document').ready(function () {
         initControls();
     });
 
-
     ///PLUS MINUS CONTROLS FOR THE SLIDER
 
     $('#min i:not(.disabled)').click(function () {
@@ -978,134 +1024,113 @@ $('document').ready(function () {
 
     ///EVENT LISTENERS for the sliders
     ///innerSize - item and pie
-    document.getElementById('innerSize').addEventListener('input',
-        function (e) {
+    document
+        .getElementById('innerSize')
+        .addEventListener('input', function (e) {
             e.preventDefault();
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
+            setMinMaxStates(rvalue, activeSlider);
             innerSizeChange(rvalue);
-        }
-    );
+        });
     ///size - item and pie
-    document.getElementById('size').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            sizeChange(rvalue);
-        }
-    );
+    document.getElementById('size').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        sizeChange(rvalue);
+    });
     ///endAngle - item
-    document.getElementById('endAngle').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            endAngleChange(rvalue);
-        }
-
-    );
+    document.getElementById('endAngle').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        endAngleChange(rvalue);
+    });
     //startAngle - item
-    document.getElementById('startAngle').addEventListener('input',
-        function () {
+    document
+        .getElementById('startAngle')
+        .addEventListener('input', function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
+            setMinMaxStates(rvalue, activeSlider);
             startAngleChange(rvalue);
-        }
-    );
+        });
     //slices - pie
-    document.getElementById('slices').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            slicesChange(rvalue);
-        }
-    );
+    document.getElementById('slices').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        slicesChange(rvalue);
+    });
     ///variwide - pie
-    document.getElementById('variwide').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            variwideChange(rvalue);
-        }
-    );
+    document.getElementById('variwide').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        variwideChange(rvalue);
+    });
     //column width - column
-    document.getElementById('width').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            widthChange(rvalue);
-        }
-    );
+    document.getElementById('width').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        widthChange(rvalue);
+    });
     ///radial - for column
-    document.getElementById('radial').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            radialChange(rvalue);
-        }
-    );
+    document.getElementById('radial').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        radialChange(rvalue);
+    });
     ///plotBands - column
-    document.getElementById('plotBands').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            plotBandsChange(rvalue);
-        }
-    );
+    document.getElementById('plotBands').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        plotBandsChange(rvalue);
+    });
     ///zones - column
-    document.getElementById('zones').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            zonesChange(rvalue);
-        }
-    );
+    document.getElementById('zones').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        zonesChange(rvalue);
+    });
     ///alpha - 3d area
-    document.getElementById('alpha').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            alphaChange(rvalue);
-        });
+    document.getElementById('alpha').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        alphaChange(rvalue);
+    });
     ///beta - 3d area
-    document.getElementById('beta').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            betaChange(rvalue);
-        });
+    document.getElementById('beta').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        betaChange(rvalue);
+    });
     //viewDistance - 3d area
-    document.getElementById('viewDistance').addEventListener('input',
-        function () {
+    document
+        .getElementById('viewDistance')
+        .addEventListener('input', function () {
             rvalue = parseFloat(this.value);
             activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
+            setMinMaxStates(rvalue, activeSlider);
             viewDistanceChange(rvalue);
         });
     //depth - 3d area
-    document.getElementById('depth').addEventListener('input',
-        function () {
-            rvalue = parseFloat(this.value);
-            activeSlider = $(this)[0];
-            setMinMaxStates(rvalue,  activeSlider);
-            depthChange(rvalue);
-        });
-
+    document.getElementById('depth').addEventListener('input', function () {
+        rvalue = parseFloat(this.value);
+        activeSlider = $(this)[0];
+        setMinMaxStates(rvalue, activeSlider);
+        depthChange(rvalue);
+    });
 
     ///initial setup
     setMinMaxStates(rvalue, $('#' + thingToChange));
 
     window.addEventListener('resize', resizer);
-
 });

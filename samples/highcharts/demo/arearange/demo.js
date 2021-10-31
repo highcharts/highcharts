@@ -1,9 +1,7 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
     function (data) {
-
         Highcharts.chart('container', {
-
             chart: {
                 type: 'arearange',
                 zoomType: 'x',
@@ -41,11 +39,12 @@ Highcharts.getJSON(
                 enabled: false
             },
 
-            series: [{
-                name: 'Temperatures',
-                data: data
-            }]
-
+            series: [
+                {
+                    name: 'Temperatures',
+                    data: data
+                }
+            ]
         });
     }
 );

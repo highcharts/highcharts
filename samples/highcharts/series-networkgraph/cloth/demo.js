@@ -8,26 +8,17 @@ function generateCloth(rows, columns) {
         for (j = 1; j < columns; j++) {
             // a) right node
             if (j + 1 < columns) {
-                data.push([
-                    i + '_' + j,
-                    i + '_' + (j + 1)
-                ]);
+                data.push([i + '_' + j, i + '_' + (j + 1)]);
             }
 
             // b) bottom node
             if (i + 1 < rows) {
-                data.push([
-                    i + '_' + j,
-                    (i + 1) + '_' + j
-                ]);
+                data.push([i + '_' + j, i + 1 + '_' + j]);
             }
 
             // c) cross node (optional)
             if (i + 1 < rows && j + 1 < columns) {
-                data.push([
-                    i + '_' + j,
-                    (i + 1) + '_' + (j + 1)
-                ]);
+                data.push([i + '_' + j, i + 1 + '_' + (j + 1)]);
             }
         }
     }
@@ -54,17 +45,19 @@ Highcharts.chart('container', {
                     return Math.max(-(d * d) / (k * 300), -100);
                 },
                 repulsiveForce: function (d, k) {
-                    return Math.min((k * k) / (d), 100);
+                    return Math.min((k * k) / d, 100);
                 }
             },
             keys: ['from', 'to']
         }
     },
 
-    series: [{
-        data: generateCloth(16, 16),
-        marker: {
-            radius: 2
+    series: [
+        {
+            data: generateCloth(16, 16),
+            marker: {
+                radius: 2
+            }
         }
-    }]
+    ]
 });

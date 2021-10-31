@@ -35,7 +35,7 @@ Highcharts.chart('container', {
                                 const newZones = series.userOptions.zones;
 
                                 newZones[this.userOptions.zoneIndex].value =
-                                chart.yAxis[0].toValue(e.chartY);
+                                    chart.yAxis[0].toValue(e.chartY);
 
                                 chart.series[0].update({
                                     zones: newZones
@@ -44,10 +44,12 @@ Highcharts.chart('container', {
                         },
                         typeOptions: {
                             type: 'horizontalLine',
-                            points: [{
-                                x: x,
-                                y: y
-                            }]
+                            points: [
+                                {
+                                    x: x,
+                                    y: y
+                                }
+                            ]
                         }
                     });
 
@@ -58,7 +60,9 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        data: [2, 5, 1, 6, 7, 8, 5]
-    }]
+    series: [
+        {
+            data: [2, 5, 1, 6, 7, 8, 5]
+        }
+    ]
 });

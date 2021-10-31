@@ -1,6 +1,6 @@
 // Morph an SVG element into a different type of element
 Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
-    const getPath = shape => {
+    const getPath = (shape) => {
         const totalLength = shape.element.getTotalLength();
         const count = 100;
         const step = totalLength / count;
@@ -27,30 +27,30 @@ Highcharts.SVGElement.prototype.morph = function (shapeType, shapeArgs) {
         stroke: this.element.getAttribute('stroke'),
         'stroke-width': this.element.getAttribute('stroke-width')
     };
-    const interrim = this.renderer.path(getPath(this))
-        .attr(attribs)
-        .add();
+    const interrim = this.renderer.path(getPath(this)).attr(attribs).add();
 
     this.element.remove();
     this.element = interrim.element;
     this.d = interrim.d; // For animation
 
-    this.animate({
-        d: getPath(newShape)
-    }, {
-        complete: () => {
-            newShape.attr(attribs);
-            this.element = newShape.element;
-            interrim.destroy();
-            delete newShape.element;
-            newShape.destroy();
+    this.animate(
+        {
+            d: getPath(newShape)
+        },
+        {
+            complete: () => {
+                newShape.attr(attribs);
+                this.element = newShape.element;
+                interrim.destroy();
+                delete newShape.element;
+                newShape.destroy();
+            }
         }
-    });
+    );
 
     // Chainable
     return this;
 };
-
 
 const ren = new Highcharts.Renderer(
     document.getElementById('container'),
@@ -58,7 +58,8 @@ const ren = new Highcharts.Renderer(
     400
 );
 
-const shape = ren.circle(100, 100, 50)
+const shape = ren
+    .circle(100, 100, 50)
     .attr({
         stroke: 'rgb(255,0,0)',
         'stroke-width': '2px',
@@ -122,18 +123,15 @@ document.getElementById('marker').addEventListener('click', () => {
 
 document.getElementById('arc').addEventListener('click', () => {
     shape
-        .morph('path', Highcharts.SVGRenderer.prototype.symbols.arc(
-            200,
-            50,
-            100,
-            100,
-            {
+        .morph(
+            'path',
+            Highcharts.SVGRenderer.prototype.symbols.arc(200, 50, 100, 100, {
                 innerR: 0,
                 r: 100,
                 start: 0.2,
                 end: 0.9
-            }
-        ))
+            })
+        )
         .animate({
             stroke: 'rgb(0,128,128)',
             fill: 'rgba(0,128,128,0.3)'

@@ -24,16 +24,18 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' m'
     },
-    series: [{
-        name: 'Height',
-        colorByPoint: true,
-        data: [
-            ['Pyramid of Khufu', 138.8],
-            ['Pyramid of Khafre', 136.4],
-            ['Red Pyramid', 104],
-            ['Bent Pyramid', 101.1],
-            ['Pyramid of the Sun', 75]
-        ],
-        showInLegend: false
-    }]
+    series: [
+        {
+            name: 'Height',
+            colorByPoint: true,
+            data: [
+                ['Pyramid of Khufu', 138.8],
+                ['Pyramid of Khafre', 136.4],
+                ['Red Pyramid', 104],
+                ['Bent Pyramid', 101.1],
+                ['Pyramid of the Sun', 75]
+            ],
+            showInLegend: false
+        }
+    ]
 });

@@ -35,24 +35,8 @@ var colors = Highcharts.getOptions().colors,
                     'Chrome v29.0'
                 ],
                 data: [
-                    0.1,
-                    1.3,
-                    53.02,
-                    1.4,
-                    0.88,
-                    0.56,
-                    0.45,
-                    0.49,
-                    0.32,
-                    0.29,
-                    0.79,
-                    0.18,
-                    0.13,
-                    2.16,
-                    0.13,
-                    0.11,
-                    0.17,
-                    0.26
+                    0.1, 1.3, 53.02, 1.4, 0.88, 0.56, 0.45, 0.49, 0.32, 0.29,
+                    0.79, 0.18, 0.13, 2.16, 0.13, 0.11, 0.17, 0.26
                 ]
             }
         },
@@ -73,18 +57,7 @@ var colors = Highcharts.getOptions().colors,
                     'Firefox v48.0',
                     'Firefox v47.0'
                 ],
-                data: [
-                    1.02,
-                    7.36,
-                    0.35,
-                    0.11,
-                    0.1,
-                    0.95,
-                    0.15,
-                    0.1,
-                    0.31,
-                    0.12
-                ]
+                data: [1.02, 7.36, 0.35, 0.11, 0.1, 0.95, 0.15, 0.1, 0.31, 0.12]
             }
         },
         {
@@ -98,12 +71,7 @@ var colors = Highcharts.getOptions().colors,
                     'Internet Explorer v9.0',
                     'Internet Explorer v8.0'
                 ],
-                data: [
-                    6.2,
-                    0.29,
-                    0.27,
-                    0.47
-                ]
+                data: [6.2, 0.29, 0.27, 0.47]
             }
         },
         {
@@ -119,14 +87,7 @@ var colors = Highcharts.getOptions().colors,
                     'Safari v9.0',
                     'Safari v5.1'
                 ],
-                data: [
-                    3.39,
-                    0.96,
-                    0.36,
-                    0.54,
-                    0.13,
-                    0.2
-                ]
+                data: [3.39, 0.96, 0.36, 0.54, 0.13, 0.2]
             }
         },
         {
@@ -134,18 +95,8 @@ var colors = Highcharts.getOptions().colors,
             color: colors[5],
             drilldown: {
                 name: 'Edge',
-                categories: [
-                    'Edge v16',
-                    'Edge v15',
-                    'Edge v14',
-                    'Edge v13'
-                ],
-                data: [
-                    2.6,
-                    0.92,
-                    0.4,
-                    0.1
-                ]
+                categories: ['Edge v16', 'Edge v15', 'Edge v14', 'Edge v13'],
+                data: [2.6, 0.92, 0.4, 0.1]
             }
         },
         {
@@ -153,16 +104,8 @@ var colors = Highcharts.getOptions().colors,
             color: colors[4],
             drilldown: {
                 name: 'Opera',
-                categories: [
-                    'Opera v50.0',
-                    'Opera v49.0',
-                    'Opera v12.1'
-                ],
-                data: [
-                    0.96,
-                    0.82,
-                    0.14
-                ]
+                categories: ['Opera v50.0', 'Opera v49.0', 'Opera v12.1'],
+                data: [0.96, 0.82, 0.14]
             }
         },
         {
@@ -170,12 +113,8 @@ var colors = Highcharts.getOptions().colors,
             color: colors[6],
             drilldown: {
                 name: 'Other',
-                categories: [
-                    'Other'
-                ],
-                data: [
-                    7.62
-                ]
+                categories: ['Other'],
+                data: [7.62]
             }
         }
     ],
@@ -187,10 +126,8 @@ var colors = Highcharts.getOptions().colors,
     drillDataLen,
     brightness;
 
-
 // Build the data arrays
 for (i = 0; i < dataLen; i += 1) {
-
     // add browser data
     browserData.push({
         name: categories[i],
@@ -201,7 +138,7 @@ for (i = 0; i < dataLen; i += 1) {
     // add version data
     drillDataLen = data[i].drilldown.data.length;
     for (j = 0; j < drillDataLen; j += 1) {
-        brightness = 0.2 - (j / drillDataLen) / 5;
+        brightness = 0.2 - j / drillDataLen / 5;
         versionsData.push({
             name: data[i].drilldown.categories[j],
             y: data[i].drilldown.data[j],
@@ -230,45 +167,53 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: '%'
     },
-    series: [{
-        name: 'Browsers',
-        data: browserData,
-        size: '60%',
-        dataLabels: {
-            formatter: function () {
-                return this.y > 5 ? this.point.name : null;
-            },
-            color: '#ffffff',
-            distance: -30
-        }
-    }, {
-        name: 'Versions',
-        data: versionsData,
-        size: '80%',
-        innerSize: '60%',
-        dataLabels: {
-            formatter: function () {
-                // display only if larger than 1
-                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                    this.y + '%' : null;
+    series: [
+        {
+            name: 'Browsers',
+            data: browserData,
+            size: '60%',
+            dataLabels: {
+                formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                },
+                color: '#ffffff',
+                distance: -30
             }
         },
-        id: 'versions'
-    }],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 400
+        {
+            name: 'Versions',
+            data: versionsData,
+            size: '80%',
+            innerSize: '60%',
+            dataLabels: {
+                formatter: function () {
+                    // display only if larger than 1
+                    return this.y > 1
+                        ? '<b>' + this.point.name + ':</b> ' + this.y + '%'
+                        : null;
+                }
             },
-            chartOptions: {
-                series: [{
-                }, {
-                    id: 'versions',
-                    dataLabels: {
-                        enabled: false
-                    }
-                }]
+            id: 'versions'
+        }
+    ],
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    series: [
+                        {},
+                        {
+                            id: 'versions',
+                            dataLabels: {
+                                enabled: false
+                            }
+                        }
+                    ]
+                }
             }
-        }]
+        ]
     }
 });

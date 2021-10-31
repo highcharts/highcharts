@@ -1,12 +1,10 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
     function (data) {
-
         // Shorten the data
         data = data.splice(181, 14);
 
         Highcharts.chart('container', {
-
             chart: {
                 type: 'arearange'
             },
@@ -35,16 +33,17 @@ Highcharts.getJSON(
                 enabled: false
             },
 
-            series: [{
-                name: 'Temperatures',
-                data: data,
-                dataLabels: {
-                    enabled: true,
-                    yHigh: 20,
-                    yLow: -20
+            series: [
+                {
+                    name: 'Temperatures',
+                    data: data,
+                    dataLabels: {
+                        enabled: true,
+                        yHigh: 20,
+                        yLow: -20
+                    }
                 }
-            }]
-
+            ]
         });
     }
 );

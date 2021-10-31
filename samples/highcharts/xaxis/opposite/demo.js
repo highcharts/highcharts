@@ -4,7 +4,14 @@ Highcharts.chart('container', {
     },
     xAxis: {
         opposite: true,
-        categories: ['Prod AAA AAA', 'Prod BBB', 'Prod CCC', 'Prod DDD', 'Prod EEE', 'Prod FFF'],
+        categories: [
+            'Prod AAA AAA',
+            'Prod BBB',
+            'Prod CCC',
+            'Prod DDD',
+            'Prod EEE',
+            'Prod FFF'
+        ],
         //categories: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF'],
         labels: {
             autoRotation: 0,
@@ -13,11 +20,11 @@ Highcharts.chart('container', {
                 //fontSize: '24px'
             }
         }
-
-
     },
 
-    series: [{
-        data: [-29.9, -71.5, -106.4, -129.2, -144.0, -176.0]
-    }]
+    series: [
+        {
+            data: [-29.9, -71.5, -106.4, -129.2, -144.0, -176.0]
+        }
+    ]
 });

@@ -33,8 +33,10 @@ Highcharts.chart('container', {
             text: null
         }
     },
-    series: [{
-        name: 'Sales',
-        data: [2, 3, null, 4, 0, 5, 1, 4, 6, 3]
-    }]
+    series: [
+        {
+            name: 'Sales',
+            data: [2, 3, null, 4, 0, 5, 1, 4, 6, 3]
+        }
+    ]
 });

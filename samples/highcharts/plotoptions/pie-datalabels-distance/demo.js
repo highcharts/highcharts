@@ -15,19 +15,21 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [
-            ['Firefox',   44.2],
-            ['IE7',       26.6],
-            ['IE6',       20],
-            {
-                name: 'Chrome',
-                y: 3.1,
-                dataLabels: {
-                    distance: 30 // Individual distance (in px)
-                }
-            },
-            ['Other',    5.4]
-        ]
-    }]
+    series: [
+        {
+            data: [
+                ['Firefox', 44.2],
+                ['IE7', 26.6],
+                ['IE6', 20],
+                {
+                    name: 'Chrome',
+                    y: 3.1,
+                    dataLabels: {
+                        distance: 30 // Individual distance (in px)
+                    }
+                },
+                ['Other', 5.4]
+            ]
+        }
+    ]
 });

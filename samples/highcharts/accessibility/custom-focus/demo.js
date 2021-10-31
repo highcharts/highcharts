@@ -37,19 +37,25 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Percentage usage',
-        showInLegend: true,
-        depth: 40,
-        data: [{
-            name: 'Full time employment',
-            y: 40.7
-        }, {
-            name: 'Part time employment',
-            y: 13.9
-        }, {
-            name: 'Unemployed',
-            y: 45.4
-        }]
-    }]
+    series: [
+        {
+            name: 'Percentage usage',
+            showInLegend: true,
+            depth: 40,
+            data: [
+                {
+                    name: 'Full time employment',
+                    y: 40.7
+                },
+                {
+                    name: 'Part time employment',
+                    y: 13.9
+                },
+                {
+                    name: 'Unemployed',
+                    y: 45.4
+                }
+            ]
+        }
+    ]
 });

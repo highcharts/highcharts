@@ -7,9 +7,11 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        type: 'hollowcandlestick',
-        name: 'USD to EUR',
-        data: ohlcdata
-    }]
+    series: [
+        {
+            type: 'hollowcandlestick',
+            name: 'USD to EUR',
+            data: ohlcdata
+        }
+    ]
 });

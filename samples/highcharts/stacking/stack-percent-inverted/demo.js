@@ -6,11 +6,14 @@ Highcharts.chart('container', {
     title: {
         text: 'Inverted chart, percent stack'
     },
-    series: [{
-        data: [null, 1, null, null],
-        stacking: 'percent'
-    }, {
-        data: [null, 1, null, null],
-        stacking: 'percent'
-    }]
+    series: [
+        {
+            data: [null, 1, null, null],
+            stacking: 'percent'
+        },
+        {
+            data: [null, 1, null, null],
+            stacking: 'percent'
+        }
+    ]
 });

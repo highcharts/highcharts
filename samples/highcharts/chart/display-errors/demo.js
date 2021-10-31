@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'line',
         displayErrors: true
@@ -9,14 +8,18 @@ Highcharts.chart('container', {
         text: ''
     },
 
-    series: [{
-        data: [{
-            x: 1,
-            y: 2
-        }, {
-            x: 0,
-            y: 3
-        }]
-    }]
-
+    series: [
+        {
+            data: [
+                {
+                    x: 1,
+                    y: 2
+                },
+                {
+                    x: 0,
+                    y: 3
+                }
+            ]
+        }
+    ]
 });

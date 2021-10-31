@@ -9,25 +9,31 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0
     },
-    series: [{
-        type: 'line',
-        name: 'Regression Line',
-        data: [[0, 1.11], [5, 4.51]],
-        marker: {
-            enabled: false
+    series: [
+        {
+            type: 'line',
+            name: 'Regression Line',
+            data: [
+                [0, 1.11],
+                [5, 4.51]
+            ],
+            marker: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    lineWidth: 0
+                }
+            },
+            enableMouseTracking: false
         },
-        states: {
-            hover: {
-                lineWidth: 0
+        {
+            type: 'scatter',
+            name: 'Observations',
+            data: [1, 1.5, 2.8, 3.5, 3.9, 4.2],
+            marker: {
+                radius: 4
             }
-        },
-        enableMouseTracking: false
-    }, {
-        type: 'scatter',
-        name: 'Observations',
-        data: [1, 1.5, 2.8, 3.5, 3.9, 4.2],
-        marker: {
-            radius: 4
         }
-    }]
+    ]
 });

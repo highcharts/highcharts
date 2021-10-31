@@ -51,20 +51,26 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        name: 'Run 1',
-        data: getTestData(0)
-    }, {
-        name: 'Run 2',
-        data: getTestData(1)
-    }, {
-        name: 'Run 3',
-        data: getTestData(2)
-    }, {
-        name: 'Run 4',
-        data: getTestData(3)
-    }, {
-        name: 'Run 5',
-        data: getTestData(4)
-    }]
+    series: [
+        {
+            name: 'Run 1',
+            data: getTestData(0)
+        },
+        {
+            name: 'Run 2',
+            data: getTestData(1)
+        },
+        {
+            name: 'Run 3',
+            data: getTestData(2)
+        },
+        {
+            name: 'Run 4',
+            data: getTestData(3)
+        },
+        {
+            name: 'Run 5',
+            data: getTestData(4)
+        }
+    ]
 });

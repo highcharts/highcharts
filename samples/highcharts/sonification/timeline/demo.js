@@ -10,21 +10,24 @@ var statusLines = 0,
     },
     makeEarcon = function (frequency) {
         return new Highcharts.sonification.Earcon({
-            instruments: [{
-                instrument: 'sine',
-                playOptions: {
-                    frequency: frequency * 2,
-                    duration: 450,
-                    volume: 1
+            instruments: [
+                {
+                    instrument: 'sine',
+                    playOptions: {
+                        frequency: frequency * 2,
+                        duration: 450,
+                        volume: 1
+                    }
+                },
+                {
+                    instrument: 'square',
+                    playOptions: {
+                        frequency: frequency / 2,
+                        duration: 350,
+                        volume: 0.1
+                    }
                 }
-            }, {
-                instrument: 'square',
-                playOptions: {
-                    frequency: frequency / 2,
-                    duration: 350,
-                    volume: 0.1
-                }
-            }]
+            ]
         });
     },
     makeTimelineEvent = function (frequency, time) {

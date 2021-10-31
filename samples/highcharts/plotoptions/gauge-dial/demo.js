@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge'
     },
@@ -8,7 +7,6 @@ Highcharts.chart('container', {
         startAngle: -150,
         endAngle: 150
     },
-
 
     yAxis: {
         min: 0,
@@ -30,9 +28,9 @@ Highcharts.chart('container', {
         }
     },
 
-
-    series: [{
-        data: [80]
-    }]
-
+    series: [
+        {
+            data: [80]
+        }
+    ]
 });

@@ -56,7 +56,7 @@ button2.onclick = function () {
         volume: 0.5,
         onEnd: function () {
             sine2.play({
-                frequency: 880.00, // A5
+                frequency: 880.0, // A5
                 duration: 700,
                 pan: 0.7,
                 volume: 0.5
@@ -73,21 +73,21 @@ button3.onclick = function () {
     var duration = 20;
     for (var i = 0; i < 60; ++i) {
         setTimeout(
-            i % 2 ?
-                function play() {
-                    sine3.play({
-                        frequency: 1760, // A6
-                        volume: 0.4,
-                        duration: duration
-                    });
-                } :
-                function () {
-                    sine3.play({
-                        frequency: 1318.51, // E6
-                        volume: 0.4,
-                        duration: duration
-                    });
-                },
+            i % 2
+                ? function play() {
+                      sine3.play({
+                          frequency: 1760, // A6
+                          volume: 0.4,
+                          duration: duration
+                      });
+                  }
+                : function () {
+                      sine3.play({
+                          frequency: 1318.51, // E6
+                          volume: 0.4,
+                          duration: duration
+                      });
+                  },
             i * 50
         );
     }

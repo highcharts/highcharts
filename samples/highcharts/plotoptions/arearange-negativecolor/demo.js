@@ -1,41 +1,43 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json', function (data) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
+    function (data) {
+        Highcharts.chart('container', {
+            chart: {
+                type: 'arearange'
+            },
 
-    Highcharts.chart('container', {
-
-        chart: {
-            type: 'arearange'
-        },
-
-        title: {
-            text: 'Temperature variation by day'
-        },
-
-        xAxis: {
-            type: 'datetime'
-        },
-
-        yAxis: {
             title: {
-                text: null
-            }
-        },
+                text: 'Temperature variation by day'
+            },
 
-        tooltip: {
-            crosshairs: true,
-            shared: true,
-            valueSuffix: '°C'
-        },
+            xAxis: {
+                type: 'datetime'
+            },
 
-        legend: {
-            enabled: false
-        },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
 
-        series: [{
-            name: 'Temperatures',
-            data: data,
-            color: '#FF0000',
-            negativeColor: '#0088FF'
-        }]
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+                valueSuffix: '°C'
+            },
 
-    });
-});
+            legend: {
+                enabled: false
+            },
+
+            series: [
+                {
+                    name: 'Temperatures',
+                    data: data,
+                    color: '#FF0000',
+                    negativeColor: '#0088FF'
+                }
+            ]
+        });
+    }
+);

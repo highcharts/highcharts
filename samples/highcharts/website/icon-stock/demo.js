@@ -3,75 +3,73 @@ Math.easeInSine = function (pos) {
 };
 
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
 // Math.easeInQuint = function (pos) {
 //     return Math.pow(pos, 5);
 // },
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
+Math.easeOutBounce = (pos) => {
+    if (pos < 1 / 2.75) {
+        return 7.5625 * pos * pos;
     }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    if (pos < 2 / 2.75) {
+        return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
     }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+    if (pos < 2.5 / 2.75) {
+        return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
     }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath =
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 let done = false;
 
 // Create the chart
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlcv.json',
+    function (data) {
+        // split the data set into ohlc and volume
+        var ohlc = [],
+            volume = [],
+            dataLength = data.length,
+            // set the allowed units for data grouping
+            groupingUnits = [
+                [
+                    'week', // unit name
+                    [1] // allowed multiples
+                ],
+                ['month', [1, 2, 3, 4, 6]]
+            ],
+            i = 0;
 
-    // split the data set into ohlc and volume
-    var ohlc = [],
-        volume = [],
-        dataLength = data.length,
-        // set the allowed units for data grouping
-        groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]],
+        for (i; i < dataLength; i += 1) {
+            ohlc.push([
+                data[i][0], // the date
+                data[i][1], // open
+                data[i][2], // high
+                data[i][3], // low
+                data[i][4] // close
+            ]);
 
-        i = 0;
+            volume.push([
+                data[i][0], // the date
+                data[i][5] // the volume
+            ]);
+        }
 
-    for (i; i < dataLength; i += 1) {
-        ohlc.push([
-            data[i][0], // the date
-            data[i][1], // open
-            data[i][2], // high
-            data[i][3], // low
-            data[i][4] // close
-        ]);
-
-        volume.push([
-            data[i][0], // the date
-            data[i][5] // the volume
-        ]);
-    }
-
-
-    Highcharts.stockChart('stock',
-        {
+        Highcharts.stockChart('stock', {
             chart: {
                 animation: {
                     enabled: true,
                     duration: 2000,
                     easing: 'easeOutQuint'
                 },
-                styledMode: (true),
+                styledMode: true,
                 margin: 0,
                 spacing: 0,
                 alignTicks: false,
@@ -80,25 +78,55 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     load: function () {
                         const chart = this;
 
-                        const particle1 = document.querySelector('#stock .particle-1');
-                        const particle2 = document.querySelector('#stock .particle-2');
-                        const particle3 = document.querySelector('#stock .particle-3');
-                        const particle4 = document.querySelector('#stock .particle-4');
-                        const particle5 = document.querySelector('#stock .particle-5');
-                        const particle6 = document.querySelector('#stock .particle-6');
-                        const particles = [particle1, particle2, particle3,
-                            particle4, particle5, particle6];
-                        const greenLine = document.querySelector('#stock .highcharts-series-2.green-line');
-                        const greenArrow = document.getElementsByClassName('green-line')[1];
-                        const purpleLine = document.querySelector('#stock .highcharts-series-3.purple-line');
-                        const purpleArrow = document.getElementsByClassName('purple-line')[1];
-                        const bottomArea =  document.querySelector('#stock .stock-bottom');
-                        const topArea =  document.querySelector('#stock .stock-top');
-                        const rangeSelectorGroup =  document.querySelector('#stock .highcharts-range-selector-group');
-                        const candlestick =  document.querySelector('#stock .stick');
-                        const column = document.querySelector('#stock .highcharts-column-series.column');
-                        const title = document.querySelector('#stock .highcharts-title');
-                        const subtitle = document.querySelector('#stock .highcharts-subtitle');
+                        const particle1 =
+                            document.querySelector('#stock .particle-1');
+                        const particle2 =
+                            document.querySelector('#stock .particle-2');
+                        const particle3 =
+                            document.querySelector('#stock .particle-3');
+                        const particle4 =
+                            document.querySelector('#stock .particle-4');
+                        const particle5 =
+                            document.querySelector('#stock .particle-5');
+                        const particle6 =
+                            document.querySelector('#stock .particle-6');
+                        const particles = [
+                            particle1,
+                            particle2,
+                            particle3,
+                            particle4,
+                            particle5,
+                            particle6
+                        ];
+                        const greenLine = document.querySelector(
+                            '#stock .highcharts-series-2.green-line'
+                        );
+                        const greenArrow =
+                            document.getElementsByClassName('green-line')[1];
+                        const purpleLine = document.querySelector(
+                            '#stock .highcharts-series-3.purple-line'
+                        );
+                        const purpleArrow =
+                            document.getElementsByClassName('purple-line')[1];
+                        const bottomArea = document.querySelector(
+                            '#stock .stock-bottom'
+                        );
+                        const topArea =
+                            document.querySelector('#stock .stock-top');
+                        const rangeSelectorGroup = document.querySelector(
+                            '#stock .highcharts-range-selector-group'
+                        );
+                        const candlestick =
+                            document.querySelector('#stock .stick');
+                        const column = document.querySelector(
+                            '#stock .highcharts-column-series.column'
+                        );
+                        const title = document.querySelector(
+                            '#stock .highcharts-title'
+                        );
+                        const subtitle = document.querySelector(
+                            '#stock .highcharts-subtitle'
+                        );
 
                         ///for the arrow head sizes
                         ///based on screen size
@@ -109,42 +137,48 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         if (reduced) {
                             ///show the lines and particles immediately
                             chart.series[2].update({
-                                data: [{
-                                    x: 0,
-                                    y: 6.67
-                                }, {
-                                    x: 8.5,
-                                    y: 6.67
-                                },
-                                {
-                                    x: 14.2,
-                                    y: 12.14,
-                                    marker: {
-                                        enabled: true,
-                                        symbol: 'square',
-                                        radius: head,
-                                        className: 'green-arrow'
+                                data: [
+                                    {
+                                        x: 0,
+                                        y: 6.67
+                                    },
+                                    {
+                                        x: 8.5,
+                                        y: 6.67
+                                    },
+                                    {
+                                        x: 14.2,
+                                        y: 12.14,
+                                        marker: {
+                                            enabled: true,
+                                            symbol: 'square',
+                                            radius: head,
+                                            className: 'green-arrow'
+                                        }
                                     }
-                                }]
+                                ]
                             });
                             chart.series[3].update({
-                                data: [{
-                                    x: 0,
-                                    y: 8.25
-                                }, {
-                                    x: 10.52,
-                                    y: 8.25
-                                },
-                                {
-                                    x: 14,
-                                    y: 12.1,
-                                    marker: {
-                                        enabled: true,
-                                        symbol: 'square',
-                                        radius: head,
-                                        className: 'purple-arrow'
+                                data: [
+                                    {
+                                        x: 0,
+                                        y: 8.25
+                                    },
+                                    {
+                                        x: 10.52,
+                                        y: 8.25
+                                    },
+                                    {
+                                        x: 14,
+                                        y: 12.1,
+                                        marker: {
+                                            enabled: true,
+                                            symbol: 'square',
+                                            radius: head,
+                                            className: 'purple-arrow'
+                                        }
                                     }
-                                }]
+                                ]
                             });
                             particles.forEach(function (p) {
                                 p.classList.add('static');
@@ -159,7 +193,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 particles.forEach(function (p) {
                                     p.classList.add('fade');
                                 });
-
                             }, 1000);
 
                             setTimeout(function () {
@@ -225,7 +258,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 done = true;
                                 chart.redraw();
                             }, 3100);
-
                         } else {
                             ///move all the particles individually
                             setTimeout(function () {
@@ -280,11 +312,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 particles.forEach(function (p) {
                                     p.classList.add('move');
                                 });
-
                             }, 1000);
 
                             setTimeout(function () {
-
                                 ///moves green line
                                 //turns on the marker
                                 chart.series[2].data[2].update({
@@ -345,7 +375,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 greenLine.classList.add('fade-out');
                             }, 6000);
 
-
                             setTimeout(function () {
                                 bottomArea.classList.add('fade-out');
                                 topArea.classList.add('fade-out');
@@ -371,7 +400,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             }, 6800);
 
                             setTimeout(function () {
-
                                 chart.series[12].update({
                                     visible: true
                                 });
@@ -404,11 +432,22 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     },
                     redraw: function () {
                         if (done) {
-                            const candlestick =  document.querySelectorAll('#stock .stick')[0];
-                            const rangeSelectorGroup =  document.querySelectorAll('#stock .highcharts-range-selector-group')[0];
-                            const bottomArea =  document.querySelectorAll('#stock .stock-bottom')[0];
-                            const topArea =  document.querySelectorAll('#stock .stock-top')[0];
-                            const column = document.querySelectorAll('#stock .highcharts-column-series.column')[0];
+                            const candlestick =
+                                document.querySelectorAll('#stock .stick')[0];
+                            const rangeSelectorGroup =
+                                document.querySelectorAll(
+                                    '#stock .highcharts-range-selector-group'
+                                )[0];
+                            const bottomArea = document.querySelectorAll(
+                                '#stock .stock-bottom'
+                            )[0];
+                            const topArea =
+                                document.querySelectorAll(
+                                    '#stock .stock-top'
+                                )[0];
+                            const column = document.querySelectorAll(
+                                '#stock .highcharts-column-series.column'
+                            )[0];
                             column.classList.add('fade-in');
                             rangeSelectorGroup.classList.add('fade-in');
                             candlestick.classList.add('fade-in');
@@ -430,30 +469,36 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             rangeSelector: {
                 selected: 1,
                 floating: true,
-                buttons: [{
-                    type: 'month',
-                    count: 1,
-                    text: '1m',
-                    title: 'View 1 month'
-                }, {
-                    type: 'month',
-                    count: 3,
-                    text: '3m',
-                    title: 'View 3 months'
-                }, {
-                    type: 'month',
-                    count: 6,
-                    text: '6m',
-                    title: 'View 6 months'
-                }, {
-                    type: 'ytd',
-                    text: 'YTD',
-                    title: 'View year to date'
-                }, {
-                    type: 'all',
-                    text: 'All',
-                    title: 'View all'
-                }]
+                buttons: [
+                    {
+                        type: 'month',
+                        count: 1,
+                        text: '1m',
+                        title: 'View 1 month'
+                    },
+                    {
+                        type: 'month',
+                        count: 3,
+                        text: '3m',
+                        title: 'View 3 months'
+                    },
+                    {
+                        type: 'month',
+                        count: 6,
+                        text: '6m',
+                        title: 'View 6 months'
+                    },
+                    {
+                        type: 'ytd',
+                        text: 'YTD',
+                        title: 'View year to date'
+                    },
+                    {
+                        type: 'all',
+                        text: 'All',
+                        title: 'View all'
+                    }
+                ]
             },
             title: {
                 text: 'Candlestick and Volume',
@@ -469,7 +514,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     min: Date.UTC(2021, 5, 2),
                     max: Date.UTC(2021, 8, 4),
                     visible: false
-
                 },
                 //1 -
                 {
@@ -581,7 +625,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             enabled: false
                         }
                     }
-
                 },
                 pie: {
                     animation: false
@@ -594,7 +637,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }
             },
             series: [
-            //0 - top area (11) y0
+                //0 - top area (11) y0
                 {
                     type: 'arearange',
                     className: 'stock-top',
@@ -609,7 +652,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     marker: {
                         enabled: false
                     }
-
                 },
                 //1- bottom area (11) y1
                 {
@@ -626,7 +668,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     marker: {
                         enabled: false
                     }
-
                 },
                 //2 - green line (21) y0
                 {
@@ -637,22 +678,25 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 0,
-                        y: 6.67
-                    }, {
-                        x: 0,
-                        y: 6.67
-                    },
-                    {
-                        x: 0,
-                        y: 6.67,
-                        marker: {
-                            enabled: false,
-                            radius: 70,
-                            symbol: 'square'
+                    data: [
+                        {
+                            x: 0,
+                            y: 6.67
+                        },
+                        {
+                            x: 0,
+                            y: 6.67
+                        },
+                        {
+                            x: 0,
+                            y: 6.67,
+                            marker: {
+                                enabled: false,
+                                radius: 70,
+                                symbol: 'square'
+                            }
                         }
-                    }],
+                    ],
                     zIndex: 21,
                     xAxis: 1,
                     yAxis: 2
@@ -665,22 +709,25 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         enabled: true
                     },
                     className: 'purple-line',
-                    data: [{
-                        x: 0,
-                        y: 8.25
-                    }, {
-                        x: 0,
-                        y: 8.25
-                    },
-                    {
-                        x: 0,
-                        y: 8.25,
-                        marker: {
-                            enabled: false,
-                            radius: 70,
-                            symbol: 'square'
+                    data: [
+                        {
+                            x: 0,
+                            y: 8.25
+                        },
+                        {
+                            x: 0,
+                            y: 8.25
+                        },
+                        {
+                            x: 0,
+                            y: 8.25,
+                            marker: {
+                                enabled: false,
+                                radius: 70,
+                                symbol: 'square'
+                            }
                         }
-                    }],
+                    ],
                     zIndex: 21,
                     yAxis: 3,
                     xAxis: 1,
@@ -691,18 +738,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     type: 'line',
                     name: 'minus',
                     className: 'white-line',
-                    data: [{
-                        x: 4,
-                        y: 2.5
-                    }, {
-                        x: 8,
-                        y: 2.5
-                    }],
+                    data: [
+                        {
+                            x: 4,
+                            y: 2.5
+                        },
+                        {
+                            x: 8,
+                            y: 2.5
+                        }
+                    ],
                     zIndex: 21,
                     visible: false,
                     xAxis: 1,
                     yAxis: 2
-
                 },
                 /// 5- plus V (21) hidden
                 {
@@ -713,18 +762,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 6,
-                        y: 10
-                    }, {
-                        x: 6.1,
-                        y: 14
-                    }],
+                    data: [
+                        {
+                            x: 6,
+                            y: 10
+                        },
+                        {
+                            x: 6.1,
+                            y: 14
+                        }
+                    ],
                     zIndex: 21,
                     visible: false,
                     xAxis: 1,
                     yAxis: 2
-
                 },
                 ///6- plus H (21) hidden
                 {
@@ -735,18 +786,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 4,
-                        y: 12
-                    }, {
-                        x: 8,
-                        y: 12
-                    }],
+                    data: [
+                        {
+                            x: 4,
+                            y: 12
+                        },
+                        {
+                            x: 8,
+                            y: 12
+                        }
+                    ],
                     zIndex: 21,
                     visible: false,
                     xAxis: 1,
                     yAxis: 2
-
                 },
 
                 ///7- top arrow (21)
@@ -760,20 +813,21 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 12,
-                        low: 12.6,
-                        high: 12
-                    }, {
-                        x: 14,
-                        low: 10.18,
-                        high: 14.99
-
-                    }],
+                    data: [
+                        {
+                            x: 12,
+                            low: 12.6,
+                            high: 12
+                        },
+                        {
+                            x: 14,
+                            low: 10.18,
+                            high: 14.99
+                        }
+                    ],
                     zIndex: 21,
                     xAxis: 1,
                     yAxis: 2
-
                 },
 
                 ///8- bottom arrow (21)
@@ -785,25 +839,25 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 12,
-                        low: 14,
-                        high: 14
-                    }, {
-                        x: 14,
-                        low: 10,
-                        high: 14
-
-                    }],
+                    data: [
+                        {
+                            x: 12,
+                            low: 14,
+                            high: 14
+                        },
+                        {
+                            x: 14,
+                            low: 10,
+                            high: 14
+                        }
+                    ],
                     zIndex: 21,
                     yAxis: 3,
                     xAxis: 1,
                     marker: {
                         enabled: false
                     }
-
                 },
-
 
                 //9 - particles (40)
 
@@ -822,7 +876,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 symbol: 'url(' + imgPath + 'p1.svg)',
                                 width: 35,
                                 height: 60
-
                             }
                         },
                         {
@@ -896,17 +949,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     lineWidth: 30,
                     width: 30,
                     borderWidth: 30,
-                    data: [{
-                        x: 0,
-                        y: 6.5
-                    }, {
-                        x: 8.5,
-                        y: 6.5
-                    },
-                    {
-                        x: 13.9999,
-                        y: 11.42
-                    }],
+                    data: [
+                        {
+                            x: 0,
+                            y: 6.5
+                        },
+                        {
+                            x: 8.5,
+                            y: 6.5
+                        },
+                        {
+                            x: 13.9999,
+                            y: 11.42
+                        }
+                    ],
                     zIndex: 21,
                     xAxis: 1,
                     yAxis: 2
@@ -916,17 +972,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     type: 'line',
                     name: 'purple line',
                     className: 'transparent',
-                    data: [{
-                        x: 0,
-                        y: 8.5
-                    }, {
-                        x: 11.502,
-                        y: 8.5
-                    },
-                    {
-                        x: 13.9999,
-                        y: 12.02
-                    }],
+                    data: [
+                        {
+                            x: 0,
+                            y: 8.5
+                        },
+                        {
+                            x: 11.502,
+                            y: 8.5
+                        },
+                        {
+                            x: 13.9999,
+                            y: 12.02
+                        }
+                    ],
                     zIndex: 21,
                     yAxis: 3,
                     xAxis: 1
@@ -942,7 +1001,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                         units: groupingUnits
                     },
                     visible: false
-
                 },
                 //13 --column
                 {
@@ -957,108 +1015,106 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     },
                     visible: false
                 }
-
-
             ],
             responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 250
-                    },
-                    chartOptions: {
-                        rangeSelector: {
-                            enabled: true,
-                            dropdown: 'always',
-                            inputEnabled: false,
-                            buttonPosition: {
-                                x: 90,
-                                y: -70
-                            }
+                rules: [
+                    {
+                        condition: {
+                            maxWidth: 250
                         },
-                        plotOptions: {
-                            arearange: {
-                                marker: {
-                                    symbol: 'square',
-                                    radius: 40
+                        chartOptions: {
+                            rangeSelector: {
+                                enabled: true,
+                                dropdown: 'always',
+                                inputEnabled: false,
+                                buttonPosition: {
+                                    x: 90,
+                                    y: -70
+                                }
+                            },
+                            plotOptions: {
+                                arearange: {
+                                    marker: {
+                                        symbol: 'square',
+                                        radius: 40
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        condition: {
+                            minWidth: 251,
+                            maxWidth: 300
+                        },
+                        chartOptions: {
+                            rangeSelector: {
+                                enabled: true,
+                                dropdown: 'always',
+                                inputEnabled: false,
+                                buttonPosition: {
+                                    x: 120,
+                                    y: -70
+                                }
+                            },
+                            plotOptions: {
+                                arearange: {
+                                    marker: {
+                                        symbol: 'square',
+                                        radius: 40
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        condition: {
+                            minWidth: 301,
+                            maxWidth: 400
+                        },
+                        chartOptions: {
+                            rangeSelector: {
+                                enabled: true,
+                                dropdown: 'always',
+                                inputEnabled: true,
+                                buttonPosition: {
+                                    x: 0,
+                                    y: -70
+                                }
+                            },
+                            plotOptions: {
+                                arearange: {
+                                    marker: {
+                                        symbol: 'square',
+                                        radius: 40
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        condition: {
+                            minWidth: 499
+                        },
+                        chartOptions: {
+                            rangeSelector: {
+                                enabled: true,
+                                dropdown: 'never',
+                                inputEnabled: true,
+                                y: -60
+                            },
+                            plotOptions: {
+                                arearange: {
+                                    marker: {
+                                        symbol: 'square',
+                                        radius: 70
+                                    }
                                 }
                             }
                         }
                     }
-                },
-                {
-                    condition: {
-                        minWidth: 251,
-                        maxWidth: 300
-                    },
-                    chartOptions: {
-                        rangeSelector: {
-                            enabled: true,
-                            dropdown: 'always',
-                            inputEnabled: false,
-                            buttonPosition: {
-                                x: 120,
-                                y: -70
-                            }
-                        },
-                        plotOptions: {
-                            arearange: {
-                                marker: {
-                                    symbol: 'square',
-                                    radius: 40
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    condition: {
-                        minWidth: 301,
-                        maxWidth: 400
-                    },
-                    chartOptions: {
-                        rangeSelector: {
-                            enabled: true,
-                            dropdown: 'always',
-                            inputEnabled: true,
-                            buttonPosition: {
-                                x: 0,
-                                y: -70
-                            }
-                        },
-                        plotOptions: {
-                            arearange: {
-                                marker: {
-                                    symbol: 'square',
-                                    radius: 40
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    condition: {
-                        minWidth: 499
-                    },
-                    chartOptions: {
-                        rangeSelector: {
-                            enabled: true,
-                            dropdown: 'never',
-                            inputEnabled: true,
-                            y: -60
-                        },
-                        plotOptions: {
-                            arearange: {
-                                marker: {
-                                    symbol: 'square',
-                                    radius: 70
-                                }
-                            }
-                        }
-                    }
-                }]
+                ]
             }
-        }
-
-    );
-
-});
+        });
+    }
+);

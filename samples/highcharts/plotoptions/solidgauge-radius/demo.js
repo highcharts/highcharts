@@ -1,6 +1,5 @@
 // The speed gauge
 Highcharts.chart('container', {
-
     chart: {
         type: 'solidgauge'
     },
@@ -48,24 +47,29 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Speed',
-        data: [{
-            name: 'First car',
-            radius: 98,
-            innerRadius: 82,
-            y: 80
-        }, {
-            name: 'Second car',
-            radius: 78,
-            innerRadius: 62,
-            y: 120
-        }],
-        dataLabels: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: '{point.name}: <b>{point.y}</b> km/h'
+    series: [
+        {
+            name: 'Speed',
+            data: [
+                {
+                    name: 'First car',
+                    radius: 98,
+                    innerRadius: 82,
+                    y: 80
+                },
+                {
+                    name: 'Second car',
+                    radius: 78,
+                    innerRadius: 62,
+                    y: 120
+                }
+            ],
+            dataLabels: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: '{point.name}: <b>{point.y}</b> km/h'
+            }
         }
-    }]
+    ]
 });

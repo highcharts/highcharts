@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'dotplot'
     },
@@ -9,8 +8,20 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     yAxis: {
@@ -23,14 +34,16 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Items bought',
-        data: [5, 3, 4],
-        color: 'green'
-    }, {
-        name: 'Items sold',
-        data: [0, 2, 1],
-        color: 'red'
-    }]
-
+    series: [
+        {
+            name: 'Items bought',
+            data: [5, 3, 4],
+            color: 'green'
+        },
+        {
+            name: 'Items sold',
+            data: [0, 2, 1],
+            color: 'red'
+        }
+    ]
 });

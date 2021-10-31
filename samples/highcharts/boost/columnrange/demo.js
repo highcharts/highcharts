@@ -22,21 +22,15 @@ function getData(n) {
             spike = 0;
         }
         low = 2 * Math.sin(i / 100) + a + b + c + spike + Math.random();
-        arr.push([
-            i,
-            low,
-            low + 5 + 5 * Math.random()
-        ]);
+        arr.push([i, low, low + 5 + 5 * Math.random()]);
     }
     return arr;
 }
 var n = 500000,
     data = getData(n);
 
-
 console.time('columnrange');
 Highcharts.chart('container', {
-
     chart: {
         type: 'columnrange',
         zoomType: 'x',
@@ -64,9 +58,10 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        data: data
-    }]
-
+    series: [
+        {
+            data: data
+        }
+    ]
 });
 console.timeEnd('columnrange');

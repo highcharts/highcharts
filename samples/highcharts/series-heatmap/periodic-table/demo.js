@@ -1,7 +1,6 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.1.3/samples/data/periodic-table.json',
     function (periodicTable) {
-
         function setPointsValue(prop, init) {
             return periodicTable.map(function (element) {
                 var point;
@@ -23,7 +22,6 @@ Highcharts.getJSON(
         }
 
         var chart = Highcharts.chart('container', {
-
             title: {
                 text: 'Periodic Table',
                 floating: true,
@@ -45,7 +43,11 @@ Highcharts.getJSON(
             },
 
             colorAxis: {
-                stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']]
+                stops: [
+                    [0, '#F1EEF6'],
+                    [0.65, '#900037'],
+                    [1, '#500007']
+                ]
             },
 
             legend: {
@@ -53,7 +55,8 @@ Highcharts.getJSON(
             },
 
             tooltip: {
-                headerFormat: '<b>{point.point.number}. {point.point.name}</b><br>',
+                headerFormat:
+                    '<b>{point.point.number}. {point.point.name}</b><br>',
                 valueSuffix: 'u'
             },
 
@@ -69,36 +72,40 @@ Highcharts.getJSON(
                 reversed: true
             },
 
-            series: [{
-                name: 'Atomic mass',
-                type: 'heatmap',
-                borderWidth: 1,
-                data: setPointsValue('mass', true),
-                tooltip: {
-                    pointFormat: '{series.name}: {point.value}'
-                },
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.options.symbol}'
-                },
-                borderColor: '#FFFFFF'
-            }],
+            series: [
+                {
+                    name: 'Atomic mass',
+                    type: 'heatmap',
+                    borderWidth: 1,
+                    data: setPointsValue('mass', true),
+                    tooltip: {
+                        pointFormat: '{series.name}: {point.value}'
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.options.symbol}'
+                    },
+                    borderColor: '#FFFFFF'
+                }
+            ],
 
             responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        title: {
-                            x: 60
+                rules: [
+                    {
+                        condition: {
+                            maxWidth: 500
                         },
+                        chartOptions: {
+                            title: {
+                                x: 60
+                            },
 
-                        subtitle: {
-                            x: 60
+                            subtitle: {
+                                x: 60
+                            }
                         }
                     }
-                }]
+                ]
             }
         });
 
@@ -116,10 +123,12 @@ Highcharts.getJSON(
                     tooltip: {
                         valueSuffix: selectedOption.getAttribute('data-suffix')
                     },
-                    series: [{
-                        name: selectedOption.text,
-                        data: setPointsValue(this.value, false)
-                    }]
+                    series: [
+                        {
+                            name: selectedOption.text,
+                            data: setPointsValue(this.value, false)
+                        }
+                    ]
                 });
             }
         );
@@ -135,18 +144,22 @@ Highcharts.getJSON(
                     legend: {
                         enabled: isHeatmap
                     },
-                    series: [{
-                        type: this.value,
-                        tooltip: {
-                            pointFormat: '{series.name}: {point.' +
-                                    (isHeatmap ? 'value' : 'z') + '}'
+                    series: [
+                        {
+                            type: this.value,
+                            tooltip: {
+                                pointFormat:
+                                    '{series.name}: {point.' +
+                                    (isHeatmap ? 'value' : 'z') +
+                                    '}'
+                            }
                         }
-                    }]
+                    ]
                 });
 
-                document
-                    .getElementById('dataset-title')
-                    .textContent = isHeatmap ? 'Color by:' : 'Size by:';
+                document.getElementById('dataset-title').textContent = isHeatmap
+                    ? 'Color by:'
+                    : 'Size by:';
             }
         );
     }

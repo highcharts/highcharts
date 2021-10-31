@@ -3,13 +3,10 @@ function generateDisconnectedGraphs(length) {
 
     // Some noisy data
     while (length--) {
-        data.push([
-            length,
-            Math.sin(length).toFixed(2)
-        ], [
-            length,
-            Math.cos(length).toFixed(2)
-        ]);
+        data.push(
+            [length, Math.sin(length).toFixed(2)],
+            [length, Math.cos(length).toFixed(2)]
+        );
     }
 
     return data;
@@ -33,7 +30,9 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: generateDisconnectedGraphs(100)
-    }]
+    series: [
+        {
+            data: generateDisconnectedGraphs(100)
+        }
+    ]
 });

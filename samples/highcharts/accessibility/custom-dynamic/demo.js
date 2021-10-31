@@ -43,17 +43,21 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         max: 12,
-        plotLines: [{
-            value: 10,
-            width: 2,
-            color: '#e33'
-        }]
+        plotLines: [
+            {
+                value: 10,
+                width: 2,
+                color: '#e33'
+            }
+        ]
     },
-    series: [{
-        name: 'Random data',
-        dataLabels: {
-            enabled: true
-        },
-        data: [1.1]
-    }]
+    series: [
+        {
+            name: 'Random data',
+            dataLabels: {
+                enabled: true
+            },
+            data: [1.1]
+        }
+    ]
 });

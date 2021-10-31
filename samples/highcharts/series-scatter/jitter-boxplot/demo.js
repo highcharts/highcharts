@@ -5,7 +5,9 @@ function getExperimentData() {
         i;
     for (i = 0; i < 200; i++) {
         data.push(
-            Math.round(1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5)))
+            Math.round(
+                1000 * (off + (Math.random() - 0.5) * (Math.random() - 0.5))
+            )
         );
     }
     return data;
@@ -33,18 +35,17 @@ var experiments = [
     getExperimentData()
 ];
 
-var scatterData = experiments
-    .reduce(function (acc, data, x) {
-        return acc.concat(data.map(function (value) {
+var scatterData = experiments.reduce(function (acc, data, x) {
+    return acc.concat(
+        data.map(function (value) {
             return [x, value];
-        }));
-    }, []);
+        })
+    );
+}, []);
 
-var boxplotData = experiments
-    .map(getBoxPlotData);
+var boxplotData = experiments.map(getBoxPlotData);
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Highcharts Box Plot and Jittered Scatter Plot'
     },
@@ -66,26 +67,29 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        type: 'boxplot',
-        name: 'Summary',
-        data: boxplotData,
-        tooltip: {
-            headerFormat: '<em>Experiment No {point.key}</em><br/>'
-        }
-    }, {
-        name: 'Observation',
-        type: 'scatter',
-        data: scatterData,
-        jitter: {
-            x: 0.24 // Exact fit for box plot's groupPadding and pointPadding
+    series: [
+        {
+            type: 'boxplot',
+            name: 'Summary',
+            data: boxplotData,
+            tooltip: {
+                headerFormat: '<em>Experiment No {point.key}</em><br/>'
+            }
         },
-        marker: {
-            radius: 1
-        },
-        color: 'rgba(100, 100, 100, 0.5)',
-        tooltip: {
-            pointFormat: 'Value: {point.y}'
+        {
+            name: 'Observation',
+            type: 'scatter',
+            data: scatterData,
+            jitter: {
+                x: 0.24 // Exact fit for box plot's groupPadding and pointPadding
+            },
+            marker: {
+                radius: 1
+            },
+            color: 'rgba(100, 100, 100, 0.5)',
+            tooltip: {
+                pointFormat: 'Value: {point.y}'
+            }
         }
-    }]
+    ]
 });

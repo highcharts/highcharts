@@ -5,19 +5,15 @@ standard Highcharts config with a small variation for each data set, and a
 mouse/touch event handler to bind the charts together.
 */
 
-
 /**
  * In order to synchronize tooltips and crosshairs, override the
  * built-in events with handlers defined on the parent element.
  */
 ['mousemove', 'touchmove', 'touchstart'].forEach(function (eventType) {
-    document.getElementById('container').addEventListener(
-        eventType,
-        function (e) {
-            var chart,
-                point,
-                i,
-                event;
+    document
+        .getElementById('container')
+        .addEventListener(eventType, function (e) {
+            var chart, point, i, event;
 
             for (i = 0; i < Highcharts.charts.length; i = i + 1) {
                 chart = Highcharts.charts[i];
@@ -30,8 +26,7 @@ mouse/touch event handler to bind the charts together.
                     point.highlight(e);
                 }
             }
-        }
-    );
+        });
 });
 
 /**
@@ -58,17 +53,15 @@ Highcharts.Point.prototype.highlight = function (event) {
 function syncExtremes(e) {
     var thisChart = this.chart;
 
-    if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
+    if (e.trigger !== 'syncExtremes') {
+        // Prevent feedback loop
         Highcharts.each(Highcharts.charts, function (chart) {
             if (chart !== thisChart) {
-                if (chart.xAxis[0].setExtremes) { // It is null while updating
-                    chart.xAxis[0].setExtremes(
-                        e.min,
-                        e.max,
-                        undefined,
-                        false,
-                        { trigger: 'syncExtremes' }
-                    );
+                if (chart.xAxis[0].setExtremes) {
+                    // It is null while updating
+                    chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {
+                        trigger: 'syncExtremes'
+                    });
                 }
             }
         });
@@ -80,10 +73,8 @@ Highcharts.ajax({
     url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/activity.json',
     dataType: 'text',
     success: function (activity) {
-
         activity = JSON.parse(activity);
         activity.datasets.forEach(function (dataset, i) {
-
             // Add X values
             dataset.data = Highcharts.map(dataset.data, function (val, j) {
                 return [activity.xData[j], val];
@@ -143,16 +134,18 @@ Highcharts.ajax({
                     },
                     valueDecimals: dataset.valueDecimals
                 },
-                series: [{
-                    data: dataset.data,
-                    name: dataset.name,
-                    type: dataset.type,
-                    color: Highcharts.getOptions().colors[i],
-                    fillOpacity: 0.3,
-                    tooltip: {
-                        valueSuffix: ' ' + dataset.unit
+                series: [
+                    {
+                        data: dataset.data,
+                        name: dataset.name,
+                        type: dataset.type,
+                        color: Highcharts.getOptions().colors[i],
+                        fillOpacity: 0.3,
+                        tooltip: {
+                            valueSuffix: ' ' + dataset.unit
+                        }
                     }
-                }]
+                ]
             });
         });
     }

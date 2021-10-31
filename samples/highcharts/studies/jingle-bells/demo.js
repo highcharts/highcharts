@@ -35,7 +35,10 @@ var chart = Highcharts.chart('highcharts-container', {
         animation: false,
         backgroundColor: {
             linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-            stops: [[0, 'rgb(48, 48, 96)'], [1, 'rgb(0, 0, 0)']]
+            stops: [
+                [0, 'rgb(48, 48, 96)'],
+                [1, 'rgb(0, 0, 0)']
+            ]
         }
     },
     exporting: {
@@ -172,7 +175,7 @@ var chart = Highcharts.chart('highcharts-container', {
         pointFormatter: function () {
             if (this.series.index === 2) {
                 snowman.style.transform =
-                  'rotate(' + Math.cos(this.x * 0.3) * 30 + 'deg)';
+                    'rotate(' + Math.cos(this.x * 0.3) * 30 + 'deg)';
                 tooltip.style.bottom = 60 + Math.sin(this.x / 10) * 10 + 'px';
             }
             return '';
@@ -182,16 +185,18 @@ var chart = Highcharts.chart('highcharts-container', {
         shadow: false
     },
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                yAxis: {
-                    visible: false
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    yAxis: {
+                        visible: false
+                    }
                 }
             }
-        }]
+        ]
     }
 });
 
@@ -229,11 +234,14 @@ setInterval(function () {
                 y = 100;
             }
 
-            point.update({
-                color: 'rgba(255, 255, 255, ' + point.y / 200 + ')',
-                x: point.x - 0.1 + 0.2 * Math.random(),
-                y: y
-            }, false);
+            point.update(
+                {
+                    color: 'rgba(255, 255, 255, ' + point.y / 200 + ')',
+                    x: point.x - 0.1 + 0.2 * Math.random(),
+                    y: y
+                },
+                false
+            );
         });
 
         chart.redraw();

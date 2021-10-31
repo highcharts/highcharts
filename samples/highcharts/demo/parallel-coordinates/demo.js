@@ -1,7 +1,6 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/marathon.json',
     function (data) {
-
         Highcharts.chart('container', {
             chart: {
                 type: 'spline',
@@ -39,7 +38,8 @@ Highcharts.getJSON(
                 }
             },
             tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span>' +
                     '{series.name}: <b>{point.formattedValue}</b><br/>'
             },
             xAxis: {
@@ -54,35 +54,43 @@ Highcharts.getJSON(
                 ],
                 offset: 10
             },
-            yAxis: [{
-                type: 'datetime',
-                tooltipValueFormat: '{value:%Y-%m-%d}'
-            }, {
-                min: 0,
-                tooltipValueFormat: '{value} mile(s)'
-            }, {
-                type: 'datetime',
-                min: 0,
-                labels: {
-                    format: '{value:%H:%M}'
+            yAxis: [
+                {
+                    type: 'datetime',
+                    tooltipValueFormat: '{value:%Y-%m-%d}'
+                },
+                {
+                    min: 0,
+                    tooltipValueFormat: '{value} mile(s)'
+                },
+                {
+                    type: 'datetime',
+                    min: 0,
+                    labels: {
+                        format: '{value:%H:%M}'
+                    }
+                },
+                {
+                    categories: [
+                        'Other',
+                        'Adidas',
+                        'Mizuno',
+                        'Asics',
+                        'Brooks',
+                        'New Balance',
+                        'Izumi'
+                    ]
+                },
+                {
+                    type: 'datetime'
+                },
+                {
+                    categories: ['&gt; 5miles', '&lt; 5miles']
+                },
+                {
+                    categories: ['Before', 'After']
                 }
-            }, {
-                categories: [
-                    'Other',
-                    'Adidas',
-                    'Mizuno',
-                    'Asics',
-                    'Brooks',
-                    'New Balance',
-                    'Izumi'
-                ]
-            }, {
-                type: 'datetime'
-            }, {
-                categories: ['&gt; 5miles', '&lt; 5miles']
-            }, {
-                categories: ['Before', 'After']
-            }],
+            ],
             colors: ['rgba(11, 200, 200, 0.1)'],
             series: data.map(function (set, i) {
                 return {

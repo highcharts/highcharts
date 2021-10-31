@@ -54,48 +54,56 @@ Highcharts.chart('container', {
                     },
                     y: -1
                 },
-                zones: [{
-                    from: 0,
-                    to: 5,
-                    marker: {
-                        fillColor: '#ffcccc',
-                        radius: 13
+                zones: [
+                    {
+                        from: 0,
+                        to: 5,
+                        marker: {
+                            fillColor: '#ffcccc',
+                            radius: 13
+                        }
+                    },
+                    {
+                        from: 6,
+                        to: 15,
+                        marker: {
+                            fillColor: '#ff9999',
+                            radius: 15
+                        }
+                    },
+                    {
+                        from: 16,
+                        to: 30,
+                        marker: {
+                            fillColor: '#ff6666',
+                            radius: 18
+                        }
+                    },
+                    {
+                        from: 31,
+                        to: 40,
+                        marker: {
+                            fillColor: '#ff3333',
+                            radius: 20
+                        }
+                    },
+                    {
+                        from: 41,
+                        to: 200,
+                        marker: {
+                            fillColor: '#e60000',
+                            radius: 23
+                        }
                     }
-                }, {
-                    from: 6,
-                    to: 15,
-                    marker: {
-                        fillColor: '#ff9999',
-                        radius: 15
-                    }
-                }, {
-                    from: 16,
-                    to: 30,
-                    marker: {
-                        fillColor: '#ff6666',
-                        radius: 18
-                    }
-                }, {
-                    from: 31,
-                    to: 40,
-                    marker: {
-                        fillColor: '#ff3333',
-                        radius: 20
-                    }
-                }, {
-                    from: 41,
-                    to: 200,
-                    marker: {
-                        fillColor: '#e60000',
-                        radius: 23
-                    }
-                }]
+                ]
             }
         }
     },
-    series: [{
-        type: 'scatter',
-        color: 'red',
-        data: data
-    }]
+    series: [
+        {
+            type: 'scatter',
+            color: 'red',
+            data: data
+        }
+    ]
 });

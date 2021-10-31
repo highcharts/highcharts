@@ -3,27 +3,27 @@ Math.easeInSine = function (pos) {
 };
 
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
 // Math.easeInQuint = function (pos) {
 //     return Math.pow(pos, 5);
 // },
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
+Math.easeOutBounce = (pos) => {
+    if (pos < 1 / 2.75) {
+        return 7.5625 * pos * pos;
     }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    if (pos < 2 / 2.75) {
+        return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
     }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+    if (pos < 2.5 / 2.75) {
+        return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
     }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
 };
 
-const big = window.matchMedia("(min-width: 500px)").matches;
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let chart;
 
@@ -64,8 +64,8 @@ const ganttChart = function () {
         var chart = this.series.chart;
         // Run in a timeout to allow the select to update
         setTimeout(function () {
-            btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
-    isAddingTask;
+            btnRemoveTask.disabled =
+                !chart.getSelectedPoints().length || isAddingTask;
         }, 10);
     }
 
@@ -80,8 +80,12 @@ const ganttChart = function () {
                     const chart = this;
 
                     const buttonGroup = document.getElementById('button-group');
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
 
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
@@ -100,19 +104,21 @@ const ganttChart = function () {
                             }
                         });
                     }
-
                 },
                 redraw: function () {
-                    const background = document.querySelector('.highcharts-background');
-                    const scrollMask = document.querySelector('.highcharts-scrollable-mask');
+                    const background = document.querySelector(
+                        '.highcharts-background'
+                    );
+                    const scrollMask = document.querySelector(
+                        '.highcharts-scrollable-mask'
+                    );
                     background.classList.add('on');
                     if (scrollMask) {
                         scrollMask.style.fill = '#2F2B38';
                     }
-
                 }
             },
-            styledMode: (true)
+            styledMode: true
         },
         title: {
             text: 'Interactive Gantt Chart',
@@ -173,7 +179,6 @@ const ganttChart = function () {
             min: 0,
             max: 2,
             plotLines: [
-
                 {
                     value: 0.5
                 },
@@ -182,7 +187,8 @@ const ganttChart = function () {
                 },
                 {
                     value: 2.5
-                }],
+                }
+            ],
             visible: true,
             grid: {
                 enabled: false
@@ -242,154 +248,165 @@ const ganttChart = function () {
             shadow: false
         },
 
-        series: [{
-            name: 'Project 1',
-            data: [{
-                start: today + 2 * day,
-                end: today + day * 5,
-                name: 'Prototype',
-                id: 'prototype',
-                y: 0
-            },  {
-                start: today + day * 6,
-                name: 'Prototype done',
-                milestone: true,
-                dependency: 'prototype',
-                id: 'proto_done',
-                y: 0
-            }, {
-                start: today + day * 7,
-                end: today + day * 11,
-                name: 'Testing',
-                dependency: 'proto_done',
-                y: 0
-            }, {
-                start: today + day * 5,
-                end: today + day * 8,
-                name: 'Product pages',
-                y: 1
-            }, {
-                start: today + day * 9,
-                end: today + day * 10,
-                name: 'Newsletter',
-                y: 1
-            }, {
-                start: today + day * 9,
-                end: today + day * 11,
-                name: 'Licensing',
-                id: 'testing',
-                y: 2
-            }, {
-                start: today + day * 11.5,
-                end: today + day * 12.5,
-                name: 'Publish',
-                dependency: 'testing',
-                y: 2
-            }]
-        }],
+        series: [
+            {
+                name: 'Project 1',
+                data: [
+                    {
+                        start: today + 2 * day,
+                        end: today + day * 5,
+                        name: 'Prototype',
+                        id: 'prototype',
+                        y: 0
+                    },
+                    {
+                        start: today + day * 6,
+                        name: 'Prototype done',
+                        milestone: true,
+                        dependency: 'prototype',
+                        id: 'proto_done',
+                        y: 0
+                    },
+                    {
+                        start: today + day * 7,
+                        end: today + day * 11,
+                        name: 'Testing',
+                        dependency: 'proto_done',
+                        y: 0
+                    },
+                    {
+                        start: today + day * 5,
+                        end: today + day * 8,
+                        name: 'Product pages',
+                        y: 1
+                    },
+                    {
+                        start: today + day * 9,
+                        end: today + day * 10,
+                        name: 'Newsletter',
+                        y: 1
+                    },
+                    {
+                        start: today + day * 9,
+                        end: today + day * 11,
+                        name: 'Licensing',
+                        id: 'testing',
+                        y: 2
+                    },
+                    {
+                        start: today + day * 11.5,
+                        end: today + day * 12.5,
+                        name: 'Publish',
+                        dependency: 'testing',
+                        y: 2
+                    }
+                ]
+            }
+        ],
         responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 250
-                },
-                chartOptions: {
-                    chart: {
-                        height: 250,
-                        margin: [80, 10, 20, 10]
+            rules: [
+                {
+                    condition: {
+                        maxWidth: 250
                     },
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                enabled: false,
-                                y: 15
+                    chartOptions: {
+                        chart: {
+                            height: 250,
+                            margin: [80, 10, 20, 10]
+                        },
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    enabled: false,
+                                    y: 15
+                                }
                             }
+                        },
+                        title: {
+                            y: 0
+                        },
+                        subtitle: {
+                            y: 50
                         }
+                    }
+                },
+                {
+                    condition: {
+                        maxWidth: 300,
+                        minWidth: 251
                     },
-                    title: {
-                        y: 0
+                    chartOptions: {
+                        chart: {
+                            height: 300
+                        },
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    enabled: false,
+                                    y: 15
+                                }
+                            }
+                        },
+                        title: {
+                            y: 0
+                        },
+                        subtitle: {
+                            y: 50
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        maxWidth: 400,
+                        minWidth: 301
                     },
-                    subtitle: {
-                        y: 50
+                    chartOptions: {
+                        chart: {
+                            height: 400
+                        },
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    enabled: true,
+                                    y: 20
+                                }
+                            }
+                        },
+                        title: {
+                            y: 0
+                        },
+                        subtitle: {
+                            y: 50
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 499
+                    },
+                    chartOptions: {
+                        chart: {
+                            height: 500,
+                            margin: [120, 10, 20, 10]
+                        },
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    y: 25
+                                }
+                            }
+                        },
+                        title: {
+                            y: 10
+                        },
+                        subtitle: {
+                            y: 30
+                        }
                     }
                 }
-            },
-            {
-                condition: {
-                    maxWidth: 300,
-                    minWidth: 251
-                },
-                chartOptions: {
-                    chart: {
-                        height: 300
-                    },
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                enabled: false,
-                                y: 15
-                            }
-                        }
-                    },
-                    title: {
-                        y: 0
-                    },
-                    subtitle: {
-                        y: 50
-                    }
-                }
-            },
-            {
-                condition: {
-                    maxWidth: 400,
-                    minWidth: 301
-                },
-                chartOptions: {
-                    chart: {
-                        height: 400
-                    },
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                enabled: true,
-                                y: 20
-                            }
-                        }
-                    },
-                    title: {
-                        y: 0
-                    },
-                    subtitle: {
-                        y: 50
-                    }
-                }
-            },
-            {
-                condition: {
-                    minWidth: 499
-                },
-                chartOptions: {
-                    chart: {
-                        height: 500,
-                        margin: [120, 10, 20, 10]
-                    },
-                    plotOptions: {
-                        series: {
-                            dataLabels: {
-                                y: 25
-                            }
-                        }
-                    },
-                    title: {
-                        y: 10
-                    },
-                    subtitle: {
-                        y: 30
-                    }
-                }
-            }]
+            ]
         }
     });
-
 
     /* Add button handlers for add/remove tasks */
 
@@ -405,8 +422,8 @@ const ganttChart = function () {
 
         var depInnerHTML = '<option value=""></option>';
         each(chart.series[0].points, function (point) {
-            depInnerHTML += '<option value="' + point.id + '">' + point.name +
-        ' </option>';
+            depInnerHTML +=
+                '<option value="' + point.id + '">' + point.name + ' </option>';
         });
         selectDependency.innerHTML = depInnerHTML;
 
@@ -435,10 +452,15 @@ const ganttChart = function () {
                 selectDepartment.options[selectDepartment.selectedIndex].value,
                 10
             ),
-            maxEnd = reduce(series.points, function (acc, point) {
-                return point.y === y && point.end ?
-                    Math.max(acc, point.end) : acc;
-            }, 0),
+            maxEnd = reduce(
+                series.points,
+                function (acc, point) {
+                    return point.y === y && point.end
+                        ? Math.max(acc, point.end)
+                        : acc;
+                },
+                0
+            ),
             milestone = chkMilestone.checked || undef;
 
         // Empty category
@@ -474,9 +496,9 @@ const ganttChart = function () {
         addTaskDialogOverlay.classList.remove('show');
         isAddingTask = false;
     };
-
 };
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath =
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 const gantt = {
     chart: {
         // width: 500,
@@ -485,7 +507,7 @@ const gantt = {
             duration: 1000,
             easing: 'easeOutQuint'
         },
-        styledMode: (true),
+        styledMode: true,
         margin: 0,
         spacing: 0,
         plotBackgroundImage: 'gantt.png',
@@ -499,10 +521,14 @@ const gantt = {
                 const rcount = startSeries;
                 const flag = document.querySelector('.flag');
                 const flagpole = document.querySelector('.pole');
-                const particle2 = document.getElementsByClassName('particle-2')[1];
-                const particle3 = document.getElementsByClassName('particle-3')[1];
-                const particle5 = document.getElementsByClassName('particle-5')[1];
-                const particle6 = document.getElementsByClassName('particle-6')[1];
+                const particle2 =
+                    document.getElementsByClassName('particle-2')[1];
+                const particle3 =
+                    document.getElementsByClassName('particle-3')[1];
+                const particle5 =
+                    document.getElementsByClassName('particle-5')[1];
+                const particle6 =
+                    document.getElementsByClassName('particle-6')[1];
                 const cover = document.querySelector('.cover');
 
                 ///if reduced motion....
@@ -514,16 +540,17 @@ const gantt = {
                         const x = series.data[0].x;
                         const high = series.data[0].high + 1;
                         series.update({
-                            data: [{
-                                x: x,
-                                low: low,
-                                high: high
-                            },
-                            {
-                                x: x + 4,
-                                low: low,
-                                high: high
-                            }
+                            data: [
+                                {
+                                    x: x,
+                                    low: low,
+                                    high: high
+                                },
+                                {
+                                    x: x + 4,
+                                    low: low,
+                                    high: high
+                                }
                             ]
                         });
                     }
@@ -563,16 +590,17 @@ const gantt = {
                             const x = series.data[0].x;
                             const high = series.data[0].high + 1;
                             series.update({
-                                data: [{
-                                    x: x,
-                                    low: low,
-                                    high: high
-                                },
-                                {
-                                    x: x + 4,
-                                    low: low,
-                                    high: high
-                                }
+                                data: [
+                                    {
+                                        x: x,
+                                        low: low,
+                                        high: high
+                                    },
+                                    {
+                                        x: x + 4,
+                                        low: low,
+                                        high: high
+                                    }
                                 ]
                             });
                             count = count + 1;
@@ -622,19 +650,16 @@ const gantt = {
                         ///hides the green lines
                         [].forEach.call(
                             document.querySelectorAll('.green'),
-                            element => element.classList.add('hide')
-
+                            (element) => element.classList.add('hide')
                         );
                         //hides the steps
                         [].forEach.call(
                             document.querySelectorAll('.step-p'),
-                            element => element.classList.add('hide')
-
+                            (element) => element.classList.add('hide')
                         );
                         [].forEach.call(
                             document.querySelectorAll('.step-w'),
-                            element => element.classList.add('hide')
-
+                            (element) => element.classList.add('hide')
                         );
                         ///hides flag, pole and the 'flag cover
                         flag.classList.add('hide');
@@ -647,7 +672,6 @@ const gantt = {
                         ganttChart();
                     }, 6500);
                 }
-
             }
         }
     },
@@ -659,7 +683,7 @@ const gantt = {
         enabled: false
     },
     xAxis: [
-    //0 -
+        //0 -
         {
             min: 0,
             max: 20,
@@ -674,25 +698,28 @@ const gantt = {
             gridLineColor: 'transparent',
             tickInterval: 1
             // reversed: true
-        }],
-    yAxis: [{
-        min: -2,
-        max: 18,
-        gridZIndex: 20,
-        gridLineColor: 'transparent',
-        tickInterval: 1,
-        startOnTick: false,
-        endOnTick: false
-    },
-    {
-        min: 10,
-        max: 16,
-        gridZIndex: 20,
-        gridLineColor: 'transparent',
-        tickInterval: 1,
-        startOnTick: false,
-        endOnTick: false
-    }],
+        }
+    ],
+    yAxis: [
+        {
+            min: -2,
+            max: 18,
+            gridZIndex: 20,
+            gridLineColor: 'transparent',
+            tickInterval: 1,
+            startOnTick: false,
+            endOnTick: false
+        },
+        {
+            min: 10,
+            max: 16,
+            gridZIndex: 20,
+            gridLineColor: 'transparent',
+            tickInterval: 1,
+            startOnTick: false,
+            endOnTick: false
+        }
+    ],
     legend: {
         enabled: false
     },
@@ -736,7 +763,6 @@ const gantt = {
         line: {
             animation: false
         }
-
     },
     series: [
         //0 - bottom line
@@ -748,7 +774,6 @@ const gantt = {
                 { x: 20, y: -1 }
             ],
             zIndex: 10
-
         },
         //1 - line
         {
@@ -782,7 +807,6 @@ const gantt = {
                 { x: 20, y: 2 }
             ],
             zIndex: 10
-
         },
         //4 - line
         {
@@ -794,7 +818,6 @@ const gantt = {
                 { x: 20, y: 3 }
             ],
             zIndex: 10
-
         },
         //5 - line
         {
@@ -817,7 +840,6 @@ const gantt = {
                 { x: 20, y: 5 }
             ],
             zIndex: 10
-
         },
         //7 - line
         {
@@ -836,7 +858,10 @@ const gantt = {
             name: 'foreground',
             className: 'foreground',
             animation: false,
-            data: [{ x: 0, low: -2, high: 6 }, { x: 20, low: -2, high: 6 }],
+            data: [
+                { x: 0, low: -2, high: 6 },
+                { x: 20, low: -2, high: 6 }
+            ],
             zIndex: 4,
             visible: true
         },
@@ -849,7 +874,6 @@ const gantt = {
             data: [
                 { x: 4, low: 2, high: 2 },
                 { x: 8, low: 2, high: 2 }
-
             ],
             zIndex: 15,
             visible: true
@@ -863,7 +887,6 @@ const gantt = {
             data: [
                 { x: 5, low: 3, high: 3 },
                 { x: 9, low: 3, high: 3 }
-
             ],
             zIndex: 15,
             visible: true
@@ -877,7 +900,6 @@ const gantt = {
             data: [
                 { x: 6, low: 4, high: 4 },
                 { x: 10, low: 4, high: 4 }
-
             ],
             zIndex: 15,
             visible: true
@@ -891,7 +913,6 @@ const gantt = {
             data: [
                 { x: 7, low: 5, high: 5 },
                 { x: 11, low: 5, high: 5 }
-
             ],
             zIndex: 15,
             visible: true
@@ -905,7 +926,6 @@ const gantt = {
             data: [
                 { x: 10, low: 6, high: 6 },
                 { x: 11, low: 6, high: 6 }
-
             ],
             zIndex: 5,
             visible: true
@@ -919,7 +939,6 @@ const gantt = {
             data: [
                 { x: 11, low: 10, high: 14 },
                 { x: 16, low: 10, high: 14 }
-
             ],
             zIndex: 5,
             visible: true,
@@ -958,7 +977,6 @@ const gantt = {
                         symbol: 'url(' + imgPath + 'p2.svg)',
                         width: 22,
                         height: 41
-
                     }
                 }
             ],
@@ -980,7 +998,6 @@ const gantt = {
                         symbol: 'url(' + imgPath + 'p3.svg)',
                         width: 23,
                         height: 34
-
                     }
                 }
             ],
@@ -1004,7 +1021,6 @@ const gantt = {
                         symbol: 'url(' + imgPath + 'p5.svg)',
                         width: 35,
                         height: 50
-
                     }
                 }
             ],
@@ -1026,7 +1042,6 @@ const gantt = {
                         symbol: 'url(' + imgPath + 'p6.svg)',
                         width: 45,
                         height: 45
-
                     }
                 }
             ],
@@ -1035,7 +1050,6 @@ const gantt = {
         }
     ]
 };
-
 
 Highcharts.chart('gantt', gantt);
 //ganttChart();

@@ -5,7 +5,7 @@ const categoryLinks = {
 };
 
 // Decorate the tick item with the link
-Highcharts.addEvent(Highcharts.Tick, 'labelFormat', ctx => {
+Highcharts.addEvent(Highcharts.Tick, 'labelFormat', (ctx) => {
     const axis = ctx.axis;
     if (axis.categories) {
         const category = axis.categories[ctx.pos];
@@ -14,7 +14,6 @@ Highcharts.addEvent(Highcharts.Tick, 'labelFormat', ctx => {
 });
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Click categories to search'
     },
@@ -27,7 +26,9 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4]
-    }]
+    series: [
+        {
+            data: [29.9, 71.5, 106.4]
+        }
+    ]
 });

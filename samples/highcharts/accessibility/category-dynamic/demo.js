@@ -14,12 +14,27 @@ var chart = Highcharts.chart('container', {
         }
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
-    series: [{
-        name: 'Random data',
-        data: [1, 5]
-    }]
+    series: [
+        {
+            name: 'Random data',
+            data: [1, 5]
+        }
+    ]
 });
 
 // Add random point when clicking button

@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
@@ -22,26 +21,28 @@ Highcharts.chart('container', {
         endOnTick: false
     },
 
-    series: [{
-        data: [
-            [1, 1, 1],
-            [2, 2, 2],
-            [3, 3, 3],
-            [4, 4, 4],
-            [5, 5, 5]
-        ],
-        sizeBy: 'area',
-        name: 'Size by area'
-    }, {
-        data: [
-            [1, 1, 1],
-            [2, 2, 2],
-            [3, 3, 3],
-            [4, 4, 4],
-            [5, 5, 5]
-        ],
-        sizeBy: 'width',
-        name: 'Size by width'
-    }]
-
+    series: [
+        {
+            data: [
+                [1, 1, 1],
+                [2, 2, 2],
+                [3, 3, 3],
+                [4, 4, 4],
+                [5, 5, 5]
+            ],
+            sizeBy: 'area',
+            name: 'Size by area'
+        },
+        {
+            data: [
+                [1, 1, 1],
+                [2, 2, 2],
+                [3, 3, 3],
+                [4, 4, 4],
+                [5, 5, 5]
+            ],
+            sizeBy: 'width',
+            name: 'Size by width'
+        }
+    ]
 });

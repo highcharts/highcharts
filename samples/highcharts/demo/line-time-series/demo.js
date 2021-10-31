@@ -1,7 +1,6 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
     function (data) {
-
         Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
@@ -10,8 +9,10 @@ Highcharts.getJSON(
                 text: 'USD to EUR exchange rate over time'
             },
             subtitle: {
-                text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                text:
+                    document.ontouchstart === undefined
+                        ? 'Click and drag in the plot area to zoom in'
+                        : 'Pinch the chart to zoom in'
             },
             xAxis: {
                 type: 'datetime'
@@ -35,7 +36,14 @@ Highcharts.getJSON(
                         },
                         stops: [
                             [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                            [
+                                1,
+                                Highcharts.color(
+                                    Highcharts.getOptions().colors[0]
+                                )
+                                    .setOpacity(0)
+                                    .get('rgba')
+                            ]
                         ]
                     },
                     marker: {
@@ -51,11 +59,13 @@ Highcharts.getJSON(
                 }
             },
 
-            series: [{
-                type: 'area',
-                name: 'USD to EUR',
-                data: data
-            }]
+            series: [
+                {
+                    type: 'area',
+                    name: 'USD to EUR',
+                    data: data
+                }
+            ]
         });
     }
 );

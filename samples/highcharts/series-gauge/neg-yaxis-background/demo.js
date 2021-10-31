@@ -1,5 +1,4 @@
 Highcharts.chart('container-rpm', {
-
     chart: {
         type: 'gauge'
     },
@@ -23,7 +22,9 @@ Highcharts.chart('container-rpm', {
         max: 5
     },
 
-    series: [{
-        data: [-1]
-    }]
+    series: [
+        {
+            data: [-1]
+        }
+    ]
 });

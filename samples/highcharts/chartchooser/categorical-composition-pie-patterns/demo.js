@@ -13,8 +13,7 @@ Highcharts.chart('container', {
         text: 'Egg Yolk Composition'
     },
     subtitle: {
-        text:
-        'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
+        text: 'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
     },
     tooltip: {
         valueSuffix: '%',

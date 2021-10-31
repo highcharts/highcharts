@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Custom tick positions'
     },
@@ -19,7 +18,11 @@ Highcharts.chart('container', {
                 increment = Math.ceil((this.dataMax - this.dataMin) / 6);
 
             if (this.dataMax !== null && this.dataMin !== null) {
-                for (tick; tick - increment <= this.dataMax; tick += increment) {
+                for (
+                    tick;
+                    tick - increment <= this.dataMax;
+                    tick += increment
+                ) {
                     positions.push(tick);
                 }
             }
@@ -27,13 +30,15 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [
-            [0, 1],
-            [1, 3],
-            [2, 2],
-            [4, 4],
-            [8, 3]
-        ]
-    }]
+    series: [
+        {
+            data: [
+                [0, 1],
+                [1, 3],
+                [2, 2],
+                [4, 4],
+                [8, 3]
+            ]
+        }
+    ]
 });

@@ -7,11 +7,13 @@ const chart = Highcharts.chart('container', {
     title: {
         text: 'No data in pie chart'
     },
-    series: [{
-        type: 'pie',
-        name: 'Random data',
-        data: []
-    }]
+    series: [
+        {
+            type: 'pie',
+            name: 'Random data',
+            data: []
+        }
+    ]
 });
 
 document.getElementById('add').addEventListener('click', () => {

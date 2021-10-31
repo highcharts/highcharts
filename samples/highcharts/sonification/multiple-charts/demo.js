@@ -27,14 +27,16 @@ var opts = function (pan) {
                                         chart.resetSonifyCursor();
                                         chart.isSonifying = false;
                                     },
-                                    instruments: [{
-                                        instrument: 'triangleMajor',
-                                        instrumentMapping: {
-                                            duration: 250,
-                                            pan: pan,
-                                            frequency: 'y'
+                                    instruments: [
+                                        {
+                                            instrument: 'triangleMajor',
+                                            instrumentMapping: {
+                                                duration: 250,
+                                                pan: pan,
+                                                frequency: 'y'
+                                            }
                                         }
-                                    }]
+                                    ]
                                 });
                             }
                         } else {
@@ -47,20 +49,30 @@ var opts = function (pan) {
     };
 };
 
-Highcharts.chart('containerA', Highcharts.merge(opts(-1), {
-    title: {
-        text: 'A'
-    },
-    series: [{
-        data: data
-    }]
-}));
+Highcharts.chart(
+    'containerA',
+    Highcharts.merge(opts(-1), {
+        title: {
+            text: 'A'
+        },
+        series: [
+            {
+                data: data
+            }
+        ]
+    })
+);
 
-Highcharts.chart('containerB', Highcharts.merge(opts(1), {
-    title: {
-        text: 'B'
-    },
-    series: [{
-        data: data.reverse()
-    }]
-}));
+Highcharts.chart(
+    'containerB',
+    Highcharts.merge(opts(1), {
+        title: {
+            text: 'B'
+        },
+        series: [
+            {
+                data: data.reverse()
+            }
+        ]
+    })
+);

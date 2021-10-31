@@ -13,7 +13,7 @@ Highcharts.addEvent(Highcharts.Point, 'click', function () {
         const y = anchorY - 30;
         if (!chart.sticky) {
             chart.sticky = chart.renderer
-                .label(text, x, y, 'callout',  anchorX, anchorY)
+                .label(text, x, y, 'callout', anchorX, anchorY)
                 .attr({
                     align,
                     fill: 'rgba(0, 0, 0, 0.75)',
@@ -35,9 +35,7 @@ Highcharts.addEvent(Highcharts.Point, 'click', function () {
     }
 });
 
-
 Highcharts.chart('container', {
-
     chart: {
         scrollablePlotArea: {
             minWidth: 700
@@ -70,32 +68,37 @@ Highcharts.chart('container', {
         }
     },
 
-    yAxis: [{ // left y axis
-        title: {
-            text: null
+    yAxis: [
+        {
+            // left y axis
+            title: {
+                text: null
+            },
+            labels: {
+                align: 'left',
+                x: 3,
+                y: 16,
+                format: '{value:.,0f}'
+            },
+            showFirstLabel: false
         },
-        labels: {
-            align: 'left',
-            x: 3,
-            y: 16,
-            format: '{value:.,0f}'
-        },
-        showFirstLabel: false
-    }, { // right y axis
-        linkedTo: 0,
-        gridLineWidth: 0,
-        opposite: true,
-        title: {
-            text: null
-        },
-        labels: {
-            align: 'right',
-            x: -3,
-            y: 16,
-            format: '{value:.,0f}'
-        },
-        showFirstLabel: false
-    }],
+        {
+            // right y axis
+            linkedTo: 0,
+            gridLineWidth: 0,
+            opposite: true,
+            title: {
+                text: null
+            },
+            labels: {
+                align: 'right',
+                x: -3,
+                y: 16,
+                format: '{value:.,0f}'
+            },
+            showFirstLabel: false
+        }
+    ],
 
     legend: {
         align: 'left',
@@ -118,13 +121,16 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'All sessions',
-        lineWidth: 4,
-        marker: {
-            radius: 4
+    series: [
+        {
+            name: 'All sessions',
+            lineWidth: 4,
+            marker: {
+                radius: 4
+            }
+        },
+        {
+            name: 'New users'
         }
-    }, {
-        name: 'New users'
-    }]
+    ]
 });

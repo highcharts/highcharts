@@ -7,7 +7,9 @@ Highcharts.SparkLine = function (a, b, c) {
     let options = arguments[hasRenderToArg ? 1 : 0];
     const defaultOptions = {
         chart: {
-            renderTo: (options.chart && options.chart.renderTo) || (hasRenderToArg && a),
+            renderTo:
+                (options.chart && options.chart.renderTo) ||
+                (hasRenderToArg && a),
             backgroundColor: null,
             borderWidth: 0,
             type: 'area',
@@ -85,9 +87,9 @@ Highcharts.SparkLine = function (a, b, c) {
 
     options = Highcharts.merge(defaultOptions, options);
 
-    return hasRenderToArg ?
-        new Highcharts.Chart(a, options, c) :
-        new Highcharts.Chart(options, b);
+    return hasRenderToArg
+        ? new Highcharts.Chart(a, options, c)
+        : new Highcharts.Chart(options, b);
 };
 
 const start = +new Date(),
@@ -115,12 +117,17 @@ function doChunk() {
         }
 
         Highcharts.SparkLine(td, {
-            series: [{
-                data: data,
-                pointStart: 1
-            }],
+            series: [
+                {
+                    data: data,
+                    pointStart: 1
+                }
+            ],
             tooltip: {
-                headerFormat: '<span style="font-size: 10px">' + td.parentElement.querySelector('th').innerText + ', Q{point.x}:</span><br/>',
+                headerFormat:
+                    '<span style="font-size: 10px">' +
+                    td.parentElement.querySelector('th').innerText +
+                    ', Q{point.x}:</span><br/>',
                 pointFormat: '<b>{point.y}.000</b> USD'
             },
             chart: chart
@@ -137,7 +144,12 @@ function doChunk() {
 
         // Print a feedback on the performance
         if (n === fullLen) {
-            document.getElementById('result').innerHTML = 'Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms';
+            document.getElementById('result').innerHTML =
+                'Generated ' +
+                fullLen +
+                ' sparklines in ' +
+                (new Date() - start) +
+                ' ms';
         }
     }
 }

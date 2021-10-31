@@ -2,10 +2,7 @@ function getData(n) {
     var arr = [],
         i;
     for (i = 0; i < n; i = i + 1) {
-        arr.push([
-            i,
-            2 * Math.sin(i / 100) + Math.random()
-        ]);
+        arr.push([i, 2 * Math.sin(i / 100) + Math.random()]);
     }
     return arr;
 }
@@ -41,20 +38,19 @@ Highcharts.setOptions({
 });
 
 console.time('line');
-chart =  Highcharts.stockChart('container', {
-
+chart = Highcharts.stockChart('container', {
     chart: {
         animation: false,
         zoomType: 'x'
     },
 
     title: {
-        text: 'Highcharts drawing ' + (n * s) + ' points across ' + s + ' series'
+        text: 'Highcharts drawing ' + n * s + ' points across ' + s + ' series'
     },
 
     navigator: {
         xAxis: {
-            ordinal: false//,
+            ordinal: false //,
             // min: n / 2
             //max: 10
         },
@@ -92,7 +88,6 @@ chart =  Highcharts.stockChart('container', {
     },
 
     series: series
-
 });
 console.timeEnd('line');
 
@@ -104,7 +99,7 @@ function addPoint() {
             y = 2 * Math.sin(x / 100) + Math.random();
 
         //Yeah...
-        if (se.options.className === "highcharts-navigator-series") {
+        if (se.options.className === 'highcharts-navigator-series') {
             return;
         }
 

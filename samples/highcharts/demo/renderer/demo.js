@@ -3,13 +3,43 @@ Highcharts.chart('container', {
         backgroundColor: 'white',
         events: {
             load: function () {
-
                 // Draw the flow chart
                 var ren = this.renderer,
                     colors = Highcharts.getOptions().colors,
-                    rightArrow = ['M', 0, 0, 'L', 100, 0, 'L', 95, 5, 'M', 100, 0, 'L', 95, -5],
-                    leftArrow = ['M', 100, 0, 'L', 0, 0, 'L', 5, 5, 'M', 0, 0, 'L', 5, -5];
-
+                    rightArrow = [
+                        'M',
+                        0,
+                        0,
+                        'L',
+                        100,
+                        0,
+                        'L',
+                        95,
+                        5,
+                        'M',
+                        100,
+                        0,
+                        'L',
+                        95,
+                        -5
+                    ],
+                    leftArrow = [
+                        'M',
+                        100,
+                        0,
+                        'L',
+                        0,
+                        0,
+                        'L',
+                        5,
+                        5,
+                        'M',
+                        0,
+                        0,
+                        'L',
+                        5,
+                        -5
+                    ];
 
                 // Separator, client from service
                 ren.path(['M', 120, 40, 'L', 120, 330])
@@ -90,7 +120,23 @@ Highcharts.chart('container', {
                     .add();
 
                 // Arrow from Phantom JS to Batik
-                ren.path(['M', 250, 110, 'L', 250, 185, 'L', 245, 180, 'M', 250, 185, 'L', 255, 180])
+                ren.path([
+                    'M',
+                    250,
+                    110,
+                    'L',
+                    250,
+                    185,
+                    'L',
+                    245,
+                    180,
+                    'M',
+                    250,
+                    185,
+                    'L',
+                    255,
+                    180
+                ])
                     .attr({
                         'stroke-width': 2,
                         stroke: colors[3]
@@ -117,16 +163,33 @@ Highcharts.chart('container', {
                     .add();
 
                 // Arrow from Batik to SaaS client
-                ren
-                    .path([
-                        'M', 235, 185,
-                        'L', 235, 155,
-                        'C', 235, 130, 235, 130, 215, 130,
-                        'L', 95, 130,
-                        'L', 100, 125,
-                        'M', 95, 130,
-                        'L', 100, 135
-                    ])
+                ren.path([
+                    'M',
+                    235,
+                    185,
+                    'L',
+                    235,
+                    155,
+                    'C',
+                    235,
+                    130,
+                    235,
+                    130,
+                    215,
+                    130,
+                    'L',
+                    95,
+                    130,
+                    'L',
+                    100,
+                    125,
+                    'M',
+                    95,
+                    130,
+                    'L',
+                    100,
+                    135
+                ])
                     .attr({
                         'stroke-width': 2,
                         stroke: colors[3]
@@ -155,7 +218,6 @@ Highcharts.chart('container', {
                     })
                     .add()
                     .shadow(true);
-
 
                 // Arrow from Browser to Batik
                 ren.path(rightArrow)
@@ -236,8 +298,6 @@ Highcharts.chart('container', {
                         fontSize: '10px'
                     })
                     .add();
-
-
             }
         }
     },
@@ -250,5 +310,4 @@ Highcharts.chart('container', {
     accessibility: {
         typeDescription: 'Flowchart'
     }
-
 });

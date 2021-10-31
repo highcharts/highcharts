@@ -11,21 +11,29 @@ Highcharts.chart('container', {
         type: 'scatter'
     },
 
-    series: [{
-        keys: ['y', 'id'],
-        data: [
-            [29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'],
-            [144.0, '4'], [176.0, '5']
-        ]
-    }],
+    series: [
+        {
+            keys: ['y', 'id'],
+            data: [
+                [29.9, '0'],
+                [71.5, '1'],
+                [106.4, '2'],
+                [129.2, '3'],
+                [144.0, '4'],
+                [176.0, '5']
+            ]
+        }
+    ],
 
     defs: {
         marker0: {
             tagName: 'marker',
-            children: [{
-                tagName: 'path',
-                d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
-            }],
+            children: [
+                {
+                    tagName: 'path',
+                    d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
+                }
+            ],
             attributes: {
                 id: 'custom-shape',
                 markerWidth: 40,
@@ -35,21 +43,24 @@ Highcharts.chart('container', {
             }
         },
         marker1: {
-            children: [{
-                tagName: 'circle',
-                r: 9,
-                cx: 11,
-                cy: 11,
-                fill: 'rgba(224, 101, 0, 0.6)'
-            }, {
-                tagName: 'circle',
-                r: 10,
-                cx: 11,
-                cy: 11,
-                fill: 'none',
-                'stroke-width': 2,
-                stroke: 'black'
-            }],
+            children: [
+                {
+                    tagName: 'circle',
+                    r: 9,
+                    cx: 11,
+                    cy: 11,
+                    fill: 'rgba(224, 101, 0, 0.6)'
+                },
+                {
+                    tagName: 'circle',
+                    r: 10,
+                    cx: 11,
+                    cy: 11,
+                    fill: 'none',
+                    'stroke-width': 2,
+                    stroke: 'black'
+                }
+            ],
             tagName: 'marker',
             attributes: {
                 id: 'circle',
@@ -65,14 +76,18 @@ Highcharts.chart('container', {
         max: 300
     },
 
-    annotations: [{
-        shapes: [{
-            points: [{ x: 100, y: 100 }, { x: 200, y: 100 }, '1'],
-            type: 'path',
-            fill: 'none',
-            stroke: 'red',
-            markerStart: 'circle',
-            markerEnd: 'custom-shape'
-        }]
-    }]
+    annotations: [
+        {
+            shapes: [
+                {
+                    points: [{ x: 100, y: 100 }, { x: 200, y: 100 }, '1'],
+                    type: 'path',
+                    fill: 'none',
+                    stroke: 'red',
+                    markerStart: 'circle',
+                    markerEnd: 'custom-shape'
+                }
+            ]
+        }
+    ]
 });

@@ -6,10 +6,10 @@
         const originalGlobalAnimation = this.renderer.globalAnimation;
 
         // Replace it with a copy
-        this.spacingBox = H.merge(
-            this.spacingBox,
-            { x: this.plotLeft, width: this.plotWidth }
-        );
+        this.spacingBox = H.merge(this.spacingBox, {
+            x: this.plotLeft,
+            width: this.plotWidth
+        });
 
         if (!this.legend.placed) {
             this.renderer.globalAnimation = false;
@@ -21,8 +21,7 @@
         this.renderer.globalAnimation = originalGlobalAnimation;
         this.spacingBox = originalSpacingBox;
     });
-}(Highcharts));
-
+})(Highcharts);
 
 Highcharts.chart('container', {
     chart: {
@@ -40,8 +39,10 @@ Highcharts.chart('container', {
             text: 'X axis'
         }
     },
-    series: [{
-        data: [1, 4, 3, 5],
-        type: 'column'
-    }]
+    series: [
+        {
+            data: [1, 4, 3, 5],
+            type: 'column'
+        }
+    ]
 });

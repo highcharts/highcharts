@@ -7,7 +7,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Bubbles'
     },
-    series: [{
-        data: [[2.3, 3.1, 1]]
-    }]
+    series: [
+        {
+            data: [[2.3, 3.1, 1]]
+        }
+    ]
 });

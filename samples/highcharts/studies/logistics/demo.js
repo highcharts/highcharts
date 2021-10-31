@@ -44,7 +44,9 @@
                 if (!graphic) {
                     point.graphic = graphic = renderer[type](shape).add(group);
                 }
-                graphic.css(css).attr(attr)
+                graphic
+                    .css(css)
+                    .attr(attr)
                     .animate(animate, undefined, onComplete);
             } else if (graphic) {
                 graphic.animate(animate, undefined, function () {
@@ -59,10 +61,9 @@
             }
         };
         return draw;
-    }());
+    })();
 
     var renderHeatIndicators = (function (Highcharts, draw) {
-
         var each = Highcharts.each,
             extend = Highcharts.extend,
             isFunction = function (x) {
@@ -136,10 +137,10 @@
                     xAxis = indicator.xAxis,
                     yAxis = indicator.yAxis,
                     options = indicator.options,
-                    start = isNumber(indicator.start) ?
-                        indicator.start : xAxis.min,
-                    end = isNumber(indicator.end) ?
-                        indicator.end : xAxis.max,
+                    start = isNumber(indicator.start)
+                        ? indicator.start
+                        : xAxis.min,
+                    end = isNumber(indicator.end) ? indicator.end : xAxis.max,
                     x1 = xAxis.translate(start < end ? start : end, 0, 0, 0, 1),
                     x2 = xAxis.translate(start < end ? end : start, 0, 0, 0, 1),
                     plotY = yAxis.translate(indicator.y, 0, 1, 0, 1),
@@ -215,21 +216,26 @@
                 totalIdle = firstPoint > min ? firstPoint - min : 0,
                 max = xAxis.max;
 
-            reduce(points, function (next, current) {
-                var start = current.end,
-                    end = next ? next.start : max,
-                    idle = (start < end) ? end - start : 0,
-                    visibleIdle = Math.min(end, max) - Math.max(start, min);
-                visibleIdle = visibleIdle > 0 ? visibleIdle : 0;
-                current.idle = idle;
-                totalIdle += visibleIdle;
-                return current;
-            }, undefined);
+            reduce(
+                points,
+                function (next, current) {
+                    var start = current.end,
+                        end = next ? next.start : max,
+                        idle = start < end ? end - start : 0,
+                        visibleIdle = Math.min(end, max) - Math.max(start, min);
+                    visibleIdle = visibleIdle > 0 ? visibleIdle : 0;
+                    current.idle = idle;
+                    totalIdle += visibleIdle;
+                    return current;
+                },
+                undefined
+            );
             series.idle = totalIdle;
         };
 
         var renderHeatIndicators = function (series) {
-            var options = series.options && series.options.heatIndicator || {};
+            var options =
+                (series.options && series.options.heatIndicator) || {};
 
             // TODO Several modules are dependent upon this, it should be added
             // as a dependency somehow.
@@ -237,14 +243,16 @@
 
             each(series.points, function (point) {
                 // Get existing indicator from point, or create a new one.
-                var heatIndicator = point.heatIndicator || new HeatIndicator({
-                    group: series.group,
-                    metrics: series.columnMetrics,
-                    xAxis: series.xAxis,
-                    yAxis: series.yAxis,
-                    options: options,
-                    renderer: series.chart.renderer
-                });
+                var heatIndicator =
+                    point.heatIndicator ||
+                    new HeatIndicator({
+                        group: series.group,
+                        metrics: series.columnMetrics,
+                        xAxis: series.xAxis,
+                        yAxis: series.yAxis,
+                        options: options,
+                        renderer: series.chart.renderer
+                    });
 
                 // Update the indicator. Rerenders the graphic with new values.
                 heatIndicator.update({
@@ -259,10 +267,9 @@
         };
 
         return renderHeatIndicators;
-    }(Highcharts, draw));
+    })(Highcharts, draw);
 
     var renderEPRIndicators = (function (Highcharts, draw) {
-
         var each = Highcharts.each,
             objectEach = Highcharts.objectEach,
             extend = Highcharts.extend,
@@ -330,7 +337,11 @@
                     y1 = plotY - metrics.width / 2,
                     y2 = plotY + metrics.width / 2,
                     path = renderer.crispLine(
-                        [['M', x1, y1], ['L', x2, y2]], lineWidth
+                        [
+                            ['M', x1, y1],
+                            ['L', x2, y2]
+                        ],
+                        lineWidth
                     ),
                     attr = {
                         stroke: options.color,
@@ -362,9 +373,7 @@
                     x = indicator.x,
                     y = indicator.y;
 
-                return (
-                    indicator.enabled === true && isNumber(x) && isNumber(y)
-                );
+                return indicator.enabled === true && isNumber(x) && isNumber(y);
             },
             update: function (params) {
                 var indicator = this;
@@ -375,16 +384,18 @@
 
         var renderEPRIndicators = function (series) {
             each(series.points, function (point) {
-                var options = point.options && point.options.indicator || {},
+                var options = (point.options && point.options.indicator) || {},
                     // point.options.indicator is copied to point.indicator, so
                     // we use point.indicatorObj instead.
-                    indicator = point.indicatorObj || new EPRIndicator({
-                        group: series.group,
-                        metrics: series.columnMetrics,
-                        xAxis: series.xAxis,
-                        yAxis: series.yAxis,
-                        renderer: series.chart.renderer
-                    });
+                    indicator =
+                        point.indicatorObj ||
+                        new EPRIndicator({
+                            group: series.group,
+                            metrics: series.columnMetrics,
+                            xAxis: series.xAxis,
+                            yAxis: series.yAxis,
+                            renderer: series.chart.renderer
+                        });
                 indicator.update({
                     enabled: options.enabled,
                     x: options.x ? point.start + options.x : point.start,
@@ -396,7 +407,7 @@
         };
 
         return renderEPRIndicators;
-    }(Highcharts, draw));
+    })(Highcharts, draw);
 
     (function (Highcharts, renderHeatIndicators, renderEPRIndicators) {
         var Series = Highcharts.Series;
@@ -406,9 +417,8 @@
             renderEPRIndicators(series);
             renderHeatIndicators(series);
         });
-    }(Highcharts, renderHeatIndicators, renderEPRIndicators));
-
-}(Highcharts));
+    })(Highcharts, renderHeatIndicators, renderEPRIndicators);
+})(Highcharts);
 
 /**
  * --- Logistics module end
@@ -426,7 +436,7 @@ var today = +Date.now(),
         return Highcharts.dateFormat(format, date);
     },
     find = Highcharts.find,
-    xAxisMin = today - (10 * days),
+    xAxisMin = today - 10 * days,
     xAxisMax = xAxisMin + 90 * days,
     data;
 
@@ -452,10 +462,16 @@ data = {
                 var indicator = point.indicator;
                 return [
                     '<b>Voyage</b><br/>',
-                    'Start: (' + point.startLocation + ') ' +
-                        dateFormat(point.start) + '<br/>',
-                    'End: (' + point.endLocation + ') ' +
-                        dateFormat(point.end) + '<br/>',
+                    'Start: (' +
+                        point.startLocation +
+                        ') ' +
+                        dateFormat(point.start) +
+                        '<br/>',
+                    'End: (' +
+                        point.endLocation +
+                        ') ' +
+                        dateFormat(point.end) +
+                        '<br/>',
                     indicator ? 'EPR: ' + dateFormat(indicator.x) : ''
                 ].join('');
             }
@@ -472,105 +488,131 @@ data = {
         }
     },
     // All the vessels and its sceduled journeys
-    vessels: [{
-        name: 'Vessel 1',
-        journeys: [{
-            name: 'Contract 1',
-            start: today + days,
-            laps: [{
-                duration: 21 * days,
-                startLocation: 'USGLS',
-                endLocation: 'BEZEE',
-                loadDuration: 1 * days + 2 * hours + 45 * minutes,
-                unloadDuration: 1 * days + 2 * hours + 45 * minutes
-            }, {
-                duration: 11 * days,
-                startLocation: 'BEZEE',
-                endLocation: 'USCP6',
-                loadDuration: 0,
-                unloadDuration: 0,
-                color: '#c6dfb6'
-            }]
-        }, {
-            name: 'Contract 5',
-            start: today + 50 * days,
-            laps: [{
-                duration: 7 * days,
-                startLocation: 'USGLS',
-                endLocation: 'BEZEE',
-                loadDuration: 2 * days + 2 * hours + 45 * minutes,
-                unloadDuration: 1 * days + 2 * hours + 45 * minutes
-            }, {
-                duration: 7 * days,
-                startLocation: 'BEZEE',
-                endLocation: 'USCP6',
-                loadDuration: 0,
-                unloadDuration: 1 * days + 4 * hours,
-                color: '#c6dfb6'
-            }, {
-                duration: 19 * days,
-                startLocation: 'USCP6',
-                endLocation: 'NOVIS',
-                loadDuration: 0,
-                unloadDuration: 0
-            }]
-        }]
-    }, {
-        name: 'Vessel 2',
-        journeys: [{
-            name: 'Contract 2',
-            start: today - 5 * days,
-            laps: [{
-                duration: 13 * days,
-                startLocation: 'USGLS',
-                endLocation: 'BEZEE',
-                loadDuration: 2 * days + 2 * hours + 45 * minutes,
-                unloadDuration: 2 * days + 2 * hours + 45 * minutes
-            }, {
-                duration: 8 * days,
-                startLocation: 'BEZEE',
-                endLocation: 'USCP6',
-                loadDuration: 0,
-                unloadDuration: 0,
-                color: '#c6dfb6'
-            }],
-            earliestPossibleReturn: (today - 5 * days) + 20 * days
-        }, {
-            name: 'Contract 3',
-            start: today + 23 * days,
-            laps: [{
-                duration: 5 * days,
-                startLocation: 'USGLS',
-                endLocation: 'BEZEE',
-                loadDuration: 2 * days + 2 * hours + 45 * minutes,
-                unloadDuration: 2 * days + 2 * hours + 45 * minutes
-            }, {
-                duration: 14 * days,
-                startLocation: 'BEZEE',
-                endLocation: 'USCP6',
-                loadDuration: 0,
-                unloadDuration: 0,
-                color: '#c6dfb6'
-            }]
-        }, {
-            name: 'Contract 4',
-            start: today + 60 * days,
-            laps: [{
-                duration: 11 * days,
-                startLocation: 'USGLS',
-                endLocation: 'BEZEE',
-                loadDuration: 2 * days + 2 * hours + 45 * minutes,
-                unloadDuration: 2 * days + 2 * hours + 45 * minutes
-            }, {
-                duration: 6 * days,
-                startLocation: 'BEZEE',
-                endLocation: 'USCP6',
-                loadDuration: 0,
-                unloadDuration: 0,
-                color: '#c6dfb6'
-            }]
-        }]
-    }]
+    vessels: [
+        {
+            name: 'Vessel 1',
+            journeys: [
+                {
+                    name: 'Contract 1',
+                    start: today + days,
+                    laps: [
+                        {
+                            duration: 21 * days,
+                            startLocation: 'USGLS',
+                            endLocation: 'BEZEE',
+                            loadDuration: 1 * days + 2 * hours + 45 * minutes,
+                            unloadDuration: 1 * days + 2 * hours + 45 * minutes
+                        },
+                        {
+                            duration: 11 * days,
+                            startLocation: 'BEZEE',
+                            endLocation: 'USCP6',
+                            loadDuration: 0,
+                            unloadDuration: 0,
+                            color: '#c6dfb6'
+                        }
+                    ]
+                },
+                {
+                    name: 'Contract 5',
+                    start: today + 50 * days,
+                    laps: [
+                        {
+                            duration: 7 * days,
+                            startLocation: 'USGLS',
+                            endLocation: 'BEZEE',
+                            loadDuration: 2 * days + 2 * hours + 45 * minutes,
+                            unloadDuration: 1 * days + 2 * hours + 45 * minutes
+                        },
+                        {
+                            duration: 7 * days,
+                            startLocation: 'BEZEE',
+                            endLocation: 'USCP6',
+                            loadDuration: 0,
+                            unloadDuration: 1 * days + 4 * hours,
+                            color: '#c6dfb6'
+                        },
+                        {
+                            duration: 19 * days,
+                            startLocation: 'USCP6',
+                            endLocation: 'NOVIS',
+                            loadDuration: 0,
+                            unloadDuration: 0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            name: 'Vessel 2',
+            journeys: [
+                {
+                    name: 'Contract 2',
+                    start: today - 5 * days,
+                    laps: [
+                        {
+                            duration: 13 * days,
+                            startLocation: 'USGLS',
+                            endLocation: 'BEZEE',
+                            loadDuration: 2 * days + 2 * hours + 45 * minutes,
+                            unloadDuration: 2 * days + 2 * hours + 45 * minutes
+                        },
+                        {
+                            duration: 8 * days,
+                            startLocation: 'BEZEE',
+                            endLocation: 'USCP6',
+                            loadDuration: 0,
+                            unloadDuration: 0,
+                            color: '#c6dfb6'
+                        }
+                    ],
+                    earliestPossibleReturn: today - 5 * days + 20 * days
+                },
+                {
+                    name: 'Contract 3',
+                    start: today + 23 * days,
+                    laps: [
+                        {
+                            duration: 5 * days,
+                            startLocation: 'USGLS',
+                            endLocation: 'BEZEE',
+                            loadDuration: 2 * days + 2 * hours + 45 * minutes,
+                            unloadDuration: 2 * days + 2 * hours + 45 * minutes
+                        },
+                        {
+                            duration: 14 * days,
+                            startLocation: 'BEZEE',
+                            endLocation: 'USCP6',
+                            loadDuration: 0,
+                            unloadDuration: 0,
+                            color: '#c6dfb6'
+                        }
+                    ]
+                },
+                {
+                    name: 'Contract 4',
+                    start: today + 60 * days,
+                    laps: [
+                        {
+                            duration: 11 * days,
+                            startLocation: 'USGLS',
+                            endLocation: 'BEZEE',
+                            loadDuration: 2 * days + 2 * hours + 45 * minutes,
+                            unloadDuration: 2 * days + 2 * hours + 45 * minutes
+                        },
+                        {
+                            duration: 6 * days,
+                            startLocation: 'BEZEE',
+                            endLocation: 'USCP6',
+                            loadDuration: 0,
+                            unloadDuration: 0,
+                            color: '#c6dfb6'
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 };
 
 /**
@@ -587,23 +629,20 @@ var getPoint = function (params) {
         earliestPossibleReturn = params.epr,
         end = start + duration;
 
-    indicator = (
-        (
-            Highcharts.isNumber(earliestPossibleReturn) &&
-            start < earliestPossibleReturn &&
-            earliestPossibleReturn < end
-        ) ?
-            {
-                enabled: true,
-                x: earliestPossibleReturn - start
-            } :
-            undefined
-    );
+    indicator =
+        Highcharts.isNumber(earliestPossibleReturn) &&
+        start < earliestPossibleReturn &&
+        earliestPossibleReturn < end
+            ? {
+                  enabled: true,
+                  x: earliestPossibleReturn - start
+              }
+            : undefined;
 
     return {
         start: start,
         end: end,
-        color: voyage && voyage.color || data.events[type].color,
+        color: (voyage && voyage.color) || data.events[type].color,
         vessel: vessel.name,
         indicator: indicator,
         y: params.y,
@@ -623,52 +662,61 @@ var getPoint = function (params) {
  * Creates a set of points based on a lap. These points are grouped together.
  */
 var getGroupFromTrip = function (trip, vessel, y) {
-    return trip.laps.reduce(function (group, voyage) {
-        var points = [];
+    return trip.laps.reduce(
+        function (group, voyage) {
+            var points = [];
 
-        if (voyage.loadDuration) {
-            points.push(getPoint({
-                start: group.end,
-                duration: voyage.loadDuration,
-                tripName: trip.name,
-                type: 'loading',
-                vessel: vessel,
-                y: y
-            }));
-            group.end += voyage.loadDuration;
+            if (voyage.loadDuration) {
+                points.push(
+                    getPoint({
+                        start: group.end,
+                        duration: voyage.loadDuration,
+                        tripName: trip.name,
+                        type: 'loading',
+                        vessel: vessel,
+                        y: y
+                    })
+                );
+                group.end += voyage.loadDuration;
+            }
+
+            points.push(
+                getPoint({
+                    start: group.end,
+                    duration: voyage.duration,
+                    voyage: voyage,
+                    epr: trip.earliestPossibleReturn,
+                    tripName: trip.name,
+                    type: 'voyage',
+                    vessel: vessel,
+                    y: y
+                })
+            );
+            group.end += voyage.duration;
+
+            if (voyage.unloadDuration) {
+                points.push(
+                    getPoint({
+                        start: group.end,
+                        duration: voyage.unloadDuration,
+                        tripName: trip.name,
+                        type: 'unloading',
+                        vessel: vessel,
+                        y: y
+                    })
+                );
+                group.end += voyage.unloadDuration;
+            }
+
+            // Add the points
+            group.points = group.points.concat(points);
+            return group;
+        },
+        {
+            end: trip.start, // Previous point end
+            points: []
         }
-
-        points.push(getPoint({
-            start: group.end,
-            duration: voyage.duration,
-            voyage: voyage,
-            epr: trip.earliestPossibleReturn,
-            tripName: trip.name,
-            type: 'voyage',
-            vessel: vessel,
-            y: y
-        }));
-        group.end += voyage.duration;
-
-        if (voyage.unloadDuration) {
-            points.push(getPoint({
-                start: group.end,
-                duration: voyage.unloadDuration,
-                tripName: trip.name,
-                type: 'unloading',
-                vessel: vessel,
-                y: y
-            }));
-            group.end += voyage.unloadDuration;
-        }
-
-        // Add the points
-        group.points = group.points.concat(points);
-        return group;
-    }, {
-        end: trip.start, // Previous point end
-        points: []
-    });
+    );
 };
 
 /**
@@ -708,16 +756,16 @@ var customResize = function (e, chart) {
         end = e.newPoint.end;
         resizePoint = chart.get(e.newPointId);
 
-        diff = defined(start) && start - resizePoint.options.start ||
-                defined(end) && end - resizePoint.options.end;
+        diff =
+            (defined(start) && start - resizePoint.options.start) ||
+            (defined(end) && end - resizePoint.options.end);
 
         objectEach(e.origin.points, function (pointOrigin) {
             var point = pointOrigin.point;
             if (
-                point.id !== e.newPointId && (
-                    defined(start) && point.end <= resizePoint.options.start ||
-                    defined(end) && point.start >= resizePoint.options.end
-                )
+                point.id !== e.newPointId &&
+                ((defined(start) && point.end <= resizePoint.options.start) ||
+                    (defined(end) && point.start >= resizePoint.options.end))
             ) {
                 newPoints[point.id] = {
                     point: point,
@@ -741,27 +789,40 @@ var newPointsColliding = function (newPoints, chart) {
         inArray = Highcharts.inArray,
         groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
         y,
-        minX = reduce(keys(newPoints), function (acc, id) {
-            y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
-            return Math.min(
-                acc, pick(
-                    newPoints[id].newValues.start, newPoints[id].point.start
-                )
-            );
-        }, Infinity),
-        maxX = reduce(keys(newPoints), function (acc, id) {
-            return Math.max(
-                acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
-            );
-        }, -Infinity),
+        minX = reduce(
+            keys(newPoints),
+            function (acc, id) {
+                y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
+                return Math.min(
+                    acc,
+                    pick(
+                        newPoints[id].newValues.start,
+                        newPoints[id].point.start
+                    )
+                );
+            },
+            Infinity
+        ),
+        maxX = reduce(
+            keys(newPoints),
+            function (acc, id) {
+                return Math.max(
+                    acc,
+                    pick(newPoints[id].newValues.end, newPoints[id].point.end)
+                );
+            },
+            -Infinity
+        ),
         newSeries = chart.get(y),
         i,
         collidePoint,
         pointOverlaps = function (point) {
-            return point.end >= minX && point.start <= minX ||
-                point.start <= maxX && point.end >= maxX ||
-                point.start <= minX && point.end >= maxX ||
-                point.start >= minX && point.end <= maxX;
+            return (
+                (point.end >= minX && point.start <= minX) ||
+                (point.start <= maxX && point.end >= maxX) ||
+                (point.start <= minX && point.end >= maxX) ||
+                (point.start >= minX && point.end <= maxX)
+            );
         };
 
     if (newSeries) {
@@ -821,24 +882,21 @@ var customDrop = function (e) {
     objectEach(newPoints, function (update) {
         var newValues = update.newValues,
             oldPoint = update.point,
-            newSeries = defined(newValues.y) ?
-                chart.get(newValues.y) : oldPoint.series;
+            newSeries = defined(newValues.y)
+                ? chart.get(newValues.y)
+                : oldPoint.series;
 
         // Destroy any old heat indicator objects
         if (oldPoint.heatIndicator) {
-            oldPoint.heatIndicator =
-                oldPoint.heatIndicator.destroy();
+            oldPoint.heatIndicator = oldPoint.heatIndicator.destroy();
         }
         if (oldPoint.indicatorObj) {
-            oldPoint.indicatorObj =
-                oldPoint.indicatorObj.destroy();
+            oldPoint.indicatorObj = oldPoint.indicatorObj.destroy();
         }
 
         // Update the point
         if (newSeries !== oldPoint.series) {
-            newValues = Highcharts.merge(
-                oldPoint.options, newValues
-            );
+            newValues = Highcharts.merge(oldPoint.options, newValues);
             update.point = oldPoint = oldPoint.remove(false);
             newSeries.addPoint(newValues, false);
         } else {
@@ -971,7 +1029,7 @@ Highcharts.ganttChart('container', {
                     var start = indicator.start,
                         end = indicator.end,
                         idleTime = end - start;
-                    return idleTime > (10 * days);
+                    return idleTime > 10 * days;
                 }
             },
             stickyTracking: true,
@@ -979,33 +1037,37 @@ Highcharts.ganttChart('container', {
             borderRadius: 0,
             borderWidth: 0,
             pointPadding: 0,
-            dataLabels: [{
-                enabled: true,
-                labelrank: 1,
-                formatter: leftLabelFormatter,
-                align: 'left',
-                style: {
-                    fontSize: '8px'
+            dataLabels: [
+                {
+                    enabled: true,
+                    labelrank: 1,
+                    formatter: leftLabelFormatter,
+                    align: 'left',
+                    style: {
+                        fontSize: '8px'
+                    }
+                },
+                {
+                    enabled: true,
+                    labelrank: 2,
+                    formatter: centerLabelFormatter,
+                    align: 'center',
+                    borderWidth: 1,
+                    padding: 3,
+                    style: {
+                        fontSize: '10px'
+                    }
+                },
+                {
+                    enabled: true,
+                    labelrank: 1,
+                    formatter: rightLabelFormatter,
+                    align: 'right',
+                    style: {
+                        fontSize: '8px'
+                    }
                 }
-            }, {
-                enabled: true,
-                labelrank: 2,
-                formatter: centerLabelFormatter,
-                align: 'center',
-                borderWidth: 1,
-                padding: 3,
-                style: {
-                    fontSize: '10px'
-                }
-            }, {
-                enabled: true,
-                labelrank: 1,
-                formatter: rightLabelFormatter,
-                align: 'right',
-                style: {
-                    fontSize: '8px'
-                }
-            }],
+            ],
             point: {
                 events: {
                     drag: customDrag,
@@ -1028,36 +1090,43 @@ Highcharts.ganttChart('container', {
     tooltip: {
         formatter: tooltipFormatter
     },
-    xAxis: [{
-        type: 'datetime',
-        currentDateIndicator: true,
-        grid: false,
-        labels: {
-            format: undefined
-        },
-        min: xAxisMin,
-        max: xAxisMax,
-        tickInterval: undefined
-    }],
-    yAxis: [{
-        type: 'category',
-        reversed: true,
-        maxPadding: 0,
-        staticScale: 100,
-        labels: {
-            useHTML: true
-        },
-        grid: {
-            enabled: true,
-            columns: [{
-                labels: {
-                    formatter: gridColumnFormatterSeriesName
-                }
-            }, {
-                labels: {
-                    formatter: gridColumnFormatterSeriesIdle
-                }
-            }]
+    xAxis: [
+        {
+            type: 'datetime',
+            currentDateIndicator: true,
+            grid: false,
+            labels: {
+                format: undefined
+            },
+            min: xAxisMin,
+            max: xAxisMax,
+            tickInterval: undefined
         }
-    }]
+    ],
+    yAxis: [
+        {
+            type: 'category',
+            reversed: true,
+            maxPadding: 0,
+            staticScale: 100,
+            labels: {
+                useHTML: true
+            },
+            grid: {
+                enabled: true,
+                columns: [
+                    {
+                        labels: {
+                            formatter: gridColumnFormatterSeriesName
+                        }
+                    },
+                    {
+                        labels: {
+                            formatter: gridColumnFormatterSeriesIdle
+                        }
+                    }
+                ]
+            }
+        }
+    ]
 });

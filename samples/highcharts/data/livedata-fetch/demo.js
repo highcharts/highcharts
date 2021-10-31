@@ -4,7 +4,9 @@ let chart; // global
  * Request data from the server, add it to the graph and set a timeout to request again
  */
 async function requestData() {
-    const result = await fetch('https://demo-live-data.highcharts.com/time-rows.json');
+    const result = await fetch(
+        'https://demo-live-data.highcharts.com/time-rows.json'
+    );
     if (result.ok) {
         const data = await result.json();
 
@@ -45,9 +47,11 @@ window.addEventListener('load', function () {
                 margin: 80
             }
         },
-        series: [{
-            name: 'Random data',
-            data: []
-        }]
+        series: [
+            {
+                name: 'Random data',
+                data: []
+            }
+        ]
     });
 });

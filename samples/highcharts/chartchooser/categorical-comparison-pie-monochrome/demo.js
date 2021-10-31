@@ -24,20 +24,26 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        name: null,
-        colorByPoint: true,
-        data: [{
-            name: 'Salt water',
-            y: 97
-        }, {
-            name: 'Ice',
-            y: 2
-        }, {
-            name: 'Fresh water',
-            sliced: true,
-            selected: true,
-            y: 1
-        }]
-    }]
+    series: [
+        {
+            name: null,
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Salt water',
+                    y: 97
+                },
+                {
+                    name: 'Ice',
+                    y: 2
+                },
+                {
+                    name: 'Fresh water',
+                    sliced: true,
+                    selected: true,
+                    y: 1
+                }
+            ]
+        }
+    ]
 });

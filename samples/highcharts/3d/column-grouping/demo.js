@@ -11,8 +11,15 @@ Highcharts.chart('container', {
         text: 'Fruit Consumption'
     },
     xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges', 'Pears', 'Kiwis',
-            'Grapes', 'Dates']
+        categories: [
+            'Apples',
+            'Bananas',
+            'Oranges',
+            'Pears',
+            'Kiwis',
+            'Grapes',
+            'Dates'
+        ]
     },
     yAxis: {
         title: {
@@ -26,11 +33,14 @@ Highcharts.chart('container', {
             groupZPadding: 10
         }
     },
-    series: [{
-        name: 'Jane',
-        data: [1, 0, 4, 5, 2, 3, 1]
-    }, {
-        name: 'John',
-        data: [5, 7, 3, 6, 4, 2, 1]
-    }]
+    series: [
+        {
+            name: 'Jane',
+            data: [1, 0, 4, 5, 2, 3, 1]
+        },
+        {
+            name: 'John',
+            data: [5, 7, 3, 6, 4, 2, 1]
+        }
+    ]
 });

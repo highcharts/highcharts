@@ -8,7 +8,8 @@ Highcharts.chart('container', {
     navigation: {
         events: {
             selectButton: function (event) {
-                var newClassName = event.button.className + ' highcharts-active',
+                var newClassName =
+                        event.button.className + ' highcharts-active',
                     topButton = event.button.parentNode.parentNode;
 
                 if (topButton.classList.contains('right')) {
@@ -25,7 +26,9 @@ Highcharts.chart('container', {
                 this.chart.activeButton = event.button;
             },
             deselectButton: function (event) {
-                event.button.parentNode.parentNode.classList.remove('highcharts-active');
+                event.button.parentNode.parentNode.classList.remove(
+                    'highcharts-active'
+                );
 
                 // Remove info about active button:
                 this.chart.activeButton = null;
@@ -33,7 +36,9 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 23.3, 18.3, 13.9, 9.6]
-    }]
+    series: [
+        {
+            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 23.3, 18.3, 13.9, 9.6]
+        }
+    ]
 });

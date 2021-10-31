@@ -1,100 +1,100 @@
 const data = [
     {
-        id: "1",
-        name: "America",
-        color: "#efefef"
+        id: '1',
+        name: 'America',
+        color: '#efefef'
     },
     {
-        id: "2",
-        name: "Asia",
-        color: "#b0b0b0"
+        id: '2',
+        name: 'Asia',
+        color: '#b0b0b0'
     },
     {
-        id: "3",
-        name: "Europe",
-        color: "#7b7b7b"
+        id: '3',
+        name: 'Europe',
+        color: '#7b7b7b'
     },
     {
-        id: "4",
-        color: "#000000",
-        name: "OTH"
+        id: '4',
+        color: '#000000',
+        name: 'OTH'
     },
 
     /* America */
     {
-        parent: "1",
-        name: "US",
+        parent: '1',
+        name: 'US',
         value: 151,
-        color: "#ffffff"
+        color: '#ffffff'
     },
     {
-        parent: "1",
-        name: "CA",
-        color: "#ffffff",
+        parent: '1',
+        name: 'CA',
+        color: '#ffffff',
         value: 8
     },
     {
-        parent: "1",
-        name: "BR",
-        color: "#ffffff",
+        parent: '1',
+        name: 'BR',
+        color: '#ffffff',
         value: 1
     },
     /* Asia */
     {
-        parent: "2",
-        name: "RU",
-        color: "#e3e3e3",
+        parent: '2',
+        name: 'RU',
+        color: '#e3e3e3',
         value: 49
     },
     {
-        parent: "2",
-        name: "JP",
-        color: "#d2d2d2",
+        parent: '2',
+        name: 'JP',
+        color: '#d2d2d2',
         value: 9
     },
     {
-        parent: "2",
-        name: "OTH",
-        color: "#c1c1c1",
+        parent: '2',
+        name: 'OTH',
+        color: '#c1c1c1',
         value: 3
     },
     /* Europe */
     {
-        parent: "3",
-        name: "IT",
-        color: "#aeaeae",
+        parent: '3',
+        name: 'IT',
+        color: '#aeaeae',
         value: 5
     },
     {
-        parent: "3",
-        name: "FR",
-        color: "#a1a1a1",
+        parent: '3',
+        name: 'FR',
+        color: '#a1a1a1',
         value: 4
     },
     {
-        parent: "3",
-        name: "UK",
-        color: "#949494",
+        parent: '3',
+        name: 'UK',
+        color: '#949494',
         value: 3
     },
     {
-        parent: "3",
-        name: "OTH",
-        color: "#878787",
+        parent: '3',
+        name: 'OTH',
+        color: '#878787',
         value: 6
     },
     /* Other */
     {
-        parent: "4",
-        name: "OTH",
-        color: "#333333",
+        parent: '4',
+        name: 'OTH',
+        color: '#333333',
         value: 2
     }
 ];
 
-Highcharts.chart("container", {
+Highcharts.chart('container', {
     title: {
-        text: "Visitors to the International Space Station by Country"
+        text: 'Visitors to the International Space Station by Country'
     },
 
     subtitle: {
@@ -102,22 +102,22 @@ Highcharts.chart("container", {
     },
     accessibility: {
         typeDescription:
-      "Sunburst chart with 2 levels. The inner level represents continents, and the outer level represents the countries within the continents.",
+            'Sunburst chart with 2 levels. The inner level represents continents, and the outer level represents the countries within the continents.',
         point: {
-            valueSuffix: " visitors"
+            valueSuffix: ' visitors'
         }
     },
     series: [
         {
-            type: "sunburst",
+            type: 'sunburst',
             data: data,
             borderWidth: 1.5,
-            borderColor: "#000000",
+            borderColor: '#000000',
             allowDrillToNode: true,
-            cursor: "pointer",
+            cursor: 'pointer',
             dataLabels: {
-                format: "{point.name}",
-                color: "#000000",
+                format: '{point.name}',
+                color: '#000000',
                 style: {
                     textOutline: false
                 }
@@ -128,8 +128,8 @@ Highcharts.chart("container", {
                     levelIsConstant: false,
                     dataLabels: {
                         filter: {
-                            property: "outerArcLength",
-                            operator: ">",
+                            property: 'outerArcLength',
+                            operator: '>',
                             value: 64
                         }
                     }
@@ -143,7 +143,7 @@ Highcharts.chart("container", {
     ],
 
     tooltip: {
-        headerFormat: "",
-        pointFormat: "<b>{point.name}</b>: <b>{point.value}</b> visitors"
+        headerFormat: '',
+        pointFormat: '<b>{point.name}</b>: <b>{point.value}</b> visitors'
     }
 });

@@ -27,8 +27,9 @@ Highcharts.chart('container', {
         text: 'Highcharts star plot with multivariate data'
     },
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-        '{series.name}: <b>{point.formattedValue}</b><br/>'
+        pointFormat:
+            '<span style="color:{point.color}">\u25CF</span>' +
+            '{series.name}: <b>{point.formattedValue}</b><br/>'
     },
     legend: {
         enabled: true,
@@ -55,40 +56,48 @@ Highcharts.chart('container', {
         },
         gridLineWidth: 0
     },
-    yAxis: [{
-        type: 'datetime',
-        tooltipValueFormat: '{value:%Y-%m-%d}'
-    }, {
-        min: 0,
-        tooltipValueFormat: '{value} mile(s)'
-    }, {
-        type: 'datetime',
-        min: 0,
-        labels: {
-            format: '{value:%H:%M}'
+    yAxis: [
+        {
+            type: 'datetime',
+            tooltipValueFormat: '{value:%Y-%m-%d}'
+        },
+        {
+            min: 0,
+            tooltipValueFormat: '{value} mile(s)'
+        },
+        {
+            type: 'datetime',
+            min: 0,
+            labels: {
+                format: '{value:%H:%M}'
+            }
+        },
+        {
+            categories: [
+                'Other',
+                'Adidas',
+                'Mizuno',
+                'Asics',
+                'Brooks',
+                'New Balance',
+                'Izumi'
+            ],
+            min: -1
+        },
+        {
+            type: 'datetime'
+        },
+        {
+            categories: ['&gt; 5miles', '&lt; 5miles'],
+            min: -1,
+            max: 1
+        },
+        {
+            categories: ['Before', 'After'],
+            min: -1,
+            max: 1
         }
-    }, {
-        categories: [
-            'Other',
-            'Adidas',
-            'Mizuno',
-            'Asics',
-            'Brooks',
-            'New Balance',
-            'Izumi'
-        ],
-        min: -1
-    }, {
-        type: 'datetime'
-    }, {
-        categories: ['&gt; 5miles', '&lt; 5miles'],
-        min: -1,
-        max: 1
-    }, {
-        categories: ['Before', 'After'],
-        min: -1,
-        max: 1
-    }],
+    ],
     series: data.map(function (set, i) {
         return {
             name: 'Runner ' + i,

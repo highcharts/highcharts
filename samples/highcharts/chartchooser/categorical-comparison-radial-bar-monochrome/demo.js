@@ -1,9 +1,9 @@
 const country = {
-    Norway: "no",
-    "United States": "us",
-    Germany: "de",
-    Canada: "ca",
-    Austria: "at"
+    Norway: 'no',
+    'United States': 'us',
+    Germany: 'de',
+    Canada: 'ca',
+    Austria: 'at'
 };
 Highcharts.chart('container', {
     colors: ['#10487F', '#3a7ab7', '#7CB5EC'],
@@ -33,13 +33,13 @@ Highcharts.chart('container', {
     xAxis: {
         tickInterval: 1,
         labels: {
-            align: "right",
+            align: 'right',
             useHTML: true,
             allowOverlap: true,
             step: 1,
             y: 3,
             style: {
-                fontSize: "13px"
+                fontSize: '13px'
             },
             formatter: function () {
                 return `${
@@ -50,9 +50,9 @@ Highcharts.chart('container', {
             }
         },
         lineWidth: 0,
-        categories: ["Norway", "United States", "Germany", "Canada", "Austria"],
+        categories: ['Norway', 'United States', 'Germany', 'Canada', 'Austria'],
         accessibility: {
-            description: "Countries"
+            description: 'Countries'
         }
     },
     yAxis: {
@@ -71,20 +71,24 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         column: {
-            stacking: "normal",
+            stacking: 'normal',
             borderWidth: 0,
             pointPadding: 0,
             groupPadding: 0.15
         }
     },
-    series: [{
-        name: 'Gold medals',
-        data: [132, 105, 92, 73, 64]
-    }, {
-        name: 'Silver medals',
-        data: [125, 110, 86, 64, 81]
-    }, {
-        name: 'Bronze medals',
-        data: [111, 90, 60, 62, 87]
-    }]
+    series: [
+        {
+            name: 'Gold medals',
+            data: [132, 105, 92, 73, 64]
+        },
+        {
+            name: 'Silver medals',
+            data: [125, 110, 86, 64, 81]
+        },
+        {
+            name: 'Bronze medals',
+            data: [111, 90, 60, 62, 87]
+        }
+    ]
 });

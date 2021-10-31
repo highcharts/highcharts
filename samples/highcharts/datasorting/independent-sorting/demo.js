@@ -30,35 +30,30 @@ var chart = Highcharts.chart({
         align: 'right',
         verticalAlign: 'middle'
     },
-    series: [{
-        dataSorting: {
-            enabled: true
+    series: [
+        {
+            dataSorting: {
+                enabled: true
+            },
+            data: getRandomData()
         },
-        data: getRandomData()
-    }, {
-        colorAxis: false,
-        type: 'scatter',
-        showInLegend: false,
-        marker: {
-            radius: 2
-        },
-        dataSorting: {
-            enabled: true
-        },
-        data: getRandomData()
-    }]
+        {
+            colorAxis: false,
+            type: 'scatter',
+            showInLegend: false,
+            marker: {
+                radius: 2
+            },
+            dataSorting: {
+                enabled: true
+            },
+            data: getRandomData()
+        }
+    ]
 });
 
 setInterval(function () {
-    chart.series[0].setData(
-        getRandomData(),
-        false,
-        { duration: 1500 }
-    );
+    chart.series[0].setData(getRandomData(), false, { duration: 1500 });
 
-    chart.series[1].setData(
-        getRandomData(),
-        true,
-        { duration: 1500 }
-    );
+    chart.series[1].setData(getRandomData(), true, { duration: 1500 });
 }, 2000);

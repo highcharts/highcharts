@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'pie',
         borderWidth: 2
@@ -31,22 +30,24 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: (function () {
-            var names = 'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
-                'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
-                arr = [];
+    series: [
+        {
+            data: (function () {
+                var names =
+                        'Ari,Bjartur,Bogi,Bragi,Dánjal,Dávur,Eli,Emil,Fróði,Hákun,Hanus,Hjalti,Ísakur,' +
+                        'Johan,Jóhan,Julian,Kristian,Leon,Levi,Magnus,Martin,Mattias,Mikkjal,Nóa,Óli,Pauli,Petur,Rói,Sveinur,Teitur',
+                    arr = [];
 
-            Highcharts.each(names.split(','), function (name) {
-                arr.push({
-                    name: name,
-                    y: Math.round(Math.random() * 100)
+                Highcharts.each(names.split(','), function (name) {
+                    arr.push({
+                        name: name,
+                        y: Math.round(Math.random() * 100)
+                    });
                 });
-            });
 
-            return arr;
-        }()),
-        showInLegend: true
-    }]
-
+                return arr;
+            })(),
+            showInLegend: true
+        }
+    ]
 });

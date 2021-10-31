@@ -34,17 +34,19 @@ const dl = {
 function getDistance(pt1, pt2) {
     const toRad = Math.PI / 180;
     const R = 6371; // Radius of the earth in km
-    const dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in radians
+    const dLat = (pt2.lat - pt1.lat) * toRad; // Javascript functions in radians
     const dLon = (pt2.lon - pt1.lon) * toRad;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(pt1.lat * toRad) * Math.cos(pt2.lat * toRad) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(pt1.lat * toRad) *
+            Math.cos(pt2.lat * toRad) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c; // Distance in km
 
     return d;
 }
-
 
 const xml = document.getElementById('data'),
     data = [];
@@ -85,12 +87,10 @@ trackPoints.forEach((trkpt, i) => {
     });
 
     lastPoint = point;
-
 });
 
 // Now create the chart
 Highcharts.chart('container', {
-
     chart: {
         type: 'area'
     },
@@ -134,26 +134,27 @@ Highcharts.chart('container', {
         enabled: false
     },
 
-    series: [{
-        data: data,
-        name: 'Elevation',
-        marker: {
-            enabled: false,
-            states: {
-                hover: {
-                    enabled: true
+    series: [
+        {
+            data: data,
+            name: 'Elevation',
+            marker: {
+                enabled: false,
+                states: {
+                    hover: {
+                        enabled: true
+                    }
                 }
-            }
-        },
-        fillColor: {
-            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-            stops: [
-                [0, 'rgba(65, 116, 158, 0.7)'],
-                [1, 'rgba(255, 255, 255, 0.7)']
-            ]
-        },
-        threshold: null,
-        turboThreshold: 0
-    }]
-
+            },
+            fillColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, 'rgba(65, 116, 158, 0.7)'],
+                    [1, 'rgba(255, 255, 255, 0.7)']
+                ]
+            },
+            threshold: null,
+            turboThreshold: 0
+        }
+    ]
 });

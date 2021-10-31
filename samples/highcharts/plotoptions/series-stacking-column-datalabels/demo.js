@@ -12,7 +12,20 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     yAxis: {
@@ -30,15 +43,20 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [1, 5, 2, 4]
-    }, {
-        data: [6, 5, -1, 1]
-    }, {
-        data: [-6, 5, -1, 1.1]
-    }],
+    series: [
+        {
+            data: [1, 5, 2, 4]
+        },
+        {
+            data: [6, 5, -1, 1]
+        },
+        {
+            data: [-6, 5, -1, 1.1]
+        }
+    ],
 
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>'
+        pointFormat:
+            '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>'
     }
 });

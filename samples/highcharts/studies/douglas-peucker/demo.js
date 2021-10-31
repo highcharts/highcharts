@@ -14,12 +14,14 @@ function simplifyPath(data, epsilon) {
 
         // recurring factors
         var m = (end.y - start.y) / (end.x - start.x),
-            b = start.y - (m * start.x);
+            b = start.y - m * start.x;
 
         // Find furthest point
         for (i = 1; i <= data.length - 2; i++) {
             point = data[i];
-            d = Math.abs(point.y - (m * point.x) - b) / Math.sqrt(Math.pow(m, 2) + 1);
+            d =
+                Math.abs(point.y - m * point.x - b) /
+                Math.sqrt(Math.pow(m, 2) + 1);
             if (d > dmax) {
                 dmax = d;
                 index = i;
@@ -27,8 +29,12 @@ function simplifyPath(data, epsilon) {
         }
         // Evaluate
         if (dmax >= epsilon) {
-            result = result.concat(douglasPecker(data.slice(0, index + 1), epsilon));
-            result = result.concat(douglasPecker(data.slice(index + 1, data.length), epsilon));
+            result = result.concat(
+                douglasPecker(data.slice(0, index + 1), epsilon)
+            );
+            result = result.concat(
+                douglasPecker(data.slice(index + 1, data.length), epsilon)
+            );
         } else {
             result = [start];
         }
@@ -39,7 +45,6 @@ function simplifyPath(data, epsilon) {
     arr.push(data[data.length - 1]);
     return arr;
 }
-
 
 function getData(n) {
     var arr = [],
@@ -71,16 +76,19 @@ function getData(n) {
     return arr;
 }
 
-
 var rawData = getData(500000),
     simplifiedData = simplifyPath(rawData, 3);
 
-console.log('Raw data length:', rawData.length, 'Simplifid data length:', simplifiedData.length);
+console.log(
+    'Raw data length:',
+    rawData.length,
+    'Simplifid data length:',
+    simplifiedData.length
+);
 rawData.length = 0; // clear memory
 
 console.time('Highcharts.Chart');
 Highcharts.chart('container', {
-
     title: {
         text: 'Trimmed Highcharts'
     },
@@ -89,10 +97,11 @@ Highcharts.chart('container', {
         text: 'The points are filtered through the Douglas Peucker algorithm<br>View console for benchmarks'
     },
 
-    series: [{
-        data: simplifiedData,
-        turboThreshold: 0
-    }]
-
+    series: [
+        {
+            data: simplifiedData,
+            turboThreshold: 0
+        }
+    ]
 });
 console.timeEnd('Highcharts.Chart');

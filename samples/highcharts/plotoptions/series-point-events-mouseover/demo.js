@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Mouse events demo'
     },
@@ -13,7 +12,8 @@ Highcharts.chart('container', {
                     mouseOver: function () {
                         var chart = this.series.chart;
                         if (!chart.lbl) {
-                            chart.lbl = chart.renderer.label('')
+                            chart.lbl = chart.renderer
+                                .label('')
                                 .attr({
                                     padding: 10,
                                     r: 10,
@@ -24,11 +24,9 @@ Highcharts.chart('container', {
                                 })
                                 .add();
                         }
-                        chart.lbl
-                            .show()
-                            .attr({
-                                text: 'x: ' + this.x + ', y: ' + this.y
-                            });
+                        chart.lbl.show().attr({
+                            text: 'x: ' + this.x + ', y: ' + this.y
+                        });
                     }
                 }
             },
@@ -46,7 +44,12 @@ Highcharts.chart('container', {
         enabled: false
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    }]
+    series: [
+        {
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ]
+        }
+    ]
 });

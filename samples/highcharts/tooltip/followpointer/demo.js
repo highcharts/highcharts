@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Tooltip should follow mouse'
     },
@@ -12,9 +11,10 @@ Highcharts.chart('container', {
         followPointer: true
     },
 
-    series: [{
-        data: [3, 2, 5, 4],
-        type: 'column'
-    }]
-
+    series: [
+        {
+            data: [3, 2, 5, 4],
+            type: 'column'
+        }
+    ]
 });

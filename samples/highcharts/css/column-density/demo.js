@@ -2,7 +2,7 @@ function getData(n) {
     var arr = [],
         i;
     for (i = 0; i < n; i++) {
-        arr.push(Math.sin(Math.PI * 2 / 360 * i));
+        arr.push(Math.sin(((Math.PI * 2) / 360) * i));
     }
     return arr;
 }
@@ -14,11 +14,13 @@ const chart = Highcharts.chart('container', {
     title: {
         text: 'Dense column borders'
     },
-    series: [{
-        type: 'column',
-        name: 'Sinus',
-        data: getData(360)
-    }]
+    series: [
+        {
+            type: 'column',
+            name: 'Sinus',
+            data: getData(360)
+        }
+    ]
 });
 
 document.getElementById('dense').addEventListener('click', () => {

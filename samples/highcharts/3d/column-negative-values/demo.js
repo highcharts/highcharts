@@ -18,7 +18,9 @@ Highcharts.chart('container', {
             negativeColor: '#DD0000'
         }
     },
-    series: [{
-        data: [-1, 3, -3, -2, 1, 0]
-    }]
+    series: [
+        {
+            data: [-1, 3, -3, -2, 1, 0]
+        }
+    ]
 });

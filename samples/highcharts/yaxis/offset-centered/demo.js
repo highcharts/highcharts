@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         marginTop: 50,
         marginBottom: 50,
@@ -27,17 +26,17 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [
-            [-3, 3],
-            [-2, 2],
-            [-1, 1],
-            [0, 0],
-            [1, 1],
-            [2, 2],
-            [3, 3]
-
-        ]
-    }]
-
+    series: [
+        {
+            data: [
+                [-3, 3],
+                [-2, 2],
+                [-1, 1],
+                [0, 0],
+                [1, 1],
+                [2, 2],
+                [3, 3]
+            ]
+        }
+    ]
 });

@@ -5,26 +5,32 @@ Highcharts.chart('container', {
     title: {
         text: 'Multiple X axes'
     },
-    xAxis: [{
-        categories: ["Ein", "To", "Tre", "Fire"],
-        title: {
-            text: 'Norwegian'
+    xAxis: [
+        {
+            categories: ['Ein', 'To', 'Tre', 'Fire'],
+            title: {
+                text: 'Norwegian'
+            }
+        },
+        {
+            categories: ['Uno', 'Dos', 'Tres', 'Quatro'],
+            title: {
+                text: 'Spanish'
+            }
         }
-    }, {
-        categories: ["Uno", "Dos", "Tres", "Quatro"],
-        title: {
-            text: 'Spanish'
-        }
-    }],
+    ],
     legend: {
         align: 'right',
         verticalAlign: 'middle',
         layout: 'vertical'
     },
-    series: [{
-        data: [1, 2, 3, 4]
-    }, {
-        data: [1, 2, 3, 4],
-        xAxis: 1
-    }]
+    series: [
+        {
+            data: [1, 2, 3, 4]
+        },
+        {
+            data: [1, 2, 3, 4],
+            xAxis: 1
+        }
+    ]
 });

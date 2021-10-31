@@ -6,7 +6,6 @@ Highcharts.setOptions({
 });
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Numeric symbols magnitude'
     },
@@ -16,14 +15,29 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
-    series: [{
-        data: [2990, 7150, 10640, 12920, 14400, 17600,
-            13560, 14850, 21640, 19410, 9560, 5440],
-        type: 'column'
-    }]
-
+    series: [
+        {
+            data: [
+                2990, 7150, 10640, 12920, 14400, 17600, 13560, 14850, 21640,
+                19410, 9560, 5440
+            ],
+            type: 'column'
+        }
+    ]
 });

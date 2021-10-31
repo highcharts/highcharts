@@ -2,29 +2,32 @@ var chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
     },
-    series: [{
-        data: [1, 4, 3, 5],
-        type: 'spline'
-    }, {
-        data: [null, 14, 13, 15],
-        type: 'spline'
-    }, {
-        type: 'scatter',
-        dataLabels: {
-            enabled: true,
-            format: 'Nice text around the shape',
-            textPath: {
-                enabled: true
-            }
+    series: [
+        {
+            data: [1, 4, 3, 5],
+            type: 'spline'
         },
-        marker: {
-            radius: 40,
-            symbol: 'circle'
+        {
+            data: [null, 14, 13, 15],
+            type: 'spline'
         },
-        data: [15]
-    }]
+        {
+            type: 'scatter',
+            dataLabels: {
+                enabled: true,
+                format: 'Nice text around the shape',
+                textPath: {
+                    enabled: true
+                }
+            },
+            marker: {
+                radius: 40,
+                symbol: 'circle'
+            },
+            data: [15]
+        }
+    ]
 });
-
 
 chart.renderer
     .text('text(): The quick brown fox jumps over the lazy dog', 0, 0)

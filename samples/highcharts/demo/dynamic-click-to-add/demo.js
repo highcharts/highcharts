@@ -11,7 +11,6 @@ Highcharts.chart('container', {
 
                 // Add it
                 series.addPoint([x, y]);
-
             }
         }
     },
@@ -39,11 +38,13 @@ Highcharts.chart('container', {
         minPadding: 0.2,
         maxPadding: 0.2,
         maxZoom: 60,
-        plotLines: [{
-            value: 0,
-            width: 1,
-            color: '#808080'
-        }]
+        plotLines: [
+            {
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }
+        ]
     },
     legend: {
         enabled: false
@@ -65,7 +66,12 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        data: [[20, 20], [80, 80]]
-    }]
+    series: [
+        {
+            data: [
+                [20, 20],
+                [80, 80]
+            ]
+        }
+    ]
 });

@@ -5,7 +5,6 @@
  * Last updated: 2016-09-23
  */
 (function (H) {
-
     // Skip advanced options testing, assume all points are given as [x, y]
     H.seriesTypes.scatter.prototype.pointClass = H.extendClass(H.Point, {
         init: function (series, options) {
@@ -87,7 +86,8 @@
                 groups.push(group);
             }
 
-            if (!group.length && !oddOrEven) { // finished adding points to even stripes
+            if (!group.length && !oddOrEven) {
+                // finished adding points to even stripes
                 oddOrEven = 1;
             }
         }
@@ -130,16 +130,17 @@
             }
 
             paths.push(path);
-
-
         }
 
         // render
         for (i = 0; i < paths.length; i += 1) {
             if (!layers[i]) {
-                layers[i] = renderer.path(paths[i]).attr({
-                    fill: this.pointAttribs().fill
-                }).add(this.markerGroup);
+                layers[i] = renderer
+                    .path(paths[i])
+                    .attr({
+                        fill: this.pointAttribs().fill
+                    })
+                    .add(this.markerGroup);
             } else {
                 layers[i].attr({
                     d: paths[i]
@@ -148,8 +149,7 @@
         }
         layers.length = i;
     };
-
-}(Highcharts));
+})(Highcharts);
 // End faster scatter mod
 
 // Prepare the data
@@ -163,49 +163,53 @@ for (var i = 0; i < 50000; i += 1) {
 
 var start = +new Date();
 //console.profile('scatter');
-Highcharts.chart('container', {
+Highcharts.chart(
+    'container',
+    {
+        xAxis: {
+            gridLineWidth: 1
+        },
+        yAxis: {
+            min: 0,
+            max: 100
+        },
 
-    xAxis: {
-        gridLineWidth: 1
-    },
-    yAxis: {
-        min: 0,
-        max: 100
-    },
-
-    title: {
-        text: 'Scatter chart with ' + data.length + ' points'
-    },
-    subtitle: {
-        text: 'Rendered in ...'
-    },
-    legend: {
-        enabled: false
-    },
-    series: [{
-        type: 'scatter',
-        animation: false,
-        data: data,
-        color: 'rgba(152,0,67,0.2)',
-        marker: {
-            radius: 1,
-            states: {
-                hover: {
-                    radius: 2,
-                    lineWidth: 1,
-                    lineColor: 'black'
+        title: {
+            text: 'Scatter chart with ' + data.length + ' points'
+        },
+        subtitle: {
+            text: 'Rendered in ...'
+        },
+        legend: {
+            enabled: false
+        },
+        series: [
+            {
+                type: 'scatter',
+                animation: false,
+                data: data,
+                color: 'rgba(152,0,67,0.2)',
+                marker: {
+                    radius: 1,
+                    states: {
+                        hover: {
+                            radius: 2,
+                            lineWidth: 1,
+                            lineColor: 'black'
+                        }
+                    }
+                },
+                tooltip: {
+                    followPointer: false,
+                    pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
                 }
             }
-        },
-        tooltip: {
-            followPointer: false,
-            pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
-        }
-    }]
-
-}, function (chart) {
-    //console.profileEnd('scatter');
-    chart.setTitle(null, {
-        text: 'Rendered in ' + (new Date() - start) + ' ms by Highcharts'
-    });
-});
+        ]
+    },
+    function (chart) {
+        //console.profileEnd('scatter');
+        chart.setTitle(null, {
+            text: 'Rendered in ' + (new Date() - start) + ' ms by Highcharts'
+        });
+    }
+);

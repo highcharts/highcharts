@@ -3,12 +3,14 @@ function breakEffect(axis, point, path, color) {
         brkLine = point.brkLine;
 
     if (!brkLine) {
-        point.brkLine = brkLine = renderer.path(path)
+        point.brkLine = brkLine = renderer
+            .path(path)
             .attr({
                 'stroke-width': 1,
                 stroke: color,
                 fill: color
-            }).add(point.graphic.parentGroup);
+            })
+            .add(point.graphic.parentGroup);
     } else {
         brkLine.attr({
             d: path
@@ -38,7 +40,18 @@ function pointInBreak(item) {
         y = axis.toPixels(brk.to) - axis.top + 1,
         h = axis.toPixels(brk.from) - axis.toPixels(brk.to),
         w = sA.width - 1,
-        path = ['M', x, y + h, 'L', x + (w / 2), y + (h / 2), 'L', x + w, y + h, 'Z'];
+        path = [
+            'M',
+            x,
+            y + h,
+            'L',
+            x + w / 2,
+            y + h / 2,
+            'L',
+            x + w,
+            y + h,
+            'Z'
+        ];
 
     breakEffect(this, point, path, point.color || point.series.color);
 }
@@ -52,21 +65,38 @@ Highcharts.chart('container', {
         text: 'Chart with a more elaborate break effect'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
     yAxis: {
         title: false,
         tickInterval: 100,
-        breaks: [{
-            from: 500,
-            to: 3000,
-            breakSize: 100
-        }],
-        plotBands: [{
-            from: 500,
-            to: 3000,
-            color: '#F0F0F0'
-        }],
+        breaks: [
+            {
+                from: 500,
+                to: 3000,
+                breakSize: 100
+            }
+        ],
+        plotBands: [
+            {
+                from: 500,
+                to: 3000,
+                color: '#F0F0F0'
+            }
+        ],
         events: {
             pointBreak: pointBreak,
             pointInBreak: pointInBreak
@@ -77,12 +107,16 @@ Highcharts.chart('container', {
             animation: false
         }
     },
-    series: [{
-        name: 'Attraction 1',
-        data: [44, 128, 180, 345, 3050, 3590, 3840, 3630, 3120, 420, 240, 80]
-    }, {
-        name: 'Attraction 2',
-        data: [64, 138, 164, 408, 3120, 3540, 3875, 3420, 720, 320, 160, 20]
-    }]
-
+    series: [
+        {
+            name: 'Attraction 1',
+            data: [
+                44, 128, 180, 345, 3050, 3590, 3840, 3630, 3120, 420, 240, 80
+            ]
+        },
+        {
+            name: 'Attraction 2',
+            data: [64, 138, 164, 408, 3120, 3540, 3875, 3420, 720, 320, 160, 20]
+        }
+    ]
 });

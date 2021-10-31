@@ -33,10 +33,12 @@ Highcharts.chart('container', {
         tickWidth: 0
     },
 
-    series: [{
-        data: [39.9, 71.5, 106.4],
-        dataLabels: {
-            enabled: true
+    series: [
+        {
+            data: [39.9, 71.5, 106.4],
+            dataLabels: {
+                enabled: true
+            }
         }
-    }]
+    ]
 });

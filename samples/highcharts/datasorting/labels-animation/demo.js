@@ -1,4 +1,15 @@
-var names = ['Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas', 'Maria', 'Leon', 'Anna', 'Tim', 'Laura'];
+var names = [
+    'Alexander',
+    'Marie',
+    'Maximilian',
+    'Sophia',
+    'Lukas',
+    'Maria',
+    'Leon',
+    'Anna',
+    'Tim',
+    'Laura'
+];
 
 function getRandomData() {
     var data = [];
@@ -11,7 +22,6 @@ function getRandomData() {
 }
 
 var chart = Highcharts.chart('container', {
-
     chart: {
         type: 'bar',
         marginLeft: 100
@@ -39,29 +49,28 @@ var chart = Highcharts.chart('container', {
         enabled: false
     },
 
-    series: [{
-        zoneAxis: 'x',
-        zones: [{
-            value: 1,
-            color: '#ff4d40'
-        }],
-        dataLabels: {
-            enabled: true,
-            format: '{y:,.2f}'
-        },
-        dataSorting: {
-            enabled: true,
-            sortKey: 'y'
-        },
-        data: getRandomData()
-    }]
-
+    series: [
+        {
+            zoneAxis: 'x',
+            zones: [
+                {
+                    value: 1,
+                    color: '#ff4d40'
+                }
+            ],
+            dataLabels: {
+                enabled: true,
+                format: '{y:,.2f}'
+            },
+            dataSorting: {
+                enabled: true,
+                sortKey: 'y'
+            },
+            data: getRandomData()
+        }
+    ]
 });
 
 setInterval(function () {
-    chart.series[0].setData(
-        getRandomData(),
-        true,
-        { duration: 2000 }
-    );
+    chart.series[0].setData(getRandomData(), true, { duration: 2000 });
 }, 3000);

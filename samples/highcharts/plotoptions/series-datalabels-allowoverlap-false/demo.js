@@ -5,19 +5,21 @@ const chart = Highcharts.chart('container', {
     title: {
         text: 'Hide overlapping data labels'
     },
-    series: [{
-        data: ((arr, len) => {
-            var i;
-            for (i = 0; i < len; i = i + 1) {
-                arr.push(i);
+    series: [
+        {
+            data: ((arr, len) => {
+                var i;
+                for (i = 0; i < len; i = i + 1) {
+                    arr.push(i);
+                }
+                return arr;
+            })([], 50),
+            dataLabels: {
+                enabled: true,
+                y: -5
             }
-            return arr;
-        })([], 50),
-        dataLabels: {
-            enabled: true,
-            y: -5
         }
-    }]
+    ]
 });
 
 document.getElementById('setextremes').addEventListener('click', () => {

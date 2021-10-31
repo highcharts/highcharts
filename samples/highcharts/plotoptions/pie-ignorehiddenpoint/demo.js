@@ -16,21 +16,23 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        ignoreHiddenPoint: true,
-        type: 'pie',
-        name: 'Browser share',
-        data: [
-            ['Firefox',   45.0],
-            ['IE',       26.8],
-            {
-                name: 'Chrome',
-                y: 12.8,
-                visible: false
-            },
-            ['Safari',    8.5],
-            ['Opera',     6.2],
-            ['Others',   0.7]
-        ]
-    }]
+    series: [
+        {
+            ignoreHiddenPoint: true,
+            type: 'pie',
+            name: 'Browser share',
+            data: [
+                ['Firefox', 45.0],
+                ['IE', 26.8],
+                {
+                    name: 'Chrome',
+                    y: 12.8,
+                    visible: false
+                },
+                ['Safari', 8.5],
+                ['Opera', 6.2],
+                ['Others', 0.7]
+            ]
+        }
+    ]
 });

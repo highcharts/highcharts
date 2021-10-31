@@ -16,7 +16,6 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 
 console.time('bubble');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'xy'
     },
@@ -37,7 +36,10 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+        text:
+            'Bubble chart with ' +
+            Highcharts.numberFormat(data.length, 0, ' ') +
+            ' points'
     },
 
     legend: {
@@ -49,19 +51,20 @@ Highcharts.chart('container', {
         usePreallocated: true
     },
 
-    series: [{
-        type: 'bubble',
-        boostBlending: 'alpha',
-        color: 'rgb(152, 0, 67)',
-        fillOpacity: 0.1,
-        data: data,
-        minSize: 1,
-        maxSize: 10,
-        tooltip: {
-            followPointer: false,
-            pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+    series: [
+        {
+            type: 'bubble',
+            boostBlending: 'alpha',
+            color: 'rgb(152, 0, 67)',
+            fillOpacity: 0.1,
+            data: data,
+            minSize: 1,
+            maxSize: 10,
+            tooltip: {
+                followPointer: false,
+                pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+            }
         }
-    }]
-
+    ]
 });
 console.timeEnd('bubble');

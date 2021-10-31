@@ -1,31 +1,41 @@
-const dataSequence = [{
-    name: '2009',
-    data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
-}, {
-    name: '2010',
-    data: [6, 12, 2, 3, 3, 2, 2, 3, 2, 2]
-}, {
-    name: '2011',
-    data: [4, 5, 6, 5, 5, 4, 9, 5, 3, 4]
-}, {
-    name: '2012',
-    data: [5, 5, 6, 6, 5, 6, 6, 5, 5, 6]
-}, {
-    name: '2013',
-    data: [6, 7, 7, 6, 6, 6, 7, 7, 6, 7]
-}, {
-    name: '2014',
-    data: [8, 9, 9, 8, 8, 8, 9, 9, 8, 9]
-}, {
-    name: '2015',
-    data: [9, 10, 4, 10, 9, 9, 9, 10, 10, 10]
-}, {
-    name: '2016',
-    data: [1, 10, 10, 10, 10, 11, 11, 11, 12, 12]
-}, {
-    name: '2017',
-    data: [11, 11, 12, 12, 12, 11, 11, 12, 12, 12]
-}];
+const dataSequence = [
+    {
+        name: '2009',
+        data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
+    },
+    {
+        name: '2010',
+        data: [6, 12, 2, 3, 3, 2, 2, 3, 2, 2]
+    },
+    {
+        name: '2011',
+        data: [4, 5, 6, 5, 5, 4, 9, 5, 3, 4]
+    },
+    {
+        name: '2012',
+        data: [5, 5, 6, 6, 5, 6, 6, 5, 5, 6]
+    },
+    {
+        name: '2013',
+        data: [6, 7, 7, 6, 6, 6, 7, 7, 6, 7]
+    },
+    {
+        name: '2014',
+        data: [8, 9, 9, 8, 8, 8, 9, 9, 8, 9]
+    },
+    {
+        name: '2015',
+        data: [9, 10, 4, 10, 9, 9, 9, 10, 10, 10]
+    },
+    {
+        name: '2016',
+        data: [1, 10, 10, 10, 10, 11, 11, 11, 12, 12]
+    },
+    {
+        name: '2017',
+        data: [11, 11, 12, 12, 12, 11, 11, 12, 12, 12]
+    }
+];
 
 const chart = Highcharts.mapChart('container', {
     title: {
@@ -44,21 +54,23 @@ const chart = Highcharts.mapChart('container', {
         min: 0,
         max: 12
     },
-    series: [{
-        data: dataSequence[0].data,
-        mapData: Highcharts.maps['countries/au/au-all'],
-        joinBy: null,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#a4edba'
+    series: [
+        {
+            data: dataSequence[0].data,
+            mapData: Highcharts.maps['countries/au/au-all'],
+            joinBy: null,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#a4edba'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
             }
-        },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
         }
-    }]
+    ]
 });
 
 /**
@@ -85,7 +97,8 @@ function update(increment) {
     }
     chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
     output.innerHTML = dataSequence[input.value].name; // Output value
-    if (input.value >= input.max) { // Auto-pause
+    if (input.value >= input.max) {
+        // Auto-pause
         pause(document.getElementById('play-pause-button'));
     }
 }
@@ -104,7 +117,7 @@ function play(button) {
 /**
  * Toggle play and pause from the button
  */
-document.getElementById('play-pause-button').addEventListener('click', e => {
+document.getElementById('play-pause-button').addEventListener('click', (e) => {
     if (chart.sequenceTimer === undefined) {
         play(e.target);
     } else {

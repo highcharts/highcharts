@@ -11,15 +11,17 @@ function addText(text) {
 }
 
 function fallbackHandler(options) {
-    if (options.type !== 'image/svg+xml' && isOldEdgeBrowser ||
-        options.type === 'application/pdf' && isMSBrowser) {
+    if (
+        (options.type !== 'image/svg+xml' && isOldEdgeBrowser) ||
+        (options.type === 'application/pdf' && isMSBrowser)
+    ) {
         addText(options.type + ' fell back on purpose');
     } else {
-        throw 'Should not have to fall back for this combination. ' +
-            options.type;
+        throw (
+            'Should not have to fall back for this combination. ' + options.type
+        );
     }
 }
-
 
 // NOTE: dataURL length limits in certain browsers. #6108
 
@@ -39,7 +41,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Lots of data points, test PDF in particular'
     },
-    series: [{
-        data: arr
-    }]
+    series: [
+        {
+            data: arr
+        }
+    ]
 });

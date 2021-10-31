@@ -49,12 +49,11 @@ document.getElementById('playFalling').onclick = function () {
 
 // Play musical notes in sequence
 document.getElementById('playMusic').onclick = function () {
-
     // Simple fade in and out via a volume
     var fade = function (to, time) {
-        return time < 0.5 ?
-            Math.min(4 * time * time, to) : // Fade in
-            Math.min(1 - time * time, to); // Fade out
+        return time < 0.5
+            ? Math.min(4 * time * time, to) // Fade in
+            : Math.min(1 - time * time, to); // Fade out
     };
 
     // Bass
@@ -93,7 +92,7 @@ document.getElementById('playMusic').onclick = function () {
     sine.play({
         frequency: function (time) {
             var sequence = [
-                987, 2093, 1760, 987, 1046.50, 1567.98, 1396.91, 1318.51, 1760,
+                987, 2093, 1760, 987, 1046.5, 1567.98, 1396.91, 1318.51, 1760,
                 1567.98, 1318.51, 880, 880, 880
             ];
             return sequence[Math.round((sequence.length - 1) * time)];

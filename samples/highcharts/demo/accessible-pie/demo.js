@@ -53,49 +53,63 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Screen reader usage',
-        data: [{
-            name: 'NVDA',
-            y: 40.6,
-            website: 'https://www.nvaccess.org',
-            accessibility: {
-                description: 'This is the most used desktop screen reader'
-            }
-        }, {
-            name: 'JAWS',
-            y: 40.1,
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
-        }, {
-            name: 'VoiceOver',
-            y: 12.9,
-            website: 'http://www.apple.com/accessibility/osx/voiceover'
-        }, {
-            name: 'ZoomText',
-            y: 2,
-            website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
-        }, {
-            name: 'Other',
-            y: 4.4,
-            website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
-        }]
-    }],
+    series: [
+        {
+            name: 'Screen reader usage',
+            data: [
+                {
+                    name: 'NVDA',
+                    y: 40.6,
+                    website: 'https://www.nvaccess.org',
+                    accessibility: {
+                        description:
+                            'This is the most used desktop screen reader'
+                    }
+                },
+                {
+                    name: 'JAWS',
+                    y: 40.1,
+                    website:
+                        'https://www.freedomscientific.com/Products/Blindness/JAWS'
+                },
+                {
+                    name: 'VoiceOver',
+                    y: 12.9,
+                    website: 'http://www.apple.com/accessibility/osx/voiceover'
+                },
+                {
+                    name: 'ZoomText',
+                    y: 2,
+                    website:
+                        'http://www.zoomtext.com/products/zoomtext-magnifierreader'
+                },
+                {
+                    name: 'Other',
+                    y: 4.4,
+                    website:
+                        'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
+                }
+            ]
+        }
+    ],
 
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            format: '<b>{point.name}</b>'
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                format: '<b>{point.name}</b>'
+                            }
                         }
                     }
                 }
             }
-        }]
+        ]
     }
 });
 

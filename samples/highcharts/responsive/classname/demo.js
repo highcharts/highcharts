@@ -16,21 +16,25 @@ const chart = Highcharts.chart('container', {
             text: 'Amount'
         }
     },
-    series: [{
-        name: 'Fruits',
-        data: [1, 4, 3]
-    }],
+    series: [
+        {
+            name: 'Fruits',
+            data: [1, 4, 3]
+        }
+    ],
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                chart: {
-                    className: 'small-chart'
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    chart: {
+                        className: 'small-chart'
+                    }
                 }
             }
-        }]
+        ]
     }
 });
 

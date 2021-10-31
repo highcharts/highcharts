@@ -1,5 +1,4 @@
 var chart = Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },
@@ -32,46 +31,52 @@ var chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Christmas Eve',
-        data: [1, 4, 3]
-    }, {
-        name: 'Christmas Day before dinner',
-        data: [6, 4, 2]
-    }, {
-        name: 'Christmas Day after dinner',
-        data: [8, 4, 3]
-    }],
+    series: [
+        {
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        },
+        {
+            name: 'Christmas Day before dinner',
+            data: [6, 4, 2]
+        },
+        {
+            name: 'Christmas Day after dinner',
+            data: [8, 4, 3]
+        }
+    ],
 
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    align: 'center',
-                    verticalAlign: 'bottom',
-                    layout: 'horizontal'
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
                 },
-                yAxis: {
-                    labels: {
-                        align: 'left',
-                        x: 0,
-                        y: -5
+                chartOptions: {
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal'
                     },
-                    title: {
+                    yAxis: {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -5
+                        },
+                        title: {
+                            text: null
+                        }
+                    },
+                    subtitle: {
                         text: null
+                    },
+                    credits: {
+                        enabled: false
                     }
-                },
-                subtitle: {
-                    text: null
-                },
-                credits: {
-                    enabled: false
                 }
             }
-        }]
+        ]
     }
 });
 

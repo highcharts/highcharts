@@ -266,19 +266,23 @@ const chartOptions = {
     },
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: 'Column chart showing a selected high contrast theme'
+            beforeChartFormat:
+                'Column chart showing a selected high contrast theme'
         },
         landmarkVerbosity: 'one'
     },
     credits: {
         enabled: false
     },
-    series: [{
-        colorByPoint: true,
-        data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
-    }, {
-        data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
-    }]
+    series: [
+        {
+            colorByPoint: true,
+            data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+        },
+        {
+            data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+        }
+    ]
 };
 
 const initialOptions = JSON.parse(JSON.stringify(Highcharts.getOptions()));

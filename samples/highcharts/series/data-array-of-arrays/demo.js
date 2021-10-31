@@ -4,11 +4,13 @@ Highcharts.chart('container', {
         maxPadding: 0.05
     },
 
-    series: [{
-        data: [
-            [0, 29.9],
-            [1, 71.5],
-            [3, 106.4]
-        ]
-    }]
+    series: [
+        {
+            data: [
+                [0, 29.9],
+                [1, 71.5],
+                [3, 106.4]
+            ]
+        }
+    ]
 });

@@ -20,7 +20,9 @@ Highcharts.chart('container', {
             groupZPadding: 100
         }
     },
-    series: [{
-        data: [2, 3, null, 4, 0, 5]
-    }]
+    series: [
+        {
+            data: [2, 3, null, 4, 0, 5]
+        }
+    ]
 });

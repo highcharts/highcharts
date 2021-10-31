@@ -21,8 +21,11 @@ Highcharts.chart('container', {
                 enabled: true,
                 alignTo: 'plotEdges',
                 format: '<b>{point.name}</b>: {point.y}',
-                connectorShape: function (labelPosition, connectorPosition, options) {
-
+                connectorShape: function (
+                    labelPosition,
+                    connectorPosition,
+                    options
+                ) {
                     var connectorPadding = options.connectorPadding,
                         touchingSliceAt = connectorPosition.touchingSliceAt,
                         series = this.series,
@@ -30,11 +33,15 @@ Highcharts.chart('container', {
                         plotLeft = series.chart.plotLeft,
                         alignment = labelPosition.alignment,
                         stepDistance = 150, // in px - distance betwenn the step and vertical plot border
-                        stepX = alignment === 'left' ? plotLeft + plotWidth - stepDistance : plotLeft + stepDistance;
+                        stepX =
+                            alignment === 'left'
+                                ? plotLeft + plotWidth - stepDistance
+                                : plotLeft + stepDistance;
 
-                    return ['M',
-                        labelPosition.x + (alignment === 'left' ? 1 : -1) *
-            connectorPadding,
+                    return [
+                        'M',
+                        labelPosition.x +
+                            (alignment === 'left' ? 1 : -1) * connectorPadding,
                         labelPosition.y,
                         'L',
                         stepX,
@@ -46,38 +53,48 @@ Highcharts.chart('container', {
                         touchingSliceAt.x,
                         touchingSliceAt.y
                     ];
-
                 }
             }
         }
     },
-    series: [{
-        name: 'Teams',
-        colorByPoint: true,
-        data: [{
-            name: 'Spain',
-            y: 1
-        }, {
-            name: 'Brazil',
-            y: 5
-        }, {
-            name: 'England',
-            y: 1
-        }, {
-            name: 'Germany',
-            y: 4
-        }, {
-            name: 'Italy',
-            y: 4
-        }, {
-            name: 'Uruguay',
-            y: 2
-        }, {
-            name: 'Argentina',
-            y: 2
-        }, {
-            name: 'France',
-            y: 2
-        }]
-    }]
+    series: [
+        {
+            name: 'Teams',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Spain',
+                    y: 1
+                },
+                {
+                    name: 'Brazil',
+                    y: 5
+                },
+                {
+                    name: 'England',
+                    y: 1
+                },
+                {
+                    name: 'Germany',
+                    y: 4
+                },
+                {
+                    name: 'Italy',
+                    y: 4
+                },
+                {
+                    name: 'Uruguay',
+                    y: 2
+                },
+                {
+                    name: 'Argentina',
+                    y: 2
+                },
+                {
+                    name: 'France',
+                    y: 2
+                }
+            ]
+        }
+    ]
 });

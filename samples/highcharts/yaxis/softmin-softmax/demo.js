@@ -6,7 +6,20 @@ const chart = Highcharts.chart('container', {
         text: 'Click the button to change data max'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
     yAxis: {
         softMax: 100,
@@ -14,9 +27,11 @@ const chart = Highcharts.chart('container', {
             text: 'Percentage'
         }
     },
-    series: [{
-        data: [0, 1, 0, 2, 3, 5, 8, 5, 15, 14, 25, 54]
-    }]
+    series: [
+        {
+            data: [0, 1, 0, 2, 3, 5, 8, 5, 15, 14, 25, 54]
+        }
+    ]
 });
 
 let toggle = false;

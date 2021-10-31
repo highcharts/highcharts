@@ -27,9 +27,12 @@ Highcharts.chart('container', {
             text: null
         }
     },
-    series: [{
-        data: [2, 3, null, 4, 0, 5]
-    }, {
-        data: [4, null, 1, 2, 1, 3]
-    }]
+    series: [
+        {
+            data: [2, 3, null, 4, 0, 5]
+        },
+        {
+            data: [4, null, 1, 2, 1, 3]
+        }
+    ]
 });

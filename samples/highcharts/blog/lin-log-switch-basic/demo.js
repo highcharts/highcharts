@@ -2,10 +2,12 @@ const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
     },
-    series: [{
-        data: [1, 11, 209, 0.2],
-        type: 'column'
-    }]
+    series: [
+        {
+            data: [1, 11, 209, 0.2],
+            type: 'column'
+        }
+    ]
 });
 
 let isLogarithmic = false;

@@ -1,6 +1,19 @@
 Highcharts.chart('container', {
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     plotOptions: {
@@ -9,7 +22,8 @@ Highcharts.chart('container', {
                 checkboxClick: function (event) {
                     var text = 'The checkbox is now ' + event.checked;
                     if (!this.chart.lbl) {
-                        this.chart.lbl = this.chart.renderer.label(text, 100, 70)
+                        this.chart.lbl = this.chart.renderer
+                            .label(text, 100, 70)
                             .attr({
                                 padding: 10,
                                 r: 5,
@@ -31,7 +45,12 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-    }]
+    series: [
+        {
+            data: [
+                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ]
+        }
+    ]
 });

@@ -14,9 +14,11 @@ Highcharts.stockChart('container', {
             color: Highcharts.getOptions().colors[0]
         }
     },
-    series: [{
-        type: 'hollowcandlestick',
-        name: 'Hollow Candlestick',
-        data: data
-    }]
+    series: [
+        {
+            type: 'hollowcandlestick',
+            name: 'Hollow Candlestick',
+            data: data
+        }
+    ]
 });

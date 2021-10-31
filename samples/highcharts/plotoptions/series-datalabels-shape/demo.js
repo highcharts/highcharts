@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },
@@ -13,7 +12,20 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     plotOptions: {
@@ -29,45 +41,59 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [{
-            y: 29.9,
-            dataLabels: {
-                enabled: true,
-                format: 'January<br><span style="font-size: 1.3em">Dryest</span>',
-                verticalAlign: 'bottom',
-                y: -10
-            }
-        }, {
-            y: 71.5
-        }, {
-            y: 106.4
-        }, {
-            y: 129.2
-        }, {
-            y: 144.0
-        }, {
-            y: 176.0
-        }, {
-            y: 135.6
-        }, {
-            y: 148.5
-        }, {
-            y: 216.4,
-            dataLabels: {
-                enabled: true,
-                format: 'September<br><span style="font-size: 1.3em">Wettest</span>',
-                align: 'right',
-                verticalAlign: 'middle',
-                x: -35
-
-            }
-        }, {
-            y: 194.1
-        }, {
-            y: 95.6
-        }, {
-            y: 54.4
-        }]
-    }]
+    series: [
+        {
+            data: [
+                {
+                    y: 29.9,
+                    dataLabels: {
+                        enabled: true,
+                        format: 'January<br><span style="font-size: 1.3em">Dryest</span>',
+                        verticalAlign: 'bottom',
+                        y: -10
+                    }
+                },
+                {
+                    y: 71.5
+                },
+                {
+                    y: 106.4
+                },
+                {
+                    y: 129.2
+                },
+                {
+                    y: 144.0
+                },
+                {
+                    y: 176.0
+                },
+                {
+                    y: 135.6
+                },
+                {
+                    y: 148.5
+                },
+                {
+                    y: 216.4,
+                    dataLabels: {
+                        enabled: true,
+                        format: 'September<br><span style="font-size: 1.3em">Wettest</span>',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        x: -35
+                    }
+                },
+                {
+                    y: 194.1
+                },
+                {
+                    y: 95.6
+                },
+                {
+                    y: 54.4
+                }
+            ]
+        }
+    ]
 });

@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         marginLeft: 120
     },
@@ -9,7 +8,20 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ],
         offset: 10,
         lineWidth: 2
     },
@@ -21,9 +33,10 @@ Highcharts.chart('container', {
         tickWidth: 1
     },
 
-    series: [{
-        type: 'spline',
-        data: [29.9, 71.5, 0, 0, 0, 450.0, 135.6, 148.5, 216.4, 0, 0, 0]
-    }]
-
+    series: [
+        {
+            type: 'spline',
+            data: [29.9, 71.5, 0, 0, 0, 450.0, 135.6, 148.5, 216.4, 0, 0, 0]
+        }
+    ]
 });

@@ -20,35 +20,43 @@ var chart = Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        type: 'column',
-        id: 'columnSeries',
-        data: [1, 2, 4, 5, 7, 9, 7, 5]
-    }, {
-        type: 'scatter',
-        id: 'scatterSeriesA',
-        data: [4, null, 7, 11, 13, 13],
-        sonification: {
-            instruments: [{
-                instrument: 'sineMajor',
-                mapping: {
-                    pan: -1
-                }
-            }]
+    series: [
+        {
+            type: 'column',
+            id: 'columnSeries',
+            data: [1, 2, 4, 5, 7, 9, 7, 5]
+        },
+        {
+            type: 'scatter',
+            id: 'scatterSeriesA',
+            data: [4, null, 7, 11, 13, 13],
+            sonification: {
+                instruments: [
+                    {
+                        instrument: 'sineMajor',
+                        mapping: {
+                            pan: -1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            type: 'scatter',
+            id: 'scatterSeriesB',
+            data: [2, 3, 9, 9, 11, 11, 9],
+            sonification: {
+                instruments: [
+                    {
+                        mapping: {
+                            volume: 0.4,
+                            pan: 1
+                        }
+                    }
+                ]
+            }
         }
-    }, {
-        type: 'scatter',
-        id: 'scatterSeriesB',
-        data: [2, 3, 9, 9, 11, 11, 9],
-        sonification: {
-            instruments: [{
-                mapping: {
-                    volume: 0.4,
-                    pan: 1
-                }
-            }]
-        }
-    }]
+    ]
 });
 
 document.getElementById('sonify').onclick = function () {

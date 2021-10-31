@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'area'
     },
@@ -12,12 +11,14 @@ Highcharts.chart('container', {
             stacking: 'normal'
         }
     },
-    series: [{
-        type: 'area',
-        data: [1, 1, null, 1, 1, 1]
-    }, {
-        type: 'area',
-        data: [1, 1, 1, null, 1, 1]
-    }]
-
+    series: [
+        {
+            type: 'area',
+            data: [1, 1, null, 1, 1, 1]
+        },
+        {
+            type: 'area',
+            data: [1, 1, 1, null, 1, 1]
+        }
+    ]
 });

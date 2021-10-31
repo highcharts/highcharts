@@ -6,7 +6,7 @@ Highcharts.chart('container', {
         marginTop: 25
     },
     title: {
-        text: 'Custom xAxis\' angle on inverted polar chart'
+        text: "Custom xAxis' angle on inverted polar chart"
     },
     xAxis: {
         angle: 324,
@@ -26,8 +26,10 @@ Highcharts.chart('container', {
         min: 0,
         max: 10
     },
-    series: [{
-        borderWidth: 0,
-        data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    }]
+    series: [
+        {
+            borderWidth: 0,
+            data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        }
+    ]
 });

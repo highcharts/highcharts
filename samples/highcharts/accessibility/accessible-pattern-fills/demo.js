@@ -32,7 +32,8 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
+            beforeChartFormat:
+                '<p>Area chart showing use of visual pattern fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -57,24 +58,39 @@ Highcharts.chart('container-area', {
         enabled: false
     },
 
-    series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6],
-        color: '#88e',
-        fillColor: {
-            pattern: {
-                color: '#11d'
+    series: [
+        {
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6],
+            color: '#88e',
+            fillColor: {
+                pattern: {
+                    color: '#11d'
+                }
+            }
+        },
+        {
+            data: [
+                null,
+                null,
+                null,
+                null,
+                null,
+                43.1,
+                95.6,
+                148.5,
+                216.4,
+                194.1,
+                95.6,
+                54.4
+            ],
+            color: '#e88',
+            fillColor: {
+                pattern: {
+                    color: '#d11'
+                }
             }
         }
-    }, {
-        data: [null, null, null, null, null,
-            43.1, 95.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        color: '#e88',
-        fillColor: {
-            pattern: {
-                color: '#d11'
-            }
-        }
-    }]
+    ]
 });
 
 Highcharts.chart('container-col', {
@@ -104,7 +120,8 @@ Highcharts.chart('container-col', {
 
     lang: {
         accessibility: {
-            chartContainerLabel: 'Column chart showing use of visual pattern fills.'
+            chartContainerLabel:
+                'Column chart showing use of visual pattern fills.'
         }
     },
 
@@ -115,61 +132,74 @@ Highcharts.chart('container-col', {
         landmarkVerbosity: 'one'
     },
 
-    series: [{
-        type: 'column',
-        borderColor: Highcharts.getOptions().colors[0],
-        data: [{
-            y: 1,
-            color: {
-                patternIndex: 0
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 1
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 2
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 3
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 4
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 5
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 6
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 7
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 8
-            }
-        }, {
-            y: 1,
-            color: {
-                patternIndex: 9
-            }
-        }]
-    }]
+    series: [
+        {
+            type: 'column',
+            borderColor: Highcharts.getOptions().colors[0],
+            data: [
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 0
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 1
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 2
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 3
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 4
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 5
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 6
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 7
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 8
+                    }
+                },
+                {
+                    y: 1,
+                    color: {
+                        patternIndex: 9
+                    }
+                }
+            ]
+        }
+    ]
 });
 
 function getColorPattern(i) {
@@ -193,7 +223,6 @@ function getColorPattern(i) {
     };
 }
 
-
 Highcharts.chart('container-pie', {
     chart: {
         type: 'pie'
@@ -215,7 +244,8 @@ Highcharts.chart('container-pie', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Pie chart showing use of visual pattern fills.</p>'
+            beforeChartFormat:
+                '<p>Pie chart showing use of visual pattern fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -237,24 +267,32 @@ Highcharts.chart('container-pie', {
         }
     },
 
-    series: [{
-        data: [{
-            y: 40.6,
-            color: getColorPattern(0)
-        }, {
-            y: 40.1,
-            color: getColorPattern(1)
-        }, {
-            y: 12.9,
-            color: getColorPattern(2)
-        }, {
-            y: 2,
-            color: getColorPattern(3)
-        }, {
-            y: 4.4,
-            color: getColorPattern(4)
-        }]
-    }]
+    series: [
+        {
+            data: [
+                {
+                    y: 40.6,
+                    color: getColorPattern(0)
+                },
+                {
+                    y: 40.1,
+                    color: getColorPattern(1)
+                },
+                {
+                    y: 12.9,
+                    color: getColorPattern(2)
+                },
+                {
+                    y: 2,
+                    color: getColorPattern(3)
+                },
+                {
+                    y: 4.4,
+                    color: getColorPattern(4)
+                }
+            ]
+        }
+    ]
 });
 
 Highcharts.chart('container-line', {
@@ -301,28 +339,35 @@ Highcharts.chart('container-line', {
     yAxis: {
         visible: false
     },
-    series: [{
-        data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
-        color: colors[2]
-    }, {
-        data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7],
-        dashStyle: 'ShortDashDot',
-        color: colors[0]
-    }, {
-        data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1],
-        dashStyle: 'ShortDot',
-        color: colors[1]
-    }, {
-        data: [null, null, null, null, 21.4, 30.3],
-        dashStyle: 'Dash',
-        color: colors[9]
-    }, {
-        data: [6.1, 6.8, 5.3, 27.5, 6.0, 5.5],
-        dashStyle: 'ShortDot',
-        color: colors[5]
-    }, {
-        data: [42.6, 51.5, 54.2, 45.8, 20.2, 15.4],
-        dashStyle: 'ShortDash',
-        color: colors[3]
-    }]
+    series: [
+        {
+            data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
+            color: colors[2]
+        },
+        {
+            data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7],
+            dashStyle: 'ShortDashDot',
+            color: colors[0]
+        },
+        {
+            data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1],
+            dashStyle: 'ShortDot',
+            color: colors[1]
+        },
+        {
+            data: [null, null, null, null, 21.4, 30.3],
+            dashStyle: 'Dash',
+            color: colors[9]
+        },
+        {
+            data: [6.1, 6.8, 5.3, 27.5, 6.0, 5.5],
+            dashStyle: 'ShortDot',
+            color: colors[5]
+        },
+        {
+            data: [42.6, 51.5, 54.2, 45.8, 20.2, 15.4],
+            dashStyle: 'ShortDash',
+            color: colors[3]
+        }
+    ]
 });

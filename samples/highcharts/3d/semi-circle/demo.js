@@ -13,7 +13,9 @@ Highcharts.chart('container', {
             endAngle: 90
         }
     },
-    series: [{
-        data: [2, 4, 6, 1, 3]
-    }]
+    series: [
+        {
+            data: [2, 4, 6, 1, 3]
+        }
+    ]
 });

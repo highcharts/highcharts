@@ -29,16 +29,20 @@
             }
         }
         if (point) {
-            point.graphic.attr({
-                display: ''
-            }).animate({
-                opacity: 1
-            }, {
-                duration: 500
-            });
+            point.graphic
+                .attr({
+                    display: ''
+                })
+                .animate(
+                    {
+                        opacity: 1
+                    },
+                    {
+                        duration: 500
+                    }
+                );
         }
     };
-
 
     Chart.prototype.callbacks.push(function (chart) {
         var total = 0;
@@ -51,7 +55,8 @@
             total: total,
             remaining: total
         };
-        chart.puzzleCount = chart.renderer.label('', 10, 5)
+        chart.puzzleCount = chart.renderer
+            .label('', 10, 5)
             .css({
                 fontSize: '30px'
             })
@@ -60,7 +65,11 @@
         function updateCount(diff) {
             chart.puzzle.remaining += diff;
             chart.puzzleCount.attr({
-                text: (chart.puzzle.total - chart.puzzle.remaining) + ' / ' + chart.puzzle.total
+                text:
+                    chart.puzzle.total -
+                    chart.puzzle.remaining +
+                    ' / ' +
+                    chart.puzzle.total
             });
         }
         updateCount(0);
@@ -85,7 +94,6 @@
             stopDrag(point);
             updateCount(-1);
             chart.presentNext();
-
         }
 
         function pointerDown(e) {
@@ -129,19 +137,16 @@
                 translateX = startTranslateX + e.chartX - dragStart.chartX;
                 translateY = startTranslateY + e.chartY - dragStart.chartY;
 
-
                 // Pixel distance to target
                 dist = Math.sqrt(
-                    Math.pow(translateX, 2) +
-                    Math.pow(translateY, 2)
+                    Math.pow(translateX, 2) + Math.pow(translateY, 2)
                 );
-
 
                 // Proximity snap to the true position
                 if (dist < 20) {
                     drop(point);
 
-                // Else, move it along
+                    // Else, move it along
                 } else {
                     point.graphic
                         .attr({
@@ -161,7 +166,6 @@
             }
         }
 
-
         // Set events on the container
         addEvent(this.container, 'mousedown', pointerDown);
         addEvent(this.container, 'touchstart', pointerDown);
@@ -175,14 +179,12 @@
         var total = 0;
 
         if (this.options.puzzle) {
-
             each(this.points, function (point) {
                 var bBox = point.graphic.getBBox(),
                     scale = Math.min(100 / bBox.width, 100 / bBox.height);
 
                 // Small items are hard to place
                 if (bBox.width > 5 && bBox.height > 5) {
-
                     // Put it in the dock
                     point.graphic.attr({
                         scaleX: scale,
@@ -196,15 +198,13 @@
                     point.inPuzzle = true;
                     total++;
                 }
-
             });
 
             this.chart.presentNext();
         }
         return total;
     };
-
-}(Highcharts));
+})(Highcharts);
 
 var n,
     mapData,
@@ -226,7 +226,6 @@ Highcharts.each(mapData.features, function (feature) {
 
 // Initialize the chart
 Highcharts.mapChart('container', {
-
     title: {
         text: 'Highmaps puzzle',
         style: {
@@ -256,21 +255,24 @@ Highcharts.mapChart('container', {
         }
     },
 
-    series: [{
-        borderColor: '#e8e8e8',
-        mapData: mapData,
-        nullColor: 'transparent'
-    }, {
-        mapData: mapData,
-        colorByPoint: true,
-        data: data,
-        borderColor: '#000000',
-        joinBy: 'hc-key',
-        puzzle: true,
-        states: {
-            hover: {
-                color: Highcharts.getOptions().colors[2]
+    series: [
+        {
+            borderColor: '#e8e8e8',
+            mapData: mapData,
+            nullColor: 'transparent'
+        },
+        {
+            mapData: mapData,
+            colorByPoint: true,
+            data: data,
+            borderColor: '#000000',
+            joinBy: 'hc-key',
+            puzzle: true,
+            states: {
+                hover: {
+                    color: Highcharts.getOptions().colors[2]
+                }
             }
         }
-    }]
+    ]
 });

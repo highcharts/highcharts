@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     pane: {
         center: ['50%', '80%'],
         size: '130%',
@@ -25,11 +24,12 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        type: 'solidgauge',
-        innerRadius: '50%',
-        radius: '100%',
-        data: [54.4]
-    }]
-
+    series: [
+        {
+            type: 'solidgauge',
+            innerRadius: '50%',
+            radius: '100%',
+            data: [54.4]
+        }
+    ]
 });

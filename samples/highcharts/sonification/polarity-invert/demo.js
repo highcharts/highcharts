@@ -33,18 +33,32 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        data: [523, 587, 659, 696, 784, 880, 988, 1046]
-    }, {
-        // Frequencies such that when played with inverse polarity,
-        // the intervals correspond to the C5-C6 major scale
-        data: [1046, 1569 - 587, 1569 - 659, 1569 - 696, 1569 - 784, 1569 - 880, 1569 - 988, 1569 - 1046],
-        sonification: {
-            instruments: [{
-                mapping: {
-                    frequency: '-y'
-                }
-            }]
+    series: [
+        {
+            data: [523, 587, 659, 696, 784, 880, 988, 1046]
+        },
+        {
+            // Frequencies such that when played with inverse polarity,
+            // the intervals correspond to the C5-C6 major scale
+            data: [
+                1046,
+                1569 - 587,
+                1569 - 659,
+                1569 - 696,
+                1569 - 784,
+                1569 - 880,
+                1569 - 988,
+                1569 - 1046
+            ],
+            sonification: {
+                instruments: [
+                    {
+                        mapping: {
+                            frequency: '-y'
+                        }
+                    }
+                ]
+            }
         }
-    }]
+    ]
 });

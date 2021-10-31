@@ -3,18 +3,15 @@
  * bounding box, so that it can utilize all space available in the page.
  */
 (function (H) {
-
     var offset = 6;
 
     H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
-
         var chart = this.chart,
             options = this.options,
             chartRenderer = chart.renderer,
             container;
 
         if (!this.label) {
-
             // Add a HTML container, otherwise useHTML won't work
             this.container = container = H.doc.createElement('div');
             container.style.position = 'absolute';
@@ -51,11 +48,14 @@
                 doc = H.doc,
                 documentElement = doc.documentElement,
                 plusWidth = documentElement.clientWidth - chart.chartWidth,
-                plusHeight = Math.max(
-                    doc.body.scrollHeight, documentElement.scrollHeight,
-                    doc.body.offsetHeight, documentElement.offsetHeight,
-                    documentElement.clientHeight
-                ) - chart.chartHeight;
+                plusHeight =
+                    Math.max(
+                        doc.body.scrollHeight,
+                        documentElement.scrollHeight,
+                        doc.body.offsetHeight,
+                        documentElement.offsetHeight,
+                        documentElement.clientHeight
+                    ) - chart.chartHeight;
 
             point.plotX += this.chart.pointer.chartPosition.left;
             point.plotY += this.chart.pointer.chartPosition.top;
@@ -99,7 +99,10 @@
 
         // Set the renderer size dynamically to prevent document size to change
         this.renderer.setSize(
-            label.width + (this.options.borderWidth || 0) + this.distance + offset,
+            label.width +
+                (this.options.borderWidth || 0) +
+                this.distance +
+                offset,
             label.height + this.distance + offset,
             false
         );
@@ -112,12 +115,9 @@
             point.plotY + chart.plotTop - pos.y
         );
     };
-
-}(Highcharts));
-
+})(Highcharts);
 
 Highcharts.chart('container1', {
-
     chart: {
         type: 'column',
         borderWidth: 1
@@ -135,25 +135,27 @@ Highcharts.chart('container1', {
         enabled: false
     },
 
-    series: [{
-        name: 'Really, really long series name 1',
-        data: [1, 4, 2, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [4, 2, 5, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 5, 3, 1]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 4, 2, 1]
-    }]
-
+    series: [
+        {
+            name: 'Really, really long series name 1',
+            data: [1, 4, 2, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [4, 2, 5, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 5, 3, 1]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 4, 2, 1]
+        }
+    ]
 });
 
-
 Highcharts.chart('container2', {
-
     chart: {
         type: 'line',
         borderWidth: 1
@@ -171,25 +173,27 @@ Highcharts.chart('container2', {
         enabled: false
     },
 
-    series: [{
-        name: 'Really, really long series name 1',
-        data: [1, 4, 2, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [4, 2, 5, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 5, 3, 1]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 4, 2, 1]
-    }]
-
+    series: [
+        {
+            name: 'Really, really long series name 1',
+            data: [1, 4, 2, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [4, 2, 5, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 5, 3, 1]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 4, 2, 1]
+        }
+    ]
 });
 
-
 Highcharts.chart('container3', {
-
     chart: {
         type: 'bar',
         borderWidth: 1
@@ -211,18 +215,22 @@ Highcharts.chart('container3', {
         useHTML: true
     },
 
-    series: [{
-        name: 'Really, really long series name 1',
-        data: [1, 4, 2, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [4, 2, 5, 3]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 5, 3, 1]
-    }, {
-        name: 'Really, really long series name 2',
-        data: [6, 4, 2, 1]
-    }]
-
+    series: [
+        {
+            name: 'Really, really long series name 1',
+            data: [1, 4, 2, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [4, 2, 5, 3]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 5, 3, 1]
+        },
+        {
+            name: 'Really, really long series name 2',
+            data: [6, 4, 2, 1]
+        }
+    ]
 });

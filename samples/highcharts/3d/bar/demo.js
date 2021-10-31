@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'bar',
         margin: 75,
@@ -22,14 +21,16 @@ Highcharts.chart('container', {
     xAxis: {
         type: 'category'
     },
-    series: [{
-        data: [
-            ['Birch', 34],
-            ['Oak', 20],
-            ['Pine', 44],
-            ['Elm', 12],
-            ['Aspen', 59],
-            ['Maple', 41]
-        ]
-    }]
+    series: [
+        {
+            data: [
+                ['Birch', 34],
+                ['Oak', 20],
+                ['Pine', 44],
+                ['Elm', 12],
+                ['Aspen', 59],
+                ['Maple', 41]
+            ]
+        }
+    ]
 });

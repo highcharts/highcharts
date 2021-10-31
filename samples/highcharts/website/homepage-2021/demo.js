@@ -3,30 +3,36 @@ Math.easeInSine = function (pos) {
 };
 
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
 
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
+Math.easeOutBounce = (pos) => {
+    if (pos < 1 / 2.75) {
+        return 7.5625 * pos * pos;
     }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    if (pos < 2 / 2.75) {
+        return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
     }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+    if (pos < 2.5 / 2.75) {
+        return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
     }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
 };
 
 let heroChart;
 
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const big = window.matchMedia('(min-width: 500px)').matches;
 
 const bubbleData0 = [
-    { x: 0, y: 3, z: 200, className: 'transparent', dataLabels: { enabled: false } },
-    { x: 0.5, y: 16, z: 120000, className: 'bubble-black', zIndex: 1  },
+    {
+        x: 0,
+        y: 3,
+        z: 200,
+        className: 'transparent',
+        dataLabels: { enabled: false }
+    },
+    { x: 0.5, y: 16, z: 120000, className: 'bubble-black', zIndex: 1 },
     { x: 0.5, y: 18, z: 12000, className: 'bubble-green' },
     { x: 0.5, y: 12.9, z: 80000, className: 'bubble-brown', zIndex: 1 },
     { x: 0.5, y: 14.2, z: 2000, className: 'bubble-gray', zIndex: 10 },
@@ -91,7 +97,6 @@ const bubbleData5 = [
     { x: 5.64, y: 8.2, z: 24000, className: 'bubble-gray' },
     { x: 5.64, y: 5, z: 120000, className: 'bubble-black' },
     { x: 5.64, y: 7.25, z: 200, className: 'bubble-orange' }
-
 ];
 
 const bubbleData6 = [
@@ -102,26 +107,29 @@ const bubbleData6 = [
     { x: 6.58, y: 9.8, z: 10000, className: 'bubble-green' },
     { x: 6.58, y: 4.53, z: 12000, className: 'bubble-purple' },
     { x: 6.58, y: 3.2, z: 3000, className: 'bubble-purple' }
-
 ];
 
 const updateStyle = function (selector, property, value, duration) {
-    [].forEach.call(
-        document.querySelectorAll('.' + selector),
-        function (elem) {
-            elem.style.transition = property + ' ' + duration;
-            elem.style[property] = value;
-        }
-    );
+    [].forEach.call(document.querySelectorAll('.' + selector), function (elem) {
+        elem.style.transition = property + ' ' + duration;
+        elem.style[property] = value;
+    });
 };
-const bubbleData = [bubbleData0, bubbleData1, bubbleData2, bubbleData3,
-    bubbleData4, bubbleData5, bubbleData6];
+const bubbleData = [
+    bubbleData0,
+    bubbleData1,
+    bubbleData2,
+    bubbleData3,
+    bubbleData4,
+    bubbleData5,
+    bubbleData6
+];
 
 const bubble = {
     chart: {
         type: 'bubble',
         height: 430,
-        styledMode: (true),
+        styledMode: true,
         margin: [0, 0, 0, 0],
         spacing: 0,
         animation: {
@@ -147,7 +155,7 @@ const bubble = {
 
                 if (reduced) {
                     chart.series[0].update({ visible: true });
-                    updateStyle('highcharts-bubble-series', 'opacity',  1, '0s');
+                    updateStyle('highcharts-bubble-series', 'opacity', 1, '0s');
                     setTimeout(function () {
                         chart.yAxis[0].setExtremes(0, 24);
                         chart.yAxis[1].setExtremes(0, 24);
@@ -156,68 +164,111 @@ const bubble = {
 
                     setTimeout(function () {
                         ///moves all the bubbles down, fades them out
-                        const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
+                        const bubbleClasses = [
+                            'green',
+                            'brown',
+                            'purple',
+                            'dpurple',
+                            'gray',
+                            'orange',
+                            'black'
+                        ];
 
-                        updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+                        updateStyle(
+                            'highcharts-data-labels',
+                            'opacity',
+                            0,
+                            '1s'
+                        );
 
                         updateStyle('highcharts-plot-line', 'opacity', 0, '1s');
 
                         for (let ii = 0; ii < bubbleClasses.length; ++ii) {
-                            const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
+                            const bubbleSelector =
+                                'highcharts-point.bubble-' + bubbleClasses[ii];
                             updateStyle(bubbleSelector, 'opacity', 0, '300ms');
                         }
                     }, 3500);
-
                 } else {
                     updateStyle('highcharts-bubble-series', 'opacity', 0, '0s');
                     setTimeout(function () {
                         chart.series[0].update({ visible: true });
-                        updateStyle('highcharts-bubble-series', 'opacity', 1, '1s');
-                        updateStyle('highcharts-data-labels', 'opacity', 0, '0s');
+                        updateStyle(
+                            'highcharts-bubble-series',
+                            'opacity',
+                            1,
+                            '1s'
+                        );
+                        updateStyle(
+                            'highcharts-data-labels',
+                            'opacity',
+                            0,
+                            '0s'
+                        );
                     }, 100);
 
                     setTimeout(function () {
                         updateStyle('highcharts-plot-line', 'opacity', 1, '1s');
                         chart.yAxis[0].setExtremes(0, 24);
                         [].forEach.call(
-                            document.querySelectorAll('.highcharts-data-labels'),
+                            document.querySelectorAll(
+                                '.highcharts-data-labels'
+                            ),
                             function (elem, index) {
                                 if (index % 2 === 0) {
                                     elem.style.opacity = 1;
                                 }
                             }
                         );
-
                     }, 1500);
                     setTimeout(function () {
                         chart.yAxis[1].setExtremes(0, 24);
 
                         [].forEach.call(
-                            document.querySelectorAll('.highcharts-data-labels'),
+                            document.querySelectorAll(
+                                '.highcharts-data-labels'
+                            ),
                             function (elem, index) {
                                 if (index % 2 !== 0) {
                                     elem.style.opacity = 1;
                                 }
                             }
                         );
-
                     }, 3000);
 
                     setTimeout(function () {
                         ///moves all the bubbles down, fades them out
                         chart.yAxis[0].setExtremes(-2, 1000);
                         chart.yAxis[1].setExtremes(-2, 1000);
-                        const bubbleClasses = ['green', 'brown', 'purple', 'dpurple', 'gray', 'orange', 'black'];
+                        const bubbleClasses = [
+                            'green',
+                            'brown',
+                            'purple',
+                            'dpurple',
+                            'gray',
+                            'orange',
+                            'black'
+                        ];
 
                         for (let ii = 0; ii < bubbleClasses.length; ++ii) {
-                            const bubbleSelector = 'highcharts-point.bubble-' + bubbleClasses[ii];
+                            const bubbleSelector =
+                                'highcharts-point.bubble-' + bubbleClasses[ii];
                             updateStyle(bubbleSelector, 'opacity', 0, '0s');
                         }
-                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
-                        updateStyle('highcharts-data-labels', 'opacity', 0, '1s');
+                        updateStyle(
+                            'highcharts-bubble-series',
+                            'opacity',
+                            0,
+                            '1s'
+                        );
+                        updateStyle(
+                            'highcharts-data-labels',
+                            'opacity',
+                            0,
+                            '1s'
+                        );
                         updateStyle('highcharts-plot-line', 'opacity', 0, '1s');
                     }, 5500);
-
                 }
             }
         }
@@ -268,30 +319,33 @@ const bubble = {
                     value: 6.58
                 }
             ]
-        }],
+        }
+    ],
 
-    yAxis: [{
-        visible: false,
-        offest: 0,
-        min: -250,
-        max: 250,
-        labels: {
-            style: {
-                color: '#fff'
+    yAxis: [
+        {
+            visible: false,
+            offest: 0,
+            min: -250,
+            max: 250,
+            labels: {
+                style: {
+                    color: '#fff'
+                }
+            }
+        },
+        {
+            visible: false,
+            offest: 0,
+            min: -250,
+            max: 250,
+            labels: {
+                style: {
+                    color: '#fff'
+                }
             }
         }
-    },
-    {
-        visible: false,
-        offest: 0,
-        min: -250,
-        max: 250,
-        labels: {
-            style: {
-                color: '#fff'
-            }
-        }
-    }],
+    ],
     legend: {
         enabled: false,
         itemMarginTop: 10,
@@ -364,7 +418,6 @@ const sankeyData = [
     ['26,253', '8,123', 10],
     ['', '8,123', 0],
 
-
     ['', '3,959', 0],
     ['94,236', '3,959', 10],
     ['86,811', '3,959', 0],
@@ -377,7 +430,7 @@ const sankeyData = [
 ];
 const sankey = {
     chart: {
-        styledMode: (true),
+        styledMode: true,
         height: 430,
         marginRight: 0,
         animation: {
@@ -434,7 +487,6 @@ const sankey = {
                     updateStyle('highcharts-node', 'opacity', 0, '2s');
                 };
                 setTimeout(p22, 4500);
-
             }
         }
     },
@@ -473,79 +525,86 @@ const sankey = {
     legend: {
         enabled: false
     },
-    series: [{
-        keys: ['from', 'to', 'weight'],
-        centerInCategory: true,
-        linkOpacity: 1,
-        data: [],
-        curveFactor: 0.33,
-        nodes: [{
-            id: '',
-            colorIndex: 0
-        }, {
-            id: '94,236',
-            colorIndex: 1
-        }, {
-            id: '86,811',
-            colorIndex: 2
-        }, {
-            id: '72,638',
-            colorIndex: 3
-        }, {
-            id: '70,770',
-            colorIndex: 4
-        }, {
-            id: ''
+    series: [
+        {
+            keys: ['from', 'to', 'weight'],
+            centerInCategory: true,
+            linkOpacity: 1,
+            data: [],
+            curveFactor: 0.33,
+            nodes: [
+                {
+                    id: '',
+                    colorIndex: 0
+                },
+                {
+                    id: '94,236',
+                    colorIndex: 1
+                },
+                {
+                    id: '86,811',
+                    colorIndex: 2
+                },
+                {
+                    id: '72,638',
+                    colorIndex: 3
+                },
+                {
+                    id: '70,770',
+                    colorIndex: 4
+                },
+                {
+                    id: ''
+                },
+                {
+                    id: '30,903'
+                },
+                {
+                    id: '26,253'
+                },
+                {
+                    id: ''
+                }
+            ],
+            type: 'sankey',
+            name: 'Highcharts Sankey Diagram'
         },
         {
-            id: '30,903'
+            type: 'area',
+            className: 'cover',
+            data: [
+                {
+                    x: -1,
+                    y: 10
+                },
+                {
+                    x: 2.5,
+                    y: 10
+                }
+            ]
         },
         {
-            id: '26,253'
-        },
-        {
-            id: ''
-        }],
-        type: 'sankey',
-        name: 'Highcharts Sankey Diagram'
-    },
-    {
-        type: 'area',
-        className: 'cover',
-        data: [
-            {
-                x: -1,
-                y: 10
-            },
-            {
-                x: 2.5,
-                y: 10
-            }
-        ]
-    },
-    {
-        type: 'area',
-        className: 'cover',
-        data: [
-            {
-                x: 7.5,
-                y: 10
-            },
-            {
-                x: 11,
-                y: 10
-            }
-        ]
-
-    }]
-
+            type: 'area',
+            className: 'cover',
+            data: [
+                {
+                    x: 7.5,
+                    y: 10
+                },
+                {
+                    x: 11,
+                    y: 10
+                }
+            ]
+        }
+    ]
 };
 
 const bubble2 = {
     chart: {
         type: 'bubble',
         height: 430,
-        styledMode: (true),
+        styledMode: true,
         margin: [0, 0, 0, 0],
         spacing: 0,
         animation: {
@@ -562,10 +621,20 @@ const bubble2 = {
                 if (reduced) {
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
-                        updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
+                        updateStyle(
+                            'highcharts-data-labels',
+                            'opacity',
+                            1,
+                            '1s'
+                        );
                     }, 200);
                     setTimeout(function () {
-                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
+                        updateStyle(
+                            'highcharts-bubble-series',
+                            'opacity',
+                            0,
+                            '1s'
+                        );
                     }, 5000);
                 } else {
                     setTimeout(function () {
@@ -573,10 +642,20 @@ const bubble2 = {
                     }, 1000);
                     setTimeout(function () {
                         chart.xAxis[0].setExtremes(0, 10);
-                        updateStyle('highcharts-data-labels', 'opacity', 1, '1s');
+                        updateStyle(
+                            'highcharts-data-labels',
+                            'opacity',
+                            1,
+                            '1s'
+                        );
                     }, 2600);
                     setTimeout(function () {
-                        updateStyle('highcharts-bubble-series', 'opacity', 0, '1s');
+                        updateStyle(
+                            'highcharts-bubble-series',
+                            'opacity',
+                            0,
+                            '1s'
+                        );
                         chart.yAxis[0].setExtremes(-2000, 2000);
                     }, 5000);
                 }
@@ -605,37 +684,42 @@ const bubble2 = {
                     color: '#fff'
                 }
             }
-
-        }],
-    yAxis: [{
-        tickInterval: 1,
-        max: 24,
-        min: -2,
-        plotLines: [{
-            value: 21
-        }, {
-            value: 17.6
-        },
+        }
+    ],
+    yAxis: [
         {
-            value: 15.4
-        },
-        {
-            value: 12.5
-        },
-        {
-            value: 10.3
-        },
-        {
-            value: 7.2
-        },
-        {
-            value: 5.2
-        },
-        {
-            value: 2
-        }],
-        offset: 0
-    }],
+            tickInterval: 1,
+            max: 24,
+            min: -2,
+            plotLines: [
+                {
+                    value: 21
+                },
+                {
+                    value: 17.6
+                },
+                {
+                    value: 15.4
+                },
+                {
+                    value: 12.5
+                },
+                {
+                    value: 10.3
+                },
+                {
+                    value: 7.2
+                },
+                {
+                    value: 5.2
+                },
+                {
+                    value: 2
+                }
+            ],
+            offset: 0
+        }
+    ],
     plotOptions: {
         series: {
             name: 'Highcharts Bubble Chart'
@@ -654,14 +738,56 @@ const bubble2 = {
             },
             data: [
                 { x: 0, y: 16.85, z: 20, className: 'transparent' },
-                { x: 1.14, y: 19.125, z: 3, className: 'bubble2-gray', zIndex: 1  },
-                { x: 1.57, y: 13.95, z: 5, className: 'bubble2-yellow', zIndex: 1  },
-                { x: 2.46, y: 19.21, z: 10, className: 'bubble2-green', zIndex: 1  },
-                { x: 2.76, y: 8.74, z: 12, className: 'bubble2-purple', zIndex: 1  },
-                { x: 2.82, y: 3.57, z: 8, className: 'bubble2-green', zIndex: 1  },
-                { x: 6.5, y: 3.43, z: 12, className: 'bubble2-orange', zIndex: 1  },
-                { x: 8.63, y: 0.94, z: 3, className: 'bubble2-white', zIndex: 1  },
-                { x: 9, y: 0.94, z: 3, className: 'bubble2-white', zIndex: 1  },
+                {
+                    x: 1.14,
+                    y: 19.125,
+                    z: 3,
+                    className: 'bubble2-gray',
+                    zIndex: 1
+                },
+                {
+                    x: 1.57,
+                    y: 13.95,
+                    z: 5,
+                    className: 'bubble2-yellow',
+                    zIndex: 1
+                },
+                {
+                    x: 2.46,
+                    y: 19.21,
+                    z: 10,
+                    className: 'bubble2-green',
+                    zIndex: 1
+                },
+                {
+                    x: 2.76,
+                    y: 8.74,
+                    z: 12,
+                    className: 'bubble2-purple',
+                    zIndex: 1
+                },
+                {
+                    x: 2.82,
+                    y: 3.57,
+                    z: 8,
+                    className: 'bubble2-green',
+                    zIndex: 1
+                },
+                {
+                    x: 6.5,
+                    y: 3.43,
+                    z: 12,
+                    className: 'bubble2-orange',
+                    zIndex: 1
+                },
+                {
+                    x: 8.63,
+                    y: 0.94,
+                    z: 3,
+                    className: 'bubble2-white',
+                    zIndex: 1
+                },
+                { x: 9, y: 0.94, z: 3, className: 'bubble2-white', zIndex: 1 },
                 { x: 10, y: 16.35, z: 20, className: 'transparent' }
             ],
             visible: true,
@@ -710,7 +836,6 @@ const bubble2 = {
                 },
 
                 { x: 10, y: 20, z: 30, className: 'transparent' }
-
             ]
         },
         {
@@ -1027,176 +1152,249 @@ const bubble2 = {
 };
 
 const candlestick = function (type) {
-    Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
-    // create the chart
-        heroChart = Highcharts.stockChart('hero', {
-            chart: {
-                styledMode: (true),
-                margin: [0, 0, 0, 0],
-                height: 430,
-                animation: {
-                    enabled: true,
-                    duration: 1000,
-                    easing: 'easeOutQuint'
-                },
-                events: {
-                    load: function () {
-                        const chart = this;
+    Highcharts.getJSON(
+        'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+        function (data) {
+            // create the chart
+            heroChart = Highcharts.stockChart('hero', {
+                chart: {
+                    styledMode: true,
+                    margin: [0, 0, 0, 0],
+                    height: 430,
+                    animation: {
+                        enabled: true,
+                        duration: 1000,
+                        easing: 'easeOutQuint'
+                    },
+                    events: {
+                        load: function () {
+                            const chart = this;
 
-                        updateStyle('highcharts-title', 'opacity', 0, '0s');
-                        updateStyle('candlestick', 'opacity', 0, '0s');
-                        updateStyle('highcharts-yaxis-labels', 'opacity', 0, '0s');
-
-                        if (type === 'static') {
-                            chart.update({
-                                navigator: {
-                                    enabled: true
-                                }
-                            });
-                            updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
-                            if (big) {
-                                chart.rangeSelector.clickButton(3);
-                            } else {
-                                chart.rangeSelector.clickButton(1);
-                            }
-                        }
-
-                        const p1 = function () {
-                            chart.xAxis[0].update({ visible: true });
-                            updateStyle('highcharts-axis-labels', 'opacity', 1, '800ms');
+                            updateStyle('highcharts-title', 'opacity', 0, '0s');
                             updateStyle('candlestick', 'opacity', 0, '0s');
-                            updateStyle('candlestick', 'opacity', 1, '1s');
-                            updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
-                            updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
-                            updateStyle('highcharts-range-selector-buttons', 'opacity', 1, '1s');
-                            if (!reduced) {
-                                updateStyle('candlestick', 'transform', 'rotate(0deg)', '1s');
-                            }
+                            updateStyle(
+                                'highcharts-yaxis-labels',
+                                'opacity',
+                                0,
+                                '0s'
+                            );
 
-                        };
-                        setTimeout(p1, 700);
-
-                        if (type === 'animated') {
-                            const p2 = function () {
+                            if (type === 'static') {
+                                chart.update({
+                                    navigator: {
+                                        enabled: true
+                                    }
+                                });
+                                updateStyle(
+                                    'candlestick',
+                                    'transform',
+                                    'rotate(0deg)',
+                                    '0s'
+                                );
                                 if (big) {
                                     chart.rangeSelector.clickButton(3);
                                 } else {
                                     chart.rangeSelector.clickButton(1);
                                 }
+                            }
 
+                            const p1 = function () {
+                                chart.xAxis[0].update({ visible: true });
+                                updateStyle(
+                                    'highcharts-axis-labels',
+                                    'opacity',
+                                    1,
+                                    '800ms'
+                                );
+                                updateStyle('candlestick', 'opacity', 0, '0s');
+                                updateStyle('candlestick', 'opacity', 1, '1s');
+                                updateStyle(
+                                    'highcharts-point-up',
+                                    'fillOpacity',
+                                    1,
+                                    '1s'
+                                );
+                                updateStyle(
+                                    'highcharts-point-down',
+                                    'fillOpacity',
+                                    1,
+                                    '1s'
+                                );
+                                updateStyle(
+                                    'highcharts-range-selector-buttons',
+                                    'opacity',
+                                    1,
+                                    '1s'
+                                );
+                                if (!reduced) {
+                                    updateStyle(
+                                        'candlestick',
+                                        'transform',
+                                        'rotate(0deg)',
+                                        '1s'
+                                    );
+                                }
                             };
-                            setTimeout(p2, 3000);
+                            setTimeout(p1, 700);
 
-                            const p21 = function () {
-                                updateStyle('highcharts-range-selector-buttons', 'opacity', 0, '1s');
-                                updateStyle('highcharts-axis-labels', 'opacity', 0, '800ms');
-                                updateStyle('highcharts-xaxis', 'opacity', 0, '800ms');
-                                updateStyle('candlestick', 'stroke', 'transparent', '800ms');
-                                updateStyle('candlestick', 'opacity', 0, '1s');
-                            };
-                            setTimeout(p21, 5500);
+                            if (type === 'animated') {
+                                const p2 = function () {
+                                    if (big) {
+                                        chart.rangeSelector.clickButton(3);
+                                    } else {
+                                        chart.rangeSelector.clickButton(1);
+                                    }
+                                };
+                                setTimeout(p2, 3000);
+
+                                const p21 = function () {
+                                    updateStyle(
+                                        'highcharts-range-selector-buttons',
+                                        'opacity',
+                                        0,
+                                        '1s'
+                                    );
+                                    updateStyle(
+                                        'highcharts-axis-labels',
+                                        'opacity',
+                                        0,
+                                        '800ms'
+                                    );
+                                    updateStyle(
+                                        'highcharts-xaxis',
+                                        'opacity',
+                                        0,
+                                        '800ms'
+                                    );
+                                    updateStyle(
+                                        'candlestick',
+                                        'stroke',
+                                        'transparent',
+                                        '800ms'
+                                    );
+                                    updateStyle(
+                                        'candlestick',
+                                        'opacity',
+                                        0,
+                                        '1s'
+                                    );
+                                };
+                                setTimeout(p21, 5500);
+                            }
                         }
                     }
-                }
-            },
-            title: {
-                text: '',
-                y: 110
+                },
+                title: {
+                    text: '',
+                    y: 110
+                },
+                exporting: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                navigator: {
+                    enabled: false
+                },
+                scrollbar: {
+                    enabled: false
+                },
+                rangeSelector: {
+                    enabled: true,
+                    inputEnabled: false,
+                    selected: 0,
+                    buttons: [
+                        {
+                            type: 'week',
+                            count: 1,
+                            text: '1w',
+                            title: 'View 1 week'
+                        },
+                        {
+                            type: 'week',
+                            count: 4,
+                            text: '1m',
+                            title: 'View 1 month'
+                        },
+                        {
+                            type: 'month',
+                            count: 2,
+                            text: '2m',
+                            title: 'View 2 months'
+                        },
+                        {
+                            type: 'month',
+                            count: 3,
+                            text: '3m',
+                            title: 'View 3 months'
+                        },
 
-            },
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            navigator: {
-                enabled: false
-            },
-            scrollbar: {
-                enabled: false
-            },
-            rangeSelector: {
-                enabled: true,
-                inputEnabled: false,
-                selected: 0,
-                buttons: [{
-                    type: 'week',
-                    count: 1,
-                    text: '1w',
-                    title: 'View 1 week'
-                },
-                {
-                    type: 'week',
-                    count: 4,
-                    text: '1m',
-                    title: 'View 1 month'
-                }, {
-                    type: 'month',
-                    count: 2,
-                    text: '2m',
-                    title: 'View 2 months'
-                },
-                {
-                    type: 'month',
-                    count: 3,
-                    text: '3m',
-                    title: 'View 3 months'
-                },
-
-                {
-                    type: 'month',
-                    count: 4,
-                    text: '4m',
-                    title: 'View 4 months'
-                }],
-                floating: true,
-                verticalAlign: 'middle',
-                y: -130,
-                buttonPosition: {
-                    align: 'center'
-                }
-            },
-            xAxis: [{
-                visible: false,
-                offset: -30,
-                events: {
-                    afterSetExtremes: function () {
-                        // document.querySelector('.highcharts-candlestick-series.candlestick').classList.add('h');
-                        updateStyle('highcharts-point-up', 'fillOpacity', 1, '1s');
-                        updateStyle('highcharts-point-down', 'fillOpacity', 1, '1s');
+                        {
+                            type: 'month',
+                            count: 4,
+                            text: '4m',
+                            title: 'View 4 months'
+                        }
+                    ],
+                    floating: true,
+                    verticalAlign: 'middle',
+                    y: -130,
+                    buttonPosition: {
+                        align: 'center'
                     }
-                }
-            }],
-            yAxis: [{
-                visible: false
-            }],
-            series: [{
-                name: 'AAPL',
-                animation: {
-                    enabled: true
                 },
-                type: 'candlestick',
-                className: 'candlestick',
-                dataGrouping: {
-                    units: [
-                        [
-                            'week',
-                            [1, 2, 3, 4, 6, 52]
-                        ],
-                        [
-                            'month',
-                            [12]
-                        ]
-                    ]
-                },
-                data: data,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            }]
-        });
-    });
+                xAxis: [
+                    {
+                        visible: false,
+                        offset: -30,
+                        events: {
+                            afterSetExtremes: function () {
+                                // document.querySelector('.highcharts-candlestick-series.candlestick').classList.add('h');
+                                updateStyle(
+                                    'highcharts-point-up',
+                                    'fillOpacity',
+                                    1,
+                                    '1s'
+                                );
+                                updateStyle(
+                                    'highcharts-point-down',
+                                    'fillOpacity',
+                                    1,
+                                    '1s'
+                                );
+                            }
+                        }
+                    }
+                ],
+                yAxis: [
+                    {
+                        visible: false
+                    }
+                ],
+                series: [
+                    {
+                        name: 'AAPL',
+                        animation: {
+                            enabled: true
+                        },
+                        type: 'candlestick',
+                        className: 'candlestick',
+                        dataGrouping: {
+                            units: [
+                                ['week', [1, 2, 3, 4, 6, 52]],
+                                ['month', [12]]
+                            ]
+                        },
+                        data: data,
+                        tooltip: {
+                            valueDecimals: 2
+                        }
+                    }
+                ]
+            });
+        }
+    );
 };
 
 //bubble, sankey, candlestick, bubble2, clear intervals

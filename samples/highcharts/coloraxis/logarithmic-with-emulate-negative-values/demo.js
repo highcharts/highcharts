@@ -8,12 +8,11 @@
         const logarithmic = this.logarithmic;
 
         if (logarithmic && this.options.allowNegativeLog) {
-
             // Avoid errors on negative numbers on a log axis
             this.positiveValuesOnly = false;
 
             // Override the converter functions
-            logarithmic.log2lin = num => {
+            logarithmic.log2lin = (num) => {
                 const isNegative = num < 0;
 
                 let adjustedNum = Math.abs(num);
@@ -26,7 +25,7 @@
                 return isNegative ? -result : result;
             };
 
-            logarithmic.lin2log = num => {
+            logarithmic.lin2log = (num) => {
                 const isNegative = num < 0;
 
                 let result = Math.pow(10, Math.abs(num));
@@ -37,18 +36,28 @@
             };
         }
     });
-}(Highcharts));
-
+})(Highcharts);
 
 Highcharts.chart('container', {
-
     title: {
         text: 'Logarithmic color axis with custom conversion allows negative values'
     },
 
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     colorAxis: {
@@ -56,8 +65,9 @@ Highcharts.chart('container', {
         allowNegativeLog: true
     },
 
-    series: [{
-        data: [-1000, -100, -10, -1, -0.1, 0, 0.1, 1, 10, 100, 1000]
-    }]
-
+    series: [
+        {
+            data: [-1000, -100, -10, -1, -0.1, 0, 0.1, 1, 10, 100, 1000]
+        }
+    ]
 });

@@ -29,30 +29,37 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        name: 'Registrations',
-        colorByPoint: true,
-        innerSize: '75%',
-        data: [{
-            name: 'EV',
-            y: 68.1,
-            color: { patternIndex: 0 },
-            borderColor: '#5997DE'
-        }, {
-            name: 'Hybrids',
-            color: { patternIndex: 1 },
-            y: 11.0,
-            borderColor: '#949494'
-        }, {
-            name: 'Diesel',
-            color: { patternIndex: 2 },
-            y: 11.2,
-            borderColor: '#69A550'
-        }, {
-            name: 'Petrol',
-            color: { patternIndex: 3 },
-            y: 9.7,
-            borderColor: '#C9854A'
-        }]
-    }]
+    series: [
+        {
+            name: 'Registrations',
+            colorByPoint: true,
+            innerSize: '75%',
+            data: [
+                {
+                    name: 'EV',
+                    y: 68.1,
+                    color: { patternIndex: 0 },
+                    borderColor: '#5997DE'
+                },
+                {
+                    name: 'Hybrids',
+                    color: { patternIndex: 1 },
+                    y: 11.0,
+                    borderColor: '#949494'
+                },
+                {
+                    name: 'Diesel',
+                    color: { patternIndex: 2 },
+                    y: 11.2,
+                    borderColor: '#69A550'
+                },
+                {
+                    name: 'Petrol',
+                    color: { patternIndex: 3 },
+                    y: 9.7,
+                    borderColor: '#C9854A'
+                }
+            ]
+        }
+    ]
 });

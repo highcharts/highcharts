@@ -20,19 +20,25 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        name: 'Percentage',
-        colorByPoint: true,
-        innerSize: '75%',
-        data: [{
-            name: 'Nitrogen',
-            y: 78
-        }, {
-            name: 'Oxygen',
-            y: 20.9
-        }, {
-            name: 'Other gases',
-            y: 1.1
-        }]
-    }]
+    series: [
+        {
+            name: 'Percentage',
+            colorByPoint: true,
+            innerSize: '75%',
+            data: [
+                {
+                    name: 'Nitrogen',
+                    y: 78
+                },
+                {
+                    name: 'Oxygen',
+                    y: 20.9
+                },
+                {
+                    name: 'Other gases',
+                    y: 1.1
+                }
+            ]
+        }
+    ]
 });

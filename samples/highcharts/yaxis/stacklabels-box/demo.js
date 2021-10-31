@@ -32,9 +32,12 @@ Highcharts.chart('container', {
             stacking: 'normal'
         }
     },
-    series: [{
-        data: [50, 32, 47, 51, 25]
-    }, {
-        data: [21, 28, 34, 22, 11]
-    }]
+    series: [
+        {
+            data: [50, 32, 47, 51, 25]
+        },
+        {
+            data: [21, 28, 34, 22, 11]
+        }
+    ]
 });

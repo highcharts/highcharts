@@ -3,27 +3,26 @@ Math.easeInSine = function (pos) {
 };
 
 Math.easeOutQuint = function (pos) {
-    return (Math.pow((pos - 1), 5) + 1);
+    return Math.pow(pos - 1, 5) + 1;
 };
-Math.easeOutBounce = pos => {
-    if ((pos) < (1 / 2.75)) {
-        return (7.5625 * pos * pos);
+Math.easeOutBounce = (pos) => {
+    if (pos < 1 / 2.75) {
+        return 7.5625 * pos * pos;
     }
-    if (pos < (2 / 2.75)) {
-        return (7.5625 * (pos -= (1.5 / 2.75)) * pos + 0.75);
+    if (pos < 2 / 2.75) {
+        return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
     }
-    if (pos < (2.5 / 2.75)) {
-        return (7.5625 * (pos -= (2.25 / 2.75)) * pos + 0.9375);
+    if (pos < 2.5 / 2.75) {
+        return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
     }
-    return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
+    return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
 };
 
-
-const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let mapLoaded = false;
 
-
-const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
+const imgPath =
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';
 const maps = {
     chart: {
         animation: {
@@ -31,8 +30,7 @@ const maps = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode:
-        true,
+        styledMode: true,
         margin: 0,
         spacing: 0,
         plotBackgroundImage: 'bg.png',
@@ -40,23 +38,28 @@ const maps = {
             load: function () {
                 const chart = this;
 
-                const mapPointPoint = document.querySelector('.map-point-point');
-                const mapPointTop = document.getElementsByClassName('map-point-top')[1];
-                const mapPointCenter = document.getElementsByClassName('map-point-center')[1];
-                const leftSide =  document.querySelector('.left');
-                const rightSide =  document.querySelector('.right');
-                const top =  document.querySelector('.top');
-                const bottom =  document.querySelector('.bottom');
-                const background = document.getElementsByClassName('highcharts-plot-background')[0];
+                const mapPointPoint =
+                    document.querySelector('.map-point-point');
+                const mapPointTop =
+                    document.getElementsByClassName('map-point-top')[1];
+                const mapPointCenter =
+                    document.getElementsByClassName('map-point-center')[1];
+                const leftSide = document.querySelector('.left');
+                const rightSide = document.querySelector('.right');
+                const top = document.querySelector('.top');
+                const bottom = document.querySelector('.bottom');
+                const background = document.getElementsByClassName(
+                    'highcharts-plot-background'
+                )[0];
 
                 const finalHide = function () {
                     [].forEach.call(
                         document.getElementsByClassName('particle'),
-                        p => p.classList.add('fade')
+                        (p) => p.classList.add('fade')
                     );
                     [].forEach.call(
                         document.getElementsByClassName('green'),
-                        g => g.classList.add('fade')
+                        (g) => g.classList.add('fade')
                     );
 
                     leftSide.classList.add('fade');
@@ -70,7 +73,6 @@ const maps = {
                     mapPointCenter.classList.add('hide');
                     background.style.fill = '#1f1836';
                 };
-
 
                 const updateData = function () {
                     chart.series[10].update({
@@ -101,31 +103,33 @@ const maps = {
                             { x: 14, y: 9 }
                         ]
                     });
-
                 };
 
                 const growEnvelope = function () {
-
                     leftSide.style.transition = 'none';
                     rightSide.style.transition = 'none';
 
                     chart.series[10].data[2].update({
-                        x: 10, y: 5
+                        x: 10,
+                        y: 5
                     });
                     chart.series[10].data[1].update({
                         x: 6
                     });
                     chart.series[11].data[2].update({
-                        x: 10, y: 5
+                        x: 10,
+                        y: 5
                     });
                     chart.series[11].data[1].update({
                         x: 6
                     });
                     chart.series[12].data[1].update({
-                        x: 10, y: 5
+                        x: 10,
+                        y: 5
                     });
                     chart.series[13].data[1].update({
-                        x: 10, y: 11
+                        x: 10,
+                        y: 11
                     });
                 };
 
@@ -150,7 +154,6 @@ const maps = {
                     ///hide everything
                     finalHide();
                 }, 4000);
-
             }
         }
     },
@@ -191,7 +194,8 @@ const maps = {
             max: 20,
             gridLineColor: 'transparent',
             tickInterval: 1
-        }],
+        }
+    ],
     yAxis: [
         //0
         {
@@ -213,7 +217,8 @@ const maps = {
             startOnTick: false,
             endOnTick: false,
             reversed: true
-        }],
+        }
+    ],
     legend: {
         enabled: false
     },
@@ -246,7 +251,6 @@ const maps = {
         line: {
             animation: false
         }
-
     },
     series: [
         //0 - bottom line
@@ -258,7 +262,6 @@ const maps = {
                 { x: 20, y: -1 }
             ],
             zIndex: 10
-
         },
         //1 - line
         {
@@ -292,7 +295,6 @@ const maps = {
                 { x: 20, y: 2 }
             ],
             zIndex: 10
-
         },
         //4 - line
         {
@@ -304,7 +306,6 @@ const maps = {
                 { x: 20, y: 3 }
             ],
             zIndex: 10
-
         },
         //5 - line
         {
@@ -327,7 +328,6 @@ const maps = {
                 { x: 20, y: 5 }
             ],
             zIndex: 10
-
         },
         //7 - line
         {
@@ -357,7 +357,10 @@ const maps = {
             name: 'foreground',
             className: 'foreground',
             animation: false,
-            data: [{ x: 0, low: -2, high: 8 }, { x: 20, low: -2, high: 8 }],
+            data: [
+                { x: 0, low: -2, high: 8 },
+                { x: 20, low: -2, high: 8 }
+            ],
             zIndex: 4,
             visible: true
         },
@@ -371,14 +374,15 @@ const maps = {
                 { x: 4, y: 2 },
                 { x: 4, y: 7 },
                 { x: 4, y: 2 }
-
             ],
             xAxis: 1,
             zoneAxis: 'y',
-            zones: [{
-                value: 2,
-                color: 'transparent'
-            }],
+            zones: [
+                {
+                    value: 2,
+                    color: 'transparent'
+                }
+            ],
             zIndex: 15,
             visible: true
         },
@@ -393,13 +397,14 @@ const maps = {
                 { x: 4, y: 2 },
                 { x: 4, y: 7 },
                 { x: 4, y: 2 }
-
             ],
             zoneAxis: 'y',
-            zones: [{
-                value: 2,
-                color: 'transparent'
-            }],
+            zones: [
+                {
+                    value: 2,
+                    color: 'transparent'
+                }
+            ],
             zIndex: 15,
             visible: true
         },
@@ -413,13 +418,14 @@ const maps = {
                 { x: 4, y: 2 },
                 { x: 10, y: 2 },
                 { x: 16, y: 2 }
-
             ],
             zoneAxis: 'y',
-            zones: [{
-                value: 2,
-                color: 'transparent'
-            }],
+            zones: [
+                {
+                    value: 2,
+                    color: 'transparent'
+                }
+            ],
             zIndex: 15,
             visible: true
         },
@@ -434,14 +440,15 @@ const maps = {
                 { x: 6, y: 9 },
                 { x: 10, y: 9 },
                 { x: 14, y: 9 }
-
             ],
             yAxis: 1,
             zoneAxis: 'y',
-            zones: [{
-                value: 9,
-                color: 'transparent'
-            }],
+            zones: [
+                {
+                    value: 9,
+                    color: 'transparent'
+                }
+            ],
             zIndex: 15,
             visible: true
         },
@@ -498,13 +505,14 @@ const maps = {
                 { x: 8.84, y: 8.48 },
                 { x: 10, y: 10 },
                 { x: 11.16, y: 8.52 }
-
             ],
             zoneAxis: 'y',
-            zones: [{
-                value: 7,
-                color: 'transparent'
-            }],
+            zones: [
+                {
+                    value: 7,
+                    color: 'transparent'
+                }
+            ],
             zIndex: 18,
             marker: {
                 enabled: false
@@ -528,7 +536,6 @@ const maps = {
                         symbol: 'url(' + imgPath + 'p1.svg)',
                         width: 25,
                         height: 35
-
                     }
                 },
                 {
@@ -540,7 +547,6 @@ const maps = {
                         symbol: 'url(' + imgPath + 'p2.svg)',
                         width: 30,
                         height: 45
-
                     }
                 },
                 {
@@ -552,7 +558,6 @@ const maps = {
                         symbol: 'url(' + imgPath + 'p6.svg)',
                         width: 45,
                         height: 45
-
                     }
                 },
                 {
@@ -564,7 +569,6 @@ const maps = {
                         symbol: 'url(' + imgPath + 'p5.svg)',
                         width: 35,
                         height: 50
-
                     }
                 }
             ],
@@ -575,9 +579,9 @@ const maps = {
     ]
 };
 
-
 const finalMap = function () {
-    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
+    Highcharts.getJSON(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
         function (data) {
             // Assign id's
             data.forEach(function (p) {
@@ -586,19 +590,24 @@ const finalMap = function () {
             // Initialize the chart
             Highcharts.mapChart('maps', {
                 chart: {
-                    styledMode: (true),
+                    styledMode: true,
                     animation: {
-
                         duration: 1000
-
                     },
                     events: {
                         load: function () {
                             const chart = this;
 
-                            const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
-                            const title = document.getElementsByClassName('highcharts-title')[0];
-                            const subtitle = document.querySelector('.highcharts-subtitle');
+                            const mapSeries = document.getElementsByClassName(
+                                'highcharts-map-series'
+                            )[0];
+                            const title =
+                                document.getElementsByClassName(
+                                    'highcharts-title'
+                                )[0];
+                            const subtitle = document.querySelector(
+                                '.highcharts-subtitle'
+                            );
                             mapSeries.style.opacity = 0;
                             setTimeout(function () {
                                 chart.mapZoom(0.01, 4540, -8600);
@@ -612,29 +621,27 @@ const finalMap = function () {
                             }, 200);
 
                             setTimeout(function () {
-
                                 if (!reduced) {
                                     chart.mapZoom(10);
                                 }
-                                chart.tooltip.refresh(
-                                    [chart.series[0].points[143]]
-                                );
+                                chart.tooltip.refresh([
+                                    chart.series[0].points[143]
+                                ]);
 
                                 mapSeries.classList.add('fade-in');
                             }, 500);
 
-
                             setTimeout(function () {
-                                mapLoaded  = true;
+                                mapLoaded = true;
                             }, 2000);
                         },
                         redraw: function () {
-                            const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
+                            const mapSeries = document.getElementsByClassName(
+                                'highcharts-map-series'
+                            )[0];
                             if (mapLoaded) {
                                 mapSeries.classList.add('show');
                             }
-
-
                         }
                     }
                 },
@@ -657,7 +664,6 @@ const finalMap = function () {
                     },
                     labelStyle: {
                         color: '#fff'
-
                     },
 
                     floating: true,
@@ -680,8 +686,7 @@ const finalMap = function () {
                     useHTML: true,
                     distance: -15,
                     formatter: function () {
-                        const htmlString =
-                        `<div class="tip-grid">
+                        const htmlString = `<div class="tip-grid">
                         <div class="tip-content">
                             <div class="dot"></div>${this.point.name}
                         </div>
@@ -692,54 +697,57 @@ const finalMap = function () {
                     },
                     valueSuffix: '/km²'
                 },
-                series: [{
-                    data: data,
-                    mapData: Highcharts.maps['custom/world-highres'],
-                    joinBy: ['iso-a2', 'code'],
-                    name: 'Population density',
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    events: {
-                        click: function (e) {
-                            e.point.zoomTo();
+                series: [
+                    {
+                        data: data,
+                        mapData: Highcharts.maps['custom/world-highres'],
+                        joinBy: ['iso-a2', 'code'],
+                        name: 'Population density',
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        events: {
+                            click: function (e) {
+                                e.point.zoomTo();
+                            }
                         }
                     }
-
-                }],
+                ],
                 responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 400
-                        },
-                        chartOptions: {
-                            subtitle: {
-                                text: ''
+                    rules: [
+                        {
+                            condition: {
+                                maxWidth: 400
                             },
-                            chart: {
-                                margin: [40, 1, 65, 0]
+                            chartOptions: {
+                                subtitle: {
+                                    text: ''
+                                },
+                                chart: {
+                                    margin: [40, 1, 65, 0]
+                                }
+                            }
+                        },
+                        {
+                            condition: {
+                                minWidth: 401
+                            },
+                            chartOptions: {
+                                subtitle: {
+                                    text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
+                                },
+                                chart: {
+                                    margin: [60, 1, 65, 0]
+                                }
                             }
                         }
-                    },
-                    {
-                        condition: {
-                            minWidth: 401
-                        },
-                        chartOptions: {
-                            subtitle: {
-                                text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
-                            },
-                            chart: {
-                                margin: [60, 1, 65, 0]
-                            }
-
-                        }
-                    }]
+                    ]
                 }
             });
-        });
+        }
+    );
 };
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     Highcharts.mapChart('maps', maps);
     let dtime = 5000;
 
@@ -749,5 +757,4 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
         finalMap();
     }, dtime);
-
 });

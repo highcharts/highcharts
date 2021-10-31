@@ -1,6 +1,6 @@
 /**
-*Function to draw the path
-*/
+ *Function to draw the path
+ */
 function getPath(width, height) {
     var path = [],
         centerX = width * 0.5,
@@ -14,7 +14,7 @@ function getPath(width, height) {
 
     //loop to add points to the path
     for (i = 0; i < 32; i = i + 1) {
-        angle = i * Math.PI / 16;
+        angle = (i * Math.PI) / 16;
         if (i === 0) {
             path.push('M');
         } else if (i === 1) {
@@ -35,8 +35,8 @@ function getPath(width, height) {
 }
 
 /**
-* Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
-*/
+ * Function to check if the drawing of the compassrose exists, if so - it updates the path, if not, it draws it.
+ */
 function onDraw() {
     var path = getPath(this.chartWidth, this.chartHeight);
     if (this.compassrose) {
@@ -44,7 +44,8 @@ function onDraw() {
             d: path
         });
     } else {
-        this.compassrose = this.renderer.path(path)
+        this.compassrose = this.renderer
+            .path(path)
             .attr({
                 fill: '#666666'
             })
@@ -52,100 +53,117 @@ function onDraw() {
     }
 }
 
-Highcharts.chart('container', {
-    chart: {
-        type: 'gauge',
-        plotBackgroundColor: null,
-        plotBackgroundImage: null,
-        plotBorderWidth: 0,
-        plotShadow: false,
-        height: document.getElementById('container').offsetWidth,
-        events: {
-            load: onDraw,
-            resize: onDraw
-        }
-    },
-    title: {
-        text: "Demo of custom backgroundshape in Highcharts"
-    },
-    pane: {
-        startAngle: 0,
-        endAngle: 360,
-        background: null
-    },
-    yAxis: [{
-        min: 0,
-        max: 360,
-        lineWidth: 0,
-        minorTickWidth: 0,
-        tickWidth: 0,
-        labels: {
-            enabled: false
-        }
-    }, {
-        categories: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
-        min: 0,
-        max: 8,
-        lineWidth: 0,
-        minorTickWidth: 0,
-        tickWidth: 0,
-        showLastLabel: false,
-        labels: {
-            style: {
-                color: '#000000'
-            },
-            distance: 10,
-            useHTML: true,
-            formatter: function () {
-                var style = '',
-                    scale = document.getElementById('container').offsetWidth * 0.005;
-                if (this.value.length === 1) {
-                    style = 'font-size:' + (scale * 1.3) + 'em';
-                } else if (this.value.length === 2) {
-                    style = 'font-size:' + (scale * 0.8) + 'em';
-                }
-                return '<span style="' + style + '">' + this.value + '</span>';
+Highcharts.chart(
+    'container',
+    {
+        chart: {
+            type: 'gauge',
+            plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            height: document.getElementById('container').offsetWidth,
+            events: {
+                load: onDraw,
+                resize: onDraw
             }
-        }
-    }],
-    tooltip: {
-        enabled: false
-    },
-    plotOptions: {
-        series: {
-            animation: 2000
         },
-        gauge: {
-            dial: {
-                backgroundColor: '#000000',
-                radius: '100%',
-                baseWidth: 15,
-                borderColor: '#000000',
-                borderWidth: 0,
-                topWidth: 1,
-                baseLength: '10%',
-                rearLength: '20%'
+        title: {
+            text: 'Demo of custom backgroundshape in Highcharts'
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360,
+            background: null
+        },
+        yAxis: [
+            {
+                min: 0,
+                max: 360,
+                lineWidth: 0,
+                minorTickWidth: 0,
+                tickWidth: 0,
+                labels: {
+                    enabled: false
+                }
             },
-            pivot: {
-                backgroundColor: '#000000',
-                radius: 10
-            },
-            dataLabels: {
-                enabled: false
+            {
+                categories: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
+                min: 0,
+                max: 8,
+                lineWidth: 0,
+                minorTickWidth: 0,
+                tickWidth: 0,
+                showLastLabel: false,
+                labels: {
+                    style: {
+                        color: '#000000'
+                    },
+                    distance: 10,
+                    useHTML: true,
+                    formatter: function () {
+                        var style = '',
+                            scale =
+                                document.getElementById('container')
+                                    .offsetWidth * 0.005;
+                        if (this.value.length === 1) {
+                            style = 'font-size:' + scale * 1.3 + 'em';
+                        } else if (this.value.length === 2) {
+                            style = 'font-size:' + scale * 0.8 + 'em';
+                        }
+                        return (
+                            '<span style="' +
+                            style +
+                            '">' +
+                            this.value +
+                            '</span>'
+                        );
+                    }
+                }
             }
-        }
+        ],
+        tooltip: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                animation: 2000
+            },
+            gauge: {
+                dial: {
+                    backgroundColor: '#000000',
+                    radius: '100%',
+                    baseWidth: 15,
+                    borderColor: '#000000',
+                    borderWidth: 0,
+                    topWidth: 1,
+                    baseLength: '10%',
+                    rearLength: '20%'
+                },
+                pivot: {
+                    backgroundColor: '#000000',
+                    radius: 10
+                },
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        series: [
+            {
+                name: 'Direction',
+                data: [0]
+            }
+        ]
     },
-    series: [{
-        name: 'Direction',
-        data: [0]
-    }]
-}, chart => {
-    if (!chart.renderer.forExport) {
-        setInterval(() => {
-            const point = chart.series[0].points[0];
-            const inc = 5 - Math.floor(Math.random() * 10);
-            const newVal = point.y + inc;
-            point.update(newVal);
-        }, 3000);
+    (chart) => {
+        if (!chart.renderer.forExport) {
+            setInterval(() => {
+                const point = chart.series[0].points[0];
+                const inc = 5 - Math.floor(Math.random() * 10);
+                const newVal = point.y + inc;
+                point.update(newVal);
+            }, 3000);
+        }
     }
-});
+);

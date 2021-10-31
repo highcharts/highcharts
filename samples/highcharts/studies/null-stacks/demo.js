@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'areaspline'
     },
@@ -15,13 +14,16 @@ Highcharts.chart('container', {
         //min: -5
     },
 
-    series: [{
-        data: [1, 2, 3, 4, 5, 4, 3, 2, 1],
-        pointStart: 2
-    }, {
-        data: [1, 2, null, 2, 1, 1]
-    }, {
-        data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    }]
-
+    series: [
+        {
+            data: [1, 2, 3, 4, 5, 4, 3, 2, 1],
+            pointStart: 2
+        },
+        {
+            data: [1, 2, null, 2, 1, 1]
+        },
+        {
+            data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        }
+    ]
 });

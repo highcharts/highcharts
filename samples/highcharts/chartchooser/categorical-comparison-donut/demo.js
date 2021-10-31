@@ -28,22 +28,29 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        name: 'Registrations',
-        colorByPoint: true,
-        innerSize: '75%',
-        data: [{
-            name: 'EV',
-            y: 68.1
-        }, {
-            name: 'Hybrids',
-            y: 11.0
-        }, {
-            name: 'Diesel',
-            y: 11.2
-        }, {
-            name: 'Petrol',
-            y: 9.7
-        }]
-    }]
+    series: [
+        {
+            name: 'Registrations',
+            colorByPoint: true,
+            innerSize: '75%',
+            data: [
+                {
+                    name: 'EV',
+                    y: 68.1
+                },
+                {
+                    name: 'Hybrids',
+                    y: 11.0
+                },
+                {
+                    name: 'Diesel',
+                    y: 11.2
+                },
+                {
+                    name: 'Petrol',
+                    y: 9.7
+                }
+            ]
+        }
+    ]
 });

@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'column'
     },
@@ -22,9 +21,12 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [1, 3, 2, 4]
-    }, {
-        data: [5, 3, 4, 2]
-    }]
+    series: [
+        {
+            data: [1, 3, 2, 4]
+        },
+        {
+            data: [5, 3, 4, 2]
+        }
+    ]
 });

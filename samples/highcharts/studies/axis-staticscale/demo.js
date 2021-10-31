@@ -22,10 +22,12 @@ const chart = Highcharts.chart('container', {
         minRange: 1,
         categories: true
     },
-    series: [{
-        data: data,
-        type: 'bar'
-    }]
+    series: [
+        {
+            data: data,
+            type: 'bar'
+        }
+    ]
 });
 
 document.getElementById('add').addEventListener('click', () => {

@@ -8,7 +8,9 @@ Highcharts.chart('container', {
             maxPointSize: 300
         }
     },
-    series: [{
-        data: [1, 75, 112, 180, 20, 3000]
-    }]
+    series: [
+        {
+            data: [1, 75, 112, 180, 20, 3000]
+        }
+    ]
 });

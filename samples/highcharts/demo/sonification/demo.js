@@ -1,47 +1,53 @@
 // Sonification options
-var sdInstruments = [{
-        instrument: 'sineMajor',
-        instrumentMapping: {
-            duration: 200,
-            frequency: 'y',
-            volume: 0.7,
-            pan: -1
-        },
-        instrumentOptions: {
-            minFrequency: 220,
-            maxFrequency: 1900
+var sdInstruments = [
+        {
+            instrument: 'sineMajor',
+            instrumentMapping: {
+                duration: 200,
+                frequency: 'y',
+                volume: 0.7,
+                pan: -1
+            },
+            instrumentOptions: {
+                minFrequency: 220,
+                maxFrequency: 1900
+            }
         }
-    }],
-    nyInstruments = [{
-        instrument: 'triangleMajor',
-        instrumentMapping: {
-            duration: 200,
-            frequency: 'y',
-            volume: 0.6,
-            pan: 1
-        },
-        instrumentOptions: {
-            minFrequency: 220,
-            maxFrequency: 1900
+    ],
+    nyInstruments = [
+        {
+            instrument: 'triangleMajor',
+            instrumentMapping: {
+                duration: 200,
+                frequency: 'y',
+                volume: 0.6,
+                pan: 1
+            },
+            instrumentOptions: {
+                minFrequency: 220,
+                maxFrequency: 1900
+            }
         }
-    }];
+    ];
 
 // Point of interest options
 var poiTime = Date.UTC(2018, 4, 6),
     poiEarcon = {
         // Define the earcon we want to play for the point of interest
         earcon: new Highcharts.sonification.Earcon({
-            instruments: [{
-                instrument: 'squareMajor',
-                playOptions: {
-                    // Play a quick rising frequency
-                    frequency: function (time) {
-                        return time * 1760 + 440;
-                    },
-                    volume: 0.1,
-                    duration: 200
+            instruments: [
+                {
+                    instrument: 'squareMajor',
+                    playOptions: {
+                        // Play a quick rising frequency
+                        frequency: function (time) {
+                            return time * 1760 + 440;
+                        },
+                        volume: 0.1,
+                        duration: 200
+                    }
                 }
-            }]
+            ]
         }),
         // Play this earcon if we hit the point of interest
         condition: function (point) {
@@ -67,12 +73,14 @@ var chart = Highcharts.chart('container', {
     },
     xAxis: {
         type: 'datetime',
-        plotLines: [{
-            value: poiTime,
-            dashStyle: 'dash',
-            width: 1,
-            color: '#d33'
-        }]
+        plotLines: [
+            {
+                value: poiTime,
+                dashStyle: 'dash',
+                width: 1,
+                color: '#d33'
+            }
+        ]
     },
     tooltip: {
         split: true,
@@ -94,8 +102,10 @@ var chart = Highcharts.chart('container', {
                             chart = this.series.chart;
                         chart.series.forEach(function (series) {
                             // Map instruments to the options for this series
-                            var instruments = series.options.id === 'sd' ?
-                                sdInstruments : nyInstruments;
+                            var instruments =
+                                series.options.id === 'sd'
+                                    ? sdInstruments
+                                    : nyInstruments;
                             // See if we have a point with the targetX
                             series.points.some(function (point) {
                                 if (point.x === targetX) {
@@ -120,17 +130,19 @@ var chart = Highcharts.chart('container', {
             columns.splice(1, 2); // Remove the non-average columns
         }
     },
-    series: [{
-        name: 'San Diego',
-        id: 'sd',
-        color: '#f4b042'
-    }, {
-        name: 'New York',
-        id: 'ny',
-        color: '#41aff4'
-    }]
+    series: [
+        {
+            name: 'San Diego',
+            id: 'sd',
+            color: '#f4b042'
+        },
+        {
+            name: 'New York',
+            id: 'ny',
+            color: '#41aff4'
+        }
+    ]
 });
-
 
 // Utility function that highlights a point
 function highlightPoint(event, point) {
@@ -147,12 +159,10 @@ function highlightPoint(event, point) {
     }
 }
 
-
 // On speed change we reset the sonification
 document.getElementById('speed').onchange = function () {
     chart.cancelSonify();
 };
-
 
 // Add sonification button handlers
 document.getElementById('play').onclick = function () {
@@ -161,17 +171,20 @@ document.getElementById('play').onclick = function () {
             duration: 5000 / document.getElementById('speed').value,
             order: 'simultaneous',
             pointPlayTime: 'x',
-            seriesOptions: [{
-                id: 'sd',
-                instruments: sdInstruments,
-                onPointStart: highlightPoint,
-                // Play earcon at point of interest
-                earcons: [poiEarcon]
-            }, {
-                id: 'ny',
-                instruments: nyInstruments,
-                onPointStart: highlightPoint
-            }],
+            seriesOptions: [
+                {
+                    id: 'sd',
+                    instruments: sdInstruments,
+                    onPointStart: highlightPoint,
+                    // Play earcon at point of interest
+                    earcons: [poiEarcon]
+                },
+                {
+                    id: 'ny',
+                    instruments: nyInstruments,
+                    onPointStart: highlightPoint
+                }
+            ],
             // Delete timeline on end
             onEnd: function () {
                 if (chart.sonification.timeline) {

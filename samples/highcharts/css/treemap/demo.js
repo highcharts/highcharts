@@ -20,7 +20,7 @@ var data = {
                 'Noncommunicable diseases': '487.2',
                 'Communicable & other Group I': '59.2'
             },
-            'Democratic People\'s Republic of Korea': {
+            "Democratic People's Republic of Korea": {
                 Injuries: '91.9',
                 'Noncommunicable diseases': '751.4',
                 'Communicable & other Group I': '117.3'
@@ -454,7 +454,7 @@ var data = {
                 Injuries: '53.8',
                 'Communicable & other Group I': '97.8'
             },
-            'C\u00f4te d\'Ivoire': {
+            "C\u00f4te d'Ivoire": {
                 'Noncommunicable diseases': '794.0',
                 Injuries: '124.0',
                 'Communicable & other Group I': '861.3'
@@ -820,7 +820,7 @@ var data = {
                 Injuries: '59.0',
                 'Noncommunicable diseases': '435.4'
             },
-            'Lao People\'s Democratic Republic': {
+            "Lao People's Democratic Republic": {
                 'Communicable & other Group I': '328.7',
                 Injuries: '75.2',
                 'Noncommunicable diseases': '680.0'
@@ -890,7 +890,7 @@ var data = {
     };
 
 for (region in data) {
-    if (data.hasOwnProperty(region)) {
+    if (Object.hasOwnProperty.call(data, region)) {
         regionVal = 0;
         regionP = {
             id: 'id_' + regionI,
@@ -899,7 +899,7 @@ for (region in data) {
         };
         countryI = 0;
         for (country in data[region]) {
-            if (data[region].hasOwnProperty(country)) {
+            if (Object.hasOwnProperty.call(data[region], country)) {
                 countryP = {
                     id: regionP.id + '_' + countryI,
                     name: country,
@@ -908,7 +908,9 @@ for (region in data) {
                 points.push(countryP);
                 causeI = 0;
                 for (cause in data[region][country]) {
-                    if (data[region][country].hasOwnProperty(cause)) {
+                    if (
+                        Object.hasOwnProperty.call(data[region][country], cause)
+                    ) {
                         causeP = {
                             id: countryP.id + '_' + causeI,
                             name: causeName[cause],
@@ -932,23 +934,27 @@ Highcharts.chart('container', {
     chart: {
         styledMode: true
     },
-    series: [{
-        type: 'treemap',
-        layoutAlgorithm: 'squarified',
-        allowDrillToNode: true,
-        animationLimit: 1000,
-        dataLabels: {
-            enabled: false
-        },
-        levelIsConstant: false,
-        levels: [{
-            level: 1,
+    series: [
+        {
+            type: 'treemap',
+            layoutAlgorithm: 'squarified',
+            allowDrillToNode: true,
+            animationLimit: 1000,
             dataLabels: {
-                enabled: true
-            }
-        }],
-        data: points
-    }],
+                enabled: false
+            },
+            levelIsConstant: false,
+            levels: [
+                {
+                    level: 1,
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            ],
+            data: points
+        }
+    ],
     subtitle: {
         text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
     },

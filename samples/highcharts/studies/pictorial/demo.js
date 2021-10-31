@@ -18,8 +18,12 @@ Highcharts.seriesType(
     },
     {
         pointAttribs: function (point, selected) {
-            const pointAttribs = Highcharts.seriesTypes.column.prototype
-                .pointAttribs.call(this, point, selected);
+            const pointAttribs =
+                Highcharts.seriesTypes.column.prototype.pointAttribs.call(
+                    this,
+                    point,
+                    selected
+                );
 
             pointAttribs.fill = {
                 pattern: {
@@ -50,7 +54,7 @@ Highcharts.seriesType(
 
 Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
     if (this instanceof Highcharts.seriesTypes.pictorial) {
-        this.points.forEach(point => {
+        this.points.forEach((point) => {
             const fill = point.graphic && point.graphic.attr('fill');
             const match = fill && fill.match(/url\(([^)]+)\)/);
             if (match) {
@@ -58,18 +62,16 @@ Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
                 if (patternPath) {
                     const bBox = patternPath.getBBox();
                     const scaleX = 1 / bBox.width;
-                    const scaleY = this.yAxis.len /
-                        point.shapeArgs.height /
-                        bBox.height;
+                    const scaleY =
+                        this.yAxis.len / point.shapeArgs.height / bBox.height;
 
                     patternPath.setAttribute(
                         'transform',
                         `scale(${scaleX} ${scaleY}) ` +
-                        `translate(${-bBox.x}, ${-bBox.y})`
+                            `translate(${-bBox.x}, ${-bBox.y})`
                     );
                 }
             }
-
         });
     }
 });
@@ -108,29 +110,34 @@ Highcharts.chart('container', {
         verticalAlign: 'middle',
         layout: 'vertical'
     },
-    series: [{
-        data: [10, 20],
-        name: 'Quality A'
-    }, {
-        data: [20, 50],
-        name: 'Quality B'
-    }, {
-        data: [70, 30],
-        name: 'Quality C'
-    }],
+    series: [
+        {
+            data: [10, 20],
+            name: 'Quality A'
+        },
+        {
+            data: [20, 50],
+            name: 'Quality B'
+        },
+        {
+            data: [70, 30],
+            name: 'Quality C'
+        }
+    ],
     responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'top'
+        rules: [
+            {
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'top'
+                    }
                 }
             }
-        }]
-
+        ]
     }
 });

@@ -32,10 +32,12 @@ var chart = Highcharts.chart('container', {
             pointInterval: 1000 * 60 * 60
         }
     },
-    series: [{
-        name: 'Random data',
-        data: [1, 3, 4, 6, 7, 5, 3, 4, 8, 9, 7, 6, 4, 3]
-    }]
+    series: [
+        {
+            name: 'Random data',
+            data: [1, 3, 4, 6, 7, 5, 3, 4, 8, 9, 7, 6, 4, 3]
+        }
+    ]
 });
 
 // Add random point when clicking button

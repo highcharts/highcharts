@@ -15,8 +15,7 @@ Highcharts.chart('container', {
         text: 'Swedish top 10 professions dominated by women (16-64 years) in 2017'
     },
     subtitle: {
-        text:
-        'Source: <a href="https://www.scb.se/">Swedish National Statistics</a>'
+        text: 'Source: <a href="https://www.scb.se/">Swedish National Statistics</a>'
     },
     xAxis: {
         categories: [
@@ -48,7 +47,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat:
-        '<span style="color:{series.options.contrastColor}">{series.name}</span>: <b>{point.percentage:.0f}%</b><br/>',
+            '<span style="color:{series.options.contrastColor}">{series.name}</span>: <b>{point.percentage:.0f}%</b><br/>',
         shared: true
     },
     plotOptions: {

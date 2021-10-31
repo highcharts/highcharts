@@ -31,7 +31,6 @@ var data = getData(500000);
 
 console.time('column');
 Highcharts.chart('container', {
-
     chart: {
         type: 'bar',
         zoomType: 'x',
@@ -51,9 +50,10 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        data: data
-    }]
-
+    series: [
+        {
+            data: data
+        }
+    ]
 });
 console.timeEnd('column');

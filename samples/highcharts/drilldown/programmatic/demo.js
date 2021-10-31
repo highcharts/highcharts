@@ -22,48 +22,60 @@ const chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Goods',
-        data: [{
-            name: '2020',
-            id: 'point-2020',
-            y: 5,
-            drilldown: 'goods-2020'
-        }, {
-            name: '2021',
-            y: 2
-        }]
-    }, {
-        name: 'Services',
-        data: [{
-            name: '2020',
-            y: 7,
-            drilldown: 'services-2020'
-        }, {
-            name: '2021',
-            y: 3
-        }]
-    }],
+    series: [
+        {
+            name: 'Goods',
+            data: [
+                {
+                    name: '2020',
+                    id: 'point-2020',
+                    y: 5,
+                    drilldown: 'goods-2020'
+                },
+                {
+                    name: '2021',
+                    y: 2
+                }
+            ]
+        },
+        {
+            name: 'Services',
+            data: [
+                {
+                    name: '2020',
+                    y: 7,
+                    drilldown: 'services-2020'
+                },
+                {
+                    name: '2021',
+                    y: 3
+                }
+            ]
+        }
+    ],
     drilldown: {
-        series: [{
-            id: 'goods-2020',
-            name: 'Goods 2020',
-            data: [
-                ['Q1 2020', 4],
-                ['Q2 2020', 2],
-                ['Q3 2020', 1],
-                ['Q4 2020', 2]
-            ]
-        }, {
-            id: 'services-2020',
-            name: 'Services 2020',
-            data: [
-                ['Q1 2020', 4],
-                ['Q2 2020', 2],
-                ['Q3 2020', 5],
-                ['Q4 2020', 1]
-            ]
-        }]
+        series: [
+            {
+                id: 'goods-2020',
+                name: 'Goods 2020',
+                data: [
+                    ['Q1 2020', 4],
+                    ['Q2 2020', 2],
+                    ['Q3 2020', 1],
+                    ['Q4 2020', 2]
+                ]
+            },
+            {
+                id: 'services-2020',
+                name: 'Services 2020',
+                data: [
+                    ['Q1 2020', 4],
+                    ['Q2 2020', 2],
+                    ['Q3 2020', 5],
+                    ['Q4 2020', 1]
+                ]
+            }
+        ]
     }
 });
 

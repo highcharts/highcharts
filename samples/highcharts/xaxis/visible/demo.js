@@ -24,13 +24,16 @@ const chart = Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        data: [1, 3, 2, 4],
-        name: 'Ola'
-    }, {
-        data: [5, 4, 5, 2],
-        name: 'Kari'
-    }]
+    series: [
+        {
+            data: [1, 3, 2, 4],
+            name: 'Ola'
+        },
+        {
+            data: [5, 4, 5, 2],
+            name: 'Kari'
+        }
+    ]
 });
 
 let yVisible = false;

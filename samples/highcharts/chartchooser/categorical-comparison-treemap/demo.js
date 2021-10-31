@@ -1,47 +1,47 @@
 const colors = [
-    "#E59866",
-    "#F8C471",
-    "#F7DC6F",
-    "#82E0AA",
-    "#73C6B6",
-    "#85C1E9",
-    "#BB8FCE",
-    "#F1948A",
-    "#B2BABB"
+    '#E59866',
+    '#F8C471',
+    '#F7DC6F',
+    '#82E0AA',
+    '#73C6B6',
+    '#85C1E9',
+    '#BB8FCE',
+    '#F1948A',
+    '#B2BABB'
 ];
 
 Highcharts.getJSON(
-    "https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json",
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@dac9b997d8/samples/data/denmark-export-2018.json',
 
     function (dataJson) {
-        Highcharts.chart("container", {
+        Highcharts.chart('container', {
             accessibility: {
                 screenReaderSection: {
                     beforeChartFormat:
-            "<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>"
+                        '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div>'
                 },
                 description:
-          "Tree map detailing exported goods from Denmark in 2018. The services category is the largest, and makes up 39% of the total export. Transport services are the most exported. Chemicals are the second most exported category with 13%, then agriculture with 12%, and machinery with 10%. The other categories are textiles, electronics, metals, minerals, vehicles, stone, and other."
+                    'Tree map detailing exported goods from Denmark in 2018. The services category is the largest, and makes up 39% of the total export. Transport services are the most exported. Chemicals are the second most exported category with 13%, then agriculture with 12%, and machinery with 10%. The other categories are textiles, electronics, metals, minerals, vehicles, stone, and other.'
             },
             colors: colors,
             series: [
                 {
-                    name: "Export",
-                    type: "treemap",
-                    layoutAlgorithm: "squarified",
+                    name: 'Export',
+                    type: 'treemap',
+                    layoutAlgorithm: 'squarified',
                     allowDrillToNode: true,
                     turboThreshold: Infinity,
                     dataLabels: {
                         enabled: false,
                         crop: true
                     },
-                    borderColor: "black",
+                    borderColor: 'black',
                     levels: [
                         {
                             level: 1,
                             colorByPoint: true,
                             dataLabels: {
-                                format: "{point.name} {point.value:.0f}%",
+                                format: '{point.name} {point.value:.0f}%',
                                 style: {
                                     textOutline: false,
                                     fontSize: 18
@@ -66,14 +66,14 @@ Highcharts.getJSON(
                 }
             ],
             title: {
-                text: "Denmark Export 2018"
+                text: 'Denmark Export 2018'
             },
             subtitle: {
-                text: "Source: Harvard.edu"
+                text: 'Source: Harvard.edu'
             },
             tooltip: {
                 valueDecimals: 2,
-                pointFormat: "<b>{point.name}</b>: <b>{point.value}%"
+                pointFormat: '<b>{point.name}</b>: <b>{point.value}%'
             }
         });
     }

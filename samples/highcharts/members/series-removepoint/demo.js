@@ -8,16 +8,17 @@ const chart = Highcharts.chart('container', {
     xAxis: {
         min: 100
     },
-    series: [{
-        data: (function (arr, i) {
-            for (i = 0; i < 200; i = i + 1) {
-                arr.push(i);
-            }
-            return arr;
-        }([])),
-        cropThreshold: 100
-    }]
-
+    series: [
+        {
+            data: (function (arr, i) {
+                for (i = 0; i < 200; i = i + 1) {
+                    arr.push(i);
+                }
+                return arr;
+            })([]),
+            cropThreshold: 100
+        }
+    ]
 });
 
 document.getElementById('remove').addEventListener('click', () => {

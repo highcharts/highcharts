@@ -1,24 +1,30 @@
 // Table row definitions. The table is built from this data.
-var tableRows = [{
-    trackTitle: 'Education',
-    chartData: [178, 184, 167, 183, 160, 138]
-}, {
-    trackTitle: 'Employment & Workplace',
-    chartData: [87, 68, 99, 105, 91, 137]
-}, {
-    trackTitle: 'Entertainment & Leisure',
-    chartData: [24, 32, 30, 25, 25, 28]
-}, {
-    trackTitle: 'Independent Living',
-    chartData: [51, 57, 67, 76, 57, 107]
-}, {
-    trackTitle: 'Law & Policy',
-    chartData: [37, 42, 53, 45, 44, 54]
-}, {
-    trackTitle: 'Transportation',
-    chartData: [5, 6, 10, 8, 4, 4]
-}];
-
+var tableRows = [
+    {
+        trackTitle: 'Education',
+        chartData: [178, 184, 167, 183, 160, 138]
+    },
+    {
+        trackTitle: 'Employment & Workplace',
+        chartData: [87, 68, 99, 105, 91, 137]
+    },
+    {
+        trackTitle: 'Entertainment & Leisure',
+        chartData: [24, 32, 30, 25, 25, 28]
+    },
+    {
+        trackTitle: 'Independent Living',
+        chartData: [51, 57, 67, 76, 57, 107]
+    },
+    {
+        trackTitle: 'Law & Policy',
+        chartData: [37, 42, 53, 45, 44, 54]
+    },
+    {
+        trackTitle: 'Transportation',
+        chartData: [5, 6, 10, 8, 4, 4]
+    }
+];
 
 // Default options for the sparkline charts
 var defaultChartOptions = {
@@ -33,9 +39,10 @@ var defaultChartOptions = {
             valueSuffix: ' sessions'
         },
         screenReaderSection: {
-            beforeChartFormat: '<h5>{chartTitle}</h5>' +
-                    '<div>{chartLongdesc}</div>' +
-                    '<div>{playAsSoundButton}</div>',
+            beforeChartFormat:
+                '<h5>{chartTitle}</h5>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>',
             afterChartFormat: ''
         }
     },
@@ -87,17 +94,31 @@ var defaultChartOptions = {
         formatter: function () {
             var point = this.point;
             var chart = this.series.chart;
-            var longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
-            var longdescFormat = '<span style="font-size: 12px">' + longdescText + '</span><br/>';
-            var pointFormat = '<div style="margin-top:10px;"><span style="color:' + point.color +
-                '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';
+            var longdescText =
+                chart.accessibility.components.infoRegions.getLongdescText() ||
+                'Sessions';
+            var longdescFormat =
+                '<span style="font-size: 12px">' +
+                longdescText +
+                '</span><br/>';
+            var pointFormat =
+                '<div style="margin-top:10px;"><span style="color:' +
+                point.color +
+                '">●</span> ' +
+                point.x +
+                ': <b>' +
+                point.y +
+                '</b></div>';
 
             return longdescFormat + pointFormat;
         },
         positioner: function () {
             var chart = this.chart;
             var chartPosition = chart.pointer.getChartPosition();
-            var tooltipBBox = this.label && this.label.getBBox() || { width: 100, height: 100 };
+            var tooltipBBox = (this.label && this.label.getBBox()) || {
+                width: 100,
+                height: 100
+            };
             var tooltipXOffset = (chart.plotWidth - tooltipBBox.width) / 2;
             var tooltipYOffset = 12;
             var x = chartPosition.left + tooltipXOffset;
@@ -117,7 +138,6 @@ var defaultChartOptions = {
     }
 };
 
-
 // Get string with basic description of chart data.
 function describeChart(data) {
     var firstPoint = data[0];
@@ -126,17 +146,25 @@ function describeChart(data) {
     var maxPoint = Math.max.apply(null, data);
     var slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
-    return 'Sessions ' + slopeText + ' overall from 2015 to 2020, starting at ' + firstPoint +
-        ' and ending at ' + lastPoint + '. Values ranged between ' +
-        minPoint + ' and ' + maxPoint + '.';
+    return (
+        'Sessions ' +
+        slopeText +
+        ' overall from 2015 to 2020, starting at ' +
+        firstPoint +
+        ' and ending at ' +
+        lastPoint +
+        '. Values ranged between ' +
+        minPoint +
+        ' and ' +
+        maxPoint +
+        '.'
+    );
 }
-
 
 // Add automated descriptions to the data
 tableRows.forEach(function (rowDefinition) {
     rowDefinition.chartDescription = describeChart(rowDefinition.chartData);
 });
-
 
 // Add a cell with the track title to a table row element
 function addTrackCell(tableRowElement, rowDefinition) {
@@ -146,16 +174,16 @@ function addTrackCell(tableRowElement, rowDefinition) {
     tableRowElement.appendChild(cell);
 }
 
-
 // Add a cell with the average data to a table row element
 function addAverageCell(tableRowElement, rowDefinition) {
     var cell = document.createElement('td');
-    var getArrayAverage = arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
+    var getArrayAverage = (arr) =>
+        arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
 
-    cell.textContent = Math.round(getArrayAverage(rowDefinition.chartData)) + ' sessions';
+    cell.textContent =
+        Math.round(getArrayAverage(rowDefinition.chartData)) + ' sessions';
     tableRowElement.appendChild(cell);
 }
-
 
 // Add a sparkline cell to a table row element
 function addSparklineCell(tableRowElement, rowDefinition) {
@@ -166,20 +194,24 @@ function addSparklineCell(tableRowElement, rowDefinition) {
     cell.appendChild(sparklineContainer);
     tableRowElement.appendChild(cell);
 
-    Highcharts.chart(sparklineContainer, Highcharts.merge(defaultChartOptions, {
-        title: {
-            text: rowDefinition.trackTitle + ' Chart'
-        },
-        accessibility: {
-            description: rowDefinition.chartDescription
-        },
-        series: [{
-            name: 'Sessions',
-            data: rowDefinition.chartData
-        }]
-    }));
+    Highcharts.chart(
+        sparklineContainer,
+        Highcharts.merge(defaultChartOptions, {
+            title: {
+                text: rowDefinition.trackTitle + ' Chart'
+            },
+            accessibility: {
+                description: rowDefinition.chartDescription
+            },
+            series: [
+                {
+                    name: 'Sessions',
+                    data: rowDefinition.chartData
+                }
+            ]
+        })
+    );
 }
-
 
 // Populate the table
 var tableBody = document.getElementById('tbody');

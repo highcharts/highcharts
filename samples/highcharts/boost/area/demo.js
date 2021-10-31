@@ -31,7 +31,6 @@ var data = getData(500000);
 
 console.time('area');
 Highcharts.chart('container', {
-
     chart: {
         type: 'area',
         zoomType: 'x',
@@ -55,9 +54,10 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        data: data
-    }]
-
+    series: [
+        {
+            data: data
+        }
+    ]
 });
 console.timeEnd('area');

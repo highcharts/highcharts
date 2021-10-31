@@ -15,9 +15,12 @@ Highcharts.chart('container', {
             stacking: true
         }
     },
-    series: [{
-        data: [1, 2, 4]
-    }, {
-        data: [5, 6, 3]
-    }]
+    series: [
+        {
+            data: [1, 2, 4]
+        },
+        {
+            data: [5, 6, 3]
+        }
+    ]
 });

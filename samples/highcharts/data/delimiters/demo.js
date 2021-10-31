@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Highcharts data delimiters demo'
     },

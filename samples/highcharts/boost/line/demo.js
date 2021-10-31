@@ -30,10 +30,8 @@ function getData(n) {
 var n = 500000,
     data = getData(n);
 
-
 console.time('line');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'x',
         panning: true,
@@ -56,10 +54,11 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        data: data,
-        lineWidth: 0.5
-    }]
-
+    series: [
+        {
+            data: data,
+            lineWidth: 0.5
+        }
+    ]
 });
 console.timeEnd('line');

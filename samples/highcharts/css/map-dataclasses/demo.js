@@ -1,6 +1,5 @@
 function drawChart(data) {
     return Highcharts.mapChart('container', {
-
         chart: {
             styledMode: true
         },
@@ -28,28 +27,34 @@ function drawChart(data) {
 
         colorAxis: {
             dataClassColor: 'category',
-            dataClasses: [{
-                to: 20,
-                name: 'Sparse (<20)'
-            }, {
-                from: 20,
-                to: 200,
-                name: 'Moderate (2 - 200)'
-            }, {
-                from: 200,
-                name: 'Dense (>200)'
-            }]
+            dataClasses: [
+                {
+                    to: 20,
+                    name: 'Sparse (<20)'
+                },
+                {
+                    from: 20,
+                    to: 200,
+                    name: 'Moderate (2 - 200)'
+                },
+                {
+                    from: 200,
+                    name: 'Dense (>200)'
+                }
+            ]
         },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            tooltip: {
-                valueSuffix: '/km²'
+        series: [
+            {
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
             }
-        }]
+        ]
     });
 }
 
@@ -61,7 +66,6 @@ Highcharts.data({
 
     // custom handler when the spreadsheet is parsed
     parsed: function (columns) {
-
         // Read the columns into the data array
         var data = [];
         columns[0].forEach((code, i) => {

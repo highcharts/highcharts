@@ -1,5 +1,4 @@
 var chart = Highcharts.chart('container', {
-
     chart: {
         type: 'solidgauge'
     },
@@ -33,7 +32,6 @@ var chart = Highcharts.chart('container', {
 
     // the value axis
     yAxis: {
-
         min: -4,
         max: 4,
         title: {
@@ -51,17 +49,20 @@ var chart = Highcharts.chart('container', {
             [0.4999, '#55BF3B'], // green
             [0.5, '#DF5353'] // red
         ],
-        plotBands: [{
-            color: '#55BF3B', // Color value
-            from: -4, // Start of the plot band
-            to: 0,
-            outerRadius: "78%"
-        }, {
-            color: '#DF5353', // Color value
-            from: 0, // Start of the plot band
-            to: 4,
-            outerRadius: "78%"
-        }]
+        plotBands: [
+            {
+                color: '#55BF3B', // Color value
+                from: -4, // Start of the plot band
+                to: 0,
+                outerRadius: '78%'
+            },
+            {
+                color: '#DF5353', // Color value
+                from: 0, // Start of the plot band
+                to: 4,
+                outerRadius: '78%'
+            }
+        ]
     },
 
     plotOptions: {
@@ -70,7 +71,7 @@ var chart = Highcharts.chart('container', {
                 y: 5,
                 borderWidth: 0
             },
-            innerRadius: "80%"
+            innerRadius: '80%'
         }
     },
 
@@ -78,26 +79,27 @@ var chart = Highcharts.chart('container', {
         enabled: false
     },
 
-    series: [{
-        name: 'Svinn',
-        data: [-0.5],
-        threshold: 0,
-        dataLabels: {
-            format:
-                '<span style="font-size:25px;color:black">{y} </span>' +
-                '<span style="font-size:16px">%</span><br>' +
-                '<span style="color:silver">Target: 2 %</span>'
-        },
-        tooltip: {
-            valueSuffix: ' %'
+    series: [
+        {
+            name: 'Svinn',
+            data: [-0.5],
+            threshold: 0,
+            dataLabels: {
+                format:
+                    '<span style="font-size:25px;color:black">{y} </span>' +
+                    '<span style="font-size:16px">%</span><br>' +
+                    '<span style="color:silver">Target: 2 %</span>'
+            },
+            tooltip: {
+                valueSuffix: ' %'
+            }
         }
-    }]
+    ]
 });
 
 // Bring life to the dial
 setInterval(function () {
-    var point,
-        newVal;
+    var point, newVal;
 
     if (chart) {
         point = chart.series[0].points[0];

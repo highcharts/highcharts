@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'area',
         polar: true,
@@ -15,9 +14,10 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        type: 'area',
-        data: [1, 1, null, 1, 1]
-    }]
-
+    series: [
+        {
+            type: 'area',
+            data: [1, 1, null, 1, 1]
+        }
+    ]
 });

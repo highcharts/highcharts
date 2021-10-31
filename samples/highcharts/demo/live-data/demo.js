@@ -15,7 +15,11 @@ function createChart() {
             announceNewData: {
                 enabled: true,
                 minAnnounceInterval: 15000,
-                announcementFormatter: function (allSeries, newSeries, newPoint) {
+                announcementFormatter: function (
+                    allSeries,
+                    newSeries,
+                    newPoint
+                ) {
                     if (newPoint) {
                         return 'New point added. Value: ' + newPoint.y;
                     }
@@ -39,7 +43,10 @@ urlInput.value = defaultData;
 
 // We recreate instead of using chart update to make sure the loaded CSV
 // and such is completely gone.
-pollingCheckbox.onchange = urlInput.onchange = pollingInput.onchange = createChart;
+pollingCheckbox.onchange =
+    urlInput.onchange =
+    pollingInput.onchange =
+        createChart;
 
 // Create the chart
 createChart();

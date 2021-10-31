@@ -1,7 +1,19 @@
 Highcharts.chart('container', {
-
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     yAxis: {
@@ -9,8 +21,9 @@ Highcharts.chart('container', {
         minorTickInterval: 'auto'
     },
 
-    series: [{
-        data: [2, 5, 3, 7, 40, 3]
-    }]
-
+    series: [
+        {
+            data: [2, 5, 3, 7, 40, 3]
+        }
+    ]
 });

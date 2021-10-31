@@ -6,7 +6,7 @@ const renderer = new Highcharts.Renderer(
 renderer
     .text(
         'This text is <span style="color: red">styled</span> and ' +
-        '<a href="https://example.com">linked</a>',
+            '<a href="https://example.com">linked</a>',
         20,
         20
     )

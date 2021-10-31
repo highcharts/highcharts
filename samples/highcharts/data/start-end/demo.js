@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     title: {
         text: 'Global temperature change'
     },
@@ -20,7 +19,9 @@ Highcharts.chart('container', {
         allowDecimals: false
     },
 
-    series: [{
-        name: 'Annual mean'
-    }]
+    series: [
+        {
+            name: 'Annual mean'
+        }
+    ]
 });

@@ -1,6 +1,5 @@
 Highcharts.chart('container', {
-    colors: [
-        { patternIndex: 3 }, { patternIndex: 1 }, '#5050f0'],
+    colors: [{ patternIndex: 3 }, { patternIndex: 1 }, '#5050f0'],
     chart: {
         type: 'pie'
     },
@@ -23,22 +22,28 @@ Highcharts.chart('container', {
             showInLegend: true
         }
     },
-    series: [{
-        name: 'Percentage',
-        colorByPoint: true,
-        innerSize: '75%',
-        data: [{
-            name: 'Nitrogen',
-            y: 78,
-            borderColor: '#D97D26'
-        }, {
-            name: 'Oxygen',
-            y: 20.9,
-            borderColor: '#999'
-        }, {
-            name: 'Other gases',
-            y: 1.1,
-            borderColor: '#5050a0'
-        }]
-    }]
+    series: [
+        {
+            name: 'Percentage',
+            colorByPoint: true,
+            innerSize: '75%',
+            data: [
+                {
+                    name: 'Nitrogen',
+                    y: 78,
+                    borderColor: '#D97D26'
+                },
+                {
+                    name: 'Oxygen',
+                    y: 20.9,
+                    borderColor: '#999'
+                },
+                {
+                    name: 'Other gases',
+                    y: 1.1,
+                    borderColor: '#5050a0'
+                }
+            ]
+        }
+    ]
 });

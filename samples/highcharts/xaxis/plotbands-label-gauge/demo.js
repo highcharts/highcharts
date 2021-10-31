@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge'
     },
@@ -28,44 +27,48 @@ Highcharts.chart('container', {
         tickPixelInterval: 40,
         tickWidth: 2,
 
-
         title: {
             text: 'km/h'
         },
-        plotBands: [{
-            from: 0,
-            to: 50,
-            color: '#55BF3B',
-            label: {
-                text: 'green',
-                align: 'right',
-                x: -10
+        plotBands: [
+            {
+                from: 0,
+                to: 50,
+                color: '#55BF3B',
+                label: {
+                    text: 'green',
+                    align: 'right',
+                    x: -10
+                }
+            },
+            {
+                from: 50,
+                to: 90,
+                color: '#DDDF0D',
+                label: {
+                    text: 'yellow',
+                    align: 'left'
+                }
+            },
+            {
+                from: 90,
+                to: 120,
+                color: '#DF5353',
+                label: {
+                    text: 'red',
+                    align: 'left'
+                }
             }
-        }, {
-            from: 50,
-            to: 90,
-            color: '#DDDF0D',
-            label: {
-                text: 'yellow',
-                align: 'left'
-            }
-        }, {
-            from: 90,
-            to: 120,
-            color: '#DF5353',
-            label: {
-                text: 'red',
-                align: 'left'
-            }
-        }]
+        ]
     },
 
-    series: [{
-        name: 'Speed',
-        data: [80],
-        tooltip: {
-            valueSuffix: ' km/h'
+    series: [
+        {
+            name: 'Speed',
+            data: [80],
+            tooltip: {
+                valueSuffix: ' km/h'
+            }
         }
-    }]
-
+    ]
 });

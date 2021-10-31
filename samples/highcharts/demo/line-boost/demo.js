@@ -35,10 +35,8 @@ function getData(n) {
 var n = 500000,
     data = getData(n);
 
-
 console.time('line');
 Highcharts.chart('container', {
-
     chart: {
         zoomType: 'x'
     },
@@ -59,11 +57,12 @@ Highcharts.chart('container', {
         type: 'datetime'
     },
 
-    series: [{
-        data: data,
-        lineWidth: 0.5,
-        name: 'Hourly data points'
-    }]
-
+    series: [
+        {
+            data: data,
+            lineWidth: 0.5,
+            name: 'Hourly data points'
+        }
+    ]
 });
 console.timeEnd('line');
