@@ -16,11 +16,7 @@ import type Position3DObject from '../Renderer/Position3DObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type Tick from './Tick.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    extend,
-    wrap
-} = U;
+const { addEvent, extend, wrap } = U;
 
 /* eslint-disable valid-jsdoc */
 
@@ -30,7 +26,6 @@ const {
  * @class
  */
 class Tick3D {
-
     /* *
      *
      *  Static Functions
@@ -41,8 +36,11 @@ class Tick3D {
      * @private
      */
     public static compose(TickClass: typeof Tick): void {
-
-        addEvent(TickClass, 'afterGetLabelPosition', Tick3D.onAfterGetLabelPosition);
+        addEvent(
+            TickClass,
+            'afterGetLabelPosition',
+            Tick3D.onAfterGetLabelPosition
+        );
 
         const tickProto = TickClass.prototype as Tick3D;
 
@@ -70,16 +68,10 @@ class Tick3D {
     /**
      * @private
      */
-    public static wrapGetMarkPath(
-        this: Tick,
-        proceed: Function
-    ): SVGPath {
+    public static wrapGetMarkPath(this: Tick, proceed: Function): SVGPath {
         const chart = this.axis.chart;
         const axis3D = this.axis.axis3D;
-        const path: SVGPath = proceed.apply(
-            this,
-            [].slice.call(arguments, 1)
-        );
+        const path: SVGPath = proceed.apply(this, [].slice.call(arguments, 1));
 
         if (axis3D) {
             const start = path[0];
@@ -95,7 +87,6 @@ class Tick3D {
         }
         return path;
     }
-
 }
 
 /**

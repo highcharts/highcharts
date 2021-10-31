@@ -19,12 +19,7 @@
 import type Axis from './Axis';
 
 import U from '../Utilities.js';
-const {
-    addEvent,
-    getMagnitude,
-    normalizeTickInterval,
-    pick
-} = U;
+const { addEvent, getMagnitude, normalizeTickInterval, pick } = U;
 
 /* *
  *
@@ -54,7 +49,6 @@ declare module './AxisType' {
  * @private
  */
 namespace LogarithmicAxis {
-
     /* *
      *
      *  Declarations
@@ -87,8 +81,7 @@ namespace LogarithmicAxis {
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
-    ): (T&typeof Composition) {
-
+    ): T & typeof Composition {
         if (composedClasses.indexOf(AxisClass) === -1) {
             composedClasses.push(AxisClass);
 
@@ -98,16 +91,13 @@ namespace LogarithmicAxis {
             addEvent(AxisClass, 'afterInit', onAfterInit);
         }
 
-        return AxisClass as (T&typeof Composition);
+        return AxisClass as T & typeof Composition;
     }
 
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['options'] }
-    ): void {
+    function onInit(this: Axis, e: { userOptions: Axis['options'] }): void {
         const axis = this;
         const options = e.userOptions;
 
@@ -117,7 +107,9 @@ namespace LogarithmicAxis {
             axis.logarithmic = void 0;
         } else {
             if (!logarithmic) {
-                logarithmic = axis.logarithmic = new Additions(axis as Composition);
+                logarithmic = axis.logarithmic = new Additions(
+                    axis as Composition
+                );
             }
         }
     }
@@ -125,9 +117,7 @@ namespace LogarithmicAxis {
     /**
      * @private
      */
-    function onAfterInit(
-        this: Axis
-    ): void {
+    function onAfterInit(this: Axis): void {
         const axis = this as Composition;
         const log = axis.logarithmic;
 
@@ -148,38 +138,36 @@ namespace LogarithmicAxis {
      *
      * */
 
-
     /**
      * Provides logarithmic support for axes.
      * @private
      * @class
      */
     export class Additions {
-
         /* *
-        *
-        *  Constructors
-        *
-        * */
+         *
+         *  Constructors
+         *
+         * */
 
         public constructor(axis: Composition) {
             this.axis = axis;
         }
 
         /* *
-        *
-        *  Properties
-        *
-        * */
+         *
+         *  Properties
+         *
+         * */
 
         public axis: Composition;
         public minorAutoInterval?: number;
 
         /* *
-        *
-        *  Functions
-        *
-        * */
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * Set the tick positions of a logarithmic axis.
@@ -209,26 +197,21 @@ namespace LogarithmicAxis {
                 interval = Math.round(interval);
                 positions = axis.getLinearTickPositions(interval, min, max);
 
-            // Second case: We need intermediary ticks. For example
-            // 1, 2, 4, 6, 8, 10, 20, 40 etc.
+                // Second case: We need intermediary ticks. For example
+                // 1, 2, 4, 6, 8, 10, 20, 40 etc.
             } else if (interval >= 0.08) {
                 const roundedMin = Math.floor(min);
 
-                let intermediate,
-                    i,
-                    j,
-                    len,
-                    pos,
-                    lastPos,
-                    break2;
+                let intermediate, i, j, len, pos, lastPos, break2;
 
                 if (interval > 0.3) {
                     intermediate = [1, 2, 4];
 
-                // 0.2 equals five minor ticks per 1, 10, 100 etc
+                    // 0.2 equals five minor ticks per 1, 10, 100 etc
                 } else if (interval > 0.15) {
                     intermediate = [1, 2, 4, 6, 8];
-                } else { // 0.1 equals ten minor ticks per 1, 10, 100 etc
+                } else {
+                    // 0.1 equals ten minor ticks per 1, 10, 100 etc
                     intermediate = [1, 2, 3, 4, 5, 6, 7, 8, 9];
                 }
 
@@ -252,29 +235,30 @@ namespace LogarithmicAxis {
                     }
                 }
 
-            // Third case: We are so deep in between whole logarithmic values,
-            // that we might as well handle the tick positions like a linear
-            // axis. For example 1.01, 1.02, 1.03, 1.04.
+                // Third case: We are so deep in between whole logarithmic
+                // values that we might as well handle the tick positions like a
+                // linear axis. For example 1.01, 1.02, 1.03, 1.04.
             } else {
                 const realMin = log.lin2log(min),
                     realMax = log.lin2log(max),
-                    tickIntervalOption = minor ?
-                        axis.getMinorTickInterval() :
-                        options.tickInterval,
-                    filteredTickIntervalOption = tickIntervalOption === 'auto' ?
-                        null :
-                        tickIntervalOption,
+                    tickIntervalOption = minor
+                        ? axis.getMinorTickInterval()
+                        : options.tickInterval,
+                    filteredTickIntervalOption =
+                        tickIntervalOption === 'auto'
+                            ? null
+                            : tickIntervalOption,
                     tickPixelIntervalOption =
                         (options.tickPixelInterval as any) / (minor ? 5 : 1),
-                    totalPixelLength = minor ?
-                        axisLength / axis.tickPositions.length :
-                        axisLength;
+                    totalPixelLength = minor
+                        ? axisLength / axis.tickPositions.length
+                        : axisLength;
 
                 interval = pick(
                     filteredTickIntervalOption,
                     log.minorAutoInterval,
-                    (realMax - realMin) *
-                        tickPixelIntervalOption / (totalPixelLength || 1)
+                    ((realMax - realMin) * tickPixelIntervalOption) /
+                        (totalPixelLength || 1)
                 );
 
                 interval = normalizeTickInterval(
@@ -283,11 +267,9 @@ namespace LogarithmicAxis {
                     getMagnitude(interval)
                 );
 
-                positions = axis.getLinearTickPositions(
-                    interval,
-                    realMin,
-                    realMax
-                ).map(log.log2lin);
+                positions = axis
+                    .getLinearTickPositions(interval, realMin, realMax)
+                    .map(log.log2lin);
 
                 if (!minor) {
                     log.minorAutoInterval = interval / 5;
@@ -308,7 +290,6 @@ namespace LogarithmicAxis {
         public log2lin(num: number): number {
             return Math.log(num) / Math.LN10;
         }
-
     }
 }
 

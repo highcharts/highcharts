@@ -81,7 +81,6 @@ import { Palette } from '../../Color/Palettes.js';
  * @optionparent colorAxis
  */
 const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
-
     /**
      * Whether to allow decimals on the color axis.
      * @type      {boolean}
@@ -312,7 +311,6 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @product highcharts highstock highmaps
      */
     marker: {
-
         /**
          * Animation for the marker as it moves between values. Set to
          * `false` to disable animation. Defaults to `{ duration: 50 }`.
@@ -347,7 +345,6 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @product highcharts highstock highmaps
      */
     labels: {
-
         /**
          * How to handle overflowing labels on horizontal color axis. If set
          * to `"allow"`, it will not be aligned at all. By default it
@@ -360,7 +357,6 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
         overflow: 'justify',
 
         rotation: 0
-
     },
 
     /**

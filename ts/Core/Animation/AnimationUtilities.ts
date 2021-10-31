@@ -60,7 +60,7 @@ const {
  * so it should be moved to the SVGRenderer.
  */
 function setAnimation(
-    animation: (boolean|Partial<AnimationOptions>|undefined),
+    animation: boolean | Partial<AnimationOptions> | undefined,
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
@@ -84,14 +84,14 @@ function setAnimation(
  *         An object with at least a duration property.
  */
 function animObject(
-    animation?: (boolean|DeepPartial<AnimationOptions>)
+    animation?: boolean | DeepPartial<AnimationOptions>
 ): AnimationOptions {
-    return isObject(animation) ?
-        merge(
-            { duration: 500, defer: 0 },
-            animation as AnimationOptions
-        ) as any :
-        { duration: animation as boolean ? 500 : 0, defer: 0 };
+    return isObject(animation)
+        ? (merge(
+              { duration: 500, defer: 0 },
+              animation as AnimationOptions
+          ) as any)
+        : { duration: (animation as boolean) ? 500 : 0, defer: 0 };
 }
 
 /**
@@ -114,7 +114,7 @@ function animObject(
  */
 function getDeferredAnimation(
     chart: Chart,
-    animation: (false|Partial<AnimationOptions>),
+    animation: false | Partial<AnimationOptions>,
     series?: Series
 ): Partial<AnimationOptions> {
     const labelAnimation = animObject(animation),
@@ -125,12 +125,10 @@ function getDeferredAnimation(
     s.forEach((series): void => {
         const seriesAnim = animObject(series.options.animation);
 
-        defer = animation && defined(animation.defer) ?
-            labelAnimation.defer :
-            Math.max(
-                defer,
-                seriesAnim.duration + seriesAnim.defer
-            );
+        defer =
+            animation && defined(animation.defer)
+                ? labelAnimation.defer
+                : Math.max(defer, seriesAnim.duration + seriesAnim.defer);
         duration = Math.min(labelAnimation.duration, seriesAnim.duration);
     });
     // Disable defer for exporting
@@ -165,9 +163,9 @@ function getDeferredAnimation(
  * @return {void}
  */
 function animate(
-    el: (HTMLDOMElement|SVGElement),
-    params: (CSSObject|SVGAttributes),
-    opt?: boolean|Partial<AnimationOptions>
+    el: HTMLDOMElement | SVGElement,
+    params: CSSObject | SVGAttributes,
+    opt?: boolean | Partial<AnimationOptions>
 ): void {
     let start,
         unit = '',
@@ -175,7 +173,8 @@ function animate(
         fx,
         args;
 
-    if (!isObject(opt)) { // Number or undefined/null
+    if (!isObject(opt)) {
+        // Number or undefined/null
         args = arguments;
         opt = {
             duration: args[2],
@@ -186,9 +185,10 @@ function animate(
     if (!isNumber(opt.duration)) {
         opt.duration = 400;
     }
-    opt.easing = typeof opt.easing === 'function' ?
-        opt.easing :
-        (Math[opt.easing as keyof Math] || Math.easeInOutSine) as any;
+    opt.easing =
+        typeof opt.easing === 'function'
+            ? opt.easing
+            : ((Math[opt.easing as keyof Math] || Math.easeInOutSine) as any);
     opt.curAnim = merge(params) as any;
 
     objectEach(params, function (val, prop): void {

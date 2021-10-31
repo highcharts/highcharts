@@ -75,9 +75,9 @@ export interface SeriesEventsOptions {
     show?: EventCallback<Series, Event>;
 }
 
-export type SeriesFindNearestPointByValue = ('x'|'xy');
+export type SeriesFindNearestPointByValue = 'x' | 'xy';
 
-export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
+export type SeriesLinecapValue = 'butt' | 'round' | 'square' | string;
 
 /**
  * Helper interface for series types to add options to all series options.
@@ -87,7 +87,7 @@ export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
  */
 export interface SeriesOptions {
     allowPointSelect?: boolean;
-    animation?: (boolean|DeepPartial<AnimationOptions>);
+    animation?: boolean | DeepPartial<AnimationOptions>;
     className?: string;
     clip?: boolean;
     color?: ColorType;
@@ -95,10 +95,10 @@ export interface SeriesOptions {
     colorIndex?: number;
     colors?: Array<ColorType>;
     connectNulls?: boolean;
-    crisp?: (boolean|number);
+    crisp?: boolean | number;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
-    data?: Array<(PointOptions|PointShortOptions)>;
+    data?: Array<PointOptions | PointShortOptions>;
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;
@@ -109,7 +109,7 @@ export interface SeriesOptions {
     inactiveOtherPoints?: boolean;
     /** @private */
     isInternal?: boolean;
-    joinBy?: (string|Array<string>);
+    joinBy?: string | Array<string>;
     kdNow?: boolean;
     keys?: Array<string>;
     linecap?: SeriesLinecapValue;
@@ -121,20 +121,20 @@ export interface SeriesOptions {
     negativeColor?: ColorType;
     opacity?: number;
     point?: SeriesPointOptions;
-    pointPlacement?: (number|string);
+    pointPlacement?: number | string;
     pointStart?: number;
     relativeXValue?: boolean;
     pointValKey?: string;
     selected?: boolean;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shadow?: boolean | Partial<ShadowOptionsObject>;
     states?: SeriesStatesOptions<Series>;
     step?: SeriesStepValue;
     stickyTracking?: boolean;
     turboThreshold?: number;
     type?: string;
     visible?: boolean;
-    xAxis?: (number|string);
-    yAxis?: (number|string);
+    xAxis?: number | string;
+    yAxis?: number | string;
     zIndex?: number;
     zoneAxis?: string;
     zones?: Array<SeriesZonesOptions>;
@@ -152,10 +152,10 @@ export interface SeriesStateHoverHaloOptions {
 }
 
 export interface SeriesStateHoverOptions extends StateHoverOptions {
-    animation?: (boolean|DeepPartial<AnimationOptions>);
+    animation?: boolean | DeepPartial<AnimationOptions>;
     brightness?: number;
     enabled?: boolean;
-    halo?: (boolean|SeriesStateHoverHaloOptions);
+    halo?: boolean | SeriesStateHoverHaloOptions;
     lineWidth?: number;
     lineWidthPlus?: number;
     radius?: number;
@@ -175,14 +175,15 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
     // nothing here yet
 }
 
-export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
-    hover?: SeriesStateHoverOptions&StateGenericOptions<T>;
-    inactive?: SeriesStateInactiveOptions&StateGenericOptions<T>;
-    normal?: SeriesStateNormalOptions&StateGenericOptions<T>;
-    select?: SeriesStateSelectOptions&StateGenericOptions<T>;
+export interface SeriesStatesOptions<T extends { options: AnyRecord }>
+    extends StatesOptions {
+    hover?: SeriesStateHoverOptions & StateGenericOptions<T>;
+    inactive?: SeriesStateInactiveOptions & StateGenericOptions<T>;
+    normal?: SeriesStateNormalOptions & StateGenericOptions<T>;
+    select?: SeriesStateSelectOptions & StateGenericOptions<T>;
 }
 
-export type SeriesStepValue = ('center'|'left'|'right');
+export type SeriesStepValue = 'center' | 'left' | 'right';
 
 /**
  * An array defining zones within a series. Zones can be applied to the

@@ -27,7 +27,6 @@ import H from '../Globals.js';
  * */
 
 namespace RendererRegistry {
-
     /* *
      *
      *  Constants
@@ -63,7 +62,7 @@ namespace RendererRegistry {
     export function getRendererType(
         rendererType: string = defaultRenderer
     ): typeof SVGRenderer {
-        return (rendererTypes[rendererType] || rendererTypes[defaultRenderer]);
+        return rendererTypes[rendererType] || rendererTypes[defaultRenderer];
     }
 
     /**

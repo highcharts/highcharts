@@ -35,25 +35,14 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
-const {
-    charts,
-    deg2rad
-} = H;
+const { charts, deg2rad } = H;
 import Math3D from '../../../Extensions/Math3D.js';
-const {
-    perspective,
-    shapeArea
-} = Math3D;
+const { perspective, shapeArea } = Math3D;
 import SVGElement from './SVGElement.js';
 import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
-const {
-    defined,
-    extend,
-    merge,
-    pick
-} = U;
+const { defined, extend, merge, pick } = U;
 
 /* *
  *
@@ -82,10 +71,7 @@ declare module './SVGRendererLike' {
         element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
         face3d(args?: SVGAttributes): SVGElement;
         polyhedron(args?: SVGAttributes): SVGElement3DLike;
-        toLinePath(
-            points: Array<PositionObject>,
-            closed?: boolean
-        ): SVGPath;
+        toLinePath(points: Array<PositionObject>, closed?: boolean): SVGPath;
         toLineSegments(points: Array<PositionObject>): SVGPath;
     }
 }
@@ -99,7 +85,7 @@ declare module './SVGRendererLike' {
 const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,
-    dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+    dFactor = (4 * (Math.sqrt(2) - 1)) / 3 / (PI / 2);
 
 /* *
  *
@@ -116,7 +102,6 @@ const cos = Math.cos,
  * */
 
 class SVGRenderer3D extends SVGRenderer {
-
     /* *
      *
      *  Static Functions
@@ -158,38 +143,48 @@ class SVGRenderer3D extends SVGRenderer {
         let result = [] as SVGPath,
             arcAngle = end - start;
 
-        if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
+        if (end > start && end - start > Math.PI / 2 + 0.0001) {
             result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
+                this.curveTo(cx, cy, rx, ry, start, start + Math.PI / 2, dx, dy)
             );
             result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
-            );
-            return result;
-        }
-        if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
-            result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)
-            );
-            result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
+                this.curveTo(cx, cy, rx, ry, start + Math.PI / 2, end, dx, dy)
             );
             return result;
         }
-        return [[
-            'C',
-            cx + (rx * Math.cos(start)) -
-                ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
-            cy + (ry * Math.sin(start)) +
-                ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
-            cx + (rx * Math.cos(end)) +
-                ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
-            cy + (ry * Math.sin(end)) -
-                ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
+        if (end < start && start - end > Math.PI / 2 + 0.0001) {
+            result = result.concat(
+                this.curveTo(cx, cy, rx, ry, start, start - Math.PI / 2, dx, dy)
+            );
+            result = result.concat(
+                this.curveTo(cx, cy, rx, ry, start - Math.PI / 2, end, dx, dy)
+            );
+            return result;
+        }
+        return [
+            [
+                'C',
+                cx +
+                    rx * Math.cos(start) -
+                    rx * dFactor * arcAngle * Math.sin(start) +
+                    dx,
+                cy +
+                    ry * Math.sin(start) +
+                    ry * dFactor * arcAngle * Math.cos(start) +
+                    dy,
+                cx +
+                    rx * Math.cos(end) +
+                    rx * dFactor * arcAngle * Math.sin(end) +
+                    dx,
+                cy +
+                    ry * Math.sin(end) -
+                    ry * dFactor * arcAngle * Math.cos(end) +
+                    dy,
 
-            cx + (rx * Math.cos(end)) + dx,
-            cy + (ry * Math.sin(end)) + dy
-        ]];
+                cx + rx * Math.cos(end) + dx,
+                cy + ry * Math.sin(end) + dy
+            ]
+        ];
     }
 
     /* *
@@ -254,16 +249,13 @@ class SVGRenderer3D extends SVGRenderer {
 
         ret.attr = function (
             this: SVGElement,
-            hash?: (string|SVGAttributes3D)
-        ): (number|string|SVGElement) {
-
+            hash?: string | SVGAttributes3D
+        ): number | string | SVGElement {
             if (
                 typeof hash === 'object' &&
-                (
-                    defined(hash.enabled) ||
+                (defined(hash.enabled) ||
                     defined(hash.vertexes) ||
-                    defined(hash.insidePlotArea)
-                )
+                    defined(hash.insidePlotArea))
             ) {
                 this.enabled = pick(hash.enabled, this.enabled);
                 this.vertexes = pick(hash.vertexes, this.vertexes);
@@ -285,7 +277,8 @@ class SVGRenderer3D extends SVGRenderer {
                     area = shapeArea(vertexes2d);
 
                 hash.d = path;
-                hash.visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+                hash.visibility =
+                    this.enabled && area > 0 ? 'visible' : 'hidden';
             }
             return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;
@@ -296,11 +289,9 @@ class SVGRenderer3D extends SVGRenderer {
         ): SVGElement {
             if (
                 typeof params === 'object' &&
-                (
-                    defined(params.enabled) ||
+                (defined(params.enabled) ||
                     defined(params.vertexes) ||
-                    defined(params.insidePlotArea)
-                )
+                    defined(params.insidePlotArea))
             ) {
                 this.enabled = pick(params.enabled, this.enabled);
                 this.vertexes = pick(params.vertexes, this.vertexes);
@@ -320,7 +311,8 @@ class SVGRenderer3D extends SVGRenderer {
                     ),
                     path = renderer.toLinePath(vertexes2d, true),
                     area = shapeArea(vertexes2d),
-                    visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+                    visibility =
+                        this.enabled && area > 0 ? 'visible' : 'hidden';
 
                 params.d = path;
                 this.attr('visibility', visibility);
@@ -365,11 +357,11 @@ class SVGRenderer3D extends SVGRenderer {
 
         result.attr = function (
             this: SVGElement,
-            hash?: (string|SVGAttributes3D),
+            hash?: string | SVGAttributes3D,
             val?: string,
             complete?: Function,
             continueAnimation?: boolean
-        ): (number|string|SVGElement) {
+        ): number | string | SVGElement {
             if (typeof hash === 'object' && defined(hash.faces)) {
                 while (result.faces.length > hash.faces.length) {
                     result.faces.pop().destroy();
@@ -396,7 +388,7 @@ class SVGRenderer3D extends SVGRenderer {
         result.animate = function (
             this: SVGElement,
             params: SVGAttributes3D,
-            duration?: (boolean|Partial<AnimationOptions>),
+            duration?: boolean | Partial<AnimationOptions>,
             complete?: Function
         ): SVGElement {
             if (params && params.faces) {
@@ -407,7 +399,11 @@ class SVGRenderer3D extends SVGRenderer {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (let i = 0; i < params.faces.length; i++) {
-                    result.faces[i].animate(params.faces[i], duration, complete);
+                    result.faces[i].animate(
+                        params.faces[i],
+                        duration,
+                        complete
+                    );
                 }
                 delete params.faces;
             }
@@ -467,7 +463,7 @@ class SVGRenderer3D extends SVGRenderer {
             bottom: Array<number>,
             left: Array<number>,
             right: Array<number>,
-            shape: Array<number|Array<number>>,
+            shape: Array<number | Array<number>>,
             path1: Array<PositionObject>,
             path2: Array<PositionObject>,
             path3: Array<PositionObject>,
@@ -484,44 +480,50 @@ class SVGRenderer3D extends SVGRenderer {
             incrementY = 10,
             incrementZ = 100,
             zIndex = 0,
-
             // The 8 corners of the cube
-            pArr = [{
-                x: x,
-                y: y,
-                z: z
-            }, {
-                x: x + w,
-                y: y,
-                z: z
-            }, {
-                x: x + w,
-                y: y + h,
-                z: z
-            }, {
-                x: x,
-                y: y + h,
-                z: z
-            }, {
-                x: x,
-                y: y + h,
-                z: z + d
-            }, {
-                x: x + w,
-                y: y + h,
-                z: z + d
-            }, {
-                x: x + w,
-                y: y,
-                z: z + d
-            }, {
-                x: x,
-                y: y,
-                z: z + d
-            }],
-
+            pArr = [
+                {
+                    x: x,
+                    y: y,
+                    z: z
+                },
+                {
+                    x: x + w,
+                    y: y,
+                    z: z
+                },
+                {
+                    x: x + w,
+                    y: y + h,
+                    z: z
+                },
+                {
+                    x: x,
+                    y: y + h,
+                    z: z
+                },
+                {
+                    x: x,
+                    y: y + h,
+                    z: z + d
+                },
+                {
+                    x: x + w,
+                    y: y + h,
+                    z: z + d
+                },
+                {
+                    x: x + w,
+                    y: y,
+                    z: z + d
+                },
+                {
+                    x: x,
+                    y: y,
+                    z: z + d
+                }
+            ],
             forcedSides: Array<string> = [],
-
             pickShape;
 
         // apply perspective
@@ -535,7 +537,8 @@ class SVGRenderer3D extends SVGRenderer {
             // Added support for 0 value in columns, where height is 0
             // but the shape is rendered.
             // Height is used from 1st to 6th element of pArr
-            if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
+            if (h === 0 && i > 1 && i < 6) {
+                // [2, 3, 4, 5]
                 return {
                     x: pArr[i].x,
                     // when height is 0 instead of cuboid we render plane
@@ -548,7 +551,8 @@ class SVGRenderer3D extends SVGRenderer {
             // It is needed to calculate dummy sides (front/back) for breaking
             // points in case of x and depth values. If column has side,
             // it means that x values of front and back side are different.
-            if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
+            if (pArr[0].x === pArr[7].x && i >= 4) {
+                // [4, 5, 6, 7]
                 return {
                     x: pArr[i].x + 10,
                     // when height is 0 instead of cuboid we render plane
@@ -559,7 +563,8 @@ class SVGRenderer3D extends SVGRenderer {
                 };
             }
             // Added dummy depth
-            if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
+            if ((d === 0 && i < 2) || i > 5) {
+                // [0, 1, 6, 7]
 
                 return {
                     x: pArr[i].x,
@@ -594,13 +599,11 @@ class SVGRenderer3D extends SVGRenderer {
             verticesIndex1: Array<number>,
             verticesIndex2: Array<number>,
             side?: string
-        ): Array<number|Array<number>> {
+        ): Array<number | Array<number>> {
             let ret = [[] as any, -1],
                 // An array of vertices for cuboid face
-                face1: Array<Position3DObject> =
-                    verticesIndex1.map(mapPath),
-                face2: Array<Position3DObject> =
-                    verticesIndex2.map(mapPath),
+                face1: Array<Position3DObject> = verticesIndex1.map(mapPath),
+                face2: Array<Position3DObject> = verticesIndex2.map(mapPath),
                 // dummy face is calculated the same way as standard face, but
                 // if cuboid height is 0 additional height is added so it is
                 // possible to use this vertices array for visible face
@@ -633,7 +636,6 @@ class SVGRenderer3D extends SVGRenderer {
         path1 = shape[0] as any;
         isFront = shape[1] as any;
 
-
         // top or bottom
         top = [1, 6, 7, 0];
         bottom = [4, 5, 2, 3];
@@ -665,15 +667,17 @@ class SVGRenderer3D extends SVGRenderer {
             zIndex += incrementX * x;
         }
 
-        zIndex += incrementY * (
-            !isTop ||
+        zIndex +=
+            incrementY *
+            (!isTop ||
             // Numbers checked empirically
-            (alpha >= 0 && alpha <= 180 || alpha < 360 && alpha > 357.5) ?
-                (chart as any).plotHeight - y : 10 + y
-        );
+            (alpha >= 0 && alpha <= 180) ||
+            (alpha < 360 && alpha > 357.5)
+                ? (chart as any).plotHeight - y
+                : 10 + y);
 
         if (isFront === 1) {
-            zIndex += incrementZ * (z);
+            zIndex += incrementZ * z;
         } else if (!isFront) {
             zIndex += incrementZ * (1000 - z);
         }
@@ -695,7 +699,6 @@ class SVGRenderer3D extends SVGRenderer {
 
     /** @private */
     public arc3d(attribs: SVGAttributes3D): SVGElement {
-
         const wrapper = this.g(),
             renderer = wrapper.renderer,
             customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
@@ -705,7 +708,9 @@ class SVGRenderer3D extends SVGRenderer {
          * object with only custom attr.
          * @private
          */
-        function suckOutCustom(params: SVGAttributes3D): (SVGAttributes3D|undefined) {
+        function suckOutCustom(
+            params: SVGAttributes3D
+        ): SVGAttributes3D | undefined {
             let hasCA = false,
                 ca = {} as SVGAttributes,
                 key: string;
@@ -748,6 +753,7 @@ class SVGRenderer3D extends SVGRenderer {
             ['out', 'inn', 'side1', 'side2'].forEach(function (face): void {
                 wrapper[face]
                     .attr({
+                        // prettier-ignore
                         'class': className + ' highcharts-3d-side'
                     })
                     .add(parent);
@@ -772,7 +778,6 @@ class SVGRenderer3D extends SVGRenderer {
          * @private
          */
         wrapper.setPaths = function (attribs: SVGAttributes3D): void {
-
             const paths = wrapper.renderer.arc3dPath(attribs),
                 zIndex = paths.zTop * 100;
 
@@ -783,7 +788,6 @@ class SVGRenderer3D extends SVGRenderer {
             wrapper.out.attr({ d: paths.out, zIndex: paths.zOut });
             wrapper.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
             wrapper.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
-
 
             // show all children
             wrapper.zIndex = zIndex;
@@ -820,28 +824,28 @@ class SVGRenderer3D extends SVGRenderer {
 
         // Apply the same value to all. These properties cascade down to the
         // children when set to the composite arc3d.
-        ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
-            function (setter: string): void {
-                wrapper[setter + 'Setter'] = function (
-                    value: any,
-                    key: string
+        ['opacity', 'translateX', 'translateY', 'visibility'].forEach(function (
+            setter: string
+        ): void {
+            wrapper[setter + 'Setter'] = function (
+                value: any,
+                key: string
+            ): void {
+                wrapper[key] = value;
+                ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (
+                    el: string
                 ): void {
-                    wrapper[key] = value;
-                    ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (
-                        el: string
-                    ): void {
-                        wrapper[el].attr(key, value);
-                    });
-                };
-            }
-        );
+                    wrapper[el].attr(key, value);
+                });
+            };
+        });
 
         // Override attr to remove shape attributes and use those to set child
         // paths
         wrapper.attr = function (
             this: SVGElement,
-            params?: (string|SVGAttributes)
-        ): (number|string|SVGElement) {
+            params?: string | SVGAttributes
+        ): number | string | SVGElement {
             let ca, paramArr;
 
             if (typeof params === 'object') {
@@ -862,14 +866,15 @@ class SVGRenderer3D extends SVGRenderer {
         wrapper.animate = function (
             this: SVGElement,
             params: SVGAttributes3D,
-            animation?: (boolean|Partial<AnimationOptions>),
+            animation?: boolean | Partial<AnimationOptions>,
             complete?: Function
         ): SVGElement {
             let paramArr,
                 from = this.attribs,
                 to: SVGAttributes,
                 anim,
-                randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
+                randomProp =
+                    'data-' + Math.random().toString(26).substring(2, 9);
 
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
@@ -891,27 +896,30 @@ class SVGRenderer3D extends SVGRenderer {
                 if (paramArr) {
                     to = (paramArr as any)[0]; // custom attr
                     anim.step = function (a: unknown, fx: Fx): void {
-
                         /**
                          * @private
                          */
                         function interpolate(key: string): number {
-                            return (from as any)[key] + (
-                                pick((to as any)[key], (from as any)[key]) -
-                                (from as any)[key]
-                            ) * fx.pos;
+                            return (
+                                (from as any)[key] +
+                                (pick((to as any)[key], (from as any)[key]) -
+                                    (from as any)[key]) *
+                                    fx.pos
+                            );
                         }
 
                         if (fx.prop === randomProp) {
-                            (fx.elem as any).setPaths(merge(from, {
-                                x: interpolate('x'),
-                                y: interpolate('y'),
-                                r: interpolate('r'),
-                                innerR: interpolate('innerR'),
-                                start: interpolate('start'),
-                                end: interpolate('end'),
-                                depth: interpolate('depth')
-                            }));
+                            (fx.elem as any).setPaths(
+                                merge(from, {
+                                    x: interpolate('x'),
+                                    y: interpolate('y'),
+                                    r: interpolate('r'),
+                                    innerR: interpolate('innerR'),
+                                    start: interpolate('start'),
+                                    end: interpolate('end'),
+                                    depth: interpolate('depth')
+                                })
+                            );
                         }
                     };
                 }
@@ -945,10 +953,7 @@ class SVGRenderer3D extends SVGRenderer {
             this.side2.hide();
         } as any;
 
-        wrapper.show = function (
-            this: SVGElement,
-            inherit?: boolean
-        ): void {
+        wrapper.show = function (this: SVGElement, inherit?: boolean): void {
             this.top.show(inherit);
             this.out.show(inherit);
             this.inn.show(inherit);
@@ -989,23 +994,23 @@ class SVGRenderer3D extends SVGRenderer {
             dy = d * Math.sin(alpha); // distance between top and bottom in y
 
         // TOP
-        let top: SVGPath = [
-            ['M', cx + (rx * cs), cy + (ry * ss)]
-        ];
+        let top: SVGPath = [['M', cx + rx * cs, cy + ry * ss]];
 
-        top = top.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0));
-        top.push([
-            'L', cx + (irx * ce), cy + (iry * se)
-        ]);
-        top = top.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0));
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0)
+        );
+        top.push(['L', cx + irx * ce, cy + iry * se]);
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0)
+        );
         top.push(['Z']);
 
         // OUTSIDE
-        const b = (beta > 0 ? Math.PI / 2 : 0),
-            a = (alpha > 0 ? 0 : Math.PI / 2);
+        const b = beta > 0 ? Math.PI / 2 : 0,
+            a = alpha > 0 ? 0 : Math.PI / 2;
 
-        const start2 = start > -b ? start : (end > -b ? -b : start),
-            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
+        const start2 = start > -b ? start : end > -b ? -b : start,
+            end2 = end < PI - a ? end : start < PI - a ? PI - a : end,
             midEnd = 2 * PI - a;
 
         // When slice goes over bottom middle, need to add both, left and right
@@ -1033,87 +1038,99 @@ class SVGRenderer3D extends SVGRenderer {
         // negative startAngle
 
         let out: SVGPath = [
-            ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
+            ['M', cx + rx * cos(start2), cy + ry * sin(start2)]
         ];
 
-        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0)
+        );
 
         // When shape is wide, it can cross both, (c) and (d) edges, when using
         // startAngle
         if (end > midEnd && start < midEnd) {
             // Go to outer side
-            out.push([
-                'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
-            ]);
+            out.push(['L', cx + rx * cos(end2) + dx, cy + ry * sin(end2) + dy]);
             // Curve to the right edge of the slice (d)
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy)
+            );
             // Go to the inner side
-            out.push([
-                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
-            ]);
+            out.push(['L', cx + rx * cos(midEnd), cy + ry * sin(midEnd)]);
             // Curve to the true end of the slice
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0)
+            );
             // Go to the outer side
-            out.push([
-                'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
-            ]);
+            out.push(['L', cx + rx * cos(end) + dx, cy + ry * sin(end) + dy]);
             // Go back to middle (d)
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
-            out.push([
-                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
-            ]);
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy)
+            );
+            out.push(['L', cx + rx * cos(midEnd), cy + ry * sin(midEnd)]);
             // Go back to the left edge
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0)
+            );
 
-        // But shape can cross also only (c) edge:
+            // But shape can cross also only (c) edge:
         } else if (end > PI - a && start < PI - a) {
             // Go to outer side
             out.push([
                 'L',
-                cx + (rx * Math.cos(end2)) + dx,
-                cy + (ry * Math.sin(end2)) + dy
+                cx + rx * Math.cos(end2) + dx,
+                cy + ry * Math.sin(end2) + dy
             ]);
             // Curve to the true end of the slice
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy)
+            );
             // Go to the inner side
-            out.push([
-                'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
-            ]);
+            out.push(['L', cx + rx * Math.cos(end), cy + ry * Math.sin(end)]);
             // Go back to the artifical end2
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0)
+            );
         }
 
         out.push([
-            'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
+            'L',
+            cx + rx * Math.cos(end2) + dx,
+            cy + ry * Math.sin(end2) + dy
         ]);
-        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy)
+        );
         out.push(['Z']);
 
         // INSIDE
-        let inn: SVGPath = [
-            ['M', cx + (irx * cs), cy + (iry * ss)]
-        ];
+        let inn: SVGPath = [['M', cx + irx * cs, cy + iry * ss]];
 
-        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0)
+        );
         inn.push([
-            'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
+            'L',
+            cx + irx * Math.cos(end) + dx,
+            cy + iry * Math.sin(end) + dy
         ]);
-        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy)
+        );
         inn.push(['Z']);
 
         // SIDES
         const side1: SVGPath = [
-            ['M', cx + (rx * cs), cy + (ry * ss)],
-            ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
-            ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
-            ['L', cx + (irx * cs), cy + (iry * ss)],
+            ['M', cx + rx * cs, cy + ry * ss],
+            ['L', cx + rx * cs + dx, cy + ry * ss + dy],
+            ['L', cx + irx * cs + dx, cy + iry * ss + dy],
+            ['L', cx + irx * cs, cy + iry * ss],
             ['Z']
         ];
         const side2: SVGPath = [
-            ['M', cx + (rx * ce), cy + (ry * se)],
-            ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
-            ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],
-            ['L', cx + (irx * ce), cy + (iry * se)],
+            ['M', cx + rx * ce, cy + ry * se],
+            ['L', cx + rx * ce + dx, cy + ry * se + dy],
+            ['L', cx + irx * ce + dx, cy + iry * se + dy],
+            ['L', cx + irx * ce, cy + iry * se],
             ['Z']
         ];
 

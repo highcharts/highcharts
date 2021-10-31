@@ -29,13 +29,7 @@ import type TreeGridAxis from './TreeGridAxis';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    isObject,
-    isNumber,
-    pick,
-    wrap
-} = U;
+const { addEvent, isObject, isNumber, pick, wrap } = U;
 
 /* *
  *
@@ -58,7 +52,6 @@ interface TreeGridTick extends Tick {
  * @private
  */
 namespace TreeGridTick {
-
     /* *
      *
      *  Interfaces
@@ -93,22 +86,29 @@ namespace TreeGridTick {
      * @private
      */
     export function compose(TickClass: typeof Tick): void {
-
         if (!applied) {
-
             addEvent(TickClass, 'init', onInit);
 
             wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
             wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
 
             // backwards compatibility
-            (TickClass.prototype as any).collapse = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).collapse = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.collapse(redraw);
             };
-            (TickClass.prototype as any).expand = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).expand = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.expand(redraw);
             };
-            (TickClass.prototype as any).toggleCollapse = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).toggleCollapse = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.toggleCollapse(redraw);
             };
 
@@ -143,10 +143,7 @@ namespace TreeGridTick {
     /**
      * @private
      */
-    function onTickHoverExit(
-        label: SVGElement,
-        options: SVGAttributes
-    ): void {
+    function onTickHoverExit(label: SVGElement, options: SVGAttributes): void {
         const css: CSSObject = isObject(options.style) ? options.style : {};
 
         label.removeClass('highcharts-treegrid-node-active');
@@ -171,8 +168,8 @@ namespace TreeGridTick {
             width = options.width || 0,
             height = options.height || 0,
             iconCenter = {
-                x: labelBox.x - (width / 2) - (options.padding || 0),
-                y: labelBox.y - (height / 2)
+                x: labelBox.x - width / 2 - (options.padding || 0),
+                y: labelBox.y - height / 2
             },
             rotation = params.collapsed ? 90 : 180,
             shouldRender = params.show && isNumber(iconCenter.y);
@@ -180,12 +177,14 @@ namespace TreeGridTick {
 
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[(options as any).type as SymbolKey](
-                    options.x || 0,
-                    options.y || 0,
-                    width,
-                    height
-                ))
+                .path(
+                    renderer.symbols[(options as any).type as SymbolKey](
+                        options.x || 0,
+                        options.y || 0,
+                        width,
+                        height
+                    )
+                )
                 .addClass('highcharts-label-icon')
                 .add(params.group);
         }
@@ -195,14 +194,13 @@ namespace TreeGridTick {
 
         // Presentational attributes
         if (!renderer.styledMode) {
-            icon
-                .attr({
-                    cursor: 'pointer',
-                    'fill': pick(params.color, Palette.neutralColor60),
-                    'stroke-width': 1,
-                    stroke: options.lineColor,
-                    strokeWidth: options.lineWidth || 0
-                });
+            icon.attr({
+                cursor: 'pointer',
+                fill: pick(params.color, Palette.neutralColor60),
+                'stroke-width': 1,
+                stroke: options.lineColor,
+                strokeWidth: options.lineWidth || 0
+            });
         }
 
         // Update the icon positions
@@ -211,7 +209,6 @@ namespace TreeGridTick {
             translateY: iconCenter.y,
             rotation: rotation
         });
-
     }
 
     /**
@@ -230,47 +227,41 @@ namespace TreeGridTick {
         step: number
     ): PositionObject {
         const tick = this,
-            lbOptions = pick(
-                tick.options && tick.options.labels,
-                labelOptions
-            ),
+            lbOptions = pick(tick.options && tick.options.labels, labelOptions),
             pos = tick.pos,
             axis = tick.axis,
             options = axis.options,
             isTreeGrid = options.type === 'treegrid',
-            result = proceed.apply(
-                tick,
-                [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
-            );
-        let symbolOptions,
-            indentation,
-            mapOfPosToGridNode,
-            node,
-            level;
+            result = proceed.apply(tick, [
+                x,
+                y,
+                label,
+                horiz,
+                lbOptions,
+                tickmarkOffset,
+                index,
+                step
+            ]);
+        let symbolOptions, indentation, mapOfPosToGridNode, node, level;
 
         if (isTreeGrid) {
-            symbolOptions = (
-                lbOptions && isObject(lbOptions.symbol, true) ?
-                    lbOptions.symbol :
-                    {}
-            );
-            indentation = (
-                lbOptions && isNumber(lbOptions.indentation) ?
-                    lbOptions.indentation :
-                    0
-            );
+            symbolOptions =
+                lbOptions && isObject(lbOptions.symbol, true)
+                    ? lbOptions.symbol
+                    : {};
+            indentation =
+                lbOptions && isNumber(lbOptions.indentation)
+                    ? lbOptions.indentation
+                    : 0;
             mapOfPosToGridNode = axis.treeGrid.mapOfPosToGridNode;
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
             level = (node && node.depth) || 1;
-            result.x += (
+            result.x +=
                 // Add space for symbols
-                (
-                    (symbolOptions.width || 0) +
-                    ((symbolOptions.padding || 0) * 2)
-                ) +
+                (symbolOptions.width || 0) +
+                (symbolOptions.padding || 0) * 2 +
                 // Apply indentation
-                ((level - 1) * indentation)
-            );
+                (level - 1) * indentation;
         }
 
         return result;
@@ -279,10 +270,7 @@ namespace TreeGridTick {
     /**
      * @private
      */
-    function wrapRenderLabel(
-        this: TreeGridTick,
-        proceed: Function
-    ): void {
+    function wrapRenderLabel(this: TreeGridTick, proceed: Function): void {
         const tick = this,
             pos = tick.pos,
             axis = tick.axis,
@@ -293,27 +281,21 @@ namespace TreeGridTick {
                 tick.options && tick.options.labels,
                 options && options.labels
             ),
-            symbolOptions = (
-                labelOptions && isObject(labelOptions.symbol, true) ?
-                    labelOptions.symbol :
-                    {}
-            ),
+            symbolOptions =
+                labelOptions && isObject(labelOptions.symbol, true)
+                    ? labelOptions.symbol
+                    : {},
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth,
             isTreeGrid = options.type === 'treegrid',
             shouldRender = axis.tickPositions.indexOf(pos) > -1,
             prefixClassName = 'highcharts-treegrid-node-',
             styledMode = axis.chart.styledMode;
-        let collapsed,
-            addClassName,
-            removeClassName;
+        let collapsed, addClassName, removeClassName;
 
         if (isTreeGrid && node) {
             // Add class name for hierarchical styling.
-            if (
-                label &&
-                label.element
-            ) {
+            if (label && label.element) {
                 label.addClass(prefixClassName + 'level-' + level);
             }
         }
@@ -330,28 +312,24 @@ namespace TreeGridTick {
         ) {
             collapsed = axis.treeGrid.isCollapsed(node);
 
-            renderLabelIcon(
-                tick,
-                {
-                    color: !styledMode && label.styles && label.styles.color || '',
-                    collapsed: collapsed,
-                    group: label.parentGroup,
-                    options: symbolOptions,
-                    renderer: label.renderer,
-                    show: shouldRender,
-                    xy: label.xy
-                }
-            );
+            renderLabelIcon(tick, {
+                color:
+                    (!styledMode && label.styles && label.styles.color) || '',
+                collapsed: collapsed,
+                group: label.parentGroup,
+                options: symbolOptions,
+                renderer: label.renderer,
+                show: shouldRender,
+                xy: label.xy
+            });
 
             // Add class name for the node.
-            addClassName = prefixClassName +
-                (collapsed ? 'collapsed' : 'expanded');
-            removeClassName = prefixClassName +
-                (collapsed ? 'expanded' : 'collapsed');
+            addClassName =
+                prefixClassName + (collapsed ? 'collapsed' : 'expanded');
+            removeClassName =
+                prefixClassName + (collapsed ? 'expanded' : 'collapsed');
 
-            label
-                .addClass(addClassName)
-                .removeClass(removeClassName);
+            label.addClass(addClassName).removeClass(removeClassName);
 
             if (!styledMode) {
                 label.css({
@@ -361,7 +339,7 @@ namespace TreeGridTick {
 
             // Add events to both label text and icon
             [label, tick.treeGrid.labelIcon].forEach(function (
-                object: (SVGElement|undefined)
+                object: SVGElement | undefined
             ): void {
                 if (object && !object.attachedTreeGridEvents) {
                     // On hover
@@ -394,7 +372,6 @@ namespace TreeGridTick {
      * @class
      */
     export class Additions {
-
         /* *
          *
          *  Constructors
@@ -440,10 +417,7 @@ namespace TreeGridTick {
                 axis = tick.axis,
                 brokenAxis = axis.brokenAxis;
 
-            if (
-                brokenAxis &&
-                axis.treeGrid.mapOfPosToGridNode
-            ) {
+            if (brokenAxis && axis.treeGrid.mapOfPosToGridNode) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
                     breaks = axis.treeGrid.collapse(node);
@@ -469,10 +443,7 @@ namespace TreeGridTick {
                 axis = tick.axis,
                 brokenAxis = axis.brokenAxis;
 
-            if (
-                brokenAxis &&
-                axis.treeGrid.mapOfPosToGridNode
-            ) {
+            if (brokenAxis && axis.treeGrid.mapOfPosToGridNode) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
                     breaks = axis.treeGrid.expand(node);
@@ -499,10 +470,7 @@ namespace TreeGridTick {
                 axis = tick.axis,
                 brokenAxis = axis.brokenAxis;
 
-            if (
-                brokenAxis &&
-                axis.treeGrid.mapOfPosToGridNode
-            ) {
+            if (brokenAxis && axis.treeGrid.mapOfPosToGridNode) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
                     breaks = axis.treeGrid.toggleCollapse(node);

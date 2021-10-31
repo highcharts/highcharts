@@ -22,12 +22,7 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 
 import U from '../Utilities.js';
-const {
-    addEvent,
-    getMagnitude,
-    normalizeTickInterval,
-    timeUnits
-} = U;
+const { addEvent, getMagnitude, normalizeTickInterval, timeUnits } = U;
 
 /* *
  *
@@ -44,7 +39,7 @@ declare module './AxisComposition' {
 declare module './AxisOptions' {
     interface AxisOptions {
         dateTimeLabelFormats?: DateTimeAxis.LabelFormatOptions;
-        units?: Array<[DateTimeAxis.LabelFormatsKey, (Array<number>|null)]>;
+        units?: Array<[DateTimeAxis.LabelFormatsKey, Array<number> | null]>;
     }
 }
 
@@ -75,8 +70,7 @@ declare module './TimeTicksInfoObject' {
 
 /* eslint-disable valid-jsdoc */
 
-namespace DateTimeAxis{
-
+namespace DateTimeAxis {
     /* *
      *
      *  Declarations
@@ -90,14 +84,14 @@ namespace DateTimeAxis{
     export type LabelFormatsKey = keyof LabelFormatOptions;
 
     export interface LabelFormatOptions {
-        day?: (string|LabelFormatOptionsObject);
-        hour?: (string|LabelFormatOptionsObject);
-        millisecond?: (string|LabelFormatOptionsObject);
-        minute?: (string|LabelFormatOptionsObject);
-        month?: (string|LabelFormatOptionsObject);
-        second?: (string|LabelFormatOptionsObject);
-        week?: (string|LabelFormatOptionsObject);
-        year?: (string|LabelFormatOptionsObject);
+        day?: string | LabelFormatOptionsObject;
+        hour?: string | LabelFormatOptionsObject;
+        millisecond?: string | LabelFormatOptionsObject;
+        minute?: string | LabelFormatOptionsObject;
+        month?: string | LabelFormatOptionsObject;
+        second?: string | LabelFormatOptionsObject;
+        week?: string | LabelFormatOptionsObject;
+        year?: string | LabelFormatOptionsObject;
     }
 
     export interface LabelFormatOptionsObject {
@@ -110,7 +104,7 @@ namespace DateTimeAxis{
         unitName: LabelFormatsKey;
     }
 
-    export type PointIntervalUnitValue = ('day'|'month'|'year');
+    export type PointIntervalUnitValue = 'day' | 'month' | 'year';
 
     /* *
      *
@@ -132,8 +126,7 @@ namespace DateTimeAxis{
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
-    ): (typeof Composition&T) {
-
+    ): typeof Composition & T {
         if (composedClasses.indexOf(AxisClass) === -1) {
             composedClasses.push(AxisClass);
 
@@ -146,7 +139,7 @@ namespace DateTimeAxis{
             addEvent(AxisClass, 'init', onInit);
         }
 
-        return AxisClass as (typeof Composition&T);
+        return AxisClass as typeof Composition & T;
     }
 
     /**
@@ -171,21 +164,14 @@ namespace DateTimeAxis{
      *
      * @return {Highcharts.AxisTickPositionsArray}
      */
-    function getTimeTicks(
-        this: Axis
-    ): TickPositionsArray {
-        return this.chart.time.getTimeTicks.apply(
-            this.chart.time, arguments
-        );
+    function getTimeTicks(this: Axis): TickPositionsArray {
+        return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
     }
 
     /**
      * @private
      */
-    function onInit(
-        this: Axis,
-        e: { userOptions: Axis['userOptions'] }
-    ): void {
+    function onInit(this: Axis, e: { userOptions: Axis['userOptions'] }): void {
         const axis = this;
         const options = e.userOptions;
 
@@ -206,7 +192,6 @@ namespace DateTimeAxis{
      * */
 
     export class Additions {
-
         /* *
          *
          *  Constructors
@@ -245,33 +230,21 @@ namespace DateTimeAxis{
             tickInterval: number,
             unitsOption?: AxisOptions['units']
         ): DateTimeAxis.NormalizedObject {
-            const units = (
-                unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-                ], [
-                    'second',
-                    [1, 2, 5, 10, 15, 30]
-                ], [
-                    'minute',
-                    [1, 2, 5, 10, 15, 30]
-                ], [
-                    'hour',
-                    [1, 2, 3, 4, 6, 8, 12]
-                ], [
-                    'day',
-                    [1, 2]
-                ], [
-                    'week',
-                    [1, 2]
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ], [
-                    'year',
-                    null
-                ]] as Required<AxisOptions>['units']
-            );
+            const units =
+                unitsOption ||
+                ([
+                    [
+                        'millisecond', // unit name
+                        [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                    ],
+                    ['second', [1, 2, 5, 10, 15, 30]],
+                    ['minute', [1, 2, 5, 10, 15, 30]],
+                    ['hour', [1, 2, 3, 4, 6, 8, 12]],
+                    ['day', [1, 2]],
+                    ['week', [1, 2]],
+                    ['month', [1, 2, 3, 4, 6]],
+                    ['year', null]
+                ] as Required<AxisOptions>['units']);
 
             let unit = units[units.length - 1], // default unit is years
                 interval = timeUnits[unit[0]],
@@ -285,15 +258,14 @@ namespace DateTimeAxis{
                 interval = timeUnits[unit[0]];
                 multiples = unit[1];
 
-
                 if (units[i + 1]) {
                     // lessThan is in the middle between the highest multiple
                     // and the next unit.
-                    const lessThan = (
-                        interval *
-                        (multiples as any)[(multiples as any).length - 1] +
-                        timeUnits[units[i + 1][0]]
-                    ) / 2;
+                    const lessThan =
+                        (interval *
+                            (multiples as any)[(multiples as any).length - 1] +
+                            timeUnits[units[i + 1][0]]) /
+                        2;
 
                     // break and keep the current unit
                     if (tickInterval <= lessThan) {
@@ -311,9 +283,9 @@ namespace DateTimeAxis{
             const count = normalizeTickInterval(
                 tickInterval / interval,
                 multiples as any,
-                unit[0] === 'year' ? // #1913, #2360
-                    Math.max(getMagnitude(tickInterval / interval), 1) :
-                    1
+                unit[0] === 'year' // #1913, #2360
+                    ? Math.max(getMagnitude(tickInterval / interval), 1)
+                    : 1
             );
 
             return {
@@ -341,17 +313,16 @@ namespace DateTimeAxis{
         ): string {
             const { axis } = this;
 
-            return axis.closestPointRange ?
-                axis.chart.time.getDateFormat(
-                    axis.closestPointRange,
-                    x,
-                    axis.options.startOfWeek,
-                    dateTimeLabelFormats
-                ) || dateTimeLabelFormats.year : // #2546, 2581
-                dateTimeLabelFormats.day;
+            return axis.closestPointRange
+                ? axis.chart.time.getDateFormat(
+                      axis.closestPointRange,
+                      x,
+                      axis.options.startOfWeek,
+                      dateTimeLabelFormats
+                  ) || dateTimeLabelFormats.year // #2546, 2581
+                : dateTimeLabelFormats.day;
         }
     }
-
 }
 
 /* *

@@ -14,7 +14,7 @@
  *
  * */
 
-export interface FormatterCallback<TScope, TValue=undefined> {
+export interface FormatterCallback<TScope, TValue = undefined> {
     (this: TScope, value: TValue): string;
 }
 

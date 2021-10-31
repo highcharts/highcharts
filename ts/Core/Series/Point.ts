@@ -82,10 +82,7 @@ declare module './PointLike' {
         onMouseOut(): void;
         onMouseOver(e?: PointerEvent): void;
         select(selected?: boolean | null, accumulate?: boolean): void;
-        setState(
-            state?: string,
-            move?: boolean
-        ): void;
+        setState(state?: string, move?: boolean): void;
     }
 }
 
@@ -107,7 +104,6 @@ declare module './PointLike' {
  * @name Highcharts.Point
  */
 class Point {
-
     /* *
      *
      *  Properties
@@ -236,9 +232,9 @@ class Point {
      */
     public visible: boolean = true;
 
-    public x: (number|null) = void 0 as any;
+    public x: number | null = void 0 as any;
 
-    public y?: (number|null);
+    public y?: number | null;
 
     /* *
      *
@@ -261,24 +257,30 @@ class Point {
             const isDataLabel = prop === 'dataLabel';
 
             (point as any)[prop] = (point as any)[prop].animate(
-                isDataLabel ? {
-                    x: (point as any)[prop].startXPos,
-                    y: (point as any)[prop].startYPos,
-                    opacity: 0
-                } : animateParams
+                isDataLabel
+                    ? {
+                          x: (point as any)[prop].startXPos,
+                          y: (point as any)[prop].startYPos,
+                          opacity: 0
+                      }
+                    : animateParams
             );
         });
 
         graphicalProps.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
-                    item.animate(extend<SVGAttributes>(
-                        { x: point.startXPos },
-                        (item.startYPos ? {
-                            x: item.startXPos,
-                            y: item.startYPos
-                        } : {})
-                    ));
+                    item.animate(
+                        extend<SVGAttributes>(
+                            { x: point.startXPos },
+                            item.startYPos
+                                ? {
+                                      x: item.startXPos,
+                                      y: item.startYPos
+                                  }
+                                : {}
+                        )
+                    );
                 }
             });
         });
@@ -301,7 +303,7 @@ class Point {
      *         The Point instance.
      */
     public applyOptions(
-        options: (PointOptions|PointShortOptions),
+        options: PointOptions | PointShortOptions,
         x?: number
     ): Point {
         const point = this,
@@ -313,7 +315,9 @@ class Point {
         // copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ? extend(point.options, options as any) : options;
+        point.options = point.options
+            ? extend(point.options, options as any)
+            : options;
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
@@ -332,7 +336,10 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
+            point.y = Point.prototype.getNestedProperty.call(
+                point,
+                pointValKey
+            ) as number | null | undefined;
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -403,12 +410,14 @@ class Point {
                 point.destroyElements();
             }
 
-            for (prop in point) { // eslint-disable-line guard-for-in
+            // eslint-disable-next-line guard-for-in
+            for (prop in point) {
                 (point as any)[prop] = null;
             }
         }
 
-        if (point.legendItem) { // pies have legend items
+        if (point.legendItem) {
+            // pies have legend items
             chart.legend.destroyItem(point);
         }
 
@@ -418,7 +427,6 @@ class Point {
             if (!hoverPoints.length) {
                 chart.hoverPoints = null as any;
             }
-
         }
         if (point === chart.hoverPoint) {
             point.onMouseOut();
@@ -427,7 +435,6 @@ class Point {
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
             destroyPoint();
-
         } else {
             this.animateBeforeDestroy();
             syncTimeout(destroyPoint, animation.duration);
@@ -479,24 +486,21 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent<T extends AnyRecord|Event>(
+    public firePointEvent<T extends AnyRecord | Event>(
         eventType: string,
         eventArgs?: T,
-        defaultFunction?: (
-            EventCallback<Point, T>|Function
-        )
+        defaultFunction?: EventCallback<Point, T> | Function
     ): void {
         const point = this,
             series = this.series,
             seriesOptions = series.options;
 
         // load event handlers on demand to save time on mouseover/out
-        if ((seriesOptions.point as any).events[eventType] ||
-            (
-                point.options &&
+        if (
+            (seriesOptions.point as any).events[eventType] ||
+            (point.options &&
                 point.options.events &&
-                (point.options.events as any)[eventType]
-            )
+                (point.options.events as any)[eventType])
         ) {
             point.importEvents();
         }
@@ -506,7 +510,8 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (point.select) { // #2911
+                if (point.select) {
+                    // #2911
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
@@ -529,15 +534,19 @@ class Point {
      */
     public getClassName(): string {
         const point = this;
-        return 'highcharts-point' +
+        return (
+            'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
             (point.negative ? ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
-            (typeof point.colorIndex !== 'undefined' ?
-                ' highcharts-color-' + point.colorIndex : '') +
+            (typeof point.colorIndex !== 'undefined'
+                ? ' highcharts-color-' + point.colorIndex
+                : '') +
             (point.options.className ? ' ' + point.options.className : '') +
-            (point.zone && point.zone.className ? ' ' +
-                point.zone.className.replace('highcharts-negative', '') : '');
+            (point.zone && point.zone.className
+                ? ' ' + point.zone.className.replace('highcharts-negative', '')
+                : '')
+        );
     }
 
     /**
@@ -548,13 +557,13 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      * @return {Highcharts.PointGraphicalProps}
      */
-    public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
+    public getGraphicalProps(
+        kinds?: Record<string, number>
+    ): Point.GraphicalProps {
         const point = this,
             props = [],
-            graphicalProps: Point.GraphicalProps =
-                { singular: [], plural: [] };
-        let prop,
-            i;
+            graphicalProps: Point.GraphicalProps = { singular: [], plural: [] };
+        let prop, i;
 
         kinds = kinds || { graphic: 1, dataLabel: 1 };
 
@@ -660,9 +669,10 @@ class Point {
      *
      * @return boolean|undefined
      */
-    public hasNewShapeType(): boolean|undefined {
+    public hasNewShapeType(): boolean | undefined {
         const point = this;
-        const oldShapeType = point.graphic &&
+        const oldShapeType =
+            point.graphic &&
             (point.graphic.symbolName || point.graphic.element.nodeName);
         return oldShapeType !== this.shapeType;
     }
@@ -689,10 +699,9 @@ class Point {
      */
     public init(
         series: Series,
-        options: (PointOptions|PointShortOptions),
+        options: PointOptions | PointShortOptions,
         x?: number
     ): Point {
-
         this.series = series;
 
         this.applyOptions(options, x);
@@ -731,7 +740,7 @@ class Point {
      * Transformed point options.
      */
     public optionsToObject(
-        options: (PointOptions|PointShortOptions)
+        options: PointOptions | PointShortOptions
     ): this['options'] {
         const series = this.series,
             keys = series.options.keys,
@@ -744,7 +753,6 @@ class Point {
 
         if (isNumber(options) || options === null) {
             ret[pointArrayMap[0]] = options;
-
         } else if (isArray(options)) {
             // with leading x value
             if (!keys && (options as any).length > valueCount) {
@@ -763,7 +771,9 @@ class Point {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
                         Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
+                            ret,
+                            (options as any)[i],
+                            pointArrayMap[j]
                         );
                     } else {
                         ret[pointArrayMap[j]] = (options as any)[i];
@@ -857,11 +867,7 @@ class Point {
      * @return {T}
      *         The modified object.
      */
-    public setNestedProperty<T>(
-        object: T,
-        value: any,
-        key: string
-    ): T {
+    public setNestedProperty<T>(object: T, value: any, key: string): T {
         const nestedKeys = key.split('.');
 
         nestedKeys.reduce(function (
@@ -872,15 +878,14 @@ class Point {
         ): T {
             const isLastKey = arr.length - 1 === i;
 
-            result[key] = (
-                isLastKey ?
-                    value :
-                    isObject(result[key], true) ?
-                        result[key] :
-                        {}
-            );
+            result[key] = isLastKey
+                ? value
+                : isObject(result[key], true)
+                ? result[key]
+                : {};
             return result[key];
-        }, object);
+        },
+        object);
         return object;
     }
 
@@ -896,7 +901,6 @@ class Point {
      *         A string to be concatenated in to the common tooltip text.
      */
     public tooltipFormatter(pointFormat: string): string {
-
         // Insert options for valueDecimals, valuePrefix, and valueSuffix
         const series = this.series,
             seriesTooltipOptions = series.tooltipOptions,
@@ -906,8 +910,9 @@ class Point {
 
         // Replace default point style with class name
         if (series.chart.styledMode) {
-            pointFormat =
-                (series.chart.tooltip as any).styledModeFormat(pointFormat);
+            pointFormat = (series.chart.tooltip as any).styledModeFormat(
+                pointFormat
+            );
         }
 
         // Loop over the point array map and replace unformatted values with
@@ -926,10 +931,14 @@ class Point {
             );
         });
 
-        return format(pointFormat, {
-            point: this,
-            series: this.series
-        }, series.chart);
+        return format(
+            pointFormat,
+            {
+                point: this,
+                series: this.series
+            },
+            series.chart
+        );
     }
 
     /**
@@ -965,9 +974,9 @@ class Point {
      * @fires Highcharts.Point#event:update
      */
     public update(
-        options: (PointOptions|PointShortOptions),
+        options: PointOptions | PointShortOptions,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>),
+        animation?: boolean | Partial<AnimationOptions>,
         runEvent?: boolean
     ): void {
         const point = this,
@@ -982,13 +991,13 @@ class Point {
          * @private
          */
         function update(): void {
-
             point.applyOptions(options);
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             const hasDummyGraphic = graphic && point.hasDummyGraphic;
-            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            const shouldDestroyGraphic =
+                point.y === null ? !hasDummyGraphic : hasDummyGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
@@ -1021,20 +1030,21 @@ class Point {
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
+            (seriesOptions.data as any)[i] =
                 isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                isObject(options, true)
+                    ? point.options
+                    : pick(options, (seriesOptions.data as any)[i]);
 
             // redraw
             series.isDirty = series.isDirtyData = true;
-            if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
+            if (!series.fixedBox && series.hasCartesianSeries) {
+                // #1906, #2320
                 chart.isDirtyBox = true;
             }
 
-            if (seriesOptions.legendType === 'point') { // #1831, #1885
+            if (seriesOptions.legendType === 'point') {
+                // #1831, #1885
                 chart.isDirtyLegend = true;
             }
             if (redraw) {
@@ -1043,7 +1053,8 @@ class Point {
         }
 
         // Fire the event with a default handler of doing the update
-        if (runEvent === false) { // When called from setData
+        if (runEvent === false) {
+            // When called from setData
             update();
         } else {
             point.firePointEvent('update', { options: options }, update);
@@ -1074,7 +1085,7 @@ class Point {
      */
     public remove(
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>)
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         this.series.removePoint(
             this.series.data.indexOf(this),
@@ -1112,10 +1123,7 @@ class Point {
      * @fires Highcharts.Point#event:select
      * @fires Highcharts.Point#event:unselect
      */
-    public select(
-        selected?: boolean,
-        accumulate?: boolean
-    ): void {
+    public select(selected?: boolean, accumulate?: boolean): void {
         const point = this,
             series = point.series,
             chart = series.chart;
@@ -1129,7 +1137,6 @@ class Point {
             selected ? 'select' : 'unselect',
             { accumulate: accumulate },
             function (): void {
-
                 /**
                  * Whether the point is selected or not.
                  *
@@ -1147,29 +1154,31 @@ class Point {
 
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
-                    chart.getSelectedPoints().forEach(function (
-                        loopPoint: Point
-                    ): void {
-                        const loopSeries = loopPoint.series;
+                    chart
+                        .getSelectedPoints()
+                        .forEach(function (loopPoint: Point): void {
+                            const loopSeries = loopPoint.series;
 
-                        if (loopPoint.selected && loopPoint !== point) {
-                            loopPoint.selected = loopPoint.options.selected =
-                                false;
-                            (loopSeries.options.data as any)[
-                                loopSeries.data.indexOf(loopPoint)
-                            ] = loopPoint.options;
+                            if (loopPoint.selected && loopPoint !== point) {
+                                loopPoint.selected =
+                                    loopPoint.options.selected = false;
+                                (loopSeries.options.data as any)[
+                                    loopSeries.data.indexOf(loopPoint)
+                                ] = loopPoint.options;
 
-                            // Programatically selecting a point should restore
-                            // normal state, but when click happened on other
-                            // point, set inactive state to match other points
-                            loopPoint.setState(
-                                chart.hoverPoints &&
-                                    loopSeries.options.inactiveOtherPoints ?
-                                    'inactive' : ''
-                            );
-                            loopPoint.firePointEvent('unselect');
-                        }
-                    });
+                                // Programatically selecting a point should
+                                // restore normal state, but when click happened
+                                // on other point, set inactive state to match
+                                // other points
+                                loopPoint.setState(
+                                    chart.hoverPoints &&
+                                        loopSeries.options.inactiveOtherPoints
+                                        ? 'inactive'
+                                        : ''
+                                );
+                                loopPoint.firePointEvent('unselect');
+                            }
+                        });
                 }
             }
         );
@@ -1192,10 +1201,13 @@ class Point {
             chart = series.chart,
             pointer = chart.pointer;
 
-        e = e ?
-            pointer.normalize(e) :
-            // In cases where onMouseOver is called directly without an event
-            pointer.getChartCoordinatesFromPoint(point, chart.inverted) as any;
+        e = e
+            ? pointer.normalize(e)
+            : // In cases where onMouseOver is called directly without an event
+              (pointer.getChartCoordinatesFromPoint(
+                  point,
+                  chart.inverted
+              ) as any);
         pointer.runPointActions(e as any, point);
     }
 
@@ -1213,9 +1225,7 @@ class Point {
         point.firePointEvent('mouseOut');
 
         if (!point.series.options.inactiveOtherPoints) {
-            (chart.hoverPoints || []).forEach(function (
-                p: Point
-            ): void {
+            (chart.hoverPoints || []).forEach(function (p: Point): void {
                 p.setState();
             });
         }
@@ -1241,16 +1251,15 @@ class Point {
 
             point.events = events;
 
-            objectEach(events, function (
-                event: Function,
-                eventType: string
-            ): void {
-                if (isFunction(event)) {
-                    addEvent(point, eventType, event);
+            objectEach(
+                events,
+                function (event: Function, eventType: string): void {
+                    if (isFunction(event)) {
+                        addEvent(point, eventType, event);
+                    }
                 }
-            });
+            );
             this.hasImportedEvents = true;
-
         }
     }
 
@@ -1268,65 +1277,51 @@ class Point {
      *
      * @fires Highcharts.Point#event:afterSetState
      */
-    public setState(
-        state?: (StatesOptionsKey|''),
-        move?: boolean
-    ): void {
+    public setState(state?: StatesOptionsKey | '', move?: boolean): void {
         const point = this,
             series = point.series,
             previousState = point.state,
-            stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
-                {}
-            ),
-            markerOptions = (
-                (defaultOptions.plotOptions as any)[series.type as any].marker &&
-                series.options.marker
-            ),
-            normalDisabled = (markerOptions && markerOptions.enabled === false),
-            markerStateOptions = ((
-                markerOptions &&
-                markerOptions.states &&
-                (markerOptions.states as any)[state || 'normal']
-            ) || {}),
+            stateOptions =
+                (series.options.states as any)[state || 'normal'] || {},
+            markerOptions =
+                (defaultOptions.plotOptions as any)[series.type as any]
+                    .marker && series.options.marker,
+            normalDisabled = markerOptions && markerOptions.enabled === false,
+            markerStateOptions =
+                (markerOptions &&
+                    markerOptions.states &&
+                    (markerOptions.states as any)[state || 'normal']) ||
+                {},
             stateDisabled = (markerStateOptions as any).enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
-            hasMarkers = (markerOptions && series.markerAttribs);
+            hasMarkers = markerOptions && series.markerAttribs;
         let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
             pointAttribsAnimation: AnimationOptions,
             stateMarkerGraphic = series.stateMarkerGraphic,
-            newSymbol: (SymbolKey|undefined);
+            newSymbol: SymbolKey | undefined;
 
         state = state || ''; // empty string
 
         if (
             // already has this state
             (state === point.state && !move) ||
-
             // selected points don't respond to hover
             (point.selected && state !== 'select') ||
-
             // series' state options is disabled
-            (stateOptions.enabled === false) ||
-
+            stateOptions.enabled === false ||
             // general point marker's state options is disabled
-            (state && (
-                stateDisabled ||
-                (normalDisabled &&
-                (markerStateOptions as any).enabled === false)
-            )) ||
-
+            (state &&
+                (stateDisabled ||
+                    (normalDisabled &&
+                        (markerStateOptions as any).enabled === false))) ||
             // individual point marker's state options is disabled
-            (
-                state &&
+            (state &&
                 pointMarker.states &&
                 (pointMarker.states as any)[state] &&
-                (pointMarker.states as any)[state].enabled === false
-            ) // #1610
-
+                (pointMarker.states as any)[state].enabled === false) // #1610
         ) {
             return;
         }
@@ -1340,7 +1335,6 @@ class Point {
         // Apply hover styles to the existing point
         // Prevent from dummy null points (#14966)
         if (point.graphic && !point.hasDummyGraphic) {
-
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);
             }
@@ -1357,7 +1351,10 @@ class Point {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
+                if (
+                    series.options.inactiveOtherPoints &&
+                    isNumber(pointAttribs.opacity)
+                ) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1381,10 +1378,7 @@ class Point {
                     }
                 }
 
-                point.graphic.animate(
-                    pointAttribs,
-                    pointAttribsAnimation
-                );
+                point.graphic.animate(pointAttribs, pointAttribsAnimation);
             }
 
             if (markerAttribs) {
@@ -1411,7 +1405,8 @@ class Point {
 
                 // If the point has another symbol than the previous one, throw
                 // away the state marker graphic and force a new one (#1459)
-                if (stateMarkerGraphic &&
+                if (
+                    stateMarkerGraphic &&
                     stateMarkerGraphic.currentSymbol !== newSymbol
                 ) {
                     stateMarkerGraphic = stateMarkerGraphic.destroy();
@@ -1434,16 +1429,19 @@ class Point {
                             stateMarkerGraphic.currentSymbol = newSymbol;
                         }
 
-                    // Move the existing graphic
+                        // Move the existing graphic
                     } else {
-                        stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({
+                            // #1054
                             x: markerAttribs.x,
                             y: markerAttribs.y
                         });
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic &&
+                if (
+                    !chart.styledMode &&
+                    stateMarkerGraphic &&
                     point.state !== 'inactive'
                 ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
@@ -1451,9 +1449,7 @@ class Point {
             }
 
             if (stateMarkerGraphic) {
-                stateMarkerGraphic[
-                    state && point.isInside ? 'show' : 'hide'
-                ](); // #2450
+                stateMarkerGraphic[state && point.isInside ? 'show' : 'hide'](); // #2450
                 (stateMarkerGraphic.element as any).point = point; // #4310
 
                 stateMarkerGraphic.addClass(point.getClassName(), true);
@@ -1462,19 +1458,20 @@ class Point {
 
         // Show me your halo
         const haloOptions = stateOptions.halo;
-        const markerGraphic = (point.graphic || stateMarkerGraphic);
-        const markerVisibility = (
-            markerGraphic && markerGraphic.visibility || 'inherit'
-        );
+        const markerGraphic = point.graphic || stateMarkerGraphic;
+        const markerVisibility =
+            (markerGraphic && markerGraphic.visibility) || 'inherit';
 
-        if (haloOptions &&
+        if (
+            haloOptions &&
             haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster
         ) {
             if (!halo) {
-                series.halo = halo = chart.renderer.path()
+                series.halo = halo = chart.renderer
+                    .path()
                     // #5818, #5903, #6705
                     .add(markerGraphic.parentGroup);
             }
@@ -1482,24 +1479,27 @@ class Point {
                 d: point.haloPath(haloOptions.size) as any
             });
             halo.attr({
-                'class': 'highcharts-halo highcharts-color-' +
+                // prettier-ignore
+                'class':
+                    'highcharts-halo highcharts-color-' +
                     pick(point.colorIndex, series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
-                'visibility': markerVisibility,
-                'zIndex': -1 // #4929, #8276
+                visibility: markerVisibility,
+                zIndex: -1 // #4929, #8276
             });
             halo.point = point; // #6055
 
             if (!chart.styledMode) {
-                halo.attr(extend<SVGAttributes>(
-                    {
-                        'fill': point.color || series.color,
-                        'fill-opacity': haloOptions.opacity
-                    },
-                    AST.filterUserAttributes(haloOptions.attributes || {})
-                ));
+                halo.attr(
+                    extend<SVGAttributes>(
+                        {
+                            fill: point.color || series.color,
+                            'fill-opacity': haloOptions.opacity
+                        },
+                        AST.filterUserAttributes(haloOptions.attributes || {})
+                    )
+                );
             }
-
         } else if (halo && halo.point && halo.point.haloPath) {
             // Animate back to 0 on the current halo point (#6055)
             halo.animate(
@@ -1537,7 +1537,6 @@ class Point {
             size * 2
         );
     }
-
 }
 
 /* *
@@ -1563,10 +1562,10 @@ namespace Point {
     }
     export interface PointLabelObject {
         x?: string;
-        y?: (number|null);
+        y?: number | null;
         color?: ColorType;
         colorIndex?: number;
-        key?: number|string;
+        key?: number | string;
         series: Series;
         point: Point;
         percentage?: number;
@@ -1615,7 +1614,7 @@ export default Point;
  *
  * @interface Highcharts.PointClickEventObject
  * @extends Highcharts.PointerEventObject
- *//**
+ */ /**
  * Clicked point.
  * @name Highcharts.PointClickEventObject#point
  * @type {Highcharts.Point}
@@ -1625,43 +1624,43 @@ export default Point;
  * Configuration hash for the data label and tooltip formatters.
  *
  * @interface Highcharts.PointLabelObject
- *//**
+ */ /**
  * The point's current color.
  * @name Highcharts.PointLabelObject#color
  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
- *//**
+ */ /**
  * The point's current color index, used in styled mode instead of `color`. The
  * color index is inserted in class names used for styling.
  * @name Highcharts.PointLabelObject#colorIndex
  * @type {number}
- *//**
+ */ /**
  * The name of the related point.
  * @name Highcharts.PointLabelObject#key
  * @type {string|undefined}
- *//**
+ */ /**
  * The percentage for related points in a stacked series or pies.
  * @name Highcharts.PointLabelObject#percentage
  * @type {number}
- *//**
+ */ /**
  * The related point. The point name, if defined, is available through
  * `this.point.name`.
  * @name Highcharts.PointLabelObject#point
  * @type {Highcharts.Point}
- *//**
+ */ /**
  * The related series. The series name is available through `this.series.name`.
  * @name Highcharts.PointLabelObject#series
  * @type {Highcharts.Series}
- *//**
+ */ /**
  * The total of values in either a stack for stacked series, or a pie in a pie
  * series.
  * @name Highcharts.PointLabelObject#total
  * @type {number|undefined}
- *//**
+ */ /**
  * For categorized axes this property holds the category name for the point. For
  * other axes it holds the X value.
  * @name Highcharts.PointLabelObject#x
  * @type {number|string|undefined}
- *//**
+ */ /**
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
  * @type {number|undefined}
@@ -1748,7 +1747,7 @@ export default Point;
  *
  * @interface Highcharts.PointUpdateEventObject
  * @extends global.Event
- *//**
+ */ /**
  * Options data of the update event.
  * @name Highcharts.PointUpdateEventObject#options
  * @type {Highcharts.PointOptionsType}
@@ -1756,13 +1755,13 @@ export default Point;
 
 /**
  * @interface Highcharts.PointEventsOptionsObject
- *//**
+ */ /**
  * Fires when the point is selected either programmatically or following a click
  * on the point. One parameter, `event`, is passed to the function. Returning
  * `false` cancels the operation.
  * @name Highcharts.PointEventsOptionsObject#select
  * @type {Highcharts.PointSelectCallbackFunction|undefined}
- *//**
+ */ /**
  * Fires when the point is unselected either programmatically or following a
  * click on the point. One parameter, `event`, is passed to the function.
  * Returning `false` cancels the operation.
@@ -1775,7 +1774,7 @@ export default Point;
  *
  * @interface Highcharts.PointInteractionEventObject
  * @extends global.Event
- *//**
+ */ /**
  * @name Highcharts.PointInteractionEventObject#accumulate
  * @type {boolean}
  */
@@ -1806,4 +1805,4 @@ export default Point;
  *        Event that occured.
  */
 
-''; // keeps doclets above in JS file.
+(''); // keeps doclets above in JS file.

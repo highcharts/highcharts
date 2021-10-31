@@ -15,7 +15,7 @@
  * */
 
 export interface EventCallback<T> {
-    (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
+    (this: T, eventArguments: AnyRecord | Event): boolean | void;
 }
 
 /* *

@@ -24,12 +24,7 @@ import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Series from './Series/Series.js';
 import U from './Utilities.js';
-const {
-    addEvent,
-    isFunction,
-    objectEach,
-    removeEvent
-} = U;
+const { addEvent, isFunction, objectEach, removeEvent } = U;
 
 /* *
  *
@@ -38,7 +33,6 @@ const {
  * */
 
 namespace Foundation {
-
     /* *
      *
      *  Functions
@@ -55,10 +49,9 @@ namespace Foundation {
      * @private
      */
     export function registerEventOptions(
-        component: Axis|Chart|Series,
-        options: XAxisOptions|ChartOptions|SeriesOptions
+        component: Axis | Chart | Series,
+        options: XAxisOptions | ChartOptions | SeriesOptions
     ): void {
-
         // A lookup over those events that are added by _options_ (not
         // programmatically). These are updated through .update()
         component.eventOptions = component.eventOptions || {};
@@ -70,7 +63,6 @@ namespace Foundation {
                 // If event does not exist, or is changed by the .update()
                 // function
                 if (component.eventOptions[eventType] !== event) {
-
                     // Remove existing if set by option
                     if (component.eventOptions[eventType]) {
                         removeEvent(
@@ -89,7 +81,6 @@ namespace Foundation {
             }
         );
     }
-
 }
 
 /* *

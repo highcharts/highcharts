@@ -29,20 +29,11 @@ import type VMLAxis3D from '../../Extensions/Oldie/VMLAxis3D';
 import H from '../Globals.js';
 const { deg2rad } = H;
 import Math3D from '../../Extensions/Math3D.js';
-const {
-    perspective,
-    perspective3D,
-    shapeArea
-} = Math3D;
+const { perspective, perspective3D, shapeArea } = Math3D;
 import Tick from './Tick.js';
 import Tick3D from './Tick3D.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    merge,
-    pick,
-    wrap
-} = U;
+const { addEvent, merge, pick, wrap } = U;
 
 /* *
  *
@@ -62,8 +53,8 @@ declare module './AxisOptions' {
         skew3d?: boolean;
     }
     interface AxisTitleOptions {
-        position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
-        skew3d?: (boolean|null);
+        position3d?: 'chart' | 'flap' | 'offset' | 'ortho' | null;
+        skew3d?: boolean | null;
     }
 }
 
@@ -102,7 +93,6 @@ declare module '../Series/PointLike' {
  * @class
  */
 class Axis3DAdditions {
-
     /* *
      *
      *  Constructors
@@ -150,11 +140,7 @@ class Axis3DAdditions {
         const chart = axis.chart;
 
         // Do not do this if the chart is not 3D
-        if (
-            axis.coll === 'colorAxis' ||
-            !chart.chart3d ||
-            !chart.is3d()
-        ) {
+        if (axis.coll === 'colorAxis' || !chart.chart3d || !chart.is3d()) {
             return pos;
         }
 
@@ -184,7 +170,8 @@ class Axis3DAdditions {
 
         pos = axis.axis3D.swapZ({ x: pos.x, y: pos.y, z: 0 });
 
-        if (axis.isZAxis) { // Z Axis
+        if (axis.isZAxis) {
+            // Z Axis
             if (axis.opposite) {
                 if (frame.axes.z.top === null) {
                     return {} as any;
@@ -204,7 +191,8 @@ class Axis3DAdditions {
                 vecX = frame.axes.z.bottom.xDir;
                 reverseFlap = !frame.bottom.frontFacing;
             }
-        } else if (axis.horiz) { // X Axis
+        } else if (axis.horiz) {
+            // X Axis
             if (axis.opposite) {
                 if (frame.axes.x.top === null) {
                     return {} as any;
@@ -224,7 +212,8 @@ class Axis3DAdditions {
                 vecX = frame.axes.x.bottom.xDir;
                 reverseFlap = !frame.bottom.frontFacing;
             }
-        } else { // Y Axis
+        } else {
+            // Y Axis
             if (axis.opposite) {
                 if (frame.axes.y.right === null) {
                     return {} as any;
@@ -249,12 +238,13 @@ class Axis3DAdditions {
         if (positionMode === 'chart') {
             // Labels preserve their direction relative to the chart
             // nothing to do
-
         } else if (positionMode === 'flap') {
             // Labels are rotated around the axis direction to face the screen
-            if (!axis.horiz) { // Y Axis
+            if (!axis.horiz) {
+                // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-            } else { // X and Z Axis
+            } else {
+                // X and Z Axis
                 let sin = Math.sin(alpha);
                 const cos = Math.cos(alpha);
 
@@ -268,9 +258,11 @@ class Axis3DAdditions {
             }
         } else if (positionMode === 'ortho') {
             // Labels will be rotated to be ortogonal to the axis
-            if (!axis.horiz) { // Y Axis
+            if (!axis.horiz) {
+                // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-            } else { // X and Z Axis
+            } else {
+                // X and Z Axis
                 const sina = Math.sin(alpha);
                 const cosa = Math.cos(alpha);
                 const sinb = Math.sin(beta);
@@ -282,21 +274,30 @@ class Axis3DAdditions {
                     y: vecX.z * vecZ.x - vecX.x * vecZ.z,
                     z: vecX.x * vecZ.y - vecX.y * vecZ.x
                 };
-                let scale = 1 / Math.sqrt(
-                    vecY.x * vecY.x + vecY.y * vecY.y + vecY.z * vecY.z
-                );
+                let scale =
+                    1 /
+                    Math.sqrt(
+                        vecY.x * vecY.x + vecY.y * vecY.y + vecY.z * vecY.z
+                    );
 
                 if (reverseFlap) {
                     scale = -scale;
                 }
-                vecY = { x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z };
+                vecY = {
+                    x: scale * vecY.x,
+                    y: scale * vecY.y,
+                    z: scale * vecY.z
+                };
             }
-        } else { // positionMode  == 'offset'
+        } else {
+            // positionMode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets
             // from axis
-            if (!axis.horiz) { // Y Axis
+            if (!axis.horiz) {
+                // Y Axis
                 vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-            } else { // X and Z Axis
+            } else {
+                // X and Z Axis
                 vecY = {
                     x: Math.sin(beta) * Math.sin(alpha),
                     y: Math.cos(alpha),
@@ -312,21 +313,38 @@ class Axis3DAdditions {
 
         if (skew) {
             // Check if the label text would be mirrored
-            const isMirrored = shapeArea(perspective([
-                pos,
-                { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
-                { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
-            ], axis.chart)) < 0;
+            const isMirrored =
+                shapeArea(
+                    perspective(
+                        [
+                            pos,
+                            {
+                                x: pos.x + vecX.x,
+                                y: pos.y + vecX.y,
+                                z: pos.z + vecX.z
+                            },
+                            {
+                                x: pos.x + vecY.x,
+                                y: pos.y + vecY.y,
+                                z: pos.z + vecY.z
+                            }
+                        ],
+                        axis.chart
+                    )
+                ) < 0;
 
             if (isMirrored) {
                 vecX = { x: -vecX.x, y: -vecX.y, z: -vecX.z };
             }
 
-            const pointsProjected = perspective([
-                { x: pos.x, y: pos.y, z: pos.z },
-                { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
-                { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
-            ], axis.chart);
+            const pointsProjected = perspective(
+                [
+                    { x: pos.x, y: pos.y, z: pos.z },
+                    { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
+                    { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
+                ],
+                axis.chart
+            );
 
             projected.matrix = [
                 pointsProjected[1].x - pointsProjected[0].x,
@@ -336,9 +354,11 @@ class Axis3DAdditions {
                 projected.x,
                 projected.y
             ];
-            projected.matrix[4] -= projected.x * projected.matrix[0] +
+            projected.matrix[4] -=
+                projected.x * projected.matrix[0] +
                 projected.y * projected.matrix[2];
-            projected.matrix[5] -= projected.x * projected.matrix[1] +
+            projected.matrix[5] -=
+                projected.x * projected.matrix[1] +
                 projected.y * projected.matrix[3];
         }
 
@@ -365,7 +385,6 @@ class Axis3DAdditions {
         }
         return p;
     }
-
 }
 
 /**
@@ -374,7 +393,6 @@ class Axis3DAdditions {
  * @class
  */
 class Axis3D {
-
     /* *
      *
      *  Static Properties
@@ -489,7 +507,7 @@ class Axis3D {
              */
             skew3d: null
         }
-    }
+    };
 
     /* *
      *
@@ -502,7 +520,6 @@ class Axis3D {
      * @private
      */
     public static compose(AxisClass: typeof Axis): void {
-
         merge(true, AxisClass.defaultOptions, Axis3D.defaultOptions);
         AxisClass.keepProps.push('axis3D');
 
@@ -519,7 +536,6 @@ class Axis3D {
         wrap(axisProto, 'getTitlePosition', Axis3D.wrapGetTitlePosition);
 
         Tick3D.compose(Tick);
-
     }
 
     /**
@@ -548,14 +564,11 @@ class Axis3D {
     ): void {
         const axis = this;
 
-        if (
-            axis.chart.is3d() &&
-            axis.coll !== 'colorAxis'
-        ) {
+        if (axis.chart.is3d() && axis.coll !== 'colorAxis') {
             if (e.point) {
-                e.point.crosshairPos = axis.isXAxis ?
-                    e.point.axisXpos :
-                    axis.len - (e.point.axisYpos as any);
+                e.point.crosshairPos = axis.isXAxis
+                    ? e.point.axisXpos
+                    : axis.len - (e.point.axisYpos as any);
             }
         }
     }
@@ -575,10 +588,7 @@ class Axis3D {
      * Do not draw axislines in 3D.
      * @private
      */
-    public static wrapGetLinePath(
-        this: Axis3D,
-        proceed: Function
-    ): SVGPath {
+    public static wrapGetLinePath(this: Axis3D, proceed: Function): SVGPath {
         const axis = this;
 
         // Do not do this if the chart is not 3D
@@ -645,17 +655,10 @@ class Axis3D {
         const axis = this,
             axis3D = axis.axis3D,
             chart = axis.chart,
-            path: SVGPath = proceed.apply(
-                axis,
-                [].slice.call(arguments, 1)
-            );
+            path: SVGPath = proceed.apply(axis, [].slice.call(arguments, 1));
 
         // Do not do this if the chart is not 3D
-        if (
-            axis.coll === 'colorAxis' ||
-            !chart.chart3d ||
-            !chart.is3d()
-        ) {
+        if (axis.coll === 'colorAxis' || !chart.chart3d || !chart.is3d()) {
             return path;
         }
 
@@ -680,7 +683,8 @@ class Axis3D {
                 axis3D.swapZ({ x: endSegment[1], y: endSegment[2], z: d })
             ];
 
-            if (!this.horiz) { // Y-Axis
+            if (!this.horiz) {
+                // Y-Axis
                 if (frame.front.visible) {
                     pathSegments.push(pArr[0], pArr[2]);
                 }
@@ -693,7 +697,8 @@ class Axis3D {
                 if (frame.right.visible) {
                     pathSegments.push(pArr[2], pArr[3]);
                 }
-            } else if (this.isZAxis) { // Z-Axis
+            } else if (this.isZAxis) {
+                // Z-Axis
                 if (frame.left.visible) {
                     pathSegments.push(pArr[0], pArr[2]);
                 }
@@ -706,7 +711,8 @@ class Axis3D {
                 if (frame.bottom.visible) {
                     pathSegments.push(pArr[2], pArr[3]);
                 }
-            } else { // X-Axis
+            } else {
+                // X-Axis
                 if (frame.front.visible) {
                     pathSegments.push(pArr[0], pArr[2]);
                 }
@@ -750,40 +756,56 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            const firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            const firstGridLine = (
+                    gridGroup.element.childNodes[0] as any
+                ).getBBox(),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
                 options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
                     z: options3d.depth / 2,
-                    vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+                    vd:
+                        pick(options3d.depth, 1) *
+                        pick(options3d.viewDistance, 0)
                 },
                 tickId = tick.pos,
                 prevTick = ticks[tickId - 1],
                 nextTick = ticks[tickId + 1];
 
-            let labelPos,
-                prevLabelPos,
-                nextLabelPos;
+            let labelPos, prevLabelPos, nextLabelPos;
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
-            if (tickId !== 0 && prevTick && prevTick.label && prevTick.label.xy) {
-                prevLabelPos = perspective3D({ // #8621
-                    x: prevTick.label.xy.x,
-                    y: prevTick.label.xy.y,
-                    z: null as any
-                }, origin, origin.vd);
+            if (
+                tickId !== 0 &&
+                prevTick &&
+                prevTick.label &&
+                prevTick.label.xy
+            ) {
+                prevLabelPos = perspective3D(
+                    {
+                        // #8621
+                        x: prevTick.label.xy.x,
+                        y: prevTick.label.xy.y,
+                        z: null as any
+                    },
+                    origin,
+                    origin.vd
+                );
             }
             // If next label position is defined, then recalculate its position
             // basing on the perspective.
             if (nextTick && nextTick.label && nextTick.label.xy) {
-                nextLabelPos = perspective3D({
-                    x: nextTick.label.xy.x,
-                    y: nextTick.label.xy.y,
-                    z: null as any
-                }, origin, origin.vd);
+                nextLabelPos = perspective3D(
+                    {
+                        x: nextTick.label.xy.x,
+                        y: nextTick.label.xy.y,
+                        z: null as any
+                    },
+                    origin,
+                    origin.vd
+                );
             }
             labelPos = {
                 x: tick.label.xy.x,
@@ -799,10 +821,11 @@ class Axis3D {
             // return the difference between the first grid line and left 3d
             // frame.
             return Math.abs(
-                prevLabelPos ?
-                    labelPos.x - prevLabelPos.x : nextLabelPos ?
-                        nextLabelPos.x - labelPos.x :
-                        firstGridLine.x - frame3DLeft.x
+                prevLabelPos
+                    ? labelPos.x - prevLabelPos.x
+                    : nextLabelPos
+                    ? nextLabelPos.x - labelPos.x
+                    : firstGridLine.x - frame3DLeft.x
             );
         }
         return proceed.apply(axis, [].slice.call(arguments, 1));
@@ -815,14 +838,13 @@ class Axis3D {
         this: Axis3D,
         proceed: Function
     ): Position3DObject {
-        const pos: Position3DObject =
-            proceed.apply(this, [].slice.call(arguments, 1));
+        const pos: Position3DObject = proceed.apply(
+            this,
+            [].slice.call(arguments, 1)
+        );
 
-        return this.axis3D ?
-            this.axis3D.fix3dPosition(pos, true) :
-            pos;
+        return this.axis3D ? this.axis3D.fix3dPosition(pos, true) : pos;
     }
-
 }
 
 /**

@@ -42,7 +42,7 @@ export interface HTMLAttributes {
     rowspan?: number;
     summary?: string;
     tabindex?: number;
-    valign?: 'bottom'|'middle'|'top';
+    valign?: 'bottom' | 'middle' | 'top';
     value?: string;
 }
 

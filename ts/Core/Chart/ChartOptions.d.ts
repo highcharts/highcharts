@@ -33,7 +33,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
-declare module './Chart/ChartLike'{
+declare module './Chart/ChartLike' {
     interface ChartLike {
         marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
@@ -86,7 +86,7 @@ export interface ChartLoadCallbackFunction {
 }
 export interface ChartOptions {
     alignTicks?: boolean;
-    animation?: (boolean|Partial<AnimationOptions>);
+    animation?: boolean | Partial<AnimationOptions>;
     backgroundColor?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
@@ -94,12 +94,12 @@ export interface ChartOptions {
     className?: string;
     colorCount?: number;
     events?: ChartEventsOptions;
-    height?: (null|number|string);
+    height?: null | number | string;
     ignoreHiddenSeries?: boolean;
     inverted?: boolean;
-    map?: string|Array<any>|Highcharts.GeoJSON;
+    map?: string | Array<any> | Highcharts.GeoJSON;
     mapTransforms?: any;
-    margin?: (number|Array<number>);
+    margin?: number | Array<number>;
     marginBottom?: number;
     marginLeft?: number;
     marginRight?: number;
@@ -112,12 +112,12 @@ export interface ChartOptions {
     plotBackgroundImage?: string;
     plotBorderColor?: ColorType;
     plotBorderWidth?: number;
-    plotShadow?: (boolean|Partial<ShadowOptionsObject>);
+    plotShadow?: boolean | Partial<ShadowOptionsObject>;
     polar?: boolean;
     reflow?: boolean;
-    renderTo?: (string|HTMLDOMElement);
+    renderTo?: string | HTMLDOMElement;
     resetZoomButton?: ChartResetZoomButtonOptions;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shadow?: boolean | Partial<ShadowOptionsObject>;
     selectionMarkerFill?: ColorType;
     showAxes?: boolean;
     spacing?: Array<number>;
@@ -128,13 +128,13 @@ export interface ChartOptions {
     style?: CSSObject;
     styledMode?: boolean;
     type?: string;
-    width?: (null|number);
+    width?: null | number;
     zoomBySingleTouch?: boolean;
-    zoomType?: ('x'|'xy'|'y');
+    zoomType?: 'x' | 'xy' | 'y';
 }
 
 export interface ChartPanningOptions {
-    type: ('x'|'y'|'xy');
+    type: 'x' | 'y' | 'xy';
     enabled: boolean;
 }
 
@@ -159,10 +159,7 @@ export interface ChartSelectionAxisContextObject {
 }
 
 export interface ChartSelectionCallbackFunction {
-    (
-        this: Chart,
-        event: ChartSelectionContextObject
-    ): (boolean|undefined);
+    (this: Chart, event: ChartSelectionContextObject): boolean | undefined;
 }
 
 export interface ChartSelectionContextObject {

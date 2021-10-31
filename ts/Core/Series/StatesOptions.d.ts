@@ -25,9 +25,9 @@ import type DashStyleValue from '../Renderer/DashStyleValue';
 
 export interface StateClassWithOptions {}
 
-export type StateGenericOptions<T extends { options: AnyRecord }> = (
-    DeepPartial<Omit<T['options'], ('states'|'data')>>
-);
+export type StateGenericOptions<T extends { options: AnyRecord }> = DeepPartial<
+    Omit<T['options'], 'states' | 'data'>
+>;
 
 export interface StateHoverOptions {
     color?: ColorType;
@@ -56,7 +56,7 @@ export interface StatesOptions {
     select?: StateSelectOptions;
 }
 
-export type StatesOptionsKey = (''|keyof StatesOptions);
+export type StatesOptionsKey = '' | keyof StatesOptions;
 
 /* *
  *

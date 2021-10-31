@@ -24,13 +24,8 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import Axis from './Axis.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    destroyObjectProperties,
-    fireEvent,
-    isNumber,
-    objectEach
-} = U;
+const { addEvent, destroyObjectProperties, fireEvent, isNumber, objectEach } =
+    U;
 
 /* *
  *
@@ -60,7 +55,6 @@ declare module './AxisType' {
  * @private
  */
 namespace StackingAxis {
-
     /* *
      *
      *  Declarations
@@ -91,8 +85,9 @@ namespace StackingAxis {
      * Extends axis with stacking support.
      * @private
      */
-    export function compose<T extends typeof Axis>(AxisClass: T): (T&typeof Composition) {
-
+    export function compose<T extends typeof Axis>(
+        AxisClass: T
+    ): T & typeof Composition {
         if (composedClasses.indexOf(AxisClass) === -1) {
             composedClasses.push(AxisClass);
 
@@ -100,7 +95,7 @@ namespace StackingAxis {
             addEvent(AxisClass, 'destroy', onDestroy);
         }
 
-        return AxisClass as (T&typeof Composition);
+        return AxisClass as T & typeof Composition;
     }
 
     /**
@@ -116,19 +111,19 @@ namespace StackingAxis {
         const stacks = stacking.stacks;
 
         // Destroy each stack total
-        objectEach(stacks, function (
-            stack: Record<string, StackItem>,
-            stackKey: string
-        ): void {
-            destroyObjectProperties(stack);
+        objectEach(
+            stacks,
+            function (
+                stack: Record<string, StackItem>,
+                stackKey: string
+            ): void {
+                destroyObjectProperties(stack);
 
-            stacks[stackKey] = null as any;
-        });
+                stacks[stackKey] = null as any;
+            }
+        );
 
-        if (
-            stacking &&
-            stacking.stackTotalGroup
-        ) {
+        if (stacking && stacking.stackTotalGroup) {
             stacking.stackTotalGroup.destroy();
         }
     }
@@ -155,22 +150,21 @@ namespace StackingAxis {
      * @class
      */
     export class Additions {
-
         /* *
-        *
-        *  Constructors
-        *
-        * */
+         *
+         *  Constructors
+         *
+         * */
 
         public constructor(axis: Composition) {
             this.axis = axis;
         }
 
         /* *
-        *
-        *  Properties
-        *
-        * */
+         *
+         *  Properties
+         *
+         * */
 
         axis: Composition;
         oldStacks: Record<string, Record<string, StackItem>> = {};
@@ -180,10 +174,10 @@ namespace StackingAxis {
         usePercentage?: boolean;
 
         /* *
-        *
-        *  Functions
-        *
-        * */
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * Build the stacks from top down
@@ -196,8 +190,7 @@ namespace StackingAxis {
             const reversedStacks = axis.options.reversedStacks;
             const len = axisSeries.length;
 
-            let actualSeries: Series,
-                i: number;
+            let actualSeries: Series, i: number;
 
             if (!axis.isXAxis) {
                 stacking.usePercentage = false;
@@ -231,13 +224,14 @@ namespace StackingAxis {
                 }
 
                 // reset stacks
-                objectEach(stacks, function (
-                    type: Record<string, StackItem>
-                ): void {
-                    objectEach(type, function (stack: StackItem): void {
-                        stack.cumulative = stack.total;
-                    });
-                });
+                objectEach(
+                    stacks,
+                    function (type: Record<string, StackItem>): void {
+                        objectEach(type, function (stack: StackItem): void {
+                            stack.cumulative = stack.total;
+                        });
+                    }
+                );
             }
         }
 
@@ -247,13 +241,9 @@ namespace StackingAxis {
          */
         public resetStacks(): void {
             const stacking = this,
-                {
-                    axis,
-                    stacks
-                } = stacking;
+                { axis, stacks } = stacking;
 
             if (!axis.isXAxis) {
-
                 objectEach(stacks, (type): void => {
                     objectEach(type, (stack, x): void => {
                         // Clean up memory after point deletion (#1044, #4320)
@@ -264,7 +254,7 @@ namespace StackingAxis {
                             stack.destroy();
                             delete type[x];
 
-                        // Reset stacks
+                            // Reset stacks
                         } else {
                             stack.total = null;
                             stack.cumulative = null;
@@ -283,9 +273,14 @@ namespace StackingAxis {
                 chart = axis.chart,
                 renderer = chart.renderer,
                 stacks = stacking.stacks,
-                stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation,
-                animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false),
-                stackTotalGroup = stacking.stackTotalGroup = (
+                stackLabelsAnim =
+                    axis.options.stackLabels &&
+                    axis.options.stackLabels.animation,
+                animationConfig = getDeferredAnimation(
+                    chart,
+                    stackLabelsAnim || false
+                ),
+                stackTotalGroup = (stacking.stackTotalGroup =
                     stacking.stackTotalGroup ||
                     renderer
                         .g('stack-labels')
@@ -294,8 +289,7 @@ namespace StackingAxis {
                             zIndex: 6,
                             opacity: 0
                         })
-                        .add()
-                );
+                        .add());
 
             // plotLeft/Top will change when y axis gets wider so we need to
             // translate the stackTotalGroup at every render call. See bug #506
@@ -303,16 +297,23 @@ namespace StackingAxis {
             stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
             // Render each stack total
-            objectEach(stacks, function (
-                type: Record<string, Highcharts.StackItem>
-            ): void {
-                objectEach(type, function (stack: Highcharts.StackItem): void {
-                    stack.render(stackTotalGroup);
-                });
-            });
-            stackTotalGroup.animate({
-                opacity: 1
-            }, animationConfig);
+            objectEach(
+                stacks,
+                function (type: Record<string, Highcharts.StackItem>): void {
+                    objectEach(
+                        type,
+                        function (stack: Highcharts.StackItem): void {
+                            stack.render(stackTotalGroup);
+                        }
+                    );
+                }
+            );
+            stackTotalGroup.animate(
+                {
+                    opacity: 1
+                },
+                animationConfig
+            );
         }
     }
 }

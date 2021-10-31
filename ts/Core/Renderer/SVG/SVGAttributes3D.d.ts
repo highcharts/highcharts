@@ -28,7 +28,7 @@ interface SVGAttributes3D extends SVGAttributes {
     alpha?: number;
     beta?: number;
     center?: number;
-    enabled?: (boolean|'auto'|'default');
+    enabled?: boolean | 'auto' | 'default';
     faces?: Array<SVGAttributes3D>;
     insidePlotArea?: boolean;
     vertexes?: Array<Position3DObject>;

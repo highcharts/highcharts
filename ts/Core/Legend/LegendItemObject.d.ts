@@ -34,8 +34,8 @@ export interface LegendItemObject {
     itemHeight?: number;
     itemWidth?: number;
     legendGroup?: SVGElement;
-    legendItem?: (ColorAxis.LegendItemObject|SVGElement);
-    legendItems?: Array<(ColorAxis.LegendItemObject|SVGElement)>;
+    legendItem?: ColorAxis.LegendItemObject | SVGElement;
+    legendItems?: Array<ColorAxis.LegendItemObject | SVGElement>;
     legendItemHeight?: number;
     legendItemWidth?: number;
     legendLine?: SVGElement;

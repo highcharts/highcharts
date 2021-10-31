@@ -18,20 +18,13 @@
 
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
-import type {
-    DOMElementType,
-    HTMLDOMElement
-} from './Renderer/DOMElementType';
+import type { DOMElementType, HTMLDOMElement } from './Renderer/DOMElementType';
 import type EventCallback from './EventCallback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 
 import H from './Globals.js';
-const {
-    charts,
-    doc,
-    win
-} = H;
+const { charts, doc, win } = H;
 
 /* *
  *
@@ -41,7 +34,7 @@ const {
 
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
-type NullType = (null|undefined);
+type NullType = null | undefined;
 
 /* *
  *
@@ -80,7 +73,7 @@ type NullType = (null|undefined);
  * @return {void}
  */
 function error(
-    code: (number|string),
+    code: number | string,
     stop?: boolean,
     chart?: Chart,
     params?: Record<string, string>
@@ -91,9 +84,9 @@ function error(
     }
 
     const isCode = isNumber(code);
-    let message = isCode ?
-        `${severity} #${code}: www.highcharts.com/errors/${code}/` :
-        code.toString();
+    let message = isCode
+        ? `${severity} #${code}: www.highcharts.com/errors/${code}/`
+        : code.toString();
     const defaultHandler = function (): void {
         if (stop) {
             throw new Error(message);
@@ -137,8 +130,8 @@ namespace error {
 function merge<T = object>(
     extend: true,
     a?: T,
-    ...n: Array<DeepPartial<T>|undefined>
-): (T);
+    ...n: Array<DeepPartial<T> | undefined>
+): T;
 function merge<
     T1 extends object = object,
     T2 = unknown,
@@ -158,8 +151,8 @@ function merge<
     f?: T6,
     g?: T7,
     h?: T8,
-    i?: T9,
-): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
+    i?: T9
+): T1 & T2 & T3 & T4 & T5 & T6 & T7 & T8 & T9;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -184,7 +177,7 @@ function merge<
  * @return {T}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
- *//**
+ */ /**
  * Utility function to deep merge two or more objects and return a third object.
  * The merge function can also be used with a single object argument to create a
  * deep copy of an object.
@@ -214,20 +207,20 @@ function merge<T>(): T {
         }
 
         objectEach(original, function (value, key): void {
-
             // Prototype pollution (#14883)
             if (key === '__proto__' || key === 'constructor') {
                 return;
             }
 
             // Copy the contents of objects, but not arrays or DOM nodes
-            if (isObject(value, true) &&
+            if (
+                isObject(value, true) &&
                 !isClass(value) &&
                 !isDOMElement(value)
             ) {
                 copy[key] = doCopy(copy[key] || {}, value);
 
-            // Primitives and arrays are copied over directly
+                // Primitives and arrays are copied over directly
             } else {
                 copy[key] = original[key];
             }
@@ -261,7 +254,7 @@ function merge<T>(): T {
  * @return {number} Returns a number value within min and max.
  */
 function clamp(value: number, min: number, max: number): number {
-    return value > min ? value < max ? value : max : min;
+    return value > min ? (value < max ? value : max) : min;
 }
 
 // eslint-disable-next-line valid-jsdoc
@@ -276,7 +269,7 @@ function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
 ): TNew & TOld {
     const result: AnyRecord = {};
 
-    objectEach(newer, function (_val: unknown, key: (number|string)): void {
+    objectEach(newer, function (_val: unknown, key: number | string): void {
         let ob;
 
         // Dive into objects (except DOM nodes)
@@ -285,19 +278,13 @@ function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
             !newer.nodeType && // #10044
             older[key]
         ) {
-            ob = cleanRecursively(
-                newer[key],
-                older[key]
-            );
+            ob = cleanRecursively(newer[key], older[key]);
             if (Object.keys(ob).length) {
                 result[key] = ob;
             }
 
-        // Arrays, primitives and DOM nodes are copied directly
-        } else if (
-            isObject(newer[key]) ||
-            newer[key] !== older[key]
-        ) {
+            // Arrays, primitives and DOM nodes are copied directly
+        } else if (isObject(newer[key]) || newer[key] !== older[key]) {
             result[key] = newer[key];
         }
     });
@@ -356,8 +343,14 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(
+    obj: T,
+    strict: true
+): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(
+    obj: T,
+    strict?: false
+): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -376,11 +369,9 @@ function isObject<T>(
     obj: T,
     strict?: boolean
 ): obj is object & NonFunction<NonNullable<T>> {
-    return (
-        !!obj &&
+    return (!!obj &&
         typeof obj === 'object' &&
-        (!strict || !isArray(obj))
-    ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+        (!strict || !isArray(obj))) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -409,13 +400,15 @@ function isDOMElement(obj: unknown): obj is HTMLDOMElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): obj is Utilities.Class<any> {
-    const c: (Function|undefined) = obj && obj.constructor;
+function isClass(obj: object | undefined): obj is Utilities.Class<any> {
+    const c: Function | undefined = obj && obj.constructor;
 
     return !!(
         isObject(obj, true) &&
         !isDOMElement(obj) &&
-        (c && (c as any).name && (c as any).name !== 'Object')
+        c &&
+        (c as any).name &&
+        (c as any).name !== 'Object'
     );
 }
 
@@ -476,17 +469,17 @@ function defined<T>(obj: T): obj is NonNullable<T> {
 
 function attr(
     elem: DOMElementType,
-    prop: (HTMLAttributes|SVGAttributes)
+    prop: HTMLAttributes | SVGAttributes
 ): undefined;
 function attr(
     elem: DOMElementType,
     prop: string,
     value?: undefined
-): (string|null);
+): string | null;
 function attr(
     elem: DOMElementType,
     prop: string,
-    value: (number|string)
+    value: number | string
 ): undefined;
 /**
  * Set or get an attribute or an object of attributes.
@@ -513,9 +506,9 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|HTMLAttributes|SVGAttributes),
-    value?: (number|string)
-): (string|null|undefined) {
+    prop: string | HTMLAttributes | SVGAttributes,
+    value?: number | string
+): string | null | undefined {
     let ret;
 
     // if the prop is a string
@@ -524,7 +517,7 @@ function attr(
         if (defined(value)) {
             elem.setAttribute(prop, value as string);
 
-        // get the value
+            // get the value
         } else if (elem && elem.getAttribute) {
             ret = elem.getAttribute(prop);
 
@@ -534,7 +527,7 @@ function attr(
             }
         }
 
-    // else if prop is defined, it is a hash of key/value pairs
+        // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
             if (defined(val)) {
@@ -581,11 +574,7 @@ function splat(obj: any): Array<any> {
  *         An identifier for the timeout that can later be cleared with
  *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-function syncTimeout(
-    fn: Function,
-    delay: number,
-    context?: unknown
-): number {
+function syncTimeout(fn: Function, delay: number, context?: unknown): number {
     if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
@@ -626,40 +615,58 @@ function internalClearTimeout(id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
+function extend<T extends object>(a: T | undefined, b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     let n;
 
     if (!a) {
         a = {} as T;
     }
-    for (n in b) { // eslint-disable-line guard-for-in
+    // eslint-disable-next-line guard-for-in
+    for (n in b) {
         (a as any)[n] = (b as any)[n];
     }
     return a;
 }
 
-function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ?
-            T4 extends NullType ?
-                T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ?
-            T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3>(...args: [T1, T2, T3]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ? undefined : T3 : T2 : T1;
-function pick<T1, T2>(...args: [T1, T2]):
-T1 extends NullType ?
-    T2 extends NullType ? undefined : T2 : T1;
-function pick<T1>(...args: [T1]):
-T1 extends NullType ? undefined : T1;
-function pick<T>(...args: Array<T|null|undefined>): T|undefined;
+function pick<T1, T2, T3, T4, T5>(
+    ...args: [T1, T2, T3, T4, T5]
+): T1 extends NullType
+    ? T2 extends NullType
+        ? T3 extends NullType
+            ? T4 extends NullType
+                ? T5 extends NullType
+                    ? undefined
+                    : T5
+                : T4
+            : T3
+        : T2
+    : T1;
+function pick<T1, T2, T3, T4>(
+    ...args: [T1, T2, T3, T4]
+): T1 extends NullType
+    ? T2 extends NullType
+        ? T3 extends NullType
+            ? T4 extends NullType
+                ? undefined
+                : T4
+            : T3
+        : T2
+    : T1;
+function pick<T1, T2, T3>(
+    ...args: [T1, T2, T3]
+): T1 extends NullType
+    ? T2 extends NullType
+        ? T3 extends NullType
+            ? undefined
+            : T3
+        : T2
+    : T1;
+function pick<T1, T2>(
+    ...args: [T1, T2]
+): T1 extends NullType ? (T2 extends NullType ? undefined : T2) : T1;
+function pick<T1>(...args: [T1]): T1 extends NullType ? undefined : T1;
+function pick<T>(...args: Array<T | null | undefined>): T | undefined;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -672,7 +679,7 @@ function pick<T>(...args: Array<T|null|undefined>): T|undefined;
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-function pick<T>(): T|undefined {
+function pick<T>(): T | undefined {
     const args = arguments;
     const length = args.length;
     for (let i = 0; i < length; i++) {
@@ -696,14 +703,12 @@ function pick<T>(): T|undefined {
  *
  * @return {void}
  */
-function css(
-    el: DOMElementType,
-    styles: CSSObject
-): void {
-    if (H.isMS && !H.svg) { // #2686
+function css(el: DOMElementType, styles: CSSObject): void {
+    if (H.isMS && !H.svg) {
+        // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
             styles.filter =
-                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
+                'alpha(opacity=' + (styles.opacity as any) * 100 + ')';
         }
     }
     extend(el.style, styles as any);
@@ -772,11 +777,11 @@ function createElement(
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-function extendClass <T, TReturn = T>(
+function extendClass<T, TReturn = T>(
     parent: Utilities.Class<T>,
     members: any
 ): Utilities.Class<TReturn> {
-    const obj: Utilities.Class<TReturn> = (function (): void {}) as any;
+    const obj: Utilities.Class<TReturn> = function (): void {} as any;
 
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
@@ -801,13 +806,11 @@ function extendClass <T, TReturn = T>(
  *         The padded string.
  */
 function pad(number: number, length?: number, padder?: string): string {
-    return new Array(
-        (length || 2) +
-        1 -
-        String(number)
-            .replace('-', '')
-            .length
-    ).join(padder || '0') + number;
+    return (
+        new Array(
+            (length || 2) + 1 - String(number).replace('-', '').length
+        ).join(padder || '0') + number
+    );
 }
 
 /**
@@ -833,9 +836,9 @@ function relativeLength(
     base: number,
     offset?: number
 ): number {
-    return (/%$/).test(value as any) ?
-        (base * parseFloat(value as any) / 100) + (offset || 0) :
-        parseFloat(value as any);
+    return /%$/.test(value as any)
+        ? (base * parseFloat(value as any)) / 100 + (offset || 0)
+        : parseFloat(value as any);
 }
 
 /**
@@ -937,14 +940,12 @@ function normalizeTickInterval(
 
     // multiples for a linear scale
     if (!multiples) {
-        multiples = hasTickAmount ?
-            // Finer grained ticks when the tick amount is hard set, including
-            // when alignTicks is true on multiple axes (#4580).
-            [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] :
-
-            // Else, let ticks fall on rounder numbers
-            [1, 2, 2.5, 5, 10];
-
+        multiples = hasTickAmount
+            ? // Finer grained ticks when the tick amount is hard set, including
+              // when alignTicks is true on multiple axes (#4580).
+              [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]
+            : // Else, let ticks fall on rounder numbers
+              [1, 2, 2.5, 5, 10];
 
         // the allowDecimals option
         if (allowDecimals === false) {
@@ -963,20 +964,10 @@ function normalizeTickInterval(
         retInterval = multiples[i];
         // only allow tick amounts smaller than natural
         if (
-            (
-                hasTickAmount &&
-                retInterval * (magnitude as any) >= interval
-            ) ||
-            (
-                !hasTickAmount &&
-                (
-                    normalized <=
-                    (
-                        multiples[i] +
-                        (multiples[i + 1] || multiples[i])
-                    ) / 2
-                )
-            )
+            (hasTickAmount && retInterval * (magnitude as any) >= interval) ||
+            (!hasTickAmount &&
+                normalized <=
+                    (multiples[i] + (multiples[i + 1] || multiples[i])) / 2)
         ) {
             break;
         }
@@ -991,7 +982,6 @@ function normalizeTickInterval(
 
     return retInterval;
 }
-
 
 /**
  * Sort an object array and keep the order of equal items. The ECMAScript
@@ -1009,13 +999,11 @@ function stableSort<T>(
     arr: Array<T>,
     sortFunction: (a: T, b: T) => number
 ): void {
-
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
     const length = arr.length;
-    let sortValue,
-        i;
+    let sortValue, i;
 
     // Add index to each item
     for (i = 0; i < length; i++) {
@@ -1109,7 +1097,6 @@ function destroyObjectProperties(obj: any, except?: any): void {
     });
 }
 
-
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -1119,7 +1106,6 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
         garbageBin = createElement('div');
@@ -1132,7 +1118,7 @@ function discardElement(element?: HTMLDOMElement): void {
     garbageBin.innerHTML = '';
 }
 
-let garbageBin: (globalThis.HTMLElement|undefined);
+let garbageBin: globalThis.HTMLElement | undefined;
 
 /**
  * Fix JS round off float errors.
@@ -1149,11 +1135,8 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-
     // When the number is higher than 1e14 use the number (#16275)
-    return num > 1e14 ? num : parseFloat(
-        num.toPrecision(prec || 14)
-    );
+    return num > 1e14 ? num : parseFloat(num.toPrecision(prec || 14));
 }
 
 /**
@@ -1205,17 +1188,13 @@ Math.easeInOutSine = function (pos: number): number {
  * The unknown property value.
  */
 function getNestedProperty(path: string, parent: unknown): unknown {
-
     const pathElements = path.split('.');
 
     while (pathElements.length && defined(parent)) {
         const pathElement = pathElements.shift();
 
         // Filter on the key
-        if (
-            typeof pathElement === 'undefined' ||
-            pathElement === '__proto__'
-        ) {
+        if (typeof pathElement === 'undefined' || pathElement === '__proto__') {
             return; // undefined
         }
 
@@ -1228,7 +1207,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             !defined(child) ||
             typeof child === 'function' ||
             typeof child.nodeType === 'number' ||
-            child as unknown === win
+            (child as unknown) === win
         ) {
             return; // undefined
         }
@@ -1243,12 +1222,12 @@ function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt: true
-): (number|undefined);
+): number | undefined;
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: false
-): (number|string|undefined);
+): number | string | undefined;
 /**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
@@ -1272,23 +1251,21 @@ function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
-): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = (
+): number | string | undefined {
+    const customGetStyle: typeof getStyle =
         (H as any).getStyle || // oldie getStyle
-        getStyle
-    );
+        getStyle;
 
-    let style: (number|string|undefined);
+    let style: number | string | undefined;
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
-
         let offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
 
         // In flex boxes, we need to use getBoundingClientRect and floor it,
         // because scrollWidth doesn't support subpixel precision (#6427) ...
-        const boundingClientRectWidth = el.getBoundingClientRect &&
-            el.getBoundingClientRect().width;
+        const boundingClientRectWidth =
+            el.getBoundingClientRect && el.getBoundingClientRect().width;
         // ...unless if the containing div or its parents are transform-scaled
         // down, in which case the boundingClientRect can't be used as it is
         // also scaled down (#9871, #10498).
@@ -1301,22 +1278,18 @@ function getStyle(
 
         return Math.max(
             0, // #8377
-            (
-                offsetWidth -
+            offsetWidth -
                 (customGetStyle(el, 'padding-left', true) || 0) -
                 (customGetStyle(el, 'padding-right', true) || 0)
-            )
         );
     }
 
     if (prop === 'height') {
         return Math.max(
             0, // #8377
-            (
-                Math.min(el.offsetHeight, el.scrollHeight) -
+            Math.min(el.offsetHeight, el.scrollHeight) -
                 (customGetStyle(el, 'padding-top', true) || 0) -
                 (customGetStyle(el, 'padding-bottom', true) || 0)
-            )
         );
     }
 
@@ -1377,27 +1350,28 @@ function inArray(item: any, arr: Array<any>, fromIndex?: number): number {
  * @return {T|undefined}
  *         The value of the element.
  */
-const find = (Array.prototype as any).find ?
-    function<T> (
-        arr: Array<T>,
-        callback: Utilities.FindCallback<T>
-    ): (T|undefined) {
-        return (arr as any).find(callback as any);
-    } :
-    // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function<T> (
-        arr: Array<T>,
-        callback: Utilities.FindCallback<T>
-    ): (T|undefined) {
-        let i;
-        const length = arr.length;
+const find = (Array.prototype as any).find
+    ? function <T>(
+          arr: Array<T>,
+          callback: Utilities.FindCallback<T>
+      ): T | undefined {
+          return (arr as any).find(callback as any);
+      }
+    : // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
+      function <T>(
+          arr: Array<T>,
+          callback: Utilities.FindCallback<T>
+      ): T | undefined {
+          let i;
+          const length = arr.length;
 
-        for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
-                return arr[i];
-            }
-        }
-    };
+          for (i = 0; i < length; i++) {
+              // eslint-disable-next-line callback-return
+              if (callback(arr[i], i)) {
+                  return arr[i];
+              }
+          }
+      };
 
 /**
  * Returns an array of a given object's own properties.
@@ -1430,14 +1404,19 @@ function keys(obj: any): Array<string> {
  */
 function offset(el: Element): Utilities.OffsetObject {
     const docElem = doc.documentElement,
-        box = (el.parentElement || el.parentNode) ?
-            el.getBoundingClientRect() :
-            { top: 0, left: 0, width: 0, height: 0 };
+        box =
+            el.parentElement || el.parentNode
+                ? el.getBoundingClientRect()
+                : { top: 0, left: 0, width: 0, height: 0 };
 
     return {
-        top: box.top + (win.pageYOffset || docElem.scrollTop) -
+        top:
+            box.top +
+            (win.pageYOffset || docElem.scrollTop) -
             (docElem.clientTop || 0),
-        left: box.left + (win.pageXOffset || docElem.scrollLeft) -
+        left:
+            box.left +
+            (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0),
         width: box.width,
         height: box.height
@@ -1472,7 +1451,12 @@ function objectEach<TObject, TContext>(
     /* eslint-enable valid-jsdoc */
     for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
+            fn.call(
+                ctx || (obj[key] as unknown as TContext),
+                obj[key],
+                key,
+                obj
+            );
         }
     }
 }
@@ -1571,21 +1555,26 @@ function objectEach<TObject, TContext>(
  *
  * @return {boolean}
  */
-objectEach({
-    map: 'map',
-    each: 'forEach',
-    grep: 'filter',
-    reduce: 'reduce',
-    some: 'some'
-} as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
-    (H as any)[key] = function (arr: Array<unknown>): any {
-        error(32, false, void 0, { [`Highcharts.${key}`]: `use Array.${val}` });
-        return (Array.prototype[val] as any).apply(
-            arr,
-            [].slice.call(arguments, 1)
-        );
-    };
-});
+objectEach(
+    {
+        map: 'map',
+        each: 'forEach',
+        grep: 'filter',
+        reduce: 'reduce',
+        some: 'some'
+    } as Record<string, 'map' | 'forEach' | 'filter' | 'reduce' | 'some'>,
+    function (val, key): void {
+        (H as any)[key] = function (arr: Array<unknown>): any {
+            error(32, false, void 0, {
+                [`Highcharts.${key}`]: `use Array.${val}`
+            });
+            return (Array.prototype[val] as any).apply(
+                arr,
+                [].slice.call(arguments, 1)
+            );
+        };
+    }
+);
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -1610,9 +1599,9 @@ objectEach({
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: Utilities.Class<T> | T,
     type: string,
-    fn: (EventCallback<T>|Function),
+    fn: EventCallback<T> | Function,
     options: Utilities.EventOptions = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
@@ -1621,16 +1610,16 @@ function addEvent<T>(
     // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
     // inherited down the prototype chain, in which case we need to set the
     // property on this instance (which may itself be a prototype).
-    const owner = typeof el === 'function' && el.prototype || el;
+    const owner = (typeof el === 'function' && el.prototype) || el;
     if (!Object.hasOwnProperty.call(owner, 'hcEvents')) {
         owner.hcEvents = {};
     }
     const events: Record<string, Array<any>> = owner.hcEvents;
 
-
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
-    if ((H as any).Point && // without H a dependency loop occurs
+    if (
+        (H as any).Point && // without H a dependency loop occurs
         el instanceof (H as any).Point &&
         (el as any).series &&
         (el as any).series.chart
@@ -1641,19 +1630,22 @@ function addEvent<T>(
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
-    const addEventListener = (
-        (el as any).addEventListener || H.addEventListenerPolyfill
-    );
+    const addEventListener =
+        (el as any).addEventListener || H.addEventListenerPolyfill;
     if (addEventListener) {
         addEventListener.call(
             el,
             type,
             fn,
-            H.supportsPassiveEvents ? {
-                passive: options.passive === void 0 ?
-                    type.indexOf('touch') !== -1 : options.passive,
-                capture: false
-            } : false
+            H.supportsPassiveEvents
+                ? {
+                      passive:
+                          options.passive === void 0
+                              ? type.indexOf('touch') !== -1
+                              : options.passive,
+                      capture: false
+                  }
+                : false
         );
     }
 
@@ -1668,10 +1660,12 @@ function addEvent<T>(
     events[type].push(eventObject);
 
     // Order the calls
-    events[type].sort((
-        a: Utilities.EventWrapperObject<T>,
-        b: Utilities.EventWrapperObject<T>
-    ): number => a.order - b.order);
+    events[type].sort(
+        (
+            a: Utilities.EventWrapperObject<T>,
+            b: Utilities.EventWrapperObject<T>
+        ): number => a.order - b.order
+    );
 
     // Return a function that can be called to remove this event.
     return function (): void {
@@ -1699,9 +1693,9 @@ function addEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (Utilities.Class<T>|T),
+    el: Utilities.Class<T> | T,
     type?: string,
-    fn?: (EventCallback<T>|Function)
+    fn?: EventCallback<T> | Function
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -1713,11 +1707,10 @@ function removeEvent<T>(
      */
     function removeOneEvent(
         type: string,
-        fn: (EventCallback<T>|Function)
+        fn: EventCallback<T> | Function
     ): void {
-        const removeEventListener = (
-            (el as any).removeEventListener || H.removeEventListenerPolyfill
-        );
+        const removeEventListener =
+            (el as any).removeEventListener || H.removeEventListenerPolyfill;
 
         if (removeEventListener) {
             removeEventListener.call(el, type, fn, false);
@@ -1730,8 +1723,7 @@ function removeEvent<T>(
      * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
-        let types: Record<string, boolean>,
-            len;
+        let types: Record<string, boolean>, len;
 
         if (!(el as any).nodeName) {
             return; // break on non-DOM events
@@ -1754,22 +1746,18 @@ function removeEvent<T>(
         });
     }
 
-    const owner = typeof el === 'function' && el.prototype || el;
+    const owner = (typeof el === 'function' && el.prototype) || el;
     if (Object.hasOwnProperty.call(owner, 'hcEvents')) {
         const events = owner.hcEvents;
         if (type) {
-            const typeEvents = (
-                events[type] || []
-            ) as Utilities.EventWrapperObject<T>[];
+            const typeEvents = (events[type] ||
+                []) as Utilities.EventWrapperObject<T>[];
 
             if (fn) {
-                events[type] = typeEvents.filter(
-                    function (obj): boolean {
-                        return fn !== obj.fn;
-                    }
-                );
+                events[type] = typeEvents.filter(function (obj): boolean {
+                    return fn !== obj.fn;
+                });
                 removeOneEvent(type, fn);
-
             } else {
                 removeAllEvents(events);
                 events[type] = [];
@@ -1807,24 +1795,20 @@ function removeEvent<T>(
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (AnyRecord|Event),
-    defaultFunction?: (EventCallback<T>|Function)
+    eventArguments?: AnyRecord | Event,
+    defaultFunction?: EventCallback<T> | Function
 ): void {
     /* eslint-enable valid-jsdoc */
-    let e,
-        i;
+    let e, i;
 
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent &&
-        (
-            (el as any).dispatchEvent ||
-            (
-                (el as any).fireEvent &&
+    if (
+        doc.createEvent &&
+        ((el as any).dispatchEvent ||
+            ((el as any).fireEvent &&
                 // Enable firing events on Highcharts instance.
-                (el as any) !== H
-            )
-        )
+                (el as any) !== H))
     ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
@@ -1836,9 +1820,7 @@ function fireEvent<T>(
         } else {
             (el as any).fireEvent(type, eventArguments);
         }
-
     } else if ((el as any).hcEvents) {
-
         if (!(eventArguments as any).target) {
             // We're running a custom event
 
@@ -1883,10 +1865,12 @@ function fireEvent<T>(
         // events are already sorted in the addEvent function.
         if (multilevel) {
             // Order the calls
-            events.sort((
-                a: Utilities.EventWrapperObject<T>,
-                b: Utilities.EventWrapperObject<T>
-            ): number => a.order - b.order);
+            events.sort(
+                (
+                    a: Utilities.EventWrapperObject<T>,
+                    b: Utilities.EventWrapperObject<T>
+                ): number => a.order - b.order
+            );
         }
 
         // Call the collected event handlers
@@ -1897,7 +1881,6 @@ function fireEvent<T>(
                 (eventArguments as any).preventDefault();
             }
         });
-
     }
 
     // Run the default if not prevented
@@ -1906,7 +1889,7 @@ function fireEvent<T>(
     }
 }
 
-let serialMode: (boolean|undefined);
+let serialMode: boolean | undefined;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -1921,7 +1904,6 @@ let serialMode: (boolean|undefined);
  * A unique key.
  */
 const uniqueKey = (function (): () => string {
-
     const hash = Math.random().toString(36).substring(2, 9) + '-';
 
     let id = 0;
@@ -1929,8 +1911,7 @@ const uniqueKey = (function (): () => string {
     return function (): string {
         return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
-
-}());
+})();
 /**
  * Activates a serial mode for element IDs provided by
  * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
@@ -1955,17 +1936,16 @@ const uniqueKey = (function (): () => string {
  * @return {boolean|undefined}
  * State of the serial mode.
  */
-function useSerialIds(mode?: boolean): (boolean|undefined) {
+function useSerialIds(mode?: boolean): boolean | undefined {
     return (serialMode = pick(mode, serialMode));
 }
-
-function isFunction(obj: unknown): obj is Function { // eslint-disable-line
+// eslint-disable-next-line
+function isFunction(obj: unknown): obj is Function {
     return typeof obj === 'function';
 }
 
 // Register Highcharts as a plugin in jQuery
 if ((win as any).jQuery) {
-
     /**
      * Highcharts-extended JQuery.
      *
@@ -1980,7 +1960,7 @@ if ((win as any).jQuery) {
      *
      * @return {Highcharts.Chart}
      *         The chart that is linked to the JQuery selector element.
-     *//**
+     */ /**
      * Factory function to create a chart in the current JQuery selector
      * element.
      *
@@ -2004,7 +1984,8 @@ if ((win as any).jQuery) {
     (win as any).jQuery.fn.highcharts = function (): any {
         const args = [].slice.call(arguments) as any;
 
-        if (this[0]) { // this[0] is the renderTo div
+        if (this[0]) {
+            // this[0] is the renderTo div
 
             // Create the chart
             if (args[0]) {
@@ -2017,7 +1998,7 @@ if ((win as any).jQuery) {
 
             // When called without parameters or with the return argument,
             // return an existing chart
-            return charts[(attr(this[0], 'data-highcharts-chart') as any)];
+            return charts[attr(this[0], 'data-highcharts-chart') as any];
         }
     };
 }
@@ -2029,9 +2010,9 @@ if ((win as any).jQuery) {
  * */
 
 namespace Utilities {
-    export type RelativeSize = (number|string);
+    export type RelativeSize = number | string;
     export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
+        new (...args: Array<any>): T;
     }
     export interface ErrorMessageEventObject {
         chart?: Chart;
@@ -2048,10 +2029,7 @@ namespace Utilities {
         order: number;
     }
     export interface FindCallback<T> {
-        (
-            value: T,
-            index: number
-        ): unknown;
+        (value: T, index: number): unknown;
     }
     export interface ObjectEachCallback<TObject, TContext> {
         (
@@ -2131,7 +2109,6 @@ const Utilities = {
 
 export default Utilities;
 
-
 /* *
  *
  *  API Declarations
@@ -2144,23 +2121,23 @@ export default Utilities;
  * of 500ms and defer of 0ms.
  *
  * @interface Highcharts.AnimationOptionsObject
- *//**
+ */ /**
  * A callback function to exectute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
- *//**
+ */ /**
  * The animation defer in milliseconds.
  * @name Highcharts.AnimationOptionsObject#defer
  * @type {number|undefined}
- *//**
+ */ /**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration
  * @type {number|undefined}
- *//**
+ */ /**
  * The name of an easing function as defined on the `Math` object.
  * @name Highcharts.AnimationOptionsObject#easing
  * @type {string|Function|undefined}
- *//**
+ */ /**
  * A callback function to execute on each step of each attribute or CSS property
  * that's being animated. The first argument contains information about the
  * animation and progress.
@@ -2184,7 +2161,7 @@ export default Utilities;
  *
  * @interface Highcharts.Class<T>
  * @extends Function
- *//**
+ */ /**
  * Class costructor.
  * @function Highcharts.Class<T>#new
  * @param {...Array<*>} args
@@ -2205,102 +2182,102 @@ export default Utilities;
  * }
  *
  * @interface Highcharts.CSSObject
- *//**
+ */ /**
  * @name Highcharts.CSSObject#[key:string]
  * @type {boolean|number|string|undefined}
- *//**
+ */ /**
  * Background style for the element.
  * @name Highcharts.CSSObject#background
  * @type {string|undefined}
- *//**
+ */ /**
  * Background color of the element.
  * @name Highcharts.CSSObject#backgroundColor
  * @type {Highcharts.ColorString|undefined}
- *//**
+ */ /**
  * Border style for the element.
  * @name Highcharts.CSSObject#border
  * @type {string|undefined}
- *//**
+ */ /**
  * Radius of the element border.
  * @name Highcharts.CSSObject#borderRadius
  * @type {number|undefined}
- *//**
+ */ /**
  * Color used in the element. The 'contrast' option is a Highcharts custom
  * property that results in black or white, depending on the background of the
  * element.
  * @name Highcharts.CSSObject#color
  * @type {'contrast'|Highcharts.ColorString|undefined}
- *//**
+ */ /**
  * Style of the mouse cursor when resting over the element.
  * @name Highcharts.CSSObject#cursor
  * @type {Highcharts.CursorValue|undefined}
- *//**
+ */ /**
  * Font family of the element text. Multiple values have to be in decreasing
  * preference order and separated by comma.
  * @name Highcharts.CSSObject#fontFamily
  * @type {string|undefined}
- *//**
+ */ /**
  * Font size of the element text.
  * @name Highcharts.CSSObject#fontSize
  * @type {string|undefined}
- *//**
+ */ /**
  * Font weight of the element text.
  * @name Highcharts.CSSObject#fontWeight
  * @type {string|undefined}
- *//**
+ */ /**
  * Height of the element.
  * @name Highcharts.CSSObject#height
  * @type {number|undefined}
- *//**
+ */ /**
  * Width of the element border.
  * @name Highcharts.CSSObject#lineWidth
  * @type {number|undefined}
- *//**
+ */ /**
  * Opacity of the element.
  * @name Highcharts.CSSObject#opacity
  * @type {number|undefined}
- *//**
+ */ /**
  * Space around the element content.
  * @name Highcharts.CSSObject#padding
  * @type {string|undefined}
- *//**
+ */ /**
  * Behaviour of the element when the mouse cursor rests over it.
  * @name Highcharts.CSSObject#pointerEvents
  * @type {string|undefined}
- *//**
+ */ /**
  * Positioning of the element.
  * @name Highcharts.CSSObject#position
  * @type {string|undefined}
- *//**
+ */ /**
  * Alignment of the element text.
  * @name Highcharts.CSSObject#textAlign
  * @type {string|undefined}
- *//**
+ */ /**
  * Additional decoration of the element text.
  * @name Highcharts.CSSObject#textDecoration
  * @type {string|undefined}
- *//**
+ */ /**
  * Outline style of the element text.
  * @name Highcharts.CSSObject#textOutline
  * @type {string|undefined}
- *//**
+ */ /**
  * Line break style of the element text. Highcharts SVG elements support
  * `ellipsis` when a `width` is set.
  * @name Highcharts.CSSObject#textOverflow
  * @type {string|undefined}
- *//**
+ */ /**
  * Top spacing of the element relative to the parent element.
  * @name Highcharts.CSSObject#top
  * @type {string|undefined}
- *//**
+ */ /**
  * Animated transition of selected element properties.
  * @name Highcharts.CSSObject#transition
  * @type {string|undefined}
- *//**
+ */ /**
  * Line break style of the element text.
  * @name Highcharts.CSSObject#whiteSpace
  * @type {string|undefined}
- *//**
+ */ /**
  * Width of the element.
  * @name Highcharts.CSSObject#width
  * @type {number|undefined}
@@ -2324,7 +2301,7 @@ export default Utilities;
  *
  * @deprecated
  * @interface Highcharts.Dictionary<T>
- *//**
+ */ /**
  * @name Highcharts.Dictionary<T>#[key:string]
  * @type {T}
  */
@@ -2347,13 +2324,13 @@ export default Utilities;
  * The event options for adding function callback.
  *
  * @interface Highcharts.EventOptionsObject
- *//**
+ */ /**
  * The order the event handler should be called. This opens for having one
  * handler be called before another, independent of in which order they were
  * added.
  * @name Highcharts.EventOptionsObject#order
  * @type {number}
- *//**
+ */ /**
  * Whether an event should be passive or not.
  * When set to `true`, the function specified by listener will never call
  * `preventDefault()`.
@@ -2412,11 +2389,11 @@ export default Utilities;
  * page.
  *
  * @interface Highcharts.OffsetObject
- *//**
+ */ /**
  * Left distance to the page border.
  * @name Highcharts.OffsetObject#left
  * @type {number}
- *//**
+ */ /**
  * Top distance to the page border.
  * @name Highcharts.OffsetObject#top
  * @type {number}
@@ -2426,11 +2403,11 @@ export default Utilities;
  * Describes a range.
  *
  * @interface Highcharts.RangeObject
- *//**
+ */ /**
  * Maximum number of the range.
  * @name Highcharts.RangeObject#max
  * @type {number}
- *//**
+ */ /**
  * Minimum number of the range.
  * @name Highcharts.RangeObject#min
  * @type {number}
@@ -2476,4 +2453,4 @@ export default Utilities;
  * @namespace Highcharts
  */
 
-''; // detach doclets above
+(''); // detach doclets above

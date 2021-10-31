@@ -35,10 +35,10 @@ import type TickPositionsArray from './TickPositionsArray';
  *
  * */
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface Options {
-        xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
-        yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
+        xAxis?: DeepPartial<XAxisOptions> | Array<DeepPartial<XAxisOptions>>;
+        yAxis?: DeepPartial<YAxisOptions> | Array<DeepPartial<YAxisOptions>>;
     }
 }
 
@@ -75,8 +75,8 @@ export interface AxisEventsOptions {
 }
 
 export type AxisLabelFormatterCallback = FormatterCallback<
-AxisLabelFormatterContextObject,
-AxisLabelFormatterContextObject
+    AxisLabelFormatterContextObject,
+    AxisLabelFormatterContextObject
 >;
 
 export interface AxisLabelFormatterContextObject {
@@ -88,7 +88,7 @@ export interface AxisLabelFormatterContextObject {
     pos: number;
     text?: string;
     tick: Tick;
-    value: number|string;
+    value: number | string;
 }
 
 export interface AxisLabelOptions {
@@ -99,12 +99,15 @@ export interface AxisLabelOptions {
     distance?: number;
     enabled: boolean;
     format?: string;
-    formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
+    formatter?: FormatterCallback<
+        AxisLabelFormatterContextObject,
+        AxisLabelFormatterContextObject
+    >;
     indentation: number;
     overflow: OptionsOverflowValue;
     padding: number;
     reserveSpace?: boolean;
-    rotation?: number|'auto';
+    rotation?: number | 'auto';
     staggerLines: number;
     step: number;
     style: CSSObject;
@@ -121,7 +124,7 @@ export interface AxisOptions {
     categories?: Array<string>;
     ceiling?: number;
     className?: string;
-    crosshair?: (boolean|AxisCrosshairOptions);
+    crosshair?: boolean | AxisCrosshairOptions;
     endOnTick: boolean;
     events?: AxisEventsOptions;
     floor?: number;
@@ -129,25 +132,25 @@ export interface AxisOptions {
     gridLineDashStyle: DashStyleValue;
     gridLineWidth?: number;
     gridZIndex: number;
-    height?: (number|string);
+    height?: number | string;
     id?: string;
     isX?: boolean;
     labels: AxisLabelOptions;
-    left?: (number|string);
+    left?: number | string;
     lineColor: ColorType;
     lineWidth: number;
     linkedTo?: number;
     margin?: number;
-    max?: (null|number);
+    max?: null | number;
     maxPadding: number;
     maxRange?: number;
     maxZoom?: number;
-    min?: (null|number);
+    min?: null | number;
     minorGridLineColor: ColorType;
     minorGridLineDashStyle: DashStyleValue;
     minorGridLineWidth: number;
     minorTickColor: ColorType;
-    minorTickInterval?: ('auto'|null|number);
+    minorTickInterval?: 'auto' | null | number;
     minorTickLength: number;
     minorTickPosition: AxisTickPositionValue;
     minorTicks?: boolean;
@@ -177,18 +180,18 @@ export interface AxisOptions {
     tickColor: ColorType;
     tickInterval?: number;
     tickLength: number;
-    tickmarkPlacement: ('between'|'on');
+    tickmarkPlacement: 'between' | 'on';
     tickPixelInterval: number;
     tickPosition: AxisTickPositionValue;
     tickPositioner?: AxisTickPositionerCallback;
     tickPositions?: TickPositionsArray;
     tickWidth?: number;
     title: AxisTitleOptions;
-    top?: (number|string);
-    type: ('linear'|'logarithmic'|'datetime'|'category'|'treegrid');
+    top?: number | string;
+    type: 'linear' | 'logarithmic' | 'datetime' | 'category' | 'treegrid';
     uniqueNames: boolean;
     visible: boolean;
-    width?: (number|string);
+    width?: number | string;
     zIndex: number;
     zoomEnabled: boolean;
 }
@@ -202,7 +205,7 @@ export interface AxisPointBreakEventObject {
     point: Point;
     preventDefault: Function;
     target: SVGElement;
-    type: ('pointBreak'|'pointInBreak');
+    type: 'pointBreak' | 'pointInBreak';
 }
 
 export interface AxisSetExtremesEventCallback {
@@ -217,24 +220,20 @@ export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
 }
 
 export interface AxisTickPositionerCallback {
-    (
-        this: Axis,
-        min: number,
-        max: number
-    ): (TickPositionsArray|undefined);
+    (this: Axis, min: number, max: number): TickPositionsArray | undefined;
 }
 
-export type AxisTickPositionValue = ('inside'|'outside');
+export type AxisTickPositionValue = 'inside' | 'outside';
 
 export interface AxisTitleOptions {
-    align: ('high'|'low'|'middle');
+    align: 'high' | 'low' | 'middle';
     enabled?: boolean;
     margin?: number;
     offset?: number;
     reserveSpace?: boolean;
     rotation: number;
     style: CSSObject;
-    text?: (string|null);
+    text?: string | null;
     textAlign?: AlignValue;
     useHTML: boolean;
     x: number;

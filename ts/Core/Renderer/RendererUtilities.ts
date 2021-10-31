@@ -17,11 +17,7 @@
  * */
 
 import U from '../Utilities.js';
-const {
-    clamp,
-    pick,
-    stableSort
-} = U;
+const { clamp, pick, stableSort } = U;
 
 /* *
  *
@@ -30,7 +26,6 @@ const {
  * */
 
 namespace RendererUtilities {
-
     /* *
      *
      *  Declarations
@@ -40,14 +35,14 @@ namespace RendererUtilities {
     export interface BoxObject {
         align?: number;
         pos?: number;
-        rank?: (number|null);
+        rank?: number | null;
         size: number;
         target: number;
         targets?: Array<number>;
     }
 
     export interface DistributedBoxArray<T extends BoxObject>
-        extends Array<(T&DistributedBoxObject)> {
+        extends Array<T & DistributedBoxObject> {
         reducedLen?: number;
     }
 
@@ -78,15 +73,9 @@ namespace RendererUtilities {
     ): DistributedBoxArray<T> {
         const origBoxes = boxes as DistributedBoxArray<T>, // Original array will be altered with added .pos
             reducedLen = origBoxes.reducedLen || len,
-            sortByRank = (
-                a: BoxObject,
-                b: BoxObject
-            ): number =>
+            sortByRank = (a: BoxObject, b: BoxObject): number =>
                 (b.rank || 0) - (a.rank || 0),
-            sortByTarget = (
-                a: BoxObject,
-                b: BoxObject
-            ): number =>
+            sortByTarget = (a: BoxObject, b: BoxObject): number =>
                 a.target - b.target;
 
         let i: number,
@@ -118,14 +107,16 @@ namespace RendererUtilities {
         // Order by target
         stableSort(boxes, sortByTarget);
 
-
         // So far we have been mutating the original array. Now
         // create a copy with target arrays
-        boxes = boxes.map((box): (T&BoxObject) => ({
-            size: box.size,
-            targets: [box.target],
-            align: pick(box.align, 0.5)
-        } as (T&BoxObject)));
+        boxes = boxes.map(
+            (box): T & BoxObject =>
+                ({
+                    size: box.size,
+                    targets: [box.target],
+                    align: pick(box.align, 0.5)
+                } as T & BoxObject)
+        );
 
         while (overlapping) {
             // Initial positions: target centered in box
@@ -133,12 +124,14 @@ namespace RendererUtilities {
             while (i--) {
                 box = boxes[i];
                 // Composite box, average of targets
-                target = (
-                    Math.min.apply(0, box.targets as any) +
-                    Math.max.apply(0, box.targets as any)
-                ) / 2;
+                target =
+                    (Math.min.apply(0, box.targets as any) +
+                        Math.max.apply(0, box.targets as any)) /
+                    2;
                 box.pos = clamp(
-                    target - box.size * (box.align as any), 0, len - box.size
+                    target - box.size * (box.align as any),
+                    0,
+                    len - box.size
                 );
             }
 
@@ -147,15 +140,16 @@ namespace RendererUtilities {
             overlapping = false;
             while (i--) {
                 // Overlap
-                if (i > 0 &&
+                if (
+                    i > 0 &&
                     (boxes[i - 1].pos as any) + boxes[i - 1].size >
-                    (boxes[i].pos as any)
+                        (boxes[i].pos as any)
                 ) {
                     // Add this size to the previous box
                     boxes[i - 1].size += boxes[i].size;
-                    boxes[i - 1].targets = (boxes[i - 1]
-                        .targets as any)
-                        .concat(boxes[i].targets);
+                    boxes[i - 1].targets = (boxes[i - 1].targets as any).concat(
+                        boxes[i].targets
+                    );
                     boxes[i - 1].align = 0.5;
 
                     // Overlapping right, push left
@@ -170,7 +164,6 @@ namespace RendererUtilities {
 
         // Add the rest (hidden boxes)
         origBoxes.push.apply(origBoxes, restBoxes as DistributedBoxArray<T>);
-
 
         // Now the composite boxes are placed, we need to put the original boxes
         // within them
@@ -189,7 +182,8 @@ namespace RendererUtilities {
                 // maxDistance, we're good.
                 if (
                     typeof maxDistance !== 'undefined' &&
-                    Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
+                    Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) >
+                        maxDistance
                 ) {
                     // Reset the positions that are already set
                     origBoxes
@@ -198,7 +192,7 @@ namespace RendererUtilities {
 
                     // Try with a smaller length
                     origBoxes.reducedLen =
-                        (origBoxes.reducedLen || len) - (len * 0.1);
+                        (origBoxes.reducedLen || len) - len * 0.1;
 
                     // Recurse
                     if (origBoxes.reducedLen > len * 0.1) {

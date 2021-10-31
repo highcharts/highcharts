@@ -80,7 +80,7 @@ const {
  *
  * */
 
-let hasInternalReferenceBug: (boolean|undefined);
+let hasInternalReferenceBug: boolean | undefined;
 
 /* *
  *
@@ -138,7 +138,6 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        etc.
  */
 class SVGRenderer implements SVGRendererLike {
-
     /* *
      *
      *  Constructors
@@ -154,7 +153,15 @@ class SVGRenderer implements SVGRendererLike {
         allowHTML?: boolean,
         styledMode?: boolean
     ) {
-        this.init(container, width, height, style, forExport, allowHTML, styledMode);
+        this.init(
+            container,
+            width,
+            height,
+            style,
+            forExport,
+            allowHTML,
+            styledMode
+        );
     }
 
     /* *
@@ -197,7 +204,7 @@ class SVGRenderer implements SVGRendererLike {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: (boolean|Partial<AnimationOptions>) = void 0 as any;
+    public globalAnimation: boolean | Partial<AnimationOptions> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -262,12 +269,11 @@ class SVGRenderer implements SVGRendererLike {
         styledMode?: boolean
     ): void {
         const renderer = this,
-            boxWrapper = renderer
-                .createElement('svg')
-                .attr({
-                    version: '1.1',
-                    'class': 'highcharts-root'
-                }) as any,
+            boxWrapper = renderer.createElement('svg').attr({
+                version: '1.1',
+                // prettier-ignore
+                'class': 'highcharts-root'
+            }) as any,
             element = boxWrapper.element;
 
         if (!styledMode) {
@@ -294,7 +300,6 @@ class SVGRenderer implements SVGRendererLike {
 
         this.url = this.getReferenceURL();
 
-
         // Add description
         const desc = this.createElement('desc').add();
         desc.element.appendChild(
@@ -312,7 +317,6 @@ class SVGRenderer implements SVGRendererLike {
 
         renderer.setSize(width, height, false);
 
-
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
         // may land between pixels. The container itself doesn't display this,
@@ -327,8 +331,8 @@ class SVGRenderer implements SVGRendererLike {
                 css(container, { left: 0, top: 0 });
                 rect = container.getBoundingClientRect();
                 css(container, {
-                    left: (Math.ceil(rect.left) - rect.left) + 'px',
-                    top: (Math.ceil(rect.top) - rect.top) + 'px'
+                    left: Math.ceil(rect.left) - rect.left + 'px',
+                    top: Math.ceil(rect.top) - rect.top + 'px'
                 });
             };
 
@@ -339,7 +343,6 @@ class SVGRenderer implements SVGRendererLike {
             renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
         }
     }
-
 
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used
@@ -385,12 +388,10 @@ class SVGRenderer implements SVGRendererLike {
      * The prefix to use. An empty string for modern browsers.
      */
     public getReferenceURL(): string {
-
         if (
             (isFirefox || isWebKit) &&
             doc.getElementsByTagName('base').length
         ) {
-
             // Detect if a clip path is taking effect by performing a hit test
             // outside the clipped area. If the hit element is the rectangle
             // that was supposed to be clipped, the bug is present. This only
@@ -398,38 +399,47 @@ class SVGRenderer implements SVGRendererLike {
             // locally in the module.
             if (!defined(hasInternalReferenceBug)) {
                 const id = uniqueKey();
-                const ast = new AST([{
-                    tagName: 'svg',
-                    attributes: {
-                        width: 8,
-                        height: 8
-                    },
-                    children: [{
-                        tagName: 'defs',
-                        children: [{
-                            tagName: 'clipPath',
-                            attributes: {
-                                id
+                const ast = new AST([
+                    {
+                        tagName: 'svg',
+                        attributes: {
+                            width: 8,
+                            height: 8
+                        },
+                        children: [
+                            {
+                                tagName: 'defs',
+                                children: [
+                                    {
+                                        tagName: 'clipPath',
+                                        attributes: {
+                                            id
+                                        },
+                                        children: [
+                                            {
+                                                tagName: 'rect',
+                                                attributes: {
+                                                    width: 4,
+                                                    height: 4
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
-                            children: [{
+                            {
                                 tagName: 'rect',
                                 attributes: {
-                                    width: 4,
-                                    height: 4
+                                    id: 'hitme',
+                                    width: 8,
+                                    height: 8,
+                                    'clip-path': `url(#${id})`,
+                                    fill: 'rgba(0,0,0,0.001)'
                                 }
-                            }]
-                        }]
-                    }, {
-                        tagName: 'rect',
-                        attributes: {
-                            id: 'hitme',
-                            width: 8,
-                            height: 8,
-                            'clip-path': `url(#${id})`,
-                            fill: 'rgba(0,0,0,0.001)'
-                        }
-                    }]
-                }]);
+                            }
+                        ]
+                    }
+                ]);
                 const svg = ast.addToDOM(doc.body);
                 css(svg, {
                     position: 'fixed',
@@ -439,18 +449,21 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug =
+                    (hitElement && hitElement.id) === 'hitme';
                 doc.body.removeChild(svg);
             }
 
             if (hasInternalReferenceBug) {
-                return win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20');
+                return (
+                    win.location.href
+                        .split('#')[0] // remove the hash
+                        .replace(/<[^>]*>/g, '') // wing cut HTML
+                        // escape parantheses and quotes
+                        .replace(/([\('\)])/g, '\\$1')
+                        // replace spaces (needed for Safari only)
+                        .replace(/ /g, '%20')
+                );
             }
         }
         return '';
@@ -469,13 +482,15 @@ class SVGRenderer implements SVGRendererLike {
      * The style settings mixed with defaults.
      */
     public getStyle(style: CSSObject): CSSObject {
-        this.style = extend<CSSObject>({
-
-            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
-                'Arial, Helvetica, sans-serif',
-            fontSize: '12px'
-
-        }, style);
+        this.style = extend<CSSObject>(
+            {
+                fontFamily:
+                    '"Lucida Grande", "Lucida Sans Unicode", ' +
+                    'Arial, Helvetica, sans-serif',
+                fontSize: '12px'
+            },
+            style
+        );
         return this.style;
     }
 
@@ -502,7 +517,8 @@ class SVGRenderer implements SVGRendererLike {
      * @return {boolean}
      * True if it is hidden.
      */
-    public isHidden(): boolean { // #608
+    public isHidden(): boolean {
+        // #608
         return !this.boxWrapper.getBBox().width;
     }
 
@@ -574,9 +590,13 @@ class SVGRenderer implements SVGRendererLike {
         gradAttr: SVGAttributes
     ): SVGAttributes {
         return {
-            cx: (radialReference[0] - radialReference[2] / 2) +
+            cx:
+                radialReference[0] -
+                radialReference[2] / 2 +
                 (gradAttr.cx || 0) * radialReference[2],
-            cy: (radialReference[1] - radialReference[2] / 2) +
+            cy:
+                radialReference[1] -
+                radialReference[2] / 2 +
                 (gradAttr.cy || 0) * radialReference[2],
             r: (gradAttr.r || 0) * radialReference[2]
         };
@@ -619,9 +639,9 @@ class SVGRenderer implements SVGRendererLike {
         (rgba[2] as any) *= 0.5; // blue
 
         return (rgba[0] as any) + (rgba[1] as any) + (rgba[2] as any) >
-            1.8 * 255 ?
-            '#000000' :
-            '#FFFFFF';
+            1.8 * 255
+            ? '#000000'
+            : '#FFFFFF';
     }
 
     /**
@@ -692,7 +712,7 @@ class SVGRenderer implements SVGRendererLike {
             // (reference to options.rangeSelector.buttonTheme)
             normalState = theme ? merge(theme) : {};
 
-        const userNormalStyle = normalState && normalState.style || {};
+        const userNormalStyle = (normalState && normalState.style) || {};
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -707,47 +727,62 @@ class SVGRenderer implements SVGRendererLike {
             disabledStyle: any;
 
         if (!styledMode) {
-
             // Normal state - prepare the attributes
-            normalState = merge({
-                fill: Palette.neutralColor3,
-                stroke: Palette.neutralColor20,
-                'stroke-width': 1,
-                style: {
-                    color: Palette.neutralColor80,
-                    cursor: 'pointer',
-                    fontWeight: 'normal'
-                }
-            }, {
-                style: userNormalStyle
-            }, normalState);
+            normalState = merge(
+                {
+                    fill: Palette.neutralColor3,
+                    stroke: Palette.neutralColor20,
+                    'stroke-width': 1,
+                    style: {
+                        color: Palette.neutralColor80,
+                        cursor: 'pointer',
+                        fontWeight: 'normal'
+                    }
+                },
+                {
+                    style: userNormalStyle
+                },
+                normalState
+            );
             normalStyle = normalState.style;
             delete normalState.style;
 
             // Hover state
-            hoverState = merge(normalState, {
-                fill: Palette.neutralColor10
-            }, AST.filterUserAttributes(hoverState || {}));
+            hoverState = merge(
+                normalState,
+                {
+                    fill: Palette.neutralColor10
+                },
+                AST.filterUserAttributes(hoverState || {})
+            );
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
-            pressedState = merge(normalState, {
-                fill: Palette.highlightColor10,
-                style: {
-                    color: Palette.neutralColor100,
-                    fontWeight: 'bold'
-                }
-            }, AST.filterUserAttributes(pressedState || {}));
+            pressedState = merge(
+                normalState,
+                {
+                    fill: Palette.highlightColor10,
+                    style: {
+                        color: Palette.neutralColor100,
+                        fontWeight: 'bold'
+                    }
+                },
+                AST.filterUserAttributes(pressedState || {})
+            );
             pressedStyle = pressedState.style;
             delete pressedState.style;
 
             // Disabled state
-            disabledState = merge(normalState, {
-                style: {
-                    color: Palette.neutralColor20
-                }
-            }, AST.filterUserAttributes(disabledState || {}));
+            disabledState = merge(
+                normalState,
+                {
+                    style: {
+                        color: Palette.neutralColor20
+                    }
+                },
+                AST.filterUserAttributes(disabledState || {})
+            );
             disabledStyle = disabledState.style;
             delete disabledState.style;
         }
@@ -755,7 +790,8 @@ class SVGRenderer implements SVGRendererLike {
         // Add the events. IE9 and IE10 need mouseover and mouseout to funciton
         // (#667).
         addEvent(
-            label.element, isMS ? 'mouseover' : 'mouseenter',
+            label.element,
+            isMS ? 'mouseover' : 'mouseenter',
             function (): void {
                 if (curState !== 3) {
                     label.setState(1);
@@ -763,7 +799,8 @@ class SVGRenderer implements SVGRendererLike {
             }
         );
         addEvent(
-            label.element, isMS ? 'mouseout' : 'mouseleave',
+            label.element,
+            isMS ? 'mouseout' : 'mouseleave',
             function (): void {
                 if (curState !== 3) {
                     label.setState(curState);
@@ -783,32 +820,29 @@ class SVGRenderer implements SVGRendererLike {
                 )
                 .addClass(
                     'highcharts-button-' +
-                    ['normal', 'hover', 'pressed', 'disabled'][state || 0]
+                        ['normal', 'hover', 'pressed', 'disabled'][state || 0]
                 );
 
             if (!styledMode) {
                 label
-                    .attr([
-                        normalState,
-                        hoverState,
-                        pressedState,
-                        disabledState
-                    ][state || 0])
-                    .css([
-                        normalStyle,
-                        hoverStyle,
-                        pressedStyle,
-                        disabledStyle
-                    ][state || 0]);
+                    .attr(
+                        [normalState, hoverState, pressedState, disabledState][
+                            state || 0
+                        ]
+                    )
+                    .css(
+                        [normalStyle, hoverStyle, pressedStyle, disabledStyle][
+                            state || 0
+                        ]
+                    );
             }
         };
 
-
         // Presentational attributes
         if (!styledMode) {
-            (label
-                .attr(normalState) as any)
-                .css(extend({ cursor: 'default' }, normalStyle));
+            (label.attr(normalState) as any).css(
+                extend({ cursor: 'default' }, normalStyle)
+            );
         }
 
         return label
@@ -841,7 +875,7 @@ class SVGRenderer implements SVGRendererLike {
     public crispLine(
         points: SVGPath,
         width: number,
-        roundingFunction: ('round'|'floor'|'ceil') = 'round'
+        roundingFunction: 'round' | 'floor' | 'ceil' = 'round'
     ): SVGPath {
         const start = points[0];
         const end = points[1];
@@ -851,11 +885,11 @@ class SVGRenderer implements SVGRendererLike {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
             start[1] = end[1] =
-                Math[roundingFunction](start[1]) - (width % 2 / 2);
+                Math[roundingFunction](start[1]) - (width % 2) / 2;
         }
         if (defined(start[2]) && start[2] === end[2]) {
             start[2] = end[2] =
-                Math[roundingFunction](start[2]) + (width % 2 / 2);
+                Math[roundingFunction](start[2]) + (width % 2) / 2;
         }
         return points;
     }
@@ -881,7 +915,7 @@ class SVGRenderer implements SVGRendererLike {
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
      *
-     *//**
+     */ /**
      * Draw a path, wraps the SVG `path` element.
      *
      * @function Highcharts.SVGRenderer#path
@@ -892,14 +926,17 @@ class SVGRenderer implements SVGRendererLike {
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
      */
-    public path(path?: (SVGAttributes|SVGPath)): SVGElement {
-        const attribs: SVGAttributes = (this.styledMode ? {} : {
-            fill: 'none'
-        });
+    public path(path?: SVGAttributes | SVGPath): SVGElement {
+        const attribs: SVGAttributes = this.styledMode
+            ? {}
+            : {
+                  fill: 'none'
+              };
 
         if (isArray(path)) {
             attribs.d = path;
-        } else if (isObject(path)) { // attributes
+        } else if (isObject(path)) {
+            // attributes
             extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
@@ -924,7 +961,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
-     *//**
+     */ /**
      * Draw a circle, wraps the SVG `circle` element.
      *
      * @function Highcharts.SVGRenderer#circle
@@ -936,15 +973,15 @@ class SVGRenderer implements SVGRendererLike {
      * The generated wrapper element.
      */
     public circle(
-        x?: (number|SVGAttributes),
+        x?: number | SVGAttributes,
         y?: number,
         r?: number
     ): SVGElement {
-        const attribs: SVGAttributes = (
-                isObject(x) ?
-                    x :
-                    typeof x === 'undefined' ? {} : { x: x, y: y, r: r }
-            ),
+        const attribs: SVGAttributes = isObject(x)
+                ? x
+                : typeof x === 'undefined'
+                ? {}
+                : { x: x, y: y, r: r },
             wrapper = this.createElement('circle');
 
         // Setting x or y translates to cx and cy
@@ -998,7 +1035,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
-     *//**
+     */ /**
      * Draw and return an arc. Overloaded function that takes arguments object.
      *
      * @function Highcharts.SVGRenderer#arc
@@ -1010,7 +1047,7 @@ class SVGRenderer implements SVGRendererLike {
      * The generated wrapper element.
      */
     public arc(
-        x?: (number|SVGAttributes),
+        x?: number | SVGAttributes,
         y?: number,
         r?: number,
         innerR?: number,
@@ -1033,14 +1070,7 @@ class SVGRenderer implements SVGRendererLike {
 
         // Arcs are defined as symbols for the ability to set
         // attributes in attr and animate
-        const arc = this.symbol(
-            'arc',
-            x as number,
-            y,
-            r,
-            r,
-            options
-        );
+        const arc = this.symbol('arc', x as number, y, r, r, options);
         arc.r = r; // #959
         return arc;
     }
@@ -1070,7 +1100,7 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
-     *//**
+     */ /**
      * Draw and return a rectangle.
      *
      * @sample highcharts/members/renderer-rect-on-chart/
@@ -1087,30 +1117,27 @@ class SVGRenderer implements SVGRendererLike {
      * The generated wrapper element.
      */
     public rect(
-        x?: (number|SVGAttributes),
+        x?: number | SVGAttributes,
         y?: number,
         width?: number,
         height?: number,
         r?: number,
         strokeWidth?: number
     ): SVGElement {
-
         r = isObject(x) ? (x as any).r : r;
 
         const wrapper = this.createElement('rect');
 
-        let attribs = (
-            isObject(x) ?
-                x as SVGAttributes :
-                typeof x === 'undefined' ?
-                    {} :
-                    {
-                        x: x,
-                        y: y,
-                        width: Math.max(width as any, 0),
-                        height: Math.max(height as any, 0)
-                    }
-        );
+        let attribs = isObject(x)
+            ? (x as SVGAttributes)
+            : typeof x === 'undefined'
+            ? {}
+            : {
+                  x: x,
+                  y: y,
+                  width: Math.max(width as any, 0),
+                  height: Math.max(height as any, 0)
+              };
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
@@ -1163,25 +1190,31 @@ class SVGRenderer implements SVGRendererLike {
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Partial<AnimationOptions>)
+        animate?: boolean | Partial<AnimationOptions>
     ): void {
         const renderer = this;
 
         renderer.width = width;
         renderer.height = height;
 
-        renderer.boxWrapper.animate({
-            width: width,
-            height: height
-        }, {
-            step: function (this: SVGElement): void {
-                this.attr({
-                    viewBox: '0 0 ' + this.attr('width') + ' ' +
-                        this.attr('height')
-                });
+        renderer.boxWrapper.animate(
+            {
+                width: width,
+                height: height
             },
-            duration: pick(animate, true) ? void 0 : 0
-        });
+            {
+                step: function (this: SVGElement): void {
+                    this.attr({
+                        viewBox:
+                            '0 0 ' +
+                            this.attr('width') +
+                            ' ' +
+                            this.attr('height')
+                    });
+                },
+                duration: pick(animate, true) ? void 0 : 0
+            }
+        );
 
         renderer.alignElements();
     }
@@ -1203,9 +1236,10 @@ class SVGRenderer implements SVGRendererLike {
     public g(name?: string): SVGElement {
         const elem = this.createElement('g');
 
-        return name ?
-            elem.attr({ 'class': 'highcharts-' + name }) as any :
-            elem;
+        return name
+            ? // prettier-ignore
+              elem.attr({ 'class': 'highcharts-' + name }) as any
+            : elem;
     }
 
     /**
@@ -1249,14 +1283,13 @@ class SVGRenderer implements SVGRendererLike {
         onload?: Function
     ): SVGElement {
         const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
-            setSVGImageSource = function (
-                el: SVGElement,
-                src: string
-            ): void {
+            setSVGImageSource = function (el: SVGElement, src: string): void {
                 // Set the href in the xlink namespace
                 if (el.setAttributeNS) {
                     el.setAttributeNS(
-                        'http://www.w3.org/1999/xlink', 'href', src
+                        'http://www.w3.org/1999/xlink',
+                        'href',
+                        src
                     );
                 } else {
                     // could be exporting in IE
@@ -1279,7 +1312,6 @@ class SVGRenderer implements SVGRendererLike {
         if (isNumber(height)) {
             attribs.height = height;
         }
-
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
@@ -1348,11 +1380,11 @@ class SVGRenderer implements SVGRendererLike {
         const ren = this,
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
-            sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
+            sym = !isImage && (this.symbols[symbol] ? symbol : 'circle'),
             // get the symbol definition function
-            symbolFn = (sym && this.symbols[sym]);
+            symbolFn = sym && this.symbols[sym];
 
-        let obj: (SVGElement|undefined),
+        let obj: SVGElement | undefined,
             path,
             imageSrc: string,
             centerImage: Function;
@@ -1377,7 +1409,7 @@ class SVGRenderer implements SVGRendererLike {
 
             // expando properties for use in animate and attr
             extend(obj, {
-                symbolName: (sym || void 0),
+                symbolName: sym || void 0,
                 x: x,
                 y: y,
                 width: width,
@@ -1387,15 +1419,12 @@ class SVGRenderer implements SVGRendererLike {
                 extend(obj, options);
             }
 
-
-        // Image symbols
+            // Image symbols
         } else if (isImage) {
-
-
             imageSrc = (symbol.match(imageRegex) as any)[1];
 
             // Create the image synchronously, add attribs async
-            const img = obj = this.image(imageSrc);
+            const img = (obj = this.image(imageSrc));
 
             // The image width is not always the same as the symbol width. The
             // image may be centered within the symbol, as is the case when
@@ -1411,10 +1440,11 @@ class SVGRenderer implements SVGRendererLike {
             /**
              * Set the size and position
              */
-            centerImage = (obj: SVGElement): SVGElement => obj.attr({
-                width: obj.width,
-                height: obj.height
-            });
+            centerImage = (obj: SVGElement): SVGElement =>
+                obj.attr({
+                    width: obj.width,
+                    height: obj.height
+                });
 
             /**
              * Width and height setters that take both the image's physical size
@@ -1427,7 +1457,6 @@ class SVGRenderer implements SVGRendererLike {
 
                     this[key] = value;
                     if (defined(imgSize)) {
-
                         // Scale and center the image within its container.
                         // The name `backgroundSize` is taken from the CSS spec,
                         // but the value `within` is made up. Other possible
@@ -1439,10 +1468,13 @@ class SVGRenderer implements SVGRendererLike {
                             this.width &&
                             this.height
                         ) {
-                            imgSize = Math.round(imgSize * Math.min(
-                                this.width / this.imgwidth,
-                                this.height / this.imgheight
-                            ));
+                            imgSize = Math.round(
+                                imgSize *
+                                    Math.min(
+                                        this.width / this.imgwidth,
+                                        this.height / this.imgheight
+                                    )
+                            );
                         }
 
                         if (this.element) {
@@ -1450,15 +1482,15 @@ class SVGRenderer implements SVGRendererLike {
                         }
                         if (!this.alignByTranslate) {
                             const translate = ((this[key] || 0) - imgSize) / 2;
-                            const attribs = key === 'width' ?
-                                { translateX: translate } :
-                                { translateY: translate };
+                            const attribs =
+                                key === 'width'
+                                    ? { translateX: translate }
+                                    : { translateY: translate };
                             this.attr(attribs);
                         }
                     }
                 };
             });
-
 
             if (defined(x)) {
                 img.attr({
@@ -1478,7 +1510,6 @@ class SVGRenderer implements SVGRendererLike {
                 // Create a dummy JavaScript image to get the width and height.
                 createElement('img', {
                     onload: function (this: SVGDOMElement): void {
-
                         const chart = charts[ren.chartIndex];
 
                         // Special case for SVGs on IE11, the width is not
@@ -1493,7 +1524,8 @@ class SVGRenderer implements SVGRendererLike {
                         }
 
                         // Center the image
-                        symbolSizes[imageSrc] = { // Cache for next
+                        symbolSizes[imageSrc] = {
+                            // Cache for next
                             width: (this as any).width,
                             height: (this as any).height
                         };
@@ -1560,18 +1592,19 @@ class SVGRenderer implements SVGRendererLike {
      *         A clipping rectangle.
      */
     public clipRect(
-        x?: (number|SVGAttributes),
+        x?: number | SVGAttributes,
         y?: number,
         width?: number,
         height?: number
     ): SVGRenderer.ClipRectElement {
-        const
-            // Add a hyphen at the end to avoid confusion in testing indexes
+        const // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
             id = uniqueKey() + '-',
-            clipPath = (this.createElement('clipPath').attr({
-                id: id
-            }) as any).add(this.defs),
+            clipPath = (
+                this.createElement('clipPath').attr({
+                    id: id
+                }) as any
+            ).add(this.defs),
             wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 
         wrapper.id = id;
@@ -1580,7 +1613,6 @@ class SVGRenderer implements SVGRendererLike {
 
         return wrapper;
     }
-
 
     /**
      * Draw text. The text can contain a subset of HTML, like spans and anchors
@@ -1644,7 +1676,11 @@ class SVGRenderer implements SVGRendererLike {
                 const tspans = element.getElementsByTagName('tspan'),
                     parentVal = element.getAttribute(key);
 
-                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
+                for (
+                    let i = 0, tspan: SVGTSpanElement;
+                    i < tspans.length;
+                    i++
+                ) {
                     tspan = tspans[i];
                     // If the x values are equal, the tspan represents a
                     // linebreak
@@ -1676,19 +1712,18 @@ class SVGRenderer implements SVGRendererLike {
      *         The font metrics.
      */
     public fontMetrics(
-        fontSize?: (number|string),
-        elem?: (DOMElementType|SVGElement)
+        fontSize?: number | string,
+        elem?: DOMElementType | SVGElement
     ): FontMetricsObject {
         if (
             (this.styledMode || !/px/.test(fontSize as any)) &&
             win.getComputedStyle // old IE doesn't support it
         ) {
-            fontSize = elem && SVGElement.prototype.getStyle.call(
-                elem,
-                'font-size'
-            );
+            fontSize =
+                elem && SVGElement.prototype.getStyle.call(elem, 'font-size');
         } else {
-            fontSize = fontSize ||
+            fontSize =
+                fontSize ||
                 // When the elem is a DOM element (#5932)
                 (elem && elem.style && elem.style.fontSize) ||
                 // Fall back on the renderer style default
@@ -1705,11 +1740,8 @@ class SVGRenderer implements SVGRendererLike {
         // Empirical values found by comparing font size and bounding box
         // height. Applies to the default font family.
         // https://jsfiddle.net/highcharts/7xvn7/
-        const lineHeight = (
-                fontSize < 24 ?
-                    fontSize + 3 :
-                    Math.round(fontSize * 1.2)
-            ),
+        const lineHeight =
+                fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2),
             baseline = Math.round(lineHeight * 0.8);
 
         return {
@@ -1759,8 +1791,7 @@ class SVGRenderer implements SVGRendererLike {
      * @private
      * @function Highcharts.SVGRenderer#pathToSegments
      */
-    public pathToSegments(path: Array<string|number>): SVGPath {
-
+    public pathToSegments(path: Array<string | number>): SVGPath {
         const ret: SVGPath = [];
         const segment = [];
         const commandLength: Record<string, number | undefined> = {
@@ -1784,7 +1815,7 @@ class SVGRenderer implements SVGRendererLike {
             if (
                 isString(segment[0]) &&
                 isNumber(path[i]) &&
-                segment.length === commandLength[(segment[0].toUpperCase())]
+                segment.length === commandLength[segment[0].toUpperCase()]
             ) {
                 path.splice(
                     i,
@@ -2096,7 +2127,6 @@ interface SVGRenderer extends SVGRendererLike {
     draw: Function;
 }
 extend(SVGRenderer.prototype, {
-
     /**
      * A pointer to the renderer's associated Element class. The VMLRenderer
      * will have a pointer to VMLElement here.
@@ -2145,7 +2175,6 @@ extend(SVGRenderer.prototype, {
      * @function Highcharts.SVGRenderer#draw
      */
     draw: noop
-
 });
 
 /* *
@@ -2201,17 +2230,17 @@ export default SVGRenderer;
  * The font metrics.
  *
  * @interface Highcharts.FontMetricsObject
- *//**
+ */ /**
  * The baseline relative to the top of the box.
  *
  * @name Highcharts.FontMetricsObject#b
  * @type {number}
- *//**
+ */ /**
  * The font size.
  *
  * @name Highcharts.FontMetricsObject#f
  * @type {number}
- *//**
+ */ /**
  * The line height.
  *
  * @name Highcharts.FontMetricsObject#h
@@ -2222,11 +2251,11 @@ export default SVGRenderer;
  * An object containing `x` and `y` properties for the position of an element.
  *
  * @interface Highcharts.PositionObject
- *//**
+ */ /**
  * X position of the element.
  * @name Highcharts.PositionObject#x
  * @type {number}
- *//**
+ */ /**
  * Y position of the element.
  * @name Highcharts.PositionObject#y
  * @type {number}
@@ -2236,19 +2265,19 @@ export default SVGRenderer;
  * A rectangle.
  *
  * @interface Highcharts.RectangleObject
- *//**
+ */ /**
  * Height of the rectangle.
  * @name Highcharts.RectangleObject#height
  * @type {number}
- *//**
+ */ /**
  * Width of the rectangle.
  * @name Highcharts.RectangleObject#width
  * @type {number}
- *//**
+ */ /**
  * Horizontal position of the rectangle.
  * @name Highcharts.RectangleObject#x
  * @type {number}
- *//**
+ */ /**
  * Vertical position of the rectangle.
  * @name Highcharts.RectangleObject#y
  * @type {number}
@@ -2258,29 +2287,29 @@ export default SVGRenderer;
  * The shadow options.
  *
  * @interface Highcharts.ShadowOptionsObject
- *//**
+ */ /**
  * The shadow color.
  * @name    Highcharts.ShadowOptionsObject#color
  * @type    {Highcharts.ColorString|undefined}
  * @default ${palette.neutralColor100}
- *//**
+ */ /**
  * The horizontal offset from the element.
  *
  * @name    Highcharts.ShadowOptionsObject#offsetX
  * @type    {number|undefined}
  * @default 1
- *//**
+ */ /**
  * The vertical offset from the element.
  * @name    Highcharts.ShadowOptionsObject#offsetY
  * @type    {number|undefined}
  * @default 1
- *//**
+ */ /**
  * The shadow opacity.
  *
  * @name    Highcharts.ShadowOptionsObject#opacity
  * @type    {number|undefined}
  * @default 0.15
- *//**
+ */ /**
  * The shadow width or distance from the element.
  * @name    Highcharts.ShadowOptionsObject#width
  * @type    {number|undefined}
@@ -2289,10 +2318,10 @@ export default SVGRenderer;
 
 /**
  * @interface Highcharts.SizeObject
- *//**
+ */ /**
  * @name Highcharts.SizeObject#height
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.SizeObject#width
  * @type {number}
  */
@@ -2318,25 +2347,25 @@ export default SVGRenderer;
  * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
  *
  * @interface Highcharts.SymbolDictionary
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#[key:string]
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#arc
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#callout
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#circle
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#diamond
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#square
  * @type {Function|undefined}
- *//**
+ */ /**
  * @name Highcharts.SymbolDictionary#triangle
  * @type {Function|undefined}
  */
@@ -2354,34 +2383,34 @@ export default SVGRenderer;
  * Additional options, depending on the actual symbol drawn.
  *
  * @interface Highcharts.SymbolOptionsObject
- *//**
+ */ /**
  * The anchor X position for the `callout` symbol. This is where the chevron
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorX
  * @type {number|undefined}
- *//**
+ */ /**
  * The anchor Y position for the `callout` symbol. This is where the chevron
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorY
  * @type {number|undefined}
- *//**
+ */ /**
  * The end angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#end
  * @type {number|undefined}
- *//**
+ */ /**
  * Whether to draw `arc` symbol open or closed.
  *
  * @name Highcharts.SymbolOptionsObject#open
  * @type {boolean|undefined}
- *//**
+ */ /**
  * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#r
  * @type {number|undefined}
- *//**
+ */ /**
  * The start angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#start

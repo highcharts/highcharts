@@ -30,7 +30,8 @@ export type RendererClass = RendererTypeRegistry[keyof RendererTypeRegistry];
 /**
  * All possible renderer types.
  */
-export type RendererType = RendererTypeRegistry[keyof RendererTypeRegistry]['prototype'];
+export type RendererType =
+    RendererTypeRegistry[keyof RendererTypeRegistry]['prototype'];
 
 /**
  * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.

@@ -32,7 +32,6 @@ import { Palette } from '../Color/Palettes.js';
  * @optionparent chart
  */
 const ChartDefaults: ChartOptions = {
-
     /**
      * Default `mapData` for all series. If set to a string, it functions
      * as an index into the `Highcharts.maps` array. Otherwise it is
@@ -201,7 +200,6 @@ const ChartDefaults: ChartOptions = {
      * @context   Highcharts.Chart
      * @apioption chart.events.click
      */
-
 
     /**
      * Fires when the chart is finished loading. Since v4.2.2, it also waits
@@ -467,7 +465,6 @@ const ChartDefaults: ChartOptions = {
      * @apioption  chart.pinchType
      */
 
-
     /**
      * Whether to apply styled mode. When in styled mode, no presentational
      * attributes or CSS are applied to the chart SVG. Instead, CSS rules
@@ -540,7 +537,6 @@ const ChartDefaults: ChartOptions = {
      */
     ignoreHiddenSeries: true,
 
-
     /**
      * Whether to invert the axes so that the x axis is vertical and y axis
      * is horizontal. When `true`, the x axis is [reversed](#xAxis.reversed)
@@ -582,7 +578,6 @@ const ChartDefaults: ChartOptions = {
      * to reset zoom.
      */
     resetZoomButton: {
-
         /**
          * What frame the button placement should be related to. Can be
          * either `plotBox` or `spacingBox`.
@@ -632,7 +627,6 @@ const ChartDefaults: ChartOptions = {
          * @since 2.2
          */
         position: {
-
             /**
              * The horizontal alignment of the button.
              */
@@ -1121,7 +1115,6 @@ const ChartDefaults: ChartOptions = {
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     plotBorderColor: Palette.neutralColor20
-
 };
 
 /* *

@@ -35,7 +35,7 @@ export interface ColorAxisDataClassesOptions {
 }
 
 export interface ColorAxisMarkerOptions {
-    animation?: (boolean|Partial<AnimationOptions>);
+    animation?: boolean | Partial<AnimationOptions>;
     color?: ColorType;
     width?: number;
 }

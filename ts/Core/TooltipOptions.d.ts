@@ -59,7 +59,7 @@ export interface TooltipOptions {
     pointFormat: string;
     pointFormatter?: F.FormatterCallback<Point>;
     positioner?: Tooltip.PositionerCallbackFunction;
-    shadow: (boolean|Partial<ShadowOptionsObject>);
+    shadow: boolean | Partial<ShadowOptionsObject>;
     shape: Tooltip.ShapeValue;
     shared: boolean;
     snap: number;

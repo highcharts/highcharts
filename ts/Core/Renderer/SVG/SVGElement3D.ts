@@ -34,12 +34,7 @@ import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
-const {
-    defined,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { defined, merge, objectEach, pick } = U;
 
 /* *
  *
@@ -56,22 +51,24 @@ SVGElement3D.base = {
      * The init is used by base - renderer.Element
      * @private
      */
-    initArgs: function (
-        this: SVGElement,
-        args: SVGAttributes
-    ): void {
+    initArgs: function (this: SVGElement, args: SVGAttributes): void {
         const elem3d = this,
             renderer = elem3d.renderer,
-            paths: (SVGArc3D|SVGCuboid) =
-                (renderer as any)[elem3d.pathType + 'Path'](args),
+            paths: SVGArc3D | SVGCuboid = (renderer as any)[
+                elem3d.pathType + 'Path'
+            ](args),
             zIndexes = (paths as any).zIndexes;
 
         // build parts
         (elem3d.parts as any).forEach(function (part: string): void {
-            elem3d[part] = renderer.path((paths as any)[part]).attr({
-                'class': 'highcharts-3d-' + part,
-                zIndex: zIndexes[part] || 0
-            }).add(elem3d);
+            elem3d[part] = renderer
+                .path((paths as any)[part])
+                .attr({
+                    // prettier-ignore
+                    'class': 'highcharts-3d-' + part,
+                    zIndex: zIndexes[part] || 0
+                })
+                .add(elem3d);
         });
 
         elem3d.attr({
@@ -84,7 +81,6 @@ SVGElement3D.base = {
         elem3d.destroy = elem3d.destroyParts;
         // Store information if any side of element was rendered by force.
         elem3d.forcedSides = (paths as any).forcedSides;
-
     },
 
     /**
@@ -102,7 +98,7 @@ SVGElement3D.base = {
     ): SVGElement {
         const elem3d = this,
             newAttr = {} as AnyRecord,
-            optionsToApply = [null, null, (verb || 'attr'), duration, complete],
+            optionsToApply = [null, null, verb || 'attr', duration, complete],
             hasZIndexes = values && values.zIndexes;
 
         if (!values) {
@@ -177,8 +173,8 @@ SVGElement3D.cuboid = merge(SVGElement3D.base, {
 
     attr: function (
         this: SVGElement,
-        args: (string|SVGAttributes),
-        val?: (number|string|SVGPath),
+        args: string | SVGAttributes,
+        val?: number | string | SVGPath,
         complete?: Function,
         continueAnimation?: boolean
     ): SVGElement {
@@ -201,20 +197,29 @@ SVGElement3D.cuboid = merge(SVGElement3D.base, {
         }
 
         return SVGElement.prototype.attr.call(
-            this, args as any, void 0, complete, continueAnimation
+            this,
+            args as any,
+            void 0,
+            complete,
+            continueAnimation
         );
     },
     animate: function (
         this: SVGElement,
         args: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptions>),
+        duration?: boolean | Partial<AnimationOptions>,
         complete?: Function
     ): SVGElement {
         if (defined(args.x) && defined(args.y)) {
             const paths = (this.renderer as any)[this.pathType + 'Path'](args),
                 forcedSides = paths.forcedSides;
             this.singleSetterForParts(
-                'd', null, paths, 'animate', duration, complete
+                'd',
+                null,
+                paths,
+                'animate',
+                duration,
+                complete
             );
 
             this.attr({
@@ -232,21 +237,18 @@ SVGElement3D.cuboid = merge(SVGElement3D.base, {
         }
         return this;
     },
-    fillSetter: function (
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement {
+    fillSetter: function (this: SVGElement, fill: ColorType): SVGElement {
         const elem3d = this;
         elem3d.forcedSides = elem3d.forcedSides || [];
         elem3d.singleSetterForParts('fill', null, {
             front: fill,
             // Do not change color if side was forced to render.
-            top: color(fill).brighten(
-                elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1
-            ).get(),
-            side: color(fill).brighten(
-                elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1
-            ).get()
+            top: color(fill)
+                .brighten(elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1)
+                .get(),
+            side: color(fill)
+                .brighten(elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1)
+                .get()
         });
 
         // fill for animation getter (#6776)

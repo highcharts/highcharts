@@ -28,10 +28,7 @@ const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
-const {
-    isNumber,
-    objectEach
-} = U;
+const { isNumber, objectEach } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -65,7 +62,6 @@ const {
  */
 
 class Fx {
-
     /* *
      *
      *  Static Properties
@@ -81,7 +77,7 @@ class Fx {
      * */
 
     public constructor(
-        elem: (HTMLElement|SVGElement),
+        elem: HTMLElement | SVGElement,
         options: Partial<AnimationOptions>,
         prop: string
     ) {
@@ -96,7 +92,7 @@ class Fx {
      *
      * */
 
-    public elem: (HTMLElement|SVGElement);
+    public elem: HTMLElement | SVGElement;
     public end?: number;
     public from?: number;
     public now?: number;
@@ -132,10 +128,8 @@ class Fx {
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
             path = this.toD || [];
-
         } else if (start.length === end.length && now < 1) {
             for (let i = 0; i < end.length; i++) {
-
                 // Tween between the start segment and the end segment. Start
                 // with a copy of the end segment and tween the appropriate
                 // numerics
@@ -156,16 +150,16 @@ class Fx {
                     ) {
                         tweenSeg[j] = startItem + now * (endItem - startItem);
 
-                    // Strings, take directly from the end segment
+                        // Strings, take directly from the end segment
                     } else {
                         tweenSeg[j] = endItem;
                     }
                 }
 
                 path.push(tweenSeg as SVGPath.Segment);
-
             }
-        // If animation is finished or length not matching, land on right value
+            // If animation is finished or length not matching, land on right
+            // value
         } else {
             path = end;
         }
@@ -190,13 +184,13 @@ class Fx {
         if ((this as any)[prop + 'Setter']) {
             (this as any)[prop + 'Setter']();
 
-        // Other animations on SVGElement
+            // Other animations on SVGElement
         } else if (elem.attr) {
             if (elem.element) {
                 elem.attr(prop, now, null as any, true);
             }
 
-        // HTML styles, raw HTML content like container size
+            // HTML styles, raw HTML content like container size
         } else {
             elem.style[prop as any] = now + (this.unit as any);
         }
@@ -204,7 +198,6 @@ class Fx {
         if (step) {
             step.call(elem, now, this);
         }
-
     }
 
     /**
@@ -248,10 +241,14 @@ class Fx {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete (options.curAnim as any)[this.prop];
-            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
+            if (
+                options.complete &&
+                Object.keys(options.curAnim as any).length === 0
+            ) {
                 options.complete.call(this.elem);
             }
-        } else { // #7166
+        } else {
+            // #7166
             this.startTime = +new Date();
             this.start = from;
             this.end = to;
@@ -286,12 +283,11 @@ class Fx {
             complete = options.complete,
             duration: number = options.duration as any,
             curAnim: Record<string, boolean> = options.curAnim as any;
-        let ret,
-            done;
+        let ret, done;
 
-        if (elem.attr && !elem.element) { // #2616, element is destroyed
+        if (elem.attr && !elem.element) {
+            // #2616, element is destroyed
             ret = false;
-
         } else if (gotoEnd || t >= duration + (this.startTime as any)) {
             this.now = this.end;
             this.pos = 1;
@@ -311,12 +307,13 @@ class Fx {
                 complete.call(elem);
             }
             ret = false;
-
         } else {
             this.pos = (options.easing as Function)(
                 (t - (this.startTime as any)) / duration
             );
-            this.now = (this.start as any) + (((this.end as any) - (this.start as any)) * (this.pos as any));
+            this.now =
+                (this.start as any) +
+                ((this.end as any) - (this.start as any)) * (this.pos as any);
             this.update();
             ret = true;
         }
@@ -343,7 +340,7 @@ class Fx {
      */
     public initPath(
         elem: SVGElement,
-        fromD: SVGPath|undefined,
+        fromD: SVGPath | undefined,
         toD: SVGPath
     ): [SVGPath, SVGPath] {
         const startX = elem.startX,
@@ -369,12 +366,8 @@ class Fx {
          * @param {Highcharts.SVGPathArray} other - array
          * @return {void}
          */
-        function prepend(
-            arr: SVGPath,
-            other: SVGPath
-        ): void {
+        function prepend(arr: SVGPath, other: SVGPath): void {
             while (arr.length < fullLength) {
-
                 // Move to, line to or curve to?
                 const moveSegment = arr[0],
                     otherSegment = other[fullLength - arr.length];
@@ -414,19 +407,16 @@ class Fx {
          * @param {Highcharts.SVGPathArray} other - array
          * @return {void}
          */
-        function append(
-            arr: SVGPath,
-            other: SVGPath
-        ): void {
+        function append(arr: SVGPath, other: SVGPath): void {
             while (arr.length < fullLength) {
-
                 // Pull out the slice that is going to be appended or inserted.
                 // In a line graph, the positionFactor is 1, and the last point
                 // is sliced out. In an area graph, the positionFactor is 2,
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
+                const segmentToAdd =
+                    arr[Math.floor(arr.length / positionFactor) - 1].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
@@ -436,10 +426,9 @@ class Fx {
 
                 if (!isArea) {
                     arr.push(segmentToAdd as SVGPath.Segment);
-
                 } else {
-
-                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
+                    const lowerSegmentToAdd =
+                        arr[Math.floor(arr.length / positionFactor)].slice();
                     arr.splice(
                         arr.length / 2,
                         0,
@@ -458,16 +447,17 @@ class Fx {
                 if (startX[i] === endX[0]) {
                     shift = i;
                     break;
-                // Moving right
-                } else if (startX[0] ===
-                        endX[endX.length - startX.length + i]) {
+                    // Moving right
+                } else if (
+                    startX[0] === endX[endX.length - startX.length + i]
+                ) {
                     shift = i;
                     reverse = true;
                     break;
-                // Fixed from the right side, "scaling" left
+                    // Fixed from the right side, "scaling" left
                 } else if (
                     startX[startX.length - 1] ===
-                        endX[endX.length - startX.length + i]
+                    endX[endX.length - startX.length + i]
                 ) {
                     shift = startX.length - i;
                     break;
@@ -479,7 +469,6 @@ class Fx {
         }
 
         if (start.length && isNumber(shift)) {
-
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
             fullLength = end.length + shift * positionFactor;
@@ -516,7 +505,10 @@ class Fx {
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
+            color(this.start as any).tweenTo(
+                color(this.end as any),
+                this.pos as any
+            ),
             null as any,
             true
         );
@@ -542,7 +534,7 @@ interface Fx extends FxLike {
 namespace Fx {
     export interface Timer {
         (gotoEnd?: boolean): boolean;
-        elem?: (HTMLDOMElement|SVGElement);
+        elem?: HTMLDOMElement | SVGElement;
         prop?: string;
         stopped?: boolean;
     }

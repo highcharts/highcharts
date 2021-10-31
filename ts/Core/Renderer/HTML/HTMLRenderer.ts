@@ -24,12 +24,7 @@ import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
-const {
-    attr,
-    createElement,
-    extend,
-    pick
-} = U;
+const { attr, createElement, extend, pick } = U;
 
 /* *
  *
@@ -54,7 +49,6 @@ declare module '../SVG/SVGRendererLike' {
 
 // Extend SvgRenderer for useHTML option.
 class HTMLRenderer extends SVGRenderer {
-
     /* *
      *
      *  Static Properties
@@ -72,8 +66,7 @@ class HTMLRenderer extends SVGRenderer {
     /** @private */
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
-    ): (T&typeof HTMLRenderer) {
-
+    ): T & typeof HTMLRenderer {
         if (HTMLRenderer.composedClasses.indexOf(SVGRendererClass) === -1) {
             HTMLRenderer.composedClasses.push(SVGRendererClass);
 
@@ -83,7 +76,7 @@ class HTMLRenderer extends SVGRenderer {
             svgRendererProto.html = htmlRendererProto.html;
         }
 
-        return SVGRendererClass as (T&typeof HTMLRenderer);
+        return SVGRendererClass as T & typeof HTMLRenderer;
     }
 
     /* *
@@ -134,11 +127,15 @@ class HTMLRenderer extends SVGRenderer {
                         key: string,
                         elem: HTMLElement
                     ): void {
-                        const styleObject = gWrapper.div ?
-                            gWrapper.div.style :
-                            style;
-                        SVGElement.prototype[prop + 'Setter']
-                            .call(this, value, key, elem);
+                        const styleObject = gWrapper.div
+                            ? gWrapper.div.style
+                            : style;
+                        SVGElement.prototype[prop + 'Setter'].call(
+                            this,
+                            value,
+                            key,
+                            elem
+                        );
                         if (styleObject) {
                             styleObject[key as any] = value;
                         }
@@ -161,27 +158,26 @@ class HTMLRenderer extends SVGRenderer {
         };
 
         // Add setters for the element itself (#4938)
-        if (isSVG) { // #4938, only for HTML within SVG
+        if (isSVG) {
+            // #4938, only for HTML within SVG
             addSetters(wrapper, wrapper.element.style);
         }
 
         // Various setters which rely on update transform
         wrapper.xSetter =
-        wrapper.ySetter =
-        wrapper.alignSetter =
-        wrapper.rotationSetter =
-        function (
-            value: string,
-            key?: string
-        ): void {
-            if (key === 'align') {
-                // Do not overwrite the SVGElement.align method. Same as VML.
-                wrapper.alignValue = wrapper.textAlign = value as any;
-            } else {
-                wrapper[key as any] = value;
-            }
-            wrapper.doTransform = true;
-        };
+            wrapper.ySetter =
+            wrapper.alignSetter =
+            wrapper.rotationSetter =
+                function (value: string, key?: string): void {
+                    if (key === 'align') {
+                        // Do not overwrite the SVGElement.align method. Same as
+                        // VML.
+                        wrapper.alignValue = wrapper.textAlign = value as any;
+                    } else {
+                        wrapper[key as any] = value;
+                    }
+                    wrapper.doTransform = true;
+                };
 
         // Runs at the end of .attr()
         wrapper.afterSetters = function (): void {
@@ -219,11 +215,13 @@ class HTMLRenderer extends SVGRenderer {
 
         // This is specific for HTML within SVG
         if (isSVG) {
-            wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
+            wrapper.add = function (
+                svgGroupWrapper?: HTMLElement
+            ): HTMLElement {
                 const container = renderer.box.parentNode,
                     parents = [] as Array<HTMLElement>;
 
-                let htmlGroup: (HTMLElement|HTMLDOMElement|null|undefined),
+                let htmlGroup: HTMLElement | HTMLDOMElement | null | undefined,
                     parentGroup;
 
                 this.parentGroup = svgGroupWrapper as any;
@@ -232,12 +230,10 @@ class HTMLRenderer extends SVGRenderer {
                 if (svgGroupWrapper) {
                     htmlGroup = svgGroupWrapper.div;
                     if (!htmlGroup) {
-
                         // Read the parent chain into an array and read from top
                         // down
                         parentGroup = svgGroupWrapper;
                         while (parentGroup) {
-
                             parents.push(parentGroup);
 
                             // Move up to the next parent group
@@ -277,26 +273,31 @@ class HTMLRenderer extends SVGRenderer {
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
                             const parentGroupStyles = parentGroup.styles || {};
-                            htmlGroup =
-                            parentGroup.div =
-                            parentGroup.div || createElement(
-                                'div',
-                                cls ? { className: cls } : void 0,
-                                {
-                                    position: 'absolute',
-                                    left: (parentGroup.translateX || 0) + 'px',
-                                    top: (parentGroup.translateY || 0) + 'px',
-                                    display: parentGroup.display,
-                                    opacity: parentGroup.opacity, // #5075
-                                    cursor: parentGroupStyles.cursor, // #6794
-                                    pointerEvents:
-                                        parentGroupStyles.pointerEvents, // #5595
-                                    visibility: parentGroup.visibility
+                            htmlGroup = parentGroup.div =
+                                parentGroup.div ||
+                                createElement(
+                                    'div',
+                                    cls ? { className: cls } : void 0,
+                                    {
+                                        position: 'absolute',
+                                        left:
+                                            (parentGroup.translateX || 0) +
+                                            'px',
+                                        top:
+                                            (parentGroup.translateY || 0) +
+                                            'px',
+                                        display: parentGroup.display,
+                                        opacity: parentGroup.opacity, // #5075
+                                        cursor: parentGroupStyles.cursor, // #6794
+                                        pointerEvents:
+                                            parentGroupStyles.pointerEvents, // #5595
+                                        visibility: parentGroup.visibility
 
-                                // the top group is appended to container
-                                },
-                                (htmlGroup as any) || container
-                            );
+                                        // the top group is appended to
+                                        // container
+                                    },
+                                    (htmlGroup as any) || container
+                                );
 
                             // Shortcut
                             const htmlGroupStyle = (htmlGroup as any).style;
@@ -319,13 +320,17 @@ class HTMLRenderer extends SVGRenderer {
                                         );
                                         htmlGroup.className = value;
                                     };
-                                }(htmlGroup as any)),
+                                })(htmlGroup as any),
                                 on: function (): HTMLElement {
-                                    if (parents[0].div) { // #6418
-                                        wrapper.on.apply({
-                                            element: parents[0].div,
-                                            onEvents: parentGroup.onEvents
-                                        }, arguments);
+                                    if (parents[0].div) {
+                                        // #6418
+                                        wrapper.on.apply(
+                                            {
+                                                element: parents[0].div,
+                                                onEvents: parentGroup.onEvents
+                                            },
+                                            arguments
+                                        );
                                     }
                                     return parentGroup;
                                 },
@@ -336,7 +341,6 @@ class HTMLRenderer extends SVGRenderer {
                                 addSetters(parentGroup);
                             }
                         });
-
                     }
                 } else {
                     htmlGroup = container as any;

@@ -14,9 +14,7 @@
  *
  * */
 
-export interface LegendLike {
-
-}
+export interface LegendLike {}
 
 /* *
  *

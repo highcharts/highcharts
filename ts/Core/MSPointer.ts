@@ -21,20 +21,10 @@ import type Options from './Options';
 import type PointerEvent from './PointerEvent';
 
 import H from './Globals.js';
-const {
-    charts,
-    doc,
-    noop,
-    win
-} = H;
+const { charts, doc, noop, win } = H;
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
-const {
-    addEvent,
-    css,
-    objectEach,
-    removeEvent
-} = U;
+const { addEvent, css, objectEach, removeEvent } = U;
 
 /* *
  *
@@ -73,7 +63,7 @@ function getWebkitTouches(): void {
 
 /** @private */
 function translateMSPointer(
-    e: (PointerEvent|MSPointerEvent),
+    e: PointerEvent | MSPointerEvent,
     method: string,
     wktype: string,
     func: Function
@@ -81,10 +71,9 @@ function translateMSPointer(
     const chart = charts[Pointer.hoverChartIndex || NaN];
 
     if (
-        (
-            e.pointerType === 'touch' ||
-            e.pointerType === e.MSPOINTER_TYPE_TOUCH
-        ) && chart
+        (e.pointerType === 'touch' ||
+            e.pointerType === e.MSPOINTER_TYPE_TOUCH) &&
+        chart
     ) {
         const p: AnyRecord = chart.pointer;
 
@@ -106,7 +95,6 @@ function translateMSPointer(
 
 /** @private */
 class MSPointer extends Pointer {
-
     /* *
      *
      *  Static Functions
@@ -148,7 +136,6 @@ class MSPointer extends Pointer {
 
     // Destroy MS events also
     public destroy(): void {
-
         this.batchMSEvents(removeEvent);
 
         super.destroy();
@@ -156,10 +143,10 @@ class MSPointer extends Pointer {
 
     // Disable default IE actions for pinch and such on chart element
     public init(chart: Chart, options: Options): void {
-
         super.init(chart, options);
 
-        if (this.hasZoom) { // #4014
+        if (this.hasZoom) {
+            // #4014
             css(chart.container, {
                 '-ms-touch-action': 'none',
                 'touch-action': 'none'
@@ -196,9 +183,10 @@ class MSPointer extends Pointer {
             'onContainerTouchMove',
             'touchmove',
             function (e: PointerEvent): void {
-                (touches as any)[e.pointerId] = (
-                    { pageX: e.pageX, pageY: e.pageY }
-                );
+                (touches as any)[e.pointerId] = {
+                    pageX: e.pageX,
+                    pageY: e.pageY
+                };
                 if (!(touches as any)[e.pointerId].target) {
                     (touches as any)[e.pointerId].target = e.currentTarget;
                 }
@@ -223,7 +211,6 @@ class MSPointer extends Pointer {
 
     // Add IE specific touch events to chart
     public setDOMEvents(): void {
-
         super.setDOMEvents();
 
         if (this.hasZoom || this.followTouchMove) {

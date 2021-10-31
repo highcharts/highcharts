@@ -25,13 +25,7 @@ import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    isNumber
-} = U;
+const { addEvent, extend, merge, pick, isNumber } = U;
 
 /* *
  *
@@ -63,7 +57,6 @@ declare module './SeriesLike' {
  * */
 
 class Series3D extends Series {
-
     /* *
      *
      *  Static Properties
@@ -100,28 +93,32 @@ class Series3D extends Series {
             rawPoint: Point,
             projectedPoints: Array<Position3DObject>,
             projectedPoint: Position3DObject,
-            zValue: (number|null|undefined),
+            zValue: number | null | undefined,
             i: number,
             rawPointsX: Array<number> = [],
-            stack = seriesOptions.stacking ?
-                (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
-                series.index || 0;
+            stack = seriesOptions.stacking
+                ? isNumber(seriesOptions.stack)
+                    ? seriesOptions.stack
+                    : 0
+                : series.index || 0;
 
-        series.zPadding = stack *
+        series.zPadding =
+            stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
         for (i = 0; i < series.data.length; i++) {
             rawPoint = series.data[i];
 
             if (zAxis && zAxis.translate) {
-                zValue = zAxis.logarithmic && zAxis.val2lin ?
-                    zAxis.val2lin(rawPoint.z as any) :
-                    rawPoint.z; // #4562
+                zValue =
+                    zAxis.logarithmic && zAxis.val2lin
+                        ? zAxis.val2lin(rawPoint.z as any)
+                        : rawPoint.z; // #4562
                 rawPoint.plotZ = zAxis.translate(zValue as any);
-                rawPoint.isInside = rawPoint.isInside ?
-                    ((zValue as any) >= (zAxis.min as any) &&
-                    (zValue as any) <= (zAxis.max as any)) :
-                    false;
+                rawPoint.isInside = rawPoint.isInside
+                    ? (zValue as any) >= (zAxis.min as any) &&
+                      (zValue as any) <= (zAxis.max as any)
+                    : false;
             } else {
                 rawPoint.plotZ = series.zPadding;
             }

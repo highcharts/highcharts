@@ -27,15 +27,7 @@ import H from '../Globals.js';
 import Point from '../Series/Point.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    css,
-    defined,
-    error,
-    pick,
-    timeUnits
-} = U;
+const { addEvent, correctFloat, css, defined, error, pick, timeUnits } = U;
 
 /* *
  *
@@ -102,7 +94,6 @@ const composedClasses: Array<Function> = [];
  * @private
  */
 namespace OrdinalAxis {
-
     /* *
      *
      *  Declarations
@@ -152,8 +143,7 @@ namespace OrdinalAxis {
         AxisClass: T,
         SeriesClass: typeof Series,
         ChartClass: typeof Chart
-    ): (typeof Composition&T) {
-
+    ): typeof Composition & T {
         if (composedClasses.indexOf(AxisClass) === -1) {
             composedClasses.push(AxisClass);
 
@@ -167,9 +157,17 @@ namespace OrdinalAxis {
             axisProto.ordinal2lin = axisProto.val2lin;
 
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-            addEvent(AxisClass as (T&typeof Composition), 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass as T & typeof Composition,
+                'foundExtremes',
+                onAxisFoundExtremes
+            );
             addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
-            addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
+            addEvent(
+                AxisClass,
+                'initialAxisTranslation',
+                onAxisInitialAxisTranslation
+            );
         }
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -180,7 +178,7 @@ namespace OrdinalAxis {
             addEvent(SeriesClass, 'updatedData', onSeriesUpdatedData);
         }
         /* eslint-enable no-invalid-this */
-        return AxisClass as (typeof Composition&T);
+        return AxisClass as typeof Composition & T;
     }
     /**
      * In an ordinal axis, there might be areas with dense consentrations of
@@ -202,7 +200,6 @@ namespace OrdinalAxis {
         closestDistance: number = 0,
         findHigherRanks?: boolean
     ): TickPositionsArray {
-
         const higherRanks = {} as Record<string, string>,
             tickPixelIntervalOption = this.options.tickPixelInterval,
             time = this.chart.time,
@@ -236,10 +233,10 @@ namespace OrdinalAxis {
         const posLength = positions.length;
 
         for (end = 0; end < posLength; end++) {
-
             outsideMax = end && positions[end - 1] > max;
 
-            if (positions[end] < min) { // Set the last position before min
+            if (positions[end] < min) {
+                // Set the last position before min
                 start = end;
             }
 
@@ -248,11 +245,11 @@ namespace OrdinalAxis {
                 positions[end + 1] - positions[end] > closestDistance * 5 ||
                 outsideMax
             ) {
-
                 // For each segment, calculate the tick positions from the
                 // getTimeTicks utility function. The interval will be the
                 // same regardless of how long the segment is.
-                if (positions[end] > lastGroupPosition) { // #1475
+                if (positions[end] > lastGroupPosition) {
+                    // #1475
 
                     segmentPositions = time.getTimeTicks(
                         normalizedInterval,
@@ -275,7 +272,9 @@ namespace OrdinalAxis {
                     }
 
                     segmentStarts.push(groupPositions.length);
-                    groupPositions = groupPositions.concat(segmentPositions) as any;
+                    groupPositions = groupPositions.concat(
+                        segmentPositions
+                    ) as any;
                 }
                 // Set start of next segment
                 start = end + 1;
@@ -318,7 +317,6 @@ namespace OrdinalAxis {
             // Save the info
             info.segmentStarts = segmentStarts;
             groupPositions.info = info;
-
         } else {
             error(12, false, this.chart);
         }
@@ -326,7 +324,6 @@ namespace OrdinalAxis {
         // space between two points is greater than a portion of the tick
         // pixel interval
         if (findHigherRanks && defined(tickPixelIntervalOption)) {
-
             const length = groupPositions.length,
                 translatedArr = [],
                 distances = [];
@@ -356,7 +353,9 @@ namespace OrdinalAxis {
             lastTranslated = void 0;
             while (i--) {
                 translated = translatedArr[i];
-                distance = Math.abs((lastTranslated as any) - (translated as any));
+                distance = Math.abs(
+                    (lastTranslated as any) - (translated as any)
+                );
                 // #4175 - when axis is reversed, the distance, is negative
                 // but tickPixelIntervalOption positive, so we need to
                 // compare the same values
@@ -369,27 +368,22 @@ namespace OrdinalAxis {
                     distance < (tickPixelIntervalOption as any) * 0.8 &&
                     (medianDistance === null || distance < medianDistance * 0.8)
                 ) {
-
                     // Is this a higher ranked position with a normal
                     // position to the right?
                     if (
                         higherRanks[groupPositions[i]] &&
                         !higherRanks[groupPositions[i + 1]]
                     ) {
-
                         // Yes: remove the lower ranked neighbour to the
                         // right
                         itemToRemove = i + 1;
                         lastTranslated = translated; // #709
-
                     } else {
-
                         // No: remove this one
                         itemToRemove = i;
                     }
 
                     groupPositions.splice(itemToRemove, 1);
-
                 } else {
                     lastTranslated = translated;
                 }
@@ -424,21 +418,28 @@ namespace OrdinalAxis {
         let i = ordinalPositions.length - 1,
             distance;
 
-        if (index < 0) { // out of range, in effect panning to the left
+        if (index < 0) {
+            // out of range, in effect panning to the left
             index = ordinalPositions[0];
-        } else if (index > i) { // out of range, panning to the right
+        } else if (index > i) {
+            // out of range, panning to the right
             index = ordinalPositions[i];
-        } else { // split it up
+        } else {
+            // split it up
             i = Math.floor(index);
             distance = index - i; // the decimal
         }
 
-        if (typeof distance !== 'undefined' &&
-            typeof ordinalPositions[i] !== 'undefined') {
-            return ordinalPositions[i] + (distance ?
-                distance *
-                    (ordinalPositions[i + 1] - ordinalPositions[i]) :
-                0);
+        if (
+            typeof distance !== 'undefined' &&
+            typeof ordinalPositions[i] !== 'undefined'
+        ) {
+            return (
+                ordinalPositions[i] +
+                (distance
+                    ? distance * (ordinalPositions[i + 1] - ordinalPositions[i])
+                    : 0)
+            );
         }
         return index;
     }
@@ -467,7 +468,8 @@ namespace OrdinalAxis {
         }
 
         // Convert back from modivied value to pixels. // #15970
-        const pixelVal = (val - (localMin as any)) * localA + axis.minPixelPadding,
+        const pixelVal =
+                (val - (localMin as any)) * localA + axis.minPixelPadding,
             isInside = pixelVal > 0 && pixelVal < axis.left + axis.len;
 
         // If the value is not inside the plot area,
@@ -477,7 +479,8 @@ namespace OrdinalAxis {
             // When iterating for the first time,
             // get the extended ordinal positional and assign them.
             if (!ordinal.extendedOrdinalPositions) {
-                ordinal.extendedOrdinalPositions = ordinal.getExtendedPositions();
+                ordinal.extendedOrdinalPositions =
+                    ordinal.getExtendedPositions();
             }
             positions = ordinal.extendedOrdinalPositions;
         }
@@ -505,7 +508,9 @@ namespace OrdinalAxis {
             const positionsLength = positions.length,
                 firstPositionsValue = positions[0],
                 lastPositionsValue = positions[positionsLength - 1],
-                slope = (lastPositionsValue - firstPositionsValue) / (positionsLength - 1);
+                slope =
+                    (lastPositionsValue - firstPositionsValue) /
+                    (positionsLength - 1);
 
             if (index < 0) {
                 return firstPositionsValue + slope * index;
@@ -521,9 +526,15 @@ namespace OrdinalAxis {
      * in ordinalPositions array.
      * @private
      */
-    function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
-        const index =
-        OrdinalAxis.Additions.findIndexOf(ordinalPositions, val, true);
+    function getIndexInArray(
+        ordinalPositions: Array<number>,
+        val: number
+    ): number {
+        const index = OrdinalAxis.Additions.findIndexOf(
+            ordinalPositions,
+            val,
+            true
+        );
         if (ordinalPositions[index] === val) {
             return index;
         }
@@ -534,8 +545,8 @@ namespace OrdinalAxis {
     }
 
     /**
-    * @private
-    */
+     * @private
+     */
     function onAxisAfterInit(this: Axis): void {
         const axis = this;
 
@@ -554,22 +565,18 @@ namespace OrdinalAxis {
             axis.isXAxis &&
             defined(axis.options.overscroll) &&
             axis.max === axis.dataMax &&
-            (
-                // Panning is an execption. We don't want to apply
-                // overscroll when panning over the dataMax
-                !axis.chart.mouseIsDown ||
-                axis.isInternal
-            ) && (
-                // Scrollbar buttons are the other execption:
-                !axis.eventArgs ||
-                axis.eventArgs && axis.eventArgs.trigger !== 'navigator'
-            )
+            // Panning is an execption. We don't want to apply
+            // overscroll when panning over the dataMax
+            (!axis.chart.mouseIsDown || axis.isInternal) &&
+            // Scrollbar buttons are the other execption:
+            (!axis.eventArgs ||
+                (axis.eventArgs && axis.eventArgs.trigger !== 'navigator'))
         ) {
-            (axis.max as any) += (axis.options.overscroll as any);
+            (axis.max as any) += axis.options.overscroll as any;
 
             // Live data and buttons require translation for the min:
             if (!axis.isInternal && defined(axis.userMin)) {
-                (axis.min as any) += (axis.options.overscroll as any);
+                (axis.min as any) += axis.options.overscroll as any;
             }
         }
     }
@@ -584,7 +591,8 @@ namespace OrdinalAxis {
         const axis = this;
 
         if (axis.horiz && !axis.isDirty) {
-            axis.isDirty = axis.isOrdinal &&
+            axis.isDirty =
+                axis.isOrdinal &&
                 axis.chart.navigator &&
                 !(axis.chart.navigator as any).adaptToUpdatedData;
         }
@@ -598,7 +606,9 @@ namespace OrdinalAxis {
 
         if (axis.ordinal) {
             axis.ordinal.beforeSetTickPositions();
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
+            axis.tickInterval = axis.ordinal.postProcessTickInterval(
+                axis.tickInterval
+            );
         }
     }
 
@@ -620,38 +630,32 @@ namespace OrdinalAxis {
             xAxis.options.ordinal &&
             xAxis.series.length
         ) {
-
             const mouseDownX = chart.mouseDownX,
                 extremes = xAxis.getExtremes(),
                 dataMax = extremes.dataMax,
                 min = extremes.min,
                 max = extremes.max,
                 hoverPoints = chart.hoverPoints,
-                closestPointRange = (
+                closestPointRange =
                     xAxis.closestPointRange ||
-                    (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange)
-                ),
-                pointPixelWidth = (
+                    (xAxis.ordinal && xAxis.ordinal.overscrollPointsRange),
+                pointPixelWidth =
                     xAxis.translationSlope *
-                    (xAxis.ordinal.slope || (closestPointRange as any))
-                ),
+                    (xAxis.ordinal.slope || (closestPointRange as any)),
                 // how many ordinal units did we move?
                 movedUnits = ((mouseDownX as any) - chartX) / pointPixelWidth,
                 // get index of all the chart's points
-                extendedAxis = { ordinal: { positions: xAxis.ordinal.getExtendedPositions() } },
+                extendedAxis = {
+                    ordinal: { positions: xAxis.ordinal.getExtendedPositions() }
+                },
                 index2val = xAxis.index2val,
                 val2lin = xAxis.val2lin;
-            let trimmedRange,
-                ordinalPositions,
-                searchAxisLeft,
-                searchAxisRight;
+            let trimmedRange, ordinalPositions, searchAxisLeft, searchAxisRight;
 
             // we have an ordinal axis, but the data is equally spaced
             if (!extendedAxis.ordinal.positions) {
                 runBase = true;
-
             } else if (Math.abs(movedUnits) > 1) {
-
                 // Remove active points for shared tooltip
                 if (hoverPoints) {
                     hoverPoints.forEach(function (point: Point): void {
@@ -661,9 +665,13 @@ namespace OrdinalAxis {
 
                 if (movedUnits < 0) {
                     searchAxisLeft = extendedAxis;
-                    searchAxisRight = xAxis.ordinal.positions ? xAxis : extendedAxis;
+                    searchAxisRight = xAxis.ordinal.positions
+                        ? xAxis
+                        : extendedAxis;
                 } else {
-                    searchAxisLeft = xAxis.ordinal.positions ? xAxis : extendedAxis;
+                    searchAxisLeft = xAxis.ordinal.positions
+                        ? xAxis
+                        : extendedAxis;
                     searchAxisRight = extendedAxis;
                 }
 
@@ -673,8 +681,11 @@ namespace OrdinalAxis {
                 // be allowed to pan grouped data series passed the right of
                 // the plot area.
                 ordinalPositions = searchAxisRight.ordinal.positions;
-                if (dataMax >
-                    (ordinalPositions as any)[(ordinalPositions as any).length - 1]
+                if (
+                    dataMax >
+                    (ordinalPositions as any)[
+                        (ordinalPositions as any).length - 1
+                    ]
                 ) {
                     (ordinalPositions as any).push(dataMax);
                 }
@@ -687,7 +698,9 @@ namespace OrdinalAxis {
                 // smaller and faster.
                 chart.fixedRange = max - min;
 
-                trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
+                trimmedRange = (
+                    xAxis as NavigatorAxis
+                ).navigatorAxis.toFixedRange(
                     null as any,
                     null as any,
                     index2val.apply(searchAxisLeft, [
@@ -699,8 +712,10 @@ namespace OrdinalAxis {
                 );
 
                 // Apply it if it is within the available data range
-                if (trimmedRange.min >= Math.min(extremes.dataMin, min) &&
-                    trimmedRange.max <= Math.max(dataMax, max) + (overscroll as any)
+                if (
+                    trimmedRange.min >= Math.min(extremes.dataMin, min) &&
+                    trimmedRange.max <=
+                        Math.max(dataMax, max) + (overscroll as any)
                 ) {
                     xAxis.setExtremes(
                         trimmedRange.min,
@@ -714,7 +729,6 @@ namespace OrdinalAxis {
                 chart.mouseDownX = chartX; // set new reference for next run
                 css(chart.container, { cursor: 'move' });
             }
-
         } else {
             runBase = true;
         }
@@ -758,7 +772,11 @@ namespace OrdinalAxis {
      *
      * @return {number}
      */
-    function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
+    function val2lin(
+        this: OrdinalAxis.Composition,
+        val: number,
+        toIndex?: boolean
+    ): number {
         const axis = this,
             ordinal = axis.ordinal,
             ordinalPositions = ordinal.positions;
@@ -780,15 +798,15 @@ namespace OrdinalAxis {
             ordinalIndex = getIndexInArray(ordinalPositions, val);
             // final return value is based on ordinalIndex
         } else {
-
             if (!extendedOrdinalPositions) {
                 extendedOrdinalPositions =
                     ordinal.getExtendedPositions &&
                     ordinal.getExtendedPositions();
                 ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
             }
-            if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
-
+            if (
+                !(extendedOrdinalPositions && extendedOrdinalPositions.length)
+            ) {
                 return val;
             }
 
@@ -812,13 +830,12 @@ namespace OrdinalAxis {
             // check if it is inside extendedOrdinalPositions.
             if (
                 val >= extendedOrdinalPositions[0] &&
-                val <=
-                    extendedOrdinalPositions[
-                        length - 1
-                    ]
+                val <= extendedOrdinalPositions[length - 1]
             ) {
                 // Return Value
-                ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
+                ordinalIndex =
+                    getIndexInArray(extendedOrdinalPositions, val) -
+                    originalPositionsReference;
             } else {
                 // Since ordinal.slope is the average distance between 2
                 // points on visible plotArea, this can be used to calculete
@@ -828,14 +845,9 @@ namespace OrdinalAxis {
                     const diff = extendedOrdinalPositions[0] - val,
                         approximateIndexOffset = diff / slope;
                     ordinalIndex =
-                        -originalPositionsReference -
-                        approximateIndexOffset;
+                        -originalPositionsReference - approximateIndexOffset;
                 } else {
-                    const diff =
-                            val -
-                            extendedOrdinalPositions[
-                                length - 1
-                            ],
+                    const diff = val - extendedOrdinalPositions[length - 1],
                         approximateIndexOffset = diff / slope;
                     ordinalIndex =
                         approximateIndexOffset +
@@ -845,8 +857,9 @@ namespace OrdinalAxis {
             }
         }
 
-        return toIndex ? ordinalIndex : (slope as any) * (ordinalIndex || 0) +
-                    (ordinal.offset as any);
+        return toIndex
+            ? ordinalIndex
+            : (slope as any) * (ordinalIndex || 0) + (ordinal.offset as any);
     }
 
     /* *
@@ -859,7 +872,6 @@ namespace OrdinalAxis {
      * @private
      */
     export class Additions {
-
         /* *
          *
          *  Constructors
@@ -889,10 +901,10 @@ namespace OrdinalAxis {
         public slope?: number;
 
         /* *
-        *
-        *  Functions
-        *
-        * */
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
@@ -920,16 +932,18 @@ namespace OrdinalAxis {
                 useOrdinal = false;
 
             // Apply the ordinal logic
-            if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
+            if (isOrdinal || hasBreaks) {
+                // #4167 YAxis is never ordinal ?
 
                 axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
-                        ((series as ScatterSeries).takeOrdinalPosition !== false || hasBreaks)
+                        ((series as ScatterSeries).takeOrdinalPosition !==
+                            false ||
+                            hasBreaks)
                     ) {
-
                         // concatenate the processed X data into the existing
                         // positions, or the empty array
                         ordinalPositions = ordinalPositions.concat(
@@ -957,11 +971,11 @@ namespace OrdinalAxis {
                         );
 
                         if (len) {
-
                             i = 0;
                             while (i < len - 1) {
                                 if (
-                                    ordinalPositions[i] !== ordinalPositions[i + 1]
+                                    ordinalPositions[i] !==
+                                    ordinalPositions[i + 1]
                                 ) {
                                     uniqueOrdinalPositions.push(
                                         ordinalPositions[i + 1]
@@ -972,7 +986,8 @@ namespace OrdinalAxis {
 
                             // Check first item:
                             if (
-                                uniqueOrdinalPositions[0] !== ordinalPositions[0]
+                                uniqueOrdinalPositions[0] !==
+                                ordinalPositions[0]
                             ) {
                                 uniqueOrdinalPositions.unshift(
                                     ordinalPositions[0]
@@ -990,12 +1005,14 @@ namespace OrdinalAxis {
                 // Check if we really need the overhead of mapping axis data
                 // against the ordinal positions. If the series consist of
                 // evenly spaced data any way, we don't need any ordinal logic.
-                if (len > 2) { // two points have equal distance by default
+                if (len > 2) {
+                    // two points have equal distance by default
                     dist = ordinalPositions[1] - ordinalPositions[0];
                     i = len - 1;
                     while (i-- && !useOrdinal) {
                         if (
-                            ordinalPositions[i + 1] - ordinalPositions[i] !== dist
+                            ordinalPositions[i + 1] - ordinalPositions[i] !==
+                            dist
                         ) {
                             useOrdinal = true;
                         }
@@ -1006,11 +1023,10 @@ namespace OrdinalAxis {
                     // spaced.
                     if (
                         !axis.options.keepOrdinalPadding &&
-                        (
-                            ordinalPositions[0] - min > dist ||
-                            max - ordinalPositions[ordinalPositions.length - 1] >
-                                dist
-                        )
+                        (ordinalPositions[0] - min > dist ||
+                            max -
+                                ordinalPositions[ordinalPositions.length - 1] >
+                                dist)
                     ) {
                         useOrdinal = true;
                     }
@@ -1030,7 +1046,8 @@ namespace OrdinalAxis {
                     } else {
                         // In case of zooming in on overscrolled range, stick to
                         // the old range:
-                        overscrollPointsRange = ordinal.overscrollPointsRange as any;
+                        overscrollPointsRange =
+                            ordinal.overscrollPointsRange as any;
                     }
                 }
 
@@ -1039,7 +1056,6 @@ namespace OrdinalAxis {
                 // current range, get the start and end positions within it
                 // (#719, #665b)
                 if (useOrdinal || axis.forceOrdinal) {
-
                     if (axis.options.overscroll) {
                         ordinal.overscrollPointsRange = overscrollPointsRange;
                         ordinalPositions = ordinalPositions.concat(
@@ -1053,33 +1069,35 @@ namespace OrdinalAxis {
                     // This relies on the ordinalPositions being set. Use
                     // Math.max and Math.min to prevent padding on either sides
                     // of the data.
-                    minIndex = axis.ordinal2lin( // #5979
-                        Math.max(
-                            min,
-                            ordinalPositions[0]
-                        ),
+                    minIndex = axis.ordinal2lin(
+                        // #5979
+                        Math.max(min, ordinalPositions[0]),
                         true
                     );
-                    maxIndex = Math.max(axis.ordinal2lin(
-                        Math.min(
-                            max,
-                            ordinalPositions[ordinalPositions.length - 1]
+                    maxIndex = Math.max(
+                        axis.ordinal2lin(
+                            Math.min(
+                                max,
+                                ordinalPositions[ordinalPositions.length - 1]
+                            ),
+                            true
                         ),
-                        true
-                    ), 1); // #3339
+                        1
+                    ); // #3339
 
                     // Set the slope and offset of the values compared to the
                     // indices in the ordinal positions
                     ordinal.slope = slope = (max - min) / (maxIndex - minIndex);
-                    ordinal.offset = min - (minIndex * slope);
-
+                    ordinal.offset = min - minIndex * slope;
                 } else {
                     ordinal.overscrollPointsRange = pick(
                         axis.closestPointRange,
                         ordinal.overscrollPointsRange
                     );
-                    ordinal.positions = axis.ordinal.slope = ordinal.offset =
-                        void 0;
+                    ordinal.positions =
+                        axis.ordinal.slope =
+                        ordinal.offset =
+                            void 0;
                 }
             }
 
@@ -1143,9 +1161,9 @@ namespace OrdinalAxis {
                 axisProto = axis.constructor.prototype,
                 chart = axis.chart,
                 grouping = axis.series[0].currentDataGrouping,
-                key = grouping ?
-                    grouping.count + (grouping.unitName as any) :
-                    'raw',
+                key = grouping
+                    ? grouping.count + (grouping.unitName as any)
+                    : 'raw',
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes();
             let fakeAxis: Composition,
@@ -1159,9 +1177,7 @@ namespace OrdinalAxis {
                 ordinalIndex = ordinal.index = {};
             }
 
-
             if (!ordinalIndex[key]) {
-
                 // Create a fake axis object where the extended ordinal
                 // positions are emulated
                 fakeAxis = {
@@ -1205,21 +1221,25 @@ namespace OrdinalAxis {
                     );
 
                     fakeSeries.options = {
-                        dataGrouping: grouping ? {
-                            firstAnchor: 'firstPoint',
-                            anchor: 'middle',
-                            lastAnchor: 'lastPoint',
-                            enabled: true,
-                            forced: true,
-                            // doesn't matter which, use the fastest
-                            approximation: 'open',
-                            units: [[
-                                (grouping as any).unitName,
-                                [grouping.count]
-                            ]]
-                        } : {
-                            enabled: false
-                        }
+                        dataGrouping: grouping
+                            ? {
+                                  firstAnchor: 'firstPoint',
+                                  anchor: 'middle',
+                                  lastAnchor: 'lastPoint',
+                                  enabled: true,
+                                  forced: true,
+                                  // doesn't matter which, use the fastest
+                                  approximation: 'open',
+                                  units: [
+                                      [
+                                          (grouping as any).unitName,
+                                          [grouping.count]
+                                      ]
+                                  ]
+                              }
+                            : {
+                                  enabled: false
+                              }
                     };
                     fakeAxis.series.push(fakeSeries);
 
@@ -1227,17 +1247,15 @@ namespace OrdinalAxis {
                 });
 
                 // Apply grouping if needed.
-                axis.applyGrouping.call(
-                    fakeAxis,
-                    {
-                        hasExtemesChanged: false
-                    }
-                );
+                axis.applyGrouping.call(fakeAxis, {
+                    hasExtemesChanged: false
+                });
 
                 // Force to use the ordinal when points are evenly spaced
                 // (e.g. weeks), #3825.
                 if (
-                    fakeSeries.closestPointRange !== fakeSeries.basePointRange &&
+                    fakeSeries.closestPointRange !==
+                        fakeSeries.basePointRange &&
                     fakeSeries.currentDataGrouping
                 ) {
                     fakeAxis.forceOrdinal = true;
@@ -1289,15 +1307,14 @@ namespace OrdinalAxis {
                 i,
                 groupIntervalFactor = ordinal.groupIntervalFactor;
 
-
             // Only do this computation for the first series, let the other
             // inherit it (#2416)
             if (!groupIntervalFactor) {
-
                 // Register all the distances in an array
                 for (i = 0; i < len - 1; i++) {
                     distances[i] =
-                        (processedXData as any)[i + 1] - (processedXData as any)[i];
+                        (processedXData as any)[i + 1] -
+                        (processedXData as any)[i];
                 }
 
                 // Sort them and find the median
@@ -1342,9 +1359,10 @@ namespace OrdinalAxis {
                 axis = ordinal.axis,
                 firstPointVal = ordinal.positions ? ordinal.positions[0] : 0;
 
-            let firstPointX = axis.series[0].points &&
-                axis.series[0].points[0] &&
-                axis.series[0].points[0].plotX ||
+            let firstPointX =
+                (axis.series[0].points &&
+                    axis.series[0].points[0] &&
+                    axis.series[0].points[0].plotX) ||
                 axis.minPixelPadding; // #15987
 
             // When more series assign to axis, find the smallest one, #15987.
@@ -1363,12 +1381,17 @@ namespace OrdinalAxis {
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
-            const ordinalPointPixelInterval = axis.translationSlope *
-                (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+            const ordinalPointPixelInterval =
+                    axis.translationSlope *
+                    (ordinal.slope ||
+                        axis.closestPointRange ||
+                        (ordinal.overscrollPointsRange as number)),
                 // toValue for the first point.
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 
-            return Additions.findIndexOf(ordinalArray, firstPointVal) + shiftIndex;
+            return (
+                Additions.findIndexOf(ordinalArray, firstPointVal) + shiftIndex
+            );
         }
 
         /**
@@ -1392,12 +1415,12 @@ namespace OrdinalAxis {
                 // Max + pointRange because we need to scroll to the last
 
                 while (
-                    (max as any) <= (axis.dataMax as any) + (extraRange as any)
+                    (max as any) <=
+                    (axis.dataMax as any) + (extraRange as any)
                 ) {
-                    (max as any) += (distance as any);
+                    (max as any) += distance as any;
                     positions.push(max);
                 }
-
             }
 
             return positions as any;
@@ -1419,10 +1442,10 @@ namespace OrdinalAxis {
                 ordinalSlope = ordinal.slope;
             let ret;
 
-
             if (ordinalSlope) {
                 if (!axis.options.breaks) {
-                    ret = tickInterval / (ordinalSlope / axis.closestPointRange);
+                    ret =
+                        tickInterval / (ordinalSlope / axis.closestPointRange);
                 } else {
                     ret = axis.closestPointRange || tickInterval; // #7275
                 }
@@ -1431,9 +1454,7 @@ namespace OrdinalAxis {
             }
             return ret;
         }
-
     }
-
 }
 
 /* *

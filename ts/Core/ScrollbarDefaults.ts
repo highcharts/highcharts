@@ -51,7 +51,6 @@ import { Palette } from './Color/Palettes.js';
  * @private
  */
 const ScrollbarDefaults: ScrollbarOptions = {
-
     /**
      * The height of the scrollbar. The height also applies to the width
      * of the scroll arrows so that they are always squares. Defaults to

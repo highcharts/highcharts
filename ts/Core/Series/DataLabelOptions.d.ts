@@ -14,10 +14,7 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Renderer/AlignObject';
+import type { AlignValue, VerticalAlignValue } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -31,20 +28,26 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
-export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
+export type DataLabelFilterOperatorValue =
+    | '>'
+    | '<'
+    | '>='
+    | '<='
+    | '=='
+    | '===';
 
 export interface DataLabelFilterOptions {
     operator: DataLabelFilterOperatorValue;
     property: string;
-    value: (null|number);
+    value: null | number;
 }
 
 export interface DataLabelFormatterCallback {
-    (this: Point.PointLabelObject): (number|string|null|undefined);
+    (this: Point.PointLabelObject): number | string | null | undefined;
 }
 
 export interface DataLabelOptions {
-    animation?: (boolean|Partial<AnimationOptions>);
+    animation?: boolean | Partial<AnimationOptions>;
     align?: AlignValue;
     allowOverlap?: boolean;
     backgroundColor?: ColorType;
@@ -60,11 +63,11 @@ export interface DataLabelOptions {
     format?: string;
     formatter?: DataLabelFormatterCallback;
     inside?: boolean;
-    nullFormat?: (boolean|string);
+    nullFormat?: boolean | string;
     overflow?: DataLabelOverflowValue;
     padding?: number;
     rotation?: number;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shadow?: boolean | Partial<ShadowOptionsObject>;
     shape?: string;
     style?: CSSObject;
     textPath?: DataLabelTextPathOptions;
@@ -75,7 +78,7 @@ export interface DataLabelOptions {
     zIndex?: number;
 }
 
-export type DataLabelOverflowValue = ('allow'|'justify');
+export type DataLabelOverflowValue = 'allow' | 'justify';
 
 export interface DataLabelTextPathOptions {
     attributes?: SVGAttributes;

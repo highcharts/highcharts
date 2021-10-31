@@ -31,7 +31,7 @@ export type PointType = PointTypeRegistry[keyof PointTypeRegistry]['prototype'];
 /**
  * All possible options of series types.
  */
-export type PointTypeOptions = (PointOptions&PointType['options']);
+export type PointTypeOptions = PointOptions & PointType['options'];
 
 /**
  * Helper interface to add series point types to `PointType`.

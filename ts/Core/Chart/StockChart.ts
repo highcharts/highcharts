@@ -16,10 +16,7 @@
  *
  * */
 
-import type {
-    AxisOptions,
-    YAxisOptions
-} from '../Axis/AxisOptions';
+import type { AxisOptions, YAxisOptions } from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
@@ -30,9 +27,7 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import A from '../Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+const { animObject } = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import F from '../../Core/FormatUtilities.js';
@@ -86,7 +81,7 @@ declare module './ChartLike' {
     }
 }
 
-declare module '../Options'{
+declare module '../Options' {
     interface Options {
         isStock?: boolean;
     }
@@ -95,7 +90,7 @@ declare module '../Options'{
 declare module '../Series/SeriesLike' {
     interface SeriesLike {
         clipBox?: BBoxObject;
-        forceCropping(): boolean|undefined;
+        forceCropping(): boolean | undefined;
     }
 }
 
@@ -171,7 +166,11 @@ class StockChart extends Chart {
                 },
                 scrollbar: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(defaultOptions.scrollbar && defaultOptions.scrollbar.enabled, true)
+                    enabled: pick(
+                        defaultOptions.scrollbar &&
+                            defaultOptions.scrollbar.enabled,
+                        true
+                    )
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
@@ -190,12 +189,12 @@ class StockChart extends Chart {
                 legend: {
                     enabled: false
                 }
-
             },
 
             userOptions, // user's options
 
-            { // forced options
+            {
+                // forced options
                 isStock: true // internal flag
             }
         );
@@ -301,8 +300,8 @@ namespace StockChart {
      *         The chart object.
      */
     export function stockChart(
-        a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        a: string | HTMLDOMElement | Options,
+        b?: Chart.CallbackFunction | Options,
         c?: Chart.CallbackFunction
     ): StockChart {
         return new StockChart(a as any, b as any, c);
@@ -353,8 +352,7 @@ function getDefaultAxisOptions(
              */
             showLastLabel: !!(
                 // #6104, show last label by default for category axes
-                options.categories ||
-                options.type === 'category'
+                (options.categories || options.type === 'category')
             ),
 
             title: {
@@ -410,41 +408,42 @@ function getForcedAxisOptions(
 
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(Series, 'setOptions', function (
-    e: { plotOptions: SeriesTypePlotOptions }
-): void {
-    let overrides;
+addEvent(
+    Series,
+    'setOptions',
+    function (e: { plotOptions: SeriesTypePlotOptions }): void {
+        let overrides;
 
-    if (this.chart.options.isStock) {
-        if (this.is('column') || this.is('columnrange')) {
-            overrides = {
-                borderWidth: 0,
-                shadow: false
-            };
-
-        } else if (!this.is('scatter') && !this.is('sma')) {
-            overrides = {
-                marker: {
-                    enabled: false,
-                    radius: 2
-                }
-            };
-        }
-        if (overrides) {
-            e.plotOptions[this.type] = merge(
-                e.plotOptions[this.type],
-                overrides
-            );
+        if (this.chart.options.isStock) {
+            if (this.is('column') || this.is('columnrange')) {
+                overrides = {
+                    borderWidth: 0,
+                    shadow: false
+                };
+            } else if (!this.is('scatter') && !this.is('sma')) {
+                overrides = {
+                    marker: {
+                        enabled: false,
+                        radius: 2
+                    }
+                };
+            }
+            if (overrides) {
+                e.plotOptions[this.type] = merge(
+                    e.plotOptions[this.type],
+                    overrides
+                );
+            }
         }
     }
-});
+);
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
     let chart = this.chart,
         options = this.options,
-        panes = chart._labelPanes = chart._labelPanes || {},
+        panes = (chart._labelPanes = chart._labelPanes || {}),
         key,
         labelOptions = this.options.labels;
 
@@ -452,7 +451,8 @@ addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
         if (!panes[key] && labelOptions.enabled) {
-            if (labelOptions.x === 15) { // default
+            if (labelOptions.x === 15) {
+                // default
                 labelOptions.x = 0;
             }
             if (typeof labelOptions.align === 'undefined') {
@@ -469,7 +469,7 @@ addEvent(Axis, 'autoLabelAlign', function (e: Event): void {
 // Clear axis from label panes (#6071)
 addEvent(Axis, 'destroy', function (): void {
     const chart = this.chart,
-        key = this.options && (this.options.top + ',' + this.options.height);
+        key = this.options && this.options.top + ',' + this.options.height;
 
     if (key && chart._labelPanes && chart._labelPanes[key] === this) {
         delete chart._labelPanes[key];
@@ -477,176 +477,179 @@ addEvent(Axis, 'destroy', function (): void {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-addEvent(Axis, 'getPlotLinePath', function (
-    e: (Event&Axis.PlotLinePathOptions)
-): void {
-    let axis = this,
-        series = (
-            this.isLinked && !this.series ?
-                (this.linkedParent as any).series :
-                this.series
-        ),
-        chart = axis.chart,
-        renderer = chart.renderer,
-        axisLeft = axis.left,
-        axisTop = axis.top,
-        x1,
-        y1,
-        x2,
-        y2,
-        result = [] as SVGPath,
-        axes = [], // #3416 need a default array
-        axes2: Array<Axis>,
-        uniqueAxes: Array<Axis>,
-        translatedValue = e.translatedValue,
-        value = e.value,
-        force = e.force,
-        transVal: number;
+addEvent(
+    Axis,
+    'getPlotLinePath',
+    function (e: Event & Axis.PlotLinePathOptions): void {
+        let axis = this,
+            series =
+                this.isLinked && !this.series
+                    ? (this.linkedParent as any).series
+                    : this.series,
+            chart = axis.chart,
+            renderer = chart.renderer,
+            axisLeft = axis.left,
+            axisTop = axis.top,
+            x1,
+            y1,
+            x2,
+            y2,
+            result = [] as SVGPath,
+            axes = [], // #3416 need a default array
+            axes2: Array<Axis>,
+            uniqueAxes: Array<Axis>,
+            translatedValue = e.translatedValue,
+            value = e.value,
+            force = e.force,
+            transVal: number;
 
-    /**
-     * Return the other axis based on either the axis option or on related
-     * series.
-     * @private
-     */
-    function getAxis(coll: string): Array<Axis> {
-        const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
-            opt = (axis.options as any)[otherColl];
+        /**
+         * Return the other axis based on either the axis option or on related
+         * series.
+         * @private
+         */
+        function getAxis(coll: string): Array<Axis> {
+            const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+                opt = (axis.options as any)[otherColl];
 
-        // Other axis indexed by number
-        if (isNumber(opt)) {
-            return [(chart as any)[otherColl][opt]];
+            // Other axis indexed by number
+            if (isNumber(opt)) {
+                return [(chart as any)[otherColl][opt]];
+            }
+
+            // Other axis indexed by id (like navigator)
+            if (isString(opt)) {
+                return [chart.get(opt) as Axis];
+            }
+
+            // Auto detect based on existing series
+            return series.map(function (s: Series): Axis {
+                return (s as any)[otherColl];
+            });
         }
 
-        // Other axis indexed by id (like navigator)
-        if (isString(opt)) {
-            return [chart.get(opt) as Axis];
-        }
+        if (
+            // For stock chart, by default render paths across the panes
+            // except the case when `acrossPanes` is disabled by user (#6644)
+            (chart.options.isStock &&
+                (e as any).acrossPanes !== false &&
+                // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
+                axis.coll === 'xAxis') ||
+            axis.coll === 'yAxis'
+        ) {
+            e.preventDefault();
 
-        // Auto detect based on existing series
-        return series.map(function (s: Series): Axis {
-            return (s as any)[otherColl];
-        });
-    }
+            // Get the related axes based on series
+            axes = getAxis(axis.coll);
 
-    if (// For stock chart, by default render paths across the panes
-        // except the case when `acrossPanes` is disabled by user (#6644)
-        (chart.options.isStock && (e as any).acrossPanes !== false) &&
-        // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-        axis.coll === 'xAxis' || axis.coll === 'yAxis'
-    ) {
+            // Get the related axes based options.*Axis setting #2810
+            axes2 = axis.isXAxis ? chart.yAxis : chart.xAxis;
+            axes2.forEach(function (A): void {
+                if (
+                    defined(A.options.id)
+                        ? A.options.id.indexOf('navigator') === -1
+                        : true
+                ) {
+                    const a = A.isXAxis ? 'yAxis' : 'xAxis',
+                        rax = defined((A.options as any)[a])
+                            ? (chart as any)[a][(A.options as any)[a]]
+                            : (chart as any)[a][0];
 
-        e.preventDefault();
+                    if (axis === rax) {
+                        axes.push(A);
+                    }
+                }
+            });
 
-        // Get the related axes based on series
-        axes = getAxis(axis.coll);
+            // Remove duplicates in the axes array. If there are no axes in the
+            // axes array, we are adding an axis without data, so we need to
+            // populate this with grid lines (#2796).
+            uniqueAxes = axes.length
+                ? []
+                : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
+            axes.forEach(function (axis2): void {
+                if (
+                    uniqueAxes.indexOf(axis2) === -1 &&
+                    // Do not draw on axis which overlap completely. #5424
+                    !find(uniqueAxes, function (unique: Axis): boolean {
+                        return (
+                            unique.pos === axis2.pos && unique.len === axis2.len
+                        );
+                    })
+                ) {
+                    uniqueAxes.push(axis2);
+                }
+            });
 
-        // Get the related axes based options.*Axis setting #2810
-        axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-        axes2.forEach(function (A): void {
-            if (
-                defined(A.options.id) ?
-                    A.options.id.indexOf('navigator') === -1 :
-                    true
-            ) {
-                const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-                    rax = (
-                        defined((A.options as any)[a]) ?
-                            (chart as any)[a][(A.options as any)[a]] :
-                            (chart as any)[a][0]
-                    );
+            transVal = pick(
+                translatedValue,
+                axis.translate(value as any, null, null, (e as any).old) as any
+            );
+            if (isNumber(transVal)) {
+                if (axis.horiz) {
+                    uniqueAxes.forEach(function (axis2): void {
+                        let skip;
 
-                if (axis === rax) {
-                    axes.push(A);
+                        y1 = axis2.pos;
+                        y2 = (y1 as any) + axis2.len;
+                        x1 = x2 = Math.round(transVal + axis.transB);
+
+                        // outside plot area
+                        if (
+                            force !== 'pass' &&
+                            (x1 < axisLeft || x1 > axisLeft + axis.width)
+                        ) {
+                            if (force) {
+                                x1 = x2 = clamp(
+                                    x1,
+                                    axisLeft,
+                                    axisLeft + axis.width
+                                );
+                            } else {
+                                skip = true;
+                            }
+                        }
+                        if (!skip) {
+                            result.push(['M', x1, y1], ['L', x2, y2]);
+                        }
+                    });
+                } else {
+                    uniqueAxes.forEach(function (axis2): void {
+                        let skip;
+
+                        x1 = axis2.pos;
+                        x2 = (x1 as any) + axis2.len;
+                        y1 = y2 = Math.round(axisTop + axis.height - transVal);
+
+                        // outside plot area
+                        if (
+                            force !== 'pass' &&
+                            (y1 < axisTop || y1 > axisTop + axis.height)
+                        ) {
+                            if (force) {
+                                y1 = y2 = clamp(
+                                    y1,
+                                    axisTop,
+                                    axisTop + axis.height
+                                );
+                            } else {
+                                skip = true;
+                            }
+                        }
+                        if (!skip) {
+                            result.push(['M', x1, y1], ['L', x2, y2]);
+                        }
+                    });
                 }
             }
-        });
-
-
-        // Remove duplicates in the axes array. If there are no axes in the axes
-        // array, we are adding an axis without data, so we need to populate
-        // this with grid lines (#2796).
-        uniqueAxes = axes.length ?
-            [] :
-            [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-        axes.forEach(function (axis2): void {
-            if (
-                uniqueAxes.indexOf(axis2) === -1 &&
-                // Do not draw on axis which overlap completely. #5424
-                !find(uniqueAxes, function (unique: Axis): boolean {
-                    return unique.pos === axis2.pos && unique.len === axis2.len;
-                })
-            ) {
-                uniqueAxes.push(axis2);
-            }
-        });
-
-        transVal = pick(
-            translatedValue,
-            axis.translate(value as any, null, null, (e as any).old) as any
-        );
-        if (isNumber(transVal)) {
-            if (axis.horiz) {
-                uniqueAxes.forEach(function (axis2): void {
-                    let skip;
-
-                    y1 = axis2.pos;
-                    y2 = (y1 as any) + axis2.len;
-                    x1 = x2 = Math.round(transVal + axis.transB);
-
-                    // outside plot area
-                    if (
-                        force !== 'pass' &&
-                        (x1 < axisLeft || x1 > axisLeft + axis.width)
-                    ) {
-                        if (force) {
-                            x1 = x2 = clamp(
-                                x1,
-                                axisLeft,
-                                axisLeft + axis.width
-                            );
-                        } else {
-                            skip = true;
-                        }
-                    }
-                    if (!skip) {
-                        result.push(['M', x1, y1], ['L', x2, y2]);
-                    }
-                });
-            } else {
-                uniqueAxes.forEach(function (axis2): void {
-                    let skip;
-
-                    x1 = axis2.pos;
-                    x2 = (x1 as any) + axis2.len;
-                    y1 = y2 = Math.round(axisTop + axis.height - transVal);
-
-                    // outside plot area
-                    if (
-                        force !== 'pass' &&
-                        (y1 < axisTop || y1 > axisTop + axis.height)
-                    ) {
-                        if (force) {
-                            y1 = y2 = clamp(
-                                y1,
-                                axisTop,
-                                axisTop + axis.height
-                            );
-                        } else {
-                            skip = true;
-                        }
-                    }
-                    if (!skip) {
-                        result.push(['M', x1, y1], ['L', x2, y2]);
-                    }
-                });
-            }
+            (e as any).path =
+                result.length > 0
+                    ? renderer.crispPolyLine(result as any, e.lineWidth || 1)
+                    : // #3557 getPlotLinePath in regular Highcharts also returns null
+                      null;
         }
-        (e as any).path = result.length > 0 ?
-            renderer.crispPolyLine(result as any, e.lineWidth || 1) :
-            // #3557 getPlotLinePath in regular Highcharts also returns null
-            null;
     }
-});
+);
 
 /**
  * Function to crisp a line with multiple segments
@@ -659,7 +662,7 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: SVGRenderer,
-    points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
+    points: Array<SVGPath.MoveTo | SVGPath.LineTo>,
     width: number
 ): SVGPath {
     // points format: [['M', 0, 0], ['L', 100, 0]]
@@ -671,12 +674,10 @@ SVGRenderer.prototype.crispPolyLine = function (
         if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            start[1] = end[1] =
-                Math.round(start[1]) - (width % 2 / 2);
+            start[1] = end[1] = Math.round(start[1]) - (width % 2) / 2;
         }
         if (start[2] === end[2]) {
-            start[2] = end[2] =
-                Math.round(start[2]) + (width % 2 / 2);
+            start[2] = end[2] = Math.round(start[2]) + (width % 2) / 2;
         }
     }
     return points;
@@ -690,190 +691,201 @@ addEvent(Axis, 'afterHideCrosshair', function (): void {
 });
 
 // Extend crosshairs to also draw the label
-addEvent(Axis, 'afterDrawCrosshair', function (
-    event: { e: PointerEvent; point: Point }
-): void {
+addEvent(
+    Axis,
+    'afterDrawCrosshair',
+    function (event: { e: PointerEvent; point: Point }): void {
+        // Check if the label has to be drawn
+        if (
+            !this.crosshair ||
+            !this.crosshair.label ||
+            !this.crosshair.label.enabled ||
+            !this.cross ||
+            !isNumber(this.min) ||
+            !isNumber(this.max)
+        ) {
+            return;
+        }
 
-    // Check if the label has to be drawn
-    if (
-        !this.crosshair ||
-        !this.crosshair.label ||
-        !this.crosshair.label.enabled ||
-        !this.cross ||
-        !isNumber(this.min) ||
-        !isNumber(this.max)
-    ) {
-        return;
-    }
+        let chart = this.chart,
+            log = this.logarithmic,
+            options = this.crosshair.label, // the label's options
+            horiz = this.horiz, // axis orientation
+            opposite = this.opposite, // axis position
+            left = this.left, // left position
+            top = this.top, // top position
+            crossLabel = this.crossLabel, // the svgElement
+            posx,
+            posy,
+            crossBox,
+            formatOption = options.format,
+            formatFormat = '',
+            limit,
+            align,
+            tickInside = this.options.tickPosition === 'inside',
+            snap = (this.crosshair as any).snap !== false,
+            offset = 0,
+            // Use last available event (#5287)
+            e = event.e || (this.cross && this.cross.e),
+            point = event.point,
+            min = this.min,
+            max = this.max;
 
-    let chart = this.chart,
-        log = this.logarithmic,
-        options = this.crosshair.label, // the label's options
-        horiz = this.horiz, // axis orientation
-        opposite = this.opposite, // axis position
-        left = this.left, // left position
-        top = this.top, // top position
-        crossLabel = this.crossLabel, // the svgElement
-        posx,
-        posy,
-        crossBox,
-        formatOption = options.format,
-        formatFormat = '',
-        limit,
-        align,
-        tickInside = this.options.tickPosition === 'inside',
-        snap = (this.crosshair as any).snap !== false,
-        offset = 0,
-        // Use last available event (#5287)
-        e = event.e || (this.cross && this.cross.e),
-        point = event.point,
-        min = this.min,
-        max = this.max;
+        if (log) {
+            min = log.lin2log(min);
+            max = log.lin2log(max);
+        }
 
-    if (log) {
-        min = log.lin2log(min);
-        max = log.lin2log(max);
-    }
+        align = horiz
+            ? 'center'
+            : opposite
+            ? this.labelAlign === 'right'
+                ? 'right'
+                : 'left'
+            : this.labelAlign === 'left'
+            ? 'left'
+            : 'center';
 
-    align = (horiz ? 'center' : opposite ?
-        (this.labelAlign === 'right' ? 'right' : 'left') :
-        (this.labelAlign === 'left' ? 'left' : 'center'));
-
-    // If the label does not exist yet, create it.
-    if (!crossLabel) {
-        crossLabel = this.crossLabel = chart.renderer
-            .label(
-                '',
-                0,
-                void 0,
-                options.shape || 'callout'
-            )
-            .addClass(
-                'highcharts-crosshair-label highcharts-color-' + (
-                    point ?
-                        point.series.colorIndex :
-                        this.series[0] && this.series[0].colorIndex
+        // If the label does not exist yet, create it.
+        if (!crossLabel) {
+            crossLabel = this.crossLabel = chart.renderer
+                .label('', 0, void 0, options.shape || 'callout')
+                .addClass(
+                    'highcharts-crosshair-label highcharts-color-' +
+                        (point
+                            ? point.series.colorIndex
+                            : this.series[0] && this.series[0].colorIndex)
                 )
-            )
-            .attr({
-                align: options.align || align as any,
-                padding: pick(options.padding, 8),
-                r: pick(options.borderRadius, 3),
-                zIndex: 2
-            })
-            .add(this.labelGroup);
-
-        // Presentational
-        if (!chart.styledMode) {
-            crossLabel
                 .attr({
-                    fill: options.backgroundColor ||
-                        point && point.series && point.series.color || // #14888
-                        Palette.neutralColor60,
-                    stroke: options.borderColor || '',
-                    'stroke-width': options.borderWidth || 0
+                    align: options.align || (align as any),
+                    padding: pick(options.padding, 8),
+                    r: pick(options.borderRadius, 3),
+                    zIndex: 2
                 })
-                .css(extend<CSSObject>({
-                    color: Palette.backgroundColor,
-                    fontWeight: 'normal',
-                    fontSize: '11px',
-                    textAlign: 'center'
-                }, options.style || {}));
-        }
-    }
+                .add(this.labelGroup);
 
-    if (horiz) {
-        posx = snap ? (point.plotX || 0) + left : e.chartX;
-        posy = top + (opposite ? 0 : this.height);
-    } else {
-        posx = opposite ? this.width + left : 0;
-        posy = snap ? (point.plotY || 0) + top : e.chartY;
-    }
-
-    if (!formatOption && !options.formatter) {
-        if (this.dateTime) {
-            formatFormat = '%b %d, %Y';
-        }
-        formatOption =
-            '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
-    }
-
-    // Show the label
-    const value = snap ?
-        (this.isXAxis ? point.x : point.y) :
-        this.toValue(horiz ? e.chartX : e.chartY);
-
-    // Crosshair should be rendered within Axis range (#7219). Also, the point
-    // of currentPriceIndicator should be inside the plot area, #14879.
-    const isInside = point ?
-        point.series.isPointInside(point) :
-        (isNumber(value) && value > min && value < max);
-
-    let text = '';
-    if (formatOption) {
-        text = format(formatOption, { value }, chart);
-    } else if (options.formatter && isNumber(value)) {
-        text = options.formatter.call(this, value);
-    }
-
-    crossLabel.attr({
-        text,
-        x: posx,
-        y: posy,
-        visibility: isInside ? 'visible' : 'hidden'
-    });
-
-    crossBox = crossLabel.getBBox();
-
-    // now it is placed we can correct its position
-    if (isNumber(crossLabel.y)) {
-        if (horiz) {
-            if ((tickInside && !opposite) || (!tickInside && opposite)) {
-                posy = crossLabel.y - crossBox.height;
+            // Presentational
+            if (!chart.styledMode) {
+                crossLabel
+                    .attr({
+                        fill:
+                            options.backgroundColor ||
+                            (point && point.series && point.series.color) || // #14888
+                            Palette.neutralColor60,
+                        stroke: options.borderColor || '',
+                        'stroke-width': options.borderWidth || 0
+                    })
+                    .css(
+                        extend<CSSObject>(
+                            {
+                                color: Palette.backgroundColor,
+                                fontWeight: 'normal',
+                                fontSize: '11px',
+                                textAlign: 'center'
+                            },
+                            options.style || {}
+                        )
+                    );
             }
-        } else {
-            posy = crossLabel.y - (crossBox.height / 2);
         }
-    }
 
-    // check the edges
-    if (horiz) {
-        limit = {
-            left: left - crossBox.x,
-            right: left + this.width - crossBox.x
-        };
-    } else {
-        limit = {
-            left: this.labelAlign === 'left' ? left : 0,
-            right: this.labelAlign === 'right' ?
-                left + this.width :
-                chart.chartWidth
-        };
-    }
+        if (horiz) {
+            posx = snap ? (point.plotX || 0) + left : e.chartX;
+            posy = top + (opposite ? 0 : this.height);
+        } else {
+            posx = opposite ? this.width + left : 0;
+            posy = snap ? (point.plotY || 0) + top : e.chartY;
+        }
 
-    // left edge
-    if (crossLabel.translateX < limit.left) {
-        offset = limit.left - crossLabel.translateX;
-    }
-    // right edge
-    if (crossLabel.translateX + crossBox.width >= limit.right) {
-        offset = -(crossLabel.translateX + crossBox.width - limit.right);
-    }
+        if (!formatOption && !options.formatter) {
+            if (this.dateTime) {
+                formatFormat = '%b %d, %Y';
+            }
+            formatOption =
+                '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
+        }
 
-    // show the crosslabel
-    crossLabel.attr({
-        x: posx + offset,
-        y: posy,
-        // First set x and y, then anchorX and anchorY, when box is actually
-        // calculated, #5702
-        anchorX: horiz ?
-            posx :
-            (this.opposite ? 0 : chart.chartWidth),
-        anchorY: horiz ?
-            (this.opposite ? chart.chartHeight : 0) :
-            posy + crossBox.height / 2
-    });
-});
+        // Show the label
+        const value = snap
+            ? this.isXAxis
+                ? point.x
+                : point.y
+            : this.toValue(horiz ? e.chartX : e.chartY);
+
+        // Crosshair should be rendered within Axis range (#7219). Also, the
+        // point of currentPriceIndicator should be inside the plot area,
+        // #14879.
+        const isInside = point
+            ? point.series.isPointInside(point)
+            : isNumber(value) && value > min && value < max;
+
+        let text = '';
+        if (formatOption) {
+            text = format(formatOption, { value }, chart);
+        } else if (options.formatter && isNumber(value)) {
+            text = options.formatter.call(this, value);
+        }
+
+        crossLabel.attr({
+            text,
+            x: posx,
+            y: posy,
+            visibility: isInside ? 'visible' : 'hidden'
+        });
+
+        crossBox = crossLabel.getBBox();
+
+        // now it is placed we can correct its position
+        if (isNumber(crossLabel.y)) {
+            if (horiz) {
+                if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                    posy = crossLabel.y - crossBox.height;
+                }
+            } else {
+                posy = crossLabel.y - crossBox.height / 2;
+            }
+        }
+
+        // check the edges
+        if (horiz) {
+            limit = {
+                left: left - crossBox.x,
+                right: left + this.width - crossBox.x
+            };
+        } else {
+            limit = {
+                left: this.labelAlign === 'left' ? left : 0,
+                right:
+                    this.labelAlign === 'right'
+                        ? left + this.width
+                        : chart.chartWidth
+            };
+        }
+
+        // left edge
+        if (crossLabel.translateX < limit.left) {
+            offset = limit.left - crossLabel.translateX;
+        }
+        // right edge
+        if (crossLabel.translateX + crossBox.width >= limit.right) {
+            offset = -(crossLabel.translateX + crossBox.width - limit.right);
+        }
+
+        // show the crosslabel
+        crossLabel.attr({
+            x: posx + offset,
+            y: posy,
+            // First set x and y, then anchorX and anchorY, when box is actually
+            // calculated, #5702
+            anchorX: horiz ? posx : this.opposite ? 0 : chart.chartWidth,
+            anchorY: horiz
+                ? this.opposite
+                    ? chart.chartHeight
+                    : 0
+                : posy + crossBox.height / 2
+        });
+    }
+);
 
 /**
  * Based on the data grouping options decides whether
@@ -882,31 +894,33 @@ addEvent(Axis, 'afterDrawCrosshair', function (
  * @ignore
  * @function Highcharts.Series#forceCropping
  */
-Series.prototype.forceCropping = function (this: Series): (boolean|undefined) {
+Series.prototype.forceCropping = function (this: Series): boolean | undefined {
     const chart = this.chart,
         options = this.options,
         dataGroupingOptions = options.dataGrouping,
-        groupingEnabled = this.allowDG !== false && dataGroupingOptions &&
+        groupingEnabled =
+            this.allowDG !== false &&
+            dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock);
 
     return groupingEnabled;
 };
 
-addEvent(Chart, 'update', function (
-    this: StockChart,
-    e: { options: Options }
-): void {
-    const options = e.options;
+addEvent(
+    Chart,
+    'update',
+    function (this: StockChart, e: { options: Options }): void {
+        const options = e.options;
 
-    // Use case: enabling scrollbar from a disabled state.
-    // Scrollbar needs to be initialized from a controller, Navigator in this
-    // case (#6615)
-    if ('scrollbar' in options && this.navigator) {
-        merge(true, this.options.scrollbar, options.scrollbar);
-        (this.navigator.update as any)({}, false);
-        delete options.scrollbar;
+        // Use case: enabling scrollbar from a disabled state. Scrollbar needs
+        // to be initialized from a controller, Navigator in this case (#6615)
+        if ('scrollbar' in options && this.navigator) {
+            merge(true, this.options.scrollbar, options.scrollbar);
+            (this.navigator.update as any)({}, false);
+            delete options.scrollbar;
+        }
     }
-});
+);
 
 /* *
  *

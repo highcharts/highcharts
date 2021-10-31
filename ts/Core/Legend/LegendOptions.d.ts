@@ -14,10 +14,7 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Renderer/AlignObject';
+import type { AlignValue, VerticalAlignValue } from '../Renderer/AlignObject';
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
@@ -56,9 +53,9 @@ export interface LegendOptions {
     itemMarginTop?: number;
     itemStyle?: CSSObject;
     itemWidth?: number;
-    layout?: ('horizontal'|'vertical'|'proximate');
+    layout?: 'horizontal' | 'vertical' | 'proximate';
     labelFormat?: string;
-    labelFormatter?: F.FormatterCallback<Series|Point>;
+    labelFormatter?: F.FormatterCallback<Series | Point>;
     /** @deprecated */
     lineHeight?: number;
     margin?: number;
@@ -67,7 +64,7 @@ export interface LegendOptions {
     padding?: number;
     reversed?: boolean;
     rtl?: boolean;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shadow?: boolean | Partial<ShadowOptionsObject>;
     squareSymbol?: boolean;
     /** @deprecated */
     style?: CSSObject;
@@ -78,14 +75,14 @@ export interface LegendOptions {
     title?: LegendTitleOptions;
     useHTML?: boolean;
     verticalAlign?: VerticalAlignValue;
-    width?: (number|string);
+    width?: number | string;
     x?: number;
     y?: number;
 }
 
 export interface LegendNavigationOptions {
     activeColor?: ColorType;
-    animation?: (boolean|Partial<AnimationOptions>);
+    animation?: boolean | Partial<AnimationOptions>;
     arrowSize?: number;
     enabled?: boolean;
     inactiveColor?: ColorType;

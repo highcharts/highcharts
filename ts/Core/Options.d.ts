@@ -26,7 +26,6 @@ import type { SymbolKey } from './Renderer/SVG/SymbolType';
  *
  * */
 
-
 export interface Options {
     colors?: Array<ColorString>;
     lang: LangOptions;
@@ -54,8 +53,8 @@ export interface NumberFormatterCallbackFunction {
     ): string;
 }
 
-export type OptionsOverflowValue = ('allow'|'justify');
-export type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
+export type OptionsOverflowValue = 'allow' | 'justify';
+export type OptionsPosition3dValue = 'chart' | 'flap' | 'offset' | 'ortho';
 
 /* *
  *

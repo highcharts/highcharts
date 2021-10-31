@@ -14,9 +14,9 @@
  *
  * */
 
-export type AlignValue = ('center'|'left'|'right');
+export type AlignValue = 'center' | 'left' | 'right';
 
-export type VerticalAlignValue = ('bottom'|'middle'|'top');
+export type VerticalAlignValue = 'bottom' | 'middle' | 'top';
 
 export interface AlignObject {
     align?: AlignValue;

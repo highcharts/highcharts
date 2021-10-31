@@ -45,7 +45,7 @@ const hasValidDOMParser = (function (): boolean {
     } catch (e) {
         return false;
     }
-}());
+})();
 
 /* *
  *
@@ -65,7 +65,6 @@ const hasValidDOMParser = (function (): boolean {
  * Either an HTML string or an ASTNode list to populate the tree.
  */
 class AST {
-
     /* *
      *
      *  Static Properties
@@ -281,15 +280,20 @@ class AST {
                 valid = false;
             }
             if (
-                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
-                    .indexOf(key) !== -1
+                ['background', 'dynsrc', 'href', 'lowsrc', 'src'].indexOf(
+                    key
+                ) !== -1
             ) {
-                valid = isString(val) && AST.allowedReferences.some(
-                    (ref): boolean => val.indexOf(ref) === 0
-                );
+                valid =
+                    isString(val) &&
+                    AST.allowedReferences.some(
+                        (ref): boolean => val.indexOf(ref) === 0
+                    );
             }
             if (!valid) {
-                error(`Highcharts warning: Invalid attribute '${key}' in config`);
+                error(
+                    `Highcharts warning: Invalid attribute '${key}' in config`
+                );
                 delete attributes[key];
             }
         });
@@ -326,9 +330,9 @@ class AST {
      * */
 
     // Construct an AST from HTML markup, or wrap an array of existing AST nodes
-    constructor(source: (string|Array<AST.Node>)) {
-        this.nodes = typeof source === 'string' ?
-            this.parseMarkup(source) : source;
+    constructor(source: string | Array<AST.Node>) {
+        this.nodes =
+            typeof source === 'string' ? this.parseMarkup(source) : source;
     }
 
     /* *
@@ -360,10 +364,7 @@ class AST {
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
-    public addToDOM(
-        parent: Element
-    ): HTMLElement|SVGElement {
-
+    public addToDOM(parent: Element): HTMLElement | SVGElement {
         /**
          * @private
          * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
@@ -371,28 +372,26 @@ class AST {
          * @return {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} The inserted node.
          */
         function recurse(
-            subtree: (AST.Node|Array<AST.Node>),
+            subtree: AST.Node | Array<AST.Node>,
             subParent: Element
-        ): SVGElement|HTMLElement {
+        ): SVGElement | HTMLElement {
             let ret: any;
 
-            splat(subtree).forEach(function (
-                item: AST.Node
-            ): void {
+            splat(subtree).forEach(function (item: AST.Node): void {
                 const tagName = item.tagName;
-                const textNode = item.textContent ?
-                    H.doc.createTextNode(item.textContent) :
-                    void 0;
-                let node: Text|Element|undefined;
+                const textNode = item.textContent
+                    ? H.doc.createTextNode(item.textContent)
+                    : void 0;
+                let node: Text | Element | undefined;
 
                 if (tagName) {
                     if (tagName === '#text') {
                         node = textNode;
-
                     } else if (AST.allowedTags.indexOf(tagName) !== -1) {
-                        const NS = tagName === 'svg' ?
-                            SVG_NS :
-                            (subParent.namespaceURI || SVG_NS);
+                        const NS =
+                            tagName === 'svg'
+                                ? SVG_NS
+                                : subParent.namespaceURI || SVG_NS;
 
                         const element = H.doc.createElementNS(NS, tagName);
                         const attributes = item.attributes || {};
@@ -422,9 +421,10 @@ class AST {
                         // Recurse
                         recurse(item.children || [], element);
                         node = element;
-
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            `Highcharts warning: Invalid tagName '${tagName}' in config`
+                        );
                     }
                 }
 
@@ -457,7 +457,7 @@ class AST {
      */
     private parseMarkup(markup: string): Array<AST.Node> {
         interface Attribute {
-            name: (keyof SVGAttributes|keyof HTMLAttributes);
+            name: keyof SVGAttributes | keyof HTMLAttributes;
             value: string;
         }
 
@@ -492,7 +492,7 @@ class AST {
 
             // Add attributes
             if (parsedAttributes) {
-                const attributes: HTMLAttributes&SVGAttributes = {};
+                const attributes: HTMLAttributes & SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
                     attributes[attrib.name] = attrib.value;
                 });
@@ -516,9 +516,8 @@ class AST {
             addTo.push(astNode);
         };
 
-        [].forEach.call(
-            doc.body.childNodes,
-            (childNode): void => appendChildNodes(childNode, nodes)
+        [].forEach.call(doc.body.childNodes, (childNode): void =>
+            appendChildNodes(childNode, nodes)
         );
 
         if (body) {
@@ -536,7 +535,6 @@ class AST {
  * */
 
 namespace AST {
-
     /* *
      *
      *  Declarations
@@ -544,12 +542,11 @@ namespace AST {
      * */
 
     export interface Node {
-        attributes?: (HTMLAttributes&SVGAttributes);
+        attributes?: HTMLAttributes & SVGAttributes;
         children?: Array<Node>;
         tagName?: string;
         textContent?: string;
     }
-
 }
 
 /* *
@@ -570,16 +567,16 @@ export default AST;
  * Serialized form of an SVG/HTML definition, including children.
  *
  * @interface Highcharts.ASTNode
- *//**
+ */ /**
  * @name Highcharts.ASTNode#attributes
  * @type {Highcharts.SVGAttributes|undefined}
- *//**
+ */ /**
  * @name Highcharts.ASTNode#children
  * @type {Array<Highcharts.ASTNode>|undefined}
- *//**
+ */ /**
  * @name Highcharts.ASTNode#tagName
  * @type {string|undefined}
- *//**
+ */ /**
  * @name Highcharts.ASTNode#textContent
  * @type {string|undefined}
  */

@@ -18,10 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from './Axis';
-import type {
-    AxisBreakOptions,
-    YAxisOptions
-} from './AxisOptions';
+import type { AxisBreakOptions, YAxisOptions } from './AxisOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
@@ -30,14 +27,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    find,
-    fireEvent,
-    isArray,
-    isNumber,
-    pick
-} = U;
+const { addEvent, find, fireEvent, isArray, isNumber, pick } = U;
 
 /* *
  *
@@ -97,7 +87,6 @@ declare module '../Series/SeriesOptions' {
  * @private
  */
 namespace BrokenAxis {
-
     /* *
      *
      *  Declarations
@@ -139,8 +128,7 @@ namespace BrokenAxis {
     export function compose<T extends typeof Axis>(
         AxisClass: T,
         SeriesClass: typeof Series
-    ): (T&typeof BrokenAxis) {
-
+    ): T & typeof BrokenAxis {
         if (composedClasses.indexOf(AxisClass) === -1) {
             composedClasses.push(AxisClass);
 
@@ -148,7 +136,11 @@ namespace BrokenAxis {
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-            addEvent(AxisClass, 'afterSetTickPositions', onAxisAfterSetTickPositions);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
@@ -160,11 +152,15 @@ namespace BrokenAxis {
             seriesProto.drawBreaks = seriesDrawBreaks;
             seriesProto.gappedPath = seriesGappedPath;
 
-            addEvent(SeriesClass, 'afterGeneratePoints', onSeriesAfterGeneratePoints);
+            addEvent(
+                SeriesClass,
+                'afterGeneratePoints',
+                onSeriesAfterGeneratePoints
+            );
             addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         }
 
-        return AxisClass as (T&typeof BrokenAxis);
+        return AxisClass as T & typeof BrokenAxis;
     }
 
     /**
@@ -194,10 +190,7 @@ namespace BrokenAxis {
         const axis = this,
             brokenAxis = axis.brokenAxis;
 
-        if (
-            brokenAxis &&
-            brokenAxis.hasBreaks
-        ) {
+        if (brokenAxis && brokenAxis.hasBreaks) {
             const tickPositions = axis.tickPositions,
                 info = axis.tickPositions.info,
                 newPositions = [];
@@ -245,24 +238,19 @@ namespace BrokenAxis {
 
                 // Respect nulls inside the break (#4275)
                 const nullGap = point.y === null && connectNulls === false;
-                const isPointInBreak = (
-                    !nullGap && (
-                        (
-                            xAxis &&
-                            xAxis.brokenAxis &&
-                            xAxis.brokenAxis.isInAnyBreak(point.x, true)
-                        ) || (
-                            yAxis &&
+                const isPointInBreak =
+                    !nullGap &&
+                    ((xAxis &&
+                        xAxis.brokenAxis &&
+                        xAxis.brokenAxis.isInAnyBreak(point.x, true)) ||
+                        (yAxis &&
                             yAxis.brokenAxis &&
-                            yAxis.brokenAxis.isInAnyBreak(point.y, true)
-                        )
-                    )
-                );
+                            yAxis.brokenAxis.isInAnyBreak(point.y, true)));
                 // Set point.visible if in any break.
                 // If not in break, reset visible to original value.
-                point.visible = isPointInBreak ?
-                    false :
-                    point.options.visible !== false;
+                point.visible = isPointInBreak
+                    ? false
+                    : point.options.visible !== false;
             }
         }
     }
@@ -280,16 +268,16 @@ namespace BrokenAxis {
      */
     function seriesDrawBreaks(
         this: Series,
-        axis: (Axis|undefined),
+        axis: Axis | undefined,
         keys: Array<string>
     ): void {
         const series = this,
             points = series.points;
 
         let breaks: Array<AxisBreakObject>,
-            threshold: (number|null|undefined),
+            threshold: number | null | undefined,
             eventName: string,
-            y: (number|null|undefined);
+            y: number | null | undefined;
 
         if (
             axis && // #5950
@@ -299,10 +287,10 @@ namespace BrokenAxis {
             const brokenAxis = axis.brokenAxis;
 
             keys.forEach(function (key: string): void {
-                breaks = brokenAxis && brokenAxis.breakArray || [];
-                threshold = axis.isXAxis ?
-                    axis.min :
-                    pick(series.options.threshold, axis.min);
+                breaks = (brokenAxis && brokenAxis.breakArray) || [];
+                threshold = axis.isXAxis
+                    ? axis.min
+                    : pick(series.options.threshold, axis.min);
                 points.forEach(function (point: Point): void {
                     y = pick(
                         (point as any)['stack' + key.toUpperCase()],
@@ -310,7 +298,6 @@ namespace BrokenAxis {
                     );
                     breaks.forEach(function (brk: AxisBreakObject): void {
                         if (isNumber(threshold) && isNumber(y)) {
-
                             eventName = false as any;
 
                             if (
@@ -318,10 +305,13 @@ namespace BrokenAxis {
                                 (threshold > brk.from && y < brk.from)
                             ) {
                                 eventName = 'pointBreak';
-
                             } else if (
-                                (threshold < brk.from && y > brk.from && y < brk.to) ||
-                                (threshold > brk.from && y > brk.to && y < brk.from)
+                                (threshold < brk.from &&
+                                    y > brk.from &&
+                                    y < brk.to) ||
+                                (threshold > brk.from &&
+                                    y > brk.to &&
+                                    y < brk.from)
                             ) {
                                 eventName = 'pointInBreak';
                             }
@@ -412,7 +402,8 @@ namespace BrokenAxis {
          * @apioption  plotOptions.series.gapUnit
          */
 
-        if (gapSize && i > 0) { // #5008
+        if (gapSize && i > 0) {
+            // #5008
 
             // Gap unit is relative
             if (this.options.gapUnit !== 'value') {
@@ -447,7 +438,8 @@ namespace BrokenAxis {
                 if ((next.x as any) - (current.x as any) > gapSize) {
                     const xRange = ((current.x as any) + (next.x as any)) / 2;
 
-                    points.splice( // insert after this one
+                    points.splice(
+                        // insert after this one
                         i + 1,
                         0,
                         {
@@ -459,17 +451,15 @@ namespace BrokenAxis {
                     // For stacked chart generate empty stack items,
                     // #6546
                     if (yAxis.stacking && this.options.stacking) {
-                        stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
-                            new StackItem(
-                                yAxis as any,
-                                (
-                                    (yAxis.options as YAxisOptions)
-                                        .stackLabels as any
-                                ),
-                                false,
-                                xRange,
-                                this.stack
-                            );
+                        stack = yAxis.stacking.stacks[this.stackKey as any][
+                            xRange
+                        ] = new StackItem(
+                            yAxis as any,
+                            (yAxis.options as YAxisOptions).stackLabels as any,
+                            false,
+                            xRange,
+                            this.stack
+                        );
                         stack.total = 0;
                     }
                 }
@@ -494,7 +484,6 @@ namespace BrokenAxis {
      * @class
      */
     export class Additions {
-
         /* *
          *
          *  Static Functions
@@ -507,17 +496,16 @@ namespace BrokenAxis {
         public static isInBreak(
             brk: AxisBreakOptions,
             val: number
-        ): (boolean|undefined) {
+        ): boolean | undefined {
             const repeat = brk.repeat || Infinity,
                 from = brk.from,
                 length = brk.to - brk.from,
-                test = (
-                    val >= from ?
-                        (val - from) % repeat :
-                        repeat - ((from - val) % repeat)
-                );
+                test =
+                    val >= from
+                        ? (val - from) % repeat
+                        : repeat - ((from - val) % repeat);
 
-            let ret: (boolean|undefined);
+            let ret: boolean | undefined;
 
             if (!brk.inclusive) {
                 ret = test < length && test !== 0;
@@ -530,10 +518,7 @@ namespace BrokenAxis {
         /**
          * @private
          */
-        public static lin2Val(
-            this: Axis,
-            val: (number|null)
-        ): (number|null) {
+        public static lin2Val(this: Axis, val: number | null): number | null {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
             const breakArray = brokenAxis && brokenAxis.breakArray;
@@ -563,10 +548,7 @@ namespace BrokenAxis {
         /**
          * @private
          */
-        public static val2Lin(
-            this: Axis,
-            val: (number|null)
-        ): (number|null) {
+        public static val2Lin(this: Axis, val: number | null): number | null {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
             const breakArray = brokenAxis && brokenAxis.breakArray;
@@ -586,7 +568,7 @@ namespace BrokenAxis {
                 } else if (brk.from >= val) {
                     break;
                 } else if (Additions.isInBreak(brk, val)) {
-                    nval -= (val - brk.from);
+                    nval -= val - brk.from;
                     break;
                 }
             }
@@ -638,7 +620,7 @@ namespace BrokenAxis {
         public findBreakAt(
             x: number,
             breaks: Array<AxisBreakOptions>
-        ): (AxisBreakOptions|undefined) {
+        ): AxisBreakOptions | undefined {
             return find(breaks, function (b): boolean {
                 return b.from < x && x < b.to;
             });
@@ -648,20 +630,19 @@ namespace BrokenAxis {
          * @private
          */
         public isInAnyBreak(
-            val: (number|null|undefined),
+            val: number | null | undefined,
             testKeep?: boolean
-        ): (boolean|undefined) {
+        ): boolean | undefined {
             const brokenAxis = this,
                 axis = brokenAxis.axis,
                 breaks = axis.options.breaks || [];
 
             let i = breaks.length,
-                inbrk: (boolean|undefined),
-                keep: (boolean|undefined),
-                ret: (boolean|undefined);
+                inbrk: boolean | undefined,
+                keep: boolean | undefined,
+                ret: boolean | undefined;
 
             if (i && isNumber(val)) {
-
                 while (i--) {
                     if (Additions.isInBreak(breaks[i], val)) {
                         inbrk = true;
@@ -702,7 +683,7 @@ namespace BrokenAxis {
         ): void {
             const brokenAxis = this;
             const axis = brokenAxis.axis;
-            const hasBreaks = (isArray(breaks) && !!breaks.length);
+            const hasBreaks = isArray(breaks) && !!breaks.length;
 
             axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
             brokenAxis.hasBreaks = hasBreaks;
@@ -729,20 +710,27 @@ namespace BrokenAxis {
                     newMin: number,
                     newMax: number,
                     redraw?: boolean,
-                    animation?: (boolean|Partial<AnimationOptions>),
+                    animation?: boolean | Partial<AnimationOptions>,
                     eventArguments?: any
                 ): void {
                     // If trying to set extremes inside a break, extend min to
                     // after, and max to before the break ( #3857 )
                     if (brokenAxis.hasBreaks) {
-                        const breaks = (this.options.breaks || []);
+                        const breaks = this.options.breaks || [];
 
                         let axisBreak;
 
-                        while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
+                        while (
+                            (axisBreak = brokenAxis.findBreakAt(newMin, breaks))
+                        ) {
                             newMin = axisBreak.to as any;
                         }
-                        while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks as any))) {
+                        while (
+                            (axisBreak = brokenAxis.findBreakAt(
+                                newMax,
+                                breaks as any
+                            ))
+                        ) {
                             newMax = axisBreak.from as any;
                         }
 
@@ -777,97 +765,92 @@ namespace BrokenAxis {
                             repeat: number,
                             min = axis.userMin || axis.min,
                             max = axis.userMax || axis.max,
-                            start: (number|null|undefined),
+                            start: number | null | undefined,
                             i: number;
 
                         // Min & max check (#4247)
-                        breaks.forEach(
-                            function (brk): void {
-                                repeat = brk.repeat || Infinity;
-                                if (isNumber(min) && isNumber(max)) {
-                                    if (Additions.isInBreak(brk, min)) {
-                                        min += (brk.to % repeat) - (min % repeat);
-                                    }
-                                    if (Additions.isInBreak(brk, max)) {
-                                        max -= (max % repeat) - (brk.from % repeat);
-                                    }
+                        breaks.forEach(function (brk): void {
+                            repeat = brk.repeat || Infinity;
+                            if (isNumber(min) && isNumber(max)) {
+                                if (Additions.isInBreak(brk, min)) {
+                                    min += (brk.to % repeat) - (min % repeat);
+                                }
+                                if (Additions.isInBreak(brk, max)) {
+                                    max -= (max % repeat) - (brk.from % repeat);
                                 }
                             }
-                        );
+                        });
 
                         // Construct an array holding all breaks in the axis
-                        breaks.forEach(
-                            function (brk): void {
-                                start = brk.from;
-                                repeat = brk.repeat || Infinity;
+                        breaks.forEach(function (brk): void {
+                            start = brk.from;
+                            repeat = brk.repeat || Infinity;
 
-                                if (isNumber(min) && isNumber(max)) {
+                            if (isNumber(min) && isNumber(max)) {
+                                while (start - repeat > min) {
+                                    start -= repeat;
+                                }
+                                while (start < min) {
+                                    start += repeat;
+                                }
 
-                                    while (start - repeat > min) {
-                                        start -= repeat;
-                                    }
-                                    while (start < min) {
-                                        start += repeat;
-                                    }
-
-                                    for (i = start; i < max; i += repeat) {
-                                        breakArrayT.push({
-                                            value: i,
-                                            move: 'in'
-                                        });
-                                        breakArrayT.push({
-                                            value: i + brk.to - brk.from,
-                                            move: 'out',
-                                            size: brk.breakSize
-                                        });
-                                    }
+                                for (i = start; i < max; i += repeat) {
+                                    breakArrayT.push({
+                                        value: i,
+                                        move: 'in'
+                                    });
+                                    breakArrayT.push({
+                                        value: i + brk.to - brk.from,
+                                        move: 'out',
+                                        size: brk.breakSize
+                                    });
                                 }
                             }
-                        );
+                        });
 
                         breakArrayT.sort(function (
                             a: AxisBreakBorderObject,
                             b: AxisBreakBorderObject
                         ): number {
-                            return (
-                                (a.value === b.value) ?
-                                    (
-                                        (a.move === 'in' ? 0 : 1) -
-                                        (b.move === 'in' ? 0 : 1)
-                                    ) :
-                                    a.value - b.value
-                            );
+                            return a.value === b.value
+                                ? (a.move === 'in' ? 0 : 1) -
+                                      (b.move === 'in' ? 0 : 1)
+                                : a.value - b.value;
                         });
 
                         // Simplify the breaks
                         inBrk = 0;
                         start = min;
 
-                        breakArrayT.forEach(
-                            function (brk: AxisBreakBorderObject): void {
-                                inBrk += (brk.move === 'in' ? 1 : -1);
+                        breakArrayT.forEach(function (
+                            brk: AxisBreakBorderObject
+                        ): void {
+                            inBrk += brk.move === 'in' ? 1 : -1;
 
-                                if (inBrk === 1 && brk.move === 'in') {
-                                    start = brk.value;
-                                }
-                                if (inBrk === 0 && isNumber(start)) {
-                                    breakArray.push({
-                                        from: start,
-                                        to: brk.value,
-                                        len: brk.value - start - (brk.size || 0)
-                                    });
-                                    length += brk.value - start - (brk.size || 0);
-                                }
+                            if (inBrk === 1 && brk.move === 'in') {
+                                start = brk.value;
                             }
-                        );
+                            if (inBrk === 0 && isNumber(start)) {
+                                breakArray.push({
+                                    from: start,
+                                    to: brk.value,
+                                    len: brk.value - start - (brk.size || 0)
+                                });
+                                length += brk.value - start - (brk.size || 0);
+                            }
+                        });
 
                         brokenAxis.breakArray = breakArray;
 
                         // Used with staticScale, and below the actual axis
                         // length, when breaks are substracted.
-                        if (isNumber(min) && isNumber(max) && isNumber(axis.min)) {
-                            brokenAxis.unitLength = max - min - length +
-                                pointRangePadding;
+                        if (
+                            isNumber(min) &&
+                            isNumber(max) &&
+                            isNumber(axis.min)
+                        ) {
+                            brokenAxis.unitLength =
+                                max - min - length + pointRangePadding;
 
                             fireEvent(axis, 'afterBreaks');
 
@@ -896,7 +879,6 @@ namespace BrokenAxis {
             }
         }
     }
-
 }
 
 /* *

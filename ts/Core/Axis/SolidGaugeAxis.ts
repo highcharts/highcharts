@@ -22,14 +22,9 @@ import type ColorType from '../../Core/Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
 import type RadialAxis from './RadialAxis';
 import Color from '../Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import U from '../Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 /* eslint-disable valid-jsdoc */
 
 /**
@@ -41,17 +36,13 @@ interface SolidGaugeAxis extends RadialAxis.AxisComposition {
     stops: ColorAxis['stops'];
     initDataClasses(userOptions: ColorAxis.Options): void;
     initStops(userOptions: ColorAxis.Options): void;
-    toColor(
-        value: number,
-        point: SolidGaugePoint
-    ): (ColorType|undefined);
+    toColor(value: number, point: SolidGaugePoint): ColorType | undefined;
 }
 
 /**
  * @private
  */
 namespace SolidGaugeAxis {
-
     /* *
      *
      *  Interfaces
@@ -80,7 +71,6 @@ namespace SolidGaugeAxis {
      * If we implement an AMD system we should make ColorAxis a dependency.
      */
     const methods = {
-
         initDataClasses: function (
             this: SolidGaugeAxis,
             userOptions: ColorAxis.Options
@@ -96,7 +86,7 @@ namespace SolidGaugeAxis {
                 dataClass: ColorAxis.DataClassesOptions,
                 i: number
             ): void {
-                let colors: (Array<string>|undefined);
+                let colors: Array<string> | undefined;
 
                 dataClass = merge(dataClass);
                 dataClasses.push(dataClass);
@@ -137,15 +127,15 @@ namespace SolidGaugeAxis {
             this: SolidGaugeAxis,
             value: number,
             point: SolidGaugePoint
-        ): (ColorType|undefined) {
+        ): ColorType | undefined {
             let pos: number,
                 stops = this.stops,
-                from: (number|GradientColor['stops'][0]|undefined),
-                to: (number|GradientColor['stops'][0]|undefined),
-                color: (ColorType|undefined),
+                from: number | GradientColor['stops'][0] | undefined,
+                to: number | GradientColor['stops'][0] | undefined,
+                color: ColorType | undefined,
                 dataClasses = this.dataClasses,
-                dataClass: (ColorAxis.DataClassesOptions|undefined),
-                i: (number|undefined);
+                dataClass: ColorAxis.DataClassesOptions | undefined,
+                i: number | undefined;
 
             if (dataClasses) {
                 i = dataClasses.length;
@@ -164,13 +154,11 @@ namespace SolidGaugeAxis {
                         break;
                     }
                 }
-
             } else {
-
                 if (this.logarithmic) {
                     value = this.val2lin(value);
                 }
-                pos = 1 - ((this.max - value) / (this.max - this.min));
+                pos = 1 - (this.max - value) / (this.max - this.min);
                 i = stops.length;
                 while (i--) {
                     if (pos > stops[i][0]) {
@@ -181,13 +169,12 @@ namespace SolidGaugeAxis {
                 to = stops[i + 1] || from;
 
                 // The position within the gradient
-                pos = (1 - ((to as any)[0] - pos) / (((to as any)[0] -
-                    (from as any)[0]) || 1));
+                pos =
+                    1 -
+                    ((to as any)[0] - pos) /
+                        ((to as any)[0] - (from as any)[0] || 1);
 
-                color = (from as any).color.tweenTo(
-                    (to as any).color,
-                    pos
-                );
+                color = (from as any).color.tweenTo((to as any).color, pos);
             }
             return color;
         }
@@ -203,9 +190,8 @@ namespace SolidGaugeAxis {
      * @private
      */
     export function init(axis: RadialAxis.AxisComposition): void {
-        extend<SolidGaugeAxis|RadialAxis.AxisComposition>(axis, methods);
+        extend<SolidGaugeAxis | RadialAxis.AxisComposition>(axis, methods);
     }
-
 }
 
 /* *

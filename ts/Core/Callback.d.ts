@@ -22,15 +22,17 @@ export interface CallbackLike {
     (this: any): any;
 }
 
-export interface EventCallback<TScope, TEvent extends object> extends EventCallbackLike {
-    (this: TScope, e: TEvent): (boolean|void);
+export interface EventCallback<TScope, TEvent extends object>
+    extends EventCallbackLike {
+    (this: TScope, e: TEvent): boolean | void;
 }
 
 export interface EventCallbackLike {
-    (this: any, e: object): (boolean|void);
+    (this: any, e: object): boolean | void;
 }
 
-export interface FormatterCallback<TScope, TEvent extends object> extends Callback<TScope, string> {
+export interface FormatterCallback<TScope, TEvent extends object>
+    extends Callback<TScope, string> {
     (this: TScope, e: TEvent): string;
 }
 

@@ -33,10 +33,10 @@ export interface SVGElement3DLike extends SVGElement {
     base: SVGElement3DLikeBase;
     cuboid: SVGElement3DLikeCuboid;
     add(parent?: SVGElement3DLike): this;
-    attr(key: string): (number|string);
+    attr(key: string): number | string;
     attr(
         key: string,
-        val: (number|string|ColorType|SVGPath),
+        val: number | string | ColorType | SVGPath,
         complete?: Function,
         continueAnimation?: boolean
     ): this;
@@ -52,10 +52,7 @@ export interface SVGElement3DLikeBase {
     processParts: Function;
     singleSetterForParts: Function;
     destroyParts(this: SVGElement): void;
-    initArgs(
-        this: SVGElement,
-        args: SVGAttributes
-    ): void;
+    initArgs(this: SVGElement, args: SVGAttributes): void;
 }
 
 export interface SVGElement3DLikeCuboid extends SVGElement3DLikeBase {
@@ -64,20 +61,17 @@ export interface SVGElement3DLikeCuboid extends SVGElement3DLikeBase {
     animate(
         this: SVGElement,
         args: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptions>),
+        duration?: boolean | Partial<AnimationOptions>,
         complete?: Function
     ): SVGElement;
     attr(
         this: SVGElement,
-        args: (string|SVGAttributes),
-        val?: (number|string),
+        args: string | SVGAttributes,
+        val?: number | string,
         complete?: any,
         continueAnimation?: any
     ): SVGElement;
-    fillSetter(
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement;
+    fillSetter(this: SVGElement, fill: ColorType): SVGElement;
 }
 
 export default SVGElement3DLike;

@@ -26,17 +26,10 @@ const { getOptions } = D;
 import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge,
-    pick
-} = U;
+const { addEvent, clamp, isNumber, merge, pick } = U;
 import '../../Maps/MapSymbols.js';
 
-
-declare module './ChartLike'{
+declare module './ChartLike' {
     interface ChartLike {
         mapView?: MapView;
     }
@@ -74,7 +67,6 @@ class MapChart extends Chart {
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-
         // Initialize the MapView after initialization, but before firstRender
         addEvent(this, 'afterInit', function (): void {
             this.mapView = new MapView(this, this.options.mapView);
@@ -157,8 +149,8 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        a: string | HTMLDOMElement | Options,
+        b?: Chart.CallbackFunction | Options,
         c?: Chart.CallbackFunction
     ): MapChart {
         return new MapChart(a as any, b as any, c);
@@ -175,24 +167,23 @@ namespace MapChart {
      *
      * @return {Highcharts.SVGPathArray}
      */
-    export function splitPath(
-        path: string|Array<string|number>
-    ): SVGPath {
-        let arr: Array<string|number>;
+    export function splitPath(path: string | Array<string | number>): SVGPath {
+        let arr: Array<string | number>;
 
         if (typeof path === 'string') {
             path = path
                 // Move letters apart
                 .replace(/([A-Za-z])/g, ' $1 ')
                 // Trim
-                .replace(/^\s*/, '').replace(/\s*$/, '');
+                .replace(/^\s*/, '')
+                .replace(/\s*$/, '');
 
             // Split on spaces and commas. The semicolon is bogus, designed to
             // circumvent string replacement in the pre-v7 assembler that built
             // specific styled mode files.
             const split = path.split(/[ ,;]+/);
 
-            arr = split.map((item): (number|string) => {
+            arr = split.map((item): number | string => {
                 if (!/[A-za-z]/.test(item)) {
                     return parseFloat(item);
                 }

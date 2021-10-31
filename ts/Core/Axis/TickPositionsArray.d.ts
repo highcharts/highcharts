@@ -8,16 +8,13 @@
  *
  * */
 
-
 /* *
  *
  *  Declarations
  *
  * */
 
-export interface TickPositionsArray extends Array<number> {
-
-}
+export interface TickPositionsArray extends Array<number> {}
 
 /* *
  *

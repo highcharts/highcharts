@@ -20,9 +20,7 @@ import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import H from './Globals.js';
-const {
-    win
-} = H;
+const { win } = H;
 import U from './Utilities.js';
 const {
     defined,
@@ -49,7 +47,7 @@ declare module './Options' {
     }
 }
 
-declare module './Axis/TickPositionsArray'{
+declare module './Axis/TickPositionsArray' {
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;
     }
@@ -62,15 +60,11 @@ declare module './Axis/TickPositionsArray'{
  * */
 
 const hasNewSafariBug =
-    H.isSafari &&
-    win.Intl &&
-    win.Intl.DateTimeFormat.prototype.formatRange;
+    H.isSafari && win.Intl && win.Intl.DateTimeFormat.prototype.formatRange;
 
 // To do: Remove this when we no longer need support for Safari < v14.1
 const hasOldSafariBug =
-    H.isSafari &&
-    win.Intl &&
-    !win.Intl.DateTimeFormat.prototype.formatRange;
+    H.isSafari && win.Intl && !win.Intl.DateTimeFormat.prototype.formatRange;
 
 /* *
  *
@@ -122,16 +116,13 @@ const hasOldSafariBug =
  * Time options as defined in [chart.options.time](/highcharts/time).
  */
 class Time {
-
     /* *
      *
      *  Constructors
      *
      * */
 
-    public constructor(
-        options: Time.TimeOptions
-    ) {
+    public constructor(options: Time.TimeOptions) {
         /**
          * Get the time zone offset based on the current timezone information as
          * set in the global options.
@@ -238,7 +229,8 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -300,10 +292,8 @@ class Time {
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
-        this.variableTimezone = useUTC && !!(
-            options.getTimezoneOffset ||
-            options.timezone
-        );
+        this.variableTimezone =
+            useUTC && !!(options.getTimezoneOffset || options.timezone);
     }
 
     /**
@@ -353,17 +343,17 @@ class Time {
             if (offset !== newOffset) {
                 d += newOffset - offset;
 
-            // A special case for transitioning from summer time to winter time.
-            // When the clock is set back, the same time is repeated twice, i.e.
-            // 02:30 am is repeated since the clock is set back from 3 am to
-            // 2 am. We need to make the same time as local Date does.
+                // A special case for transitioning from summer time to winter
+                // time. When the clock is set back, the same time is repeated
+                // twice, i.e. 02:30 am is repeated since the clock is set back
+                // from 3 am to 2 am. We need to make the same time as local
+                // Date does.
             } else if (
                 offset - 36e5 === this.getTimezoneOffset(d - 36e5) &&
                 !hasOldSafariBug
             ) {
                 d -= 36e5;
             }
-
         } else {
             d = new this.Date(
                 year,
@@ -390,14 +380,16 @@ class Time {
      * @return {Function}
      *         A getTimezoneOffset function
      */
-    public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
+    public timezoneOffsetFunction(): (timestamp: number | Date) => number {
         const time = this,
             options = this.options,
             moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
-            return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+            return function (timestamp: number | Date): number {
+                return (
+                    new Date(timestamp.toString()).getTimezoneOffset() * 60000
+                );
             };
         }
 
@@ -406,21 +398,23 @@ class Time {
                 // getTimezoneOffset-function stays undefined because it depends
                 // on Moment.js
                 error(25);
-
             } else {
-                return function (timestamp: (number|Date)): number {
-                    return -moment.tz(
-                        timestamp,
-                        options.timezone
-                    ).utcOffset() * 60000;
+                return function (timestamp: number | Date): number {
+                    return (
+                        -moment.tz(timestamp, options.timezone).utcOffset() *
+                        60000
+                    );
                 };
             }
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
-            return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+            return function (timestamp: number | Date): number {
+                return (
+                    (options.getTimezoneOffset as any)(timestamp.valueOf()) *
+                    60000
+                );
             };
         }
 
@@ -484,8 +478,7 @@ class Time {
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
             return (
-                H.defaultOptions.lang &&
-                H.defaultOptions.lang.invalidDate ||
+                (H.defaultOptions.lang && H.defaultOptions.lang.invalidDate) ||
                 ''
             );
         }
@@ -500,19 +493,17 @@ class Time {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = (lang && lang.weekdays as any),
-            shortWeekdays = (lang && lang.shortWeekdays),
-
+            langWeekdays = lang && (lang.weekdays as any),
+            shortWeekdays = lang && lang.shortWeekdays,
             // List all format keys. Custom formats can be added from the
             // outside.
             replacements = extend(
                 {
-
                     // Day
                     // Short weekday, like 'Mon'
-                    a: shortWeekdays ?
-                        shortWeekdays[day] :
-                        langWeekdays[day].substr(0, 3),
+                    a: shortWeekdays
+                        ? shortWeekdays[day]
+                        : langWeekdays[day].substr(0, 3),
                     // Long weekday, like 'Monday'
                     A: langWeekdays[day],
                     // Two digit day of the month, 01 to 31
@@ -547,9 +538,9 @@ class Time {
                     // Hours in 24h format, 0 through 23
                     k: hours,
                     // Two digits hours in 12h format, 00 through 11
-                    I: pad((hours % 12) || 12),
+                    I: pad(hours % 12 || 12),
                     // Hours in 12h format, 1 through 12
-                    l: (hours % 12) || 12,
+                    l: hours % 12 || 12,
                     // Two digits minutes, 00 through 59
                     M: pad(this.get('Minutes', date)),
                     // Upper case AM or PM
@@ -566,27 +557,25 @@ class Time {
             );
 
         // Do the replaces
-        objectEach(replacements, function (
-            val: (string|Function),
-            key: string
-        ): void {
-            // Regex would do it in one line, but this is faster
-            while (format.indexOf('%' + key) !== -1) {
-                format = format.replace(
-                    '%' + key,
-                    typeof val === 'function' ? val.call(time, timestamp) : val
-                );
+        objectEach(
+            replacements,
+            function (val: string | Function, key: string): void {
+                // Regex would do it in one line, but this is faster
+                while (format.indexOf('%' + key) !== -1) {
+                    format = format.replace(
+                        '%' + key,
+                        typeof val === 'function'
+                            ? val.call(time, timestamp)
+                            : val
+                    );
+                }
             }
-
-        });
+        );
 
         // Optionally capitalize the string and return
-        return capitalize ?
-            (
-                format.substr(0, 1).toUpperCase() +
-                format.substr(1)
-            ) :
-            format;
+        return capitalize
+            ? format.substr(0, 1).toUpperCase() + format.substr(1)
+            : format;
     }
 
     /**
@@ -597,9 +586,10 @@ class Time {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     public resolveDTLFormat<T>(
-        f: (string|Array<T>|Record<string, T>)
+        f: string | Array<T> | Record<string, T>
     ): Record<string, T> {
-        if (!isObject(f, true)) { // check for string or array
+        if (!isObject(f, true)) {
+            // check for string or array
             f = splat(f);
             return {
                 main: f[0],
@@ -652,75 +642,81 @@ class Time {
 
         startOfWeek = pick(startOfWeek, 1);
 
-        if (defined(min)) { // #1300
+        if (defined(min)) {
+            // #1300
             time.set(
                 'Milliseconds',
                 minDate,
-                interval >= timeUnits.second ?
-                    0 : // #3935
-                    count * Math.floor(
-                        time.get('Milliseconds', minDate) / count
-                    )
+                interval >= timeUnits.second
+                    ? 0 // #3935
+                    : count *
+                          Math.floor(time.get('Milliseconds', minDate) / count)
             ); // #3652, #3654
 
-            if (interval >= timeUnits.second) { // second
+            if (interval >= timeUnits.second) {
+                // second
                 time.set(
                     'Seconds',
                     minDate,
-                    interval >= timeUnits.minute ?
-                        0 : // #3935
-                        count * Math.floor(time.get('Seconds', minDate) / count)
+                    interval >= timeUnits.minute
+                        ? 0 // #3935
+                        : count *
+                              Math.floor(time.get('Seconds', minDate) / count)
                 );
             }
 
-            if (interval >= timeUnits.minute) { // minute
+            if (interval >= timeUnits.minute) {
+                // minute
                 time.set(
                     'Minutes',
                     minDate,
-                    interval >= timeUnits.hour ?
-                        0 :
-                        count * Math.floor(time.get('Minutes', minDate) / count)
+                    interval >= timeUnits.hour
+                        ? 0
+                        : count *
+                              Math.floor(time.get('Minutes', minDate) / count)
                 );
             }
 
-            if (interval >= timeUnits.hour) { // hour
+            if (interval >= timeUnits.hour) {
+                // hour
                 time.set(
                     'Hours',
                     minDate,
-                    interval >= timeUnits.day ?
-                        0 :
-                        count * Math.floor(
-                            time.get('Hours', minDate) / count
-                        )
+                    interval >= timeUnits.day
+                        ? 0
+                        : count * Math.floor(time.get('Hours', minDate) / count)
                 );
             }
 
-            if (interval >= timeUnits.day) { // day
+            if (interval >= timeUnits.day) {
+                // day
                 time.set(
                     'Date',
                     minDate,
-                    interval >= timeUnits.month ?
-                        1 :
-                        Math.max(
-                            1,
-                            count * Math.floor(
-                                time.get('Date', minDate) / count
-                            )
-                        )
+                    interval >= timeUnits.month
+                        ? 1
+                        : Math.max(
+                              1,
+                              count *
+                                  Math.floor(time.get('Date', minDate) / count)
+                          )
                 );
             }
 
-            if (interval >= timeUnits.month) { // month
+            if (interval >= timeUnits.month) {
+                // month
                 time.set(
                     'Month',
                     minDate,
-                    interval >= timeUnits.year ? 0 :
-                        count * Math.floor(time.get('Month', minDate) / count)
+                    interval >= timeUnits.year
+                        ? 0
+                        : count * Math.floor(time.get('Month', minDate) / count)
                 );
                 minYear = time.get('FullYear', minDate);
             }
 
-            if (interval >= timeUnits.year) { // year
+            if (interval >= timeUnits.year) {
+                // year
                 minYear -= minYear % count;
                 time.set('FullYear', minDate, minYear);
             }
@@ -732,16 +728,14 @@ class Time {
                 time.set(
                     'Date',
                     minDate,
-                    (
-                        time.get('Date', minDate) -
-                        minDay + startOfWeek +
+                    time.get('Date', minDate) -
+                        minDay +
+                        startOfWeek +
                         // We don't want to skip days that are before
                         // startOfWeek (#7051)
                         (minDay < startOfWeek ? -7 : 0)
-                    )
                 );
             }
-
 
             // Get basics for variable time spans
             minYear = time.get('FullYear', minDate);
@@ -759,14 +753,12 @@ class Time {
                 // be 23h or 25h and we need to compute the exact clock time for
                 // each tick instead of just adding hours. This comes at a cost,
                 // so first we find out if it is needed (#4951).
-                variableDayLength = (
+                variableDayLength =
                     // Long range, assume we're crossing over.
                     max - min > 4 * timeUnits.month ||
                     // Short range, check if min and max are in different time
                     // zones.
-                    time.getTimezoneOffset(min) !==
-                    time.getTimezoneOffset(max)
-                );
+                    time.getTimezoneOffset(min) !== time.getTimezoneOffset(max);
             }
 
             // Iterate and add tick positions at appropriate values
@@ -780,12 +772,13 @@ class Time {
                 if (interval === timeUnits.year) {
                     t = time.makeTime(minYear + i * count, 0);
 
-                // if the interval is months, use Date.UTC to increase months
+                    // if the interval is months, use Date.UTC to increase
+                    // months
                 } else if (interval === timeUnits.month) {
                     t = time.makeTime(minYear, minMonth + i * count);
 
-                // if we're using global time, the interval is not fixed as it
-                // jumps one hour at the DST crossover
+                    // if we're using global time, the interval is not fixed as
+                    // it jumps one hour at the DST crossover
                 } else if (
                     variableDayLength &&
                     (interval === timeUnits.day || interval === timeUnits.week)
@@ -796,7 +789,6 @@ class Time {
                         minDateDate +
                             i * count * (interval === timeUnits.day ? 1 : 7)
                     );
-
                 } else if (
                     variableDayLength &&
                     interval === timeUnits.hour &&
@@ -811,7 +803,7 @@ class Time {
                         minHours + i * count
                     );
 
-                // else, the interval is fixed and we use simple addition
+                    // else, the interval is fixed and we use simple addition
                 } else {
                     t += interval * count;
                 }
@@ -821,7 +813,6 @@ class Time {
 
             // push the last time
             tickPositions.push(t);
-
 
             // Handle higher ranks. Mark new days if the time is on midnight
             // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
@@ -841,15 +832,13 @@ class Time {
             }
         }
 
-
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
-            normalizedInterval,
-            {
-                higherRanks,
-                totalRange: interval * count
-            }
-        ) as TimeTicksInfoObject;
+        tickPositions.info = extend<
+            Time.TimeNormalizedObject | TimeTicksInfoObject
+        >(normalizedInterval, {
+            higherRanks,
+            totalRange: interval * count
+        }) as TimeTicksInfoObject;
 
         return tickPositions;
     }
@@ -881,7 +870,7 @@ class Time {
         timestamp: number,
         startOfWeek: number,
         dateTimeLabelFormats: Record<string, string>
-    ): string|undefined {
+    ): string | undefined {
         const dateStr = this.dateFormat('%m-%d %H:%M:%S.%L', timestamp),
             blank = '01-01 00:00:00.000',
             strpos = {
@@ -892,12 +881,12 @@ class Time {
                 day: 3
             } as Record<string, number>;
 
-        let format: string|undefined,
+        let format: string | undefined,
             n,
             lastN = 'millisecond'; // for sub-millisecond data, #4223
 
-        for (n in timeUnits) { // eslint-disable-line guard-for-in
-
+        // eslint-disable-next-line guard-for-in
+        for (n in timeUnits) {
             // If the range is exactly one week and we're looking at a
             // Sunday/Monday, go for the week format
             if (
@@ -961,16 +950,15 @@ namespace Time {
         count: number;
         unitRange: number;
     }
-    export type TimeUnitValue = (
-        'Date'|
-        'Day'|
-        'FullYear'|
-        'Hours'|
-        'Milliseconds'|
-        'Minutes'|
-        'Month'|
-        'Seconds'
-    );
+    export type TimeUnitValue =
+        | 'Date'
+        | 'Day'
+        | 'FullYear'
+        | 'Hours'
+        | 'Milliseconds'
+        | 'Minutes'
+        | 'Month'
+        | 'Seconds';
 }
 
 /* *
@@ -991,12 +979,12 @@ export default Time;
  * Normalized interval.
  *
  * @interface Highcharts.TimeNormalizedObject
- *//**
+ */ /**
  * The count.
  *
  * @name Highcharts.TimeNormalizedObject#count
  * @type {number}
- *//**
+ */ /**
  * The interval in axis values (ms).
  *
  * @name Highcharts.TimeNormalizedObject#unitRange
@@ -1020,7 +1008,7 @@ export default Time;
  *
  * @interface Highcharts.AxisTickPositionsArray
  * @extends global.Array<number>
- *//**
+ */ /**
  * @name Highcharts.AxisTickPositionsArray#info
  * @type {Highcharts.TimeTicksInfoObject|undefined}
  */
@@ -1052,4 +1040,4 @@ export default Time;
  * @apioption time.moment
  */
 
-''; // keeps doclets above in JS file
+(''); // keeps doclets above in JS file

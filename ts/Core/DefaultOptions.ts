@@ -24,10 +24,7 @@ import ChartDefaults from './Chart/ChartDefaults.js';
 import Color from './Color/Color.js';
 const { parse: color } = Color;
 import H from './Globals.js';
-const {
-    isTouchDevice,
-    svg
-} = H;
+const { isTouchDevice, svg } = H;
 import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
@@ -47,12 +44,11 @@ declare module './GlobalsLike' {
     }
 }
 
-declare module './Chart/ChartOptions'{
-    interface ChartOptions {
-    }
+declare module './Chart/ChartOptions' {
+    interface ChartOptions {}
 }
 
-declare module './LangOptions'{
+declare module './LangOptions' {
     export interface LangOptions {
         decimalPoint: string;
         invalidDate?: string;
@@ -82,11 +78,10 @@ declare module './LangOptions'{
  *
  * @name Highcharts.defaultOptions
  * @type {Highcharts.Options}
- *//**
+ */ /**
  * @optionparent
  */
 const defaultOptions: Options = {
-
     /**
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -161,7 +156,6 @@ const defaultOptions: Options = {
      * ```
      */
     lang: {
-
         /**
          * The loading text that appears when the chart is set into the loading
          * state following a call to `chart.showLoading`.
@@ -178,8 +172,18 @@ const defaultOptions: Options = {
          *          "December"]
          */
         months: [
-            'January', 'February', 'March', 'April', 'May', 'June', 'July',
-            'August', 'September', 'October', 'November', 'December'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ],
 
         /**
@@ -191,8 +195,18 @@ const defaultOptions: Options = {
          *          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
          */
         shortMonths: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-            'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
         ],
 
         /**
@@ -203,8 +217,13 @@ const defaultOptions: Options = {
          *          "Friday", "Saturday"]
          */
         weekdays: [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-            'Thursday', 'Friday', 'Saturday'
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
         ],
 
         /**
@@ -409,7 +428,6 @@ const defaultOptions: Options = {
 
     global: {},
 
-
     /**
      * Time options that can apply globally or to individual charts. These
      * settings affect how `datetime` axes are laid out, how tooltips are
@@ -549,7 +567,6 @@ const defaultOptions: Options = {
      *         Title options demonstrated
      */
     title: {
-
         /**
          * When the title is floating, the plot area will not move to make space
          * for it.
@@ -699,7 +716,6 @@ const defaultOptions: Options = {
          * @since 4.2.5
          */
         widthAdjust: -44
-
     },
 
     /**
@@ -712,7 +728,6 @@ const defaultOptions: Options = {
      *         Subtitle options demonstrated
      */
     subtitle: {
-
         /**
          * When the subtitle is floating, the plot area will not move to make
          * space for it.
@@ -853,7 +868,6 @@ const defaultOptions: Options = {
      * @since  7.2.0
      */
     caption: {
-
         /**
          * When the caption is floating, the plot area will not move to make
          * space for it.
@@ -933,7 +947,6 @@ const defaultOptions: Options = {
          * @type      {Highcharts.VerticalAlignValue}
          */
         verticalAlign: 'bottom'
-
     },
 
     /**
@@ -960,7 +973,6 @@ const defaultOptions: Options = {
      * @product   highcharts highstock
      */
     labels: {
-
         /**
          * An HTML label that can be positioned anywhere in the chart area.
          *
@@ -1025,7 +1037,6 @@ const defaultOptions: Options = {
      * Either as a gradient, or as multiple legend items for `dataClasses`.
      */
     legend: {
-
         /**
          * The background color of the legend.
          *
@@ -1243,9 +1254,7 @@ const defaultOptions: Options = {
          *
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
-        labelFormatter: function (
-            this: (Series|Point)
-        ): string {
+        labelFormatter: function (this: Series | Point): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;
         },
@@ -1330,7 +1339,6 @@ const defaultOptions: Options = {
          * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).
          */
         navigation: {
-
             /**
              * How to animate the pages when navigating up or down. A value of
              * `true` applies the default navigation given in the
@@ -1804,7 +1812,6 @@ const defaultOptions: Options = {
         }
     },
 
-
     /**
      * The loading options control the appearance of the loading screen
      * that covers the plot area on chart operations. This screen only
@@ -1815,7 +1822,6 @@ const defaultOptions: Options = {
      * object, but part of the `lang` object.
      */
     loading: {
-
         /**
          * The duration in milliseconds of the fade out effect.
          *
@@ -1904,7 +1910,6 @@ const defaultOptions: Options = {
             textAlign: 'center'
         }
     },
-
 
     /**
      * Options for the tooltip that appears when the user hovers over a
@@ -2066,7 +2071,6 @@ const defaultOptions: Options = {
          * @apioption tooltip.formatter
          */
 
-
         /**
          * Callback function to format the text of the tooltip for
          * visible null points.
@@ -2078,7 +2082,6 @@ const defaultOptions: Options = {
          * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.nullFormatter
          */
-
 
         /**
          * Whether to allow the tooltip to render outside the chart's SVG
@@ -2496,7 +2499,8 @@ const defaultOptions: Options = {
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+        pointFormat:
+            '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 
         /**
          * The background color or gradient for the tooltip.
@@ -2523,7 +2527,8 @@ const defaultOptions: Options = {
          */
         backgroundColor: color(Palette.neutralColor3)
             // @todo: Disallow undefined as input for colors
-            .setOpacity(0.85).get() as any,
+            .setOpacity(0.85)
+            .get() as any,
 
         /**
          * The pixel width of the tooltip border.
@@ -2615,13 +2620,11 @@ const defaultOptions: Options = {
         useHTML: false
     },
 
-
     /**
      * Highchart by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     credits: {
-
         /**
          * Credits for map source to be concatenated with conventional credit
          * text. By default this is a format string that collects copyright
@@ -2731,7 +2734,6 @@ const defaultOptions: Options = {
          *         Custom URL and text
          */
         text: 'Highcharts.com'
-
     }
 };
 
@@ -2742,12 +2744,9 @@ const defaultOptions: Options = {
 /*= } else { =*/
 (defaultOptions.chart as any).styledMode = false;
 /*= } =*/
-'';
+('');
 
-const defaultTime = new Time(merge(
-    defaultOptions.global,
-    defaultOptions.time
-));
+const defaultTime = new Time(merge(defaultOptions.global, defaultOptions.time));
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
@@ -2777,22 +2776,21 @@ function getOptions(): Options {
  * @return {Highcharts.Options}
  *         Updated options.
  */
-function setOptions(
-    options: DeepPartial<Options>
-): Options {
-
+function setOptions(options: DeepPartial<Options>): Options {
     // Copy in the default options
     merge(true, defaultOptions, options);
 
     // Update the time object
     if (options.time || options.global) {
         if (H.time) {
-            H.time.update(merge(
-                defaultOptions.global,
-                defaultOptions.time,
-                options.global,
-                options.time
-            ));
+            H.time.update(
+                merge(
+                    defaultOptions.global,
+                    defaultOptions.time,
+                    options.global,
+                    options.time
+                )
+            );
         } else {
             /**
              * Global `Time` object with default options. Since v6.0.5, time
@@ -2853,19 +2851,19 @@ export default DefaultOptions;
  * access the series options that were passed to the `addSeries` method.
  *
  * @interface Highcharts.ChartAddSeriesEventObject
- *//**
+ */ /**
  * The series options that were passed to the `addSeries` method.
  * @name Highcharts.ChartAddSeriesEventObject#options
  * @type {Highcharts.SeriesOptionsType}
- *//**
+ */ /**
  * Prevents the default behaviour of the event.
  * @name Highcharts.ChartAddSeriesEventObject#preventDefault
  * @type {Function}
- *//**
+ */ /**
  * The event target.
  * @name Highcharts.ChartAddSeriesEventObject#target
  * @type {Highcharts.Chart}
- *//**
+ */ /**
  * The event type.
  * @name Highcharts.ChartAddSeriesEventObject#type
  * @type {"addSeries"}
@@ -2887,11 +2885,11 @@ export default DefaultOptions;
  * Contains an axes of the clicked spot.
  *
  * @interface Highcharts.ChartClickEventAxisObject
- *//**
+ */ /**
  * Axis at the clicked spot.
  * @name Highcharts.ChartClickEventAxisObject#axis
  * @type {Highcharts.Axis}
- *//**
+ */ /**
  * Axis value at the clicked spot.
  * @name Highcharts.ChartClickEventAxisObject#value
  * @type {number}
@@ -2903,15 +2901,15 @@ export default DefaultOptions;
  *
  * @interface Highcharts.ChartClickEventObject
  * @extends Highcharts.PointerEventObject
- *//**
+ */ /**
  * Information about the x-axis on the clicked spot.
  * @name Highcharts.ChartClickEventObject#xAxis
  * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
+ */ /**
  * Information about the y-axis on the clicked spot.
  * @name Highcharts.ChartClickEventObject#yAxis
  * @type {Array<Highcharts.ChartClickEventAxisObject>}
- *//**
+ */ /**
  * Information about the z-axis on the clicked spot.
  * @name Highcharts.ChartClickEventObject#zAxis
  * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
@@ -2979,12 +2977,12 @@ export default DefaultOptions;
  *
  * @interface Highcharts.ChartSelectionContextObject
  * @extends global.Event
- *//**
+ */ /**
  * Arrays containing the axes of each dimension and each axis' min and max
  * values.
  * @name Highcharts.ChartSelectionContextObject#xAxis
  * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
- *//**
+ */ /**
  * Arrays containing the axes of each dimension and each axis' min and max
  * values.
  * @name Highcharts.ChartSelectionContextObject#yAxis
@@ -2995,15 +2993,15 @@ export default DefaultOptions;
  * Axis context of the selection.
  *
  * @interface Highcharts.ChartSelectionAxisContextObject
- *//**
+ */ /**
  * The selected Axis.
  * @name Highcharts.ChartSelectionAxisContextObject#axis
  * @type {Highcharts.Axis}
- *//**
+ */ /**
  * The maximum axis value, either automatic or set manually.
  * @name Highcharts.ChartSelectionAxisContextObject#max
  * @type {number}
- *//**
+ */ /**
  * The minimum axis value, either automatic or set manually.
  * @name Highcharts.ChartSelectionAxisContextObject#min
  * @type {number}

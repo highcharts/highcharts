@@ -23,10 +23,7 @@ import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import U from '../Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 /* *
  *
@@ -48,10 +45,9 @@ declare module '../Series/PointLike' {
 
 declare module '../Series/SeriesLike' {
     interface SeriesLike extends LegendItemObject {
-        drawLegendSymbol: (
-            typeof LegendSymbol.drawLineMarker|
-            typeof LegendSymbol.drawRectangle
-        );
+        drawLegendSymbol:
+            | typeof LegendSymbol.drawLineMarker
+            | typeof LegendSymbol.drawRectangle;
     }
 }
 
@@ -62,12 +58,11 @@ declare module '../Series/SeriesLike' {
  * */
 
 namespace LegendSymbol {
-
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -83,18 +78,15 @@ namespace LegendSymbol {
      * @param {Highcharts.Legend} legend
      * The legend object.
      */
-    export function drawLineMarker(
-        this: Series,
-        legend: Legend
-    ): void {
-
+    export function drawLineMarker(this: Series, legend: Legend): void {
         const options = this.options,
             symbolWidth = legend.symbolWidth,
             symbolHeight = legend.symbolHeight,
             generalRadius = symbolHeight / 2,
             renderer = this.chart.renderer,
             legendItemGroup = this.legendGroup,
-            verticalCenter = (legend.baseline as any) -
+            verticalCenter =
+                (legend.baseline as any) -
                 Math.round((legend.fontMetrics as any).b * 0.3);
 
         let attr: SVGAttributes = {},
@@ -122,7 +114,6 @@ namespace LegendSymbol {
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
-
             // Do not allow the marker to be larger than the symbolHeight
             let radius = Math.min(
                 pick(markerOptions.radius, generalRadius),
@@ -138,14 +129,15 @@ namespace LegendSymbol {
                 radius = 0;
             }
 
-            this.legendSymbol = legendSymbol = renderer.symbol(
-                this.symbol as any,
-                (symbolWidth / 2) - radius,
-                verticalCenter - radius,
-                2 * radius,
-                2 * radius,
-                markerOptions
-            )
+            this.legendSymbol = legendSymbol = renderer
+                .symbol(
+                    this.symbol as any,
+                    symbolWidth / 2 - radius,
+                    verticalCenter - radius,
+                    2 * radius,
+                    2 * radius,
+                    markerOptions
+                )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
             legendSymbol.isMarker = true;
@@ -170,27 +162,27 @@ namespace LegendSymbol {
     export function drawRectangle(
         this: Series,
         legend: Legend,
-        item: (Point|Series)
+        item: Point | Series
     ): void {
         const options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
             symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
-        item.legendSymbol = this.chart.renderer.rect(
-            square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
-            (legend.baseline as any) - symbolHeight + 1, // #3988
-            symbolWidth,
-            symbolHeight,
-            pick(legend.options.symbolRadius, symbolHeight / 2)
-        )
+        item.legendSymbol = this.chart.renderer
+            .rect(
+                square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
+                (legend.baseline as any) - symbolHeight + 1, // #3988
+                symbolWidth,
+                symbolHeight,
+                pick(legend.options.symbolRadius, symbolHeight / 2)
+            )
             .addClass('highcharts-point')
             .attr({
                 zIndex: 3
-            }).add(item.legendGroup);
-
+            })
+            .add(item.legendGroup);
     }
-
 }
 
 /* *

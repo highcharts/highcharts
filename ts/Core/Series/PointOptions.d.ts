@@ -94,22 +94,21 @@ export interface PointOptions {
     states?: PointStatesOptions<Point>;
     visible?: boolean;
     x?: number;
-    y?: (null|number);
+    y?: null | number;
 }
 
 export interface PointSelectEvent extends Event {
     accumulate: boolean;
 }
 
-export type PointShortOptions = (
-    number|
-    string|
-    Array<(number|string|null)>|
-    null
-);
+export type PointShortOptions =
+    | number
+    | string
+    | Array<number | string | null>
+    | null;
 
 export interface PointStateHoverOptions extends StateHoverOptions {
-    animation?: (boolean|DeepPartial<AnimationOptions>);
+    animation?: boolean | DeepPartial<AnimationOptions>;
     enabled?: boolean;
     fillColor?: ColorType;
     lineColor?: ColorType;
@@ -123,15 +122,16 @@ export interface PointStateInactiveOptions extends StateInactiveOptions {
 }
 
 export interface PointStateNormalOptions extends StateNormalOptions {
-    animation?: (boolean|DeepPartial<AnimationOptions>);
+    animation?: boolean | DeepPartial<AnimationOptions>;
     opacity?: number;
 }
 
-export interface PointStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
-    hover?: PointStateHoverOptions&StateGenericOptions<T>;
-    inactive?: PointStateInactiveOptions&StateGenericOptions<T>;
-    normal?: PointStateNormalOptions&StateGenericOptions<T>;
-    select?: PointStateSelectOptions&StateGenericOptions<T>;
+export interface PointStatesOptions<T extends { options: AnyRecord }>
+    extends StatesOptions {
+    hover?: PointStateHoverOptions & StateGenericOptions<T>;
+    inactive?: PointStateInactiveOptions & StateGenericOptions<T>;
+    normal?: PointStateNormalOptions & StateGenericOptions<T>;
+    select?: PointStateSelectOptions & StateGenericOptions<T>;
 }
 
 export interface PointStateSelectOptions extends StateSelectOptions {

@@ -23,11 +23,7 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import U from '../../Utilities.js';
-const {
-    erase,
-    extend,
-    isNumber
-} = U;
+const { erase, extend, isNumber } = U;
 
 /* *
  *
@@ -49,7 +45,6 @@ declare module '../AxisOptions' {
  * */
 
 namespace PlotLineOrBandAxis {
-
     /* *
      *
      *  Declarations
@@ -57,24 +52,20 @@ namespace PlotLineOrBandAxis {
      * */
 
     export declare class Composition extends Axis {
-        addPlotBand(
-            options: PlotBandOptions
-        ): (PlotLineOrBand|undefined);
+        addPlotBand(options: PlotBandOptions): PlotLineOrBand | undefined;
         addPlotBandOrLine(
             options: PlotBandOptions,
             coll?: 'plotBands'
-        ): (PlotLineOrBand|undefined);
+        ): PlotLineOrBand | undefined;
         addPlotBandOrLine(
             options: PlotLineOptions,
             coll?: 'plotLines'
-        ): (PlotLineOrBand|undefined);
-        addPlotLine(
-            options: PlotLineOptions
-        ): (PlotLineOrBand|undefined);
+        ): PlotLineOrBand | undefined;
+        addPlotLine(options: PlotLineOptions): PlotLineOrBand | undefined;
         getPlotBandPath(
             from: number,
             to: number,
-            options?: (PlotBandOptions|PlotLineOptions)
+            options?: PlotBandOptions | PlotLineOptions
         ): SVGPath;
         removePlotBand(id: string): void;
         removePlotBandOrLine(id: string): void;
@@ -111,8 +102,7 @@ namespace PlotLineOrBandAxis {
     export function compose<T extends typeof Axis>(
         PlotLineOrBandType: typeof PlotLineOrBand,
         AxisClass: T
-    ): (T&typeof Composition) {
-
+    ): T & typeof Composition {
         if (!PlotLineOrBandClass) {
             PlotLineOrBandClass = PlotLineOrBandType;
         }
@@ -123,7 +113,7 @@ namespace PlotLineOrBandAxis {
             extend(AxisClass.prototype, Additions.prototype as any);
         }
 
-        return AxisClass as (T&typeof Composition);
+        return AxisClass as T & typeof Composition;
     }
 
     /* *
@@ -137,7 +127,6 @@ namespace PlotLineOrBandAxis {
      * @private
      */
     class Additions {
-
         /* *
          *
          *  Functions
@@ -167,7 +156,7 @@ namespace PlotLineOrBandAxis {
             this: Composition,
             from: number,
             to: number,
-            options: (PlotBandOptions|PlotLineOptions) = this.options
+            options: PlotBandOptions | PlotLineOptions = this.options
         ): SVGPath {
             const toPath = this.getPlotLinePath({
                     value: to,
@@ -190,10 +179,9 @@ namespace PlotLineOrBandAxis {
                 i,
                 // #4964 check if chart is inverted or plotband is on yAxis
                 plus = 1,
-                isFlat: (boolean|undefined);
+                isFlat: boolean | undefined;
 
             if (path && toPath) {
-
                 // Flat paths don't need labels (#3836)
                 if (outside) {
                     isFlat = path.toString() === toPath.toString();
@@ -234,8 +222,8 @@ namespace PlotLineOrBandAxis {
                     }
                     (result as any).isFlat = isFlat;
                 }
-
-            } else { // outside the axis area
+            } else {
+                // outside the axis area
                 path = null;
             }
 
@@ -260,7 +248,7 @@ namespace PlotLineOrBandAxis {
         public addPlotBand(
             this: Composition,
             options: PlotBandOptions
-        ): (PlotLineOrBand|undefined) {
+        ): PlotLineOrBand | undefined {
             return this.addPlotBandOrLine(options, 'plotBands');
         }
 
@@ -282,7 +270,7 @@ namespace PlotLineOrBandAxis {
         public addPlotLine(
             this: Composition,
             options: PlotLineOptions
-        ): (PlotLineOrBand|undefined) {
+        ): PlotLineOrBand | undefined {
             return this.addPlotBandOrLine(options, 'plotLines');
         }
 
@@ -300,39 +288,38 @@ namespace PlotLineOrBandAxis {
          *
          * @return {Highcharts.PlotLineOrBand|undefined}
          */
-        public addPlotBandOrLine<T extends PlotBandOptions|PlotLineOptions>(
+        public addPlotBandOrLine<T extends PlotBandOptions | PlotLineOptions>(
             this: Composition,
             options: T,
-            coll?: (
-                T extends PlotBandOptions ?
-                    'plotBands' :
-                    'plotLines'
-            )
-        ): (PlotLineOrBand|undefined) {
+            coll?: T extends PlotBandOptions ? 'plotBands' : 'plotLines'
+        ): PlotLineOrBand | undefined {
             const userOptions = this.userOptions;
 
-            let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(this, options);
+            let obj: PlotLineOrBand | undefined = new PlotLineOrBandClass(
+                this,
+                options
+            );
 
             if (this.visible) {
                 obj = obj.render();
             }
 
-            if (obj) { // #2189
+            if (obj) {
+                // #2189
                 if (!this._addedPlotLB) {
                     this._addedPlotLB = true;
                     (userOptions.plotLines || [])
                         .concat((userOptions.plotBands as any) || [])
-                        .forEach(
-                            (plotLineOptions: any): void => {
-                                this.addPlotBandOrLine(plotLineOptions);
-                            }
-                        );
+                        .forEach((plotLineOptions: any): void => {
+                            this.addPlotBandOrLine(plotLineOptions);
+                        });
                 }
 
                 // Add it to the user options for exporting and Axis.update
                 if (coll) {
                     // Workaround Microsoft/TypeScript issue #32693
-                    const updatedOptions = (userOptions[coll] || []) as Array<T>;
+                    const updatedOptions = (userOptions[coll] ||
+                        []) as Array<T>;
                     updatedOptions.push(options);
                     userOptions[coll] = updatedOptions;
                 }
@@ -348,27 +335,25 @@ namespace PlotLineOrBandAxis {
          * @private
          * @function Highcharts.Axis#removePlotBandOrLine
          */
-        public removePlotBandOrLine(
-            this: Composition,
-            id: string
-        ): void {
+        public removePlotBandOrLine(this: Composition, id: string): void {
             const plotLinesAndBands = this.plotLinesAndBands,
                 options = this.options,
                 userOptions = this.userOptions;
 
-            if (plotLinesAndBands) { // #15639
+            if (plotLinesAndBands) {
+                // #15639
                 let i = plotLinesAndBands.length;
                 while (i--) {
                     if (plotLinesAndBands[i].id === id) {
                         plotLinesAndBands[i].destroy();
                     }
                 }
-                ([
+                [
                     options.plotLines || [],
                     userOptions.plotLines || [],
                     options.plotBands || [],
                     userOptions.plotBands || []
-                ]).forEach(function (arr): void {
+                ].forEach(function (arr): void {
                     i = arr.length;
                     while (i--) {
                         if ((arr[i] || {}).id === id) {
@@ -393,10 +378,7 @@ namespace PlotLineOrBandAxis {
          *        The plot band's `id` as given in the original configuration
          *        object or in the `addPlotBand` option.
          */
-        public removePlotBand(
-            this: Composition,
-            id: string
-        ): void {
+        public removePlotBand(this: Composition, id: string): void {
             this.removePlotBandOrLine(id);
         }
 
@@ -414,15 +396,10 @@ namespace PlotLineOrBandAxis {
          *        The plot line's `id` as given in the original configuration
          *        object or in the `addPlotLine` option.
          */
-        public removePlotLine(
-            this: Composition,
-            id: string
-        ): void {
+        public removePlotLine(this: Composition, id: string): void {
             this.removePlotBandOrLine(id);
         }
-
     }
-
 }
 
 /* *

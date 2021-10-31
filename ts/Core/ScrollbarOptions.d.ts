@@ -22,7 +22,7 @@ import type ColorType from './Color/ColorType';
  *
  * */
 
-declare module './Options'{
+declare module './Options' {
     interface Options {
         scrollbar?: ScrollbarOptions;
     }

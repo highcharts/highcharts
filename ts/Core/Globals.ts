@@ -25,16 +25,15 @@ import type GlobalsLike from './GlobalsLike';
  * */
 
 declare global {
-
     type AnyRecord = Record<string, any>;
 
     type DeepPartial<T> = {
-        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
-    }
+        [P in keyof T]?: T[P] | DeepPartial<T[P]>;
+    };
 
     type DeepRecord<K extends keyof any, T> = {
-        [P in K]: (T|DeepRecord<K, T>);
-    }
+        [P in K]: T | DeepRecord<K, T>;
+    };
 
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
 
@@ -42,7 +41,7 @@ declare global {
         apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
             thisArg: TScope,
-            args?: (TArguments|IArguments)
+            args?: TArguments | IArguments
         ): TReturn;
     }
 
@@ -59,7 +58,7 @@ declare global {
         radialReference?: Array<number>;
         setAttribute(
             qualifiedName: string,
-            value: (boolean|number|string)
+            value: boolean | number | string
         ): void;
     }
 
@@ -99,8 +98,7 @@ declare global {
      * @deprecated
      * @todo: Rename UMD argument `win` to `window`
      */
-    const win: Window|undefined;
-
+    const win: Window | undefined;
 }
 
 /* *
@@ -115,13 +113,13 @@ declare global {
  * @todo Rename UMD argument `win` to `window`; move code to `Globals.win`
  */
 const w = (
-    typeof win !== 'undefined' ?
-        win :
-        typeof window !== 'undefined' ?
-            window :
-            {}
-// eslint-disable-next-line node/no-unsupported-features/es-builtins
-) as (Window&typeof globalThis);
+    typeof win !== 'undefined'
+        ? win
+        : typeof window !== 'undefined'
+        ? window
+        : {}
+) as // eslint-disable-next-line node/no-unsupported-features/es-builtins
+Window & typeof globalThis;
 
 /* *
  *
@@ -133,7 +131,6 @@ const w = (
  * Shared Highcharts properties.
  */
 namespace Globals {
-
     /* *
      *
      *  Constants
@@ -145,11 +142,11 @@ namespace Globals {
         version = '@product.version@',
         win = w,
         doc = win.document,
-        svg = (
+        svg =
             doc &&
             doc.createElementNS &&
-            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
-        ),
+            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement)
+                .createSVGRect,
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
@@ -157,11 +154,9 @@ namespace Globals {
         isSafari = !isChrome && userAgent.indexOf('Safari') !== -1,
         isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
         isWebKit = userAgent.indexOf('AppleWebKit') !== -1,
-        deg2rad = Math.PI * 2 / 360,
-        hasBidiBug = (
-            isFirefox &&
-            parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-        ),
+        deg2rad = (Math.PI * 2) / 360,
+        hasBidiBug =
+            isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
         hasTouch = !!win.TouchEvent,
         marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
@@ -190,7 +185,7 @@ namespace Globals {
             }
 
             return supportsPassive;
-        }());
+        })();
 
     /**
      * An array containing the current chart objects in the page. A chart's
@@ -237,7 +232,6 @@ namespace Globals {
 
     // eslint-disable-next-line prefer-const
     export let chartCount = 0;
-
 }
 
 /* *

@@ -25,7 +25,7 @@ import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions
  *
  * */
 
-declare module './ChartLike'{
+declare module './ChartLike' {
     interface ChartLike {
         navigation?: ChartNavigationComposition.Additions;
     }
@@ -38,7 +38,6 @@ declare module './ChartLike'{
  * */
 
 namespace ChartNavigationComposition {
-
     /* *
      *
      *  Declarations
@@ -69,14 +68,12 @@ namespace ChartNavigationComposition {
     /**
      * @private
      */
-    export function compose<T extends Chart>(
-        chart: T
-    ): (T&Composition) {
+    export function compose<T extends Chart>(chart: T): T & Composition {
         if (!chart.navigation) {
             chart.navigation = new Additions(chart as Composition);
         }
 
-        return chart as (T&Composition);
+        return chart as T & Composition;
     }
 
     /* *
@@ -91,7 +88,6 @@ namespace ChartNavigationComposition {
      * @private
      */
     export class Additions {
-
         /* *
          *
          *  Constructor
@@ -132,16 +128,9 @@ namespace ChartNavigationComposition {
         /**
          * @private
          */
-        public update(
-            options: NavigationOptions,
-            redraw?: boolean
-        ): void {
+        public update(options: NavigationOptions, redraw?: boolean): void {
             this.updates.forEach((updateFn): void => {
-                updateFn.call(
-                    this.chart,
-                    options,
-                    redraw
-                );
+                updateFn.call(this.chart, options, redraw);
             });
         }
     }

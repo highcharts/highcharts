@@ -19,17 +19,9 @@
 import type Chart from './Chart/Chart';
 
 import D from './DefaultOptions.js';
-const {
-    defaultOptions,
-    defaultTime
-} = D;
+const { defaultOptions, defaultTime } = D;
 import U from './Utilities.js';
-const {
-    getNestedProperty,
-    isNumber,
-    pick,
-    pInt
-} = U;
+const { getNestedProperty, isNumber, pick, pInt } = U;
 
 /* *
  *
@@ -128,8 +120,8 @@ function format(str: string, ctx: any, chart?: Chart): string {
     const floatRegex = /f$/;
     const decRegex = /\.([0-9])/;
     const lang = defaultOptions.lang;
-    const time = chart && chart.time || defaultTime;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
+    const time = (chart && chart.time) || defaultTime;
+    const numberFormatter = (chart && chart.numberFormatter) || numberFormat;
     const ret = [];
 
     while (str) {
@@ -139,18 +131,22 @@ function format(str: string, ctx: any, chart?: Chart): string {
         }
 
         segment = str.slice(0, index);
-        if (isInside) { // we're on the closing bracket looking back
+        if (isInside) {
+            // we're on the closing bracket looking back
 
             valueAndFormat = segment.split(':');
             val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
             if (valueAndFormat.length && typeof val === 'number') {
-
                 segment = valueAndFormat.join(':');
 
-                if (floatRegex.test(segment)) { // float
-                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                if (floatRegex.test(segment)) {
+                    // float
+                    const decimals = parseInt(
+                        (segment.match(decRegex) || ['', '-1'])[1],
+                        10
+                    );
                     if (val !== null) {
                         val = numberFormatter(
                             val,
@@ -168,7 +164,6 @@ function format(str: string, ctx: any, chart?: Chart): string {
             ret.push(val);
         } else {
             ret.push(segment);
-
         }
         str = str.slice(index + 1); // the rest
         isInside = !isInside; // toggle
@@ -213,8 +208,7 @@ function numberFormat(
     number = +number || 0;
     decimals = +decimals;
 
-    let ret,
-        fractionDigits;
+    let ret, fractionDigits;
 
     const lang = defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
@@ -226,22 +220,24 @@ function numberFormat(
         decimals = Math.min(origDec, 20);
     } else if (!isNumber(decimals)) {
         decimals = 2;
-    } else if (decimals && exponent[1] && exponent[1] as any < 0) {
+    } else if (decimals && exponent[1] && (exponent[1] as any) < 0) {
         // Expose decimals from exponential notation (#7042)
         fractionDigits = decimals + +exponent[1];
         if (fractionDigits >= 0) {
             // remove too small part of the number while keeping the notation
-            exponent[0] = (+exponent[0]).toExponential(fractionDigits)
+            exponent[0] = (+exponent[0])
+                .toExponential(fractionDigits)
                 .split('e')[0];
             decimals = fractionDigits;
         } else {
             // fractionDigits < 0
-            exponent[0] = exponent[0].split('.')[0] || 0 as any;
+            exponent[0] = exponent[0].split('.')[0] || (0 as any);
 
             if (decimals < 20) {
                 // use number instead of exponential notation (#7405)
-                number = (exponent[0] as any * Math.pow(10, exponent[1] as any))
-                    .toFixed(decimals) as any;
+                number = (
+                    (exponent[0] as any) * Math.pow(10, exponent[1] as any)
+                ).toFixed(decimals) as any;
             } else {
                 // or zero
                 number = 0;
@@ -253,7 +249,7 @@ function numberFormat(
     // Add another decimal to avoid rounding errors of float numbers. (#4573)
     // Then use toFixed to handle rounding.
     const roundedNumber = (
-        Math.abs(exponent[1] ? exponent[0] as any : number) +
+        Math.abs(exponent[1] ? (exponent[0] as any) : number) +
         Math.pow(10, -Math.max(decimals, origDec) - 1)
     ).toFixed(decimals);
 

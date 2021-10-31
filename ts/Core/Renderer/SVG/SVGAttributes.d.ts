@@ -15,10 +15,7 @@
  * */
 
 import type ColorType from '../../Color/ColorType';
-import type {
-    CSSObject,
-    CursorValue
-} from '../CSSObject';
+import type { CSSObject, CursorValue } from '../CSSObject';
 import type DashStyleValue from '../DashStyleValue';
 import type SVGPath from './SVGPath';
 
@@ -30,7 +27,7 @@ import type SVGPath from './SVGPath';
 
 export interface SVGAttributes {
     // [key: string]: any;
-    align?: 'left'|'center'|'right';
+    align?: 'left' | 'center' | 'right';
     'alignment-baseline'?: string;
     alphaCorrection?: number;
     anchorX?: number;
@@ -48,10 +45,10 @@ export interface SVGAttributes {
     cursor?: CursorValue;
     cx?: number;
     cy?: number;
-    d?: (string|SVGPath);
+    d?: string | SVGPath;
     dashstyle?: DashStyleValue;
     depth?: number;
-    display?: ''|'block'|'none';
+    display?: '' | 'block' | 'none';
     'dominant-baseline'?: string;
     dx?: number;
     dy?: number;
@@ -74,9 +71,9 @@ export interface SVGAttributes {
     opacity?: number;
     open?: boolean;
     padding?: number;
-    paddingLeft?: number|'unset';
-    paddingRight?: number|'unset';
-    patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
+    paddingLeft?: number | 'unset';
+    paddingRight?: number | 'unset';
+    patternContentUnits?: 'userSpaceOnUse' | 'objectBoundingBox';
     patternTransform?: string;
     patternUnits?: 'userSpaceOnUse';
     preserveAspectRatio?: string;
@@ -95,8 +92,8 @@ export interface SVGAttributes {
     start?: number;
     stdDeviation?: number;
     stroke?: ColorType;
-    'stroke-linecap'?: 'butt'|'round'|'square';
-    'stroke-linejoin'?: 'butt'|'round'|'square';
+    'stroke-linecap'?: 'butt' | 'round' | 'square';
+    'stroke-linejoin'?: 'butt' | 'round' | 'square';
     'stroke-opacity'?: number;
     'stroke-width'?: number;
     strokeWidth?: number; // Used in PatternFill, transformed to stroke-width
@@ -104,12 +101,12 @@ export interface SVGAttributes {
     // states?: any;
     'stop-color'?: string;
     'stop-opacity'?: number;
-    style?: CSSObject|string;
-    'sweep-flag'?: 0|1;
+    style?: CSSObject | string;
+    'sweep-flag'?: 0 | 1;
     tabindex?: number;
     tableValues?: string;
     text?: string;
-    'text-align'?: 'center'|'left'|'right';
+    'text-align'?: 'center' | 'left' | 'right';
     title?: string;
     transform?: string;
     translateX?: number;
@@ -117,7 +114,7 @@ export interface SVGAttributes {
     type?: string;
     version?: string;
     viewBox?: string;
-    visibility?: 'hidden'|'inherit'|'visible';
+    visibility?: 'hidden' | 'inherit' | 'visible';
     width?: number;
     x?: number;
     x1?: number;

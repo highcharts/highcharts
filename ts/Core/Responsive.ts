@@ -59,7 +59,6 @@ declare module './Options' {
  * */
 
 namespace Responsive {
-
     /* *
      *
      *  Declarations
@@ -74,14 +73,9 @@ namespace Responsive {
         /** @requires Core/Responsive */
         currentResponsive?: CurrentObject;
         /** @requires Core/Responsive */
-        currentOptions(
-            options: Partial<GlobalOptions>
-        ): Partial<GlobalOptions>;
+        currentOptions(options: Partial<GlobalOptions>): Partial<GlobalOptions>;
         /** @requires Core/Responsive */
-        matchResponsiveRule(
-            rule: RuleOptions,
-            matches: Array<string>
-        ): void;
+        matchResponsiveRule(rule: RuleOptions, matches: Array<string>): void;
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
     }
@@ -131,15 +125,14 @@ namespace Responsive {
      */
     export function compose<T extends typeof Chart>(
         ChartClass: T
-    ): (T&typeof Composition) {
-
+    ): T & typeof Composition {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
             extend(ChartClass.prototype, Additions.prototype as Composition);
         }
 
-        return ChartClass as (T&typeof Composition);
+        return ChartClass as T & typeof Composition;
     }
 
     /* *
@@ -149,7 +142,6 @@ namespace Responsive {
      * */
 
     class Additions {
-
         /* *
          *
          *  Functions
@@ -172,7 +164,6 @@ namespace Responsive {
             this: Composition,
             options: GlobalOptions
         ): Partial<GlobalOptions> {
-
             const chart = this,
                 ret = {};
 
@@ -200,8 +191,11 @@ namespace Responsive {
 
                         // Iterate over collections like series, xAxis or yAxis
                         // and map the items by index.
-                        for (i = 0; i < Math.max(val.length, curr[key].length); i++) {
-
+                        for (
+                            i = 0;
+                            i < Math.max(val.length, curr[key].length);
+                            i++
+                        ) {
                             // Item exists in current data (#6347)
                             if (curr[key][i]) {
                                 // If the item is missing from the new data, we
@@ -211,7 +205,7 @@ namespace Responsive {
                                 if (val[i] === void 0) {
                                     ret[key][i] = curr[key][i];
 
-                                // Otherwise, proceed
+                                    // Otherwise, proceed
                                 } else {
                                     ret[key][i] = {};
                                     getCurrent(
@@ -226,7 +220,8 @@ namespace Responsive {
                     } else if (isObject(val)) {
                         ret[key] = isArray(val) ? [] : {};
                         getCurrent(val, curr[key] || {}, ret[key], depth + 1);
-                    } else if (typeof curr[key] === 'undefined') { // #10286
+                    } else if (typeof curr[key] === 'undefined') {
+                        // #10286
                         ret[key] = null;
                     } else {
                         ret[key] = curr[key];
@@ -252,17 +247,19 @@ namespace Responsive {
             rule: RuleOptions,
             matches: Array<string>
         ): void {
-
             const condition = rule.condition,
-                fn = condition.callback || function (this: Chart): boolean {
-                    return (
-                        this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
-                        this.chartHeight <=
-                            pick(condition.maxHeight, Number.MAX_VALUE) &&
-                        this.chartWidth >= pick(condition.minWidth, 0) &&
-                        this.chartHeight >= pick(condition.minHeight, 0)
-                    );
-                };
+                fn =
+                    condition.callback ||
+                    function (this: Chart): boolean {
+                        return (
+                            this.chartWidth <=
+                                pick(condition.maxWidth, Number.MAX_VALUE) &&
+                            this.chartHeight <=
+                                pick(condition.maxHeight, Number.MAX_VALUE) &&
+                            this.chartWidth >= pick(condition.minWidth, 0) &&
+                            this.chartHeight >= pick(condition.minHeight, 0)
+                        );
+                    };
 
             if (fn.call(this)) {
                 matches.push(rule._id as any);
@@ -297,31 +294,34 @@ namespace Responsive {
                         rule._id = uniqueKey();
                     }
 
-                    this.matchResponsiveRule(rule, ruleIds/* , redraw */);
+                    this.matchResponsiveRule(rule, ruleIds /* , redraw */);
                 }, this);
             }
 
             // Merge matching rules
             const mergedOptions = merge(
                 ...ruleIds
-                    .map((ruleId): (RuleOptions|undefined) => find(
-                        (options || {}).rules || [],
-                        (rule): boolean => (rule._id === ruleId)
-                    ))
-                    .map((rule): (GlobalOptions|undefined) => (
-                        rule && rule.chartOptions
-                    ))
+                    .map((ruleId): RuleOptions | undefined =>
+                        find(
+                            (options || {}).rules || [],
+                            (rule): boolean => rule._id === ruleId
+                        )
+                    )
+                    .map(
+                        (rule): GlobalOptions | undefined =>
+                            rule && rule.chartOptions
+                    )
             );
 
             mergedOptions.isResponsiveOptions = true;
 
             // Stringified key for the rules that currently apply.
-            ruleIds = ((ruleIds.toString() as any) || void 0);
-            const currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+            ruleIds = (ruleIds.toString() as any) || void 0;
+            const currentRuleIds =
+                currentResponsive && currentResponsive.ruleIds;
 
             // Changes in what rules apply
             if ((ruleIds as any) !== currentRuleIds) {
-
                 // Undo previous rules. Before we apply a new set of rules, we
                 // need to roll back completely to base options (#6291).
                 if (currentResponsive) {
@@ -339,14 +339,12 @@ namespace Responsive {
                     };
 
                     this.update(mergedOptions, redraw, true);
-
                 } else {
                     this.currentResponsive = void 0;
                 }
             }
         }
     }
-
 }
 
 /* *

@@ -30,13 +30,7 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import U from '../../Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    splat
-} = U;
+const { addEvent, extend, merge, pick, splat } = U;
 
 /* *
  *
@@ -65,7 +59,6 @@ declare module '../../Series/SeriesLike' {
  * */
 
 namespace ColorAxisComposition {
-
     /* *
      *
      *  Declarations
@@ -74,7 +67,7 @@ namespace ColorAxisComposition {
 
     export interface PointComposition extends Point {
         series: SeriesComposition;
-        value?: (number|null);
+        value?: number | null;
         setVisible(vis?: boolean): void;
     }
 
@@ -134,7 +127,9 @@ namespace ColorAxisComposition {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
-            chartProto.collectionsWithInit.colorAxis = [chartProto.addColorAxis];
+            chartProto.collectionsWithInit.colorAxis = [
+                chartProto.addColorAxis
+            ];
 
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
@@ -152,25 +147,23 @@ namespace ColorAxisComposition {
             composedClasses.push(LegendClass);
 
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-            addEvent(LegendClass, 'afterColorizeItem', onLegendAfterColorizeItem);
+            addEvent(
+                LegendClass,
+                'afterColorizeItem',
+                onLegendAfterColorizeItem
+            );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            extend(
-                SeriesClass.prototype,
-                {
-                    optionalAxis: 'colorAxis',
-                    translateColors: seriesTranslateColors
-                }
-            );
-            extend(
-                SeriesClass.prototype.pointClass.prototype,
-                {
-                    setVisible: pointSetVisible
-                }
-            );
+            extend(SeriesClass.prototype, {
+                optionalAxis: 'colorAxis',
+                translateColors: seriesTranslateColors
+            });
+            extend(SeriesClass.prototype.pointClass.prototype, {
+                setVisible: pointSetVisible
+            });
 
             addEvent(SeriesClass, 'afterTranslate', onSeriesAfterTranslate);
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
@@ -181,9 +174,7 @@ namespace ColorAxisComposition {
      * Extend the chart getAxes method to also get the color axis.
      * @private
      */
-    function onChartAfterGetAxes(
-        this: Chart
-    ): void {
+    function onChartAfterGetAxes(this: Chart): void {
         const options = this.options;
 
         this.colorAxis = [];
@@ -205,11 +196,13 @@ namespace ColorAxisComposition {
     function onLegendAfterGetAllItems(
         this: Legend,
         e: {
-            allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
+            allItems: Array<
+                Series | Point | ColorAxis | ColorAxis.LegendItemObject
+            >;
         }
     ): void {
         const colorAxes = this.chart.colorAxis || [],
-            destroyItem = (item: (Series|Point)): void => {
+            destroyItem = (item: Series | Point): void => {
                 const i = e.allItems.indexOf(item);
                 if (i !== -1) {
                     // #15436
@@ -218,7 +211,9 @@ namespace ColorAxisComposition {
                 }
             };
 
-        let colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
+        let colorAxisItems = [] as Array<
+                ColorAxis | ColorAxis.LegendItemObject
+            >,
             options: ColorAxis.Options,
             i;
 
@@ -246,7 +241,6 @@ namespace ColorAxisComposition {
                             ): void {
                                 destroyItem(point);
                             });
-
                         } else {
                             destroyItem(series);
                         }
@@ -296,12 +290,9 @@ namespace ColorAxisComposition {
      * Calculate and set colors for points.
      * @private
      */
-    function onSeriesAfterTranslate(
-        this: Series
-    ): void {
+    function onSeriesAfterTranslate(this: Series): void {
         if (
-            this.chart.colorAxis &&
-            this.chart.colorAxis.length ||
+            (this.chart.colorAxis && this.chart.colorAxis.length) ||
             (this as TreemapSeries).colorAttribs
         ) {
             this.translateColors();
@@ -312,14 +303,11 @@ namespace ColorAxisComposition {
      * Add colorAxis to series axisTypes.
      * @private
      */
-    function onSeriesBindAxes(
-        this: Series
-    ): void {
+    function onSeriesBindAxes(this: Series): void {
         const axisTypes = this.axisTypes;
 
         if (!axisTypes) {
             this.axisTypes = ['colorAxis'];
-
         } else if (axisTypes.indexOf('colorAxis') === -1) {
             axisTypes.push('colorAxis');
         }
@@ -332,7 +320,10 @@ namespace ColorAxisComposition {
      * @param {boolean} visible
      * @return {void}
      */
-    export function pointSetVisible(this: PointComposition, vis?: boolean): void {
+    export function pointSetVisible(
+        this: PointComposition,
+        vis?: boolean
+    ): void {
         const point = this,
             method = vis ? 'show' : 'hide';
 
@@ -363,13 +354,13 @@ namespace ColorAxisComposition {
 
         points.forEach((point): void => {
             const value = point.getNestedProperty(colorKey) as number,
-                color = point.options.color || (
-                    point.isNull || point.value === null ?
-                        nullColor :
-                        (colorAxis && typeof value !== 'undefined') ?
-                            colorAxis.toColor(value, point) :
-                            point.color || series.color
-                );
+                color =
+                    point.options.color ||
+                    (point.isNull || point.value === null
+                        ? nullColor
+                        : colorAxis && typeof value !== 'undefined'
+                        ? colorAxis.toColor(value, point)
+                        : point.color || series.color);
 
             if (color && point.color !== color) {
                 point.color = color;
@@ -384,23 +375,24 @@ namespace ColorAxisComposition {
     /**
      * @private
      */
-    function wrapChartCreateAxis(
-        ChartClass: typeof Chart
-    ): void {
+    function wrapChartCreateAxis(ChartClass: typeof Chart): void {
         const superCreateAxis = ChartClass.prototype.createAxis;
 
         ChartClass.prototype.createAxis = function (
             type: string,
             options: Chart.CreateAxisOptionsObject
-        ): (Axis|ColorAxis) {
+        ): Axis | ColorAxis {
             if (type !== 'colorAxis') {
                 return superCreateAxis.apply(this, arguments);
             }
 
-            const axis = new ColorAxisClass(this, merge(options.axis, {
-                index: (this as AnyRecord)[type].length,
-                isX: false
-            }));
+            const axis = new ColorAxisClass(
+                this,
+                merge(options.axis, {
+                    index: (this as AnyRecord)[type].length,
+                    isX: false
+                })
+            );
 
             this.isDirtyLegend = true;
 
@@ -426,15 +418,10 @@ namespace ColorAxisComposition {
      * Handle animation of the color attributes directly.
      * @private
      */
-    function wrapFxFillSetter(
-        this: Fx
-    ): void {
+    function wrapFxFillSetter(this: Fx): void {
         this.elem.attr(
             'fill',
-            color(this.start as any).tweenTo(
-                color(this.end as any),
-                this.pos
-            ),
+            color(this.start as any).tweenTo(color(this.end as any), this.pos),
             void 0,
             true
         );
@@ -444,20 +431,14 @@ namespace ColorAxisComposition {
      * Handle animation of the color attributes directly.
      * @private
      */
-    function wrapFxStrokeSetter(
-        this: Fx
-    ): void {
+    function wrapFxStrokeSetter(this: Fx): void {
         this.elem.attr(
             'stroke',
-            color(this.start as any).tweenTo(
-                color(this.end as any),
-                this.pos
-            ),
+            color(this.start as any).tweenTo(color(this.end as any), this.pos),
             void 0,
             true
         );
     }
-
 }
 
 /* *

@@ -23,11 +23,8 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Geometry from './GeometryUtilities.js';
-const {
-    getAngleBetweenPoints,
-    getCenterOfPoints,
-    getDistanceBetweenPoints
-} = Geometry;
+const { getAngleBetweenPoints, getCenterOfPoints, getDistanceBetweenPoints } =
+    Geometry;
 
 /* *
  *
@@ -36,7 +33,6 @@ const {
  * */
 
 namespace CircleUtilities {
-
     /* *
      *
      *  Functions
@@ -96,7 +92,9 @@ namespace CircleUtilities {
      * Returns the area of the circular segment.
      */
     export function getCircularSegmentArea(r: number, h: number): number {
-        return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
+        return (
+            r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h))
+        );
     }
 
     /**
@@ -119,7 +117,11 @@ namespace CircleUtilities {
      * @return {number}
      * Returns the area of overlap between the two circles.
      */
-    export function getOverlapBetweenCircles(r1: number, r2: number, d: number): number {
+    export function getOverlapBetweenCircles(
+        r1: number,
+        r2: number,
+        d: number
+    ): number {
         let overlap = 0;
 
         // If the distance is larger than the sum of the radiuses then the
@@ -135,10 +137,9 @@ namespace CircleUtilities {
                     // Height of second triangle segment.
                     d2 = d - d1;
 
-                overlap = (
+                overlap =
                     getCircularSegmentArea(r1, r1 - d1) +
-                    getCircularSegmentArea(r2, r2 - d2)
-                );
+                    getCircularSegmentArea(r2, r2 - d2);
             }
             // Round the result to two decimals.
             overlap = round(overlap, 14);
@@ -184,8 +185,8 @@ namespace CircleUtilities {
                 x2 = c2.x,
                 y1 = c1.y,
                 y2 = c2.y,
-                x0 = x1 + x * (x2 - x1) / d,
-                y0 = y1 + x * (y2 - y1) / d,
+                x0 = x1 + (x * (x2 - x1)) / d,
+                y0 = y1 + (x * (y2 - y1)) / d,
                 rx = -(y2 - y1) * (y / d),
                 ry = -(x2 - x1) * (y / d);
 
@@ -216,12 +217,14 @@ namespace CircleUtilities {
                 .slice(i + 1)
                 .reduce((points, c2, j, arr): Array<GeometryObject> => {
                     const indexes: [number, number] = [i, j + i + 1];
-                    return points.concat(getCircleCircleIntersection(c1, c2).map((
-                        p: GeometryObject
-                    ): GeometryObject => {
-                        p.indexes = indexes;
-                        return p;
-                    }));
+                    return points.concat(
+                        getCircleCircleIntersection(c1, c2).map(
+                            (p: GeometryObject): GeometryObject => {
+                                p.indexes = indexes;
+                                return p;
+                            }
+                        )
+                    );
                 }, [] as Array<GeometryObject>);
 
             return points.concat(additional);
@@ -247,7 +250,10 @@ namespace CircleUtilities {
         circle1: CircleObject,
         circle2: CircleObject
     ): boolean {
-        return getDistanceBetweenPoints(circle1, circle2) + circle2.r < circle1.r + 1e-10;
+        return (
+            getDistanceBetweenPoints(circle1, circle2) + circle2.r <
+            circle1.r + 1e-10
+        );
     }
 
     /**
@@ -332,10 +338,11 @@ namespace CircleUtilities {
     export function getCirclesIntersectionPolygon(
         circles: Array<CircleObject>
     ): Array<GeometryObject> {
-        return getCirclesIntersectionPoints(circles)
-            .filter(function (p: PositionObject): boolean {
-                return isPointInsideAllCircles(p, circles);
-            });
+        return getCirclesIntersectionPoints(circles).filter(function (
+            p: PositionObject
+        ): boolean {
+            return isPointInsideAllCircles(p, circles);
+        });
     }
 
     /**
@@ -354,9 +361,9 @@ namespace CircleUtilities {
      */
     export function getAreaOfIntersectionBetweenCircles(
         circles: Array<CircleObject>
-    ): (IntersectionObject|undefined) {
+    ): IntersectionObject | undefined {
         let intersectionPoints = getCirclesIntersectionPolygon(circles),
-            result: (IntersectionObject|undefined);
+            result: IntersectionObject | undefined;
 
         if (intersectionPoints.length > 1) {
             // Calculate the center of the intersection points.
@@ -373,12 +380,10 @@ namespace CircleUtilities {
                     return (b.angle as any) - (a.angle as any);
                 });
 
-            const startPoint = intersectionPoints[intersectionPoints.length - 1];
-            const arcs: SVGPath = intersectionPoints
-                .reduce(function (
-                    data,
-                    p1: GeometryObject
-                ): any {
+            const startPoint =
+                intersectionPoints[intersectionPoints.length - 1];
+            const arcs: SVGPath = intersectionPoints.reduce(
+                function (data, p1: GeometryObject): any {
                     const { startPoint } = data,
                         midPoint = getCenterOfPoints([startPoint, p1]);
 
@@ -388,24 +393,28 @@ namespace CircleUtilities {
                         // Filter out circles that are not included in both
                         // intersection points.
                         .filter(function (index: number): boolean {
-                            return (startPoint.indexes as any).indexOf(index) > -1;
+                            return (
+                                (startPoint.indexes as any).indexOf(index) > -1
+                            );
                         })
                         // Iterate the circles of the intersection points and
                         // calculate arcs.
                         .reduce(function (arc: any, index: number): any {
                             const circle = circles[index],
                                 angle1 = getAngleBetweenPoints(circle, p1),
-                                angle2 = getAngleBetweenPoints(circle, startPoint),
-                                angleDiff = angle2 - angle1 +
+                                angle2 = getAngleBetweenPoints(
+                                    circle,
+                                    startPoint
+                                ),
+                                angleDiff =
+                                    angle2 -
+                                    angle1 +
                                     (angle2 < angle1 ? 2 * Math.PI : 0),
                                 angle = angle2 - angleDiff / 2;
-                            let width = getDistanceBetweenPoints(
-                                midPoint,
-                                {
-                                    x: circle.x + circle.r * Math.sin(angle),
-                                    y: circle.y + circle.r * Math.cos(angle)
-                                }
-                            );
+                            let width = getDistanceBetweenPoints(midPoint, {
+                                x: circle.x + circle.r * Math.sin(angle),
+                                y: circle.y + circle.r * Math.cos(angle)
+                            });
                             const { r } = circle;
 
                             // Width can sometimes become to large due to
@@ -432,16 +441,25 @@ namespace CircleUtilities {
                     if (arc) {
                         const { r } = arc;
 
-                        data.arcs.push(
-                            ['A', r, r, 0, arc.largeArc, 1, arc.x, arc.y]
-                        );
+                        data.arcs.push([
+                            'A',
+                            r,
+                            r,
+                            0,
+                            arc.largeArc,
+                            1,
+                            arc.x,
+                            arc.y
+                        ]);
                         data.startPoint = p1;
                     }
                     return data;
-                }, {
+                },
+                {
                     startPoint: startPoint,
                     arcs: [] as SVGPath
-                }).arcs;
+                }
+            ).arcs;
 
             if (arcs.length === 0) {
                 // empty
@@ -458,7 +476,6 @@ namespace CircleUtilities {
 
         return result;
     }
-
 }
 
 /* *

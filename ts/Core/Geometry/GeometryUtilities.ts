@@ -25,7 +25,6 @@ import type PositionObject from '../Renderer/PositionObject';
  * */
 
 namespace GeometryUtilities {
-
     /* *
      *
      *  Functions
@@ -46,11 +45,14 @@ namespace GeometryUtilities {
     export function getCenterOfPoints(
         points: Array<PositionObject>
     ): PositionObject {
-        const sum = points.reduce((sum, point): PositionObject => {
-            sum.x += point.x;
-            sum.y += point.y;
-            return sum;
-        }, { x: 0, y: 0 } as PositionObject);
+        const sum = points.reduce(
+            (sum, point): PositionObject => {
+                sum.x += point.x;
+                sum.y += point.y;
+                return sum;
+            },
+            { x: 0, y: 0 } as PositionObject
+        );
         return {
             x: sum.x / points.length,
             y: sum.y / points.length
@@ -93,7 +95,6 @@ namespace GeometryUtilities {
     ): number {
         return Math.atan2(p2.x - p1.x, p2.y - p1.y);
     }
-
 }
 
 /* *

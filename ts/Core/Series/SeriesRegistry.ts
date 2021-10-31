@@ -19,21 +19,14 @@
 import type Chart from '../Chart/Chart';
 import type Series from './Series.js';
 import type SeriesOptions from './SeriesOptions';
-import type {
-    SeriesTypeOptions,
-    SeriesTypeRegistry
-} from './SeriesType';
+import type { SeriesTypeOptions, SeriesTypeRegistry } from './SeriesType';
 
 import H from '../Globals.js';
 import D from '../DefaultOptions.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
-const {
-    error,
-    extendClass,
-    merge
-} = U;
+const { error, extendClass, merge } = U;
 
 /* *
  *
@@ -42,7 +35,6 @@ const {
  * */
 
 namespace SeriesRegistry {
-
     /* *
      *
      *  Properties
@@ -75,12 +67,11 @@ namespace SeriesRegistry {
         options: DeepPartial<SeriesTypeOptions> = {}
     ): Series {
         const optionsChart = chart.options.chart,
-            type = (
+            type =
                 options.type ||
                 optionsChart.type ||
                 optionsChart.defaultSeriesType ||
-                ''
-            ),
+                '',
             SeriesClass: typeof Series = seriesTypes[type] as any;
 
         // No such series type
@@ -151,7 +142,7 @@ namespace SeriesRegistry {
      */
     export function seriesType<T extends typeof Series>(
         type: keyof SeriesTypeRegistry,
-        parent: (keyof SeriesTypeRegistry|undefined),
+        parent: keyof SeriesTypeRegistry | undefined,
         options: T['prototype']['options'],
         seriesProto?: DeepPartial<T['prototype']>,
         pointProto?: DeepPartial<T['prototype']['pointClass']['prototype']>
@@ -161,28 +152,30 @@ namespace SeriesRegistry {
         parent = parent || '';
 
         // Merge the options
-        defaultPlotOptions[type] = merge(
-            defaultPlotOptions[parent],
-            options
-        );
+        defaultPlotOptions[type] = merge(defaultPlotOptions[parent], options);
 
         // Create the class
-        registerSeriesType(type, extendClass(
-            seriesTypes[parent] as any || function (): void {},
-            seriesProto
-        ) as any);
+        registerSeriesType(
+            type,
+            extendClass(
+                (seriesTypes[parent] as any) || function (): void {},
+                seriesProto
+            ) as any
+        );
         seriesTypes[type].prototype.type = type;
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto) as any;
+            seriesTypes[type].prototype.pointClass = extendClass(
+                Point,
+                pointProto
+            ) as any;
         }
 
         return seriesTypes[type] as unknown as T;
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

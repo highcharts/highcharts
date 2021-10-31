@@ -36,7 +36,7 @@ export interface GlobalsLike {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     chartCount: number;
-    readonly charts: Array<(Chart|undefined)>;
+    readonly charts: Array<Chart | undefined>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     readonly deg2rad: number;
     readonly doc: Document;
@@ -60,7 +60,7 @@ export interface GlobalsLike {
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins
-    readonly win: (Window&typeof globalThis);
+    readonly win: Window & typeof globalThis;
 }
 
 /* *

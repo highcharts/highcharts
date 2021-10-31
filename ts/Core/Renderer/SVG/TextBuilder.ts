@@ -16,28 +16,16 @@
  *
  * */
 
-import type {
-    DOMElementType,
-    SVGDOMElement
-} from '../DOMElementType';
+import type { DOMElementType, SVGDOMElement } from '../DOMElementType';
 import type SVGAttributes from './SVGAttributes';
 import type SVGElement from './SVGElement';
 import type SVGRenderer from './SVGRenderer';
 
 import AST from '../HTML/AST.js';
 import H from '../../Globals.js';
-const {
-    doc,
-    SVG_NS,
-    win
-} = H;
+const { doc, SVG_NS, win } = H;
 import U from '../../Utilities.js';
-const {
-    attr,
-    isString,
-    objectEach,
-    pick
-} = U;
+const { attr, isString, objectEach, pick } = U;
 
 /* *
  *
@@ -52,7 +40,6 @@ const {
  * @name Highcharts.TextBuilder
  */
 class TextBuilder {
-
     public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
 
@@ -62,7 +49,9 @@ class TextBuilder {
 
         this.textLineHeight = textStyles && textStyles.lineHeight;
         this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(textStyles && textStyles.textOverflow === 'ellipsis');
+        this.ellipsis = Boolean(
+            textStyles && textStyles.textOverflow === 'ellipsis'
+        );
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
@@ -112,7 +101,7 @@ class TextBuilder {
         delete wrapper.actualWidth;
 
         // Remove old text
-        for (let i = childNodes.length; i--;) {
+        for (let i = childNodes.length; i--; ) {
             textNode.removeChild(childNodes[i]);
         }
 
@@ -121,18 +110,15 @@ class TextBuilder {
             !hasMarkup &&
             !this.ellipsis &&
             !this.width &&
-            (
-                textStr.indexOf(' ') === -1 ||
-                (this.noWrap && !regexMatchBreaks.test(textStr))
-            )
+            (textStr.indexOf(' ') === -1 ||
+                (this.noWrap && !regexMatchBreaks.test(textStr)))
         ) {
             textNode.appendChild(
                 doc.createTextNode(this.unescapeEntities(textStr))
             );
 
-        // Complex strings, add more logic
+            // Complex strings, add more logic
         } else if (textStr !== '') {
-
             if (tempParent) {
                 // attach it to the DOM to read offset width
                 tempParent.appendChild(textNode);
@@ -159,10 +145,10 @@ class TextBuilder {
             ) {
                 wrapper.attr(
                     'title',
-                    this.unescapeEntities(
-                        wrapper.textStr || '',
-                        ['&lt;', '&gt;']
-                    ) // #7179
+                    this.unescapeEntities(wrapper.textStr || '', [
+                        '&lt;',
+                        '&gt;'
+                    ]) // #7179
                 );
             }
             if (tempParent) {
@@ -186,7 +172,6 @@ class TextBuilder {
      * @return {void}
      */
     private modifyDOM(): void {
-
         const wrapper = this.svgElement;
         const x = attr(wrapper.element, 'x');
         wrapper.firstLineMetrics = void 0;
@@ -196,11 +181,9 @@ class TextBuilder {
         // where the header is empty. By doing this in the DOM rather than in
         // the AST, we can inspect the textContent directly and don't have to
         // recurse down to look for valid content.
-        let firstChild: ChildNode|null;
+        let firstChild: ChildNode | null;
         while ((firstChild = wrapper.element.firstChild)) {
-            if (
-                /^[\s\u200B]*$/.test(firstChild.textContent || ' ')
-            ) {
+            if (/^[\s\u200B]*$/.test(firstChild.textContent || ' ')) {
                 wrapper.element.removeChild(firstChild);
             } else {
                 break;
@@ -211,11 +194,14 @@ class TextBuilder {
         [].forEach.call(
             wrapper.element.querySelectorAll('tspan.highcharts-br'),
             (br: SVGDOMElement, i): void => {
-                if (br.nextSibling && br.previousSibling) { // #5261
+                if (br.nextSibling && br.previousSibling) {
+                    // #5261
 
                     if (i === 0 && br.previousSibling.nodeType === 1) {
-                        wrapper.firstLineMetrics = wrapper.renderer
-                            .fontMetrics(void 0, br.previousSibling as any);
+                        wrapper.firstLineMetrics = wrapper.renderer.fontMetrics(
+                            void 0,
+                            br.previousSibling as any
+                        );
                     }
 
                     attr(br, {
@@ -245,9 +231,9 @@ class TextBuilder {
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
                 // .trim()
                 .split(' '); // #1273
-            const hasWhiteSpace = !this.noWrap && (
-                words.length > 1 || wrapper.element.childNodes.length > 1
-            );
+            const hasWhiteSpace =
+                !this.noWrap &&
+                (words.length > 1 || wrapper.element.childNodes.length > 1);
 
             const dy = this.getLineHeight(parentElement);
 
@@ -288,12 +274,11 @@ class TextBuilder {
                 }
 
                 while (words.length) {
-
                     // Apply the previous line
                     if (words.length && !this.noWrap && lineNo > 0) {
-
                         lines.push(textNode.textContent || '');
-                        textNode.textContent = words.join(' ')
+                        textNode.textContent = words
+                            .join(' ')
                             .replace(/- /g, '-');
                     }
 
@@ -303,7 +288,7 @@ class TextBuilder {
                         textNode,
                         void 0,
                         words,
-                        lineNo === 0 ? (startAt || 0) : 0,
+                        lineNo === 0 ? startAt || 0 : 0,
                         width,
                         // Build the text to test for
                         (t: string, currentIndex: number): string =>
@@ -324,7 +309,6 @@ class TextBuilder {
 
                 // Insert the previous lines before the original text node
                 lines.forEach((line): void => {
-
                     // Insert the line
                     parentElement.insertBefore(
                         doc.createTextNode(line),
@@ -332,17 +316,19 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGDOMElement;
+                    const br = doc.createElementNS(
+                        SVG_NS,
+                        'tspan'
+                    ) as SVGDOMElement;
                     br.textContent = '\u200B'; // zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
                 });
-
             }
         };
 
         // Recurse down the DOM tree and handle line breaks for each text node
-        const modifyChildren = ((node: DOMElementType): void => {
+        const modifyChildren = (node: DOMElementType): void => {
             const childNodes = [].slice.call(node.childNodes);
             childNodes.forEach((childNode: ChildNode): void => {
                 if (childNode.nodeType === win.Node.TEXT_NODE) {
@@ -350,8 +336,9 @@ class TextBuilder {
                 } else {
                     // Reset word-wrap width readings after hard breaks
                     if (
-                        (childNode as DOMElementType).className.baseVal
-                            .indexOf('highcharts-br') !== -1
+                        (childNode as DOMElementType).className.baseVal.indexOf(
+                            'highcharts-br'
+                        ) !== -1
                     ) {
                         wrapper.actualWidth = 0;
                     }
@@ -359,7 +346,7 @@ class TextBuilder {
                     modifyChildren(childNode as DOMElementType);
                 }
             });
-        });
+        };
         modifyChildren(wrapper.element);
     }
 
@@ -370,27 +357,28 @@ class TextBuilder {
      *
      * @return {number} The rendered line height
      */
-    private getLineHeight(node: DOMElementType|Text): number {
+    private getLineHeight(node: DOMElementType | Text): number {
         let fontSizeStyle;
 
         // If the node is a text node, use its parent
-        const element: DOMElementType|null = node.nodeType === win.Node.TEXT_NODE ?
-            node.parentElement :
-            node as DOMElementType;
+        const element: DOMElementType | null =
+            node.nodeType === win.Node.TEXT_NODE
+                ? node.parentElement
+                : (node as DOMElementType);
 
         if (!this.renderer.styledMode) {
             fontSizeStyle =
-                element && /(px|em)$/.test(element.style.fontSize) ?
-                    element.style.fontSize :
-                    (this.fontSize || this.renderer.style.fontSize || 12);
+                element && /(px|em)$/.test(element.style.fontSize)
+                    ? element.style.fontSize
+                    : this.fontSize || this.renderer.style.fontSize || 12;
         }
 
-        return this.textLineHeight ?
-            parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(
-                fontSizeStyle as any,
-                element || this.svgElement.element
-            ).h;
+        return this.textLineHeight
+            ? parseInt(this.textLineHeight.toString(), 10)
+            : this.renderer.fontMetrics(
+                  fontSizeStyle as any,
+                  element || this.svgElement.element
+              ).h;
     }
 
     /**
@@ -404,10 +392,7 @@ class TextBuilder {
      *
      * @return {void}
      */
-    private modifyTree(
-        nodes: AST.Node[]
-    ): void {
-
+    private modifyTree(nodes: AST.Node[]): void {
         const modifyChild = (node: AST.Node, i: number): void => {
             const tagName = node.tagName;
             const styledMode = this.renderer.styledMode;
@@ -418,13 +403,15 @@ class TextBuilder {
                 if (styledMode) {
                     attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
                 } else {
-                    attributes.style = 'font-weight:bold;' + (attributes.style || '');
+                    attributes.style =
+                        'font-weight:bold;' + (attributes.style || '');
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
                     attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 } else {
-                    attributes.style = 'font-style:italic;' + (attributes.style || '');
+                    attributes.style =
+                        'font-style:italic;' + (attributes.style || '');
                 }
             }
 
@@ -436,7 +423,6 @@ class TextBuilder {
                 );
             }
 
-
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
                 node.textContent = '\u200B'; // zero-width space
@@ -444,8 +430,10 @@ class TextBuilder {
                 // Trim whitespace off the beginning of new lines
                 const nextNode = nodes[i + 1];
                 if (nextNode && nextNode.textContent) {
-                    nextNode.textContent =
-                        nextNode.textContent.replace(/^ +/gm, '');
+                    nextNode.textContent = nextNode.textContent.replace(
+                        /^ +/gm,
+                        ''
+                    );
                 }
             }
 
@@ -473,8 +461,8 @@ class TextBuilder {
      */
     private truncate(
         textNode: Text,
-        text: (string|undefined),
-        words: (Array<string>|undefined),
+        text: string | undefined,
+        words: Array<string> | undefined,
         startAt: number,
         width: number,
         getString: Function
@@ -509,20 +497,22 @@ class TextBuilder {
                     // of unknown reason. Desired width is 0, text content
                     // is "5" and end is 1.
                     try {
-                        lengths[end] = startAt +
+                        lengths[end] =
+                            startAt +
                             (parentNode as any).getSubStringLength(
                                 0,
                                 words ? end + 1 : end
                             );
-
                     } catch (e) {
-                        '';
+                        ('');
                     }
 
-                // Legacy
-                } else if (renderer.getSpanWidth) { // #9058 jsdom
+                    // Legacy
+                } else if (renderer.getSpanWidth) {
+                    // #9058 jsdom
                     textNode.textContent = getString(text || words, charEnd);
-                    lengths[end] = startAt +
+                    lengths[end] =
+                        startAt +
                         renderer.getSpanWidth(svgElement, textNode as any);
                 }
             }
@@ -533,7 +523,6 @@ class TextBuilder {
         actualWidth = getSubStringLength((textNode.textContent as any).length);
 
         if (startAt + actualWidth > width) {
-
             // Do a binary search for the index where to truncate the text
             while (minIndex <= maxIndex) {
                 currentIndex = Math.ceil((minIndex + maxIndex) / 2);
@@ -567,10 +556,11 @@ class TextBuilder {
                 // Remove ellipsis
                 textNode.textContent = '';
 
-            // If the new text length is one less than the original, we don't
-            // need the ellipsis
+                // If the new text length is one less than the original, we
+                // don't need the ellipsis
             } else if (!(text && maxIndex === text.length - 1)) {
-                textNode.textContent = str || getString(text || words, currentIndex);
+                textNode.textContent =
+                    str || getString(text || words, currentIndex);
             }
         }
 
@@ -594,21 +584,17 @@ class TextBuilder {
      *
      * @return {string} The processed string
      */
-    private unescapeEntities(
-        inputStr: string,
-        except?: Array<string>
-    ): string {
-        objectEach(this.renderer.escapes, function (
-            value: string,
-            key: string
-        ): void {
-            if (!except || except.indexOf(value) === -1) {
-                inputStr = inputStr.toString().replace(
-                    new RegExp(value, 'g'),
-                    key
-                );
+    private unescapeEntities(inputStr: string, except?: Array<string>): string {
+        objectEach(
+            this.renderer.escapes,
+            function (value: string, key: string): void {
+                if (!except || except.indexOf(value) === -1) {
+                    inputStr = inputStr
+                        .toString()
+                        .replace(new RegExp(value, 'g'), key);
+                }
             }
-        });
+        );
         return inputStr;
     }
 }

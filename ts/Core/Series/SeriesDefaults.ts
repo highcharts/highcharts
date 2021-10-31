@@ -262,7 +262,6 @@ const seriesDefaults: SeriesOptions = {
      * @apioption plotOptions.series.colorIndex
      */
 
-
     /**
      * Whether to connect a graph line across null points, or render a gap
      * between the two points on either side of the null.
@@ -277,7 +276,6 @@ const seriesDefaults: SeriesOptions = {
      * @product   highcharts highstock
      * @apioption plotOptions.series.connectNulls
      */
-
 
     /**
      * You can set the cursor to "pointer" if you have click events attached
@@ -988,7 +986,6 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     marker: {
-
         /**
          * Enable or disable the point marker. If `undefined`, the markers
          * are hidden when the data is dense, and shown for more widespread
@@ -1122,7 +1119,6 @@ const seriesDefaults: SeriesOptions = {
          * @declare Highcharts.PointStatesOptionsObject
          */
         states: {
-
             /**
              * The normal state of a single point marker. Currently only
              * used for setting animation when returning to normal state
@@ -1145,7 +1141,6 @@ const seriesDefaults: SeriesOptions = {
              * @declare Highcharts.PointStatesHoverOptionsObject
              */
             hover: {
-
                 /**
                  * Animation when hovering over the marker.
                  *
@@ -1244,7 +1239,6 @@ const seriesDefaults: SeriesOptions = {
              * @declare Highcharts.PointStatesSelectOptionsObject
              */
             select: {
-
                 /**
                  * Enable or disable visible feedback for selection.
                  *
@@ -1307,7 +1301,6 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     point: {
-
         /**
          * Fires when a point is clicked. One parameter, `event`, is passed
          * to the function, containing common event information.
@@ -1720,7 +1713,9 @@ const seriesDefaults: SeriesOptions = {
          */
         formatter: function (this: Point.PointLabelObject): string {
             const { numberFormatter } = this.series.chart;
-            return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
+            return typeof this.y !== 'number'
+                ? ''
+                : numberFormatter(this.y, -1);
         },
 
         /**
@@ -2029,7 +2024,6 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     states: {
-
         /**
          * The normal state of a series, or for point items in column, pie
          * and similar series. Currently only used for setting animation
@@ -2041,7 +2035,7 @@ const seriesDefaults: SeriesOptions = {
             /**
              * Animation when returning to normal state after hovering.
              *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
@@ -2053,7 +2047,6 @@ const seriesDefaults: SeriesOptions = {
          * @declare Highcharts.SeriesStatesHoverOptionsObject
          */
         hover: {
-
             /**
              * Enable separate styles for the hovered series to visualize
              * that the user hovers either the series itself or the legend.
@@ -2071,7 +2064,6 @@ const seriesDefaults: SeriesOptions = {
              * @apioption plotOptions.series.states.hover.enabled
              */
 
-
             /**
              * Animation setting for hovering the graph in line-type series.
              *
@@ -2080,7 +2072,6 @@ const seriesDefaults: SeriesOptions = {
              * @product highcharts highstock
              */
             animation: {
-
                 /**
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
@@ -2156,7 +2147,6 @@ const seriesDefaults: SeriesOptions = {
              * @product highcharts highstock
              */
             halo: {
-
                 /**
                  * A collection of SVG attributes to override the appearance
                  * of the halo, for example `fill`, `stroke` and
@@ -2167,7 +2157,6 @@ const seriesDefaults: SeriesOptions = {
                  * @product   highcharts highstock
                  * @apioption plotOptions.series.states.hover.halo.attributes
                  */
-
 
                 /**
                  * The pixel size of the halo. For point markers this is the
@@ -2192,7 +2181,6 @@ const seriesDefaults: SeriesOptions = {
                 opacity: 0.25
             }
         },
-
 
         /**
          * Specific options for point in selected states, after being
@@ -2459,7 +2447,6 @@ const seriesDefaults: SeriesOptions = {
      * @private
      */
     findNearestPointBy: 'x'
-
 };
 
 /* *

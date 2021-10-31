@@ -27,7 +27,7 @@ export interface AnimationOptions {
     curAnim?: Record<string, boolean>;
     defer: number;
     duration: number;
-    easing?: (string|Function);
+    easing?: string | Function;
     step?: AnimationStepCallbackFunction;
 }
 

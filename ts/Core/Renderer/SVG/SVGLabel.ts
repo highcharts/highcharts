@@ -26,14 +26,7 @@ import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
-const {
-    defined,
-    extend,
-    isNumber,
-    merge,
-    pick,
-    removeEvent
-} = U;
+const { defined, extend, isNumber, merge, pick, removeEvent } = U;
 
 /* *
  *
@@ -49,14 +42,18 @@ const {
  * @augments Highcharts.SVGElement
  */
 class SVGLabel extends SVGElement {
-
     /* *
      *
      *  Static Properties
      *
      * */
 
-    public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+    public static readonly emptyBBox: BBoxObject = {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0
+    };
 
     /**
      * For labels, these CSS properties are applied to the `text` node directly.
@@ -66,9 +63,18 @@ class SVGLabel extends SVGElement {
      * @type {Array<string>}
      */
     public static textProps: Array<keyof CSSObject> = [
-        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
+        'color',
+        'direction',
+        'fontFamily',
+        'fontSize',
+        'fontStyle',
+        'fontWeight',
+        'lineHeight',
+        'textAlign',
+        'textDecoration',
+        'textOutline',
+        'textOverflow',
+        'width'
     ];
 
     /* *
@@ -82,7 +88,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SymbolKey|string),
+        shape?: SymbolKey | string,
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -101,9 +107,9 @@ class SVGLabel extends SVGElement {
         this.className = className;
 
         this.addClass(
-            className === 'button' ?
-                'highcharts-no-tooltip' :
-                'highcharts-label'
+            className === 'button'
+                ? 'highcharts-no-tooltip'
+                : 'highcharts-label'
         );
 
         if (className) {
@@ -129,7 +135,6 @@ class SVGLabel extends SVGElement {
         this.needsBox = renderer.styledMode || hasBGImage;
         this.deferredAttr = {};
         this.alignFactor = 0;
-
     }
 
     /* *
@@ -142,7 +147,7 @@ class SVGLabel extends SVGElement {
     public baselineOffset: number;
     public bBox: BBoxObject;
     public box?: SVGElement;
-    public deferredAttr: (SVGAttributes&AnyRecord);
+    public deferredAttr: SVGAttributes & AnyRecord;
     public heightSetting?: number;
     public needsBox?: boolean;
     public padding: number;
@@ -159,11 +164,11 @@ class SVGLabel extends SVGElement {
      * */
 
     public alignSetter(value: AlignValue): void {
-        const alignFactor = ({
+        const alignFactor = {
             left: 0,
             center: 0.5,
             right: 1
-        })[value];
+        }[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -191,7 +196,7 @@ class SVGLabel extends SVGElement {
      */
     private boxAttr(
         key: string,
-        value: (number|string|ColorType|SVGPath)
+        value: number | string | ColorType | SVGPath
     ): void {
         if (this.box) {
             this.box.attr(key, value);
@@ -220,7 +225,8 @@ class SVGLabel extends SVGElement {
             this.text.css(textStyles);
 
             const isWidth = 'width' in textStyles,
-                isFontStyle = ('fontSize' in textStyles || 'fontWeight' in textStyles);
+                isFontStyle =
+                    'fontSize' in textStyles || 'fontWeight' in textStyles;
 
             // Update existing text, box (#9400, #12163)
             if (isFontStyle) {
@@ -228,7 +234,6 @@ class SVGLabel extends SVGElement {
             } else if (isWidth) {
                 this.updateBoxSize();
             }
-
         }
         return SVGElement.prototype.css.call(this, styles) as this;
     }
@@ -237,7 +242,6 @@ class SVGLabel extends SVGElement {
      * Destroy and release memory.
      */
     public destroy(): undefined {
-
         // Added by button implementation
         removeEvent(this.element, 'mouseenter');
         removeEvent(this.element, 'mouseleave');
@@ -284,9 +288,11 @@ class SVGLabel extends SVGElement {
     }
 
     private getCrispAdjust(): number {
-        return this.renderer.styledMode && this.box ?
-            this.box.strokeWidth() % 2 / 2 :
-            (this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0) % 2 / 2;
+        return this.renderer.styledMode && this.box
+            ? (this.box.strokeWidth() % 2) / 2
+            : ((this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0) %
+                  2) /
+                  2;
     }
 
     public heightSetter(value: number): void {
@@ -303,7 +309,7 @@ class SVGLabel extends SVGElement {
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (defined(str) ? str : ''),
+            text: defined(str) ? str : '',
             x: this.x,
             y: this.y
         });
@@ -316,10 +322,7 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    public paddingSetter(
-        value: (number|string),
-        key: string
-    ): void {
+    public paddingSetter(value: number | string, key: string): void {
         if (!isNumber(value)) {
             this[key] = void 0;
         } else if (value !== this[key]) {
@@ -329,15 +332,13 @@ class SVGLabel extends SVGElement {
     }
 
     public rSetter(
-        value: (number|string|ColorType|SVGPath),
+        value: number | string | ColorType | SVGPath,
         key: string
     ): void {
         this.boxAttr(key, value);
     }
 
-    public shadow(
-        b?: (boolean|Partial<ShadowOptionsObject>)
-    ): this {
+    public shadow(b?: boolean | Partial<ShadowOptionsObject>): this {
         if (b && !this.renderer.styledMode) {
             this.updateBoxSize();
             if (this.box) {
@@ -347,19 +348,13 @@ class SVGLabel extends SVGElement {
         return this;
     }
 
-    public strokeSetter(
-        value: ColorType,
-        key: string
-    ): void {
+    public strokeSetter(value: ColorType, key: string): void {
         // for animation getter (#6776)
         this.stroke = value;
         this.boxAttr(key, value);
     }
 
-    public 'stroke-widthSetter'(
-        value: string,
-        key: string
-    ): void {
+    public 'stroke-widthSetter'(value: string, key: string): void {
         if (value) {
             this.needsBox = true;
         }
@@ -391,15 +386,13 @@ class SVGLabel extends SVGElement {
             // #12165 error when width is null (auto)
             // #12163 when fontweight: bold, recalculate bBox withot cache
             // #3295 && 3514 box failure when string equals 0
-            bBox = this.bBox = (
-                ((
-                    !isNumber(this.widthSetting) ||
+            bBox = (this.bBox =
+                (!isNumber(this.widthSetting) ||
                     !isNumber(this.heightSetting) ||
-                    this.textAlign
-                ) && defined(this.text.textStr)) ?
-                    this.text.getBBox() :
-                    SVGLabel.emptyBBox
-            );
+                    this.textAlign) &&
+                defined(this.text.textStr)
+                    ? this.text.getBBox()
+                    : SVGLabel.emptyBBox);
 
         let crispAdjust;
 
@@ -413,13 +406,15 @@ class SVGLabel extends SVGElement {
 
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
-        this.baselineOffset = padding + Math.min(
-            // When applicable, use the font size of the first line (#15707)
-            (this.text.firstLineMetrics || metrics).b,
-            // When the height is 0, there is no bBox, so go with the font
-            // metrics. Highmaps CSS demos.
-            bBox.height || Infinity
-        );
+        this.baselineOffset =
+            padding +
+            Math.min(
+                // When applicable, use the font size of the first line (#15707)
+                (this.text.firstLineMetrics || metrics).b,
+                // When the height is 0, there is no bBox, so go with the font
+                // metrics. Highmaps CSS demos.
+                bBox.height || Infinity
+            );
 
         // #15491: Vertical centering
         if (this.heightSetting) {
@@ -427,17 +422,21 @@ class SVGLabel extends SVGElement {
         }
 
         if (this.needsBox) {
-
             // Create the border box if it is not already present
             if (!this.box) {
                 // Symbol definition exists (#5324)
-                const box = this.box = this.symbolKey ?
-                    this.renderer.symbol(this.symbolKey) :
-                    this.renderer.rect();
+                const box = (this.box = this.symbolKey
+                    ? this.renderer.symbol(this.symbolKey)
+                    : this.renderer.rect());
 
-                box.addClass( // Don't use label className for buttons
-                    (this.className === 'button' ? '' : 'highcharts-label-box') +
-                    (this.className ? ' highcharts-' + this.className + '-box' : '')
+                box.addClass(
+                    // Don't use label className for buttons
+                    (this.className === 'button'
+                        ? ''
+                        : 'highcharts-label-box') +
+                        (this.className
+                            ? ' highcharts-' + this.className + '-box'
+                            : '')
                 );
 
                 box.add(this);
@@ -445,7 +444,8 @@ class SVGLabel extends SVGElement {
 
             crispAdjust = this.getCrispAdjust();
             attribs.x = crispAdjust;
-            attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
+            attribs.y =
+                (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
 
             // Apply the box attributes
             attribs.width = Math.round(this.width);
@@ -476,7 +476,10 @@ class SVGLabel extends SVGElement {
             this.bBox &&
             (this.textAlign === 'center' || this.textAlign === 'right')
         ) {
-            textX += { center: 0.5, right: 1 }[this.textAlign as ('center'|'right')] *
+            textX +=
+                { center: 0.5, right: 1 }[
+                    this.textAlign as 'center' | 'right'
+                ] *
                 (this.widthSetting - this.bBox.width);
         }
 
@@ -498,7 +501,7 @@ class SVGLabel extends SVGElement {
         text.y = textY;
     }
 
-    public widthSetter(value: (number|string)): void {
+    public widthSetter(value: number | string): void {
         // width:auto => null
         this.widthSetting = isNumber(value) ? value : void 0;
     }
@@ -507,7 +510,11 @@ class SVGLabel extends SVGElement {
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         const paddingRight = pick(this.paddingRight, padding);
-        return (this.widthSetting || this.bBox.width || 0) + paddingLeft + paddingRight;
+        return (
+            (this.widthSetting || this.bBox.width || 0) +
+            paddingLeft +
+            paddingRight
+        );
     }
 
     public xSetter(value: number): void {

@@ -22,11 +22,7 @@ import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
 import U from '../Utilities.js';
-const {
-    isNumber,
-    merge,
-    pInt
-} = U;
+const { isNumber, merge, pInt } = U;
 
 /* *
  *
@@ -46,7 +42,6 @@ const {
  * The input color in either rbga or hex format
  */
 class Color implements ColorLike {
-
     /* *
      *
      *  Static Properties
@@ -67,26 +62,28 @@ class Color implements ColorLike {
      * Collection of parsers. This can be extended from the outside by pushing
      * parsers to `Color.parsers`.
      */
-    public static parsers = [{
-        // RGBA color
-        // eslint-disable-next-line max-len
-        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-        parse: function (result: RegExpExecArray): Color.RGBA {
-            return [
-                pInt(result[1]),
-                pInt(result[2]),
-                pInt(result[3]),
-                (parseFloat as Function)(result[4], 10)
-            ];
+    public static parsers = [
+        {
+            // RGBA color
+            // eslint-disable-next-line max-len
+            regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+            parse: function (result: RegExpExecArray): Color.RGBA {
+                return [
+                    pInt(result[1]),
+                    pInt(result[2]),
+                    pInt(result[3]),
+                    (parseFloat as Function)(result[4], 10)
+                ];
+            }
+        },
+        {
+            // RGB color
+            regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+            parse: function (result: RegExpExecArray): Color.RGBA {
+                return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+            }
         }
-    }, {
-        // RGB color
-        regex:
-            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
-        parse: function (result: RegExpExecArray): Color.RGBA {
-            return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
-        }
-    }];
+    ];
 
     // Must be last static member for init cycle
     public static readonly None = new Color('');
@@ -118,9 +115,7 @@ class Color implements ColorLike {
      *
      * */
 
-    public constructor(
-        input: ColorType
-    ) {
+    public constructor(input: ColorType) {
         this.input = input;
 
         const GlobalColor = (H as AnyRecord).Color;
@@ -163,11 +158,9 @@ class Color implements ColorLike {
      * @param {Highcharts.ColorType} input
      * The input color in either rbga or hex format
      */
-    private init(
-        input: ColorType
-    ): void {
-        let result: (RegExpExecArray|null),
-            rgba: (Color.RGBA|undefined),
+    private init(input: ColorType): void {
+        let result: RegExpExecArray | null,
+            rgba: Color.RGBA | undefined,
             i: number,
             parser: Color.Parser;
 
@@ -180,9 +173,9 @@ class Color implements ColorLike {
                 (stop): Color => new Color(stop[1])
             );
 
-        // Solid colors
+            // Solid colors
         } else if (typeof input === 'string') {
-            this.input = input = (Color.names[input.toLowerCase()] || input);
+            this.input = input = Color.names[input.toLowerCase()] || input;
 
             // Bitmasking as input[0] is not working for legacy IE.
             if (input.charAt(0) === '#') {
@@ -191,29 +184,21 @@ class Color implements ColorLike {
 
                 // Handle long-form, e.g. #AABBCC
                 if (len === 7) {
-
                     rgba = [
-                        (col & 0xFF0000) >> 16,
-                        (col & 0xFF00) >> 8,
-                        (col & 0xFF),
+                        (col & 0xff0000) >> 16,
+                        (col & 0xff00) >> 8,
+                        col & 0xff,
                         1
                     ];
 
-                // Handle short-form, e.g. #ABC
-                // In short form, the value is assumed to be the same
-                // for both nibbles for each component. e.g. #ABC = #AABBCC
+                    // Handle short-form, e.g. #ABC
+                    // In short form, the value is assumed to be the same
+                    // for both nibbles for each component. e.g. #ABC = #AABBCC
                 } else if (len === 4) {
-
                     rgba = [
-                        (
-                            ((col & 0xF00) >> 4) |
-                            (col & 0xF00) >> 8
-                        ),
-                        (
-                            ((col & 0xF0) >> 4) |
-                            (col & 0xF0)
-                        ),
-                        ((col & 0xF) << 4) | (col & 0xF),
+                        ((col & 0xf00) >> 4) | ((col & 0xf00) >> 8),
+                        ((col & 0xf0) >> 4) | (col & 0xf0),
+                        ((col & 0xf) << 4) | (col & 0xf),
                         1
                     ];
                 }
@@ -248,21 +233,15 @@ class Color implements ColorLike {
      * @return {Highcharts.ColorType}
      * This color as a string or gradient stops.
      */
-    public get(format?: ('a'|'rgb'|'rgba')): ColorType {
+    public get(format?: 'a' | 'rgb' | 'rgba'): ColorType {
         const input = this.input,
             rgba = this.rgba;
 
-        if (
-            typeof input === 'object' &&
-            typeof this.stops !== 'undefined'
-        ) {
+        if (typeof input === 'object' && typeof this.stops !== 'undefined') {
             const ret = merge(input as GradientColor);
             ret.stops = [].slice.call(ret.stops);
             this.stops.forEach((stop: Color, i: number): void => {
-                ret.stops[i] = [
-                    ret.stops[i][0],
-                    stop.get(format) as string
-                ];
+                ret.stops[i] = [ret.stops[i][0], stop.get(format) as string];
             });
             return ret;
         }
@@ -299,7 +278,6 @@ class Color implements ColorLike {
             this.stops.forEach(function (stop: Color): void {
                 stop.brighten(alpha);
             });
-
         } else if (isNumber(alpha) && alpha !== 0) {
             for (let i = 0; i < 3; i++) {
                 rgba[i] += pInt(alpha * 255);
@@ -358,23 +336,20 @@ class Color implements ColorLike {
 
         // Check for has alpha, because rgba colors perform worse due to
         // lack of support in WebKit.
-        const hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
+        const hasAlpha = toRgba[3] !== 1 || fromRgba[3] !== 1;
 
-        return (hasAlpha ? 'rgba(' : 'rgb(') +
+        return (
+            (hasAlpha ? 'rgba(' : 'rgb(') +
             Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
             ',' +
             Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
             ',' +
             Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
-            (
-                hasAlpha ?
-                    (
-                        ',' +
-                        (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
-                    ) :
-                    ''
-            ) +
-            ')';
+            (hasAlpha
+                ? ',' + (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
+                : '') +
+            ')'
+        );
     }
 }
 
@@ -385,16 +360,12 @@ class Color implements ColorLike {
  * */
 
 namespace Color {
-
     export interface Parser {
         regex: RegExp;
-        parse: (
-            result: RegExpExecArray
-        ) => RGBA;
+        parse: (result: RegExpExecArray) => RGBA;
     }
 
     export type RGBA = [number, number, number, number];
-
 }
 
 /* *
@@ -443,16 +414,16 @@ export default Color;
  * }
  *
  * @interface Highcharts.GradientColorObject
- *//**
+ */ /**
  * Holds an object that defines the start position and the end position relative
  * to the shape.
  * @name Highcharts.GradientColorObject#linearGradient
  * @type {Highcharts.LinearGradientColorObject|undefined}
- *//**
+ */ /**
  * Holds an object that defines the center position and the radius.
  * @name Highcharts.GradientColorObject#radialGradient
  * @type {Highcharts.RadialGradientColorObject|undefined}
- *//**
+ */ /**
  * The first item in each tuple is the position in the gradient, where 0 is the
  * start of the gradient and 1 is the end of the gradient. Multiple stops can be
  * applied. The second item is the color for each stop. This color can also be
@@ -467,13 +438,13 @@ export default Color;
  * @see Highcharts.GradientColorObject
  *
  * @interface Highcharts.GradientColorStopObject
- *//**
+ */ /**
  * @name Highcharts.GradientColorStopObject#0
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.GradientColorStopObject#1
  * @type {Highcharts.ColorString}
- *//**
+ */ /**
  * @name Highcharts.GradientColorStopObject#color
  * @type {Highcharts.Color|undefined}
  */
@@ -484,19 +455,19 @@ export default Color;
  * to the shape, where 0 means top/left and 1 is bottom/right.
  *
  * @interface Highcharts.LinearGradientColorObject
- *//**
+ */ /**
  * Start horizontal position of the gradient. Float ranges 0-1.
  * @name Highcharts.LinearGradientColorObject#x1
  * @type {number}
- *//**
+ */ /**
  * End horizontal position of the gradient. Float ranges 0-1.
  * @name Highcharts.LinearGradientColorObject#x2
  * @type {number}
- *//**
+ */ /**
  * Start vertical position of the gradient. Float ranges 0-1.
  * @name Highcharts.LinearGradientColorObject#y1
  * @type {number}
- *//**
+ */ /**
  * End vertical position of the gradient. Float ranges 0-1.
  * @name Highcharts.LinearGradientColorObject#y2
  * @type {number}
@@ -506,15 +477,15 @@ export default Color;
  * Defines the center position and the radius for a gradient.
  *
  * @interface Highcharts.RadialGradientColorObject
- *//**
+ */ /**
  * Center horizontal position relative to the shape. Float ranges 0-1.
  * @name Highcharts.RadialGradientColorObject#cx
  * @type {number}
- *//**
+ */ /**
  * Center vertical position relative to the shape. Float ranges 0-1.
  * @name Highcharts.RadialGradientColorObject#cy
  * @type {number}
- *//**
+ */ /**
  * Radius relative to the shape. Float ranges 0-1.
  * @name Highcharts.RadialGradientColorObject#r
  * @type {number}

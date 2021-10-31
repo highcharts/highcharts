@@ -18,29 +18,15 @@
 
 import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
-import type {
-    DOMElementType,
-    HTMLDOMElement
-} from '../DOMElementType';
+import type { DOMElementType, HTMLDOMElement } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import H from '../../Globals.js';
-const {
-    isFirefox,
-    isMS,
-    isWebKit,
-    win
-} = H;
+const { isFirefox, isMS, isWebKit, win } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
-const {
-    css,
-    defined,
-    extend,
-    pick,
-    pInt
-} = U;
+const { css, defined, extend, pick, pInt } = U;
 
 /* *
  *
@@ -48,21 +34,20 @@ const {
  *
  * */
 
-type TransformKeyType = (
-    '-ms-transform'|
-    '-webkit-transform'|
-    'MozTransform'|
-    '-o-transform'
-);
+type TransformKeyType =
+    | '-ms-transform'
+    | '-webkit-transform'
+    | 'MozTransform'
+    | '-o-transform';
 
 declare module '../SVG/SVGElementLike' {
     interface SVGElementLike {
         /** @requires Core/Renderer/HTML/HTMLElement */
         appendChild: HTMLDOMElement['appendChild'];
         element: DOMElementType;
-        parentGroup?: (HTMLElement|SVGElement);
-        renderer: (HTMLRenderer|SVGRenderer);
-        style: (CSSObject&CSSStyleDeclaration);
+        parentGroup?: HTMLElement | SVGElement;
+        renderer: HTMLRenderer | SVGRenderer;
+        style: CSSObject & CSSStyleDeclaration;
         xCorr: number;
         yCorr: number;
         afterSetters(): void;
@@ -99,7 +84,6 @@ declare module '../SVG/SVGElementLike' {
 /* eslint-disable valid-jsdoc */
 
 class HTMLElement extends SVGElement {
-
     /* *
      *
      *  Static Properties
@@ -120,22 +104,23 @@ class HTMLElement extends SVGElement {
      */
     public static compose<T extends typeof SVGElement>(
         SVGElementClass: T
-    ): (T&typeof HTMLElement) {
-
+    ): T & typeof HTMLElement {
         if (HTMLElement.composedClasses.indexOf(SVGElementClass) === -1) {
             HTMLElement.composedClasses.push(SVGElementClass);
 
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 
-            svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+            svgElementProto.getSpanCorrection =
+                htmlElementProto.getSpanCorrection;
             svgElementProto.htmlCss = htmlElementProto.htmlCss;
             svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+            svgElementProto.htmlUpdateTransform =
+                htmlElementProto.htmlUpdateTransform;
             svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
         }
 
-        return SVGElementClass as (T&typeof HTMLElement);
+        return SVGElementClass as T & typeof HTMLElement;
     }
 
     /* *
@@ -176,15 +161,9 @@ class HTMLElement extends SVGElement {
             element = wrapper.element,
             // When setting or unsetting the width style, we need to update
             // transform (#8809)
-            isSettingWidth = (
-                element.tagName === 'SPAN' &&
-                styles &&
-                'width' in styles
-            ),
-            textWidth = pick(
-                isSettingWidth && styles.width,
-                void 0
-            );
+            isSettingWidth =
+                element.tagName === 'SPAN' && styles && 'width' in styles,
+            textWidth = pick(isSettingWidth && styles.width, void 0);
 
         let doTransform;
 
@@ -244,9 +223,13 @@ class HTMLElement extends SVGElement {
             x = wrapper.x || 0,
             y = wrapper.y || 0,
             align = wrapper.textAlign || 'left',
-            alignCorrection = ({
-                left: 0, center: 0.5, right: 1
-            } as Record<string, number>)[align],
+            alignCorrection = (
+                {
+                    left: 0,
+                    center: 0.5,
+                    right: 1
+                } as Record<string, number>
+            )[align],
             styles = wrapper.styles,
             whiteSpace = styles && styles.whiteSpace;
 
@@ -270,19 +253,19 @@ class HTMLElement extends SVGElement {
             marginTop: translateY as any
         });
 
-        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
-            wrapper.shadows.forEach(function (
-                shadow: DOMElementType
-            ): void {
+        if (!renderer.styledMode && wrapper.shadows) {
+            // used in labels/tooltip
+            wrapper.shadows.forEach(function (shadow: DOMElementType): void {
                 css(shadow, {
-                    marginLeft: translateX + 1 as any,
-                    marginTop: translateY + 1 as any
+                    marginLeft: (translateX + 1) as any,
+                    marginTop: (translateY + 1) as any
                 });
             });
         }
 
         // apply inversion
-        if (wrapper.inverted) { // wrapper is a group
+        if (wrapper.inverted) {
+            // wrapper is a group
             [].forEach.call(elem.childNodes, function (child: ChildNode): void {
                 renderer.invertChild(child as any, elem);
             });
@@ -306,23 +289,22 @@ class HTMLElement extends SVGElement {
             // avoid the getTextPxLength function using elem.offsetWidth.
             // Calling offsetWidth affects rendering time as it forces layout
             // (#7656).
-            if (textWidth !== wrapper.oldTextWidth) { // #983, #1254
+            if (textWidth !== wrapper.oldTextWidth) {
+                // #983, #1254
                 const textPxLength = getTextPxLength();
                 if (
-                    (
-                        (textWidth > wrapper.oldTextWidth) ||
-                        textPxLength > textWidth
-                    ) && (
-                        // Only set the width if the text is able to word-wrap,
-                        // or text-overflow is ellipsis (#9537)
-                        /[ \-]/.test(elem.textContent || elem.innerText) ||
-                        elem.style.textOverflow === 'ellipsis'
-                    )
+                    (textWidth > wrapper.oldTextWidth ||
+                        textPxLength > textWidth) &&
+                    // Only set the width if the text is able to word-wrap,
+                    // or text-overflow is ellipsis (#9537)
+                    (/[ \-]/.test(elem.textContent || elem.innerText) ||
+                        elem.style.textOverflow === 'ellipsis')
                 ) {
                     css(elem, {
-                        width: (textPxLength > textWidth) || rotation ?
-                            textWidth + 'px' :
-                            'auto', // #16261
+                        width:
+                            textPxLength > textWidth || rotation
+                                ? textWidth + 'px'
+                                : 'auto', // #16261
                         display: 'block',
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
@@ -331,7 +313,6 @@ class HTMLElement extends SVGElement {
                 }
             }
             wrapper.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
-
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
@@ -344,10 +325,8 @@ class HTMLElement extends SVGElement {
                 // have something to update.
                 if (
                     defined(rotation) &&
-                    (
-                        (rotation !== (wrapper.oldRotation || 0)) ||
-                        (align !== wrapper.oldAlign)
-                    )
+                    (rotation !== (wrapper.oldRotation || 0) ||
+                        align !== wrapper.oldAlign)
                 ) {
                     wrapper.setSpanRotation(
                         rotation as any,
@@ -359,10 +338,8 @@ class HTMLElement extends SVGElement {
                 (wrapper.getSpanCorrection as any)(
                     // Avoid elem.offsetWidth if we can, it affects rendering
                     // time heavily (#7656)
-                    (
-                        (!defined(rotation) && wrapper.textPxLength) || // #7920
-                        elem.offsetWidth
-                    ),
+                    (!defined(rotation) && wrapper.textPxLength) || // #7920
+                        elem.offsetWidth,
                     baseline,
                     alignCorrection,
                     rotation,
@@ -372,8 +349,8 @@ class HTMLElement extends SVGElement {
 
             // apply position with correction
             css(elem, {
-                left: (x + (wrapper.xCorr || 0)) + 'px',
-                top: (y + (wrapper.yCorr || 0)) + 'px'
+                left: x + (wrapper.xCorr || 0) + 'px',
+                top: y + (wrapper.yCorr || 0) + 'px'
             });
 
             // record current text transform
@@ -392,16 +369,16 @@ class HTMLElement extends SVGElement {
         alignCorrection: number,
         baseline: number
     ): void {
-        const getTransformKey = (): (TransformKeyType|undefined) => (isMS &&
-            !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        void 0);
+        const getTransformKey = (): TransformKeyType | undefined =>
+            isMS && !/Edge/.test(win.navigator.userAgent)
+                ? '-ms-transform'
+                : isWebKit
+                ? '-webkit-transform'
+                : isFirefox
+                ? 'MozTransform'
+                : win.opera
+                ? '-o-transform'
+                : void 0;
 
         const rotationStyle: CSSObject = {},
             cssTransformKey = getTransformKey();
@@ -412,7 +389,7 @@ class HTMLElement extends SVGElement {
             (rotationStyle as any)[
                 cssTransformKey + (isFirefox ? 'Origin' : '-origin')
             ] = rotationStyle.transformOrigin =
-                (alignCorrection * 100) + '% ' + baseline + 'px';
+                alignCorrection * 100 + '% ' + baseline + 'px';
             css(this.element, rotationStyle);
         }
     }

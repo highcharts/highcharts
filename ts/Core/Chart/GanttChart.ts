@@ -18,10 +18,7 @@
  *
  * */
 
-import type {
-    AxisOptions,
-    YAxisOptions
-} from '../Axis/AxisOptions';
+import type { AxisOptions, YAxisOptions } from '../Axis/AxisOptions';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -29,11 +26,7 @@ import Chart from './Chart.js';
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
 import U from '../Utilities.js';
-const {
-    isArray,
-    merge,
-    splat
-} = U;
+const { isArray, merge, splat } = U;
 
 import '../../Series/Gantt/GanttSeries.js';
 
@@ -132,19 +125,18 @@ class GanttChart extends Chart {
         // If user hasn't defined axes as array, make it into an array and add a
         // second axis by default.
         options.xAxis = (
-            !isArray(userOptions.xAxis) ?
-                [userOptions.xAxis || {}, {}] :
-                userOptions.xAxis
-        ).map(function (
-            xAxisOptions,
-            i
-        ): DeepPartial<AxisOptions> {
-            if (i === 1) { // Second xAxis
+            !isArray(userOptions.xAxis)
+                ? [userOptions.xAxis || {}, {}]
+                : userOptions.xAxis
+        ).map(function (xAxisOptions, i): DeepPartial<AxisOptions> {
+            if (i === 1) {
+                // Second xAxis
                 defaultLinkedTo = 0;
             }
             return merge(
                 defaultOptions.xAxis,
-                { // defaults
+                {
+                    // defaults
                     grid: {
                         enabled: true
                     },
@@ -152,19 +144,21 @@ class GanttChart extends Chart {
                     linkedTo: defaultLinkedTo
                 },
                 xAxisOptions, // user options
-                { // forced options
+                {
+                    // forced options
                     type: 'datetime'
                 }
             );
         });
 
         // apply Y axis options to both single and multi y axes
-        options.yAxis = (splat(userOptions.yAxis || {})).map(function (
+        options.yAxis = splat(userOptions.yAxis || {}).map(function (
             yAxisOptions: YAxisOptions
         ): YAxisOptions {
             return merge(
                 defaultOptions.yAxis, // #3802
-                { // defaults
+                {
+                    // defaults
                     grid: {
                         enabled: true
                     },
@@ -175,7 +169,9 @@ class GanttChart extends Chart {
 
                     // Set default type treegrid, but only if 'categories' is
                     // undefined
-                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                    type: yAxisOptions.categories
+                        ? yAxisOptions.type
+                        : 'treegrid'
                 } as YAxisOptions,
                 yAxisOptions // user options
             );
@@ -221,8 +217,8 @@ namespace GanttChart {
      *         Returns the Chart object.
      */
     export function ganttChart(
-        a: (string|HTMLDOMElement|Options),
-        b?: (Chart.CallbackFunction|Options),
+        a: string | HTMLDOMElement | Options,
+        b?: Chart.CallbackFunction | Options,
         c?: Chart.CallbackFunction
     ): GanttChart {
         return new GanttChart(a as any, b as any, c);

@@ -18,7 +18,6 @@ export interface ChartLike {
     // nothing here yet
 }
 
-
 /* *
  *
  *  Default Export

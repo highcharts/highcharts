@@ -90,7 +90,6 @@ declare module './AxisOptions' {
  * Optional parameters for the tick.
  */
 class Tick {
-
     /* *
      *
      *  Constructors
@@ -212,7 +211,8 @@ class Tick {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
+            animateLabels =
+                (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
             tickPositionInfo = tickPositions.info;
 
@@ -222,15 +222,12 @@ class Tick {
             i: number;
 
         // The context value
-        let value = this.parameters.category || (
-            categories ?
-                pick(categories[pos], names[pos], pos) :
-                pos
-        );
+        let value =
+            this.parameters.category ||
+            (categories ? pick(categories[pos], names[pos], pos) : pos);
         if (log && isNumber(value)) {
             value = correctFloat(log.lin2log(value));
         }
-
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -238,15 +235,13 @@ class Tick {
             if (tickPositionInfo) {
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(
                     (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
+                        (!options.grid && tickPositionInfo.higherRanks[pos]) ||
+                            tickPositionInfo.unitName
                     ]
                 );
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
-            } else if (isNumber(value)) { // #1441
+            } else if (isNumber(value)) {
+                // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
                     value,
                     (options.dateTimeLabelFormats || {}) as any
@@ -291,7 +286,9 @@ class Tick {
         // defaultFormatter and append the result to the context as `text`.
         // Handy for adding prefix or suffix while keeping default number
         // formatting.
-        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
+        const labelFormatter = (
+            ctx: AxisLabelFormatterContextObject
+        ): string => {
             if (labelOptions.formatter) {
                 return labelOptions.formatter.call(ctx, ctx);
             }
@@ -304,21 +301,18 @@ class Tick {
         const str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
+        const list = dateTimeLabelFormats && (dateTimeLabelFormats.list as any);
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
-                    extend(
-                        ctx,
-                        { dateTimeLabelFormat: list[i] }
-                    );
+                    extend(ctx, { dateTimeLabelFormat: list[i] });
                     (label as any).attr({
                         text: labelFormatter.call(ctx, ctx)
                     });
                     if (
                         (label as any).getBBox().width <
-                        axis.getSlotWidth(tick as any) - 2 *
-                            labelOptions.padding
+                        axis.getSlotWidth(tick as any) -
+                            2 * labelOptions.padding
                     ) {
                         return;
                     }
@@ -352,7 +346,7 @@ class Tick {
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
 
-        // update
+            // update
         } else if (label && label.textStr !== str && !animateLabels) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
@@ -380,19 +374,15 @@ class Tick {
         xy: PositionObject,
         str: string,
         labelOptions: AxisLabelOptions
-    ): (SVGElement|undefined) {
+    ): SVGElement | undefined {
         const axis = this.axis,
             chart = axis.chart,
-            label = defined(str) && labelOptions.enabled ?
-                chart.renderer
-                    .text(
-                        str,
-                        xy.x,
-                        xy.y,
-                        labelOptions.useHTML
-                    )
-                    .add(axis.labelGroup) :
-                null as any;
+            label =
+                defined(str) && labelOptions.enabled
+                    ? chart.renderer
+                          .text(str, xy.x, xy.y, labelOptions.useHTML)
+                          .add(axis.labelGroup)
+                    : (null as any);
 
         // Un-rotated length
         if (label) {
@@ -441,7 +431,7 @@ class Tick {
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
-        horiz: boolean|undefined,
+        horiz: boolean | undefined,
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
@@ -450,44 +440,39 @@ class Tick {
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
             pos = {
-                x: horiz ?
-                    correctFloat(
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) +
-                        axis.transB
-                    ) :
-                    (
-                        axis.left +
-                        axis.offset +
-                        (
-                            axis.opposite ?
-                                (
-                                    (
-                                        (old && chart.oldChartWidth as any) ||
-                                        (chart.chartWidth as any)
-                                    ) -
-                                    axis.right -
-                                    axis.left
-                                ) :
-                                0
-                        )
-                    ),
+                x: horiz
+                    ? correctFloat(
+                          (axis.translate(
+                              tickPos + tickmarkOffset,
+                              null,
+                              null,
+                              old
+                          ) as any) + axis.transB
+                      )
+                    : axis.left +
+                      axis.offset +
+                      (axis.opposite
+                          ? ((old && (chart.oldChartWidth as any)) ||
+                                (chart.chartWidth as any)) -
+                            axis.right -
+                            axis.left
+                          : 0),
 
-                y: horiz ?
-                    (
-                        (cHeight as any) -
-                        axis.bottom +
-                        axis.offset -
-                        (axis.opposite ? axis.height : 0)
-                    ) :
-                    correctFloat(
-                        (cHeight as any) -
-                        (axis.translate(
-                            tickPos + tickmarkOffset, null, null, old
-                        ) as any) -
-                        axis.transB
-                    )
+                y: horiz
+                    ? (cHeight as any) -
+                      axis.bottom +
+                      axis.offset -
+                      (axis.opposite ? axis.height : 0)
+                    : correctFloat(
+                          (cHeight as any) -
+                              (axis.translate(
+                                  tickPos + tickmarkOffset,
+                                  null,
+                                  null,
+                                  old
+                              ) as any) -
+                              axis.transB
+                      )
             };
 
         // Chrome workaround for #10516
@@ -496,7 +481,6 @@ class Tick {
         fireEvent(this, 'afterGetPosition', { pos: pos });
 
         return pos;
-
     }
 
     /**
@@ -517,22 +501,18 @@ class Tick {
     ): PositionObject {
         const axis = this.axis,
             transA = axis.transA,
-            reversed = ( // #7911
-                axis.isLinked && axis.linkedParent ?
-                    axis.linkedParent.reversed :
-                    axis.reversed
-            ),
+            reversed = // #7911
+                axis.isLinked && axis.linkedParent
+                    ? axis.linkedParent.reversed
+                    : axis.reversed,
             staggerLines = axis.staggerLines,
             rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-
             // Adjust for label alignment if we use reserveSpace: true (#5286)
-            labelOffsetCorrection = (
-                !horiz && !axis.reserveSpaceDefault ?
-                    -(axis.labelOffset as any) * (
-                        axis.labelAlign === 'center' ? 0.5 : 1
-                    ) :
-                    0
-            ),
+            labelOffsetCorrection =
+                !horiz && !axis.reserveSpaceDefault
+                    ? -(axis.labelOffset as any) *
+                      (axis.labelAlign === 'center' ? 0.5 : 1)
+                    : 0,
             pos = {} as PositionObject;
 
         let yOffset = labelOptions.y,
@@ -545,26 +525,30 @@ class Tick {
                 yOffset = rotCorr.y + 8;
             } else {
                 // #3140, #3140
-                yOffset = Math.cos((label.rotation as any) * deg2rad) *
+                yOffset =
+                    Math.cos((label.rotation as any) * deg2rad) *
                     (rotCorr.y - label.getBBox(false, 0).height / 2);
             }
         }
 
-        x = x +
+        x =
+            x +
             labelOptions.x +
             labelOffsetCorrection +
             rotCorr.x -
-            (
-                tickmarkOffset && horiz ?
-                    tickmarkOffset * transA * (reversed ? -1 : 1) :
-                    0
-            );
-        y = y + yOffset - (tickmarkOffset && !horiz ?
-            tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
+            (tickmarkOffset && horiz
+                ? tickmarkOffset * transA * (reversed ? -1 : 1)
+                : 0);
+        y =
+            y +
+            yOffset -
+            (tickmarkOffset && !horiz
+                ? tickmarkOffset * transA * (reversed ? 1 : -1)
+                : 0);
 
         // Correct for staggered labels
         if (staggerLines) {
-            line = (index / (step || 1) % staggerLines);
+            line = (index / (step || 1)) % staggerLines;
             if (axis.opposite) {
                 line = staggerLines - line - 1;
             }
@@ -574,11 +558,11 @@ class Tick {
         pos.x = x;
         pos.y = Math.round(y);
 
-        fireEvent(
-            this,
-            'afterGetLabelPosition',
-            { pos: pos, tickmarkOffset: tickmarkOffset, index: index }
-        );
+        fireEvent(this, 'afterGetLabelPosition', {
+            pos: pos,
+            tickmarkOffset: tickmarkOffset,
+            index: index
+        });
 
         return pos;
     }
@@ -590,9 +574,9 @@ class Tick {
      * @function Highcharts.Tick#getLabelSize
      */
     public getLabelSize(): number {
-        return this.label ?
-            this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
-            0;
+        return this.label
+            ? this.label.getBBox()[this.axis.horiz ? 'height' : 'width']
+            : 0;
     }
 
     /**
@@ -607,15 +591,17 @@ class Tick {
         horiz: boolean,
         renderer: SVGRenderer
     ): SVGPath {
-        return renderer.crispLine([[
-            'M',
-            x,
-            y
-        ], [
-            'L',
-            x + (horiz ? 0 : -tickLength),
-            y + (horiz ? tickLength : 0)
-        ]], tickWidth);
+        return renderer.crispLine(
+            [
+                ['M', x, y],
+                [
+                    'L',
+                    x + (horiz ? 0 : -tickLength),
+                    y + (horiz ? tickLength : 0)
+                ]
+            ],
+            tickWidth
+        );
     }
 
     /**
@@ -645,13 +631,13 @@ class Tick {
             ),
             label = this.label,
             rotation = this.rotation,
-            factor = ({
-                left: 0,
-                center: 0.5,
-                right: 1
-            } as Record<string, number>)[
-                axis.labelAlign || (label as any).attr('align')
-            ],
+            factor = (
+                {
+                    left: 0,
+                    center: 0.5,
+                    right: 1
+                } as Record<string, number>
+            )[axis.labelAlign || (label as any).attr('align')],
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
             xCorrection = factor,
@@ -680,16 +666,13 @@ class Tick {
 
             modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
             if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
-                xy.x += (
+                xy.x +=
                     goRight *
-                    (
-                        slotWidth -
+                    (slotWidth -
                         modifiedSlotWidth -
-                        xCorrection * (
-                            slotWidth - Math.min(labelWidth, modifiedSlotWidth)
-                        )
-                    )
-                );
+                        xCorrection *
+                            (slotWidth -
+                                Math.min(labelWidth, modifiedSlotWidth)));
             }
             // If the label width exceeds the available space, set a text width
             // to be picked up below. Also, if a width has been set before, we
@@ -702,8 +685,8 @@ class Tick {
                 textWidth = modifiedSlotWidth;
             }
 
-        // Add ellipsis to prevent rotated labels to be clipped against the edge
-        // of the chart
+            // Add ellipsis to prevent rotated labels to be clipped against the
+            // edge of the chart
         } else if (
             (rotation as any) < 0 &&
             pxPos - factor * labelWidth < leftBound
@@ -717,7 +700,7 @@ class Tick {
         ) {
             textWidth = Math.round(
                 ((chartWidth as any) - pxPos) /
-                Math.cos((rotation as any) * deg2rad)
+                    Math.cos((rotation as any) * deg2rad)
             );
         }
 
@@ -730,7 +713,6 @@ class Tick {
                     css.textOverflow = 'ellipsis';
                 }
                 (label as any).css(css);
-
             }
         }
     }
@@ -756,8 +738,8 @@ class Tick {
             tick.movedLabel = label;
             moved = true;
             delete tick.label;
-
-        } else { // Find a label with the same string
+        } else {
+            // Find a label with the same string
             objectEach(axis.ticks, function (currentTick: Tick): void {
                 if (
                     !moved &&
@@ -777,10 +759,16 @@ class Tick {
         // Create new label if the actual one is moved
         if (!moved && (tick.labelPos || label)) {
             labelPos = tick.labelPos || (label as any).xy;
-            xPos = axis.horiz ?
-                (reversed ? 0 : axis.width + axis.left) : labelPos.x;
-            yPos = axis.horiz ?
-                labelPos.y : (reversed ? (axis.width + axis.left) : 0);
+            xPos = axis.horiz
+                ? reversed
+                    ? 0
+                    : axis.width + axis.left
+                : labelPos.x;
+            yPos = axis.horiz
+                ? labelPos.y
+                : reversed
+                ? axis.width + axis.left
+                : 0;
 
             tick.movedLabel = tick.createLabel(
                 { x: xPos, y: yPos },
@@ -805,11 +793,7 @@ class Tick {
      *
      * @param {number} [opacity]
      */
-    public render(
-        index: number,
-        old?: boolean,
-        opacity?: number
-    ): void {
+    public render(index: number, old?: boolean, opacity?: number): void {
         const tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
@@ -818,8 +802,11 @@ class Tick {
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
-            reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
-                (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+            reverseCrisp =
+                (horiz && x === axis.pos + axis.len) ||
+                (!horiz && y === axis.pos)
+                    ? -1
+                    : 1; // #1480, #1687
 
         const labelOpacity = pick(
             opacity,
@@ -853,7 +840,7 @@ class Tick {
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      */
     public renderGridLine(
-        old: boolean|undefined,
+        old: boolean | undefined,
         opacity: number,
         reverseCrisp: number
     ): void {
@@ -895,24 +882,22 @@ class Tick {
              * @name Highcharts.Tick#gridLine
              * @type {Highcharts.SVGElement|undefined}
              */
-            tick.gridLine = gridLine = renderer.path()
+            tick.gridLine = gridLine = renderer
+                .path()
                 .attr(attribs)
                 .addClass(
                     'highcharts-' + (type ? type + '-' : '') + 'grid-line'
                 )
                 .add(axis.gridGroup);
-
         }
 
         if (gridLine) {
-            gridLinePath = axis.getPlotLinePath(
-                {
-                    value: pos + tickmarkOffset,
-                    lineWidth: gridLine.strokeWidth() * reverseCrisp,
-                    force: 'pass',
-                    old: old
-                }
-            );
+            gridLinePath = axis.getPlotLinePath({
+                value: pos + tickmarkOffset,
+                lineWidth: gridLine.strokeWidth() * reverseCrisp,
+                force: 'pass',
+                old: old
+            });
 
             // If the parameter 'old' is set, the current call will be followed
             // by another call, therefore do not do any animations this time
@@ -951,16 +936,14 @@ class Tick {
                 options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
                 !type && axis.isXAxis ? 1 : 0
             ), // X axis defaults to 1
-            tickColor = options[
-                type !== 'minor' ? 'tickColor' : 'minorTickColor'
-            ];
+            tickColor =
+                options[type !== 'minor' ? 'tickColor' : 'minorTickColor'];
 
         let mark = tick.mark;
 
         const isNewMark = !mark;
 
         if (tickSize) {
-
             // negate the length
             if (axis.opposite) {
                 tickSize[0] = -tickSize[0];
@@ -973,7 +956,8 @@ class Tick {
                  * @name Highcharts.Tick#mark
                  * @type {Highcharts.SVGElement|undefined}
                  */
-                tick.mark = mark = renderer.path()
+                tick.mark = mark = renderer
+                    .path()
                     .addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
                     .add(axis.axisGroup);
 
@@ -1013,7 +997,7 @@ class Tick {
      */
     public renderLabel(
         xy: Tick.LabelObject,
-        old: boolean|undefined,
+        old: boolean | undefined,
         opacity: number,
         index: number
     ): void {
@@ -1045,20 +1029,12 @@ class Tick {
             // last, it is a single centered tick, in which case we show the
             // label anyway (#2100).
             if (
-                (
-                    tick.isFirst &&
-                    !tick.isLast &&
-                    !options.showFirstLabel
-                ) ||
-                (
-                    tick.isLast &&
-                    !tick.isFirst &&
-                    !options.showLastLabel
-                )
+                (tick.isFirst && !tick.isLast && !options.showFirstLabel) ||
+                (tick.isLast && !tick.isFirst && !options.showLastLabel)
             ) {
                 show = false;
 
-            // Handle label overflow and show or hide accordingly
+                // Handle label overflow and show or hide accordingly
             } else if (
                 horiz &&
                 !labelOptions.step &&
@@ -1100,23 +1076,22 @@ class Tick {
             axis = tick.axis,
             reversed = axis.reversed;
 
-        let x,
-            y;
+        let x, y;
 
         // Animate and destroy
         if (label && !tick.isNew) {
-            x = axis.horiz ? (
-                reversed ? axis.left : axis.width + axis.left
-            ) : label.xy.x;
-            y = axis.horiz ?
-                label.xy.y :
-                (reversed ? axis.width + axis.top : axis.top);
+            x = axis.horiz
+                ? reversed
+                    ? axis.left
+                    : axis.width + axis.left
+                : label.xy.x;
+            y = axis.horiz
+                ? label.xy.y
+                : reversed
+                ? axis.width + axis.top
+                : axis.top;
 
-            label.animate(
-                { x: x, y: y, opacity: 0 },
-                void 0,
-                label.destroy
-            );
+            label.animate({ x: x, y: y, opacity: 0 }, void 0, label.destroy);
 
             delete tick.label;
         }
@@ -1144,7 +1119,6 @@ interface Tick extends TickLike {
  * */
 
 namespace Tick {
-
     /* *
      *
      *  Declarations
@@ -1179,14 +1153,14 @@ export default Tick;
  * Optional parameters for the tick.
  * @private
  * @interface Highcharts.TickParametersObject
- *//**
+ */ /**
  * Set category for the tick.
  * @name Highcharts.TickParametersObject#category
  * @type {string|undefined}
- *//**
+ */ /**
  * @name Highcharts.TickParametersObject#options
  * @type {Highcharts.Dictionary<any>|undefined}
- *//**
+ */ /**
  * Set tickmarkOffset for the tick.
  * @name Highcharts.TickParametersObject#tickmarkOffset
  * @type {number|undefined}
@@ -1197,10 +1171,10 @@ export default Tick;
  *
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
- *//**
+ */ /**
  * @name Highcharts.TimeTicksInfoObject#higherRanks
  * @type {Array<string>}
- *//**
+ */ /**
  * @name Highcharts.TimeTicksInfoObject#totalRange
  * @type {number}
  */

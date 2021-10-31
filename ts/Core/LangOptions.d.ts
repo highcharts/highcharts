@@ -21,7 +21,6 @@ export interface LangOptions {
     // add properties with the `declare module` pattern
 }
 
-
 /* *
  *
  *  Default Export

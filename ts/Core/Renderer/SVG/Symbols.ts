@@ -21,11 +21,7 @@ import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
 import U from '../../Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+const { defined, isNumber, pick } = U;
 
 /* *
  *
@@ -49,10 +45,8 @@ function arc(
             rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             proximity = 0.001,
-            fullCircle = (
-                Math.abs((options.end || 0) - start - 2 * Math.PI) <
-                proximity
-            ),
+            fullCircle =
+                Math.abs((options.end || 0) - start - 2 * Math.PI) < proximity,
             // Substract a small number to prevent cos and sin of start
             // and end from becoming equal on 360 arcs (related: #1561)
             end = (options.end || 0) - proximity,
@@ -69,11 +63,7 @@ function arc(
             );
 
         arc.push(
-            [
-                'M',
-                x + rx * cosStart,
-                y + ry * sinStart
-            ],
+            ['M', x + rx * cosStart, y + ry * sinStart],
             [
                 'A', // arcTo
                 rx, // x radius
@@ -88,16 +78,9 @@ function arc(
 
         if (defined(innerRadius)) {
             arc.push(
-                open ?
-                    [
-                        'M',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
-                    ] : [
-                        'L',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
-                    ],
+                open
+                    ? ['M', x + innerRadius * cosEnd, y + innerRadius * sinEnd]
+                    : ['L', x + innerRadius * cosEnd, y + innerRadius * sinEnd],
                 [
                     'A', // arcTo
                     innerRadius, // x radius
@@ -135,7 +118,7 @@ function callout(
         r = Math.min((options && options.r) || 0, w, h),
         safeDistance = r + halfDistance,
         anchorX = options && options.anchorX,
-        anchorY = options && options.anchorY || 0;
+        anchorY = (options && options.anchorY) || 0;
 
     const path = roundedRect(x, y, w, h, { r });
 
@@ -145,12 +128,8 @@ function callout(
 
     // Anchor on right side
     if (x + anchorX >= w) {
-
         // Chevron
-        if (
-            anchorY > y + safeDistance &&
-            anchorY < y + h - safeDistance
-        ) {
+        if (anchorY > y + safeDistance && anchorY < y + h - safeDistance) {
             path.splice(
                 3,
                 1,
@@ -160,7 +139,7 @@ function callout(
                 ['L', x + w, y + h - r]
             );
 
-        // Simple connector
+            // Simple connector
         } else {
             path.splice(
                 3,
@@ -172,14 +151,10 @@ function callout(
             );
         }
 
-    // Anchor on left side
+        // Anchor on left side
     } else if (x + anchorX <= 0) {
-
         // Chevron
-        if (
-            anchorY > y + safeDistance &&
-            anchorY < y + h - safeDistance
-        ) {
+        if (anchorY > y + safeDistance && anchorY < y + h - safeDistance) {
             path.splice(
                 7,
                 1,
@@ -189,7 +164,7 @@ function callout(
                 ['L', x, y + r]
             );
 
-        // Simple connector
+            // Simple connector
         } else {
             path.splice(
                 7,
@@ -200,8 +175,8 @@ function callout(
                 ['L', x, y + r]
             );
         }
-
-    } else if ( // replace bottom
+    } else if (
+        // replace bottom
         anchorY &&
         anchorY > h &&
         anchorX > x + safeDistance &&
@@ -215,8 +190,8 @@ function callout(
             ['L', anchorX - halfDistance, y + h],
             ['L', x + r, y + h]
         );
-
-    } else if ( // replace top
+    } else if (
+        // replace top
         anchorY &&
         anchorY < 0 &&
         anchorX > x + safeDistance &&
@@ -235,12 +210,7 @@ function callout(
     return path;
 }
 
-function circle(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
+function circle(x: number, y: number, w: number, h: number): SVGPath {
     // Return a full arc
     return arc(x + w / 2, y + h / 2, w / 2, h / 2, {
         start: Math.PI * 0.5,
@@ -249,12 +219,7 @@ function circle(
     });
 }
 
-function diamond(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
+function diamond(x: number, y: number, w: number, h: number): SVGPath {
     return [
         ['M', x + w / 2, y],
         ['L', x + w, y + h / 2],
@@ -305,32 +270,12 @@ function roundedRect(
     ];
 }
 
-function triangle(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x + w / 2, y],
-        ['L', x + w, y + h],
-        ['L', x, y + h],
-        ['Z']
-    ];
+function triangle(x: number, y: number, w: number, h: number): SVGPath {
+    return [['M', x + w / 2, y], ['L', x + w, y + h], ['L', x, y + h], ['Z']];
 }
 
-function triangleDown(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y],
-        ['L', x + w / 2, y + h],
-        ['Z']
-    ];
+function triangleDown(x: number, y: number, w: number, h: number): SVGPath {
+    return [['M', x, y], ['L', x + w, y], ['L', x + w / 2, y + h], ['Z']];
 }
 
 /* *

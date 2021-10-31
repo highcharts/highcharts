@@ -22,10 +22,7 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
-const {
-    addEvent,
-    objectEach
-} = U;
+const { addEvent, objectEach } = U;
 
 /* *
  *
@@ -56,7 +53,6 @@ interface WaterfallAxis extends Axis {
  * @private
  */
 namespace WaterfallAxis {
-
     /* *
      *
      *  Interfaces
@@ -89,7 +85,6 @@ namespace WaterfallAxis {
      * @private
      */
     export class Composition {
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
 
         /* *
@@ -134,7 +129,8 @@ namespace WaterfallAxis {
         public renderStackTotals(): void {
             const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
+                stackTotalGroup =
+                    yAxis.stacking && yAxis.stacking.stackTotalGroup,
                 dummyStackItem = new StackItem(
                     yAxis as any,
                     yAxis.options.stackLabels as any,
@@ -147,9 +143,7 @@ namespace WaterfallAxis {
 
             // Render each waterfall stack total
             objectEach(waterfallStacks, function (type): void {
-                objectEach(type, function (
-                    stackItem: StacksItemObject
-                ): void {
+                objectEach(type, function (stackItem: StacksItemObject): void {
                     dummyStackItem.total = stackItem.stackTotal;
 
                     if (stackItem.label) {
@@ -166,7 +160,6 @@ namespace WaterfallAxis {
             });
             dummyStackItem.total = null;
         }
-
     }
 
     /* *
@@ -179,13 +172,14 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
-
+    export function compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
         addEvent(AxisClass, 'init', onInit);
         addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
         addEvent(AxisClass, 'afterRender', onAfterRender);
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
-
     }
     /**
      * @private
@@ -207,12 +201,14 @@ namespace WaterfallAxis {
         const axis = this as WaterfallAxis;
         const stackLabelOptions = axis.options.stackLabels;
 
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
+        if (
+            stackLabelOptions &&
+            stackLabelOptions.enabled &&
+            axis.waterfall.stacks
+        ) {
             axis.waterfall.renderStackTotals();
         }
     }
-
 
     /**
      * @private

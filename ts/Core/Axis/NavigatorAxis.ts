@@ -13,18 +13,10 @@
 import type RangeSelector from '../../Extensions/RangeSelector';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-const {
-    isTouchDevice
-} = H;
+const { isTouchDevice } = H;
 
 import U from '../Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    isNumber,
-    pick
-} = U;
+const { addEvent, correctFloat, defined, isNumber, pick } = U;
 
 declare module './AxisComposition' {
     interface AxisComposition {
@@ -48,7 +40,6 @@ declare module './AxisType' {
  * @class
  */
 class NavigatorAxisAdditions {
-
     /* *
      *
      *  Constructors
@@ -67,7 +58,7 @@ class NavigatorAxisAdditions {
 
     public axis: NavigatorAxis;
     public fake?: boolean;
-    public previousZoom?: [(number|null), (number|null)];
+    public previousZoom?: [number | null, number | null];
 
     /* *
      *
@@ -106,11 +97,13 @@ class NavigatorAxisAdditions {
 
         let fixedRange = chart && chart.fixedRange,
             halfPointRange = (axis.pointRange || 0) / 2,
-            newMin = pick<number|undefined, number>(
-                fixedMin, axis.translate(pxMin as any, true, !axis.horiz) as any
+            newMin = pick<number | undefined, number>(
+                fixedMin,
+                axis.translate(pxMin as any, true, !axis.horiz) as any
             ),
-            newMax = pick<number|undefined, number>(
-                fixedMax, axis.translate(pxMax as any, true, !axis.horiz) as any
+            newMax = pick<number | undefined, number>(
+                fixedMax,
+                axis.translate(pxMax as any, true, !axis.horiz) as any
             ),
             changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
@@ -132,7 +125,8 @@ class NavigatorAxisAdditions {
                 newMax = newMin + (fixedRange as any);
             }
         }
-        if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
+        if (!isNumber(newMin) || !isNumber(newMax)) {
+            // #1195, #7411
             newMin = newMax = void 0 as any;
         }
 
@@ -141,7 +135,6 @@ class NavigatorAxisAdditions {
             max: newMax
         };
     }
-
 }
 
 /**
@@ -149,7 +142,6 @@ class NavigatorAxisAdditions {
  * @class
  */
 class NavigatorAxis {
-
     /* *
      *
      *  Static Properties
@@ -171,7 +163,6 @@ class NavigatorAxis {
      * @private
      */
     public static compose(AxisClass: typeof Axis): void {
-
         AxisClass.keepProps.push('navigatorAxis');
 
         /* eslint-disable no-invalid-this */
@@ -180,7 +171,9 @@ class NavigatorAxis {
             const axis = this;
 
             if (!axis.navigatorAxis) {
-                axis.navigatorAxis = new NavigatorAxisAdditions(axis as NavigatorAxis);
+                axis.navigatorAxis = new NavigatorAxisAdditions(
+                    axis as NavigatorAxis
+                );
             }
         });
 
@@ -199,26 +192,25 @@ class NavigatorAxis {
 
             let previousZoom;
 
-            if (axis.isXAxis && ((navigator && navigator.enabled) ||
-                    (rangeSelector && rangeSelector.enabled))) {
-
+            if (
+                axis.isXAxis &&
+                ((navigator && navigator.enabled) ||
+                    (rangeSelector && rangeSelector.enabled))
+            ) {
                 // For y only zooming, ignore the X axis completely
                 if (zoomType === 'y') {
                     e.zoomed = false;
 
-                // For xy zooming, record the state of the zoom before zoom
-                // selection, then when the reset button is pressed, revert to
-                // this state. This should apply only if the chart is
-                // initialized with a range (#6612), otherwise zoom all the way
-                // out.
+                    // For xy zooming, record the state of the zoom before zoom
+                    // selection, then when the reset button is pressed, revert
+                    // to this state. This should apply only if the chart is
+                    // initialized with a range (#6612), otherwise zoom all the
+                    // way out.
                 } else if (
-                    (
-                        (!isTouchDevice && zoomType === 'xy') ||
-                        (isTouchDevice && pinchType === 'xy')
-                    ) &&
+                    ((!isTouchDevice && zoomType === 'xy') ||
+                        (isTouchDevice && pinchType === 'xy')) &&
                     axis.options.range
                 ) {
-
                     previousZoom = navigatorAxis.previousZoom;
                     if (defined(e.newMin)) {
                         navigatorAxis.previousZoom = [axis.min, axis.max];
@@ -228,7 +220,6 @@ class NavigatorAxis {
                         navigatorAxis.previousZoom = void 0;
                     }
                 }
-
             }
             if (typeof e.zoomed !== 'undefined') {
                 e.preventDefault();
@@ -236,7 +227,6 @@ class NavigatorAxis {
         });
 
         /* eslint-enable no-invalid-this */
-
     }
 }
 

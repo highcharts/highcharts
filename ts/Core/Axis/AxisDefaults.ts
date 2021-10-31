@@ -16,11 +16,7 @@
  *
  * */
 
-import type {
-    AxisOptions,
-    XAxisOptions,
-    YAxisOptions
-} from './AxisOptions';
+import type { AxisOptions, XAxisOptions, YAxisOptions } from './AxisOptions';
 
 import { Palette } from '../Color/Palettes.js';
 
@@ -31,7 +27,6 @@ import { Palette } from '../Color/Palettes.js';
  * */
 
 namespace AxisDefaults {
-
     /* *
      *
      *  Constants
@@ -55,7 +50,6 @@ namespace AxisDefaults {
      * @optionparent xAxis
      */
     export const defaultXAxisOptions: XAxisOptions = {
-
         /**
          * When using multiple axis, the ticks of two or more opposite axes
          * will automatically be aligned by adding ticks to the axis or axes
@@ -556,7 +550,7 @@ namespace AxisDefaults {
              * @type {string|*}
              */
             month: {
-                main: '%b \'%y'
+                main: "%b '%y"
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -740,7 +734,6 @@ namespace AxisDefaults {
          * and can be enabled on X and Y axes too.
          */
         labels: {
-
             /**
              * What part of the string the given position is anchored to.
              * If `left`, the left side of the string is at the axis position.
@@ -1444,7 +1437,6 @@ namespace AxisDefaults {
          * @apioption xAxis.pane
          */
 
-
         /**
          * The zoomed range to display when only defining one or none of `min`
          * or `max`. For example, to show the latest month, a range of one month
@@ -1606,7 +1598,6 @@ namespace AxisDefaults {
          * @since 1.2.0
          */
         startOnTick: false,
-
 
         /**
          * The amount of ticks to draw on the axis. This opens up for aligning
@@ -1788,7 +1779,6 @@ namespace AxisDefaults {
          * and left by default.
          */
         title: {
-
             /**
              * Alignment of the title relative to the axis values. Possible
              * values are "low", "middle" or "high".
@@ -2236,7 +2226,6 @@ namespace AxisDefaults {
      * @optionparent yAxis
      */
     export const defaultYAxisOptions: DeepPartial<YAxisOptions> = {
-
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
          * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
@@ -2842,7 +2831,6 @@ namespace AxisDefaults {
         startOnTick: true,
 
         title: {
-
             /**
              * The pixel distance between the axis labels and the title.
              * Positive values are outside the axis line, negative are inside.
@@ -3147,8 +3135,6 @@ namespace AxisDefaults {
             rotation: 0
         }
     };
-
-
 }
 
 /* *
