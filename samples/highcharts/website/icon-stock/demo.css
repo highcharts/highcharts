@@ -1,5 +1,9 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
+body{
+	margin:0px;
+}
+
 /* Styles for all branded charts */
 
 .chart-container .thick{
