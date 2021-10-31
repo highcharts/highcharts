@@ -4,22 +4,31 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
 <script src="https://www.highcharts.com/samples/static/jquery.combobox.js"></script>
 
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link
+    href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css"
+    rel="stylesheet"
+/>
+<link
+    href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
+    rel="stylesheet"
+/>
 
 <div id="demo-wrapper">
     <div id="mapBox">
         <div id="up"></div>
         <div class="selector">
-            <button id="btn-prev-map" class="prev-next"><i class="fa fa-angle-left"></i></button>
+            <button id="btn-prev-map" class="prev-next">
+                <i class="fa fa-angle-left"></i>
+            </button>
             <select id="mapDropdown" class="ui-widget combobox"></select>
-            <button id="btn-next-map" class="prev-next"><i class="fa fa-angle-right"></i></button>
+            <button id="btn-next-map" class="prev-next">
+                <i class="fa fa-angle-right"></i>
+            </button>
         </div>
         <div id="container"></div>
     </div>
     <div id="sideBox">
-
-        <input type="checkbox" id="chkDataLabels" checked='checked' />
+        <input type="checkbox" id="chkDataLabels" checked="checked" />
         <label for="chkDataLabels" style="display: inline">Data labels</label>
         <div id="infoBox">
             <h4>This map</h4>
