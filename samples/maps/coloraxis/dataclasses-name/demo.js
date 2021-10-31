@@ -4,7 +4,11 @@ function drawChart(data) {
             borderWidth: 1
         },
 
-        colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
+        colors: [
+            'rgba(19,64,117,0.1)',
+            'rgba(19,64,117,0.5)',
+            'rgba(19,64,117,1)'
+        ],
 
         title: {
             text: 'Named data classes'
@@ -29,36 +33,41 @@ function drawChart(data) {
         },
 
         colorAxis: {
-            dataClasses: [{
-                to: 20,
-                name: 'Sparse (<20)'
-            }, {
-                from: 20,
-                to: 200,
-                name: 'Moderate (2 - 200)'
-            }, {
-                from: 200,
-                name: 'Dense (>200)'
-            }]
+            dataClasses: [
+                {
+                    to: 20,
+                    name: 'Sparse (<20)'
+                },
+                {
+                    from: 20,
+                    to: 200,
+                    name: 'Moderate (2 - 200)'
+                },
+                {
+                    from: 200,
+                    name: 'Dense (>200)'
+                }
+            ]
         },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+        series: [
+            {
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
             }
-        }]
+        ]
     });
 }
-
 
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=1gXzu9TYT3UvDMcoxj_kS7PUXMmC1MNVSfewccOs2dkA&output=html

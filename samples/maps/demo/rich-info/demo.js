@@ -2,7 +2,6 @@ Highcharts.ajax({
     url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-history.csv',
     dataType: 'csv',
     success: function (csv) {
-
         // Parse the CSV Data
         /*Highcharts.data({
             csv: data,
@@ -14,9 +13,7 @@ Highcharts.ajax({
 
         // Very simple and case-specific CSV string splitting
         function CSVtoArray(text) {
-            return text.replace(/^"/, '')
-                .replace(/",$/, '')
-                .split('","');
+            return text.replace(/^"/, '').replace(/",$/, '').split('","');
         }
 
         csv = csv.split(/\n/);
@@ -84,91 +81,96 @@ Highcharts.ajax({
         });
 
         // Wrap point.select to get to the total selected points
-        Highcharts.wrap(Highcharts.Point.prototype, 'select', function (proceed) {
+        Highcharts.wrap(
+            Highcharts.Point.prototype,
+            'select',
+            function (proceed) {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                var points = mapChart.getSelectedPoints();
+                if (points.length) {
+                    if (points.length === 1) {
+                        document.querySelector('#info #flag').className =
+                            'flag ' + points[0].flag;
+                        document.querySelector('#info h2').innerHTML =
+                            points[0].name;
+                    } else {
+                        document.querySelector('#info #flag').className =
+                            'flag';
+                        document.querySelector('#info h2').innerHTML =
+                            'Comparing countries';
+                    }
+                    document.querySelector('#info .subheader').innerHTML =
+                        '<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>';
 
-            var points = mapChart.getSelectedPoints();
-            if (points.length) {
-                if (points.length === 1) {
-                    document.querySelector('#info #flag')
-                        .className = 'flag ' + points[0].flag;
-                    document.querySelector('#info h2').innerHTML = points[0].name;
-                } else {
-                    document.querySelector('#info #flag')
-                        .className = 'flag';
-                    document.querySelector('#info h2').innerHTML = 'Comparing countries';
-
-                }
-                document.querySelector('#info .subheader')
-                    .innerHTML = '<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>';
-
-                if (!countryChart) {
-                    countryChart = Highcharts.chart('country-chart', {
-                        chart: {
-                            height: 250,
-                            spacingLeft: 0
-                        },
-                        credits: {
-                            enabled: false
-                        },
-                        title: {
-                            text: null
-                        },
-                        subtitle: {
-                            text: null
-                        },
-                        xAxis: {
-                            tickPixelInterval: 50,
-                            crosshair: true
-                        },
-                        yAxis: {
-                            title: null,
-                            opposite: true
-                        },
-                        tooltip: {
-                            split: true
-                        },
-                        plotOptions: {
-                            series: {
-                                animation: {
-                                    duration: 500
-                                },
-                                marker: {
-                                    enabled: false
-                                },
-                                threshold: 0,
-                                pointStart: parseInt(categories[0], 10)
+                    if (!countryChart) {
+                        countryChart = Highcharts.chart('country-chart', {
+                            chart: {
+                                height: 250,
+                                spacingLeft: 0
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            },
+                            subtitle: {
+                                text: null
+                            },
+                            xAxis: {
+                                tickPixelInterval: 50,
+                                crosshair: true
+                            },
+                            yAxis: {
+                                title: null,
+                                opposite: true
+                            },
+                            tooltip: {
+                                split: true
+                            },
+                            plotOptions: {
+                                series: {
+                                    animation: {
+                                        duration: 500
+                                    },
+                                    marker: {
+                                        enabled: false
+                                    },
+                                    threshold: 0,
+                                    pointStart: parseInt(categories[0], 10)
+                                }
                             }
-                        }
+                        });
+                    }
+
+                    countryChart.series.slice(0).forEach(function (s) {
+                        s.remove(false);
                     });
-                }
-
-                countryChart.series.slice(0).forEach(function (s) {
-                    s.remove(false);
-                });
-                points.forEach(function (p) {
-                    countryChart.addSeries({
-                        name: p.name,
-                        data: countries[p.code3].data,
-                        type: points.length > 1 ? 'line' : 'area'
-                    }, false);
-                });
-                countryChart.redraw();
-
-            } else {
-                document.querySelector('#info #flag').className = '';
-                document.querySelector('#info h2').innerHTML = '';
-                document.querySelector('#info .subheader').innerHTML = '';
-                if (countryChart) {
-                    countryChart = countryChart.destroy();
+                    points.forEach(function (p) {
+                        countryChart.addSeries(
+                            {
+                                name: p.name,
+                                data: countries[p.code3].data,
+                                type: points.length > 1 ? 'line' : 'area'
+                            },
+                            false
+                        );
+                    });
+                    countryChart.redraw();
+                } else {
+                    document.querySelector('#info #flag').className = '';
+                    document.querySelector('#info h2').innerHTML = '';
+                    document.querySelector('#info .subheader').innerHTML = '';
+                    if (countryChart) {
+                        countryChart = countryChart.destroy();
+                    }
                 }
             }
-        });
+        );
 
         // Initiate the map chart
         mapChart = Highcharts.mapChart('container', {
-
             title: {
                 text: 'Population history by country'
             },
@@ -192,25 +194,28 @@ Highcharts.ajax({
             },
 
             tooltip: {
-                footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
+                footerFormat:
+                    '<span style="font-size: 10px">(Click for details)</span>'
             },
 
-            series: [{
-                data: data,
-                mapData: mapData,
-                joinBy: ['iso-a3', 'code3'],
-                name: 'Current population',
-                allowPointSelect: true,
-                cursor: 'pointer',
-                states: {
-                    select: {
-                        color: '#a4edba',
-                        borderColor: 'black',
-                        dashStyle: 'shortdot'
-                    }
-                },
-                borderWidth: 0.5
-            }]
+            series: [
+                {
+                    data: data,
+                    mapData: mapData,
+                    joinBy: ['iso-a3', 'code3'],
+                    name: 'Current population',
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    states: {
+                        select: {
+                            color: '#a4edba',
+                            borderColor: 'black',
+                            dashStyle: 'shortdot'
+                        }
+                    },
+                    borderWidth: 0.5
+                }
+            ]
         });
 
         // Pre-select a country

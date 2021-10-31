@@ -50,12 +50,15 @@ Highcharts.chart('container', {
         min: -5
     },
 
-    series: [{
-        borderWidth: 0,
-        colsize: 24 * 36e5, // one day
-        tooltip: {
-            headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+    series: [
+        {
+            borderWidth: 0,
+            colsize: 24 * 36e5, // one day
+            tooltip: {
+                headerFormat: 'Temperature<br/>',
+                pointFormat:
+                    '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
+            }
         }
-    }]
+    ]
 });

@@ -1,7 +1,6 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@c116b6fa6948448/samples/data/us-counties-unemployment.json',
     function (data) {
-
         /**
          * Data parsed from http://www.bls.gov/lau/#tables
          *
@@ -19,27 +18,31 @@ Highcharts.getJSON(
             ),
             // Extract the line paths from the GeoJSON
             lines = Highcharts.geojson(
-                Highcharts.maps['countries/us/us-all-all'], 'mapline'
+                Highcharts.maps['countries/us/us-all-all'],
+                'mapline'
             ),
             // Filter out the state borders and separator lines, we want these
             // in separate series
             borderLines = lines.filter(
-                l => l.properties['hc-group'] === '__border_lines__'
+                (l) => l.properties['hc-group'] === '__border_lines__'
             ),
             separatorLines = lines.filter(
-                l => l.properties['hc-group'] === '__separator_lines__'
+                (l) => l.properties['hc-group'] === '__separator_lines__'
             );
 
         // Add state acronym for tooltip
         countiesMap.forEach(function (mapPoint) {
-            mapPoint.name = mapPoint.name + ', ' +
+            mapPoint.name =
+                mapPoint.name +
+                ', ' +
                 mapPoint.properties['hc-key'].substr(3, 2);
         });
 
         document.getElementById('container').innerHTML = 'Rendering map...';
 
         // Create the map
-        setTimeout(function () { // Otherwise innerHTML doesn't update
+        setTimeout(function () {
+            // Otherwise innerHTML doesn't update
             Highcharts.mapChart('container', {
                 chart: {
                     borderWidth: 1,
@@ -54,11 +57,12 @@ Highcharts.getJSON(
                     layout: 'vertical',
                     align: 'right',
                     floating: true,
-                    backgroundColor: ( // theme
-                        Highcharts.defaultOptions &&
-                        Highcharts.defaultOptions.legend &&
-                        Highcharts.defaultOptions.legend.backgroundColor
-                    ) || 'rgba(255, 255, 255, 0.85)'
+                    backgroundColor:
+                        // theme
+                        (Highcharts.defaultOptions &&
+                            Highcharts.defaultOptions.legend &&
+                            Highcharts.defaultOptions.legend.backgroundColor) ||
+                        'rgba(255, 255, 255, 0.85)'
                 },
 
                 mapNavigation: {
@@ -69,7 +73,11 @@ Highcharts.getJSON(
                     min: 0,
                     max: 25,
                     tickInterval: 5,
-                    stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
+                    stops: [
+                        [0, '#F1EEF6'],
+                        [0.65, '#900037'],
+                        [1, '#500007']
+                    ],
                     labels: {
                         format: '{value}%'
                     }
@@ -82,34 +90,38 @@ Highcharts.getJSON(
                     }
                 },
 
-                series: [{
-                    mapData: countiesMap,
-                    data: data,
-                    joinBy: ['hc-key', 'code'],
-                    name: 'Unemployment rate',
-                    tooltip: {
-                        valueSuffix: '%'
+                series: [
+                    {
+                        mapData: countiesMap,
+                        data: data,
+                        joinBy: ['hc-key', 'code'],
+                        name: 'Unemployment rate',
+                        tooltip: {
+                            valueSuffix: '%'
+                        },
+                        borderWidth: 0.5,
+                        states: {
+                            hover: {
+                                color: '#a4edba'
+                            }
+                        },
+                        shadow: false
                     },
-                    borderWidth: 0.5,
-                    states: {
-                        hover: {
-                            color: '#a4edba'
-                        }
+                    {
+                        type: 'mapline',
+                        name: 'State borders',
+                        data: borderLines,
+                        color: 'white',
+                        shadow: false
                     },
-                    shadow: false
-                }, {
-                    type: 'mapline',
-                    name: 'State borders',
-                    data: borderLines,
-                    color: 'white',
-                    shadow: false
-                }, {
-                    type: 'mapline',
-                    name: 'Separator',
-                    data: separatorLines,
-                    color: 'gray',
-                    shadow: false
-                }]
+                    {
+                        type: 'mapline',
+                        name: 'Separator',
+                        data: separatorLines,
+                        color: 'gray',
+                        shadow: false
+                    }
+                ]
             });
         }, 0);
     }

@@ -5,8 +5,15 @@ function drawChart(data) {
             borderWidth: 1
         },
 
-        colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
-            'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
+        colors: [
+            'rgba(19,64,117,0.05)',
+            'rgba(19,64,117,0.2)',
+            'rgba(19,64,117,0.4)',
+            'rgba(19,64,117,0.5)',
+            'rgba(19,64,117,0.6)',
+            'rgba(19,64,117,0.8)',
+            'rgba(19,64,117,1)'
+        ],
 
         title: {
             text: 'Population density by country (/km²)'
@@ -20,13 +27,15 @@ function drawChart(data) {
             title: {
                 text: 'Individuals per km²',
                 style: {
-                    color: ( // theme
-                        Highcharts.defaultOptions &&
-                        Highcharts.defaultOptions.legend &&
-                        Highcharts.defaultOptions.legend.title &&
-                        Highcharts.defaultOptions.legend.title.style &&
-                        Highcharts.defaultOptions.legend.title.style.color
-                    ) || 'black'
+                    color:
+                        // theme
+                        (Highcharts.defaultOptions &&
+                            Highcharts.defaultOptions.legend &&
+                            Highcharts.defaultOptions.legend.title &&
+                            Highcharts.defaultOptions.legend.title.style &&
+                            Highcharts.defaultOptions.legend.title.style
+                                .color) ||
+                        'black'
                 }
             },
             align: 'left',
@@ -34,53 +43,64 @@ function drawChart(data) {
             floating: true,
             layout: 'vertical',
             valueDecimals: 0,
-            backgroundColor: ( // theme
-                Highcharts.defaultOptions &&
-                Highcharts.defaultOptions.legend &&
-                Highcharts.defaultOptions.legend.backgroundColor
-            ) || 'rgba(255, 255, 255, 0.85)',
+            backgroundColor:
+                // theme
+                (Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.legend &&
+                    Highcharts.defaultOptions.legend.backgroundColor) ||
+                'rgba(255, 255, 255, 0.85)',
             symbolRadius: 0,
             symbolHeight: 14
         },
 
         colorAxis: {
-            dataClasses: [{
-                to: 3
-            }, {
-                from: 3,
-                to: 10
-            }, {
-                from: 10,
-                to: 30
-            }, {
-                from: 30,
-                to: 100
-            }, {
-                from: 100,
-                to: 300
-            }, {
-                from: 300,
-                to: 1000
-            }, {
-                from: 1000
-            }]
+            dataClasses: [
+                {
+                    to: 3
+                },
+                {
+                    from: 3,
+                    to: 10
+                },
+                {
+                    from: 10,
+                    to: 30
+                },
+                {
+                    from: 30,
+                    to: 100
+                },
+                {
+                    from: 100,
+                    to: 300
+                },
+                {
+                    from: 300,
+                    to: 1000
+                },
+                {
+                    from: 1000
+                }
+            ]
         },
 
-        series: [{
-            data: data,
-            joinBy: ['iso-a2', 'code'],
-            animation: true,
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
-            },
-            shadow: false
-        }]
+        series: [
+            {
+                data: data,
+                joinBy: ['iso-a2', 'code'],
+                animation: true,
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                },
+                shadow: false
+            }
+        ]
     });
 }
 
@@ -92,7 +112,6 @@ Highcharts.data({
 
     // Custom handler when the spreadsheet is parsed
     parsed: function (columns) {
-
         // Read the columns into the data array
         const data = columns[0].slice(1).map((code, i) => ({
             code: code.toUpperCase(),
@@ -106,7 +125,7 @@ Highcharts.data({
         const chart = drawChart();
         chart.showLoading(
             '<i class="icon-frown icon-large"></i> ' +
-            'Error loading data from Google Spreadsheets'
+                'Error loading data from Google Spreadsheets'
         );
     }
 });

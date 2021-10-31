@@ -4,7 +4,11 @@ function drawChart(data) {
             borderWidth: 1
         },
 
-        colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
+        colors: [
+            'rgba(19,64,117,0.1)',
+            'rgba(19,64,117,0.5)',
+            'rgba(19,64,117,1)'
+        ],
 
         title: {
             text: 'Data classes with legend label formatter'
@@ -40,30 +44,36 @@ function drawChart(data) {
         },
 
         colorAxis: {
-            dataClasses: [{
-                to: 20
-            }, {
-                from: 20,
-                to: 200
-            }, {
-                from: 200
-            }]
+            dataClasses: [
+                {
+                    to: 20
+                },
+                {
+                    from: 20,
+                    to: 200
+                },
+                {
+                    from: 200
+                }
+            ]
         },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+        series: [
+            {
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
             }
-        }]
+        ]
     });
 }
 
@@ -92,5 +102,4 @@ Highcharts.data({
         const chart = drawChart();
         chart.showLoading('Error loading sample data: ' + xhr.status);
     }
-
 });

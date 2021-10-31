@@ -937,14 +937,17 @@ const getGraticule = () => {
         data.push({
             geometry: {
                 type: 'LineString',
-                coordinates: x % 90 === 0 ? [
-                    [x, -90],
-                    [x, 0],
-                    [x, 90]
-                ] : [
-                    [x, -80],
-                    [x, 80]
-                ]
+                coordinates:
+                    x % 90 === 0
+                        ? [
+                              [x, -90],
+                              [x, 0],
+                              [x, 90]
+                          ]
+                        : [
+                              [x, -80],
+                              [x, 80]
+                          ]
             }
         });
     }
@@ -968,53 +971,62 @@ const getGraticule = () => {
 };
 
 // Add flight route after initial animation
-const afterAnimate = e => {
+const afterAnimate = (e) => {
     const chart = e.target.chart;
 
     if (!chart.get('flight-route')) {
-        chart.addSeries({
-            type: 'mapline',
-            animation: false,
-            id: 'flight-route',
-            data: [{
-                geometry: {
-                    type: 'LineString',
-                    coordinates: [
-                        [4.90, 53.38], // Amsterdam
-                        [-118.24, 34.05] // Los Angeles
-                    ]
-                },
+        chart.addSeries(
+            {
+                type: 'mapline',
+                animation: false,
+                id: 'flight-route',
+                data: [
+                    {
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: [
+                                [4.9, 53.38], // Amsterdam
+                                [-118.24, 34.05] // Los Angeles
+                            ]
+                        },
+                        color: '#313f77'
+                    }
+                ],
+                lineWidth: 2
+            },
+            false
+        );
+        chart.addSeries(
+            {
+                type: 'mappoint',
+                animation: false,
+                data: [
+                    {
+                        name: 'Amsterdam',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [4.9, 53.38]
+                        }
+                    },
+                    {
+                        name: 'LA',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [-118.24, 34.05]
+                        }
+                    }
+                ],
                 color: '#313f77'
-            }],
-            lineWidth: 2
-        }, false);
-        chart.addSeries({
-            type: 'mappoint',
-            animation: false,
-            data: [{
-                name: 'Amsterdam',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [4.90, 53.38]
-                }
-            }, {
-                name: 'LA',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [-118.24, 34.05]
-                }
-            }],
-            color: '#313f77'
-        }, false);
+            },
+            false
+        );
         chart.redraw(false);
     }
 };
 
-
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2e11000c966a20f08afc4e0927b91df99821de99/samples/data/world-countries.topo.json',
-    topology => {
-
+    (topology) => {
         // Convert the topoJSON feature into geoJSON
         const geojson = window.topojson.feature(
             topology,
@@ -1039,7 +1051,8 @@ Highcharts.getJSON(
             },
 
             subtitle: {
-                text: 'Source: <a href="http://www.citypopulation.de/en/world/bymap/airports/">citypopulation.de</a><br>' +
+                text:
+                    'Source: <a href="http://www.citypopulation.de/en/world/bymap/airports/">citypopulation.de</a><br>' +
                     'Click and drag to rotate globe<br>',
                 floating: true,
                 y: 34,
@@ -1086,30 +1099,33 @@ Highcharts.getJSON(
                 }
             },
 
-            series: [{
-                name: 'Graticule',
-                id: 'graticule',
-                type: 'mapline',
-                data: getGraticule(),
-                nullColor: 'rgba(0, 0, 0, 0.05)'
-            }, {
-                data,
-                joinBy: 'name',
-                name: 'Airports per million km²',
-                states: {
-                    hover: {
-                        color: '#a4edba',
-                        borderColor: '#333333'
+            series: [
+                {
+                    name: 'Graticule',
+                    id: 'graticule',
+                    type: 'mapline',
+                    data: getGraticule(),
+                    nullColor: 'rgba(0, 0, 0, 0.05)'
+                },
+                {
+                    data,
+                    joinBy: 'name',
+                    name: 'Airports per million km²',
+                    states: {
+                        hover: {
+                            color: '#a4edba',
+                            borderColor: '#333333'
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false,
+                        format: '{point.name}'
+                    },
+                    events: {
+                        afterAnimate
                     }
-                },
-                dataLabels: {
-                    enabled: false,
-                    format: '{point.name}'
-                },
-                events: {
-                    afterAnimate
                 }
-            }]
+            ]
         });
 
         // Render a circle filled with a radial gradient behind the globe to
@@ -1154,6 +1170,5 @@ Highcharts.getJSON(
         };
         renderSea();
         Highcharts.addEvent(chart, 'redraw', renderSea);
-
     }
 );

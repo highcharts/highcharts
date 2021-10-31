@@ -18,43 +18,47 @@ var data = [
     ['DE.', 361]
 ];
 
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json', function (geojson) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/germany.geo.json',
+    function (geojson) {
+        // Initialize the chart
+        Highcharts.mapChart('container', {
+            chart: {
+                map: geojson
+            },
 
-    // Initialize the chart
-    Highcharts.mapChart('container', {
-        chart: {
-            map: geojson
-        },
+            title: {
+                text: 'GeoJSON in Highmaps'
+            },
 
-        title: {
-            text: 'GeoJSON in Highmaps'
-        },
-
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            tickPixelInterval: 100
-        },
-
-        series: [{
-            data: data,
-            keys: ['code_hasc', 'value'],
-            joinBy: 'code_hasc',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
                 }
             },
-            dataLabels: {
-                enabled: true,
-                format: '{point.properties.postal}'
-            }
-        }]
-    });
-});
+
+            colorAxis: {
+                tickPixelInterval: 100
+            },
+
+            series: [
+                {
+                    data: data,
+                    keys: ['code_hasc', 'value'],
+                    joinBy: 'code_hasc',
+                    name: 'Random data',
+                    states: {
+                        hover: {
+                            color: '#a4edba'
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.properties.postal}'
+                    }
+                }
+            ]
+        });
+    }
+);

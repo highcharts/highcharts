@@ -16,8 +16,7 @@ function showMap(mapKey) {
             events: {
                 click: function (e) {
                     const series = this.get(
-                            document
-                                .querySelector('input[name=series]:checked')
+                            document.querySelector('input[name=series]:checked')
                                 .value
                         ),
                         pos = this.mapView.pixelsToProjectedUnits({
@@ -26,9 +25,7 @@ function showMap(mapKey) {
                         });
 
                     series.addPoint(
-                        supportsLatLon ?
-                            this.fromPointToLatLon(pos) :
-                            pos
+                        supportsLatLon ? this.fromPointToLatLon(pos) : pos
                     );
                 }
             },
@@ -39,12 +36,14 @@ function showMap(mapKey) {
             text: 'Draw your own points or lines'
         },
 
-        subtitle: supportsLatLon ? {} : {
-            text: 'This map does not support latitude/longitude - x/y coordinates will be used',
-            style: {
-                color: 'red'
-            }
-        },
+        subtitle: supportsLatLon
+            ? {}
+            : {
+                  text: 'This map does not support latitude/longitude - x/y coordinates will be used',
+                  style: {
+                      color: 'red'
+                  }
+              },
 
         mapNavigation: {
             enabled: true,
@@ -58,9 +57,9 @@ function showMap(mapKey) {
         },
 
         tooltip: {
-            pointFormat: supportsLatLon ?
-                'Lat: {point.lat:.2f}, Lon: {point.lon:.2f}' :
-                'x: {point.x:.0f}, y: {point.y:.0f}'
+            pointFormat: supportsLatLon
+                ? 'Lat: {point.lat:.2f}, Lon: {point.lon:.2f}'
+                : 'x: {point.x:.0f}, y: {point.y:.0f}'
         },
 
         plotOptions: {
@@ -72,8 +71,8 @@ function showMap(mapKey) {
                         drop: function () {
                             var newLatLon;
                             if (supportsLatLon) {
-                                newLatLon = this.series.chart
-                                    .fromPointToLatLon(this);
+                                newLatLon =
+                                    this.series.chart.fromPointToLatLon(this);
                                 this.lat = newLatLon.lat;
                                 this.lon = newLatLon.lon;
                             }
@@ -83,45 +82,49 @@ function showMap(mapKey) {
             }
         },
 
-        series: [{
-            mapData: Highcharts.maps[mapKey]
-        }, {
-            type: 'mappoint',
-            id: 'points',
-            name: 'Points',
-            dragDrop: {
-                draggableX: true,
-                draggableY: true
+        series: [
+            {
+                mapData: Highcharts.maps[mapKey]
             },
-            cursor: 'move',
-            point: {
-                events: {
-                    click: function () {
-                        if (document.getElementById('delete').checked) {
-                            this.remove();
+            {
+                type: 'mappoint',
+                id: 'points',
+                name: 'Points',
+                dragDrop: {
+                    draggableX: true,
+                    draggableY: true
+                },
+                cursor: 'move',
+                point: {
+                    events: {
+                        click: function () {
+                            if (document.getElementById('delete').checked) {
+                                this.remove();
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                type: 'mappoint',
+                id: 'connected-points',
+                name: 'Connected points',
+                draggableX: true,
+                draggableY: true,
+                cursor: 'move',
+                color: Highcharts.getOptions().colors[0],
+                lineWidth: 2,
+                point: {
+                    events: {
+                        click: function () {
+                            if (document.getElementById('delete').checked) {
+                                this.remove();
+                            }
                         }
                     }
                 }
             }
-        }, {
-            type: 'mappoint',
-            id: 'connected-points',
-            name: 'Connected points',
-            draggableX: true,
-            draggableY: true,
-            cursor: 'move',
-            color: Highcharts.getOptions().colors[0],
-            lineWidth: 2,
-            point: {
-                events: {
-                    click: function () {
-                        if (document.getElementById('delete').checked) {
-                            this.remove();
-                        }
-                    }
-                }
-            }
-        }]
+        ]
     });
 }
 
@@ -130,7 +133,7 @@ function showMap(mapKey) {
 
     const container = document.getElementById('container');
 
-    document.getElementById('getconfig').addEventListener('click', e => {
+    document.getElementById('getconfig').addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -138,22 +141,34 @@ function showMap(mapKey) {
         let html = '';
 
         function getPointConfigString(point) {
-            return point.lat ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }' :
-                '{ x: ' + point.x + ', y: ' + point.y + ' }';
+            return point.lat
+                ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }'
+                : '{ x: ' + point.x + ', y: ' + point.y + ' }';
         }
 
         if (chart.get('points').data.length) {
-            points = '{\n    type: "mappoint",\n    data: [\n        ' +
-                chart.get('points').data.map(getPointConfigString).join(",\n        ") +
+            points =
+                '{\n    type: "mappoint",\n    data: [\n        ' +
+                chart
+                    .get('points')
+                    .data.map(getPointConfigString)
+                    .join(',\n        ') +
                 '\n    ]\n}';
             html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
         }
 
         if (chart.get('connected-points').data.length) {
-            points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-                chart.get('connected-points').data.map(getPointConfigString).join(",\n        ") +
+            points =
+                '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
+                chart
+                    .get('connected-points')
+                    .data.map(getPointConfigString)
+                    .join(',\n        ') +
                 '\n    ]\n}';
-            html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
+            html +=
+                '<h3>Connected points configuration</h3><pre>' +
+                points +
+                '</pre>';
         }
 
         if (!html) {
@@ -178,13 +193,15 @@ function showMap(mapKey) {
                 for (const name in Highcharts.mapDataIndex[group]) {
                     if (
                         Object.prototype.hasOwnProperty.call(
-                            Highcharts.mapDataIndex[group], name
+                            Highcharts.mapDataIndex[group],
+                            name
                         )
                     ) {
                         const option = document.createElement('option');
                         option.value = Highcharts.mapDataIndex[group][name];
                         option.innerText = name;
-                        option.selected = name ===
+                        option.selected =
+                            name ===
                             'World, Miller projection, medium resolution';
 
                         select.append(option);
@@ -196,9 +213,8 @@ function showMap(mapKey) {
 
     select.addEventListener('change', () => {
         const mapKey = select.value.replace(/\.js$/, '');
-        getScript(
-            `https://code.highcharts.com/mapdata/${mapKey}.js`,
-            () => showMap(mapKey)
+        getScript(`https://code.highcharts.com/mapdata/${mapKey}.js`, () =>
+            showMap(mapKey)
         );
     });
-}());
+})();

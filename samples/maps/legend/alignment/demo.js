@@ -1,52 +1,55 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
+    function (data) {
+        // Initialize the chart
+        Highcharts.mapChart('container', {
+            chart: {
+                marginLeft: 70
+            },
 
-    // Initialize the chart
-    Highcharts.mapChart('container', {
-
-        chart: {
-            marginLeft: 70
-        },
-
-        title: {
-            text: 'Legend alignment'
-        },
-
-        legend: {
             title: {
-                text: 'Population density per km²'
+                text: 'Legend alignment'
             },
-            align: 'left',
-            verticalAlign: 'middle',
-            y: 100,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor: 'white'
-        },
 
-        mapNavigation: {
-            enabled: true,
-            enableButtons: false
-        },
+            legend: {
+                title: {
+                    text: 'Population density per km²'
+                },
+                align: 'left',
+                verticalAlign: 'middle',
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: 'white'
+            },
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
+            mapNavigation: {
+                enabled: true,
+                enableButtons: false
+            },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [
+                {
+                    data: data,
+                    mapData: Highcharts.maps['custom/world'],
+                    joinBy: ['iso-a2', 'code'],
+                    name: 'Population density',
+                    states: {
+                        hover: {
+                            color: '#a4edba'
+                        }
+                    },
+                    tooltip: {
+                        valueSuffix: '/km²'
+                    }
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
-    });
-});
+            ]
+        });
+    }
+);

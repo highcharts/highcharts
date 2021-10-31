@@ -1,60 +1,63 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
-
-    // Initialize the chart
-    Highcharts.mapChart('container', {
-
-        chart: {
-            plotBorderWidth: 1,
-            plotBorderColor: '#A0A090',
-            plotShadow: true,
-            plotBackgroundColor: '#e0f8ff'
-        },
-
-        title: {
-            text: 'Chart with a plot border'
-        },
-
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                alignTo: 'spacingBox',
-                verticalAlign: 'bottom'
-            }
-        },
-
-        mapView: {
-            padding: '5%'
-        },
-
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            minColor: '#BFCFAD',
-            maxColor: '#31784B',
-            type: 'logarithmic'
-        },
-
-        legend: {
-            title: {
-                text: 'Population per km²'
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
+    function (data) {
+        // Initialize the chart
+        Highcharts.mapChart('container', {
+            chart: {
+                plotBorderWidth: 1,
+                plotBorderColor: '#A0A090',
+                plotShadow: true,
+                plotBackgroundColor: '#e0f8ff'
             },
-            backgroundColor: 'rgba(255,255,255,0.85)'
-        },
 
-        // The map series
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            title: {
+                text: 'Chart with a plot border'
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    alignTo: 'spacingBox',
+                    verticalAlign: 'bottom'
                 }
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
-    });
-});
+
+            mapView: {
+                padding: '5%'
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                minColor: '#BFCFAD',
+                maxColor: '#31784B',
+                type: 'logarithmic'
+            },
+
+            legend: {
+                title: {
+                    text: 'Population per km²'
+                },
+                backgroundColor: 'rgba(255,255,255,0.85)'
+            },
+
+            // The map series
+            series: [
+                {
+                    data: data,
+                    mapData: Highcharts.maps['custom/world'],
+                    joinBy: ['iso-a2', 'code'],
+                    name: 'Population density',
+                    states: {
+                        hover: {
+                            color: '#a4edba'
+                        }
+                    },
+                    tooltip: {
+                        valueSuffix: '/km²'
+                    }
+                }
+            ]
+        });
+    }
+);

@@ -6,19 +6,17 @@ Highcharts.data({
 
     // Custom handler for columns
     parsed: function (columns) {
-
         /**
          * Event handler for clicking points. Use jQuery UI to pop up
          * a pie chart showing the details for each state.
          */
         function pointClick() {
             var row = this.options.row,
-                $div = $('<div></div>')
-                    .dialog({
-                        title: this.name,
-                        width: 320,
-                        height: 300
-                    });
+                $div = $('<div></div>').dialog({
+                    title: this.name,
+                    width: 320,
+                    height: 300
+                });
 
             window.chart = new Highcharts.Chart({
                 chart: {
@@ -30,21 +28,26 @@ Highcharts.data({
                 title: {
                     text: null
                 },
-                series: [{
-                    name: 'Votes',
-                    data: [{
-                        name: 'Trump',
-                        color: '#C40401',
-                        y: parseInt(columns[3][row], 10)
-                    }, {
-                        name: 'Clinton',
-                        color: '#0200D0',
-                        y: parseInt(columns[2][row], 10)
-                    }],
-                    dataLabels: {
-                        format: '<b>{point.name}</b> {point.percentage:.1f}%'
+                series: [
+                    {
+                        name: 'Votes',
+                        data: [
+                            {
+                                name: 'Trump',
+                                color: '#C40401',
+                                y: parseInt(columns[3][row], 10)
+                            },
+                            {
+                                name: 'Clinton',
+                                color: '#0200D0',
+                                y: parseInt(columns[2][row], 10)
+                            }
+                        ],
+                        dataLabels: {
+                            format: '<b>{point.name}</b> {point.percentage:.1f}%'
+                        }
                     }
-                }]
+                ]
             });
         }
 
@@ -78,11 +81,12 @@ Highcharts.data({
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: ( // theme
-                        Highcharts.defaultOptions &&
-                        Highcharts.defaultOptions.legend &&
-                        Highcharts.defaultOptions.legend.backgroundColor
-                    ) || 'rgba(255, 255, 255, 0.85)'
+                    backgroundColor:
+                        // theme
+                        (Highcharts.defaultOptions &&
+                            Highcharts.defaultOptions.legend &&
+                            Highcharts.defaultOptions.legend.backgroundColor) ||
+                        'rgba(255, 255, 255, 0.85)'
                 },
 
                 mapNavigation: {
@@ -91,47 +95,53 @@ Highcharts.data({
                 },
 
                 colorAxis: {
-                    dataClasses: [{
-                        from: -100,
-                        to: 0,
-                        color: '#0200D0',
-                        name: 'Clinton'
-                    }, {
-                        from: 0,
-                        to: 100,
-                        color: '#C40401',
-                        name: 'Trump'
-                    }]
+                    dataClasses: [
+                        {
+                            from: -100,
+                            to: 0,
+                            color: '#0200D0',
+                            name: 'Clinton'
+                        },
+                        {
+                            from: 0,
+                            to: 100,
+                            color: '#C40401',
+                            name: 'Trump'
+                        }
+                    ]
                 },
 
-                series: [{
-                    data: [],
-                    joinBy: 'postal-code',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#FFFFFF',
-                        format: '{point.postal-code}',
-                        style: {
-                            textTransform: 'uppercase'
-                        }
+                series: [
+                    {
+                        data: [],
+                        joinBy: 'postal-code',
+                        dataLabels: {
+                            enabled: true,
+                            color: '#FFFFFF',
+                            format: '{point.postal-code}',
+                            style: {
+                                textTransform: 'uppercase'
+                            }
+                        },
+                        name: 'Republicans margin',
+                        point: {
+                            events: {
+                                click: pointClick
+                            }
+                        },
+                        tooltip: {
+                            ySuffix: ' %'
+                        },
+                        cursor: 'pointer'
                     },
-                    name: 'Republicans margin',
-                    point: {
-                        events: {
-                            click: pointClick
-                        }
-                    },
-                    tooltip: {
-                        ySuffix: ' %'
-                    },
-                    cursor: 'pointer'
-                }, {
-                    name: 'Separators',
-                    type: 'mapline',
-                    nullColor: 'silver',
-                    showInLegend: false,
-                    enableMouseTracking: false
-                }]
+                    {
+                        name: 'Separators',
+                        type: 'mapline',
+                        nullColor: 'silver',
+                        showInLegend: false,
+                        enableMouseTracking: false
+                    }
+                ]
             };
         keys = keys.map(function (key) {
             return key.toUpperCase();
@@ -140,12 +150,17 @@ Highcharts.data({
             if (mapPoint.properties['postal-code']) {
                 var postalCode = mapPoint.properties['postal-code'],
                     i = $.inArray(postalCode, keys);
-                options.series[0].data.push(Highcharts.extend({
-                    value: parseFloat(percent[i]),
-                    name: names[i],
-                    'postal-code': postalCode,
-                    row: i
-                }, mapPoint));
+                options.series[0].data.push(
+                    Highcharts.extend(
+                        {
+                            value: parseFloat(percent[i]),
+                            name: names[i],
+                            'postal-code': postalCode,
+                            row: i
+                        },
+                        mapPoint
+                    )
+                );
             }
         });
 
@@ -154,9 +169,11 @@ Highcharts.data({
     },
 
     error: function () {
-        $('#container').html('<div class="loading">' +
-            '<i class="icon-frown icon-large"></i> ' +
-            '<p>Error loading data from Google Spreadsheets</p>' +
-            '</div>');
+        $('#container').html(
+            '<div class="loading">' +
+                '<i class="icon-frown icon-large"></i> ' +
+                '<p>Error loading data from Google Spreadsheets</p>' +
+                '</div>'
+        );
     }
 });

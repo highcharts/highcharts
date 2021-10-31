@@ -1,7 +1,9 @@
 // Load the data from the HTML table and tag it with an upper case name used for joining
 var data = [],
     // Get the map data
-    mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);
+    mapData = Highcharts.geojson(
+        Highcharts.maps['countries/us/custom/us-small']
+    );
 
 Highcharts.data({
     table: document.getElementById('data'),
@@ -26,14 +28,12 @@ mapData.forEach(function (p) {
     // this hack
     const legendBox = coordinates[0][0];
     if (legendBox[0][0] === 9727) {
-
         // Identify the box
-        const bounds = Highcharts.seriesTypes.map.prototype
-            .getProjectedBounds
-            .call({
+        const bounds =
+            Highcharts.seriesTypes.map.prototype.getProjectedBounds.call({
                 chart: {
                     mapView: {
-                        projection: new Highcharts._modules[// eslint-disable-line no-underscore-dangle
+                        projection: new Highcharts._modules[ // eslint-disable-line no-underscore-dangle
                             'Maps/Projection.js'
                         ]()
                     }
@@ -43,9 +43,11 @@ mapData.forEach(function (p) {
 
         // Place the center of the data label in the center of the point legend
         // box
-        p.middleX = ((legendBox[0][0] + legendBox[1][0]) / 2 - bounds.x1) /
+        p.middleX =
+            ((legendBox[0][0] + legendBox[1][0]) / 2 - bounds.x1) /
             (bounds.x2 - bounds.x1);
-        p.middleY = ((legendBox[0][1] + legendBox[2][1]) / 2 - bounds.y2) /
+        p.middleY =
+            ((legendBox[0][1] + legendBox[2][1]) / 2 - bounds.y2) /
             (bounds.y1 - bounds.y2);
 
         delete p.bounds;
@@ -57,7 +59,6 @@ mapData.forEach(function (p) {
 
 // Initialize the chart
 Highcharts.mapChart('container', {
-
     title: {
         text: 'US unemployment rate in Dec. 2017'
     },
@@ -83,31 +84,37 @@ Highcharts.mapChart('container', {
         }
     },
 
-    series: [{
-        mapData: mapData,
-        data: data,
-        joinBy: 'ucName',
-        name: 'Unemployment rate per 2015',
-        states: {
-            hover: {
-                color: '#a4edba'
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            formatter: function () {
-                return this.point.properties['hc-a2'];
+    series: [
+        {
+            mapData: mapData,
+            data: data,
+            joinBy: 'ucName',
+            name: 'Unemployment rate per 2015',
+            states: {
+                hover: {
+                    color: '#a4edba'
+                }
             },
-            style: {
-                fontSize: '10px'
+            dataLabels: {
+                enabled: true,
+                formatter: function () {
+                    return this.point.properties['hc-a2'];
+                },
+                style: {
+                    fontSize: '10px'
+                }
+            },
+            tooltip: {
+                valueSuffix: '%'
             }
         },
-        tooltip: {
-            valueSuffix: '%'
+        {
+            type: 'mapline',
+            data: Highcharts.geojson(
+                Highcharts.maps['countries/us/custom/us-small'],
+                'mapline'
+            ),
+            color: 'silver'
         }
-    }, {
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small'], 'mapline'),
-        color: 'silver'
-    }]
+    ]
 });

@@ -1,7 +1,6 @@
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
-    data => {
-
+    (data) => {
         const click = function (e) {
             // `this` is either Series or Chart
             const chart = this.chart || this;
@@ -22,7 +21,6 @@ Highcharts.getJSON(
 
         // Initialize the chart
         Highcharts.mapChart('container', {
-
             chart: {
                 events: {
                     click
@@ -46,29 +44,32 @@ Highcharts.getJSON(
                 type: 'logarithmic'
             },
 
-            series: [{
-                data,
-                mapData: Highcharts.maps['custom/world'],
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
+            series: [
+                {
+                    data,
+                    mapData: Highcharts.maps['custom/world'],
+                    joinBy: ['iso-a2', 'code'],
+                    name: 'Population density',
+                    states: {
+                        hover: {
+                            color: '#a4edba'
+                        }
+                    },
+                    tooltip: {
+                        valueSuffix: '/km²'
+                    },
+                    events: {
+                        click
                     }
                 },
-                tooltip: {
-                    valueSuffix: '/km²'
-                },
-                events: {
-                    click
+                {
+                    colorAxis: false,
+                    type: 'mappoint',
+                    id: 'clicks',
+                    name: 'Clicks',
+                    data: []
                 }
-            }, {
-                colorAxis: false,
-                type: 'mappoint',
-                id: 'clicks',
-                name: 'Clicks',
-                data: []
-            }]
+            ]
         });
     }
 );

@@ -72,14 +72,15 @@ const newData = [
 // 'mappoint' series type, and it should be defined before in the
 // series array.
 function getTemp(point, countries, capitals) {
+    const url =
+        'https://api.met.no/weatherapi/locationforecast/2.0/?lat=' +
+        point[1] +
+        '&lon=' +
+        point[2];
 
-    const url = 'https://api.met.no/weatherapi/locationforecast/2.0/?lat=' +
-    point[1] + '&lon=' + point[2];
-
-    const callBack = json => {
-
-        const temp = json.properties.timeseries[0].data.instant.details
-            .air_temperature;
+    const callBack = (json) => {
+        const temp =
+            json.properties.timeseries[0].data.instant.details.air_temperature;
         const colorAxis = countries.chart.colorAxis[0];
 
         const country = {
@@ -154,38 +155,52 @@ Highcharts.mapChart('container', {
     },
 
     tooltip: {
-        headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
+        headerFormat:
+            '<span style="color:{point.color}">\u25CF</span> {point.key}:<br/>',
         pointFormatter: function () {
-            var value = Number.isInteger(this.temp) ? this.temp + '°C' : 'No data';
+            var value = Number.isInteger(this.temp)
+                ? this.temp + '°C'
+                : 'No data';
             return 'Temperature: <b>' + value + '</b>';
         }
     },
 
-    series: [{
-        name: 'Temperatures',
-        states: {
-            hover: {
-                color: '#BADA55'
-            }
+    series: [
+        {
+            name: 'Temperatures',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            enableMouseTracking: false
         },
-        dataLabels: {
-            enabled: false
-        },
-        enableMouseTracking: false
-    }, {
-        name: 'Capitals of Europe',
-        type: 'mappoint',
-        showInLegend: false,
-        marker: {
-            lineWidth: 1,
-            lineColor: '#000'
-        },
-        dataLabels: {
-            crop: true,
-            formatter: function () {
-                var value = Number.isInteger(this.point.temp) ? this.point.temp + '°C' : 'No data';
-                return '<span>' + this.key + '</span><br/><span>' + value + '</span>';
+        {
+            name: 'Capitals of Europe',
+            type: 'mappoint',
+            showInLegend: false,
+            marker: {
+                lineWidth: 1,
+                lineColor: '#000'
+            },
+            dataLabels: {
+                crop: true,
+                formatter: function () {
+                    var value = Number.isInteger(this.point.temp)
+                        ? this.point.temp + '°C'
+                        : 'No data';
+                    return (
+                        '<span>' +
+                        this.key +
+                        '</span><br/><span>' +
+                        value +
+                        '</span>'
+                    );
+                }
             }
         }
-    }]
+    ]
 });

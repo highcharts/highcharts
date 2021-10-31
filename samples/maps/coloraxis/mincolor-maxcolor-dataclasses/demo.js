@@ -27,44 +27,54 @@ function drawChart(data) {
         },
 
         colorAxis: {
-            dataClasses: [{
-                to: 3
-            }, {
-                from: 3,
-                to: 10
-            }, {
-                from: 10,
-                to: 30
-            }, {
-                from: 30,
-                to: 100
-            }, {
-                from: 100,
-                to: 300
-            }, {
-                from: 300,
-                to: 1000
-            }, {
-                from: 1000
-            }],
+            dataClasses: [
+                {
+                    to: 3
+                },
+                {
+                    from: 3,
+                    to: 10
+                },
+                {
+                    from: 10,
+                    to: 30
+                },
+                {
+                    from: 30,
+                    to: 100
+                },
+                {
+                    from: 100,
+                    to: 300
+                },
+                {
+                    from: 300,
+                    to: 1000
+                },
+                {
+                    from: 1000
+                }
+            ],
             minColor: '#efecf3',
             maxColor: '#990041'
         },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+        series: [
+            {
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
                 }
-            },
-            tooltip: {
-                valueSuffix: '/km²'
             }
-        }]
+        ]
     });
 }
 
@@ -87,7 +97,6 @@ Highcharts.data({
         });
 
         drawChart(data);
-
     },
 
     error: function (html, xhr) {

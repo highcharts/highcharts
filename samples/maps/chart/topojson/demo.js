@@ -1,8 +1,7 @@
 // Source: https://github.com/leakyMirror/map-of-europe
 Highcharts.getJSON(
     'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v9.2.0/samples/data/europe.topo.json',
-    topology => {
-
+    (topology) => {
         // Convert the topoJSON feature into geoJSON
         const geojson = window.topojson.feature(
             topology,
@@ -42,20 +41,22 @@ Highcharts.getJSON(
                 pointFormat: '{point.properties.NAME}: {point.value}'
             },
 
-            series: [{
-                data,
-                joinBy: null,
-                name: 'Random data',
-                states: {
-                    hover: {
-                        color: '#a4edba'
+            series: [
+                {
+                    data,
+                    joinBy: null,
+                    name: 'Random data',
+                    states: {
+                        hover: {
+                            color: '#a4edba'
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.properties.NAME}'
                     }
-                },
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.properties.NAME}'
                 }
-            }]
+            ]
         });
     }
 );

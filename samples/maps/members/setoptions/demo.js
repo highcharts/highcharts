@@ -38,45 +38,47 @@ Highcharts.setOptions({
             }
         }
     }
-
 });
 
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
-
-    // Initialize the chart
-    Highcharts.mapChart('container', {
-
-        title: {
-            text: 'Set general theme options'
-        },
-
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        legend: {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json',
+    function (data) {
+        // Initialize the chart
+        Highcharts.mapChart('container', {
             title: {
-                text: 'Population density (/km²)'
-            }
-        },
+                text: 'Set general theme options'
+            },
 
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
-    });
-});
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            legend: {
+                title: {
+                    text: 'Population density (/km²)'
+                }
+            },
+
+            series: [
+                {
+                    data: data,
+                    mapData: Highcharts.maps['custom/world'],
+                    joinBy: ['iso-a2', 'code'],
+                    name: 'Population density',
+                    tooltip: {
+                        valueSuffix: '/km²'
+                    }
+                }
+            ]
+        });
+    }
+);
