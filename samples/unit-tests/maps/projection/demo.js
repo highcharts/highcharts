@@ -1,5 +1,4 @@
 QUnit.module('Projection', function () {
-
     const Projection = Highcharts._modules['Maps/Projection.js']; // eslint-disable-line no-underscore-dangle
 
     const testPoints = (assert, projection) => {
@@ -9,7 +8,7 @@ QUnit.module('Projection', function () {
             [45, 0],
             [0, 45],
             [-45, 0]
-        ].forEach(coordinates => {
+        ].forEach((coordinates) => {
             const result = projection.inverse(projection.forward(coordinates));
             assert.close(
                 result[0],
@@ -42,16 +41,12 @@ QUnit.module('Projection', function () {
         );
     };
 
-    Object.keys(Projection.registry).forEach(name => {
+    Object.keys(Projection.registry).forEach((name) => {
         QUnit.test(name, function (assert) {
             const basicProjection = new Projection({ name });
             testPoints(assert, basicProjection);
             testScale(assert, basicProjection);
-            testPoints(
-                assert,
-                new Projection({ name, rotation: [30, 30] })
-            );
+            testPoints(assert, new Projection({ name, rotation: [30, 30] }));
         });
     });
-
 });

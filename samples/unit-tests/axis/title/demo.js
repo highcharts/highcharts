@@ -302,9 +302,9 @@ QUnit.test('title.reserveSpace', function (assert) {
         noTitle = axis.labelGroup.getBBox()[dir];
 
         assert.ok(
-            lessThan ?
-                reserveSpaceTrue < reserveSpaceFalse :
-                reserveSpaceTrue > reserveSpaceFalse,
+            lessThan
+                ? reserveSpaceTrue < reserveSpaceFalse
+                : reserveSpaceTrue > reserveSpaceFalse,
             axisName +
                 ': reserveSpaceTrue ' +
                 dir +

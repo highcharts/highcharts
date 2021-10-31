@@ -399,9 +399,9 @@ QUnit.test('Date objects as X values, column', function (assert) {
                 );
 
                 assert.ok(
-                    percent ?
-                        oldTranslateY < newTranslateY :
-                        oldTranslateY > newTranslateY,
+                    percent
+                        ? oldTranslateY < newTranslateY
+                        : oldTranslateY > newTranslateY,
                     'The y position should be lower.'
                 );
             });
@@ -699,4 +699,4 @@ QUnit.test('Date objects as X values, column', function (assert) {
             'Series 3 - Point should start from value=1 (#4024)'
         );
     });
-}());
+})();

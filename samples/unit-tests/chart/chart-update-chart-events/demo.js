@@ -1,4 +1,4 @@
-QUnit.test('Chart events', assert => {
+QUnit.test('Chart events', (assert) => {
     const stack = [];
     const chart = Highcharts.chart('container', {
         chart: {
@@ -9,44 +9,32 @@ QUnit.test('Chart events', assert => {
         }
     });
 
-    assert.deepEqual(
-        stack,
-        [],
-        'No redraw calls initially'
-    );
+    assert.deepEqual(stack, [], 'No redraw calls initially');
 
     chart.setSize(300);
-    assert.deepEqual(
-        stack,
-        [
-            'Redraw.1'
-        ],
-        'The initial event should fire'
+    assert.deepEqual(stack, ['Redraw.1'], 'The initial event should fire');
+
+    chart.update(
+        {
+            chart: {
+                events: {
+                    redraw: () => stack.push('Redraw.2')
+                }
+            }
+        },
+        false
     );
 
-    chart.update({
-        chart: {
-            events: {
-                redraw: () => stack.push('Redraw.2')
-            }
-        }
-    }, false);
-
     assert.deepEqual(
         stack,
-        [
-            'Redraw.1'
-        ],
+        ['Redraw.1'],
         'Updated without redraw, no event should fire'
     );
 
     chart.redraw();
     assert.deepEqual(
         stack,
-        [
-            'Redraw.1',
-            'Redraw.2'
-        ],
+        ['Redraw.1', 'Redraw.2'],
         'Redrew, only the replaced event should fire (#6538)'
     );
 });

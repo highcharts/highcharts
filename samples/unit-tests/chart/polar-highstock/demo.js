@@ -18,6 +18,10 @@ QUnit.test(
             }),
             series = chart.series[0];
 
-        assert.strictEqual(series.clipBox, undefined, 'no Highcharts Stock clipping');
+        assert.strictEqual(
+            series.clipBox,
+            undefined,
+            'no Highcharts Stock clipping'
+        );
     }
 );

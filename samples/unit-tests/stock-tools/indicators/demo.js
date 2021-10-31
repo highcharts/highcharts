@@ -46,8 +46,8 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
     });
 
     // Test yAxis resizers and adding indicators:
-    chart.navigationBindings.selectedButtonElement = document
-        .getElementsByClassName('highcharts-indicators')[0];
+    chart.navigationBindings.selectedButtonElement =
+        document.getElementsByClassName('highcharts-indicators')[0];
     chart.navigationBindings.utils.manageIndicators.call(
         chart.navigationBindings,
         {
@@ -146,9 +146,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.navigationBindings,
         {
             actionType: 'remove',
-            seriesId:
-                chart.series[chart.series.length - 2]
-                    .options.id
+            seriesId: chart.series[chart.series.length - 2].options.id
         }
     );
 
@@ -184,9 +182,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.navigationBindings,
         {
             actionType: 'remove',
-            seriesId:
-                chart.series[chart.series.length - 2]
-                    .options.id
+            seriesId: chart.series[chart.series.length - 2].options.id
         }
     );
 
@@ -289,9 +285,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.navigationBindings,
         {
             actionType: 'remove',
-            seriesId:
-                chart.series[chart.series.length - 2]
-                    .options.id
+            seriesId: chart.series[chart.series.length - 2].options.id
         }
     );
 
@@ -319,18 +313,19 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.navigationBindings,
         {
             actionType: 'remove',
-            seriesId:
-                chart.series[chart.series.length - 2]
-                    .options.id
+            seriesId: chart.series[chart.series.length - 2].options.id
         }
     );
 
-    chart.yAxis[0].update({
-        height: '60%',
-        labels: {
-            align: 'left'
-        }
-    }, false);
+    chart.yAxis[0].update(
+        {
+            height: '60%',
+            labels: {
+                align: 'left'
+            }
+        },
+        false
+    );
 
     chart.addAxis(
         {
@@ -481,9 +476,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         chart.navigationBindings,
         {
             actionType: 'remove',
-            seriesId:
-                chart.series[chart.series.length - 2]
-                    .options.id
+            seriesId: chart.series[chart.series.length - 2].options.id
         }
     );
 
@@ -576,8 +569,8 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
 
     assert.strictEqual(
         chart.series[2].getDGApproximation(),
-        chart.series[chart.series.length - 1].options
-            .dataGrouping.approximation,
+        chart.series[chart.series.length - 1].options.dataGrouping
+            .approximation,
         'Indicator on column series should use the same DG approximation (#13950).'
     );
 });

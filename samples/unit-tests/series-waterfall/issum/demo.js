@@ -44,7 +44,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('First point as sum', assert => {
+QUnit.test('First point as sum', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'waterfall'

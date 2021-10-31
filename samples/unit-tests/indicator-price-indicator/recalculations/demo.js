@@ -148,142 +148,162 @@ QUnit.test(
     }
 );
 
-QUnit.test(`The currentPriceIndicator, lastPrice and axis crosshair
+QUnit.test(
+    `The currentPriceIndicator, lastPrice and axis crosshair
     didn't work properly with stockTools, #13876.`,
-function (assert) {
-    const chart = Highcharts.stockChart('container', {
-            stockTools: {
-                gui: {
-                    enabled: true,
-                    buttons: ['currentPriceIndicator']
-                }
-            },
-            yAxis: [{
-                crosshair: {
-                    color: '#0000ff',
-                    label: {
-                        padding: 6,
-                        backgroundColor: '#0000ff',
-                        enabled: true
-                    }
-                }
-            }],
-            series: [{
-                data: [1, 2, 4, 6, 1, 4, 6, 4, 3, 2],
-                lastVisiblePrice: {
-                    color: '#00ff00',
-                    label: {
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+                stockTools: {
+                    gui: {
                         enabled: true,
-                        backgroundColor: '#00ff00'
+                        buttons: ['currentPriceIndicator']
                     }
                 },
-                lastPrice: {
-                    color: '#ff0000'
-                }
-            }]
-        }),
-        controller = new TestController(chart),
-        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+                yAxis: [
+                    {
+                        crosshair: {
+                            color: '#0000ff',
+                            label: {
+                                padding: 6,
+                                backgroundColor: '#0000ff',
+                                enabled: true
+                            }
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        data: [1, 2, 4, 6, 1, 4, 6, 4, 3, 2],
+                        lastVisiblePrice: {
+                            color: '#00ff00',
+                            label: {
+                                enabled: true,
+                                backgroundColor: '#00ff00'
+                            }
+                        },
+                        lastPrice: {
+                            color: '#ff0000'
+                        }
+                    }
+                ]
+            }),
+            controller = new TestController(chart),
+            button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
 
-    chart.stockTools.wrapper.style.display = 'none';
+        chart.stockTools.wrapper.style.display = 'none';
 
-    // Show croshair with the label.
-    controller.moveTo(200, 200);
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Axis cross label should be visible.'
-    );
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
-        '#0000ff',
-        'Axis cross label fill color should be blue.'
-    );
+        // Show croshair with the label.
+        controller.moveTo(200, 200);
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Axis cross label should be visible.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute(
+                'fill'
+            ),
+            '#0000ff',
+            'Axis cross label fill color should be blue.'
+        );
 
-    // Hide croshair with the label.
-    controller.moveTo(30, 20);
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'hidden',
-        'Cross label should not be visible.'
-    );
+        // Hide croshair with the label.
+        controller.moveTo(30, 20);
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
+            'hidden',
+            'Cross label should not be visible.'
+        );
 
-    // Show currentPriceIndicator with the label.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
-    assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Series price indicator should be visible.'
-    );
-    assert.strictEqual(
-        chart.series[0].crossLabel.element.childNodes[0].getAttribute('fill'),
-        '#00ff00',
-        'Cross label fill color should be blue.'
-    );
+        // Show currentPriceIndicator with the label.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
+        assert.strictEqual(
+            chart.series[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Series price indicator should be visible.'
+        );
+        assert.strictEqual(
+            chart.series[0].crossLabel.element.childNodes[0].getAttribute(
+                'fill'
+            ),
+            '#00ff00',
+            'Cross label fill color should be blue.'
+        );
 
-    // Show currentPriceIndicator togehter with axis croshair.
-    controller.moveTo(200, 200);
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Cross label should be visible.'
-    );
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
-        '#0000ff',
-        'Cross label fill color should be blue.'
-    );
+        // Show currentPriceIndicator togehter with axis croshair.
+        controller.moveTo(200, 200);
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Cross label should be visible.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute(
+                'fill'
+            ),
+            '#0000ff',
+            'Cross label fill color should be blue.'
+        );
 
-    // Adjust extremes to show the lastPrice line.
-    chart.xAxis[0].setExtremes(0, 4);
-    assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Series last price indicator should be visible.'
-    );
-    assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
-        '#ff0000',
-        'Cross label fill color should be red.'
-    );
+        // Adjust extremes to show the lastPrice line.
+        chart.xAxis[0].setExtremes(0, 4);
+        assert.strictEqual(
+            chart.series[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Series last price indicator should be visible.'
+        );
+        assert.strictEqual(
+            chart.series[0].lastPrice.stroke,
+            '#ff0000',
+            'Cross label fill color should be red.'
+        );
 
-    // Hide lastPrice and currentPriceIndicator.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
-    assert.notOk(
-        chart.series[0].crossLabel,
-        'Series price indicator should not exist.'
-    );
-    assert.notOk(
-        chart.series[0].lastPrice,
-        'Series last price indicator should not exist.'
-    );
+        // Hide lastPrice and currentPriceIndicator.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
+        assert.notOk(
+            chart.series[0].crossLabel,
+            'Series price indicator should not exist.'
+        );
+        assert.notOk(
+            chart.series[0].lastPrice,
+            'Series last price indicator should not exist.'
+        );
 
-    // Show again the lastPrice and currentPriceIndicator.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Cross label should be visible again.'
-    );
-    assert.strictEqual(
-        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
-        '#0000ff',
-        'Cross label fill color should be blue again.'
-    );
-    assert.strictEqual(
-        chart.series[0].crossLabel.element.getAttribute('visibility'),
-        'visible',
-        'Series last price indicator should be visible again.'
-    );
-    assert.strictEqual(
-        chart.series[0].lastPrice.stroke,
-        '#ff0000',
-        'Cross label fill color should be red again.'
-    );
-});
+        // Show again the lastPrice and currentPriceIndicator.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Cross label should be visible again.'
+        );
+        assert.strictEqual(
+            chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute(
+                'fill'
+            ),
+            '#0000ff',
+            'Cross label fill color should be blue again.'
+        );
+        assert.strictEqual(
+            chart.series[0].crossLabel.element.getAttribute('visibility'),
+            'visible',
+            'Series last price indicator should be visible again.'
+        );
+        assert.strictEqual(
+            chart.series[0].lastPrice.stroke,
+            '#ff0000',
+            'Cross label fill color should be red again.'
+        );
+    }
+);
 
 QUnit.test('The lastPrice color, #15074.', function (assert) {
     const chart = Highcharts.stockChart('container', {
@@ -293,13 +313,15 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
                     buttons: ['currentPriceIndicator']
                 }
             },
-            series: [{
-                data: [1, 2, 4, 6, 1, 5, 2.5],
-                lastPrice: {
-                    enabled: true,
-                    color: '#00ff00'
+            series: [
+                {
+                    data: [1, 2, 4, 6, 1, 5, 2.5],
+                    lastPrice: {
+                        enabled: true,
+                        color: '#00ff00'
+                    }
                 }
-            }]
+            ]
         }),
         button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
 
@@ -310,10 +332,14 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
     );
 
     // Toggle the currentPriceIndicator button in the stock tools.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings,
+        button
+    );
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings,
+        button
+    );
 
     assert.strictEqual(
         chart.series[0].lastPrice.attr('stroke'),
@@ -322,162 +348,193 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
     );
 
     assert.ok(
-        chart.series[0].lastPrice.element.classList
-            .contains('highcharts-color-0'),
+        chart.series[0].lastPrice.element.classList.contains(
+            'highcharts-color-0'
+        ),
         'CSS class of highcharts-color-{x} ' +
             'should be added to lastPrice (#15222)'
     );
 });
 
-QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-            yAxis: [{
-                height: '60%'
-            }, {
-                top: '65%',
-                height: '35%'
-            }],
-            stockTools: {
-                gui: {
-                    enabled: true,
-                    buttons: ['currentPriceIndicator']
-                }
-            },
-            series: [{
-                id: 'main',
-                color: '#00ffff',
-                data: [2, 6, 8, 6, 3, 1, 1, 3, 5, 6, 9, 9, 9, 7, 4, 2, 1, 9]
-            }, {
-                type: 'sma',
-                linkedTo: 'main',
-                color: '#ff00ff'
-            }, {
-                type: 'column',
-                color: '#000000',
-                yAxis: 1,
-                data: [10, 2, 5, 6, 1, 3, 5, 1, 3, 5, 4, 1, 3, 5, 6, 4, 1, 4]
-            }]
-        }),
-        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+QUnit.test(
+    'The currentPriceIndicator for multiple series, #14888.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+                yAxis: [
+                    {
+                        height: '60%'
+                    },
+                    {
+                        top: '65%',
+                        height: '35%'
+                    }
+                ],
+                stockTools: {
+                    gui: {
+                        enabled: true,
+                        buttons: ['currentPriceIndicator']
+                    }
+                },
+                series: [
+                    {
+                        id: 'main',
+                        color: '#00ffff',
+                        data: [
+                            2, 6, 8, 6, 3, 1, 1, 3, 5, 6, 9, 9, 9, 7, 4, 2, 1, 9
+                        ]
+                    },
+                    {
+                        type: 'sma',
+                        linkedTo: 'main',
+                        color: '#ff00ff'
+                    },
+                    {
+                        type: 'column',
+                        color: '#000000',
+                        yAxis: 1,
+                        data: [
+                            10, 2, 5, 6, 1, 3, 5, 1, 3, 5, 4, 1, 3, 5, 6, 4, 1,
+                            4
+                        ]
+                    }
+                ]
+            }),
+            button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
 
-    // Click the currentPriceIndicator button in the stock tools.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
+        // Click the currentPriceIndicator button in the stock tools.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
 
-    chart.series.forEach(function (series) {
-        if (series.options.id !== 'highcharts-navigator-series') {
-            assert.strictEqual(
-                series.lastPrice.attr('stroke'),
-                series.color,
-                'Each series\' lastPrice line should have color as series.'
-            );
-            assert.strictEqual(
-                series.crossLabel.attr('fill'),
-                series.color,
-                'Each series\' lastVisiblePrice label should have color as series.'
-            );
-        }
-    });
+        chart.series.forEach(function (series) {
+            if (series.options.id !== 'highcharts-navigator-series') {
+                assert.strictEqual(
+                    series.lastPrice.attr('stroke'),
+                    series.color,
+                    "Each series' lastPrice line should have color as series."
+                );
+                assert.strictEqual(
+                    series.crossLabel.attr('fill'),
+                    series.color,
+                    "Each series' lastVisiblePrice label should have color as series."
+                );
+            }
+        });
 
-    chart.series[0].update({
-        lastPrice: {
-            color: '#ff0000'
-        }
-    });
-    assert.strictEqual(
-        chart.series[0].lastPrice.attr('stroke'),
-        '#ff0000',
-        'Options declared for the lastPrice should overwrite the default one.'
-    );
-});
+        chart.series[0].update({
+            lastPrice: {
+                color: '#ff0000'
+            }
+        });
+        assert.strictEqual(
+            chart.series[0].lastPrice.attr('stroke'),
+            '#ff0000',
+            'Options declared for the lastPrice should overwrite the default one.'
+        );
+    }
+);
 
-QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-            stockTools: {
-                gui: {
-                    enabled: true,
-                    buttons: ['currentPriceIndicator']
-                }
-            },
-            series: [{
-                data: [1, 2, 4, 6, 1, 5, 2.5],
-                lastPrice: {
-                    enabled: true,
-                    color: '#00ff00'
-                }
-            }]
-        }),
-        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+QUnit.test(
+    'The currentPriceIndicator in StockTools, #15029.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+                stockTools: {
+                    gui: {
+                        enabled: true,
+                        buttons: ['currentPriceIndicator']
+                    }
+                },
+                series: [
+                    {
+                        data: [1, 2, 4, 6, 1, 5, 2.5],
+                        lastPrice: {
+                            enabled: true,
+                            color: '#00ff00'
+                        }
+                    }
+                ]
+            }),
+            button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
 
-    assert.ok(
-        chart.series[0].lastPrice,
-        'When declared in options the lastPrice line should exist.'
-    );
-    assert.notOk(
-        chart.series[0].lastVisiblePrice,
-        'The lastVisiblePrice should not exist.'
-    );
-    assert.ok(
-        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
-        'When the chart initialized with the price indicator, the button should show an icon to hide.'
-    );
+        assert.ok(
+            chart.series[0].lastPrice,
+            'When declared in options the lastPrice line should exist.'
+        );
+        assert.notOk(
+            chart.series[0].lastVisiblePrice,
+            'The lastVisiblePrice should not exist.'
+        );
+        assert.ok(
+            button.childNodes[0].style['background-image'].indexOf('hide') !==
+                -1,
+            'When the chart initialized with the price indicator, the button should show an icon to hide.'
+        );
 
-    // Click the button in StockTools.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
+        // Click the button in StockTools.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
 
-    assert.notOk(
-        chart.series[0].lastPrice,
-        'The lastPrice should not exist.'
-    );
-    assert.notOk(
-        chart.series[0].lastVisiblePrice,
-        'The lastVisiblePrice should not exist.'
-    );
-    assert.ok(
-        button.childNodes[0].style['background-image'].indexOf('show') !== -1,
-        'After a click, the button should suggest a possibility to show a price indicator.'
-    );
+        assert.notOk(
+            chart.series[0].lastPrice,
+            'The lastPrice should not exist.'
+        );
+        assert.notOk(
+            chart.series[0].lastVisiblePrice,
+            'The lastVisiblePrice should not exist.'
+        );
+        assert.ok(
+            button.childNodes[0].style['background-image'].indexOf('show') !==
+                -1,
+            'After a click, the button should suggest a possibility to show a price indicator.'
+        );
 
-    // Click the button in StockTools once again.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
+        // Click the button in StockTools once again.
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
 
-    assert.ok(
-        chart.series[0].lastPrice,
-        'The lastPrice should exist.'
-    );
-    assert.ok(
-        chart.series[0].lastVisiblePrice,
-        'The lastVisiblePrice should exist.'
-    );
-    assert.ok(
-        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
-        'After the second click, the button should change again.'
-    );
+        assert.ok(chart.series[0].lastPrice, 'The lastPrice should exist.');
+        assert.ok(
+            chart.series[0].lastVisiblePrice,
+            'The lastVisiblePrice should exist.'
+        );
+        assert.ok(
+            button.childNodes[0].style['background-image'].indexOf('hide') !==
+                -1,
+            'After the second click, the button should change again.'
+        );
 
-    chart.series[0].update({
-        lastVisiblePrice: {
-            enabled: false
-        }
-    });
-    assert.ok(
-        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
-        'After an update, the button should suggest a possibility to hide a price indicator.'
-    );
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init
-        .call(chart.navigationBindings, button);
+        chart.series[0].update({
+            lastVisiblePrice: {
+                enabled: false
+            }
+        });
+        assert.ok(
+            button.childNodes[0].style['background-image'].indexOf('hide') !==
+                -1,
+            'After an update, the button should suggest a possibility to hide a price indicator.'
+        );
+        chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+            chart.navigationBindings,
+            button
+        );
 
-    assert.notOk(
-        chart.series[0].lastPrice,
-        'The lastPrice should not exist.'
-    );
-    assert.notOk(
-        chart.series[0].lastVisiblePrice,
-        'The lastVisiblePrice should not exist.'
-    );
-    assert.ok(
-        button.childNodes[0].style['background-image'].indexOf('show') !== -1,
-        'After an update and click, the button should suggest a possibility to show a price indicator again.'
-    );
-});
+        assert.notOk(
+            chart.series[0].lastPrice,
+            'The lastPrice should not exist.'
+        );
+        assert.notOk(
+            chart.series[0].lastVisiblePrice,
+            'The lastVisiblePrice should not exist.'
+        );
+        assert.ok(
+            button.childNodes[0].style['background-image'].indexOf('show') !==
+                -1,
+            'After an update and click, the button should suggest a possibility to show a price indicator again.'
+        );
+    }
+);

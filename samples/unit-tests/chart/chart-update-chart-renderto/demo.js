@@ -1,4 +1,4 @@
-QUnit.test('Chart update with circular renderTo', assert => {
+QUnit.test('Chart update with circular renderTo', (assert) => {
     const renderTo = document.createElement('div');
     let chart;
     document.getElementById('container').appendChild(renderTo);

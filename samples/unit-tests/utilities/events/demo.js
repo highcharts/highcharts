@@ -564,12 +564,12 @@
         assert.ok(true, 'Chart should render');
     });
 
-    QUnit.test('Event order', assert => {
+    QUnit.test('Event order', (assert) => {
         var obj = {},
             calls = [];
 
         [undefined, { order: 2 }, undefined, { order: 1 }].forEach(
-            options => {
+            (options) => {
                 addEvent(
                     obj,
                     'hit',
@@ -590,7 +590,7 @@
         );
     });
 
-    QUnit.test('Events in extended classes', assert => {
+    QUnit.test('Events in extended classes', (assert) => {
         const results = [];
 
         function Series() {}
@@ -670,7 +670,7 @@
         );
     });
 
-    QUnit.test('FireEvent on dom element keeps params', assert => {
+    QUnit.test('FireEvent on dom element keeps params', (assert) => {
         const container = document.getElementById('container');
         const value = 'test';
 
@@ -678,9 +678,14 @@
             e.test = value;
         });
 
-        Highcharts.fireEvent(container, 'testEvent', { a: 'test' }, function (e) {
-            assert.equal(e.test, value);
-        });
+        Highcharts.fireEvent(
+            container,
+            'testEvent',
+            { a: 'test' },
+            function (e) {
+                assert.equal(e.test, value);
+            }
+        );
 
         const obj = {};
 
@@ -692,4 +697,4 @@
             assert.equal(e.test, value);
         });
     });
-}());
+})();

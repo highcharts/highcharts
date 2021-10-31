@@ -31,7 +31,6 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
     // #15639
     chart.xAxis[0].destroy();
     chart.xAxis[0].removePlotBand('plotband-1');
-
 });
 
 QUnit.test(
@@ -72,18 +71,8 @@ QUnit.test(
                 {
                     name: 'Temperature',
                     data: [
-                        7.0,
-                        6.9,
-                        9.5,
-                        14.5,
-                        18.2,
-                        21.5,
-                        25.2,
-                        26.5,
-                        23.3,
-                        18.3,
-                        13.9,
-                        9.6
+                        7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3,
+                        13.9, 9.6
                     ],
                     color: '#F33'
                 }
@@ -117,18 +106,8 @@ QUnit.test(
             color: '#08F',
             yAxis: 'rainfall-axis',
             data: [
-                49.9,
-                71.5,
-                106.4,
-                129.2,
-                144.0,
-                176.0,
-                135.6,
-                148.5,
-                216.4,
-                194.1,
-                95.6,
-                54.4
+                49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
             ]
         });
 
@@ -143,7 +122,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Defaults', assert => {
+QUnit.test('Defaults', (assert) => {
     const chart = Highcharts.chart('container', {
         title: {
             text: 'Sensible defaults'
@@ -184,18 +163,8 @@ QUnit.test('Defaults', assert => {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -259,15 +228,8 @@ QUnit.test('General tests', function (assert) {
         series: [
             {
                 data: [
-                    2900.9,
-                    701.5,
-                    10006.4,
-                    12009.2,
-                    1404.0,
-                    1076.0,
-                    135.6,
-                    148.5,
-                    21006.4
+                    2900.9, 701.5, 10006.4, 12009.2, 1404.0, 1076.0, 135.6,
+                    148.5, 21006.4
                 ]
             }
         ]
@@ -446,15 +408,7 @@ QUnit.test('#7709 - From and to infinity', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4
                 ],
                 pointStart: Date.UTC(2010, 0, 1),
                 pointInterval: 24 * 3600 * 1000
@@ -699,24 +653,8 @@ QUnit.test('Dynamically added plotbands', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    100,
-                    110,
-                    120,
-                    101,
-                    115,
-                    128,
-                    99,
-                    80,
-                    132
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    100, 110, 120, 101, 115, 128, 99, 80, 132
                 ],
                 pointStart: Date.UTC(2010, 0, 1),
                 pointInterval: 24 * 3600 * 1000

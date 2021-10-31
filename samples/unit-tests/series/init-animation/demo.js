@@ -17,7 +17,8 @@ QUnit.test('General animation tests', function (assert) {
             done = assert.async(),
             width;
 
-        const initialClips = chart.container.querySelectorAll('defs clipPath').length;
+        const initialClips =
+            chart.container.querySelectorAll('defs clipPath').length;
         assert.ok(
             initialClips >= 2,
             'There should be at least clips initially, one for plot area and one for the series'
@@ -38,8 +39,8 @@ QUnit.test('General animation tests', function (assert) {
                 0 // defer
             ].join(',');
 
-            width = chart.sharedClips[animationClipKey]
-                .element.width.baseVal.value;
+            width =
+                chart.sharedClips[animationClipKey].element.width.baseVal.value;
 
             assert.strictEqual(
                 width,
@@ -53,9 +54,8 @@ QUnit.test('General animation tests', function (assert) {
                 chart.container.querySelectorAll('defs clipPath').length,
                 initialClips + 2,
                 'There should be an additional two clips when animating, ' +
-                'one for the line and one for markers'
+                    'one for the line and one for markers'
             );
-
         }, 200);
 
         setTimeout(function () {
@@ -63,7 +63,7 @@ QUnit.test('General animation tests', function (assert) {
                 chart.container.querySelectorAll('defs clipPath').length,
                 initialClips,
                 'When the animation settles, the two temporary clips should ' +
-                'be purged'
+                    'be purged'
             );
 
             done();
@@ -105,8 +105,8 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
             ].join(',');
 
             // animation started
-            width = chart.sharedClips[animationClipKey]
-                .element.width.baseVal.value;
+            width =
+                chart.sharedClips[animationClipKey].element.width.baseVal.value;
 
             assert.strictEqual(
                 width > 20 && width < 200,
@@ -116,8 +116,9 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
             setTimeout(function () {
                 // animation uncovers most of the plot
-                width = chart.sharedClips[animationClipKey]
-                    .element.width.baseVal.value;
+                width =
+                    chart.sharedClips[animationClipKey].element.width.baseVal
+                        .value;
                 assert.strictEqual(
                     width > 300 && width < 600,
                     true,
@@ -161,14 +162,8 @@ QUnit.test(
                     series: [
                         {
                             data: [
-                                43934,
-                                52503,
-                                57177,
-                                69658,
-                                97031,
-                                119931,
-                                137133,
-                                154175
+                                43934, 52503, 57177, 69658, 97031, 119931,
+                                137133, 154175
                             ],
                             animation: {
                                 defer: 200,
@@ -190,19 +185,17 @@ QUnit.test(
                 ].join(',');
 
                 // animation started
-                width = chart.sharedClips[animationClipKey]
-                    .element.width.baseVal.value;
+                width =
+                    chart.sharedClips[animationClipKey].element.width.baseVal
+                        .value;
 
-                assert.strictEqual(
-                    width,
-                    0,
-                    'Animate should not start'
-                );
+                assert.strictEqual(width, 0, 'Animate should not start');
 
                 setTimeout(function () {
                     // animation uncovers most of the plot
-                    width = chart.sharedClips[animationClipKey]
-                        .element.width.baseVal.value;
+                    width =
+                        chart.sharedClips[animationClipKey].element.width
+                            .baseVal.value;
                     assert.strictEqual(
                         width > 300 && width < 600,
                         true,
@@ -211,9 +204,7 @@ QUnit.test(
                 }, 250);
 
                 setTimeout(function () {
-                    const clipRect = chart.sharedClips[
-                        animationClipKey
-                    ];
+                    const clipRect = chart.sharedClips[animationClipKey];
 
                     // animation finished
                     assert.strictEqual(

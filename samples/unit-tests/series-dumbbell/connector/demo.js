@@ -61,7 +61,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         connectorColor: 'blue'
     });
 
-    const assertDestruction = msg => {
+    const assertDestruction = (msg) => {
         var point = chart.series[1].points[0],
             lowerGraphic = point.lowerGraphic,
             upperGraphic = point.upperGraphic,
@@ -71,11 +71,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         point.remove();
 
         pointGraphics.forEach(function (graphic) {
-            assert.strictEqual(
-                graphic && graphic.element,
-                undefined,
-                msg
-            );
+            assert.strictEqual(graphic && graphic.element, undefined, msg);
         });
     };
 
@@ -87,5 +83,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         }
     });
 
-    assertDestruction('#15560: All point graphics should be destroyed when markers are disabled');
+    assertDestruction(
+        '#15560: All point graphics should be destroyed when markers are disabled'
+    );
 });

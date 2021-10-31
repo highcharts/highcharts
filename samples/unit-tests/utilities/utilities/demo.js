@@ -63,8 +63,7 @@
         );
     });
 
-    QUnit.test('Merge', assert => {
-
+    QUnit.test('Merge', (assert) => {
         // test filtering of __proto__
         const objProto = JSON.parse(`{
             "__proto__": {
@@ -92,7 +91,6 @@
             'undefined',
             'The prototype (and window) should not be polluted through merge'
         );
-
     });
 
     QUnit.test('PInt', function (assert) {
@@ -423,7 +421,7 @@
             '0',
             Highcharts.numberFormat(4.9e-7, 0),
             'For small numbers and when decimals argument declared as zero, ' +
-            'the formatter should return zero, #14023.'
+                'the formatter should return zero, #14023.'
         );
     });
 
@@ -538,7 +536,7 @@
             'Key: January, value: 3.14, date: 2012-01-01.',
             format(
                 'Key: {point.key}, value: {point.value:.2f}, date: ' +
-                '{point.date:%Y-%m-%d}.',
+                    '{point.date:%Y-%m-%d}.',
                 { point: point }
             )
         );
@@ -1064,10 +1062,10 @@
         );
     });
 
-    QUnit.test('keys', assert => {
+    QUnit.test('keys', (assert) => {
         assert.deepEqual(
             Highcharts.keys({ foo: 'bar' }),
             Object.keys({ foo: 'bar' })
         );
     });
-}());
+})();

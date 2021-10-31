@@ -10,18 +10,8 @@ QUnit.test('minRange with log axis', function (assert) {
         series: [
             {
                 data: [
-                    7937,
-                    9689,
-                    9204,
-                    9087,
-                    12400,
-                    11520,
-                    8781,
-                    11637,
-                    10918,
-                    8198,
-                    10695,
-                    11251
+                    7937, 9689, 9204, 9087, 12400, 11520, 8781, 11637, 10918,
+                    8198, 10695, 11251
                 ]
             }
         ]
@@ -34,7 +24,7 @@ QUnit.test('minRange with log axis', function (assert) {
     );
 });
 
-QUnit.test('#14505: minRange NaN with single point series', assert => {
+QUnit.test('#14505: minRange NaN with single point series', (assert) => {
     [
         [
             {
@@ -63,7 +53,7 @@ QUnit.test('#14505: minRange NaN with single point series', assert => {
                 data: [1]
             }
         ]
-    ].forEach(series => {
+    ].forEach((series) => {
         const chart = Highcharts.chart('container', { series });
 
         assert.ok(

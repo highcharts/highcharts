@@ -79,7 +79,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
-QUnit.test('getLabelWidth', assert => {
+QUnit.test('getLabelWidth', (assert) => {
     const { getLabelWidth } = Highcharts.seriesTypes.venn.prototype.utils;
 
     // Start with an internal circle, and no external circles.
@@ -119,7 +119,7 @@ QUnit.test('getLabelWidth', assert => {
     );
 });
 
-QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
+QUnit.test('getDistanceBetweenCirclesByOverlap', (assert) => {
     var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
         { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
 
@@ -164,7 +164,7 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
  * wont tell if a change in return values is correct or not, but it will alert
  * of any unexpected changes.
  */
-QUnit.test('layoutGreedyVenn', assert => {
+QUnit.test('layoutGreedyVenn', (assert) => {
     const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
     const { layoutGreedyVenn } = vennPrototype.utils;
 
@@ -546,7 +546,7 @@ QUnit.test('sortByTotalOverlap', function (assert) {
 QUnit.module('nelder-mead', () => {
     const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
 
-    QUnit.test('getCentroid', assert => {
+    QUnit.test('getCentroid', (assert) => {
         const { getCentroid } = vennUtils;
         assert.deepEqual(
             getCentroid([
@@ -559,7 +559,7 @@ QUnit.module('nelder-mead', () => {
         );
     });
 
-    QUnit.test('nelderMead', assert => {
+    QUnit.test('nelderMead', (assert) => {
         const { getMarginFromCircles, nelderMead } = vennUtils;
         const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
         const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
@@ -611,7 +611,7 @@ QUnit.module('geometry', () => {
 QUnit.module('geometry-circles', () => {
     const { geometryCircles } = Highcharts.seriesTypes.venn.prototype.utils;
 
-    QUnit.test('getAreaOfCircle', assert => {
+    QUnit.test('getAreaOfCircle', (assert) => {
         const { getAreaOfCircle } = geometryCircles;
 
         assert.strictEqual(
@@ -734,7 +734,7 @@ QUnit.module('geometry-circles', () => {
         );
     });
 
-    QUnit.test('getCirclesIntersectionPolygon', assert => {
+    QUnit.test('getCirclesIntersectionPolygon', (assert) => {
         const { getCirclesIntersectionPolygon } = geometryCircles;
 
         const circlesNotOverlapping = [
@@ -763,7 +763,7 @@ QUnit.module('geometry-circles', () => {
         );
     });
 
-    QUnit.test('getCircularSegmentArea', assert => {
+    QUnit.test('getCircularSegmentArea', (assert) => {
         const { getCircularSegmentArea } = geometryCircles;
 
         assert.strictEqual(
@@ -779,7 +779,7 @@ QUnit.module('geometry-circles', () => {
         );
     });
 
-    QUnit.test('getOverlapBetweenCircles', assert => {
+    QUnit.test('getOverlapBetweenCircles', (assert) => {
         const { getOverlapBetweenCircles } = geometryCircles;
 
         assert.strictEqual(

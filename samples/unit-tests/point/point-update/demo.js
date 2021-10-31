@@ -150,18 +150,8 @@ QUnit.test('Column update(#4284)', function (assert) {
                     type: 'column',
                     animation: false,
                     data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4
                     ]
                 }
             ]
@@ -222,9 +212,9 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.data
                 .map(function (pointCfg) {
-                    return typeof pointCfg === 'object' ?
-                        Object.prototype.toString.call(pointCfg) :
-                        typeof pointCfg;
+                    return typeof pointCfg === 'object'
+                        ? Object.prototype.toString.call(pointCfg)
+                        : typeof pointCfg;
                 })
                 .join(','),
             'number,number,[object Array]',
@@ -236,9 +226,9 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.data
                 .map(function (pointCfg) {
-                    return typeof pointCfg === 'object' ?
-                        Object.prototype.toString.call(pointCfg) :
-                        typeof pointCfg;
+                    return typeof pointCfg === 'object'
+                        ? Object.prototype.toString.call(pointCfg)
+                        : typeof pointCfg;
                 })
                 .join(','),
             'number,number,[object Object]',
@@ -309,9 +299,9 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.data
                 .map(function (pointCfg) {
-                    return typeof pointCfg === 'object' ?
-                        Object.prototype.toString.call(pointCfg) :
-                        typeof pointCfg;
+                    return typeof pointCfg === 'object'
+                        ? Object.prototype.toString.call(pointCfg)
+                        : typeof pointCfg;
                 })
                 .join(','),
             '[object Array],[object Array],[object Array]',
@@ -323,9 +313,9 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].options.data
                 .map(function (pointCfg) {
-                    return typeof pointCfg === 'object' ?
-                        Object.prototype.toString.call(pointCfg) :
-                        typeof pointCfg;
+                    return typeof pointCfg === 'object'
+                        ? Object.prototype.toString.call(pointCfg)
+                        : typeof pointCfg;
                 })
                 .join(','),
             '[object Array],[object Array],[object Object]',

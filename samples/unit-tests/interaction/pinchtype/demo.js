@@ -348,7 +348,7 @@
         assert.notEqual(xAxis.max, 999, 'Altered max');
     });
 
-    QUnit.test('zoomBySingleTouch is true', assert => {
+    QUnit.test('zoomBySingleTouch is true', (assert) => {
         const chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'x',
@@ -391,4 +391,4 @@
             'Extremes should change after single touch zoom'
         );
     });
-}());
+})();

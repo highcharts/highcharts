@@ -29,7 +29,8 @@ QUnit.test(
                 {
                     type: 'column',
                     data: [2, 3, 5, 2, 5, 2]
-                }, {
+                },
+                {
                     type: 'line',
                     data: [1, 2, 3]
                 }
@@ -215,7 +216,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
     );
 });
 
-QUnit.test('Tooltip position with multiple axes.', assert => {
+QUnit.test('Tooltip position with multiple axes.', (assert) => {
     const chart = Highcharts.chart('container', {
         xAxis: [
             {
@@ -275,31 +276,38 @@ QUnit.test('Tooltip position with multiple axes.', assert => {
     );
 });
 
-QUnit.test('Tooltip position with inverted multiple axes', assert => {
+QUnit.test('Tooltip position with inverted multiple axes', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             inverted: true
         },
-        yAxis: [{
-            width: '45%'
-        }, {
-            width: '45%',
-            left: '55%',
-            offset: 0
-        }],
+        yAxis: [
+            {
+                width: '45%'
+            },
+            {
+                width: '45%',
+                left: '55%',
+                offset: 0
+            }
+        ],
         tooltip: {
             shared: false
         },
-        series: [{
-            data: [1, -4, 3, -5],
-            yAxis: 0
-        }, {
-            data: [2, -2, 1, -3],
-            yAxis: 0
-        }, {
-            data: [1, -4, 3, -5],
-            yAxis: 1
-        }]
+        series: [
+            {
+                data: [1, -4, 3, -5],
+                yAxis: 0
+            },
+            {
+                data: [2, -2, 1, -3],
+                yAxis: 0
+            },
+            {
+                data: [1, -4, 3, -5],
+                yAxis: 1
+            }
+        ]
     });
 
     const point1 = chart.series[0].points[1];

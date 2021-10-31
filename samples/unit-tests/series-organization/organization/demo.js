@@ -1,4 +1,4 @@
-QUnit.test('Organization data', assert => {
+QUnit.test('Organization data', (assert) => {
     let chart = Highcharts.chart('container', {
         series: [
             {
@@ -52,7 +52,7 @@ QUnit.test('Organization data', assert => {
     );
 });
 
-QUnit.test('Organization single data', assert => {
+QUnit.test('Organization single data', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -77,7 +77,7 @@ QUnit.test('Organization single data', assert => {
 
 QUnit.test(
     'Drilldown in the organization chart should be allowed, #13711.',
-    assert => {
+    (assert) => {
         var clock = TestUtilities.lolexInstall(),
             chart = Highcharts.chart('container', {
                 chart: {

@@ -1,4 +1,4 @@
-QUnit.test('Column pyramid series', assert => {
+QUnit.test('Column pyramid series', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'columnpyramid',
@@ -7,9 +7,11 @@ QUnit.test('Column pyramid series', assert => {
         yAxis: {
             width: '40%'
         },
-        series: [{
-            data: [10, 20, 5]
-        }]
+        series: [
+            {
+                data: [10, 20, 5]
+            }
+        ]
     });
 
     assert.ok(

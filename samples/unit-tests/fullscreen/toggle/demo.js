@@ -7,7 +7,7 @@ QUnit.test('Fullscreen module.', function (assert) {
         ]
     });
 
-    const eventCount = el => {
+    const eventCount = (el) => {
         let count = 0;
         //eslint-disable-next-line
         for (const t in el.hcEvents) {

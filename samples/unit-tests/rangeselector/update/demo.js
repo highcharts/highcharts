@@ -40,7 +40,7 @@ QUnit.test('RangeSelector update', function (assert) {
         '#11669: dateBox text should be set'
     );
 
-    const eventCount = el => {
+    const eventCount = (el) => {
         let count = 0;
         //eslint-disable-next-line
         for (const t in el.hcEvents) {

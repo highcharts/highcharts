@@ -72,7 +72,7 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
         ]
     });
 
-    const testAutumn = s => {
+    const testAutumn = (s) => {
         assert.deepEqual(
             chart.series[0].points.map(function (point) {
                 return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
@@ -87,7 +87,7 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
         );
     };
 
-    const testSpring = s => {
+    const testSpring = (s) => {
         assert.deepEqual(
             chart.series[0].points.map(function (point) {
                 return Highcharts.dateFormat('%Y-%m-%d %H:%M', point.x);
@@ -106,11 +106,15 @@ QUnit.test('Point interval unit across DST (#4958)', function (assert) {
     testAutumn('Points should land on local timezone midnight');
 
     chart.series[0].update({
-        data: [[0, 1], [1, 1], [2, 1], [3, 1]],
+        data: [
+            [0, 1],
+            [1, 1],
+            [2, 1],
+            [3, 1]
+        ],
         relativeXValue: true
     });
     testAutumn('Relative X value, points should land on local midnight');
-
 
     // Spring crossover
     chart.series[0].update({

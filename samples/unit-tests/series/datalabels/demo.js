@@ -112,8 +112,7 @@ QUnit.test('Top -90', function (assert) {
         Math.abs(
             chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
                 .top -
-                chart.series[0].points[0].graphic.element
-                    .getBoundingClientRect()
+                chart.series[0].points[0].graphic.element.getBoundingClientRect()
                     .top
         ) < 12,
         'Label is top aligned to element'
@@ -122,8 +121,7 @@ QUnit.test('Top -90', function (assert) {
         Math.abs(
             chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
                 .top -
-                chart.series[0].points[1].graphic.element
-                    .getBoundingClientRect()
+                chart.series[0].points[1].graphic.element.getBoundingClientRect()
                     .top
         ) < 12,
         'Label is top aligned to element'
@@ -159,8 +157,7 @@ QUnit.test('Bottom 90', function (assert) {
         Math.abs(
             chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
                 .bottom -
-                chart.series[0].points[1].dataLabel.element
-                    .getBoundingClientRect()
+                chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
                     .bottom
         ) < 12,
         'Labels are equally bottom aligned'
@@ -195,13 +192,11 @@ QUnit.test('Top 90', function (assert) {
     assert.ok(
         Math.abs(
             Math.round(
-                chart.series[0].points[0].dataLabel.element
-                    .getBoundingClientRect()
+                chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
                     .top
             ) -
                 Math.round(
-                    chart.series[0].points[0].graphic.element
-                        .getBoundingClientRect()
+                    chart.series[0].points[0].graphic.element.getBoundingClientRect()
                         .top
                 )
         ) < 12,
@@ -210,13 +205,11 @@ QUnit.test('Top 90', function (assert) {
     assert.ok(
         Math.abs(
             Math.round(
-                chart.series[0].points[1].dataLabel.element
-                    .getBoundingClientRect()
+                chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
                     .top
             ) -
                 Math.round(
-                    chart.series[0].points[1].graphic.element
-                        .getBoundingClientRect()
+                    chart.series[0].points[1].graphic.element.getBoundingClientRect()
                         .top
                 )
         ) < 12,
@@ -323,7 +316,7 @@ QUnit.test('Datalabels overlap in hidden series (#3866)', function (assert) {
 
     assert.ok(
         chart.series[1].points.every(
-            point =>
+            (point) =>
                 point.dataLabel.attr('translateY') < 0 ||
                 point.dataLabel.attr('opacity') === 0
         ),
@@ -334,7 +327,7 @@ QUnit.test('Datalabels overlap in hidden series (#3866)', function (assert) {
 
     assert.ok(
         chart.series[1].points.every(
-            point => point.dataLabel.attr('translateY') >= 0
+            (point) => point.dataLabel.attr('translateY') >= 0
         ),
         'All six labels of the second series should be visible.'
     );
@@ -409,7 +402,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('defer:true and exporting (#10661)', assert => {
+QUnit.test('defer:true and exporting (#10661)', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             forExport: true
@@ -431,7 +424,7 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
     });
 
     assert.deepEqual(
-        chart.series[0].points.map(p =>
+        chart.series[0].points.map((p) =>
             p.dataLabel.element.getAttribute('visibility')
         ),
         [null, null, null],
@@ -439,7 +432,7 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
     );
 
     assert.deepEqual(
-        chart.series[0].points.map(p =>
+        chart.series[0].points.map((p) =>
             p.dataLabel.element.getAttribute('opacity')
         ),
         [null, null, null],

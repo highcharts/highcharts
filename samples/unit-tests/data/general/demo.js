@@ -16,14 +16,16 @@ QUnit.test(
             previousSample;
 
         samples
-            .map(sample => data.parseDate(sample))
-            .map(sample => (new Date(sample)).toUTCString())
+            .map((sample) => data.parseDate(sample))
+            .map((sample) => new Date(sample).toUTCString())
             .forEach((sample, index) => {
                 if (previousSample) {
                     assert.strictEqual(
                         sample,
                         previousSample,
-                        'Parsed dates should be the same. (Index: ' + index + ')'
+                        'Parsed dates should be the same. (Index: ' +
+                            index +
+                            ')'
                     );
                 }
                 previousSample = sample;

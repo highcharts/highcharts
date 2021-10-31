@@ -1,4 +1,4 @@
-QUnit.test('#14426: Vertical panning after zooming', assert => {
+QUnit.test('#14426: Vertical panning after zooming', (assert) => {
     let chart = Highcharts.chart('container', {
         chart: {
             type: 'column',

@@ -1,4 +1,4 @@
-QUnit.test('Item series negative values', assert => {
+QUnit.test('Item series negative values', (assert) => {
     const {
         series: [series]
     } = Highcharts.chart('container', {

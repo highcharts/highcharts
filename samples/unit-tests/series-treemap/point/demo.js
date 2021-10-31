@@ -1,4 +1,4 @@
-QUnit.test('Treemap', assert => {
+QUnit.test('Treemap', (assert) => {
     const container1 = document.createElement('div');
     document.getElementById('container').appendChild(container1);
     const container2 = document.createElement('div');
@@ -25,15 +25,13 @@ QUnit.test('Treemap', assert => {
                         data: [
                             {
                                 id: 'A',
-                                name:
-                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                name: 'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
                                 value: 6,
                                 color: 'red'
                             },
                             {
                                 id: 'B',
-                                name:
-                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                name: 'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
                                 value: 6,
                                 color: 'blue'
                             },
@@ -59,7 +57,7 @@ QUnit.test('Treemap', assert => {
                     defaultOptions.chart.width = 470;
                     defaultOptions.chart.height = 400;
                     return defaultOptions;
-                }())
+                })()
             );
 
         // Update chart1 with the same height and width as chart2

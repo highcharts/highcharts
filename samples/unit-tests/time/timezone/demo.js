@@ -39,7 +39,7 @@ QUnit.test('timezone', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 dataLabels: {
                     enabled: true,
                     format: '{x:%H:%M}'
@@ -118,7 +118,7 @@ QUnit.test('getTimezoneOffset', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 dataLabels: {
                     enabled: true,
                     format: '{x:%H:%M}'

@@ -1,22 +1,34 @@
-QUnit.test('#13490: Hovering after disabling polar', assert => {
+QUnit.test('#13490: Hovering after disabling polar', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             polar: true
         },
         xAxis: {
             categories: [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
             ],
             tickWidth: 1,
             tickmarkPlacement: 'on'
         },
-        series: [{
-            data: [
-                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
-            ]
-        }],
+        series: [
+            {
+                data: [
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
+                ]
+            }
+        ],
         tooltip: {
             hideDelay: 0
         }

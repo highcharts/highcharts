@@ -4,36 +4,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 {
                     id: 'main',
                     data: [
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15,
-                        13,
-                        14,
-                        15
+                        13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14,
+                        15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13,
+                        14, 15
                     ]
                 },
                 {
@@ -102,36 +75,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         cropThreshold: 2,
         pointStart: 1,
         data: [
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15,
-            13,
-            14,
-            15
+            13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14,
+            15, 13, 14, 15, 13, 14, 15, 13, 14, 15, 13, 14, 15
         ]
     });
 
@@ -183,16 +128,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 pointStart: 1486166400000,
                 pointInterval: 24 * 3600 * 1000,
                 data: [
-                    221.85,
-                    220.95,
-                    218.01,
-                    224.94,
-                    223.52,
-                    225.75,
-                    222.15,
-                    217.79,
-                    218.5,
-                    220.91
+                    221.85, 220.95, 218.01, 224.94, 223.52, 225.75, 222.15,
+                    217.79, 218.5, 220.91
                 ]
             },
             {
@@ -207,18 +144,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     // Update issues with cropped data (#8572, #9493)
     secondChart.series[0].setData([
-        211.85,
-        215.95,
-        212.01,
-        211.94,
-        210.52,
-        213.75,
-        212.15,
-        212.79,
-        218.5,
-        214.91,
-        215.01,
-        211.78
+        211.85, 215.95, 212.01, 211.94, 210.52, 213.75, 212.15, 212.79, 218.5,
+        214.91, 215.01, 211.78
     ]);
 
     secondChart.series[1].points.forEach(function (point) {
@@ -258,12 +185,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         pointsValue,
         [
-            212.074,
-            212.23000000000002,
-            213.542,
-            214.42000000000002,
-            216.27200000000002,
-            216.19800000000004
+            212.074, 212.23000000000002, 213.542, 214.42000000000002,
+            216.27200000000002, 216.19800000000004
         ],
         'Correct points after update with cropped data - simulated draggable points (#9822)'
     );
@@ -290,17 +213,19 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         navigator: {
             enabled: false
         },
-        series: [{
-            id: 'main',
-            data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
-        },
-        {
-            type: 'sma',
-            linkedTo: 'main',
-            params: {
-                period: 4
+        series: [
+            {
+                id: 'main',
+                data: [13, 14, 15, 13, 14, 15, 13, 14, 15]
+            },
+            {
+                type: 'sma',
+                linkedTo: 'main',
+                params: {
+                    period: 4
+                }
             }
-        }]
+        ]
     });
 
     assert.strictEqual(

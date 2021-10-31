@@ -116,18 +116,7 @@ QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
             {
                 name: 'Sales',
                 data: [
-                    434,
-                    523,
-                    345,
-                    785,
-                    565,
-                    843,
-                    726,
-                    590,
-                    665,
-                    434,
-                    312,
-                    432
+                    434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432
                 ]
             }
         ]
@@ -183,7 +172,7 @@ QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
     );
 });
 
-QUnit.test('Stacking consistent after update', assert => {
+QUnit.test('Stacking consistent after update', (assert) => {
     const options = {
         chart: {
             width: 250,

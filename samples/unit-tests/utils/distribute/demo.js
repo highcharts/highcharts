@@ -179,4 +179,4 @@
 
         assert.strictEqual(verify(boxes), true, 'Equal, unranked boxes');
     });
-}());
+})();

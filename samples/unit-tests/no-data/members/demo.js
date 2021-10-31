@@ -1,4 +1,4 @@
-QUnit.test('defaultOptions', assert => {
+QUnit.test('defaultOptions', (assert) => {
     const {
         noData: {
             attr: { zIndex }
@@ -8,7 +8,7 @@ QUnit.test('defaultOptions', assert => {
     assert.equal(zIndex, 1, 'Default z index should be 1 (#12343)');
 });
 
-QUnit.test('Updating no-data element.', assert => {
+QUnit.test('Updating no-data element.', (assert) => {
     const chart = Highcharts.chart('container', {});
 
     chart.update({

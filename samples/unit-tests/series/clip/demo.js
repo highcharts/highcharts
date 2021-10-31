@@ -1,43 +1,53 @@
-QUnit.test('General series clip tests', assert => {
+QUnit.test('General series clip tests', (assert) => {
     var clock = TestUtilities.lolexInstall();
 
     try {
         const chart = Highcharts.chart('container', {
-                series: [{
-                    data: [10, 20]
-                }, {
-                    data: [1, 2, 3],
-                    yAxis: 1
-                }],
-                yAxis: [{
-                    labels: {
-                        format: '{value}'
+                series: [
+                    {
+                        data: [10, 20]
+                    },
+                    {
+                        data: [1, 2, 3],
+                        yAxis: 1
                     }
-                }, {
-                    opposite: true
-                }],
+                ],
+                yAxis: [
+                    {
+                        labels: {
+                            format: '{value}'
+                        }
+                    },
+                    {
+                        opposite: true
+                    }
+                ],
                 plotOptions: {
                     series: {
                         animation: false
                     }
                 },
                 responsive: {
-                    rules: [{
-                        chartOptions: {
-                            title: {
-                                text: null
+                    rules: [
+                        {
+                            chartOptions: {
+                                title: {
+                                    text: null
+                                }
+                            },
+                            condition: {
+                                callback: () => true
                             }
-                        },
-                        condition: {
-                            callback: () => true
                         }
-                    }]
+                    ]
                 }
             }),
             done = assert.async();
 
         assert.strictEqual(
-            chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height'),
+            chart.sharedClips[chart.series[0].getSharedClipKey()].attr(
+                'height'
+            ),
             chart.yAxis[0].len,
             '#13858: clipBox should have been updated in compliance with responsive rule'
         );
@@ -70,17 +80,26 @@ QUnit.test('General series clip tests', assert => {
             '#15128: Series with clip=false should not have stock clipping applied'
         );
 
-        const widthBefore = chart.sharedClips[chart.series[3].sharedClipKey].attr('width');
+        const widthBefore =
+            chart.sharedClips[chart.series[3].sharedClipKey].attr('width');
 
-        chart.update({
-            yAxis: [{}, {
-                visible: false
-            }],
-            series: [{}, {}, {}, {}]
-        }, true, true);
+        chart.update(
+            {
+                yAxis: [
+                    {},
+                    {
+                        visible: false
+                    }
+                ],
+                series: [{}, {}, {}, {}]
+            },
+            true,
+            true
+        );
 
         assert.ok(
-            chart.sharedClips[chart.series[3].sharedClipKey].attr('width') > widthBefore,
+            chart.sharedClips[chart.series[3].sharedClipKey].attr('width') >
+                widthBefore,
             '#15435: Shared clip should have been updated'
         );
 
@@ -126,61 +145,88 @@ QUnit.test('General series clip tests', assert => {
     }
 });
 
-QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
-    const chart = Highcharts.stockChart('container', {
-        chart: {
-            height: 300,
-            events: {
-                load() {
-                    this.setSize(null, 400, false);
+QUnit.test(
+    'Each series should have their own clip-path, (#14549).',
+    (assert) => {
+        const chart = Highcharts.stockChart('container', {
+            chart: {
+                height: 300,
+                events: {
+                    load() {
+                        this.setSize(null, 400, false);
+                    }
                 }
-            }
-        },
-        series: [{
-            data: [1, 2, 3]
-        }]
-    });
+            },
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
+        });
 
-    assert.strictEqual(
-        chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height'),
-        chart.clipBox.height,
-        '#15400: clipBox should have been updated by setSize in load event'
-    );
+        assert.strictEqual(
+            chart.sharedClips[chart.series[0].getSharedClipKey()].attr(
+                'height'
+            ),
+            chart.clipBox.height,
+            '#15400: clipBox should have been updated by setSize in load event'
+        );
 
-    chart.series[0].remove();
+        chart.series[0].remove();
 
-    chart.addAxis({
-        id: 'line',
-        height: '60%',
-        min: 4,
-        max: 6
-    }, false, false);
+        chart.addAxis(
+            {
+                id: 'line',
+                height: '60%',
+                min: 4,
+                max: 6
+            },
+            false,
+            false
+        );
 
-    chart.addAxis({
-        id: 'column',
-        top: '65%',
-        height: '35%',
-        offset: 0
-    }, false, false);
+        chart.addAxis(
+            {
+                id: 'column',
+                top: '65%',
+                height: '35%',
+                offset: 0
+            },
+            false,
+            false
+        );
 
-    chart.addSeries({
-        type: 'line',
-        data: [5, 7, 5, 2, 3, 7],
-        yAxis: 'line'
-    }, false, false);
+        chart.addSeries(
+            {
+                type: 'line',
+                data: [5, 7, 5, 2, 3, 7],
+                yAxis: 'line'
+            },
+            false,
+            false
+        );
 
-    chart.addSeries({
-        type: 'column',
-        data: [23, 45, 37, 22, 39, 65],
-        yAxis: 'column'
-    }, false, false);
+        chart.addSeries(
+            {
+                type: 'column',
+                data: [23, 45, 37, 22, 39, 65],
+                yAxis: 'column'
+            },
+            false,
+            false
+        );
 
-    chart.redraw(false);
+        chart.redraw(false);
 
-    assert.ok(
-        chart.sharedClips[chart.series[0].getSharedClipKey()].attr('height') +
-        chart.sharedClips[chart.series[1].getSharedClipKey()].attr('height') <=
-        chart.plotHeight,
-        "The sum of the series clip-paths should not be bigger than the plot height."
-    );
-});
+        assert.ok(
+            chart.sharedClips[chart.series[0].getSharedClipKey()].attr(
+                'height'
+            ) +
+                chart.sharedClips[chart.series[1].getSharedClipKey()].attr(
+                    'height'
+                ) <=
+                chart.plotHeight,
+            'The sum of the series clip-paths should not be bigger than the plot height.'
+        );
+    }
+);

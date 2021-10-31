@@ -263,4 +263,4 @@
 
         assert.ok(t1 - t0 >= 300000, 'Per-chart time options work');
     });
-}());
+})();

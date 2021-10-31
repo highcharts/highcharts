@@ -134,7 +134,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
 
     chart.removeAnnotation('first');
 
-    ['add', 'afterUpdate', 'drag', 'remove'].forEach(eventName => {
+    ['add', 'afterUpdate', 'drag', 'remove'].forEach((eventName) => {
         assert.strictEqual(
             firedEvents[eventName],
             true,

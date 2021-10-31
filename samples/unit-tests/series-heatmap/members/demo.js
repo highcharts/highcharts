@@ -12,11 +12,7 @@ QUnit.test(
             series: [
                 {
                     data: [
-                        [
-                            Date.UTC(2012, 12, 2),
-                            0,
-                            93
-                        ] /*, [
+                        [Date.UTC(2012, 12, 2), 0, 93] /*, [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -54,11 +50,7 @@ QUnit.test(
             series: [
                 {
                     data: [
-                        [
-                            Date.UTC(2012, 12, 2),
-                            0,
-                            93
-                        ] /*, [
+                        [Date.UTC(2012, 12, 2), 0, 93] /*, [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -100,11 +92,7 @@ QUnit.test(
             series: [
                 {
                     data: [
-                        [
-                            Date.UTC(2012, 12, 2),
-                            0,
-                            93
-                        ] /*, [
+                        [Date.UTC(2012, 12, 2), 0, 93] /*, [
                 Date.UTC(2012, 12, 3),
                 0,
                 1
@@ -196,14 +184,17 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
                 type: 'heatmap'
             },
 
-            series: [{
-                data: [[0, 0, 1]],
-                borderRadius: 39
-            }]
+            series: [
+                {
+                    data: [[0, 0, 1]],
+                    borderRadius: 39
+                }
+            ]
         }),
         point = chart.series[0].points[0],
-        setState = Highcharts.seriesTypes.heatmap.prototype
-            .pointClass.prototype.setState;
+        setState =
+            Highcharts.seriesTypes.heatmap.prototype.pointClass.prototype
+                .setState;
 
     setState.call(point, '');
     assert.strictEqual(

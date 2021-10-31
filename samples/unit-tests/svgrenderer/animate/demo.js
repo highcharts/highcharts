@@ -927,7 +927,7 @@ QUnit.test('Defer test #12901', function (assert) {
     }
 });
 
-QUnit.test('#14351: Tweening NaN path', assert => {
+QUnit.test('#14351: Tweening NaN path', (assert) => {
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
         400,

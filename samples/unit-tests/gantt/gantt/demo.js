@@ -3,10 +3,10 @@
         getSpacing = function (chart, tick1, tick2) {
             var yAxis = chart.yAxis[0],
                 ticks = yAxis.ticks,
-                tick1Space = ticks[Highcharts.pick(tick1, '-1')].mark.getBBox()
-                    .y,
-                tick2Space = ticks[Highcharts.pick(tick2, '0')].mark.getBBox()
-                    .y;
+                tick1Space =
+                    ticks[Highcharts.pick(tick1, '-1')].mark.getBBox().y,
+                tick2Space =
+                    ticks[Highcharts.pick(tick2, '0')].mark.getBBox().y;
 
             return tick2Space - tick1Space;
         },
@@ -332,7 +332,7 @@
         );
     });
 
-    QUnit.test('Point.update', assert => {
+    QUnit.test('Point.update', (assert) => {
         const today = +new Date();
         const day = 24 * 60 * 60 * 1000;
         const {
@@ -407,13 +407,13 @@
 
         // Test that collapsed graphics are removed
         assert.strictEqual(
-            points.filter(p => Boolean(p.graphic)).length,
+            points.filter((p) => Boolean(p.graphic)).length,
             2,
             'Collapsed graphics should not be rendered (#12617)'
         );
     });
 
-    QUnit.test('Collapsing subtasks', assert => {
+    QUnit.test('Collapsing subtasks', (assert) => {
         const today = new Date();
         const day = 24 * 60 * 60 * 1000;
 
@@ -503,7 +503,7 @@
 
     QUnit.test(
         'The ticks should be generated correctly during scrolling with the grid axis, #13072.',
-        assert => {
+        (assert) => {
             const chart = Highcharts.ganttChart('container', {
                 yAxis: {
                     min: 0,
@@ -718,42 +718,50 @@
         );
     });
 
-    QUnit.test('Gantt with scrollbar using uniqueNames, #14808.', function (assert) {
-        Highcharts.ganttChart('container', {
-            yAxis: {
-                min: 0,
-                max: 1,
-                uniqueNames: true,
-                scrollbar: {
-                    enabled: true
-                }
-            },
-            series: [{
-                type: 'gantt',
-                name: 's1',
-                data: [{
-                    name: 'Task 1',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
-                }, {
-                    name: 'Task 2',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
-                }]
-            }, {
-                type: 'gantt',
-                name: 's2',
-                data: [{
-                    name: 'Task 3',
-                    start: Date.UTC(2020, 5, 1),
-                    end: Date.UTC(2020, 5, 3)
-                }]
-            }]
-        });
+    QUnit.test(
+        'Gantt with scrollbar using uniqueNames, #14808.',
+        function (assert) {
+            Highcharts.ganttChart('container', {
+                yAxis: {
+                    min: 0,
+                    max: 1,
+                    uniqueNames: true,
+                    scrollbar: {
+                        enabled: true
+                    }
+                },
+                series: [
+                    {
+                        type: 'gantt',
+                        name: 's1',
+                        data: [
+                            {
+                                name: 'Task 1',
+                                start: Date.UTC(2020, 5, 1),
+                                end: Date.UTC(2020, 5, 3)
+                            },
+                            {
+                                name: 'Task 2',
+                                start: Date.UTC(2020, 5, 1),
+                                end: Date.UTC(2020, 5, 3)
+                            }
+                        ]
+                    },
+                    {
+                        type: 'gantt',
+                        name: 's2',
+                        data: [
+                            {
+                                name: 'Task 3',
+                                start: Date.UTC(2020, 5, 1),
+                                end: Date.UTC(2020, 5, 3)
+                            }
+                        ]
+                    }
+                ]
+            });
 
-        assert.ok(
-            true,
-            'There should be no errors in the console.'
-        );
-    });
-}());
+            assert.ok(true, 'There should be no errors in the console.');
+        }
+    );
+})();

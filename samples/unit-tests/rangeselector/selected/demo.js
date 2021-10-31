@@ -16,7 +16,7 @@ QUnit.test('Fixed range for initial range (#5930)', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 pointInterval: 24 * 36e5,
                 animation: false
             }
@@ -110,7 +110,7 @@ QUnit.test(
                         chart.redraw();
 
                         assert.strictEqual(
-                            chart.rangeSelector.buttonOptions[// eslint-disable-line no-underscore-dangle
+                            chart.rangeSelector.buttonOptions[ // eslint-disable-line no-underscore-dangle
                                 chart.rangeSelector.selected
                             ]._range,
                             chart.xAxis[0].max - chart.xAxis[0].min,
@@ -152,7 +152,7 @@ QUnit.test(
                             ]);
                         }
                         return data;
-                    }())
+                    })()
                 }
             ]
         });
@@ -235,7 +235,7 @@ QUnit.test('1Y button should be selected. (#7467)', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 pointInterval: 24 * 36e5
             }
         ]
@@ -253,7 +253,7 @@ QUnit.test('1Y button should be selected. (#7467)', function (assert) {
     );
 });
 
-QUnit.test('Highcharts Stock with empty data', assert => {
+QUnit.test('Highcharts Stock with empty data', (assert) => {
     var chart = Highcharts.stockChart('container', {
         xAxis: {
             min: 1378449361033,
@@ -267,7 +267,7 @@ QUnit.test('Highcharts Stock with empty data', assert => {
     });
 
     assert.deepEqual(
-        chart.rangeSelector.buttons.map(btn => btn.state),
+        chart.rangeSelector.buttons.map((btn) => btn.state),
         [3, 3, 3, 0, 3, 2],
         'Fixed-range buttons should be disabled with empty data'
     );

@@ -1,15 +1,13 @@
 QUnit.test(
     'Reversed yAxis for bar charts cause detached columns from axis (#4504)',
     function (assert) {
-
-        const tooltipCenter = tooltip => {
+        const tooltipCenter = (tooltip) => {
             const label = tooltip.getLabel();
             return [
                 label.translateX + label.width / 2,
                 label.translateY + label.height / 2
             ];
         };
-
 
         var options = {
                 chart: {
@@ -118,7 +116,6 @@ QUnit.test(
                 'Zero point should be zero height (#4656)'
             );
 
-
             // Test tooltip position
             point.onMouseOver();
             if (chart.inverted) {
@@ -137,7 +134,7 @@ QUnit.test(
         });
 
         // Clean up
-        charts.forEach(chart => {
+        charts.forEach((chart) => {
             const renderTo = chart.renderTo;
             chart.destroy();
             renderTo.parentNode.removeChild(renderTo);

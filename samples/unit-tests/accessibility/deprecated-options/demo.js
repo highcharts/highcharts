@@ -12,7 +12,7 @@ function getChildProp(root, propArray) {
 
 QUnit.test(
     'Check that deprecated chart and series options are moved over',
-    assert => {
+    (assert) => {
         const unmute = muteErrors();
 
         const chart = Highcharts.chart('container', {
@@ -29,7 +29,8 @@ QUnit.test(
                         exposeElementToA11y: false,
                         test: 'hello',
                         data: [1, 2, { y: 5, test: 'testStr' }, 3]
-                    }, {
+                    },
+                    {
                         accessibility: {
                             pointDescriptionFormatter: () => {}
                         }
@@ -65,7 +66,7 @@ QUnit.test(
 
 QUnit.test(
     'Check that deprecated accessibility top level options are moved over',
-    assert => {
+    (assert) => {
         const unmute = muteErrors();
 
         const newOptionMap = {
@@ -102,28 +103,28 @@ QUnit.test(
             chart = Highcharts.chart('container', {
                 accessibility: {
                     pointDateFormat: 'dateformat',
-                    pointDateFormatter: a => a + 1,
-                    pointDescriptionFormatter: a => a + 2,
+                    pointDateFormatter: (a) => a + 1,
+                    pointDescriptionFormatter: (a) => a + 2,
                     pointDescriptionThreshold: 321,
                     pointNavigationThreshold: null,
                     pointValueDecimals: 41,
                     pointValuePrefix: 'prefix',
                     pointValueSuffix: null,
-                    screenReaderSectionFormatter: a => a + 3,
+                    screenReaderSectionFormatter: (a) => a + 3,
                     describeSingleSeries: true,
-                    seriesDescriptionFormatter: a => a + 4,
-                    onTableAnchorClick: a => a + 5,
+                    seriesDescriptionFormatter: (a) => a + 4,
+                    onTableAnchorClick: (a) => a + 5,
                     axisRangeDateFormat: 'axisdateformat'
                 },
                 series: [{ data: [1] }]
             }),
-            getNewOptionValue = oldOptionKey =>
+            getNewOptionValue = (oldOptionKey) =>
                 getChildProp(
                     chart.options.accessibility,
                     newOptionMap[oldOptionKey]
                 );
 
-        Object.keys(newOptionMap).forEach(oldOption => {
+        Object.keys(newOptionMap).forEach((oldOption) => {
             assert.strictEqual(
                 getNewOptionValue(oldOption),
                 chart.options.accessibility[oldOption],
@@ -138,7 +139,7 @@ QUnit.test(
 
 QUnit.test(
     'Check that deprecated keyboardNavigation options are moved over',
-    assert => {
+    (assert) => {
         const unmute = muteErrors();
 
         const chart = Highcharts.chart('container', {
@@ -159,7 +160,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Check that deprecated lang options are moved over', assert => {
+QUnit.test('Check that deprecated lang options are moved over', (assert) => {
     const unmute = muteErrors();
 
     const newOptionMap = {
@@ -198,13 +199,13 @@ QUnit.test('Check that deprecated lang options are moved over', assert => {
             },
             series: [{ data: [1] }]
         }),
-        getNewOptionValue = oldOptionKey =>
+        getNewOptionValue = (oldOptionKey) =>
             getChildProp(
                 chart.options.lang.accessibility,
                 newOptionMap[oldOptionKey]
             );
 
-    Object.keys(newOptionMap).forEach(oldOption => {
+    Object.keys(newOptionMap).forEach((oldOption) => {
         assert.strictEqual(
             getNewOptionValue(oldOption),
             chart.options.lang.accessibility[oldOption],

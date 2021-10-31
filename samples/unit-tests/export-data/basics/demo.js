@@ -24,18 +24,8 @@ QUnit.test('Categorized', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    0,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 0, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -163,18 +153,8 @@ QUnit.test('Datetime', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ],
                 pointStart: Date.UTC(2014, 0, 1),
                 pointInterval: 24 * 36e5
@@ -261,18 +241,8 @@ QUnit.test('Numeric', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -314,8 +284,7 @@ QUnit.test('Pie chart', function (assert) {
         ]
     });
 
-    var csv =
-        '"Category","Series 1"\n"",1\n"Pears",2\n"Oranges",3';
+    var csv = '"Category","Series 1"\n"",1\n"Pears",2\n"Oranges",3';
 
     assert.equal(chart.getCSV(), csv, 'Pie chart');
 
@@ -653,7 +622,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             // accessibility module added.
             .replace(/<table[^>]+>/g, '<table>')
             .replace('<caption>Chart title</caption>', ''),
-        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Drop 2</th><th class=\"text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">1</td><td class=\"number\">1</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"empty\"></td><td class=\"number\">2</td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">3</td><td class=\"number\">3</td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">4</td><td class=\"number\">4</td></tr></tbody></table>',
+        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th class="text" scope="col">Category</th><th class="text" scope="col">Drop 2</th><th class="text" scope="col">Full</th></tr></thead><tbody><tr><th class="number" scope="row">0</th><td class="number">1</td><td class="number">1</td></tr><tr><th class="number" scope="row">1</th><td class="number">1</td><td class="number">1</td></tr><tr><th class="number" scope="row">2</th><td class="empty"></td><td class="number">2</td></tr><tr><th class="number" scope="row">3</th><td class="number">3</td><td class="number">3</td></tr><tr><th class="number" scope="row">4</th><td class="number">4</td><td class="number">4</td></tr></tbody></table>',
         'Empty data in table'
     );
 
@@ -769,7 +738,6 @@ QUnit.test('Combined column and scatter', function (assert) {
 });
 
 QUnit.test('Item delimiter and decimal point', function (assert) {
-
     /* eslint no-extend-native: 0 */
     var chart = new Highcharts.Chart({
         chart: {
@@ -837,7 +805,6 @@ QUnit.test('Item delimiter and decimal point', function (assert) {
         '"Category"|"Series 1"\n"Apples"|1_3\n"Pears"|2_1',
         'Explicit decimalPoint and itemDelimiter without useLocalDecimalPoint'
     );
-
 });
 
 QUnit.test('Zoomed chart', function (assert) {

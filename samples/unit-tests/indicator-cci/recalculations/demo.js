@@ -88,9 +88,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         chart.series[1].yData,
         [
-            -41.97530864197531,
-            40.47619047619052,
-            125.00000000000001,
+            -41.97530864197531, 40.47619047619052, 125.00000000000001,
             -45.83333333333332
         ],
         'Correct values'

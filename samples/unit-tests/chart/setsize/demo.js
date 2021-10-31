@@ -112,8 +112,8 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
         );
 
         // Move it again and verify it has moved
-        var path = chart.series[0].points[0].graphic.element.firstChild
-            .getAttribute(
+        var path =
+            chart.series[0].points[0].graphic.element.firstChild.getAttribute(
                 'd'
             );
         chart.setSize(500, undefined, { duration: 25 });
@@ -121,10 +121,9 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
         setTimeout(function () {
             var newPath =
                 chart.series &&
-                chart.series[0].points[0].graphic.element.firstChild
-                    .getAttribute(
-                        'd'
-                    );
+                chart.series[0].points[0].graphic.element.firstChild.getAttribute(
+                    'd'
+                );
             assert.strictEqual(path.indexOf('M'), 0, 'Path is a path');
             assert.notEqual(
                 newPath,
@@ -150,13 +149,11 @@ QUnit.test(
                 },
                 title: {
                     useHTML: true,
-                    text:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum.'
+                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum.'
                 },
                 subtitle: {
                     useHTML: true,
-                    text:
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat.'
+                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat.'
                 },
 
                 series: [
@@ -236,7 +233,11 @@ QUnit.test(
                 chart.setSize(700, 450);
 
                 assert.strictEqual(
-                    Number(chart.sharedClips[chart.series[1].sharedClipKey].attr('width')),
+                    Number(
+                        chart.sharedClips[chart.series[1].sharedClipKey].attr(
+                            'width'
+                        )
+                    ),
                     chart.series[1].xAxis.len,
                     'Correct clipbox width.'
                 );
@@ -326,8 +327,7 @@ QUnit.test('Polar chart resize (#5220)', function (assert) {
 QUnit.test('Title resize (#2857)', function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
-                text:
-                    'Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014'
+                text: 'Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014 Browser market shares at a specific website, 2014'
             },
             series: [
                 {
@@ -438,7 +438,7 @@ QUnit.test('Plot area update(#3098)', function (assert) {
     assert.ok(legendTranslateY > plotYPos, 'The legend overlaps the plot');
 });
 
-QUnit.test('Succession of setSize and other dynamics', assert => {
+QUnit.test('Succession of setSize and other dynamics', (assert) => {
     const done = assert.async();
     const chart = Highcharts.chart('container', {
         chart: {
@@ -472,7 +472,7 @@ QUnit.test('Succession of setSize and other dynamics', assert => {
     }, 2);
 });
 
-QUnit.test('Succession of setSize and adders', assert => {
+QUnit.test('Succession of setSize and adders', (assert) => {
     var chart = Highcharts.chart('container', {});
     chart.setSize(undefined, undefined);
 

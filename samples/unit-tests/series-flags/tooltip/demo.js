@@ -93,4 +93,5 @@ QUnit.test(
             chart.tooltip.label.hasClass('highcharts-label'),
             'The flags tooltip should not be split'
         );
-    });
+    }
+);

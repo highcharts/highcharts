@@ -218,7 +218,7 @@ QUnit.module('setRootNode', () => {
         rootNode: ''
     };
 
-    QUnit.test('should set property rootNode on the series.', assert => {
+    QUnit.test('should set property rootNode on the series.', (assert) => {
         const series = merge({}, seriesDefault);
         setRootNode.call(series, 'A');
         assert.strictEqual(
@@ -248,11 +248,11 @@ QUnit.module('setRootNode', () => {
         setRootNode.call(series, 'A');
     });
 
-    QUnit.test('should pass along arguments to the event', assert => {
+    QUnit.test('should pass along arguments to the event', (assert) => {
         const series = merge({}, seriesDefault);
         const { addEvent } = Highcharts;
 
-        addEvent(series, 'setRootNode', eventArguments => {
+        addEvent(series, 'setRootNode', (eventArguments) => {
             assert.strictEqual(
                 eventArguments.newRootId,
                 'A',
@@ -326,7 +326,7 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     );
 });
 
-QUnit.test('traverseUpButton', assert => {
+QUnit.test('traverseUpButton', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'treemap'
@@ -370,7 +370,7 @@ QUnit.test('traverseUpButton', assert => {
     );
 });
 
-QUnit.test('Traversing single top node', assert => {
+QUnit.test('Traversing single top node', (assert) => {
     const data = [
         {
             value: 350,

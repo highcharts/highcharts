@@ -1,13 +1,10 @@
-QUnit.test('GeoJSON and map transforms', assert => {
-
+QUnit.test('GeoJSON and map transforms', (assert) => {
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: 'custom/world'
         },
-        series: [{
-        }]
+        series: [{}]
     });
-
 
     [
         { lon: 0, lat: 0 },
@@ -15,7 +12,7 @@ QUnit.test('GeoJSON and map transforms', assert => {
         { lon: 90, lat: 0 },
         { lon: 0, lat: -60 },
         { lon: -90, lat: 0 }
-    ].forEach(lonLat => {
+    ].forEach((lonLat) => {
         const projected = chart.fromLatLonToPoint(lonLat),
             result = chart.fromPointToLatLon(projected);
         assert.close(

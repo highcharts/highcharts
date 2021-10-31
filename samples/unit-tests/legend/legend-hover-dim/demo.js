@@ -45,7 +45,7 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
     );
     assert.deepEqual(
         classes.some(
-            cssClass => cssClass === 'highcharts-legend-series-active'
+            (cssClass) => cssClass === 'highcharts-legend-series-active'
         ),
         false,
         'Chart container should not have "highcharts-legend-series-active" class.'

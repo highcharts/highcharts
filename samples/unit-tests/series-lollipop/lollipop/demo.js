@@ -32,14 +32,8 @@ QUnit.test('Lollipop offset affection.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[0].points.map(p => p.graphic.attr('fill')),
-        [
-            '#0000ff',
-            '#0000ff',
-            '#ff0000',
-            '#0000ff',
-            '#ff0000'
-        ],
+        chart.series[0].points.map((p) => p.graphic.attr('fill')),
+        ['#0000ff', '#0000ff', '#ff0000', '#0000ff', '#ff0000'],
         '#15523: Only negative points should use negativeColor'
     );
 });

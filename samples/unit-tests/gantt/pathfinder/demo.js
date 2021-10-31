@@ -441,10 +441,12 @@
                 ]
             });
 
-        pathWithoutMarkers = connectionFromPoint(chart.series[0].points[0])
-            .graphics;
-        pathWithMarkers = connectionFromPoint(chart.series[1].points[0])
-            .graphics;
+        pathWithoutMarkers = connectionFromPoint(
+            chart.series[0].points[0]
+        ).graphics;
+        pathWithMarkers = connectionFromPoint(
+            chart.series[1].points[0]
+        ).graphics;
 
         assert.ok(
             typeof pathWithoutMarkers.start === 'undefined' &&
@@ -462,7 +464,7 @@
     QUnit.module('pathfinderAlgorithms', () => {
         const { algorithms } = Highcharts.Pathfinder.prototype;
 
-        QUnit.test('simpleConnect', assert => {
+        QUnit.test('simpleConnect', (assert) => {
             const { simpleConnect } = algorithms;
             const options = {
                 chartObstacles: [
@@ -498,4 +500,4 @@
             );
         });
     });
-}());
+})();

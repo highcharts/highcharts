@@ -142,7 +142,7 @@ QUnit.test('Scrollbar.liveRedraw option', function (assert) {
     );
 });
 
-QUnit.test('#14193: Scrollbar touch', assert => {
+QUnit.test('#14193: Scrollbar touch', (assert) => {
     const { hasTouch, isTouchDevice } = Highcharts;
     Highcharts.hasTouch = Highcharts.isTouchDevice = true;
 
@@ -158,44 +158,14 @@ QUnit.test('#14193: Scrollbar touch', assert => {
             {
                 type: 'column',
                 data: [
-                    5.5,
-                    6.2,
-                    5.9,
-                    5.9,
-                    6.2,
-                    5.6,
-                    5.7,
-                    5.7,
-                    5.7,
-                    5.8,
-                    5.7,
-                    6.2,
-                    5.6,
-                    5.9,
-                    6.0,
-                    5.7,
-                    6.0
+                    5.5, 6.2, 5.9, 5.9, 6.2, 5.6, 5.7, 5.7, 5.7, 5.8, 5.7, 6.2,
+                    5.6, 5.9, 6.0, 5.7, 6.0
                 ]
             },
             {
                 data: [
-                    42,
-                    67,
-                    59,
-                    61,
-                    72,
-                    42,
-                    48,
-                    46,
-                    47,
-                    50,
-                    50,
-                    70,
-                    47,
-                    58,
-                    65,
-                    50,
-                    62
+                    42, 67, 59, 61, 72, 42, 48, 46, 47, 50, 50, 70, 47, 58, 65,
+                    50, 62
                 ]
             }
         ]

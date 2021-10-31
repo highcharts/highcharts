@@ -1,5 +1,5 @@
 QUnit.test('Heading auto detection works as expected', function (assert) {
-    document.getElementById('container').innerHTML =  `
+    document.getElementById('container').innerHTML = `
         <div>
             <div>
                 <h2>
@@ -26,26 +26,31 @@ QUnit.test('Heading auto detection works as expected', function (assert) {
     `;
 
     const getHeading = Highcharts.A11yHTMLUtilities.getHeadingTagNameForElement;
-    const getEl = e => document.getElementById(e);
+    const getEl = (e) => document.getElementById(e);
 
     assert.strictEqual(
-        getHeading(document.body), 'p',
+        getHeading(document.body),
+        'p',
         'document.body should not have a heading.'
     );
     assert.strictEqual(
-        getHeading(getEl('1')), 'h3',
+        getHeading(getEl('1')),
+        'h3',
         'Nested inside h2 should give h3.'
     );
     assert.strictEqual(
-        getHeading(getEl('2')), 'h5',
+        getHeading(getEl('2')),
+        'h5',
         'Parent previous sibling h4 should give h5.'
     );
     assert.strictEqual(
-        getHeading(getEl('3')), 'h6',
+        getHeading(getEl('3')),
+        'h6',
         'Previous sibling h5 should give h6.'
     );
     assert.strictEqual(
-        getHeading(getEl('4')), 'h2',
+        getHeading(getEl('4')),
+        'h2',
         'Parent previous sibling h1 should give h2.'
     );
 });

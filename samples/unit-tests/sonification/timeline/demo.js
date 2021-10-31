@@ -30,10 +30,7 @@ QUnit.test(
                 id: 'mockInstrument'
             });
             Highcharts.sonification.Instrument.prototype.play =
-                mockInstrument.play =
-                function (
-                    options
-                ) {
+                mockInstrument.play = function (options) {
                     if (this.id === 'mockInstrument') {
                         playedPoint++;
                     } else {
@@ -85,9 +82,9 @@ QUnit.test(
                     return new Highcharts.sonification.TimelineEvent({
                         eventObject: object,
                         playOptions:
-                            object instanceof Highcharts.Point ?
-                                playOptions :
-                                undefined,
+                            object instanceof Highcharts.Point
+                                ? playOptions
+                                : undefined,
                         time: time,
                         onEnd: function () {
                             endedTimelineEvent++;

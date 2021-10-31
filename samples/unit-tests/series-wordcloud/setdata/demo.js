@@ -28,8 +28,8 @@ QUnit.test('Update the chart using the same data (#11993)', function (assert) {
                 }
             ]
         }),
-        widthBeforeUpdate = chart.series[0].points[0].graphic.getBBox(true)
-            .width;
+        widthBeforeUpdate =
+            chart.series[0].points[0].graphic.getBBox(true).width;
 
     chart.series[0].setData(data);
 

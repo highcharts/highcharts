@@ -596,15 +596,15 @@ QUnit.test('Image animation opacity', function (assert) {
                             color: {
                                 pattern: {
                                     id: 'test-pattern',
-                                    image:
-                                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
+                                    image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
                                     opacity: 0.5,
                                     animation: {
                                         duration: 50,
                                         complete: function () {
                                             assert.strictEqual(
-                                                columnPattern.firstChild
-                                                    .getAttribute('opacity'),
+                                                columnPattern.firstChild.getAttribute(
+                                                    'opacity'
+                                                ),
                                                 '0.5',
                                                 'Pattern should end at 0.5 opacity'
                                             );
@@ -699,6 +699,6 @@ QUnit.test('Destroy and recreate chart', function (assert) {
     testChart(secondChart);
 });
 
-QUnit.test('#14765: Global patterns', assert => {
+QUnit.test('#14765: Global patterns', (assert) => {
     assert.ok(Highcharts.patterns, 'Global patterns should be defined');
 });

@@ -1,5 +1,5 @@
 // Skipped as #10161 was rolled back (broke with pointPlacement = on)
-QUnit.test('setAxisTranslation', assert => {
+QUnit.test('setAxisTranslation', (assert) => {
     const {
         yAxis: [axis]
     } = Highcharts.chart('container', {
@@ -40,7 +40,7 @@ QUnit.test('setAxisTranslation', assert => {
     );
 });
 
-QUnit.test('setTickPositions', assert => {
+QUnit.test('setTickPositions', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {

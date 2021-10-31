@@ -115,7 +115,7 @@ QUnit.test('Null inside break (#4275)', function (assert) {
                             }
                         }
                         return arr;
-                    }())
+                    })()
                 }
             ]
         })
@@ -166,7 +166,7 @@ QUnit.test('Null inside break (#4275)', function (assert) {
                             }
                         }
                         return arr;
-                    }())
+                    })()
                 }
             ]
         })
@@ -234,7 +234,7 @@ QUnit.test(
                             data.push(i);
                         }
                         return data;
-                    }())
+                    })()
                 }
             ]
         });
@@ -631,15 +631,7 @@ QUnit.test('Axis breaks with categories', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
                     194.1
                 ]
             }
@@ -720,7 +712,7 @@ QUnit.test('Axis breaks on Y axis', function (assert) {
     );
 });
 
-QUnit.test('#14236: Stacked area chart null yBottom', assert => {
+QUnit.test('#14236: Stacked area chart null yBottom', (assert) => {
     const chart = Highcharts.chart('container', {
         xAxis: {
             type: 'datetime'
@@ -758,44 +750,50 @@ QUnit.test('#14236: Stacked area chart null yBottom', assert => {
     });
 
     assert.notOk(
-        chart.series[1].areaPath.some(p => p[2] === null),
+        chart.series[1].areaPath.some((p) => p[2] === null),
         'There should be no null yBottoms'
     );
 });
 
-QUnit.test('#14833: Column series axis break regression', assert => {
+QUnit.test('#14833: Column series axis break regression', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
         xAxis: {
             tickInterval: 1,
-            breaks: [{
-                from: 5,
-                to: 10,
-                breakSize: 1
-            }]
-        },
-        series: [{
-            gapSize: 1,
-            data: (function () {
-                var data = [],
-                    i;
-                for (i = 0; i < 20; i = i + 1) {
-                    data.push(i);
+            breaks: [
+                {
+                    from: 5,
+                    to: 10,
+                    breakSize: 1
                 }
-                return data;
-            }())
-        }]
+            ]
+        },
+        series: [
+            {
+                gapSize: 1,
+                data: (function () {
+                    var data = [],
+                        i;
+                    for (i = 0; i < 20; i = i + 1) {
+                        data.push(i);
+                    }
+                    return data;
+                })()
+            }
+        ]
     });
 
     assert.ok(
-        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
+        chart.series[0].points
+            .slice(6, 10)
+            .every((point) => point.graphic.visibility === 'hidden'),
         'Points in break should not render'
     );
 });
 
-QUnit.test('connectNulls and stacking', assert => {
+QUnit.test('connectNulls and stacking', (assert) => {
     const chart = Highcharts.chart('container', {
         yAxis: [{}, {}],
         plotOptions: {
@@ -803,16 +801,19 @@ QUnit.test('connectNulls and stacking', assert => {
                 connectNulls: false
             }
         },
-        series: [{
-            type: 'line',
-            stacking: false,
-            data: [4, 4, null, null, 4, 4, 4]
-        }, {
-            type: 'area',
-            stacking: 'normal',
-            yAxis: 1,
-            data: [1, 1, null, null, 1, 1, 1]
-        }]
+        series: [
+            {
+                type: 'line',
+                stacking: false,
+                data: [4, 4, null, null, 4, 4, 4]
+            },
+            {
+                type: 'area',
+                stacking: 'normal',
+                yAxis: 1,
+                data: [1, 1, null, null, 1, 1, 1]
+            }
+        ]
     });
 
     assert.notStrictEqual(
@@ -822,33 +823,40 @@ QUnit.test('connectNulls and stacking', assert => {
     );
 });
 
-QUnit.test('Axis with breaks and toValue method calculation, #13238.', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            width: 400
-        },
-        xAxis: {
-            breaks: [{
-                from: 3,
-                to: 7
-            }]
-        },
-        series: [{
-            data: [
-                [0, 1],
-                [1, 1],
-                [5, 2],
-                [6, 2],
-                [7, 2],
-                [8, 2]
+QUnit.test(
+    'Axis with breaks and toValue method calculation, #13238.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 400
+            },
+            xAxis: {
+                breaks: [
+                    {
+                        from: 3,
+                        to: 7
+                    }
+                ]
+            },
+            series: [
+                {
+                    data: [
+                        [0, 1],
+                        [1, 1],
+                        [5, 2],
+                        [6, 2],
+                        [7, 2],
+                        [8, 2]
+                    ]
+                }
             ]
-        }]
-    });
+        });
 
-    assert.close(
-        chart.xAxis[0].toValue(100),
-        0.26227,
-        0.05,
-        'The toValue method should return correct value when breakes enabled.'
-    );
-});
+        assert.close(
+            chart.xAxis[0].toValue(100),
+            0.26227,
+            0.05,
+            'The toValue method should return correct value when breakes enabled.'
+        );
+    }
+);

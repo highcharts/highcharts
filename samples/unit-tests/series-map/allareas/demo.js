@@ -1,13 +1,13 @@
 QUnit.test(
     'Map with allAreas disabled centers on visible areas (#4784)',
-    assert => {
-
+    (assert) => {
         let chart;
 
-        const getRenderedHeight = () => Math.abs(
-            chart.series[0].points[0].graphic.getBBox().height *
-            chart.series[0].svgTransform.scaleY
-        );
+        const getRenderedHeight = () =>
+            Math.abs(
+                chart.series[0].points[0].graphic.getBBox().height *
+                    chart.series[0].svgTransform.scaleY
+            );
 
         chart = Highcharts.mapChart('container', {
             series: [

@@ -29,12 +29,15 @@ QUnit.test('#13664 - annotation measure on yAxis', function (assert) {
             }
         ],
 
-        series: [{
-            data: [1, 2, 3, 2, 3, 4, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3]
-        }, {
-            yAxis: 1,
-            data: [6, 7, 8, 3, 2, 4, 4, 4, 4, 3, 3, 2, 4, 4, 4, 4, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 2, 3, 4, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3]
+            },
+            {
+                yAxis: 1,
+                data: [6, 7, 8, 3, 2, 4, 4, 4, 4, 3, 3, 2, 4, 4, 4, 4, 3]
+            }
+        ]
     });
 
     let bbox = chart.annotations[0].shapesGroup.getBBox();

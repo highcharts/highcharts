@@ -1,11 +1,13 @@
 QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3, 4, 5, 6]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6]
+                }
+            ]
         }),
-        exportProxy = chart.accessibility.components.chartMenu
-            .exportButtonProxy;
+        exportProxy =
+            chart.accessibility.components.chartMenu.exportButtonProxy;
 
     assert.ok(
         exportProxy.buttonElement.getAttribute('aria-label'),

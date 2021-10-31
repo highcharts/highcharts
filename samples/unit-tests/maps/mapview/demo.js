@@ -1,17 +1,15 @@
 QUnit.module('MapView', () => {
-
     const MapView = Highcharts._modules['Maps/MapView.js']; // eslint-disable-line no-underscore-dangle
 
-    [
-        {},
-        { zoom: 5, center: [50, 50] }
-    ].forEach(options => {
-        QUnit.test('options: ' + JSON.stringify(options), assert => {
-
-            const mapView = new MapView({
-                plotWidth: 1000,
-                plotHeight: 1000
-            }, options);
+    [{}, { zoom: 5, center: [50, 50] }].forEach((options) => {
+        QUnit.test('options: ' + JSON.stringify(options), (assert) => {
+            const mapView = new MapView(
+                {
+                    plotWidth: 1000,
+                    plotHeight: 1000
+                },
+                options
+            );
 
             [
                 { x: 0, y: 0 },
@@ -19,7 +17,7 @@ QUnit.module('MapView', () => {
                 { x: 100, y: 0 },
                 { x: 0, y: 100 },
                 { x: -100, y: 0 }
-            ].forEach(point => {
+            ].forEach((point) => {
                 const projected = mapView.pixelsToProjectedUnits(point),
                     result = mapView.projectedUnitsToPixels(projected);
                 assert.close(
@@ -38,6 +36,5 @@ QUnit.module('MapView', () => {
                 );
             });
         });
-
     });
 });

@@ -146,7 +146,7 @@ QUnit.test('Shared tooltip marker.', function (assert) {
                         ranges.push([Math.random(), 10 + Math.random()]);
                     }
                     return ranges;
-                }())
+                })()
             }
         ]
     });

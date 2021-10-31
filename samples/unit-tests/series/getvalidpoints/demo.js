@@ -14,7 +14,7 @@ QUnit.module('Series.getValidPoints', () => {
         return arr;
     }
     function test(inverted) {
-        QUnit.test(`chart.inverted: ${inverted}`, assert => {
+        QUnit.test(`chart.inverted: ${inverted}`, (assert) => {
             const {
                 series: [series],
                 series: [{ points }]

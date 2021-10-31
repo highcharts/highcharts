@@ -472,13 +472,13 @@
         );
     });
 
-    QUnit.test('#13961: Missing ticks for half-hour timezones', assert => {
+    QUnit.test('#13961: Missing ticks for half-hour timezones', (assert) => {
         const utc = new Highcharts.Time();
         const india = new Highcharts.Time({
             timezoneOffset: -330
         });
 
-        [2, 5, 10, 15].forEach(count =>
+        [2, 5, 10, 15].forEach((count) =>
             assert.strictEqual(
                 utc.getTimeTicks(
                     {
@@ -501,7 +501,7 @@
         );
     });
 
-    QUnit.test('#14746: Undefined max getTimeTicks threw', assert => {
+    QUnit.test('#14746: Undefined max getTimeTicks threw', (assert) => {
         const time = new Highcharts.Time({
             useUTC: false
         });
@@ -510,4 +510,4 @@
 
         assert.ok(true, 'It should not throw');
     });
-}());
+})();

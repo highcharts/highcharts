@@ -1,4 +1,4 @@
-QUnit.test('Point select and staging', assert => {
+QUnit.test('Point select and staging', (assert) => {
     let selectedPoints = [];
     const chart = Highcharts.chart('container', {
         chart: {
@@ -20,12 +20,12 @@ QUnit.test('Point select and staging', assert => {
                         select: () => {
                             selectedPoints = chart
                                 .getSelectedPoints()
-                                .map(p => p.name);
+                                .map((p) => p.name);
                         },
                         unselect: () => {
                             selectedPoints = chart
                                 .getSelectedPoints()
-                                .map(p => p.name);
+                                .map((p) => p.name);
                         }
                     }
                 }

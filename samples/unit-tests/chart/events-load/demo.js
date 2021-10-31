@@ -2,9 +2,9 @@
 
 (function () {
     var url =
-        location.host.substr(0, 12) === 'localhost:98' ?
-            'url(base/test/testimage.png)' : // karma
-            'url(testimage.png)'; // utils
+        location.host.substr(0, 12) === 'localhost:98'
+            ? 'url(base/test/testimage.png)' // karma
+            : 'url(testimage.png)'; // utils
 
     QUnit.test('Load event without images', function (assert) {
         var flagLoad = false,
@@ -198,4 +198,4 @@
             chart.destroy();
         }
     );
-}());
+})();

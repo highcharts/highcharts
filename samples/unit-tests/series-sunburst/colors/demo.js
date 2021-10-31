@@ -22,7 +22,7 @@ QUnit.test('series.colors: default to colors.', function (assert) {
     );
 });
 
-QUnit.test('series.colors: custom colors.', assert => {
+QUnit.test('series.colors: custom colors.', (assert) => {
     const chartColors = ['#00ffff', '#ff00ff', '#ffff00'];
     const seriesColors = ['#ff0000', '#00ff00', '#0000ff'];
     const {
@@ -38,7 +38,7 @@ QUnit.test('series.colors: custom colors.', assert => {
         ]
     });
     assert.deepEqual(
-        series.points.map(point => point.color),
+        series.points.map((point) => point.color),
         chartColors,
         'series.points[].colors equals chart.colors when series.colors not set.'
     );
@@ -48,7 +48,7 @@ QUnit.test('series.colors: custom colors.', assert => {
         colors: seriesColors
     });
     assert.deepEqual(
-        series.points.map(point => point.color),
+        series.points.map((point) => point.color),
         seriesColors,
         'series.points[].colors equals series.colors.'
     );

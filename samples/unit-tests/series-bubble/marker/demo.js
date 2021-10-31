@@ -108,7 +108,7 @@ QUnit.test('Bubble data points without z-param.(#8608)', function (assert) {
     );
 });
 
-QUnit.test('Bubble animation and async redraws (#13494)', assert => {
+QUnit.test('Bubble animation and async redraws (#13494)', (assert) => {
     const clock = TestUtilities.lolexInstall();
 
     try {

@@ -123,7 +123,7 @@ QUnit.test('Network Graph', function (assert) {
 
     assert.strictEqual(
         chart.series[0].nodes.filter(
-            node => node.graphic.element.getAttribute('fill') === 'orange'
+            (node) => node.graphic.element.getAttribute('fill') === 'orange'
         ).length,
         1,
         'Only one node has selected attributes (#11212)'
@@ -166,7 +166,7 @@ QUnit.test('Network Graph', function (assert) {
 
     assert.strictEqual(
         rSeries.points.filter(
-            link => link.from !== '1.0' && link.to !== '1.0'
+            (link) => link.from !== '1.0' && link.to !== '1.0'
         ).length,
         2,
         'Removed all links for node = 1.0'
@@ -237,7 +237,7 @@ QUnit.test('Markers', function (assert) {
         ]
     });
 
-    chart.series[0].nodes.forEach(node => {
+    chart.series[0].nodes.forEach((node) => {
         assert.ok(
             node.plotY - node.radius >= 0,
             `Node: ${node.id} should be within the plotting area
@@ -321,7 +321,7 @@ QUnit.test('Layout operations', function (assert) {
     );
 });
 
-QUnit.test('Network Graph and legend', assert => {
+QUnit.test('Network Graph and legend', (assert) => {
     Highcharts.chart('container', {
         series: [
             {
@@ -340,7 +340,7 @@ QUnit.test('Network Graph and legend', assert => {
     assert.ok(true, 'No errors when networkgraph rendered in legend (#12424).');
 });
 
-QUnit.test('Networkgraph and series updates', assert => {
+QUnit.test('Networkgraph and series updates', (assert) => {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'line'
@@ -376,7 +376,7 @@ QUnit.test('Networkgraph and series updates', assert => {
     );
 });
 
-QUnit.test('#14397: Updating networkgraph series', assert => {
+QUnit.test('#14397: Updating networkgraph series', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'networkgraph'

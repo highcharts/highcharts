@@ -239,7 +239,7 @@ QUnit.test('Updating point visibility (#8428)', function (assert) {
     );
 });
 
-QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
+QUnit.test('#14246: ignoreHiddenPoint legend click', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -284,18 +284,15 @@ QUnit.test(
                 styledMode: true,
                 type: 'pie'
             },
-            series: [{
-                data: [3]
-            }]
+            series: [
+                {
+                    data: [3]
+                }
+            ]
         });
 
-        const styleBefore = chart.series[0]
-            .points[0]
-            .graphic
-            .element
-            .attributes
-            .class
-            .value;
+        const styleBefore =
+            chart.series[0].points[0].graphic.element.attributes.class.value;
 
         chart.series[0].points[0].update({
             colorIndex: 5
@@ -305,13 +302,8 @@ QUnit.test(
             colorIndex: 0
         });
 
-        const styleAfter = chart.series[0]
-            .points[0]
-            .graphic
-            .element
-            .attributes
-            .class
-            .value;
+        const styleAfter =
+            chart.series[0].points[0].graphic.element.attributes.class.value;
 
         assert.strictEqual(
             styleAfter,
@@ -321,13 +313,16 @@ QUnit.test(
     }
 );
 
-QUnit.test('Pie chart initialized through the stockChart constructor and splitted tooltip, (#14773).',
+QUnit.test(
+    'Pie chart initialized through the stockChart constructor and splitted tooltip, (#14773).',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
-            series: [{
-                type: 'pie',
-                data: [3]
-            }]
+            series: [
+                {
+                    type: 'pie',
+                    data: [3]
+                }
+            ]
         });
         chart.tooltip.refresh(chart.series[0].points[0]);
         assert.ok(
@@ -336,9 +331,12 @@ QUnit.test('Pie chart initialized through the stockChart constructor and splitte
             constructor should not produce errors in the console.`
         );
 
-        chart.addSeries({
-            data: [2, 3, 5, 6]
-        }, false);
+        chart.addSeries(
+            {
+                data: [2, 3, 5, 6]
+            },
+            false
+        );
         chart.update({
             navigator: {
                 enabled: false

@@ -27,9 +27,9 @@ QUnit.test('Option chart plot border and background update', function (assert) {
     });
 
     var testimage =
-        location.host.substr(0, 12) === 'localhost:98' ?
-            'base/test/testimage.png' : // karma
-            'testimage.png'; // utils
+        location.host.substr(0, 12) === 'localhost:98'
+            ? 'base/test/testimage.png' // karma
+            : 'testimage.png'; // utils
 
     chart.update({
         chart: {

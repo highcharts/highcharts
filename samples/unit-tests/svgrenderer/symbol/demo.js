@@ -10,9 +10,9 @@ QUnit.test('Symbol tests', function (assert) {
         symbol3,
         label,
         url =
-            location.host.substr(0, 12) === 'localhost:98' ?
-                'url(base/test/testimage.png)' : // karma
-                'url(testimage.png)'; // utils
+            location.host.substr(0, 12) === 'localhost:98'
+                ? 'url(base/test/testimage.png)' // karma
+                : 'url(testimage.png)'; // utils
 
     function ifDone() {
         count++;
@@ -154,25 +154,17 @@ QUnit.test('Symbol tests', function (assert) {
     });
 });
 
-QUnit.test('Arc', assert => {
+QUnit.test('Arc', (assert) => {
     const path = Highcharts.SVGRenderer.prototype.symbols.arc(0, 0, 10, 10, {
         r: 0
     });
 
-    assert.strictEqual(
-        path[1][1],
-        0,
-        '#15382: X radius should be 0'
-    );
-    assert.strictEqual(
-        path[1][2],
-        0,
-        '#15382: Y radius should be 0'
-    );
+    assert.strictEqual(path[1][1], 0, '#15382: X radius should be 0');
+    assert.strictEqual(path[1][2], 0, '#15382: Y radius should be 0');
 });
 
-QUnit.test('Square/rect', assert => {
-    ['square', 'rect'].forEach(shape => {
+QUnit.test('Square/rect', (assert) => {
+    ['square', 'rect'].forEach((shape) => {
         const fn = Highcharts.SVGRenderer.prototype.symbols[shape];
 
         let path = fn(0, 0, 10, 10);
@@ -190,26 +182,25 @@ QUnit.test('Square/rect', assert => {
         );
 
         path = fn(0, 0, 10, 10, { r: 5 });
-        assert.ok(
-            path.length > 5,
-            `${shape}, r=5: Path should have curves`
-        );
+        assert.ok(path.length > 5, `${shape}, r=5: Path should have curves`);
     });
 });
 
-QUnit.test('Image', assert => {
+QUnit.test('Image', (assert) => {
     const renderer = new Highcharts.Renderer(
         document.getElementById('container'),
         400,
         300
     );
 
-    renderer.image(
-        'https://www.highcharts.com/samples/graphics/sun.png',
-        100,
-        null,
-        ''
-    ).add();
+    renderer
+        .image(
+            'https://www.highcharts.com/samples/graphics/sun.png',
+            100,
+            null,
+            ''
+        )
+        .add();
 
     assert.ok(
         true,

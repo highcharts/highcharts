@@ -292,7 +292,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Toggle chart.scrollbar', assert => {
+QUnit.test('Toggle chart.scrollbar', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -340,7 +340,7 @@ QUnit.test('Toggle chart.scrollbar', assert => {
     );
 });
 
-QUnit.test('#13473: Threshold', assert => {
+QUnit.test('#13473: Threshold', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -351,9 +351,11 @@ QUnit.test('#13473: Threshold', assert => {
                 enabled: true
             }
         },
-        series: [{
-            data: [100, 200, 500]
-        }]
+        series: [
+            {
+                data: [100, 200, 500]
+            }
+        ]
     });
 
     const scrollbar = chart.yAxis[0].scrollbar;

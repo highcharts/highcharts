@@ -193,9 +193,13 @@ QUnit.test('Pane update through chart.update', function (assert) {
         'Pane updated by id'
     );
 
-    chart.update({
-        pane: []
-    }, true, true);
+    chart.update(
+        {
+            pane: []
+        },
+        true,
+        true
+    );
 
     assert.ok(
         true,

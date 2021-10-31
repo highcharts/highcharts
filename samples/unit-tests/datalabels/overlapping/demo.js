@@ -100,7 +100,10 @@ QUnit.test(
             ]
         });
 
-        Highcharts.fireEvent(chart.legend.allItems[1].legendGroup.element, 'click');
+        Highcharts.fireEvent(
+            chart.legend.allItems[1].legendGroup.element,
+            'click'
+        );
         chart.xAxis[0].setExtremes(0.5);
 
         assert.strictEqual(

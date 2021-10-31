@@ -810,8 +810,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         },
 
         subtitle: {
-            text:
-                'Source map: <a href="https://code.highcharts.com/mapdata/custom/world.js">World</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world.js">World</a>'
         },
 
         mapNavigation: {
@@ -848,19 +847,11 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     const mapView = $('#container').highcharts().mapView;
 
-    const before = Object.assign(
-        {},
-        mapView.center,
-        mapView.zoom
-    );
+    const before = Object.assign({}, mapView.center, mapView.zoom);
 
     Highcharts.charts[0].series[0].setData(data);
 
-    const after = Object.assign(
-        {},
-        mapView.center,
-        mapView.zoom
-    );
+    const after = Object.assign({}, mapView.center, mapView.zoom);
 
     assert.deepEqual(
         after,

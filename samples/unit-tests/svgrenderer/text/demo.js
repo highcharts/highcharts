@@ -85,11 +85,7 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 
     var breaks = text.element.querySelectorAll('tspan[x="100"]');
 
-    assert.strictEqual(
-        breaks.length,
-        5,
-        'Five breaks should be applied'
-    );
+    assert.strictEqual(breaks.length, 5, 'Five breaks should be applied');
 
     assert.strictEqual(
         text.element.childNodes[2].textContent.indexOf(' ') > 0,
@@ -143,7 +139,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
     }
 });
 
-QUnit.module('whiteSpace: "nowrap"', hooks => {
+QUnit.module('whiteSpace: "nowrap"', (hooks) => {
     const { Renderer } = Highcharts;
     const renderer = new Renderer(
         document.getElementById('container'),
@@ -163,7 +159,7 @@ QUnit.module('whiteSpace: "nowrap"', hooks => {
         text.destroy();
     });
 
-    QUnit.test('Skip tspans', assert => {
+    QUnit.test('Skip tspans', (assert) => {
         text.attr({ text: 'single_word' });
         assert.strictEqual(
             text.element.innerHTML,
@@ -221,7 +217,6 @@ QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
         2,
         'No additional soft breaks should be applied'
     );
-
 });
 
 QUnit.test('titleSetter', function (assert) {
@@ -297,7 +292,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         },
         text1 = ren.text('01234567', 0, 100).css(style).add(),
         text2 = ren.text('012345678', 0, 120).css(style).add(),
-        getTextContent = text => {
+        getTextContent = (text) => {
             const childNodes = text.element.childNodes;
             let textContent = '';
             for (let i = 0; i < childNodes.length; i++) {
@@ -433,8 +428,6 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
             2,
             'The content should be rendered across three lines'
         );
-
-
     } finally {
         renderer.destroy();
     }
@@ -530,12 +523,7 @@ QUnit.test('HTML', function (assert) {
 
         document.getElementById('container').style.position = 'relative';
         text = renderer
-            .text(
-                'LooooooooooooooooooooooooooooooooooooongText',
-                0,
-                10,
-                true
-            )
+            .text('LooooooooooooooooooooooooooooooooooooongText', 0, 10, true)
             .css({
                 width: '50px',
                 textOverflow: 'ellipsis'
@@ -552,7 +540,6 @@ QUnit.test('HTML', function (assert) {
             'When not overflowing, the bounding box should not extend to the CSS width (#16261)'
         );
 
-
         renderer = new Highcharts.SVGRenderer(
             document.getElementById('container'),
             500,
@@ -561,11 +548,9 @@ QUnit.test('HTML', function (assert) {
             true
         );
 
-        text = renderer.text('Line<br>break', 0, 10, true)
-            .add()
-            .attr({
-                x: 10
-            });
+        text = renderer.text('Line<br>break', 0, 10, true).add().attr({
+            x: 10
+        });
 
         assert.strictEqual(
             text.element.querySelector('tspan').getAttribute('x'),
@@ -756,8 +741,7 @@ QUnit.test('Adding new text style (#3501)', function (assert) {
         txt.css({ fill: 'red' });
 
         txt.attr({
-            text:
-                'After running .css once, the new text does not respect box width'
+            text: 'After running .css once, the new text does not respect box width'
         });
 
         var rectWidth = rect.element.getBBox().width,

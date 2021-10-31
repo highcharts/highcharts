@@ -1,4 +1,4 @@
-QUnit.test('Item series dynamics', assert => {
+QUnit.test('Item series dynamics', (assert) => {
     const {
         series: [series]
     } = Highcharts.chart('container', {

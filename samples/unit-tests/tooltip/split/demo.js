@@ -210,7 +210,6 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 });
 
 QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
-
     // Create another container to float within
     const subcontainer = document.createElement('div');
     subcontainer.id = 'subcontainer';
@@ -242,11 +241,11 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
     points[points.length - 1].onMouseOver();
 
     // Check both the series tooltip, and the header tooltip
-    [chart.tooltip.tt, chart.series[0].tt].forEach(tt => {
+    [chart.tooltip.tt, chart.series[0].tt].forEach((tt) => {
         // Get the absolute position of right side of the tooltip element
         // Test fails on firefox if we use getBoundingClientRect().right
-        const ttRight = tt.element.getBoundingClientRect().left +
-            tt.getBBox().width;
+        const ttRight =
+            tt.element.getBoundingClientRect().left + tt.getBBox().width;
 
         assert.strictEqual(
             tt.x < tt.anchorX,
@@ -278,7 +277,6 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
     // Reset
     subcontainer.remove();
     mainContainer.style.width = initialWidth;
-
 });
 
 QUnit.test(
@@ -355,7 +353,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('positioning', assert => {
+QUnit.test('positioning', (assert) => {
     const axisHeight = 150;
     const data = [85, 82, 84, 87, 92];
     const {
@@ -414,7 +412,7 @@ QUnit.test('positioning', assert => {
     );
 });
 
-QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
+QUnit.test('Split tooltip, horizontal scrollable plot area', (assert) => {
     const container = document.getElementById('container');
     const originalContainerWidth = container.style.width;
 
@@ -474,7 +472,7 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
     }
 });
 
-QUnit.test('Split tooltip, vertical scrollable plot area', assert => {
+QUnit.test('Split tooltip, vertical scrollable plot area', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
@@ -514,7 +512,7 @@ QUnit.test('Split tooltip, vertical scrollable plot area', assert => {
     );
 });
 
-QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
+QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', (assert) => {
     const chart = Highcharts.chart('container', {
             tooltip: {
                 hideDelay: 0,

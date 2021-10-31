@@ -8,13 +8,7 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                 series: [
                     {
                         data: [
-                            43934,
-                            52503,
-                            57177,
-                            69658,
-                            97031,
-                            119931,
-                            137133,
+                            43934, 52503, 57177, 69658, 97031, 119931, 137133,
                             154175
                         ],
                         animation: {
@@ -28,13 +22,7 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                     },
                     {
                         data: [
-                            43934,
-                            52503,
-                            57177,
-                            69658,
-                            97031,
-                            119931,
-                            137133,
+                            43934, 52503, 57177, 69658, 97031, 119931, 137133,
                             154175
                         ].reverse(),
                         animation: {

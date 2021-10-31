@@ -61,7 +61,7 @@ QUnit.test('10px height (#6217)', function (assert) {
     }
 });
 
-QUnit.test('Transformed container parents', assert => {
+QUnit.test('Transformed container parents', (assert) => {
     const container1 = document.createElement('div');
     container1.style.transform = 'scale(0.7)';
     container1.style.width = '400px';

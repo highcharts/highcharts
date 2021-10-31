@@ -150,10 +150,12 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
             yAxis: [
                 {
                     height: '60%'
-                }, {
+                },
+                {
                     height: '20%',
                     top: '60%'
-                }, {
+                },
+                {
                     height: '20%',
                     top: '80%'
                 }
@@ -167,13 +169,15 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
                     tooltip: {
                         valueDecimals: 2
                     }
-                }, {
+                },
+                {
                     type: 'column',
                     id: 'vol',
                     name: 'Volume',
                     data: volume,
                     yAxis: 1
-                }, {
+                },
+                {
                     type: 'klinger',
                     linkedTo: 'main',
                     showInLegend: true,
@@ -188,9 +192,9 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
 
     function klingerWithRound(arr, index) {
         return Highcharts.map(arr, function (point) {
-            return point[index] ?
-                parseFloat(point[index].toFixed(0)) :
-                point[index];
+            return point[index]
+                ? parseFloat(point[index].toFixed(0))
+                : point[index];
         });
     }
 
@@ -213,8 +217,10 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         `The last x point should be on the last day of array.`
     );
 
-    chart.series[0]
-        .addPoint([1561987800000, 50.79, 51.12, 50.16, 50.39], false);
+    chart.series[0].addPoint(
+        [1561987800000, 50.79, 51.12, 50.16, 50.39],
+        false
+    );
     chart.series[1].addPoint([1561987800000, 109012000]);
     assert.strictEqual(
         series[0].points.length,
@@ -225,21 +231,9 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     assert.deepEqual(
         klingerWithRound(chart.series[2].yData, 0),
         [
-            -4895496810,
-            -4460879653,
-            -4476536511,
-            -4559868781,
-            -4021678910,
-            -3444312215,
-            -2982582927,
-            -2476362156,
-            -2020654819,
-            -1567932276,
-            -1732124088,
-            -1561320815,
-            -1726810221,
-            -1579257269,
-            -1329570690,
+            -4895496810, -4460879653, -4476536511, -4559868781, -4021678910,
+            -3444312215, -2982582927, -2476362156, -2020654819, -1567932276,
+            -1732124088, -1561320815, -1726810221, -1579257269, -1329570690,
             -1000226243
         ],
         'Correct values for the main Klinger line.'

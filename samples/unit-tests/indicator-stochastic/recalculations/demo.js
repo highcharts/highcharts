@@ -33,9 +33,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
 
     function toFastStochasticWithRound(arr, index) {
         return Highcharts.map(arr, function (point) {
-            return point[index] ?
-                parseFloat(point[index].toFixed(5)) :
-                point[index];
+            return point[index]
+                ? parseFloat(point[index].toFixed(5))
+                : point[index];
         });
     }
 
@@ -108,23 +108,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     assert.deepEqual(
         toFastStochasticWithRound(chart.series[1].yData, 0),
         [
-            70.43822,
-            67.60891,
-            89.20211,
-            65.81055,
-            81.74771,
-            64.5238,
-            74.52978,
-            98.58144,
-            70.10453,
-            73.05609,
-            73.41779,
-            61.23129,
-            60.95627,
-            40.3861,
-            40.3861,
-            66.82855,
-            56.73142
+            70.43822, 67.60891, 89.20211, 65.81055, 81.74771, 64.5238, 74.52978,
+            98.58144, 70.10453, 73.05609, 73.41779, 61.23129, 60.95627, 40.3861,
+            40.3861, 66.82855, 56.73142
         ],
         'Correct values'
     );
@@ -139,22 +125,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     assert.deepEqual(
         toFastStochasticWithRound(chart.series[1].yData, 0),
         [
-            70.43822,
-            67.60891,
-            89.20211,
-            65.81055,
-            81.74771,
-            64.5238,
-            74.52978,
-            98.58144,
-            70.10453,
-            73.05609,
-            73.41779,
-            61.23129,
-            60.95627,
-            40.3861,
-            40.3861,
-            66.82855
+            70.43822, 67.60891, 89.20211, 65.81055, 81.74771, 64.5238, 74.52978,
+            98.58144, 70.10453, 73.05609, 73.41779, 61.23129, 60.95627, 40.3861,
+            40.3861, 66.82855
         ],
         'Correct values after point.remove()'
     );

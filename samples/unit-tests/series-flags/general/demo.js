@@ -53,7 +53,7 @@ QUnit.test('Flag values and placement', function (assert) {
                             });
                         }
                         return d;
-                    }(11))
+                    })(11)
                 }
             ],
             yAxis: [
@@ -77,7 +77,7 @@ QUnit.test('Flag values and placement', function (assert) {
                 }
             }
             return ret;
-        }(series)),
+        })(series),
         true,
         'Order of points shoule be the same as data (#3763)'
     );
@@ -181,25 +181,31 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
             max: 3
         },
 
-        series: [{
-            data: [1, 2, 3, 4, 5]
-        }, {
-            type: 'flags',
-            data: [{
-                x: 3,
-                text: '3',
-                title: '3'
-            }]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4, 5]
+            },
+            {
+                type: 'flags',
+                data: [
+                    {
+                        x: 3,
+                        text: '3',
+                        title: '3'
+                    }
+                ]
+            }
+        ]
     });
 
     chart.xAxis[0].setExtremes(3, 4);
 
     assert.equal(
-        [...chart.container.querySelectorAll('.highcharts-flags-series')]
-            .some(group =>  group.getAttribute('transform').includes('NaN')),
+        [...chart.container.querySelectorAll('.highcharts-flags-series')].some(
+            (group) => group.getAttribute('transform').includes('NaN')
+        ),
         false,
-        'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
+        "The flag series' DOM elements should not contain NaN attributes values (#14063)."
     );
 });
 
@@ -208,18 +214,23 @@ QUnit.test('Distributing the flag, #16041.)', function (assert) {
         chart: {
             width: 800
         },
-        series: [{
-            data: [
-                [1, 10],
-                [6, 60]
-            ]
-        }, {
-            data: [{
-                x: 5,
-                title: 'Very long long text very long long text'
-            }],
-            type: 'flags'
-        }]
+        series: [
+            {
+                data: [
+                    [1, 10],
+                    [6, 60]
+                ]
+            },
+            {
+                data: [
+                    {
+                        x: 5,
+                        title: 'Very long long text very long long text'
+                    }
+                ],
+                type: 'flags'
+            }
+        ]
     });
 
     assert.ok(

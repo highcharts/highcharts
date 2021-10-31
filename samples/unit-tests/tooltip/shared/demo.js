@@ -58,7 +58,7 @@
             );
         }
     );
-}());
+})();
 
 QUnit.test(
     'Shared tooltip should always highlight all markers. (#5862)',
@@ -137,54 +137,24 @@ QUnit.test(
                             type: 'column',
                             yAxis: 1,
                             data: [
-                                49.9,
-                                71.5,
-                                106.4,
-                                129.2,
-                                144.0,
-                                176.0,
-                                135.6,
-                                148.5,
-                                216.4,
-                                194.1,
-                                95.6,
-                                54.4
+                                49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                                148.5, 216.4, 194.1, 95.6, 54.4
                             ],
                             zIndex: 1
                         },
                         {
                             yAxis: 2,
                             data: [
-                                1016,
-                                1016,
-                                1015.9,
-                                1015.5,
-                                1012.3,
-                                1009.5,
-                                1009.6,
-                                1010.2,
-                                1013.1,
-                                1016.9,
-                                1018.2,
-                                1016.7
+                                1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5,
+                                1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7
                             ],
                             zIndex: 2
                         },
                         {
                             type: 'spline',
                             data: [
-                                7.0,
-                                6.9,
-                                9.5,
-                                14.5,
-                                18.2,
-                                21.5,
-                                25.2,
-                                26.5,
-                                23.3,
-                                18.3,
-                                13.9,
-                                9.6
+                                7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5,
+                                23.3, 18.3, 13.9, 9.6
                             ],
                             zIndex: 1000,
                             lineWidth: 10
@@ -212,97 +182,111 @@ QUnit.test(
     }
 );
 
-QUnit.test('Shared tooltip with pointPlacement and stickOnContact', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
+QUnit.test(
+    'Shared tooltip with pointPlacement and stickOnContact',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
 
-        tooltip: {
-            shared: true,
-            stickOnContact: true
-        },
-        plotOptions: {
-            column: {
-                stacking: 'normal',
-                kdNow: true
-            }
-        },
+            tooltip: {
+                shared: true,
+                stickOnContact: true
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    kdNow: true
+                }
+            },
 
+            series: [
+                {
+                    data: [1, 1, 1],
+                    stack: 'a',
+                    pointPlacement: 0.06
+                },
+                {
+                    data: [2, 2, 2],
+                    stack: 'test'
+                },
+                {
+                    data: [3, 3, 3],
+                    stack: 'test'
+                },
+                {
+                    data: [4, 4, 4],
+                    stack: 'other',
+                    pointPlacement: -0.06
+                },
+                {
+                    data: [5, 5, 5],
+                    stack: 'other',
+                    pointPlacement: -0.06
+                }
+            ]
+        });
+
+        var point = chart.series[0].points[0],
+            offset = Highcharts.offset(chart.container);
+
+        // Set hoverPoint
+        point.onMouseOver();
+
+        chart.pointer.onContainerMouseMove({
+            type: 'mousemove',
+            pageX: point.plotX + chart.plotLeft + offset.left,
+            pageY: point.plotY + chart.plotTop + offset.top,
+            target: chart.container
+        });
+
+        assert.strictEqual(
+            chart.hoverPoints.length,
+            5,
+            '#5832: All series present'
+        );
+
+        const heightBefore = chart.tooltip.tracker.attr('height');
+        chart.series[1].points[0].onMouseOver();
+        assert.strictEqual(
+            chart.tooltip.tracker.attr('height'),
+            heightBefore,
+            '#15843: Tracker height should be the same after hovering another point in the same stack'
+        );
+    }
+);
+
+QUnit.test('Shared tooltip with multiple axes', (assert) => {
+    const chart = Highcharts.chart('container', {
         series: [
             {
-                data: [1, 1, 1],
-                stack: 'a',
-                pointPlacement: 0.06
+                data: [4]
             },
             {
-                data: [2, 2, 2],
-                stack: 'test'
+                data: [2, 6, 4],
+                type: 'column'
             },
             {
-                data: [3, 3, 3],
-                stack: 'test'
-            },
-            {
-                data: [4, 4, 4],
-                stack: 'other',
-                pointPlacement: -0.06
-            },
-            {
-                data: [5, 5, 5],
-                stack: 'other',
-                pointPlacement: -0.06
+                data: [4, 7, 9],
+                type: 'column',
+                yAxis: 1
             }
-        ]
-    });
-
-    var point = chart.series[0].points[0],
-        offset = Highcharts.offset(chart.container);
-
-    // Set hoverPoint
-    point.onMouseOver();
-
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: point.plotX + chart.plotLeft + offset.left,
-        pageY: point.plotY + chart.plotTop + offset.top,
-        target: chart.container
-    });
-
-    assert.strictEqual(chart.hoverPoints.length, 5, '#5832: All series present');
-
-    const heightBefore = chart.tooltip.tracker.attr('height');
-    chart.series[1].points[0].onMouseOver();
-    assert.strictEqual(
-        chart.tooltip.tracker.attr('height'),
-        heightBefore,
-        '#15843: Tracker height should be the same after hovering another point in the same stack'
-    );
-});
-
-QUnit.test('Shared tooltip with multiple axes', assert => {
-    const chart = Highcharts.chart('container', {
-        series: [{
-            data: [4]
-        }, {
-            data: [2, 6, 4],
-            type: 'column'
-        }, {
-            data: [4, 7, 9],
-            type: 'column',
-            yAxis: 1
-        }],
+        ],
         tooltip: {
             shared: true,
             hideDelay: 0
         },
-        yAxis: [{
-            height: '50%'
-        }, {
-            top: '60%',
-            height: '40%',
-            offset: 0
-        }]
+        yAxis: [
+            {
+                height: '50%'
+            },
+            {
+                top: '60%',
+                height: '40%',
+                offset: 0
+            }
+        ]
     });
 
     const controller = new TestController(chart);
@@ -310,8 +294,5 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
     const axis = chart.yAxis[1];
 
     controller.moveTo(axis.left + point.plotX, axis.top + point.plotY + 5);
-    assert.notOk(
-        chart.tooltip.isHidden,
-        '#16004: Tooltip should be visible'
-    );
+    assert.notOk(chart.tooltip.isHidden, '#16004: Tooltip should be visible');
 });

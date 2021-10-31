@@ -14,13 +14,7 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
             series: [
                 {
                     data: [
-                        43934,
-                        52503,
-                        57177,
-                        69658,
-                        97031,
-                        119931,
-                        137133,
+                        43934, 52503, 57177, 69658, 97031, 119931, 137133,
                         154175
                     ]
                 }
@@ -105,7 +99,8 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
                     xAxis: 0,
                     yAxis: 0
                 }
-            }, {
+            },
+            {
                 point: {
                     x: 3,
                     y: 125000,
@@ -218,29 +213,29 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
     );
 
     const rect = chart.addAnnotation({
-        shapes: [{
-            type: 'path',
-            points: [
-                { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
-                { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
-                { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
-                { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
-            ]
-        }, {
-            type: 'path',
-            points: [
-                { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
-                { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
-                { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
-                { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
-            ]
-        }]
+        shapes: [
+            {
+                type: 'path',
+                points: [
+                    { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
+                    { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
+                    { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
+                    { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
+                ]
+            },
+            {
+                type: 'path',
+                points: [
+                    { xAxis: 0, yAxis: 0, x: 1, y: 150000 },
+                    { xAxis: 0, yAxis: 0, x: 3, y: 150000 },
+                    { xAxis: 0, yAxis: 0, x: 3, y: 100000 },
+                    { xAxis: 0, yAxis: 0, x: 1, y: 100000 }
+                ]
+            }
+        ]
     });
 
-    assert.ok(
-        rect.clipRect,
-        '#15726: Rectangle annotations should be clipped'
-    );
+    assert.ok(rect.clipRect, '#15726: Rectangle annotations should be clipped');
 
     assert.ok(
         thirdAnnotation.labels[0].graphic.hasClass('highcharts-no-tooltip'),

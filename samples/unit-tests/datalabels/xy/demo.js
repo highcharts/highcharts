@@ -1,4 +1,4 @@
-QUnit.test('Data label alignment and x/y options (#13580)', assert => {
+QUnit.test('Data label alignment and x/y options (#13580)', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             width: 300,

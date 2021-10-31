@@ -1,4 +1,4 @@
-QUnit.test('Setting and resetting', assert => {
+QUnit.test('Setting and resetting', (assert) => {
     assert.strictEqual(
         Highcharts.time.options.timezone,
         undefined,
@@ -300,7 +300,7 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip']('Maketime', function (assert) {
     }
 });
 
-QUnit.test('useUTC = false (variableTimezone)', assert => {
+QUnit.test('useUTC = false (variableTimezone)', (assert) => {
     const time = new Highcharts.Time({
         useUTC: false
     });

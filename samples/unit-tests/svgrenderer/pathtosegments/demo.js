@@ -1,9 +1,9 @@
-QUnit.test('SVGRenderer.pathToSegments', assert => {
+QUnit.test('SVGRenderer.pathToSegments', (assert) => {
     const pathToSegments = Highcharts.SVGRenderer.prototype.pathToSegments;
 
     const testUpperAndLower = (from, to, comment) => {
-        const toLower = arr =>
-            arr.map(item => {
+        const toLower = (arr) =>
+            arr.map((item) => {
                 if (typeof item === 'string') {
                     return item.toLowerCase();
                 }
@@ -13,8 +13,8 @@ QUnit.test('SVGRenderer.pathToSegments', assert => {
                 return item;
             });
 
-        const toUpper = arr =>
-            arr.map(item => {
+        const toUpper = (arr) =>
+            arr.map((item) => {
                 if (typeof item === 'string') {
                     return item.toUpperCase();
                 }

@@ -8,7 +8,7 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 pointInterval: 24 * 36e5
             }
         ],
@@ -160,7 +160,7 @@ QUnit.test('Aligning after updates.', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 pointInterval: 24 * 36e5
             }
         ],
@@ -261,7 +261,7 @@ QUnit.test('Collision with bottom legend', function (assert) {
                     arr.push(i);
                 }
                 return arr;
-            }()),
+            })(),
             pointInterval: 24 * 36e5
         }
     ];
@@ -298,7 +298,7 @@ QUnit.test('x and y parameters', function (assert) {
                     arr.push(i);
                 }
                 return arr;
-            }()),
+            })(),
             pointInterval: 24 * 36e5
         }
     ];
@@ -344,7 +344,7 @@ QUnit.test('button width', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 pointInterval: 24 * 36e5
             }
         ],
@@ -445,8 +445,7 @@ QUnit.test('Rangeselector update', function (assert) {
     );
 });
 
-
-QUnit.test('Chart setSize', assert => {
+QUnit.test('Chart setSize', (assert) => {
     const chart = Highcharts.stockChart('container', {
         chart: {
             width: 800
@@ -470,25 +469,29 @@ QUnit.test('Chart setSize', assert => {
     );
 });
 
-QUnit.test('#14292: Right-aligned button position after animating', assert => {
-    const chart = Highcharts.stockChart('container', {
-        chart: {
-            animation: 500
-        },
-        rangeSelector: {
-            buttonPosition: {
-                align: 'right'
+QUnit.test(
+    '#14292: Right-aligned button position after animating',
+    (assert) => {
+        const chart = Highcharts.stockChart('container', {
+            chart: {
+                animation: 500
             },
-            inputEnabled: false
-        }
-    });
+            rangeSelector: {
+                buttonPosition: {
+                    align: 'right'
+                },
+                inputEnabled: false
+            }
+        });
 
-    const width = chart.rangeSelector.buttonGroup.getBBox().width;
+        const width = chart.rangeSelector.buttonGroup.getBBox().width;
 
-    chart.rangeSelector.update();
+        chart.rangeSelector.update();
 
-    assert.ok(
-        chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,
-        'Buttons should be inside the chart'
-    );
-});
+        assert.ok(
+            chart.rangeSelector.buttonGroup.translateX + width <=
+                chart.plotWidth,
+            'Buttons should be inside the chart'
+        );
+    }
+);

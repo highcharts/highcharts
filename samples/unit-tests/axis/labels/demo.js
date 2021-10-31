@@ -443,66 +443,14 @@ QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
             series: [
                 {
                     data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4,
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4,
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4,
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4,
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2,
+                        144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2,
+                        144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4
                     ]
                 }
             ]
@@ -548,18 +496,8 @@ QUnit.test(
                 series: [
                     {
                         data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
+                            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                            148.5, 216.4, 194.1, 95.6, 54.4
                         ]
                     }
                 ]
@@ -934,18 +872,8 @@ QUnit.test('Label ellipsis', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ],
                 type: 'column'
             }
@@ -1305,7 +1233,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
     );
 });
 
-QUnit.test('Label ellipsis and resetting categories', assert => {
+QUnit.test('Label ellipsis and resetting categories', (assert) => {
     const chart = new Highcharts.chart('container', {
         chart: {
             width: 600,
@@ -2022,7 +1950,7 @@ QUnit.test(
                 series: [
                     {
                         pointPlacement: 'on',
-                        data: (numberOfPoints => {
+                        data: ((numberOfPoints) => {
                             var data = [];
                             while (numberOfPoints) {
                                 data.push(100);
@@ -2058,49 +1986,49 @@ QUnit.test(
     }
 );
 
-QUnit.test(
-    'Format and formatter',
-    assert => {
-        var results = [];
+QUnit.test('Format and formatter', (assert) => {
+    var results = [];
 
-        const chart = Highcharts.chart('container', {
-            chart: {
-                height: 150,
-                width: 500
-            },
+    const chart = Highcharts.chart('container', {
+        chart: {
+            height: 150,
+            width: 500
+        },
 
-            yAxis: {
-                labels: {
-                    formatter: function () {
-                        results.push(this.value);
-                    }
+        yAxis: {
+            labels: {
+                formatter: function () {
+                    results.push(this.value);
                 }
-            },
+            }
+        },
 
-            xAxis: {
-                labels: {
-                    format: 'Dummy, I should not be called',
-                    formatter: ctx => ctx.number
-                }
-            },
+        xAxis: {
+            labels: {
+                format: 'Dummy, I should not be called',
+                formatter: (ctx) => ctx.number
+            }
+        },
 
-            series: [{
+        series: [
+            {
                 data: [null, null]
-            }]
-        });
-
-        // Issue #14769
-        assert.deepEqual(
-            results,
-            [],
-            'Formatter should not be called when labels don\'t exist (#14769)'
-        );
-
-        assert.strictEqual(
-            chart.container.querySelector('.highcharts-xaxis-labels')
-                .textContent
-                .indexOf('Dummy'),
-            -1,
-            'label.formatter should take precedence over label.format'
-        );
+            }
+        ]
     });
+
+    // Issue #14769
+    assert.deepEqual(
+        results,
+        [],
+        "Formatter should not be called when labels don't exist (#14769)"
+    );
+
+    assert.strictEqual(
+        chart.container
+            .querySelector('.highcharts-xaxis-labels')
+            .textContent.indexOf('Dummy'),
+        -1,
+        'label.formatter should take precedence over label.format'
+    );
+});

@@ -322,12 +322,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     chart.series[0].addPoint([
-        1320105600000,
-        56.77,
-        57.07,
-        56.17,
-        56.64,
-        132946877
+        1320105600000, 56.77, 57.07, 56.17, 56.64, 132946877
     ]);
 
     assert.strictEqual(

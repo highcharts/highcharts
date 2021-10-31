@@ -58,61 +58,64 @@ QUnit.test(
     }
 );
 
-QUnit.test('Undefined and null z scatter points (#4507, #12548)', function (assert) {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            options3d: {
-                enabled: true,
-                alpha: 10,
-                beta: 90,
-                depth: 250,
-                viewDistance: 5,
-                frame: {
-                    bottom: {
-                        size: 1,
-                        color: 'rgba(0,0,0,0.02)'
-                    },
-                    back: {
-                        size: 1,
-                        color: 'rgba(0,0,0,0.04)'
-                    },
-                    side: {
-                        size: 1,
-                        color: 'rgba(0,0,0,0.06)'
+QUnit.test(
+    'Undefined and null z scatter points (#4507, #12548)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                options3d: {
+                    enabled: true,
+                    alpha: 10,
+                    beta: 90,
+                    depth: 250,
+                    viewDistance: 5,
+                    frame: {
+                        bottom: {
+                            size: 1,
+                            color: 'rgba(0,0,0,0.02)'
+                        },
+                        back: {
+                            size: 1,
+                            color: 'rgba(0,0,0,0.04)'
+                        },
+                        side: {
+                            size: 1,
+                            color: 'rgba(0,0,0,0.06)'
+                        }
                     }
                 }
-            }
-        },
-        series: [
-            {
-                type: 'scatter',
-                data: [
-                    {
-                        y: 100000,
-                        z: null
-                    },
-                    {
-                        y: 20000
-                    },
-                    {
-                        y: 100100
-                    },
-                    {
-                        y: 100000
-                    },
-                    {
-                        y: 110000
-                    }
-                ]
-            }
-        ]
-    });
+            },
+            series: [
+                {
+                    type: 'scatter',
+                    data: [
+                        {
+                            y: 100000,
+                            z: null
+                        },
+                        {
+                            y: 20000
+                        },
+                        {
+                            y: 100100
+                        },
+                        {
+                            y: 100000
+                        },
+                        {
+                            y: 110000
+                        }
+                    ]
+                }
+            ]
+        });
 
-    assert.ok(
-        chart.series[0].points.every(p => p.graphic),
-        'All points should have rendered'
-    );
-});
+        assert.ok(
+            chart.series[0].points.every((p) => p.graphic),
+            'All points should have rendered'
+        );
+    }
+);
 
 QUnit.test('Point is on appropriate position', function (assert) {
     var chart = Highcharts.chart('container', {

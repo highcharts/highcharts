@@ -161,7 +161,7 @@ QUnit.test('Compare to the proper series (#7773)', function (assert) {
     );
 });
 
-QUnit.test('Compare with one single value', assert => {
+QUnit.test('Compare with one single value', (assert) => {
     const chart = Highcharts.chart('container', {
         plotOptions: {
             series: {
@@ -183,25 +183,28 @@ QUnit.test('Compare with one single value', assert => {
     );
 });
 
-QUnit.test('Compare multi line indicators, #15867.', assert => {
+QUnit.test('Compare multi line indicators, #15867.', (assert) => {
     const chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 compare: 'value'
             }
         },
-        series: [{
-            type: 'line',
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            data: [1, 2, 3, 4, 5]
-        }, {
-            type: 'bb',
-            linkedTo: 'aapl',
-            params: {
-                period: 3
+        series: [
+            {
+                type: 'line',
+                id: 'aapl',
+                name: 'AAPL Stock Price',
+                data: [1, 2, 3, 4, 5]
+            },
+            {
+                type: 'bb',
+                linkedTo: 'aapl',
+                params: {
+                    period: 3
+                }
             }
-        }]
+        ]
     });
 
     assert.strictEqual(

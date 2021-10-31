@@ -38,13 +38,11 @@ QUnit.test('Use HTML and legend item resizing', function (assert) {
         },
         series: [
             {
-                name:
-                    'AAAAAAAAAAAAAAAAAAAAAAAAAAAA long tiiiiiiiiiiiiiiiiiitle',
+                name: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAA long tiiiiiiiiiiiiiiiiiitle',
                 data: [39]
             },
             {
-                name:
-                    'BBBBBBBBBBBBBBBBBBBBBBBBBBBB long tiiiiiiiiiiiiiiiiiitle',
+                name: 'BBBBBBBBBBBBBBBBBBBBBBBBBBBB long tiiiiiiiiiiiiiiiiiitle',
                 data: [12]
             }
         ]

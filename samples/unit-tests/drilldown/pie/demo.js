@@ -10,8 +10,7 @@ QUnit.test('Pie color and data labels', function (assert) {
             text: 'Browser market shares. January, 2015 to May, 2015'
         },
         subtitle: {
-            text:
-                'Click the slices to view versions. Source: netmarketshare.com.'
+            text: 'Click the slices to view versions. Source: netmarketshare.com.'
         },
         plotOptions: {
             series: {
@@ -408,8 +407,10 @@ QUnit.test(
                 done = assert.async();
 
             point.doDrilldown();
-            initialPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic
-                .attr('start');
+            initialPos =
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr(
+                    'start'
+                );
             previousColor = chart.options.colors[0];
 
             assert.strictEqual(
@@ -441,8 +442,10 @@ QUnit.test(
                     'Time 400 - Fill color should be tweening'
                 );
 
-                previousPos = chart.drilldownLevels[0].lowerSeries.data[4]
-                    .graphic.attr('start');
+                previousPos =
+                    chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr(
+                        'start'
+                    );
                 previousColor = tweeningGraphic.attr('fill');
             }, 400);
 
@@ -460,8 +463,10 @@ QUnit.test(
                     'Time 800 - Fill color should be tweening'
                 );
 
-                previousPos = chart.drilldownLevels[0].lowerSeries.data[4]
-                    .graphic.attr('start');
+                previousPos =
+                    chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr(
+                        'start'
+                    );
                 previousColor = tweeningGraphic.attr('fill');
             }, 800);
 
@@ -479,8 +484,10 @@ QUnit.test(
                     'Time 1200 - Fill color should be tweening'
                 );
 
-                previousPos = chart.drilldownLevels[0].lowerSeries.data[4]
-                    .graphic.attr('start');
+                previousPos =
+                    chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr(
+                        'start'
+                    );
                 previousColor = tweeningGraphic.attr('fill');
             }, 1200);
 

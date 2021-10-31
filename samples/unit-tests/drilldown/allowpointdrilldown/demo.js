@@ -7,8 +7,7 @@ QUnit.test('Drill down on single point is not allowed', function (assert) {
             text: 'Highcharts multi-series drilldown'
         },
         subtitle: {
-            text:
-                'The <em>allowPointDrilldown</em> option makes point clicks drill to the whole category'
+            text: 'The <em>allowPointDrilldown</em> option makes point clicks drill to the whole category'
         },
         xAxis: {
             type: 'category'

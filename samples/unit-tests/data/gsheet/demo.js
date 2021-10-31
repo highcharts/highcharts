@@ -6,9 +6,9 @@ QUnit.skip('data-google-spreadsheetloading', function (assert) {
         var options = chart.options;
 
         assert.strictEqual(
-            (Highcharts.isArray(options.xAxis) ?
-                options.xAxis[0] :
-                options.xAxis
+            (Highcharts.isArray(options.xAxis)
+                ? options.xAxis[0]
+                : options.xAxis
             ).type,
             'datetime',
             'X axis is date/time'

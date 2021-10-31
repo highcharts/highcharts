@@ -4,8 +4,7 @@ QUnit.test('Chart setTitle', function (assert) {
             text: 'Head Count Terminations<br> It overlaps chart'
         },
         subtitle: {
-            text:
-                'Source: <br><a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
+            text: 'Source: <br><a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
         },
         legend: {
             verticalAlign: 'top'

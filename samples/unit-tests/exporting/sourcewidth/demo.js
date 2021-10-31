@@ -4,8 +4,7 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
                 text: 'Highcharts sourceWidth and sourceHeight demo'
             },
             subtitle: {
-                text:
-                    'The on-screen chart is 600x400.<br/>The exported chart is 800x400<br/>(sourceWidth and sourceHeight multiplied by scale)',
+                text: 'The on-screen chart is 600x400.<br/>The exported chart is 800x400<br/>(sourceWidth and sourceHeight multiplied by scale)',
                 floating: true,
                 align: 'left',
                 x: 60,
@@ -30,18 +29,8 @@ QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
             series: [
                 {
                     data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4
                     ]
                 }
             ],

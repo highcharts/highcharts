@@ -1,4 +1,4 @@
-QUnit.test('Chart update with map', assert => {
+QUnit.test('Chart update with map', (assert) => {
     const options1 = {
         chart: {
             map: 'custom/europe',
@@ -26,7 +26,7 @@ QUnit.test('Chart update with map', assert => {
 
     const chart = Highcharts.mapChart('container', options1);
 
-    const getAttribs = attr => ({
+    const getAttribs = (attr) => ({
         iceland: chart.container
             .querySelector('.highcharts-key-is')
             .getAttribute(attr),

@@ -56,18 +56,8 @@ QUnit.test(
                     series: [
                         {
                             data: [
-                                29.9,
-                                71.5,
-                                106.4,
-                                129.2,
-                                144.0,
-                                176.0,
-                                135.6,
-                                148.5,
-                                216.4,
-                                194.1,
-                                95.6,
-                                54.4
+                                29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                                148.5, 216.4, 194.1, 95.6, 54.4
                             ],
                             pointInterval: 10,
                             type: 'column'
@@ -379,28 +369,28 @@ QUnit.test('Negative values on the log axes.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[0].points.map(point => point.isNull),
+        chart.series[0].points.map((point) => point.isNull),
         [true, true, true, true, false],
         'Points with negative value should be discarded when both axes ' +
             'are logarithmic.  '
     );
 
     assert.deepEqual(
-        chart.series[1].points.map(point => point.isNull),
+        chart.series[1].points.map((point) => point.isNull),
         [true, true, true, false, false],
         'Points with negative xValues should be discarded when xAxis ' +
             'is logarithmic.'
     );
 
     assert.deepEqual(
-        chart.series[2].points.map(point => point.isNull),
+        chart.series[2].points.map((point) => point.isNull),
         [true, false, true, true, false],
         'Points with negative yValues should be discarded when yAxis ' +
             'is logarithmic.'
     );
 
     assert.strictEqual(
-        chart.series[3].points.filter(point => point.isNull).length,
+        chart.series[3].points.filter((point) => point.isNull).length,
         0,
         'Points with negative value should not be discarded when both ' +
             'axes are linear.'

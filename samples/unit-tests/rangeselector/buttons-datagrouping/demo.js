@@ -46,7 +46,7 @@ QUnit.test('getUnionExtremes', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 animation: false,
                 pointStart: Date.UTC(2009, 0, 1),
                 pointInterval: 24 * 36e5

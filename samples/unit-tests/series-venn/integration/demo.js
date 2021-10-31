@@ -1,4 +1,4 @@
-QUnit.test('zIndex. #10490', assert => {
+QUnit.test('zIndex. #10490', (assert) => {
     const unsortedData = [
         {
             sets: ['A', 'B'],
@@ -62,7 +62,7 @@ QUnit.test('zIndex. #10490', assert => {
 });
 
 QUnit.module('Options', () => {
-    QUnit.test('states[<state>].halo', assert => {
+    QUnit.test('states[<state>].halo', (assert) => {
         const chart = Highcharts.chart('container', {
             series: [
                 {
@@ -77,7 +77,7 @@ QUnit.module('Options', () => {
         let { userOptions, options } = series;
 
         // Test default behaviour
-        states.forEach(state => {
+        states.forEach((state) => {
             assert.strictEqual(
                 options.states[state].halo,
                 false,
@@ -94,14 +94,14 @@ QUnit.module('Options', () => {
         series.update({ states: statesOptions });
         ({ userOptions, options } = series);
 
-        states.forEach(state => {
+        states.forEach((state) => {
             assert.strictEqual(
                 typeof userOptions.states[state].halo,
                 'object',
                 `Should have userOptions.states.${state}.halo type of "object".`
             );
         });
-        states.forEach(state => {
+        states.forEach((state) => {
             assert.strictEqual(
                 options.states[state].halo,
                 false,
@@ -135,8 +135,7 @@ QUnit.test(
                             color: {
                                 pattern: {
                                     path: {
-                                        d:
-                                            'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+                                        d: 'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
                                         strokeWidth: 3
                                     },
                                     width: 10,

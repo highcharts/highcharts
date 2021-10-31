@@ -71,7 +71,7 @@
     test('pie', false);
     test('column', true);
     test('column', false);
-}());
+})();
 
 QUnit.test('Click to add', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -94,8 +94,7 @@ QUnit.test('Click to add', function (assert) {
                 text: 'User supplied data'
             },
             subtitle: {
-                text:
-                    'Click the plot area to add a point. Click a point to remove it.'
+                text: 'Click the plot area to add a point. Click a point to remove it.'
             },
             xAxis: {
                 gridLineWidth: 1,

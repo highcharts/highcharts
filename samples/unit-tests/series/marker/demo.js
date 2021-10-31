@@ -183,7 +183,7 @@ QUnit.test('Marker size and position', function (assert) {
     );
 });
 
-QUnit.test('visibility', assert => {
+QUnit.test('visibility', (assert) => {
     const axisHeight = 150;
     const data = [85, 82, 84, 87, 92];
     const {

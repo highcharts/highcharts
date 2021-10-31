@@ -111,7 +111,7 @@
         checkElement('HTML group', g, g.div, assert);
     });
 
-    QUnit.test('Add multiple class names', assert => {
+    QUnit.test('Add multiple class names', (assert) => {
         const ren = new Highcharts.Renderer(
             document.getElementById('container'),
             600,
@@ -134,4 +134,4 @@
             'Duplicate class names should not occur (#10265)'
         );
     });
-}());
+})();

@@ -121,7 +121,7 @@ QUnit.test('Indentation', function (assert) {
         childTickIconY,
         0,
         'Label icon should be shown after double clicking ' +
-        'parent in drop-down. (#14904)'
+            'parent in drop-down. (#14904)'
     );
 });
 
@@ -190,7 +190,7 @@ QUnit.test('Tree.getNode', function (assert) {
     );
 });
 
-QUnit.test('Axis.update', assert => {
+QUnit.test('Axis.update', (assert) => {
     const { getStyle } = Highcharts;
     const {
         yAxis: [axis]
@@ -263,7 +263,7 @@ QUnit.test('Axis.update', assert => {
     );
 });
 
-QUnit.test('Chart.addSeries', assert => {
+QUnit.test('Chart.addSeries', (assert) => {
     const chart = Highcharts.chart('container', {
         yAxis: [
             {
@@ -292,7 +292,7 @@ QUnit.test('Chart.addSeries', assert => {
     };
     const getYValues = ({ series }) =>
         series.reduce(
-            (arr, series) => arr.concat(series.points.map(point => point.y)),
+            (arr, series) => arr.concat(series.points.map((point) => point.y)),
             []
         );
 
@@ -330,7 +330,7 @@ QUnit.test('Chart.addSeries', assert => {
     );
 });
 
-QUnit.test('Chart.addSeries collapsed', assert => {
+QUnit.test('Chart.addSeries collapsed', (assert) => {
     const chart = Highcharts.chart('container', {
         yAxis: [
             {
@@ -365,12 +365,12 @@ QUnit.test('Chart.addSeries collapsed', assert => {
     );
 });
 
-QUnit.test('Series.setVisible', assert => {
+QUnit.test('Series.setVisible', (assert) => {
     const {
         series: [series1, series2, series3],
         yAxis: [axis]
     } = Highcharts.chart('container', {
-        series: [0, 1, 2].map(x => ({
+        series: [0, 1, 2].map((x) => ({
             data: [{ x, name: `Point ${x + 1}` }]
         })),
         legend: { enabled: true },
@@ -443,7 +443,7 @@ QUnit.test('Series.setVisible', assert => {
     );
 });
 
-QUnit.test('series.data[].collapsed', assert => {
+QUnit.test('series.data[].collapsed', (assert) => {
     const { fireEvent } = Highcharts;
     const chart = Highcharts.chart('container', {
         yAxis: [

@@ -383,7 +383,7 @@ QUnit.test('Sankey column option', function (assert) {
     );
 });
 
-QUnit.test('Sankey and unordered data', assert => {
+QUnit.test('Sankey and unordered data', (assert) => {
     const chart = Highcharts.chart('container', {
         title: {
             text: 'Unordered Sankey'
@@ -522,16 +522,14 @@ QUnit.test('Sankey and circular data', function (assert) {
     const numberOfCurves = chart.series[0].points[3].graphic
         .attr('d')
         .split(' ')
-        .filter(item => item === 'C').length;
+        .filter((item) => item === 'C').length;
     assert.ok(
         numberOfCurves > 4,
         'The link should have a complex, circular structure, ' +
             'not direct (#12882)'
     );
 
-    chart.series[0].setData([
-        ['a', 'a', 1]
-    ]);
+    chart.series[0].setData([['a', 'a', 1]]);
     chart.series[0].redraw();
 
     const shapeArgs = chart.series[0].nodes[0].shapeArgs;
@@ -565,7 +563,7 @@ QUnit.test('Sankey and minimum line width', function (assert) {
     );
 });
 
-QUnit.test('Sankey and node.level option', assert => {
+QUnit.test('Sankey and node.level option', (assert) => {
     const chart = Highcharts.chart('container', {
         title: {
             text: 'Highcharts Sankey Diagram'
@@ -607,7 +605,7 @@ QUnit.test('Sankey and node.level option', assert => {
     });
 
     assert.deepEqual(
-        chart.series[0].nodes.map(n => n.name),
+        chart.series[0].nodes.map((n) => n.name),
         [
             'Primary Oil',
             'Coal',
@@ -622,7 +620,7 @@ QUnit.test('Sankey and node.level option', assert => {
     chart.setSize(undefined, 401);
 
     assert.deepEqual(
-        chart.series[0].nodes.map(n => n.name),
+        chart.series[0].nodes.map((n) => n.name),
         [
             'Primary Oil',
             'Coal',
@@ -785,7 +783,7 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
     );
 });
 
-QUnit.test('#14584: Sankey overlapping datalabels', assert => {
+QUnit.test('#14584: Sankey overlapping datalabels', (assert) => {
     const chart = Highcharts.chart('container', {
         plotOptions: {
             sankey: {
@@ -862,7 +860,7 @@ QUnit.test('#14584: Sankey overlapping datalabels', assert => {
     });
 
     assert.ok(
-        chart.series[0].points.some(p => p.dataLabel.attr('opacity') === 0),
+        chart.series[0].points.some((p) => p.dataLabel.attr('opacity') === 0),
         'Some of the point datalabels should be hidden'
     );
 });

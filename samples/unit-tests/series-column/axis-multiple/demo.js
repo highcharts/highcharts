@@ -47,8 +47,8 @@ QUnit.test('Wrong datalabel position (#3648)', function (assert) {
     });
     var pointsFirstSeries = chart.series[0].points,
         pointsSecondSeries = chart.series[1].points,
-        heightOfFirstSeries = chart.container.childNodes[0].childNodes[4]
-            .getBBox().height,
+        heightOfFirstSeries =
+            chart.container.childNodes[0].childNodes[4].getBBox().height,
         xPosForDataLabels = [],
         columnHeights = [];
 

@@ -7,18 +7,8 @@ QUnit.test('Legend object set to false (#5215)', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ],
                 type: 'column'
             }
@@ -146,8 +136,8 @@ QUnit.test(
                     }
                 ]
             }),
-            itemOriginalYPos = +chart.legend.allItems[0].legendItem.element
-                .attributes.y.value;
+            itemOriginalYPos =
+                +chart.legend.allItems[0].legendItem.element.attributes.y.value;
 
         chart.update({
             legend: {

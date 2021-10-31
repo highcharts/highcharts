@@ -8,7 +8,7 @@ Object.keys(Highcharts.seriesTypes).forEach(function (type) {
         QUnit.test(
             `No errors in the console during initialization with no data for
             ${type} series.`,
-            assert => {
+            (assert) => {
                 const chart = Highcharts.chart('container', {
                     chart: {
                         type: type
@@ -42,8 +42,8 @@ Object.keys(Highcharts.seriesTypes).forEach(function (type) {
     }
 });
 
-QUnit.test('#13277: Event listener memory leak', assert => {
-    Object.keys(Highcharts.seriesTypes).forEach(type => {
+QUnit.test('#13277: Event listener memory leak', (assert) => {
+    Object.keys(Highcharts.seriesTypes).forEach((type) => {
         if (
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
             type !== 'scatter3d' &&
@@ -61,7 +61,7 @@ QUnit.test('#13277: Event listener memory leak', assert => {
                 ]
             });
 
-            const eventCount = el => {
+            const eventCount = (el) => {
                 let count = 0;
                 //eslint-disable-next-line
                 for (const t in el.hcEvents) {

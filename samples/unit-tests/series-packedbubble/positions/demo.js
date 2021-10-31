@@ -104,7 +104,6 @@ QUnit.test('Bubble positions', function (assert) {
 });
 
 QUnit.test('PackedBubble layout simulation', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',
@@ -122,13 +121,18 @@ QUnit.test('PackedBubble layout simulation', function (assert) {
                 }
             }
         },
-        series: [{
-            data: [{
-                value: 7
-            }, {
-                value: 7
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        value: 7
+                    },
+                    {
+                        value: 7
+                    }
+                ]
+            }
+        ]
     });
 
     var temp = chart.series[0].data[0].temperature;
@@ -158,12 +162,14 @@ QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
                 }
             }
         },
-        series: [{
-            value: 1
-
-        }, {
-            value: 2
-        }]
+        series: [
+            {
+                value: 1
+            },
+            {
+                value: 2
+            }
+        ]
     });
 
     const bubbleOne = chart.series[0].parentNode,
@@ -172,10 +178,10 @@ QUnit.test('PackedBubble hover and dehover (#12537)', function (assert) {
     bubbleOne.onMouseOver();
     bubbleTwo.onMouseOver();
 
-    const lineWidth = bubbleOne.graphic["stroke-width"];
+    const lineWidth = bubbleOne.graphic['stroke-width'];
     assert.strictEqual(
         lineWidth,
         10,
-        "Linewidth should go back to 10 after de-hovering."
+        'Linewidth should go back to 10 after de-hovering.'
     );
 });

@@ -95,9 +95,5 @@ QUnit.test('zAxis update through chart.update() (#6566)', function (assert) {
         '#14793: isZAxis should still be true after update'
     );
 
-    assert.strictEqual(
-        updates,
-        1,
-        'zAxis should only have updated once'
-    );
+    assert.strictEqual(updates, 1, 'zAxis should only have updated once');
 });

@@ -59,4 +59,4 @@
 
         assert.ok(isOneToOne(out), 'Results are one to one');
     });
-}());
+})();

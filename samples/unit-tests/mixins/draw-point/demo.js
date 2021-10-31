@@ -1,4 +1,4 @@
-QUnit.test('drawPoint', assert => {
+QUnit.test('drawPoint', (assert) => {
     const { Renderer } = Highcharts;
     const { pointClass } = Highcharts.seriesTypes.treemap.prototype;
     const { draw } = pointClass.prototype;

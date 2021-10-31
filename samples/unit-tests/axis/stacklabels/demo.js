@@ -74,10 +74,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             },
             {
                 data: [
-                    144.0123464,
-                    -176.0123464,
-                    135.6123464,
-                    148.5123464
+                    144.0123464, -176.0123464, 135.6123464, 148.5123464
                 ].reverse()
             }
         ]
@@ -283,34 +280,14 @@ QUnit.test(
             series: [
                 {
                     data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4
                     ]
                 },
                 {
                     data: [
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4,
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2
+                        144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
+                        29.9, 71.5, 106.4, 129.2
                     ]
                 }
             ]
@@ -556,26 +533,14 @@ QUnit.test(
                     series: [
                         {
                             data: [
-                                43934,
-                                52503,
-                                57177,
-                                69658,
-                                97031,
-                                119931,
-                                137133,
-                                154175
+                                43934, 52503, 57177, 69658, 97031, 119931,
+                                137133, 154175
                             ]
                         },
                         {
                             data: [
-                                43934,
-                                52503,
-                                57177,
-                                69658,
-                                97031,
-                                119931,
-                                137133,
-                                154175
+                                43934, 52503, 57177, 69658, 97031, 119931,
+                                137133, 154175
                             ].reverse()
                         }
                     ]
@@ -626,42 +591,48 @@ QUnit.test(
     }
 );
 
-QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', assert => {
-    [
-        'column',
-        'bar'
-    ].forEach(type => {
-        const chart = Highcharts.chart('container', {
-            chart: {
-                type
-            },
-            yAxis: {
-                stackLabels: {
-                    enabled: true
-                }
-            },
-            plotOptions: {
-                [type]: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        inside: false
+QUnit.test(
+    '#8742: Some stackLabels did not render with dataLabels enabled',
+    (assert) => {
+        ['column', 'bar'].forEach((type) => {
+            const chart = Highcharts.chart('container', {
+                chart: {
+                    type
+                },
+                yAxis: {
+                    stackLabels: {
+                        enabled: true
                     }
-                }
-            },
-            series: [{
-                data: [0, 99, 454, 297, 409]
-            }, {
-                data: [51, 150, 155, 106, 97]
-            }, {
-                data: [19, 107, 184, 138, 150]
-            }]
-        });
+                },
+                plotOptions: {
+                    [type]: {
+                        stacking: 'normal',
+                        dataLabels: {
+                            enabled: true,
+                            inside: false
+                        }
+                    }
+                },
+                series: [
+                    {
+                        data: [0, 99, 454, 297, 409]
+                    },
+                    {
+                        data: [51, 150, 155, 106, 97]
+                    },
+                    {
+                        data: [19, 107, 184, 138, 150]
+                    }
+                ]
+            });
 
-        const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
-        assert.ok(
-            Object.values(stack).every(item => item.label.visibility !== 'hidden'),
-            `${type}: All stackLabels should be visible`
-        );
-    });
-});
+            const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
+            assert.ok(
+                Object.values(stack).every(
+                    (item) => item.label.visibility !== 'hidden'
+                ),
+                `${type}: All stackLabels should be visible`
+            );
+        });
+    }
+);

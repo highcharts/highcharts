@@ -4,18 +4,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             {
                 id: 'main',
                 data: [
-                    22.27,
-                    22.19,
-                    22.08,
-                    22.17,
-                    22.18,
-                    22.13,
-                    22.23,
-                    22.43,
-                    22.24,
-                    22.29,
-                    22.15,
-                    22.39
+                    22.27, 22.19, 22.08, 22.17, 22.18, 22.13, 22.23, 22.43,
+                    22.24, 22.29, 22.15, 22.39
                 ]
             },
             {
@@ -43,19 +33,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     chart.series[0].setData([
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        22.15,
-        22.39,
-        22.38
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22.15, 22.39, 22.38
     ]);
 
     assert.deepEqual(

@@ -5,8 +5,7 @@ QUnit.module('XSS', function () {
         let y = 0;
         let text;
 
-        QUnit.test(`useHTML = ${useHTML}`, assert => {
-
+        QUnit.test(`useHTML = ${useHTML}`, (assert) => {
             const ren = new Highcharts.Renderer(
                 document.getElementById('container'),
                 600,
@@ -19,26 +18,26 @@ QUnit.module('XSS', function () {
                 assert.ok(false, 'Alert should not be called');
             };
 
-            ren
-                .text(
-                    'This is a link to <a href="https://www.highcharts.com">highcharts.com</a>',
-                    x,
-                    y += lineHeight,
-                    useHTML
-                )
-                .add();
+            ren.text(
+                'This is a link to <a href="https://www.highcharts.com">highcharts.com</a>',
+                x,
+                (y += lineHeight),
+                useHTML
+            ).add();
             assert.strictEqual(
-                document.getElementById('container').innerHTML.indexOf('onclick'),
+                document
+                    .getElementById('container')
+                    .innerHTML.indexOf('onclick'),
                 -1,
                 'There should be no translation of anchors to onclick like historically'
             );
 
-
             text = ren
                 .text(
+                    // eslint-disable-next-line no-script-url
                     `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`,
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -48,18 +47,17 @@ QUnit.module('XSS', function () {
                 'No funny business should be allowed in the node'
             );
 
-
             // JavaScript directive
             text = ren
                 .text(
                     'This is a link to <a href="javascript:alert(\'XSS\')">an simple JS directive</a>, <br>' +
-                    'an image <IMG SRC="javascript:alert(\'XSS\');">, <br>' +
-                    'an unquoted image <IMG SRC=javascript:alert(\'XSS\')>, <br>' +
-                    'a case insensitive attack vector <IMG SRC=JaVaScRiPt:alert(\'XSS\')>, <br>' +
-                    'HTML entities <IMG SRC=javascript:alert(&quot;XSS&quot;)>, <br>' +
-                    'grave accent obfuscation <IMG SRC=`javascript:alert("RSnake says, \'XSS\'")`>',
+                        'an image <IMG SRC="javascript:alert(\'XSS\');">, <br>' +
+                        "an unquoted image <IMG SRC=javascript:alert('XSS')>, <br>" +
+                        "a case insensitive attack vector <IMG SRC=JaVaScRiPt:alert('XSS')>, <br>" +
+                        'HTML entities <IMG SRC=javascript:alert(&quot;XSS&quot;)>, <br>' +
+                        'grave accent obfuscation <IMG SRC=`javascript:alert("RSnake says, \'XSS\'")`>',
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -77,19 +75,19 @@ QUnit.module('XSS', function () {
             text = ren
                 .text(
                     [
-                        '\<a onmouseover="alert(document.cookie)"\>xxs link\</a\>',
-                        '\<a onmouseover=alert(document.cookie)\>xxs link\</a\>',
-                        '<IMG """><SCRIPT>alert("XSS")<\/SCRIPT>"\>',
+                        '<a onmouseover="alert(document.cookie)">xxs link</a>',
+                        '<a onmouseover=alert(document.cookie)>xxs link</a>',
+                        '<IMG """><SCRIPT>alert("XSS")</SCRIPT>">',
                         '<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>',
                         '<IMG SRC=# onmouseover="alert(\'xxs\')">',
                         '<IMG SRC= onmouseover="alert(\'xxs\')">',
                         '<IMG onmouseover="alert(\'xxs\')">',
                         '<IMG SRC=/ onerror="alert(String.fromCharCode(88,83,83))"></img>',
-                        '<<SCRIPT>alert("XSS");//\<<\/SCRIPT>',
+                        '<<SCRIPT>alert("XSS");//<</SCRIPT>',
                         '<SCRIPT SRC=http://xss.rocks/xss.js?< B >'
                     ].join(',<br>'),
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -124,10 +122,9 @@ QUnit.module('XSS', function () {
                         '<IMG SRC="jav&#x0A;ascript:alert(\'XSS\');">',
                         '<IMG SRC="jav&#x0D;ascript:alert(\'XSS\');">',
                         '<IMG SRC=" &#14;  javascript:alert(\'XSS\');">'
-
                     ].join(',<br>'),
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -144,17 +141,16 @@ QUnit.module('XSS', function () {
                 'Character tricks, alerts should be stripped out from JS directives'
             );
 
-
             // Non-alpha-non-digit
             text = ren
                 .text(
                     [
-                        '<SCRIPT/XSS SRC="http://xss.rocks/xss.js"><\/SCRIPT>',
-                        '<BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert("XSS")>',
-                        '<SCRIPT/SRC="http://xss.rocks/xss.js"><\/SCRIPT>'
+                        '<SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>',
+                        '<BODY onload!#$%&()*~+-_.,:;?@[/|]^`=alert("XSS")>',
+                        '<SCRIPT/SRC="http://xss.rocks/xss.js"></SCRIPT>'
                     ].join(',<br>'),
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -171,22 +167,21 @@ QUnit.module('XSS', function () {
                 'Non-alpha, scripts should be stripped out from DOM'
             );
 
-
             // Tag tricks
             text = ren
                 .text(
                     [
-                        '<\/script><script>alert(\'XSS\');<\/script>',
-                        '</TITLE><SCRIPT>alert("XSS");<\/SCRIPT>',
+                        "</script><script>alert('XSS');</script>",
+                        '</TITLE><SCRIPT>alert("XSS");</SCRIPT>',
                         '<INPUT TYPE="IMAGE" SRC="javascript:alert(\'XSS\');">',
                         '<BODY BACKGROUND="javascript:alert(\'XSS\')">',
                         '<IMG DYNSRC="javascript:alert(\'XSS\')">',
                         '<IMG LOWSRC="javascript:alert(\'XSS\')">',
-                        '<svg/onload=alert(\'XSS\')>',
-                        '<BODY ONLOAD=alert(\'XSS\')>'
+                        "<svg/onload=alert('XSS')>",
+                        "<BODY ONLOAD=alert('XSS')>"
                     ].join(',<br>'),
                     x,
-                    y += lineHeight,
+                    (y += lineHeight),
                     useHTML
                 )
                 .add();
@@ -209,16 +204,12 @@ QUnit.module('XSS', function () {
 
             // Reset
             window.alert = realAlert;
-
         });
-
     });
-
 });
 
-QUnit.test('Script injection through AST options', assert => {
+QUnit.test('Script injection through AST options', (assert) => {
     const chart = Highcharts.chart('container', {
-
         chart: {
             styledMode: true
         },
@@ -227,7 +218,7 @@ QUnit.test('Script injection through AST options', assert => {
             xss: {
                 tagName: 'script',
                 href: 'https://code.example.com',
-                onerror: 'javascript:console.log(\'XSS\')' // eslint-disable-line
+                onerror: "javascript:console.log('XSS')" // eslint-disable-line
             }
         }
     });

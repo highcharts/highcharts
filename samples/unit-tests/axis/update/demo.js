@@ -129,20 +129,23 @@ QUnit.test('General yAxis updates', function (assert) {
         'Last index should be less than yAxis array length (#8075) - part II'
     );
 
-    chart.update({
-        series: [{
-            yAxis: 0
-        }, {
-            yAxis: 1
-        }],
-        yAxis: [{}, {}]
-    }, true, true);
-
-    assert.strictEqual(
-        chart.yAxis.length,
-        3,
-        '#9671: There should be 3 axes'
+    chart.update(
+        {
+            series: [
+                {
+                    yAxis: 0
+                },
+                {
+                    yAxis: 1
+                }
+            ],
+            yAxis: [{}, {}]
+        },
+        true,
+        true
     );
+
+    assert.strictEqual(chart.yAxis.length, 3, '#9671: There should be 3 axes');
     assert.strictEqual(
         chart.series[1].yAxis,
         chart.yAxis[2],

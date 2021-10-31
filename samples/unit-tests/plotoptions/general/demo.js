@@ -1,4 +1,4 @@
-QUnit.test('Plot options and series options priority (#3881)', assert => {
+QUnit.test('Plot options and series options priority (#3881)', (assert) => {
     const options = {
         series: [
             {
@@ -48,7 +48,7 @@ QUnit.test('Plot options and series options priority (#3881)', assert => {
     );
 });
 
-QUnit.test('Random properties in plot options', assert => {
+QUnit.test('Random properties in plot options', (assert) => {
     Highcharts.chart('container', {
         plotOptions: {
             randomProperty: true,
@@ -61,7 +61,7 @@ QUnit.test('Random properties in plot options', assert => {
     assert.ok('No error should occur on the above', true);
 });
 
-QUnit.test('Updates', assert => {
+QUnit.test('Updates', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -119,7 +119,7 @@ QUnit.test('Updates', assert => {
     );
 });
 
-QUnit.test('hasOptionChanged() method', assert => {
+QUnit.test('hasOptionChanged() method', (assert) => {
     let chart;
 
     chart = Highcharts.chart('container', {

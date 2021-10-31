@@ -1,4 +1,4 @@
-QUnit.test('Series.opacity general tests', assert => {
+QUnit.test('Series.opacity general tests', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {

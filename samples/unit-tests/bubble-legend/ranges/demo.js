@@ -160,8 +160,8 @@ QUnit.test('Bubble legend ranges sizes', function (assert) {
         colorIndex: 2
     });
 
-    var bubbleLegendClass = chart.legend.bubbleLegend.symbols.bubbleItems[0]
-        .element.classList[0];
+    var bubbleLegendClass =
+        chart.legend.bubbleLegend.symbols.bubbleItems[0].element.classList[0];
 
     assert.strictEqual(
         bubbleLegendClass,

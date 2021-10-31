@@ -38,13 +38,9 @@ QUnit.test('Axis events', function (assert) {
             }
         ]
     });
-    Highcharts.addEvent(
-        chart.xAxis[0],
-        'afterSetExtremes',
-        function () {
-            calls.afterSetExtremesInstance++;
-        }
-    );
+    Highcharts.addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
+        calls.afterSetExtremesInstance++;
+    });
 
     // Events got lost after Axis.update (#5773)
     assert.deepEqual(
@@ -70,7 +66,6 @@ QUnit.test('Axis events', function (assert) {
         [2, 2],
         'Each event should be fired again on set extremes after update'
     );
-
 
     // Events should be replaced when doing Axis.update (#6943)
     chart.xAxis[0].update({

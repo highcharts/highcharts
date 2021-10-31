@@ -63,16 +63,15 @@ QUnit.test('Stocktools GUI', function (assert) {
 
     // Shorthand for selecting a button
     function selectButton(name, text = '') {
-
         let button = document.getElementsByClassName('highcharts-' + name)[0];
 
         if (button.tagName === 'UL' && text !== '') {
-
             button = button.getElementsByTagName('li');
             let found = false,
                 i = -1;
 
-            while (!found && ++i < button.length) { // Find the button with text
+            while (!found && ++i < button.length) {
+                // Find the button with text
                 if (button[i].innerHTML.indexOf(text) !== -1) {
                     found = true;
                     button = button[i];
@@ -82,26 +81,24 @@ QUnit.test('Stocktools GUI', function (assert) {
         } else {
             button.click();
         }
-
     }
 
     selectButton('indicators'); // Click on indicators
     selectButton('indicator-list', 'APO'); // Click on APO.
 
-    const textLabel = chart
-        .navigationBindings
-        .popup.container
-        .childNodes[3]
-        .childNodes[1]
-        .childNodes[0]
-        .childNodes[6]
-        .firstChild
-        .data; // Periods textLabel of APO
+    const textLabel =
+        chart.navigationBindings.popup.container.childNodes[3].childNodes[1]
+            .childNodes[0].childNodes[6].firstChild.data; // Periods textLabel of APO
 
-    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
+    assert.strictEqual(
+        textLabel,
+        'Periods',
+        'APO should have Periods text-label.'
+    );
 });
 
-QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
+QUnit.test(
+    'Disabling and enabling stock tools buttons, when series are invisible, #14192',
     function (assert) {
         var wasInitCalled = false;
 
@@ -114,8 +111,12 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         button.innerHTML = 'dummy button';
         toolsContainer.appendChild(button);
 
-        document.getElementById('container').parentNode
-            .insertBefore(toolsContainer, document.getElementById('container'));
+        document
+            .getElementById('container')
+            .parentNode.insertBefore(
+                toolsContainer,
+                document.getElementById('container')
+            );
 
         var chart = Highcharts.stockChart('container', {
             stockTools: {
@@ -130,11 +131,9 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
                         init: function () {
                             wasInitCalled = true;
 
-                            Highcharts.fireEvent(
-                                this,
-                                'deselectButton',
-                                { button }
-                            );
+                            Highcharts.fireEvent(this, 'deselectButton', {
+                                button
+                            });
                         }
                     }
                 },
@@ -147,7 +146,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         toolsContainer.style['z-index'] = 99999;
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be executed, when there is no series.'
         );
@@ -158,7 +158,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         });
 
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should be executed, after series was added.'
         );
@@ -166,7 +167,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(false);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, when series are invisible.'
         );
@@ -174,7 +176,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].setVisible(true);
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             true,
             'Init function should not be called, when series are visible.'
         );
@@ -182,28 +185,35 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         chart.series[0].remove();
         wasInitCalled = false;
         controller.click(10, 10);
-        assert.equal(wasInitCalled,
+        assert.equal(
+            wasInitCalled,
             false,
             'Init function should not be called, after deleting the series.'
         );
 
-        chart.addSeries({
-            data: [1, 2, 3, 2, 3, 2]
-        }, false);
+        chart.addSeries(
+            {
+                data: [1, 2, 3, 2, 3, 2]
+            },
+            false
+        );
 
-        chart.update({
-            navigation: {
-                bindings: {
-                    dummyButton: {
-                        className: 'dummy-button',
-                        noDataState: 'normal',
-                        init: function () {
-                            wasInitCalled = true;
+        chart.update(
+            {
+                navigation: {
+                    bindings: {
+                        dummyButton: {
+                            className: 'dummy-button',
+                            noDataState: 'normal',
+                            init: function () {
+                                wasInitCalled = true;
+                            }
                         }
                     }
                 }
-            }
-        }, false);
+            },
+            false
+        );
 
         chart.series[0].setVisible(false, false);
         chart.redraw();
@@ -217,4 +227,5 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
 
         button.remove();
         toolsContainer.remove();
-    });
+    }
+);

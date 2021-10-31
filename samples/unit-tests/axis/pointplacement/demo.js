@@ -1,4 +1,4 @@
-QUnit.test('Axis pointPlacement', assert => {
+QUnit.test('Axis pointPlacement', (assert) => {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 600,
@@ -32,7 +32,11 @@ QUnit.test('Axis pointPlacement', assert => {
     const axis = chart.xAxis[0];
     const controller = new TestController(chart);
 
-    assert.strictEqual(axis.toPixels(1541688900000, true), 0, 'No padded ticks');
+    assert.strictEqual(
+        axis.toPixels(1541688900000, true),
+        0,
+        'No padded ticks'
+    );
 
     assert.strictEqual(
         axis.toPixels(1542038400000, true),
@@ -68,13 +72,11 @@ QUnit.test('Axis pointPlacement', assert => {
 
     var isInsidePlot = true;
 
-    chart.series[0].points.forEach(p => {
+    chart.series[0].points.forEach((p) => {
         if (isInsidePlot) {
-            isInsidePlot = chart.isInsidePlot(
-                p.plotX,
-                p.plotY,
-                { inverted: true }
-            );
+            isInsidePlot = chart.isInsidePlot(p.plotX, p.plotY, {
+                inverted: true
+            });
         }
     });
 
@@ -84,7 +86,7 @@ QUnit.test('Axis pointPlacement', assert => {
     );
 });
 
-QUnit.test('#14637: Line series pointPlacement="between"', assert => {
+QUnit.test('#14637: Line series pointPlacement="between"', (assert) => {
     const chart = Highcharts.chart('container', {
         plotOptions: {
             series: {

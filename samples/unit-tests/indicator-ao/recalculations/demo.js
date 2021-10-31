@@ -83,12 +83,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     );
 
     mainSeries.addPoint([
-        1542378600000,
-        190.5,
-        194.97,
-        189.46,
-        193.53,
-        36928300
+        1542378600000, 190.5, 194.97, 189.46, 193.53, 36928300
     ]);
 
     assert.strictEqual(
@@ -148,18 +143,8 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     assert.deepEqual(
         toFastAOWithRound(awesomeSeries.yData),
         [
-            268.5088,
-            285.2115,
-            266.6546,
-            249.4397,
-            240.6838,
-            223.2821,
-            199.1612,
-            175.0496,
-            147.0401,
-            89.3869,
-            45.8001,
-            11.3172
+            268.5088, 285.2115, 266.6546, 249.4397, 240.6838, 223.2821,
+            199.1612, 175.0496, 147.0401, 89.3869, 45.8001, 11.3172
         ],
         'Correct values'
     );
@@ -233,17 +218,8 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
     assert.deepEqual(
         toFastAOWithRound(awesomeSeries.yData),
         [
-            268.5088,
-            285.2115,
-            266.6546,
-            249.4397,
-            240.6838,
-            223.2821,
-            199.1612,
-            175.0496,
-            147.0401,
-            89.3869,
-            45.8001
+            268.5088, 285.2115, 266.6546, 249.4397, 240.6838, 223.2821,
+            199.1612, 175.0496, 147.0401, 89.3869, 45.8001
         ],
         'Correct values after point.remove()'
     );

@@ -65,7 +65,8 @@ QUnit.test('Whitespace trimming', function (assert) {
         'Initial break should be left out'
     );
 
-    label = ren.label('<span> </span><br>Hello World', 100, 50)
+    label = ren
+        .label('<span> </span><br>Hello World', 100, 50)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -136,7 +137,6 @@ QUnit.test('Whitespace trimming', function (assert) {
         html,
         '#15235: Nested whitespace between spans should not be removed'
     );
-
 });
 
 QUnit.test('Image labels should have no fill (#4324)', function (assert) {
@@ -215,9 +215,9 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
     );
 
     var url =
-        location.host.substr(0, 12) === 'localhost:98' ?
-            'url(base/test/testimage.png)' : // karma
-            'url(testimage.png)'; // utils
+        location.host.substr(0, 12) === 'localhost:98'
+            ? 'url(base/test/testimage.png)' // karma
+            : 'url(testimage.png)'; // utils
 
     var label = renderer
         .label('Max observation', 270, 50, url, 100, 100)
@@ -464,7 +464,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
     );
 });
 
-QUnit.test('Labels with useHTML', assert => {
+QUnit.test('Labels with useHTML', (assert) => {
     document.getElementById('container').innerHTML = '';
     document.getElementById('container').style.position = 'relative';
     const ren = new Highcharts.Renderer(
@@ -508,7 +508,8 @@ QUnit.test('Labels with useHTML', assert => {
         'The span width should adapt to shorter text (#10009)'
     );
 
-    const g = ren.g('parent')
+    const g = ren
+        .g('parent')
         .attr({
             visibility: 'hidden'
         })
@@ -556,7 +557,7 @@ QUnit.test('Change of label alignment after add (#4652)', function (assert) {
     );
 });
 
-QUnit.test('Labels and styled mode', assert => {
+QUnit.test('Labels and styled mode', (assert) => {
     var renderer;
 
     renderer = new Highcharts.Renderer(
@@ -584,16 +585,14 @@ QUnit.test('Labels and styled mode', assert => {
     );
 });
 
-QUnit.test('Label padding', assert => {
+QUnit.test('Label padding', (assert) => {
     const ren = new Highcharts.Renderer(
         document.getElementById('container'),
         600,
         400
     );
 
-    const label = ren.label('Hello', 10, 30)
-        .attr({ padding: 5 })
-        .add();
+    const label = ren.label('Hello', 10, 30).attr({ padding: 5 }).add();
 
     let width = label.getBBox().width;
     label.attr({ padding: 0 });
@@ -606,52 +605,54 @@ QUnit.test('Label padding', assert => {
 
     width = label.getBBox().width;
 
-    [
-        [10],
-        [0, 10, 10],
-        [10, 10, 10]
-    ].forEach(([padding, paddingLeft, paddingRight]) => {
-        const label = ren.label('Hello', 10, 60)
-            .attr({ padding, paddingLeft, paddingRight })
-            .add();
+    [[10], [0, 10, 10], [10, 10, 10]].forEach(
+        ([padding, paddingLeft, paddingRight]) => {
+            const label = ren
+                .label('Hello', 10, 60)
+                .attr({ padding, paddingLeft, paddingRight })
+                .add();
 
-        assert.strictEqual(
-            label.getBBox().width,
-            width + 20,
-            'Padding should increase width by 20'
-        );
-    });
-});
-
-QUnit.test('#14858: Callout missing line when anchorX within width and no room for chevron', assert => {
-    const ren = new Highcharts.Renderer(
-        document.getElementById('container'),
-        600,
-        400
+            assert.strictEqual(
+                label.getBBox().width,
+                width + 20,
+                'Padding should increase width by 20'
+            );
+        }
     );
-
-    [
-        [1, 'left', 100],
-        [1, 'right', 100],
-        [1, 'left', 20],
-        [1, 'right', 20],
-        [2, 'left', 100],
-        [2, 'right', 100],
-        [2, 'left', 20],
-        [2, 'right', 20]
-    ].forEach(([strokeWidth, align, anchorY]) => {
-        const label = ren
-            .label('Some text', 100, 50, 'callout', 100, anchorY)
-            .attr({
-                align,
-                'stroke-width': strokeWidth,
-                stroke: 'black'
-            })
-            .add();
-
-        assert.ok(
-            label.box.pathArray.length > 9,
-            'Anchor line should have rendered'
-        );
-    });
 });
+
+QUnit.test(
+    '#14858: Callout missing line when anchorX within width and no room for chevron',
+    (assert) => {
+        const ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            600,
+            400
+        );
+
+        [
+            [1, 'left', 100],
+            [1, 'right', 100],
+            [1, 'left', 20],
+            [1, 'right', 20],
+            [2, 'left', 100],
+            [2, 'right', 100],
+            [2, 'left', 20],
+            [2, 'right', 20]
+        ].forEach(([strokeWidth, align, anchorY]) => {
+            const label = ren
+                .label('Some text', 100, 50, 'callout', 100, anchorY)
+                .attr({
+                    align,
+                    'stroke-width': strokeWidth,
+                    stroke: 'black'
+                })
+                .add();
+
+            assert.ok(
+                label.box.pathArray.length > 9,
+                'Anchor line should have rendered'
+            );
+        });
+    }
+);

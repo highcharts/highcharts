@@ -163,64 +163,72 @@ QUnit.test('variwide null points', function (assert) {
     );
 });
 
-QUnit.test('#8635: Variwide zoom', assert => {
+QUnit.test('#8635: Variwide zoom', (assert) => {
     [
         {},
         {
             xAxis: {
                 reversed: true
             }
-        }/*,
+        } /*,
         {
             chart: {
                 inverted: true
             }
         }*/
-    ].forEach(config => {
-        const chart = Highcharts.chart('container', Highcharts.merge({
-            chart: {
-                type: 'variwide',
-                zoomType: 'x'
-            },
-            xAxis: {
-                type: 'category'
-            },
-            series: [{
-                data: [
-                    ['Norway', 50.2, 335504],
-                    ['Denmark', 42, 277339],
-                    ['Belgium', 39.2, 421611],
-                    ['Sweden', 38, 462057],
-                    ['France', 35.6, 2228857],
-                    ['Netherlands', 34.3, 702641],
-                    ['Finland', 33.2, 215615],
-                    ['Germany', 33.0, 3144050],
-                    ['Austria', 32.7, 349344],
-                    ['Ireland', 30.4, 275567],
-                    ['Italy', 27.8, 1672438],
-                    ['United Kingdom', 26.7, 2366911],
-                    ['Spain', 21.3, 1113851],
-                    ['Greece', 14.2, 175887],
-                    ['Portugal', 13.7, 184933],
-                    ['Czech Republic', 10.2, 176564],
-                    ['Poland', 8.6, 424269],
-                    ['Romania', 5.5, 169578]
-                ]
-            }]
-        }, config));
+    ].forEach((config) => {
+        const chart = Highcharts.chart(
+            'container',
+            Highcharts.merge(
+                {
+                    chart: {
+                        type: 'variwide',
+                        zoomType: 'x'
+                    },
+                    xAxis: {
+                        type: 'category'
+                    },
+                    series: [
+                        {
+                            data: [
+                                ['Norway', 50.2, 335504],
+                                ['Denmark', 42, 277339],
+                                ['Belgium', 39.2, 421611],
+                                ['Sweden', 38, 462057],
+                                ['France', 35.6, 2228857],
+                                ['Netherlands', 34.3, 702641],
+                                ['Finland', 33.2, 215615],
+                                ['Germany', 33.0, 3144050],
+                                ['Austria', 32.7, 349344],
+                                ['Ireland', 30.4, 275567],
+                                ['Italy', 27.8, 1672438],
+                                ['United Kingdom', 26.7, 2366911],
+                                ['Spain', 21.3, 1113851],
+                                ['Greece', 14.2, 175887],
+                                ['Portugal', 13.7, 184933],
+                                ['Czech Republic', 10.2, 176564],
+                                ['Poland', 8.6, 424269],
+                                ['Romania', 5.5, 169578]
+                            ]
+                        }
+                    ]
+                },
+                config
+            )
+        );
 
         const center = chart.plotLeft + chart.plotWidth / 2;
         const controller = new TestController(chart);
         controller.pan([center - 25, 150], [center + 25, 150]);
 
-        const points = chart.xAxis[0].reversed ?
-            chart.series[0].points.slice().reverse() :
-            chart.series[0].points;
+        const points = chart.xAxis[0].reversed
+            ? chart.series[0].points.slice().reverse()
+            : chart.series[0].points;
 
         let prevRight = -Infinity;
 
         assert.ok(
-            points.every(point => {
+            points.every((point) => {
                 const ret = prevRight <= point.shapeArgs.x;
                 prevRight = point.shapeArgs.x + point.shapeArgs.width;
                 return ret;

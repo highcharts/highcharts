@@ -1,4 +1,4 @@
-QUnit.test('Test Slow Stochastic calculations on data updates.', assert => {
+QUnit.test('Test Slow Stochastic calculations on data updates.', (assert) => {
     const chart = Highcharts.stockChart('container', {
             yAxis: [
                 {

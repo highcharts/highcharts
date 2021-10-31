@@ -153,7 +153,7 @@ QUnit.test('Legend.title renders after update', function (assert) {
             called = true;
             return fn.apply(this, arguments);
         };
-    }(chart.legend.title.destroy));
+    })(chart.legend.title.destroy);
 
     chart.legend.update(config.legend);
 

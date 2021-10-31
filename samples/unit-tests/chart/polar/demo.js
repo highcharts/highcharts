@@ -13,10 +13,7 @@ QUnit.test('Polar chart data', function (assert) {
         ]
     });
 
-    assert.ok(
-        true,
-        '#5226: Polar chart with no data should not throw'
-    );
+    assert.ok(true, '#5226: Polar chart with no data should not throw');
 
     chart.series[0].update({
         data: [null]
@@ -42,8 +39,8 @@ QUnit.test('Polar chart data', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].graphPath.every(
-            p => p.slice(1).every(Highcharts.isNumber)
+        chart.series[0].graphPath.every((p) =>
+            p.slice(1).every(Highcharts.isNumber)
         ),
         '#15489: Graph path should not contain any NaN values'
     );
@@ -196,7 +193,7 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
     }
 });
 
-QUnit.test('Polar with overlapping axis labels', assert => {
+QUnit.test('Polar with overlapping axis labels', (assert) => {
     const data = [];
 
     for (let i = 0; i < 100; i++) {
@@ -227,7 +224,7 @@ QUnit.test('Polar with overlapping axis labels', assert => {
 
     assert.ok(
         chart.xAxis[0].tickPositions.some(
-            pos =>
+            (pos) =>
                 chart.xAxis[0].ticks[pos].label.element.getAttribute(
                     'opacity'
                 ) === '0'
@@ -243,7 +240,7 @@ QUnit.test('Polar with overlapping axis labels', assert => {
 
     assert.notOk(
         chart.xAxis[0].tickPositions.some(
-            pos =>
+            (pos) =>
                 chart.xAxis[0].ticks[pos].label.element.getAttribute(
                     'opacity'
                 ) === '0'
@@ -252,7 +249,7 @@ QUnit.test('Polar with overlapping axis labels', assert => {
     );
 });
 
-QUnit.test('Data validation', assert => {
+QUnit.test('Data validation', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             polar: true
@@ -271,27 +268,27 @@ QUnit.test('Data validation', assert => {
 
     // #10082
     assert.deepEqual(
-        chart.series[0].points.map(p => p.isNull),
+        chart.series[0].points.map((p) => p.isNull),
         [false, false, false, false, true],
         'Values below Y axis mininum should be treated as null'
     );
 
     chart.series[0].points[4].update(25);
     assert.deepEqual(
-        chart.series[0].points.map(p => p.isNull),
+        chart.series[0].points.map((p) => p.isNull),
         [false, false, false, false, false],
         '... and it should respond to update'
     );
 
     chart.series[0].points[2].update(-25);
     assert.deepEqual(
-        chart.series[0].points.map(p => p.isNull),
+        chart.series[0].points.map((p) => p.isNull),
         [false, false, true, false, false],
         '... both ways'
     );
 });
 
-QUnit.test('Polar and pie in panes (#11897)', assert => {
+QUnit.test('Polar and pie in panes (#11897)', (assert) => {
     Highcharts.chart('container', {
         chart: {
             polar: true
@@ -315,7 +312,7 @@ QUnit.test('Polar and pie in panes (#11897)', assert => {
     assert.ok(true, 'No errors (#11897).');
 });
 
-QUnit.test('Polar and clipping', assert => {
+QUnit.test('Polar and clipping', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             polar: true

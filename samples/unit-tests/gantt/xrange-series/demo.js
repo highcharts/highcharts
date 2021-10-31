@@ -281,4 +281,4 @@
             'The tooltip header should container formatted date (#9301)'
         );
     });
-}());
+})();

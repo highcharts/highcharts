@@ -9,18 +9,8 @@ QUnit.test(
                 series: [
                     {
                         data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
+                            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                            148.5, 216.4, 194.1, 95.6, 54.4
                         ]
                     }
                 ]
@@ -139,7 +129,7 @@ QUnit.test('General Navigator tests', function (assert) {
         '#15803: navigator.left should be correct after afterSetChartSize'
     );
 
-    const eventCount = el => {
+    const eventCount = (el) => {
         let count = 0;
         //eslint-disable-next-line
         for (const t in el.hcEvents) {
@@ -660,7 +650,7 @@ QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
                         data.push([x++, x % 10]);
                     }
                     return data;
-                }())
+                })()
             }
         ],
 
@@ -1111,9 +1101,8 @@ QUnit.test('Navigator with adding series on chart load.', function (assert) {
             events: {
                 load: function (event) {
                     this.navigator.onMouseUp(event);
-                    const xStr = this.navigator.shades[1].element.getAttribute(
-                        'x'
-                    );
+                    const xStr =
+                        this.navigator.shades[1].element.getAttribute('x');
                     assert.notEqual(
                         /^[\-0-9\.]+$/.test(xStr) || xStr === null,
                         false,
@@ -1165,13 +1154,17 @@ QUnit.test(
 
 QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        series: [{
-            data: [1, 2, 3],
-            dataLabels: [{
-                enabled: true,
-                format: 'T2'
-            }]
-        }]
+        series: [
+            {
+                data: [1, 2, 3],
+                dataLabels: [
+                    {
+                        enabled: true,
+                        format: 'T2'
+                    }
+                ]
+            }
+        ]
     });
 
     assert.equal(
@@ -1200,9 +1193,11 @@ QUnit.test('Navigator dafault dataLabels enabled, #13847.', function (assert) {
     chart.update({
         navigator: {
             series: {
-                dataLabels: [{
-                    enabled: false
-                }]
+                dataLabels: [
+                    {
+                        enabled: false
+                    }
+                ]
             }
         }
     });
@@ -1222,10 +1217,12 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
             xAxis: {
                 range: 15
             },
-            series: [{
-                // 16 points -> range is 15
-                data: originalData
-            }]
+            series: [
+                {
+                    // 16 points -> range is 15
+                    data: originalData
+                }
+            ]
         });
 
     function addPoints() {
@@ -1290,20 +1287,24 @@ QUnit.test('Scrolling when the range is set, #14742.', function (assert) {
     );
 });
 
-
-QUnit.test('Initiation chart without data but with set range, #15864.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        rangeSelector: {
-            selected: 1
-        },
-        series: [{
-            pointInterval: 36e7
-        }]
-    });
-    assert.notStrictEqual(
-        chart.xAxis[0].max,
-        0,
-        `After adding series to the chart that has set the range,
+QUnit.test(
+    'Initiation chart without data but with set range, #15864.',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 1
+            },
+            series: [
+                {
+                    pointInterval: 36e7
+                }
+            ]
+        });
+        assert.notStrictEqual(
+            chart.xAxis[0].max,
+            0,
+            `After adding series to the chart that has set the range,
         the navigator shouldn't stick to min.`
-    );
-});
+        );
+    }
+);

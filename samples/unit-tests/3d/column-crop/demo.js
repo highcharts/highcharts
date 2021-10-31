@@ -218,10 +218,10 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
     });
 
     var labelWidth = chart.xAxis[0].ticks[0].label.getBBox().width;
-    var yAxisFirstLine = chart.yAxis[0].gridGroup.element.childNodes[0]
-        .getBBox();
-    var xAxisFirstLine = chart.xAxis[0].gridGroup.element.childNodes[0]
-        .getBBox();
+    var yAxisFirstLine =
+        chart.yAxis[0].gridGroup.element.childNodes[0].getBBox();
+    var xAxisFirstLine =
+        chart.xAxis[0].gridGroup.element.childNodes[0].getBBox();
 
     assert.ok(
         labelWidth < xAxisFirstLine.x - yAxisFirstLine.x + 1,

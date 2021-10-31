@@ -199,18 +199,8 @@ QUnit.test('All faces should have class name', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -376,7 +366,7 @@ QUnit.test('3d pie drilldown and drill up', function (assert) {
     TestUtilities.lolexRunAndUninstall(clock);
 });
 
-QUnit.test('3D pie updates', assert => {
+QUnit.test('3D pie updates', (assert) => {
     // Create the chart
     const chart = Highcharts.chart('container', {
             chart: {
@@ -427,7 +417,7 @@ QUnit.test('3D pie updates', assert => {
     );
 });
 
-QUnit.test('#13804: Inactive tab animation threw', assert => {
+QUnit.test('#13804: Inactive tab animation threw', (assert) => {
     const animate = Highcharts.SVGElement.prototype.animate;
     Highcharts.SVGElement.prototype.animate = function (params, options) {
         // Simulate inactive tab
@@ -457,26 +447,30 @@ QUnit.test('#13804: Inactive tab animation threw', assert => {
                 depth: 35
             }
         },
-        series: [{
-            type: 'pie',
-            data: [
-                Math.random() * 20,
-                Math.random() * 20,
-                Math.random() * 20,
-                Math.random() * 20
-            ]
-        }]
+        series: [
+            {
+                type: 'pie',
+                data: [
+                    Math.random() * 20,
+                    Math.random() * 20,
+                    Math.random() * 20,
+                    Math.random() * 20
+                ]
+            }
+        ]
     });
 
     chart.update({
-        series: [{
-            data: [
-                Math.random() * 20,
-                Math.random() * 20,
-                Math.random() * 20,
-                Math.random() * 20
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    Math.random() * 20,
+                    Math.random() * 20,
+                    Math.random() * 20,
+                    Math.random() * 20
+                ]
+            }
+        ]
     });
 
     assert.ok(true, 'It should not throw');

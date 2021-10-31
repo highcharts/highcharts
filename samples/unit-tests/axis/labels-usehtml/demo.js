@@ -99,29 +99,8 @@ QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
         series: [
             {
                 data: [
-                    4,
-                    1,
-                    6.7,
-                    1.2,
-                    1.3,
-                    1.3,
-                    7.6,
-                    1.85,
-                    1.85,
-                    2,
-                    0.5,
-                    1.5,
-                    2,
-                    4.15,
-                    2,
-                    1,
-                    2,
-                    2,
-                    2.5,
-                    2,
-                    0.5,
-                    0.5,
-                    5
+                    4, 1, 6.7, 1.2, 1.3, 1.3, 7.6, 1.85, 1.85, 2, 0.5, 1.5, 2,
+                    4.15, 2, 1, 2, 2, 2.5, 2, 0.5, 0.5, 5
                 ]
             }
         ],
@@ -556,18 +535,8 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ]
@@ -619,7 +588,7 @@ QUnit.test(
                 series: [
                     {
                         pointPlacement: 'on',
-                        data: (numberOfPoints => {
+                        data: ((numberOfPoints) => {
                             var data = [];
                             while (numberOfPoints) {
                                 data.push(100);

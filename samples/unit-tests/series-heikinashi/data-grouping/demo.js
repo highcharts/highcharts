@@ -32,11 +32,7 @@ QUnit.test('Heikinashi with data grouping.', function (assert) {
         points = chart.series[0].points,
         thirdPointOpen = points[2].open;
 
-    assert.strictEqual(
-        points[0].open,
-        2.25,
-        `Points should be grouped.`
-    );
+    assert.strictEqual(points[0].open, 2.25, `Points should be grouped.`);
     chart.xAxis[0].setExtremes(5, undefined);
     assert.strictEqual(
         thirdPointOpen,

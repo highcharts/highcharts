@@ -1,4 +1,4 @@
-QUnit.test('Caption as initial option', assert => {
+QUnit.test('Caption as initial option', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -17,7 +17,7 @@ QUnit.test('Caption as initial option', assert => {
     );
 });
 
-QUnit.test('Caption and chart.update lifecycle', assert => {
+QUnit.test('Caption and chart.update lifecycle', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {

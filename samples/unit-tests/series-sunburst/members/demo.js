@@ -108,9 +108,8 @@ QUnit.test('utils.calculateLevelSizes', function (assert) {
 });
 
 QUnit.test('utils.getLevelFromAndTo', function (assert) {
-    const {
-        getLevelFromAndTo
-    } = Highcharts.seriesTypes.sunburst.prototype.utils;
+    const { getLevelFromAndTo } =
+        Highcharts.seriesTypes.sunburst.prototype.utils;
     assert.deepEqual(
         getLevelFromAndTo({ level: 0, height: 3 }),
         { from: 1, to: 3 },

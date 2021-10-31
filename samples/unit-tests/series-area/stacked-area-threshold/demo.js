@@ -113,4 +113,4 @@
 
         checkY(chart, assert);
     });
-}());
+})();

@@ -1,19 +1,21 @@
-QUnit.test('Datalabel click', assert => {
+QUnit.test('Datalabel click', (assert) => {
     let clicked = false;
 
     const chart = Highcharts.chart('container', {
-        series: [{
-            type: 'line',
-            data: [1, 2, 3],
-            dataLabels: {
-                enabled: true
-            },
-            events: {
-                click: () => {
-                    clicked = true;
+        series: [
+            {
+                type: 'line',
+                data: [1, 2, 3],
+                dataLabels: {
+                    enabled: true
+                },
+                events: {
+                    click: () => {
+                        clicked = true;
+                    }
                 }
             }
-        }]
+        ]
     });
 
     const controller = new TestController(chart);

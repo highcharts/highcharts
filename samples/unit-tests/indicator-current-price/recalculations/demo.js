@@ -14,7 +14,8 @@ QUnit.test('Test current and last price indicator.', function (assert) {
                         enabled: true
                     }
                 }
-            }, {
+            },
+            {
                 data: [0],
                 lastVisiblePrice: {
                     enabled: true,
@@ -89,36 +90,38 @@ QUnit.test(
     }
 );
 
-QUnit.test('The currentPriceIndicator label should be visible, #14879.',
+QUnit.test(
+    'The currentPriceIndicator label should be visible, #14879.',
     function (assert) {
         const chart = Highcharts.stockChart('container', {
             stockTools: {
                 gui: {
                     enabled: true,
-                    buttons: [
-                        "currentPriceIndicator"
-                    ]
+                    buttons: ['currentPriceIndicator']
                 }
             },
-            series: [{
-                compare: 'percent',
-                data: [100, 1, 1, 10, 1],
-                lastPrice: {
-                    enabled: true,
-                    color: 'red'
-                },
-                // label
-                lastVisiblePrice: {
-                    enabled: true,
-                    label: {
-                        enabled: true
+            series: [
+                {
+                    compare: 'percent',
+                    data: [100, 1, 1, 10, 1],
+                    lastPrice: {
+                        enabled: true,
+                        color: 'red'
+                    },
+                    // label
+                    lastVisiblePrice: {
+                        enabled: true,
+                        label: {
+                            enabled: true
+                        }
                     }
                 }
-            }]
+            ]
         });
 
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-crosshair-label').attributes.visibility.value,
+            chart.container.querySelector('.highcharts-crosshair-label')
+                .attributes.visibility.value,
             'visible',
             'Crosshair label should be visible.'
         );

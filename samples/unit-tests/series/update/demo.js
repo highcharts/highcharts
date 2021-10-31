@@ -362,7 +362,7 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
     );
 });
 
-QUnit.test('Series.update and events', assert => {
+QUnit.test('Series.update and events', (assert) => {
     const clicks = {
         option: 0,
         updatedOption: 0,
@@ -592,7 +592,7 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
     s = chart.series[1];
 
     assert.deepEqual(
-        s.points.map(p => typeof p.legendItem),
+        s.points.map((p) => typeof p.legendItem),
         ['object', 'object', 'object'],
         'Pie points should show in legend'
     );
@@ -964,7 +964,7 @@ QUnit.test(
 
 QUnit.test(
     'Series.update with individual markers and data labels (#10649)',
-    assert => {
+    (assert) => {
         const chart = Highcharts.chart('container', {
             accessibility: {
                 enabled: false // A11y forces markers
@@ -1020,13 +1020,13 @@ QUnit.test(
         const series = chart.series[0];
 
         assert.deepEqual(
-            series.points.map(p => typeof p.graphic),
+            series.points.map((p) => typeof p.graphic),
             ['object', 'object', 'undefined', 'undefined'],
             'Initial individual markers'
         );
 
         assert.deepEqual(
-            series.points.map(p => typeof p.dataLabel),
+            series.points.map((p) => typeof p.dataLabel),
             ['object', 'object', 'undefined', 'undefined'],
             'Initial individual data labels'
         );
@@ -1066,13 +1066,13 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            series.points.map(p => typeof p.graphic),
+            series.points.map((p) => typeof p.graphic),
             ['object', 'undefined', 'object', 'undefined'],
             'Updated individual markers'
         );
 
         assert.deepEqual(
-            series.points.map(p => typeof p.dataLabel),
+            series.points.map((p) => typeof p.dataLabel),
             ['object', 'undefined', 'object', 'undefined'],
             'Updated individual data labels'
         );
@@ -1089,7 +1089,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('The eventsToUnbind array instance (#12959, #13937)', assert => {
+QUnit.test('The eventsToUnbind array instance (#12959, #13937)', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {

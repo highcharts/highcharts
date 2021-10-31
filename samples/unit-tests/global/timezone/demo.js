@@ -39,7 +39,7 @@ QUnit.test('timezone', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 dataLabels: {
                     enabled: true,
                     format: '{x:%H:%M}'
@@ -118,7 +118,7 @@ QUnit.test('getTimezoneOffset', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 dataLabels: {
                     enabled: true,
                     format: '{x:%H:%M}'
@@ -361,8 +361,8 @@ QUnit.skip('Midnight ticks should show date (#3359)', function (assert) {
         }
         return tickLabels;
     }
-    var defaultHighchartsOptions = Highcharts.getOptions().global
-        .timezoneOffset;
+    var defaultHighchartsOptions =
+        Highcharts.getOptions().global.timezoneOffset;
     var minus60OffsetXLabels = [
         '16:00',
         '2. Jan',

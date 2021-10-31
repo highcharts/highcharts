@@ -99,9 +99,9 @@ QUnit.test('Treemap opacity on levels (#4700)', function (assert) {
             );
         },
         getOpacity = function (color) {
-            return color.indexOf('rgba') > -1 ?
-                +color.replace('rgba(', '').replace(')', '').split(',')[3] :
-                1;
+            return color.indexOf('rgba') > -1
+                ? +color.replace('rgba(', '').replace(')', '').split(',')[3]
+                : 1;
         },
         userOptions = {
             opacity: 1,

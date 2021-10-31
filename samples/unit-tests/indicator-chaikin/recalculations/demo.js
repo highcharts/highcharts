@@ -153,16 +153,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         toFastChaikinWithRound(chaikinSeries.yData),
         [
-            -14939.5329,
-            -12021.9458,
-            -6051.0882,
-            -3379.5447,
-            -2246.9718,
-            -611.4819,
-            -2604.5232,
-            -5273.5011,
-            -7708.6457,
-            -12962.0449,
+            -14939.5329, -12021.9458, -6051.0882, -3379.5447, -2246.9718,
+            -611.4819, -2604.5232, -5273.5011, -7708.6457, -12962.0449,
             -17604.151
         ],
         'Correct values'
@@ -180,16 +172,8 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         toFastChaikinWithRound(chaikinSeries.yData),
         [
-            -14939.5329,
-            -12021.9458,
-            -6051.0882,
-            -3379.5447,
-            -2246.9718,
-            -611.4819,
-            -2604.5232,
-            -5273.5011,
-            -7708.6457,
-            -12962.0449
+            -14939.5329, -12021.9458, -6051.0882, -3379.5447, -2246.9718,
+            -611.4819, -2604.5232, -5273.5011, -7708.6457, -12962.0449
         ],
         'Correct values after point.remove()'
     );

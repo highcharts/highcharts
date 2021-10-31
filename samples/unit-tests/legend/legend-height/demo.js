@@ -98,4 +98,4 @@
 
         assert.ok(chart.legend.legendHeight > 150, 'Legend is full height');
     });
-}());
+})();

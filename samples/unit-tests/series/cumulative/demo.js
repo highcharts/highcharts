@@ -1,23 +1,24 @@
 QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
     const chart = Highcharts.chart('container', {
-
             plotOptions: {
                 series: {
                     cumulative: true
                 }
             },
 
-            series: [{
-                data: [0]
-            }]
-
+            series: [
+                {
+                    data: [0]
+                }
+            ]
         }),
         dataArr1 = [1, 4, 5, 6],
         dataArr2 = [4, 5, 1, -3];
 
     assert.deepEqual(
-        chart.series[0].dataModify.constructor
-            .getCumulativeExtremes([1, 2, 3, 4, 5, 0]),
+        chart.series[0].dataModify.constructor.getCumulativeExtremes([
+            1, 2, 3, 4, 5, 0
+        ]),
         [1, 15],
         'Data min and max should be calculated correctly.'
     );
@@ -93,5 +94,4 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
         `The two first points should be summed only in the first series.
         1 + 4 should be equal to 5 (second point of the second series).`
     );
-
 });

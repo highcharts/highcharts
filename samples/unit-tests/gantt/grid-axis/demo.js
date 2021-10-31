@@ -37,14 +37,7 @@ QUnit.test('isOuterAxis()', function (assert) {
             },
             {
                 data: [
-                    29.9,
-                    -71.5,
-                    -106.4,
-                    -129.2,
-                    -144.0,
-                    -176.0,
-                    -135.6,
-                    -148.5
+                    29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5
                 ],
                 xAxis: 1
             },
@@ -54,14 +47,7 @@ QUnit.test('isOuterAxis()', function (assert) {
             },
             {
                 data: [
-                    29.9,
-                    -71.5,
-                    -106.4,
-                    -129.2,
-                    -144.0,
-                    -176.0,
-                    -135.6,
-                    -148.5
+                    29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5
                 ],
                 xAxis: 3
             }
@@ -225,14 +211,7 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
             },
             {
                 data: [
-                    29.9,
-                    -71.5,
-                    -106.4,
-                    -129.2,
-                    -144.0,
-                    -176.0,
-                    -135.6,
-                    -148.5
+                    29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5
                 ],
                 yAxis: 1
             }
@@ -442,14 +421,7 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
             },
             {
                 data: [
-                    29.9,
-                    -71.5,
-                    -106.4,
-                    -129.2,
-                    -144.0,
-                    -176.0,
-                    -135.6,
-                    -148.5
+                    29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5
                 ],
                 xAxis: 1
             }
@@ -1563,18 +1535,8 @@ QUnit.test('Reversed axis', function (assert) {
             series: [
                 {
                     data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+                        29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5,
+                        216.4, 194.1, 95.6, 54.4
                     ],
                     type: 'column'
                 }
@@ -1737,8 +1699,8 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
     );
 });
 
-QUnit.test('Chart.update', assert => {
-    const getColumn = format => ({ labels: { format } });
+QUnit.test('Chart.update', (assert) => {
+    const getColumn = (format) => ({ labels: { format } });
     const chart = Highcharts.chart('container', {
         yAxis: {
             grid: {
@@ -1757,10 +1719,8 @@ QUnit.test('Chart.update', assert => {
         yAxis: [axis]
     } = chart;
     const getYAxisLabels = () =>
-        Array.from(
-            document.querySelectorAll('.highcharts-yaxis-labels > text')
-        )
-            .map(text => text.textContent)
+        Array.from(document.querySelectorAll('.highcharts-yaxis-labels > text'))
+            .map((text) => text.textContent)
             .reverse();
 
     assert.strictEqual(chart.yAxis.length, 1, 'should have only one yAxis');
@@ -1810,7 +1770,7 @@ QUnit.test('Chart.update', assert => {
 
 QUnit.test(
     'Secondary tick interval when years in primary (#11427)',
-    assert => {
+    (assert) => {
         const chart = Highcharts.ganttChart('container', {
             chart: {
                 width: 1200
@@ -1849,14 +1809,22 @@ QUnit.test(
             'The secondary axis should have longer range ticks'
         );
 
-        chart.update({
-            series: [{
-                data: [{
-                    start: Date.UTC(2019, 7, 2),
-                    end: Date.UTC(2019, 11, 1)
-                }]
-            }]
-        }, true, true);
+        chart.update(
+            {
+                series: [
+                    {
+                        data: [
+                            {
+                                start: Date.UTC(2019, 7, 2),
+                                end: Date.UTC(2019, 11, 1)
+                            }
+                        ]
+                    }
+                ]
+            },
+            true,
+            true
+        );
         chart.setSize(400);
 
         const axis = chart.xAxis[1];
@@ -1869,7 +1837,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('Zero-width slot', assert => {
+QUnit.test('Zero-width slot', (assert) => {
     const chart = Highcharts.ganttChart('container', {
         chart: {
             width: 600
@@ -1895,7 +1863,7 @@ QUnit.test('Zero-width slot', assert => {
     });
 
     const labels = chart.xAxis[1].tickPositions.map(
-        pos => chart.xAxis[1].ticks[pos].label
+        (pos) => chart.xAxis[1].ticks[pos].label
     );
 
     assert.ok(
@@ -1908,7 +1876,7 @@ QUnit.test('Zero-width slot', assert => {
 
 QUnit.test(
     'Only one scrollbar should be visible for the vertical scrolling #13359',
-    assert => {
+    (assert) => {
         const chart = Highcharts.ganttChart('container', {
             yAxis: {
                 min: 0,
@@ -1994,7 +1962,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('yAxis label adjustment #10281', assert => {
+QUnit.test('yAxis label adjustment #10281', (assert) => {
     const chart = Highcharts.ganttChart('container', {
         series: [
             {
@@ -2005,8 +1973,7 @@ QUnit.test('yAxis label adjustment #10281', assert => {
                         end: Date.UTC(2014, 10, 25)
                     },
                     {
-                        name:
-                            'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
+                        name: 'Really Long series name that is very long indeed. Really Long series name that is very long indeed.',
                         start: Date.UTC(2014, 10, 23),
                         end: Date.UTC(2014, 10, 26)
                     }
@@ -2025,7 +1992,7 @@ QUnit.test('yAxis label adjustment #10281', assert => {
     );
 });
 
-QUnit.test('yAxis max value #10779', assert => {
+QUnit.test('yAxis max value #10779', (assert) => {
     const chart = Highcharts.ganttChart('container', {
         yAxis: {
             max: 5
@@ -2062,7 +2029,7 @@ QUnit.test('yAxis max value #10779', assert => {
 
 QUnit.test(
     'When the grid axis label has format "%E", time zone declared per chart should be respected., #13591.',
-    assert => {
+    (assert) => {
         const chart = Highcharts.ganttChart('container', {
             chart: {
                 width: 500
@@ -2105,7 +2072,7 @@ QUnit.test(
 
 QUnit.test(
     'Grid axis code should not interfere with non-Gantt type charts, 14868.',
-    assert => {
+    (assert) => {
         const chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
@@ -2113,22 +2080,28 @@ QUnit.test(
             xAxis: {
                 type: 'datetime'
             },
-            series: [{
-                type: 'xrange',
-                data: [{
-                    x: Date.UTC(2014, 11, 8),
-                    x2: Date.UTC(2014, 11, 9),
-                    y: 0
-                }, {
-                    x: Date.UTC(2014, 11, 9),
-                    x2: Date.UTC(2014, 11, 19),
-                    y: 1
-                }, {
-                    x: Date.UTC(2014, 11, 10),
-                    x2: Date.UTC(2014, 11, 23),
-                    y: 2
-                }]
-            }]
+            series: [
+                {
+                    type: 'xrange',
+                    data: [
+                        {
+                            x: Date.UTC(2014, 11, 8),
+                            x2: Date.UTC(2014, 11, 9),
+                            y: 0
+                        },
+                        {
+                            x: Date.UTC(2014, 11, 9),
+                            x2: Date.UTC(2014, 11, 19),
+                            y: 1
+                        },
+                        {
+                            x: Date.UTC(2014, 11, 10),
+                            x2: Date.UTC(2014, 11, 23),
+                            y: 2
+                        }
+                    ]
+                }
+            ]
         });
 
         assert.notOk(
@@ -2146,19 +2119,21 @@ QUnit.test(
     }
 );
 
-QUnit.test('slotWidth', assert => {
-    const chart = Highcharts.ganttChart("container", {
+QUnit.test('slotWidth', (assert) => {
+    const chart = Highcharts.ganttChart('container', {
         chart: {
             width: 600
         },
-        series: [{
-            data: [
-                {
-                    start: Date.UTC(2017, 8, 1),
-                    end: Date.UTC(2017, 11, 4)
-                }
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        start: Date.UTC(2017, 8, 1),
+                        end: Date.UTC(2017, 11, 4)
+                    }
+                ]
+            }
+        ]
     });
 
     const axis = chart.xAxis[1];

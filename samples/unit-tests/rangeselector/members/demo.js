@@ -75,7 +75,7 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
     assert.deepEqual(result, [0, 0, 2, 0, 0, 0], 'allButtonsEnabled.');
 });
 
-QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
+QUnit.test('RangeSelector.updateButtonStates, visual output', (assert) => {
     const getOptions = () => ({
         chart: {
             type: 'column',
@@ -90,7 +90,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
                         dataArrayTmp.push([i * 120000, 1]);
                     }
                     return dataArrayTmp;
-                }())
+                })()
             }
         ],
 
@@ -110,7 +110,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     chart.rangeSelector.clickButton(0);
 
     assert.deepEqual(
-        chart.rangeSelector.buttons.map(b => b.state),
+        chart.rangeSelector.buttons.map((b) => b.state),
         [2],
         'The button should be clicked'
     );
@@ -129,7 +129,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     chart.xAxis[0].setExtremes(chart.xAxis[0].min + 12000, chart.xAxis[0].max);
 
     assert.deepEqual(
-        chart.rangeSelector.buttons.map(b => b.state),
+        chart.rangeSelector.buttons.map((b) => b.state),
         [0],
         'The button should not be clicked'
     );
@@ -148,7 +148,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     chart.update(getOptions());
 
     assert.deepEqual(
-        chart.rangeSelector.buttons.map(b => b.state),
+        chart.rangeSelector.buttons.map((b) => b.state),
         [0],
         'The button should not be selected after redraw (#9209)'
     );

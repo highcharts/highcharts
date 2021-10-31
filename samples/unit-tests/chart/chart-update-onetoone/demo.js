@@ -177,19 +177,22 @@
         runTests(chart, assert);
     });
 
-    QUnit.test('Series update with Highcharts Stock (#8196)', function (assert) {
-        var chart = Highcharts.stockChart('container', {
-            series: [
-                {
-                    data: [1, 2, 3, 4]
-                }
-            ]
-        });
-        runTests(chart, assert);
-    });
-}());
+    QUnit.test(
+        'Series update with Highcharts Stock (#8196)',
+        function (assert) {
+            var chart = Highcharts.stockChart('container', {
+                series: [
+                    {
+                        data: [1, 2, 3, 4]
+                    }
+                ]
+            });
+            runTests(chart, assert);
+        }
+    );
+})();
 
-QUnit.test('Series update with ids', assert => {
+QUnit.test('Series update with ids', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -206,7 +209,7 @@ QUnit.test('Series update with ids', assert => {
     });
 
     assert.deepEqual(
-        chart.series.map(s => s.name),
+        chart.series.map((s) => s.name),
         ['S1', 'S2'],
         'Initial series names'
     );
@@ -231,7 +234,7 @@ QUnit.test('Series update with ids', assert => {
     );
 
     assert.deepEqual(
-        chart.series.map(s => s.name),
+        chart.series.map((s) => s.name),
         ['S2', 'S3'],
         'Updating with ids, cleanly update and replace (#13541)'
     );

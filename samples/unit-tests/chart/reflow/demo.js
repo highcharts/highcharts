@@ -41,18 +41,8 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                 series: [
                     {
                         data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
+                            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                            148.5, 216.4, 194.1, 95.6, 54.4
                         ]
                     }
                 ]
@@ -122,18 +112,8 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                 series: [
                     {
                         data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
+                            29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
+                            148.5, 216.4, 194.1, 95.6, 54.4
                         ]
                     }
                 ]
@@ -199,63 +179,79 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
     }
 });
 
-QUnit.test('#13220, #12788, #12489, 11975: Pointer position after setting size or scale on a parent', assert => {
-    const chart = Highcharts.chart('container', {
-        series: [{
-            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-        }, {
-            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-        }, {
-            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-        }, {
-            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-        }, {
-            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-        }],
-        tooltip: {
-            hideDelay: 0
-        }
-    });
+QUnit.test(
+    '#13220, #12788, #12489, 11975: Pointer position after setting size or scale on a parent',
+    (assert) => {
+        const chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [
+                        43934, 52503, 57177, 69658, 97031, 119931, 137133,
+                        154175
+                    ]
+                },
+                {
+                    data: [
+                        24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434
+                    ]
+                },
+                {
+                    data: [
+                        11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387
+                    ]
+                },
+                {
+                    data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
+                },
+                {
+                    data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
+                }
+            ],
+            tooltip: {
+                hideDelay: 0
+            }
+        });
 
-    const point = chart.series[0].points[0];
+        const point = chart.series[0].points[0];
 
-    const controller = new TestController(chart);
-    controller.moveTo(0, 0);
+        const controller = new TestController(chart);
+        controller.moveTo(0, 0);
 
-    chart.renderTo.style.width = '300px';
-    chart.reflow();
+        chart.renderTo.style.width = '300px';
+        chart.reflow();
 
-    controller.mouseMove(
-        chart.plotLeft + point.plotX,
-        chart.plotTop + point.plotY
-    );
+        controller.mouseMove(
+            chart.plotLeft + point.plotX,
+            chart.plotTop + point.plotY
+        );
 
-    assert.ok(
-        !chart.tooltip.isHidden &&
-        Math.round(point.plotX + chart.plotLeft) ===
-        chart.tooltip.now.anchorX &&
-        Math.round(point.plotY + chart.plotTop) ===
-        chart.tooltip.now.anchorY,
-        'Tooltip should be visible and in the correct position'
-    );
+        assert.ok(
+            !chart.tooltip.isHidden &&
+                Math.round(point.plotX + chart.plotLeft) ===
+                    chart.tooltip.now.anchorX &&
+                Math.round(point.plotY + chart.plotTop) ===
+                    chart.tooltip.now.anchorY,
+            'Tooltip should be visible and in the correct position'
+        );
 
-    chart.renderTo.style.width = '600px';
-    chart.renderTo.style.transform = 'scale(0.5)';
-    chart.reflow();
+        chart.renderTo.style.width = '600px';
+        chart.renderTo.style.transform = 'scale(0.5)';
+        chart.reflow();
 
-    controller.mouseMove(
-        0.5 * (chart.plotLeft + point.plotX),
-        0.5 * (chart.plotTop + point.plotY)
-    );
+        controller.mouseMove(
+            0.5 * (chart.plotLeft + point.plotX),
+            0.5 * (chart.plotTop + point.plotY)
+        );
 
-    assert.ok(
-        !chart.tooltip.isHidden &&
-        Math.round(point.plotX + chart.plotLeft) ===
-        chart.tooltip.now.anchorX &&
-        Math.round(point.plotY + chart.plotTop) ===
-        chart.tooltip.now.anchorY,
-        'Tooltip should be visible and in the correct position'
-    );
+        assert.ok(
+            !chart.tooltip.isHidden &&
+                Math.round(point.plotX + chart.plotLeft) ===
+                    chart.tooltip.now.anchorX &&
+                Math.round(point.plotY + chart.plotTop) ===
+                    chart.tooltip.now.anchorY,
+            'Tooltip should be visible and in the correct position'
+        );
 
-    chart.renderTo.style.transform = '';
-});
+        chart.renderTo.style.transform = '';
+    }
+);

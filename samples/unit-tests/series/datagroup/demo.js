@@ -13,7 +13,7 @@ QUnit.test('Point dataGroup', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }())
+                })()
             }
         ],
         navigator: {

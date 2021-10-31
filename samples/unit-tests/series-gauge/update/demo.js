@@ -1,4 +1,4 @@
-QUnit.test('Updating gauge series', assert => {
+QUnit.test('Updating gauge series', (assert) => {
     const clock = TestUtilities.lolexInstall();
 
     const chart = Highcharts.chart('container', {
@@ -50,7 +50,7 @@ QUnit.test('Updating gauge series', assert => {
     );
 
     assert.ok(
-        Object.values(chart.yAxis[0].ticks).some(t => t.label.opacity === 0),
+        Object.values(chart.yAxis[0].ticks).some((t) => t.label.opacity === 0),
         '#15528: Some tick labels should still be hidden after update'
     );
 

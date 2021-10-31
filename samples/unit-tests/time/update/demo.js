@@ -30,7 +30,7 @@ QUnit.test('Time zone update', function (assert) {
                         arr.push(i);
                     }
                     return arr;
-                }()),
+                })(),
                 dataLabels: {
                     enabled: true,
                     format: '{x:%H:%M}'
@@ -71,7 +71,7 @@ QUnit.test('Time zone update', function (assert) {
     );
 });
 
-QUnit.test('Updating from global to instance time', assert => {
+QUnit.test('Updating from global to instance time', (assert) => {
     var chart;
 
     chart = Highcharts.chart('container', {

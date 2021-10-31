@@ -1,31 +1,34 @@
-QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) {
-    var chart;
+QUnit.test(
+    'Pie in Highcharts Stock, StockChart constructor',
+    function (assert) {
+        var chart;
 
-    chart = new Highcharts.StockChart({
-        chart: {
-            renderTo: 'container'
-        },
-        navigator: {
-            enabled: false
-        },
-        series: [
-            {
-                type: 'pie',
-                data: [
-                    {
-                        y: 36
-                    }
-                ]
-            }
-        ]
-    });
+        chart = new Highcharts.StockChart({
+            chart: {
+                renderTo: 'container'
+            },
+            navigator: {
+                enabled: false
+            },
+            series: [
+                {
+                    type: 'pie',
+                    data: [
+                        {
+                            y: 36
+                        }
+                    ]
+                }
+            ]
+        });
 
-    assert.strictEqual(
-        typeof chart.series[0].points[0].graphic,
-        'object',
-        'Has slice'
-    );
-});
+        assert.strictEqual(
+            typeof chart.series[0].points[0].graphic,
+            'object',
+            'Has slice'
+        );
+    }
+);
 
 QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     var chart, i;

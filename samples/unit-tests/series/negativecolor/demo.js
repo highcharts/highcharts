@@ -47,9 +47,9 @@ QUnit.test(
                 .brighten(sColumn.options.brightness)
                 .get();
             assert.strictEqual(
-                point.y <= 0 ?
-                    pointColor === seriesNegColor :
-                    pointColor === seriesPosColor,
+                point.y <= 0
+                    ? pointColor === seriesNegColor
+                    : pointColor === seriesPosColor,
                 true,
                 'Color matched with options (column)'
             );
@@ -62,9 +62,9 @@ QUnit.test(
             point.setState('hover');
             pointColor = Highcharts.color(point.graphic.attr('fill')).get();
             assert.strictEqual(
-                point.y <= 0 ?
-                    pointColor === seriesNegColor :
-                    pointColor === seriesPosColor,
+                point.y <= 0
+                    ? pointColor === seriesNegColor
+                    : pointColor === seriesPosColor,
                 true,
                 'Color matched with options (series with marker)'
             );

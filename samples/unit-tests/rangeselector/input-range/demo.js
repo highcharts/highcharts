@@ -1,6 +1,6 @@
 QUnit.test(
     'RangeSelector inputs setting not affecting each other.',
-    assert => {
+    (assert) => {
         var data = [],
             dayFactor = 1000 * 3600 * 24,
             startDate = Date.UTC(2000, 0, 1);
@@ -34,7 +34,7 @@ QUnit.test(
 QUnit.test(
     'RangeSelector input: Re-setting same ' +
         'date after setting extremes in other fashion.',
-    assert => {
+    (assert) => {
         var data = [],
             dayFactor = 1000 * 3600 * 24,
             startDate = Date.UTC(2000, 0, 1);
@@ -82,7 +82,7 @@ QUnit.test(
     }
 );
 
-QUnit.test('#6537 - 1M button should select range 28.02-31.03', assert => {
+QUnit.test('#6537 - 1M button should select range 28.02-31.03', (assert) => {
     var chart = Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 0
@@ -210,7 +210,7 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
 });
 QUnit.test(
     "Focusable inputs after setting chart's zIndex (#8899)",
-    assert => {
+    (assert) => {
         var chart = Highcharts.stockChart({
                 chart: {
                     renderTo: 'container'
@@ -290,32 +290,8 @@ QUnit.test('Check input format', function (assert) {
         series: [
             {
                 data: [
-                    1,
-                    4,
-                    2,
-                    5,
-                    3,
-                    6,
-                    4,
-                    4,
-                    6,
-                    6,
-                    5,
-                    5,
-                    5,
-                    6,
-                    6,
-                    5,
-                    5,
-                    4,
-                    3,
-                    3,
-                    3,
-                    4,
-                    5,
-                    5,
-                    6,
-                    6
+                    1, 4, 2, 5, 3, 6, 4, 4, 6, 6, 5, 5, 5, 6, 6, 5, 5, 4, 3, 3,
+                    3, 4, 5, 5, 6, 6
                 ],
                 tooltip: {
                     valueDecimals: 2
@@ -409,7 +385,7 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
     assert.notStrictEqual(min, newMin, 'Extremes should be updated');
 });
 
-QUnit.test('#13205, #14544: Timezone issues', assert => {
+QUnit.test('#13205, #14544: Timezone issues', (assert) => {
     const chart = Highcharts.stockChart('container', {
         rangeSelector: {
             inputDateFormat: '%Y/%m/%d %H:%M:%S.%L',
@@ -495,7 +471,7 @@ QUnit.test('#13205, #14544: Timezone issues', assert => {
 
 QUnit.test(
     '#14416: Range selector ignored chart.time.timezoneOffset',
-    assert => {
+    (assert) => {
         const chart = Highcharts.stockChart('container', {
             time: {
                 timezoneOffset: 420
@@ -535,8 +511,8 @@ QUnit.test(
     }
 );
 
-QUnit.test('Input types', assert => {
-    const supports = type => {
+QUnit.test('Input types', (assert) => {
+    const supports = (type) => {
         const el = document.createElement('input');
         el.type = type;
         return el.type === type;
@@ -556,7 +532,7 @@ QUnit.test('Input types', assert => {
 
     const axis = chart.xAxis[0];
 
-    const parse = str =>
+    const parse = (str) =>
         Highcharts.RangeSelector.prototype.defaultInputDateParser(
             str,
             chart.time.useUTC,
@@ -566,7 +542,7 @@ QUnit.test('Input types', assert => {
     [
         () => chart.rangeSelector.minInput,
         () => chart.rangeSelector.maxInput
-    ].forEach(input => {
+    ].forEach((input) => {
         chart.update({
             rangeSelector: {
                 inputDateFormat: '%b %e, %Y'

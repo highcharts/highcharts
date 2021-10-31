@@ -8,9 +8,11 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
             },
             inverted: true
         },
-        series: [{
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -118,14 +120,15 @@ QUnit.test(
         });
 
         assert.notOk(
-            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
-                .contains('highcharts-fixed'),
+            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList.contains(
+                'highcharts-fixed'
+            ),
             'yAxis should not have that class.'
         );
     }
 );
 
-QUnit.test('#12517: Reset zoom button', assert => {
+QUnit.test('#12517: Reset zoom button', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
@@ -133,9 +136,11 @@ QUnit.test('#12517: Reset zoom button', assert => {
             },
             zoomType: 'x'
         },
-        series: [{
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
 
     const controller = new TestController(chart);

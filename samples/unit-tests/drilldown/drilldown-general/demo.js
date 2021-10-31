@@ -204,9 +204,11 @@ QUnit.test('Drilldown methods', function (assert) {
 
     chart.drillUp();
     chart.update({
-        series: [{
-            cropThreshold: 1
-        }],
+        series: [
+            {
+                cropThreshold: 1
+            }
+        ],
         xAxis: {
             min: 2
         }
@@ -2634,7 +2636,7 @@ QUnit.test('Wrong points after click on label (#12656)', function (assert) {
     );
 });
 
-QUnit.test('#14428: Update point.drilldown', assert => {
+QUnit.test('#14428: Update point.drilldown', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -2667,7 +2669,7 @@ QUnit.test('#14428: Update point.drilldown', assert => {
 
 QUnit.test(
     '#14458: Drilling down 3d chart points with the same name threw',
-    assert => {
+    (assert) => {
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',

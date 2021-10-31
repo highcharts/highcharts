@@ -1,4 +1,4 @@
-QUnit.test('visibility', assert => {
+QUnit.test('visibility', (assert) => {
     const {
         series: [series1, series2]
     } = Highcharts.chart('container', {
@@ -47,7 +47,7 @@ QUnit.test('visibility', assert => {
     );
 });
 
-QUnit.test('Halo with boost module, #12870', assert => {
+QUnit.test('Halo with boost module, #12870', (assert) => {
     const chart = Highcharts.chart('container', {
         xAxis: {
             min: -5,

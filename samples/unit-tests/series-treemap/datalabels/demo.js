@@ -914,10 +914,12 @@ QUnit.test(
                         points.push(countryP);
                         causeI = 0;
                         for (cause in data[region][country]) {
-                            if (Object.hasOwnProperty.call(
-                                data[region][country],
-                                cause
-                            )) {
+                            if (
+                                Object.hasOwnProperty.call(
+                                    data[region][country],
+                                    cause
+                                )
+                            ) {
                                 causeP = {
                                     id: countryP.id + '_' + causeI,
                                     name: causeName[cause],
@@ -962,8 +964,7 @@ QUnit.test(
                 }
             ],
             subtitle: {
-                text:
-                    'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
+                text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
             },
             title: {
                 text: 'Global Mortality Rate 2012, per 100 000 population'

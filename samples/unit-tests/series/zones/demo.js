@@ -129,8 +129,7 @@ QUnit.test('Point colors within color zones(#4430)', function (assert) {
 QUnit.test('Spline zones out of range', function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
-                text:
-                    'Zones were not applied correctly if they were out of range'
+                text: 'Zones were not applied correctly if they were out of range'
             },
             yAxis: {
                 tickPositioner: function () {
@@ -194,7 +193,7 @@ QUnit.test('Negative color with crushed chart (#9200)', function (assert) {
     );
 });
 
-QUnit.test('Zones and column presentational props (#6234)', assert => {
+QUnit.test('Zones and column presentational props (#6234)', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {
@@ -330,10 +329,7 @@ QUnit.test('Adding and removing zones', function (assert) {
     const clip = chart.series[0].clips[0];
     chart.series[0].destroy();
 
-    assert.notOk(
-        clip.element,
-        '#15420: Clip should have been destroyed'
-    );
+    assert.notOk(clip.element, '#15420: Clip should have been destroyed');
 });
 
 QUnit.test('#9198 setData and zones', function (assert) {

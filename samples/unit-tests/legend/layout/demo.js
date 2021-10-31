@@ -81,7 +81,7 @@ QUnit.test('Legend layout', function (assert) {
     );
 });
 
-QUnit.test('Proximate layout and dataGrouping', assert => {
+QUnit.test('Proximate layout and dataGrouping', (assert) => {
     const chart = new Highcharts.chart('container', {
         chart: {
             animation: false

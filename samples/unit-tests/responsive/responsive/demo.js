@@ -124,18 +124,8 @@ QUnit.test('Responsive on chart.update', function (assert) {
         series: [
             {
                 data: [
-                    29.9,
-                    71.5,
-                    106.4,
-                    129.2,
-                    144.0,
-                    176.0,
-                    135.6,
-                    148.5,
-                    216.4,
-                    194.1,
-                    95.6,
-                    54.4
+                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                    194.1, 95.6, 54.4
                 ]
             }
         ],
@@ -406,7 +396,6 @@ QUnit.test('Annotations applied on init', function (assert) {
         'Label v2',
         'Annotation options should be set'
     );
-
 });
 
 QUnit.test('Revert axis properties', function (assert) {
@@ -594,18 +583,7 @@ QUnit.test('Mismatch of collection length (#6347)', function (assert) {
             {
                 name: 'Sales',
                 data: [
-                    434,
-                    523,
-                    345,
-                    785,
-                    565,
-                    843,
-                    726,
-                    590,
-                    665,
-                    434,
-                    312,
-                    432
+                    434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432
                 ]
             }
         ],
@@ -651,18 +629,7 @@ QUnit.test('Responsive rules and chart.update', function (assert) {
             {
                 name: 'Sales',
                 data: [
-                    434,
-                    523,
-                    345,
-                    785,
-                    565,
-                    843,
-                    726,
-                    590,
-                    665,
-                    434,
-                    312,
-                    432
+                    434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432
                 ]
             }
         ],
@@ -717,7 +684,7 @@ QUnit.test('Responsive rules and chart.update', function (assert) {
     );
 });
 
-QUnit.test('Falsy default', assert => {
+QUnit.test('Falsy default', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -775,7 +742,7 @@ QUnit.test('Falsy default', assert => {
     );
 });
 
-QUnit.test('Responsive spacing options', assert => {
+QUnit.test('Responsive spacing options', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'pie',
@@ -832,7 +799,7 @@ QUnit.test('Responsive spacing options', assert => {
     );
 });
 
-QUnit.test('Restoring to undefined settings (#10286)', assert => {
+QUnit.test('Restoring to undefined settings (#10286)', (assert) => {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
@@ -932,7 +899,7 @@ QUnit.test('Restoring to undefined settings (#10286)', assert => {
     );
 });
 
-QUnit.test('Pane with responsive margin', assert => {
+QUnit.test('Pane with responsive margin', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'gauge',
@@ -978,7 +945,7 @@ QUnit.test('Pane with responsive margin', assert => {
     );
 });
 
-QUnit.test('Responsive amount of axes', assert => {
+QUnit.test('Responsive amount of axes', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             width: 800
@@ -1002,36 +969,15 @@ QUnit.test('Responsive amount of axes', assert => {
                 yAxis: 0,
                 name: 'First',
                 data: [
-                    434,
-                    523,
-                    345,
-                    785,
-                    565,
-                    843,
-                    726,
-                    590,
-                    665,
-                    434,
-                    312,
-                    432
+                    434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432
                 ]
             },
             {
                 yAxis: 1,
                 name: 'Second',
                 data: [
-                    4304,
-                    5230,
-                    3450,
-                    7850,
-                    5650,
-                    8403,
-                    3260,
-                    2900,
-                    6650,
-                    4340,
-                    3102,
-                    4320
+                    4304, 5230, 3450, 7850, 5650, 8403, 3260, 2900, 6650, 4340,
+                    3102, 4320
                 ]
             }
         ],
@@ -1056,36 +1002,16 @@ QUnit.test('Responsive amount of axes', assert => {
                                 yAxis: 0,
                                 name: 'First',
                                 data: [
-                                    1,
-                                    2,
-                                    345,
-                                    785,
-                                    565,
-                                    843,
-                                    726,
-                                    590,
-                                    665,
-                                    434,
-                                    312,
-                                    432
+                                    1, 2, 345, 785, 565, 843, 726, 590, 665,
+                                    434, 312, 432
                                 ]
                             },
                             {
                                 yAxis: 0,
                                 name: 'Second',
                                 data: [
-                                    4304,
-                                    5230,
-                                    3450,
-                                    7850,
-                                    5650,
-                                    8403,
-                                    3260,
-                                    2900,
-                                    6650,
-                                    4340,
-                                    3102,
-                                    4320
+                                    4304, 5230, 3450, 7850, 5650, 8403, 3260,
+                                    2900, 6650, 4340, 3102, 4320
                                 ]
                             }
                         ]
@@ -1096,7 +1022,7 @@ QUnit.test('Responsive amount of axes', assert => {
     });
 
     assert.deepEqual(
-        chart.yAxis.map(a => a.axisTitle.textStr),
+        chart.yAxis.map((a) => a.axisTitle.textStr),
         ['First', 'Second'],
         'Initial axis layout'
     );
@@ -1108,7 +1034,7 @@ QUnit.test('Responsive amount of axes', assert => {
 
     chart.setSize(400);
     assert.deepEqual(
-        chart.yAxis.map(a => a.axisTitle.textStr),
+        chart.yAxis.map((a) => a.axisTitle.textStr),
         ['First'],
         'Responsive rule kicks in, only the first axis should apply'
     );
@@ -1121,7 +1047,7 @@ QUnit.test('Responsive amount of axes', assert => {
     chart.setSize(800);
 
     assert.deepEqual(
-        chart.yAxis.map(a => a.axisTitle.textStr),
+        chart.yAxis.map((a) => a.axisTitle.textStr),
         ['First', 'Second'],
         'After resetting, initial axis layout should be restored'
     );
@@ -1132,8 +1058,7 @@ QUnit.test('Responsive amount of axes', assert => {
     );
 });
 
-QUnit.test('Initially responsive, skip update animation', assert => {
-
+QUnit.test('Initially responsive, skip update animation', (assert) => {
     const clock = TestUtilities.lolexInstall();
     const chart = Highcharts.chart('container', {
         chart: {
@@ -1182,5 +1107,4 @@ QUnit.test('Initially responsive, skip update animation', assert => {
     }, 50);
 
     TestUtilities.lolexRunAndUninstall(clock);
-
 });

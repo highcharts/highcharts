@@ -77,9 +77,9 @@ if (!isNaN(Date.parse('Jan 16'))) {
             options = chart.options;
 
         assert.strictEqual(
-            (Highcharts.isArray(options.xAxis) ?
-                options.xAxis[0] :
-                options.xAxis
+            (Highcharts.isArray(options.xAxis)
+                ? options.xAxis[0]
+                : options.xAxis
             ).type,
             'datetime',
             'X axis is date/time'
@@ -690,14 +690,14 @@ QUnit.test(
     'Hex values are not treated as comments (#13283).',
     function (assert) {
         Highcharts.data({
-            csv:
-                'x;y;color\n' +
-                '0;1;#F0F\n',
+            csv: 'x;y;color\n0;1;#F0F\n',
 
             itemDelimiter: ';',
-            seriesMapping: [{
-                color: 2
-            }],
+            seriesMapping: [
+                {
+                    color: 2
+                }
+            ],
 
             parsed: function () {
                 assert.strictEqual(

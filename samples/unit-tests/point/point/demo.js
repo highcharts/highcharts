@@ -357,30 +357,8 @@ QUnit.test('Dynamic point states', function (assert) {
                 {
                     type: 'line',
                     data: [
-                        1,
-                        2,
-                        1,
-                        2,
-                        1,
-                        3,
-                        3,
-                        5,
-                        6,
-                        6,
-                        54,
-                        4,
-                        3,
-                        3,
-                        2,
-                        2,
-                        2,
-                        3,
-                        4,
-                        4,
-                        5,
-                        56,
-                        7,
-                        7
+                        1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3,
+                        4, 4, 5, 56, 7, 7
                     ],
                     marker: {
                         enabled: false
@@ -389,30 +367,8 @@ QUnit.test('Dynamic point states', function (assert) {
                 {
                     type: 'line',
                     data: [
-                        1,
-                        2,
-                        1,
-                        2,
-                        1,
-                        3,
-                        3,
-                        5,
-                        6,
-                        6,
-                        54,
-                        4,
-                        3,
-                        3,
-                        2,
-                        2,
-                        2,
-                        3,
-                        4,
-                        4,
-                        5,
-                        56,
-                        7,
-                        7
+                        1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3,
+                        4, 4, 5, 56, 7, 7
                     ].reverse(),
                     marker: {
                         enabled: false
@@ -650,7 +606,7 @@ QUnit.test('Select and unselect', function (assert) {
                             tab.push(i + 1);
                         }
                         return tab;
-                    }(200))
+                    })(200)
                 }
             ]
         }),
@@ -749,7 +705,7 @@ QUnit.test('Deselecting points', function (assert) {
     );
 });
 
-QUnit.test('#14623: colorIndex Series.update()', assert => {
+QUnit.test('#14623: colorIndex Series.update()', (assert) => {
     const chart = Highcharts.chart('container', {
         series: [
             {

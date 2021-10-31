@@ -57,13 +57,15 @@ QUnit.test('Update flag (#4222)', function (assert) {
     chart.tooltip.refresh([point]);
 
     assert.strictEqual(
-        chart.tooltip.label.element.lastChild.lastChild.textContent
-            .replace('\u200B', ''),
+        chart.tooltip.label.element.lastChild.lastChild.textContent.replace(
+            '\u200B',
+            ''
+        ),
         flag.text,
         'Updated text'
     );
 
-    const eventCount = el => {
+    const eventCount = (el) => {
         let count = 0;
         //eslint-disable-next-line
         for (const t in el.hcEvents) {
@@ -81,7 +83,7 @@ QUnit.test('Update flag (#4222)', function (assert) {
     );
 });
 
-QUnit.test('#14649: Dynamically updated visual attributes', assert => {
+QUnit.test('#14649: Dynamically updated visual attributes', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'line'

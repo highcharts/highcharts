@@ -182,7 +182,7 @@ QUnit.test('Updating series with indexes', function (assert) {
     );
 });
 
-QUnit.test('Chart.update and series events (#11088)', assert => {
+QUnit.test('Chart.update and series events (#11088)', (assert) => {
     const counters = {
         initial: 0,
         updated: 0,

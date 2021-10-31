@@ -1,4 +1,4 @@
-QUnit.test('Axis.setBreaks', assert => {
+QUnit.test('Axis.setBreaks', (assert) => {
     const {
         series: [series],
         series: [{ points }],
@@ -11,8 +11,8 @@ QUnit.test('Axis.setBreaks', assert => {
             }
         ]
     });
-    const getXValuesOfInvisiblePoints = points =>
-        points.filter(point => !point.visible).map(point => point.x);
+    const getXValuesOfInvisiblePoints = (points) =>
+        points.filter((point) => !point.visible).map((point) => point.x);
 
     axis.brokenAxis.setBreaks([
         {

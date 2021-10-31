@@ -1,4 +1,4 @@
-QUnit.test('#14440: Missing adjustForMissingColumns', assert => {
+QUnit.test('#14440: Missing adjustForMissingColumns', (assert) => {
     Highcharts.chart('container', {
         chart: {
             type: 'column'

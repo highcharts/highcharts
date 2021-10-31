@@ -33,7 +33,7 @@ QUnit.test('Datalabel inside on columnrange(#2711)', function (assert) {
     );
 });
 
-QUnit.test('Implicitly inside percent stacked bar', assert => {
+QUnit.test('Implicitly inside percent stacked bar', (assert) => {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
@@ -50,13 +50,17 @@ QUnit.test('Implicitly inside percent stacked bar', assert => {
                 }
             }
         },
-        series: [{
-            data: [5, 3, 4, 7, 2]
-        }, {
-            data: [2, 2, 3, 2, 1]
-        }, {
-            data: [3, 4, 4, 2, 5]
-        }]
+        series: [
+            {
+                data: [5, 3, 4, 7, 2]
+            },
+            {
+                data: [2, 2, 3, 2, 1]
+            },
+            {
+                data: [3, 4, 4, 2, 5]
+            }
+        ]
     });
 
     assert.ok(

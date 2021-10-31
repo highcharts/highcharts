@@ -1,13 +1,15 @@
 QUnit.test('Heikinashi point calculation.', function (assert) {
     const chart = Highcharts.stockChart('container', {
-            series: [{
-                type: 'heikinashi',
-                data: [
-                    [3, 5, 6, 3, 6],
-                    [4, 8, 9, 3, 4],
-                    [6, 18, 24, 12, 18]
-                ]
-            }]
+            series: [
+                {
+                    type: 'heikinashi',
+                    data: [
+                        [3, 5, 6, 3, 6],
+                        [4, 8, 9, 3, 4],
+                        [6, 18, 24, 12, 18]
+                    ]
+                }
+            ]
         }),
         points = chart.series[0].points;
 

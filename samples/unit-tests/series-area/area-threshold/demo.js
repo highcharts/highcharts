@@ -1,6 +1,6 @@
 QUnit.test(
     "Area doesn't respect the threshold, when low value is defined #3694",
-    assert => {
+    (assert) => {
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'

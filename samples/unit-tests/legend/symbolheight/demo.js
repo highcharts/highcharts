@@ -4,9 +4,9 @@ QUnit.test(
         var done = assert.async();
 
         var url =
-            location.host.substr(0, 12) === 'localhost:98' ?
-                'url(base/test/testimage.png)' : // karma
-                'url(testimage.png)'; // utils
+            location.host.substr(0, 12) === 'localhost:98'
+                ? 'url(base/test/testimage.png)' // karma
+                : 'url(testimage.png)'; // utils
 
         var chart = Highcharts.chart('container', {
             chart: {
