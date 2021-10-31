@@ -8,7 +8,7 @@ test_labelStyling();
 
 function test_drillUp() {
     const chart = Highcharts.chart('container', {});
-    chart.drillUp();// #13037
+    chart.drillUp(); // #13037
 }
 
 function test_labelStyling() {
@@ -37,23 +37,29 @@ function test_labelStyling() {
                 }
             }
         },
-        series: [{
-            type: 'column',
-            name: 'Things',
-            colorByPoint: true,
-            data: [{
-                name: 'Dieren',
-                y: 5,
-                drilldown: 'animals'
-            }, {
-                name: 'Fruit',
-                y: 2,
-                drilldown: 'fruits'
-            }, {
-                name: 'Auto\'s',
-                y: 4
-            }]
-        }],
+        series: [
+            {
+                type: 'column',
+                name: 'Things',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: 'Dieren',
+                        y: 5,
+                        drilldown: 'animals'
+                    },
+                    {
+                        name: 'Fruit',
+                        y: 2,
+                        drilldown: 'fruits'
+                    },
+                    {
+                        name: "Auto's",
+                        y: 4
+                    }
+                ]
+            }
+        ],
         drilldown: {
             drillUpButton: {
                 relativeTo: relativeToValues.spacingBox,
@@ -77,24 +83,27 @@ function test_labelStyling() {
                     }
                 }
             },
-            series: [{
-                type: 'column',
-                id: 'animals',
-                data: [
-                    ['Katten', 4],
-                    ['Honden', 2],
-                    ['Koeien', 1],
-                    ['Schapen', 2],
-                    ['Varkens', 1]
-                ]
-            }, {
-                type: 'column',
-                id: 'fruits',
-                data: [
-                    ['Appels', 4],
-                    ['Sinaasappels', 2]
-                ]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    id: 'animals',
+                    data: [
+                        ['Katten', 4],
+                        ['Honden', 2],
+                        ['Koeien', 1],
+                        ['Schapen', 2],
+                        ['Varkens', 1]
+                    ]
+                },
+                {
+                    type: 'column',
+                    id: 'fruits',
+                    data: [
+                        ['Appels', 4],
+                        ['Sinaasappels', 2]
+                    ]
+                }
+            ]
         }
     });
 }

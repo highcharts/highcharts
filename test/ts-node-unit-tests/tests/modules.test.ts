@@ -36,7 +36,7 @@ export function testMapSeries() {
         Highmaps.product,
         'Highmaps',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testStockSeries() {
@@ -72,7 +72,7 @@ export function testStockSeries() {
         Highstock.product,
         'Highstock',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testGanttSeries() {
@@ -106,7 +106,7 @@ export function testGanttSeries() {
         Gantt.product,
         'Highcharts Gantt',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsSeries() {
@@ -138,7 +138,7 @@ export function testHighchartsSeries() {
         Highcharts.product,
         'Highcharts',
         'The loaded module has the correct product name'
-    )
+    );
 }
 
 export function testHighchartsMoreSeries() {
@@ -187,12 +187,10 @@ export function test3dSeries() {
 
     const seriesTypes = Object.keys(Highcharts.seriesTypes);
 
-    const added = [
-        'scatter3d'
-    ];
+    const added = ['scatter3d'];
 
-    added.forEach(
-        series => ok(
+    added.forEach((series) =>
+        ok(
             seriesTypes.includes(series),
             `Series "${series}" should be added with the 3d values`
         )
@@ -307,11 +305,7 @@ export function testHighchartsWithModules() {
 
     // Data
     require('../../../code/modules/data.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.Data,
-        true,
-        'Data is loaded.'
-    );
+    strictEqual(!!Highcharts.Data, true, 'Data is loaded.');
 
     // Drilldown
     require('../../../code/modules/drilldown.src')(Highcharts);
@@ -331,27 +325,15 @@ export function testHighchartsWithModules() {
 
     // Funnel
     require('../../../code/modules/funnel.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.funnel,
-        true,
-        'Funnel is loaded.'
-    );
+    strictEqual(!!Highcharts.seriesTypes.funnel, true, 'Funnel is loaded.');
 
     // Heatmap
     require('../../../code/modules/heatmap.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.heatmap,
-        true,
-        'Heatmap is loaded.'
-    );
+    strictEqual(!!Highcharts.seriesTypes.heatmap, true, 'Heatmap is loaded.');
 
     // Map
     require('../../../code/modules/map.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.map,
-        true,
-        'Map is loaded.'
-    );
+    strictEqual(!!Highcharts.seriesTypes.map, true, 'Map is loaded.');
 
     // No Data To Display
     require('../../../code/modules/no-data-to-display.src')(Highcharts);
@@ -379,9 +361,5 @@ export function testHighchartsWithModules() {
 
     // Treemap
     require('../../../code/modules/treemap.src')(Highcharts);
-    strictEqual(
-        !!Highcharts.seriesTypes.treemap,
-        true,
-        'Treemap is loaded.'
-    );
+    strictEqual(!!Highcharts.seriesTypes.treemap, true, 'Treemap is loaded.');
 }

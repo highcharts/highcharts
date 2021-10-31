@@ -18,7 +18,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
             .click(350, 100, { force: true })
             .click(300, 170, { force: true });
 
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             const ellipse = chart.annotations[0].shapes[0],
                 xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                 yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
@@ -26,7 +26,6 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 y1 = yAxis.toPixels(ellipse.points[0].y),
                 x2 = xAxis.toPixels(ellipse.points[1].x),
                 y2 = yAxis.toPixels(ellipse.points[1].y);
-
 
             assert.closeTo(
                 x1,
@@ -71,7 +70,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
             .first()
             .click()
             .dragTo('.highcharts-container', 300, 100);
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             const ellipse = chart.annotations[0].shapes[0],
                 xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                 yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
@@ -113,7 +112,7 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
         cy.get('.highcharts-popup').should('be.visible');
 
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             const ellipse = chart.annotations[0].shapes[0],
                 xAxis = chart.xAxis[ellipse.points[0].options.xAxis],
                 yAxis = chart.yAxis[ellipse.points[0].options.yAxis],
@@ -152,15 +151,13 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 1,
                 'New ry property value should be equal to expected value.'
             );
-
         });
     });
 
     it('Ellipse should keep its shape after popup edit.', () => {
         cy.contains('edit').click();
         cy.contains('save').click();
-        cy.chart().then(chart => {
-
+        cy.chart().then((chart) => {
             const ellipse = chart.annotations[0].shapes[0];
             assert.closeTo(
                 ellipse.options.ry,
@@ -169,5 +166,5 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
                 `Ry property shouldn't change after popup edit.`
             );
         });
-    })
+    });
 });

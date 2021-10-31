@@ -1,5 +1,4 @@
 TestTemplate.register('highcharts/scatter', Highcharts.chart, {
-
     chart: {
         type: 'scatter'
     },
@@ -18,9 +17,15 @@ TestTemplate.register('highcharts/scatter', Highcharts.chart, {
         max: 4
     },
 
-    series: [{
-        type: 'scatter',
-        data: [[2, 2], [2, 3], [3, 2], [3, 3]]
-    }]
-
+    series: [
+        {
+            type: 'scatter',
+            data: [
+                [2, 2],
+                [2, 3],
+                [3, 2],
+                [3, 3]
+            ]
+        }
+    ]
 });

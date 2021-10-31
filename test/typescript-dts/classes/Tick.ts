@@ -10,5 +10,5 @@ function test_Tick() {
     return (
         tick.label instanceof Highcharts.SVGElement &&
         tick.mark instanceof Highcharts.SVGElement
-    )
+    );
 }

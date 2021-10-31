@@ -1,5 +1,4 @@
 TestTemplate.register('highcharts/line', Highcharts.chart, {
-
     chart: {
         type: 'line'
     },
@@ -8,9 +7,10 @@ TestTemplate.register('highcharts/line', Highcharts.chart, {
         text: 'template/highcharts/line'
     },
 
-    series: [{
-        type: 'line',
-        data: [1, 3, 2]
-    }]
-
+    series: [
+        {
+            type: 'line',
+            data: [1, 3, 2]
+        }
+    ]
 });

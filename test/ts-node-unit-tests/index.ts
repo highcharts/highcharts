@@ -1,7 +1,12 @@
 import { readdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { reportError } from './test-utils';
-import { starting, finished, success, warn } from '../../tools/gulptasks/lib/log.js';
+import {
+    starting,
+    finished,
+    success,
+    warn
+} from '../../tools/gulptasks/lib/log.js';
 
 const TEST_PATH = join(__dirname, './tests');
 const CODE_PATH = join(__dirname, '../../code');
@@ -18,12 +23,13 @@ if (!existsSync(CODE_PATH)) {
 }
 
 if (existsSync(TEST_PATH)) {
-    const testFiles = readdirSync(TEST_PATH)
-        .filter(file => file.includes('.test.ts'));
+    const testFiles = readdirSync(TEST_PATH).filter((file) =>
+        file.includes('.test.ts')
+    );
 
-    testFiles.forEach(testFile => {
+    testFiles.forEach((testFile) => {
         const tests = require(join(TEST_PATH, testFile));
-        Object.values(tests).forEach(test => {
+        Object.values(tests).forEach((test) => {
             try {
                 if (typeof test === 'function') {
                     testCounter++;

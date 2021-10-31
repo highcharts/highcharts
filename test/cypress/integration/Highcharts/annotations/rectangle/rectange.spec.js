@@ -15,7 +15,8 @@ describe('Stock tools rectangle annotatation.', () => {
         let path = cy
             .get('.highcharts-annotation-shapes>path')
             .first()
-            .invoke('attr', 'd').then(d => {
+            .invoke('attr', 'd')
+            .then((d) => {
                 assert.equal(
                     d.slice(-1), // last char of the string
                     'Z',

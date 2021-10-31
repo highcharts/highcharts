@@ -23,7 +23,8 @@ function getProperties() {
         if (!process.env.BROWSERSTACK_USER) {
             // fallback to good old property file
             let lines = fs.readFileSync(
-                path.join(__dirname, '../../git-ignore-me.properties'), 'utf8'
+                path.join(__dirname, '../../git-ignore-me.properties'),
+                'utf8'
             );
             lines.split('\n').forEach(function (line) {
                 line = line.split('=');
@@ -39,7 +40,7 @@ function getProperties() {
     } catch (e) {
         throw new Error(
             'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
+                'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
         );
     }
     return properties;
@@ -79,7 +80,7 @@ const browserStackBrowsers = {
         browser: 'edge',
         browser_version: '80.0',
         os: 'Windows',
-        os_version: '10',
+        os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
@@ -91,7 +92,6 @@ const browserStackBrowsers = {
 };
 
 module.exports = function (config) {
-
     const argv = require('yargs').argv;
 
     /**
@@ -116,59 +116,65 @@ module.exports = function (config) {
     //*/
 
     // Browsers
-    let browsers = argv.browsers ?
-        argv.browsers.split(',') :
-        ['ChromeHeadless'];
+    let browsers = argv.browsers
+        ? argv.browsers.split(',')
+        : ['ChromeHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const tests = (
+    const tests =
         // debugger test
-        argv.testsAbsolutePath ?
-                argv.testsAbsolutePath.split(',').filter(path => !!path) :
-        // specific tests
-        argv.tests ?
+        argv.testsAbsolutePath
+            ? argv.testsAbsolutePath.split(',').filter((path) => !!path)
+            : // specific tests
             argv.tests
-                .split(',')
-                .filter(path => !!path)
-                .map(path => ({
-                    pattern: `test/typescript-karma/${path}.test.js`,
-                    type: 'module'
-                }))
-                .concat([{
-                    pattern: 'test/typescript-karma/**/!(*.test).js',
-                    type: 'module'
-                }]) :
-            // all tests
-            [{
-                pattern: 'test/typescript-karma/**/!(demo).js',
-                type: 'module'
-            }]
-    );
+            ? argv.tests
+                  .split(',')
+                  .filter((path) => !!path)
+                  .map((path) => ({
+                      pattern: `test/typescript-karma/${path}.test.js`,
+                      type: 'module'
+                  }))
+                  .concat([
+                      {
+                          pattern: 'test/typescript-karma/**/!(*.test).js',
+                          type: 'module'
+                      }
+                  ])
+            : // all tests
+              [
+                  {
+                      pattern: 'test/typescript-karma/**/!(demo).js',
+                      type: 'module'
+                  }
+              ];
 
     let options = {
         basePath: '../../', // Root relative to this file
         frameworks: ['qunit'],
-        files: [].concat([
-            // Set up
-            'vendor/require.js',
-            'test/test-controller.js',
-            'test/test-utilities.js',
-            'test/typescript-karma/karma-setup.js',
-            {
-                included: false,
-                pattern: 'code/**/*.js',
-            },
-            {
-                included: false,
-                pattern: 'js/**/*.js',
-                type: 'module'
-            }
-        ], tests),
+        files: [].concat(
+            [
+                // Set up
+                'vendor/require.js',
+                'test/test-controller.js',
+                'test/test-utilities.js',
+                'test/typescript-karma/karma-setup.js',
+                {
+                    included: false,
+                    pattern: 'code/**/*.js'
+                },
+                {
+                    included: false,
+                    pattern: 'js/**/*.js',
+                    type: 'module'
+                }
+            ],
+            tests
+        ),
 
         reporters: ['progress'],
-        port: 9876,  // karma web server port
+        port: 9876, // karma web server port
         colors: true,
         logLevel: config.LOG_INFO,
         browsers: browsers,
@@ -176,25 +182,27 @@ module.exports = function (config) {
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
         reportSlowerThan: 3000,
-        plugins: [
-            'karma-*',
-        ],
+        plugins: ['karma-*'],
 
         formatError: function (s) {
             let ret = s;
 
             // Insert link to utils
-            let regex = /(test\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
+            let regex =
+                /(test\/([a-z0-9\-]+\/[a-z0-9\-]+\/[a-z0-9\-]+)\/demo\.js:[0-9]+:[0-9]+)/;
             let match = s.match(regex);
 
             if (match) {
                 // Insert the utils link before the first line with mixed indent
                 ret = s.replace(
                     '\t    ',
-                    '\tDebug: ' + `http://utils.highcharts.local/samples/#test/${match[2]}`.cyan + '\n\t    '
+                    '\tDebug: ' +
+                        `http://utils.highcharts.local/samples/#test/${match[2]}`
+                            .cyan +
+                        '\n\t    '
                 );
 
-                ret = ret.replace(regex, a => a.cyan);
+                ret = ret.replace(regex, (a) => a.cyan);
             }
 
             // Skip the call stack, it's internal QUnit stuff
@@ -204,7 +212,7 @@ module.exports = function (config) {
         }
     };
 
-    if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
+    if (browsers.some((browser) => /^(Mac|Win)\./.test(browser))) {
         let properties = getProperties();
         const randomString = Math.random().toString(36).substring(7);
 
@@ -212,7 +220,9 @@ module.exports = function (config) {
             username: properties['browserstack.username'],
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
-            build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
+            build: `highcharts-build-${
+                process.env.CIRCLE_BUILD_NUM || randomString
+            } `,
             name: `circle-ci-karma-highcharts-${randomString}`,
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
@@ -240,22 +250,20 @@ module.exports = function (config) {
 
         options.reporters = ['progress'];
 
-        if (browsers.some(browser => /(Edge)/.test(browser))) {
+        if (browsers.some((browser) => /(Edge)/.test(browser))) {
             // fallback to polling for Edge browsers as websockets disconnects a lot.
             options.transports = ['polling'];
         }
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
-            `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
+                `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
     } else if (argv.testsAbsolutePath) {
         options.customLaunchers = {
             'ChromeHeadless.Debugging': {
                 base: 'ChromeHeadless',
-                flags: [
-                    '--remote-debugging-port=9333'
-                ]
+                flags: ['--remote-debugging-port=9333']
             }
         };
         options.browserDisconnectTimeout = 30 * 60 * 1000;

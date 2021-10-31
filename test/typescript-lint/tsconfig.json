@@ -17,9 +17,7 @@
         },
         "types": []
     },
-    "exclude": [
-        "../../node_modules"
-    ],
+    "exclude": ["../../node_modules"],
     "files": [
         "../../code/highcharts.d.ts",
         "../../code/highcharts.src.d.ts",

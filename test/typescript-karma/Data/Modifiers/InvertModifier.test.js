@@ -2,17 +2,17 @@ import DataTable from '/base/js/Data/DataTable.js';
 import InvertModifier from '/base/js/Data/Modifiers/InvertModifier.js';
 
 QUnit.test('InvertModifier.modify', function (assert) {
-
     const done = assert.async(),
         modifier = new InvertModifier();
 
     modifier
-        .modify(new DataTable({
-            x: [ 0, 1, 2, 3, 4 ],
-            y: [ 'a', 'b', 'c', 'd', 'e' ]
-        }))
+        .modify(
+            new DataTable({
+                x: [0, 1, 2, 3, 4],
+                y: ['a', 'b', 'c', 'd', 'e']
+            })
+        )
         .then((table) => {
-
             const tableColumnNames = table.getColumnNames();
 
             assert.notStrictEqual(
@@ -42,19 +42,12 @@ QUnit.test('InvertModifier.modify', function (assert) {
                         'Double inverted table should be the same as original table.'
                     )
                 );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('InvertModifier.modifyCell', function (assert) {
-
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
@@ -65,7 +58,6 @@ QUnit.test('InvertModifier.modifyCell', function (assert) {
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.strictEqual(
                 table.modified.getRowCount(),
                 table.getColumnNames().length,
@@ -91,19 +83,12 @@ QUnit.test('InvertModifier.modifyCell', function (assert) {
                 5,
                 'Inverted table should contain valid value.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('InvertModifier.modifyColumns', function (assert) {
-
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
@@ -114,7 +99,6 @@ QUnit.test('InvertModifier.modifyColumns', function (assert) {
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.deepEqual(
                 table.modified.getColumn('3'),
                 [1, 'd'],
@@ -144,19 +128,12 @@ QUnit.test('InvertModifier.modifyColumns', function (assert) {
                 1,
                 'Inverted table should contain only one column as row.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('InvertModifier.modifyRows', function (assert) {
-
     const done = assert.async(),
         modifier = new InvertModifier(),
         table = new DataTable({
@@ -167,7 +144,6 @@ QUnit.test('InvertModifier.modifyRows', function (assert) {
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.strictEqual(
                 table.modified.getColumn('5'),
                 undefined,
@@ -195,13 +171,7 @@ QUnit.test('InvertModifier.modifyRows', function (assert) {
                 6,
                 'Inverted table should contain only five rows (plus one extra) as columns.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });

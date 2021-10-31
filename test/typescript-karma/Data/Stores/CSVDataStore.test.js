@@ -1,5 +1,5 @@
-import CSVStore from '/base/js/Data/Stores/CSVStore.js'
-import { registerStoreEvents, testExportedDataTable } from './utils.js'
+import CSVStore from '/base/js/Data/Stores/CSVStore.js';
+import { registerStoreEvents, testExportedDataTable } from './utils.js';
 import DataTable from '/base/js/Data/DataTable.js';
 
 const { test, only } = QUnit;
@@ -37,7 +37,8 @@ test('CSVStore from string', function (assert) {
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
-        datastore.table.getRowCount(), csv.split('\n').length - 1,
+        datastore.table.getRowCount(),
+        csv.split('\n').length - 1,
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
@@ -57,30 +58,26 @@ test('CSVStore from string', function (assert) {
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
 });
 
-test('CSVStore from string, with decimalpoint option', function(assert){
-    const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
+test('CSVStore from string, with decimalpoint option', function (assert) {
+    const csv =
+        'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
     let store = new CSVStore(undefined, {
         csv
     });
 
     store.load();
-    assert.strictEqual(
-        store.table.getRowCount(),
-        3
-    );
+    assert.strictEqual(store.table.getRowCount(), 3);
     assert.strictEqual(
         typeof store.table.getCell('Value', 2),
         'number',
         'The parser should be able to guess this decimalpoint'
-    )
-
-    store = new CSVStore(undefined,
-        {
-            csv,
-            decimalPoint: '.'
-        }
     );
-    store.load()
+
+    store = new CSVStore(undefined, {
+        csv,
+        decimalPoint: '.'
+    });
+    store.load();
     assert.strictEqual(
         typeof store.table.getCell('Value', 2),
         'string',
@@ -90,7 +87,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
 
 test('CSVStore, negative values', function (assert) {
     // If the final value is undefined it will be trimmed
-    const array = [-3, -3.1, -.2, 2.1, undefined, 1];
+    const array = [-3, -3.1, -0.2, 2.1, undefined, 1];
 
     let store = new CSVStore(undefined, {
         csv: ['Values', ...array].join('\n')
@@ -98,12 +95,8 @@ test('CSVStore, negative values', function (assert) {
 
     store.load();
 
-    assert.deepEqual(
-        store.table.getColumns(['Values'])['Values'],
-        array
-    );
-
-})
+    assert.deepEqual(store.table.getColumns(['Values'])['Values'], array);
+});
 
 test('CSV with ""s', (assert) => {
     const csv = `"test","test2"
@@ -111,7 +104,7 @@ test('CSV with ""s', (assert) => {
 "a",4
 "s",5
 12,"5"
-`
+`;
     const datastore = new CSVStore(undefined, {
         csv
     });
@@ -122,17 +115,17 @@ test('CSV with ""s', (assert) => {
         datastore.table.getColumnNames(),
         ['test', 'test2'],
         'Headers should not contain ""s'
-    )
+    );
 
     datastore.describeColumn('test', {
         dataType: 'string'
-    })
+    });
 
     assert.strictEqual(
         datastore.save().split('\n')[1].split(',')[0],
-        '\"12\"',
+        '"12"',
         'The first value (12) should be quoted when exported to csv, if dataType is set to string'
-    )
+    );
 
     // Not quite here yet
 
@@ -150,8 +143,7 @@ test('CSVStore from URL', function (assert) {
         enablePolling: true
     });
 
-
-    registerStoreEvents(datastore, registeredEvents, assert)
+    registerStoreEvents(datastore, registeredEvents, assert);
 
     let pollNumber = 0;
     let states = [];
@@ -159,7 +151,7 @@ test('CSVStore from URL', function (assert) {
     const doneLoading = assert.async(3);
 
     datastore.on('afterLoad', (e) => {
-        assert.ok(e.table.getRowCount() > 1, 'Datastore got rows')
+        assert.ok(e.table.getRowCount() > 1, 'Datastore got rows');
 
         // Check that the store is updated
         // with the new dataset when polling
@@ -170,15 +162,23 @@ test('CSVStore from URL', function (assert) {
                 states[pollNumber].length,
                 states[pollNumber - 1].length,
                 'Should have the same amount of rows'
-            )
+            );
 
-            const currentValue = states[pollNumber].getCellAsNumber('X', 1, true);
-            const previousValue = states[pollNumber - 1].getCellAsNumber('X', 1, true);
+            const currentValue = states[pollNumber].getCellAsNumber(
+                'X',
+                1,
+                true
+            );
+            const previousValue = states[pollNumber - 1].getCellAsNumber(
+                'X',
+                1,
+                true
+            );
             assert.notStrictEqual(
                 currentValue,
                 previousValue,
                 'Fetched new data'
-            )
+            );
         }
 
         pollNumber++;
@@ -188,7 +188,7 @@ test('CSVStore from URL', function (assert) {
             datastore.options.enablePolling = false;
         }
 
-        function getExpectedEvents(){
+        function getExpectedEvents() {
             const expectedArray = [];
             const events = ['load', 'afterLoad'];
             let i = 0;
@@ -199,15 +199,22 @@ test('CSVStore from URL', function (assert) {
             return expectedArray;
         }
 
-        assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
-        assert.ok(e.csv, 'AfterLoad event has CSV attached')
+        assert.deepEqual(
+            registeredEvents,
+            getExpectedEvents(),
+            'Events are fired in correct order'
+        );
+        assert.ok(e.csv, 'AfterLoad event has CSV attached');
 
-        doneLoading()
-        ;
+        doneLoading();
     });
 
     datastore.on('load', (e) => {
-        assert.deepEqual(e.table, datastore.table, 'DataTable from event is same as DataTable from datastore')
+        assert.deepEqual(
+            e.table,
+            datastore.table,
+            'DataTable from event is same as DataTable from datastore'
+        );
     });
 
     datastore.on('loadError', (e) => {
@@ -218,12 +225,10 @@ test('CSVStore from URL', function (assert) {
 
     // Do the load
     datastore.load();
-
-})
+});
 
 // TODO: test amount of retries, event orders
-test('CSVStore error', function(assert){
-
+test('CSVStore error', function (assert) {
     const registeredEvents = [];
 
     const datastore = new CSVStore(undefined, {
@@ -232,14 +237,14 @@ test('CSVStore error', function(assert){
 
     const afterError = assert.async();
 
-    datastore.on('load', (e) =>{
+    datastore.on('load', (e) => {
         // console.log('Attempting to load');
-    })
+    });
 
-    datastore.on('loadError', (e)=>{
+    datastore.on('loadError', (e) => {
         assert.ok(true);
         afterError();
-    })
+    });
 
     datastore.load();
 });

@@ -1,7 +1,7 @@
 /// <reference path="../code/highcharts.d.ts" />
 
 declare interface Lolex {
-    install: (lolexConfig? : any) => (LolexClock|undefined);
+    install: (lolexConfig?: any) => LolexClock | undefined;
 }
 
 declare interface LolexClock {

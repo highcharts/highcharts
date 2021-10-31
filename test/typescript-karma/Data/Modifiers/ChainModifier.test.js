@@ -5,41 +5,49 @@ import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
 
 QUnit.test('ChainModifier.benchmark', function (assert) {
-
     const modifier = new ChainModifier(
             {},
             new GroupModifier({
                 groupColumn: 'y'
             }),
             new RangeModifier({
-                ranges: [{
-                    column: 'value',
-                    minValue: 'A',
-                    maxValue: 'b'
-                }]
+                ranges: [
+                    {
+                        column: 'value',
+                        minValue: 'A',
+                        maxValue: 'b'
+                    }
+                ]
             })
         ),
         table = new DataTable();
-    
-    table.setRows([{
-        x: 1,
-        y: 'a'
-    }, {
-        x: 2,
-        y: 'a'
-    }, {
-        x: 3,
-        y: 'b'
-    }, {
-        x: 4,
-        y: 'b'
-    }, {
-        x: 5,
-        y: 'c'
-    }, {
-        x: 6,
-        y: 'c'
-    }]);
+
+    table.setRows([
+        {
+            x: 1,
+            y: 'a'
+        },
+        {
+            x: 2,
+            y: 'a'
+        },
+        {
+            x: 3,
+            y: 'b'
+        },
+        {
+            x: 4,
+            y: 'b'
+        },
+        {
+            x: 5,
+            y: 'c'
+        },
+        {
+            x: 6,
+            y: 'c'
+        }
+    ]);
 
     const options = {
             iterations: 10
@@ -54,7 +62,6 @@ QUnit.test('ChainModifier.benchmark', function (assert) {
 });
 
 QUnit.test('ChainModifier.modify', function (assert) {
-
     const done = assert.async(),
         modifier = new ChainModifier(
             {},
@@ -62,11 +69,13 @@ QUnit.test('ChainModifier.modify', function (assert) {
                 groupColumn: 'y'
             }),
             new RangeModifier({
-                ranges: [{
-                    column: 'value',
-                    minValue: 'A',
-                    maxValue: 'b'
-                }]
+                ranges: [
+                    {
+                        column: 'value',
+                        minValue: 'A',
+                        maxValue: 'b'
+                    }
+                ]
             })
         ),
         table = new DataTable({
@@ -77,7 +86,6 @@ QUnit.test('ChainModifier.modify', function (assert) {
     modifier
         .modify(table)
         .then((table) => {
-
             assert.equal(
                 table.modified.getRowCount(),
                 2,
@@ -92,42 +100,39 @@ QUnit.test('ChainModifier.modify', function (assert) {
                 },
                 'Modified table should have expected structure of two rows with sub tables.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('ChainModifier.modifyCell', function (assert) {
-
     const done = assert.async(),
         table = new DataTable({
             x: [1, 2, 3, 4, 5, 6]
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
-            new RangeModifier({
-                ranges: [{
-                    column: 'x',
-                    minValue: 2,
-                    maxValue: 5
-                }]
-            }),
-            new SortModifier({
-                direction: 'desc',
-                sortByColumn: 'x',
-            })
-        ))
+        .setModifier(
+            new ChainModifier(
+                {
+                    columns: ['x', 'y']
+                },
+                new RangeModifier({
+                    ranges: [
+                        {
+                            column: 'x',
+                            minValue: 2,
+                            maxValue: 5
+                        }
+                    ]
+                }),
+                new SortModifier({
+                    direction: 'desc',
+                    sortByColumn: 'x'
+                })
+            )
+        )
         .then((table) => {
-
             assert.strictEqual(
                 table.getRowCount(),
                 6,
@@ -153,42 +158,39 @@ QUnit.test('ChainModifier.modifyCell', function (assert) {
                 3,
                 'DataTable.modified should contain three rows.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('ChainModifier.modifyColumns', function (assert) {
-
     const done = assert.async(),
         table = new DataTable({
             x: [1, 2, 3, 4, 5, 6]
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
-            new RangeModifier({
-                ranges: [{
-                    column: 'x',
-                    minValue: 2,
-                    maxValue: 5
-                }]
-            }),
-            new SortModifier({
-                direction: 'desc',
-                sortByColumn: 'x',
-            })
-        ))
+        .setModifier(
+            new ChainModifier(
+                {
+                    columns: ['x', 'y']
+                },
+                new RangeModifier({
+                    ranges: [
+                        {
+                            column: 'x',
+                            minValue: 2,
+                            maxValue: 5
+                        }
+                    ]
+                }),
+                new SortModifier({
+                    direction: 'desc',
+                    sortByColumn: 'x'
+                })
+            )
+        )
         .then((table) => {
-
             assert.strictEqual(
                 table.getRowCount(),
                 6,
@@ -214,20 +216,12 @@ QUnit.test('ChainModifier.modifyColumns', function (assert) {
                 3,
                 'DataTable.modified should contain three rows.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
-
 QUnit.test('ChainModifier.modifyRows', function (assert) {
-
     const done = assert.async(),
         table = new DataTable({
             x: [6, 5, 4, 3, 2, 1],
@@ -235,23 +229,27 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
         });
 
     table
-        .setModifier(new ChainModifier({
-                columns: ['x', 'y']
-            },
-            new RangeModifier({
-                ranges: [{
-                    column: 'x',
-                    minValue: 2,
-                    maxValue: 5
-                }]
-            }),
-            new SortModifier({
-                direction: 'asc',
-                sortByColumn: 'x',
-            })
-        ))
+        .setModifier(
+            new ChainModifier(
+                {
+                    columns: ['x', 'y']
+                },
+                new RangeModifier({
+                    ranges: [
+                        {
+                            column: 'x',
+                            minValue: 2,
+                            maxValue: 5
+                        }
+                    ]
+                }),
+                new SortModifier({
+                    direction: 'asc',
+                    sortByColumn: 'x'
+                })
+            )
+        )
         .then((table) => {
-
             assert.strictEqual(
                 table.getRowCount(),
                 6,
@@ -277,13 +275,7 @@ QUnit.test('ChainModifier.modifyRows', function (assert) {
                 4,
                 'DataTable.modified should contain three rows.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });

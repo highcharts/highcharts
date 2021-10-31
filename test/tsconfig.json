@@ -8,12 +8,8 @@
         "module": "none",
         "moduleResolution": "node",
         "target": "es5",
-        "lib": [
-            "dom",
-            "es5"
-        ],
-        "types": [
-        ]
+        "lib": ["dom", "es5"],
+        "types": []
     },
     "files": [
         "tsglobal.d.ts",

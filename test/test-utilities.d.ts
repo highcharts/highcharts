@@ -27,7 +27,10 @@ declare class TestUtilities {
      * @param fn
      * The function to call. First argument is the matching timezone string.
      */
-    static ifTimezone<T>(timezones: Array<string>, fn: (timezoneString: string) => T): (T | undefined);
+    static ifTimezone<T>(
+        timezones: Array<string>,
+        fn: (timezoneString: string) => T
+    ): T | undefined;
     /**
      * Convenient wrapper for installing lolex and bypassing
      * requestAnimationFrame. Returns a clock object.

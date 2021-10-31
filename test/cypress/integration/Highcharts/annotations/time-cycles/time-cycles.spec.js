@@ -11,10 +11,9 @@ describe('Stock Tools Time Cicles, #15826', () => {
         cy.selectAnnotation('highcharts-time-cycles', 'highcharts-fibonacci');
         cy.get('.highcharts-container')
             .click(120, 150, { force: true })
-            .click(220, 150, { force: true })
+            .click(220, 150, { force: true });
 
-        cy.chart().then(chart => {
-
+        cy.chart().then((chart) => {
             const annotation = chart.annotations[0],
                 xAxis = chart.xAxis[0],
                 point1 = annotation.points[0],
@@ -40,17 +39,14 @@ describe('Stock Tools Time Cicles, #15826', () => {
         });
     });
 
-
     it(`Changes annotation's properties when the controlPoints are dragged.`, () => {
-        cy.get('.highcharts-annotation').first()
-            .click({ force: true })
+        cy.get('.highcharts-annotation').first().click({ force: true });
 
         cy.get('.highcharts-control-points')
             .children()
             .last()
             .dragTo('.highcharts-container', 370, 100);
-        cy.chart().then(chart => {
-
+        cy.chart().then((chart) => {
             const annotation = chart.annotations[0],
                 xAxis = chart.xAxis[0],
                 point1 = annotation.points[0],
@@ -78,11 +74,11 @@ describe('Stock Tools Time Cicles, #15826', () => {
     });
 
     it(`Dragging control Points should change annotation's properties.`, () => {
-        cy.get('.highcharts-annotation').first()
+        cy.get('.highcharts-annotation')
+            .first()
             .dragTo('.highcharts-container', 450, 100);
 
-        cy.chart().then(chart => {
-
+        cy.chart().then((chart) => {
             const annotation = chart.annotations[0],
                 xAxis = chart.xAxis[0],
                 point1 = annotation.points[0],

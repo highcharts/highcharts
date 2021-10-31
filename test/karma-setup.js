@@ -26,7 +26,6 @@ var demoHTML = document.createElement('div');
 demoHTML.setAttribute('id', 'demo-html');
 document.body.appendChild(demoHTML);
 
-
 var currentTests = [];
 
 Highcharts.useSerialIds(true);
@@ -78,7 +77,6 @@ Highcharts.setOptions({
                 maxIterations: 10
             }
         }
-
     },
     // Stock's Toolbar decreases width of the chart. At the same time, some
     // tests have hardcoded x/y positions for events which cuases them to fail.
@@ -157,31 +155,36 @@ if (window.$) {
 var open = XMLHttpRequest.prototype.open;
 var send = XMLHttpRequest.prototype.send;
 XMLHttpRequest.prototype.open = function (type, url) {
-	this.requestURL = url;
+    this.requestURL = url;
     return open.apply(this, arguments);
-}
+};
 
 XMLHttpRequest.prototype.send = function () {
     var localData = this.requestURL && window.JSONSources[this.requestURL];
-	if (localData) {
+    if (localData) {
         Object.defineProperty(this, 'readyState', {
-            get: function () { return 4; }
+            get: function () {
+                return 4;
+            }
         });
         Object.defineProperty(this, 'status', {
-            get: function () { return 200; }
+            get: function () {
+                return 200;
+            }
         });
         Object.defineProperty(this, 'responseText', {
-            get: function () { return JSON.stringify(localData); }
+            get: function () {
+                return JSON.stringify(localData);
+            }
         });
 
         this.onreadystatechange();
     } else {
         return send.apply(this, arguments);
     }
-}
+};
 
 function resetDefaultOptions(testName) {
-
     var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
 
     // Before running setOptions, delete properties that are undefined by
@@ -218,12 +221,13 @@ function resetDefaultOptions(testName) {
 
     // Create a new Time instance to avoid state leaks related to time and the
     // legacy global options
-    Highcharts.time = new Highcharts.Time(Highcharts.merge(
-        Highcharts.defaultOptions.global,
-        Highcharts.defaultOptions.time
-    ));
+    Highcharts.time = new Highcharts.Time(
+        Highcharts.merge(
+            Highcharts.defaultOptions.global,
+            Highcharts.defaultOptions.time
+        )
+    );
 }
-
 
 // Handle wrapping, reset functions that are wrapped in the visual samples to
 // prevent the wraps from piling up downstream.
@@ -234,18 +238,18 @@ var addedEvents = [];
 
 if (window.QUnit) {
     // Fix the number localization in IE
-    if (
-        /msie/.test(navigator.userAgent) &&
-        !Number.prototype._toString
-    ) {
+    if (/msie/.test(navigator.userAgent) && !Number.prototype._toString) {
         Number.prototype._toString = Number.prototype.toString;
-        Number.prototype.toString = function(radix) {
+        Number.prototype.toString = function (radix) {
             if (radix) {
                 return Number.prototype._toString.apply(this, arguments);
             } else {
-                return this.toLocaleString('en', { useGrouping: false, maximumFractionDigits: 20 });
+                return this.toLocaleString('en', {
+                    useGrouping: false,
+                    maximumFractionDigits: 20
+                });
             }
-        }
+        };
     }
 
     //QUnit.config.seed = 'vaolebrok';
@@ -260,10 +264,7 @@ if (window.QUnit) {
      */
     QUnit.assert.close = function (number, expected, error, message) {
         // Remove fix of number localization in IE
-        if (
-            /msie/.test(navigator.userAgent) &&
-            Number.prototype._toString
-        ) {
+        if (/msie/.test(navigator.userAgent) && Number.prototype._toString) {
             Number.prototype.toString = Number.prototype._toString;
             delete Number.prototype._toString;
         }
@@ -272,7 +273,10 @@ if (window.QUnit) {
             error = 0.00001; // default error
         }
 
-        var result = number === expected || (number <= expected + error && number >= expected - error) || false;
+        var result =
+            number === expected ||
+            (number <= expected + error && number >= expected - error) ||
+            false;
 
         this.pushResult({
             result: result,
@@ -316,17 +320,14 @@ if (window.QUnit) {
                     addedEvents.push(unbinder);
                 }
                 return unbinder;
-            }
+            };
         },
 
         afterEach: function (test) {
             if (VERBOSE) {
                 console.log('- end "' + test.test.testName + '"');
             }
-            currentTests.splice(
-                currentTests.indexOf(test.test.testName),
-                1
-            );
+            currentTests.splice(currentTests.indexOf(test.test.testName), 1);
 
             var defaultOptions = JSON.stringify(Highcharts.defaultOptions);
             if (defaultOptions !== Highcharts.defaultOptionsRaw) {
@@ -391,7 +392,6 @@ if (window.QUnit) {
             }
             Highcharts.addEvent = origAddEvent;
 
-
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
@@ -417,12 +417,9 @@ if (window.QUnit) {
  * Display the tooltip so it gets part of the comparison
  */
 Highcharts.prepareShot = function (chart) {
-    if (
-        chart &&
-        chart.series &&
-        chart.series[0]
-    ) {
-        var points = chart.series[0].nodes || // Network graphs, sankey etc
+    if (chart && chart.series && chart.series[0]) {
+        var points =
+            chart.series[0].nodes || // Network graphs, sankey etc
             chart.series[0].points;
 
         if (points) {
@@ -430,10 +427,13 @@ Highcharts.prepareShot = function (chart) {
                 if (
                     points[i] &&
                     !points[i].isNull &&
-                    !( // Map point with no extent, like Aruba
-                        points[i].shapeArgs &&
-                        points[i].shapeArgs.d &&
-                        points[i].shapeArgs.d.length === 0
+                    !(
+                        // Map point with no extent, like Aruba
+                        (
+                            points[i].shapeArgs &&
+                            points[i].shapeArgs.d &&
+                            points[i].shapeArgs.d.length === 0
+                        )
                     ) &&
                     typeof points[i].onMouseOver === 'function'
                 ) {
@@ -446,10 +446,10 @@ Highcharts.prepareShot = function (chart) {
 };
 
 /**
-* Basic pretty-print SVG, each tag on a new line.
-* @param  {String} svg The SVG
-* @return {String}     Pretty SVG
-*/
+ * Basic pretty-print SVG, each tag on a new line.
+ * @param  {String} svg The SVG
+ * @return {String}     Pretty SVG
+ */
 function prettyXML(svg) {
     svg = svg
         .replace(/>/g, '>\n')
@@ -474,9 +474,9 @@ function getSVG(chart) {
     if (chart) {
         var container = chart.container;
         Highcharts.prepareShot(chart);
-        svg = container.querySelector('svg')
-            .outerHTML
-            .replace(
+        svg = container
+            .querySelector('svg')
+            .outerHTML.replace(
                 /<svg /,
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             );
@@ -484,12 +484,12 @@ function getSVG(chart) {
         if (chart.styledMode) {
             svg = svg.replace(
                 '</style>',
-                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } '
-                + 'text, tspan { fill: blue; stroke: none; } </style>'
+                '* { fill: rgba(0, 0, 0, 0.1); stroke: black; stroke-width: 1px; } ' +
+                    'text, tspan { fill: blue; stroke: none; } </style>'
             );
         }
 
-    // Renderer samples
+        // Renderer samples
     } else {
         if (document.getElementsByTagName('svg').length) {
             svg = document.getElementsByTagName('svg')[0].outerHTML;
@@ -505,7 +505,8 @@ function getSVG(chart) {
  * @param  {Array} data2 Pixel data for image2.
  * @return {Number}      The amount of different pixels, where 0 is identical
  */
-function compare(data1, data2) { // eslint-disable-line no-unused-vars
+function compare(data1, data2) {
+    // eslint-disable-line no-unused-vars
     var i = data1.length,
         diff = 0,
         pixels = [],
@@ -531,7 +532,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 function xhrLoad(url, callback) {
     var xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             callback(xhr);
         }
@@ -542,23 +543,36 @@ function xhrLoad(url, callback) {
 
 function loadReferenceSVG(path) {
     return new Promise(function (resolve, reject) {
-        var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
+        var remotelocation =
+            __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
         if (remotelocation) {
-            url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/visualtests/reference/latest/' + path + '/reference.svg';
+            url =
+                'http://' +
+                remotelocation +
+                '.s3.eu-central-1.amazonaws.com/visualtests/reference/latest/' +
+                path +
+                '/reference.svg';
         }
         xhrLoad(url, function onXHRDone(xhr) {
             if (xhr.status === 200) {
                 var svg = xhr.responseText;
                 resolve(svg);
             } else {
-                var errMsg = 'Unable to load svg for test ' + path + ' found. Skipping comparison.'
-                    + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.';
+                var errMsg =
+                    'Unable to load svg for test ' +
+                    path +
+                    ' found. Skipping comparison.' +
+                    ' Status returned is ' +
+                    xhr.status +
+                    ' ' +
+                    xhr.statusText +
+                    '.';
                 reject(new Error(errMsg));
             }
         });
-    })
+    });
 }
 
 /**
@@ -576,9 +590,8 @@ function saveSVGSnapshot(svg, path) {
     }
 }
 
-
 function svgToPixels(svg, canvas) {
-    var DOMURL = (window.URL || window.webkitURL || window);
+    var DOMURL = window.URL || window.webkitURL || window;
     var ctx = canvas.getContext && canvas.getContext('2d');
 
     // Invalidate images, loading external images will throw an error
@@ -618,9 +631,9 @@ function createCanvas(id) {
  * @param  {String} path  The sample path
  * @return {String}       The image data
  */
-function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
+function compareToReference(chart, path) {
+    // eslint-disable-line no-unused-vars
     return new Promise(function (resolve, reject) {
-
         var candidateSVG = getSVG(chart);
         if (!candidateSVG || !path) {
             reject(new Error('No candidate SVG found for path: ' + path));
@@ -647,65 +660,62 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                         filename: './samples/' + path + '/diff.gif',
                         canvasWidth: CANVAS_WIDTH,
                         canvasHeight: CANVAS_HEIGHT,
-                        frames: [
-                            referencePixels,
-                            candidatePixels
-                        ]
+                        frames: [referencePixels, candidatePixels]
                     });
                     saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
                 }
                 resolve(diff);
             })
-            ['catch'](function (error) { // to avoid IE8 failure
+            ['catch'](function (error) {
+                // to avoid IE8 failure
                 console.log(error && error.message);
                 resolve(error && error.message); // skip and continue processing
             });
-
     });
 }
 
 // De-randomize Math.random in tests
 (function () {
-    var randomValues = [0.14102989272214472, 0.0351817375048995,
-        0.10094573209062219, 0.35990892769768834, 0.7690574480220675,
-        0.16634021210484207, 0.3944594960194081, 0.7656398438848555,
-        0.27706647920422256, 0.5681763959582895, 0.513730650767684,
-        0.26344996923580766, 0.09001278411597013, 0.2977627406362444,
-        0.6982127586379647, 0.9593012358527631, 0.8456065070349723,
-        0.26248381356708705, 0.12872424302622676, 0.25530692492611706,
-        0.9969052199739963, 0.09259856841526926, 0.9022860133554786,
-        0.3393681487068534, 0.41671016393229365, 0.10582929337397218,
-        0.1322793234139681, 0.595869708340615, 0.050670077092945576,
-        0.8613549116998911, 0.17356411134824157, 0.16447093593887985,
-        0.44514468451961875, 0.15736589767038822, 0.8677479331381619,
-        0.30932203005068004, 0.6120233973488212, 0.001859797164797783,
-        0.7689258102327585, 0.7421043077483773, 0.7548440918326378,
-        0.9667320610024035, 0.13654314493760467, 0.6277681242208928,
-        0.002858637133613229, 0.6877673089038581, 0.44036358245648444,
-        0.3101970909629017, 0.013212101766839623, 0.7115063068922609,
-        0.2931885647121817, 0.5031651991885155, 0.8921459852717817,
-        0.547999506117776, 0.010382920736446977, 0.9862914837431163,
-        0.9629317701328546, 0.07685352209955454, 0.2859949553385377,
-        0.5578324059024453, 0.7765828191768378, 0.1696563793811947,
-        0.34366130153648555, 0.11959927808493376, 0.8898638435639441,
-        0.8963573810178787, 0.332408863119781, 0.27137733018025756,
-        0.3066735703032464, 0.2789501305669546, 0.4567076754756272,
-        0.09539463231340051, 0.9158625246491283, 0.2145260546822101,
-        0.8913846455980092, 0.22340057184919715, 0.09033847553655505,
-        0.49042539740912616, 0.4070818084292114, 0.5827512110117823,
-        0.1993762720376253, 0.9264022477436811, 0.3290765874553472,
-        0.07792594563215971, 0.7663758248090744, 0.4329648329876363,
-        0.10257583996281028, 0.8170149670913815, 0.41387700103223324,
-        0.7504217880778015, 0.08603733032941818, 0.17256441875360906,
-        0.4064991301856935, 0.829071992309764, 0.6997416105587035,
-        0.2686419754754752, 0.36025605257600546, 0.6014082923065871,
-        0.9787689209915698, 0.016065671807155013];
+    var randomValues = [
+        0.14102989272214472, 0.0351817375048995, 0.10094573209062219,
+        0.35990892769768834, 0.7690574480220675, 0.16634021210484207,
+        0.3944594960194081, 0.7656398438848555, 0.27706647920422256,
+        0.5681763959582895, 0.513730650767684, 0.26344996923580766,
+        0.09001278411597013, 0.2977627406362444, 0.6982127586379647,
+        0.9593012358527631, 0.8456065070349723, 0.26248381356708705,
+        0.12872424302622676, 0.25530692492611706, 0.9969052199739963,
+        0.09259856841526926, 0.9022860133554786, 0.3393681487068534,
+        0.41671016393229365, 0.10582929337397218, 0.1322793234139681,
+        0.595869708340615, 0.050670077092945576, 0.8613549116998911,
+        0.17356411134824157, 0.16447093593887985, 0.44514468451961875,
+        0.15736589767038822, 0.8677479331381619, 0.30932203005068004,
+        0.6120233973488212, 0.001859797164797783, 0.7689258102327585,
+        0.7421043077483773, 0.7548440918326378, 0.9667320610024035,
+        0.13654314493760467, 0.6277681242208928, 0.002858637133613229,
+        0.6877673089038581, 0.44036358245648444, 0.3101970909629017,
+        0.013212101766839623, 0.7115063068922609, 0.2931885647121817,
+        0.5031651991885155, 0.8921459852717817, 0.547999506117776,
+        0.010382920736446977, 0.9862914837431163, 0.9629317701328546,
+        0.07685352209955454, 0.2859949553385377, 0.5578324059024453,
+        0.7765828191768378, 0.1696563793811947, 0.34366130153648555,
+        0.11959927808493376, 0.8898638435639441, 0.8963573810178787,
+        0.332408863119781, 0.27137733018025756, 0.3066735703032464,
+        0.2789501305669546, 0.4567076754756272, 0.09539463231340051,
+        0.9158625246491283, 0.2145260546822101, 0.8913846455980092,
+        0.22340057184919715, 0.09033847553655505, 0.49042539740912616,
+        0.4070818084292114, 0.5827512110117823, 0.1993762720376253,
+        0.9264022477436811, 0.3290765874553472, 0.07792594563215971,
+        0.7663758248090744, 0.4329648329876363, 0.10257583996281028,
+        0.8170149670913815, 0.41387700103223324, 0.7504217880778015,
+        0.08603733032941818, 0.17256441875360906, 0.4064991301856935,
+        0.829071992309764, 0.6997416105587035, 0.2686419754754752,
+        0.36025605257600546, 0.6014082923065871, 0.9787689209915698,
+        0.016065671807155013
+    ];
     Math.randomCursor = 0;
     Math.random = function () {
-        var ret = randomValues[
-            Math.randomCursor % randomValues.length
-        ];
+        var ret = randomValues[Math.randomCursor % randomValues.length];
         Math.randomCursor++;
         return ret;
     };
-}());
+})();

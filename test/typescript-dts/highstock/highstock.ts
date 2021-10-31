@@ -28,13 +28,15 @@ function test_seriesLine() {
                 data: lineData
             }
         },
-        series: [{
-            type: 'line',
-            data: lineData,
-            tooltip: {
-                valueDecimals: 2
+        series: [
+            {
+                type: 'line',
+                data: lineData,
+                tooltip: {
+                    valueDecimals: 2
+                }
             }
-        }]
+        ]
     });
 }
 
@@ -44,7 +46,8 @@ function test_seriesLine() {
 function test_theme() {
     Highcharts.stockChart('container', {
         rangeSelector: {
-            buttonTheme: { // styles for the buttons
+            buttonTheme: {
+                // styles for the buttons
                 fill: 'none',
                 stroke: 'none',
                 'stroke-width': 0,
@@ -54,8 +57,7 @@ function test_theme() {
                     fontWeight: 'bold'
                 },
                 states: {
-                    hover: {
-                    },
+                    hover: {},
                     select: {
                         fill: '#039',
                         style: {
@@ -92,10 +94,12 @@ function test_theme() {
                 } as any
             }
         },
-        series: [{
-            type: 'line',
-            name: 'USD to EUR',
-            data: []
-        }]
+        series: [
+            {
+                type: 'line',
+                name: 'USD to EUR',
+                data: []
+            }
+        ]
     });
 }

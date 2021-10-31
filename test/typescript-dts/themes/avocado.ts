@@ -1,4 +1,4 @@
 import * as Highcharts from 'highcharts';
-import AvocadoTheme from "highcharts/themes/avocado";
+import AvocadoTheme from 'highcharts/themes/avocado';
 
 AvocadoTheme(Highcharts);

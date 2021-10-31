@@ -1,5 +1,4 @@
 TestTemplate.register('highcharts/columnrange', Highcharts.chart, {
-
     chart: {
         type: 'columnrange'
     },
@@ -8,9 +7,14 @@ TestTemplate.register('highcharts/columnrange', Highcharts.chart, {
         text: 'template/highcharts/columnrange'
     },
 
-    series: [{
-        type: 'columnrange',
-        data: [[0, 1], [2, 3], [1, 2]]
-    }]
-
+    series: [
+        {
+            type: 'columnrange',
+            data: [
+                [0, 1],
+                [2, 3],
+                [1, 2]
+            ]
+        }
+    ]
 });

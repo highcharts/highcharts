@@ -1,5 +1,4 @@
 describe('Name of the group', () => {
-
     /*
      *   beforeEach and afterEach should be used with care.
      *   Avoid heavy operations such as `cy.visit()`

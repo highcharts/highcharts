@@ -8,7 +8,6 @@
  * Useful functions for test purposes.
  */
 class TestUtilities {
-
     /* *
      *
      *  Constants
@@ -24,43 +23,43 @@ class TestUtilities {
      */
     public static readonly browser: string = (function () {
         var userAgent = window.navigator.userAgent;
-        if ((new RegExp('MSIE|Trident', 'i')).test(userAgent) &&
-            !(new RegExp('Opera', 'i')).test(userAgent)
+        if (
+            new RegExp('MSIE|Trident', 'i').test(userAgent) &&
+            !new RegExp('Opera', 'i').test(userAgent)
         ) {
             return 'MSIE';
         }
-        if ((new RegExp('Firefox', 'i')).test(userAgent)) {
+        if (new RegExp('Firefox', 'i').test(userAgent)) {
             return 'Firefox';
         }
-        if ((new RegExp('Edge', 'i')).test(userAgent)) {
+        if (new RegExp('Edge', 'i').test(userAgent)) {
             return 'Edge';
         }
-        if ((new RegExp('Chrome', 'i')).test(userAgent)) {
+        if (new RegExp('Chrome', 'i').test(userAgent)) {
             return 'Chrome';
         }
-        if ((new RegExp('PhantomJS', 'i')).test(userAgent)) {
+        if (new RegExp('PhantomJS', 'i').test(userAgent)) {
             return 'PhantomJS';
         }
-        if ((new RegExp('Safari', 'i')).test(userAgent)) {
+        if (new RegExp('Safari', 'i').test(userAgent)) {
             return 'Safari';
         }
-        if ((new RegExp('Opera', 'i')).test(userAgent)) {
+        if (new RegExp('Opera', 'i').test(userAgent)) {
             return 'Opera';
         }
-        if ((new RegExp('Netscape', 'i')).test(userAgent)) {
+        if (new RegExp('Netscape', 'i').test(userAgent)) {
             return 'Netscape';
         }
         return '';
-    }());
+    })();
 
     /**
      * Indiciates, if system time runs in CET timezone.
      */
-    private static readonly isCET: boolean = (
+    private static readonly isCET: boolean =
         TestUtilities.timeString.indexOf('CET') !== -1 ||
         TestUtilities.timeString.indexOf('CEST') !== -1 ||
-        TestUtilities.timeString.indexOf('W. Europe Standard Time') !== -1
-    );
+        TestUtilities.timeString.indexOf('W. Europe Standard Time') !== -1;
 
     /* *
      *
@@ -78,9 +77,9 @@ class TestUtilities {
      * The function to call. First argument is the matching timezone string.
      */
     public static ifTimezone<T>(
-        timezones: Array<string>, fn: (timezoneString: string) => T
-    ): (T | undefined) {
-
+        timezones: Array<string>,
+        fn: (timezoneString: string) => T
+    ): T | undefined {
         var timezoneString;
 
         for (var i = 0, ie = timezones.length; i < ie; ++i) {
@@ -102,12 +101,12 @@ class TestUtilities {
      * @param lolexConfig
      * Config supplied to lolex.install
      */
-    private static lolexInstall (lolexConfig?: any): (LolexClock|undefined) {
+    private static lolexInstall(lolexConfig?: any): LolexClock | undefined {
         if (!lolex) {
             return;
         }
 
-        const win = (window as any);
+        const win = window as any;
 
         win.backupRequestAnimationFrame = win.requestAnimationFrame;
         win.requestAnimationFrame = null;
@@ -124,13 +123,12 @@ class TestUtilities {
      * @param clock
      * The clock object
      */
-    private static lolexUninstall (clock?: LolexClock) {
-
+    private static lolexUninstall(clock?: LolexClock) {
         if (!clock || !lolex) {
             return;
         }
 
-        const win = (window as any);
+        const win = window as any;
 
         clock.uninstall();
 
@@ -145,7 +143,8 @@ class TestUtilities {
      * @param clock
      * The clock object
      */
-    private static lolexRunAndUninstall (clock?: LolexClock) { // eslint-disable-line no-unused-vars
+    private static lolexRunAndUninstall(clock?: LolexClock) {
+        // eslint-disable-line no-unused-vars
 
         if (!clock || !lolex) {
             return;

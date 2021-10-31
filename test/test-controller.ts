@@ -33,7 +33,7 @@ interface ClipPaths {
  * Chart position of a controller instance
  */
 interface TestControllerPosition extends Highcharts.PositionObject {
-    relatedTarget: (Element|null);
+    relatedTarget: Element | null;
 }
 
 /**
@@ -48,8 +48,7 @@ interface TestControllerTouchPosition {
  * Touch coordinates
  */
 interface TestControllerTouchPositions
-    extends Array<TestControllerTouchPosition>
-{
+    extends Array<TestControllerTouchPosition> {
     [index: number]: TestControllerTouchPosition;
     item?: (index: number) => TestControllerTouchPosition;
 }
@@ -72,7 +71,6 @@ interface TestControllerTouchPositions
  * controller.pan([200, 100], [150, 100], { shiftKey: true });
  */
 class TestController {
-
     /* *
      *
      *  Static Functions
@@ -85,7 +83,7 @@ class TestController {
      * @param arr
      * The list of touches.
      */
-    private static createTouchList (
+    private static createTouchList(
         positions: TestControllerTouchPositions
     ): TestControllerTouchPositions {
         positions.item = function (
@@ -110,9 +108,10 @@ class TestController {
      * The distance between points.
      */
     private static getPointsBetween(
-        a: TestControllerPoint, b: TestControllerPoint, interval: number = 1
+        a: TestControllerPoint,
+        b: TestControllerPoint,
+        interval: number = 1
     ): Array<TestControllerPoint> {
-
         const points = [] as Array<TestControllerPoint>;
 
         let complete = false,
@@ -130,10 +129,9 @@ class TestController {
         points.push([x1, y1]);
 
         while (!complete) {
-
             deltaX = x2 - x1;
             deltaY = y2 - y1;
-            distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+            distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
             if (distance > interval) {
                 ratio = interval / distance;
@@ -164,8 +162,7 @@ class TestController {
      * @param chart
      * Chart to control
      */
-    public constructor (chart: Highcharts.Chart) {
-
+    public constructor(chart: Highcharts.Chart) {
         if (!(this instanceof TestController)) {
             return new TestController(chart);
         }
@@ -190,10 +187,10 @@ class TestController {
     private mouseEnterStack: Array<Element>;
 
     private positionX: number;
-    
+
     private positionY: number;
 
-    private relatedTarget: (Element|null);
+    private relatedTarget: Element | null;
 
     /* *
      *
@@ -220,7 +217,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public click (
+    public click(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = void 0,
@@ -231,13 +228,12 @@ class TestController {
         this.triggerEvent('click', chartX, chartY, extra, debug);
     }
 
-    public createEvent (
+    public createEvent(
         type: string,
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = void 0
     ): Event {
-
         const chartOffset = Highcharts.offset(this.chart.container);
         let evt: Event;
 
@@ -245,18 +241,15 @@ class TestController {
             evt = document.createEvent('Events');
             evt.initEvent(type, true, true);
         } else {
-            evt = new Event(
-                type,
-                {
-                    bubbles: (extra.bubbles ?? true),
-                    cancelable: (extra.cancelable ?? true)
-                }
-            );
+            evt = new Event(type, {
+                bubbles: extra.bubbles ?? true,
+                cancelable: extra.cancelable ?? true
+            });
         }
 
-        extra = (extra || {});
-        extra.pageX = (chartOffset.left + chartX);
-        extra.pageY = (chartOffset.top + chartY);
+        extra = extra || {};
+        extra.pageX = chartOffset.left + chartX;
+        extra.pageY = chartOffset.top + chartY;
 
         switch (type) {
             case 'click':
@@ -275,7 +268,8 @@ class TestController {
         }
 
         if (typeof extra.buttons === 'undefined') {
-            extra.buttons = (TestController.MouseButtonsBitMap[extra.button] || 0);
+            extra.buttons =
+                TestController.MouseButtonsBitMap[extra.button] || 0;
         }
 
         Object.keys(extra).forEach(function (key) {
@@ -294,26 +288,29 @@ class TestController {
      * @param chartY
      * Y relative to the chart.
      */
-    public elementFromPoint (
+    public elementFromPoint(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         useMSWorkaround: boolean = true
-    ): (Element|undefined) {
-
+    ): Element | undefined {
         const chartOffset = Highcharts.offset(this.chart.container);
         let clipPaths;
 
         if (useMSWorkaround) {
-            clipPaths = this.setUpMSWorkaround()
+            clipPaths = this.setUpMSWorkaround();
         }
 
         let element = document.elementFromPoint(
-            (chartOffset.left + chartX),
-            (chartOffset.top + chartY)
+            chartOffset.left + chartX,
+            chartOffset.top + chartY
         );
 
         if (element && getComputedStyle(element).pointerEvents === 'none') {
-            element = this.elementsFromPoint(chartX, chartY, useMSWorkaround)[0];
+            element = this.elementsFromPoint(
+                chartX,
+                chartY,
+                useMSWorkaround
+            )[0];
         }
 
         // Reset clip paths for Edge and IE
@@ -324,25 +321,25 @@ class TestController {
         return element;
     }
 
-    public elementsFromPoint (
+    public elementsFromPoint(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         useMSWorkaround: boolean = true
-    ): (Array<Element>) {
+    ): Array<Element> {
         const chartOffset = Highcharts.offset(this.chart.container);
         let clipPaths;
 
         if (useMSWorkaround) {
-            clipPaths = this.setUpMSWorkaround()
+            clipPaths = this.setUpMSWorkaround();
         }
 
         const elements = document
             .elementsFromPoint(
-                (chartOffset.left + chartX),
-                (chartOffset.top + chartY)
+                chartOffset.left + chartX,
+                chartOffset.top + chartY
             )
             .filter(
-                element => (getComputedStyle(element).pointerEvents !== 'none')
+                (element) => getComputedStyle(element).pointerEvents !== 'none'
             );
 
         // Reset clip paths for Edge and IE
@@ -356,7 +353,7 @@ class TestController {
     /**
      * Get the current position of the cursor.
      */
-    public getPosition (): TestControllerPosition {
+    public getPosition(): TestControllerPosition {
         return {
             x: this.positionX,
             y: this.positionY,
@@ -383,7 +380,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseDown (
+    public mouseDown(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = undefined,
@@ -411,7 +408,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseEnter (
+    public mouseEnter(
         newPosition: TestControllerPoint,
         oldPosition: TestControllerPoint,
         extra: any = undefined,
@@ -422,18 +419,26 @@ class TestController {
         const newElement = newStack[0];
         if (debug) {
             this.setDebugMark(
-                newPosition[0], newPosition[1],
+                newPosition[0],
+                newPosition[1],
                 TestController.DebugMarkTypes.normal
             );
         }
         let element: Element;
-        while (element = newStack.pop()) {
+        while ((element = newStack.pop())) {
             if (oldStack.indexOf(element) !== -1) {
                 continue;
             }
             extra.currentTarget = element;
             extra.target = newElement;
-            element.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+            element.dispatchEvent(
+                this.createEvent(
+                    'mouseenter',
+                    newPosition[0],
+                    newPosition[1],
+                    extra
+                )
+            );
         }
         // Make sure to fire always for the top SVG element
         if (
@@ -442,7 +447,14 @@ class TestController {
         ) {
             extra.currentTarget = newElement;
             extra.target = newElement;
-            newElement.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+            newElement.dispatchEvent(
+                this.createEvent(
+                    'mouseenter',
+                    newPosition[0],
+                    newPosition[1],
+                    extra
+                )
+            );
         }
     }
 
@@ -466,7 +478,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseLeave (
+    public mouseLeave(
         newPosition: TestControllerPoint,
         oldPosition: TestControllerPoint,
         extra: any = undefined,
@@ -478,18 +490,26 @@ class TestController {
         const newElement = newStack[0];
         if (debug) {
             this.setDebugMark(
-                newPosition[0], newPosition[1],
+                newPosition[0],
+                newPosition[1],
                 TestController.DebugMarkTypes.normal
             );
         }
         let element: Element;
-        while (element = oldStack.shift()) {
+        while ((element = oldStack.shift())) {
             if (newStack.indexOf(element) !== -1) {
                 continue;
             }
             extra.currentTarget = element;
             extra.target = newElement;
-            element.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+            element.dispatchEvent(
+                this.createEvent(
+                    'mouseleave',
+                    oldPosition[0],
+                    oldPosition[1],
+                    extra
+                )
+            );
         }
         // Make sure to fire always for the top SVG element
         if (
@@ -498,7 +518,14 @@ class TestController {
         ) {
             extra.currentTarget = oldElement;
             extra.target = newElement;
-            oldElement.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+            oldElement.dispatchEvent(
+                this.createEvent(
+                    'mouseleave',
+                    oldPosition[0],
+                    oldPosition[1],
+                    extra
+                )
+            );
         }
     }
 
@@ -521,7 +548,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseMove (
+    public mouseMove(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = undefined,
@@ -549,7 +576,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseOut (
+    public mouseOut(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = undefined,
@@ -577,7 +604,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseOver (
+    public mouseOver(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = undefined,
@@ -605,7 +632,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public mouseUp (
+    public mouseUp(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = undefined,
@@ -634,7 +661,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public moveTo (
+    public moveTo(
         chartX: number,
         chartY: number,
         extra: any = undefined,
@@ -653,7 +680,6 @@ class TestController {
         let clipPaths = this.setUpMSWorkaround();
 
         for (let i = 0, ie = points.length; i < ie; ++i) {
-
             oldPoint = [this.positionX, this.positionY];
             oldTarget = this.relatedTarget;
 
@@ -665,42 +691,55 @@ class TestController {
                 continue;
             }
 
-            if (
-                oldTarget &&
-                target !== oldTarget
-            ) {
+            if (oldTarget && target !== oldTarget) {
                 // First trigger a mouseout on the old target.
                 this.mouseOut(
-                    oldPoint[0], oldPoint[1],
-                    Highcharts.merge({
-                        currentTarget: oldTarget,
-                        relatedTarget: target,
-                        target: target
-                    }, extra)
+                    oldPoint[0],
+                    oldPoint[1],
+                    Highcharts.merge(
+                        {
+                            currentTarget: oldTarget,
+                            relatedTarget: target,
+                            target: target
+                        },
+                        extra
+                    )
                 );
                 this.mouseLeave(
-                    point, oldPoint,
-                    Highcharts.merge({
-                        currentTarget: oldTarget,
-                        relatedTarget: target,
-                        target: target
-                    }, extra)
+                    point,
+                    oldPoint,
+                    Highcharts.merge(
+                        {
+                            currentTarget: oldTarget,
+                            relatedTarget: target,
+                            target: target
+                        },
+                        extra
+                    )
                 );
 
                 // Then trigger a mouseover on the new target.
                 this.mouseOver(
-                    point[0], point[1],
-                    Highcharts.merge({
-                        relatedTarget: target,
-                        target: target
-                    }, extra)
+                    point[0],
+                    point[1],
+                    Highcharts.merge(
+                        {
+                            relatedTarget: target,
+                            target: target
+                        },
+                        extra
+                    )
                 );
                 this.mouseEnter(
-                    point, oldPoint,
-                    Highcharts.merge({
-                        relatedTarget: target,
-                        target: target
-                    }, extra)
+                    point,
+                    oldPoint,
+                    Highcharts.merge(
+                        {
+                            relatedTarget: target,
+                            target: target
+                        },
+                        extra
+                    )
                 );
             }
 
@@ -729,7 +768,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public pan (
+    public pan(
         startPoint: TestControllerPoint = [this.positionX, this.positionY],
         endPoint: TestControllerPoint = [this.positionX, this.positionY],
         extra: any = undefined,
@@ -759,13 +798,12 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public pinch (
+    public pinch(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         distance: number = 10,
         debug: boolean = false
     ): void {
-
         var startPoint1: [number, number],
             startPoint2: [number, number],
             endPoint1: [number, number],
@@ -774,34 +812,35 @@ class TestController {
         distance = Math.round(distance / 2);
 
         if (distance < 0) {
-            distance = (-1 * distance);
-            distance = (distance > 10 ? distance : 11);
-            startPoint1 = [(chartX - distance), (chartY - distance)];
-            startPoint2 = [(chartX + distance), (chartY + distance)];
-            endPoint1 = [(chartX - 11), (chartY - 11)];
-            endPoint2 = [(chartX + 11), (chartY + 11)];
+            distance = -1 * distance;
+            distance = distance > 10 ? distance : 11;
+            startPoint1 = [chartX - distance, chartY - distance];
+            startPoint2 = [chartX + distance, chartY + distance];
+            endPoint1 = [chartX - 11, chartY - 11];
+            endPoint2 = [chartX + 11, chartY + 11];
         } else {
-            distance = (distance > 10 ? distance : 11);
-            startPoint1 = [(chartX - 11), (chartY - 11)];
-            startPoint2 = [(chartX + 11), (chartY + 11)];
-            endPoint1 = [(chartX - distance), (chartY - distance)];
-            endPoint2 = [(chartX + distance), (chartY + distance)];
+            distance = distance > 10 ? distance : 11;
+            startPoint1 = [chartX - 11, chartY - 11];
+            startPoint2 = [chartX + 11, chartY + 11];
+            endPoint1 = [chartX - distance, chartY - distance];
+            endPoint2 = [chartX + distance, chartY + distance];
         }
 
         const movePoints1 = TestController.getPointsBetween(
-            startPoint1, endPoint1, 1
+            startPoint1,
+            endPoint1,
+            1
         );
         const movePoints2 = TestController.getPointsBetween(
-            startPoint2, endPoint2, 1
+            startPoint2,
+            endPoint2,
+            1
         );
         const target = this.elementFromPoint(chartX, chartY);
 
-        let extra,
-            movePoint1,
-            movePoint2;
+        let extra, movePoint1, movePoint2;
 
-        for (let i = 0, ie = (movePoints1.length - 1); i <= ie; ++i) {
-
+        for (let i = 0, ie = movePoints1.length - 1; i <= ie; ++i) {
             movePoint1 = movePoints1[i];
             movePoint2 = movePoints2[i];
             extra = {
@@ -831,28 +870,28 @@ class TestController {
      * @param chartY
      * Y relative to the chart.
      */
-    public setDebugMark (
+    public setDebugMark(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
-        type: TestController.DebugMarkTypes = TestController.DebugMarkTypes.normal
+        type: TestController.DebugMarkTypes = TestController.DebugMarkTypes
+            .normal
     ): Highcharts.SVGElement {
-
         const marker = this.chart.renderer
             .circle(
                 chartX,
                 chartY,
-                (type === TestController.DebugMarkTypes.movement ? 2 : 3)
+                type === TestController.DebugMarkTypes.movement ? 2 : 3
             )
             .attr({
                 fill: 'white',
-                stroke: (
-                    type === TestController.DebugMarkTypes.movement ?
-                        'blue' :
-                        type === TestController.DebugMarkTypes.activation ?
-                            'green' :
-                            'red'
-                ),
-                'stroke-width': (type === TestController.DebugMarkTypes.movement ? 1 : 2),
+                stroke:
+                    type === TestController.DebugMarkTypes.movement
+                        ? 'blue'
+                        : type === TestController.DebugMarkTypes.activation
+                        ? 'green'
+                        : 'red',
+                'stroke-width':
+                    type === TestController.DebugMarkTypes.movement ? 1 : 2,
                 zIndex: 100
             }) as Highcharts.SVGElement;
 
@@ -875,22 +914,25 @@ class TestController {
      * @param useMSWorkaround
      * Whether to do additional operations to work around IE problems.
      */
-    public setPosition (
+    public setPosition(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         useMSWorkaround?: boolean
     ): void {
         this.positionX = chartX;
         this.positionY = chartY;
-        this.relatedTarget = this.elementFromPoint(chartX, chartY, useMSWorkaround);
+        this.relatedTarget = this.elementFromPoint(
+            chartX,
+            chartY,
+            useMSWorkaround
+        );
     }
 
     /**
      * Edge and IE are unable to get elementFromPoint when the group has a
      * clip path. It reports the first underlying element with no clip path.
      */
-    private setUpMSWorkaround (): ClipPaths {
-
+    private setUpMSWorkaround(): ClipPaths {
         const clipPaths: ClipPaths = {
             elements: [],
             values: []
@@ -899,15 +941,11 @@ class TestController {
         if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
             [].slice
                 .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
-                .forEach(
-                    function (elemCP: Element): void {
-                        clipPaths.elements.push(elemCP);
-                        clipPaths.values.push(
-                            elemCP.getAttribute('clip-path')!
-                        );
-                        elemCP.removeAttribute('clip-path');
-                    }
-                );
+                .forEach(function (elemCP: Element): void {
+                    clipPaths.elements.push(elemCP);
+                    clipPaths.values.push(elemCP.getAttribute('clip-path')!);
+                    elemCP.removeAttribute('clip-path');
+                });
         }
 
         return clipPaths;
@@ -930,18 +968,23 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public slide (
+    public slide(
         startPoint: TestControllerPoint = [this.positionX, this.positionY],
         endPoint: TestControllerPoint = [this.positionX, this.positionY],
         twoFingers: boolean = false,
         debug: boolean = false
     ): void {
-
-        const movePoints = TestController
-            .getPointsBetween(startPoint, endPoint);
+        const movePoints = TestController.getPointsBetween(
+            startPoint,
+            endPoint
+        );
 
         this.touchStart(
-            startPoint[0], startPoint[1], twoFingers, undefined, debug
+            startPoint[0],
+            startPoint[1],
+            twoFingers,
+            undefined,
+            debug
         );
 
         let movePoint;
@@ -949,13 +992,15 @@ class TestController {
         for (var i = 0, ie = movePoints.length; i < ie; ++i) {
             movePoint = movePoints[i];
             this.touchMove(
-                movePoint[0], movePoint[1], twoFingers, undefined, debug
+                movePoint[0],
+                movePoint[1],
+                twoFingers,
+                undefined,
+                debug
             );
         }
 
-        this.touchEnd(
-            endPoint[0], endPoint[1], twoFingers, undefined, debug
-        );
+        this.touchEnd(endPoint[0], endPoint[1], twoFingers, undefined, debug);
     }
 
     /**
@@ -975,7 +1020,7 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public tap (
+    public tap(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         twoFingers: boolean = false,
@@ -987,13 +1032,11 @@ class TestController {
 
     /**
      * Undo the workaround for Edge and IE.
-     * 
+     *
      * @param clipPaths
      * The clip paths that were returned from the `setUpMSWorkaround` function.
      */
-    private tearDownMSWorkaround (
-        clipPaths: ClipPaths
-    ): void {
+    private tearDownMSWorkaround(clipPaths: ClipPaths): void {
         // Reset clip paths for Edge and IE
         if (clipPaths) {
             clipPaths.elements.forEach(function (elemCP, i) {
@@ -1024,35 +1067,32 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public touchEnd (
+    public touchEnd(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         twoFingers: boolean = false,
         extra: any = undefined,
         debug: boolean = false
     ): void {
+        const target = this.elementFromPoint(chartX, chartY) || undefined;
 
-        const target = (this.elementFromPoint(chartX, chartY) || undefined);
-
-        extra = (extra || {});
-        extra.preventDefault = (extra.preventDefault || function () {});
-        extra.relatedTarget = (extra.relatedTarget || target);
+        extra = extra || {};
+        extra.preventDefault = extra.preventDefault || function () {};
+        extra.relatedTarget = extra.relatedTarget || target;
 
         if (twoFingers === true) {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
-                    { pageX: (chartX - 11), pageY: (chartY - 11) },
-                    { pageX: (chartX + 11), pageY: (chartY + 11) }
-                ])
-            );
+                    { pageX: chartX - 11, pageY: chartY - 11 },
+                    { pageX: chartX + 11, pageY: chartY + 11 }
+                ]);
         } else {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
                     { pageX: chartX, pageY: chartY }
-                ])
-            );
+                ]);
         }
 
         this.triggerEvent('touchend', chartX, chartY, extra, debug);
@@ -1085,43 +1125,38 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public touchMove (
+    public touchMove(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         twoFingers: boolean = false,
         extra: any = undefined,
         debug: boolean = false
     ): void {
-
         const target = this.elementFromPoint(chartX, chartY);
 
-        extra = (extra || {});
-        extra.preventDefault = (extra.preventDefault || function () {});
-        extra.relatedTarget = (extra.relatedTarget || target);
+        extra = extra || {};
+        extra.preventDefault = extra.preventDefault || function () {};
+        extra.relatedTarget = extra.relatedTarget || target;
 
         if (twoFingers === true) {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
-                    { pageX: (chartX - 11), pageY: (chartY - 11) },
-                    { pageX: (chartX + 11), pageY: (chartY + 11) }
-                ])
-            );
+                    { pageX: chartX - 11, pageY: chartY - 11 },
+                    { pageX: chartX + 11, pageY: chartY + 11 }
+                ]);
         } else {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
                     { pageX: chartX, pageY: chartY }
-                ])
-            );
+                ]);
         }
 
         if (Highcharts.Pointer) {
             this.triggerEvent('pointermove', chartX, chartY, extra, debug);
         } else if ((Highcharts as any).MSPointer) {
-            this.triggerEvent(
-                'MSPointerMove', chartX, chartY, extra, debug
-            );
+            this.triggerEvent('MSPointerMove', chartX, chartY, extra, debug);
         }
         this.triggerEvent('touchmove', chartX, chartY, extra, debug);
     }
@@ -1148,44 +1183,39 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public touchStart (
+    public touchStart(
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         twoFingers: boolean = false,
         extra: any = undefined,
         debug: boolean = false
     ): void {
-
         const target = this.elementFromPoint(chartX, chartY);
 
-        extra = (extra || {});
-        extra.preventDefault = (extra.preventDefault || function () {});
-        extra.relatedTarget = (extra.relatedTarget || target);
+        extra = extra || {};
+        extra.preventDefault = extra.preventDefault || function () {};
+        extra.relatedTarget = extra.relatedTarget || target;
 
         if (twoFingers === true) {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
-                    { pageX: (chartX - 11), pageY: (chartY - 11) },
-                    { pageX: (chartX + 11), pageY: (chartY + 11) }
-                ])
-            );
+                    { pageX: chartX - 11, pageY: chartY - 11 },
+                    { pageX: chartX + 11, pageY: chartY + 11 }
+                ]);
         } else {
-            extra.touches = (
+            extra.touches =
                 extra.touches ||
                 TestController.createTouchList([
                     { pageX: chartX, pageY: chartY }
-                ])
-            );
+                ]);
         }
 
         this.triggerEvent('touchstart', chartX, chartY, extra, debug);
         if (Highcharts.Pointer) {
             this.triggerEvent('pointerdown', chartX, chartY, extra, debug);
         } else if ((Highcharts as any).MSPointer) {
-            this.triggerEvent(
-                'MSPointerDown', chartX, chartY, extra, debug
-            );
+            this.triggerEvent('MSPointerDown', chartX, chartY, extra, debug);
         }
     }
 
@@ -1213,20 +1243,18 @@ class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    public triggerEvent (
+    public triggerEvent(
         type: string,
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         extra: any = {},
         debug: boolean = false
     ): void {
-
         // Find an element related to the coordinates and fire event.
-        let element: (Element|undefined) = (
+        let element: Element | undefined =
             (extra && extra.currentTarget) ||
             (extra && extra.target) ||
-            this.elementFromPoint(chartX, chartY)
-        );
+            this.elementFromPoint(chartX, chartY);
 
         if (!element) {
             return;
@@ -1237,11 +1265,11 @@ class TestController {
             this.setDebugMark(
                 chartX,
                 chartY,
-                type === 'mousemove' ?
-                    TestController.DebugMarkTypes.movement :
-                    type === 'mousedown' ?
-                        TestController.DebugMarkTypes.activation :
-                        TestController.DebugMarkTypes.normal
+                type === 'mousemove'
+                    ? TestController.DebugMarkTypes.movement
+                    : type === 'mousedown'
+                    ? TestController.DebugMarkTypes.activation
+                    : TestController.DebugMarkTypes.normal
             );
         }
 
@@ -1257,7 +1285,6 @@ class TestController {
 }
 
 namespace TestController {
-
     /* *
      *
      *  Enums
@@ -1267,13 +1294,13 @@ namespace TestController {
     export enum DebugMarkTypes {
         activation,
         movement,
-        normal,
+        normal
     }
 
     export enum MouseButtons {
         left = 0,
         middle = 1,
-        right = 2,
+        right = 2
     }
 
     export const MouseButtonsBitMap: Record<number, number> = {
@@ -1281,7 +1308,6 @@ namespace TestController {
         1: 4,
         2: 2,
         3: 8,
-        4: 16,
-    }
-
+        4: 16
+    };
 }

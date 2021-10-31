@@ -10,7 +10,6 @@
  * `node test/node-datagrouping`
  */
 
-
 /* eslint-env node, es6 */
 /* eslint-disable no-console */
 const Highcharts = require('../code/highcharts.src.js')();
@@ -32,7 +31,7 @@ const [xData, yData] = (function () {
         ys.push(y++);
     }
     return [xs, ys];
-}());
+})();
 
 // First, get the tick distribution where we want the data to be grouped. In
 // this example we are dealing with time data, so we use Highcharts.Time to find
@@ -50,10 +49,12 @@ const groupPositions = time.getTimeTicks(
 
 // Next, group the data by the groupPositions.
 const approximation = 'average'; // See https://api.highcharts.com/highstock/series.line.dataGrouping.approximation
-const {
-    groupedXData,
-    groupedYData
-} = dataGrouping.groupData(xData, yData, groupPositions, approximation);
+const { groupedXData, groupedYData } = dataGrouping.groupData(
+    xData,
+    yData,
+    groupPositions,
+    approximation
+);
 
 // Optionally, transform it to a Highcharts-compatible two-dimensional array.
 const data = groupedXData.map((x, i) => [x, groupedYData[i]]);

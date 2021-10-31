@@ -16,11 +16,11 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
 
         cy.get('.highcharts-container')
             .click(firstClickPosition, 150, { force: true })
-            .click(
-                firstClickPosition + secondClickOffset, 150, { force: true }
-            );
+            .click(firstClickPosition + secondClickOffset, 150, {
+                force: true
+            });
 
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             const annotation = chart.annotations[0];
 
             assert.strictEqual(
@@ -51,8 +51,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
 
             assert.closeTo(
                 +annotation.shapes[8].graphic.d.split(' ')[1],
-                chart.plotLeft + firstLinePlotX +
-                    distanceBetweenLines * fibVal,
+                chart.plotLeft + firstLinePlotX + distanceBetweenLines * fibVal,
                 1,
                 'The 9th line position should be correct.'
             );
@@ -65,7 +64,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
             .click({ force: true })
             .dragTo('.highcharts-container', 100, 150, { force: true });
 
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             assert.closeTo(
                 chart.annotations[0].points[0].plotX + chart.plotLeft,
                 100,
@@ -80,7 +79,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
         let linePos;
 
         // Get the current line's position.
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             linePos = +chart.annotations[0].shapes[3].graphic.d.split(' ')[1];
         });
 
@@ -90,7 +89,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
             .first()
             .dragTo('.highcharts-container', controlPointNewX, 200);
 
-        cy.chart().then(chart => {
+        cy.chart().then((chart) => {
             cy.get('.highcharts-popup').should('be.visible');
 
             assert.notEqual(

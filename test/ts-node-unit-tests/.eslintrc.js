@@ -5,10 +5,7 @@ module.exports = {
         ecmaVersion: 2020,
         sourceType: 'module'
     },
-    plugins: [
-        'highcharts',
-        '@typescript-eslint'
-    ],
+    plugins: ['highcharts', '@typescript-eslint'],
     env: {
         es2021: true,
         node: true

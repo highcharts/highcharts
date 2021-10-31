@@ -14,7 +14,7 @@
  * Constructor for a test chart
  */
 type TestChartConstructor = (
-    container: (string|Highcharts.HTMLDOMElement),
+    container: string | Highcharts.HTMLDOMElement,
     options: Highcharts.Options
 ) => Highcharts.Chart;
 
@@ -26,7 +26,7 @@ type TestTemplateCallback = (testTemplate: TestTemplate) => void;
 /**
  * Initializer for each test
  */
-type TestTemplateInitializer =(
+type TestTemplateInitializer = (
     this: Highcharts.Chart,
     chartOptions: Highcharts.Options
 ) => void;
@@ -64,7 +64,6 @@ interface TestTemplateRegistry {
  * provides static functions to use registered templates in test cases.
  */
 class TestTemplate {
-
     /* *
      *
      *  Static Properties
@@ -74,7 +73,9 @@ class TestTemplate {
     /**
      * The registered chart templates
      */
-    public static templates: Highcharts.Dictionary<TestTemplate|TestTemplateRegistry> = {};
+    public static templates: Highcharts.Dictionary<
+        TestTemplate | TestTemplateRegistry
+    > = {};
 
     /* *
      *
@@ -85,8 +86,7 @@ class TestTemplate {
     /**
      * Creates a new container in the DOM tree.
      */
-    private static createContainer (): HTMLElement {
-
+    private static createContainer(): HTMLElement {
         var container = document.createElement('div'),
             containerStyle = container.style;
 
@@ -120,7 +120,6 @@ class TestTemplate {
         chartOptions: Highcharts.Options,
         testInitializer: TestTemplateInitializer = undefined
     ) {
-
         if (TestTemplate.templates[name]) {
             throw new Error('Chart template already registered');
         }
@@ -131,7 +130,7 @@ class TestTemplate {
             chartOptions: chartOptions,
             testInitializer: testInitializer
         };
-    }
+    };
 
     /**
      * Prepares a chart template for a test. This function works asynchronously.
@@ -146,12 +145,11 @@ class TestTemplate {
      *        The callback with the prepared chart template as the first
      *        argument.
      */
-    public static test (
+    public static test(
         name: string,
         chartOptions: Highcharts.Options = {},
         testCallback: TestTemplateCallback = undefined
     ) {
-
         let template = TestTemplate.templates[name];
 
         if (!template) {
@@ -179,11 +177,8 @@ class TestTemplate {
      * @param propertiesTree
      *        The properties tree to copy.
      */
-    private static treeCopy (source: any, propertiesTree: any): any {
-
-        if (!source ||
-            typeof source !== 'object'
-        ) {
+    private static treeCopy(source: any, propertiesTree: any): any {
+        if (!source || typeof source !== 'object') {
             return source;
         }
 
@@ -192,11 +187,13 @@ class TestTemplate {
         var copy = {} as any;
 
         for (var key in propertiesTree) {
-            if (propertiesTree.hasOwnProperty(key) &&
+            if (
+                propertiesTree.hasOwnProperty(key) &&
                 source.hasOwnProperty(key)
             ) {
                 copy[key] = TestTemplate.treeCopy(
-                    source[key], propertiesTree[key]
+                    source[key],
+                    propertiesTree[key]
                 );
             } else {
                 copy[key] = undefined;
@@ -214,7 +211,6 @@ class TestTemplate {
      *        The instance of the chart
      */
     private static updateUndoFor(chart: Highcharts.Chart): Function {
-
         var undoStack = [] as Array<Highcharts.Options>,
             removeEvent: Function;
 
@@ -229,7 +225,6 @@ class TestTemplate {
         );
 
         return function () {
-
             removeEvent();
 
             let undoOption;
@@ -262,21 +257,24 @@ class TestTemplate {
      * @param testInitializer
      *        The initializer function for a test case. (optional)
      */
-    constructor (
+    constructor(
         name: string,
         chartConstructor: TestChartConstructor,
         chartOptions: Highcharts.Options,
         testInitializer?: TestTemplateInitializer
     ) {
-
         if (!(this instanceof TestTemplate)) {
             return new TestTemplate(
-                name, chartConstructor, chartOptions, testInitializer
+                name,
+                chartConstructor,
+                chartOptions,
+                testInitializer
             );
         }
 
         this.chart = chartConstructor(
-            TestTemplate.createContainer(), chartOptions
+            TestTemplate.createContainer(),
+            chartOptions
         );
         this.chart.template = name;
         this.name = name;
@@ -332,11 +330,10 @@ class TestTemplate {
      * @param testCallback
      *        The callback to test the chart
      */
-    public test (
+    public test(
         chartOptions: Highcharts.Options = {},
         testCallback: TestTemplateCallback = undefined
     ) {
-
         const chart = this.chart;
         const testInitializer = this.testInitializer;
 
@@ -352,14 +349,11 @@ class TestTemplate {
         this.ready = false;
 
         try {
-
-            let testCase: (TestTemplateCase|undefined);
+            let testCase: TestTemplateCase | undefined;
             while (!!(testCase = this.testCases.shift())) {
-
-                let undoUpdates: (Function|undefined);
+                let undoUpdates: Function | undefined;
 
                 try {
-
                     undoUpdates = TestTemplate.updateUndoFor(chart);
 
                     if (typeof testInitializer === 'function') {
@@ -369,9 +363,7 @@ class TestTemplate {
                     chart.update(testCase.chartOptions, true, true, false);
                     chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
-                }
-                finally {
-
+                } finally {
                     if (typeof undoUpdates === 'function') {
                         undoUpdates();
                     }
@@ -379,9 +371,7 @@ class TestTemplate {
                     chart.container.style.zIndex = '';
                 }
             }
-        }
-        finally {
-
+        } finally {
             this.ready = true;
         }
     }

@@ -18,11 +18,11 @@ export function describe(...text: string[]): void {
  * @param error
  * The error object
  */
-export function reportError(error: (AssertionError & Error)): void {
+export function reportError(error: AssertionError & Error): void {
     const { actual, expected, code, message: errorMessage, stack } = error;
 
     const printArrayOrString = (array: string | []) =>
-        (Array.isArray(array) ? JSON.stringify(array, undefined, 4) : array);
+        Array.isArray(array) ? JSON.stringify(array, undefined, 4) : array;
 
     failure(`${code} ${errorMessage}
         ${stack?.split('\n')[1]}

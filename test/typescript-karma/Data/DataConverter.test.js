@@ -1,27 +1,16 @@
 import DataConverter from '/base/js/Data/DataConverter.js';
 import DataTable from '/base/js/Data/DataTable.js';
 
-const {test, only} = QUnit;
+const { test, only } = QUnit;
 
 test('guessType', function (assert) {
-    const testCases = [
-        '',
-        '1',
-        '1.1',
-        'this.should.be.string',
-        100
-    ], expectations = [
-        'string',
-        'number',
-        'number',
-        'string',
-        'number'
-    ];
+    const testCases = ['', '1', '1.1', 'this.should.be.string', 100],
+        expectations = ['string', 'number', 'number', 'string', 'number'];
 
     let converter = new DataConverter();
 
     assert.deepEqual(
-        testCases.map(value => converter.guessType(value)),
+        testCases.map((value) => converter.guessType(value)),
         expectations
     );
 
@@ -47,10 +36,14 @@ test('asBoolean', function (assert) {
         id: ['a', 'b', 'c'],
         column1: ['value1', 'value1', 'value1'],
         column2: [0.0002, 'value2', 'value2'],
-        column3: [false, new DataTable({
-            id: ['ba', 'bb', 'bc'],
-            column1: ['value1', 'value1', 'value1']
-        }), 'value3']
+        column3: [
+            false,
+            new DataTable({
+                id: ['ba', 'bb', 'bc'],
+                column1: ['value1', 'value1', 'value1']
+            }),
+            'value3'
+        ]
     });
 
     const testCases = [
@@ -69,7 +62,7 @@ test('asBoolean', function (assert) {
     let converter = new DataConverter();
 
     assert.deepEqual(
-        testCases.map(value => converter.asBoolean(value)),
+        testCases.map((value) => converter.asBoolean(value)),
         [false, true, true, true, false, true, false, false, false, true],
         'Should convert all values properly.'
     );
@@ -84,10 +77,7 @@ test('asNumber', function (assert) {
         'Should handle negative numbers'
     );
 
-    assert.ok(
-        isNaN(converter.asNumber('')),
-        'Should handle empty strings'
-    );
+    assert.ok(isNaN(converter.asNumber('')), 'Should handle empty strings');
 
     converter = new DataConverter({ decimalPoint: ',' });
     assert.strictEqual(
@@ -135,7 +125,11 @@ test('asDate', function (assert) {
         'Should return date for NaN timestamp when value does not fit any format.'
     );
 
-    converter.deduceDateFormat(['10/08/2020', '10/12/2020', '10/22/2020'], null, true);
+    converter.deduceDateFormat(
+        ['10/08/2020', '10/12/2020', '10/22/2020'],
+        null,
+        true
+    );
     timestamp = converter.asDate('10/14/2020').getTime();
     assert.strictEqual(
         timestamp,

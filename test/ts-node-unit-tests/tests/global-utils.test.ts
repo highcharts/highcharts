@@ -52,13 +52,15 @@ export function testGlobalUtilities() {
         'uniqueKey',
         'useSerialIds',
         'wrap'
-    ]
+    ];
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
         const prop = Highcharts[key];
         ok(prop, `The ${key} property is defined on the Highcharts object`);
         if (!['function', 'object'].includes(typeof prop)) {
-            throw new Error(`${prop} should be either a function or an object/array`);
+            throw new Error(
+                `${prop} should be either a function or an object/array`
+            );
         }
     });
 }

@@ -21,9 +21,10 @@ Screenshots and videos will end up in the top-level `cypress` folder, which shou
 ## Testing best practices
 
 The Cypress docs has a good [article](https://docs.cypress.io/guides/references/best-practices) on this, but here are a few key takeaways:
-  * Avoid doing time-consuming operations in the `beforeEach`/`afterEach` hooks, such as navigating to a page. This can add unnecessary time to each test.
-  * Similarly, avoid using timeouts with `cy.wait()` if it is not necessary.
-  * It is usually better to chain together tests when possible.
+
+-   Avoid doing time-consuming operations in the `beforeEach`/`afterEach` hooks, such as navigating to a page. This can add unnecessary time to each test.
+-   Similarly, avoid using timeouts with `cy.wait()` if it is not necessary.
+-   It is usually better to chain together tests when possible.
 
 ## Running tests locally
 

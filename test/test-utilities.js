@@ -7,8 +7,7 @@
  * Useful functions for test purposes.
  */
 var TestUtilities = /** @class */ (function () {
-    function TestUtilities() {
-    }
+    function TestUtilities() {}
     /* *
      *
      *  Functions
@@ -95,38 +94,41 @@ var TestUtilities = /** @class */ (function () {
      */
     TestUtilities.browser = (function () {
         var userAgent = window.navigator.userAgent;
-        if ((new RegExp('MSIE|Trident', 'i')).test(userAgent) &&
-            !(new RegExp('Opera', 'i')).test(userAgent)) {
+        if (
+            new RegExp('MSIE|Trident', 'i').test(userAgent) &&
+            !new RegExp('Opera', 'i').test(userAgent)
+        ) {
             return 'MSIE';
         }
-        if ((new RegExp('Firefox', 'i')).test(userAgent)) {
+        if (new RegExp('Firefox', 'i').test(userAgent)) {
             return 'Firefox';
         }
-        if ((new RegExp('Edge', 'i')).test(userAgent)) {
+        if (new RegExp('Edge', 'i').test(userAgent)) {
             return 'Edge';
         }
-        if ((new RegExp('Chrome', 'i')).test(userAgent)) {
+        if (new RegExp('Chrome', 'i').test(userAgent)) {
             return 'Chrome';
         }
-        if ((new RegExp('PhantomJS', 'i')).test(userAgent)) {
+        if (new RegExp('PhantomJS', 'i').test(userAgent)) {
             return 'PhantomJS';
         }
-        if ((new RegExp('Safari', 'i')).test(userAgent)) {
+        if (new RegExp('Safari', 'i').test(userAgent)) {
             return 'Safari';
         }
-        if ((new RegExp('Opera', 'i')).test(userAgent)) {
+        if (new RegExp('Opera', 'i').test(userAgent)) {
             return 'Opera';
         }
-        if ((new RegExp('Netscape', 'i')).test(userAgent)) {
+        if (new RegExp('Netscape', 'i').test(userAgent)) {
             return 'Netscape';
         }
         return '';
-    }());
+    })();
     /**
      * Indiciates, if system time runs in CET timezone.
      */
-    TestUtilities.isCET = (TestUtilities.timeString.indexOf('CET') !== -1 ||
+    TestUtilities.isCET =
+        TestUtilities.timeString.indexOf('CET') !== -1 ||
         TestUtilities.timeString.indexOf('CEST') !== -1 ||
-        TestUtilities.timeString.indexOf('W. Europe Standard Time') !== -1);
+        TestUtilities.timeString.indexOf('W. Europe Standard Time') !== -1;
     return TestUtilities;
-}());
+})();

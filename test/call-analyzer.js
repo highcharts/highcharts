@@ -1,7 +1,6 @@
 /* eslint no-console: 0, no-extend-native: 0 */
 /* global Highcharts */
 (function (window) {
-
     var // applyLogger,
         // callLogger,
         // isHighcharts,
@@ -84,7 +83,7 @@
     /**
      * The call analyzer to track function calls.
      */
-    window.CallAnalyzer = (window.CallAnalyzer || {});
+    window.CallAnalyzer = window.CallAnalyzer || {};
 
     /**
      * Turns the logging of function calls on.
@@ -137,7 +136,6 @@
      * The array of log items.
      */
     window.CallAnalyzer.getLog = function (filter) {
-
         // window.CallAnalyzer.deactivate();
 
         if (typeof filter !== 'function') {
@@ -163,7 +161,6 @@
      * @return {void}
      */
     window.CallAnalyzer.wrapHighcharts = function () {
-
         if (!window.Highcharts) {
             return;
         }
@@ -206,12 +203,11 @@
          * @return {void}
          */
         function wrap(obj, objName) {
-
             var prop;
 
             for (var key in obj) {
-
-                if (typeof obj[key] === 'undefined' ||
+                if (
+                    typeof obj[key] === 'undefined' ||
                     obj[key] === null ||
                     !obj.hasOwnProperty(key)
                 ) {
@@ -221,7 +217,6 @@
                 prop = obj[key];
 
                 if (typeof prop === 'function') {
-
                     obj[key] = createWrapper(prop, objName + '.' + key);
 
                     if (typeof prop.prototype !== 'undefined') {
@@ -234,13 +229,12 @@
                         functionName: key
                     });
                 }
-
             }
         }
 
         for (var className in Highcharts) {
-
-            if (typeof Highcharts[className] === 'undefined' ||
+            if (
+                typeof Highcharts[className] === 'undefined' ||
                 Highcharts[className] === null ||
                 !Highcharts.hasOwnProperty(className)
             ) {
@@ -263,9 +257,7 @@
                     wrap(Highcharts[className].prototype, className);
                     break;
             }
-
         }
-
     };
 
     /**
@@ -274,7 +266,6 @@
      * @return {void}
      */
     window.CallAnalyzer.unwrapHighcharts = function () {
-
         if (!window.Highcharts) {
             return;
         }
@@ -283,7 +274,6 @@
             wrap = wrapStack[i];
             wrap.obj[wrap.functionName] = wrap.property;
         }
-
     };
 
     /**
@@ -296,7 +286,6 @@
      * @return {void}
      */
     window.CallAnalyzer.printLog = function (filter) {
-
         // window.CallAnalyzer.deactivate();
 
         var log = window.CallAnalyzer.getLog(filter),
@@ -322,7 +311,5 @@
         }
 
         window.console.log(logString);
-
     };
-
-}(this));
+})(this);

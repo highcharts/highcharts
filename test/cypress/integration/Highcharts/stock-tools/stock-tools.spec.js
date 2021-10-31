@@ -8,16 +8,11 @@ describe('Stock Tools annotation popup, #15725', () => {
     });
 
     it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
-        cy.get('.highcharts-label-annotation')
-            .first()
-            .click();
-        cy.get('.highcharts-label-annotation')
-            .first()
-            .click();
-        cy.get('.highcharts-container')
-            .click(100, 210)
+        cy.get('.highcharts-label-annotation').first().click();
+        cy.get('.highcharts-label-annotation').first().click();
+        cy.get('.highcharts-container').click(100, 210);
 
-    cy.chart().should(chart =>
+        cy.chart().should((chart) =>
             assert.notOk(
                 chart.annotations.length,
                 'Annotation should not be added.'
@@ -28,7 +23,7 @@ describe('Stock Tools annotation popup, #15725', () => {
     it('#15730: Should close popup after hiding annotation', () => {
         cy.get('.highcharts-label-annotation').first().click();
         cy.get('.highcharts-container').click();
-        cy.chart().should(chart =>
+        cy.chart().should((chart) =>
             assert.strictEqual(chart.annotations.length, 1)
         );
         cy.get('.highcharts-annotation').click();
@@ -68,8 +63,8 @@ describe('Stock Tools annotation popup, #15725', () => {
             .click(120, 260)
             .click(140, 210)
             .click(160, 260);
-        cy.chart().should(chart =>
-            chart.annotations[1].points.forEach(point =>
+        cy.chart().should((chart) =>
+            chart.annotations[1].points.forEach((point) =>
                 assert.ok(point.y > -50 && point.y < 50)
             )
         );
@@ -78,14 +73,26 @@ describe('Stock Tools annotation popup, #15725', () => {
     it('#16158: Should use correct default series in popup', () => {
         cy.get('.highcharts-indicators').click();
         cy.get('.highcharts-indicator-list').contains('Accumulation').click();
-        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
-        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should(
+            'have.value',
+            'aapl-ohlc'
+        );
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should(
+            'have.value',
+            'aapl-volume'
+        );
         cy.addIndicator();
 
         cy.get('.highcharts-indicators').click();
         cy.get('.highcharts-tab-item').contains('edit').click();
-        cy.get('.highcharts-tab-item-show #highcharts-select-series').should('have.value', 'aapl-ohlc');
-        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should('have.value', 'aapl-volume');
+        cy.get('.highcharts-tab-item-show #highcharts-select-series').should(
+            'have.value',
+            'aapl-ohlc'
+        );
+        cy.get('.highcharts-tab-item-show #highcharts-select-volume').should(
+            'have.value',
+            'aapl-volume'
+        );
         cy.get('.highcharts-popup-rhs-col button').contains('save').click();
     });
 
@@ -95,8 +102,7 @@ describe('Stock Tools annotation popup, #15725', () => {
             .contains('Disparity Index')
             .click();
 
-        cy.get('#highcharts-select-params\\.average')
-            .select('ema')
+        cy.get('#highcharts-select-params\\.average').select('ema');
         cy.addIndicator();
     });
 });
@@ -118,55 +124,58 @@ describe('Indicator popup searchbox, #16019.', () => {
             .click()
             .type('ac');
         cy.get('.highcharts-indicator-list').should(($p) => {
-            expect($p).to.have.length(5)
-        })
+            expect($p).to.have.length(5);
+        });
 
         // Test the sorting.
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('c');
-        cy.get('.highcharts-indicator-list li:first')
-            .should('contain.text', 'Acceleration Bands');
+        cy.get('input[name="highcharts-input-search-indicators"]').type('c');
+        cy.get('.highcharts-indicator-list li:first').should(
+            'contain.text',
+            'Acceleration Bands'
+        );
 
         // Test if regex works.
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .clear();
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('cd');
-        cy.get('.highcharts-indicator-list li:first')
-            .should('contain.text', 'MACD');
+        cy.get('input[name="highcharts-input-search-indicators"]').clear();
+        cy.get('input[name="highcharts-input-search-indicators"]').type('cd');
+        cy.get('.highcharts-indicator-list li:first').should(
+            'contain.text',
+            'MACD'
+        );
     });
 
     it('Clicking the reset button should reset the indicator list, #16019.', () => {
-        cy.get('.clear-filter-button')
-            .click();
+        cy.get('.clear-filter-button').click();
 
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .should('have.value', '')
+        cy.get('input[name="highcharts-input-search-indicators"]').should(
+            'have.value',
+            ''
+        );
 
-        cy.get('.highcharts-indicator-list')
-            .should('have.length', 50)
+        cy.get('.highcharts-indicator-list').should('have.length', 50);
     });
 
     it('Indicators should be accessible through aliases, #16019.', () => {
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('boll');
+        cy.get('input[name="highcharts-input-search-indicators"]').type('boll');
 
-        cy.get('.highcharts-indicator-list li:first')
-            .should('contain.text', 'BB');
+        cy.get('.highcharts-indicator-list li:first').should(
+            'contain.text',
+            'BB'
+        );
     });
 
-
     it('Popup should warn when no items are found using the filter, #16019.', () => {
-        cy.get('input[name="highcharts-input-search-indicators"]')
-            .type('dada');
+        cy.get('input[name="highcharts-input-search-indicators"]').type('dada');
 
-        cy.get('.highcharts-popup-rhs-col-wrapper')
-            .should('contain.text', 'No match');
+        cy.get('.highcharts-popup-rhs-col-wrapper').should(
+            'contain.text',
+            'No match'
+        );
 
-        cy.get('.clear-filter-button')
-            .click();
+        cy.get('.clear-filter-button').click();
 
-        cy.get('.highcharts-indicator-list li:first')
-            .should('contain.text', 'Acceleration Bands');
+        cy.get('.highcharts-indicator-list li:first').should(
+            'contain.text',
+            'Acceleration Bands'
+        );
     });
 });

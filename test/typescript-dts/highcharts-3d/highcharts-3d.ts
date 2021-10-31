@@ -38,9 +38,11 @@ function test_3DColumn() {
                 depth: 25
             }
         },
-        series: [{
-            type: 'column',
-            data: [29.9, 71.5, 106.4, 129.2, 144.0]
-        }]
+        series: [
+            {
+                type: 'column',
+                data: [29.9, 71.5, 106.4, 129.2, 144.0]
+            }
+        ]
     });
 }

@@ -14,8 +14,8 @@ test_GlobalSVGElement();
  * Tests globals.GlobalSVGElement in a simple use case.
  */
 function test_GlobalSVGElement() {
-    let test: (globals.GlobalSVGElement|null);
-    test = document.getElementById('test') as (SVGElement|null);
+    let test: globals.GlobalSVGElement | null;
+    test = document.getElementById('test') as SVGElement | null;
     if (test) {
         test.focus();
     }

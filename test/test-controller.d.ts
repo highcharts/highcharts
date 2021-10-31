@@ -18,7 +18,7 @@ interface ClipPaths {
  * Chart position of a controller instance
  */
 interface TestControllerPosition extends Highcharts.PositionObject {
-    relatedTarget: (Element | null);
+    relatedTarget: Element | null;
 }
 /**
  * Page coordinates of a controller instance
@@ -30,7 +30,8 @@ interface TestControllerTouchPosition {
 /**
  * Touch coordinates
  */
-interface TestControllerTouchPositions extends Array<TestControllerTouchPosition> {
+interface TestControllerTouchPositions
+    extends Array<TestControllerTouchPosition> {
     [index: number]: TestControllerTouchPosition;
     item?: (index: number) => TestControllerTouchPosition;
 }
@@ -99,7 +100,12 @@ declare class TestController {
      * might catch events and mess up the test result.
      */
     click(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
-    createEvent(type: string, chartX?: number, chartY?: number, extra?: any): Event;
+    createEvent(
+        type: string,
+        chartX?: number,
+        chartY?: number,
+        extra?: any
+    ): Event;
     /**
      * Get the element from a point on the chart.
      *
@@ -109,8 +115,16 @@ declare class TestController {
      * @param chartY
      * Y relative to the chart.
      */
-    elementFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (Element | undefined);
-    elementsFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (Array<Element>);
+    elementFromPoint(
+        chartX?: number,
+        chartY?: number,
+        useMSWorkaround?: boolean
+    ): Element | undefined;
+    elementsFromPoint(
+        chartX?: number,
+        chartY?: number,
+        useMSWorkaround?: boolean
+    ): Array<Element>;
     /**
      * Get the current position of the cursor.
      */
@@ -134,7 +148,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseDown(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseDown(
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers mouse enter event on all necessary elements.
      *
@@ -154,7 +173,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseEnter(newPosition: TestControllerPoint, oldPosition: TestControllerPoint, extra?: any, debug?: boolean): void;
+    mouseEnter(
+        newPosition: TestControllerPoint,
+        oldPosition: TestControllerPoint,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers mouse enter event on all elements, that are missing on the
      * provided new position.
@@ -175,7 +199,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseLeave(newPosition: TestControllerPoint, oldPosition: TestControllerPoint, extra?: any, debug?: boolean): void;
+    mouseLeave(
+        newPosition: TestControllerPoint,
+        oldPosition: TestControllerPoint,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers an event.
      *
@@ -195,7 +224,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseMove(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseMove(
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers an event.
      *
@@ -215,7 +249,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseOut(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseOut(
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers an event.
      *
@@ -235,7 +274,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseOver(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseOver(
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers an event.
      *
@@ -255,7 +299,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseUp(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseUp(
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Move the cursor from current position to a new one. Fire a series of
      * mousemoves, also mouseout and mouseover if new targets are found.
@@ -296,7 +345,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    pan(startPoint?: TestControllerPoint, endPoint?: TestControllerPoint, extra?: any, debug?: boolean): void;
+    pan(
+        startPoint?: TestControllerPoint,
+        endPoint?: TestControllerPoint,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Simulates a pinch gesture.
      *
@@ -315,7 +369,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    pinch(chartX?: number, chartY?: number, distance?: number, debug?: boolean): void;
+    pinch(
+        chartX?: number,
+        chartY?: number,
+        distance?: number,
+        debug?: boolean
+    ): void;
     /**
      * Leave marks for debugging purposes.
      *
@@ -325,7 +384,11 @@ declare class TestController {
      * @param chartY
      * Y relative to the chart.
      */
-    setDebugMark(chartX?: number, chartY?: number, type?: TestController.DebugMarkTypes): Highcharts.SVGElement;
+    setDebugMark(
+        chartX?: number,
+        chartY?: number,
+        type?: TestController.DebugMarkTypes
+    ): Highcharts.SVGElement;
     /**
      * Move the cursor position to a new position, without firing events.
      *
@@ -338,7 +401,11 @@ declare class TestController {
      * @param useMSWorkaround
      * Whether to do additional operations to work around IE problems.
      */
-    setPosition(chartX?: number, chartY?: number, useMSWorkaround?: boolean): void;
+    setPosition(
+        chartX?: number,
+        chartY?: number,
+        useMSWorkaround?: boolean
+    ): void;
     /**
      * Edge and IE are unable to get elementFromPoint when the group has a
      * clip path. It reports the first underlying element with no clip path.
@@ -361,7 +428,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    slide(startPoint?: TestControllerPoint, endPoint?: TestControllerPoint, twoFingers?: boolean, debug?: boolean): void;
+    slide(
+        startPoint?: TestControllerPoint,
+        endPoint?: TestControllerPoint,
+        twoFingers?: boolean,
+        debug?: boolean
+    ): void;
     /**
      * Simulates a tap action with a finger.
      *
@@ -379,7 +451,12 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    tap(chartX?: number, chartY?: number, twoFingers?: boolean, debug?: boolean): void;
+    tap(
+        chartX?: number,
+        chartY?: number,
+        twoFingers?: boolean,
+        debug?: boolean
+    ): void;
     /**
      * Undo the workaround for Edge and IE.
      *
@@ -409,7 +486,13 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    touchEnd(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    touchEnd(
+        chartX?: number,
+        chartY?: number,
+        twoFingers?: boolean,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers touch move events.
      *
@@ -432,7 +515,13 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    touchMove(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    touchMove(
+        chartX?: number,
+        chartY?: number,
+        twoFingers?: boolean,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Triggers touch starts events.
      *
@@ -455,7 +544,13 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    touchStart(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    touchStart(
+        chartX?: number,
+        chartY?: number,
+        twoFingers?: boolean,
+        extra?: any,
+        debug?: boolean
+    ): void;
     /**
      * Trigger an event. The target element will be found based on the chart
      * coordinates. This function is called behind the shorthand functions
@@ -480,7 +575,13 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    triggerEvent(type: string, chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    triggerEvent(
+        type: string,
+        chartX?: number,
+        chartY?: number,
+        extra?: any,
+        debug?: boolean
+    ): void;
 }
 declare namespace TestController {
     enum DebugMarkTypes {

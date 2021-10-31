@@ -34,11 +34,24 @@ var TestTemplate = /** @class */ (function () {
      * @param testInitializer
      *        The initializer function for a test case. (optional)
      */
-    function TestTemplate(name, chartConstructor, chartOptions, testInitializer) {
+    function TestTemplate(
+        name,
+        chartConstructor,
+        chartOptions,
+        testInitializer
+    ) {
         if (!(this instanceof TestTemplate)) {
-            return new TestTemplate(name, chartConstructor, chartOptions, testInitializer);
+            return new TestTemplate(
+                name,
+                chartConstructor,
+                chartOptions,
+                testInitializer
+            );
         }
-        this.chart = chartConstructor(TestTemplate.createContainer(), chartOptions);
+        this.chart = chartConstructor(
+            TestTemplate.createContainer(),
+            chartOptions
+        );
         this.chart.template = name;
         this.name = name;
         this.ready = true;
@@ -54,7 +67,8 @@ var TestTemplate = /** @class */ (function () {
      * Creates a new container in the DOM tree.
      */
     TestTemplate.createContainer = function () {
-        var container = document.createElement('div'), containerStyle = container.style;
+        var container = document.createElement('div'),
+            containerStyle = container.style;
         containerStyle.left = '0';
         containerStyle.position = 'absolute';
         containerStyle.top = '0';
@@ -75,14 +89,23 @@ var TestTemplate = /** @class */ (function () {
      *        argument.
      */
     TestTemplate.test = function (name, chartOptions, testCallback) {
-        if (chartOptions === void 0) { chartOptions = {}; }
-        if (testCallback === void 0) { testCallback = undefined; }
+        if (chartOptions === void 0) {
+            chartOptions = {};
+        }
+        if (testCallback === void 0) {
+            testCallback = undefined;
+        }
         var template = TestTemplate.templates[name];
         if (!template) {
             throw new Error('Template "' + name + '" is not registered');
         }
         if (!(template instanceof TestTemplate)) {
-            TestTemplate.templates[name] = template = new TestTemplate(template.name, template.chartConstructor, template.chartOptions, template.testInitializer);
+            TestTemplate.templates[name] = template = new TestTemplate(
+                template.name,
+                template.chartConstructor,
+                template.chartOptions,
+                template.testInitializer
+            );
         }
         template.test(chartOptions, testCallback);
     };
@@ -96,18 +119,21 @@ var TestTemplate = /** @class */ (function () {
      *        The properties tree to copy.
      */
     TestTemplate.treeCopy = function (source, propertiesTree) {
-        if (!source ||
-            typeof source !== 'object') {
+        if (!source || typeof source !== 'object') {
             return source;
         }
         // @todo handle arrays (peek into karma-setup how it is handled there)
         var copy = {};
         for (var key in propertiesTree) {
-            if (propertiesTree.hasOwnProperty(key) &&
-                source.hasOwnProperty(key)) {
-                copy[key] = TestTemplate.treeCopy(source[key], propertiesTree[key]);
-            }
-            else {
+            if (
+                propertiesTree.hasOwnProperty(key) &&
+                source.hasOwnProperty(key)
+            ) {
+                copy[key] = TestTemplate.treeCopy(
+                    source[key],
+                    propertiesTree[key]
+                );
+            } else {
                 copy[key] = undefined;
             }
         }
@@ -121,7 +147,8 @@ var TestTemplate = /** @class */ (function () {
      *        The instance of the chart
      */
     TestTemplate.updateUndoFor = function (chart) {
-        var undoStack = [], removeEvent;
+        var undoStack = [],
+            removeEvent;
         removeEvent = Highcharts.addEvent(chart, 'update', function (args) {
             undoStack.push(TestTemplate.treeCopy(chart.options, args.options));
         });
@@ -149,8 +176,12 @@ var TestTemplate = /** @class */ (function () {
      *        The callback to test the chart
      */
     TestTemplate.prototype.test = function (chartOptions, testCallback) {
-        if (chartOptions === void 0) { chartOptions = {}; }
-        if (testCallback === void 0) { testCallback = undefined; }
+        if (chartOptions === void 0) {
+            chartOptions = {};
+        }
+        if (testCallback === void 0) {
+            testCallback = undefined;
+        }
         var chart = this.chart;
         var testInitializer = this.testInitializer;
         this.testCases.push({
@@ -173,16 +204,14 @@ var TestTemplate = /** @class */ (function () {
                     chart.update(testCase.chartOptions, true, true, false);
                     chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
-                }
-                finally {
+                } finally {
                     if (typeof undoUpdates === 'function') {
                         undoUpdates();
                     }
                     chart.container.style.zIndex = '';
                 }
             }
-        }
-        finally {
+        } finally {
             this.ready = true;
         }
     };
@@ -210,8 +239,15 @@ var TestTemplate = /** @class */ (function () {
      * @param testInitializer
      *        The initializer function for a test case. (optional)
      */
-    TestTemplate.register = function (name, chartConstructor, chartOptions, testInitializer) {
-        if (testInitializer === void 0) { testInitializer = undefined; }
+    TestTemplate.register = function (
+        name,
+        chartConstructor,
+        chartOptions,
+        testInitializer
+    ) {
+        if (testInitializer === void 0) {
+            testInitializer = undefined;
+        }
         if (TestTemplate.templates[name]) {
             throw new Error('Chart template already registered');
         }
@@ -223,4 +259,4 @@ var TestTemplate = /** @class */ (function () {
         };
     };
     return TestTemplate;
-}());
+})();

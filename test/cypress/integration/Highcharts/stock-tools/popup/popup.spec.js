@@ -1,4 +1,3 @@
-
 describe('Popup tests, #16234', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
@@ -8,7 +7,6 @@ describe('Popup tests, #16234', () => {
         cy.visit('highcharts/annotations/gui/');
     });
     it('Should create Circle Annotation, and check if there are label options', () => {
-
         cy.get('.highcharts-submenu-wrapper').invoke('show');
         cy.get('.highcharts-circle-annotation').click();
         cy.get('.highcharts-container')

@@ -1,6 +1,5 @@
-
-import GoogleSheetsStore from '/base/js/Data/Stores/GoogleSheetsStore.js'
-import { registerStoreEvents } from './utils.js'
+import GoogleSheetsStore from '/base/js/Data/Stores/GoogleSheetsStore.js';
+import { registerStoreEvents } from './utils.js';
 const { test, only } = QUnit;
 
 test('GoogleDataStore', function (assert) {
@@ -23,7 +22,7 @@ test('GoogleDataStore', function (assert) {
         );
 
         assert.deepEqual(
-            e.table.getRow(1).map(cellValue => typeof cellValue),
+            e.table.getRow(1).map((cellValue) => typeof cellValue),
             ['string', 'number', 'number', 'number'],
             'The store table has the correct data types'
         );
@@ -48,7 +47,7 @@ test('GoogleDataStore', function (assert) {
     datastore.load();
 
     window.setTimeout(() => doneLoading(), 5000);
-})
+});
 
 test('GoogleDataStore, bad spreadsheetkey', function (assert) {
     const registeredEvents = [];
@@ -72,7 +71,7 @@ test('GoogleDataStore, bad spreadsheetkey', function (assert) {
         hasErrored();
     });
 
-    datastore.load()
+    datastore.load();
 
     window.setTimeout(() => assert.done(), 5000);
-})
+});

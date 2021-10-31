@@ -15,27 +15,15 @@
         "moduleResolution": "classic",
         "rootDir": "../../",
         "target": "ES6",
-        "lib": [
-            "dom",
-            "es5"
-        ],
+        "lib": ["dom", "es5"],
         "paths": {
-            "/base/js/*": [
-                "ts/*"
-            ],
-            "/base/*": [
-                "*"
-            ]
+            "/base/js/*": ["ts/*"],
+            "/base/*": ["*"]
         },
         "types": [
             // disable node types
         ]
     },
-    "files": [
-        "tsglobal.d.ts"
-    ],
-    "include": [
-        "ts/**/*.ts",
-        "**/*.test.js",
-    ]
+    "files": ["tsglobal.d.ts"],
+    "include": ["ts/**/*.ts", "**/*.test.js"]
 }

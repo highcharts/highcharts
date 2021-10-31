@@ -1,14 +1,19 @@
-parserOptions:
-    source-type: module
+{
+    "parserOptions": {
+        "source-type": "module"
+    },
+    "env": {
+        "browser": true
+    },
 
-env:
-    browser: true
+    "globals": {
+        "QUnit": true,
+        "TestController": true,
+        "TestUtilities": true
+    },
 
-globals:
-    QUnit: true
-    TestController: true
-    TestUtilities: true
-
-rules:
-    spaced-comment: 0
-    node/no-extraneous-require: 0
+    "rules": {
+        "spaced-comment": 0,
+        "node/no-extraneous-require": 0
+    }
+}

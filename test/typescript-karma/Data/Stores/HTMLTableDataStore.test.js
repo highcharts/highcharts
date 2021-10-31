@@ -1,7 +1,7 @@
-import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js'
-import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js'
+import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js';
+import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js';
 import U from '/base/js/Core/Utilities.js';
-import { registerStoreEvents, testExportedDataTable } from './utils.js'
+import { registerStoreEvents, testExportedDataTable } from './utils.js';
 import CSVStore from '/base/js/Data/Stores/CSVStore.js';
 const { test, only } = QUnit;
 const { createElement } = U;
@@ -286,12 +286,12 @@ test('HTMLTableStore from HTML element', function (assert) {
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
-        )
+        );
         assert.strictEqual(
             e.table.getRowCount(),
             tableElement.querySelectorAll('tr').length - 1,
             'Datastore loaded from HTML element has same amount of rows minus the column names'
-        )
+        );
 
         // const datastoreFromJSON = HTMLTableStore.fromJSON(datastore.toJSON());
         // datastoreFromJSON.load();
@@ -310,10 +310,10 @@ test('HTMLTableParser', function (assert) {
     tableElement.setAttribute('id', 'myDivider');
     tableElement.innerHTML = tableHTML;
 
-    const dataparser = new HTMLTableParser({}, tableElement)
+    const dataparser = new HTMLTableParser({}, tableElement);
     const done = assert.async();
 
-    dataparser.on('afterParse', e => {
+    dataparser.on('afterParse', (e) => {
         assert.strictEqual(
             dataparser.tableElementID,
             tableElement.id,
@@ -321,8 +321,8 @@ test('HTMLTableParser', function (assert) {
         );
         assert.ok(true);
         done();
-    })
-    dataparser.parse()
+    });
+    dataparser.parse();
 });
 
 test('Export as HTML', function (assert) {
@@ -333,10 +333,10 @@ test('Export as HTML', function (assert) {
     const csvdatastore = new CSVStore(undefined, { csv: tableCSV });
     csvdatastore.load();
 
-    const htmlstore = new HTMLTableStore(csvdatastore.table)
+    const htmlstore = new HTMLTableStore(csvdatastore.table);
 
     // Export with default settings (multiline and rowspan should be enabled)
-    let htmlString = htmlstore.save()
+    let htmlString = htmlstore.save();
     const HTMLElement = createElement('div');
     HTMLElement.innerHTML = htmlString;
 
@@ -394,16 +394,15 @@ test('Export as HTML', function (assert) {
         1,
         'The table should have a single caption'
     );
-    assert.strictEqual(
-        captionSearch[0].innerText,
-        'My Data Table'
-    );
+    assert.strictEqual(captionSearch[0].innerText, 'My Data Table');
 
     // Make sure the exported table is parseable, and returns the same result
-    const storeFromExportedHTML = new HTMLTableStore(undefined, { table: HTMLElement });
+    const storeFromExportedHTML = new HTMLTableStore(undefined, {
+        table: HTMLElement
+    });
     const doneLoading = assert.async();
 
-    storeFromExportedHTML.on('afterLoad', e => {
+    storeFromExportedHTML.on('afterLoad', (e) => {
         assert.strictEqual(
             storeFromExportedHTML.save(),
             htmlstore.save(),
@@ -412,13 +411,10 @@ test('Export as HTML', function (assert) {
         doneLoading();
     });
     storeFromExportedHTML.on('loadError', () => {
-        assert.ok(
-            false,
-            'The load failed'
-        )
+        assert.ok(false, 'The load failed');
         doneLoading();
     });
 
     storeFromExportedHTML.load();
-    assert.ok(true)
-})
+    assert.ok(true);
+});

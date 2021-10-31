@@ -52,7 +52,7 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         // image quality. 10 is default.
         encoder.setQuality(10);
 
-        frames.forEach(frame => {
+        frames.forEach((frame) => {
             encoder.addFrame(frame);
         });
         encoder.finish();
@@ -105,30 +105,43 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
      * @param {object} testResult data
      * @return {void}
      */
-    this.specSuccess = this.specSkipped = this.specFailure = function (browser, testResult) {
-        if (referenceRun) {
-            // no need to log results test results if the test run is for references/baselines
-            return;
-        }
-        const { log = [], skipped, success } = testResult;
-        const filename = imageCapture.resultsOutputPath;
-        const diffResults = readExistingResult(filename);
+    this.specSuccess =
+        this.specSkipped =
+        this.specFailure =
+            function (browser, testResult) {
+                if (referenceRun) {
+                    // no need to log results test results if the test run is for references/baselines
+                    return;
+                }
+                const { log = [], skipped, success } = testResult;
+                const filename = imageCapture.resultsOutputPath;
+                const diffResults = readExistingResult(filename);
 
-        if (skipped) {
-            diffResults[testResult.description] = undefined;
-        } else if (success) {
-            diffResults[testResult.description] = 0;
-        } else if (!success && log.length > 0) {
-            const matches = log[0].match(/Actual: (\d+)/);
-            if (matches[1]) {
-                LOG.info(`Test ${testResult.description} differs with ${matches[1]} pixels`);
-                diffResults[testResult.description] = parseInt(matches[1], 10);
-            } else {
-                LOG.warn(`Test ${testResult.description} failed, but unable to determine the diff. Has the test assert(..) changed?`);
-            }
-        }
-        fs.writeFileSync(filename, JSON.stringify(diffResults, null, ' '));
-    };
+                if (skipped) {
+                    diffResults[testResult.description] = undefined;
+                } else if (success) {
+                    diffResults[testResult.description] = 0;
+                } else if (!success && log.length > 0) {
+                    const matches = log[0].match(/Actual: (\d+)/);
+                    if (matches[1]) {
+                        LOG.info(
+                            `Test ${testResult.description} differs with ${matches[1]} pixels`
+                        );
+                        diffResults[testResult.description] = parseInt(
+                            matches[1],
+                            10
+                        );
+                    } else {
+                        LOG.warn(
+                            `Test ${testResult.description} failed, but unable to determine the diff. Has the test assert(..) changed?`
+                        );
+                    }
+                }
+                fs.writeFileSync(
+                    filename,
+                    JSON.stringify(diffResults, null, ' ')
+                );
+            };
 
     /**
      * Writes image data to file
@@ -139,7 +152,7 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         try {
             if (/\.svg$/.test(filename)) {
                 pendingFileWritings++;
-                fs.writeFile(filename, data, err => {
+                fs.writeFile(filename, data, (err) => {
                     if (err) {
                         throw err;
                     }
@@ -147,20 +160,22 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
                         fileWritingFinished();
                     }
                 });
-
             } else if (/\.png$/.test(filename)) {
                 data = data.replace(/^data:image\/\w+;base64,/, '');
                 fs.writeFileSync(filename, Buffer.from(data, 'base64'));
-
             } else if (/\.gif$/.test(filename)) {
                 const canvasWidth = info.canvasWidth || 600;
                 const canvasHeight = info.canvasHeight || 400;
-                createAnimatedGif(filename, info.frames, canvasWidth, canvasHeight);
+                createAnimatedGif(
+                    filename,
+                    info.frames,
+                    canvasWidth,
+                    canvasHeight
+                );
             }
         } catch (err) {
             LOG.error(`Failed to write file ${filename}\n\n${err}`);
         }
-
     });
 
     // wait for async file writes before exiting
@@ -171,7 +186,6 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
             done();
         }
     };
-
 }
 /* eslint-enable require-jsdoc */
 

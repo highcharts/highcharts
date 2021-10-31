@@ -2,19 +2,19 @@ import DataTable from '/base/js/Data/DataTable.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 
 QUnit.test('GroupModifier.modify', function (assert) {
-
     const done = assert.async(),
         modifier = new GroupModifier({
             groupColumn: 'y'
         });
 
     modifier
-        .modify(new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
-        }))
+        .modify(
+            new DataTable({
+                x: [0, 0, 1, 1],
+                y: ['a', 'b', 'b', 'a']
+            })
+        )
         .then((table) => {
-
             assert.ok(
                 table.modified.getCell('table', 0) instanceof DataTable,
                 'Modified table should contain subtables.'
@@ -37,32 +37,24 @@ QUnit.test('GroupModifier.modify', function (assert) {
                 },
                 'Modified table should have subtables. (#1)'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('GroupModifier.modifyCell', function (assert) {
-
     const done = assert.async(),
         modifier = new GroupModifier({
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            x: [0, 0, 1, 1],
+            y: ['a', 'b', 'b', 'a']
         });
 
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.ok(
                 table.modified.getCell('table', 0) instanceof DataTable,
                 'Modified table should contain subtables.'
@@ -81,32 +73,24 @@ QUnit.test('GroupModifier.modifyCell', function (assert) {
                 10,
                 'Subtable should contain valid x value.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('GroupModifier.modifyColumns', function (assert) {
-
     const done = assert.async(),
         modifier = new GroupModifier({
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            x: [0, 0, 1, 1],
+            y: ['a', 'b', 'b', 'a']
         });
 
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.ok(
                 table.modified.getCell('table', 0) instanceof DataTable,
                 'Modified table should contain subtables.'
@@ -119,7 +103,7 @@ QUnit.test('GroupModifier.modifyColumns', function (assert) {
             );
 
             table.setColumns({
-                'x': [4, 3, 2, 1]
+                x: [4, 3, 2, 1]
             });
 
             assert.deepEqual(
@@ -127,32 +111,24 @@ QUnit.test('GroupModifier.modifyColumns', function (assert) {
                 [4, 1],
                 'Subtable should contain valid x value.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
 
 QUnit.test('GroupModifier.modifyRows', function (assert) {
-
     const done = assert.async(),
         modifier = new GroupModifier({
             groupColumn: 'y'
         }),
         table = new DataTable({
-            x: [ 0, 0, 1, 1 ],
-            y: [ 'a', 'b', 'b', 'a']
+            x: [0, 0, 1, 1],
+            y: ['a', 'b', 'b', 'a']
         });
 
     table
         .setModifier(modifier)
         .then((table) => {
-
             assert.ok(
                 table.modified.getCell('table', 0) instanceof DataTable,
                 'Modified table should contain subtables.'
@@ -171,13 +147,7 @@ QUnit.test('GroupModifier.modifyRows', function (assert) {
                 5,
                 'Subtable should contain valid x value.'
             );
-
         })
-        .catch((e) =>
-            assert.notOk(true, e)
-        )
-        .then(() =>
-            done()
-        );
-
+        .catch((e) => assert.notOk(true, e))
+        .then(() => done());
 });
