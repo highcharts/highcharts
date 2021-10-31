@@ -1,5 +1,4 @@
-Drill down
-==========
+# Drill down
 
 For full detailed documentation and more samples of the drilldown feature, see [the Highcharts API](https://api.highcharts.com/highcharts/drilldown).
 
@@ -7,7 +6,7 @@ Since version 3.0.8, Highcharts has built-in support for drilldown. By giving a 
 
 ### Basic setup
 
-For a basic setup, the drilldown series are defined in a separate array under the `drilldown` configuration. Each series configuration is given an id, which is used for the drilldown parent point to identify its series. 
+For a basic setup, the drilldown series are defined in a separate array under the `drilldown` configuration. Each series configuration is given an id, which is used for the drilldown parent point to identify its series.
 
 ```js
 series: [{

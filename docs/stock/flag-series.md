@@ -1,9 +1,8 @@
-Flag series
-================
+# Flag series
 
 A flag series consists of flags marking events or points of interests. Used alone flag series will make no sense. Flags can be placed on either the series of the chart or on the axis.
 
-Flag series belong to Highcharts Stock, but they can also be applied to a regular Highcharts chart created with the Highcharts.Chart() constructor as long as the highstock.js file is loaded in the page. See the [FAQ item](https://www.highcharts.com/docs/getting-started/frequently-asked-questions#can-i-use-features-from-highstock-in-highcharts) on the matter. 
+Flag series belong to Highcharts Stock, but they can also be applied to a regular Highcharts chart created with the Highcharts.Chart() constructor as long as the highstock.js file is loaded in the page. See the [FAQ item](https://www.highcharts.com/docs/getting-started/frequently-asked-questions#can-i-use-features-from-highstock-in-highcharts) on the matter.
 
 ![flagseries.png](flagseries.png)
 
@@ -16,10 +15,10 @@ To create a flag series, add the following configuration in the series option:
     type : 'flags',
     data : [{
         x : 0,      // Point where the flag appears
-        title : '', // Title of flag displayed on the chart 
+        title : '', // Title of flag displayed on the chart
         text : ''   // Text displayed when the flag are highlighted.
     }],
-    onSeries : '',  // Id of which series it should be placed on. If not defined 
+    onSeries : '',  // Id of which series it should be placed on. If not defined
                     // the flag series will be put on the X axis
     shape : 'flag'  // Defines the shape of the flags.
 }
@@ -27,9 +26,8 @@ To create a flag series, add the following configuration in the series option:
 
 For an overview of the flag series options see the [API reference](https://api.highcharts.com/highstock/plotOptions.flags).
 
-Flags series examples
--------------------
+## Flags series examples
 
-*   [Flags marking events](https://highcharts.com/stock/demo/flags-general)
-*   [Flags placement](https://highcharts.com/stock/demo/flags-placement)
-*   [Flags shapes and colors](https://highcharts.com/stock/demo/flags-shapes)
+-   [Flags marking events](https://highcharts.com/stock/demo/flags-general)
+-   [Flags placement](https://highcharts.com/stock/demo/flags-placement)
+-   [Flags shapes and colors](https://highcharts.com/stock/demo/flags-shapes)

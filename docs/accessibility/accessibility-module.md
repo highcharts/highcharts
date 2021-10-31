@@ -1,5 +1,4 @@
-Accessibility module
-===
+# Accessibility module
 
 The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an afterthought. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
 
@@ -7,9 +6,9 @@ We recommend to always include the accessibility module, unless there is an expl
 
 Visit our [accessibility portal](https://www.highcharts.com/accessibility/) to learn more about Highcharts' accessibility features.
 
-Getting started with accessibility
-----------------------------------
-*Read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart).*
+## Getting started with accessibility
+
+_Read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart)._
 
 To include the accessibility module, simply include the following file after including any of the Highcharts JS files:
 
@@ -26,10 +25,10 @@ We also recommend including the exporting and export-data modules. This lets use
 ```
 
 Example of a line chart with the accessibility module:
+
 <iframe style="width: 100%; height: 470px; border: none;" src='https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-line' allow="fullscreen"></iframe>
 
-Basic configuration
--------------------
+## Basic configuration
 
 The accessibility module is highly configurable, but the most important option we will always recommend you provide is a text description of your chart. This is essential for SEO, accessibility for users with disabilities, and to help ensure your readers understand what the chart is about. The description should concisely explain what can be learned from the chart. For screen reader users, this enables fast access to the main takeaway of the chart, and also helps them decide if they should invest more time in exploring the chart further. The text description is usually best placed in visible text around the chart, so that all users can benefit from knowing what the chart should convey.
 
@@ -42,9 +41,13 @@ This behavior can be configured with the [`accessibility.linkedDescription`](htt
 ```js
 <figure>
     <div id="chart-container"></div>
-    <p class="highcharts-description">The following chart demonstrates some accessibility features  of Highcharts, including use of the <code>linkedDescription</code> option.</p>
+    <p class="highcharts-description">
+        The following chart demonstrates some accessibility features of
+        Highcharts, including use of the <code>linkedDescription</code> option.
+    </p>
 </figure>
 ```
+
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-avg-temp allow="fullscreen"></iframe>
 
 **Caption:**
@@ -55,11 +58,11 @@ It is possible to add the text description directly on the chart SVG as well, us
 Highcharts.chart('container', {
     caption: {
         text: '<b>The caption renders in the bottom, and is part of the exported chart.</b>'
-    },
+    }
     // ...
 });
-
 ```
+
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/caption/text allow="fullscreen"></iframe>
 
 **Description:**
@@ -70,26 +73,25 @@ If making the text visible is not desirable, or you prefer to add a separate des
 Highcharts.chart('container', {
     accessibility: {
         description: 'This is the most used desktop screen reader'
-    },
+    }
     // ...
 });
 ```
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/accessibility/accessible-bar allow="fullscreen"></iframe>
 
+## Other accessible features
 
-Other accessible features
--------------------------
 The Accessibility module adds several layers of functionality for making your charts compatible with assistive technologies, improving the usability of your charts, and helping you reach a broader audience.
-- Keyboard navigation
-- Screen readers
-- Low vision features
-- Voice input
-- Tactile export
-- Sonification
-- Cognitive accessibility
-- Internationalization
 
+-   Keyboard navigation
+-   Screen readers
+-   Low vision features
+-   Voice input
+-   Tactile export
+-   Sonification
+-   Cognitive accessibility
+-   Internationalization
 
 See [demos using the Accessibility module](https://www.highcharts.com/demo#accessible-charts).
 

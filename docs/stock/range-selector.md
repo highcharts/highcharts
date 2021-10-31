@@ -1,20 +1,18 @@
-Range selector
-================
+# Range selector
 
 The range selector is a tool for selecting ranges to display within the chart. It provides buttons to select pre-configured ranges in the chart, like 1 day, 1 week, 1 month, etc. It also provides input boxes where min and max dates can be manually input.
 
-![rangeSelector.png](rangeSelector.png) 
+![rangeSelector.png](rangeSelector.png)
 
-Vertical position
------------------
+## Vertical position
 
 The range selector box can be positioned vertically.
 
 Allowed properties are:
 
-*   top (by default)
-*   middle
-*   bottom
+-   top (by default)
+-   middle
+-   bottom
 
 ```js
 rangeSelector: {
@@ -28,8 +26,7 @@ Use the x and y options to customize position. The x and y options offset the se
 
 ![ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH](https://lh3.googleusercontent.com/ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH)
 
-Floating
---------
+## Floating
 
 The option allows to skip adding extra space for range selector. [See a live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/rangeselector/floating/).
 
@@ -40,16 +37,15 @@ rangeSelector: {
 },
 ```
 
-![DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1](https://lh3.googleusercontent.com/DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1) 
+![DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1](https://lh3.googleusercontent.com/DDz6GfTHnK-F2thKxueqGuU0qLQ-aLHBYUlWqyAOu34_V45k8UXoITv4uNjg6WAQtMHdKPkC7K6ZFpc1QD7siVGBCZi9oirugTMmIreYN1Q-HDZKp2f_ghcM2RpK30z3bnYb23R1)
 
-Input position / button position
---------------------------------
+## Input position / button position
 
 The input boxes, which handle the `from` and `to` dates, can be positioned individually using the following options:
 
-*   align (left, center, right)
-*   x
-*   y
+-   align (left, center, right)
+-   x
+-   y
 
 For example, we can make them swap places like this:
 
@@ -70,8 +66,7 @@ rangeSelector: {
 
 ![RXAXKRKmXdJAoJfEZIsYiuFOJu7_-8SQ98TIZfdhGBhu9hsRXCJwlBg-3V8BfTY4u30XIwhpeLnsMq0mMnDdzGMQ9T7O_bqsjKjGF2xbmKA0az-a77snT9_40wgdSbaSypH_XSTw](https://lh5.googleusercontent.com/RXAXKRKmXdJAoJfEZIsYiuFOJu7_-8SQ98TIZfdhGBhu9hsRXCJwlBg-3V8BfTY4u30XIwhpeLnsMq0mMnDdzGMQ9T7O_bqsjKjGF2xbmKA0az-a77snT9_40wgdSbaSypH_XSTw)
 
-Input type
-----------
+## Input type
 
 The option `inputDateFormat` is used to determine which type of input to show, `datetime-local`, `date` or `time` and falling back to `text` when the browser does not support the input type or the format contains milliseconds. The default setting of `%b %e, %Y` for example is going to show a `date` input when the browser supports it, while the example below is going to result in a `datetime-local` input:
 
@@ -81,13 +76,11 @@ rangeSelector: {
 },
 ```
 
-Responsive
-----------
+## Responsive
 
 By default the range selector buttons will collapse into a dropdown when there is not enough room to show everything in a single row, this behaviour can be controlled using the `dropdown` option. More info on this can be found in the [API docs](https://api.highcharts.com/highstock/rangeSelector.dropdown)
 
-Custom button click event
--------------------------
+## Custom button click event
 
 Each range selector button can get a custom action as shown in this example:
 

@@ -1,5 +1,4 @@
-Sonification
-===
+# Sonification
 
 Sonification is a collective term for conveying information or perceptualizing data using non-speech audio. It is used all around us, imagine for example your grandfather’s clock with has an audible tick every second and chimes every hour.
 
@@ -11,26 +10,24 @@ Note that this module is still considered experimental. Legacy browsers are not 
 
 <iframe style="width: 100%; height: 635px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/sonification allow="fullscreen"></iframe>
 
-Installation
-------------
+## Installation
 
 Requires the `sonification.js` module. This adds the functions [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify), [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify), and [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify), as well as several helper classes and functionality for controlling the playback of the chart. These are detailed below.
 
-Features
-----------------------------------------------
+## Features
 
 **Highlights:**
 
-*   Supports playing back points with configurable mapping from point data to sound parameters, as well as sound parameters changing over time.
-*   Supports playing back series with configurable timing of points.
-*   Supports playing multiple series in sync, or in sequence. The order of series and delay between them is configurable.
-*   Supports intelligent timing of points and series based on a configurable total target duration.
-*   Supports playing custom Earcons while sonifying a point or series, either attached to a point or with a condition function. Earcons can also be played independently, and instantiated anywhere.
-*   Defines a set of predefined instruments with different timbres and properties.
-*   Supports limiting frequencies to scales or musical notes.
-*   Supports user defined oscillator instruments.
-*   Supports pausing and resuming the sonification, as well as reverse playing and programmatic moving of the play cursor.
-*   Emits events for hooking into the processes.
+-   Supports playing back points with configurable mapping from point data to sound parameters, as well as sound parameters changing over time.
+-   Supports playing back series with configurable timing of points.
+-   Supports playing multiple series in sync, or in sequence. The order of series and delay between them is configurable.
+-   Supports intelligent timing of points and series based on a configurable total target duration.
+-   Supports playing custom Earcons while sonifying a point or series, either attached to a point or with a condition function. Earcons can also be played independently, and instantiated anywhere.
+-   Defines a set of predefined instruments with different timbres and properties.
+-   Supports limiting frequencies to scales or musical notes.
+-   Supports user defined oscillator instruments.
+-   Supports pausing and resuming the sonification, as well as reverse playing and programmatic moving of the play cursor.
+-   Emits events for hooking into the processes.
 
 See the [API documentation](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify) for configuration details.
 
@@ -42,13 +39,11 @@ Earcons are ear-icons, predefined sounds that play to indicate something notewor
 **Instruments**  
 The module makes use of the concept of instruments. When sonifying data, you specify the instruments you want to be playing, and you map data properties to instrument parameters. A common example would be to map y-values to the instrument frequency, which results in a sound that rises in pitch for higher data values. This is in most simple cases fairly intuitive to readers.
 
-Use Cases
----------
+## Use Cases
 
 **Simple sonification of points**  
 In this example, we will show how to use [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify) to sonify single points.
 
-    
     Highcharts.chart('container', {
         // ...
         series: [{
@@ -84,7 +79,6 @@ In this example, we will show how to use [Point.sonify](https://api.highcharts.c
             }
         }]
     });
-    
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/point-basic allow="fullscreen"></iframe>
 
@@ -95,7 +89,6 @@ For a full overview of the available options, see [Point.sonify](https://api.hig
 **Simple sonification of series**  
 In this example we will show how to use [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify) to sonify series, and how this differs from sonifying single points.
 
-    
     Highcharts.chart('container', {
         // ...
         plotOptions: {
@@ -127,7 +120,6 @@ In this example we will show how to use [Series.sonify](https://api.highcharts.c
             }
         }
     });
-    
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/series-basic allow="fullscreen"></iframe>
 
@@ -143,12 +135,11 @@ For a full overview of the available options, see [Series.sonify](https://api.hi
 
 In this example we will show how to sonify a chart with multiple series using [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify), and clarify the differences from sonifying single series.
 
-    
     // Set up a chart
         var chart = Highcharts.chart('container', {
             // ...
         });
-        
+
         // Click button to call chart.sonify()
         document.getElementById('sonify').onclick = function () {
             chart.sonify({
@@ -172,7 +163,6 @@ In this example we will show how to sonify a chart with multiple series using [C
                 }]
             });
         };
-        
 
 <iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/chart-sequential allow="fullscreen"></iframe>
 
@@ -188,7 +178,6 @@ For a full overview of the available options, see [Chart.sonify](https://api.hig
 
 In this example we will take a look at Earcons and how to use them in a chart.
 
-    
         Highcharts.chart('container', {
           // ...
           plotOptions: {
@@ -272,19 +261,18 @@ It is also possible to instantiate an Earcon object anywhere and call `Earcon.so
 
 For a full overview of the available options, see [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon#Earcon).
 
-API documents
--------------
+## API documents
 
-*   [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify)
-*   [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify)
-*   [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify)
-*   [Instrument](https://api.highcharts.com/class-reference/Highcharts.Instrument)
-*   [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon)
-*   [Chart.cancelSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#cancelSonify)
-*   [Chart.getCurrentSonifyPoints](https://api.highcharts.com/class-reference/Highcharts.Chart#getCurrentSonifyPoints)
-*   [Chart.pauseSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#pauseSonify)
-*   [Chart.resetSonifyCursor](https://api.highcharts.com/class-reference/Highcharts.Chart#resetSonifyCursor)
-*   [Chart.resetSonifyCursorEnd](https://api.highcharts.com/class-reference/Highcharts.Chart#resetSonifyCursorEnd)
-*   [Chart.resumeSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#resumeSonify)
-*   [Chart.rewindSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#rewindSonify)
-*   [Chart.setSonifyCursor](https://api.highcharts.com/class-reference/Highcharts.Chart#setSonifyCursor)
+-   [Point.sonify](https://api.highcharts.com/class-reference/Highcharts.Point#sonify)
+-   [Series.sonify](https://api.highcharts.com/class-reference/Highcharts.Series#sonify)
+-   [Chart.sonify](https://api.highcharts.com/class-reference/Highcharts.Chart#sonify)
+-   [Instrument](https://api.highcharts.com/class-reference/Highcharts.Instrument)
+-   [Earcon](https://api.highcharts.com/class-reference/Highcharts.Earcon)
+-   [Chart.cancelSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#cancelSonify)
+-   [Chart.getCurrentSonifyPoints](https://api.highcharts.com/class-reference/Highcharts.Chart#getCurrentSonifyPoints)
+-   [Chart.pauseSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#pauseSonify)
+-   [Chart.resetSonifyCursor](https://api.highcharts.com/class-reference/Highcharts.Chart#resetSonifyCursor)
+-   [Chart.resetSonifyCursorEnd](https://api.highcharts.com/class-reference/Highcharts.Chart#resetSonifyCursorEnd)
+-   [Chart.resumeSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#resumeSonify)
+-   [Chart.rewindSonify](https://api.highcharts.com/class-reference/Highcharts.Chart#rewindSonify)
+-   [Chart.setSonifyCursor](https://api.highcharts.com/class-reference/Highcharts.Chart#setSonifyCursor)

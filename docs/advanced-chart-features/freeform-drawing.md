@@ -1,5 +1,4 @@
-Freeform drawing
-================
+# Freeform drawing
 
 Internally, Highcharts is equipped with a rendering module that acts as a wrapper for JavaScript access to SVG in modern browsers and VML in IE < 9. It has much in common with drawing tools like Raphaël or SVG jQuery. This drawing module can be used either to draw shapes or text on the chart, or even as a standalone drawing tool for HTML pages.
 

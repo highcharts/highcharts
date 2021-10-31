@@ -1,5 +1,4 @@
-Adding points and lines
-===
+# Adding points and lines
 
 Map points and lines are added to the map by coordinates. The coordinate system used in most of our maps is a custom one, where both the X and Y values range from 0 to some thousands. The rationale for not using latitude and longitude coordinates in version 1 of the [Map Collection](https://code.highcharts.com/mapdata/) is partly to save downloading weight, partly to not have to deal with projection on the client side, and partly because many of the maps are composite. For example Alaska is moved into the Pacific next to the US mainland on most US maps, thus Alaska would need its own projection within the same map. With the support of the _proj4js_ library, points can be placed by latitude and longitude. See the [Latitude/longitude](latlon) article.
 

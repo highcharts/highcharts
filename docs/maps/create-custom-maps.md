@@ -1,5 +1,4 @@
-Creating custom maps
-===
+# Creating custom maps
 
 Highcharts Maps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
 
@@ -37,7 +36,7 @@ Highcharts Maps can be used for more than geographic data, and more than the fea
 
 ![map-from-svg-8.png](map-from-svg-8.png)
 
-12. After you're finished drawing, save the file. Inkscape saves as SVG by default. Open the file in a text editor so that you see the SVG/XML markup. Select all and copy. 
+12. After you're finished drawing, save the file. Inkscape saves as SVG by default. Open the file in a text editor so that you see the SVG/XML markup. Select all and copy.
 
 13. Using a modern browser (tested with Chrome), go to [highcharts.github.io/map-from-svg](https://highcharts.github.io/map-from-svg). In the textarea labeled "Online SVG URL or SVG markup", paste your SVG markup. Hit the Load button. Now an interactive map should display on the right.
 

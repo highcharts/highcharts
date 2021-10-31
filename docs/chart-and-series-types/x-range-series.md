@@ -1,5 +1,4 @@
-X-range series
-===
+# X-range series
 
 The X-range series displays ranges on the X axis, typically time intervals with a start and an end date. X-range is the basic series of a Gantt chart.
 
@@ -13,8 +12,7 @@ _For more detailed samples and documentation check the [API.](https://api.highch
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/x-range/) to check the code.
 
-Data structure
---------------
+## Data structure
 
 Each data point in an x-range is a range from an x value (typically start date) to x2 (typically the end date). Note that dates on a Highcharts datetime axis are given as milliseconds since 1970.
 

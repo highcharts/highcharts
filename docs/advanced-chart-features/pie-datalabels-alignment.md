@@ -1,44 +1,37 @@
-Pie dataLabels alignment
-===
+# Pie dataLabels alignment
 
 Highcharts 7 introduces 3 new options for working with data labels: `dataLabels.alignTo`, `dataLabels.connectorShape` and `dataLabels.crookDistance`.
 
-*   `dataLabels.alignTo` allows aligning the connectors so that they all end in the same x position, or align data labels so that they touch the edges of the plot area.
-*   `dataLabels.connectorShape` gives the ability to define the shape of the connector. The user can select one of the predefined shapes or create their own algorithm for generating the connector path.
-*   `dataLabels.crookDistance` is a helper parameter for connectorShape option.
+-   `dataLabels.alignTo` allows aligning the connectors so that they all end in the same x position, or align data labels so that they touch the edges of the plot area.
+-   `dataLabels.connectorShape` gives the ability to define the shape of the connector. The user can select one of the predefined shapes or create their own algorithm for generating the connector path.
+-   `dataLabels.crookDistance` is a helper parameter for connectorShape option.
 
-Installation
-------------
+## Installation
 
 No additional file is needed - new functionalities are implemented in `highcharts.js` file
 
-Specific description of new options
------------------------------------
+## Specific description of new options
 
 ### dataLabels.alignTo
 
 Alignment method for data labels. Possible values are:
 
-*   `connectors`: each label touches the nearest vertical edge of the plot area.
-*   `toPlotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
+-   `connectors`: each label touches the nearest vertical edge of the plot area.
+-   `toPlotEdges`: the ends of the connectors have the same x position and the widest label of each half (left & right) touches the nearest vertical edge of the plot area.
 
 **Demo with connectors**
-
 
     dataLabels: {
         alignTo: 'connectors'
     }
 
-
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-connectors allow="fullscreen"></iframe>
 
 **Demo with plotEdges**
 
-
     dataLabels: {
         alignTo: 'plotEdges'
     }
-
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-alignto-plotedges allow="fullscreen"></iframe>
 
@@ -48,33 +41,27 @@ Specifies the method that is used to generate the connector path. Highcharts pro
 
 **fixedOffset (default):**
 
-
     dataLabels: {
         connectorShape: 'fixedOffset'
     }
 
-
 <iframe width="100%" height="550" style="null" src=https://jsfiddle.net/mushigh/r0qsw9mh/3/embedded/result/ allow="fullscreen"></iframe>
 
 **straight:**
-
 
     dataLabels: {
         connectorShape: 'straight',
         crookDistance: '70%'
     }
 
-
 **crookedLine**
 
 This option can be used with the `crookDistance` parameter. It defines how far from the vertical plot edge the connector path should be crooked. Using `crookedLine` makes the most sense (in most cases) when `alignTo` is set.
-
 
     dataLabels: {
         connectorShape: 'crookedLine',
         crookDistance: '70%'
     }
-
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-crookdistance allow="fullscreen"></iframe>
 
@@ -114,11 +101,10 @@ connectorShape: function(labelPosition, connectorPosition, options) {
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/pie-datalabels-connectorshape-function allow="fullscreen"></iframe>
 
-API documents
--------------
+## API documents
 
 Here are the API documents for more information
 
-*   [plotOptions.pie.dataLabels.connectorShape](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.connectorShape)
-*   [plotOptions.pie.dataLabels.alignTo](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.alignTo)
-*   [plotOptions.pie.dataLabels.crookDistance](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.crookDistance)
+-   [plotOptions.pie.dataLabels.connectorShape](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.connectorShape)
+-   [plotOptions.pie.dataLabels.alignTo](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.alignTo)
+-   [plotOptions.pie.dataLabels.crookDistance](https://api.highcharts.com/highcharts/plotOptions.pie.dataLabels.crookDistance)

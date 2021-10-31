@@ -1,5 +1,4 @@
-Installation
-===
+# Installation
 
 ### npm and Bower
 
@@ -10,7 +9,7 @@ Highcharts is also available as packages through npm and Bower. Read more on ins
 Include the JavaScript files in the `<head>` section of your web page as shown below.
 
 ```html
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 ```
 
 If you need support for IE6, 7 or 8, you need to include some polyfills. See details in [System Requirements](https://www.highcharts.com/docs/getting-started/system-requirements#oldie).
@@ -44,4 +43,4 @@ But the separate files can't run in the same page along with each other or with 
 
 You are now ready to use Highcharts, see [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart) to get started.
 
-*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highcharts Stock versions) IE VML rendering is built into the library.
+\*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highcharts Stock versions) IE VML rendering is built into the library.

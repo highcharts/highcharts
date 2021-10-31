@@ -1,9 +1,8 @@
-Funnel series
-=============
+# Funnel series
 
 [See live demo](https://highcharts.com/demo/funnel).
 
-Funnel charts are a type of chart often used to visualize stages in a sales project, where the top are the initial stages with the most clients. The funnel narrows as more clients drop off. 
+Funnel charts are a type of chart often used to visualize stages in a sales project, where the top are the initial stages with the most clients. The funnel narrows as more clients drop off.
 
 ![funnel.png](funnel.png)
 

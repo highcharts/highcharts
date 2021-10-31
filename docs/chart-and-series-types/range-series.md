@@ -1,5 +1,4 @@
-Range series
-============
+# Range series
 
 Using range series requires that the highcharts-more.js file is loaded.
 
@@ -9,19 +8,16 @@ Highcharts includes range series in three different flavours, namely "arearange"
 
 To create a range series set chart.type or series.type to "columnrange":
 
-    
     chart: {
         type: 'columnrange'
     }
 
-Options related to Range series
--------------------------------
+## Options related to Range series
 
-|Option|Description|
-|------|-----------|
-|[dataLabels](https://api.highcharts.com/highcharts/plotOptions.arearange.dataLabels)|Since both the low values and high values for a series need a separate data label, we added a new set of options, "xLow", "xHigh", "yLow" and "yHigh". With these options, the relative position can be altered.|
+| Option                                                                               | Description                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [dataLabels](https://api.highcharts.com/highcharts/plotOptions.arearange.dataLabels) | Since both the low values and high values for a series need a separate data label, we added a new set of options, "xLow", "xHigh", "yLow" and "yHigh". With these options, the relative position can be altered. |
 
-Range series examples
----------------------
+## Range series examples
 
-*   [View horizontal column range example with data labels](https://www.highcharts.com/demo/columnrange)
+-   [View horizontal column range example with data labels](https://www.highcharts.com/demo/columnrange)

@@ -1,5 +1,4 @@
-Navigator
-================
+# Navigator
 
 The navigator is a small series below the main series, displaying a view of the entire data set. It provides tools to zoom in and out on parts of the data as well as panning across the dataset.
 
@@ -7,7 +6,6 @@ The navigator is a small series below the main series, displaying a view of the 
 
 The navigator is enabled by default for the first series in all Highcharts Stock charts. To configure which series are shown in the navigator, use the [`series.showInNavigator`](https://api.highcharts.com/highstock/plotOptions.series.showInNavigator) option.
 
-    
     series: {
         showInNavigator: true
     }

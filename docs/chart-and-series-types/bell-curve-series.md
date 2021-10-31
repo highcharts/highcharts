@@ -1,5 +1,4 @@
-Bell curve
-===
+# Bell curve
 
 A bell curve series is a graphical representation of a normal (Gaussian) probability distribution. Bell curve is used to visualize the probability of occurring outcomes. The curve is bell-shaped, and its center top point is the mean of the base data.
 
@@ -9,8 +8,7 @@ _For more detailed samples and documentation check the [API.](https://api.highch
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bellcurve/) to check the code.
 
-How to create a Bell Curve
---------------------------
+## How to create a Bell Curve
 
 The bell curve requires the following module [modules/histogram-bellcurve.js](https://code.highcharts.com/maps/modules/histogram-bellcurve.js).
 
@@ -18,11 +16,10 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
 
 **Two steps are required to create a bell curve:**
 
-1. Set the series `type` to `bellcurve`.
+1.  Set the series `type` to `bellcurve`.
 
-2. Set `baseSeries` to the right data series’ `id` or `index`.
+2.  Set `baseSeries` to the right data series’ `id` or `index`.
 
-    
         series: [{
             type: 'bellcurve',
             xAxis: 1,
@@ -31,15 +28,13 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
         }, {
             data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
         }]
-    
 
-Setting the Bell Curve
-----------------------
+## Setting the Bell Curve
 
 A bell curve series has two additional options:
 
-*   **intervals**: to control the length of the curve.
-*   **pointsInInterval**: to control the number of points within one interval, i.e., the number of points between σn and σn+1.
+-   **intervals**: to control the length of the curve.
+-   **pointsInInterval**: to control the number of points within one interval, i.e., the number of points between σn and σn+1.
 
 The following demo visualizes four intervals for each side of the bell curve, and five points between each Nxσ:
 
@@ -51,7 +46,6 @@ series: [{
     ...
 }]
 ```
-    
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval allow="fullscreen"></iframe>
 

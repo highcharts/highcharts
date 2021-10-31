@@ -1,17 +1,14 @@
-Accessibility module feature overview
-=======
+# Accessibility module feature overview
 
-The Accessibility module adds several layers of functionality for making your charts compatible with assistive technologies, improving the usability of your charts, and helping you reach a broader audience. 
+The Accessibility module adds several layers of functionality for making your charts compatible with assistive technologies, improving the usability of your charts, and helping you reach a broader audience.
 
-Keyboard navigation
--------------------
+## Keyboard navigation
 
 An essential part of the Accessibility module is the added keyboard navigation support. This is obviously a critical feature for users with mobility impairments, but also benefits all users. While using a computer mouse can be faster, keyboard navigation allows all users access to precise navigation of the chart.
 
 By including the Accessibility module with your charts, users are able to navigate and interact with the data points, chart menu, and other chart controls using the keyboard only.
 
-Screen Readers
---------------
+## Screen Readers
 
 One of the most well known assistive technologies in use by people with disabilities, a screen reader is a program that attempts to convey the information on the screen by using non-visual methods, such as text-to-speech. If your charts are using the Accessibility module, screen reader users can navigate and explore your charts. It will also help your SEO, as web crawlers can read the information provided for screen readers.
 
@@ -25,34 +22,28 @@ If the chart enables drilldown or is otherwise updating its data dynamically, Hi
 
 The Accessibility module is compatible with most screen readers in modern browsers, including JAWS, NVDA, Narrator, VoiceOver, and TalkBack.
 
-Low vision features
--------------------
+## Low vision features
 
 With the accessibility module, Highcharts comes with built in support for Windows High Contrast Mode. Charts can also be viewed in full screen for additional separation of elements. [Pattern fills](https://www.highcharts.com/docs/accessibility/patterns-and-contrast) are supported, as well as [premade themes](https://www.highcharts.com/docs/chart-design-and-style/themes) with higher contrast. Series markers also have different shapes to help distinguish between data points without use of color. Due to the responsive nature of Highcharts, screen zooming tools are well supported.
 
-Voice input
------------
+## Voice input
 
 New since Highcharts version 7.1 is support for voice input software. Similarly to keyboard navigation, this is a technology that is beneficial to users with mobility impairments, but has potential benefits for all users.
 
 Highcharts allows users of voice input software to interact with chart controls such as the chart menu using voice commands. Examples of compatible software include Nuance Dragon, and Microsoft Windows Speech Recognition.
 
-Tactile export
---------------
+## Tactile export
 
 As long as the [exporting module](https://www.highcharts.com/docs/export-module/export-module-overview) is included alongside the Accessibility module, users can download an SVG version of the chart. This SVG can be printed and turned into a tactile graphic using embossing printers or similar technology.
 
-Sonification
-------------
+## Sonification
 
 With Highcharts you can play back the chart as sound. This can be highly effective for conveying trends and patterns quickly without need for visuals. For more information, see [Sonification](https://www.highcharts.com/docs/accessibility/sonification).
 
-Cognitive accessibility
------------------------
+## Cognitive accessibility
 
 A lot of Highcharts features are developed with the goal of making charts easier to use and understand. This translates to better cognitive accessibility, as well as an improved user experience for all users. Relevant features include tooltips, chart legends, dimming surrounding content on hover, series labels, viewing charts in full screen, and data table support.
 
-Internationalization
---------------------
+## Internationalization
 
 All Highcharts generated text content can be translated to different languages, including all text used by the accessibility module. To set these options see [`lang.accessibility`](https://api.highcharts.com/highcharts/lang.accessibility).

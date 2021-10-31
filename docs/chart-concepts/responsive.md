@@ -1,22 +1,20 @@
-Responsive charts
-===
+# Responsive charts
 
 Since Highcharts 5.0 you can create responsive charts much the same way you work with responsive web pages. A top-level option, [responsive](https://api.highcharts.com/highcharts/responsive), exists in the configuration.
 
-It lets you define a set of rules, each with a [condition](https://api.highcharts.com/highcharts/responsive.rules.condition), for example _maxWidth: 500_, and a separate set of [chartOptions](https://api.highcharts.com/highcharts/responsive.rules.chartOptions) that is applied on top of the general chart options. The _chartOptions_ work as overrides to the regular chart options, which apply when the rule applies. For example, the following rule will hide the legend for charts less than 500 pixels wide: 
+It lets you define a set of rules, each with a [condition](https://api.highcharts.com/highcharts/responsive.rules.condition), for example *maxWidth: 500*, and a separate set of [chartOptions](https://api.highcharts.com/highcharts/responsive.rules.chartOptions) that is applied on top of the general chart options. The *chartOptions* work as overrides to the regular chart options, which apply when the rule applies. For example, the following rule will hide the legend for charts less than 500 pixels wide:
 
-    
-    responsive: {  
-      rules: [{  
-        condition: {  
-          maxWidth: 500  
-        },  
-        chartOptions: {  
-          legend: {  
-            enabled: false  
-          }  
-        }  
-      }]  
+    responsive: {
+      rules: [{
+        condition: {
+          maxWidth: 500
+        },
+        chartOptions: {
+          legend: {
+            enabled: false
+          }
+        }
+      }]
     }
 
 One of the most handy options is [chart.className](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/responsive/classname/) that can be used to control the style of all other elements in Highcharts styled mode.

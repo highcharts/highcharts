@@ -1,7 +1,6 @@
 These methods are deprecated, please use our new ones, which can be found [here](https://highcharts.com/docs/export-module/setting-up-the-server).
 
-Deprecated export servers
--------------------------
+## Deprecated export servers
 
 Previously we had two older varieties of servers to choose from; these export servers are no longer maintained. The documentation below serves for reference purposes only.
 
@@ -15,15 +14,14 @@ Our older, [legacy export server](https://github.com/highcharts/highcharts-expo
 
 Typical use cases are:
 
-*   you want to include your charts in emails or automated management reports
-*   you want to have a consistency between graphs you present on your website and your backend produced reports
+-   you want to include your charts in emails or automated management reports
+-   you want to have a consistency between graphs you present on your website and your backend produced reports
 
 We're using [PhantomJS](https://phantomjs.org) for this, which emulates a browser environment (Webkit) on the server. PhantomJS comes with a JavaScript API and we used this for making a script for converting our graphs to another file format. In summary, it works like this; the script ([highcharts-convert.js](https://github.com/highcharts/highcharts-export-server/tree/master/phantomjs/highcharts-convert.js)) starts a browser, opens a page with Highcharts loaded in it and produces a chart and saves it as an image, PDF or SVG.
 
 ### Command line usage
 
 PhantomJS is started from the command line with our highcharts-convert.js script as first parameter. With the other command line parameters we pass over the Highcharts configuration, the name of the output file and parameters for the graphical layout. Example usage on the command line:
-
 
     phantomjs highcharts-convert.js -infile options.js -outfile chart.png -scale 2.5 -width 300 
 
@@ -63,15 +61,15 @@ Stringified JSON which can contain three properties: js, css and files. Example:
 
 ```json
 {
-"files": "highstock.js,highcharts-more.js,data.js,drilldown.js,funnel.js,heatmap.js,treemap.js,highcharts-3d.js,no-data-to-display.js,map.js,solid-gauge.js,broken-axis.js",
-"css": "g.highcharts-series path {stroke-width:2;stroke: pink}",
-"js": "document.body.style.webkitTransform = 'rotate(-10deg)';"
+    "files": "highstock.js,highcharts-more.js,data.js,drilldown.js,funnel.js,heatmap.js,treemap.js,highcharts-3d.js,no-data-to-display.js,map.js,solid-gauge.js,broken-axis.js",
+    "css": "g.highcharts-series path {stroke-width:2;stroke: pink}",
+    "js": "document.body.style.webkitTransform = 'rotate(-10deg)';"
 }
 ```
 
-*   `files`: A comma separated string of filenames that need to be injected to the page for rendering a chart. Only files with the extensions `.css` and `.js` are injected, the rest is ignored.
-*   `css`: Css inserted in the body of the page
-*   `js`: Javascript inserted in the body of the page
+-   `files`: A comma separated string of filenames that need to be injected to the page for rendering a chart. Only files with the extensions `.css` and `.js` are injected, the rest is ignored.
+-   `css`: Css inserted in the body of the page
+-   `js`: Javascript inserted in the body of the page
 
 `-host`
 
@@ -91,13 +89,16 @@ You can also let the script start a web server. By doing so, we don't have to st
 
 This is how you start a web server in PhantomJS with the highcharts-convert.js script, change the host and port to your needs. However do not expose the PhantomJS web server to the outside world, it’s not intended as a general production server.
 
-
     phantomjs highcharts-convert.js -host 127.0.0.1 -port 3003
 
 Note that the web server listens only to POST requests. Use the same parameters as for command line usage, but wrap them in a JSON structure. See this example for the content of a POST request. Note that these parameters are defined: `infile`, `callback` and `constr`;
 
 ```json
-{"infile":"{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};","callback":"function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}","constr":"Chart"}
+{
+    "infile": "{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};",
+    "callback": "function(chart) {chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({fill : '#FCFFC5',stroke : 'black','stroke-width' : 1}).add();}",
+    "constr": "Chart"
+}
 ```
 
 This is how you can send a POST from the command line with curl (Mac & Linux):
@@ -136,14 +137,14 @@ It takes either SVG or Highcharts options (in javascript) as input and converts 
 
 The java based Highcharts export-server has the following prerequisites:
 
-*   install an java application server (for example: Apache Tomcat, Jboss, TC server, Resin)
+-   install an java application server (for example: Apache Tomcat, Jboss, TC server, Resin)
 
 _TIP: use Jetty (application server) during development, requires no installation_
 
-*   install Java 1.8
-*   install Maven 3
-*   install PhantomJS 2.0 on the server, [see here](https://bitbucket.org/ariya/phantomjs/downloads)
-*   download the source for the export-server module from [Github](https://github.com/highcharts/highcharts-export-server/tree/master/java). This is a maven module. Save the _highcharts-export_ folder to a convenient place.
+-   install Java 1.8
+-   install Maven 3
+-   install PhantomJS 2.0 on the server, [see here](https://bitbucket.org/ariya/phantomjs/downloads)
+-   download the source for the export-server module from [Github](https://github.com/highcharts/highcharts-export-server/tree/master/java). This is a maven module. Save the _highcharts-export_ folder to a convenient place.
 
 #### 2.2. Configuration
 
@@ -177,7 +178,6 @@ $ mvn clean package
 
 After compiling and the message BUILD SUCCESS, you will find a file: highcharts-export-web.war in the `highcharts-export/highcharts-export-web/target` folder.
 
-
     [INFO] ------------------------------------------------------------------------
      [INFO] BUILD SUCCESS
      [INFO] ------------------------------------------------------------------------
@@ -194,29 +194,27 @@ Upload/copy this to the application server. You're done with setting up the high
 
 #### 2.6. Some Tips
 
-*   We added the Jetty Server dependency in pom.xml file for testing convenience. For running the export-server locally, during development, navigate in a DOS/Shell to the highcharts-export/highcharts-export-web folder, and run this command: `mvn jetty:run`. This starts the Jetty application server and the application is now accessible at `http://localhost:8080/export`.
+-   We added the Jetty Server dependency in pom.xml file for testing convenience. For running the export-server locally, during development, navigate in a DOS/Shell to the highcharts-export/highcharts-export-web folder, and run this command: `mvn jetty:run`. This starts the Jetty application server and the application is now accessible at `http://localhost:8080/export`.
 
-*   Change you url property for the [exporting option](https://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
-
+-   Change you url property for the [exporting option](https://api.highcharts.com/highcharts#exporting.url) in your (javascript) highcharts configuration, and point it to the new installed exporting-server, otherwise it still points at Highcharts export-server at http://export.highcharts.com
 
         exporting:{
         url:'http://new.server.com/highcharts-export/'
         }
-*   Remember to install necessary fonts on the server. When characters are missing, they will be displayed as squares on the exported charts. The application will automatically pick the fonts up after installation.
+
+-   Remember to install necessary fonts on the server. When characters are missing, they will be displayed as squares on the exported charts. The application will automatically pick the fonts up after installation.
 
     Highcharts sets its font globally to Lucida Grande, so if you use for example a japanese font, you have to set the fontFamily to a japanese-able font with [Highcharts.setOptions](https://api.highcharts.com/highcharts#Highcharts.setOptions), for making the export work.
 
-*   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
-
-
+-   When having problems while using the export-server, the first thing you could do is to enable logging Debug messages. This can give you a clue of what's going wrong. To enable Debug messages, uncomment these lines in highcharts-export/highcharts-export-web/src/main/resources/log4j.properties
 
     \# Debug specific class
-     `log4j.logger.services=DEBUG`
-     `log4j.logger.converter=DEBUG`
-     `log4j.logger.exporter=DEBUG`
-     `log4j.logger.pool=DEBUG`
+    `log4j.logger.services=DEBUG`
+    `log4j.logger.converter=DEBUG`
+    `log4j.logger.exporter=DEBUG`
+    `log4j.logger.pool=DEBUG`
 
-*   **When running on WebLogic**
+-   **When running on WebLogic**
 
 By default WebLogic registers its own `URLStreamHandler to handle http` URLs. This results in that the Connection silently returns and empty files being returned from the server. The solution is to get in a reference to Java's default `URLStreamHandler` instead of the one from WebLogic. Follow these steps
 
@@ -224,12 +222,10 @@ By default WebLogic registers its own `URLStreamHandler to handle http` URLs. Th
 
 Change line 94,95 from
 
-
     URL url = new URL("http://" + host + ":"
      + port + "/");
 
 to
-
 
     sun.net.www.protocol.http.Handler handler = new sun.net.www.protocol.http.Handler();
     URL url = new URL(null, "http://" + host + ":" + port + "/", handler);
@@ -257,7 +253,6 @@ The `index.php` file that handles the POST can be downloaded from our [GitHub re
 #### TROUBLESHOOTING
 
 If for any reason the export-server fails to export images, then consider pasting this code snippet to output error messages. Paste this before Line 78, beginning with the commenting text: `// Do the conversion.`
-
 
     // Troubleshoot snippet
     $command = "java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1";

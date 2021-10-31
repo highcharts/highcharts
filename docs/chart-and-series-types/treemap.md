@@ -1,5 +1,4 @@
-Treemap
-===
+# Treemap
 
 <iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels allow="fullscreen"></iframe>
 
@@ -10,13 +9,12 @@ For use with [colorAxis](https://api.highcharts.com/highmaps/colorAxis), the `mo
 
 ### Data structure
 
-The data is structured as a [Tree](https://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.
+The data is structured as a [Tree](<https://en.wikipedia.org/wiki/Tree_(data_structure)>), where each point represents a node. Each node can have its own children.
 
 The tree automatically has one node at the top representing the root node. If a point has an undefined parent, or the parent is not matching any id, the parent will be automatically set to the root node.
 
 The following is an example of how the tree is built in Highcharts:
 
-    
     data: [{
         name: 'I have children',
         id: 'id-1'
@@ -29,7 +27,6 @@ The following is an example of how the tree is built in Highcharts:
         parent: 'id-1',
         value: 1
     }]
-    
 
 ### Algorithms
 
@@ -67,26 +64,25 @@ Start by creating the function containing the algorithm. Two arguments are passe
 
 The parent object which is passed along has the following variables:
 
-*   **Number x** // The x position of the parent
-*   **Number y** // The y position of the parent
-*   **Number width** // The width of the parent
-*   **Number height** // The height of the parent
-*   **String direction** // The starting direction, either vertical or horizontal, which the children should be drawn
-*   **Number val** // The sum of all the children values
+-   **Number x** // The x position of the parent
+-   **Number y** // The y position of the parent
+-   **Number width** // The width of the parent
+-   **Number height** // The height of the parent
+-   **String direction** // The starting direction, either vertical or horizontal, which the children should be drawn
+-   **Number val** // The sum of all the children values
 
 The each child which is passed along has the following variables:
 
-*   **Number val** // The point value
-*   **Number level** // The level which the point node is in the tree
+-   **Number val** // The point value
+-   **Number level** // The level which the point node is in the tree
 
 A starting point for the function could be the following
 
-    
     function myFunction(parent, children) {
         childrenAreas = [];
         Highcharts.each(children, function(child) {
             // Do some calculations
-    
+
             // These return values are required for each child
             childrenAreas.push({
                 x: someXValue,
@@ -97,17 +93,13 @@ A starting point for the function could be the following
         });
         return childrenAreas;
     };
-    
 
 After the algorithm function is finished, then we have to add it by extending the treemap prototype with the function
 
-    
     Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
-    
 
 Afterwards when you declare the chart options, then specify that the series.layoutAlgorithm should be your new custom algorithm.
 
-    
     var chart = new Highcharts.Chart({
         ...
         series: [{
@@ -116,7 +108,6 @@ Afterwards when you declare the chart options, then specify that the series.layo
         }],
         ...
     });
-    
 
 ### Work with levels
 
@@ -124,7 +115,6 @@ The levels option gives the ability to set options on a specific level. This com
 
 Below is an example where the first level will use the Slice And Dice algorithm, and the rest will use the Squarified algorithm. Also all points on the second level will be colored blue, while the rest will be in the color red.
 
-    
     var chart = new Highcharts.Chart({
         ...
         series: [{
@@ -141,7 +131,6 @@ Below is an example where the first level will use the Slice And Dice algorithm,
         }],
         ...
     });
-    
 
 ##### Level Is Constant:
 
@@ -157,7 +146,6 @@ For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 
 After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
-    
     var chart = new Highcharts.Chart({
         ...
         colorAxis: {
@@ -166,11 +154,9 @@ After the module is included in your project, a colorAxis object can be defined 
         },
         ...
     });
-    
 
 And each point needs its own colorValue.
 
-    
     var chart = new Highcharts.Chart({
         ...
         colorAxis: {
@@ -187,7 +173,6 @@ And each point needs its own colorValue.
         }],
         ...
     });
-    
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
 
@@ -197,6 +182,6 @@ For an overview over the options for the treemap, see the [API](https://api.hig
 
 ### Mode demos
 
-*   [Treemap with colorAxis](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
-*   [Treemap displaying the global mortality rate and causes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset)
-*   [Treemap using level specific options](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-with-levels)
+-   [Treemap with colorAxis](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
+-   [Treemap displaying the global mortality rate and causes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset)
+-   [Treemap using level specific options](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-with-levels)

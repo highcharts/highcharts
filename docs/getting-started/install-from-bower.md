@@ -1,5 +1,4 @@
-Installing with Bower
-===
+# Installing with Bower
 
 Bower is no longer the dependency manager of choice for front-end projects. While the open source project is still maintained, its creators decided to deprecate it, and advise how to migrate to other solutions—namely Yarn and webpack.
 
@@ -7,20 +6,20 @@ The Bower package contains Highcharts, Highcharts Stock and Highcharts Maps. Sta
 
 `bower install highcharts`
 
-Load Highcharts
----------------
+## Load Highcharts
 
 ```html
-<script src="./bower_components/highcharts/highcharts.js"></script>  
-    
-<script>  
-// Create the chart
-Highcharts.Chart('container', { /*Highcharts options*/ });
+<script src="./bower_components/highcharts/highcharts.js"></script>
+
+<script>
+    // Create the chart
+    Highcharts.Chart('container', {
+        /*Highcharts options*/
+    });
 </script>
 ```
 
-Load additional modules
------------------------
+## Load additional modules
 
 To load additional functionality onto Highcharts, include the modules:
 
@@ -28,8 +27,7 @@ To load additional functionality onto Highcharts, include the modules:
 <script src="./bower_components/highcharts/modules/exporting.js"></script>
 ```
 
-Load Highcharts Stock or Highcharts Maps
---------------------------
+## Load Highcharts Stock or Highcharts Maps
 
 Highcharts is already included in Highcharts Stock, so it not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. To load the full suite in one page, load Highcharts Maps as a module.
 
@@ -37,11 +35,9 @@ Highcharts is already included in Highcharts Stock, so it not necessary to load 
 <script src="./bower_components/highcharts/highstock.js"></script>
 <script src="./bower_components/highcharts/modules/map.js"></script>
 ```
-    
 
 Alternatively when only map functionality is needed, and not stock.
 
 ```html
 <script src="./bower_components/highcharts/highmaps.js"></script>
 ```
-

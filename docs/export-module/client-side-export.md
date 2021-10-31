@@ -1,11 +1,10 @@
-Client side export
-===
+# Client side export
 
 The offline-exporting module allows for image export of charts without sending data to an external server. This is the solution if you:
 
-*   Want to avoid having users send your chart configs to Highsoft's servers
-*   Want to save the cost of setting up your own server
-*   Don't require the export to work with old browsers like IE8
+-   Want to avoid having users send your chart configs to Highsoft's servers
+-   Want to save the cost of setting up your own server
+-   Don't require the export to work with old browsers like IE8
 
 [View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-demo/).
 
@@ -17,22 +16,21 @@ PDF does not support exporting with images and will fall back to the export serv
 
 To use the module, simply include it after the exporting module. The exporting module is a required dependency even if fallback is disabled.
 
-
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 
 ### Browser support table
 
-|                                         | Chrome (latest) | Firefox (latest) | Edge (latest) | Safari (latest) | Safari 5.1                | IE 10-11                  | Android (latest) | Android (4.0)             | Chrome for Android | Safari for iOS     | Chrome for iOS            |
-|-----------------------------------------|-----------------|------------------|---------------|-----------------|---------------------------|---------------------------|------------------|---------------------------|--------------------|--------------------|---------------------------|
-| SVG                                     | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK                 | OK                        |
-| PNG/JPEG                                | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK                 | OK                        |
-| PDF                                     | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK                 | OK                        |
-| SVG w/images (same server)              | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK                 | OK                        |
-| PNG/JPEG w/images (same server)         | OK              | OK               | OK            | OK              | Suboptimal image          | Fallback to export server | OK               | Opens data URI            | OK                 | OK                 | OK                        |
-| SVG w/images (CORS enabled server)      | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK                 | OK                        |
-| PNG/JPEG w/images (CORS enabled server) | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK                 | OK                        |
+|                                         | Chrome (latest) | Firefox (latest) | Edge (latest) | Safari (latest) | Safari 5.1                | IE 10-11                  | Android (latest) | Android (4.0)             | Chrome for Android | Safari for iOS | Chrome for iOS |
+| --------------------------------------- | --------------- | ---------------- | ------------- | --------------- | ------------------------- | ------------------------- | ---------------- | ------------------------- | ------------------ | -------------- | -------------- |
+| SVG                                     | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK             | OK             |
+| PNG/JPEG                                | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK             | OK             |
+| PDF                                     | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK             | OK             |
+| SVG w/images (same server)              | OK              | OK               | OK            | OK              | Opens data URI            | OK                        | OK               | Opens data URI            | OK                 | OK             | OK             |
+| PNG/JPEG w/images (same server)         | OK              | OK               | OK            | OK              | Suboptimal image          | Fallback to export server | OK               | Opens data URI            | OK                 | OK             | OK             |
+| SVG w/images (CORS enabled server)      | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK             | OK             |
+| PNG/JPEG w/images (CORS enabled server) | OK              | OK               | OK            | OK              | Fallback to export server | Fallback to export server | OK               | Fallback to export server | OK                 | OK             | OK             |
 
 Internet Explorer 9 and older will attempt to fall back to export server in all cases.
 

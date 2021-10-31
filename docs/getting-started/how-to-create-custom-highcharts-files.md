@@ -1,5 +1,4 @@
-Creating custom Highcharts files
-================================
+# Creating custom Highcharts files
 
 Thanks to ES modules you can create your own custom Highcharts package files. A
 benefit of using a custom file can be optimization of browser load speed due to
@@ -7,10 +6,7 @@ lower filesize and less files to request.
 
 Follow the steps below to get started.
 
-
-
-Install Highcharts
-------------------
+## Install Highcharts
 
 Go to the [`highcharts/highcharts`](https://github.com/highcharts/highcharts)
 repository and click on "Code" and select "Download ZIP". Once the zip file is
@@ -21,10 +17,7 @@ run `npm install` to install any required dependencies. On Macs this step
 requires the Installation of Xcode app or the Command Line Tools, which you run
 with `xcode-select --install`.
 
-
-
-Create a custom master file
----------------------------
+## Create a custom master file
 
 Go in your editor to the unpacked folder `highcharts-master/ts/masters` and
 create a new file, named for example `custom.src.ts`. In this example we want a
@@ -53,10 +46,7 @@ See other masters for order information.
 
 For similar examples take a look at the other master files.
 
-
-
-Create the custom package file
-------------------------------
+## Create the custom package file
 
 Run `npx gulp scripts` to build all package files out of the master files.
 Optional run `npx gulp scripts-compile` in addition to get minified versions.
@@ -66,10 +56,7 @@ becomes the new package file `code/custom.src.js`.
 
 You can pick the package file `code/custom.src.js` and use it in your project.
 
-
-
-Use your custom package file
-----------------------------
+## Use your custom package file
 
 According to our [installation](./installation.md) guide you can reference your
 custom package file either as a ES module...
@@ -81,10 +68,12 @@ custom package file either as a ES module...
         <script type="module">
             import Highcharts from 'custom.src.js';
             Highcharts.chart('container', {
-                series: [{
-                    type: 'line',
-                    data: [1, 32, 42]
-                }]
+                series: [
+                    {
+                        type: 'line',
+                        data: [1, 32, 42]
+                    }
+                ]
             });
         </script>
     </body>
@@ -102,13 +91,14 @@ custom package file either as a ES module...
         <div id="container"></div>
         <script>
             Highcharts.chart('container', {
-                series: [{
-                    type: 'line',
-                    data: [1, 32, 42]
-                }]
+                series: [
+                    {
+                        type: 'line',
+                        data: [1, 32, 42]
+                    }
+                ]
             });
         </script>
     </body>
 </html>
 ```
-

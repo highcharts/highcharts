@@ -1,5 +1,4 @@
-Cross domain data
-=================
+# Cross domain data
 
 It is not possible to use the jQuery .getJSON() function on JSON files outside of your own domain. It is however possible to use JSONP.
 
@@ -7,24 +6,23 @@ The difference between JSON and JSONP is that in a regular JSON file you would j
 
 Here is an example:
 
-*   The serverside php file:
+-   The serverside php file:
 
 ```php
 <?php
-header("content-type: application/json"); 
+header("content-type: application/json");
 
 $array = array(7,4,2,8,4,1,9,3,2,16,7,12);
 
-echo $_GET['callback']. '('. json_encode($array) . ')';    
+echo $_GET['callback']. '('. json_encode($array) . ')';
 
 ?>
 ```
-    
 
-*   The JavaScript calling the callback function using jQuery.
+-   The JavaScript calling the callback function using jQuery.
 
 ```js
-$(document).ready(function() {
+$(document).ready(function () {
     var options = {
         chart: {
             renderTo: 'container',
@@ -32,9 +30,9 @@ $(document).ready(function() {
         },
         series: [{}]
     };
-    
-    var url =  "http://url-to-your-remote-server/jsonp.php?callback=?";
-    $.getJSON(url,  function(data) {
+
+    var url = 'http://url-to-your-remote-server/jsonp.php?callback=?';
+    $.getJSON(url, function (data) {
         options.series[0].data = data;
         var chart = new Highcharts.Chart(options);
     });

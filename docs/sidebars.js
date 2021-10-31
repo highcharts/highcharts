@@ -30,7 +30,7 @@ module.exports = {
             'chart-concepts/responsive',
             'chart-concepts/security'
         ],
-        'Stock': [
+        Stock: [
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
@@ -49,7 +49,7 @@ module.exports = {
             'stock/technical-indicator-series',
             'stock/custom-technical-indicators'
         ],
-        'Maps': [
+        Maps: [
             'maps/getting-started',
             'maps/map-navigation',
             'maps/color-axis',
@@ -61,7 +61,7 @@ module.exports = {
             'maps/map-series',
             'maps/tilemap-series'
         ],
-        'Gantt': [
+        Gantt: [
             'gantt/getting-started-gantt',
             'gantt/gantt-grouping-tasks',
             'gantt/gantt-task-dependencies',
@@ -116,7 +116,6 @@ module.exports = {
             'chart-and-series-types/wind-barbs-series',
             'chart-and-series-types/word-cloud-series',
             'chart-and-series-types/x-range-series'
-
         ],
         'Advanced chart features': [
             'advanced-chart-features/annotations-module',
@@ -158,7 +157,7 @@ module.exports = {
             'chart-design-and-style/custom-themes-in-styled-mode',
             'chart-design-and-style/gradients-shadows-and-patterns'
         ],
-        'Accessibility': [
+        Accessibility: [
             'accessibility/accessibility-module',
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
@@ -168,8 +167,6 @@ module.exports = {
             'accessibility/tables',
             'accessibility/compliance'
         ],
-        'Extending Highcharts': [
-            'extending-highcharts/extending-highcharts'
-        ]
+        'Extending Highcharts': ['extending-highcharts/extending-highcharts']
     }
 };

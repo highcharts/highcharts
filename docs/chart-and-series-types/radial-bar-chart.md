@@ -1,13 +1,10 @@
-Radial (or Circular) bar chart
-===
+# Radial (or Circular) bar chart
 
 A radial (or circular) bar series visualizes columns on a polar coordinate system. Since the `xAxis` is vertical and `yAxis` is circular, as opposed to non-inverted variant, the shape of the columns is circular.
 
 <iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/polar-radial-bar allow="fullscreen"></iframe>
 
-
-Getting started
----------------
+## Getting started
 
 ### Loading the required scripts
 
@@ -26,20 +23,20 @@ Highcharts.chart('container', {
 });
 ```
 
-Data format
------------
+## Data format
 
 The format of the data is the same as in any other `column` or `bar` series. Example:
 
 ```js
-series: [{
-    type: 'column',
-    data: [1, 2, 3, 4, 5]
-}]
+series: [
+    {
+        type: 'column',
+        data: [1, 2, 3, 4, 5]
+    }
+];
 ```
 
-Examples of use
----------------
+## Examples of use
 
 **Stacked two series with enabled data labels**
 

@@ -1,5 +1,4 @@
-Cumulative Sum
-================
+# Cumulative Sum
 
 The Cumulative Sum tool sums (cumulates) all the previous values with the current value in a visible range.
 

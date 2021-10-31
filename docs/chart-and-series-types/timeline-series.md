@@ -1,12 +1,10 @@
-Timeline chart
-===
+# Timeline chart
 
 A Timeline chart visualizes important events over a time span. Charts with a Timeline series display every data point as a separate event along a horizontal or vertical line. The Timeline series is also referred to as a Timeline Diagram.
 
 For each point defined in the timeline series, a flag is placed with a descriptive text. It is advised, to place the longer descriptions of an event in the tooltip. The description will then be visible on hovering the points. By default, the tooltip will show text specified for the `description` property of the data series point.
 
-Getting started
----------------
+## Getting started
 
 Timeline series requires loading both the Highcharts and the `timeline.js` module.
 
@@ -16,8 +14,8 @@ Here is an example for loading Timeline into a webpage:
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/timeline.js"></script>
 ```
-Data format
------------
+
+## Data format
 
 The events in the Timeline chart can be visualized in two ways:
 
@@ -30,7 +28,6 @@ The Timeline series data is structured differently for the above alternatives fo
 
 The data series has no `x`property set.
 
-    
      data: [{
         name: 'Some date',
         label: 'Event label',
@@ -39,7 +36,7 @@ The data series has no `x`property set.
         name: 'Another date',
         label: 'Another event label',
         description: 'Description of second event'
-    }] 
+    }]
 
 ### Events tied to a datetime axis
 
@@ -47,7 +44,6 @@ To place events on a datetime axis, the `x` property can be set with a timestamp
 
 Example of data series:
 
-    
     data: [{
         x: 1514764800000,
         name: 'Event name',
@@ -68,22 +64,19 @@ The demo below also illustrates the key moments of space exploration, but it’s
 
 <iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/datetime-axis allow="fullscreen"></iframe>
 
-Vertical timeline
------------------
+## Vertical timeline
 
 To display a vertical timeline, set `chart.inverted` to `true`.
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/inverted allow="fullscreen"></iframe>
 
-Alternate labels
-----------------
+## Alternate labels
 
 Use the `alternate` property in the `dataLabels` configuration, for placing the data labels alternately (on both sides of the point).
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-timeline/alternate-labels allow="fullscreen"></iframe>
 
-Other configuring options
--------------------------
+## Other configuring options
 
 Customize a timeline chart with options that are standard to most Highcharts charts, such as data labels `width`, `distance` or using the point properties, `color`, `x`, `y`, `markers` or the connectors. In the demo below the color properties of the `marker` data point property is setting the color of a section in the timeline.
 

@@ -1,5 +1,4 @@
-Box plot series
-===
+# Box plot series
 
 A box plot is a convenient way of depicting groups of data through their five-number summaries: the smallest observation (sample minimum), lower quartile (Q1), median (Q2), upper quartile (Q3), and largest observation (sample maximum). Combined with a scatter series, the box plot may also indicate which observations, if any, might be considered outliers.
 
@@ -9,11 +8,11 @@ A box plot is a convenient way of depicting groups of data through their five-nu
 
 Each point in a box plot has five values: low, q1, median, q3 and high. Highcharts recognizes three ways of defining a point:
 
-*   Object literal. The X value is optional.  
+-   Object literal. The X value is optional.  
     `{ x: Date.UTC(2013, 1, 7), low: 0, q1: 1, median: 2, q3: 3, high: 4 }`
-*   Array of 5 values. The X value is inferred.  
+-   Array of 5 values. The X value is inferred.  
     `[0, 1, 2, 3, 4]`
-*   Array of 6 values. The X value is the first position.  
+-   Array of 6 values. The X value is the first position.  
     `[Date.UTC(2013, 1, 7), 0, 1, 2, 3, 4]`
 
 ### Styling the boxes

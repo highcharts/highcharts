@@ -1,16 +1,13 @@
-Data sorting
-===
+# Data sorting
 
 Highcharts 8 introduces a possibility of presenting data in ascending or descending order. This concept, in a simple way, allows distinguishing points with the highest or lowest values, which is very useful for dynamic data. The whole functionality is based on setting the increasing `x` property for points according to their value defined in `sortKey` option. The order of points in an array is unchanged.
 
-Installation
-------------
+## Installation
 
 Data sorting is implemented in the Highcharts core and does not require any additional modules.
 To use this feature set `dataSorting.enabled` to `true` on a series level.
 
-Configuration
--------------
+## Configuration
 
 To manipulate the order of sorting use `xAxis.reversed` option.
 
@@ -80,8 +77,7 @@ In the example below the points will be matched by name in the update.
         ]);
     }, 2000);
 
-Use Cases
----------
+## Use Cases
 
 **Sorting with `xAxis` labels animation and zones**
 
@@ -134,7 +130,6 @@ If a `dataSorting` property is defined in the master series but not in the other
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/datasorting/dependent-sorting allow="fullscreen"></iframe>
 
-API documentation
------------------
+## API documentation
 
 Check the following [API document link](https://api.highcharts.com/highcharts/plotOptions.series.dataSorting) to learn more about the data sorting.

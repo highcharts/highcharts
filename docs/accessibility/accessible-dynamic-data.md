@@ -1,5 +1,4 @@
-Accessible dynamic data
-===
+# Accessible dynamic data
 
 The Highcharts suite of products has extensive dynamic support. Changes to the layout, design, and data is supported after the chart has been created, using methods like [`chart.update`](https://api.highcharts.com/class-reference/Highcharts.Chart#update) and [`series.setData`](https://api.highcharts.com/class-reference/Highcharts.Series#setData). This gives us some interesting challenges for accessibility, particularly for non-visual users.
 
@@ -15,5 +14,5 @@ By defining the [`accessibility.announceNewData.announcementFormatter`](https:/
 
 Dynamic data demos:
 
-*   [Basic demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dynamic)
-*   [High priority live alerts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/custom-dynamic)
+-   [Basic demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/accessible-dynamic)
+-   [High priority live alerts](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/accessibility/custom-dynamic)

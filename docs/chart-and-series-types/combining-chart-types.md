@@ -1,5 +1,4 @@
-Combining chart types
-=====================
+# Combining chart types
 
 To combine several chart types in one chart you only need to create series of different types:
 

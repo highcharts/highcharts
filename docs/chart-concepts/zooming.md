@@ -1,5 +1,4 @@
-Zooming
-=======
+# Zooming
 
 ### Highcharts Basic
 
@@ -32,7 +31,7 @@ are set to `false`.
 
 In Highcharts Stock, we also have the Navigator, Range Selector, and Scrollbar to ease
 navigation, so zooming is disabled by default. Instead, panning is enabled so
-that moving the zoomed area is easier. 
+that moving the zoomed area is easier.
 
 On touch devices, both zooming and panning are enabled through the
 [chart.pinchType](https://api.highcharts.com/highstock/chart.pinchType)

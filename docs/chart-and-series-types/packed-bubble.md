@@ -1,17 +1,14 @@
-Packed bubble
-===
+# Packed bubble
 
 A bubble chart requires three dimensions of data; the x-value and y-value to position the bubble along the value axes and a third value for its volume. Packed Bubble charts have a simpler data structure, a flat, one-dimensional array with volumes is sufficient. The bubble’s x/y position is automatically calculated using an algorithm that packs the bubbles in a cluster. The series data point configuration has support for setting colors and label values. Drag’n drop feature was also added to give the user a chance to quickly move one bubble between series and then check how their relations will change.
 
-Get started
------------
+## Get started
 
 Packed Bubble chart are part of the [highcharts-more](https://code.highcharts.com/highcharts-more.js) package, make sure this is loaded in your webpage or added as a dependency to your project. The `chart.type()` property of this chart is set with `packedbubble`.
 
 The configuration of `packedbubble` differs little from other series types like scatter and bubble charts, and many other settings have defaults for responsiveness, tooltip, colors, legends, etc. A few lines of code are needed to get started with Packed Bubble.
 
 Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubble chart in its simplest form:
-
 
     Highcharts.chart('container', {
         chart: {
@@ -22,13 +19,11 @@ Here is an [example](https://jsfiddle.net/gvaartjes/0yrdsv2a/) of a packed bubbl
         }]
     });
 
-Data format
------------
+## Data format
 
 In the above example, the series data for Packed Bubble takes a one-dimensional array of values, but can also take data point properties for `color()` and `name()`.
 
 Here is an example of how to set the data for a packed bubble with 3 series and different data formats:
-
 
     Highcharts.chart('container', {
         chart: {
@@ -75,13 +70,11 @@ Here is an demo for a packed bubble chart with a more complex setup and larger d
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/packed-bubble allow="fullscreen"></iframe>
 
-Bubble sizes
-------------
+## Bubble sizes
 
 Packed Bubble charts with a dataset of either many small or large values need some tweaking of the options to control the size of the bubbles displayed. The minimum and maximum size of bubbles is configured by two parameters: minSize and maxSize Bubbles will automatically size between the minSize and maxSize to reflect the volume of each bubble. Can be either pixels (when no unit is given), or a percentage of the smallest one of the plot width and height.
 
 Here is an example of setting min and max size for bubbles:
-
 
     Highcharts.chart('container', {
         chart: {
@@ -100,7 +93,7 @@ Here is an example of setting min and max size for bubbles:
 
 <iframe width="100%" height="500" style="null" src=https://jsfiddle.net/gvaartjes/vrzfwcdk/embedded/result allow="fullscreen"></iframe>
 
-----------------------------------------------
+---
 
 ### ALGORITHMS
 
@@ -122,12 +115,11 @@ layoutAlgorithm: {
 
 Whether to split series into individual groups or to mix all series together.
 
-
 ```js
 plotOptions: {
     packedbubble: {
         layoutAlgorithm: {
-            splitSeries: true
+            splitSeries: true;
         }
     }
 }
@@ -142,12 +134,12 @@ plotOptions: {
 ```js
 plotOptions: {
     packedbubble: {
-        useSimulation: true
+        useSimulation: true;
     }
 }
 plotOptions: {
     packedbubble: {
-        useSimulation: false
+        useSimulation: false;
     }
 }
 ```
@@ -161,7 +153,7 @@ Flag to determine if nodes are draggable or not. Available for graph with useSim
 ```js
 plotOptions: {
     packedbubble: {
-        Draggable: true
+        Draggable: true;
     }
 }
 ```
@@ -175,8 +167,7 @@ layoutAlgorithm: {
 }
 ```
 
-Use Cases
----------
+## Use Cases
 
 ### Use Case 1
 

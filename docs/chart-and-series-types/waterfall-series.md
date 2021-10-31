@@ -1,5 +1,4 @@
-Waterfall series
-================
+# Waterfall series
 
 A waterfall chart is a form of data visualization that helps in determining the cumulative effect of sequentially introduced positive or negative values. The waterfall chart is also known as a flying bricks chart or Mario chart due to the apparent suspension of columns (bricks) in mid-air. Often in finance, it will be referred to as a bridge. (Quote from Wikipedia).
 
@@ -11,14 +10,13 @@ Defining the points in a waterfall is pretty straight forward. Each point is acc
 
 Furthermore, a waterfall series has two kinds of automatically computed columns. These points don't have an Y value, only a flag that specifies their type:
 
-*   `isIntermediateSum`   
+-   `isIntermediateSum`   
     When this property is true, the points acts as a summary column for the values added or substracted since the last intermediate sum.
-*   `isSum`  
+-   `isSum`  
     When this preperty is true, the point display the total sum across the entire series.
 
 Sample code:
 
-    
     data: [{
         name: 'Start',
         y: 120000

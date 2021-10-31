@@ -1,10 +1,8 @@
-Network graph
-===
+# Network graph
 
 Network graph (force directed graph) is a mathematical structure (graph) to show relations between points in an aesthetically-pleasing way. The graph visualizes how subjects are interconnected with each other. Entities are displayed as nodes and the relationship between them are displayed with lines. The graph is force directed by assigning a weight (force) from the node edges and the other interconnected nodes get assigned a weighted factor. The graph simulates the weight as forces in a physical system, where the forces have impact on the nodes and find the best position on the chart’s plotting area. The Network Graph has various use case such as display relations between people, roads, companies, and products.
 
-Getting started
----------------
+## Getting started
 
 Add `modules/networkgraph.js` after you have included Highcharts.
 
@@ -12,11 +10,10 @@ _Example of loading both files in a webpage_
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/networkgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
 ```
 
-Data format
------------
+## Data format
 
 The Network Graph needs a data format that builds up an array of links, where each link is specified by a `start` and an `end` node.
 
@@ -35,7 +32,6 @@ series: [{
     ]
 }]
 ```
-    
 
 _See simple Network Graph demo_
 
@@ -45,56 +41,51 @@ _See simple Network Graph demo_
 
 <iframe style="width: 100%; height: 860px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/network-graph allow="fullscreen"></iframe>
 
-Algorithm options
------------------
+## Algorithm options
 
 Forces and the algorithm are configured using `series.layoutAlgorithm` options:
 
-*   **attractiveForce** `series.layoutAlgorithm.attractiveForce` - function that returns the force between two connected nodes.
-*   **enableSimulation** `series.layoutAlgorithm.enableSimulation` - enables/disables simulation.
-*   **friction** `series.layoutAlgorithm.friction` - friction to show smooth animation of nodes translations.
-*   **gravitationalConstant** `series.layoutAlgorithm.gravitationalConstant` - constant for barycenter forces applied on nodes.
-*   **maxIterations** `series.layoutAlgorithm.maxIterations` - max number of iterations that algorithm will be running.
-*   **initialPositions** `series.layoutAlgorithm.initialPositions` - algorithm for initial placement of nodes (can be one of predefined or a custom function).
-*   **repulsiveForce** `series.layoutAlgorithm.repulsiveForce` - function that returns the force between two nodes.
-*   **type** `series.layoutAlgorithm.type` - only `reingold-fruchterman` available at this moment.
+-   **attractiveForce** `series.layoutAlgorithm.attractiveForce` - function that returns the force between two connected nodes.
+-   **enableSimulation** `series.layoutAlgorithm.enableSimulation` - enables/disables simulation.
+-   **friction** `series.layoutAlgorithm.friction` - friction to show smooth animation of nodes translations.
+-   **gravitationalConstant** `series.layoutAlgorithm.gravitationalConstant` - constant for barycenter forces applied on nodes.
+-   **maxIterations** `series.layoutAlgorithm.maxIterations` - max number of iterations that algorithm will be running.
+-   **initialPositions** `series.layoutAlgorithm.initialPositions` - algorithm for initial placement of nodes (can be one of predefined or a custom function).
+-   **repulsiveForce** `series.layoutAlgorithm.repulsiveForce` - function that returns the force between two nodes.
+-   **type** `series.layoutAlgorithm.type` - only `reingold-fruchterman` available at this moment.
 
 Since version 7.1 additional configuration options are available:
 
-*   **approximation** - when rendering a huge number of nodes, recommended to approximate repulsive forces to decrease complexity from O(N^2) to O(N log N).
-*   **theta** - used in Barnes-Hut approximation to determine when the force on nodes should be approximated or calculated directly.
-*   **integration** - forces integration type. Changes how force is applied on nodes changing the animation too. Note that different integrations have different default `attracitveForce` and `repulsiveForce` options.
-*   **maxSpeed** - max speed that node can have in one iteration, preventing small and disconnected nodes to run too fast. Verlet integration only
+-   **approximation** - when rendering a huge number of nodes, recommended to approximate repulsive forces to decrease complexity from O(N^2) to O(N log N).
+-   **theta** - used in Barnes-Hut approximation to determine when the force on nodes should be approximated or calculated directly.
+-   **integration** - forces integration type. Changes how force is applied on nodes changing the animation too. Note that different integrations have different default `attracitveForce` and `repulsiveForce` options.
+-   **maxSpeed** - max speed that node can have in one iteration, preventing small and disconnected nodes to run too fast. Verlet integration only
 
 _See the demo below, for a network graph with custom algorithm options applied_
 
 <iframe style="width: 100%; height: 515px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-networkgraph/forces allow="fullscreen"></iframe>
 
-Link configuration options
---------------------------
+## Link configuration options
 
-*   **link** `series.link` - style options for links/connections (`link.width`, `link.color` and `link.dashStyle`).
-*   **draggable** `series.draggable` - enables/disables drag&drop for nodes.
+-   **link** `series.link` - style options for links/connections (`link.width`, `link.color` and `link.dashStyle`).
+-   **draggable** `series.draggable` - enables/disables drag&drop for nodes.
 
-Node Configuration Options
---------------------------
+## Node Configuration Options
 
 Nodes are generated automatically from `series.data` connections. Nodes are instances of [Highcharts.Point](https://api.highcharts.com/class-reference/Highcharts.Point) and are available from the `series.nodes` array.
 
 In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, `series.nodes`, to the series options and linking nodes by `id`. For example: [data-option](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-networkgraph/data-options/)
 
-Datalabels Options
-------------------
+## Datalabels Options
 
 Since v7.1 dataLabels are available for both, nodes and links, list of new options:
 
-*   **linkFormat** `dataLabels.linkFormat` - format for the dataLabels on links (string).
-*   **linkFormatter** `dataLabels.linkFormatter` - formatter for the dataLabels on links (function).
-*   **linkTextPath** `dataLabels.linkTextPath` - options for the dataLabels on link if text should be rendered along the link.
-*   **textPath** `dataLabels.textPath` - options for the dataLabels on node if text should be rendered around the node.
+-   **linkFormat** `dataLabels.linkFormat` - format for the dataLabels on links (string).
+-   **linkFormatter** `dataLabels.linkFormatter` - formatter for the dataLabels on links (function).
+-   **linkTextPath** `dataLabels.linkTextPath` - options for the dataLabels on link if text should be rendered along the link.
+-   **textPath** `dataLabels.textPath` - options for the dataLabels on node if text should be rendered around the node.
 
-Use Cases
----------
+## Use Cases
 
 ### Use Case 1
 

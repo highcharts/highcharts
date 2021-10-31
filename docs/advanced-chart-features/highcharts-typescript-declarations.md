@@ -1,5 +1,4 @@
-Highcharts TypeScript Declarations (beta)
-=========================================
+# Highcharts TypeScript Declarations (beta)
 
 Highcharts 7 is the first release with integrated support for TypeScript through
 declarations files. TypeScript-compatible editors can give you tooltips and
@@ -7,57 +6,48 @@ suggestions for Highcharts as you type. The TypeScript compiler watches and
 points out potential problems while coding. The outcome is a faster and better
 fail-proofed development cycle for your Highcharts-based solutions.
 
-
-
-Summary of Changes from v7.2.1 to v8.0.0
-----------------------------------------
+## Summary of Changes from v7.2.1 to v8.0.0
 
 With Highcharts v8 the file size of TypeScript declarations has been reduced by
 40 percent. This has been achieved by combining individual options to more
 generic shared options. Following are the most significant changes:
 
-|  Name Scheme in v7.2.1                 |  Name Scheme in v8.0.0                      |
+|                  Name Scheme in v7.2.1 | Name Scheme in v8.0.0                       |
 | -------------------------------------: | :------------------------------------------ |
-| `AccessibilityAnnounceNewDataOptions`  | `AccessibilityAnnounceNewDataOptionsObject` |
-| `DataLabelsFilterOperatorValue`        | `OptionsOperatorValue`                      |
+|  `AccessibilityAnnounceNewDataOptions` | `AccessibilityAnnounceNewDataOptionsObject` |
+|        `DataLabelsFilterOperatorValue` | `OptionsOperatorValue`                      |
 | `ExportingButtonsContextButtonOptions` | `ExportingButtonsOptionsObject`             |
-| `NavigatorSeriesDataGroupingOptions`   | `DataGroupingOptionsObject`                 |
-| `PlotLineAccessibilityOptions`¹        | `SeriesAccessibilityOptionsObject`          |
-| `PlotLineAnimationOptions`¹            | `AnimationOptionsObject`                    |
-| `PlotLineConnectorsOptions`¹           | `SeriesConnectorsOptionsObject`             |
-| `PlotLineDataGroupingOptions`¹         | `DataGroupingOptionsObject`                 |
-| `PlotLineEventsOptions`¹               | `SeriesEventsOptionsObject`                 |
-| `PlotLineLabelOptions`¹                | `SeriesLabelOptionsObject`                  |
-| `PlotLineMarkerOptions`¹               | `PointMarkerOptionsObject`                  |
-| `PlotLinePointOptions`¹                | `PlotSeriesPointOptions`                    |
-| `PlotLineStatesOptions`¹               | `SeriesStatesOptionsObject`                 |
-| `PlotLineTooltipOptions`¹              | `SeriesTooltipOptionsObject`                |
-| `PlotLineZonesOptions`¹                | `SeriesZonesOptionsObject`                  |
-| `SeriesLineDataOptions`²               | `PointOptionsObject`                        |
-| `XAxisAccessibilityOptions`³           | `AxisAccessibilityOptionsObject`            |
-| `XAxisCrosshairOptions`³               | `AxisCrosshairOptions`                      |
-| `XAxisCurrentDateIndicatorOptions`³    | `AxisCurrentDateIndicatorOptions`           |
-| `XAxisDateTimeLabelFormatsOptions`³    | `AxisDateTimeLabelFormatsOptions`           |
-| `XAxisMarkerOptions`³                  | `PointMarkerOptionsObject`                  |
+|   `NavigatorSeriesDataGroupingOptions` | `DataGroupingOptionsObject`                 |
+|        `PlotLineAccessibilityOptions`¹ | `SeriesAccessibilityOptionsObject`          |
+|            `PlotLineAnimationOptions`¹ | `AnimationOptionsObject`                    |
+|           `PlotLineConnectorsOptions`¹ | `SeriesConnectorsOptionsObject`             |
+|         `PlotLineDataGroupingOptions`¹ | `DataGroupingOptionsObject`                 |
+|               `PlotLineEventsOptions`¹ | `SeriesEventsOptionsObject`                 |
+|                `PlotLineLabelOptions`¹ | `SeriesLabelOptionsObject`                  |
+|               `PlotLineMarkerOptions`¹ | `PointMarkerOptionsObject`                  |
+|                `PlotLinePointOptions`¹ | `PlotSeriesPointOptions`                    |
+|               `PlotLineStatesOptions`¹ | `SeriesStatesOptionsObject`                 |
+|              `PlotLineTooltipOptions`¹ | `SeriesTooltipOptionsObject`                |
+|                `PlotLineZonesOptions`¹ | `SeriesZonesOptionsObject`                  |
+|               `SeriesLineDataOptions`² | `PointOptionsObject`                        |
+|           `XAxisAccessibilityOptions`³ | `AxisAccessibilityOptionsObject`            |
+|               `XAxisCrosshairOptions`³ | `AxisCrosshairOptions`                      |
+|    `XAxisCurrentDateIndicatorOptions`³ | `AxisCurrentDateIndicatorOptions`           |
+|    `XAxisDateTimeLabelFormatsOptions`³ | `AxisDateTimeLabelFormatsOptions`           |
+|                  `XAxisMarkerOptions`³ | `PointMarkerOptionsObject`                  |
 
-1) *Example, other series options like `PlotColumn…` are similar affected.*
-2) *Example, other series options like `SeriesColumn…` are similar affected.*
-3) *Example, other axis options like `ColorAxis…` are similar affected.*
+1. _Example, other series options like `PlotColumn…` are similar affected._
+2. _Example, other series options like `SeriesColumn…` are similar affected._
+3. _Example, other axis options like `ColorAxis…` are similar affected._
 
-
-
-Installation
-------------
+## Installation
 
 You need a TypeScript-capable Editor, like Microsoft's Visual Studio Code, for
 getting autocompletion and hints for Highcharts. Please note that Highcharts
 contains comprehensive declarations, which makes increased memory usage in a few
 editors like Webstorm necessary.
 
-
-
-Configuration
--------------
+## Configuration
 
 ### TypeScript
 
@@ -72,11 +62,9 @@ platform. The `tsconfig.json` below, covers a typical use case of Highcharts:
         "target": "es5",
         "module": "amd",
         "moduleResolution": "node",
-        "outDir": "mychart/",
+        "outDir": "mychart/"
     },
-    "exclude": [
-        "node_modules"
-    ]
+    "exclude": ["node_modules"]
 }
 ```
 
@@ -93,14 +81,16 @@ action, but needs some configuration to support the Highcharts package:
 
 ```js
 require.config({
-    packages: [{
-        name: 'highcharts',
-        main: 'highcharts'
-    }],
+    packages: [
+        {
+            name: 'highcharts',
+            main: 'highcharts'
+        }
+    ],
     paths: {
-        'highcharts': 'https://code.highcharts.com'
+        highcharts: 'https://code.highcharts.com'
     }
-})
+});
 ```
 
 For Highcharts Stock and other additions it is recommended to use the previous
@@ -109,23 +99,22 @@ package you have to change the configuration in the following way:
 
 ```js
 require.config({
-    packages: [{
-        name: 'highcharts',
-        main: 'highstock'
-    }],
+    packages: [
+        {
+            name: 'highcharts',
+            main: 'highstock'
+        }
+    ],
     paths: {
-        'highcharts': 'https://code.highcharts.com/stock'
+        highcharts: 'https://code.highcharts.com/stock'
     }
-})
+});
 ```
 
 Details about the configuration options can be found in the
 [RequireJS documentation](https://requirejs.org/docs/api.html#config).
 
-
-
-Migration
----------
+## Migration
 
 ### Migration from Definitely Typed
 
@@ -133,7 +122,7 @@ If you previously used TypeScript declarations for Highcharts like
 `@types/highcharts`, you should uninstall them to prevent any mismatch:
 
 ```sh
-npm uninstall @types/highcharts 
+npm uninstall @types/highcharts
 ```
 
 ### Migration from JavaScript
@@ -142,17 +131,14 @@ For full fail-proofed development you may convert your project's source code to
 TypeScript. The initial step is:
 
 ```sh
-npm install typescript && npx tsc --init 
+npm install typescript && npx tsc --init
 ```
 
 More information about migrating JavaScript projects to TypeScript can be found
 in the official
 [TypeScript handbook](http://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html).
 
-
-
-Solving Problems
-----------------
+## Solving Problems
 
 ### Debugging
 
@@ -161,10 +147,12 @@ find the correct series as a reference. If that is the case, cast the series
 options explicitly to the desired type and you get more helpful error messages:
 
 ```ts
-series: [{
-    type: "line",
-    data: [1, 2, "3", 4, 5] as Highcharts.SeriesLineDataOptions
-}] 
+series: [
+    {
+        type: 'line',
+        data: [1, 2, '3', 4, 5] as Highcharts.SeriesLineDataOptions
+    }
+];
 ```
 
 ### Missing Modules
@@ -191,10 +179,12 @@ import NewModule from 'highcharts/modules/new';
 
 // Initiate the chart
 (Highcharts as any).newChart('container', {
-    series: [{
-        type: 'new',
-        data: [1, 2, 3, 4, 5]
-    }]
+    series: [
+        {
+            type: 'new',
+            data: [1, 2, 3, 4, 5]
+        }
+    ]
 });
 ```
 
@@ -208,10 +198,7 @@ necessary. If you found something in TypeScript that is not working as in our
 [demos](https://www.highcharts.com/demo), you can create an
 [issue report](https://github.com/highcharts/highcharts/issues) to inform us.
 
-
-
-Extending Highcharts in TypeScript
-----------------------------------
+## Extending Highcharts in TypeScript
 
 The Highcharts libraries come with a huge amount of possibilities right out of
 the box, but for a special use case you might need to extend default behavior of
@@ -220,13 +207,13 @@ as illustrated with the below example.
 
 ### Steps
 
-* Set proper types for your extensions
-* Declare additional interfaces with your extensions to the Highcharts namespace
-* Make use of existing
-  [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and
-  [interfaces](https://api.highcharts.com/class-reference/Highcharts.Dictionary_T_)
-* For a deep dive into TypeScript declaration take a look at the official
-  [TypeScript guide](http://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
+-   Set proper types for your extensions
+-   Declare additional interfaces with your extensions to the Highcharts namespace
+-   Make use of existing
+    [Highcharts types](https://api.highcharts.com/class-reference/Highcharts) and
+    [interfaces](https://api.highcharts.com/class-reference/Highcharts.Dictionary_T_)
+-   For a deep dive into TypeScript declaration take a look at the official
+    [TypeScript guide](http://www.typescriptlang.org/docs/handbook/declaration-files/deep-dive.html).
 
 ### Example
 
@@ -266,7 +253,7 @@ your code:
 // ...
 declare module 'highcharts/highcharts' {
     interface Point {
-        highlight (event: Highcharts.PointerEventObject): void;
+        highlight(event: Highcharts.PointerEventObject): void;
     }
 }
 // ...
@@ -279,7 +266,7 @@ import * as Highcharts from 'highcharts';
 
 declare module 'highcharts/highcharts' {
     interface Point {
-        highlight (event: Highcharts.PointerEventObject): void;
+        highlight(event: Highcharts.PointerEventObject): void;
     }
 }
 

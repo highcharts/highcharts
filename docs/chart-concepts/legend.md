@@ -1,5 +1,4 @@
-Legend
-======
+# Legend
 
 The legend displays the series in a chart with a predefined symbol and the name of the series. Series can be disabled and enabled from the legend.
 
