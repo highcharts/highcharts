@@ -9,7 +9,7 @@ const octokit = new Octokit({
 
 require('colors');
 
-const error = e => {
+const error = (e) => {
     console.error(e);
 };
 
@@ -22,30 +22,34 @@ const log = {
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
 // as the not
-const parseUpgradeNote = p => {
+const parseUpgradeNote = (p) => {
     const paragraphs = p.body.split('\n');
     for (let i = 0; i < paragraphs.length; i++) {
         if (/upgrade note/i.test(paragraphs[i])) {
-            return (paragraphs[i + 1] ? paragraphs[i + 1].trim() : void 0);
+            return paragraphs[i + 1] ? paragraphs[i + 1].trim() : void 0;
         }
     }
     return void 0;
 };
 
-const loadPulls = async since => {
+const loadPulls = async (since) => {
     let page = 1;
     let pulls = [];
 
-    const tags = await octokit.repos.listTags({
-        owner: 'highcharts',
-        repo: 'highcharts'
-    }).catch(error);
+    const tags = await octokit.repos
+        .listTags({
+            owner: 'highcharts',
+            repo: 'highcharts'
+        })
+        .catch(error);
 
-    const commit = await octokit.repos.getCommit({
-        owner: 'highcharts',
-        repo: 'highcharts',
-        ref: since || tags.data[0].commit.sha
-    }).catch(error);
+    const commit = await octokit.repos
+        .getCommit({
+            owner: 'highcharts',
+            repo: 'highcharts',
+            ref: since || tags.data[0].commit.sha
+        })
+        .catch(error);
 
     console.log(
         'Generating log after latest tag'.green,
@@ -54,36 +58,37 @@ const loadPulls = async since => {
     const after = Date.parse(commit.headers['last-modified']);
 
     while (page < 20) {
-        const baseBranches = [
-            'master'
-        ];
+        const baseBranches = ['master'];
         const pageData = [];
         for (const base of baseBranches) {
-
-            let { data } = await octokit.pulls.list({
-                owner: 'highcharts',
-                repo: 'highcharts',
-                state: 'closed',
-                base,
-                page,
-                sort: 'updated',
-                direction: 'desc'
-            }).catch(error);
+            let { data } = await octokit.pulls
+                .list({
+                    owner: 'highcharts',
+                    repo: 'highcharts',
+                    state: 'closed',
+                    base,
+                    page,
+                    sort: 'updated',
+                    direction: 'desc'
+                })
+                .catch(error);
 
             // On the master, keep only PRs that have been closed since last
             // release
             if (base === 'master') {
-                data = data.filter(d => Date.parse(d.merged_at) > after);
+                data = data.filter((d) => Date.parse(d.merged_at) > after);
 
-            // On feature branches, keep all incoming PRs
+                // On feature branches, keep all incoming PRs
             } else {
-                data = data.filter(d => d.state === 'closed');
+                data = data.filter((d) => d.state === 'closed');
             }
 
             pageData.push.apply(pageData, data);
         }
 
-        console.log(`Loaded pulls page ${page} (${pageData.length} items)`.green);
+        console.log(
+            `Loaded pulls page ${page} (${pageData.length} items)`.green
+        );
 
         if (pageData.length === 0) {
             break;
@@ -96,7 +101,6 @@ const loadPulls = async since => {
 };
 
 module.exports = async (since, fromCache) => {
-
     const included = [];
 
     let pulls;
@@ -110,53 +114,49 @@ module.exports = async (since, fromCache) => {
 
     // Simplify
     pulls = pulls
-        .filter(p => Boolean(p.body))
-        .map(p => ({
+        .filter((p) => Boolean(p.body))
+        .map((p) => ({
             description: p.body.split('\n')[0].trim(),
             upgradeNote: parseUpgradeNote(p),
             labels: p.labels,
             number: p.number
         }));
 
-    pulls.forEach(p => {
+    pulls.forEach((p) => {
         p.product = 'Highcharts';
 
-        Object.keys(log).forEach(product => {
-            if (p.labels.find(l => l.name === `Product: ${product}`)) {
+        Object.keys(log).forEach((product) => {
+            if (p.labels.find((l) => l.name === `Product: ${product}`)) {
                 p.product = product;
             }
         });
 
-        if (p.labels.find(l => l.name === 'Changelog: Feature')) {
+        if (p.labels.find((l) => l.name === 'Changelog: Feature')) {
             p.isFeature = true;
-
-        } else if (p.labels.find(l => l.name === 'Changelog: Bugfix')) {
+        } else if (p.labels.find((l) => l.name === 'Changelog: Bugfix')) {
             p.isFix = true;
         }
     });
 
-    Object.keys(log).forEach(product => {
+    Object.keys(log).forEach((product) => {
         log[product].features = pulls.filter(
-            p => p.isFeature && p.product === product
+            (p) => p.isFeature && p.product === product
         );
     });
 
-    Object.keys(log).forEach(product => {
+    Object.keys(log).forEach((product) => {
         log[product].bugfixes = pulls.filter(
-            p => p.isFix && p.product === product
+            (p) => p.isFix && p.product === product
         );
     });
 
     // From objects to text
-    ['bugfixes', 'features'].forEach(type => {
-        Object.keys(log).forEach(product => {
-            log[product][type].forEach(
-                p => included.push(p.number)
-            );
+    ['bugfixes', 'features'].forEach((type) => {
+        Object.keys(log).forEach((product) => {
+            log[product][type].forEach((p) => included.push(p.number));
         });
     });
-    log.excluded = pulls.filter(p => included.indexOf(p.number) === -1);
+    log.excluded = pulls.filter((p) => included.indexOf(p.number) === -1);
 
     return log;
-
 };

@@ -1,5 +1,7 @@
 .prettierignore
 build
+changelog/**/*.html
+changelog/**/*.md
 code
 node_modules
 samples/.eslintrc

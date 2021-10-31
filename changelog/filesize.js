@@ -23,7 +23,6 @@ const semverSort = require('semver/functions/sort');
 
 const filepath = 'highcharts.js';
 
-
 const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
@@ -31,18 +30,14 @@ const octokit = new Octokit({
 (async function () {
     const getReleases = async () => {
         //*
-        let tags = await octokit
-            .paginate(
-                'GET /repos/:owner/:repo/tags',
-                {
-                    owner: 'highcharts',
-                    repo: 'highcharts'
-                }
-            );
+        let tags = await octokit.paginate('GET /repos/:owner/:repo/tags', {
+            owner: 'highcharts',
+            repo: 'highcharts'
+        });
 
         tags = tags
-            .map(tag => tag.name.replace(/^v/, ''))
-            .filter(ver => semver.valid(ver));
+            .map((tag) => tag.name.replace(/^v/, ''))
+            .filter((ver) => semver.valid(ver));
 
         tags = semverSort(tags);
         // */
@@ -71,30 +66,41 @@ const octokit = new Octokit({
         // */
 
         return tags;
-
     };
 
-    const getVersionFilesize = async version => new Promise((resolve, reject) => {
-        https.get(`https://code.highcharts.com/${version}/${filepath}`, res => {
-            const data = [];
+    const getVersionFilesize = async (version) =>
+        new Promise((resolve, reject) => {
+            https.get(
+                `https://code.highcharts.com/${version}/${filepath}`,
+                (res) => {
+                    const data = [];
 
-            res.on('data', chunk => {
-                data.push(chunk);
-            });
+                    res.on('data', (chunk) => {
+                        data.push(chunk);
+                    });
 
-            res.on('end', () => {
-                const bytes = data.reduce((prev, current) => prev + current.length, 0);
-                const kB = parseFloat((bytes / 1024).toFixed(1));
+                    res.on('end', () => {
+                        const bytes = data.reduce(
+                            (prev, current) => prev + current.length,
+                            0
+                        );
+                        const kB = parseFloat((bytes / 1024).toFixed(1));
 
-                const gzipped = gzipSize.sync(data.join(), { level: 9, memLevel: 9 });
-                const gzippedKB = parseFloat((gzipped / 1024).toFixed(1));
+                        const gzipped = gzipSize.sync(data.join(), {
+                            level: 9,
+                            memLevel: 9
+                        });
+                        const gzippedKB = parseFloat(
+                            (gzipped / 1024).toFixed(1)
+                        );
 
-                resolve([version, kB, gzippedKB]);
-            });
+                        resolve([version, kB, gzippedKB]);
+                    });
 
-            res.on('error', e => reject(e));
+                    res.on('error', (e) => reject(e));
+                }
+            );
         });
-    });
 
     const releases = await getReleases();
 
@@ -107,12 +113,6 @@ const octokit = new Octokit({
     }
 
     const filename = path.join(__dirname, 'filesizes.json');
-    await fs.writeFile(
-        filename,
-        JSON.stringify(data, null, '  '),
-        'utf8'
-    );
+    await fs.writeFile(filename, JSON.stringify(data, null, '  '), 'utf8');
     console.log(`Wrote filesize data to ${filename}`);
-
-
-}());
+})();

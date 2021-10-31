@@ -24,6 +24,7 @@ const childProcess = require('child_process');
 
     var fs = require('fs'),
         path = require('path'),
+        // eslint-disable-next-line node/no-missing-require
         tree = require('../tree.json');
 
     /*
@@ -34,7 +35,7 @@ const childProcess = require('child_process');
         const keys = [];
 
         function recurse(subtree, optionPath) {
-            Object.keys(subtree).forEach(key => {
+            Object.keys(subtree).forEach((key) => {
                 if (optionPath + key !== '') {
                     // Push only the second level, we don't want auto linking of
                     // general words like chart, series, legend, tooltip etc.
@@ -58,10 +59,9 @@ const childProcess = require('child_process');
      * Get the log from Git
      */
     async function getLog(callback) {
-        var log = await prLog(
-            params.since,
-            params.fromCache
-        ).catch(e => console.error(e));
+        var log = await prLog(params.since, params.fromCache).catch((e) =>
+            console.error(e)
+        );
 
         callback(log);
     }
@@ -103,11 +103,10 @@ const childProcess = require('child_process');
         // Add API Links
         const apiReg = /`([a-zA-Z0-9\.\[\]]+)`/g;
         while ((match = apiReg.exec(str)) !== null) {
-
             const shortKey = match[1];
             let replacements = [];
 
-            optionKeys.forEach(longKey => {
+            optionKeys.forEach((longKey) => {
                 if (longKey.indexOf(shortKey) !== -1) {
                     replacements.push(longKey);
                 }
@@ -117,19 +116,22 @@ const childProcess = require('child_process');
             // objects
             if (replacements.length > 1) {
                 replacements = replacements.filter(
-                    longKey => longKey.lastIndexOf(shortKey) === longKey.length - shortKey.length
+                    (longKey) =>
+                        longKey.lastIndexOf(shortKey) ===
+                        longKey.length - shortKey.length
                 );
 
                 // Check if it is a member on the root series options
                 if (
                     replacements.length > 1 &&
-                    replacements.indexOf(`plotOptions.series.${shortKey}`) !== -1
+                    replacements.indexOf(`plotOptions.series.${shortKey}`) !==
+                        -1
                 ) {
-                    replacements = replacements.filter(longKey => {
+                    replacements = replacements.filter((longKey) => {
                         // Remove series-specific members so that we may isolate
                         // it to plotOptions.series.shortKey
                         const m = longKey.match(
-                            new RegExp('plotOptions\.([a-zA-Z\.]+)\.' + shortKey)
+                            new RegExp('plotOptions.([a-zA-Z.]+).' + shortKey)
                         );
                         return !m || m[1] === 'series';
                     });
@@ -168,24 +170,22 @@ const childProcess = require('child_process');
         log = washPRLog(name, log);
 
         const upgradeNotes = log
-            .filter(change => typeof change.upgradeNote === 'string')
-            .map(change => addLinks(`- ${change.upgradeNote}`, apiFolder))
+            .filter((change) => typeof change.upgradeNote === 'string')
+            .map((change) => addLinks(`- ${change.upgradeNote}`, apiFolder))
             .join('\n');
 
         // Start the output string
-        outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
+        outputString =
+            '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
         if (name !== 'Highcharts') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
         }
         log.forEach((change, i) => {
-
             const desc = addLinks(change.description || change, apiFolder);
-
 
             // Start fixes
             if (i === log.startFixes) {
-
                 if (upgradeNotes) {
                     outputString += `\n## Upgrade notes\n${upgradeNotes}\n`;
                 }
@@ -193,55 +193,46 @@ const childProcess = require('child_process');
                 outputString += '\n## Bug fixes\n';
             }
 
-            const edit = params.review ?
-                ` [Edit](https://github.com/highcharts/highcharts/pull/${change.number}).` :
-                '';
+            const edit = params.review
+                ? ` [Edit](https://github.com/highcharts/highcharts/pull/${change.number}).`
+                : '';
 
             // All items
-            outputString += '- ' + addMissingDotToCommitMessage(desc) +
-                edit + '\n';
-
+            outputString +=
+                '- ' + addMissingDotToCommitMessage(desc) + edit + '\n';
         });
 
         fs.writeFile(filename, outputString, function () {
             console.log('Wrote draft to ' + filename);
         });
 
-
         return outputString;
     }
 
-
     function pad(number, length, padder) {
-        return new Array(
-            (length || 2) +
-            1 -
-            String(number)
-                .replace('-', '')
-                .length
-        ).join(padder || 0) + number;
+        return (
+            new Array(
+                (length || 2) + 1 - String(number).replace('-', '').length
+            ).join(padder || 0) + number
+        );
     }
 
     function saveReview(md) {
-
         const filename = path.join(__dirname, 'review.html');
 
-        fs.writeFileSync(
-            filename,
-            marked(md),
-            'utf8'
-        );
+        fs.writeFileSync(filename, marked(md), 'utf8');
 
         console.log(`Review: ${filename}`);
     }
 
     function getLatestGitSha() {
-        return childProcess.execSync('git log --pretty=format:\'%h\' -n 1').toString();
+        return childProcess
+            .execSync("git log --pretty=format:'%h' -n 1")
+            .toString();
     }
 
     // Get the Git log
     getLog(function (log) {
-
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
         const review = [];
@@ -263,24 +254,30 @@ const childProcess = require('child_process');
                 }
 
                 for (name in products) {
-
-                    if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
-                        const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
+                    if (Object.hasOwnProperty.call(products, name)) {
+                        // eslint-disable-line no-prototype-builtins
+                        const version = params.buildMetadata
+                            ? `${pack.version}+build.${getLatestGitSha()}`
+                            : pack.version;
 
                         products[name].nr = version;
                         products[name].date =
-                            d.getFullYear() + '-' +
-                            pad(d.getMonth() + 1, 2) + '-' +
+                            d.getFullYear() +
+                            '-' +
+                            pad(d.getMonth() + 1, 2) +
+                            '-' +
                             pad(d.getDate(), 2);
 
-                        review.push(buildMarkdown(
-                            name,
-                            version,
-                            products[name].date,
-                            log,
-                            products,
-                            optionKeys
-                        ));
+                        review.push(
+                            buildMarkdown(
+                                name,
+                                version,
+                                products[name].date,
+                                log,
+                                products,
+                                optionKeys
+                            )
+                        );
                     }
                 }
 
@@ -290,4 +287,4 @@ const childProcess = require('child_process');
             }
         );
     });
-}());
+})();

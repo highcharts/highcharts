@@ -16,27 +16,32 @@ function generateHTML() {
             pretty = require('pretty'),
             semver = require('semver');
 
-        var products = [{
-            header: 'Highcharts Basic',
-            name: 'highcharts',
-            changelogId: 'hc-changelog',
-            offset: ''
-        }, {
-            header: 'Highcharts Stock',
-            name: 'highcharts-stock',
-            changelogId: 'hs-changelog',
-            offset: 'hs-'
-        }, {
-            header: 'Highcharts Maps',
-            name: 'highcharts-maps',
-            changelogId: 'hm-changelog',
-            offset: 'hm-'
-        }, {
-            header: 'Highcharts Gantt',
-            name: 'highcharts-gantt',
-            changelogId: 'hg-changelog',
-            offset: 'hg-'
-        }];
+        var products = [
+            {
+                header: 'Highcharts Basic',
+                name: 'highcharts',
+                changelogId: 'hc-changelog',
+                offset: ''
+            },
+            {
+                header: 'Highcharts Stock',
+                name: 'highcharts-stock',
+                changelogId: 'hs-changelog',
+                offset: 'hs-'
+            },
+            {
+                header: 'Highcharts Maps',
+                name: 'highcharts-maps',
+                changelogId: 'hm-changelog',
+                offset: 'hm-'
+            },
+            {
+                header: 'Highcharts Gantt',
+                name: 'highcharts-gantt',
+                changelogId: 'hg-changelog',
+                offset: 'hg-'
+            }
+        ];
 
         var changelog = {
             header: {
@@ -51,7 +56,6 @@ function generateHTML() {
         };
 
         var htmlContent = '';
-
 
         function sortMarkdownFileContent(mdContent) {
             let write = 'New features';
@@ -73,10 +77,8 @@ function generateHTML() {
                 }
                 if (
                     token.type === 'heading' &&
-                    (
-                        token.text === 'Upgrade notes' ||
-                        token.text === 'Bug fixes'
-                    )
+                    (token.text === 'Upgrade notes' ||
+                        token.text === 'Bug fixes')
                 ) {
                     write = token.text;
                     return;
@@ -98,8 +100,7 @@ function generateHTML() {
         }
 
         function topHTMLContent() {
-            return (
-                `<div id="changelog">
+            return `<div id="changelog">
                 <div class="content-container container">
                 <div class="row">
                 <div class="col-md-12">
@@ -108,26 +109,28 @@ function generateHTML() {
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
                 <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
-                <a href="download">Download</a> page to get the latest version.</p>`
-            );
+                <a href="download">Download</a> page to get the latest version.</p>`;
         }
         function productHeaderHTMLStructure(product) {
-            return (
-                `<div id="${product.changelogId}">
+            return `<div id="${product.changelogId}">
                 <div class="changelog-header">
                 <h4 id="${product.name}">${product.header}</h4>
                 </div>
-                <div class="changelog-container">`);
+                <div class="changelog-container">`;
         }
         function makeDownloadLinks(version, name) {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
                 'highcharts-maps': 'Highmaps'
             };
-            if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
+            if (
+                semver.satisfies(version, '>=8.1.0') ||
+                name === 'highcharts' ||
+                name === 'highcharts-gantt'
+            ) {
                 return name
                     .split('-')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join('-');
             }
             return filePrefixMap[name];
@@ -137,76 +140,106 @@ function generateHTML() {
                 const version = changelog.header.version.split('-').join('.');
                 const id = changelog.header.name + '-v' + version;
                 const name = changelog.header.name;
-                const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
+                const downloadLink =
+                    'https://code.highcharts.com/zips/' +
+                    makeDownloadLinks(version, name) +
+                    '-' +
+                    version +
+                    '.zip';
 
-                return (
-                    `<p class="release-header">
+                return `<p class="release-header">
                         <a id="${id}"></a>
-                        <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
-                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
+                        <a href="#${id}">${
+                    changelog.header.productName
+                } v${version} ${changelog.header.date}</a>
+                        <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${
+                    changelog.header.productName
+                } v${version}"><i class="fas fa-download"></i></a></span>
                     </p>
-                    ${marked.parser(changelog.features)}`
-                );
+                    ${marked.parser(changelog.features)}`;
             }
             return '';
         }
         function upgradeNotesHTMLStructure() {
             if (changelog.upgradeNotes.length > 0) {
-                return (
-                    `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
+                return `<div id="${changelog.header.offset}heading-${
+                    changelog.header.version
+                }-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><span> Upgrade notes </span></button>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${
+                        changelog.header.offset
+                    }${
+                    changelog.header.version
+                }-upgrade-notes"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="${changelog.header.offset}${
+                    changelog.header.version
+                }-upgrade-notes" class="collapse" aria-labelledby="${
+                    changelog.header.offset
+                }heading-${
+                    changelog.header.version
+                }-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
-                    </div>`);
+                    </div>`;
             }
             return '';
         }
         function bugFixesHTMLStructure() {
             if (changelog.bugFixes.length > 0) {
-                return (
-                    `<div
-                        id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
+                return `<div
+                        id="${changelog.header.offset}heading-${
+                    changelog.header.version
+                }-bug-fixes"
                         class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><span> Bug fixes </span></button>
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${
+                        changelog.header.offset
+                    }${
+                    changelog.header.version
+                }-bug-fixes"><span> Bug fixes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="${changelog.header.offset}${
+                    changelog.header.version
+                }-bug-fixes" class="collapse" aria-labelledby="${
+                    changelog.header.offset
+                }heading-${
+                    changelog.header.version
+                }-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.bugFixes)}
                     </div>
 
-                    </div>`);
+                    </div>`;
             }
             return '';
         }
         function upgradeAndBugContainer() {
-            if (changelog.upgradeNotes.length > 0 ||
-                changelog.bugFixes.length > 0) {
-                return (
-                    `<div class="accordion card-group">
+            if (
+                changelog.upgradeNotes.length > 0 ||
+                changelog.bugFixes.length > 0
+            ) {
+                return `<div class="accordion card-group">
                     <div class="card">
                     ${upgradeNotesHTMLStructure()}
                     ${bugFixesHTMLStructure()}
                     </div>
-                    </div>`);
+                    </div>`;
             }
             return '';
         }
         function bottomHTMLContent() {
-            return (`
+            return `
                 </div>
                 </div>
                 </div>
-                </div>`);
+                </div>`;
         }
         function endProductHTMLStructure() {
-            return ('</div> </div>');
+            return '</div> </div>';
         }
 
         function formatVersionNumber(versionNumber) {
@@ -214,7 +247,10 @@ function generateHTML() {
         }
 
         function writeContentToNewHTMLFile() {
-            var outputFile = path.join(__dirname, (process.argv[2] || 'changelog') + '.html');
+            var outputFile = path.join(
+                __dirname,
+                (process.argv[2] || 'changelog') + '.html'
+            );
             fs.writeFile(outputFile, pretty(htmlContent), function (err) {
                 if (err) {
                     reject(err);
@@ -224,9 +260,9 @@ function generateHTML() {
         }
 
         function getSortedDirFiles(files) {
-            const versionFiles = files.map(file => file.replace('.md', ''));
+            const versionFiles = files.map((file) => file.replace('.md', ''));
             const sortedVersions = versionFiles
-                .filter(v => semver.valid(v.replace('-modified', '')))
+                .filter((v) => semver.valid(v.replace('-modified', '')))
                 .sort((v1, v2) => {
                     if (v1.includes(v2) && v1.includes('-modified')) {
                         return -1;
@@ -236,24 +272,25 @@ function generateHTML() {
                     }
                     return semver.rcompare(v1, v2);
                 });
-            return sortedVersions.map(file => file + '.md');
+            return sortedVersions.map((file) => file + '.md');
         }
 
         htmlContent += topHTMLContent();
         /**
          * Goes synchronous through each markdown file in each directory and captures it's content
          */
-        products.forEach(product => {
+        products.forEach((product) => {
             changelog.header.productName = product.header;
             changelog.header.name = product.name;
             changelog.header.offset = product.offset;
             htmlContent += productHeaderHTMLStructure(product);
-            var sortedDir = getSortedDirFiles(fs.readdirSync(
-                path.join(__dirname, product.name)
-            ));
-            sortedDir.forEach(file => {
+            var sortedDir = getSortedDirFiles(
+                fs.readdirSync(path.join(__dirname, product.name))
+            );
+            sortedDir.forEach((file) => {
                 var content = fs.readFileSync(
-                    path.join(__dirname, product.name, file), 'utf8'
+                    path.join(__dirname, product.name, file),
+                    'utf8'
                 );
 
                 if (content.indexOf('[Edit]') !== -1) {
@@ -278,10 +315,10 @@ function generateHTML() {
 // upload.js
 if (require.main === module) {
     generateHTML()
-        .then(params => {
+        .then((params) => {
             console.log(params.outputFile + ' was successfully created!');
         })
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
 }
 
 module.exports = { generateHTML };

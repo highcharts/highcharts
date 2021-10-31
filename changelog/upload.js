@@ -8,22 +8,25 @@
  * upload it to S3.
  */
 const path = require('path');
-const { uploadFiles } = require(
-    path.join(__dirname, '../tools/gulptasks/lib/uploadS3')
-);
+const { uploadFiles } = require(path.join(
+    __dirname,
+    '../tools/gulptasks/lib/uploadS3'
+));
 const { generateHTML } = require(path.join(__dirname, 'generate-html'));
 
 function uploadFile(filename) {
     uploadFiles({
         bucket: 'assets.highcharts.com',
-        files: [{
-            from: filename,
-            to: 'changelog/changelog.html'
-        }],
+        files: [
+            {
+                from: filename,
+                to: 'changelog/changelog.html'
+            }
+        ],
         name: 'changelog'
     });
 }
 
-generateHTML().then(params => {
+generateHTML().then((params) => {
     uploadFile(params.outputFile);
 });
