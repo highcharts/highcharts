@@ -10,7 +10,9 @@ var jsdom = require('./highcharts-jsdom'),
     fs = require('fs');
 
 // Get the document and window
-var doc = jsdom.jsdom('<!doctype html><html><body><div id="container"></div></body></html>'),
+var doc = jsdom.jsdom(
+        '<!doctype html><html><body><div id="container"></div></body></html>'
+    ),
     win = doc.defaultView;
 
 // Require Highcharts with the window shim
@@ -42,7 +44,20 @@ Highcharts.chart('container', {
         text: 'This chart is generated <em>without</em> a browser'
     },
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
     },
 
     yAxis: {
@@ -64,49 +79,64 @@ Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        name: 'Monthly rainfall',
-        data: [{
-            y: 29.9,
-            dataLabels: {
-                enabled: true,
-                format: 'January<br><span style="font-size: 1.3em">Dryest</span>',
-                // format: 'Dryest',
-                verticalAlign: 'bottom',
-                y: -10
-            }
-        }, {
-            y: 71.5
-        }, {
-            y: 106.4
-        }, {
-            y: 129.2
-        }, {
-            y: 144.0
-        }, {
-            y: 176.0
-        }, {
-            y: 135.6
-        }, {
-            y: 148.5
-        }, {
-            y: 216.4,
-            dataLabels: {
-                enabled: true,
-                format: 'September<br><span style="font-size: 1.3em">Wettest</span>',
-                // format: 'Wettest',
-                align: 'right',
-                verticalAlign: 'middle',
-                x: -35
-            }
-        }, {
-            y: 194.1
-        }, {
-            y: 95.6
-        }, {
-            y: 54.4
-        }]
-    }]
+    series: [
+        {
+            name: 'Monthly rainfall',
+            data: [
+                {
+                    y: 29.9,
+                    dataLabels: {
+                        enabled: true,
+                        format: 'January<br><span style="font-size: 1.3em">Dryest</span>',
+                        // format: 'Dryest',
+                        verticalAlign: 'bottom',
+                        y: -10
+                    }
+                },
+                {
+                    y: 71.5
+                },
+                {
+                    y: 106.4
+                },
+                {
+                    y: 129.2
+                },
+                {
+                    y: 144.0
+                },
+                {
+                    y: 176.0
+                },
+                {
+                    y: 135.6
+                },
+                {
+                    y: 148.5
+                },
+                {
+                    y: 216.4,
+                    dataLabels: {
+                        enabled: true,
+                        format: 'September<br><span style="font-size: 1.3em">Wettest</span>',
+                        // format: 'Wettest',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        x: -35
+                    }
+                },
+                {
+                    y: 194.1
+                },
+                {
+                    y: 95.6
+                },
+                {
+                    y: 54.4
+                }
+            ]
+        }
+    ]
 });
 
 /* A small label test
@@ -139,11 +169,9 @@ var ren = new Highcharts.Renderer(
 });
 */
 
-
-
-
-
 var svg = win.document.getElementById('container').innerHTML;
 fs.writeFile('chart.svg', svg, function () {
-    console.log('Wrote ' + svg.length + ' bytes to ' + __dirname + '/chart.svg.'); // eslint-disable-line no-path-concat
+    console.log(
+        'Wrote ' + svg.length + ' bytes to ' + __dirname + '/chart.svg.'
+    ); // eslint-disable-line no-path-concat
 });

@@ -1,65 +1,79 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Highcharts Example</title>
-		<base href="https://github.com/highslide-software/highcharts.com/raw/master/" />
-		
-		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-		<script type="text/javascript" src="js/highcharts.src.js"></script>
-		<script type="text/javascript" src="js/modules/ohlc.src.js"></script>
-		<script type="text/javascript" src="js/modules/exporting.src.js"></script>
-		
-		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
-		<script type="text/javascript">
-			
-		var data = [
-[ 5.64 ,  5.71 ,  4.73 ,  5.01 ],
-[ 5.39 , 6.41 , 4.85 , 5.49 ],
-[ 5.14 , 5.70 , 4.70 , 5.67 ],
-[ 5.75 , 6.00 , 4.18 , 5.17 ],
-[ 5.76 , 5.89 , 4.75 , 5.37 ],
-[ 5.26 , 6.34 , 5.21 , 5.36 ],
-[ 5.66 , 5.75 , 5.26 , 5.72 ],
-[ 5.83 , 6.47 , 5.31 , 6.18 ],
-[ 5.89 , 6.32 , 5.20 , 5.69 ],
-[ 6.14 , 6.26 , 5.89 , 6.12 ],
-[ 6.34 , 6.44 , 5.06 , 5.56 ],
-[ 6.42 , 6.49 , 6.02 , 6.40 ],
-[ 6.97 , 7.23 , 5.86 , 6.46 ],
-[ 7.00 , 7.26 , 5.85 , 6.36 ],
-[ 6.85 , 7.56 , 6.05 , 6.60 ],
-[ 6.77 , 7.36 , 6.34 , 7.34 ],
-[ 6.09 , 7.21 , 5.90 , 6.42 ],
-[ 6.02 , 6.69 , 5.95 , 6.16 ],
-[ 5.86 , 6.75 , 4.84 , 5.84 ],
-[ 6.25 , 6.58 , 5.86 , 6.56 ],
-[ 6.55 , 6.71 , 5.71 , 6.08 ],
-[ 6.23 , 6.90 , 5.60 , 6.56 ],
-[ 5.49 , 6.35 , 5.31 , 6.27 ],
-[ 5.21 , 5.50 , 4.80 , 5.26 ],
-[ 5.24 , 5.97 , 4.86 , 5.28 ],
-[ 5.89 , 5.89 , 4.91 , 4.92 ],
-[ 5.76 , 6.37 , 5.56 , 6.03 ],
-//[ 6.34 , 6.56 , 5.47 , 6.15 ],
-{ open: 8.34 , high: 8.56 , low: 5.47 , close: 6.15, color: 'yellow', lineColor: 'silver' },
-[ 5.62 , 6.61 , 5.33 , 6.04 ],
-[ 4.59 , 6.27 , 4.48 , 5.31 ],
-[ 4.43 , 5.06 , 4.40 , 4.50 ],
-[ 5.14 , 5.20 , 4.43 , 4.98 ],
-[ 5.23 , 5.52 , 4.24 , 5.20 ],
-[ 5.92 , 6.01 , 4.68 , 5.39 ],
-[ 6.16 , 6.52 , 5.30 , 5.96 ],
-[ 6.33 , 6.36 , 5.21 , 5.39 ],
-[ 6.46 , 7.03 , 5.94 , 6.89 ],
-[ 7.26 , 7.38 , 6.46 , 7.13 ],
-[ 6.69 , 7.85 , 6.55 , 7.47 ],
-[ 7.42 , 7.64 , 6.10 , 7.05 ],
-[ 6.75 , 7.44 , 6.30 , 7.20 ],
-[ 7.42 , 7.65 , 6.36 , 6.75 ],
-[ 8.15 , 8.22 , 7.42 , 8.18 ],
-[ 8.00 , 8.40 , 7.55 , 8.04 ]/*,
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Highcharts Example</title>
+        <base
+            href="https://github.com/highslide-software/highcharts.com/raw/master/"
+        />
+
+        <!-- 1. Add these JavaScript inclusions in the head of your page -->
+        <script
+            type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"
+        ></script>
+        <script type="text/javascript" src="js/highcharts.src.js"></script>
+        <script type="text/javascript" src="js/modules/ohlc.src.js"></script>
+        <script
+            type="text/javascript"
+            src="js/modules/exporting.src.js"
+        ></script>
+
+        <!-- 2. Add the JavaScript to initialize the chart on document ready -->
+        <script type="text/javascript">
+            var data = [
+                [5.64, 5.71, 4.73, 5.01],
+                [5.39, 6.41, 4.85, 5.49],
+                [5.14, 5.7, 4.7, 5.67],
+                [5.75, 6.0, 4.18, 5.17],
+                [5.76, 5.89, 4.75, 5.37],
+                [5.26, 6.34, 5.21, 5.36],
+                [5.66, 5.75, 5.26, 5.72],
+                [5.83, 6.47, 5.31, 6.18],
+                [5.89, 6.32, 5.2, 5.69],
+                [6.14, 6.26, 5.89, 6.12],
+                [6.34, 6.44, 5.06, 5.56],
+                [6.42, 6.49, 6.02, 6.4],
+                [6.97, 7.23, 5.86, 6.46],
+                [7.0, 7.26, 5.85, 6.36],
+                [6.85, 7.56, 6.05, 6.6],
+                [6.77, 7.36, 6.34, 7.34],
+                [6.09, 7.21, 5.9, 6.42],
+                [6.02, 6.69, 5.95, 6.16],
+                [5.86, 6.75, 4.84, 5.84],
+                [6.25, 6.58, 5.86, 6.56],
+                [6.55, 6.71, 5.71, 6.08],
+                [6.23, 6.9, 5.6, 6.56],
+                [5.49, 6.35, 5.31, 6.27],
+                [5.21, 5.5, 4.8, 5.26],
+                [5.24, 5.97, 4.86, 5.28],
+                [5.89, 5.89, 4.91, 4.92],
+                [5.76, 6.37, 5.56, 6.03],
+                //[ 6.34 , 6.56 , 5.47 , 6.15 ],
+                {
+                    open: 8.34,
+                    high: 8.56,
+                    low: 5.47,
+                    close: 6.15,
+                    color: 'yellow',
+                    lineColor: 'silver'
+                },
+                [5.62, 6.61, 5.33, 6.04],
+                [4.59, 6.27, 4.48, 5.31],
+                [4.43, 5.06, 4.4, 4.5],
+                [5.14, 5.2, 4.43, 4.98],
+                [5.23, 5.52, 4.24, 5.2],
+                [5.92, 6.01, 4.68, 5.39],
+                [6.16, 6.52, 5.3, 5.96],
+                [6.33, 6.36, 5.21, 5.39],
+                [6.46, 7.03, 5.94, 6.89],
+                [7.26, 7.38, 6.46, 7.13],
+                [6.69, 7.85, 6.55, 7.47],
+                [7.42, 7.64, 6.1, 7.05],
+                [6.75, 7.44, 6.3, 7.2],
+                [7.42, 7.65, 6.36, 6.75],
+                [8.15, 8.22, 7.42, 8.18],
+                [8.0, 8.4, 7.55, 8.04] /*,
 [ 7.96 , 8.54 , 7.46 , 8.34 ],
 [ 7.24 , 8.19 , 6.99 , 7.54 ],
 [ 7.63 , 7.85 , 7.24 , 7.82 ],
@@ -165,65 +179,59 @@
 [ 9.94 , 10.53 , 9.67 , 10.34 ],
 [ 10.44 , 10.74 , 9.94 , 9.99 ],
 [ 10.50 , 10.80 , 10.28 , 10.51 ],
-[ 10.04 , 10.54 , 9.70 , 10.44 ]	*/			
-					];
-			
-			
-		var options = {
-				chart: {
-				},
-				xAxis: {
-					type: 'datetime'
-				},
-				title: {
-					
-				},
-				plotOptions: {
-					series: {
-						pointStart: Date.UTC(2010, 0, 1),
-						pointInterval: 24 * 3600 * 1000
-					},
-					candlestick: {
-					}
-				},
-				tooltip: {
-					shared: true
-				},
-				legend: {
-					enabled: false
-				},
-			    series: [{
-					name: 'Exchange rate',
-					data: data
-				}]
-			};
-		
-		var chart1, chart2;
-		$(document).ready(function() {
-			options.chart.type = 'OHLC';
-			options.chart.renderTo = 'container-ohlc';
-			options.title.text = 'OHLC';
-			chart1 = new Highcharts.Chart(options);
-			
-			options.chart.type = 'candlestick';
-			options.chart.renderTo = 'container-candlestick';
-			options.title.text = 'Candlestick';
-			chart2 = new Highcharts.Chart(options);
-		});
-		
-		
-		
-		
-		</script>
-		
-	
-</head>
-	<body>
-		
-		<!-- 3. Add the container -->
-		<div id="container-ohlc" style="width: 800px; height: 200px; margin: 0 auto; "></div>
-		<div id="container-candlestick" style="width: 800px; height: 200px; margin: 0 auto; "></div>
-		
-				
-	</body>
+[ 10.04 , 10.54 , 9.70 , 10.44 ]	*/
+            ];
+
+            var options = {
+                chart: {},
+                xAxis: {
+                    type: 'datetime'
+                },
+                title: {},
+                plotOptions: {
+                    series: {
+                        pointStart: Date.UTC(2010, 0, 1),
+                        pointInterval: 24 * 3600 * 1000
+                    },
+                    candlestick: {}
+                },
+                tooltip: {
+                    shared: true
+                },
+                legend: {
+                    enabled: false
+                },
+                series: [
+                    {
+                        name: 'Exchange rate',
+                        data: data
+                    }
+                ]
+            };
+
+            var chart1, chart2;
+            $(document).ready(function () {
+                options.chart.type = 'OHLC';
+                options.chart.renderTo = 'container-ohlc';
+                options.title.text = 'OHLC';
+                chart1 = new Highcharts.Chart(options);
+
+                options.chart.type = 'candlestick';
+                options.chart.renderTo = 'container-candlestick';
+                options.title.text = 'Candlestick';
+                chart2 = new Highcharts.Chart(options);
+            });
+        </script>
+    </head>
+    <body>
+        <!-- 3. Add the container -->
+        <div
+            id="container-ohlc"
+            style="width: 800px; height: 200px; margin: 0 auto"
+        ></div>
+        <div
+            id="container-candlestick"
+            style="width: 800px; height: 200px; margin: 0 auto"
+        ></div>
+    </body>
 </html>

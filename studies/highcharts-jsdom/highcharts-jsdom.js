@@ -36,35 +36,42 @@ jsdom.jsdom = function () {
                 width = 0,
                 height = 0;
 
-            [].forEach.call(elem.children.length ? elem.children : [elem], function (child) {
-                var fontSize = child.style.fontSize || elem.style.fontSize,
-                    lineHeight,
-                    textLength;
+            [].forEach.call(
+                elem.children.length ? elem.children : [elem],
+                function (child) {
+                    var fontSize = child.style.fontSize || elem.style.fontSize,
+                        lineHeight,
+                        textLength;
 
-                // The font size and lineHeight is based on empirical values, copied from
-                // the SVGRenderer.fontMetrics function in Highcharts.
-                if (/px/.test(fontSize)) {
-                    fontSize = parseInt(fontSize, 10);
-                } else {
-                    fontSize = /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
+                    // The font size and lineHeight is based on empirical values, copied from
+                    // the SVGRenderer.fontMetrics function in Highcharts.
+                    if (/px/.test(fontSize)) {
+                        fontSize = parseInt(fontSize, 10);
+                    } else {
+                        fontSize = /em/.test(fontSize)
+                            ? parseFloat(fontSize) * 12
+                            : 12;
+                    }
+                    lineHeight =
+                        fontSize < 24
+                            ? fontSize + 3
+                            : Math.round(fontSize * 1.2);
+                    textLength = child.textContent.length * fontSize * 0.55;
+
+                    // Tspans on the same line
+                    if (child.getAttribute('dx') !== '0') {
+                        height += lineHeight;
+                    }
+
+                    // New line
+                    if (child.getAttribute('dy') !== null) {
+                        lineWidth = 0;
+                    }
+
+                    lineWidth += textLength;
+                    width = Math.max(width, lineWidth);
                 }
-                lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2);
-                textLength = child.textContent.length * fontSize * 0.55;
-
-                // Tspans on the same line
-                if (child.getAttribute('dx') !== '0') {
-                    height += lineHeight;
-                }
-
-                // New line
-                if (child.getAttribute('dy') !== null) {
-                    lineWidth = 0;
-                }
-
-                lineWidth += textLength;
-                width = Math.max(width, lineWidth);
-
-            });
+            );
 
             return {
                 x: 0,
@@ -79,4 +86,3 @@ jsdom.jsdom = function () {
 };
 
 module.exports = jsdom;
-

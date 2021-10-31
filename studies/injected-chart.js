@@ -1,5 +1,4 @@
 (function ($) {
-
     /**
      * Create the chart
      * @returns {undefined}
@@ -9,12 +8,13 @@
             title: {
                 text: 'This chart is injected from a crossdomain JS file'
             },
-            series: [{
-                data: [1, 3, 2, 4]
-            }]
+            series: [
+                {
+                    data: [1, 3, 2, 4]
+                }
+            ]
         });
     }
-
 
     // Below this line is functionality to load scripts and apply the chart
     if (!$) {
@@ -26,5 +26,4 @@
     } else {
         addChart();
     }
-
-}(window.jQuery));
+})(window.jQuery);

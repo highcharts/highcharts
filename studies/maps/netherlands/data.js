@@ -1,21 +1,21 @@
-function getData (callback) {
-    $.get('data.csv', function(data) {
+function getData(callback) {
+    $.get('data.csv', function (data) {
         // Split the lines
         var lines = data.split('\n'),
             result = {
-                "2013": []
+                2013: []
             };
 
         // Iterate over the lines and add categories or series
-        $.each(lines, function(lineNo, line) {
+        $.each(lines, function (lineNo, line) {
             var items = line.split(',');
-            
+
             // header line containes categories
-            if (lineNo == 0) { 
+            if (lineNo == 0) {
                 // IGNORE
             } else {
                 // 2013 as a seperate series
-                result["2013"].push({
+                result['2013'].push({
                     name: items[0],
                     code: items[0],
                     value: items[1]
@@ -29,31 +29,25 @@ function getData (callback) {
                     d2009 = d2010 - items[3];
 
                 // For each municipality add a series with the absolute numbers
-                result[items[0] + "absoluut"] = {
+                result[items[0] + 'absoluut'] = {
                     name: items[0],
-                    data: [
-                        d2009,
-                        d2010,
-                        d2011,
-                        d2012,
-                        d2013
-                    ]
-                }
+                    data: [d2009, d2010, d2011, d2012, d2013]
+                };
 
                 // For each municipality add a series with the growth
-                result[items[0] + "groei"] = {
+                result[items[0] + 'groei'] = {
                     name: items[0],
                     data: [
                         parseInt(items[3]),
                         parseInt(items[4]),
                         parseInt(items[5]),
-                        parseInt(items[6]),
+                        parseInt(items[6])
                     ]
-                }           
-            }            
+                };
+            }
         });
-        
+
         // Create the chart
         callback(result);
     });
-};
+}

@@ -1,40 +1,42 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Highcharts Example</title>
-		
-		
-		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
-		
-		
-		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
-		<script type="text/javascript">
-		$(document).ready(function() {
-			
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Highcharts Example</title>
 
-			var options = {
-				chart: {
-					renderTo: 'container',
-					type: 'column'
-				},
-				title: {
-					text: 'Fruit Consumption'
-				},
-				xAxis: {
-					categories: []
-				},
-				yAxis: {
-					title: {
-						text: 'Units'
-					}
-				},
-				series: []
-			};
-			
-			/*
+        <!-- 1. Add these JavaScript inclusions in the head of your page -->
+        <script
+            type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://code.highcharts.com/highcharts.js"
+        ></script>
+
+        <!-- 2. Add the JavaScript to initialize the chart on document ready -->
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var options = {
+                    chart: {
+                        renderTo: 'container',
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Fruit Consumption'
+                    },
+                    xAxis: {
+                        categories: []
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Units'
+                        }
+                    },
+                    series: []
+                };
+
+                /*
 			 Load the data from the CSV file. This is the contents of the file:
 			 
 				Apples,Pears,Oranges,Bananas,Plums
@@ -43,58 +45,63 @@
 				Joe,86,76,79,77
 				Janet,3,16,13,15
 				
-			 */ 
-			$.get('data.csv', function(data) {
-				// Split the lines
-				var lines = data.split('\n');
-				$.each(lines, function(lineNo, line) {
-					var items = line.split(',');
-					
-					// header line containes categories
-					if (lineNo == 0) {
-						$.each(items, function(itemNo, item) {
-							if (itemNo > 0) options.xAxis.categories.push(item);
-						});
-					}
-					
-					// the rest of the lines contain data with their name in the first position
-					else {
-						var series = { 
-							data: []
-						};
-						$.each(items, function(itemNo, item) {
-							if (itemNo == 0) {
-								series.name = item;
-							} else {
-								series.data.push(parseFloat(item));
-							}
-						});
-						
-						options.series.push(series);
+			 */
+                $.get('data.csv', function (data) {
+                    // Split the lines
+                    var lines = data.split('\n');
+                    $.each(lines, function (lineNo, line) {
+                        var items = line.split(',');
 
-					}
-					
-				});
-				
-				var chart = new Highcharts.Chart(options);
-			});
-			
-			
-		});
-		</script>
-		
-	</head>
-	<body>
+                        // header line containes categories
+                        if (lineNo == 0) {
+                            $.each(items, function (itemNo, item) {
+                                if (itemNo > 0)
+                                    options.xAxis.categories.push(item);
+                            });
+                        }
 
-		<div style="width: 800px; margin: 2em auto; padding: 1em; border: 1px solid red; border-radius: 0.5em">
-			NOTE: This demo shows a way of manually parsing CSV. As of Highcharts 4.0 this is
-			not necessary for simple CSV files, as this functionality is built into the 
-			<a href="https://api.highcharts.com/#data">Data module</a>.
-		</div>
-		
-		<!-- 3. Add the container -->
-		<div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div>
-		
-				
-	</body>
+                        // the rest of the lines contain data with their name in the first position
+                        else {
+                            var series = {
+                                data: []
+                            };
+                            $.each(items, function (itemNo, item) {
+                                if (itemNo == 0) {
+                                    series.name = item;
+                                } else {
+                                    series.data.push(parseFloat(item));
+                                }
+                            });
+
+                            options.series.push(series);
+                        }
+                    });
+
+                    var chart = new Highcharts.Chart(options);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div
+            style="
+                width: 800px;
+                margin: 2em auto;
+                padding: 1em;
+                border: 1px solid red;
+                border-radius: 0.5em;
+            "
+        >
+            NOTE: This demo shows a way of manually parsing CSV. As of
+            Highcharts 4.0 this is not necessary for simple CSV files, as this
+            functionality is built into the
+            <a href="https://api.highcharts.com/#data">Data module</a>.
+        </div>
+
+        <!-- 3. Add the container -->
+        <div
+            id="container"
+            style="width: 800px; height: 400px; margin: 0 auto"
+        ></div>
+    </body>
 </html>
