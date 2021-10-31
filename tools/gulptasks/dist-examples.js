@@ -92,13 +92,10 @@ function indexTemplate(options) {
  *         Assembled template string
  */
 function assembleSample(template, variables) {
-
-    return Object
-        .keys(variables)
-        .reduce(
-            (str, name) => str.replace('@demo.' + name + '@', variables[name]),
-            template
-        );
+    return Object.keys(variables).reduce(
+        (str, name) => str.replace('@demo.' + name + '@', variables[name]),
+        template
+    );
 }
 
 /**
@@ -118,7 +115,6 @@ function assembleSample(template, variables) {
  *         Promise to keep
  */
 async function createExamples(title, sourcePath, targetPath, template) {
-
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
@@ -128,20 +124,15 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
     LogLib.success('Generating', targetPath + '...');
 
-    directoryPaths.forEach(directoryPath => {
-
+    directoryPaths.forEach((directoryPath) => {
         let path;
 
-        const content = [
-            'html', 'css', 'js'
-        ].reduce(
+        const content = ['html', 'css', 'js'].reduce(
             (obj, ext) => {
                 path = Path.join(directoryPath, 'demo.' + ext);
-                obj[ext] = (
-                    FS.existsSync(path) &&
-                        FS.readFileSync(path).toString() ||
-                        ''
-                );
+                obj[ext] =
+                    (FS.existsSync(path) && FS.readFileSync(path).toString()) ||
+                    '';
                 return obj;
             },
             { title }
@@ -149,9 +140,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
 
         const sample = assembleSample(template, content);
 
-        path = Path.join(
-            targetPath, directoryPath.substr(sourcePath.length)
-        );
+        path = Path.join(targetPath, directoryPath.substr(sourcePath.length));
 
         MkDirP.sync(path);
 
@@ -176,9 +165,13 @@ async function createExamples(title, sourcePath, targetPath, template) {
     }
 
     LogLib.success('Created', targetPath);
-    const indexContent = (await downloadSidebar(sourcePath.replace(/samples\//, '').replace(/\/demo/, '')))
+    const indexContent = (
+        await downloadSidebar(
+            sourcePath.replace(/samples\//, '').replace(/\/demo/, '')
+        )
+    )
         .replace(/style=\"display:none;\"/g, '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples\/$1\/index.html'); // replace links
+        .replace(/(?!href= ")(\.\/.+?)(?=")/g, 'examples/$1/index.html'); // replace links
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(
@@ -197,23 +190,32 @@ async function createExamples(title, sourcePath, targetPath, template) {
  *         String containing converted URLs
  */
 function convertURLToLocal(str) {
-
     const StringLib = require('./lib/string');
 
     str = StringLib.replaceAll(
-        str, 'src="https://code.highcharts.com/stock/', URL_REPLACEMENT
+        str,
+        'src="https://code.highcharts.com/stock/',
+        URL_REPLACEMENT
     );
     str = StringLib.replaceAll(
-        str, 'src="https://code.highcharts.com/maps/', URL_REPLACEMENT
+        str,
+        'src="https://code.highcharts.com/maps/',
+        URL_REPLACEMENT
     );
     str = StringLib.replaceAll(
-        str, 'src="https://code.highcharts.com/gantt/', URL_REPLACEMENT
+        str,
+        'src="https://code.highcharts.com/gantt/',
+        URL_REPLACEMENT
     );
     str = StringLib.replaceAll(
-        str, 'src="https://code.highcharts.com/', URL_REPLACEMENT
+        str,
+        'src="https://code.highcharts.com/',
+        URL_REPLACEMENT
     );
     str = StringLib.replaceAll(
-        str, 'src="../../code/mapdata', 'src="https://code.highcharts.com/mapdata'
+        str,
+        'src="../../code/mapdata',
+        'src="https://code.highcharts.com/mapdata'
     );
 
     return str;
@@ -230,11 +232,9 @@ function convertURLToLocal(str) {
  *         Promise to keep
  */
 function distExamples() {
-
     const FS = require('fs');
 
     return new Promise((resolve, reject) => {
-
         const promises = [];
         const samplesSubfolder = {
             highcharts: {
@@ -254,27 +254,23 @@ function distExamples() {
                 title: 'Highcharts Gantt'
             }
         };
-        const template = FS
-            .readFileSync(TEMPLATE_FILE)
-            .toString();
+        const template = FS.readFileSync(TEMPLATE_FILE).toString();
 
-        Object
-            .keys(samplesSubfolder)
-            .forEach(product => {
-                promises.push(createExamples(
+        Object.keys(samplesSubfolder).forEach((product) => {
+            promises.push(
+                createExamples(
                     samplesSubfolder[product].title,
                     Path.join(
-                        SOURCE_DIRECTORY, ...samplesSubfolder[product].path
+                        SOURCE_DIRECTORY,
+                        ...samplesSubfolder[product].path
                     ),
                     Path.join(TARGET_DIRECTORY, product, 'examples'),
                     template
-                ));
-            });
+                )
+            );
+        });
 
-        Promise
-            .all(promises)
-            .then(resolve)
-            .catch(reject);
+        Promise.all(promises).then(resolve).catch(reject);
     });
 }
 

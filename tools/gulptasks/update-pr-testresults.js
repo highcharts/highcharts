@@ -9,7 +9,12 @@ const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('./lib/git');
 const { uploadFiles, getS3Object, putS3Object } = require('./lib/uploadS3');
-const { doRequest, createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
+const {
+    doRequest,
+    createPRComment,
+    updatePRComment,
+    fetchPRComments
+} = require('./lib/github');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
 const S3_REVIEWS_PATH = 'visualtests/reviews';
@@ -24,7 +29,9 @@ const DEFAULT_OPTIONS = {
     }
 };
 
-const VISUAL_TESTS_BUCKET = process.env.HIGHCHARTS_VISUAL_TESTS_BUCKET || 'staging-vis-dev.highcharts.com';
+const VISUAL_TESTS_BUCKET =
+    process.env.HIGHCHARTS_VISUAL_TESTS_BUCKET ||
+    'staging-vis-dev.highcharts.com';
 
 /**
  * Updates the status of the commit on github with the provided status in order to display it in pr.
@@ -49,7 +56,7 @@ async function postGitCommitStatusUpdate(pr, newReview) {
         commitState = 'success';
         logLib.message('No diffing samples found.');
     } else {
-        if (newReview.samples.every(sample => sample.approved)) {
+        if (newReview.samples.every((sample) => sample.approved)) {
             // on every subsequent run we don't need to re-approve same samples.
             description = 'Diffing samples are approved';
             commitState = 'success';
@@ -73,10 +80,14 @@ async function postGitCommitStatusUpdate(pr, newReview) {
                 context: 'Highcharts review tool'
             }
         });
-        logLib.message(`Github status for ${commitSha} created with ${commitState}`);
+        logLib.message(
+            `Github status for ${commitSha} created with ${commitState}`
+        );
     } catch (error) {
         // catch error as we dont wan't to terminate the gulp task if given failure of status update.
-        logLib.warn(`Failed to create github status for sha ${commitSha}: ${error.message}`);
+        logLib.warn(
+            `Failed to create github status for sha ${commitSha}: ${error.message}`
+        );
     }
     return response;
 }
@@ -115,15 +126,24 @@ function completeTask(message) {
  */
 function resolveGitFileStatus(changeCharacter) {
     switch (changeCharacter) {
-        case 'M': return 'Modified';
-        case 'A': return 'Added';
-        case 'D': return 'Deleted';
-        case 'R': return 'Renamed';
-        case 'C': return 'Copied';
-        case 'U': return 'Unmerged';
-        case 'T': return 'Changed file type';
-        case 'X': return 'Unknown';
-        default: return '?';
+        case 'M':
+            return 'Modified';
+        case 'A':
+            return 'Added';
+        case 'D':
+            return 'Deleted';
+        case 'R':
+            return 'Renamed';
+        case 'C':
+            return 'Copied';
+        case 'U':
+            return 'Unmerged';
+        case 'T':
+            return 'Changed file type';
+        case 'X':
+            return 'Unknown';
+        default:
+            return '?';
     }
 }
 
@@ -144,14 +164,25 @@ function createMarkdownLink(link, message = 'link') {
 function createTemplateForChangedSamples() {
     let gitChangedFiles = getFilesChanged();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
-    gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
+    gitChangedFiles = gitChangedFiles
+        .split('\n')
+        .filter(
+            (line) =>
+                line &&
+                /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line)
+        );
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
-        samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
-            gitChangedFiles.map(line => {
-                const parts = line.split('\t');
-                return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
-            }).join('\n');
+        samplesChangedTemplate =
+            '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
+            gitChangedFiles
+                .map((line) => {
+                    const parts = line.split('\t');
+                    return `|  ${resolveGitFileStatus(parts[0])} | ${
+                        parts[1]
+                    } |`;
+                })
+                .join('\n');
         samplesChangedTemplate += '\n\n</p>\n</details>\n';
     }
     return samplesChangedTemplate;
@@ -160,11 +191,14 @@ function createTemplateForChangedSamples() {
 function createPRCommentBody(newReview, prNumber) {
     let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
     if (newReview.samples.length > 0) {
-        if (newReview.samples.every(sample => sample.approved)) {
+        if (newReview.samples.every((sample) => sample.approved)) {
             commentTemplate = `${DEFAULT_COMMENT_TITLE} - All diffing samples already approved`;
         } else {
-            commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
-                `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
+            commentTemplate =
+                `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
+                `Found **${
+                    newReview.samples.length
+                }** diffing sample(s). ${createMarkdownLink(
                     'https://vrevs.highsoft.com/pr/' + prNumber + '/review',
                     'Please review the differences.'
                 )}\n`;
@@ -187,8 +221,15 @@ async function fetchExistingReview(pr) {
     let existingReview;
     try {
         // if we have and existing review we want to keep certains parts of it.
-        existingReview = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${S3_PULLREQUEST_PATH}/${pr}/review-pr-${pr}.json`));
-        logLib.message('Found existing review for pr: ' + existingReview.meta.pr);
+        existingReview = await JSON.parse(
+            await getS3Object(
+                VISUAL_TESTS_BUCKET,
+                `${S3_PULLREQUEST_PATH}/${pr}/review-pr-${pr}.json`
+            )
+        );
+        logLib.message(
+            'Found existing review for pr: ' + existingReview.meta.pr
+        );
     } catch (err) {
         logLib.message('No existing review found or error occured: ' + err);
     }
@@ -199,9 +240,16 @@ async function fetchAllReviewsForVersion(version) {
     let alLReviews;
     try {
         // if we have and existing review we want to keep certains parts of it.
-        alLReviews = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${S3_REVIEWS_PATH}/all-reviews-${version}.json`));
+        alLReviews = await JSON.parse(
+            await getS3Object(
+                VISUAL_TESTS_BUCKET,
+                `${S3_REVIEWS_PATH}/all-reviews-${version}.json`
+            )
+        );
     } catch (err) {
-        logLib.message(`Couldn't fetch all reviews for version ${version}` + err);
+        logLib.message(
+            `Couldn't fetch all reviews for version ${version}` + err
+        );
     }
     return alLReviews;
 }
@@ -217,19 +265,34 @@ async function fetchAllReviewsForVersion(version) {
 async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
     const allReviews = await fetchAllReviewsForVersion(highchartsVersion);
     if (allReviews && allReviews.samples) {
-        const approvedSamplesToRemove = Object.keys(allReviews.samples).filter(sampleName => (
-            // only keep approvals for this pr that are still having a diff > 0 in the test results.
-            allReviews.samples[sampleName].some(s => s.pr === pr && !diffingSampleEntries.some(e => e[0] === sampleName))
-        ));
+        const approvedSamplesToRemove = Object.keys(allReviews.samples).filter(
+            (sampleName) =>
+                // only keep approvals for this pr that are still having a diff > 0 in the test results.
+                allReviews.samples[sampleName].some(
+                    (s) =>
+                        s.pr === pr &&
+                        !diffingSampleEntries.some((e) => e[0] === sampleName)
+                )
+        );
 
-        approvedSamplesToRemove.forEach(s => {
-            logLib.message(`Removing previously approved sample ${s} for current pr #${pr} as it is no longer different.`);
-            allReviews.samples[s] = allReviews.samples[s].filter(approvedSample => approvedSample.pr !== pr);
+        approvedSamplesToRemove.forEach((s) => {
+            logLib.message(
+                `Removing previously approved sample ${s} for current pr #${pr} as it is no longer different.`
+            );
+            allReviews.samples[s] = allReviews.samples[s].filter(
+                (approvedSample) => approvedSample.pr !== pr
+            );
         });
 
-        if (approvedSamplesToRemove && approvedSamplesToRemove.length && !argv.dryrun) {
+        if (
+            approvedSamplesToRemove &&
+            approvedSamplesToRemove.length &&
+            !argv.dryrun
+        ) {
             const key = `${S3_REVIEWS_PATH}/all-reviews-${highchartsVersion}.json`;
-            return putS3Object(key, allReviews, { Bucket: VISUAL_TESTS_BUCKET });
+            return putS3Object(key, allReviews, {
+                Bucket: VISUAL_TESTS_BUCKET
+            });
         }
     }
     return Promise.resolve(allReviews);
@@ -242,29 +305,39 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
  * that the diffing value is the same.
  */
 async function createPRReviewFile(testResults, pr) {
-    const samplesWithDiffs = Object.entries(testResults).filter(
-        entry => entry[0] !== 'meta' && !isNaN(entry[1]) && entry[1] > 0
-    ) || [];
+    const samplesWithDiffs =
+        Object.entries(testResults).filter(
+            (entry) => entry[0] !== 'meta' && !isNaN(entry[1]) && entry[1] > 0
+        ) || [];
 
     let existingApprovedSamples = [];
     const existingReview = await fetchExistingReview(pr);
     if (existingReview && existingReview.samples) {
         // this is not first run, so get which samples are already approved
-        existingApprovedSamples = existingReview.samples.filter(sample => sample.approved);
+        existingApprovedSamples = existingReview.samples.filter(
+            (sample) => sample.approved
+        );
     }
 
-    const samples = samplesWithDiffs.map(([key, value]) => {
-        const alreadyApprovedSample = existingApprovedSamples.find(s => s.name === key && s.diff === value);
-        if (alreadyApprovedSample) {
-            logLib.message(`${alreadyApprovedSample.name} has already been approved for the diffing value` +
-                alreadyApprovedSample.diff);
-        }
-        return alreadyApprovedSample || {
-            name: key,
-            comment: '',
-            diff: value
-        };
-    }) || [];
+    const samples =
+        samplesWithDiffs.map(([key, value]) => {
+            const alreadyApprovedSample = existingApprovedSamples.find(
+                (s) => s.name === key && s.diff === value
+            );
+            if (alreadyApprovedSample) {
+                logLib.message(
+                    `${alreadyApprovedSample.name} has already been approved for the diffing value` +
+                        alreadyApprovedSample.diff
+                );
+            }
+            return (
+                alreadyApprovedSample || {
+                    name: key,
+                    comment: '',
+                    diff: value
+                }
+            );
+        }) || [];
 
     const review = {
         meta: {
@@ -274,7 +347,10 @@ async function createPRReviewFile(testResults, pr) {
         samples
     };
 
-    fs.writeFileSync(`test/review-pr-${pr}.json`, JSON.stringify(review, null, ' '));
+    fs.writeFileSync(
+        `test/review-pr-${pr}.json`,
+        JSON.stringify(review, null, ' ')
+    );
     return review;
 }
 
@@ -289,7 +365,11 @@ async function createPRReviewFile(testResults, pr) {
  * @param {boolean} includeReview file
  * @return {object|undefined} result of upload or undefined
  */
-async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
+async function uploadVisualTestFiles(
+    diffingSamples = [],
+    pr,
+    includeReview = true
+) {
     let result;
     if (diffingSamples.length > 0) {
         const files = diffingSamples.reduce((resultingFiles, sample) => {
@@ -330,10 +410,12 @@ async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = tr
                     name: `image diff on PR #${pr}`
                 });
             } catch (err) {
-                logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +
-                    'Original error: ' + err.message);
+                logLib.failure(
+                    'One or more files were not uploaded. Continuing to let task finish gracefully. ' +
+                        'Original error: ' +
+                        err.message
+                );
             }
-
         } else {
             logLib.message('Dry run - Skipping upload of files.');
         }
@@ -357,11 +439,15 @@ async function commentOnPR() {
     } = argv;
 
     if (!token && !process.env.GITHUB_TOKEN) {
-        return completeTask('No --token or GITHUB_TOKEN env var specified for github access.');
+        return completeTask(
+            'No --token or GITHUB_TOKEN env var specified for github access.'
+        );
     }
 
     if (!pr || !user) {
-        return completeTask('No --pr (pull request number) specified, or missing --user (github username)');
+        return completeTask(
+            'No --pr (pull request number) specified, or missing --user (github username)'
+        );
     }
     const prNumber = parseInt(pr, 10);
     const testResults = readTestResultsFile(resultsPath);
@@ -371,13 +457,17 @@ async function commentOnPR() {
         return completeTask(errMsg);
     }
 
-    const diffingSamples = Object.entries(testResults).filter(entry => {
+    const diffingSamples = Object.entries(testResults).filter((entry) => {
         const value = entry[1];
         return typeof value === 'number' && value > 0;
     });
 
     const newReview = await createPRReviewFile(testResults, prNumber);
-    await uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
+    await uploadVisualTestFiles(
+        diffingSamples,
+        prNumber,
+        newReview.samples.length > 0
+    );
     await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
     await postGitCommitStatusUpdate(pr, newReview);
 
@@ -388,7 +478,10 @@ async function commentOnPR() {
     try {
         if (!alwaysAdd && existingComments.length > 0) {
             logLib.message(`Updating existing comment for #${pr}`);
-            return await updatePRComment(existingComments[0].id, commentTemplate);
+            return await updatePRComment(
+                existingComments[0].id,
+                commentTemplate
+            );
         }
         logLib.message(`Creating new comment for #${pr}`);
         return await createPRComment(pr, commentTemplate);
@@ -397,16 +490,20 @@ async function commentOnPR() {
     }
 }
 
-commentOnPR.description = 'Updates/creates reviews for pr and comments any diffs from test/visual-test-results.json';
+commentOnPR.description =
+    'Updates/creates reviews for pr and comments any diffs from test/visual-test-results.json';
 commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--user': 'Github user',
     '--token': 'Github token (can also be specified with GITHUB_TOKEN env var)',
     '--contains-text': 'Filter text used to find PR comment to overwrite',
-    '--always-add': 'If present any old test results comment won\'t be overwritten',
+    '--always-add':
+        "If present any old test results comment won't be overwritten",
     '--fail-silently': 'Will always return exitCode 0 (success)',
-    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. ',
-    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+    '--dryrun':
+        'Just runs through the task for testing purposes without doing external requests. ',
+    '--profile':
+        'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)'
 };
 

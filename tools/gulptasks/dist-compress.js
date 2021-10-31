@@ -12,10 +12,8 @@ const zip = require('gulp-zip');
 const stream = require('stream');
 const util = require('util');
 
-
 const DIST_DIR = 'build/dist';
 const properties = require('../../build-properties.json');
-
 
 /**
  * Creates zip files for highcharts, highstock, highmaps, highcharts-gantt.
@@ -25,7 +23,7 @@ const properties = require('../../build-properties.json');
 function distZip() {
     const { products, version } = properties;
 
-    const zipTasks = Object.keys(products).map(key => {
+    const zipTasks = Object.keys(products).map((key) => {
         const product = products[key];
         const name = key;
 
@@ -33,12 +31,18 @@ function distZip() {
 
         const dirToZip = `${DIST_DIR}${distpath}`;
         if (!fs.existsSync(dirToZip)) {
-            return Promise.reject(new Error(`Missing folder: ${dirToZip}. Has the other dist tasks been run in advance?`));
+            return Promise.reject(
+                new Error(
+                    `Missing folder: ${dirToZip}. Has the other dist tasks been run in advance?`
+                )
+            );
         }
 
         const zipFileName = `${name.replace(/ /g, '-')}-${version}.zip`;
         const excludedDir = `!${dirToZip}/js-gzip/**`;
-        log.message(`Zipping file: ${DIST_DIR}/${zipFileName}, excluding sub-directory ${excludedDir}`);
+        log.message(
+            `Zipping file: ${DIST_DIR}/${zipFileName}, excluding sub-directory ${excludedDir}`
+        );
 
         return new Promise((resolve, reject) => {
             gulp.src([dirToZip + '/**', excludedDir])
@@ -62,7 +66,7 @@ function distGZip() {
     const { products } = properties;
 
     const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
-    gzipDirs.forEach(dir => {
+    gzipDirs.forEach((dir) => {
         log.message('Deleting dir ', dir);
         fs.removeSync(dir);
     });
@@ -70,35 +74,31 @@ function distGZip() {
     log.starting('GZipping files..');
 
     let streams = [];
-    Object.keys(products).forEach(key => {
+    Object.keys(products).forEach((key) => {
         const dirToZip = `${DIST_DIR}${products[key].distpath}/code`;
         const files = glob.sync(`${dirToZip}/**/*+(.js|.css|.map)`);
 
         log.message(`Gzipping files for ${key}... `);
-        streams = files.map(filename => {
+        streams = files.map((filename) => {
             if (yargs.argv.verbose) {
                 log.message('Processing file: ', filename);
             }
             const fileContents = fs.createReadStream(filename);
             const destination = `${filename.replace('/code/', '/js-gzip/')}`;
-            fs.mkdirSync(destination.substring(0, destination.lastIndexOf('/') + 1), { recursive: true });
+            fs.mkdirSync(
+                destination.substring(0, destination.lastIndexOf('/') + 1),
+                { recursive: true }
+            );
 
             const gzip = zlib.createGzip();
             const writeStream = fs.createWriteStream(destination);
             const pipeline = util.promisify(stream.pipeline);
 
-            return pipeline(
-                fileContents,
-                gzip,
-                writeStream
-            );
+            return pipeline(fileContents, gzip, writeStream);
         });
     });
 
     return Promise.all(streams);
-
-
 }
-
 
 gulp.task('dist-compress', gulp.series(distZip, distGZip));

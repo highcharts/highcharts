@@ -18,14 +18,10 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function jsDocDTS() {
-
     const gulpLib = require('./lib/gulp');
-    const highchartsDeclarationsGenerator = require(
-        'highcharts-declarations-generator'
-    );
+    const highchartsDeclarationsGenerator = require('highcharts-declarations-generator');
 
     return new Promise((resolve, reject) => {
-
         gulpLib
             .requires([], ['jsdoc-namespace', 'jsdoc-options'])
             .then(() => highchartsDeclarationsGenerator.task())

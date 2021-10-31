@@ -21,12 +21,12 @@ const defaultInput = path.join(__dirname, '/../', 'tree.json');
 /*
  * Flatten a tree to {'path.to.option'} style
  */
-const flatten = input => {
+const flatten = (input) => {
     const res = {};
 
     /*
-         * Visit a single node
-         */
+     * Visit a single node
+     */
     const visit = (node, name, pname) => {
         const index = (pname && pname.length ? pname + '.' : '') + name;
 
@@ -36,7 +36,7 @@ const flatten = input => {
 
         res[index] = node;
 
-        Object.keys(node.children || {}).forEach(childName => {
+        Object.keys(node.children || {}).forEach((childName) => {
             visit(
                 node.children[childName],
                 childName,
@@ -45,7 +45,7 @@ const flatten = input => {
         });
     };
 
-    Object.keys(input).forEach(id => {
+    Object.keys(input).forEach((id) => {
         if (id !== '_meta') {
             visit(input[id], id, '');
         }
@@ -136,7 +136,8 @@ const compare = (comparePath, inputPath) => {
     };
 
     // Disable the no-unused rule here so we can actually do a non-verbose mode..
-    const augmented = (id, ...things) => { // eslint-disable-line no-unused-vars
+    const augmented = (/* id, ...things */) => {
+        // eslint-disable-line no-unused-vars
         // console.log(
         //  'Augmented'.gray,
         //  (id + ':').gray,
@@ -146,7 +147,7 @@ const compare = (comparePath, inputPath) => {
         ++report.augmented;
     };
 
-    Object.keys(compareTree.nodes).forEach(id => {
+    Object.keys(compareTree.nodes).forEach((id) => {
         const cnode = compareTree.nodes[id];
 
         if (typeof inputTree.nodes[id] === 'undefined') {
@@ -165,11 +166,21 @@ const compare = (comparePath, inputPath) => {
             tnode.doclet = tnode.doclet || {};
 
             if (cnode.doclet.type && !tnode.doclet.type) {
-                warn(cnode, tnode, id, 'reference has type, new version does not');
+                warn(
+                    cnode,
+                    tnode,
+                    id,
+                    'reference has type, new version does not'
+                );
             }
 
             if (cnode.doclet.samples && !tnode.doclet.samples) {
-                warn(cnode, tnode, id, 'reference has samples, new version does not');
+                warn(
+                    cnode,
+                    tnode,
+                    id,
+                    'reference has samples, new version does not'
+                );
             }
 
             if (
@@ -186,7 +197,10 @@ const compare = (comparePath, inputPath) => {
             }
 
             if (!cnode.doclet.description || !cnode.doclet.description.length) {
-                if (tnode.doclet.description && tnode.doclet.description.length) {
+                if (
+                    tnode.doclet.description &&
+                    tnode.doclet.description.length
+                ) {
                     augmented(id, 'got a description');
                 }
             }
@@ -217,7 +231,12 @@ const compare = (comparePath, inputPath) => {
                 Object.keys(cnode.children).length &&
                 !Object.keys(tnode.children).length
             ) {
-                warn(cnode, tnode, id, 'reference has children, new version does not');
+                warn(
+                    cnode,
+                    tnode,
+                    id,
+                    'reference has children, new version does not'
+                );
             }
         }
     });
@@ -248,10 +267,12 @@ const compare = (comparePath, inputPath) => {
                 'All options are there, nodes are ok, and',
                 'the reference should be replaced with the new API!',
                 '\n    ',
-                (report.inputCount +
+                (
+                    report.inputCount +
                     ' options in input, ' +
                     report.compareCount +
-                    ' options in reference').gray
+                    ' options in reference'
+                ).gray
             );
 
             return true;

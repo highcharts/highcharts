@@ -15,7 +15,6 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function task() {
-
     const codeTool = require('../code');
     const fs = require('fs');
     const fsLib = require('./lib/fs');
@@ -23,9 +22,7 @@ function task() {
     const verbose = process.argv.includes('--verbose');
 
     return new Promise((resolve, reject) => {
-
         try {
-
             fsLib
                 .getFilePaths('code', true)
                 .filter(function (filePath) {
@@ -35,7 +32,6 @@ function task() {
                     );
                 })
                 .forEach(function (filePath) {
-
                     if (verbose) {
                         logLib.message(filePath);
                     }
@@ -49,13 +45,10 @@ function task() {
             logLib.success('Processed code sources');
 
             resolve();
-
         } catch (error) {
-
             logLib.failure('ERROR:', error);
 
             reject(error);
-
         }
     });
 }

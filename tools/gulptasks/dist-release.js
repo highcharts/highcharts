@@ -17,7 +17,6 @@ const PRODUCT_NAME = 'Highcharts';
 const releaseRepo = 'highcharts-dist';
 const pathToDistRepo = '../' + releaseRepo + '/';
 
-
 /**
  * Asks user a question, and waits for input.
  * @param {String} question to ask.
@@ -33,8 +32,8 @@ async function askUser(question) {
         output: process.stdout
     });
 
-    return new Promise(resolve => {
-        rl.question(question, input => resolve(input));
+    return new Promise((resolve) => {
+        rl.question(question, (input) => resolve(input));
     }).finally(() => rl.close());
 }
 
@@ -49,25 +48,40 @@ async function runGit(version, push = false) {
     const commands = [
         'git add --all',
         'git commit -m "v' + version + '"',
-        'git tag -a "v' + version + '" -m "Tagged ' + PRODUCT_NAME.toLowerCase() + ' version ' + version + '"',
+        'git tag -a "v' +
+            version +
+            '" -m "Tagged ' +
+            PRODUCT_NAME.toLowerCase() +
+            ' version ' +
+            version +
+            '"',
         'git push',
         'git push origin v' + version
     ];
 
     if (push) {
-        const answer = await askUser('\nAbout to run the following commands in ' + pathToDistRepo + ': \n' +
-            commands.join('\n') + '\n\n Is this ok? [Y/n]');
+        const answer = await askUser(
+            '\nAbout to run the following commands in ' +
+                pathToDistRepo +
+                ': \n' +
+                commands.join('\n') +
+                '\n\n Is this ok? [Y/n]'
+        );
         if (answer !== 'Y') {
             const message = 'Aborted before running running git commands!';
             throw new Error(message);
         }
 
-        commands.forEach(command => {
+        commands.forEach((command) => {
             log.message('Running command: ' + command);
             childProcess.execSync(command, { cwd: pathToDistRepo });
         });
     } else {
-        log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + commands.join(' &&\n') + '\n');
+        log.message(
+            '\n-----(Dryrun)------\n Would have ran the following commands:\n\n' +
+                commands.join(' &&\n') +
+                '\n'
+        );
     }
 }
 
@@ -78,26 +92,37 @@ async function runGit(version, push = false) {
  */
 async function npmPublish(push = false) {
     if (push) {
-        const answer = await askUser('\nAbout to publish to npm using \'latest\' tag. Is this ok [Y/n]?');
+        const answer = await askUser(
+            "\nAbout to publish to npm using 'latest' tag. Is this ok [Y/n]?"
+        );
         if (answer !== 'Y') {
-            const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
+            const message =
+                "Aborted before invoking 'npm publish'! Command must be run manually to complete the release.";
             throw new Error(message);
         }
         childProcess.execSync('npm publish', { cwd: pathToDistRepo });
         log.message('Successfully published to npm!');
     } else {
-        const version = childProcess.execSync('npm -v', { cwd: pathToDistRepo });
+        const version = childProcess.execSync('npm -v', {
+            cwd: pathToDistRepo
+        });
         const npmVersion = parseInt(version.toString().charAt(0), 10);
         log.message('------(Dry run)---------\n\n');
         if (npmVersion >= 6) {
             // dry-run is only available from npm version 6
-            childProcess.execSync('npm publish --dry-run', { cwd: pathToDistRepo });
+            childProcess.execSync('npm publish --dry-run', {
+                cwd: pathToDistRepo
+            });
         } else {
             log.message('Skipping npm publish. ');
         }
         log.message('-------(Dry run end)---------------');
-        log.warn(`You can clean up by running 'git reset --hard HEAD && git clean -fd' in the folder '${pathToDistRepo}'. DISCLAIMER: It will DELETE ANY UNCOMITTED AND UNTRACKED changes.`);
-        log.message('Please verify the changes in the release repo. Then run again with --push as an argument.');
+        log.warn(
+            `You can clean up by running 'git reset --hard HEAD && git clean -fd' in the folder '${pathToDistRepo}'. DISCLAIMER: It will DELETE ANY UNCOMITTED AND UNTRACKED changes.`
+        );
+        log.message(
+            'Please verify the changes in the release repo. Then run again with --push as an argument.'
+        );
     }
 }
 
@@ -110,9 +135,9 @@ async function npmPublish(push = false) {
 async function removeFilesInFolder(folder, exceptions) {
     const files = getFilesInFolder(folder, true, '');
     const promises = files
-    // Filter out files that should be kept
-        .filter(file => !exceptions.some(pattern => file.match(pattern)))
-        .map(file => removeFile(join(folder, file)));
+        // Filter out files that should be kept
+        .filter((file) => !exceptions.some((pattern) => file.match(pattern)))
+        .map((file) => removeFile(join(folder, file)));
     return Promise.all(promises);
 }
 
@@ -126,16 +151,19 @@ function updateJSONFiles(version, name) {
     log.message('Updating bower.json and package.json for ' + name + '...');
 
     ['bower', 'package'].forEach(function (file) {
-        const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
-        const json = JSON.parse(fileData);
-        json.types = (
-            json.main ?
-                json.main.replace(/\.js$/, '.d.ts') :
-                'highcharts.d.ts'
+        const fileData = fs.readFileSync(
+            '../' + releaseRepo + '/' + file + '.json'
         );
+        const json = JSON.parse(fileData);
+        json.types = json.main
+            ? json.main.replace(/\.js$/, '.d.ts')
+            : 'highcharts.d.ts';
         json.version = version;
         const outputJson = JSON.stringify(json, null, '  ');
-        fs.writeFileSync('../' + releaseRepo + '/' + file + '.json', outputJson);
+        fs.writeFileSync(
+            '../' + releaseRepo + '/' + file + '.json',
+            outputJson
+        );
     });
     log.message('Json files updated!');
 }
@@ -146,13 +174,16 @@ function updateJSONFiles(version, name) {
  */
 function copyFiles() {
     const mapFromTo = {};
-    const folders = [{
-        from: 'code',
-        to: pathToDistRepo
-    }, {
-        from: 'css',
-        to: join(pathToDistRepo, 'css')
-    }];
+    const folders = [
+        {
+            from: 'code',
+            to: pathToDistRepo
+        },
+        {
+            from: 'css',
+            to: join(pathToDistRepo, 'css')
+        }
+    ];
 
     const files = {
         'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
@@ -163,22 +194,18 @@ function copyFiles() {
     };
 
     // Copy all the files in the code folder
-    folders.forEach(folder => {
-        const {
-            from,
-            to
-        } = folder;
-        getFilesInFolder(from, true)
-            .forEach(filename => {
-                mapFromTo[join(from, filename)] = join(to, filename);
-            });
+    folders.forEach((folder) => {
+        const { from, to } = folder;
+        getFilesInFolder(from, true).forEach((filename) => {
+            mapFromTo[join(from, filename)] = join(to, filename);
+        });
     });
 
     // Add additional files to list.
     Object.assign(mapFromTo, files);
 
     // Copy all the files to release repository
-    Object.keys(mapFromTo).forEach(from => {
+    Object.keys(mapFromTo).forEach((from) => {
         const to = mapFromTo[from];
         fs.copySync(from, to);
     });
@@ -211,11 +238,17 @@ async function getProductsJs() {
  * @return {undefined}
  */
 function checkForCleanWorkingDirectory(workingDir) {
-    log.message(`Checking that ${workingDir} does not contain any uncommitted changes..`);
+    log.message(
+        `Checking that ${workingDir} does not contain any uncommitted changes..`
+    );
 
     try {
-        childProcess.execSync('git diff --name-only --exit-code', { cwd: workingDir });
-        childProcess.execSync('git diff --cached --name-only --exit-code', { cwd: workingDir });
+        childProcess.execSync('git diff --name-only --exit-code', {
+            cwd: workingDir
+        });
+        childProcess.execSync('git diff --cached --name-only --exit-code', {
+            cwd: workingDir
+        });
         log.message(`No untracked or unstaged changes found in ${workingDir}.`);
     } catch (err) {
         const message = `Your working directory ${workingDir} is not clean. Please resolve any unstaged changes and resolve any untracked changes`;
@@ -224,9 +257,13 @@ function checkForCleanWorkingDirectory(workingDir) {
     }
 
     try {
-        childProcess.execSync('git log origin/master..HEAD', { cwd: pathToDistRepo });
+        childProcess.execSync('git log origin/master..HEAD', {
+            cwd: pathToDistRepo
+        });
     } catch (error) {
-        log.warn('You have unpushed commits. Please make sure it is intended as it will be part of the release.');
+        log.warn(
+            'You have unpushed commits. Please make sure it is intended as it will be part of the release.'
+        );
     }
 }
 
@@ -237,11 +274,17 @@ function checkForCleanWorkingDirectory(workingDir) {
  * @return {Promise<void>} result
  */
 async function checkIfNotMasterBranch(repoName, workingDir) {
-    const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', { cwd: workingDir });
+    const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', {
+        cwd: workingDir
+    });
     if (branch.toString().trim() !== 'master') {
-        const answer = await askUser(`\nThe current ${repoName} branch is ${branch}. Is this correct [Y/n]?`);
+        const answer = await askUser(
+            `\nThe current ${repoName} branch is ${branch}. Is this correct [Y/n]?`
+        );
         if (answer !== 'Y') {
-            throw new Error('Aborting since current branch is not as expected.');
+            throw new Error(
+                'Aborting since current branch is not as expected.'
+            );
         }
     }
 }
@@ -254,7 +297,9 @@ function checkIfLoggedInOnNpm() {
     try {
         childProcess.execSync('npm whoami', { cwd: pathToDistRepo });
     } catch (error) {
-        throw new Error('You are not logged in on npm. Please login using npm login and try again.');
+        throw new Error(
+            'You are not logged in on npm. Please login using npm login and try again.'
+        );
     }
 }
 
@@ -274,8 +319,12 @@ async function release() {
     checkForCleanWorkingDirectory(pathToDistRepo);
     await checkIfNotMasterBranch(releaseRepo, pathToDistRepo);
 
-    log.message('Pulling latest changes from origin and rebasing against master branch.');
-    childProcess.execSync('git pull --rebase origin master', { cwd: pathToDistRepo });
+    log.message(
+        'Pulling latest changes from origin and rebasing against master branch.'
+    );
+    childProcess.execSync('git pull --rebase origin master', {
+        cwd: pathToDistRepo
+    });
 
     const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md'];
     await removeFilesInFolder(pathToDistRepo, keepFiles);
@@ -290,12 +339,14 @@ async function release() {
     return 'Success!';
 }
 
-release.description = 'Copies distribution contents to highcharts-dist repo, tags and publishes on npm (after manual approval).' +
-                        'The task assumes that highcharts-dist is already cloned in a sibling folder of this repo.';
+release.description =
+    'Copies distribution contents to highcharts-dist repo, tags and publishes on npm (after manual approval).' +
+    'The task assumes that highcharts-dist is already cloned in a sibling folder of this repo.';
 release.flags = {
-    '--push': '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
-                'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
-                'git commands and npm publish is run.',
+    '--push':
+        '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
+        'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
+        'git commands and npm publish is run.',
     '--force-yes': 'Automatically answers yes to all questions.'
 };
 

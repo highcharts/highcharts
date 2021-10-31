@@ -82,7 +82,6 @@ function response302(response, p) {
  * @return {void}
  */
 function response404(response, p) {
-
     const log = require('./lib/log');
 
     log.failure('404', p);
@@ -104,68 +103,59 @@ function response404(response, p) {
  *         Promise to keep
  */
 function jsDocServer() {
-
     const fs = require('fs');
     const http = require('http');
     const log = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         const port = 9005;
 
-        http
-            .createServer((request, response) => {
+        http.createServer((request, response) => {
+            let p = request.url;
 
-                let p = request.url;
+            if (p === '/highcharts' || p === '/' || p === '') {
+                response302(response, '/highcharts/');
+                return;
+            }
+            if (p === '/highstock') {
+                response302(response, '/highstock/');
+                return;
+            }
+            if (p === '/highmaps') {
+                response302(response, '/highmaps/');
+                return;
+            }
+            if (request.method !== 'GET') {
+                response404(response, p);
+                return;
+            }
 
-                if (p === '/highcharts' || p === '/' || p === '') {
-                    response302(response, '/highcharts/');
-                    return;
-                }
-                if (p === '/highstock') {
-                    response302(response, '/highstock/');
-                    return;
-                }
-                if (p === '/highmaps') {
-                    response302(response, '/highmaps/');
-                    return;
-                }
-                if (request.method !== 'GET') {
-                    response404(response, p);
-                    return;
-                }
+            let file = path.basename(p);
 
-                let file = path.basename(p);
+            if (p[p.length - 1] === '/') {
+                file = 'index.html';
+            } else {
+                file = path.basename(p);
+                p = path.dirname(p) + '/';
+            }
 
-                if (p[p.length - 1] === '/') {
-                    file = 'index.html';
+            let ext = path.extname(file).substr(1);
+
+            if (!MIMES[ext]) {
+                ext = 'html';
+                file += '.html';
+            }
+
+            // console.log(sourcePath + path + file);
+
+            fs.readFile(SOURCE_PATH + p + file, (error, data) => {
+                if (error) {
+                    response404(response, p + file);
                 } else {
-                    file = path.basename(p);
-                    p = path.dirname(p) + '/';
+                    response200(response, data, ext);
                 }
-
-                let ext = path.extname(file).substr(1);
-
-                if (!MIMES[ext]) {
-                    ext = 'html';
-                    file += '.html';
-                }
-
-                // console.log(sourcePath + path + file);
-
-                fs
-                    .readFile(
-                        SOURCE_PATH + p + file,
-                        (error, data) => {
-                            if (error) {
-                                response404(response, (p + file));
-                            } else {
-                                response200(response, data, ext);
-                            }
-                        }
-                    );
-            })
-            .listen(port);
+            });
+        }).listen(port);
 
         log.warn(
             'API documentation server running on http://localhost:' + port

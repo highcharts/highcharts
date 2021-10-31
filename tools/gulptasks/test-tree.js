@@ -28,13 +28,13 @@ const log = require('./lib/log.js');
  * @return {void}
  */
 function compareChildren(oldChildren, newChildren, path) {
-
-    const keys = Array.from(new Set(Object.keys(oldChildren).concat(Object.keys(newChildren))));
+    const keys = Array.from(
+        new Set(Object.keys(oldChildren).concat(Object.keys(newChildren)))
+    );
 
     let key;
 
     for (let i = 0, ie = keys.length; i < ie; ++i) {
-
         key = keys[i];
 
         compareNode(
@@ -60,7 +60,6 @@ function compareChildren(oldChildren, newChildren, path) {
  * @return {void}
  */
 function compareNode(oldNode, newNode, path) {
-
     if (!oldNode) {
         log.warn(`CREATE: ${path}`);
         return;
@@ -71,14 +70,17 @@ function compareNode(oldNode, newNode, path) {
         return;
     }
 
-    const oldDoclet = (oldNode.doclet || {});
-    const newDoclet = (newNode.doclet || {});
+    const oldDoclet = oldNode.doclet || {};
+    const newDoclet = newNode.doclet || {};
 
     if (oldDoclet.description !== newDoclet.description) {
         log.warn(`CHANGE: ${path} [description]`);
     }
 
-    if (JSON.stringify(oldDoclet.products) !== JSON.stringify(newDoclet.products)) {
+    if (
+        JSON.stringify(oldDoclet.products) !==
+        JSON.stringify(newDoclet.products)
+    ) {
         log.warn(`CHANGE: ${path} [products]`);
     }
 
@@ -86,7 +88,7 @@ function compareNode(oldNode, newNode, path) {
         log.warn(`CHANGE: ${path} [type]`);
     }
 
-    compareChildren((oldNode.children || {}), (newNode.children || {}), path);
+    compareChildren(oldNode.children || {}, newNode.children || {}, path);
 }
 
 /**
@@ -101,14 +103,11 @@ function loadNewTree() {
 
     log.message('Loading new tree.json...');
 
-    return fs
-        .readFile('tree.json')
-        .then(newTree => {
+    return fs.readFile('tree.json').then((newTree) => {
+        log.message('Parsing new tree.json...');
 
-            log.message('Parsing new tree.json...');
-
-            return JSON.parse(newTree);
-        });
+        return JSON.parse(newTree);
+    });
 }
 
 /**
@@ -125,7 +124,6 @@ function loadOldTree() {
         request.get(
             'https://api.highcharts.com/highcharts/tree.json',
             function (error, response) {
-
                 if (error) {
                     reject(error);
                     return;
@@ -136,7 +134,6 @@ function loadOldTree() {
                 resolve(JSON.parse(response.body.toString()));
             }
         );
-
     });
 }
 
@@ -153,16 +150,9 @@ function loadOldTree() {
  * Promise to keep
  */
 function testTree() {
-    return Promise
-        .all([
-            loadOldTree(),
-            loadNewTree()
-        ])
-        .then(trees => {
-            const [
-                oldTree,
-                newTree
-            ] = trees;
+    return Promise.all([loadOldTree(), loadNewTree()])
+        .then((trees) => {
+            const [oldTree, newTree] = trees;
 
             /* eslint-disable no-underscore-dangle */
             delete oldTree._meta;
@@ -173,8 +163,7 @@ function testTree() {
             compareChildren(oldTree, newTree);
             log.message('Done.');
         })
-        .catch(error => {
-
+        .catch((error) => {
             log.failure(error);
 
             return error;

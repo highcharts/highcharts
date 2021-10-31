@@ -13,17 +13,21 @@ const DEFAULT_OPTIONS = {
 };
 
 /**
-* Executes a request with the specified options
-*
-* @param {any} options to add (see node request module)
-* @return {Promise<*> | Promise | Promise} Promise to keep
-*/
+ * Executes a request with the specified options
+ *
+ * @param {any} options to add (see node request module)
+ * @return {Promise<*> | Promise | Promise} Promise to keep
+ */
 function doRequest(options = {}) {
     logLib.message(options.method + ' request to ' + options.url);
     return new Promise((resolve, reject) => {
         request(options, (error, response, data) => {
             if (error || response.statusCode >= 400) {
-                reject(error ? error : `HTTP ${response.statusCode} - ${data.message}`);
+                reject(
+                    error
+                        ? error
+                        : `HTTP ${response.statusCode} - ${data.message}`
+                );
             } else {
                 resolve(data);
             }
@@ -47,18 +51,23 @@ function fetchPRComments(pr, user, filterText) {
         doRequest({
             ...DEFAULT_OPTIONS,
             url: `https://api.github.com/repos/highcharts/highcharts/issues/${pr}/comments`
-        }).then(response => {
-            let comments = [];
-            if (response.length > 0) {
-                comments =
-                    response.filter(
-                        comment => comment.user.login === user && comment.body && comment.body.includes(filterText)
-                    );
-            }
-            resolve(comments);
         })
-            .catch(err => {
-                reject(new Error(`Failed to fetch comments for PR #${pr}.: ` + err));
+            .then((response) => {
+                let comments = [];
+                if (response.length > 0) {
+                    comments = response.filter(
+                        (comment) =>
+                            comment.user.login === user &&
+                            comment.body &&
+                            comment.body.includes(filterText)
+                    );
+                }
+                resolve(comments);
+            })
+            .catch((err) => {
+                reject(
+                    new Error(`Failed to fetch comments for PR #${pr}.: ` + err)
+                );
             });
     });
 }
@@ -83,11 +92,11 @@ function createPRComment(pr, comment) {
             method: 'POST',
             body: { body: comment }
         })
-            .then(result => {
+            .then((result) => {
                 logLib.message(`Comment created at ${result.html_url}`);
                 resolve(result);
             })
-            .catch(err => {
+            .catch((err) => {
                 const failureMsg = 'Failed to create PR comment: ' + err;
                 logLib.warn(failureMsg);
                 if (argv.failSilently) {
@@ -120,12 +129,12 @@ async function updatePRComment(commentId, newComment) {
             method: 'PATCH',
             body: { body: newComment }
         })
-            .then(response => {
+            .then((response) => {
                 logLib.message(`Comment updated at ${response.html_url}`);
 
                 resolve(response);
             })
-            .catch(err => {
+            .catch((err) => {
                 logLib.warn('Failed to update existing PR comment: ' + err);
                 reject(err);
             });

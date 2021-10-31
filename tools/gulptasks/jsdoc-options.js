@@ -24,9 +24,7 @@ const SOURCE_GLOBS = [
     'Maps/**/*',
     'Stock/**/*',
     'Series/**/*'
-].map(
-    glob => SOURCE_DIRECTORY + '/' + glob
-);
+].map((glob) => SOURCE_DIRECTORY + '/' + glob);
 
 const TARGET_DIRECTORY = path.join('build', 'api');
 
@@ -45,21 +43,18 @@ const TREE_FILE = 'tree.json';
  *         Promise to keep
  */
 function createApiDocumentation() {
-
     const apidocs = require('highcharts-documentation-generators').ApiDocs,
         argv = require('yargs').argv,
         fs = require('fs'),
         log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         log.message('Generating', TARGET_DIRECTORY + '...');
 
         const sourceJSON = JSON.parse(fs.readFileSync(TREE_FILE)),
             products = argv.products && argv.products.split(',');
 
-        apidocs(sourceJSON, TARGET_DIRECTORY, products, error => {
-
+        apidocs(sourceJSON, TARGET_DIRECTORY, products, (error) => {
             if (error) {
                 log.failure(error);
                 reject(error);
@@ -78,37 +73,35 @@ function createApiDocumentation() {
  *         Promise to keep
  */
 function createTreeJson() {
-
     const jsdoc = require('gulp-jsdoc3');
     const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         const jsDocConfig = {
             plugins: [
                 path.join(
-                    'node_modules', 'highcharts-documentation-generators',
-                    'jsdoc', 'plugins', 'highcharts.jsdoc'
+                    'node_modules',
+                    'highcharts-documentation-generators',
+                    'jsdoc',
+                    'plugins',
+                    'highcharts.jsdoc'
                 )
             ]
         };
 
         log.success('Generating', TREE_FILE + '...');
 
-        gulp
-            .src(SOURCE_GLOBS, { read: false })
-            .pipe(jsdoc(
-                jsDocConfig,
-                error => {
-                    if (error) {
-                        log.failure(error);
-                        reject(error);
-                    } else {
-                        log.success('Created', TREE_FILE);
-                        resolve();
-                    }
+        gulp.src(SOURCE_GLOBS, { read: false }).pipe(
+            jsdoc(jsDocConfig, (error) => {
+                if (error) {
+                    log.failure(error);
+                    reject(error);
+                } else {
+                    log.success('Created', TREE_FILE);
+                    resolve();
                 }
-            ));
+            })
+        );
     });
 }
 
@@ -119,11 +112,9 @@ function createTreeJson() {
  *         Promise to keep
  */
 function testTreeJson() {
-
     const fs = require('fs');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         if (!fs.existsSync(TREE_FILE)) {
             throw new Error(TREE_FILE + ' file not found.');
         }
@@ -153,11 +144,8 @@ function testTreeJson() {
  *         Promise to keep
  */
 function jsDocOptions() {
-
     return new Promise((resolve, reject) => {
-
-        Promise
-            .resolve()
+        Promise.resolve()
             .then(createTreeJson)
             .then(testTreeJson)
             .then(createApiDocumentation)

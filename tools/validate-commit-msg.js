@@ -11,11 +11,16 @@
 
 // Add validation functions here.
 const validators = [
-    msg => msg.indexOf('Fixes') >= 0 ? 'Use past tense (Fixed, not Fixes)' : 0,
-    msg => msg[0].toUpperCase() !== msg[0] ? 'First letter should be caps' : 0,
-    msg => msg.split('\n')[0].length > 72 ?
-        `First line of the commit message should not exceed 72 characters (currently ${msg.split('\n')[0].length})` :
-        0
+    (msg) =>
+        msg.indexOf('Fixes') >= 0 ? 'Use past tense (Fixed, not Fixes)' : 0,
+    (msg) =>
+        msg[0].toUpperCase() !== msg[0] ? 'First letter should be caps' : 0,
+    (msg) =>
+        msg.split('\n')[0].length > 72
+            ? `First line of the commit message should not exceed 72 characters (currently ${
+                  msg.split('\n')[0].length
+              })`
+            : 0
 ];
 
 const args = process.argv;
@@ -39,7 +44,7 @@ fs.readFile(args[2], 'utf8', (err, commitMessage) => {
     // Do validation of commitMessage
     const errors = [];
 
-    validators.forEach(fn => {
+    validators.forEach((fn) => {
         const res = fn(commitMessage);
         if (res !== 0) {
             errors.push(res);
@@ -48,7 +53,7 @@ fs.readFile(args[2], 'utf8', (err, commitMessage) => {
 
     if (errors.length) {
         console.log('Commit message does not follow spec:');
-        errors.forEach(msg => console.log('  ' + msg.red));
+        errors.forEach((msg) => console.log('  ' + msg.red));
         return process.exit(1);
     }
 

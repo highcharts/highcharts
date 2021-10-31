@@ -25,33 +25,27 @@ const PORCELAN_REGEXP = /([ACDMRU\?\! ])([ACDMRU\?\! ]) ([\.\/\w]+)/;
  *         Promise to keep with results
  */
 function getStatus() {
-
     const ChildProcess = require('child_process');
 
     return new Promise((resolve, reject) => {
-
-        ChildProcess.exec(
-            'git status --porcelain',
-            (error, stdout) => {
-
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                resolve((
-                    stdout
-                        .split('\n')
-                        .map(line => PORCELAN_REGEXP.exec(line))
-                        .filter(match => !!match)
-                        .map(match => (
-                            (new Array(...match))
-                                .slice(1)
-                                .map(column => column.trim())
-                        ))
-                ));
+        ChildProcess.exec('git status --porcelain', (error, stdout) => {
+            if (error) {
+                reject(error);
+                return;
             }
-        );
+
+            resolve(
+                stdout
+                    .split('\n')
+                    .map((line) => PORCELAN_REGEXP.exec(line))
+                    .filter((match) => !!match)
+                    .map((match) =>
+                        new Array(...match)
+                            .slice(1)
+                            .map((column) => column.trim())
+                    )
+            );
+        });
     });
 }
 
@@ -64,7 +58,9 @@ function getStatus() {
  */
 function getLatestCommitShaSync(useShortVersion = false) {
     const ChildProcess = require('child_process');
-    return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
+    return ChildProcess.execSync(
+        `git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`
+    ).toString();
 }
 
 /**
@@ -75,7 +71,11 @@ function getLatestCommitShaSync(useShortVersion = false) {
  */
 function getFilesChanged() {
     const ChildProcess = require('child_process');
-    return ChildProcess.execSync('git whatchanged --name-status --pretty="" origin..HEAD').toString() || '';
+    return (
+        ChildProcess.execSync(
+            'git whatchanged --name-status --pretty="" origin..HEAD'
+        ).toString() || ''
+    );
 }
 
 /* *

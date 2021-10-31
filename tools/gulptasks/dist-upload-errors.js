@@ -6,7 +6,6 @@ const { putS3Object } = require('./lib/uploadS3');
 const bucket = 'assets.highcharts.com';
 const errorLocation = 'errors';
 
-
 // eslint-disable-next-line require-jsdoc
 function makeHTML(errorNo, obj) {
     return `<!DOCTYPE html>
@@ -31,13 +30,15 @@ function makeHTML(errorNo, obj) {
 async function uploadErrors() {
     await Promise.all(
         Object.keys(errors)
-            .filter(key => key !== 'meta')
-            .map(err => putS3Object(`${errorLocation}/${err}/index.html`, null, {
-                Bucket: bucket,
-                Body: makeHTML(err, errors[err]),
-                ContentType: 'text/html; charset=utf-8'
-            }))
-    ).catch(error => {
+            .filter((key) => key !== 'meta')
+            .map((err) =>
+                putS3Object(`${errorLocation}/${err}/index.html`, null, {
+                    Bucket: bucket,
+                    Body: makeHTML(err, errors[err]),
+                    ContentType: 'text/html; charset=utf-8'
+                })
+            )
+    ).catch((error) => {
         throw error;
     });
     log.success('Finished uploading errors');

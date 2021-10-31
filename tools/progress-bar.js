@@ -8,26 +8,33 @@ const ProgressBar = function (user) {
         const length = options.length;
         const percentage = options.count / options.total;
         const chars = Math.floor(percentage * length);
-        return options.complete.repeat(chars) + options.incomplete.repeat(length - chars);
+        return (
+            options.complete.repeat(chars) +
+            options.incomplete.repeat(length - chars)
+        );
     };
     const getMsg = (options) => {
         const protectedKeys = ['message', 'bar'];
-        const reduceFn = (msg, key) => (
-            protectedKeys.includes(key) ?
-            msg :
-            msg.replace(`:${key}`, options[key])
+        const reduceFn = (msg, key) =>
+            protectedKeys.includes(key)
+                ? msg
+                : msg.replace(`:${key}`, options[key]);
+        return Object.keys(options).reduce(
+            reduceFn,
+            options.message.replace(':bar', getBar(options))
         );
-        return Object.keys(options)
-            .reduce(reduceFn, options.message.replace(':bar', getBar(options)));
     };
-    const options = Object.assign({
-        count: 0,
-        complete: '=',
-        incomplete: '-',
-        length: 30,
-        message: '[:bar] - :count of :total',
-        total: 100
-    }, user);
+    const options = Object.assign(
+        {
+            count: 0,
+            complete: '=',
+            incomplete: '-',
+            length: 30,
+            message: '[:bar] - :count of :total',
+            total: 100
+        },
+        user
+    );
     this.render = () => {
         logUpdate(getMsg(options));
     };

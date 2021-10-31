@@ -41,21 +41,18 @@ const IGNORE_GLOBS = [
  *         Promise to keep
  */
 function task() {
-
     const eslint = require('eslint');
     const log = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         const cli = new eslint.CLIEngine({
             fix: argv.fix,
             ignorePattern: IGNORE_GLOBS
         });
-        const globs = (
-            (argv.p || argv.path) ?
-                (argv.p || argv.path).split(',') :
-                DEFAULT_GLOBS
-        );
+        const globs =
+            argv.p || argv.path
+                ? (argv.p || argv.path).split(',')
+                : DEFAULT_GLOBS;
 
         log.message('Linting [', globs.join(', '), ']...');
 

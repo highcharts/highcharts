@@ -23,12 +23,10 @@ const DEBUG_TARGET = 'tree-debug.json';
  *         Promise to keep
  */
 function task() {
-
     const generator = require('highcharts-documentation-generators').TypeScript;
     const logLib = require('./lib/log');
 
-    return Promise
-        .resolve()
+    return Promise.resolve()
         .then(() => generator.Project.debug('ts', DEBUG_TARGET))
         .then(logLib.success)
         .catch(logLib.failure);

@@ -10,9 +10,7 @@ const gulp = require('gulp');
  *
  * */
 
-const SOURCE_GLOBS = [
-    'ts/**/*'
-];
+const SOURCE_GLOBS = ['ts/**/*'];
 
 /* *
  *
@@ -26,19 +24,14 @@ const SOURCE_GLOBS = [
  * @return {void}
  */
 function task() {
-
     const log = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         require('./tsdoc.js');
 
         const watchProcess = gulp.watch(SOURCE_GLOBS, gulp.task('tsdoc'));
 
-        watchProcess.on(
-            'change',
-            filePath => log.warn('Modified', filePath)
-        );
+        watchProcess.on('change', (filePath) => log.warn('Modified', filePath));
 
         log.warn('Watching', SOURCE_GLOBS[0] + '...');
 

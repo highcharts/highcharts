@@ -2,12 +2,14 @@
 const { getBuildScripts } = require('./build.js');
 const { compile } = require('./compile.js');
 const { sync: gzipSize } = require('gzip-size');
-const { getFile, writeFilePromise: writeFile } =
-    require('highcharts-assembler/src/utilities.js');
+const {
+    getFile,
+    writeFilePromise: writeFile
+} = require('highcharts-assembler/src/utilities.js');
 const { join, resolve } = require('path');
 
 // TODO: write JSDoc
-const log = x => {
+const log = (x) => {
     console.log(x); // eslint-disable-line no-console
 };
 
@@ -15,32 +17,26 @@ const log = x => {
 const pad = (x, length) => x.padEnd(length, ' ');
 
 // TODO: write JSDoc
-const getMaxStringLength = arr => arr
-    .reduce((max, str) => ((max > str.length) ? max : str.length), 0);
+const getMaxStringLength = (arr) =>
+    arr.reduce((max, str) => (max > str.length ? max : str.length), 0);
 
 // TODO: write JSDoc
-const formatColumn = (rows, length) => rows
-    .map(str => `| ${pad(str, length)} `);
+const formatColumn = (rows, length) =>
+    rows.map((str) => `| ${pad(str, length)} `);
 
 // TODO: write JSDoc
-const formatColumns = obj => {
+const formatColumns = (obj) => {
     const headers = Object.keys(obj);
-    headers.forEach(header => {
+    headers.forEach((header) => {
         const length = getMaxStringLength(obj[header]);
         const head = [header, '-'.repeat(length)];
-        obj[header] = formatColumn(
-            head.concat(obj[header]),
-            length
-        );
+        obj[header] = formatColumn(head.concat(obj[header]), length);
     });
 
     const length = obj[headers[0]].length;
-    const rows = Array.from({ length })
-        .map((_, i) => (
-            headers
-                .map(header => obj[header][i])
-                .join('')
-        ) + ' |');
+    const rows = Array.from({ length }).map(
+        (_, i) => headers.map((header) => obj[header][i]).join('') + ' |'
+    );
     rows.push('-'.repeat(rows[0].length));
     return rows;
 };
@@ -53,21 +49,23 @@ const formatColumns = obj => {
  * @param {object} newFileSizes The map from filename to size for the new files.
  * @return {object} The map
  */
-const getNewOldDiff = (key, oldFileSizes, newFileSizes) => Object
-    .keys(oldFileSizes)
-    .reduce((obj, filename) => {
-        const N = newFileSizes[filename][key];
-        const O = oldFileSizes[filename][key];
-        const D = N - O;
-        obj.New.push(N + ' B');
-        obj.Old.push(O + ' B');
-        obj.Diff.push(D + ' B');
-        return obj;
-    }, {
-        New: [],
-        Old: [],
-        Diff: []
-    });
+const getNewOldDiff = (key, oldFileSizes, newFileSizes) =>
+    Object.keys(oldFileSizes).reduce(
+        (obj, filename) => {
+            const N = newFileSizes[filename][key];
+            const O = oldFileSizes[filename][key];
+            const D = N - O;
+            obj.New.push(N + ' B');
+            obj.Old.push(O + ' B');
+            obj.Diff.push(D + ' B');
+            return obj;
+        },
+        {
+            New: [],
+            Old: [],
+            Diff: []
+        }
+    );
 
 const getCompareFileSizeTable = (pathOld, pathNew, out) => {
     const oldObj = require(resolve(pathOld));
@@ -98,8 +96,8 @@ const getFileSizes = (files, out) => {
     };
 
     // Finds
-    const getSizeOfSourceCompiledAndGzip = filenames => filenames.reduce(
-        (obj, filename) => {
+    const getSizeOfSourceCompiledAndGzip = (filenames) =>
+        filenames.reduce((obj, filename) => {
             const compileName = filename.replace('.src.js', '.js');
             const compiled = getFile(join(sourceFolder, compileName));
             obj[filename] = {
@@ -108,15 +106,13 @@ const getFileSizes = (files, out) => {
                 compiled: compiled.length
             };
             return obj;
-        },
-        {}
-    );
+        }, {});
 
     return Promise.resolve()
         .then(getBuildScripts({ files }).fnFirstBuild)
         .then(() => compile(files, sourceFolder))
         .then(() => getSizeOfSourceCompiledAndGzip(files))
-        .then(result => outputResult(result, out));
+        .then((result) => outputResult(result, out));
 };
 
 module.exports = {

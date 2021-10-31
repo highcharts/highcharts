@@ -14,10 +14,10 @@ const readFile = promisify(fs.readFile);
 
 // Constants
 const { argv } = process;
-const PORT = Number(argv[(argv.indexOf('--port') + 1)]) || 8080;
+const PORT = Number(argv[argv.indexOf('--port') + 1]) || 8080;
 const BASE = `http://localhost:${PORT}`;
 const PRODUCT = ['highcharts', 'highstock', 'highmaps', 'gantt'].find(
-    product => {
+    (product) => {
         try {
             fs.statSync(resolve(__dirname, product));
             return true;
@@ -40,23 +40,23 @@ function log(str) {
 }
 
 function fileExists(path) {
-    return stat(path)
-        .then(stats => (stats.isFile() ?
-            path :
-            Promise.reject(new Error(`no such file ${path}`))
-        ));
+    return stat(path).then((stats) =>
+        stats.isFile()
+            ? path
+            : Promise.reject(new Error(`no such file ${path}`))
+    );
 }
 
 function get404Handler(response) {
-    return e => {
+    return (e) => {
         response.writeHead(404, {});
         response.end(`404: ${e.message}`, 'utf-8');
     };
 }
 
 function get200Handler(response) {
-    return path => readFile(path)
-        .then(data => {
+    return (path) =>
+        readFile(path).then((data) => {
             const { ext } = parse(path);
             response.writeHead(200, {
                 'Content-type': MIME_TYPE[ext] || 'text/plain'
@@ -74,7 +74,7 @@ function getRewriteHandler(response) {
         '/highstock': '/highstock/',
         '/maps': '/maps/'
     };
-    return url => {
+    return (url) => {
         const rewrite = rewrites[url];
         if (rewrite) {
             response.writeHead(301, {
@@ -98,11 +98,9 @@ http.createServer((request, response) => {
         const filepath = resolve(
             __dirname,
             `.${url}${!isDirectory && !MIME_TYPE[ext] ? '.html' : ''}`,
-            (isDirectory ? 'index.html' : '')
+            isDirectory ? 'index.html' : ''
         );
-        return fileExists(filepath)
-            .then(handle200)
-            .catch(handle404);
+        return fileExists(filepath).then(handle200).catch(handle404);
     }
     return Promise.resolve();
 }).listen(PORT);

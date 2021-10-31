@@ -36,8 +36,10 @@ function failure(...text) {
  */
 function format(text, color) {
     return (
-        '[' + Colors.gray((new Date()).toTimeString().substr(0, 8)) + '] ' +
-         (color ? Colors[color || ''](text) : text)
+        '[' +
+        Colors.gray(new Date().toTimeString().substr(0, 8)) +
+        '] ' +
+        (color ? Colors[color || ''](text) : text)
     );
 }
 
@@ -53,8 +55,7 @@ function format(text, color) {
  * @return {void}
  */
 function finished(text, startTime) {
-
-    const endTime = (new Date()).getTime();
+    const endTime = new Date().getTime();
 
     delete startTimeDictionary[text];
 
@@ -64,8 +65,7 @@ function finished(text, startTime) {
         after = ' after ' + Colors.magenta(Time.scale(endTime - startTime));
     }
 
-    console.info(format('Finished \'' + Colors.cyan(text) + '\'' + after));
-
+    console.info(format("Finished '" + Colors.cyan(text) + "'" + after));
 }
 
 /**
@@ -90,13 +90,14 @@ function message(...text) {
  * @return {void}
  */
 function say(text) {
-
     try {
         switch (process.platform) {
             default:
                 break;
             case 'darwin':
-                ChildProcess.execSync('say -v Alex "[[volm 0.5]]' + text.replace(/"/g, '') + '"');
+                ChildProcess.execSync(
+                    'say -v Alex "[[volm 0.5]]' + text.replace(/"/g, '') + '"'
+                );
                 break;
             case 'win32':
                 ChildProcess.execSync(
@@ -119,10 +120,9 @@ function say(text) {
  *         Start time
  */
 function starting(text) {
+    const startTime = new Date().getTime();
 
-    const startTime = (new Date()).getTime();
-
-    console.info(format('Starting \'' + Colors.cyan(text) + '\'...'));
+    console.info(format("Starting '" + Colors.cyan(text) + "'..."));
 
     return startTime;
 }

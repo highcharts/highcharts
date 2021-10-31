@@ -26,18 +26,18 @@ function getDownloadTask(wrapper) {
         case 'android':
             return process.exec(
                 'git clone --depth 1 https://github.com/highcharts/highcharts-android-dev.git && ' +
-                'rm -rf build/api/android && ' +
-                'mkdir -p build/api/android && ' +
-                'mv highcharts-android-dev/JavaDoc build/api/android/highcharts && ' +
-                'rm -rf highcharts-android-dev'
+                    'rm -rf build/api/android && ' +
+                    'mkdir -p build/api/android && ' +
+                    'mv highcharts-android-dev/JavaDoc build/api/android/highcharts && ' +
+                    'rm -rf highcharts-android-dev'
             );
         case 'ios':
             return process.exec(
                 'git clone --depth 1 https://github.com/highcharts/highcharts-ios-dev.git && ' +
-                'rm -rf build/api/ios && ' +
-                'mkdir -p build/api/ios && ' +
-                'mv highcharts-ios-dev/api build/api/ios/highcharts && ' +
-                'rm -rf highcharts-ios-dev'
+                    'rm -rf build/api/ios && ' +
+                    'mkdir -p build/api/ios && ' +
+                    'mv highcharts-ios-dev/api build/api/ios/highcharts && ' +
+                    'rm -rf highcharts-ios-dev'
             );
         default:
             return Promise.reject(new Error(`Wrapper ${wrapper} not found.`));
@@ -60,10 +60,12 @@ function jsdocWrappers() {
 
     if (argv.helpme) {
         // eslint-disable-next-line no-console
-        console.log([
-            '--helpme   This help message',
-            '--wrappers [name] Download only named wrappers (comma separated).'
-        ].join('\n'));
+        console.log(
+            [
+                '--helpme   This help message',
+                '--wrappers [name] Download only named wrappers (comma separated).'
+            ].join('\n')
+        );
         return Promise.resolve();
     }
 
@@ -71,13 +73,14 @@ function jsdocWrappers() {
         promises.push(getDownloadTask(wrappers[i]));
     }
 
-    return Promise
-        .resolve()
+    return Promise.resolve()
         .then(() => process.exec('mkdir -p build/api'))
         .then(() => log.warn('Downloading', 'Wrapper documentation...'))
         .then(() => Promise.all(promises))
-        .then(() => log.warn('Done. Upload with gulp task "upload-wrapper-apidocs".'))
-        .catch(e => log.error(e));
+        .then(() =>
+            log.warn('Done. Upload with gulp task "upload-wrapper-apidocs".')
+        )
+        .catch((e) => log.error(e));
 }
 
 gulp.task('jsdoc-wrappers', jsdocWrappers);

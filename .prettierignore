@@ -6,4 +6,7 @@ code
 node_modules
 samples/.eslintrc
 samples/static
+tools/ant-contrib-0.6-bin
+tools/apache-ant
+tools/google-closure-compiler
 vendor

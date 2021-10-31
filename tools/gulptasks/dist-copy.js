@@ -44,9 +44,7 @@ const CODE_FILTER = {
         ['indicators'],
         ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'map.']
-    ].map(
-        filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    ),
+    ].map((filePath) => Path.join(CODE_DIRECTORY, ...filePath)),
     highstock: [
         ['highcharts.'],
         ['highcharts-gantt.'],
@@ -69,9 +67,7 @@ const CODE_FILTER = {
         ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
         ['modules', 'map.']
-    ].map(
-        filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    ),
+    ].map((filePath) => Path.join(CODE_DIRECTORY, ...filePath)),
     highmaps: [
         ['highcharts-gantt.'],
         ['highstock.'],
@@ -97,9 +93,7 @@ const CODE_FILTER = {
         ['modules', 'gantt.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.']
-    ].map(
-        filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    ),
+    ].map((filePath) => Path.join(CODE_DIRECTORY, ...filePath)),
     gantt: [
         ['highcharts-3d.'],
         ['highcharts-more.'],
@@ -131,9 +125,7 @@ const CODE_FILTER = {
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.'],
         ['modules', 'stock.']
-    ].map(
-        filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    )
+    ].map((filePath) => Path.join(CODE_DIRECTORY, ...filePath))
 };
 
 /**
@@ -164,13 +156,8 @@ const VENDOR_DIRECTORY = 'vendor';
 /**
  * Files that should be copied.
  */
-const VENDOR_FILTER = [
-    'canvg',
-    'jspdf',
-    'rgbcolor',
-    'svg2pdf'
-].map(
-    filePath => Path.join(VENDOR_DIRECTORY, filePath + '.')
+const VENDOR_FILTER = ['canvg', 'jspdf', 'rgbcolor', 'svg2pdf'].map(
+    (filePath) => Path.join(VENDOR_DIRECTORY, filePath + '.')
 );
 
 /* *
@@ -184,33 +171,28 @@ const VENDOR_FILTER = [
  *         Promise to keep
  */
 function distCopy() {
-
     const FsLib = require('./lib/fs');
     const LogLib = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         let directory;
 
         LogLib.message('Copying files...');
 
-        Object
-            .keys(CODE_FILTER)
-            .forEach(product => {
+        Object.keys(CODE_FILTER).forEach((product) => {
+            const productFilter = CODE_FILTER[product];
 
-                const productFilter = CODE_FILTER[product];
+            directory = Path.join(TARGET_DIRECTORY, product, 'code');
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code');
-
-                FsLib.copyAllFiles(
-                    CODE_DIRECTORY, directory, true,
-                    sourcePath => (
-                        !productFilter.some(
-                            filterPath => sourcePath.startsWith(filterPath)
-                        ) &&
-                        CODE_EXTENSIONS.includes(Path.extname(sourcePath))
-                    )
-                    /*
+            FsLib.copyAllFiles(
+                CODE_DIRECTORY,
+                directory,
+                true,
+                (sourcePath) =>
+                    !productFilter.some((filterPath) =>
+                        sourcePath.startsWith(filterPath)
+                    ) && CODE_EXTENSIONS.includes(Path.extname(sourcePath))
+                /*
                     if (targetPath.endsWith('.src.js')) {
                         return targetPath.replace('.src.js', '.js');
                     }
@@ -220,32 +202,35 @@ function distCopy() {
                         sourcePath.indexOf('.src.') === -1
                     );
                     */
-                );
+            );
 
-                LogLib.success('Created', directory);
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
-                FsLib.copyAllFiles(CSS_DIRECTORY, directory, true);
-                FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);
-                LogLib.success('Created', directory);
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true);
+            FsLib.copyAllFiles(
+                CODE_DIRECTORY + '/' + CSS_DIRECTORY,
+                directory,
+                true
+            );
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'lib');
-                FsLib.copyAllFiles(
-                    VENDOR_DIRECTORY, directory, false,
-                    filePath => VENDOR_FILTER.some(
-                        filterPath => filePath.startsWith(filterPath)
-                    )
-                );
-                LogLib.success('Created', directory);
+            directory = Path.join(TARGET_DIRECTORY, product, 'code', 'lib');
+            FsLib.copyAllFiles(VENDOR_DIRECTORY, directory, false, (filePath) =>
+                VENDOR_FILTER.some((filterPath) =>
+                    filePath.startsWith(filterPath)
+                )
+            );
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
-                FsLib.copyAllFiles(GFX_DIRECTORY, directory, true);
-                LogLib.success('Created', directory);
+            directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
+            FsLib.copyAllFiles(GFX_DIRECTORY, directory, true);
+            LogLib.success('Created', directory);
 
-                directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
-                FsLib.copyAllFiles(GRAPHICS_DIRECTORY, directory, true);
-                LogLib.success('Created', directory);
-            });
+            directory = Path.join(TARGET_DIRECTORY, product, 'graphics');
+            FsLib.copyAllFiles(GRAPHICS_DIRECTORY, directory, true);
+            LogLib.success('Created', directory);
+        });
 
         resolve();
     });

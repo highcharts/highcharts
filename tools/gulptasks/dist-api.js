@@ -23,8 +23,8 @@ const DIR_LIB = 'tools/gulptasks/lib/api';
  * completed.
  */
 function copyLibFiles() {
-    const promises = ['server.js', 'README.md'].map(
-        filename => copyFile(`${DIR_LIB}/${filename}`, `${DIR_API}/${filename}`)
+    const promises = ['server.js', 'README.md'].map((filename) =>
+        copyFile(`${DIR_LIB}/${filename}`, `${DIR_API}/${filename}`)
     );
     return Promise.all(promises);
 }
@@ -41,19 +41,26 @@ function zipProductAPI(product) {
 
     const DIR_PRODUCT = `${DIR_API}/${product}`;
     if (!existsSync(DIR_PRODUCT)) {
-        return Promise.reject(new Error(`Missing folder: ${DIR_PRODUCT}. Has the other dist tasks been run in advance?`));
+        return Promise.reject(
+            new Error(
+                `Missing folder: ${DIR_PRODUCT}. Has the other dist tasks been run in advance?`
+            )
+        );
     }
 
     const zipFileName = `${product}/api.zip`;
     log.message(`Zipping file ${zipFileName}`);
 
     return new Promise((resolve, reject) => {
-        gulp.src([
-            `${DIR_PRODUCT}/**`,
-            `${DIR_CLASS_REFERENCE}/**`,
-            `${DIR_API}/server.js`,
-            `${DIR_API}/README.md`
-        ], { base: DIST_BUILD })
+        gulp.src(
+            [
+                `${DIR_PRODUCT}/**`,
+                `${DIR_CLASS_REFERENCE}/**`,
+                `${DIR_API}/server.js`,
+                `${DIR_API}/README.md`
+            ],
+            { base: DIST_BUILD }
+        )
             .pipe(zip(zipFileName))
             .pipe(gulp.dest(DIST_DIR))
             .on('error', reject)
@@ -68,26 +75,29 @@ function zipProductAPI(product) {
  * archives is built.
  */
 function createProductsAPIArchives() {
-
     // Check if the class references exists
     const DIR_CLASS_REFERENCE = `${DIR_API}/class-reference`;
     if (!existsSync(DIR_CLASS_REFERENCE)) {
-        return Promise.reject(new Error(`Missing folder: ${DIR_CLASS_REFERENCE}. Has the other dist tasks been run in advance?`));
+        return Promise.reject(
+            new Error(
+                `Missing folder: ${DIR_CLASS_REFERENCE}. Has the other dist tasks been run in advance?`
+            )
+        );
     }
 
     // Copy lib files, then zip all product api archives
     return copyLibFiles().then(() => {
         const properties = require('../../build-properties.json');
-        const fileNames = Object.keys(properties.products).map(p => properties.products[p].distpath);
+        const fileNames = Object.keys(properties.products).map(
+            (p) => properties.products[p].distpath
+        );
         const zipTasks = fileNames.map(zipProductAPI);
         return Promise.all(zipTasks);
     });
 }
 
-
 require('./jsdoc');
-gulp.task('dist-api', gulp.series(
-    'jsdoc',
-    'test-tree',
-    createProductsAPIArchives
-));
+gulp.task(
+    'dist-api',
+    gulp.series('jsdoc', 'test-tree', createProductsAPIArchives)
+);

@@ -5,13 +5,15 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const glob = require('glob');
-const { uploadFiles, isDirectoryOrSystemFile, toS3Path } = require('./lib/uploadS3');
-
+const {
+    uploadFiles,
+    isDirectoryOrSystemFile,
+    toS3Path
+} = require('./lib/uploadS3');
 
 const SOURCE_DIR = 'studies';
 const S3_DEST_PATH = '';
 const BUCKET = 'assets.highcharts.com';
-
 
 /**
  * Upload samples data to S3.
@@ -27,8 +29,12 @@ async function distUploadStudies() {
         sourceDir = sourceDir + '/';
     }
 
-    const sourceFiles = glob.sync(`${sourceDir}/**/*`).filter(file => !isDirectoryOrSystemFile(file));
-    const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/', S3_DEST_PATH));
+    const sourceFiles = glob
+        .sync(`${sourceDir}/**/*`)
+        .filter((file) => !isDirectoryOrSystemFile(file));
+    const rootFiles = sourceFiles.map((file) =>
+        toS3Path(file, sourceDir + '/', S3_DEST_PATH)
+    );
 
     return uploadFiles({
         files: [...rootFiles],
@@ -40,7 +46,8 @@ async function distUploadStudies() {
 
 distUploadStudies.description = 'Uploads samples data to S3';
 distUploadStudies.flags = {
-    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+    '--profile':
+        'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)'
 };
 

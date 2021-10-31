@@ -10,10 +10,7 @@ const gulp = require('gulp');
  *
  * */
 
-const WATCH_GLOBS = [
-    'js/**/*.js',
-    'css/**/*.scss'
-];
+const WATCH_GLOBS = ['js/**/*.js', 'css/**/*.scss'];
 
 /* *
  *
@@ -28,7 +25,6 @@ const WATCH_GLOBS = [
  *         Promise to keep
  */
 function task() {
-
     const argv = require('yargs').argv;
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
@@ -45,35 +41,33 @@ function task() {
     let jsHash;
     let cssHash;
 
-    gulp
-        .watch(WATCH_GLOBS, done => {
+    gulp.watch(WATCH_GLOBS, (done) => {
+        const buildTasks = [];
+        const newJsHash = fsLib.getDirectoryHash('js', true);
 
-            const buildTasks = [];
-            const newJsHash = fsLib.getDirectoryHash('js', true);
+        if (newJsHash !== jsHash) {
+            jsHash = newJsHash;
+            buildTasks.push('scripts-js');
+        }
 
-            if (newJsHash !== jsHash) {
-                jsHash = newJsHash;
-                buildTasks.push('scripts-js');
-            }
+        const newCssHash = fsLib.getDirectoryHash('css', true);
 
-            const newCssHash = fsLib.getDirectoryHash('css', true);
+        if (newCssHash !== cssHash) {
+            cssHash = newCssHash;
+            buildTasks.push('scripts-css');
+        }
 
-            if (newCssHash !== cssHash) {
-                cssHash = newCssHash;
-                buildTasks.push('scripts-css');
-            }
+        if (buildTasks.length === 0) {
+            logLib.success('No significant changes found.');
+            done();
+            return;
+        }
 
-            if (buildTasks.length === 0) {
-                logLib.success('No significant changes found.');
-                done();
-                return;
-            }
-
-            gulp.series(...buildTasks)(done);
-        })
-        .on('add', filePath => logLib.warn('Modified', filePath))
-        .on('change', filePath => logLib.warn('Modified', filePath))
-        .on('unlink', filePath => logLib.warn('Modified', filePath))
+        gulp.series(...buildTasks)(done);
+    })
+        .on('add', (filePath) => logLib.warn('Modified', filePath))
+        .on('change', (filePath) => logLib.warn('Modified', filePath))
+        .on('unlink', (filePath) => logLib.warn('Modified', filePath))
         .on('error', logLib.failure);
 
     logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');

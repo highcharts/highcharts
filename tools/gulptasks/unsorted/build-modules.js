@@ -5,9 +5,7 @@ const gulp = require('gulp');
  * @return {undefined}
  */
 const buildESModules = () => {
-    const {
-        buildModules
-    } = require('highcharts-assembler/src/build.js');
+    const { buildModules } = require('highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',

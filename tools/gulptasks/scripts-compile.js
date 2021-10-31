@@ -4,14 +4,16 @@
 
 const gulp = require('gulp');
 const {
-    Worker, isMainThread, parentPort, workerData
-// eslint-disable-next-line node/no-unsupported-features/node-builtins
+    Worker,
+    isMainThread,
+    parentPort,
+    workerData
+    // eslint-disable-next-line node/no-unsupported-features/node-builtins
 } = require('worker_threads');
 const os = require('os');
 const argv = require('yargs').argv;
 
 const SOURCE_DIRECTORY = 'code';
-
 
 /**
  * Split an array into multiple new arrays/chuncks
@@ -48,45 +50,49 @@ async function task() {
     if (isMainThread) {
         logLib.warn('Warning: This task may take a few minutes.');
 
-        const files = (
-            (argv.files) ?
-                argv.files.split(',') :
-                fsLib
-                    .getFilePaths(SOURCE_DIRECTORY, true)
-                    .filter(path => (
-                        path.endsWith('.src.js') &&
-                        !path.includes('es-modules')
-                    ))
-                    .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
-        );
+        const files = argv.files
+            ? argv.files.split(',')
+            : fsLib
+                  .getFilePaths(SOURCE_DIRECTORY, true)
+                  .filter(
+                      (path) =>
+                          path.endsWith('.src.js') &&
+                          !path.includes('es-modules')
+                  )
+                  .map((path) => path.substr(SOURCE_DIRECTORY.length + 1));
 
-        const numThreads = argv.numThreads ?
-            argv.numThreads :
-            Math.min(
-                files.length,
-                Math.max(2, os.cpus().length - 2)
-            );
+        const numThreads = argv.numThreads
+            ? argv.numThreads
+            : Math.min(files.length, Math.max(2, os.cpus().length - 2));
         const batches = chunk(files, numThreads);
 
-        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
+        logLib.message(
+            `Splitting files to compile in ${batches.length} batches/threads..`
+        );
         logLib.message('Compiling', SOURCE_DIRECTORY + '...');
         batches.forEach((batch, index) => {
-            fileBatches.push(new Promise((resolve, reject) => {
-
-                const worker = new Worker(__filename, { workerData: { files: batch, batchNum: (index + 1) } });
-                worker.on('message', resolve);
-                worker.on('error', reject);
-                worker.on('exit', code => {
-                    if (code !== 0) {
-                        reject(new Error(`Worker stopped with exit code ${code}`));
-                    }
-                });
-
-            }));
+            fileBatches.push(
+                new Promise((resolve, reject) => {
+                    const worker = new Worker(__filename, {
+                        workerData: { files: batch, batchNum: index + 1 }
+                    });
+                    worker.on('message', resolve);
+                    worker.on('error', reject);
+                    worker.on('exit', (code) => {
+                        if (code !== 0) {
+                            reject(
+                                new Error(
+                                    `Worker stopped with exit code ${code}`
+                                )
+                            );
+                        }
+                    });
+                })
+            );
         });
     } else {
         const compileTool = require('../compile');
-        await compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'));
+        await compileTool.compile(workerData.files, SOURCE_DIRECTORY + '/');
         parentPort.postMessage({ done: true });
 
         logLib.success(`Compilation of batch #${workerData.batchNum} complete`);

@@ -15,16 +15,19 @@ const S3 = new AWSS3({
  */
 async function getS3Object(bucket, key) {
     return new Promise((resolve, reject) => {
-        S3.getObject({
-            Bucket: bucket,
-            Key: key
-        }, function (err, data) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data.Body.toString('utf-8'));
+        S3.getObject(
+            {
+                Bucket: bucket,
+                Key: key
+            },
+            function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data.Body.toString('utf-8'));
+                }
             }
-        });
+        );
     });
 }
 
@@ -42,22 +45,28 @@ async function putS3Object(key, body, config = {}) {
     log.message(`Put to ${config.Bucket}/${key}`);
     return new Promise((resolve, reject) => {
         try {
-            S3.putObject({
-                Bucket: config.Bucket,
-                Key: key,
-                Body: JSON.stringify(body),
-                ContentType: 'application/json; charset=utf-8',
-                ACL: 'public-read',
-                ...config
-            }, function (error, resp) {
-                if (!error) {
-                    log.success(`Saved object to ${key}`);
-                    resolve(resp);
-                } else {
-                    log.warn(`An error occured while storing an object to ${config.Bucket}/${key}`, error);
-                    reject(error);
+            S3.putObject(
+                {
+                    Bucket: config.Bucket,
+                    Key: key,
+                    Body: JSON.stringify(body),
+                    ContentType: 'application/json; charset=utf-8',
+                    ACL: 'public-read',
+                    ...config
+                },
+                function (error, resp) {
+                    if (!error) {
+                        log.success(`Saved object to ${key}`);
+                        resolve(resp);
+                    } else {
+                        log.warn(
+                            `An error occured while storing an object to ${config.Bucket}/${key}`,
+                            error
+                        );
+                        reject(error);
+                    }
                 }
-            });
+            );
         } catch (err) {
             reject(err);
         }
@@ -70,9 +79,7 @@ async function putS3Object(key, body, config = {}) {
  */
 function getGitIgnoreMeProperties() {
     const properties = {};
-    const lines = fs.readFileSync(
-        './git-ignore-me.properties', 'utf8'
-    );
+    const lines = fs.readFileSync('./git-ignore-me.properties', 'utf8');
     lines.split('\n').forEach(function (line) {
         line = line.split('=');
         if (line[0]) {
@@ -99,7 +106,12 @@ function isDirectory(source) {
  * @return {boolean} true, if directory or system file.
  */
 function isDirectoryOrSystemFile(source) {
-    return isDirectory(source) || (source.startsWith('../') ? source.substring(3, source.length - 1).indexOf('.') === 0 : source.indexOf('.') === 0);
+    return (
+        isDirectory(source) ||
+        (source.startsWith('../')
+            ? source.substring(3, source.length - 1).indexOf('.') === 0
+            : source.indexOf('.') === 0)
+    );
 }
 
 /**
@@ -111,9 +123,11 @@ function isDirectoryOrSystemFile(source) {
 function getVersionPaths(version) {
     const semver = require('semver');
 
-    version = (version || require(('../../../package.json')).version);
+    version = version || require('../../../package.json').version;
 
-    const preleaseVersion = semver.prerelease(version) ? `-${semver.prerelease(version).join('.')}` : '';
+    const preleaseVersion = semver.prerelease(version)
+        ? `-${semver.prerelease(version).join('.')}`
+        : '';
 
     return [
         `${semver.major(version)}${preleaseVersion}`,
@@ -121,7 +135,6 @@ function getVersionPaths(version) {
         `${version}`
     ];
 }
-
 
 /**
  * Upload w/progress bar.
@@ -144,24 +157,34 @@ function uploadFiles(params) {
     const defaultParams = {
         batchSize: 1500,
         bucket,
-        onError: err => {
-            log.failure(`File(s) errored:\n${err && err.message} ${err.from ? ' - ' + err.from : ''}`);
+        onError: (err) => {
+            log.failure(
+                `File(s) errored:\n${err && err.message} ${
+                    err.from ? ' - ' + err.from : ''
+                }`
+            );
         },
         callback: (from, to) => {
             log.message(`Uploaded ${from} --> ${to}`);
         }
     };
 
-    return upload.uploadFiles(
-        Object.assign(defaultParams, params)
-    ).then(result => {
-        const { errors } = result;
-        if (errors.length) {
-            errors.forEach(err => log.failure(`Failed to process file ${err.from} --> ${err.to}`));
-            return Promise.reject(new Error(`${errors[0].message}: ${errors[0].from}`));
-        }
-        return Promise.resolve(result);
-    });
+    return upload
+        .uploadFiles(Object.assign(defaultParams, params))
+        .then((result) => {
+            const { errors } = result;
+            if (errors.length) {
+                errors.forEach((err) =>
+                    log.failure(
+                        `Failed to process file ${err.from} --> ${err.to}`
+                    )
+                );
+                return Promise.reject(
+                    new Error(`${errors[0].message}: ${errors[0].from}`)
+                );
+            }
+            return Promise.resolve(result);
+        });
 }
 
 /**
@@ -174,10 +197,12 @@ function uploadFiles(params) {
 function toS3Path(fromPath, removeFromDestPath, prefix) {
     return {
         from: fromPath,
-        to: `${prefix ? prefix + '/' : ''}${fromPath.replace(removeFromDestPath, '')}`
+        to: `${prefix ? prefix + '/' : ''}${fromPath.replace(
+            removeFromDestPath,
+            ''
+        )}`
     };
 }
-
 
 module.exports = {
     uploadFiles,

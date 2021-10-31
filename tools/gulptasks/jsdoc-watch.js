@@ -10,9 +10,7 @@ const gulp = require('gulp');
  *
  * */
 
-const WATCH_GLOBS = [
-    'js/**/*.js'
-];
+const WATCH_GLOBS = ['js/**/*.js'];
 
 /* *
  *
@@ -27,20 +25,19 @@ const WATCH_GLOBS = [
  *         Promise to keep
  */
 function jsDocWatch() {
-
     const log = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         require('./jsdoc.js');
         require('./jsdoc-server');
 
-        const watchProcess = gulp.watch(WATCH_GLOBS, { delay: 5000 }, gulp.task('jsdoc'));
-
-        watchProcess.on(
-            'change',
-            filePath => log.warn('Modified', filePath)
+        const watchProcess = gulp.watch(
+            WATCH_GLOBS,
+            { delay: 5000 },
+            gulp.task('jsdoc')
         );
+
+        watchProcess.on('change', (filePath) => log.warn('Modified', filePath));
 
         log.warn('Watching', WATCH_GLOBS[0], '...');
 

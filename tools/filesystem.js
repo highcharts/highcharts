@@ -2,19 +2,9 @@
 /* eslint-disable */
 
 'use strict';
-const {
-    createReadStream,
-    createWriteStream,
-    stat,
-    mkdir
-} = require('fs');
+const { createReadStream, createWriteStream, stat, mkdir } = require('fs');
 
-const {
-    dirname,
-    join,
-    resolve,
-    sep
-} = require('path');
+const { dirname, join, resolve, sep } = require('path');
 
 const log = (txt) => {
     console.log(txt); // eslint-disable-line no-console
@@ -76,7 +66,9 @@ const checkDependency = (name, severity = 'warn', type = 'dependencies') => {
     };
     if (mismatch) {
         if (action[severity]) {
-            action[severity](`The installed version of ${name} is ${actual}, while listed version in ${type} is ${dependency}. Please update to the required version by executing "npm install ${name}"`);
+            action[severity](
+                `The installed version of ${name} is ${actual}, while listed version in ${type} is ${dependency}. Please update to the required version by executing "npm install ${name}"`
+            );
         } else {
             error(`Parameter "severity" has invalid value: ${severity}`);
         }
@@ -89,40 +81,44 @@ const checkDependency = (name, severity = 'warn', type = 'dependencies') => {
  * @return {Promise} Returns a promise that resolves when final directory has
  * been created.
  */
-const createDirectory = path => {
+const createDirectory = (path) => {
     const folders = path.split(sep).join('/').split('/');
     let directory = '';
     return folders.reduce((promise, name) => {
         const p = join(directory, name);
         directory = p;
-        return promise
-        // Check if the directory exists
-        .then(() => statPromise(p))
-        // If errors then create the directory
-        .catch(() => mkdirPromise(p)
-            // If mkdirPromise errors, then the directory already exists
-            .catch(() => {})
+        return (
+            promise
+                // Check if the directory exists
+                .then(() => statPromise(p))
+                // If errors then create the directory
+                .catch(() =>
+                    mkdirPromise(p)
+                        // If mkdirPromise errors, then the directory already exists
+                        .catch(() => {})
+                )
         );
     }, Promise.resolve());
 };
 
 const copyFile = (source, target) => {
     const directory = dirname(target);
-    return createDirectory(directory)
-    .then(() => new Promise((resolvePromise, rejectPromise) => {
-        let read = createReadStream(source);
-        let write = createWriteStream(target);
-        const onError = (err) => {
-            read.destroy();
-            write.end();
-            rejectPromise(err);
-        };
-        read.on('error', onError);
-        write.on('error', onError);
-        write.on('finish', resolvePromise);
-        read.pipe(write);
-
-    }));
+    return createDirectory(directory).then(
+        () =>
+            new Promise((resolvePromise, rejectPromise) => {
+                let read = createReadStream(source);
+                let write = createWriteStream(target);
+                const onError = (err) => {
+                    read.destroy();
+                    write.end();
+                    rejectPromise(err);
+                };
+                read.on('error', onError);
+                write.on('error', onError);
+                write.on('finish', resolvePromise);
+                read.pipe(write);
+            })
+    );
 };
 
 module.exports = {

@@ -33,20 +33,25 @@ const TS_DIRECTORY = 'ts';
  * @return {void}
  */
 function saveRun() {
-
     const fs = require('fs');
     const fslib = require('./lib/fs');
     const stringlib = require('./lib/string');
 
     const latestCodeHash = fslib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringlib.removeComments
+        CODE_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestCSSHash = fslib.getDirectoryHash(
-        CSS_DIRECTORY, true, stringlib.removeComments
+        CSS_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
     const latestJSHash = fslib.getDirectoryHash(
-        JS_DIRECTORY, true, stringlib.removeComments
+        JS_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
 
@@ -68,7 +73,6 @@ function saveRun() {
  *         True, if code is out of sync.
  */
 function shouldRun() {
-
     const fs = require('fs');
     const fslib = require('./lib/fs');
     const log = require('./lib/log');
@@ -89,27 +93,33 @@ function shouldRun() {
     }
 
     const latestCodeHash = fslib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringlib.removeComments
+        CODE_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestCSSHash = fslib.getDirectoryHash(
-        CSS_DIRECTORY, true, stringlib.removeComments
+        CSS_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
     const latestJSHash = fslib.getDirectoryHash(
-        JS_DIRECTORY, true, stringlib.removeComments
+        JS_DIRECTORY,
+        true,
+        stringlib.removeComments
     );
     const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (
+        latestCodeHash === configuration.latestCodeHash &&
         latestCSSHash === configuration.latestCSSHash &&
         latestGFXHash === configuration.latestGFXHash &&
         latestJSHash === configuration.latestJSHash &&
         latestTSHash === configuration.latestTSHash
     ) {
-
         log.success(
             '✓ Source code has not been modified' +
-            ' since the last successful run.'
+                ' since the last successful run.'
         );
 
         return false;
@@ -129,7 +139,6 @@ function shouldRun() {
  *         Promise to keep
  */
 function task() {
-
     const argv = require('yargs').argv;
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
@@ -149,13 +158,11 @@ function task() {
     }
 
     return new Promise((resolve, reject) => {
-
         if (
             argv.force ||
             shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
-
             processLib.isRunning('scripts_incomplete', true, true);
 
             gulp.series(
@@ -163,25 +170,21 @@ function task() {
                 'scripts-css',
                 'scripts-js',
                 'scripts-code'
-            )(
-                function (error) {
+            )(function (error) {
+                processLib.isRunning('scripts_incomplete', false, true);
 
-                    processLib.isRunning('scripts_incomplete', false, true);
+                saveRun();
 
-                    saveRun();
-
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve();
-                    }
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
                 }
-            );
+            });
         } else {
-
             logLib.message(
                 'Hint: Run the `scripts-watch` task to watch the js ' +
-                'and ts directories.'
+                    'and ts directories.'
             );
 
             resolve();

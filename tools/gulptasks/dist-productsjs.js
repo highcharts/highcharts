@@ -26,38 +26,33 @@ const TARGET_FILE = Path.join('build', 'dist', 'products.js');
  *         Promise to keep
  */
 function distProductsJS() {
-
     const Fs = require('fs');
     const LogLib = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         LogLib.message('Generating', TARGET_FILE + '...');
 
         const buildProperties = require('../../build-properties.json');
         const packageJson = require('../../package.json');
 
-        const date = (
-            buildProperties.date ||
-            ''
-        );
+        const date = buildProperties.date || '';
 
-        const nr = (
-            buildProperties.version ||
-            packageJson.version ||
-            ''
-        );
+        const nr = buildProperties.version || packageJson.version || '';
 
         Fs.writeFileSync(
             TARGET_FILE,
-            (
-                'var products = ' + JSON.stringify({
-                    Highcharts: { date, nr },
-                    'Highcharts Stock': { date, nr },
-                    'Highcharts Maps': { date, nr },
-                    'Highcharts Gantt': { date, nr }
-                }, undefined, '    ') + '\n'
-            )
+            'var products = ' +
+                JSON.stringify(
+                    {
+                        Highcharts: { date, nr },
+                        'Highcharts Stock': { date, nr },
+                        'Highcharts Maps': { date, nr },
+                        'Highcharts Gantt': { date, nr }
+                    },
+                    undefined,
+                    '    '
+                ) +
+                '\n'
         );
 
         LogLib.success('Created', TARGET_FILE);

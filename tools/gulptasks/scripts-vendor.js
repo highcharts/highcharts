@@ -12,10 +12,7 @@ const gulp = require('gulp');
 
 const SOURCE_DIRECTORY = 'vendor';
 
-const SOURCE_FILES = [
-    'canvg.src.js',
-    'rgbcolor.src.js'
-];
+const SOURCE_FILES = ['canvg.src.js', 'rgbcolor.src.js'];
 
 /* *
  *
@@ -30,12 +27,10 @@ const SOURCE_FILES = [
  *         Promise to keep
  */
 function task() {
-
     const compile = require('../compile.js');
     const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         log.message('Compiling', SOURCE_DIRECTORY + '...');
 
         compile

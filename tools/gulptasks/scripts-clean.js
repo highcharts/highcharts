@@ -21,9 +21,7 @@ const FILES_TO_KEEP = [
     ['js', 'readme.md'],
     ['modules', 'readme.md'],
     ['readme.txt']
-].map(
-    filePath => path.join(TARGET_DIRECTORY, ...filePath)
-);
+].map((filePath) => path.join(TARGET_DIRECTORY, ...filePath));
 
 /* *
  *
@@ -38,23 +36,23 @@ const FILES_TO_KEEP = [
  *         Promise to keep
  */
 function task() {
-
     const fs = require('./lib/fs');
     const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         const filesToDelete = fs
             .getFilePaths(TARGET_DIRECTORY, true)
-            .filter(filePath => !FILES_TO_KEEP.includes(filePath));
+            .filter((filePath) => !FILES_TO_KEEP.includes(filePath));
         const directoriesToDelete = fs
             .getDirectoryPaths(TARGET_DIRECTORY, true)
-            .filter(directoryPath => !FILES_TO_KEEP.some(
-                filterPath => filterPath.startsWith(directoryPath)
-            ));
+            .filter(
+                (directoryPath) =>
+                    !FILES_TO_KEEP.some((filterPath) =>
+                        filterPath.startsWith(directoryPath)
+                    )
+            );
 
         try {
-
             log.message('Cleaning', TARGET_DIRECTORY, '...');
 
             filesToDelete.forEach(fs.deleteFile);

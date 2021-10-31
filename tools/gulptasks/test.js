@@ -16,7 +16,9 @@ const BASE = path.join(__dirname, '..', '..');
 const CODE_DIRECTORY = path.join(BASE, 'code');
 
 const CONFIGURATION_FILE = path.join(
-    BASE, 'node_modules', '_gulptasks_test.json'
+    BASE,
+    'node_modules',
+    '_gulptasks_test.json'
 );
 
 const JS_DIRECTORY = path.join(BASE, 'js');
@@ -38,7 +40,6 @@ const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
  * @return {void}
  */
 function checkJSWrap() {
-
     const fs = require('fs');
     const glob = require('glob');
     const logLib = require('./lib/log');
@@ -48,8 +49,7 @@ function checkJSWrap() {
 
     glob.sync(
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
-    ).forEach(f => {
-
+    ).forEach((f) => {
         const detailsFile = f.replace(/\.html$/, '.details');
 
         try {
@@ -82,7 +82,7 @@ function checkDemosConsistency() {
     const tags = [],
         categories = [];
 
-    Object.keys(pages).forEach(key => {
+    Object.keys(pages).forEach((key) => {
         const page = pages[key];
         if (page.filter && page.filter.tags) {
             tags.push(...page.filter.tags);
@@ -99,21 +99,26 @@ function checkDemosConsistency() {
     let errors = 0;
 
     glob.sync(
-        process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/demo/*/demo.details'
-    ).forEach(detailsFile => {
-
+        process.cwd() +
+            '/samples/+(highcharts|stock|maps|gantt)/demo/*/demo.details'
+    ).forEach((detailsFile) => {
         try {
-            const details = yaml.load(
-                fs.readFileSync(detailsFile, 'utf-8')
-            );
+            const details = yaml.load(fs.readFileSync(detailsFile, 'utf-8'));
 
             if (typeof details !== 'object') {
                 throw new Error('Malformed details file');
             }
 
-            const { name, categories: demoCategories, tags: demoTags } = details;
+            const {
+                name,
+                categories: demoCategories,
+                tags: demoTags
+            } = details;
             if (!name || /High.*demo/.test(name)) {
-                logLib.failure('no name set, or default name used:', detailsFile);
+                logLib.failure(
+                    'no name set, or default name used:',
+                    detailsFile
+                );
                 errors++;
             }
 
@@ -121,8 +126,19 @@ function checkDemosConsistency() {
                 logLib.failure('no categories found:', detailsFile);
                 errors++;
             } else {
-                if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
-                    logLib.failure('one or more categories are missing from demo-config:', detailsFile);
+                if (
+                    !demoCategories.every((category) =>
+                        categories.includes(
+                            typeof category === 'object'
+                                ? Object.keys(category)[0]
+                                : category
+                        )
+                    )
+                ) {
+                    logLib.failure(
+                        'one or more categories are missing from demo-config:',
+                        detailsFile
+                    );
                     errors++;
                 }
             }
@@ -131,12 +147,18 @@ function checkDemosConsistency() {
                 logLib.failure('no tags found:', detailsFile);
                 errors++;
             } else {
-                if (!demoTags.every(tag => tag === 'unlisted' || tags.includes(tag))) {
-                    logLib.failure('one or more tags are missing from demo-config:', detailsFile);
+                if (
+                    !demoTags.every(
+                        (tag) => tag === 'unlisted' || tags.includes(tag)
+                    )
+                ) {
+                    logLib.failure(
+                        'one or more tags are missing from demo-config:',
+                        detailsFile
+                    );
                     errors++;
                 }
             }
-
         } catch (e) {
             logLib.failure('File not found:', detailsFile);
             errors++;
@@ -160,19 +182,24 @@ function checkDocsConsistency() {
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
-    Object
-        .keys(sidebar.docs)
-        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
+    Object.keys(sidebar.docs).forEach((key) =>
+        sidebarDocs.push(...Object.values(sidebar.docs[key]))
+    );
 
     const dirs = FS.readdirSync('docs/');
     const foundDocs = [];
 
     try {
-        dirs.forEach(dir => {
+        dirs.forEach((dir) => {
             if (FS.statSync('docs/' + dir).isDirectory()) {
                 FS.readdirSync(path.join('docs/', dir))
-                    .filter(file => FS.statSync(path.join('docs/', dir, file)).isFile() && path.extname(file) === '.md')
-                    .forEach(file => {
+                    .filter(
+                        (file) =>
+                            FS.statSync(
+                                path.join('docs/', dir, file)
+                            ).isFile() && path.extname(file) === '.md'
+                    )
+                    .forEach((file) => {
                         foundDocs.push(dir + '/' + file.replace('.md', ''));
                     });
             }
@@ -180,7 +207,7 @@ function checkDocsConsistency() {
     } catch (error) {
         throw new Error(error);
     }
-    const docsNotAdded = foundDocs.filter(file => {
+    const docsNotAdded = foundDocs.filter((file) => {
         if (unlisted.includes(file)) {
             return false;
         }
@@ -188,8 +215,10 @@ function checkDocsConsistency() {
     });
 
     if (docsNotAdded.length > 0) {
-        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.js' or '/docs/doc-config.js':`);
-        docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
+        LogLib.failure(
+            `❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.js' or '/docs/doc-config.js':`
+        );
+        docsNotAdded.forEach((file) => LogLib.warn(`   '${file}'`));
         throw new Error('Docs not added to sidebar');
     }
 }
@@ -198,19 +227,24 @@ function checkDocsConsistency() {
  * @return {void}
  */
 function saveRun() {
-
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const StringLib = require('./lib/string');
 
     const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+        CODE_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
     const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+        JS_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
     const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
+        TESTS_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
 
     const configuration = {
@@ -227,7 +261,6 @@ function saveRun() {
  *         True if outdated
  */
 function shouldRun() {
-
     const fs = require('fs');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
@@ -246,35 +279,41 @@ function shouldRun() {
     }
 
     const latestCodeHash = fsLib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringLib.removeComments
+        CODE_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
     const latestJsHash = fsLib.getDirectoryHash(
-        JS_DIRECTORY, true, stringLib.removeComments
+        JS_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
     const latestTestsHash = fsLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, stringLib.removeComments
+        TESTS_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (
+        latestCodeHash === configuration.latestCodeHash &&
         latestJsHash !== configuration.latestJsHash
     ) {
-
         logLib.failure(
             '✖ The files have not been built' +
-            ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.'
+                ' since the last source code changes.' +
+                ' Run `npx gulp` and try again.'
         );
 
         throw new Error('Code out of sync');
     }
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (
+        latestCodeHash === configuration.latestCodeHash &&
         latestTestsHash === configuration.latestTestsHash
     ) {
-
         logLib.success(
             '✓ Source code and unit tests not have been modified' +
-            ' since the last successful test run.'
+                ' since the last successful test run.'
         );
 
         return false;
@@ -282,7 +321,6 @@ function shouldRun() {
 
     return true;
 }
-
 
 /* *
  *
@@ -297,12 +335,10 @@ function shouldRun() {
  *         Promise to keep
  */
 function test() {
-
     const LogLib = require('./lib/log');
     const Yargs = require('yargs');
 
     return new Promise((resolve, reject) => {
-
         const argv = Yargs.argv;
 
         if (argv.help) {
@@ -373,10 +409,15 @@ Available arguments for 'gulp test':
         checkDemosConsistency();
         checkJSWrap();
 
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath);
+        const forceRun = !!(
+            argv.browsers ||
+            argv.browsercount ||
+            argv.force ||
+            argv.tests ||
+            argv.testsAbsolutePath
+        );
 
         if (forceRun || shouldRun()) {
-
             LogLib.message('Run `gulp test --help` for available options');
 
             const KarmaServer = require('karma').Server;
@@ -390,23 +431,26 @@ Available arguments for 'gulp test':
                 {
                     configFile: KARMA_CONFIG_FILE,
                     reporters: argv.dots ? ['dots'] : defaultReporters,
-                    browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
+                    browserDisconnectTimeout:
+                        typeof argv.timeout === 'number'
+                            ? argv.timeout
+                            : defaultTimeout,
                     singleRun: true,
                     client: {
                         cliArgs: argv
                     }
                 },
-                err => {
-
+                (err) => {
                     if (err !== 0) {
-
                         if (argv.speak) {
                             LogLib.say('Tests failed!');
                         }
 
-                        reject(new PluginError('karma', {
-                            message: 'Tests failed'
-                        }));
+                        reject(
+                            new PluginError('karma', {
+                                message: 'Tests failed'
+                            })
+                        );
 
                         return;
                     }
@@ -425,7 +469,6 @@ Available arguments for 'gulp test':
                 }
             ).start();
         } else {
-
             resolve();
         }
     });

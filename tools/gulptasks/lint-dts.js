@@ -28,30 +28,28 @@ const TEST_FOLDER = path.join('test', 'typescript-dts');
  *         Promise to keep
  */
 function task() {
-
     const fsLib = require('./lib/fs');
     const processLib = require('./lib/process');
     const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         logLib.message('Linting ...');
 
         const promises = [];
 
         promises.push(
-            processLib
-                .exec('cd ' + LINT_FOLDER + ' && npx dtslint --onlyTestTsNext')
+            processLib.exec(
+                'cd ' + LINT_FOLDER + ' && npx dtslint --onlyTestTsNext'
+            )
         );
 
         promises.push(
             ...fsLib
                 .getDirectoryPaths(TEST_FOLDER, false)
-                .map(folder => processLib.exec('npx tsc -p ' + folder))
+                .map((folder) => processLib.exec('npx tsc -p ' + folder))
         );
 
-        Promise
-            .all(promises)
+        Promise.all(promises)
             .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);

@@ -16,12 +16,19 @@ const BASE = path.join(__dirname, '..', '..');
 const CODE_DIRECTORY = path.join(BASE, 'code');
 
 const CONFIGURATION_FILE = path.join(
-    BASE, 'node_modules', '_gulptasks_test-ts.json'
+    BASE,
+    'node_modules',
+    '_gulptasks_test-ts.json'
 );
 
 const JS_DIRECTORY = path.join(BASE, 'js');
 
-const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'typescript-karma', 'karma-conf.js');
+const KARMA_CONFIG_FILE = path.join(
+    BASE,
+    'test',
+    'typescript-karma',
+    'karma-conf.js'
+);
 
 const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
 
@@ -35,19 +42,24 @@ const TESTS_DIRECTORY = path.join(BASE, 'test', 'typescript-karma');
  * @return {void}
  */
 function saveRun() {
-
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const StringLib = require('./lib/string');
 
     const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+        CODE_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
     const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+        JS_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
     const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
+        TESTS_DIRECTORY,
+        true,
+        StringLib.removeComments
     );
 
     const configuration = {
@@ -64,7 +76,6 @@ function saveRun() {
  *         True if outdated
  */
 function shouldRun() {
-
     const fs = require('fs');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
@@ -83,35 +94,41 @@ function shouldRun() {
     }
 
     const latestCodeHash = fsLib.getDirectoryHash(
-        CODE_DIRECTORY, true, stringLib.removeComments
+        CODE_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
     const latestJsHash = fsLib.getDirectoryHash(
-        JS_DIRECTORY, true, stringLib.removeComments
+        JS_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
     const latestTestsHash = fsLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, stringLib.removeComments
+        TESTS_DIRECTORY,
+        true,
+        stringLib.removeComments
     );
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (
+        latestCodeHash === configuration.latestCodeHash &&
         latestJsHash !== configuration.latestJsHash
     ) {
-
         logLib.failure(
             '✖ The files have not been built' +
-            ' since the last source code changes.' +
-            ' Run `npx gulp` and try again.'
+                ' since the last source code changes.' +
+                ' Run `npx gulp` and try again.'
         );
 
         throw new Error('Code out of sync');
     }
 
-    if (latestCodeHash === configuration.latestCodeHash &&
+    if (
+        latestCodeHash === configuration.latestCodeHash &&
         latestTestsHash === configuration.latestTestsHash
     ) {
-
         logLib.success(
             '✓ Source code and unit tests have not been modified' +
-            ' since the last successful test run.'
+                ' since the last successful test run.'
         );
 
         return false;
@@ -119,7 +136,6 @@ function shouldRun() {
 
     return true;
 }
-
 
 /* *
  *
@@ -134,12 +150,10 @@ function shouldRun() {
  *         Promise to keep
  */
 function testTS() {
-
     const LogLib = require('./lib/log');
     const Yargs = require('yargs');
 
     return new Promise((resolve, reject) => {
-
         const argv = Yargs.argv;
 
         if (argv.help) {
@@ -198,10 +212,16 @@ Available arguments for 'gulp test':
             return;
         }
 
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath || argv.wait);
+        const forceRun = !!(
+            argv.browsers ||
+            argv.browsercount ||
+            argv.force ||
+            argv.tests ||
+            argv.testsAbsolutePath ||
+            argv.wait
+        );
 
         if (forceRun || shouldRun()) {
-
             LogLib.message('Run `gulp test --help` for available options');
 
             const KarmaServer = require('karma').Server;
@@ -215,17 +235,17 @@ Available arguments for 'gulp test':
                         cliArgs: argv
                     }
                 },
-                err => {
-
+                (err) => {
                     if (err !== 0) {
-
                         if (argv.speak) {
                             LogLib.say('Tests failed!');
                         }
 
-                        reject(new PluginError('karma', {
-                            message: 'Tests failed'
-                        }));
+                        reject(
+                            new PluginError('karma', {
+                                message: 'Tests failed'
+                            })
+                        );
 
                         return;
                     }
@@ -244,7 +264,6 @@ Available arguments for 'gulp test':
                 }
             ).start();
         } else {
-
             resolve();
         }
     });

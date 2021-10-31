@@ -27,7 +27,9 @@ const CWD = process.cwd();
  * Configuration file containing running information
  */
 const CONFIG_FILE = Path.join(
-    CPD, 'node_modules', '_gulptasks_lib_process.json'
+    CPD,
+    'node_modules',
+    '_gulptasks_lib_process.json'
 );
 
 /* *
@@ -61,18 +63,16 @@ let onExitCallbacks;
  *         Promise to keep with all terminal output
  */
 function exec(command, silent) {
-
     const ChildProcess = require('child_process');
 
     return new Promise((resolve, reject) => {
-
         const cli = ChildProcess.exec(command, (error, stdout) => {
             if (error) {
                 LogLib.failure(error);
                 reject(error);
             } else {
                 LogLib.success(
-                    (silent ? 'Command finished (silent):' : 'Command finished:'),
+                    silent ? 'Command finished (silent):' : 'Command finished:',
                     command
                 );
                 resolve(stdout);
@@ -80,7 +80,7 @@ function exec(command, silent) {
         });
 
         if (!silent) {
-            cli.stdout.on('data', data => process.stdout.write(data));
+            cli.stdout.on('data', (data) => process.stdout.write(data));
         }
     });
 }
@@ -98,7 +98,6 @@ function exec(command, silent) {
  *         Current flag
  */
 function isRunning(name, runningFlag) {
-
     const config = readConfig();
     const dictionary = config.isRunning;
     const key = name.replace(/[^-\w]+/g, '_');
@@ -116,14 +115,11 @@ function isRunning(name, runningFlag) {
             dictionary[key] = runningFlag;
             writeConfig(config);
         }
-        onExit(
-            '_lib_process_isRunning_' + key,
-            () => {
-                const exitConfig = readConfig();
-                delete exitConfig.isRunning[key];
-                writeConfig(exitConfig);
-            }
-        );
+        onExit('_lib_process_isRunning_' + key, () => {
+            const exitConfig = readConfig();
+            delete exitConfig.isRunning[key];
+            writeConfig(exitConfig);
+        });
     }
 
     return runningFlag;
@@ -143,30 +139,32 @@ function isRunning(name, runningFlag) {
  * @return {void}
  */
 function onExit(name, callback) {
-
     if (!onExitCallbacks) {
-
         onExitCallbacks = {};
 
         [
-            'exit', 'uncaughtException', 'unhandledRejection', 'SIGBREAK',
-            'SIGHUP', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
-        ].forEach(evt => (
-            process.on(evt, code => {
-
-                const exit = Object
-                    .keys(onExitCallbacks)
-                    .every(key => {
-                        callback = onExitCallbacks[key];
-                        delete onExitCallbacks[key];
-                        return callback(evt, code, key) !== false;
-                    });
+            'exit',
+            'uncaughtException',
+            'unhandledRejection',
+            'SIGBREAK',
+            'SIGHUP',
+            'SIGINT',
+            'SIGUSR1',
+            'SIGUSR2',
+            'SIGTERM'
+        ].forEach((evt) =>
+            process.on(evt, (code) => {
+                const exit = Object.keys(onExitCallbacks).every((key) => {
+                    callback = onExitCallbacks[key];
+                    delete onExitCallbacks[key];
+                    return callback(evt, code, key) !== false;
+                });
 
                 if (exit) {
                     process.exit(code); // eslint-disable-line no-process-exit
                 }
             })
-        ));
+        );
     }
 
     const key = name.replace(/[^-\w]+/g, '_');
@@ -183,7 +181,6 @@ function onExit(name, callback) {
  * @return {void}
  */
 function openAppFor(pathOrURL) {
-
     switch (process.platform) {
         default:
             exec(`xdg-open ${pathOrURL}`);
@@ -204,7 +201,6 @@ function openAppFor(pathOrURL) {
  * Configuration
  */
 function readConfig() {
-
     const FS = require('fs');
 
     let config = {
@@ -232,7 +228,6 @@ function readConfig() {
  * @return {void}
  */
 function writeConfig(config) {
-
     const FS = require('fs');
 
     FS.writeFileSync(CONFIG_FILE, JSON.stringify(config));

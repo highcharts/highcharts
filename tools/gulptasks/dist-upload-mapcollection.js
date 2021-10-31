@@ -6,8 +6,12 @@
 const gulp = require('gulp');
 const glob = require('glob');
 const log = require('./lib/log');
-const { uploadFiles, getVersionPaths, isDirectoryOrSystemFile, isDirectory } = require('./lib/uploadS3');
-
+const {
+    uploadFiles,
+    getVersionPaths,
+    isDirectoryOrSystemFile,
+    isDirectory
+} = require('./lib/uploadS3');
 
 const SOURCE_DIR = '../map-collection/';
 const S3_DEST_PATH = 'mapdata';
@@ -22,7 +26,10 @@ const S3_DEST_PATH = 'mapdata';
 function toS3Path(fromPath, removeFromDestPath, prefix) {
     return {
         from: fromPath,
-        to: `${S3_DEST_PATH}/${prefix ? prefix + '/' : ''}${fromPath.replace(removeFromDestPath, '')}`
+        to: `${S3_DEST_PATH}/${prefix ? prefix + '/' : ''}${fromPath.replace(
+            removeFromDestPath,
+            ''
+        )}`
     };
 }
 
@@ -47,20 +54,28 @@ function distUploadMapCollection() {
     log.starting('Starting upload of map-collection v' + version);
 
     if (!argv.sourceDir) {
-        log.message(`Using default folder ${SOURCE_DIR} as source. Use --source-dir to specify a different folder as source.`);
+        log.message(
+            `Using default folder ${SOURCE_DIR} as source. Use --source-dir to specify a different folder as source.`
+        );
     }
 
     const sourceDir = rootSourceDir + 'Export/' + version;
     if (!isDirectory(sourceDir)) {
-        throw new Error(`Could not find source directory ${rootSourceDir}. Have you cloned the map-collection repo into ../map-collection or tried to specify a different path with --source-dir?`);
+        throw new Error(
+            `Could not find source directory ${rootSourceDir}. Have you cloned the map-collection repo into ../map-collection or tried to specify a different path with --source-dir?`
+        );
     }
 
     if (!bucket) {
         throw new Error('No --bucket specified.');
     }
 
-    const sourceFiles = glob.sync(`${sourceDir}/**/*`).filter(file => !isDirectoryOrSystemFile(file));
-    const rootFiles = sourceFiles.map(file => toS3Path(file, sourceDir + '/'));
+    const sourceFiles = glob
+        .sync(`${sourceDir}/**/*`)
+        .filter((file) => !isDirectoryOrSystemFile(file));
+    const rootFiles = sourceFiles.map((file) =>
+        toS3Path(file, sourceDir + '/')
+    );
     rootFiles.push({
         from: rootSourceDir + 'Export/changelog.html',
         to: `${S3_DEST_PATH}/changelog.html`
@@ -68,8 +83,12 @@ function distUploadMapCollection() {
 
     const versionedFiles = [];
     const versionedPaths = getVersionPaths(version);
-    versionedPaths.forEach(versionPath => {
-        versionedFiles.push(...sourceFiles.map(file => toS3Path(file, sourceDir + '/', versionPath)));
+    versionedPaths.forEach((versionPath) => {
+        versionedFiles.push(
+            ...sourceFiles.map((file) =>
+                toS3Path(file, sourceDir + '/', versionPath)
+            )
+        );
         versionedFiles.push({
             from: rootSourceDir + 'Export/changelog.html',
             to: `${S3_DEST_PATH}/${versionPath}/changelog.html`
@@ -84,12 +103,15 @@ function distUploadMapCollection() {
     });
 }
 
-distUploadMapCollection.description = 'Uploads distribution for map-collection to code bucket.';
+distUploadMapCollection.description =
+    'Uploads distribution for map-collection to code bucket.';
 distUploadMapCollection.flags = {
     '--bucket': 'S3 bucket to upload to. Normally this is code.highcharts.com',
     '--release-version': 'Version to upload.', // --version seems to be reserved by gulp
-    '--source-dir': 'Path to root folder of map-collection. .../map-collection is default. (optional) ',
-    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+    '--source-dir':
+        'Path to root folder of map-collection. .../map-collection is default. (optional) ',
+    '--profile':
+        'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)'
 };
 

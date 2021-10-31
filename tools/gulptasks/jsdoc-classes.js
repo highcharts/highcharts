@@ -76,7 +76,9 @@ const SOURCE_GLOBS = [
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
 
 const TEMPLATE_DIRECTORY = Path.join(
-    'node_modules', 'highcharts-documentation-generators', 'docstrap'
+    'node_modules',
+    'highcharts-documentation-generators',
+    'docstrap'
 );
 
 /* *
@@ -92,12 +94,10 @@ const TEMPLATE_DIRECTORY = Path.join(
  *         Promise to keep
  */
 function jsDocClasses() {
-
     const gulpJSDoc = require('gulp-jsdoc3');
     const LogLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         const jsDocConfig = {
             navOptions: {
                 theme: 'highsoft'
@@ -111,9 +111,7 @@ function jsDocClasses() {
                 ['plugins', 'add-namespace'],
                 ['plugins', 'markdown'],
                 ['plugins', 'sampletag']
-            ].map(
-                filePath => Path.join(TEMPLATE_DIRECTORY, ...filePath)
-            ),
+            ].map((filePath) => Path.join(TEMPLATE_DIRECTORY, ...filePath)),
             templates: {
                 logoFile: Path.join('img', 'highcharts-logo.svg'),
                 systemName: 'Highcharts',
@@ -123,16 +121,16 @@ function jsDocClasses() {
 
         LogLib.message('Generating', TARGET_DIRECTORY + '...');
 
-        Gulp
-            .src(SOURCE_GLOBS, { read: false })
-            .pipe(gulpJSDoc(jsDocConfig, function (error) {
+        Gulp.src(SOURCE_GLOBS, { read: false }).pipe(
+            gulpJSDoc(jsDocConfig, function (error) {
                 if (error) {
                     reject(error);
                 } else {
                     LogLib.success('Created', TARGET_DIRECTORY);
                     resolve();
                 }
-            }));
+            })
+        );
     });
 }
 

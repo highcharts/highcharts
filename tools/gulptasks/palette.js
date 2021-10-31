@@ -14,9 +14,9 @@ const log = require('./lib/log');
 async function task() {
     const fs = require('fs');
     const path = require('path');
-    const lines = fs.readFileSync(
-        path.join(__dirname, '../../css/highcharts.scss'), 'utf8'
-    ).split('\n');
+    const lines = fs
+        .readFileSync(path.join(__dirname, '../../css/highcharts.scss'), 'utf8')
+        .split('\n');
 
     let paletteTS = '',
         palettesTS = '';
@@ -24,10 +24,13 @@ async function task() {
         if (line.indexOf('$') === 0) {
             const parts = line
                 .replace(' !default', '')
-                .replace(/\r/, '').split(':');
-            const key = parts[0].trim().replace(/^\$/, '')
+                .replace(/\r/, '')
+                .split(':');
+            const key = parts[0]
+                .trim()
+                .replace(/^\$/, '')
                 // Camelcase
-                .replace(/-([a-z0-9])/g, g => g[1].toUpperCase());
+                .replace(/-([a-z0-9])/g, (g) => g[1].toUpperCase());
             const val = parts[1].split(';')[0].trim();
 
             let comment = (line.split('//')[1] || '').trim();
@@ -42,13 +45,15 @@ async function task() {
      */
     ${key} = '${val}',\n`;
 
-            // Array of colors
+                // Array of colors
             } else if (val.lastIndexOf('#') > 0) {
-                palettesTS += `    /**
+                palettesTS +=
+                    `    /**
      * ${comment}
      */
     ${key}: [\n        '` +
-                    val.replace(/ /g, '\',\n        \'') + '\'\n    ] as Array<ColorString>,\n';
+                    val.replace(/ /g, "',\n        '") +
+                    "'\n    ] as Array<ColorString>,\n";
             }
         }
     });
@@ -72,7 +77,6 @@ export default SeriesPalettes;
         'utf8'
     );
     log.success('Wrote palette colors to ts/Core/Color/Palettes.ts');
-
 }
 
 gulp.task('palette', task);

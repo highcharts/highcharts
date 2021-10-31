@@ -17,11 +17,9 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function jsDoc() {
-
     const logLib = require('./lib/log');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         logLib.success('Created API documentation');
 
         if (!process.argv.includes('jsdoc-watch')) {

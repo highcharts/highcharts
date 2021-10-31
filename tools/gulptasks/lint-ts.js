@@ -25,12 +25,10 @@ const SOURCE_GLOB = './**/*.ts';
  *         Promise to keep with console output
  */
 function task() {
-
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
-
         logLib.message('Linting [', SOURCE_GLOB, ']...');
 
         processLib

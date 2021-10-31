@@ -49,14 +49,16 @@ function replaceAll(str, pattern, replacement) {
  *         Modified string.
  */
 function replaceLast(str, pattern, replacement) {
-
     if (!str || !pattern || !replacement) {
         return str;
     }
 
     const lastIndex = str.lastIndexOf(pattern);
 
-    return str.substr(0, lastIndex) + str.substr(lastIndex).replace(pattern, replacement);
+    return (
+        str.substr(0, lastIndex) +
+        str.substr(lastIndex).replace(pattern, replacement)
+    );
 }
 
 /* *

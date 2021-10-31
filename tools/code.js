@@ -39,35 +39,37 @@ function processVariables(content) {
         /(^|\n)([ \t]+)(var[ \t]+)([\s\S]+?)(;(?:\n|$))/gm,
         function (match, prefix, indent, statement, variables, suffix) {
             return (
-                prefix + indent + statement +
-                variables.split(/\n/g).map(function (line) {
+                prefix +
+                indent +
+                statement +
+                variables
+                    .split(/\n/g)
+                    .map(function (line) {
+                        if (
+                            variables.match(/\/\*\* @class \*\//g) ||
+                            variables.match(/(['"])[^\1\n]*,[^\1\n]*\1/g)
+                        ) {
+                            // skip lines with complex strings
+                            return line;
+                        }
 
-                    if (
-                        variables.match(/\/\*\* @class \*\//g) ||
-                        variables.match(/(['"])[^\1\n]*,[^\1\n]*\1/g)
-                    ) {
-                        // skip lines with complex strings
-                        return line;
-                    }
+                        const commentPosition = line.indexOf('//');
 
-                    const commentPosition = line.indexOf('//');
+                        let comment = '';
 
-                    let comment = '';
+                        if (commentPosition !== -1) {
+                            comment = line.substr(commentPosition);
+                            line = line.substr(0, commentPosition);
+                        }
 
-                    if (commentPosition !== -1) {
-                        comment = line.substr(commentPosition);
-                        line = line.substr(0, commentPosition);
-                    }
-
-                    return (
-                        line.replace(
-                            /,[ \t]*?([A-z])/g,
-                            ',\n    ' + indent + '$1'
-                        ) +
-                        comment
-                    );
-
-                }).join('\n    ') +
+                        return (
+                            line.replace(
+                                /,[ \t]*?([A-z])/g,
+                                ',\n    ' + indent + '$1'
+                            ) + comment
+                        );
+                    })
+                    .join('\n    ') +
                 suffix
             );
         }

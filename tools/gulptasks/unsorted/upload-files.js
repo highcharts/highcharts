@@ -9,16 +9,16 @@ const gulp = require('gulp');
 const fileUpload = () => {
     const colors = require('colors');
     const ProgressBar = require('../../progress-bar.js');
-    const {
-        uploadFiles
-    } = require('../../upload.js');
+    const { uploadFiles } = require('../../upload.js');
     const argv = require('yargs').argv;
     const bucket = argv.bucket;
     const batchSize = argv.batchsize || 30000;
     const files = argv.files ? argv.files.split(',') : [];
 
     if (files.length <= 0) {
-        throw new Error('Please specify files using --files and a comma-separated list of the file paths.');
+        throw new Error(
+            'Please specify files using --files and a comma-separated list of the file paths.'
+        );
     }
 
     if (!bucket) {
@@ -35,10 +35,12 @@ const fileUpload = () => {
         const doTick = () => {
             bar.tick();
         };
-        const onError = err => {
+        const onError = (err) => {
             errors.push(`${err.message}. ${err.from} -> ${err.to}`);
             bar.tick({
-                error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
+                error: `\n${errors.length} file(s) errored:\n${errors.join(
+                    '\n'
+                )}`
             });
         };
         const params = {
@@ -48,30 +50,37 @@ const fileUpload = () => {
             callback: doTick,
             onError
         };
-        params.files = files.map(file => ({ from: file, to: file }));
+        params.files = files.map((file) => ({ from: file, to: file }));
         return params;
     };
 
     console.log(`Started upload of ${files.length} files to ${bucket}`);
     const commands = [];
-    return Promise
-        .resolve(getUploadConfig())
+    return Promise.resolve(getUploadConfig())
         .then(uploadFiles)
-        .then(result => {
+        .then((result) => {
             const { errors } = result;
             if (errors.length) {
-                const erroredFiles = errors.map(e => e.from);
+                const erroredFiles = errors.map((e) => e.from);
                 console.log(`Files errored: ${erroredFiles.join(',')}`);
-                commands.push(`gulp upload-files --bucket ${bucket} --files ${erroredFiles.join(',')}`);
+                commands.push(
+                    `gulp upload-files --bucket ${bucket} --files ${erroredFiles.join(
+                        ','
+                    )}`
+                );
             }
         })
         .then(() => {
             if (commands.length) {
-                console.log([
-                    '',
-                    colors.red('Some of the uploads failed, please run the following command to retry:'),
-                    commands.join(' && ')
-                ].join('\n'));
+                console.log(
+                    [
+                        '',
+                        colors.red(
+                            'Some of the uploads failed, please run the following command to retry:'
+                        ),
+                        commands.join(' && ')
+                    ].join('\n')
+                );
             }
         });
 };

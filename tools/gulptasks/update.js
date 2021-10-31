@@ -26,14 +26,12 @@ const CONFIGURATION_FILE = path.join('node_modules', '_gulptasks_update.json');
  *         Promise to keep.
  */
 function task() {
-
     const fs = require('fs');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
-
-        const now = (new Date()).getTime();
+        const now = new Date().getTime();
 
         let configuration = {
             checkFrequency: 'weekly',
@@ -65,7 +63,6 @@ function task() {
         }
 
         if (configuration.lastCheck > minimumTime) {
-
             logLib.message('Skipping package validation');
 
             resolve();
@@ -75,15 +72,16 @@ function task() {
 
         logLib.message('Validating packages...');
 
-        processLib.exec('npm i')
+        processLib
+            .exec('npm i')
             .then(() => {
-
                 configuration.lastCheck = now;
 
                 logLib.success('Validated packages');
 
                 fs.writeFileSync(
-                    CONFIGURATION_FILE, JSON.stringify(configuration)
+                    CONFIGURATION_FILE,
+                    JSON.stringify(configuration)
                 );
             })
             .then(resolve)

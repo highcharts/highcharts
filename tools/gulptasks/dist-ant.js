@@ -17,15 +17,10 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function distAnt() {
-
     const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
-
-        processLib
-            .exec('npx ant dist')
-            .then(resolve)
-            .catch(reject);
+        processLib.exec('npx ant dist').then(resolve).catch(reject);
     });
 }
 

@@ -10,12 +10,8 @@ const Gulp = require('gulp');
  *              specifyed then the information will be outputted to the console.
  */
 Gulp.task('compare-filesizes', () => {
-    const {
-        getCompareFileSizeTable
-    } = require('../../compareFilesize.js');
-    const {
-        argv
-    } = require('yargs');
+    const { getCompareFileSizeTable } = require('../../compareFilesize.js');
+    const { argv } = require('yargs');
     const out = argv.out;
     const pathOld = argv.old;
     const pathNew = argv.new;

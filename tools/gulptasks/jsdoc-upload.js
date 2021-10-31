@@ -99,7 +99,7 @@ const TEST_ROOT = 'build/api-test';
  * Promise to keep.
  */
 function delay(milliseconds) {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 /**
@@ -183,30 +183,35 @@ function fetchFileModificationTimes(storage, bucket, keyPrefix) {
 
         // eslint-disable-next-line require-jsdoc
         function fetch(continuationToken) {
-            storage.listObjectsV2({
-                Bucket: bucket,
-                ContinuationToken: continuationToken,
-                StartAfter: keyPrefix
-            }).promise().then(response => {
-                if (response.Contents) {
-                    response.Contents.forEach(item => {
-                        if (item.Key.startsWith(keyPrefix)) {
-                            files[item.Key] = item.LastModified;
-                        } else { // abort after items with key prefix
-                            delete response.NextContinuationToken;
-                        }
-                    });
-                }
+            storage
+                .listObjectsV2({
+                    Bucket: bucket,
+                    ContinuationToken: continuationToken,
+                    StartAfter: keyPrefix
+                })
+                .promise()
+                .then((response) => {
+                    if (response.Contents) {
+                        response.Contents.forEach((item) => {
+                            if (item.Key.startsWith(keyPrefix)) {
+                                files[item.Key] = item.LastModified;
+                            } else {
+                                // abort after items with key prefix
+                                delete response.NextContinuationToken;
+                            }
+                        });
+                    }
 
-                if (
-                    response.IsTruncated &&
-                    response.NextContinuationToken
-                ) {
-                    return fetch(response.NextContinuationToken);
-                }
+                    if (
+                        response.IsTruncated &&
+                        response.NextContinuationToken
+                    ) {
+                        return fetch(response.NextContinuationToken);
+                    }
 
-                return resolve(files);
-            }).catch(reject);
+                    return resolve(files);
+                })
+                .catch(reject);
         }
 
         fetch();
@@ -231,12 +236,7 @@ function fetchFileModificationTimes(storage, bucket, keyPrefix) {
  * @return {Promise}
  * Promise to keep.
  */
-function synchronizeFolder(
-    sourceFolder,
-    targetStorage,
-    bucket,
-    test
-) {
+function synchronizeFolder(sourceFolder, targetStorage, bucket, test) {
     const log = require('./lib/log');
 
     log.warn(`Start synchronization of "${sourceFolder}"...`);
@@ -245,36 +245,65 @@ function synchronizeFolder(
         targetStorage,
         bucket,
         path.relative(SOURCE_ROOT, sourceFolder)
-    ).then(fileModificationTimes => {
+    ).then((fileModificationTimes) => {
         const fileKeys = Object.keys(fileModificationTimes);
         const versionPattern = /\d+\.\d+/;
 
         let synchronizePromises = delay(1000),
             didSomeWork = false;
 
-        getChunks(fileKeys).forEach(fileKeysChunk => {
-            synchronizePromises = synchronizePromises.then(() => Promise.all(
-                fileKeysChunk.map(fileKey => {
-                    const filePath = path.join(SOURCE_ROOT, fileKey);
+        getChunks(fileKeys).forEach((fileKeysChunk) => {
+            synchronizePromises = synchronizePromises.then(() =>
+                Promise.all(
+                    fileKeysChunk.map((fileKey) => {
+                        const filePath = path.join(SOURCE_ROOT, fileKey);
 
-                    if (fileKey.match(versionPattern)) {
+                        if (fileKey.match(versionPattern)) {
+                            return Promise.resolve();
+                        }
+
+                        if (!fs.existsSync(filePath)) {
+                            didSomeWork = true;
+                            return deleteFileKey(
+                                targetStorage,
+                                bucket,
+                                fileKey,
+                                test
+                            );
+                        }
+
+                        if (
+                            fileModificationTimes[fileKey] <
+                            fs.lstatSync(filePath).mtime
+                        ) {
+                            didSomeWork = true;
+                            return uploadFile(
+                                filePath,
+                                targetStorage,
+                                bucket,
+                                test
+                            );
+                        }
+
                         return Promise.resolve();
-                    }
+                    })
+                )
+            );
+        });
 
-                    if (!fs.existsSync(filePath)) {
-                        didSomeWork = true;
-                        return deleteFileKey(
-                            targetStorage,
-                            bucket,
-                            fileKey,
-                            test
-                        );
-                    }
+        const filePaths = glob
+            .sync(path.posix.join(sourceFolder, '**/*'))
+            .filter(
+                (sourcePath) =>
+                    path.basename(sourcePath).indexOf('.') !== 0 &&
+                    fs.lstatSync(sourcePath).isFile() &&
+                    !fileKeys.includes(path.relative(SOURCE_ROOT, sourcePath))
+            );
 
-                    if (
-                        fileModificationTimes[fileKey] <
-                        fs.lstatSync(filePath).mtime
-                    ) {
+        getChunks(filePaths).forEach((filePathsChunk) => {
+            synchronizePromises = synchronizePromises.then(() =>
+                Promise.all(
+                    filePathsChunk.map((filePath) => {
                         didSomeWork = true;
                         return uploadFile(
                             filePath,
@@ -282,33 +311,9 @@ function synchronizeFolder(
                             bucket,
                             test
                         );
-                    }
-
-                    return Promise.resolve();
-                })
-            ));
-        });
-
-        const filePaths = glob
-            .sync(path.posix.join(sourceFolder, '**/*'))
-            .filter(sourcePath => (
-                path.basename(sourcePath).indexOf('.') !== 0 &&
-                fs.lstatSync(sourcePath).isFile() &&
-                !fileKeys.includes(path.relative(SOURCE_ROOT, sourcePath))
-            ));
-
-        getChunks(filePaths).forEach(filePathsChunk => {
-            synchronizePromises = synchronizePromises.then(() => Promise.all(
-                filePathsChunk.map(filePath => {
-                    didSomeWork = true;
-                    return uploadFile(
-                        filePath,
-                        targetStorage,
-                        bucket,
-                        test
-                    );
-                })
-            ));
+                    })
+                )
+            );
         });
 
         synchronizePromises = synchronizePromises.then(() => {
@@ -340,14 +345,19 @@ function updateFileContent(filePath, fileContent) {
         case '.htm':
         case '.html':
             if (
-                !/^(?:(?:foot|head)(?:er)?|index)|-frame\.html?/.test(basename) &&
+                !/^(?:(?:foot|head)(?:er)?|index)|-frame\.html?/.test(
+                    basename
+                ) &&
                 !fileContent.includes('<frame') &&
                 !fileContent.includes('<iframe')
             ) {
                 fileContent = Buffer.from(
                     fileContent
                         .toString()
-                        .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+                        .replace(
+                            /^(.*\<\/head\>.*)$/m,
+                            HTML_HEAD_STATIC + '\n$1'
+                        )
                 );
             }
             break;
@@ -356,7 +366,6 @@ function updateFileContent(filePath, fileContent) {
 
     return fileContent;
 }
-
 
 /**
  * Uploads a file to the bucket.
@@ -376,12 +385,7 @@ function updateFileContent(filePath, fileContent) {
  * @return {Promise}
  * Promise to keep.
  */
-function uploadFile(
-    sourceFile,
-    targetStorage,
-    targetBucket,
-    test
-) {
+function uploadFile(sourceFile, targetStorage, targetBucket, test) {
     const log = require('./lib/log');
     const fileContent = updateFileContent(
         sourceFile,
@@ -398,11 +402,7 @@ function uploadFile(
                 if (!fs.existsSync(testFolderPath)) {
                     fs.mkdirSync(testFolderPath, { recursive: true });
                 }
-                fs.writeFileSync(
-                    testPath,
-                    fileContent,
-                    { encoding: 'binary' }
-                );
+                fs.writeFileSync(testPath, fileContent, { encoding: 'binary' });
                 log.message(testPath, 'would be uploaded');
                 resolve();
             } catch (error) {
@@ -440,34 +440,29 @@ function uploadFile(
  * @return {Promise}
  * Promise to keep.
  */
-function uploadFolder(
-    sourceFolder,
-    targetStorage,
-    bucket,
-    test
-) {
+function uploadFolder(sourceFolder, targetStorage, bucket, test) {
     const log = require('./lib/log');
 
     log.warn(`Start upload of "${sourceFolder}"...`);
 
     const filePaths = glob
         .sync(path.posix.join(sourceFolder, '**/*'))
-        .filter(sourcePath => (
-            path.basename(sourcePath).indexOf('.') !== 0 &&
-            fs.lstatSync(sourcePath).isFile()
-        ));
+        .filter(
+            (sourcePath) =>
+                path.basename(sourcePath).indexOf('.') !== 0 &&
+                fs.lstatSync(sourcePath).isFile()
+        );
 
     let uploadPromises = delay(1000);
 
-    getChunks(filePaths).forEach(filePathsChunk => {
-        uploadPromises = uploadPromises.then(() => Promise.all(
-            filePathsChunk.map(filePath => uploadFile(
-                filePath,
-                targetStorage,
-                bucket,
-                test
-            ))
-        ));
+    getChunks(filePaths).forEach((filePathsChunk) => {
+        uploadPromises = uploadPromises.then(() =>
+            Promise.all(
+                filePathsChunk.map((filePath) =>
+                    uploadFile(filePath, targetStorage, bucket, test)
+                )
+            )
+        );
     });
 
     return uploadPromises;
@@ -483,15 +478,8 @@ function jsdocUpload() {
     const aws = require('aws-sdk');
     const lfs = require('./lib/fs');
     const log = require('./lib/log');
-    const {
-        bucket,
-        docs,
-        helpme,
-        profile,
-        speak,
-        sync,
-        test
-    } = require('yargs').argv;
+    const { bucket, docs, helpme, profile, speak, sync, test } =
+        require('yargs').argv;
 
     if (helpme) {
         // eslint-disable-next-line no-console
@@ -510,61 +498,39 @@ function jsdocUpload() {
         throw new Error(`Source directory "${SOURCE_ROOT}" not found.`);
     }
 
-    const sourceItems = (
-        typeof docs === 'string' ?
-            docs.split(',').map(folder => path.join(SOURCE_ROOT, folder)) :
-            lfs.getDirectoryPaths(SOURCE_ROOT)
-    );
+    const sourceItems =
+        typeof docs === 'string'
+            ? docs.split(',').map((folder) => path.join(SOURCE_ROOT, folder))
+            : lfs.getDirectoryPaths(SOURCE_ROOT);
     const targetStorage = new aws.S3({
-        region: (process.env.AWS_REGION || 'eu-west-1'),
-        credentials: (
-            profile ?
-                new aws.SharedIniFileCredentials({ profile }) :
-                void 0
-        )
+        region: process.env.AWS_REGION || 'eu-west-1',
+        credentials: profile
+            ? new aws.SharedIniFileCredentials({ profile })
+            : void 0
     });
 
     let promiseChain = Promise.resolve();
 
     if (test) {
         if (fs.existsSync(TEST_ROOT)) {
-            promiseChain = promiseChain.then(() => fs.rmdirSync(
-                TEST_ROOT,
-                { recursive: true }
-            ));
+            promiseChain = promiseChain.then(() =>
+                fs.rmdirSync(TEST_ROOT, { recursive: true })
+            );
         }
-        promiseChain = promiseChain.then(() => fs.mkdirSync(
-            TEST_ROOT,
-            { recursive: true }
-        ));
+        promiseChain = promiseChain.then(() =>
+            fs.mkdirSync(TEST_ROOT, { recursive: true })
+        );
     }
 
-    sourceItems.forEach(sourceItem => {
-        promiseChain = promiseChain.then(() => (
-            fs.lstatSync(sourceItem).isFile() ?
-                (
-                    log.warn(`Start upload of "${sourceItem}"...`),
-                    uploadFile(
-                        sourceItem,
-                        targetStorage,
-                        bucket,
-                        test
-                    )
-                ) :
-                sync ?
-                    synchronizeFolder(
-                        sourceItem,
-                        targetStorage,
-                        bucket,
-                        test
-                    ) :
-                    uploadFolder(
-                        sourceItem,
-                        targetStorage,
-                        bucket,
-                        test
-                    )
-        ));
+    sourceItems.forEach((sourceItem) => {
+        promiseChain = promiseChain.then(() =>
+            fs.lstatSync(sourceItem).isFile()
+                ? (log.warn(`Start upload of "${sourceItem}"...`),
+                  uploadFile(sourceItem, targetStorage, bucket, test))
+                : sync
+                ? synchronizeFolder(sourceItem, targetStorage, bucket, test)
+                : uploadFolder(sourceItem, targetStorage, bucket, test)
+        );
     });
 
     promiseChain = promiseChain
@@ -574,7 +540,7 @@ function jsdocUpload() {
                 log.say(`${sync ? 'Synchronization' : 'Upload'} done.`);
             }
         })
-        .catch(error => {
+        .catch((error) => {
             log.failure(error);
             if (speak) {
                 log.say(`${sync ? 'Synchronization' : 'Upload'} failed!`);

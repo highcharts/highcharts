@@ -16,7 +16,6 @@ const HOUR = 60 * MINUTE;
  *         Time in a scaled format
  */
 function scale(timestamp) {
-
     const scaledTime = [];
 
     if (timestamp > HOUR) {
@@ -24,23 +23,17 @@ function scale(timestamp) {
         timestamp = timestamp % HOUR;
     }
 
-    if (timestamp > MINUTE ||
-        (scaledTime.length > 0 && timestamp > 0)
-    ) {
+    if (timestamp > MINUTE || (scaledTime.length > 0 && timestamp > 0)) {
         scaledTime.push(Math.floor(timestamp / MINUTE) + ' m');
         timestamp = timestamp % MINUTE;
     }
 
-    if (timestamp > SECOND ||
-        (scaledTime.length > 0 && timestamp > 0)
-    ) {
+    if (timestamp > SECOND || (scaledTime.length > 0 && timestamp > 0)) {
         scaledTime.push(Math.floor(timestamp / SECOND) + ' s');
         timestamp = timestamp % SECOND;
     }
 
-    if (timestamp > 0 ||
-        scaledTime.length === 0
-    ) {
+    if (timestamp > 0 || scaledTime.length === 0) {
         scaledTime.push(timestamp + ' ms');
     }
 

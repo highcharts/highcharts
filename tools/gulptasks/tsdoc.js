@@ -36,25 +36,28 @@ const NEXT_THEME = path.join(
  *         Promise to keep
  */
 function task() {
-
     const argv = require('yargs').argv;
     const processLib = require('./lib/process');
 
     const target = argv.next ? NEXT_TARGET : INTERNAL_TARGET;
     // const theme = argv.next ? NEXT_THEME : INTERNAL_THEME;
 
-    const command = (
+    const command =
         'cd ts && npx typedoc' +
         ` --json "${path.join('..', target, 'tree.json')}"` +
-        ` --out "${path.join('..', target)}"`
-        // + ` --theme "${path.join('..', theme)}"`
-    );
+        ` --out "${path.join('..', target)}"`;
+    // + ` --theme "${path.join('..', theme)}"`
 
     return processLib
         .exec(command)
-        .then(() => processLib.openAppFor(
-            path.join((argv.next ? NEXT_TARGET : INTERNAL_TARGET), 'index.html')
-        ));
+        .then(() =>
+            processLib.openAppFor(
+                path.join(
+                    argv.next ? NEXT_TARGET : INTERNAL_TARGET,
+                    'index.html'
+                )
+            )
+        );
 
     /*
     const generators = require('highcharts-documentation-generators');

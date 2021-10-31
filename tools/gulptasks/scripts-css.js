@@ -10,10 +10,7 @@ const gulp = require('gulp');
  *
  * */
 
-const COPY_DIRECTORIES = [
-    'css',
-    'gfx'
-];
+const COPY_DIRECTORIES = ['css', 'gfx'];
 
 const SOURCE_DIRECTORY = 'css';
 
@@ -32,7 +29,6 @@ const TARGET_DIRECTORY = 'code';
  *         Promise to keep
  */
 function task() {
-
     const fs = require('fs');
     const fslib = require('./lib/fs');
     const log = require('./lib/log');
@@ -40,16 +36,15 @@ function task() {
     const path = require('path');
     const sass = require('node-sass');
 
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
         log.message('Generating css ...');
 
-        COPY_DIRECTORIES.forEach(
-            copyPath => fslib.copyAllFiles(
+        COPY_DIRECTORIES.forEach((copyPath) =>
+            fslib.copyAllFiles(
                 copyPath,
                 path.join(TARGET_DIRECTORY, copyPath),
                 true,
-                sourcePath => !sourcePath.endsWith('.scss')
+                (sourcePath) => !sourcePath.endsWith('.scss')
             )
         );
 
@@ -57,11 +52,11 @@ function task() {
 
         fslib
             .getFilePaths(SOURCE_DIRECTORY, true)
-            .filter(sourcePath => sourcePath.endsWith('.scss'))
-            .forEach(sourcePath => {
-
+            .filter((sourcePath) => sourcePath.endsWith('.scss'))
+            .forEach((sourcePath) => {
                 targetPath = path.join(
-                    TARGET_DIRECTORY, sourcePath.replace('.scss', '.css')
+                    TARGET_DIRECTORY,
+                    sourcePath.replace('.scss', '.css')
                 );
 
                 mkdir.sync(path.dirname(targetPath));

@@ -38,22 +38,20 @@ function copyAllFiles(
     includeSubDirectories,
     filterFunction
 ) {
-
     const filePaths = getFilePaths(directorySourcePath, includeSubDirectories);
 
     if (filePaths.length === 0) {
         return;
     }
 
-    const pathIndex = (directorySourcePath.length + 1);
+    const pathIndex = directorySourcePath.length + 1;
 
     if (typeof filterFunction === 'function') {
-
         let targetPath, filterResult;
-        filePaths.forEach(sourcePath => {
-
+        filePaths.forEach((sourcePath) => {
             targetPath = Path.join(
-                directoryTargetPath, sourcePath.substr(pathIndex)
+                directoryTargetPath,
+                sourcePath.substr(pathIndex)
             );
 
             filterResult = filterFunction(sourcePath, targetPath);
@@ -69,9 +67,12 @@ function copyAllFiles(
             }
         });
     } else {
-        filePaths.forEach(filePath => copyFile(
-            filePath, Path.join(directoryTargetPath, filePath.substr(pathIndex))
-        ));
+        filePaths.forEach((filePath) =>
+            copyFile(
+                filePath,
+                Path.join(directoryTargetPath, filePath.substr(pathIndex))
+            )
+        );
     }
 }
 
@@ -87,7 +88,6 @@ function copyAllFiles(
  * @return {void}
  */
 function copyFile(fileSourcePath, fileTargetPath) {
-
     const mkDirP = require('mkdirp');
 
     mkDirP.sync(Path.dirname(fileTargetPath));
@@ -109,16 +109,15 @@ function copyFile(fileSourcePath, fileTargetPath) {
  * @throws {Error}
  */
 function deleteDirectory(directoryPath, includeEntries) {
-
     if (!FS.existsSync(directoryPath)) {
         return;
     }
 
     if (includeEntries) {
-        getDirectoryPaths(directoryPath).forEach(
-            path => deleteDirectory(path, true)
+        getDirectoryPaths(directoryPath).forEach((path) =>
+            deleteDirectory(path, true)
         );
-        getFilePaths(directoryPath).forEach(path => deleteFile(path, true));
+        getFilePaths(directoryPath).forEach((path) => deleteFile(path, true));
     }
 
     FS.rmdirSync(directoryPath);
@@ -135,7 +134,6 @@ function deleteDirectory(directoryPath, includeEntries) {
  * @throws {Error}
  */
 function deleteFile(filePath) {
-
     if (!FS.existsSync(filePath)) {
         return;
     }
@@ -159,46 +157,40 @@ function deleteFile(filePath) {
  *         Hexadecimal hash value
  */
 function getDirectoryHash(directoryPath, useFileContent, contentFilter) {
-
     const directoryHash = Crypto.createHash('sha256');
 
     if (useFileContent) {
-
         getFilePaths(directoryPath, true)
             .sort()
-            .forEach(path => {
-
+            .forEach((path) => {
                 directoryHash.update(Path.basename(path));
                 directoryHash.update(
-                    contentFilter ?
-                        (
-                            contentFilter(FS.readFileSync(path).toString()) ||
-                            ''
-                        ) :
-                        FS.readFileSync(path).toString()
+                    contentFilter
+                        ? contentFilter(FS.readFileSync(path).toString()) || ''
+                        : FS.readFileSync(path).toString()
                 );
             });
     } else {
-
         let meta;
 
         [directoryPath]
             .concat(...getDirectoryPaths(directoryPath, true))
             .concat(...getFilePaths(directoryPath, true))
             .sort()
-            .forEach(path => {
-
+            .forEach((path) => {
                 meta = FS.lstatSync(path);
 
                 directoryHash.update(Path.basename(path));
-                directoryHash.update([
-                    meta.dev,
-                    meta.gid,
-                    meta.mode,
-                    meta.mtimeMs,
-                    meta.size,
-                    meta.uid
-                ].join(':'));
+                directoryHash.update(
+                    [
+                        meta.dev,
+                        meta.gid,
+                        meta.mode,
+                        meta.mtimeMs,
+                        meta.size,
+                        meta.uid
+                    ].join(':')
+                );
             });
     }
 
@@ -218,20 +210,17 @@ function getDirectoryHash(directoryPath, useFileContent, contentFilter) {
  *         Sub-directory paths
  */
 function getDirectoryPaths(directoryPath, includeSubDirectories) {
-
     const directoryPaths = [];
 
     let entryPath;
     let entryStat;
 
     if (FS.existsSync(directoryPath)) {
-        FS.readdirSync(directoryPath).forEach(entry => {
-
+        FS.readdirSync(directoryPath).forEach((entry) => {
             entryPath = Path.join(directoryPath, entry);
             entryStat = FS.lstatSync(entryPath);
 
             if (entryStat.isDirectory()) {
-
                 directoryPaths.push(entryPath);
 
                 if (includeSubDirectories) {
@@ -259,13 +248,11 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
  *         Hexadecimal hash value
  */
 function getFileHash(filePath, contentFilter) {
-
-    return Crypto
-        .createHash('sha256')
+    return Crypto.createHash('sha256')
         .update(
-            contentFilter ?
-                (contentFilter(FS.readFileSync(filePath).toString()) || '') :
-                FS.readFileSync(filePath).toString()
+            contentFilter
+                ? contentFilter(FS.readFileSync(filePath).toString()) || ''
+                : FS.readFileSync(filePath).toString()
         )
         .digest('hex');
 }
@@ -283,15 +270,13 @@ function getFileHash(filePath, contentFilter) {
  *         File paths
  */
 function getFilePaths(directoryPath, includeSubDirectories) {
-
     const filePaths = [];
 
     let entryPath;
     let entryStat;
 
     if (FS.existsSync(directoryPath)) {
-        FS.readdirSync(directoryPath).forEach(entry => {
-
+        FS.readdirSync(directoryPath).forEach((entry) => {
             entryPath = Path.join(directoryPath, entry);
             entryStat = FS.lstatSync(entryPath);
 
@@ -308,7 +293,6 @@ function getFilePaths(directoryPath, includeSubDirectories) {
     return filePaths;
 }
 
-
 /**
  * GZIPs a single file.
  *
@@ -324,13 +308,10 @@ function getFilePaths(directoryPath, includeSubDirectories) {
  *         Promise to keep
  */
 function gzipFile(fileSourcePath, fileTargetPath) {
-
     const ZLib = require('zlib');
 
     return new Promise((resolve, reject) => {
-
-        FS
-            .createReadStream(fileSourcePath)
+        FS.createReadStream(fileSourcePath)
             .pipe(ZLib.createGzip())
             .pipe(FS.createWriteStream(fileTargetPath))
             .on('close', () => resolve(fileTargetPath))

@@ -3,15 +3,15 @@
 
 'use strict';
 
-const isString = x => typeof x === 'string';
-const isFunction = x => typeof x === 'function';
-const isArray = x => Array.isArray(x);
+const isString = (x) => typeof x === 'string';
+const isFunction = (x) => typeof x === 'function';
+const isArray = (x) => Array.isArray(x);
 
 const fs = require('fs');
 
 const asyncForeach = (arr, fn) => {
     const length = arr.length;
-    const generator = j => {
+    const generator = (j) => {
         let promise;
         if (j < length) {
             promise = fn(arr[j], j, arr).then(() => generator(j + 1));
@@ -36,7 +36,7 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
     return generator(0, batchSize);
 };
 
-const uploadFiles = params => {
+const uploadFiles = (params) => {
     const aws = require('aws-sdk');
     const mimeType = {
         css: 'text/css',
@@ -71,31 +71,38 @@ const uploadFiles = params => {
     let result;
     if (isString(bucket) && isArray(files)) {
         if (profile) {
-            aws.config.credentials = new aws.SharedIniFileCredentials({ profile });
+            aws.config.credentials = new aws.SharedIniFileCredentials({
+                profile
+            });
             if (!aws.config.credentials.accessKeyId) {
-                return Promise.reject(new Error('No accessKeyId found for profile ' + profile));
+                return Promise.reject(
+                    new Error('No accessKeyId found for profile ' + profile)
+                );
             }
         }
         const s3 = new aws.S3();
         const s3Put = (filename, data, mime, s3Params = {}) => {
             return new Promise((resolve, reject) => {
-                s3.putObject({
-                    Bucket: bucket,
-                    Key: filename,
-                    Body: data,
-                    ContentType: mime,
-                    ACL: 'public-read',
-                    ...s3Params
-                }, (err, data) => {
-                    if (err) {
-                        return reject(err);
+                s3.putObject(
+                    {
+                        Bucket: bucket,
+                        Key: filename,
+                        Body: data,
+                        ContentType: mime,
+                        ACL: 'public-read',
+                        ...s3Params
+                    },
+                    (err, data) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return resolve(data);
                     }
-                    return resolve(data);
-                });
+                );
             });
         };
 
-        const uploadFile = file => {
+        const uploadFile = (file) => {
             const { from, to } = file;
             let filePromise;
             if (isString(from) && isString(to)) {
@@ -114,10 +121,17 @@ const uploadFiles = params => {
                 const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
                     filePromise = s3Put(to, content, fileMime, s3Params)
-                        .then(() => isFunction(callback) && callback(from, to, fileMime))
-                        .catch(err => {
+                        .then(
+                            () =>
+                                isFunction(callback) &&
+                                callback(from, to, fileMime)
+                        )
+                        .catch((err) => {
                             const error = {
-                                message: `S3: ${(err.pri && err.pri.message) || (err.internal && err.internal.message)}`,
+                                message: `S3: ${
+                                    (err.pri && err.pri.message) ||
+                                    (err.internal && err.internal.message)
+                                }`,
                                 from,
                                 to
                             };

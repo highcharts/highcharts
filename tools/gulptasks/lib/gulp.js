@@ -25,17 +25,19 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function requires(globPatterns, taskNames) {
-
     const glob = require('glob').sync;
 
     return new Promise((resolve, reject) => {
         try {
-            if (globPatterns.length === 0 ||
-                globPatterns.some(globPattern =>
-                    glob(globPattern, { allowEmpty: true }).length === 0)
+            if (
+                globPatterns.length === 0 ||
+                globPatterns.some(
+                    (globPattern) =>
+                        glob(globPattern, { allowEmpty: true }).length === 0
+                )
             ) {
-                taskNames.forEach(taskName => require('../' + taskName));
-                gulp.series(...taskNames)(error => {
+                taskNames.forEach((taskName) => require('../' + taskName));
+                gulp.series(...taskNames)((error) => {
                     if (error) {
                         reject(error);
                     } else {

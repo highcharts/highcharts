@@ -17,13 +17,8 @@ const TREE_FILE = 'tree-namespace.json';
 
 const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 
-const TARGET_DIRECTORIES = [
-    'gantt',
-    'highcharts',
-    'highstock',
-    'highmaps'
-].map(
-    directoryName => path.join('build', 'api', directoryName)
+const TARGET_DIRECTORIES = ['gantt', 'highcharts', 'highstock', 'highmaps'].map(
+    (directoryName) => path.join('build', 'api', directoryName)
 );
 
 /* *
@@ -40,7 +35,6 @@ const TARGET_DIRECTORIES = [
  *         Promise to keep
  */
 function jsDocNamespace() {
-
     const fs = require('fs');
     const fsLib = require('./lib/fs');
     const gulpLib = require('./lib/gulp');
@@ -48,26 +42,26 @@ function jsDocNamespace() {
     const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
-        const codeFiles = JSON
-            .parse(fs.readFileSync(TSCONFIG_FILE)).files
-            .map(file => path.normalize(
-                path.join(path.dirname(TSCONFIG_FILE), file)
-            ))
-            .filter(file => (
-                file.indexOf('global.d.ts') === -1 &&
-                file.indexOf('.src.d.ts') === -1
-            ))
-            .map(file => file.replace(
-                /.d.ts$/, '.src.js'
-            ));
+        const codeFiles = JSON.parse(fs.readFileSync(TSCONFIG_FILE))
+            .files.map((file) =>
+                path.normalize(path.join(path.dirname(TSCONFIG_FILE), file))
+            )
+            .filter(
+                (file) =>
+                    file.indexOf('global.d.ts') === -1 &&
+                    file.indexOf('.src.d.ts') === -1
+            )
+            .map((file) => file.replace(/.d.ts$/, '.src.js'));
 
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {
                 plugins: [
                     path.posix.join(
-                        'node_modules', 'highcharts-documentation-generators',
-                        'jsdoc', 'plugins', 'highcharts.namespace'
+                        'node_modules',
+                        'highcharts-documentation-generators',
+                        'jsdoc',
+                        'plugins',
+                        'highcharts.namespace'
                     )
                 ]
             };
@@ -80,32 +74,35 @@ function jsDocNamespace() {
         gulpLib
             .requires(['code/highcharts.src.js'], ['scripts'])
             .then(() => logLib.message('Generating', TREE_FILE + '...'))
-            .then(() => gulp.src(...gulpOptions).pipe(
-                jsdoc(jsdoc3Options, error => {
+            .then(() =>
+                gulp.src(...gulpOptions).pipe(
+                    jsdoc(jsdoc3Options, (error) => {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
 
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-
-                    Promise
-                        .all(TARGET_DIRECTORIES.map(
-                            targetDirectory => new Promise(done => {
-                                fsLib.copyFile(
-                                    TREE_FILE,
-                                    path.join(
-                                        targetDirectory,
-                                        path.basename(TREE_FILE)
-                                    )
-                                );
-                                done();
-                            })
-                        ))
-                        .then(() => logLib.success('Created', TREE_FILE))
-                        .then(resolve)
-                        .catch(reject);
-                })
-            ))
+                        Promise.all(
+                            TARGET_DIRECTORIES.map(
+                                (targetDirectory) =>
+                                    new Promise((done) => {
+                                        fsLib.copyFile(
+                                            TREE_FILE,
+                                            path.join(
+                                                targetDirectory,
+                                                path.basename(TREE_FILE)
+                                            )
+                                        );
+                                        done();
+                                    })
+                            )
+                        )
+                            .then(() => logLib.success('Created', TREE_FILE))
+                            .then(resolve)
+                            .catch(reject);
+                    })
+                )
+            )
             .catch(reject);
     });
 }

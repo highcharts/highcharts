@@ -25,30 +25,23 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function task() {
-
     const argv = require('yargs').argv;
     const buildTool = require('../build');
     const logLib = require('./lib/log');
     const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
-
         const BuildScripts = buildTool.getBuildScripts({
-            debug: (argv.d || argv.debug || false),
-            files: (
-                (argv.file) ?
-                    argv.file.split(',') :
-                    null
-            ),
-            type: (argv.type || null)
+            debug: argv.d || argv.debug || false,
+            files: argv.file ? argv.file.split(',') : null,
+            type: argv.type || null
         });
 
         logLib.message('Generating code...');
 
         processLib.isRunning('scripts-js', true);
 
-        BuildScripts
-            .fnFirstBuild()
+        BuildScripts.fnFirstBuild()
             .then(() => logLib.success('Created code'))
             .then(function (output) {
                 processLib.isRunning('scripts-js', false);

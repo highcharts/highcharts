@@ -17,12 +17,10 @@ const gulp = require('gulp');
  *         Promise to keep
  */
 function distClean() {
-
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
         try {
             fsLib.deleteDirectory('build/dist', true);
             resolve();

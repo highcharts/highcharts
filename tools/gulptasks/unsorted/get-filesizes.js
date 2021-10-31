@@ -9,23 +9,16 @@ const gulp = require('gulp');
  *   --out      Specify where to store the result. Defaults "./filesizes.json"
  */
 gulp.task('get-filesizes', () => {
-    const {
-        getFilesInFolder
-    } = require('highcharts-assembler/src/build.js');
-    const {
-        getFileSizes
-    } = require('../../compareFilesize.js');
-    const {
-        argv
-    } = require('yargs');
-    const isSourceFile = path => (
-        path.endsWith('.src.js') && !path.includes('es-modules')
-    );
+    const { getFilesInFolder } = require('highcharts-assembler/src/build.js');
+    const { getFileSizes } = require('../../compareFilesize.js');
+    const { argv } = require('yargs');
+    const isSourceFile = (path) =>
+        path.endsWith('.src.js') && !path.includes('es-modules');
     const jsFolder = './js/masters/';
     const out = argv.out || './filesizes.json';
-    const files = argv.file ?
-        argv.file.split(',') :
-        getFilesInFolder(jsFolder, true, '').filter(isSourceFile);
+    const files = argv.file
+        ? argv.file.split(',')
+        : getFilesInFolder(jsFolder, true, '').filter(isSourceFile);
 
     return getFileSizes(files, out);
 });
