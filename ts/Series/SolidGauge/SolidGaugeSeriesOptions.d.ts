@@ -25,10 +25,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
-    innerRadius?: (number | string);
+    innerRadius?: number | string;
     linecap?: string;
     overshoot?: number;
-    radius?: (number | string);
+    radius?: number | string;
     rounded?: boolean;
     states?: SeriesStatesOptions<SolidGaugeSeries>;
     threshold?: number;

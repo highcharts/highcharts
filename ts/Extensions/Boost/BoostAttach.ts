@@ -21,11 +21,9 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-const {
-    error
-} = U;
+const { error } = U;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike extends Highcharts.BoostTargetObject {}
 }
 
@@ -43,7 +41,7 @@ declare global {
             boostClipRect?: SVGElement;
             canvas?: HTMLCanvasElement;
             ogl?: BoostGLRenderer;
-            renderTarget?: (HTMLElement|SVGElement);
+            renderTarget?: HTMLElement | SVGElement;
             renderTargetCtx?: CanvasRenderingContext2D;
             renderTargetFo?: SVGElement;
             /** @requires modules/boost */
@@ -56,7 +54,7 @@ declare global {
     }
 }
 
-let mainCanvas: HTMLCanvasElement|undefined;
+let mainCanvas: HTMLCanvasElement | undefined;
 
 /**
  * Create a canvas + context and attach it to the target
@@ -110,13 +108,8 @@ function createAndAttachRenderer(
         // Fall back to image tag if foreignObject isn't supported,
         // or if we're exporting.
         if (chart.renderer.forExport || !foSupported) {
-            target.renderTarget = chart.renderer.image(
-                '',
-                0,
-                0,
-                width,
-                height
-            )
+            target.renderTarget = chart.renderer
+                .image('', 0, 0, width, height)
                 .addClass('highcharts-boost-canvas')
                 .add(targetGroup);
 
@@ -130,35 +123,42 @@ function createAndAttachRenderer(
                     href: (target.canvas as any).toDataURL('image/png')
                 });
             };
-
         } else {
             target.renderTargetFo = chart.renderer
                 .createElement('foreignObject')
                 .add(targetGroup);
 
             target.renderTarget = doc.createElement('canvas') as any;
-            target.renderTargetCtx =
-                (target.renderTarget as any).getContext('2d');
+            target.renderTargetCtx = (target.renderTarget as any).getContext(
+                '2d'
+            );
 
             target.renderTargetFo.element.appendChild(
                 target.renderTarget as any
             );
 
             target.boostClear = function (): void {
-                (target.renderTarget as any).width =
-                    (target.canvas as any).width;
-                (target.renderTarget as any).height =
-                    (target.canvas as any).height;
+                (target.renderTarget as any).width = (
+                    target.canvas as any
+                ).width;
+                (target.renderTarget as any).height = (
+                    target.canvas as any
+                ).height;
             };
 
             target.boostCopy = function (): void {
-                (target.renderTarget as any).width =
-                    (target.canvas as any).width;
-                (target.renderTarget as any).height =
-                    (target.canvas as any).height;
+                (target.renderTarget as any).width = (
+                    target.canvas as any
+                ).width;
+                (target.renderTarget as any).height = (
+                    target.canvas as any
+                ).height;
 
-                (target.renderTargetCtx as any)
-                    .drawImage(target.canvas as any, 0, 0);
+                (target.renderTargetCtx as any).drawImage(
+                    target.canvas as any,
+                    0,
+                    0
+                );
             };
         }
 
@@ -189,8 +189,9 @@ function createAndAttachRenderer(
 
         target.boostClipRect = chart.renderer.clipRect();
 
-        (target.renderTargetFo || (target.renderTarget as any))
-            .clip(target.boostClipRect);
+        (target.renderTargetFo || (target.renderTarget as any)).clip(
+            target.boostClipRect
+        );
 
         if (target instanceof Chart) {
             target.markerGroup = target.renderer.g().add(targetGroup);
@@ -208,7 +209,8 @@ function createAndAttachRenderer(
     target.boostClear();
 
     if (!target.ogl) {
-        target.ogl = GLRenderer(function (): void { // eslint-disable-line new-cap
+        // eslint-disable-next-line new-cap
+        target.ogl = GLRenderer(function (): void {
             if ((target.ogl as any).settings.debug.timeBufferCopy) {
                 console.time('buffer copy'); // eslint-disable-line no-console
             }
@@ -218,7 +220,6 @@ function createAndAttachRenderer(
             if ((target.ogl as any).settings.debug.timeBufferCopy) {
                 console.timeEnd('buffer copy'); // eslint-disable-line no-console
             }
-
         }) as any;
 
         if (!(target.ogl as any).init(target.canvas)) {

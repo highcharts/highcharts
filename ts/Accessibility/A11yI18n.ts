@@ -26,9 +26,7 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 
 import U from '../Core/Utilities.js';
-const {
-    pick
-} = U;
+const { pick } = U;
 
 /* *
  *
@@ -49,7 +47,6 @@ declare module '../Core/Chart/ChartLike' {
  * */
 
 namespace A11yI18nComposition {
-
     /* *
      *
      *  Declarations
@@ -69,11 +66,7 @@ namespace A11yI18nComposition {
 
     export declare class ChartComposition {
         /** @requires modules/accessibility */
-        langFormat(
-            langKey: string,
-            context: AnyRecord,
-            time?: Time
-        ): string;
+        langFormat(langKey: string, context: AnyRecord, time?: Time): string;
     }
 
     /* *
@@ -97,7 +90,7 @@ namespace A11yI18nComposition {
      */
     export function compose<T extends typeof Chart>(
         ChartClass: T
-    ): (T&ChartComposition) {
+    ): T & ChartComposition {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
@@ -106,7 +99,7 @@ namespace A11yI18nComposition {
             chartProto.langFormat = langFormat;
         }
 
-        return ChartClass as (T&ChartComposition);
+        return ChartClass as T & ChartComposition;
     }
 
     /**
@@ -134,8 +127,7 @@ namespace A11yI18nComposition {
             indexStart = statement.indexOf('['),
             indexEnd = statement.indexOf(']');
 
-        let arr,
-            result;
+        let arr, result;
 
         // Dealing with an each-function?
         if (eachStart > -1) {
@@ -152,9 +144,10 @@ namespace A11yI18nComposition {
             arr = ctx[eachArguments[0]];
             if (arr) {
                 lenArg = isNaN(lenArg) ? arr.length : lenArg;
-                len = lenArg < 0 ?
-                    arr.length + lenArg :
-                    Math.min(lenArg, arr.length); // Overshoot
+                len =
+                    lenArg < 0
+                        ? arr.length + lenArg
+                        : Math.min(lenArg, arr.length); // Overshoot
                 // Run through the array for the specified length
                 for (let i = 0; i < len; ++i) {
                     result += preEach + arr[i] + postEach;
@@ -165,8 +158,12 @@ namespace A11yI18nComposition {
 
         // Dealing with a plural-function?
         if (pluralStart > -1) {
-            const pluralEnd = statement.slice(pluralStart).indexOf(')') + pluralStart,
-                pluralStatement = statement.substring(pluralStart + 8, pluralEnd),
+            const pluralEnd =
+                    statement.slice(pluralStart).indexOf(')') + pluralStart,
+                pluralStatement = statement.substring(
+                    pluralStart + 8,
+                    pluralEnd
+                ),
                 pluralArguments = pluralStatement.split(','),
                 num = Number(ctx[pluralArguments[0]]);
 
@@ -300,7 +297,7 @@ namespace A11yI18nComposition {
         const getFirstBracketStatement = (
                 sourceStr: string,
                 offset: number
-            ): (A11yBracketStatementObject|undefined) => {
+            ): A11yBracketStatementObject | undefined => {
                 const str = sourceStr.slice(offset || 0),
                     startBracket = str.indexOf('{'),
                     endBracket = str.indexOf('}');
@@ -359,10 +356,8 @@ namespace A11yI18nComposition {
         // statements.
         return format(
             tokens.reduce(
-                (
-                    acc: string,
-                    cur: A11yFormatTokenObject
-                ): string => acc + cur.value,
+                (acc: string, cur: A11yFormatTokenObject): string =>
+                    acc + cur.value,
                 ''
             ),
             context,
@@ -400,8 +395,9 @@ namespace A11yI18nComposition {
         for (; i < keys.length; ++i) {
             formatString = formatString && (formatString as any)[keys[i]];
         }
-        return typeof formatString === 'string' ?
-            i18nFormat(formatString, context, this) : '';
+        return typeof formatString === 'string'
+            ? i18nFormat(formatString, context, this)
+            : '';
     }
 
     /**
@@ -417,9 +413,8 @@ namespace A11yI18nComposition {
      * The trimmed string
      */
     function stringTrim(str: string): string {
-        return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
+        return (str.trim && str.trim()) || str.replace(/^\s+|\s+$/g, '');
     }
-
 }
 
 /* *

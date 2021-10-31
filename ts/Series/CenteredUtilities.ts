@@ -22,17 +22,12 @@ import H from '../Core/Globals.js';
 const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-const {
-    isNumber,
-    pick,
-    relativeLength
-} = U;
+const { isNumber, pick, relativeLength } = U;
 
 /**
  * @private
  */
 namespace CenteredUtilities {
-
     /* *
      *
      *  Declarations
@@ -44,9 +39,9 @@ namespace CenteredUtilities {
     }
 
     export interface CenteredSeriesOptions extends SeriesOptions {
-        center?: Array<(number|string|null)>;
-        innerSize?: (number|string);
-        size?: (number|string);
+        center?: Array<number | string | null>;
+        innerSize?: number | string;
+        size?: number | string;
         slicedOffset?: number;
     }
 
@@ -71,13 +66,12 @@ namespace CenteredUtilities {
      * @function Highcharts.CenteredSeriesMixin.getCenter
      */
     export function getCenter(this: CenteredSeries): Array<number> {
-
         const options = this.options,
             chart = this.chart,
             slicingRoom = 2 * (options.slicedOffset || 0),
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
-            centerOption: Array<(number|string|null)> = options.center as any,
+            centerOption: Array<number | string | null> = options.center as any,
             smallestSize = Math.min(plotWidth, plotHeight);
 
         let handleSlicingRoom,
@@ -99,7 +93,10 @@ namespace CenteredUtilities {
             pick(centerOption[1] as any, '50%' as any),
             // Prevent from negative values
             pick(size && size < 0 ? void 0 : options.size, '100%'),
-            pick(innerSize && innerSize < 0 ? void 0 : options.innerSize || 0, '0%')
+            pick(
+                innerSize && innerSize < 0 ? void 0 : options.innerSize || 0,
+                '0%'
+            )
         ];
 
         // No need for inner size in angular (gauges) series but still required
@@ -116,11 +113,11 @@ namespace CenteredUtilities {
             // i == 1: centerY, relative to height
             // i == 2: size, relative to smallestSize
             // i == 3: innerSize, relative to size
-            positions[i] = relativeLength(
-                value,
-                [plotWidth, plotHeight, smallestSize, positions[2]][i]
-            ) + (handleSlicingRoom ? slicingRoom : 0);
-
+            positions[i] =
+                relativeLength(
+                    value,
+                    [plotWidth, plotHeight, smallestSize, positions[2]][i]
+                ) + (handleSlicingRoom ? slicingRoom : 0);
         }
         // innerSize cannot be larger than size (#3632)
         if (positions[3] > positions[2]) {
@@ -150,16 +147,13 @@ namespace CenteredUtilities {
         end?: number
     ): RadianAngles {
         const startAngle = isNumber(start) ? start : 0, // must be a number
-            endAngle = (
-                (
-                    isNumber(end) && // must be a number
-                    end > startAngle && // must be larger than the start angle
-                    // difference must be less than 360 degrees
-                    (end - startAngle) < 360
-                ) ?
-                    end :
-                    startAngle + 360
-            ),
+            endAngle =
+                isNumber(end) && // must be a number
+                end > startAngle && // must be larger than the start angle
+                // difference must be less than 360 degrees
+                end - startAngle < 360
+                    ? end
+                    : startAngle + 360,
             correction = -90;
 
         return {
@@ -167,7 +161,6 @@ namespace CenteredUtilities {
             end: deg2rad * (endAngle + correction)
         };
     }
-
 }
 
 /* *
@@ -187,12 +180,12 @@ export default CenteredUtilities;
 /**
  * @private
  * @interface Highcharts.RadianAngles
- *//**
+ */ /**
  * @name Highcharts.RadianAngles#end
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.RadianAngles#start
  * @type {number}
  */
 
-''; // keeps doclets above in JS file
+(''); // keeps doclets above in JS file

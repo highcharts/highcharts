@@ -38,7 +38,6 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @optionparent exporting
  */
 const exporting: ExportingOptions = {
-
     /**
      * Experimental setting to allow HTML inside the chart (added through
      * the `useHTML` options), directly in the exported image. This allows
@@ -265,7 +264,6 @@ const exporting: ExportingOptions = {
      * @requires modules/exporting
      */
     buttons: {
-
         /**
          * Options for the export button.
          *
@@ -277,7 +275,6 @@ const exporting: ExportingOptions = {
          * @requires modules/exporting
          */
         contextButton: {
-
             /**
              * A click handler callback to use on the button directly instead of
              * the popup menu.
@@ -384,9 +381,7 @@ const exporting: ExportingOptions = {
                 'downloadPDF',
                 'downloadSVG'
             ]
-
         }
-
     },
     /**
      * An object consisting of definitions for the menu items in the context
@@ -417,7 +412,6 @@ const exporting: ExportingOptions = {
      * @since   5.0.13
      */
     menuItemDefinitions: {
-
         /**
          * @ignore
          */
@@ -490,9 +484,7 @@ const exporting: ExportingOptions = {
                 });
             }
         }
-
     }
-
 };
 
 // Add language
@@ -500,7 +492,6 @@ const exporting: ExportingOptions = {
  * @optionparent lang
  */
 const lang = {
-
     /**
      * Exporting module only. The text for the menu item to view the chart
      * in full screen.
@@ -520,7 +511,6 @@ const lang = {
      * @private
      */
     exitFullscreen: 'Exit from full screen',
-
 
     /**
      * Exporting module only. The text for the menu item to print the chart.
@@ -582,11 +572,9 @@ const lang = {
      * @private
      */
     contextButtonTitle: 'Chart context menu'
-
 };
 
 const navigation: NavigationOptions = {
-
     /**
      * A collection of options for buttons appearing in the exporting
      * module.
@@ -599,7 +587,6 @@ const navigation: NavigationOptions = {
      * @private
      */
     buttonOptions: {
-
         /**
          * Whether to enable buttons.
          *
@@ -725,7 +712,7 @@ const navigation: NavigationOptions = {
          * @sample highcharts/navigation/buttonoptions-symbolfill/
          *         Blue symbol stroke for one of the buttons
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 2.0
          */
         symbolFill: Palette.neutralColor60,
@@ -765,11 +752,10 @@ const navigation: NavigationOptions = {
          * @since 3.0
          */
         theme: {
-
             /**
              * The default fill exists only to capture hover events.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @default   ${palette.backgroundColor}
              * @apioption navigation.buttonOptions.theme.fill
              */
@@ -785,9 +771,7 @@ const navigation: NavigationOptions = {
              * Padding for the button.
              */
             padding: 5
-
         }
-
     },
 
     /**
@@ -869,7 +853,6 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         color: Palette.backgroundColor
     }
-
 };
 
 /* *

@@ -18,10 +18,7 @@ import MockPointOptions from '../MockPointOptions';
 
 import U from '../../../Core/Utilities.js';
 
-const {
-    merge,
-    defined
-} = U;
+const { merge, defined } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -58,9 +55,7 @@ interface ReferencePointsOptions {
  * @param {number} index of the Ellipse
  */
 
-
 class ControllableEllipse implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -84,7 +79,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
+    public constructor(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ) {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
@@ -104,7 +103,8 @@ class ControllableEllipse implements ControllableMixin.Type {
     public linkPoints = ControllableMixin.linkPoints;
     public point = ControllableMixin.point;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+        ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;
@@ -122,7 +122,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+    public init(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -144,7 +148,8 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param parent parent SVG element.
      */
     public render(parent: SVGElement): void {
-        this.graphic = this.annotation.chart.renderer.createElement('ellipse')
+        this.graphic = this.annotation.chart.renderer
+            .createElement('ellipse')
             .attr(this.attrsFromOptions(this.options))
             .add(parent);
 
@@ -173,12 +178,17 @@ class ControllableEllipse implements ControllableMixin.Type {
         x0: number,
         y0: number
     ): number {
-        return Math.abs(
-            (point2.y - point1.y) * x0 - (point2.x - point1.x) * y0 +
-            point2.x * point1.y - point2.y * point1.x
-        ) / Math.sqrt(
-            (point2.y - point1.y) * (point2.y - point1.y) +
-                (point2.x - point1.x) * (point2.x - point1.x)
+        return (
+            Math.abs(
+                (point2.y - point1.y) * x0 -
+                    (point2.x - point1.x) * y0 +
+                    point2.x * point1.y -
+                    point2.y * point1.x
+            ) /
+            Math.sqrt(
+                (point2.y - point1.y) * (point2.y - point1.y) +
+                    (point2.x - point1.x) * (point2.x - point1.x)
+            )
         );
     }
 
@@ -188,7 +198,10 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param position absolute position of the first point in points array
      * @param position2 absolute position of the second point in points array
      */
-    public getAttrs(position: BBoxObject, position2: BBoxObject): EllipseShapeSVGOptions {
+    public getAttrs(
+        position: BBoxObject,
+        position2: BBoxObject
+    ): EllipseShapeSVGOptions {
         const x1 = position.x,
             y1 = position.y,
             x2 = position2.x,
@@ -196,11 +209,11 @@ class ControllableEllipse implements ControllableMixin.Type {
             cx = (x1 + x2) / 2,
             cy = (y1 + y2) / 2,
             rx = Math.sqrt(
-                (x1 - x2) * (x1 - x2) / 4 + (y1 - y2) * (y1 - y2) / 4
+                ((x1 - x2) * (x1 - x2)) / 4 + ((y1 - y2) * (y1 - y2)) / 4
             ),
             tan = (y2 - y1) / (x2 - x1);
 
-        let angle = Math.atan(tan) * 180 / Math.PI;
+        let angle = (Math.atan(tan) * 180) / Math.PI;
 
         if (cx < x1) {
             angle += 180;
@@ -216,9 +229,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      */
     public getRY(): number {
         const yAxis = this.getYAxis();
-        return defined(yAxis) ?
-            Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0)) :
-            this.options.ry;
+        return defined(yAxis)
+            ? Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0))
+            : this.options.ry;
     }
 
     /**
@@ -233,7 +246,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Get the absolute coordinates of the MockPoint
      * @param point MockPoint that is added through options
      */
-    public getAbsolutePosition(point: Highcharts.AnnotationPointType): BBoxObject {
+    public getAbsolutePosition(
+        point: Highcharts.AnnotationPointType
+    ): BBoxObject {
         return this.anchor(point).absolutePosition;
     }
 

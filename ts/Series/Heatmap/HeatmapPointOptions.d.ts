@@ -25,7 +25,7 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 export interface HeatmapPointOptions extends ScatterPointOptions {
     borderWidth?: number;
     pointPadding?: number;
-    value?: (number|null);
+    value?: number | null;
 }
 
 export default HeatmapPointOptions;

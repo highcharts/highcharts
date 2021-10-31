@@ -22,20 +22,13 @@ import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+const { extend, merge, pick } = U;
 
 import './VariwideComposition.js';
-
 
 /* *
  *
@@ -52,7 +45,6 @@ import './VariwideComposition.js';
  */
 
 class VariwideSeries extends ColumnSeries {
-
     /* *
      *
      * Static properties
@@ -77,18 +69,21 @@ class VariwideSeries extends ColumnSeries {
      * @requires     modules/variwide
      * @optionparent plotOptions.variwide
      */
-    public static defaultOptions: VariwideSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * In a variwide chart, the point padding is 0 in order to express the
-         * horizontal stacking of items.
-         */
-        pointPadding: 0,
-        /**
-         * In a variwide chart, the group padding is 0 in order to express the
-         * horizontal stacking of items.
-         */
-        groupPadding: 0
-    });
+    public static defaultOptions: VariwideSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            /**
+             * In a variwide chart, the point padding is 0 in order to express
+             * the horizontal stacking of items.
+             */
+            pointPadding: 0,
+            /**
+             * In a variwide chart, the group padding is 0 in order to express
+             * the horizontal stacking of items.
+             */
+            groupPadding: 0
+        }
+    );
 
     /* *
      *
@@ -110,22 +105,18 @@ class VariwideSeries extends ColumnSeries {
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
-        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
-
-        (this.xAxis.reversed ?
-            (this.zData as any).slice().reverse() :
-            (this.zData as any)
-        ).forEach(
-            function (
-                this: VariwideSeries,
-                z: number,
-                i: number
-            ): void {
-                this.relZ[i] = this.totalZ;
-                this.totalZ += z;
-            },
-            this
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(
+            this,
+            force
         );
+
+        (this.xAxis.reversed
+            ? (this.zData as any).slice().reverse()
+            : (this.zData as any)
+        ).forEach(function (this: VariwideSeries, z: number, i: number): void {
+            this.relZ[i] = this.totalZ;
+            this.totalZ += z;
+        }, this);
 
         if (this.xAxis.categories) {
             this.xAxis.variwide = true;
@@ -160,39 +151,48 @@ class VariwideSeries extends ColumnSeries {
         x: number,
         point?: VariwidePoint
     ): number {
-
         const axis = this.xAxis,
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ? (axis.dataMax || 0) + axis.pointRange : (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ? (axis.dataMin || 0) : (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(
+                axis.reversed
+                    ? (axis.dataMax || 0) + axis.pointRange
+                    : axis.dataMin || 0
+            ),
+            maxPx = axis.toPixels(
+                axis.reversed
+                    ? axis.dataMin || 0
+                    : (axis.dataMax || 0) + axis.pointRange
+            ),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
-            left = this.chart.inverted ?
-                maxPx - (this.chart.plotTop - goRight * axis.minPixelPadding) :
-                minPx - this.chart.plotLeft - goRight * axis.minPixelPadding,
-            linearSlotLeft = i / relZ.length * len,
-            linearSlotRight = (i + goRight) / relZ.length * len,
+            left = this.chart.inverted
+                ? maxPx - (this.chart.plotTop - goRight * axis.minPixelPadding)
+                : minPx - this.chart.plotLeft - goRight * axis.minPixelPadding,
+            linearSlotLeft = (i / relZ.length) * len,
+            linearSlotRight = ((i + goRight) / relZ.length) * len,
             slotLeft = (pick(relZ[i], totalZ) / totalZ) * len,
             slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len,
-            xInsideLinearSlot = (x - (left + linearSlotLeft));
+            xInsideLinearSlot = x - (left + linearSlotLeft);
 
         // Set crosshairWidth for every point (#8173)
         if (point) {
             point.crosshairWidth = slotRight - slotLeft;
         }
 
-        return left + slotLeft +
-            xInsideLinearSlot * (slotRight - slotLeft) /
-            (linearSlotRight - linearSlotLeft);
+        return (
+            left +
+            slotLeft +
+            (xInsideLinearSlot * (slotRight - slotLeft)) /
+                (linearSlotRight - linearSlotLeft)
+        );
     }
 
     /* eslint-enable valid-jsdoc */
 
     // Extend translation by distoring X position based on Z.
     public translate(): void {
-
         // Temporarily disable crisping when computing original shapeArgs
         const crispOption = this.options.crisp,
             xAxis = this.xAxis;
@@ -205,26 +205,18 @@ class VariwideSeries extends ColumnSeries {
         this.options.crisp = crispOption;
 
         const inverted = this.chart.inverted,
-            crisp = this.borderWidth % 2 / 2;
+            crisp = (this.borderWidth % 2) / 2;
 
         // Distort the points to reflect z dimension
-        this.points.forEach(function (
-            point: VariwidePoint,
-            i: number
-        ): void {
+        this.points.forEach(function (point: VariwidePoint, i: number): void {
             let left: number, right: number;
 
             if (xAxis.variwide) {
-                left = this.postTranslate(
-                    i,
-                    (point.shapeArgs as any).x,
-                    point
-                );
+                left = this.postTranslate(i, (point.shapeArgs as any).x, point);
 
                 right = this.postTranslate(
                     i,
-                    (point.shapeArgs as any).x +
-                    (point.shapeArgs as any).width
+                    (point.shapeArgs as any).x + (point.shapeArgs as any).width
                 );
 
                 // For linear or datetime axes, the variwide column should
@@ -259,7 +251,8 @@ class VariwideSeries extends ColumnSeries {
                     (point.shapeArgs as any).width / 2;
             } else {
                 (point.tooltipPos as any)[1] =
-                    xAxis.len - (point.shapeArgs as any).x -
+                    xAxis.len -
+                    (point.shapeArgs as any).x -
                     (point.shapeArgs as any).width / 2;
             }
         }, this);
@@ -279,21 +272,19 @@ class VariwideSeries extends ColumnSeries {
             stack,
             xValue;
 
-        series.points.forEach(function (
-            point: VariwidePoint
-        ): void {
+        series.points.forEach(function (point: VariwidePoint): void {
             xValue = point.x;
             pointWidth = (point.shapeArgs as any).width;
-            stack = yAxis.stacking.stacks[(
-                series.negStacks &&
-                (point.y as any) < (
-                    options.startFromThreshold ?
-                        0 :
-                        (options.threshold as any)
-                ) ?
-                    '-' :
-                    ''
-            ) + series.stackKey];
+            stack =
+                yAxis.stacking.stacks[
+                    (series.negStacks &&
+                    (point.y as any) <
+                        (options.startFromThreshold
+                            ? 0
+                            : (options.threshold as any))
+                        ? '-'
+                        : '') + series.stackKey
+                ];
 
             if (stack) {
                 pointStack = stack[xValue as any];
@@ -432,4 +423,4 @@ export default VariwideSeries;
  * @apioption series.variwide.data.z
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

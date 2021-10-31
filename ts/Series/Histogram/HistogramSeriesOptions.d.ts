@@ -26,7 +26,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface HistogramSeriesOptions extends ColumnSeriesOptions {
-    baseSeries?: (number|string);
+    baseSeries?: number | string;
     binsNumber?: string;
     binWidth?: number;
     states?: SeriesStatesOptions<HistogramSeries>;

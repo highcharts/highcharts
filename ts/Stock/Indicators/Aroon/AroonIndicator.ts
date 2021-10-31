@@ -8,10 +8,7 @@
 
 'use strict';
 
-import type {
-    AroonOptions,
-    AroonParamsOptions
-} from '../Aroon/AroonOptions';
+import type { AroonOptions, AroonParamsOptions } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -19,16 +16,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+const { extend, merge, pick } = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -40,12 +31,12 @@ const {
 function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     let extremeValue = arr[0],
         valueIndex = 0,
-        i: (number|undefined);
+        i: number | undefined;
 
     for (i = 1; i < arr.length; i++) {
         if (
-            extreme === 'max' && arr[i] >= extremeValue ||
-            extreme === 'min' && arr[i] <= extremeValue
+            (extreme === 'max' && arr[i] >= extremeValue) ||
+            (extreme === 'min' && arr[i] <= extremeValue)
         ) {
             extremeValue = arr[i];
             valueIndex = i;
@@ -92,47 +83,51 @@ class AroonIndicator extends SMAIndicator {
      * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
      */
-    public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of aroon series points.
-         *
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
-            period: 25
-        },
-        marker: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
-        },
-        /**
-         * aroonDown line options.
-         */
-        aroonDown: {
+    public static defaultOptions: AroonOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * Styles for an aroonDown line.
+             * Paramters used in calculation of aroon series points.
+             *
+             * @excluding index
              */
-            styles: {
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                period: 25
+            },
+            marker: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>'
+            },
+            /**
+             * aroonDown line options.
+             */
+            aroonDown: {
                 /**
-                 * Pixel width of the line.
+                 * Styles for an aroonDown line.
                  */
-                lineWidth: 1,
-                /**
-                 * Color of the line. If not set, it's inherited from
-                 * [plotOptions.aroon.color](#plotOptions.aroon.color).
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: void 0
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * [plotOptions.aroon.color](#plotOptions.aroon.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as AroonOptions);
+        } as AroonOptions
+    );
 
     /* *
      *
@@ -154,9 +149,9 @@ class AroonIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let period = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+        let period = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen = yVal ? yVal.length : 0,
             // 0- date, 1- Aroon Up, 2- Aroon Down
             AR: Array<Array<number>> = [],
@@ -177,15 +172,19 @@ class AroonIndicator extends SMAIndicator {
         for (i = period - 1; i < yValLen; i++) {
             slicedY = yVal.slice(i - period + 1, i + 2);
 
-            xLow = getExtremeIndexInArray(slicedY.map(
-                function (elem): number {
-                    return pick(elem[low], (elem as any));
-                }), 'min');
+            xLow = getExtremeIndexInArray(
+                slicedY.map(function (elem): number {
+                    return pick(elem[low], elem as any);
+                }),
+                'min'
+            );
 
-            xHigh = getExtremeIndexInArray(slicedY.map(
-                function (elem): number {
-                    return pick(elem[high], (elem as any));
-                }), 'max');
+            xHigh = getExtremeIndexInArray(
+                slicedY.map(function (elem): number {
+                    return pick(elem[high], elem as any);
+                }),
+                'max'
+            );
 
             aroonUp = (xHigh / period) * 100;
             aroonDown = (xLow / period) * 100;
@@ -206,10 +205,10 @@ class AroonIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *   Prototype Properties
+ *
+ * */
 
 interface AroonIndicator extends MultipleLinesComposition.Composition {
     pointArrayMap: Array<string>;
@@ -263,4 +262,4 @@ export default AroonIndicator;
  * @apioption series.aroon
  */
 
-''; // to avoid removal of the above jsdoc
+(''); // to avoid removal of the above jsdoc

@@ -26,16 +26,13 @@ import type WordcloudUtils from './WordcloudUtils';
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 import WordcloudSeries from './WordcloudSeries';
 
 class WordcloudPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Properties
@@ -46,7 +43,7 @@ class WordcloudPoint extends ColumnSeries.prototype.pointClass {
     public options: WordcloudPointOptions = void 0 as any;
     public polygon?: WordcloudUtils.PolygonObject = void 0 as any;
     public rect?: PolygonBoxObject = void 0 as any;
-    public rotation?: (boolean|number);
+    public rotation?: boolean | number;
     public series: WordcloudSeries = void 0 as any;
 
     /* *

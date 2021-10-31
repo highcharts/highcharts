@@ -27,16 +27,10 @@ import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        pie: PieSeries,
-        sankey: SankeySeries
-    }
+    seriesTypes: { pie: PieSeries, sankey: SankeySeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -52,7 +46,6 @@ const {
  * @augments Highcharts.seriesTypes.sankey
  */
 class DependencyWheelSeries extends SankeySeries {
-
     /* *
      *
      *  Static Properties
@@ -73,24 +66,28 @@ class DependencyWheelSeries extends SankeySeries {
      * @requires     modules/dependency-wheel
      * @optionparent plotOptions.dependencywheel
      */
-    public static defaultOptions: DependencyWheelSeriesOptions = merge(SankeySeries.defaultOptions, {
-        /**
-         * The center of the wheel relative to the plot area. Can be
-         * percentages or pixel values. The default behaviour is to
-         * center the wheel inside the plot area.
-         *
-         * @type    {Array<number|string|null>}
-         * @default [null, null]
-         * @product highcharts
-         */
-        center: [null, null],
-        curveFactor: 0.6,
+    public static defaultOptions: DependencyWheelSeriesOptions = merge(
+        SankeySeries.defaultOptions,
+        {
+            /**
+             * The center of the wheel relative to the plot area. Can be
+             * percentages or pixel values. The default behaviour is to
+             * center the wheel inside the plot area.
+             *
+             * @type    {Array<number|string|null>}
+             * @default [null, null]
+             * @product highcharts
+             */
+            center: [null, null],
+            curveFactor: 0.6,
 
-        /**
-         * The start angle of the dependency wheel, in degrees where 0 is up.
-         */
-        startAngle: 0
-    } as DependencyWheelSeriesOptions);
+            /**
+             * The start angle of the dependency wheel, in degrees where 0 is
+             * up.
+             */
+            startAngle: 0
+        } as DependencyWheelSeriesOptions
+    );
 
     /* *
      *
@@ -102,7 +99,8 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options: DependencyWheelSeriesOptions = void 0 as any;
 
-    public nodeColumns: Array<DependencyWheelSeries.ColumnArray> = void 0 as any;
+    public nodeColumns: Array<DependencyWheelSeries.ColumnArray> =
+        void 0 as any;
 
     public nodes: Array<DependencyWheelPoint> = void 0 as any;
 
@@ -119,7 +117,7 @@ class DependencyWheelSeries extends SankeySeries {
     public animate(init?: boolean): void {
         if (!init) {
             const duration = animObject(this.options.animation).duration,
-                step = (duration / 2) / this.nodes.length;
+                step = duration / 2 / this.nodes.length;
             this.nodes.forEach(function (point, i): void {
                 const graphic = point.graphic;
                 if (graphic) {
@@ -137,13 +135,14 @@ class DependencyWheelSeries extends SankeySeries {
             this.points.forEach(function (point): void {
                 const graphic = point.graphic;
                 if (!point.isNode && graphic) {
-                    graphic.attr({ opacity: 0 })
-                        .animate({
+                    graphic.attr({ opacity: 0 }).animate(
+                        {
                             opacity: 1
-                        }, this.options.animation);
+                        },
+                        this.options.animation
+                    );
                 }
             }, this);
-
         }
     }
 
@@ -158,9 +157,7 @@ class DependencyWheelSeries extends SankeySeries {
          * Return the sum of incoming and outgoing links.
          * @private
          */
-        node.getSum = function (
-            this: DependencyWheelPoint
-        ): number {
+        node.getSum = function (this: DependencyWheelPoint): number {
             return node.linksFrom
                 .concat(node.linksTo)
                 .reduce(function (
@@ -168,7 +165,8 @@ class DependencyWheelSeries extends SankeySeries {
                     link: DependencyWheelPoint
                 ): number {
                     return acc + (link.weight as any);
-                }, 0);
+                },
+                0);
         };
 
         /**
@@ -177,12 +175,11 @@ class DependencyWheelSeries extends SankeySeries {
          */
         node.offset = function (
             point: DependencyWheelPoint
-        ): (number|undefined) {
-
+        ): number | undefined {
             let offset = 0,
                 i: number,
                 links = node.linksFrom.concat(node.linksTo),
-                sliced: (boolean|undefined);
+                sliced: boolean | undefined;
 
             /**
              * @private
@@ -203,9 +200,10 @@ class DependencyWheelSeries extends SankeySeries {
             });
             for (i = 0; i < links.length; i++) {
                 if (otherNode(links[i]).index > node.index) {
-                    links = links.slice(0, i).reverse().concat(
-                        links.slice(i).reverse()
-                    );
+                    links = links
+                        .slice(0, i)
+                        .reverse()
+                        .concat(links.slice(i).reverse());
                     sliced = true;
                     break;
                 }
@@ -231,9 +229,7 @@ class DependencyWheelSeries extends SankeySeries {
      */
     public createNodeColumns(): Array<SankeySeriesType.ColumnArray> {
         const columns = [this.createNodeColumn()];
-        this.nodes.forEach(function (
-            node: DependencyWheelPoint
-        ): void {
+        this.nodes.forEach(function (node: DependencyWheelPoint): void {
             node.column = 0;
             columns[0].push(node);
         });
@@ -254,10 +250,9 @@ class DependencyWheelSeries extends SankeySeries {
      * functions instead of the whole translate function.
      */
     public translate(): void {
-
         const options = this.options,
-            factor = 2 * Math.PI /
-                (this.chart.plotHeight + this.getNodePadding()),
+            factor =
+                (2 * Math.PI) / (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
             startAngle = ((options.startAngle as any) - 90) * deg2rad;
 
@@ -272,7 +267,8 @@ class DependencyWheelSeries extends SankeySeries {
                     r = center[2] / 2,
                     innerR = r - (options.nodeWidth as any),
                     start = startAngle + factor * (shapeArgs.y || 0),
-                    end = startAngle +
+                    end =
+                        startAngle +
                         factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
 
                 // Middle angle
@@ -289,8 +285,12 @@ class DependencyWheelSeries extends SankeySeries {
                 };
 
                 node.dlBox = {
-                    x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
-                    y: centerY + Math.sin((start + end) / 2) * (r + innerR) / 2,
+                    x:
+                        centerX +
+                        (Math.cos((start + end) / 2) * (r + innerR)) / 2,
+                    y:
+                        centerY +
+                        (Math.sin((start + end) / 2) * (r + innerR)) / 2,
                     width: 1,
                     height: 1
                 };
@@ -306,7 +306,8 @@ class DependencyWheelSeries extends SankeySeries {
                             let angle = factor * top,
                                 x = Math.cos(startAngle + angle) * (innerR + 1),
                                 y = Math.sin(startAngle + angle) * (innerR + 1),
-                                curveFactor: number = options.curveFactor as any;
+                                curveFactor: number =
+                                    options.curveFactor as any;
 
                             // The distance between the from and to node
                             // along the perimeter. This affect how curved
@@ -320,9 +321,8 @@ class DependencyWheelSeries extends SankeySeries {
                             }
                             distance = distance * innerR;
                             if (distance < innerR) {
-                                curveFactor *= (distance / innerR);
+                                curveFactor *= distance / innerR;
                             }
-
 
                             return {
                                 x: centerX + x,
@@ -333,44 +333,55 @@ class DependencyWheelSeries extends SankeySeries {
                         });
 
                         point.shapeArgs = {
-                            d: [[
-                                'M',
-                                corners[0].x, corners[0].y
-                            ], [
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0, // long arc
-                                1, // clockwise
-                                corners[1].x, corners[1].y
-                            ], [
-                                'C',
-                                corners[1].cpX, corners[1].cpY,
-                                corners[2].cpX, corners[2].cpY,
-                                corners[2].x, corners[2].y
-                            ], [
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0,
-                                1,
-                                corners[3].x, corners[3].y
-                            ], [
-                                'C',
-                                corners[3].cpX, corners[3].cpY,
-                                corners[0].cpX, corners[0].cpY,
-                                corners[0].x, corners[0].y
-                            ]]
+                            d: [
+                                ['M', corners[0].x, corners[0].y],
+                                [
+                                    'A',
+                                    innerR,
+                                    innerR,
+                                    0,
+                                    0, // long arc
+                                    1, // clockwise
+                                    corners[1].x,
+                                    corners[1].y
+                                ],
+                                [
+                                    'C',
+                                    corners[1].cpX,
+                                    corners[1].cpY,
+                                    corners[2].cpX,
+                                    corners[2].cpY,
+                                    corners[2].x,
+                                    corners[2].y
+                                ],
+                                [
+                                    'A',
+                                    innerR,
+                                    innerR,
+                                    0,
+                                    0,
+                                    1,
+                                    corners[3].x,
+                                    corners[3].y
+                                ],
+                                [
+                                    'C',
+                                    corners[3].cpX,
+                                    corners[3].cpY,
+                                    corners[0].cpX,
+                                    corners[0].cpY,
+                                    corners[0].x,
+                                    corners[0].y
+                                ]
+                            ]
                         };
                     }
-
                 });
             }
         });
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -396,7 +407,8 @@ extend(DependencyWheelSeries.prototype, {
  * */
 
 namespace DependencyWheelSeries {
-    export interface ColumnArray<T = DependencyWheelPoint> extends SankeySeriesType.ColumnArray<T> {
+    export interface ColumnArray<T = DependencyWheelPoint>
+        extends SankeySeriesType.ColumnArray<T> {
         // nothing here yets
     }
 }
@@ -488,4 +500,4 @@ export default DependencyWheelSeries;
  * @apioption series.dependencywheel.nodes.dataLabels
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

@@ -45,7 +45,6 @@ const { merge } = U;
  * @private
  */
 class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
-
     /* *
      *
      *  Static Properties
@@ -80,15 +79,18 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
      */
     public constructor(
         table: DataTable,
-        options: (
-            Partial<GoogleSheetsStore.Options>&
-            { googleSpreadsheetKey: string }
-        ),
+        options: Partial<GoogleSheetsStore.Options> & {
+            googleSpreadsheetKey: string;
+        },
         parser?: GoogleSheetsParser
     ) {
         super(table);
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
-        this.parser = parser || new GoogleSheetsParser({ firstRowAsNames: this.options.firstRowAsNames });
+        this.parser =
+            parser ||
+            new GoogleSheetsParser({
+                firstRowAsNames: this.options.firstRowAsNames
+            });
     }
 
     /* *
@@ -148,12 +150,9 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
 
                 // Polling
                 if (enablePolling) {
-                    setTimeout(
-                        function (): void {
-                            store.fetchSheet();
-                        },
-                        dataRefreshRate * 1000
-                    );
+                    setTimeout(function (): void {
+                        store.fetchSheet();
+                    }, dataRefreshRate * 1000);
                 }
 
                 store.emit({
@@ -163,10 +162,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
                     url
                 });
             },
-            error: function (
-                xhr: XMLHttpRequest,
-                error: (string|Error)
-            ): void {
+            error: function (xhr: XMLHttpRequest, error: string | Error): void {
                 /* *
                  * TODO:
                  * catch error
@@ -209,17 +205,16 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
 }
 
 namespace GoogleSheetsStore {
-
-    export type Event = (ErrorEvent|LoadEvent);
+    export type Event = ErrorEvent | LoadEvent;
 
     export interface ErrorEvent extends DataStore.Event {
         readonly type: 'loadError';
-        readonly error: (string|Error);
+        readonly error: string | Error;
         readonly xhr: XMLHttpRequest;
     }
 
     export interface LoadEvent extends DataStore.Event {
-        readonly type: ('load'|'afterLoad');
+        readonly type: 'load' | 'afterLoad';
         readonly url: string;
     }
 
@@ -230,7 +225,6 @@ namespace GoogleSheetsStore {
         dataRefreshRate: number;
         firstRowAsNames: boolean;
     }
-
 }
 
 /* *

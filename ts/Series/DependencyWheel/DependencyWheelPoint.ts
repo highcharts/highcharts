@@ -29,9 +29,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: {
-            prototype: {
-                pointClass: SankeyPoint
-            }
+            prototype: { pointClass: SankeyPoint }
         }
     }
 } = SeriesRegistry;
@@ -45,7 +43,6 @@ const { extend } = U;
  * */
 
 class DependencyWheelPoint extends SankeyPoint {
-
     /* *
      *
      *  Properties
@@ -93,7 +90,10 @@ class DependencyWheelPoint extends SankeyPoint {
             this.dataLabelPath = renderer
                 .arc({
                     open: true,
-                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                    longArc:
+                        Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI
+                            ? 0
+                            : 1
                 })
                 // Add it inside the data label group so it gets destroyed
                 // with the label
@@ -103,12 +103,9 @@ class DependencyWheelPoint extends SankeyPoint {
         this.dataLabelPath.attr({
             x: shapeArgs.x,
             y: shapeArgs.y,
-            r: (
-                shapeArgs.r +
-                ((this.dataLabel as any).options.distance || 0)
-            ),
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
+            r: shapeArgs.r + ((this.dataLabel as any).options.distance || 0),
+            start: upperHalf ? start : end,
+            end: upperHalf ? end : start,
             clockwise: +upperHalf
         });
 
@@ -121,7 +118,6 @@ class DependencyWheelPoint extends SankeyPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

@@ -24,10 +24,7 @@ import type G from '../../Core/Globals';
 
 declare global {
     interface Canvg {
-        fromString(
-            ctx: CanvasRenderingContext2D,
-            svg: string
-        ): Canvg;
+        fromString(ctx: CanvasRenderingContext2D, svg: string): Canvg;
         start(): void;
     }
     interface CanvgNamespace {
@@ -38,8 +35,9 @@ declare global {
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
-    class jsPDF { // eslint-disable-line @typescript-eslint/class-name-casing
-        constructor (a: string, b: string, c: Array<number>);
+    // eslint-disable-next-line @typescript-eslint/class-name-casing
+    class jsPDF {
+        constructor(a: string, b: string, c: Array<number>);
         output: Function;
     }
 }

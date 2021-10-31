@@ -23,22 +23,15 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
+            prototype: { pointClass: ColumnPoint }
         },
         arearange: {
-            prototype: {
-                pointClass: AreaRangePoint
-            }
+            prototype: { pointClass: AreaRangePoint }
         }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber
-} = U;
+const { extend, isNumber } = U;
 
 /* *
  *
@@ -50,7 +43,8 @@ class ColumnRangePoint extends AreaRangePoint {
     public series: ColumnRangeSeries = void 0 as any;
     public options: ColumnRangePointOptions = void 0 as any;
     public barX: typeof ColumnPoint.prototype['barX'] = void 0 as any;
-    public pointWidth: typeof ColumnPoint.prototype['pointWidth'] = void 0 as any;
+    public pointWidth: typeof ColumnPoint.prototype['pointWidth'] =
+        void 0 as any;
     public shapeType: typeof ColumnPoint.prototype['shapeType'] = void 0 as any;
 
     public isValid(): boolean {

@@ -14,23 +14,16 @@
 
 'use strict';
 
-import type {
-    CMFOptions,
-    CMFParamsOptions
-} from './CMFOptions';
+import type { CMFOptions, CMFParamsOptions } from './CMFOptions';
 import type CMFPoint from './CMFPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * The CMF series type.
@@ -56,19 +49,22 @@ class CMFIndicator extends SMAIndicator {
      * @requires     stock/indicators/cmf
      * @optionparent plotOptions.cmf
      */
-    public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unused index, do not inherit (#15362)
+    public static defaultOptions: CMFOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * @excluding index
              */
-            volumeSeriesID: 'volume'
-        }
-    } as CMFOptions);
+            params: {
+                index: void 0, // unused index, do not inherit (#15362)
+                /**
+                 * The id of another series to use its data as volume data for
+                 * the indiator calculation.
+                 */
+                volumeSeriesID: 'volume'
+            }
+        } as CMFOptions
+    );
 
     /* *
      *
@@ -95,36 +91,32 @@ class CMFIndicator extends SMAIndicator {
         const chart = this.chart,
             options: CMFOptions = this.options,
             series = this.linkedParent,
-            volumeSeries: LineSeries = (
+            volumeSeries: LineSeries =
                 this.volumeSeries ||
-                    (
-                        this.volumeSeries =
-                        chart.get((options.params as any).volumeSeriesID) as any
-                    )
-            ),
-            isSeriesOHLC: (boolean|undefined) = (
-                series &&
-                series.yData &&
-                (series.yData as any)[0].length === 4
-            );
+                (this.volumeSeries = chart.get(
+                    (options.params as any).volumeSeriesID
+                ) as any),
+            isSeriesOHLC: boolean | undefined =
+                series && series.yData && (series.yData as any)[0].length === 4;
 
         /**
          * @private
          * @param {Highcharts.Series} serie to check length validity on.
          * @return {boolean|undefined} true if length is valid.
          */
-        function isLengthValid(
-            serie: LineSeries
-        ): (boolean|undefined) {
-            return serie.xData &&
-                serie.xData.length >= (options.params as any).period;
+        function isLengthValid(serie: LineSeries): boolean | undefined {
+            return (
+                serie.xData &&
+                serie.xData.length >= (options.params as any).period
+            );
         }
 
         return !!(
             series &&
-                volumeSeries &&
-                isLengthValid(series) &&
-                isLengthValid(volumeSeries) && isSeriesOHLC
+            volumeSeries &&
+            isLengthValid(series) &&
+            isLengthValid(volumeSeries) &&
+            isSeriesOHLC
         );
     }
 
@@ -141,7 +133,7 @@ class CMFIndicator extends SMAIndicator {
         this: CMFIndicator,
         series: TLinkedSeries,
         params: CMFParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         if (!this.isValid()) {
             return;
         }
@@ -149,8 +141,8 @@ class CMFIndicator extends SMAIndicator {
         return this.getMoneyFlow<TLinkedSeries>(
             series.xData as number[],
             series.yData,
-            (this.volumeSeries.yData as any),
-            (params.period as any)
+            this.volumeSeries.yData as any,
+            params.period as any
         );
     }
 
@@ -170,14 +162,14 @@ class CMFIndicator extends SMAIndicator {
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
         let len: number = (seriesYData as any).length,
-            moneyFlowVolume: Array<(number|null)> = [],
+            moneyFlowVolume: Array<number | null> = [],
             sumVolume = 0,
             sumMoneyFlowVolume = 0,
             moneyFlowXData: Array<number> = [],
-            moneyFlowYData: Array<(number|null)> = [],
-            values: Array<Array<(number|null)>> = [],
+            moneyFlowYData: Array<number | null> = [],
+            values: Array<Array<number | null>> = [],
             i: number,
-            point: [number, (number|null)],
+            point: [number, number | null],
             nullIndex = -1;
 
         /**
@@ -191,18 +183,16 @@ class CMFIndicator extends SMAIndicator {
         function getMoneyFlowVolume(
             ohlc: Array<number>,
             volume: number
-        ): (number|null) {
+        ): number | null {
             const high: number = ohlc[1],
                 low: number = ohlc[2],
                 close: number = ohlc[3],
-
                 isValid: boolean =
-                        volume !== null &&
-                        high !== null &&
-                        low !== null &&
-                        close !== null &&
-                        high !== low;
-
+                    volume !== null &&
+                    high !== null &&
+                    low !== null &&
+                    close !== null &&
+                    high !== low;
 
             /**
              * @private
@@ -216,12 +206,12 @@ class CMFIndicator extends SMAIndicator {
                 l: number,
                 c: number
             ): number {
-                return ((c - l) - (h - c)) / (h - l);
+                return (c - l - (h - c)) / (h - l);
             }
 
-            return isValid ?
-                getMoneyFlowMultiplier(high, low, close) * volume :
-                ((nullIndex = i), null);
+            return isValid
+                ? getMoneyFlowMultiplier(high, low, close) * volume
+                : ((nullIndex = i), null);
         }
 
         if (period > 0 && period <= len) {
@@ -231,14 +221,14 @@ class CMFIndicator extends SMAIndicator {
                     volumeSeriesYData[i]
                 );
                 sumVolume += volumeSeriesYData[i];
-                sumMoneyFlowVolume += (moneyFlowVolume[i] as any);
+                sumMoneyFlowVolume += moneyFlowVolume[i] as any;
             }
 
             moneyFlowXData.push(xData[i - 1]);
             moneyFlowYData.push(
-                i - nullIndex >= period && sumVolume !== 0 ?
-                    sumMoneyFlowVolume / sumVolume :
-                    null
+                i - nullIndex >= period && sumVolume !== 0
+                    ? sumMoneyFlowVolume / sumVolume
+                    : null
             );
             values.push([moneyFlowXData[0], moneyFlowYData[0]]);
 
@@ -251,14 +241,14 @@ class CMFIndicator extends SMAIndicator {
                 sumVolume -= volumeSeriesYData[i - period];
                 sumVolume += volumeSeriesYData[i];
 
-                sumMoneyFlowVolume -= (moneyFlowVolume[i - period] as any);
-                sumMoneyFlowVolume += (moneyFlowVolume[i] as any);
+                sumMoneyFlowVolume -= moneyFlowVolume[i - period] as any;
+                sumMoneyFlowVolume += moneyFlowVolume[i] as any;
 
                 point = [
                     xData[i],
-                    i - nullIndex >= period ?
-                        sumMoneyFlowVolume / sumVolume :
-                        null
+                    i - nullIndex >= period
+                        ? sumMoneyFlowVolume / sumVolume
+                        : null
                 ];
 
                 moneyFlowXData.push(point[0]);
@@ -320,4 +310,4 @@ export default CMFIndicator;
  * @apioption series.cmf
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

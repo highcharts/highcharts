@@ -23,7 +23,7 @@ import type BubblePointOptions from '../Bubble/BubblePointOptions';
  * */
 
 export interface MapBubblePointOptions extends BubblePointOptions {
-    z?: (number|null);
+    z?: number | null;
 }
 
 export default MapBubblePointOptions;

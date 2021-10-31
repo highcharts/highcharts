@@ -25,11 +25,7 @@ import type SignalHandler from './SignalHandler';
 
 import Instrument from './Instrument.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    merge,
-    pick
-} = U;
+const { error, merge, pick } = U;
 import SU from './SonificationUtilities.js';
 
 /* *
@@ -80,7 +76,6 @@ const defaultInstrumentOptions: PointSonify.PointInstrumentOptions = {
  */
 
 namespace PointSonify {
-
     /* *
      *
      * Declarations
@@ -102,18 +97,18 @@ namespace PointSonify {
     }
 
     export interface PointInstrument {
-        instrument: (string|Instrument);
+        instrument: string | Instrument;
         instrumentMapping: PointInstrumentMapping;
         instrumentOptions?: Partial<PointInstrumentOptions>;
         onEnd?: Function;
     }
 
     export interface PointInstrumentMapping {
-        [key: string]: (number|string|Function);
-        duration: (number|string|Function);
-        frequency: (number|string|Function);
-        pan: (number|string|Function);
-        volume: (number|string|Function);
+        [key: string]: number | string | Function;
+        duration: number | string | Function;
+        frequency: number | string | Function;
+        pan: number | string | Function;
+        volume: number | string | Function;
     }
 
     export interface PointInstrumentOptions {
@@ -149,8 +144,7 @@ namespace PointSonify {
      */
     export function compose<T extends typeof Point>(
         PointClass: T
-    ): (typeof Composition&T) {
-
+    ): typeof Composition & T {
         if (composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
 
@@ -158,9 +152,8 @@ namespace PointSonify {
 
             pointProto.sonify = pointSonify;
             pointProto.cancelSonify = pointCancelSonify;
-
         }
-        return PointClass as (typeof Composition&T);
+        return PointClass as typeof Composition & T;
     }
 
     /**
@@ -187,37 +180,41 @@ namespace PointSonify {
             masterVolume = pick(
                 options.masterVolume,
                 chart.options.sonification &&
-                chart.options.sonification.masterVolume
+                    chart.options.sonification.masterVolume
             ),
             dataExtremes = options.dataExtremes || {},
             // Get the value to pass to instrument.play from the mapping value
             // passed in.
             getMappingValue = function (
-                value: (number|string|Function),
+                value: number | string | Function,
                 makeFunction: boolean,
                 allowedExtremes: RangeSelector.RangeObject
-            ): (number|Function) {
+            ): number | Function {
                 // Function. Return new function if we try to use callback,
                 // otherwise call it now and return result.
                 if (typeof value === 'function') {
-                    return makeFunction ?
-                        function (time: any): any {
-                            return value(point, dataExtremes, time);
-                        } :
-                        value(point, dataExtremes);
+                    return makeFunction
+                        ? function (time: any): any {
+                              return value(point, dataExtremes, time);
+                          }
+                        : value(point, dataExtremes);
                 }
                 // String, this is a data prop. Potentially with
                 // negative polarity.
                 if (typeof value === 'string') {
                     const hasInvertedPolarity = value.charAt(0) === '-';
-                    const dataProp = hasInvertedPolarity ? value.slice(1) : value;
-                    const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
+                    const dataProp = hasInvertedPolarity
+                        ? value.slice(1)
+                        : value;
+                    const pointValue = pick(
+                        (point as any)[dataProp],
+                        (point.options as any)[dataProp]
+                    );
 
                     // Find data extremes if we don't have them
-                    dataExtremes[dataProp] = dataExtremes[dataProp] ||
-                        SU.calculateDataExtremes(
-                            point.series.chart, dataProp
-                        );
+                    dataExtremes[dataProp] =
+                        dataExtremes[dataProp] ||
+                        SU.calculateDataExtremes(point.series.chart, dataProp);
 
                     // Find the value
                     return SU.virtualAxisTranslate(
@@ -240,9 +237,9 @@ namespace PointSonify {
             point.sonification.instrumentsPlaying || {};
 
         // Register signal handler for the point
-        const signalHandler = point.sonification.signalHandler =
+        const signalHandler = (point.sonification.signalHandler =
             point.sonification.signalHandler ||
-            new SU.SignalHandler(['onEnd']);
+            new SU.SignalHandler(['onEnd']));
 
         signalHandler.clearSignalCallbacks();
         signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
@@ -257,9 +254,12 @@ namespace PointSonify {
         options.instruments.forEach(function (
             instrumentDefinition: PointInstrument
         ): void {
-            const instrument = typeof instrumentDefinition.instrument === 'string' ?
-                    Instrument.definitions[instrumentDefinition.instrument] :
-                    instrumentDefinition.instrument,
+            const instrument =
+                    typeof instrumentDefinition.instrument === 'string'
+                        ? Instrument.definitions[
+                              instrumentDefinition.instrument
+                          ]
+                        : instrumentDefinition.instrument,
                 mapping = instrumentDefinition.instrumentMapping || {},
                 extremes = merge(
                     defaultInstrumentOptions,
@@ -282,15 +282,15 @@ namespace PointSonify {
 
                     // Remove reference from instruments playing
                     if (
-                        point.sonification && point.sonification.instrumentsPlaying
+                        point.sonification &&
+                        point.sonification.instrumentsPlaying
                     ) {
                         delete point.sonification.instrumentsPlaying[id];
 
                         // This was the last instrument?
                         if (
-                            !Object.keys(
-                                point.sonification.instrumentsPlaying
-                            ).length
+                            !Object.keys(point.sonification.instrumentsPlaying)
+                                .length
                         ) {
                             signalHandler.emitSignal('onEnd', cancelled);
                         }
@@ -306,26 +306,22 @@ namespace PointSonify {
                 (point.sonification.instrumentsPlaying as any)[instrument.id] =
                     instrument;
                 instrument.play({
-                    frequency: getMappingValue(
-                        mapping.frequency,
-                        true,
-                        { min: extremes.minFrequency, max: extremes.maxFrequency }
-                    ),
-                    duration: getMappingValue(
-                        mapping.duration,
-                        false,
-                        { min: extremes.minDuration, max: extremes.maxDuration }
-                    ) as any,
-                    pan: getMappingValue(
-                        mapping.pan,
-                        true,
-                        { min: extremes.minPan, max: extremes.maxPan }
-                    ),
-                    volume: getMappingValue(
-                        mapping.volume,
-                        true,
-                        { min: extremes.minVolume, max: extremes.maxVolume }
-                    ),
+                    frequency: getMappingValue(mapping.frequency, true, {
+                        min: extremes.minFrequency,
+                        max: extremes.maxFrequency
+                    }),
+                    duration: getMappingValue(mapping.duration, false, {
+                        min: extremes.minDuration,
+                        max: extremes.maxDuration
+                    }) as any,
+                    pan: getMappingValue(mapping.pan, true, {
+                        min: extremes.minPan,
+                        max: extremes.maxPan
+                    }),
+                    volume: getMappingValue(mapping.volume, true, {
+                        min: extremes.minVolume,
+                        max: extremes.maxVolume
+                    }),
                     onEnd: onEnd,
                     minFrequency: extremes.minFrequency,
                     maxFrequency: extremes.maxFrequency
@@ -349,11 +345,9 @@ namespace PointSonify {
      *
      * @return {void}
      */
-    function pointCancelSonify(
-        this: Composition,
-        fadeOut?: boolean
-    ): void {
-        const playing = this.sonification && this.sonification.instrumentsPlaying,
+    function pointCancelSonify(this: Composition, fadeOut?: boolean): void {
+        const playing =
+                this.sonification && this.sonification.instrumentsPlaying,
             instrIds = playing && Object.keys(playing);
 
         if (instrIds && instrIds.length) {
@@ -362,7 +356,8 @@ namespace PointSonify {
             });
             this.sonification.instrumentsPlaying = {};
             (this.sonification.signalHandler as any).emitSignal(
-                'onEnd', 'cancelled'
+                'onEnd',
+                'cancelled'
             );
         }
     }
@@ -388,7 +383,7 @@ export default PointSonify;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.PointInstrumentMappingObject
- *//**
+ */ /**
  * Define the volume of the instrument. This can be a string with a data
  * property name, e.g. `'y'`, in which case this data property is used to define
  * the volume relative to the `y`-values of the other points. A higher `y` value
@@ -402,7 +397,7 @@ export default PointSonify;
  * 0 and 1.
  * @name Highcharts.PointInstrumentMappingObject#volume
  * @type {string|number|Function}
- *//**
+ */ /**
  * Define the duration of the notes for this instrument. This can be a string
  * with a data property name, e.g. `'y'`, in which case this data property is
  * used to define the duration relative to the `y`-values of the other points. A
@@ -414,7 +409,7 @@ export default PointSonify;
  * milliseconds. It receives two arguments: The point, and the dataExtremes.
  * @name Highcharts.PointInstrumentMappingObject#duration
  * @type {string|number|Function}
- *//**
+ */ /**
  * Define the panning of the instrument. This can be a string with a data
  * property name, e.g. `'x'`, in which case this data property is used to define
  * the panning relative to the `x`-values of the other points. A higher `x`
@@ -429,7 +424,7 @@ export default PointSonify;
  * note as a number between -1 and 1.
  * @name Highcharts.PointInstrumentMappingObject#pan
  * @type {string|number|Function|undefined}
- *//**
+ */ /**
  * Define the frequency of the instrument. This can be a string with a data
  * property name, e.g. `'y'`, in which case this data property is used to define
  * the frequency relative to the `y`-values of the other points. A higher `y`
@@ -445,54 +440,53 @@ export default PointSonify;
  * @type {string|number|Function}
  */
 
-
 /**
  * @requires module:modules/sonification
  *
  * @interface Highcharts.PointInstrumentOptionsObject
- *//**
+ */ /**
  * The minimum duration for a note when using a data property for duration. Can
  * be overridden by using either a fixed number or a function for
  * instrumentMapping.duration. Defaults to 20.
  * @name Highcharts.PointInstrumentOptionsObject#minDuration
  * @type {number|undefined}
- *//**
+ */ /**
  * The maximum duration for a note when using a data property for duration. Can
  * be overridden by using either a fixed number or a function for
  * instrumentMapping.duration. Defaults to 2000.
  * @name Highcharts.PointInstrumentOptionsObject#maxDuration
  * @type {number|undefined}
- *//**
+ */ /**
  * The minimum pan value for a note when using a data property for panning. Can
  * be overridden by using either a fixed number or a function for
  * instrumentMapping.pan. Defaults to -1 (fully left).
  * @name Highcharts.PointInstrumentOptionsObject#minPan
  * @type {number|undefined}
- *//**
+ */ /**
  * The maximum pan value for a note when using a data property for panning. Can
  * be overridden by using either a fixed number or a function for
  * instrumentMapping.pan. Defaults to 1 (fully right).
  * @name Highcharts.PointInstrumentOptionsObject#maxPan
  * @type {number|undefined}
- *//**
+ */ /**
  * The minimum volume for a note when using a data property for volume. Can be
  * overridden by using either a fixed number or a function for
  * instrumentMapping.volume. Defaults to 0.1.
  * @name Highcharts.PointInstrumentOptionsObject#minVolume
  * @type {number|undefined}
- *//**
+ */ /**
  * The maximum volume for a note when using a data property for volume. Can be
  * overridden by using either a fixed number or a function for
  * instrumentMapping.volume. Defaults to 1.
  * @name Highcharts.PointInstrumentOptionsObject#maxVolume
  * @type {number|undefined}
- *//**
+ */ /**
  * The minimum frequency for a note when using a data property for frequency.
  * Can be overridden by using either a fixed number or a function for
  * instrumentMapping.frequency. Defaults to 220.
  * @name Highcharts.PointInstrumentOptionsObject#minFrequency
  * @type {number|undefined}
- *//**
+ */ /**
  * The maximum frequency for a note when using a data property for frequency.
  * Can be overridden by using either a fixed number or a function for
  * instrumentMapping.frequency. Defaults to 2200.
@@ -500,40 +494,38 @@ export default PointSonify;
  * @type {number|undefined}
  */
 
-
 /**
  * An instrument definition for a point, specifying the instrument to play and
  * how to play it.
  *
  * @interface Highcharts.PointInstrumentObject
- *//**
+ */ /**
  * An Instrument instance or the name of the instrument in the
  * Highcharts.sonification.instruments map.
  * @name Highcharts.PointInstrumentObject#instrument
  * @type {Highcharts.Instrument|string}
- *//**
+ */ /**
  * Mapping of instrument parameters for this instrument.
  * @name Highcharts.PointInstrumentObject#instrumentMapping
  * @type {Highcharts.PointInstrumentMappingObject}
- *//**
+ */ /**
  * Options for this instrument.
  * @name Highcharts.PointInstrumentObject#instrumentOptions
  * @type {Highcharts.PointInstrumentOptionsObject|undefined}
- *//**
+ */ /**
  * Callback to call when the instrument has stopped playing.
  * @name Highcharts.PointInstrumentObject#onEnd
  * @type {Function|undefined}
  */
 
-
 /**
  * Options for sonifying a point.
  * @interface Highcharts.PointSonifyOptionsObject
- *//**
+ */ /**
  * The instrument definitions for this point.
  * @name Highcharts.PointSonifyOptionsObject#instruments
  * @type {Array<Highcharts.PointInstrumentObject>}
- *//**
+ */ /**
  * Optionally provide the minimum/maximum values for the points. If this is not
  * supplied, it is calculated from the points in the chart on demand. This
  * option is supplied in the following format, as a map of point data properties
@@ -553,7 +545,7 @@ export default PointSonify;
  *  ```
  * @name Highcharts.PointSonifyOptionsObject#dataExtremes
  * @type {object|undefined}
- *//**
+ */ /**
  * Callback called when the sonification has finished.
  * @name Highcharts.PointSonifyOptionsObject#onEnd
  * @type {Function|undefined}

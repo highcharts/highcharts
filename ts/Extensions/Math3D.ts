@@ -17,7 +17,7 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const { pick } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         scale3d?: number;
     }
@@ -114,9 +114,13 @@ function rotate3D(
 ): Position3DObject {
     return {
         x: angles.cosB * x - angles.sinB * z,
-        y: -angles.sinA * angles.sinB * x + angles.cosA * y -
+        y:
+            -angles.sinA * angles.sinB * x +
+            angles.cosA * y -
             angles.cosB * angles.sinA * z,
-        z: angles.cosA * angles.sinB * x + angles.sinA * y +
+        z:
+            angles.cosA * angles.sinB * x +
+            angles.sinA * y +
             angles.cosA * angles.cosB * z
     };
 }
@@ -146,9 +150,10 @@ function perspective3D(
     origin: Position3DObject,
     distance: number
 ): PositionObject {
-    const projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
-        distance / (coordinate.z + origin.z + distance) :
-        1;
+    const projection =
+        distance > 0 && distance < Number.POSITIVE_INFINITY
+            ? distance / (coordinate.z + origin.z + distance)
+            : 1;
 
     return {
         x: coordinate.x * projection,
@@ -191,7 +196,10 @@ function perspective(
          * inverted charts with already inverted elements,
          * such as dataLabels or tooltip positions.
          */
-        inverted = pick(useInvertedPersp, insidePlotArea ? chart.inverted : false),
+        inverted = pick(
+            useInvertedPersp,
+            insidePlotArea ? chart.inverted : false
+        ),
         origin = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
@@ -222,8 +230,11 @@ function perspective(
                 angles
             ),
             // Apply perspective
-            coordinate: Position3DObject =
-                perspective3D(rotated, origin, origin.vd) as any;
+            coordinate: Position3DObject = perspective3D(
+                rotated,
+                origin,
+                origin.vd
+            ) as any;
 
         // Apply translation
         coordinate.x = coordinate.x * scale + origin.x;
@@ -231,8 +242,8 @@ function perspective(
         coordinate.z = rotated.z * scale + origin.z;
 
         return {
-            x: (inverted ? coordinate.y : coordinate.x),
-            y: (inverted ? coordinate.x : coordinate.y),
+            x: inverted ? coordinate.y : coordinate.x,
+            y: inverted ? coordinate.x : coordinate.y,
             z: coordinate.z
         };
     });
@@ -265,14 +276,24 @@ function pointCameraDistance(
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
-            z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
+            z:
+                pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
                 options3d.depth
         },
         // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
-            Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
-            Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
-            Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2)
+            Math.pow(
+                cameraPosition.x - pick(coordinates.plotX, coordinates.x),
+                2
+            ) +
+                Math.pow(
+                    cameraPosition.y - pick(coordinates.plotY, coordinates.y),
+                    2
+                ) +
+                Math.pow(
+                    cameraPosition.z - pick(coordinates.plotZ, coordinates.z),
+                    2
+                )
         );
 
     return distance;

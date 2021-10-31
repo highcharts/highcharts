@@ -18,16 +18,11 @@ import type SlowStochasticPoint from './SlowStochasticPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        stochastic: StochasticIndicator
-    }
+    seriesTypes: { stochastic: StochasticIndicator }
 } = SeriesRegistry;
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /**
  * The Slow Stochastic series type.
@@ -55,28 +50,30 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @requires     stock/indicators/slowstochastic
      * @optionparent plotOptions.slowstochastic
      */
-    public static defaultOptions: SlowStochasticOptions =
-    merge(StochasticIndicator.defaultOptions, {
-        params: {
-            /**
-             * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
-             *
-             * @type    {Array<number,number,number>}
-             * @default [14, 3, 3]
-             */
-            periods: [14, 3, 3]
-        }
-    } as SlowStochasticOptions)
+    public static defaultOptions: SlowStochasticOptions = merge(
+        StochasticIndicator.defaultOptions,
+        {
+            params: {
+                /**
+                 * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
+                 *
+                 * @type    {Array<number,number,number>}
+                 * @default [14, 3, 3]
+                 */
+                periods: [14, 3, 3]
+            }
+        } as SlowStochasticOptions
+    );
 
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;
     public points: Array<SlowStochasticPoint> = void 0 as any;
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: SlowStochasticParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        const periods: Array<number> = (params.periods as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        const periods: Array<number> = params.periods as any,
             fastValues = seriesTypes.stochastic.prototype.getValues.call(
                 this,
                 series,
@@ -98,19 +95,18 @@ class SlowStochasticIndicator extends StochasticIndicator {
         const fastYData = fastValues.yData.slice(periods[1] - 1);
 
         // Get SMA(%D)
-        const smoothedValues: (
-            undefined|IndicatorValuesObject<LineSeries>
-        ) = seriesTypes.sma.prototype.getValues.call(
-            this,
-            ({
-                xData: slowValues.xData,
-                yData: fastYData
-            } as any),
-            {
-                index: 1,
-                period: periods[2]
-            }
-        );
+        const smoothedValues: undefined | IndicatorValuesObject<LineSeries> =
+            seriesTypes.sma.prototype.getValues.call(
+                this,
+                {
+                    xData: slowValues.xData,
+                    yData: fastYData
+                } as any,
+                {
+                    index: 1,
+                    period: periods[2]
+                }
+            );
 
         if (!smoothedValues) {
             return;
@@ -120,7 +116,6 @@ class SlowStochasticIndicator extends StochasticIndicator {
 
         // Format data
         for (; i < xDataLen; i++) {
-
             slowValues.yData[i] = [
                 fastYData[i][1],
                 smoothedValues.yData[i - periods[2] + 1] || null
@@ -133,8 +128,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
             ];
         }
 
-        return slowValues as
-            IndicatorValuesObject<TLinkedSeries>;
+        return slowValues as IndicatorValuesObject<TLinkedSeries>;
     }
 }
 
@@ -160,7 +154,6 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
-
 export default SlowStochasticIndicator;
 /**
  * A Slow Stochastic indicator. If the [type](#series.slowstochastic.type)
@@ -175,4 +168,4 @@ export default SlowStochasticIndicator;
  * @apioption series.slowstochastic
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

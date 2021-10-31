@@ -50,7 +50,6 @@ const { find } = U;
  * Options for the keyboard navigation handler.
  */
 class KeyboardNavigationHandler {
-
     /* *
      *
      *  Constructor
@@ -106,16 +105,15 @@ class KeyboardNavigationHandler {
      * @return {number} Returns a response code indicating whether the run was
      *      a success/fail/unhandled, or if we should move to next/prev module.
      */
-    public run(
-        e: KeyboardEvent
-    ): number {
+    public run(e: KeyboardEvent): number {
         const keyCode = e.which || e.keyCode;
         let response = this.response.noHandler;
-        const handlerCodeSet = find(this.keyCodeMap, function (
-            codeSet: [Array<number>, Function]
-        ): boolean {
-            return codeSet[0].indexOf(keyCode) > -1;
-        });
+        const handlerCodeSet = find(
+            this.keyCodeMap,
+            function (codeSet: [Array<number>, Function]): boolean {
+                return codeSet[0].indexOf(keyCode) > -1;
+            }
+        );
 
         if (handlerCodeSet) {
             response = handlerCodeSet[1].call(this, keyCode, e);
@@ -135,7 +133,6 @@ class KeyboardNavigationHandler {
  * */
 
 namespace KeyboardNavigationHandler {
-
     /* *
      *
      *  Declarations
@@ -148,7 +145,6 @@ namespace KeyboardNavigationHandler {
         terminate?: Function;
         validate?: Function;
     }
-
 }
 
 /* *
@@ -169,22 +165,22 @@ export default KeyboardNavigationHandler;
  * Options for the keyboard navigation handler.
  *
  * @interface Highcharts.KeyboardNavigationHandlerOptionsObject
- *//**
+ */ /**
  * An array containing pairs of an array of keycodes, mapped to a handler
  * function. When the keycode is received, the handler is called with the
  * keycode as parameter.
  * @name Highcharts.KeyboardNavigationHandlerOptionsObject#keyCodeMap
  * @type {Array<Array<Array<number>, Function>>}
- *//**
+ */ /**
  * Function to run on initialization of module.
  * @name Highcharts.KeyboardNavigationHandlerOptionsObject#init
  * @type {Function}
- *//**
+ */ /**
  * Function to run before moving to next/prev module. Receives moving direction
  * as parameter: +1 for next, -1 for previous.
  * @name Highcharts.KeyboardNavigationHandlerOptionsObject#terminate
  * @type {Function|undefined}
- *//**
+ */ /**
  * Function to run to validate module. Should return false if module should not
  * run, true otherwise. Receives chart as parameter.
  * @name Highcharts.KeyboardNavigationHandlerOptionsObject#validate

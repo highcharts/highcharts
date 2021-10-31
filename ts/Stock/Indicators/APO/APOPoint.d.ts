@@ -15,21 +15,20 @@
 import APOIndicator from './APOIndicator';
 import type EMAPoint from '../EMA/EMAPoint';
 
-
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 declare class APOPoint extends EMAPoint {
     public series: APOIndicator;
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default APOPoint;

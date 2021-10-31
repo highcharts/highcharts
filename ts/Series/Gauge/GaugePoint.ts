@@ -25,9 +25,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
-        prototype: {
-            pointClass: Point
-        }
+        prototype: { pointClass: Point }
     }
 } = SeriesRegistry;
 
@@ -38,7 +36,6 @@ const {
  * */
 
 class GaugePoint extends Point {
-
     /* *
      *
      *  Properties
@@ -49,7 +46,6 @@ class GaugePoint extends Point {
     public options: GaugePointOptions = void 0 as any;
     public series: GaugeSeries = void 0 as any;
     public shapeArgs: SVGAttributes = void 0 as any;
-
 
     /* *
      *

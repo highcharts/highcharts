@@ -28,17 +28,10 @@ import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
+    seriesTypes: { scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    extend,
-    merge,
-    pick
-} = U;
+const { arrayMax, extend, merge, pick } = U;
 
 /* *
  *
@@ -56,7 +49,6 @@ const {
  * @augments Highcharts.seriesTypes.scatter
  */
 class VectorSeries extends ScatterSeries {
-
     /* *
      *
      *  Static Properties
@@ -80,58 +72,57 @@ class VectorSeries extends ScatterSeries {
      * @requires     modules/vector
      * @optionparent plotOptions.vector
      */
-    public static defaultOptions: VectorSeriesOptions = merge(ScatterSeries.defaultOptions, {
-
-        /**
-         * The line width for each vector arrow.
-         */
-        lineWidth: 2,
-
-        /**
-         * @ignore
-         */
-        marker: null as any,
-
-        /**
-         * What part of the vector it should be rotated around. Can be one of
-         * `start`, `center` and `end`. When `start`, the vectors will start
-         * from the given [x, y] position, and when `end` the vectors will end
-         * in the [x, y] position.
-         *
-         * @sample highcharts/plotoptions/vector-rotationorigin-start/
-         *         Rotate from start
-         *
-         * @validvalue ["start", "center", "end"]
-         */
-        rotationOrigin: 'center',
-
-        states: {
-
-            hover: {
-
-                /**
-                 * Additonal line width for the vector errors when they are
-                 * hovered.
-                 */
-                lineWidthPlus: 1
-            }
-        },
-
-        tooltip: {
+    public static defaultOptions: VectorSeriesOptions = merge(
+        ScatterSeries.defaultOptions,
+        {
+            /**
+             * The line width for each vector arrow.
+             */
+            lineWidth: 2,
 
             /**
-             * @default [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
+             * @ignore
              */
-            pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
-        },
+            marker: null as any,
 
-        /**
-         * Maximum length of the arrows in the vector plot. The individual arrow
-         * length is computed between 0 and this value.
-         */
-        vectorLength: 20
+            /**
+             * What part of the vector it should be rotated around. Can be one
+             * of `start`, `center` and `end`. When `start`, the vectors will
+             * start from the given [x, y] position, and when `end` the vectors
+             * will end in the [x, y] position.
+             *
+             * @sample highcharts/plotoptions/vector-rotationorigin-start/
+             *         Rotate from start
+             *
+             * @validvalue ["start", "center", "end"]
+             */
+            rotationOrigin: 'center',
 
-    } as VectorSeriesOptions);
+            states: {
+                hover: {
+                    /**
+                     * Additonal line width for the vector errors when they are
+                     * hovered.
+                     */
+                    lineWidthPlus: 1
+                }
+            },
+
+            tooltip: {
+                /**
+                 * @default [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
+                 */
+                pointFormat:
+                    '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
+            },
+
+            /**
+             * Maximum length of the arrows in the vector plot. The individual
+             * arrow length is computed between 0 and this value.
+             */
+            vectorLength: 20
+        } as VectorSeriesOptions
+    );
 
     /* *
      *
@@ -167,9 +158,12 @@ class VectorSeries extends ScatterSeries {
                 opacity: 0.01
             });
         } else {
-            (this.markerGroup as any).animate({
-                opacity: 1
-            }, animObject(this.options.animation));
+            (this.markerGroup as any).animate(
+                {
+                    opacity: 1
+                },
+                animObject(this.options.animation)
+            );
         }
     }
 
@@ -181,14 +175,15 @@ class VectorSeries extends ScatterSeries {
     public arrow(point: VectorPoint): SVGPath {
         let path: SVGPath,
             fraction: number = (point.length as any) / this.lengthMax,
-            u: number = fraction * (this.options.vectorLength as any) / 20,
-            o: number = ({
-                start: 10 * u,
-                center: 0,
-                end: -10 * u
-            } as Record<string, number>)[
-                this.options.rotationOrigin as any
-            ] || 0;
+            u: number = (fraction * (this.options.vectorLength as any)) / 20,
+            o: number =
+                (
+                    {
+                        start: 10 * u,
+                        center: 0,
+                        end: -10 * u
+                    } as Record<string, number>
+                )[this.options.rotationOrigin as any] || 0;
 
         // The stem and the arrow head. Draw the arrow first with rotation
         // 0, which is the arrow pointing down (vector from north to south).
@@ -234,7 +229,6 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-
         const chart = this.chart;
 
         this.points.forEach(function (point): void {
@@ -243,40 +237,33 @@ class VectorSeries extends ScatterSeries {
 
             if (
                 this.options.clip === false ||
-                chart.isInsidePlot(
-                    plotX as any,
-                    plotY as any,
-                    { inverted: chart.inverted }
-                )
+                chart.isInsidePlot(plotX as any, plotY as any, {
+                    inverted: chart.inverted
+                })
             ) {
-
                 if (!point.graphic) {
                     point.graphic = this.chart.renderer
                         .path()
                         .add(this.markerGroup)
                         .addClass(
                             'highcharts-point ' +
-                            'highcharts-color-' +
-                            pick(point.colorIndex, point.series.colorIndex)
+                                'highcharts-color-' +
+                                pick(point.colorIndex, point.series.colorIndex)
                         );
                 }
-                point.graphic
-                    .attr({
-                        d: this.arrow(point),
-                        translateX: plotX,
-                        translateY: plotY,
-                        rotation: point.direction
-                    });
+                point.graphic.attr({
+                    d: this.arrow(point),
+                    translateX: plotX,
+                    translateY: plotY,
+                    rotation: point.direction
+                });
 
                 if (!this.chart.styledMode) {
-                    point.graphic
-                        .attr(this.pointAttribs(point));
+                    point.graphic.attr(this.pointAttribs(point));
                 }
-
             } else if (point.graphic) {
                 point.graphic = point.graphic.destroy();
             }
-
         }, this);
     }
 
@@ -284,10 +271,7 @@ class VectorSeries extends ScatterSeries {
      * Get presentational attributes.
      * @private
      */
-    public pointAttribs(
-        point: VectorPoint,
-        state?: string
-    ): SVGAttributes {
+    public pointAttribs(point: VectorPoint, state?: string): SVGAttributes {
         let options = this.options,
             stroke = point.color || this.color,
             strokeWidth = this.options.lineWidth;
@@ -295,12 +279,12 @@ class VectorSeries extends ScatterSeries {
         if (state) {
             stroke = (options.states as any)[state].color || stroke;
             strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+                ((options.states as any)[state].lineWidth || strokeWidth) +
+                ((options.states as any)[state].lineWidthPlus || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke: stroke,
             'stroke-width': strokeWidth
         };
     }
@@ -315,7 +299,6 @@ class VectorSeries extends ScatterSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -330,7 +313,6 @@ interface VectorSeries {
     pointClass: typeof VectorPoint;
 }
 extend(VectorSeries.prototype, {
-
     /**
      * @ignore
      * @deprecated
@@ -352,9 +334,7 @@ extend(VectorSeries.prototype, {
     parallelArrays: ['x', 'y', 'length', 'direction'],
 
     pointArrayMap: ['y', 'length', 'direction']
-
 });
-
 
 /* *
  *
@@ -461,4 +441,4 @@ export default VectorSeries;
  * @apioption series.vector.data.direction
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

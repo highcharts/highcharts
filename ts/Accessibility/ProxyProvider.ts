@@ -29,21 +29,14 @@ import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
-const {
-    attr,
-    css
-} = U;
+const { attr, css } = U;
 
 import CU from './Utils/ChartUtilities.js';
 const { unhideChartElementFromAT } = CU;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import HU from './Utils/HTMLUtilities.js';
-const {
-    removeElement,
-    removeChildNodes
-} = HU;
+const { removeElement, removeChildNodes } = HU;
 import ProxyElement from './ProxyElement.js';
-
 
 /**
  *
@@ -58,7 +51,6 @@ interface ProxyGroup {
     proxyElements: ProxyElement[];
 }
 
-
 /* *
  *
  *  Class
@@ -72,7 +64,6 @@ interface ProxyGroup {
  * @class
  */
 class ProxyProvider {
-
     /* *
      *
      *  Properties
@@ -83,7 +74,7 @@ class ProxyProvider {
     private beforeChartProxyPosContainer: HTMLDOMElement;
     private domElementProvider: DOMElementProvider;
     private groupOrder: string[];
-    private groups: Record<string, ProxyGroup|undefined>;
+    private groups: Record<string, ProxyGroup | undefined>;
 
     /* *
      *
@@ -96,8 +87,10 @@ class ProxyProvider {
         this.groups = {};
         this.groupOrder = [];
 
-        this.beforeChartProxyPosContainer = this.createProxyPosContainer('before');
-        this.afterChartProxyPosContainer = this.createProxyPosContainer('after');
+        this.beforeChartProxyPosContainer =
+            this.createProxyPosContainer('before');
+        this.afterChartProxyPosContainer =
+            this.createProxyPosContainer('after');
 
         this.update();
     }
@@ -120,17 +113,23 @@ class ProxyProvider {
     ): ProxyElement {
         const group = this.groups[groupKey];
         if (!group) {
-            throw new Error('ProxyProvider.addProxyElement: Invalid group key ' + groupKey);
+            throw new Error(
+                'ProxyProvider.addProxyElement: Invalid group key ' + groupKey
+            );
         }
 
-        const proxy = new ProxyElement(this.chart, target, group.type, attributes);
+        const proxy = new ProxyElement(
+            this.chart,
+            target,
+            group.type,
+            attributes
+        );
 
         group.proxyContainerElement.appendChild(proxy.element);
         group.proxyElements.push(proxy);
 
         return proxy;
     }
-
 
     /**
      * Create a group that will contain proxy elements. The group order is
@@ -157,7 +156,8 @@ class ProxyProvider {
             groupElement = proxyContainer;
         }
 
-        groupElement.className = 'highcharts-a11y-proxy-group highcharts-a11y-proxy-group-' +
+        groupElement.className =
+            'highcharts-a11y-proxy-group highcharts-a11y-proxy-group-' +
             groupKey.replace(/\W/g, '-');
 
         this.groups[groupKey] = {
@@ -183,7 +183,6 @@ class ProxyProvider {
         this.updateGroupOrder(this.groupOrder);
     }
 
-
     /**
      * Update HTML attributes of a group.
      */
@@ -193,11 +192,12 @@ class ProxyProvider {
     ): void {
         const group = this.groups[groupKey];
         if (!group) {
-            throw new Error('ProxyProvider.updateGroupAttrs: Invalid group key ' + groupKey);
+            throw new Error(
+                'ProxyProvider.updateGroupAttrs: Invalid group key ' + groupKey
+            );
         }
         attr(group.groupElement, attributes);
     }
-
 
     /**
      * Reorder the proxy groups.
@@ -216,7 +216,8 @@ class ProxyProvider {
         }
 
         const seriesIx = groupKeys.indexOf('series');
-        const beforeKeys = seriesIx > -1 ? groupKeys.slice(0, seriesIx) : groupKeys;
+        const beforeKeys =
+            seriesIx > -1 ? groupKeys.slice(0, seriesIx) : groupKeys;
         const afterKeys = seriesIx > -1 ? groupKeys.slice(seriesIx + 1) : [];
 
         // Store focused element since it will be lost when reordering
@@ -224,11 +225,12 @@ class ProxyProvider {
 
         // Add groups to correct container
         ['before', 'after'].forEach((pos): void => {
-            const posContainer = this[
-                pos === 'before' ?
-                    'beforeChartProxyPosContainer' :
-                    'afterChartProxyPosContainer'
-            ];
+            const posContainer =
+                this[
+                    pos === 'before'
+                        ? 'beforeChartProxyPosContainer'
+                        : 'afterChartProxyPosContainer'
+                ];
             const keys = pos === 'before' ? beforeKeys : afterKeys;
 
             removeChildNodes(posContainer);
@@ -245,13 +247,13 @@ class ProxyProvider {
         // cause screen readers re-announcing the button.
         if (
             (this.beforeChartProxyPosContainer.contains(activeElement) ||
-            this.afterChartProxyPosContainer.contains(activeElement)) &&
-            activeElement && (activeElement as HTMLElement).focus
+                this.afterChartProxyPosContainer.contains(activeElement)) &&
+            activeElement &&
+            (activeElement as HTMLElement).focus
         ) {
             (activeElement as HTMLElement).focus();
         }
     }
-
 
     /**
      * Remove all proxy elements in a group
@@ -259,11 +261,12 @@ class ProxyProvider {
     public clearGroup(groupKey: string): void {
         const group = this.groups[groupKey];
         if (!group) {
-            throw new Error('ProxyProvider.clearGroup: Invalid group key ' + groupKey);
+            throw new Error(
+                'ProxyProvider.clearGroup: Invalid group key ' + groupKey
+            );
         }
         removeChildNodes(group.proxyContainerElement);
     }
-
 
     /**
      * Remove a group from the DOM and from the proxy provider's group list.
@@ -278,7 +281,6 @@ class ProxyProvider {
         }
     }
 
-
     /**
      * Update the position and order of all proxy groups and elements
      */
@@ -288,14 +290,14 @@ class ProxyProvider {
         this.updateProxyElementPositions();
     }
 
-
     /**
      * Update all proxy element positions
      */
     public updateProxyElementPositions(): void {
-        Object.keys(this.groups).forEach(this.updateGroupProxyElementPositions.bind(this));
+        Object.keys(this.groups).forEach(
+            this.updateGroupProxyElementPositions.bind(this)
+        );
     }
-
 
     /**
      * Update a group's proxy elements' positions.
@@ -308,7 +310,6 @@ class ProxyProvider {
         }
     }
 
-
     /**
      * Remove all added elements
      */
@@ -316,9 +317,7 @@ class ProxyProvider {
         this.domElementProvider.destroyCreatedElements();
     }
 
-
     // -------------------------- private ------------------------------------
-
 
     /**
      * Create and return a pos container element (the overall containers for
@@ -327,7 +326,9 @@ class ProxyProvider {
     private createProxyPosContainer(classNamePostfix?: string): HTMLDivElement {
         const el = this.domElementProvider.createElement('div');
         el.setAttribute('aria-hidden', 'false');
-        el.className = 'highcharts-a11y-proxy-container' + (classNamePostfix ? '-' + classNamePostfix : '');
+        el.className =
+            'highcharts-a11y-proxy-container' +
+            (classNamePostfix ? '-' + classNamePostfix : '');
         css(el, {
             top: '0',
             left: '0'
@@ -341,13 +342,12 @@ class ProxyProvider {
         return el;
     }
 
-
     /**
      * Get an array of group keys that corresponds to the current group order
      * in the DOM.
      */
     private getCurrentGroupOrderInDOM(): string[] {
-        const getGroupKeyFromElement = (el: Element): string|undefined => {
+        const getGroupKeyFromElement = (el: Element): string | undefined => {
             const allGroups = Object.keys(this.groups);
             let i = allGroups.length;
             while (i--) {
@@ -375,14 +375,15 @@ class ProxyProvider {
         return before.concat(after);
     }
 
-
     /**
      * Check if the current DOM order matches the current group order, so that
      * a reordering/update is unnecessary.
      */
     private isDOMOrderGroupOrder(): boolean {
         const domOrder = this.getCurrentGroupOrderInDOM();
-        const groupOrderWithGroups = this.groupOrder.filter((x): boolean => x === 'series' || !!this.groups[x]);
+        const groupOrderWithGroups = this.groupOrder.filter(
+            (x): boolean => x === 'series' || !!this.groups[x]
+        );
 
         let i = domOrder.length;
         if (i !== groupOrderWithGroups.length) {
@@ -395,7 +396,6 @@ class ProxyProvider {
         }
         return true;
     }
-
 
     /**
      * Update the DOM positions of the before/after proxy

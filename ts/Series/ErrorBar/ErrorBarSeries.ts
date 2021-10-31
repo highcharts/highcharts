@@ -18,15 +18,10 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        arearange: AreaRangeSeries
-    }
+    seriesTypes: { arearange: AreaRangeSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 
 /**
  * Errorbar series type
@@ -39,8 +34,6 @@ const {
  *
  */
 class ErrorBarSeries extends BoxPlotSeries {
-
-
     /* *
      *
      *  Static properties
@@ -63,52 +56,55 @@ class ErrorBarSeries extends BoxPlotSeries {
      * @requires     highcharts-more
      * @optionparent plotOptions.errorbar
      */
-    public static defaultOptions: ErrorBarSeriesOptions = merge(BoxPlotSeries.defaultOptions, {
-        /**
-         * The main color of the bars. This can be overridden by
-         * [stemColor](#plotOptions.errorbar.stemColor) and
-         * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
-         *
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @default #000000
-         * @since   3.0
-         * @product highcharts
-         */
-        color: Palette.neutralColor100,
+    public static defaultOptions: ErrorBarSeriesOptions = merge(
+        BoxPlotSeries.defaultOptions,
+        {
+            /**
+             * The main color of the bars. This can be overridden by
+             * [stemColor](#plotOptions.errorbar.stemColor) and
+             * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
+             *
+             * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+             *         Error bar styling
+             *
+             * @type    {Highcharts.ColorType}
+             * @default #000000
+             * @since   3.0
+             * @product highcharts
+             */
+            color: Palette.neutralColor100,
 
-        grouping: false,
+            grouping: false,
 
-        /**
-         * The parent series of the error bar. The default value links it to
-         * the previous series. Otherwise, use the id of the parent series.
-         *
-         * @since   3.0
-         * @product highcharts
-         */
-        linkedTo: ':previous',
+            /**
+             * The parent series of the error bar. The default value links it to
+             * the previous series. Otherwise, use the id of the parent series.
+             *
+             * @since   3.0
+             * @product highcharts
+             */
+            linkedTo: ':previous',
 
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
-        },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+            },
 
-        /**
-         * The line width of the whiskers, the horizontal lines marking
-         * low and high values. When `null`, the general
-         * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
-         *
-         * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-         *         Error bar styling
-         *
-         * @type    {number}
-         * @since   3.0
-         * @product highcharts
-         */
-        whiskerWidth: null as any
-
-    } as ErrorBarSeriesOptions);
+            /**
+             * The line width of the whiskers, the horizontal lines marking
+             * low and high values. When `null`, the general
+             * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
+             *
+             * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+             *         Error bar styling
+             *
+             * @type    {number}
+             * @since   3.0
+             * @product highcharts
+             */
+            whiskerWidth: null as any
+        } as ErrorBarSeriesOptions
+    );
 
     /* *
      *
@@ -154,7 +150,6 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 }
 
-
 /* *
  *
  *  Prototype properties
@@ -175,7 +170,6 @@ extend(ErrorBarSeries.prototype, {
     pointValKey: 'high', // defines the top of the tracker
     doQuartiles: false
 });
-
 
 /* *
  *
@@ -273,4 +267,4 @@ export default ErrorBarSeries;
  * @apioption series.errorbar.data
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

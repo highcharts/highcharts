@@ -11,9 +11,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -31,7 +29,6 @@ const {
  * @param {number} index of the circle
  */
 class ControllableCircle implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -79,7 +76,8 @@ class ControllableCircle implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+        ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -140,7 +138,6 @@ class ControllableCircle implements ControllableMixin.Type {
     public setRadius(r: number): void {
         this.options.r = r;
     }
-
 }
 
 interface ControllableCircle extends ControllableMixin.Type {

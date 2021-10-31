@@ -36,22 +36,14 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
-const {
-    attr,
-    css,
-    merge
-} = U;
+const { attr, css, merge } = U;
 
 import EventProvider from './Utils/EventProvider.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = ChartUtilities;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-const {
-    cloneMouseEvent,
-    cloneTouchEvent,
-    getFakeMouseEvent,
-    removeElement
-} = HTMLUtilities;
+const { cloneMouseEvent, cloneTouchEvent, getFakeMouseEvent, removeElement } =
+    HTMLUtilities;
 
 /* *
  *
@@ -67,7 +59,6 @@ const {
  * @class
  */
 class ProxyElement {
-
     /* *
      *
      *  Properties
@@ -103,7 +94,7 @@ class ProxyElement {
         this.eventProvider = new EventProvider();
 
         const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
-        const btnEl = this.buttonElement = doc.createElement('button');
+        const btnEl = (this.buttonElement = doc.createElement('button'));
 
         if (!chart.styledMode) {
             this.hideButtonVisually(btnEl);
@@ -127,7 +118,6 @@ class ProxyElement {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Fake a click event on the target.
      */
@@ -136,9 +126,11 @@ class ProxyElement {
         pos.x += pos.width / 2;
         pos.y += pos.height / 2;
         const fakeEventObject = getFakeMouseEvent('click', pos);
-        fireEventOnWrappedOrUnwrappedElement(this.target.click, fakeEventObject);
+        fireEventOnWrappedOrUnwrappedElement(
+            this.target.click,
+            fakeEventObject
+        );
     }
-
 
     /**
      * Update the target to be proxied.
@@ -153,15 +145,20 @@ class ProxyElement {
         this.target = target;
         this.updateCSSClassName();
 
-        attr(this.buttonElement, merge({
-            'aria-label': this.getTargetAttr(target.click, 'aria-label')
-        }, attributes));
+        attr(
+            this.buttonElement,
+            merge(
+                {
+                    'aria-label': this.getTargetAttr(target.click, 'aria-label')
+                },
+                attributes
+            )
+        );
 
         this.eventProvider.removeAddedEvents();
         this.addProxyEventsToButton(this.buttonElement, target.click);
         this.refreshPosition();
     }
-
 
     /**
      * Refresh the position of the proxy element to match the current target
@@ -176,7 +173,6 @@ class ProxyElement {
         });
     }
 
-
     /**
      * Remove button from DOM, and clear events.
      */
@@ -185,59 +181,76 @@ class ProxyElement {
         removeElement(this.element);
     }
 
-
     // -------------------------- private ------------------------------------
-
 
     /**
      * Update the CSS class name to match target
      */
     private updateCSSClassName(): void {
-        const stringHasNoTooltip = (s: string): boolean => s.indexOf('highcharts-no-tooltip') > -1;
+        const stringHasNoTooltip = (s: string): boolean =>
+            s.indexOf('highcharts-no-tooltip') > -1;
         const legend = this.chart.legend;
         const groupDiv = legend.group && legend.group.div;
-        const noTooltipOnGroup = stringHasNoTooltip(groupDiv && groupDiv.className || '');
-        const targetClassName = this.getTargetAttr(this.target.click, 'class') as string || '';
+        const noTooltipOnGroup = stringHasNoTooltip(
+            (groupDiv && groupDiv.className) || ''
+        );
+        const targetClassName =
+            (this.getTargetAttr(this.target.click, 'class') as string) || '';
         const noTooltipOnTarget = stringHasNoTooltip(targetClassName);
 
-        this.buttonElement.className = noTooltipOnGroup || noTooltipOnTarget ?
-            'highcharts-a11y-proxy-button highcharts-no-tooltip' :
-            'highcharts-a11y-proxy-button';
+        this.buttonElement.className =
+            noTooltipOnGroup || noTooltipOnTarget
+                ? 'highcharts-a11y-proxy-button highcharts-no-tooltip'
+                : 'highcharts-a11y-proxy-button';
     }
-
 
     /**
      * Mirror events for a proxy button to a target
      */
     private addProxyEventsToButton(
         button: HTMLDOMElement,
-        target: DOMElementType|SVGElement|HTMLElement
+        target: DOMElementType | SVGElement | HTMLElement
     ): void {
         [
-            'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
-            'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
+            'click',
+            'touchstart',
+            'touchend',
+            'touchcancel',
+            'touchmove',
+            'mouseover',
+            'mouseenter',
+            'mouseleave',
+            'mouseout'
         ].forEach((evtType: string): void => {
             const isTouchEvent = evtType.indexOf('touch') === 0;
 
-            this.eventProvider.addEvent(button, evtType, (e: MouseEvent | TouchEvent): void => {
-                const clonedEvent = isTouchEvent ?
-                    cloneTouchEvent(e as TouchEvent) :
-                    cloneMouseEvent(e as MouseEvent);
+            this.eventProvider.addEvent(
+                button,
+                evtType,
+                (e: MouseEvent | TouchEvent): void => {
+                    const clonedEvent = isTouchEvent
+                        ? cloneTouchEvent(e as TouchEvent)
+                        : cloneMouseEvent(e as MouseEvent);
 
-                if (target) {
-                    fireEventOnWrappedOrUnwrappedElement(target, clonedEvent);
-                }
+                    if (target) {
+                        fireEventOnWrappedOrUnwrappedElement(
+                            target,
+                            clonedEvent
+                        );
+                    }
 
-                e.stopPropagation();
+                    e.stopPropagation();
 
-                // #9682, #15318: Touch scrolling didnt work when touching proxy
-                if (!isTouchEvent) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
+                    // #9682, #15318: Touch scrolling didnt work when touching
+                    // proxy
+                    if (!isTouchEvent) {
+                        e.preventDefault();
+                    }
+                },
+                { passive: false }
+            );
         });
     }
-
 
     /**
      * Set visually hidden style on a proxy button
@@ -260,16 +273,15 @@ class ProxyElement {
         });
     }
 
-
     /**
      * Get the position relative to chart container for the target
      */
     private getTargetPosition(): BBoxObject {
         const clickTarget = this.target.click;
         // We accept both DOM elements and wrapped elements as click targets.
-        const clickTargetElement = (clickTarget as SVGElement).element ?
-            (clickTarget as SVGElement).element :
-            clickTarget as SVGDOMElement;
+        const clickTargetElement = (clickTarget as SVGElement).element
+            ? (clickTarget as SVGElement).element
+            : (clickTarget as SVGDOMElement);
         const posElement = this.target.visual || clickTargetElement;
         const chartDiv: HTMLDOMElement = this.chart.renderTo;
 
@@ -288,17 +300,18 @@ class ProxyElement {
         return { x: 0, y: 0, width: 1, height: 1 };
     }
 
-
     /**
      * Get an attribute value of a target
      */
-    private getTargetAttr(target: SVGElement|HTMLElement|DOMElementType, key: string): unknown {
+    private getTargetAttr(
+        target: SVGElement | HTMLElement | DOMElementType,
+        key: string
+    ): unknown {
         if ((target as SVGElement).element) {
             return (target as SVGElement).element.getAttribute(key);
         }
         return target.getAttribute(key);
     }
-
 }
 
 /* *
@@ -308,20 +321,18 @@ class ProxyElement {
  * */
 
 namespace ProxyElement {
-
     /* *
      *
      *  Declarations
      *
      * */
 
-    export type GroupType = ('div'|'ul');
+    export type GroupType = 'div' | 'ul';
 
     export interface Target {
-        click: (DOMElementType|SVGElement|HTMLElement);
+        click: DOMElementType | SVGElement | HTMLElement;
         visual?: DOMElementType;
     }
-
 }
 
 /* *

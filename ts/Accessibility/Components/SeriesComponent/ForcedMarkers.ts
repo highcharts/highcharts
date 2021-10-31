@@ -27,10 +27,7 @@ import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    merge
-} = U;
+const { addEvent, merge } = U;
 
 /* *
  *
@@ -39,7 +36,6 @@ const {
  * */
 
 namespace ForcedMarkersComposition {
-
     /* *
      *
      *  Declarations
@@ -50,13 +46,11 @@ namespace ForcedMarkersComposition {
         hasForcedA11yMarker?: boolean;
     }
 
-
     export declare class SeriesComposition extends Accessibility.SeriesComposition {
         a11yMarkersForced?: boolean;
         points: Array<PointComposition>;
         resetA11yMarkerOptions?: PointMarkerOptions;
     }
-
 
     /* *
      *
@@ -66,7 +60,6 @@ namespace ForcedMarkersComposition {
 
     const composedClasses: Array<Function> = [];
 
-
     /* *
      *
      *  Functions
@@ -75,14 +68,10 @@ namespace ForcedMarkersComposition {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * @private
      */
-    export function compose<T extends typeof Series>(
-        SeriesClass: T
-    ): void {
-
+    export function compose<T extends typeof Series>(SeriesClass: T): void {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -103,15 +92,13 @@ namespace ForcedMarkersComposition {
                 seriesOnAfterRender
             );
         }
-
     }
-
 
     /**
      * @private
      */
     function forceZeroOpacityMarkerOptions(
-        options: (PointOptions|SeriesOptions)
+        options: PointOptions | SeriesOptions
     ): void {
         merge(true, options, {
             marker: {
@@ -125,16 +112,18 @@ namespace ForcedMarkersComposition {
         });
     }
 
-
     /**
      * @private
      */
-    function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
-        return (pointOptions.marker as any).states &&
+    function getPointMarkerOpacity(
+        pointOptions: PointOptions
+    ): number | undefined {
+        return (
+            (pointOptions.marker as any).states &&
             (pointOptions.marker as any).states.normal &&
-            (pointOptions.marker as any).states.normal.opacity;
+            (pointOptions.marker as any).states.normal.opacity
+        );
     }
-
 
     /**
      * @private
@@ -149,7 +138,9 @@ namespace ForcedMarkersComposition {
             delete point.hasForcedA11yMarker;
 
             if (pointOptions.marker) {
-                const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+                const isStillForcedMarker =
+                    hadForcedMarker &&
+                    getPointMarkerOpacity(pointOptions) === 0;
 
                 if (pointOptions.marker.enabled && !isStillForcedMarker) {
                     unforcePointMarkerOptions(pointOptions);
@@ -162,14 +153,16 @@ namespace ForcedMarkersComposition {
         }
     }
 
-
     /**
      * @private
      */
     function hasIndividualPointMarkerOptions(series: Series): boolean {
-        return !!(series._hasPointMarkers && series.points && series.points.length);
+        return !!(
+            series._hasPointMarkers &&
+            series.points &&
+            series.points.length
+        );
     }
-
 
     /**
      * @private
@@ -179,19 +172,19 @@ namespace ForcedMarkersComposition {
     ): boolean {
         const a11yOptions = series.chart.options.accessibility;
 
-        return series.points.length <
-            (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
-            (a11yOptions.series as any).pointDescriptionEnabledThreshold === false;
+        return (
+            series.points.length <
+                (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
+            (a11yOptions.series as any).pointDescriptionEnabledThreshold ===
+                false
+        );
     }
-
 
     /**
      * Process marker graphics after render
      * @private
      */
-    function seriesOnAfterRender(
-        this: SeriesComposition
-    ): void {
+    function seriesOnAfterRender(this: SeriesComposition): void {
         const series = this;
 
         // For styled mode the rendered graphic does not reflect the style
@@ -208,17 +201,20 @@ namespace ForcedMarkersComposition {
                 series.points.forEach((point): void => {
                     if (point.graphic) {
                         point.graphic[
-                            point.hasForcedA11yMarker ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker
+                                ? 'addClass'
+                                : 'removeClass'
                         ]('highcharts-a11y-marker-hidden');
                         point.graphic[
-                            point.hasForcedA11yMarker === false ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker === false
+                                ? 'addClass'
+                                : 'removeClass'
                         ]('highcharts-a11y-marker-visible');
                     }
                 });
             }
         }
     }
-
 
     /**
      * Keep track of options to reset markers to if no longer forced.
@@ -229,18 +225,16 @@ namespace ForcedMarkersComposition {
         e: { options: SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(
-            e.options.marker || {}, this.userOptions.marker || {}
+            e.options.marker || {},
+            this.userOptions.marker || {}
         );
     }
-
 
     /**
      * Keep track of forcing markers.
      * @private
      */
-    function seriesOnRender(
-        this: SeriesComposition
-    ): void {
+    function seriesOnRender(this: SeriesComposition): void {
         const series = this,
             options = series.options;
 
@@ -253,13 +247,11 @@ namespace ForcedMarkersComposition {
             if (hasIndividualPointMarkerOptions(series)) {
                 handleForcePointMarkers(series);
             }
-
         } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
             unforceSeriesMarkerOptions(series);
         }
     }
-
 
     /**
      * @private
@@ -269,12 +261,16 @@ namespace ForcedMarkersComposition {
     ): boolean {
         const chart = series.chart,
             chartA11yEnabled = chart.options.accessibility.enabled,
-            seriesA11yEnabled = (series.options.accessibility &&
-                series.options.accessibility.enabled) !== false;
+            seriesA11yEnabled =
+                (series.options.accessibility &&
+                    series.options.accessibility.enabled) !== false;
 
-        return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
+        return (
+            chartA11yEnabled &&
+            seriesA11yEnabled &&
+            isWithinDescriptionThreshold(series)
+        );
     }
-
 
     /**
      * @private
@@ -289,7 +285,6 @@ namespace ForcedMarkersComposition {
         });
     }
 
-
     /**
      * @private
      */
@@ -302,7 +297,8 @@ namespace ForcedMarkersComposition {
                     enabled: resetMarkerOptions.enabled,
                     states: {
                         normal: {
-                            opacity: resetMarkerOptions.states &&
+                            opacity:
+                                resetMarkerOptions.states &&
                                 resetMarkerOptions.states.normal &&
                                 resetMarkerOptions.states.normal.opacity
                         }
@@ -311,7 +307,6 @@ namespace ForcedMarkersComposition {
             });
         }
     }
-
 }
 
 /* *

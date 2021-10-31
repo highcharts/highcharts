@@ -27,12 +27,9 @@ import type SankeyPoint from './SankeyPoint';
  * */
 
 export interface SankeyDataLabelFormatterCallback {
-    (
-        this: (
-            SankeyDataLabelFormatterContext|
-            Point.PointLabelObject
-        )
-    ): (string|undefined);
+    (this: SankeyDataLabelFormatterContext | Point.PointLabelObject):
+        | string
+        | undefined;
 }
 
 export interface SankeyDataLabelFormatterContext {

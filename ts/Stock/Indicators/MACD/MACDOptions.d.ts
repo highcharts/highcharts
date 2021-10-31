@@ -13,10 +13,7 @@
  * */
 import type MACDIndicator from './MACDIndicator';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type {
     SeriesStatesOptions,
     SeriesZonesOptions
@@ -24,10 +21,10 @@ import type {
 import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface MACDGappedExtensionObject {
     options?: MACDGappedExtensionOptions;

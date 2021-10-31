@@ -35,7 +35,6 @@ const { extend } = U;
  * @optionparent mapNavigation
  */
 const defaultOptions: MapNavigationOptions = {
-
     /**
      * General options for the map navigation buttons. Individual options
      * can be given from the [mapNavigation.buttons](#mapNavigation.buttons)
@@ -45,7 +44,6 @@ const defaultOptions: MapNavigationOptions = {
      *         Theming the navigation buttons
      */
     buttonOptions: {
-
         /**
          * What box to align the buttons to. Possible values are `plotBox`
          * and `spacingBox`.
@@ -122,7 +120,6 @@ const defaultOptions: MapNavigationOptions = {
             /** @ignore */
             'text-align': 'center'
         }
-
     },
 
     /**
@@ -134,7 +131,6 @@ const defaultOptions: MapNavigationOptions = {
      * and `y` options are individual.
      */
     buttons: {
-
         /**
          * Options for the zoom in button. Properties for the zoom in and zoom
          * out buttons are inherited from
@@ -145,7 +141,6 @@ const defaultOptions: MapNavigationOptions = {
          * @extends mapNavigation.buttonOptions
          */
         zoomIn: {
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Click handler for the button.
@@ -180,7 +175,6 @@ const defaultOptions: MapNavigationOptions = {
          * @extends mapNavigation.buttonOptions
          */
         zoomOut: {
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Click handler for the button.

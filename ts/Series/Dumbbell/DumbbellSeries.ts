@@ -34,19 +34,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
-        columnrange: {
-            prototype: columnRangeProto
-        }
+        columnrange: { prototype: columnRangeProto }
     }
 } = SeriesRegistry;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+const { extend, merge, pick } = U;
 
 /* *
  *
@@ -70,7 +64,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * @augments Highcharts.Series
  */
 class DumbbellSeries extends AreaRangeSeries {
-
     /* *
      *
      * Static properties
@@ -122,7 +115,7 @@ class DumbbellSeries extends AreaRangeSeries {
             /**
              * Color of the start markers in a dumbbell graph.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since 8.0.0
              * @product   highcharts highstock
              */
@@ -151,7 +144,8 @@ class DumbbellSeries extends AreaRangeSeries {
                     halo: false
                 }
             }
-        } as DumbbellSeriesOptions);
+        } as DumbbellSeriesOptions
+    );
 
     /* *
      *
@@ -164,7 +158,6 @@ class DumbbellSeries extends AreaRangeSeries {
     public points: Array<DumbbellPoint> = void 0 as any;
     public columnMetrics: ColumnMetricsObject = void 0 as any;
     public lowColor?: ColorType;
-
 
     /**
      *
@@ -188,16 +181,16 @@ class DumbbellSeries extends AreaRangeSeries {
             seriesOptions = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            connectorWidth = pick<number|undefined, number>(
+            connectorWidth = pick<number | undefined, number>(
                 pointOptions.connectorWidth,
                 seriesOptions.connectorWidth as any
             ),
             connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
+                ColorType | undefined,
+                ColorString | undefined,
+                ColorType | undefined,
+                ColorType | undefined,
+                ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
@@ -207,15 +200,16 @@ class DumbbellSeries extends AreaRangeSeries {
             ),
             connectorWidthPlus = pick(
                 seriesOptions.states &&
-                seriesOptions.states.hover &&
-                seriesOptions.states.hover.connectorWidthPlus,
+                    seriesOptions.states.hover &&
+                    seriesOptions.states.hover.connectorWidthPlus,
                 1
             ),
             dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle),
             pointTop = pick(point.plotLow, point.plotY),
             pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true),
-            pointHeight = chart.inverted ?
-                yAxis.len - pxThreshold : pxThreshold,
+            pointHeight = chart.inverted
+                ? yAxis.len - pxThreshold
+                : pxThreshold,
             pointBottom = pick(point.plotHigh, pointHeight),
             attribs: SVGAttributes,
             origProps;
@@ -249,11 +243,11 @@ class DumbbellSeries extends AreaRangeSeries {
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
+                ColorType | undefined,
+                ColorString | undefined,
+                ColorType | undefined,
+                ColorType | undefined,
+                ColorType
             >(
                 pointOptions.connectorColor,
                 seriesOptions.connectorColor,
@@ -265,15 +259,14 @@ class DumbbellSeries extends AreaRangeSeries {
         }
 
         attribs = {
-            d: SVGRenderer.prototype.crispLine([[
-                'M',
-                point.plotX,
-                pointTop
-            ], [
-                'L',
-                point.plotX,
-                pointBottom
-            ]], connectorWidth, 'ceil')
+            d: SVGRenderer.prototype.crispLine(
+                [
+                    ['M', point.plotX, pointTop],
+                    ['L', point.plotX, pointBottom]
+                ],
+                connectorWidth,
+                'ceil'
+            )
         };
 
         if (!chart.styledMode) {
@@ -298,11 +291,14 @@ class DumbbellSeries extends AreaRangeSeries {
     public drawConnector(point: DumbbellPoint): void {
         const series = this,
             animationLimit = pick(series.options.animationLimit, 250),
-            verb = point.connector && series.chart.pointCount < animationLimit ?
-                'animate' : 'attr';
+            verb =
+                point.connector && series.chart.pointCount < animationLimit
+                    ? 'animate'
+                    : 'attr';
 
         if (!point.connector) {
-            point.connector = series.chart.renderer.path()
+            point.connector = series.chart.renderer
+                .path()
                 .addClass('highcharts-lollipop-stem')
                 .attr({
                     zIndex: -1
@@ -380,7 +376,7 @@ class DumbbellSeries extends AreaRangeSeries {
         let series = this,
             chart = series.chart,
             pointLength = series.points.length,
-            seriesLowColor = series.lowColor = series.options.lowColor,
+            seriesLowColor = (series.lowColor = series.options.lowColor),
             i = 0,
             lowerGraphicColor,
             point,
@@ -456,10 +452,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @return {Highcharts.SVGAttributes} pointAttribs SVGAttributes
      */
-    public pointAttribs(
-        point: DumbbellPoint,
-        state?: string
-    ): SVGAttributes {
+    public pointAttribs(point: DumbbellPoint, state?: string): SVGAttributes {
         let pointAttribs;
 
         pointAttribs = seriesProto.pointAttribs.apply(this, arguments as any);
@@ -612,10 +605,10 @@ export default DumbbellSeries;
 /**
  * Color of the start markers in a dumbbell graph.
  *
- * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type        {Highcharts.ColorType}
  * @since       8.0.0
  * @default     ${palette.neutralColor80}
  * @product     highcharts highstock
  * @apioption   series.dumbbell.data.lowColor
  */
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

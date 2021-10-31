@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 
 /* *

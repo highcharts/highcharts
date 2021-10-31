@@ -30,18 +30,13 @@ import D from '../Core/DefaultOptions.js';
 const { setOptions } = D;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
-import U from '../Core/Utilities.js';
 const {
-    addEvent,
-    extend,
-    fireEvent,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
+    prototype: { symbols }
+} = SVGRenderer;
+import U from '../Core/Utilities.js';
+const { addEvent, extend, fireEvent, isNumber, pick, syncTimeout } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
@@ -69,9 +64,9 @@ declare module '../Core/Series/SeriesLike' {
             y: number,
             bBox: BBoxObject,
             checkDistance?: boolean
-        ): (boolean|Highcharts.LabelClearPointObject);
+        ): boolean | Highcharts.LabelClearPointObject;
         drawSeriesLabels(): void;
-        getPointsOnGraph(): (Array<Point>|undefined);
+        getPointsOnGraph(): Array<Point> | undefined;
         labelFontSize(minFontSize: number, maxFontSize: number): string;
     }
 }
@@ -105,9 +100,9 @@ declare global {
             enabled?: boolean;
             format?: string;
             formatter?: FormatUtilities.FormatterCallback<Series>;
-            maxFontSize?: (number|null);
-            minFontSize?: (number|null);
-            onArea?: (boolean|null);
+            maxFontSize?: number | null;
+            minFontSize?: number | null;
+            onArea?: boolean | null;
             style?: CSSObject;
         }
     }
@@ -117,16 +112,16 @@ declare global {
  * Containing the position of a box that should be avoided by labels.
  *
  * @interface Highcharts.LabelIntersectBoxObject
- *//**
+ */ /**
  * @name Highcharts.LabelIntersectBoxObject#bottom
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.LabelIntersectBoxObject#left
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.LabelIntersectBoxObject#right
  * @type {number}
- *//**
+ */ /**
  * @name Highcharts.LabelIntersectBoxObject#top
  * @type {number}
  */
@@ -145,19 +140,17 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
 const labelDistance = 3;
 
 setOptions({
-
     /**
      * @optionparent plotOptions
      *
      * @private
      */
     plotOptions: {
-
         series: {
             /**
              * Series labels are placed as close to the series as possible in a
@@ -181,7 +174,6 @@ setOptions({
              * @requires modules/series-label
              */
             label: {
-
                 /**
                  * Enable the series label per series.
                  */
@@ -270,13 +262,9 @@ setOptions({
                  * @type {Array<Highcharts.LabelIntersectBoxObject>}
                  */
                 boxesToAvoid: []
-
             }
-
         }
-
     }
-
 });
 
 /* eslint-disable valid-jsdoc */
@@ -295,7 +283,7 @@ function ccw(
     x3: number,
     y3: number
 ): boolean {
-    const cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
+    const cw = (y3 - y1) * (x2 - x1) - (y2 - y1) * (x3 - x1);
 
     return cw > 0 ? true : !(cw < 0);
 }
@@ -316,8 +304,10 @@ function intersectLine(
     x4: number,
     y4: number
 ): boolean {
-    return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
-        ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4);
+    return (
+        ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
+        ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4)
+    );
 }
 
 /**
@@ -357,12 +347,11 @@ symbols.connector = function (x, y, w, h, options): SVGPath {
     const anchorX = options && options.anchorX,
         anchorY = options && options.anchorY;
 
-    let path: (SVGPath|undefined),
+    let path: SVGPath | undefined,
         yOffset: number,
         lateral = w / 2;
 
     if (isNumber(anchorX) && isNumber(anchorY)) {
-
         path = [['M', anchorX, anchorY]];
 
         // Prefer 45 deg connectors
@@ -371,22 +360,22 @@ symbols.connector = function (x, y, w, h, options): SVGPath {
             yOffset = -h - yOffset;
         }
         if (yOffset < w) {
-            lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
+            lateral = anchorX < x + w / 2 ? yOffset : w - yOffset;
         }
 
         // Anchor below label
         if (anchorY > y + h) {
             path.push(['L', x + lateral, y + h]);
 
-        // Anchor above label
+            // Anchor above label
         } else if (anchorY < y) {
             path.push(['L', x + lateral, y]);
 
-        // Anchor left of label
+            // Anchor left of label
         } else if (anchorX < x) {
             path.push(['L', x, y + h / 2]);
 
-        // Anchor right of label
+            // Anchor right of label
         } else if (anchorX > x + w) {
             path.push(['L', x + w, y + h / 2]);
         }
@@ -401,8 +390,7 @@ symbols.connector = function (x, y, w, h, options): SVGPath {
  * @private
  * @function Highcharts.Series#getPointsOnGraph
  */
-Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
-
+Series.prototype.getPointsOnGraph = function (): Array<Point> | undefined {
     if (!this.xAxis && !this.yAxis) {
         return;
     }
@@ -423,14 +411,14 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
 
     let point: Point,
         last: Point,
-        i: (number|undefined),
-        deltaX: (number|undefined),
-        deltaY: (number|undefined),
-        delta: (number|undefined),
-        len: (number|undefined),
-        n: (number|undefined),
-        j: (number|undefined),
-        d: (SVGPath|undefined);
+        i: number | undefined,
+        deltaX: number | undefined,
+        deltaY: number | undefined,
+        delta: number | undefined,
+        len: number | undefined,
+        n: number | undefined,
+        j: number | undefined,
+        d: SVGPath | undefined;
 
     /**
      * Push the point to the interpolated points, but only if that position in
@@ -440,8 +428,10 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
      */
     function pushDiscrete(point: Point): void {
         const cellSize = 8,
-            key = Math.round((point.plotX as any) / cellSize) + ',' +
-            Math.round((point.plotY as any) / cellSize);
+            key =
+                Math.round((point.plotX as any) / cellSize) +
+                ',' +
+                Math.round((point.plotY as any) / cellSize);
 
         if (!grid[key]) {
             grid[key] = 1;
@@ -484,11 +474,10 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         point.chartY = paneTop + (point.plotY as any);
         pushDiscrete(point);
 
-    // Interpolate
+        // Interpolate
     } else {
         len = points.length;
         for (i = 0; i < len; i += 1) {
-
             point = points[i];
             last = points[i - 1];
 
@@ -497,10 +486,11 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
             point.chartY = paneTop + (point.plotY as any);
             if (onArea) {
                 // Vertically centered inside area
-                point.chartCenterY = paneTop + (
-                    (point.plotY as any) +
-                    pick(point.yBottom, translatedThreshold)
-                ) / 2;
+                point.chartCenterY =
+                    paneTop +
+                    ((point.plotY as any) +
+                        pick(point.yBottom, translatedThreshold)) /
+                        2;
             }
 
             // Add interpolated points
@@ -509,26 +499,31 @@ Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
                 deltaY = Math.abs((point.chartY as any) - (last.chartY as any));
                 delta = Math.max(deltaX, deltaY);
                 if (delta > distance) {
-
                     n = Math.ceil(delta / distance);
 
                     for (j = 1; j < n; j += 1) {
                         pushDiscrete({
-                            chartX: (last.chartX as any) +
+                            chartX:
+                                (last.chartX as any) +
                                 ((point.chartX as any) - (last.chartX as any)) *
-                                (j / n),
-                            chartY: (last.chartY as any) +
+                                    (j / n),
+                            chartY:
+                                (last.chartY as any) +
                                 ((point.chartY as any) - (last.chartY as any)) *
-                                (j / n),
-                            chartCenterY: (last.chartCenterY as any) +
+                                    (j / n),
+                            chartCenterY:
+                                (last.chartCenterY as any) +
                                 ((point.chartCenterY as any) -
-                                (last.chartCenterY as any)) * (j / n),
-                            plotX: (last.plotX as any) +
+                                    (last.chartCenterY as any)) *
+                                    (j / n),
+                            plotX:
+                                (last.plotX as any) +
                                 ((point.plotX as any) - (last.plotX as any)) *
-                                (j / n),
-                            plotY: (last.plotY as any) +
+                                    (j / n),
+                            plotY:
+                                (last.plotY as any) +
                                 ((point.plotY as any) - (last.plotY as any)) *
-                                (j / n)
+                                    (j / n)
                         } as any);
                     }
                 }
@@ -563,10 +558,12 @@ Series.prototype.labelFontSize = function (
     minFontSize: number,
     maxFontSize: number
 ): string {
-    return minFontSize + (
+    return (
+        minFontSize +
         ((this.sum as any) / (this.chart.labelSeriesMaxSum as any)) *
-        (maxFontSize - minFontSize)
-    ) + 'px';
+            (maxFontSize - minFontSize) +
+        'px'
+    );
 };
 
 /**
@@ -580,25 +577,24 @@ Series.prototype.checkClearPoint = function (
     y: number,
     bBox: BBoxObject,
     checkDistance?: boolean
-): (boolean|Highcharts.LabelClearPointObject) {
+): boolean | Highcharts.LabelClearPointObject {
     const chart = this.chart,
         onArea = pick((this.options.label as any).onArea, !!this.area),
-        findDistanceToOthers = (
-            onArea || (this.options.label as any).connectorAllowed
-        ),
+        findDistanceToOthers =
+            onArea || (this.options.label as any).connectorAllowed,
         leastDistance = 16;
 
     let distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
-        series: (Series|undefined),
-        points: (Array<Point>|undefined),
-        withinRange: (boolean|undefined),
-        xDist: (number|undefined),
-        yDist: (number|undefined),
-        i: (number|undefined),
-        j: (number|undefined);
+        series: Series | undefined,
+        points: Array<Point> | undefined,
+        withinRange: boolean | undefined,
+        xDist: number | undefined,
+        yDist: number | undefined,
+        i: number | undefined,
+        j: number | undefined;
 
     /**
      * @private
@@ -607,10 +603,12 @@ Series.prototype.checkClearPoint = function (
         r1: Highcharts.LabelIntersectBoxObject,
         r2: Highcharts.LabelIntersectBoxObject
     ): boolean {
-        return !(r2.left > r1.right ||
+        return !(
+            r2.left > r1.right ||
             r2.right < r1.left ||
             r2.top > r1.bottom ||
-            r2.bottom < r1.top);
+            r2.bottom < r1.top
+        );
     }
 
     /**
@@ -628,12 +626,14 @@ Series.prototype.checkClearPoint = function (
 
     // First check for collision with existing labels
     for (i = 0; i < (chart.boxesToAvoid as any).length; i += 1) {
-        if (intersectRect((chart.boxesToAvoid as any)[i], {
-            left: x,
-            right: x + bBox.width,
-            top: y,
-            bottom: y + bBox.height
-        })) {
+        if (
+            intersectRect((chart.boxesToAvoid as any)[i], {
+                left: x,
+                right: x + bBox.width,
+                top: y,
+                bottom: y + bBox.height
+            })
+        ) {
             return false;
         }
     }
@@ -645,13 +645,12 @@ Series.prototype.checkClearPoint = function (
         points = series.interpolatedPoints;
         if (series.visible && points) {
             for (j = 1; j < points.length; j += 1) {
-
                 if (
                     // To avoid processing, only check intersection if the X
                     // values are close to the box.
                     (points[j].chartX as any) >= x - leastDistance &&
-                    (points[j - 1].chartX as any) <= x + bBox.width +
-                    leastDistance
+                    (points[j - 1].chartX as any) <=
+                        x + bBox.width + leastDistance
                     /* @todo condition above is not the same as below
                     (
                         (points[j].chartX as any) >=
@@ -662,16 +661,18 @@ Series.prototype.checkClearPoint = function (
                     ) */
                 ) {
                     // If any of the box sides intersect with the line, return.
-                    if (boxIntersectLine(
-                        x,
-                        y,
-                        bBox.width,
-                        bBox.height,
-                        points[j - 1].chartX as any,
-                        points[j - 1].chartY as any,
-                        points[j].chartX as any,
-                        points[j].chartY as any
-                    )) {
+                    if (
+                        boxIntersectLine(
+                            x,
+                            y,
+                            bBox.width,
+                            bBox.height,
+                            points[j - 1].chartX as any,
+                            points[j - 1].chartY as any,
+                            points[j].chartX as any,
+                            points[j].chartY as any
+                        )
+                    ) {
                         return false;
                     }
 
@@ -711,54 +712,43 @@ Series.prototype.checkClearPoint = function (
                 !onArea &&
                 findDistanceToOthers &&
                 this === series &&
-                (
-                    (checkDistance && !withinRange) ||
-                    distToOthersSquared < Math.pow(
-                        (this.options.label as any).connectorNeighbourDistance,
-                        2
-                    )
-                )
+                ((checkDistance && !withinRange) ||
+                    distToOthersSquared <
+                        Math.pow(
+                            (this.options.label as any)
+                                .connectorNeighbourDistance,
+                            2
+                        ))
             ) {
                 for (j = 1; j < points.length; j += 1) {
                     dist = Math.min(
-                        (
-                            Math.pow(
-                                x + bBox.width / 2 - (points[j].chartX as any),
-                                2
-                            ) +
+                        Math.pow(
+                            x + bBox.width / 2 - (points[j].chartX as any),
+                            2
+                        ) +
                             Math.pow(
                                 y + bBox.height / 2 - (points[j].chartY as any),
                                 2
-                            )
-                        ),
-                        (
-                            Math.pow(x - (points[j].chartX as any), 2) +
-                            Math.pow(y - (points[j].chartY as any), 2)
-                        ),
-                        (
+                            ),
+                        Math.pow(x - (points[j].chartX as any), 2) +
+                            Math.pow(y - (points[j].chartY as any), 2),
+                        Math.pow(
+                            x + bBox.width - (points[j].chartX as any),
+                            2
+                        ) + Math.pow(y - (points[j].chartY as any), 2),
+                        Math.pow(
+                            x + bBox.width - (points[j].chartX as any),
+                            2
+                        ) +
                             Math.pow(
-                                x + bBox.width - (points[j].chartX as any),
+                                y + bBox.height - (points[j].chartY as any),
                                 2
-                            ) +
-                            Math.pow(y - (points[j].chartY as any), 2)
-                        ),
-                        (
-                            Math.pow(
-                                x + bBox.width - (points[j].chartX as any),
-                                2
-                            ) +
+                            ),
+                        Math.pow(x - (points[j].chartX as any), 2) +
                             Math.pow(
                                 y + bBox.height - (points[j].chartY as any),
                                 2
                             )
-                        ),
-                        (
-                            Math.pow(x - (points[j].chartX as any), 2) +
-                            Math.pow(
-                                y + bBox.height - (points[j].chartY as any),
-                                2
-                            )
-                        )
                     );
                     if (dist < distToPointSquared) {
                         distToPointSquared = dist;
@@ -770,16 +760,17 @@ Series.prototype.checkClearPoint = function (
         }
     }
 
-    return !checkDistance || withinRange ? {
-        x: x,
-        y: y,
-        weight: getWeight(
-            distToOthersSquared,
-            connectorPoint ? distToPointSquared : 0
-        ),
-        connectorPoint: connectorPoint
-    } : false;
-
+    return !checkDistance || withinRange
+        ? {
+              x: x,
+              y: y,
+              weight: getWeight(
+                  distToOthersSquared,
+                  connectorPoint ? distToPointSquared : 0
+              ),
+              connectorPoint: connectorPoint
+          }
+        : false;
 };
 
 /**
@@ -791,7 +782,6 @@ Series.prototype.checkClearPoint = function (
  * @function Highcharts.Chart#drawSeriesLabels
  */
 Chart.prototype.drawSeriesLabels = function (): void {
-
     // console.time('drawSeriesLabels');
 
     const chart = this,
@@ -811,40 +801,40 @@ Chart.prototype.drawSeriesLabels = function (): void {
     });
 
     chart.series.forEach(function (series): void {
-
         const labelOptions = series.options.label;
 
         if (!labelOptions || (!series.xAxis && !series.yAxis)) {
             return;
         }
 
-        const colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none'),
+        const colorClass =
+                'highcharts-color-' + pick(series.colorIndex, 'none'),
             isNew = !series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
             inverted = chart.inverted,
-            paneLeft: number = (
-                inverted ? series.yAxis.pos : (series.xAxis.pos as any)
-            ),
-            paneTop: number = (
-                inverted ? series.xAxis.pos : (series.yAxis.pos as any)
-            ),
+            paneLeft: number = inverted
+                ? series.yAxis.pos
+                : (series.xAxis.pos as any),
+            paneTop: number = inverted
+                ? series.xAxis.pos
+                : (series.yAxis.pos as any),
             paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
             results: Array<Highcharts.LabelClearPointObject> = [];
 
-        let bBox: (BBoxObject|undefined),
-            x: (number|undefined),
-            y: (number|undefined),
+        let bBox: BBoxObject | undefined,
+            x: number | undefined,
+            y: number | undefined,
             clearPoint,
-            i: (number|undefined),
+            i: number | undefined,
             best,
             label: SVGElement = series.labelBySeries as any,
             dataExtremes,
-            areaMin: (number|undefined),
-            areaMax: (number|undefined);
+            areaMin: number | undefined,
+            areaMax: number | undefined;
 
         // Stay within the area data bounds (#10038)
         if (onArea && !inverted) {
@@ -861,12 +851,11 @@ Chart.prototype.drawSeriesLabels = function (): void {
         /**
          * @private
          */
-        function insidePane(
-            x: number,
-            y: number,
-            bBox: BBoxObject
-        ): boolean {
-            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+        function insidePane(x: number, y: number, bBox: BBoxObject): boolean {
+            const leftBound = Math.max(
+                    paneLeft as any,
+                    pick(areaMin, -Infinity)
+                ),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)
@@ -890,7 +879,6 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
-
                 let labelText = series.name;
                 if (typeof labelOptions.format === 'string') {
                     labelText = format(labelOptions.format, series, chart);
@@ -902,17 +890,27 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .label(labelText, 0, -9999, 'connector')
                     .addClass(
                         'highcharts-series-label ' +
-                        'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') + ' ' +
-                        colorClass
+                            'highcharts-series-label-' +
+                            series.index +
+                            ' ' +
+                            (series.options.className || '') +
+                            ' ' +
+                            colorClass
                     );
 
                 if (!chart.renderer.styledMode) {
-                    label.css(extend<CSSObject>({
-                        color: onArea ?
-                            chart.renderer.getContrast(series.color as any) :
-                            (series.color as any)
-                    }, labelOptions.style || {}));
+                    label.css(
+                        extend<CSSObject>(
+                            {
+                                color: onArea
+                                    ? chart.renderer.getContrast(
+                                          series.color as any
+                                      )
+                                    : (series.color as any)
+                            },
+                            labelOptions.style || {}
+                        )
+                    );
 
                     label.attr({
                         opacity: chart.renderer.forExport ? 1 : 0,
@@ -942,26 +940,17 @@ Chart.prototype.drawSeriesLabels = function (): void {
             // Ideal positions are centered above or below a point on right side
             // of chart
             for (i = points.length - 1; i > 0; i -= 1) {
-
                 if (onArea) {
-
                     // Centered
                     x = (points[i].chartX as any) - bBox.width / 2;
                     y = (points[i].chartCenterY as any) - bBox.height / 2;
                     if (insidePane(x, y, bBox)) {
-                        best = series.checkClearPoint(
-                            x,
-                            y,
-                            bBox
-                        );
+                        best = series.checkClearPoint(x, y, bBox);
                     }
                     if (best) {
                         results.push(best as any);
                     }
-
-
                 } else {
-
                     // Right - up
                     x = (points[i].chartX as any) + labelDistance;
                     y = (points[i].chartY as any) - bBox.height - labelDistance;
@@ -1045,7 +1034,6 @@ Chart.prototype.drawSeriesLabels = function (): void {
             }
 
             if (results.length) {
-
                 results.sort(function (
                     a: Highcharts.LabelClearPointObject,
                     b: Highcharts.LabelClearPointObject
@@ -1065,11 +1053,10 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 // Move it if needed
                 const dist = Math.sqrt(
                     Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
-                    Math.pow(Math.abs(best.y - (label.y || 0)), 2)
+                        Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
 
                 if (dist && series.labelBySeries) {
-
                     // Move fast and fade in - pure animation movement is
                     // distractive...
                     let attr: SVGAttributes = {
@@ -1092,7 +1079,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Partial<AnimationOptions>|undefined;
+                    let animationOptions: Partial<AnimationOptions> | undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005
@@ -1100,21 +1087,29 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     }
 
                     series.labelBySeries
-                        .attr(extend(attr, {
-                            anchorX: best.connectorPoint &&
-                                (best.connectorPoint.plotX as any) + paneLeft,
-                            anchorY: best.connectorPoint &&
-                                (best.connectorPoint.plotY as any) + paneTop
-                        } as SVGAttributes))
+                        .attr(
+                            extend(attr, {
+                                anchorX:
+                                    best.connectorPoint &&
+                                    (best.connectorPoint.plotX as any) +
+                                        paneLeft,
+                                anchorY:
+                                    best.connectorPoint &&
+                                    (best.connectorPoint.plotY as any) + paneTop
+                            } as SVGAttributes)
+                        )
                         .animate(anim, animationOptions);
 
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
                     series.buildKDTree();
-                    const closest = series.searchPoint({
-                        chartX: best.x,
-                        chartY: best.y
-                    } as any, true);
+                    const closest = series.searchPoint(
+                        {
+                            chartX: best.x,
+                            chartY: best.y
+                        } as any,
+                        true
+                    );
 
                     if (closest) {
                         label.closest = [
@@ -1123,9 +1118,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                             best.y - (closest.plotY || 0)
                         ];
                     }
-
                 }
-
             } else {
                 destroyLabel();
             }
@@ -1147,7 +1140,6 @@ Chart.prototype.drawSeriesLabels = function (): void {
  * @function drawLabels
  */
 function drawLabels(this: Chart, e: Event): void {
-
     if (this.renderer) {
         const chart = this;
 
@@ -1160,8 +1152,8 @@ function drawLabels(this: Chart, e: Event): void {
 
         // Which series should have labels
         chart.series.forEach(function (series): void {
-            const options: Highcharts.SeriesLabelOptionsObject =
-                    series.options.label as any,
+            const options: Highcharts.SeriesLabelOptionsObject = series.options
+                    .label as any,
                 label: SVGElement = series.labelBySeries as any,
                 closest = label && label.closest;
 
@@ -1179,7 +1171,8 @@ function drawLabels(this: Chart, e: Event): void {
                         cv: number
                     ): number {
                         return (pv || 0) + (cv || 0);
-                    }, 0);
+                    },
+                    0);
                     chart.labelSeriesMaxSum = Math.max(
                         chart.labelSeriesMaxSum as any,
                         series.sum as any
@@ -1209,13 +1202,16 @@ function drawLabels(this: Chart, e: Event): void {
             }
         });
 
-        chart.seriesLabelTimer = syncTimeout(function (): void {
-            if (chart.series && chart.labelSeries) { // #7931, chart destroyed
-                chart.drawSeriesLabels();
-            }
-        }, chart.renderer.forExport || !delay ? 0 : delay);
+        chart.seriesLabelTimer = syncTimeout(
+            function (): void {
+                if (chart.series && chart.labelSeries) {
+                    // #7931, chart destroyed
+                    chart.drawSeriesLabels();
+                }
+            },
+            chart.renderer.forExport || !delay ? 0 : delay
+        );
     }
-
 }
 
 // Leave both events, we handle animation differently (#9815)

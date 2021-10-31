@@ -21,8 +21,7 @@ import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
  *  Declarations
  *
  * */
-export interface StreamgraphPointOptions extends AreaSplinePointOptions {
-}
+export interface StreamgraphPointOptions extends AreaSplinePointOptions {}
 
 /* *
  *

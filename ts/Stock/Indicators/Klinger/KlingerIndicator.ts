@@ -8,10 +8,7 @@
 
 'use strict';
 
-import type {
-    KlingerOptions,
-    KlingerParamsOptions
-} from './KlingerOptions';
+import type { KlingerOptions, KlingerParamsOptions } from './KlingerOptions';
 import type KlingerPoint from './KlingerPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -19,19 +16,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator, ema: EMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    error,
-    extend,
-    isArray,
-    merge
-} = U;
+const { correctFloat, error, extend, isArray, merge } = U;
 
 /**
  * The Klinger oscillator series type.
@@ -43,7 +31,6 @@ const {
  * @augments Highcharts.Series
  */
 class KlingerIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -64,60 +51,64 @@ class KlingerIndicator extends SMAIndicator {
      * @requires     stock/indicators/klinger
      * @optionparent plotOptions.klinger
      */
-    public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of Klinger Oscillator.
-         *
-         * @excluding index, period
-         */
-        params: {
+    public static defaultOptions: KlingerOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The fast period for indicator calculations.
+             * Paramters used in calculation of Klinger Oscillator.
+             *
+             * @excluding index, period
              */
-            fastAvgPeriod: 34,
-            /**
-             * The slow period for indicator calculations.
-             */
-            slowAvgPeriod: 55,
-            /**
-             * The base period for signal calculations.
-             */
-            signalPeriod: 13,
-            /**
-             * The id of another series to use its data as volume data for the
-             * indiator calculation.
-             */
-            volumeSeriesID: 'volume'
-        },
-        signalLine: {
-            /**
-             * Styles for a signal line.
-             */
-            styles: {
+            params: {
                 /**
-                 * Pixel width of the line.
+                 * The fast period for indicator calculations.
                  */
-                lineWidth: 1,
+                fastAvgPeriod: 34,
                 /**
-                 * Color of the line. If not set, it's inherited from
-                 * [plotOptions.klinger.color
-                 * ](#plotOptions.klinger.color).
-                 *
-                 * @type {Highcharts.ColorString}
+                 * The slow period for indicator calculations.
                  */
-                lineColor: '#ff0000'
-            }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        },
-        tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
-                '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.signalLine.styles.lineColor}">Signal</span>' +
+                slowAvgPeriod: 55,
+                /**
+                 * The base period for signal calculations.
+                 */
+                signalPeriod: 13,
+                /**
+                 * The id of another series to use its data as volume data for
+                 * the indiator calculation.
+                 */
+                volumeSeriesID: 'volume'
+            },
+            signalLine: {
+                /**
+                 * Styles for a signal line.
+                 */
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * [plotOptions.klinger.color
+                     * ](#plotOptions.klinger.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: '#ff0000'
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+                    '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
+                    '<span style="color: {point.series.options.signalLine.styles.lineColor}">Signal</span>' +
                     ': {point.signal}<br/>'
-        }
-    } as KlingerOptions);
+            }
+        } as KlingerOptions
+    );
 
     /* *
      *
@@ -138,10 +129,11 @@ class KlingerIndicator extends SMAIndicator {
 
     public calculateTrend(
         this: KlingerIndicator,
-        yVal: (Array<Array<number>>),
+        yVal: Array<Array<number>>,
         i: number
     ): number {
-        const isUpward = yVal[i][1] + yVal[i][2] + yVal[i][3] >
+        const isUpward =
+            yVal[i][1] + yVal[i][2] + yVal[i][3] >
             yVal[i - 1][1] + yVal[i - 1][2] + yVal[i - 1][3];
 
         return isUpward ? 1 : -1;
@@ -156,30 +148,33 @@ class KlingerIndicator extends SMAIndicator {
         const chart = this.chart,
             options: KlingerOptions = this.options,
             series = this.linkedParent,
-            isSeriesOHLC: boolean = isArray(firstYVal) &&
-                firstYVal.length === 4,
+            isSeriesOHLC: boolean =
+                isArray(firstYVal) && firstYVal.length === 4,
             volumeSeries =
                 this.volumeSeries ||
-                (
-                    this.volumeSeries =
-                    chart.get((options.params as any).volumeSeriesID) as any
-                );
+                (this.volumeSeries = chart.get(
+                    (options.params as any).volumeSeriesID
+                ) as any);
 
         if (!volumeSeries) {
             error(
                 'Series ' +
-                (options.params as any).volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.',
+                    (options.params as any).volumeSeriesID +
+                    ' not found! Check `volumeSeriesID`.',
                 true,
                 series.chart
             );
         }
 
-        const isLengthValid = [series, volumeSeries].every(
-            function (series): boolean|undefined {
-                return series && series.xData && series.xData.length >=
-                (options.params as any).slowAvgPeriod;
-            });
+        const isLengthValid = [series, volumeSeries].every(function (
+            series
+        ): boolean | undefined {
+            return (
+                series &&
+                series.xData &&
+                series.xData.length >= (options.params as any).slowAvgPeriod
+            );
+        });
 
         return !!(isLengthValid && isSeriesOHLC);
     }
@@ -196,10 +191,7 @@ class KlingerIndicator extends SMAIndicator {
         );
     }
 
-    public getDM(
-        high: number,
-        low: number
-    ): number {
+    public getDM(high: number, low: number): number {
         return correctFloat(high - low);
     }
 
@@ -224,8 +216,11 @@ class KlingerIndicator extends SMAIndicator {
             // (in this iteration, previousCM can be raplaced with the DM).
             CM = this.getCM(previousCM, DM, trend, previousTrend, previousDM);
 
-            force = (this.volumeSeries.yData as any)[i] *
-                trend * Math.abs(2 * ((DM / CM) - 1)) * 100;
+            force =
+                (this.volumeSeries.yData as any)[i] *
+                trend *
+                Math.abs(2 * (DM / CM - 1)) *
+                100;
             volumeForce.push([force]);
 
             // Before next iteration, assign the current as the previous.
@@ -237,15 +232,14 @@ class KlingerIndicator extends SMAIndicator {
     }
 
     public getEMA(
-        yVal: (Array<number>|Array<Array<number>>),
-        prevEMA: (number|undefined),
+        yVal: Array<number> | Array<Array<number>>,
+        prevEMA: number | undefined,
         SMA: number,
         EMApercent: number,
         index?: number,
         i?: number,
         xVal?: Array<number>
     ): [number, number] {
-
         return EMAIndicator.prototype.calculateEma(
             xVal || [],
             yVal,
@@ -262,18 +256,22 @@ class KlingerIndicator extends SMAIndicator {
         index: number,
         values: Array<Array<number>>
     ): number {
-
-        return EMAIndicator.prototype
-            .accumulatePeriodPoints(period, index, values) / period;
+        return (
+            EMAIndicator.prototype.accumulatePeriodPoints(
+                period,
+                index,
+                values
+            ) / period
+        );
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: KlingerParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         const Klinger: Array<Array<number>> = [],
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
             calcSingal: Array<number> = [];
@@ -305,7 +303,6 @@ class KlingerIndicator extends SMAIndicator {
 
         // Calculate KO
         for (i; i < yVal.length; i++) {
-
             // Get EMA for fast period.
             if (i >= params.fastAvgPeriod) {
                 fastEMA = this.getEMA(
@@ -337,9 +334,11 @@ class KlingerIndicator extends SMAIndicator {
 
                 // Calculate signal SMA
                 if (calcSingal.length >= params.signalPeriod) {
-                    signal = calcSingal.slice(-params.signalPeriod)
-                        .reduce((prev, curr): number =>
-                            prev + curr) / params.signalPeriod;
+                    signal =
+                        calcSingal
+                            .slice(-params.signalPeriod)
+                            .reduce((prev, curr): number => prev + curr) /
+                        params.signalPeriod;
                 }
 
                 Klinger.push([xVal[i], KO, signal]);
@@ -415,4 +414,4 @@ export default KlingerIndicator;
  * @apioption series.klinger
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

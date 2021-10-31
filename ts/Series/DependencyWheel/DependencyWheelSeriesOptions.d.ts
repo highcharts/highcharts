@@ -27,7 +27,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
-    center?: Array<(number|string|null)>;
+    center?: Array<number | string | null>;
     startAngle?: number;
     states?: SeriesStatesOptions<DependencyWheelSeries>;
 }

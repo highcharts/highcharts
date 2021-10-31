@@ -35,7 +35,6 @@ import H from '../../Core/Globals.js';
  * */
 
 namespace AvocadoTheme {
-
     /* *
      *
      *  Constants
@@ -77,7 +76,6 @@ namespace AvocadoTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *

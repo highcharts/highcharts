@@ -27,7 +27,9 @@ declare global {
             isUpdating?: boolean;
             labels?: Array<AnnotationLabelType>;
             nonDOMEvents?: Array<string>;
-            options: Partial<(AnnotationControlPointOptionsObject|AnnotationsOptions)>;
+            options: Partial<
+                AnnotationControlPointOptionsObject | AnnotationsOptions
+            >;
             points?: Array<AnnotationPointType>;
             removeDrag?: Function;
             removeMouseUp?: Function;
@@ -38,17 +40,34 @@ declare global {
         interface AnnotationEventEmitterMixin {
             addEvents(this: AnnotationEventEmitter): void;
             destroy(this: AnnotationEventEmitter): void;
-            mouseMoveToRadians(this: AnnotationEventEmitter, e: AnnotationEventObject, cx: number, cy: number): number;
+            mouseMoveToRadians(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject,
+                cx: number,
+                cy: number
+            ): number;
             mouseMoveToScale(
                 this: AnnotationEventEmitter,
                 e: AnnotationEventObject,
                 cx: number,
                 cy: number
             ): PositionObject;
-            mouseMoveToTranslation(this: AnnotationEventEmitter, e: AnnotationEventObject): PositionObject;
-            onDrag(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseDown(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
+            mouseMoveToTranslation(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): PositionObject;
+            onDrag(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseDown(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseUp(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
             removeDocEvents(this: AnnotationEventEmitter): void;
         }
         interface AnnotationEventObject extends PointerEvent {
@@ -59,13 +78,7 @@ declare global {
 }
 
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    objectEach,
-    pick,
-    removeEvent
-} = U;
+const { addEvent, fireEvent, objectEach, pick, removeEvent } = U;
 
 /* eslint-disable valid-jsdoc */
 
@@ -106,40 +119,39 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             }
         });
 
-        objectEach(emitter.options.events, function (
-            event: EventCallback<Annotation>,
-            type: string
-        ): void {
-            const eventHandler = function (e: PointerEvent): void {
-                if (type !== 'click' || !emitter.cancelClick) {
-                    (event as any).call(
-                        emitter,
-                        emitter.chart.pointer.normalize(e),
-                        emitter.target
-                    );
-                }
-            };
+        objectEach(
+            emitter.options.events,
+            function (event: EventCallback<Annotation>, type: string): void {
+                const eventHandler = function (e: PointerEvent): void {
+                    if (type !== 'click' || !emitter.cancelClick) {
+                        (event as any).call(
+                            emitter,
+                            emitter.chart.pointer.normalize(e),
+                            emitter.target
+                        );
+                    }
+                };
 
-            if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
-                emitter.graphic.on(type, eventHandler);
-            } else {
-                addEvent(emitter, type, eventHandler, { passive: false });
+                if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
+                    emitter.graphic.on(type, eventHandler);
+                } else {
+                    addEvent(emitter, type, eventHandler, { passive: false });
+                }
             }
-        });
+        );
 
         if (emitter.options.draggable) {
-
             addEvent(emitter, 'drag', emitter.onDrag);
 
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {
-                    cursor: ({
-                        x: 'ew-resize',
-                        y: 'ns-resize',
-                        xy: 'move'
-                    } as Record<string, CursorValue>)[
-                        emitter.options.draggable
-                    ]
+                    cursor: (
+                        {
+                            x: 'ew-resize',
+                            y: 'ns-resize',
+                            xy: 'move'
+                        } as Record<string, CursorValue>
+                    )[emitter.options.draggable]
                 };
 
                 emitter.graphic.css(cssPointer);
@@ -173,7 +185,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse down handler.
      */
-    onMouseDown: function (this: Highcharts.AnnotationEventEmitter, e: Highcharts.AnnotationEventObject): void {
+    onMouseDown: function (
+        this: Highcharts.AnnotationEventEmitter,
+        e: Highcharts.AnnotationEventObject
+    ): void {
         let emitter = this,
             pointer = emitter.chart.pointer,
             prevChartX: number,
@@ -230,10 +245,13 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
                 // ControlPoints vs Annotation:
-                fireEvent(pick(
-                    annotation, // #15952
-                    emitter
-                ), 'afterUpdate');
+                fireEvent(
+                    pick(
+                        annotation, // #15952
+                        emitter
+                    ),
+                    'afterUpdate'
+                );
                 emitter.onMouseUp(e);
             },
             H.isTouchDevice ? { passive: false } : void 0
@@ -243,9 +261,12 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse up handler.
      */
-    onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
+    onMouseUp: function (
+        this: Highcharts.AnnotationEventEmitter,
+        _e: Highcharts.AnnotationEventObject
+    ): void {
         const chart = this.chart,
-            annotation: Annotation = this.target as any || this,
+            annotation: Annotation = (this.target as any) || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
 
@@ -284,10 +305,14 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((this.points as any).length) {
                 (this as any).translate(translation.x, translation.y);
             } else {
-                (this.shapes as any).forEach(function (shape: SVGElement): void {
+                (this.shapes as any).forEach(function (
+                    shape: SVGElement
+                ): void {
                     shape.translate(translation.x, translation.y);
                 });
-                (this.labels as any).forEach(function (label: SVGElement): void {
+                (this.labels as any).forEach(function (
+                    label: SVGElement
+                ): void {
                     label.translate(translation.x, translation.y);
                 });
             }

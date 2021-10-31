@@ -12,13 +12,11 @@
 
 'use strict';
 
-
 /* *
  *
  *  Imports
  *
  * */
-
 
 import type Accessibility from '../Accessibility';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
@@ -27,19 +25,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import RangeSelector from '../../Extensions/RangeSelector.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT,
-    getAxisRangeDescription
-} = ChartUtilities;
+const { unhideChartElementFromAT, getAxisRangeDescription } = ChartUtilities;
 import Announcer from '../Utils/Announcer.js';
 import Chart from '../../Core/Chart/Chart.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    attr
-} = U;
-
+const { addEvent, attr } = U;
 
 /* *
  *
@@ -49,30 +40,26 @@ const {
 
 /* eslint-disable valid-jsdoc */
 
-
 /**
  * @private
  */
-function shouldRunInputNavigation(
-    chart: Chart
-): boolean {
+function shouldRunInputNavigation(chart: Chart): boolean {
     return Boolean(
         chart.rangeSelector &&
-        chart.rangeSelector.inputGroup &&
-        chart.rangeSelector.inputGroup.element.style.visibility !== 'hidden' &&
-        (chart.options.rangeSelector as any).inputEnabled !== false &&
-        chart.rangeSelector.minInput &&
-        chart.rangeSelector.maxInput
+            chart.rangeSelector.inputGroup &&
+            chart.rangeSelector.inputGroup.element.style.visibility !==
+                'hidden' &&
+            (chart.options.rangeSelector as any).inputEnabled !== false &&
+            chart.rangeSelector.minInput &&
+            chart.rangeSelector.maxInput
     );
 }
-
 
 /* *
  *
  *  Class
  *
  * */
-
 
 /**
  * The RangeSelectorComponent class
@@ -82,21 +69,17 @@ function shouldRunInputNavigation(
  * @name Highcharts.RangeSelectorComponent
  */
 class RangeSelectorComponent extends AccessibilityComponent {
-
-
     /* *
      *
      *  Properties
      *
      * */
 
-
     public announcer: Announcer = void 0 as any;
 
     public removeDropdownKeydownHandler?: Function;
 
     public removeInputKeydownHandler?: Function;
-
 
     /* *
      *
@@ -106,7 +89,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Init the component
      * @private
@@ -115,7 +97,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
         const chart = this.chart;
         this.announcer = new Announcer(chart, 'polite');
     }
-
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -132,10 +113,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
         this.updateSelectorVisibility();
         this.setDropdownAttrs();
 
-        if (
-            rangeSelector.buttons &&
-            rangeSelector.buttons.length
-        ) {
+        if (rangeSelector.buttons && rangeSelector.buttons.length) {
             rangeSelector.buttons.forEach((button): void => {
                 component.setRangeButtonAttrs(button);
             });
@@ -152,14 +130,14 @@ class RangeSelectorComponent extends AccessibilityComponent {
                     unhideChartElementFromAT(chart, input);
                     component.setRangeInputAttrs(
                         input,
-                        'accessibility.rangeSelector.' + (i ? 'max' : 'min') +
+                        'accessibility.rangeSelector.' +
+                            (i ? 'max' : 'min') +
                             'InputLabel'
                     );
                 }
             });
         }
     }
-
 
     /**
      * Hide buttons from AT when showing dropdown, and vice versa.
@@ -168,32 +146,23 @@ class RangeSelectorComponent extends AccessibilityComponent {
     public updateSelectorVisibility(): void {
         const chart = this.chart;
         const rangeSelector = chart.rangeSelector;
-        const dropdown = (
-            rangeSelector &&
-            rangeSelector.dropdown
-        );
-        const buttons = (
-            rangeSelector &&
-            rangeSelector.buttons ||
-            []
-        );
-        const hideFromAT = (el: Element): void => el.setAttribute('aria-hidden', true);
+        const dropdown = rangeSelector && rangeSelector.dropdown;
+        const buttons = (rangeSelector && rangeSelector.buttons) || [];
+        const hideFromAT = (el: Element): void =>
+            el.setAttribute('aria-hidden', true);
 
-        if (
-            rangeSelector &&
-            rangeSelector.hasVisibleDropdown &&
-            dropdown
-        ) {
+        if (rangeSelector && rangeSelector.hasVisibleDropdown && dropdown) {
             unhideChartElementFromAT(chart, dropdown);
             buttons.forEach((btn): void => hideFromAT(btn.element));
         } else {
             if (dropdown) {
                 hideFromAT(dropdown);
             }
-            buttons.forEach((btn): void => unhideChartElementFromAT(chart, btn.element));
+            buttons.forEach((btn): void =>
+                unhideChartElementFromAT(chart, btn.element)
+            );
         }
     }
-
 
     /**
      * Set accessibility related attributes on dropdown element.
@@ -201,12 +170,10 @@ class RangeSelectorComponent extends AccessibilityComponent {
      */
     public setDropdownAttrs(): void {
         const chart = this.chart;
-        const dropdown = (
-            chart.rangeSelector &&
-            chart.rangeSelector.dropdown
-        );
+        const dropdown = chart.rangeSelector && chart.rangeSelector.dropdown;
         if (dropdown) {
-            const label = chart.langFormat('accessibility.rangeSelector.dropdownLabel',
+            const label = chart.langFormat(
+                'accessibility.rangeSelector.dropdownLabel',
                 { rangeTitle: chart.options.lang.rangeSelectorZoom }
             );
             dropdown.setAttribute('aria-label', label);
@@ -214,28 +181,21 @@ class RangeSelectorComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      * @param {Highcharts.SVGElement} button
      */
-    public setRangeButtonAttrs(
-        button: SVGElement
-    ): void {
+    public setRangeButtonAttrs(button: SVGElement): void {
         attr(button.element, {
             tabindex: -1,
             role: 'button'
         });
     }
 
-
     /**
      * @private
      */
-    public setRangeInputAttrs(
-        input: HTMLDOMElement,
-        langKey: string
-    ): void {
+    public setRangeInputAttrs(input: HTMLDOMElement, langKey: string): void {
         const chart = this.chart;
 
         attr(input, {
@@ -243,7 +203,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
             'aria-label': chart.langFormat(langKey, { chart: chart })
         });
     }
-
 
     /**
      * @private
@@ -258,11 +217,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
         const response = keyboardNavigationHandler.response,
             keys = this.keyCodes,
             chart = this.chart,
-            wrapAround = chart.options.accessibility
-                .keyboardNavigation.wrapAround,
-            direction = (
-                keyCode === keys.left || keyCode === keys.up
-            ) ? -1 : 1,
+            wrapAround =
+                chart.options.accessibility.keyboardNavigation.wrapAround,
+            direction = keyCode === keys.left || keyCode === keys.up ? -1 : 1,
             didHighlight = chart.highlightRangeSelectorButton(
                 (chart.highlightedRangeSelectorItemIx as any) + direction
             );
@@ -277,7 +234,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
         return response.success;
     }
-
 
     /**
      * @private
@@ -300,7 +256,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
         return response.success;
     }
 
-
     /**
      * Called whenever a range selector button has been clicked, either by
      * mouse, touch, or kbd/voice/other.
@@ -319,16 +274,14 @@ class RangeSelectorComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      */
-    public onInputKbdMove(
-        direction: number
-    ): void {
+    public onInputKbdMove(direction: number): void {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
-        const newIx = chart.highlightedInputRangeIx = (chart.highlightedInputRangeIx || 0) + direction;
+        const newIx = (chart.highlightedInputRangeIx =
+            (chart.highlightedInputRangeIx || 0) + direction);
         const newIxOutOfRange = newIx > 1 || newIx < 0;
 
         if (newIxOutOfRange) {
@@ -347,24 +300,20 @@ class RangeSelectorComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      * @param {number} direction
      */
-    public onInputNavInit(
-        direction: number
-    ): void {
+    public onInputNavInit(direction: number): void {
         const component = this;
         const chart = this.chart;
         const buttonIxToHighlight = direction > 0 ? 0 : 1;
         const rangeSel = chart.rangeSelector;
-        const svgEl = (
+        const svgEl =
             rangeSel &&
-            rangeSel[buttonIxToHighlight ? 'maxDateBox' : 'minDateBox']
-        );
-        const minInput = (rangeSel && rangeSel.minInput);
-        const maxInput = (rangeSel && rangeSel.maxInput);
+            rangeSel[buttonIxToHighlight ? 'maxDateBox' : 'minDateBox'];
+        const minInput = rangeSel && rangeSel.minInput;
+        const maxInput = rangeSel && rangeSel.maxInput;
         const inputEl = buttonIxToHighlight ? maxInput : minInput;
 
         chart.highlightedInputRangeIx = buttonIxToHighlight;
@@ -394,14 +343,12 @@ class RangeSelectorComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      */
     public onInputNavTerminate(): void {
-        const rangeSel: Highcharts.RangeSelector = (
-            (this.chart as any).rangeSelector || {}
-        );
+        const rangeSel: Highcharts.RangeSelector =
+            (this.chart as any).rangeSelector || {};
 
         if (rangeSel.maxInput) {
             rangeSel.hideInput('max');
@@ -416,14 +363,13 @@ class RangeSelectorComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      */
     public initDropdownNav(): void {
         const chart = this.chart;
         const rangeSelector = chart.rangeSelector;
-        const dropdown = (rangeSelector && rangeSelector.dropdown);
+        const dropdown = rangeSelector && rangeSelector.dropdown;
 
         if (rangeSelector && dropdown) {
             chart.setFocusToElement(rangeSelector.buttonGroup as any, dropdown);
@@ -432,7 +378,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
             }
             // Tab-press with dropdown focused does not propagate to chart
             // automatically, so we manually catch and handle it when relevant.
-            this.removeDropdownKeydownHandler = addEvent(dropdown, 'keydown',
+            this.removeDropdownKeydownHandler = addEvent(
+                dropdown,
+                'keydown',
                 (e: KeyboardEvent): void => {
                     const isTab = (e.which || e.keyCode) === this.keyCodes.tab;
                     if (isTab) {
@@ -445,10 +393,10 @@ class RangeSelectorComponent extends AccessibilityComponent {
                             ]();
                         }
                     }
-                });
+                }
+            );
         }
     }
-
 
     /**
      * Get navigation for the range selector buttons.
@@ -473,9 +421,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
                 ],
                 [
                     [keys.enter, keys.space],
-                    function (
-                        this: KeyboardNavigationHandler
-                    ): number {
+                    function (this: KeyboardNavigationHandler): number {
                         return component.onButtonNavKbdClick(this);
                     }
                 ]
@@ -510,7 +456,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
         });
     }
 
-
     /**
      * Get navigation for the range selector input boxes.
      * @private
@@ -538,7 +483,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
         });
     }
 
-
     /**
      * Get keyboard navigation handlers for this component.
      * @return {Array<Highcharts.KeyboardNavigationHandler>}
@@ -550,7 +494,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
             this.getRangeSelectorInputNavigation()
         ];
     }
-
 
     /**
      * Remove component traces
@@ -566,10 +509,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
             this.announcer.destroy();
         }
     }
-
-
 }
-
 
 /* *
  *
@@ -577,11 +517,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
  *
  * */
 
-
 interface RangeSelectorComponent {
     chart: RangeSelectorComponent.ChartComposition;
 }
-
 
 /* *
  *
@@ -589,16 +527,12 @@ interface RangeSelectorComponent {
  *
  * */
 
-
 namespace RangeSelectorComponent {
-
-
     /* *
      *
      *  Declarations
      *
      * */
-
 
     export declare class ChartComposition extends Accessibility.ChartComposition {
         highlightedInputRangeIx?: number;
@@ -608,16 +542,13 @@ namespace RangeSelectorComponent {
         highlightRangeSelectorButton(ix: number): boolean;
     }
 
-
     /* *
      *
      *  Constants
      *
      * */
 
-
     const composedClasses: Array<Function> = [];
-
 
     /* *
      *
@@ -626,7 +557,6 @@ namespace RangeSelectorComponent {
      * */
 
     /* eslint-disable valid-jsdoc */
-
 
     /**
      * Highlight range selector button by index.
@@ -642,16 +572,10 @@ namespace RangeSelectorComponent {
         this: ChartComposition,
         ix: number
     ): boolean {
-        const buttons: Array<SVGElement> = (
-            this.rangeSelector &&
-            this.rangeSelector.buttons ||
-            []
-        );
+        const buttons: Array<SVGElement> =
+            (this.rangeSelector && this.rangeSelector.buttons) || [];
         const curHighlightedIx = this.highlightedRangeSelectorItemIx;
-        const curSelectedIx = (
-            this.rangeSelector &&
-            this.rangeSelector.selected
-        );
+        const curSelectedIx = this.rangeSelector && this.rangeSelector.selected;
 
         // Deselect old
         if (
@@ -679,7 +603,6 @@ namespace RangeSelectorComponent {
         return false;
     }
 
-
     /**
      * @private
      */
@@ -692,24 +615,26 @@ namespace RangeSelectorComponent {
 
             const chartProto = ChartClass.prototype as ChartComposition;
 
-            chartProto.highlightRangeSelectorButton = chartHighlightRangeSelectorButton;
+            chartProto.highlightRangeSelectorButton =
+                chartHighlightRangeSelectorButton;
         }
         if (composedClasses.indexOf(RangeSelectorClass) === -1) {
             composedClasses.push(RangeSelectorClass);
 
-            addEvent(RangeSelector, 'afterBtnClick', rangeSelectorAfterBtnClick);
+            addEvent(
+                RangeSelector,
+                'afterBtnClick',
+                rangeSelectorAfterBtnClick
+            );
         }
     }
-
 
     /**
      * Range selector does not have destroy-setup for class instance events - so
      * we set it on the class and call the component from here.
      * @private
      */
-    function rangeSelectorAfterBtnClick(
-        this: RangeSelector
-    ): void {
+    function rangeSelectorAfterBtnClick(this: RangeSelector): void {
         if (
             this.chart.accessibility &&
             this.chart.accessibility.components.rangeSelector
@@ -717,15 +642,12 @@ namespace RangeSelectorComponent {
             return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
         }
     }
-
 }
-
 
 /* *
  *
  *  Export Default
  *
  * */
-
 
 export default RangeSelectorComponent;

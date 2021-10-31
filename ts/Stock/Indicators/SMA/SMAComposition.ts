@@ -20,16 +20,11 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
     seriesTypes: {
-        ohlc: {
-            prototype: ohlcProto
-        }
+        ohlc: { prototype: ohlcProto }
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    extend
-} = U;
+const { addEvent, extend } = U;
 
 /* *
  *

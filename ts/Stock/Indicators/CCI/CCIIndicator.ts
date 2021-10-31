@@ -13,25 +13,17 @@
  *
  * */
 
-import type {
-    CCIOptions,
-    CCIParamsOptions
-} from './CCIOptions';
+import type { CCIOptions, CCIParamsOptions } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+const { isArray, merge } = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -53,7 +45,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
         i: number;
 
     for (i = 0; i < len; i++) {
-        sum += Math.abs(sma - (arr[i]));
+        sum += Math.abs(sma - arr[i]);
     }
 
     return sum;
@@ -91,14 +83,17 @@ class CCIIndicator extends SMAIndicator {
      * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
      */
-    public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0 // unused index, do not inherit (#15362)
-        }
-    } as CCIOptions);
+    public static defaultOptions: CCIOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            /**
+             * @excluding index
+             */
+            params: {
+                index: void 0 // unused index, do not inherit (#15362)
+            }
+        } as CCIOptions
+    );
 
     /* *
      *
@@ -119,10 +114,10 @@ class CCIIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: CCIParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             TP: Array<number> = [],
             periodTP: Array<number> = [],
@@ -155,7 +150,6 @@ class CCIIndicator extends SMAIndicator {
         }
 
         for (i = period; i <= yValLen; i++) {
-
             p = yVal[i - 1];
             TPtemp = (p[1] + p[2] + p[3]) / 3;
             len = TP.push(TPtemp);
@@ -164,7 +158,7 @@ class CCIIndicator extends SMAIndicator {
             smaTP = sumArray(periodTP) / period;
             meanDev = meanDeviation(periodTP, smaTP) / period;
 
-            CCIPoint = ((TPtemp - smaTP) / (0.015 * meanDev));
+            CCIPoint = (TPtemp - smaTP) / (0.015 * meanDev);
 
             CCI.push([xVal[i - 1], CCIPoint]);
             xData.push(xVal[i - 1]);
@@ -224,4 +218,4 @@ export default CCIIndicator;
  * @apioption series.cci
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

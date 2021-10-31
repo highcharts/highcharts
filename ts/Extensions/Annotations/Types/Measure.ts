@@ -17,17 +17,10 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    isNumber,
-    merge,
-    pick
-} = U;
+const { defined, extend, isNumber, merge, pick } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 class Measure extends Annotation {
-
     /* *
      *
      *  Static Functions
@@ -47,8 +40,8 @@ class Measure extends Annotation {
                 xAxis = chart.xAxis[options.xAxis],
                 yAxis = chart.yAxis[options.yAxis],
                 bck = options.background,
-                width: number = inverted ? bck.height : bck.width as any,
-                height: number = inverted ? bck.width : bck.height as any,
+                width: number = inverted ? bck.height : (bck.width as any),
+                height: number = inverted ? bck.width : (bck.height as any),
                 selectType = options.selectType,
                 top = inverted ? xAxis.left : yAxis.top, // #13664
                 left = inverted ? yAxis.top : xAxis.left; // #13664
@@ -84,7 +77,6 @@ class Measure extends Annotation {
                 this.startXMin = xAxis.toValue(left);
                 this.startXMax = xAxis.toValue(left + xAxis.len);
             }
-
         },
         /**
          * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
@@ -115,7 +107,6 @@ class Measure extends Annotation {
             if (resize) {
                 this.resize(0, 0);
             }
-
         },
         /**
          * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
@@ -200,10 +191,16 @@ class Measure extends Annotation {
          * @private
          */
         defaultFormatter: function (this: Measure): string {
-            return 'Min: ' + this.min +
-                '<br>Max: ' + this.max +
-                '<br>Average: ' + this.average +
-                '<br>Bins: ' + this.bins;
+            return (
+                'Min: ' +
+                this.min +
+                '<br>Max: ' +
+                this.max +
+                '<br>Average: ' +
+                this.average +
+                '<br>Bins: ' +
+                this.bins
+            );
         },
         /**
          * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
@@ -227,8 +224,8 @@ class Measure extends Annotation {
          * Definitions of calculations (min, max, average, bins)
          * @private
          */
-        min: function (this: Measure): (''|number) {
-            let min: (''|number) = Infinity,
+        min: function (this: Measure): '' | number {
+            let min: '' | number = Infinity,
                 series = this.chart.series,
                 ext = Measure.calculations.getExtremes(
                     this.xAxisMin,
@@ -265,8 +262,8 @@ class Measure extends Annotation {
 
             return min;
         },
-        max: function (this: Measure): (''|number) {
-            let max: (''|number) = -Infinity,
+        max: function (this: Measure): '' | number {
+            let max: '' | number = -Infinity,
                 series = this.chart.series,
                 ext = Measure.calculations.getExtremes(
                     this.xAxisMin,
@@ -303,8 +300,8 @@ class Measure extends Annotation {
 
             return max;
         },
-        average: function (this: Measure): (''|number) {
-            let average: (''|number) = '';
+        average: function (this: Measure): '' | number {
+            let average: '' | number = '';
 
             if (this.max !== '' && this.min !== '') {
                 average = (this.max + this.min) / 2;
@@ -312,8 +309,8 @@ class Measure extends Annotation {
 
             return average;
         },
-        bins: function (this: Measure): (''|number) {
-            let bins: (''|number) = 0,
+        bins: function (this: Measure): '' | number {
+            let bins: '' | number = 0,
                 series = this.chart.series,
                 ext = Measure.calculations.getExtremes(
                     this.xAxisMin,
@@ -349,7 +346,7 @@ class Measure extends Annotation {
 
             return bins;
         }
-    }
+    };
 
     /* *
      *
@@ -375,11 +372,16 @@ class Measure extends Annotation {
      * @private
      */
     public init(
-        annotationOrChart: (Annotation|Highcharts.AnnotationChart),
+        annotationOrChart: Annotation | Highcharts.AnnotationChart,
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
+        Annotation.prototype.init.call(
+            this,
+            annotationOrChart,
+            userOptions,
+            index
+        );
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -415,7 +417,6 @@ class Measure extends Annotation {
      * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public shapePointsOptions(): Array<MockPointOptions> {
-
         const options = this.options.typeOptions,
             xAxis = options.xAxis,
             yAxis = options.yAxis;
@@ -454,10 +455,12 @@ class Measure extends Annotation {
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
 
-        if (!defined(
-            this.userOptions.controlPointOptions &&
-            this.userOptions.controlPointOptions.style.cursor
-        )) {
+        if (
+            !defined(
+                this.userOptions.controlPointOptions &&
+                    this.userOptions.controlPointOptions.style.cursor
+            )
+        ) {
             if (selectType === 'x') {
                 options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
             } else if (selectType === 'y') {
@@ -505,38 +508,45 @@ class Measure extends Annotation {
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
-                        Measure.calculations.defaultFormatter.call(this);
-
+            (this.labels[0] as any).text =
+                (formatter && formatter.call(this)) ||
+                Measure.calculations.defaultFormatter.call(this);
         } else {
-            this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
-                shape: 'rect',
-                backgroundColor: 'none',
-                color: 'black',
-                borderWidth: 0,
-                dashStyle: 'Dash',
-                overflow: 'allow',
-                align: 'left',
-                y: 0,
-                x: 0,
-                verticalAlign: 'top',
-                crop: true,
-                xAxis: 0,
-                yAxis: 0,
-                point: function (target: any): MockPointOptions {
-                    const annotation: Measure = target.annotation,
-                        options = target.options;
+            this.initLabel(
+                extend<Partial<Highcharts.AnnotationsLabelsOptions>>(
+                    {
+                        shape: 'rect',
+                        backgroundColor: 'none',
+                        color: 'black',
+                        borderWidth: 0,
+                        dashStyle: 'Dash',
+                        overflow: 'allow',
+                        align: 'left',
+                        y: 0,
+                        x: 0,
+                        verticalAlign: 'top',
+                        crop: true,
+                        xAxis: 0,
+                        yAxis: 0,
+                        point: function (target: any): MockPointOptions {
+                            const annotation: Measure = target.annotation,
+                                options = target.options;
 
-                    return {
-                        x: annotation.xAxisMin,
-                        y: annotation.yAxisMin,
-                        xAxis: pick(typeOptions.xAxis, options.xAxis),
-                        yAxis: pick(typeOptions.yAxis, options.yAxis)
-                    };
-                } as any,
-                text: (formatter && formatter.call(this)) ||
-                    Measure.calculations.defaultFormatter.call(this)
-            }, typeOptions.label as any), void 0 as any);
+                            return {
+                                x: annotation.xAxisMin,
+                                y: annotation.yAxisMin,
+                                xAxis: pick(typeOptions.xAxis, options.xAxis),
+                                yAxis: pick(typeOptions.yAxis, options.yAxis)
+                            };
+                        } as any,
+                        text:
+                            (formatter && formatter.call(this)) ||
+                            Measure.calculations.defaultFormatter.call(this)
+                    },
+                    typeOptions.label as any
+                ),
+                void 0 as any
+            );
         }
     }
 
@@ -608,38 +618,25 @@ class Measure extends Annotation {
         }
         // horizontal line
         if (options.crosshairX.enabled) {
-            pathH = [[
-                'M',
-                xAxisMin,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2)
-            ], [
-                'L',
-                xAxisMax,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2)
-            ]];
+            pathH = [
+                ['M', xAxisMin, yAxisMin + (yAxisMax - yAxisMin) / 2],
+                ['L', xAxisMax, yAxisMin + (yAxisMax - yAxisMin) / 2]
+            ];
         }
 
         // vertical line
         if (options.crosshairY.enabled) {
-            pathV = [[
-                'M',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMin
-            ], [
-                'L',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMax
-            ]];
+            pathV = [
+                ['M', xAxisMin + (xAxisMax - xAxisMin) / 2, yAxisMin],
+                ['L', xAxisMin + (xAxisMax - xAxisMin) / 2, yAxisMax]
+            ];
         }
 
         // Update existed crosshair
         if (this.shapes.length > 0) {
-
             this.shapes[0].options.d = pathH;
             this.shapes[1].options.d = pathV;
-
         } else {
-
             // Add new crosshairs
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
@@ -659,7 +656,6 @@ class Measure extends Annotation {
                 ),
                 1
             );
-
         }
     }
 
@@ -693,7 +689,6 @@ class Measure extends Annotation {
         cpIndex?: number,
         selectType?: Highcharts.AnnotationDraggableValue
     ): void {
-
         // background shape
         const bckShape = this.shapes[2];
 
@@ -719,8 +714,14 @@ class Measure extends Annotation {
             bckShape.translatePoint(0, dy, 3);
         }
 
-        Measure.calculations.updateStartPoints
-            .call(this, false, true, cpIndex as any, dx, dy);
+        Measure.calculations.updateStartPoints.call(
+            this,
+            false,
+            true,
+            cpIndex as any,
+            dx,
+            dy
+        );
 
         this.options.typeOptions.background.height = Math.abs(
             this.startYMax - this.startYMin
@@ -743,7 +744,6 @@ class Measure extends Annotation {
         resize?: boolean,
         setStartPoints?: boolean
     ): void {
-
         this.linkPoints();
 
         if (!this.graphic) {
@@ -751,7 +751,11 @@ class Measure extends Annotation {
         }
 
         if (setStartPoints) {
-            (Measure.calculations.updateStartPoints.call as any)(this, true, false as any);
+            (Measure.calculations.updateStartPoints.call as any)(
+                this,
+                true,
+                false as any
+            );
         }
 
         // #11174 - clipBox was not recalculate during resize / redraw
@@ -765,28 +769,31 @@ class Measure extends Annotation {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.redraw();
         });
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
+        this.shapes.forEach(function (
+            item: Highcharts.AnnotationShapeType
+        ): void {
             item.translate(dx, dy);
         });
 
         this.options.typeOptions.point.x = this.startXMin;
         this.options.typeOptions.point.y = this.startYMin;
     }
-
 }
 
 interface Measure {
-    average: (''|number);
-    bins: (''|number);
+    average: '' | number;
+    bins: '' | number;
     defaultOptions: Annotation['defaultOptions'];
-    min: (''|number);
-    max: (''|number);
+    min: '' | number;
+    max: '' | number;
     offsetX: number;
     offsetY: number;
     options: Measure.MeasureOptions;
@@ -1007,7 +1014,8 @@ Measure.prototype.defaultOptions = merge(
                         target.yAxisMin,
                         target.yAxisMax
                     ),
-                    x, y;
+                    x,
+                    y;
 
                 if (selectType === 'x') {
                     targetY = (ext.yAxisMax - ext.yAxisMin) / 2;
@@ -1019,8 +1027,7 @@ Measure.prototype.defaultOptions = merge(
                 }
 
                 if (selectType === 'y') {
-                    targetX = ext.xAxisMin +
-                                        ((ext.xAxisMax - ext.xAxisMin) / 2);
+                    targetX = ext.xAxisMin + (ext.xAxisMax - ext.xAxisMin) / 2;
 
                     // first control point
                     if (cpIndex === 0) {
@@ -1037,8 +1044,8 @@ Measure.prototype.defaultOptions = merge(
                 }
 
                 return {
-                    x: x - (controlPointOptions.width / 2),
-                    y: y - (controlPointOptions.height / 2)
+                    x: x - controlPointOptions.width / 2,
+                    y: y - controlPointOptions.height / 2
                 };
             },
             events: {
@@ -1053,12 +1060,7 @@ Measure.prototype.defaultOptions = merge(
                         x = selectType === 'y' ? 0 : translation.x,
                         y = selectType === 'x' ? 0 : translation.y;
 
-                    target.resize(
-                        x,
-                        y,
-                        index,
-                        selectType
-                    );
+                    target.resize(x, y, index, selectType);
 
                     target.resizeX += x;
                     target.resizeY += y;
@@ -1084,7 +1086,8 @@ namespace Measure {
         formatter?: FormatUtilities.FormatterCallback<Measure>;
         style: CSSObject;
     }
-    export interface MeasureTypeOptions extends Highcharts.AnnotationsTypeOptions {
+    export interface MeasureTypeOptions
+        extends Highcharts.AnnotationsTypeOptions {
         background: Highcharts.AnnotationsShapeOptions;
         crosshairX: MeasureTypeCrosshairOptions;
         crosshairY: MeasureTypeCrosshairOptions;
@@ -1101,7 +1104,7 @@ namespace Measure {
  *
  * */
 Annotation.types.measure = Measure as any;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         measure: typeof Measure;
     }

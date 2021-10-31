@@ -28,28 +28,13 @@ import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
-const {
-    doc,
-    seriesTypes,
-    win
-} = H;
+const { doc, seriesTypes, win } = H;
 import D from '../Core/DefaultOptions.js';
-const {
-    getOptions,
-    setOptions
-} = D;
+const { getOptions, setOptions } = D;
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    find,
-    fireEvent,
-    isNumber,
-    pick
-} = U;
+const { addEvent, defined, extend, find, fireEvent, isNumber, pick } = U;
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         dataTableDiv?: HTMLDivElement;
         /** @requires modules/export-data */
@@ -59,9 +44,7 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/export-data */
         getCSV(useLocalDecimalPoint?: boolean): string;
         /** @requires modules/export-data */
-        getDataRows(
-            multiLevelHeaders?: boolean
-        ): Array<Array<(number|string)>>;
+        getDataRows(multiLevelHeaders?: boolean): Array<Array<number | string>>;
         /** @requires modules/export-data */
         getTable(useLocalDecimalPoint?: boolean): string;
         /** @requires modules/export-data */
@@ -79,7 +62,7 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/LangOptions' {
     interface LangOptions {
         downloadCSV?: string;
         downloadXLS?: string;
@@ -106,7 +89,7 @@ declare module './Exporting/ExportingOptions' {
     interface ExportingOptions {
         csv?: Highcharts.ExportingCsvOptions;
         showTable?: boolean;
-        tableCaption?: (boolean|string);
+        tableCaption?: boolean | string;
     }
 }
 
@@ -116,7 +99,10 @@ declare module './Exporting/ExportingOptions' {
  */
 declare global {
     namespace Highcharts {
-        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
+        type ExportingCategoryMap = Record<
+            string,
+            Array<number | string | null>
+        >;
         type ExportingDateTimeMap = Record<string, Array<string>>;
 
         interface ExportingCategoryDateTimeMap {
@@ -129,10 +115,10 @@ declare global {
         }
         interface ExportingCsvOptions {
             annotations?: AnnotationInDataTable;
-            columnHeaderFormatter?: (Function|null);
+            columnHeaderFormatter?: Function | null;
             dateFormat?: string;
-            decimalPoint?: (string|null);
-            itemDelimiter?: (string|null);
+            decimalPoint?: string | null;
+            itemDelimiter?: string | null;
             lineDelimiter?: string;
         }
         interface ExportDataPoint {
@@ -151,8 +137,7 @@ declare global {
             categoryDatetimeHeader?: string;
         }
     }
-    interface MSBlobBuilder extends Blob {
-    }
+    interface MSBlobBuilder extends Blob {}
     interface Window {
         /** @deprecated */
         MSBlobBuilder: typeof MSBlobBuilder;
@@ -178,12 +163,11 @@ declare global {
  * Contains information about the export data event.
  *
  * @interface Highcharts.ExportDataEventObject
- *//**
+ */ /**
  * Contains the data rows for the current export task and can be modified.
  * @name Highcharts.ExportDataEventObject#dataRows
  * @type {Array<Array<string>>}
  */
-
 
 import DownloadURL from '../Extensions/DownloadURL.js';
 import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
@@ -218,7 +202,6 @@ setOptions({
      * @private
      */
     exporting: {
-
         /**
          * Caption for the data table. Same as chart title by default. Set to
          * `false` to disable.
@@ -254,7 +237,6 @@ setOptions({
          * @requires modules/export-data
          */
         csv: {
-
             /**
              *
              * Options for annotations in the export-data table.
@@ -267,24 +249,24 @@ setOptions({
              */
             annotations: {
                 /**
-                * The way to mark the separator for annotations
-                * combined in one export-data table cell.
-                *
-                * @since 8.2.0
-                * @requires modules/annotations
-                */
+                 * The way to mark the separator for annotations
+                 * combined in one export-data table cell.
+                 *
+                 * @since 8.2.0
+                 * @requires modules/annotations
+                 */
                 itemDelimiter: '; ',
 
                 /**
-                * When several labels are assigned to a specific point,
-                * they will be displayed in one field in the table.
-                *
-                * @sample highcharts/export-data/join-annotations/
-                *         Concatenate point annotations with itemDelimiter set.
-                *
-                * @since 8.2.0
-                * @requires modules/annotations
-                */
+                 * When several labels are assigned to a specific point,
+                 * they will be displayed in one field in the table.
+                 *
+                 * @sample highcharts/export-data/join-annotations/
+                 *         Concatenate point annotations with itemDelimiter set.
+                 *
+                 * @since 8.2.0
+                 * @requires modules/annotations
+                 */
                 join: false
             },
 
@@ -348,7 +330,6 @@ setOptions({
              * The line delimiter in the exported data, defaults to a newline.
              */
             lineDelimiter: '\n'
-
         },
 
         /**
@@ -397,7 +378,6 @@ setOptions({
      * @private
      */
     lang: {
-
         /**
          * The text for the menu item.
          *
@@ -513,36 +493,39 @@ Chart.prototype.setUpKeyToAxis = function (): void {
  */
 Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
-): Array<Array<(number|string)>> {
+): Array<Array<number | string>> {
     let hasParallelCoords = this.hasParallelCoordinates,
         time = this.time,
-        csvOptions = (
-            (this.options.exporting && this.options.exporting.csv) || {}
-        ),
+        csvOptions =
+            (this.options.exporting && this.options.exporting.csv) || {},
         xAxis: Axis,
         xAxes = this.xAxis,
-        rows: Record<string, (Array<any>&AnyRecord)> =
-            {},
+        rows: Record<string, Array<any> & AnyRecord> = {},
         rowArr = [],
         dataRows,
         topLevelColumnTitles: Array<string> = [],
         columnTitles: Array<string> = [],
-        columnTitleObj: (string|Record<string, string>),
+        columnTitleObj: string | Record<string, string>,
         i: number,
         x,
         xTitle: string,
         langOptions = this.options.lang,
-        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        exportDataOptions: Highcharts.ExportDataOptions =
+            langOptions.exportData as any,
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Axis|Series),
+            item: Axis | Series,
             key?: string,
             keyLength?: number
-        ): (string|Record<string, string>) {
+        ): string | Record<string, string> {
             if (csvOptions.columnHeaderFormatter) {
-                const s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+                const s = csvOptions.columnHeaderFormatter(
+                    item,
+                    key,
+                    keyLength
+                );
 
                 if (s !== false) {
                     return s;
@@ -554,15 +537,16 @@ Chart.prototype.getDataRows = function (
             }
 
             if (item instanceof Axis) {
-                return (item.options.title && item.options.title.text) ||
-                    (item.dateTime ? categoryDatetimeHeader : categoryHeader);
+                return (
+                    (item.options.title && item.options.title.text) ||
+                    (item.dateTime ? categoryDatetimeHeader : categoryHeader)
+                );
             }
 
             if (multiLevelHeaders) {
                 return {
-                    columnTitle: (keyLength as any) > 1 ?
-                        (key as any) :
-                        item.name,
+                    columnTitle:
+                        (keyLength as any) > 1 ? (key as any) : item.name,
                     topLevelColumnTitle: item.name
                 };
             }
@@ -579,22 +563,17 @@ Chart.prototype.getDataRows = function (
                 dateTimeValueAxisMap: Highcharts.ExportingDateTimeMap = {};
 
             pointArrayMap.forEach(function (prop: string): void {
-                const axisName = (
-                        (series.keyToAxis && series.keyToAxis[prop]) ||
-                        prop
-                    ) + 'Axis',
+                const axisName =
+                        ((series.keyToAxis && series.keyToAxis[prop]) || prop) +
+                        'Axis',
                     // Points in parallel coordinates refers to all yAxis
                     // not only `series.yAxis`
-                    axis = isNumber(pIdx) ?
-                        (series as any).chart[axisName][pIdx] :
-                        (series as any)[axisName];
+                    axis = isNumber(pIdx)
+                        ? (series as any).chart[axisName][pIdx]
+                        : (series as any)[axisName];
 
-                categoryMap[prop] = (
-                    axis && axis.categories
-                ) || [];
-                dateTimeValueAxisMap[prop] = (
-                    axis && axis.dateTime
-                );
+                categoryMap[prop] = (axis && axis.categories) || [];
+                dateTimeValueAxisMap[prop] = axis && axis.dateTime;
             });
 
             return {
@@ -604,12 +583,9 @@ Chart.prototype.getDataRows = function (
         },
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
-        getPointArray = function (
-            series: Series,
-            xAxis: Axis
-        ): string[] {
-            const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
+        getPointArray = function (series: Series, xAxis: Axis): string[] {
+            const namedPoints = series.data.filter(
+                (d): string | false => typeof d.y !== 'undefined' && d.name
             );
 
             if (
@@ -619,7 +595,9 @@ Chart.prototype.getDataRows = function (
                 !series.keyToAxis
             ) {
                 if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    const pointArrayMapCheck = series.pointArrayMap.filter(
+                        (p): boolean => p === 'x'
+                    );
                     if (pointArrayMapCheck.length) {
                         series.pointArrayMap.unshift('x');
                         return series.pointArrayMap;
@@ -641,7 +619,7 @@ Chart.prototype.getDataRows = function (
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
-            xTaken: (false|Record<string, unknown>) =
+            xTaken: false | Record<string, unknown> =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis);
         let categoryAndDatetimeMap = getCategoryAndDateTimeMap(
@@ -656,17 +634,13 @@ Chart.prototype.getDataRows = function (
             !series.options.isInternal &&
             series.visible !== false // #55
         ) {
-
             // Build a lookup for X axis index and the position of the first
             // series that belongs to that X axis. Includes -1 for non-axis
             // series types like pies.
             if (
-                !find(
-                    xAxisIndices,
-                    function (index: Array<number>): boolean {
-                        return index[0] === xAxisIndex;
-                    }
-                )
+                !find(xAxisIndices, function (index: Array<number>): boolean {
+                    return index[0] === xAxisIndex;
+                })
             ) {
                 xAxisIndices.push([xAxisIndex, i]);
             }
@@ -686,7 +660,7 @@ Chart.prototype.getDataRows = function (
                 if (multiLevelHeaders) {
                     topLevelColumnTitles.push(
                         (columnTitleObj as any).topLevelColumnTitle ||
-                        columnTitleObj
+                            columnTitleObj
                     );
                 }
                 j++;
@@ -702,14 +676,14 @@ Chart.prototype.getDataRows = function (
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
-                options: (PointOptions|PointShortOptions),
+                options: PointOptions | PointShortOptions,
                 pIdx: number
             ): void {
-                let key: (number|string),
+                let key: number | string,
                     prop: string,
                     val: number,
-                    name: (string|undefined),
-                    point: (Highcharts.ExportDataPoint|Point);
+                    name: string | undefined,
+                    point: Highcharts.ExportDataPoint | Point;
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -722,10 +696,9 @@ Chart.prototype.getDataRows = function (
                 }
 
                 point = { series: mockSeries };
-                series.pointClass.prototype.applyOptions.apply(
-                    point,
-                    [options]
-                );
+                series.pointClass.prototype.applyOptions.apply(point, [
+                    options
+                ]);
                 key = point.x as any;
                 name = series.data[pIdx] && series.data[pIdx].name;
 
@@ -735,7 +708,7 @@ Chart.prototype.getDataRows = function (
                 if (
                     !xAxis ||
                     series.exportKey === 'name' ||
-                    (!hasParallelCoords && xAxis && xAxis.hasNames) && name
+                    (!hasParallelCoords && xAxis && xAxis.hasNames && name)
                 ) {
                     key = name as any;
                 }
@@ -764,15 +737,14 @@ Chart.prototype.getDataRows = function (
                         // Y axis category if present
                         categoryAndDatetimeMap.categoryMap[prop][val],
                         // datetime yAxis
-                        categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
-                            time.dateFormat(csvOptions.dateFormat as any, val) :
-                            null,
+                        categoryAndDatetimeMap.dateTimeValueAxisMap[prop]
+                            ? time.dateFormat(csvOptions.dateFormat as any, val)
+                            : null,
                         // linear/log yAxis
                         val
                     );
                     j++;
                 }
-
             });
             i = i + j;
         }
@@ -788,20 +760,20 @@ Chart.prototype.getDataRows = function (
     let xAxisIndex: number, column: number;
 
     // Add computed column headers and top level headers to final row set
-    dataRows = multiLevelHeaders ? [topLevelColumnTitles, columnTitles] :
-        [columnTitles];
+    dataRows = multiLevelHeaders
+        ? [topLevelColumnTitles, columnTitles]
+        : [columnTitles];
 
     i = xAxisIndices.length;
-    while (i--) { // Start from end to splice in
+    while (i--) {
+        // Start from end to splice in
         xAxisIndex = xAxisIndices[i][0];
         column = xAxisIndices[i][1];
         xAxis = xAxes[xAxisIndex];
 
         // Sort it by X values
-        rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: AnyRecord,
-            b: AnyRecord
-        ): number {
+        // eslint-disable-next-line no-loop-func
+        rowArr.sort(function (a: AnyRecord, b: AnyRecord): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
 
@@ -815,9 +787,8 @@ Chart.prototype.getDataRows = function (
         }
 
         // Add the category column
-        rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: AnyRecord
-        ): void {
+        // eslint-disable-next-line no-loop-func
+        rowArr.forEach(function (row: AnyRecord): void {
             let category = row.name;
 
             if (xAxis && !defined(category)) {
@@ -864,18 +835,17 @@ Chart.prototype.getDataRows = function (
  * @return {string}
  *         CSV representation of the data
  */
-Chart.prototype.getCSV = function (
-    useLocalDecimalPoint?: boolean
-): string {
+Chart.prototype.getCSV = function (useLocalDecimalPoint?: boolean): string {
     let csv = '';
     const rows = this.getDataRows(),
-        csvOptions: Highcharts.ExportingCsvOptions =
-            (this.options.exporting as any).csv,
+        csvOptions: Highcharts.ExportingCsvOptions = (
+            this.options.exporting as any
+        ).csv,
         decimalPoint = pick(
             csvOptions.decimalPoint,
-            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.'
+            csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint
+                ? (1.1).toLocaleString()[1]
+                : '.'
         ),
         // use ';' for direct to Excel
         itemDelimiter = pick(
@@ -886,8 +856,8 @@ Chart.prototype.getCSV = function (
         lineDelimiter = csvOptions.lineDelimiter;
 
     // Transform the rows to CSV
-    rows.forEach(function (row: Array<(number|string)>, i: number): void {
-        let val: (number|string) = '',
+    rows.forEach(function (row: Array<number | string>, i: number): void {
+        let val: number | string = '',
             j = row.length;
 
         while (j--) {
@@ -932,9 +902,7 @@ Chart.prototype.getCSV = function (
  *
  * @fires Highcharts.Chart#event:afterGetTable
  */
-Chart.prototype.getTable = function (
-    useLocalDecimalPoint?: boolean
-): string {
+Chart.prototype.getTable = function (useLocalDecimalPoint?: boolean): string {
     const serialize = (node: AST.Node): string => {
         if (!node.tagName || node.tagName === '#text') {
             // Text node
@@ -989,15 +957,16 @@ Chart.prototype.getTableAST = function (
     const options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
-            (options.exporting as any).useMultiLevelHeaders, true
+            (options.exporting as any).useMultiLevelHeaders,
+            true
         ),
         rows = this.getDataRows(useMultiLevelHeaders),
         topHeaders = useMultiLevelHeaders ? rows.shift() : null,
         subHeaders = rows.shift(),
         // Compare two rows for equality
         isRowEqual = function (
-            row1: Array<(number|string)>,
-            row2: Array<(number|string)>
+            row1: Array<number | string>,
+            row2: Array<number | string>
         ): boolean {
             let i = row1.length;
 
@@ -1015,9 +984,9 @@ Chart.prototype.getTableAST = function (
         // Get table cell HTML from value
         getCellHTMLFromValue = function (
             tagName: string,
-            classes: (string|null),
+            classes: string | null,
             attributes: HTMLAttributes,
-            value: (number|string)
+            value: number | string
         ): AST.Node {
             let textContent = pick(value, ''),
                 className = 'text' + (classes ? ' ' + classes : '');
@@ -1033,28 +1002,25 @@ Chart.prototype.getTableAST = function (
                 className = 'empty';
             }
 
-            attributes = extend(
-                { 'class': className },
-                attributes
-            );
+            // prettier-ignore
+            attributes = extend({ 'class': className }, attributes);
 
             return {
                 tagName,
                 attributes,
                 textContent
             };
-
         },
         // Get table header markup from row data
         getTableHeaderHTML = function (
-            topheaders: (Array<(number|string)>|null|undefined),
-            subheaders: Array<(number|string)>,
+            topheaders: Array<number | string> | null | undefined,
+            subheaders: Array<number | string>,
             rowLength?: number
         ): AST.Node {
             const theadChildren: AST.Node[] = [];
 
             let i = 0,
-                len = rowLength || subheaders && subheaders.length,
+                len = rowLength || (subheaders && subheaders.length),
                 next,
                 cur,
                 curColspan = 0,
@@ -1079,15 +1045,17 @@ Chart.prototype.getTableAST = function (
                     } else if (curColspan) {
                         // Ended colspan
                         // Add cur to HTML with colspan.
-                        trChildren.push(getCellHTMLFromValue(
-                            'th',
-                            'highcharts-table-topheading',
-                            {
-                                scope: 'col',
-                                colspan: curColspan + 1
-                            },
-                            cur
-                        ));
+                        trChildren.push(
+                            getCellHTMLFromValue(
+                                'th',
+                                'highcharts-table-topheading',
+                                {
+                                    scope: 'col',
+                                    colspan: curColspan + 1
+                                },
+                                cur
+                            )
+                        );
                         curColspan = 0;
                     } else {
                         // Cur is standalone. If it is same as sublevel,
@@ -1133,7 +1101,10 @@ Chart.prototype.getTableAST = function (
                     if (typeof subheaders[i] !== 'undefined') {
                         trChildren.push(
                             getCellHTMLFromValue(
-                                'th', null, { scope: 'col' }, subheaders[i]
+                                'th',
+                                null,
+                                { scope: 'col' },
+                                subheaders[i]
                             )
                         );
                     }
@@ -1155,15 +1126,14 @@ Chart.prototype.getTableAST = function (
         treeChildren.push({
             tagName: 'caption',
             attributes: {
+                // prettier-ignore
                 'class': 'highcharts-table-caption'
             },
             textContent: pick(
                 (options.exporting as any).tableCaption,
-                (
-                    (options.title as any).text ?
-                        (options.title as any).text :
-                        'Chart'
-                )
+                (options.title as any).text
+                    ? (options.title as any).text
+                    : 'Chart'
             )
         });
     }
@@ -1176,26 +1146,30 @@ Chart.prototype.getTableAST = function (
     }
 
     // Add header
-    treeChildren.push(getTableHeaderHTML(
-        topHeaders,
-        subHeaders as any,
-        Math.max(rowLength, (subHeaders as any).length)
-    ));
+    treeChildren.push(
+        getTableHeaderHTML(
+            topHeaders,
+            subHeaders as any,
+            Math.max(rowLength, (subHeaders as any).length)
+        )
+    );
 
     // Transform the rows to HTML
     const trs: AST.Node[] = [];
-    rows.forEach(function (row: Array<(number|string)>): void {
+    rows.forEach(function (row: Array<number | string>): void {
         const trChildren = [];
         for (let j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
             // category axes, but also might make sense for datetime? Should
             // await user feedback on this.
-            trChildren.push(getCellHTMLFromValue(
-                j ? 'td' : 'th',
-                null,
-                j ? {} : { scope: 'row' },
-                row[j]
-            ));
+            trChildren.push(
+                getCellHTMLFromValue(
+                    j ? 'td' : 'th',
+                    null,
+                    j ? {} : { scope: 'row' },
+                    row[j]
+                )
+            );
         }
         trs.push({
             tagName: 'tr',
@@ -1219,7 +1193,6 @@ Chart.prototype.getTableAST = function (
     return e.tree;
 };
 
-
 /**
  * Get a blob object from content, if blob is supported
  *
@@ -1231,20 +1204,16 @@ Chart.prototype.getTableAST = function (
  * @return {string|undefined}
  *         The blob object, or undefined if not supported.
  */
-function getBlobFromContent(
-    content: string,
-    type: string
-): (string|undefined) {
+function getBlobFromContent(content: string, type: string): string | undefined {
     const nav = win.navigator,
-        webKit = (
+        webKit =
             nav.userAgent.indexOf('WebKit') > -1 &&
-            nav.userAgent.indexOf('Chrome') < 0
-        ),
+            nav.userAgent.indexOf('Chrome') < 0,
         domurl = win.URL || win.webkitURL || win;
 
     try {
         // MS specific
-        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
+        if (nav.msSaveOrOpenBlob && win.MSBlobBuilder) {
             const blob = new win.MSBlobBuilder();
             blob.append(content);
             return blob.getBlob('image/svg+xml') as any;
@@ -1253,10 +1222,12 @@ function getBlobFromContent(
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs.
         if (!webKit) {
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
+            return domurl.createObjectURL(
+                new win.Blob(
+                    ['\uFEFF' + content], // #7084
+                    { type: type }
+                )
+            );
         }
     } catch (e) {
         // Ignore
@@ -1301,7 +1272,8 @@ Chart.prototype.downloadXLS = function (
     this: Exporting.ChartComposition
 ): void {
     const uri = 'data:application/vnd.ms-excel;base64,',
-        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+        template =
+            '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
             'xmlns="http://www.w3.org/TR/REC-html40">' +
             '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook>' +
@@ -1312,7 +1284,7 @@ Chart.prototype.downloadXLS = function (
             '</xml><![endif]-->' +
             '<style>td{border:none;font-family: Calibri, sans-serif;} ' +
             '.number{mso-number-format:"0.00";} ' +
-            '.text{ mso-number-format:"\@";}</style>' +
+            '.text{ mso-number-format:"@";}</style>' +
             '<meta name=ProgId content=Excel.Sheet>' +
             '<meta charset=UTF-8>' +
             '</head><body>' +
@@ -1350,7 +1322,6 @@ Chart.prototype.hideData = function (): void {
 };
 
 Chart.prototype.toggleDataTable = function (show?: boolean): void {
-
     show = pick(show, !this.isDataTableVisible);
 
     // Create the div
@@ -1366,7 +1337,6 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
     // Toggle the visibility
     if (this.dataTableDiv) {
-
         this.dataTableDiv.style.display = show ? 'block' : 'none';
 
         // Generate the data table
@@ -1381,11 +1351,11 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
     // Set the flag
     this.isDataTableVisible = show;
 
-
     // Change the menu item text
     const exportDivElements = this.exportDivElements,
         options = this.options.exporting,
-        menuItems = options &&
+        menuItems =
+            options &&
             options.buttons &&
             options.buttons.contextButton.menuItems,
         lang = this.options.lang;
@@ -1399,7 +1369,8 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         menuItems &&
         exportDivElements
     ) {
-        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        const exportDivElement =
+            exportDivElements[menuItems.indexOf('viewData')];
         if (exportDivElement) {
             AST.setElementHTML(
                 exportDivElement,
@@ -1409,11 +1380,9 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
     }
 };
 
-
 // Add "Download CSV" to the exporting menu.
 const exportingOptions = getOptions().exporting;
 if (exportingOptions) {
-
     extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {
             textKey: 'downloadCSV',

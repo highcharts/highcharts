@@ -43,7 +43,8 @@ export interface PackedBubbleLayout extends Highcharts.NetworkgraphLayout {
     series: Array<NetworkgraphSeries>;
 }
 
-export interface PackedBubbleLayoutAlgorithmOptions extends Highcharts.NetworkgraphLayoutAlgorithmOptions {
+export interface PackedBubbleLayoutAlgorithmOptions
+    extends Highcharts.NetworkgraphLayoutAlgorithmOptions {
     bubblePadding?: number;
     dragBetweenSeries?: boolean;
     enableSimulation?: boolean;

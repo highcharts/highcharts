@@ -12,9 +12,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+const { addEvent } = U;
 
 /* *
  *
@@ -43,7 +41,6 @@ declare module '../../Core/Axis/AxisType' {
 /* eslint-disable valid-jsdoc */
 
 class VMLAxis3DAdditions {
-
     /* *
      *
      *  Constructors
@@ -64,11 +61,9 @@ class VMLAxis3DAdditions {
     backFrame?: Highcharts.VMLElement;
     bottomFrame?: Highcharts.VMLElement;
     sideFrame?: Highcharts.VMLElement;
-
 }
 
 class VMLAxis3D {
-
     /* *
      *
      *  Static Properties
@@ -76,13 +71,11 @@ class VMLAxis3D {
      * */
 
     public static compose(AxisClass: typeof Axis): void {
-
         AxisClass.keepProps.push('vml');
 
         addEvent(AxisClass, 'destroy', VMLAxis3D.onDestroy);
         addEvent(AxisClass, 'init', VMLAxis3D.onInit);
         addEvent(AxisClass, 'render', VMLAxis3D.onRender);
-
     }
 
     /**
@@ -92,17 +85,18 @@ class VMLAxis3D {
         const axis = this as VMLAxis3D,
             vml = axis.vml;
         if (vml) {
-            let el: (Highcharts.VMLElement|undefined);
+            let el: Highcharts.VMLElement | undefined;
 
-            (['backFrame', 'bottomFrame', 'sideFrame'] as Array<('backFrame'|'bottomFrame'|'sideFrame')>).forEach(
-                function (prop): void {
-                    el = vml[prop];
-                    if (el) {
-                        vml[prop] = el.destroy();
-                    }
-                },
-                this
-            );
+            (
+                ['backFrame', 'bottomFrame', 'sideFrame'] as Array<
+                    'backFrame' | 'bottomFrame' | 'sideFrame'
+                >
+            ).forEach(function (prop): void {
+                el = vml[prop];
+                if (el) {
+                    vml[prop] = el.destroy();
+                }
+            }, this);
         }
     }
 
@@ -144,7 +138,6 @@ class VMLAxis3D {
             });
         }
     }
-
 }
 
 interface VMLAxis3D extends Axis {

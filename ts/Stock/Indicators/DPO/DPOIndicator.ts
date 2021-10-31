@@ -8,26 +8,16 @@
 
 'use strict';
 
-import type {
-    DPOOptions,
-    DPOParamsOptions
-} from './DPOOptions';
+import type { DPOOptions, DPOParamsOptions } from './DPOOptions';
 import type DPOPoint from './DPOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    correctFloat,
-    pick
-} = U;
+const { extend, merge, correctFloat, pick } = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -37,13 +27,14 @@ const {
  */
 function accumulatePoints(
     sum: number,
-    yVal: (Array<number> | Array<Array<number>>),
+    yVal: Array<number> | Array<Array<number>>,
     i: number,
     index: number,
     subtract?: boolean
 ): number {
-    const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any)
+    const price = pick<number | undefined, number>(
+        (yVal[i] as any)[index],
+        yVal[i] as any
     );
 
     if (subtract) {
@@ -86,25 +77,28 @@ class DPOIndicator extends SMAIndicator {
      * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
      */
-    public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * Parameters used in calculation of Detrended Price Oscillator series
-         * points.
-         */
-        params: {
-            index: 0,
+    public static defaultOptions: DPOOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * Period for Detrended Price Oscillator
+             * Parameters used in calculation of Detrended Price Oscillator
+             * series points.
              */
-            period: 21
-        }
-    } as DPOOptions)
+            params: {
+                index: 0,
+                /**
+                 * Period for Detrended Price Oscillator
+                 */
+                period: 21
+            }
+        } as DPOOptions
+    );
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public options: DPOOptions = void 0 as any;
     public data: Array<DPOPoint> = void 0 as any;
@@ -123,13 +117,13 @@ class DPOIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DPOParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
-            index: number = (params.index as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            index: number = params.index as any,
             offset: number = Math.floor(period / 2 + 1),
             range: number = period + offset,
             xVal: Array<number> = series.xData || [],
-            yVal: (Array<number> | Array<Array<number>>) =
+            yVal: Array<number> | Array<Array<number>> =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,
             // 0- date, 1- Detrended Price Oscillator
@@ -162,8 +156,9 @@ class DPOIndicator extends SMAIndicator {
 
             // adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any)
+            price = pick<number | undefined, number>(
+                (yVal[rangeIndex] as any)[index],
+                yVal[rangeIndex] as any
             );
 
             oscillator = price - sum / period;
@@ -185,10 +180,10 @@ class DPOIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *   Prototype Properties
+ *
+ * */
 
 interface DPOIndicator {
     nameBase: string;
@@ -235,4 +230,4 @@ export default DPOIndicator;
  * @apioption series.dpo
  */
 
-''; // to include the above in the js output'
+(''); // to include the above in the js output'

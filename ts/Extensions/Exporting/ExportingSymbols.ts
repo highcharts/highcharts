@@ -44,7 +44,6 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  * */
 
 namespace ExportingSymbols {
-
     /* *
      *
      *  Constants
@@ -64,9 +63,7 @@ namespace ExportingSymbols {
     /**
      * @private
      */
-    export function compose(
-        SVGRendererClass: typeof SVGRenderer
-    ): void {
+    export function compose(SVGRendererClass: typeof SVGRenderer): void {
         if (modifiedClasses.indexOf(SVGRendererClass) === -1) {
             modifiedClasses.push(SVGRendererClass);
 
@@ -108,7 +105,7 @@ namespace ExportingSymbols {
         width: number,
         height: number
     ): SVGPath {
-        const h = (height / 3) - 2;
+        const h = height / 3 - 2;
 
         let path: SVGPath = [];
 
@@ -119,7 +116,6 @@ namespace ExportingSymbols {
         );
         return path;
     }
-
 }
 
 /* *

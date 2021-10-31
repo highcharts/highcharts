@@ -17,12 +17,9 @@
 import type Series from '../../Core/Series/Series';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-const {
-    win,
-    doc
-} = H;
+const { win, doc } = H;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         boostForceChartBoost?: boolean;
     }
@@ -43,10 +40,7 @@ import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
 import U from '../../Core/Utilities.js';
-const {
-    pick
-} = U;
-
+const { pick } = U;
 
 // This should be a const.
 const CHUNK_SIZE = 3000;
@@ -66,7 +60,7 @@ const CHUNK_SIZE = 3000;
 function patientMax(...args: Array<Array<unknown>>): number {
     let r = -Number.MAX_VALUE;
 
-    args.forEach(function (t: Array<unknown>): (boolean|undefined) {
+    args.forEach(function (t: Array<unknown>): boolean | undefined {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
@@ -97,12 +91,10 @@ function patientMax(...args: Array<Array<unknown>>): number {
  */
 function boostEnabled(chart: Chart): boolean {
     return pick(
-        (
-            chart &&
+        chart &&
             chart.options &&
             chart.options.boost &&
-            chart.options.boost.enabled
-        ),
+            chart.options.boost.enabled,
         true
     );
 }
@@ -135,15 +127,16 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
 
     if (chart.series.length > 1) {
         for (let i = 0; i < chart.series.length; i++) {
-
             series = chart.series[i];
 
             // Don't count series with boostThreshold set to 0
             // See #8950
             // Also don't count if the series is hidden.
             // See #9046
-            if (series.options.boostThreshold === 0 ||
-                series.visible === false) {
+            if (
+                series.options.boostThreshold === 0 ||
+                series.visible === false
+            ) {
                 continue;
             }
 
@@ -158,24 +151,23 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
                 ++canBoostCount;
             }
 
-            if (patientMax(
-                series.processedXData,
-                series.options.data as any,
-                // series.xData,
-                series.points
-            ) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
+            if (
+                patientMax(
+                    series.processedXData,
+                    series.options.data as any,
+                    // series.xData,
+                    series.points
+                ) >= (series.options.boostThreshold || Number.MAX_VALUE)
+            ) {
                 ++sboostCount;
             }
         }
     }
 
-    chart.boostForceChartBoost = allowBoostForce && (
-        (
-            canBoostCount === chart.series.length &&
-            sboostCount > 0
-        ) ||
-        sboostCount > 5
-    );
+    chart.boostForceChartBoost =
+        allowBoostForce &&
+        ((canBoostCount === chart.series.length && sboostCount > 0) ||
+            sboostCount > 5);
 
     return chart.boostForceChartBoost;
 }
@@ -194,7 +186,8 @@ function renderIfNotSeriesBoosting(
     series: Series,
     chart?: Chart
 ): void {
-    if (renderer &&
+    if (
+        renderer &&
         series.renderTarget &&
         series.canvas &&
         !(chart || series.chart).isChartSeriesBoosting()
@@ -210,7 +203,8 @@ function allocateIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
     series: Series
 ): void {
-    if (renderer &&
+    if (
+        renderer &&
         series.renderTarget &&
         series.canvas &&
         !series.chart.isChartSeriesBoosting()
@@ -253,7 +247,6 @@ function eachAsync(
 
     if (proceed) {
         if (i < arr.length) {
-
             if (noTimeout) {
                 eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
             } else if (win.requestAnimationFrame) {
@@ -266,7 +259,6 @@ function eachAsync(
                     eachAsync(arr, fn, finalFunc, chunkSize, i);
                 });
             }
-
         } else if (finalFunc) {
             finalFunc();
         }
@@ -285,7 +277,7 @@ function hasWebGLSupport(): boolean {
     let i = 0,
         canvas,
         contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
-        context: (false|WebGLRenderingContext|null) = false;
+        context: false | WebGLRenderingContext | null = false;
 
     if (typeof win.WebGLRenderingContext !== 'undefined') {
         canvas = doc.createElement('canvas');
@@ -322,9 +314,10 @@ function pointDrawHandler(this: Series, proceed: Function): void {
         renderer: Highcharts.BoostGLRenderer;
 
     if (this.chart.options && this.chart.options.boost) {
-        enabled = typeof this.chart.options.boost.enabled === 'undefined' ?
-            true :
-            this.chart.options.boost.enabled;
+        enabled =
+            typeof this.chart.options.boost.enabled === 'undefined'
+                ? true
+                : this.chart.options.boost.enabled;
     }
 
     if (!enabled || !this.isSeriesBoosting) {

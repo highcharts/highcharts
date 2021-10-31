@@ -21,9 +21,7 @@ import type HLCSeries from './HLCSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 
 /* *
@@ -33,7 +31,6 @@ const {
  * */
 
 class HLCPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -57,7 +54,6 @@ class HLCPoint extends ColumnSeries.prototype.pointClass {
     public series: HLCSeries = void 0 as any;
 
     public yBottom?: number;
-
 }
 
 /* *

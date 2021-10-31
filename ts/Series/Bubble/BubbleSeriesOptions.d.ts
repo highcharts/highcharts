@@ -26,8 +26,8 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     displayNegative?: boolean;
     marker?: BubblePointMarkerOptions;
-    minSize?: (number|string);
-    maxSize?: (number|string);
+    minSize?: number | string;
+    maxSize?: number | string;
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
     zMax?: number;
@@ -35,6 +35,6 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     zThreshold?: number;
 }
 
-export type BubbleSizeByValue = ('area'|'width');
+export type BubbleSizeByValue = 'area' | 'width';
 
 export default BubbleSeriesOptions;

@@ -26,10 +26,7 @@ import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
+const { addEvent, pick } = U;
 
 /* *
  *
@@ -37,7 +34,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         focusElement?: SVGElement;
         /** @requires modules/accessibility */
@@ -67,7 +64,6 @@ declare module '../Core/Renderer/SVG/SVGElementLike' {
  * */
 
 namespace FocusBorderComposition {
-
     /* *
      *
      *  Declarations
@@ -104,7 +100,14 @@ namespace FocusBorderComposition {
 
     // Attributes that trigger a focus border update
     const svgElementBorderUpdateTriggers = [
-        'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
+        'x',
+        'y',
+        'transform',
+        'width',
+        'height',
+        'r',
+        'd',
+        'stroke-width'
     ];
 
     /* *
@@ -122,7 +125,6 @@ namespace FocusBorderComposition {
         ChartClass: typeof Chart,
         SVGElementClass: typeof SVGElement
     ): void {
-
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
@@ -135,12 +137,12 @@ namespace FocusBorderComposition {
         if (composedClasses.indexOf(SVGElementClass) === -1) {
             composedClasses.push(SVGElementClass);
 
-            const svgElementProto = SVGElementClass.prototype as SVGElementCompositon;
+            const svgElementProto =
+                SVGElementClass.prototype as SVGElementCompositon;
 
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;
         }
-
     }
 
     /**
@@ -149,13 +151,10 @@ namespace FocusBorderComposition {
      * @private
      * @function Highcharts.Chart#renderFocusBorder
      */
-    function chartRenderFocusBorder(
-        this: ChartComposition
-    ): void {
+    function chartRenderFocusBorder(this: ChartComposition): void {
         const focusElement = this.focusElement,
-            focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
-            ) = this.options.accessibility.keyboardNavigation.focusBorder;
+            focusBorderOptions: Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions =
+                this.options.accessibility.keyboardNavigation.focusBorder;
 
         if (focusElement) {
             focusElement.removeFocusBorder();
@@ -189,22 +188,20 @@ namespace FocusBorderComposition {
         svgElement: SVGElement,
         focusElement?: DOMElementType
     ): void {
-        const focusBorderOptions: (
-                Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
-            ) = this.options.accessibility.keyboardNavigation.focusBorder,
+        const focusBorderOptions: Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions =
+                this.options.accessibility.keyboardNavigation.focusBorder,
             browserFocusElement = focusElement || svgElement.element;
 
         // Set browser focus if possible
-        if (
-            browserFocusElement &&
-            browserFocusElement.focus
-        ) {
+        if (browserFocusElement && browserFocusElement.focus) {
             // If there is no focusin-listener, add one to work around Edge
             // where Narrator is not reading out points despite calling focus().
-            if (!(
-                (browserFocusElement as any).hcEvents &&
-                (browserFocusElement as any).hcEvents.focusin
-            )) {
+            if (
+                !(
+                    (browserFocusElement as any).hcEvents &&
+                    (browserFocusElement as any).hcEvents.focusin
+                )
+            ) {
                 addEvent(browserFocusElement, 'focusin', function (): void {});
             }
 
@@ -290,7 +287,9 @@ namespace FocusBorderComposition {
          *
          * @return {TextAnchorCorrectionObject}
          */
-        function getTextAnchorCorrection(text: SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(
+            text: SVGElement
+        ): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 
@@ -311,19 +310,20 @@ namespace FocusBorderComposition {
         const isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
             const isRotated = !!this.rotation;
-            const correction = !isLabel ? getTextAnchorCorrection(this) :
-                {
-                    x: isRotated ? 1 : 0,
-                    y: 0
-                };
+            const correction = !isLabel
+                ? getTextAnchorCorrection(this)
+                : {
+                      x: isRotated ? 1 : 0,
+                      y: 0
+                  };
             const attrX = +this.attr('x');
             const attrY = +this.attr('y');
 
             if (!isNaN(attrX)) {
-                borderPosX = attrX - (bb.width * correction.x) - pad;
+                borderPosX = attrX - bb.width * correction.x - pad;
             }
             if (!isNaN(attrY)) {
-                borderPosY = attrY - (bb.height * correction.y) - pad;
+                borderPosY = attrY - bb.height * correction.y - pad;
             }
 
             if (isLabel && isRotated) {
@@ -331,21 +331,22 @@ namespace FocusBorderComposition {
                 borderWidth = borderHeight;
                 borderHeight = temp;
                 if (!isNaN(attrX)) {
-                    borderPosX = attrX - (bb.height * correction.x) - pad;
+                    borderPosX = attrX - bb.height * correction.x - pad;
                 }
                 if (!isNaN(attrY)) {
-                    borderPosY = attrY - (bb.width * correction.y) - pad;
+                    borderPosY = attrY - bb.width * correction.y - pad;
                 }
             }
         }
 
-        this.focusBorder = this.renderer.rect(
-            borderPosX,
-            borderPosY,
-            borderWidth,
-            borderHeight,
-            parseInt((attribs && attribs.r || 0).toString(), 10)
-        )
+        this.focusBorder = this.renderer
+            .rect(
+                borderPosX,
+                borderPosY,
+                borderWidth,
+                borderHeight,
+                parseInt(((attribs && attribs.r) || 0).toString(), 10)
+            )
             .addClass('highcharts-focus-border')
             .attr({
                 zIndex: 99
@@ -418,9 +419,7 @@ namespace FocusBorderComposition {
      * @private
      * @function Highcharts.SVGElement#removeFocusBorder
      */
-    function svgElementRemoveFocusBorder(
-        this: SVGElementCompositon
-    ): void {
+    function svgElementRemoveFocusBorder(this: SVGElementCompositon): void {
         svgElementRemoveUpdateFocusBorderHooks(this);
         svgElementRemoveDestroyFocusBorderHook(this);
 
@@ -454,7 +453,6 @@ namespace FocusBorderComposition {
 
         delete el.focusBorderUpdateHooks;
     }
-
 }
 
 /* *

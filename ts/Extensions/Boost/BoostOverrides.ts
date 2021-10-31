@@ -31,16 +31,9 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error,
-    isArray,
-    isNumber,
-    pick,
-    wrap
-} = U;
+const { addEvent, error, isArray, isNumber, pick, wrap } = U;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         /** @requires modules/boost */
         getBoostClipRect(target: Highcharts.BoostTargetObject): BBoxObject;
@@ -69,7 +62,7 @@ declare module '../../Core/Series/SeriesLike' {
         /** @requires modules/boost */
         hasExtremes(checkX?: boolean): boolean;
         /** @requires modules/boost */
-        getPoint(boostPoint: (Record<string, number>|Point)): Point;
+        getPoint(boostPoint: Record<string, number> | Point): Point;
     }
 }
 
@@ -122,8 +115,8 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
             50
         );
 
-    isSeriesBoosting = threshold <= this.series.length ||
-        shouldForceChartSeriesBoosting(this);
+    isSeriesBoosting =
+        threshold <= this.series.length || shouldForceChartSeriesBoosting(this);
 
     return isSeriesBoosting;
 };
@@ -154,7 +147,8 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
         const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
         if (verticalAxes.length <= 1) {
             clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+            clipBox.height =
+                verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
         } else {
             clipBox.height = this.plotHeight;
         }
@@ -176,25 +170,27 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (
-    boostPoint: (Record<string, number>|Point)
+    boostPoint: Record<string, number> | Point
 ): Point {
     let point: Point = boostPoint as any,
-        xData = (
-            this.xData || (this.options as any).xData || this.processedXData ||
-            false
-        );
+        xData =
+            this.xData ||
+            (this.options as any).xData ||
+            this.processedXData ||
+            false;
 
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
-        point = (new this.pointClass()).init( // eslint-disable-line new-cap
+        // eslint-disable-next-line new-cap
+        point = new this.pointClass().init(
             this,
             (this.options.data as any)[boostPoint.i as any],
             xData ? xData[boostPoint.i as any] : void 0
         );
 
         point.category = pick(
-            this.xAxis.categories ?
-                (this.xAxis.categories as any)[point.x as any] :
-                point.x, // @todo simplify
+            this.xAxis.categories
+                ? (this.xAxis.categories as any)[point.x as any]
+                : point.x, // @todo simplify
             point.x
         );
 
@@ -212,69 +208,69 @@ Series.prototype.getPoint = function (
 /* eslint-disable no-invalid-this */
 
 // Return a point instance from the k-d-tree
-wrap(Series.prototype, 'searchPoint', function (
-    this: Series,
-    proceed: Function
-): (Point|undefined) {
-    return this.getPoint(
-        proceed.apply(this, [].slice.call(arguments, 1))
-    );
-});
+wrap(
+    Series.prototype,
+    'searchPoint',
+    function (this: Series, proceed: Function): Point | undefined {
+        return this.getPoint(proceed.apply(this, [].slice.call(arguments, 1)));
+    }
+);
 
 // For inverted series, we need to swap X-Y values before running base methods
-wrap(Point.prototype, 'haloPath', function (
-    this: Point,
-    proceed: Function
-): SVGPath {
-    let halo,
-        point = this,
-        series = point.series,
-        chart = series.chart,
-        plotX: number = point.plotX as any,
-        plotY: number = point.plotY as any,
-        inverted = chart.inverted;
+wrap(
+    Point.prototype,
+    'haloPath',
+    function (this: Point, proceed: Function): SVGPath {
+        let halo,
+            point = this,
+            series = point.series,
+            chart = series.chart,
+            plotX: number = point.plotX as any,
+            plotY: number = point.plotY as any,
+            inverted = chart.inverted;
 
-    if (series.isSeriesBoosting && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
+        if (series.isSeriesBoosting && inverted) {
+            point.plotX = series.yAxis.len - plotY;
+            point.plotY = series.xAxis.len - plotX;
+        }
+
+        halo = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        if (series.isSeriesBoosting && inverted) {
+            point.plotX = plotX;
+            point.plotY = plotY;
+        }
+
+        return halo;
     }
+);
 
-    halo = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+wrap(
+    Series.prototype,
+    'markerAttribs',
+    function (this: Series, proceed: Function, point: Point): SVGAttributes {
+        let attribs: SVGAttributes,
+            series = this,
+            chart = series.chart,
+            plotX: number = point.plotX as any,
+            plotY: number = point.plotY as any,
+            inverted = chart.inverted;
 
-    if (series.isSeriesBoosting && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
+        if (series.isSeriesBoosting && inverted) {
+            point.plotX = series.yAxis.len - plotY;
+            point.plotY = series.xAxis.len - plotX;
+        }
+
+        attribs = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        if (series.isSeriesBoosting && inverted) {
+            point.plotX = plotX;
+            point.plotY = plotY;
+        }
+
+        return attribs;
     }
-
-    return halo;
-});
-
-wrap(Series.prototype, 'markerAttribs', function (
-    this: Series,
-    proceed: Function,
-    point: Point
-): SVGAttributes {
-    let attribs: SVGAttributes,
-        series = this,
-        chart = series.chart,
-        plotX: number = point.plotX as any,
-        plotY: number = point.plotY as any,
-        inverted = chart.inverted;
-
-    if (series.isSeriesBoosting && inverted) {
-        point.plotX = series.yAxis.len - plotY;
-        point.plotY = series.xAxis.len - plotX;
-    }
-
-    attribs = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    if (series.isSeriesBoosting && inverted) {
-        point.plotX = plotX;
-        point.plotY = plotY;
-    }
-
-    return attribs;
-});
+);
 
 /*
  * Extend series.destroy to also remove the fake k-d-tree points (#5137).
@@ -307,15 +303,23 @@ addEvent(Series, 'destroy', function (): void {
  * If we use this in the core, we can add the hook
  * to hasExtremes to the methods directly.
  */
-wrap(Series.prototype, 'getExtremes', function (
-    this: Series,
-    proceed: Function
-): DataExtremesObject {
-    if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
-        return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+wrap(
+    Series.prototype,
+    'getExtremes',
+    function (this: Series, proceed: Function): DataExtremesObject {
+        if (
+            !this.isSeriesBoosting ||
+            !this.hasExtremes ||
+            !this.hasExtremes()
+        ) {
+            return proceed.apply(
+                this,
+                Array.prototype.slice.call(arguments, 1)
+            );
+        }
+        return {};
     }
-    return {};
-});
+);
 
 /*
  * Override a bunch of methods the same way. If the number of points is
@@ -324,130 +328,126 @@ wrap(Series.prototype, 'getExtremes', function (
  *
  * Note that we're not overriding any of these for heatmaps.
  */
-[
-    'translate',
-    'generatePoints',
-    'drawTracker',
-    'drawPoints',
-    'render'
-].forEach(function (method: string): void {
-    /**
-     * @private
-     */
-    function branch(
-        this: Series,
-        proceed: Function
-    ): void {
-        const letItPass = this.options.stacking &&
-            (method === 'translate' || method === 'generatePoints');
+['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'].forEach(
+    function (method: string): void {
+        /**
+         * @private
+         */
+        function branch(this: Series, proceed: Function): void {
+            const letItPass =
+                this.options.stacking &&
+                (method === 'translate' || method === 'generatePoints');
 
-        if (
-            !this.isSeriesBoosting ||
-            letItPass ||
-            !boostEnabled(this.chart) ||
-            this.type === 'heatmap' ||
-            this.type === 'treemap' ||
-            !boostableMap[this.type] ||
-            this.options.boostThreshold === 0
-        ) {
+            if (
+                !this.isSeriesBoosting ||
+                letItPass ||
+                !boostEnabled(this.chart) ||
+                this.type === 'heatmap' ||
+                this.type === 'treemap' ||
+                !boostableMap[this.type] ||
+                this.options.boostThreshold === 0
+            ) {
+                proceed.call(this);
 
-            proceed.call(this);
+                // If a canvas version of the method exists, like
+                // renderCanvas(), run
+            } else if ((this as any)[method + 'Canvas']) {
+                (this as any)[method + 'Canvas']();
+            }
+        }
 
-        // If a canvas version of the method exists, like renderCanvas(), run
-        } else if ((this as any)[method + 'Canvas']) {
-            (this as any)[method + 'Canvas']();
+        wrap(Series.prototype, method, branch);
+
+        // A special case for some types - their translate method is already
+        // wrapped
+        if (method === 'translate') {
+            [
+                'column',
+                'bar',
+                'arearange',
+                'columnrange',
+                'heatmap',
+                'treemap'
+            ].forEach(function (type: string): void {
+                if (seriesTypes[type]) {
+                    wrap(seriesTypes[type].prototype, method, branch);
+                }
+            });
         }
     }
-
-    wrap(Series.prototype, method, branch);
-
-    // A special case for some types - their translate method is already wrapped
-    if (method === 'translate') {
-        [
-            'column',
-            'bar',
-            'arearange',
-            'columnrange',
-            'heatmap',
-            'treemap'
-        ].forEach(function (type: string): void {
-            if (seriesTypes[type]) {
-                wrap(seriesTypes[type].prototype, method, branch);
-            }
-        });
-    }
-});
+);
 
 // If the series is a heatmap or treemap, or if the series is not boosting
 // do the default behaviour. Otherwise, process if the series has no extremes.
-wrap(Series.prototype, 'processData', function (
-    this: Series,
-    proceed: Function
-): void {
-    const series = this;
+wrap(
+    Series.prototype,
+    'processData',
+    function (this: Series, proceed: Function): void {
+        const series = this;
 
-    let dataToMeasure = this.options.data;
+        let dataToMeasure = this.options.data;
 
-    /**
-     * Used twice in this function, first on this.options.data, the second
-     * time it runs the check again after processedXData is built.
-     * If the data is going to be grouped, the series shouldn't be boosted.
-     * @private
-     */
-    function getSeriesBoosting(
-        data?: Array<(PointOptions|PointShortOptions)>
-    ): boolean {
-        // Check if will be grouped.
-        if (series.forceCrop) {
-            return false;
-        }
-        return series.chart.isChartSeriesBoosting() || (
-            (data ? data.length : 0) >=
-            (series.options.boostThreshold || Number.MAX_VALUE)
-        );
-    }
-
-    if (boostEnabled(this.chart) && boostableMap[this.type]) {
-
-        // If there are no extremes given in the options, we also need to
-        // process the data to read the data extremes. If this is a heatmap, do
-        // default behaviour.
-        if (
-            !getSeriesBoosting(dataToMeasure) || // First pass with options.data
-            this.type === 'heatmap' ||
-            this.type === 'treemap' ||
-            this.options.stacking || // processedYData for the stack (#7481)
-            !this.hasExtremes ||
-            !this.hasExtremes(true)
-        ) {
-            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-            dataToMeasure = this.processedXData;
-        }
-
-        // Set the isBoosting flag, second pass with processedXData to see if we
-        // have zoomed.
-        this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
-
-        // Enter or exit boost mode
-        if (this.isSeriesBoosting) {
-            // Force turbo-mode:
-            let firstPoint;
-            if (this.options.data && this.options.data.length) {
-                firstPoint = this.getFirstValidPoint(this.options.data);
-                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                    error(12, false, this.chart);
-                }
+        /**
+         * Used twice in this function, first on this.options.data, the second
+         * time it runs the check again after processedXData is built.
+         * If the data is going to be grouped, the series shouldn't be boosted.
+         * @private
+         */
+        function getSeriesBoosting(
+            data?: Array<PointOptions | PointShortOptions>
+        ): boolean {
+            // Check if will be grouped.
+            if (series.forceCrop) {
+                return false;
             }
-            this.enterBoost();
-        } else if (this.exitBoost) {
-            this.exitBoost();
+            return (
+                series.chart.isChartSeriesBoosting() ||
+                (data ? data.length : 0) >=
+                    (series.options.boostThreshold || Number.MAX_VALUE)
+            );
         }
 
-    // The series type is not boostable
-    } else {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        if (boostEnabled(this.chart) && boostableMap[this.type]) {
+            // If there are no extremes given in the options, we also need to
+            // process the data to read the data extremes. If this is a heatmap,
+            // do default behaviour.
+            if (
+                !getSeriesBoosting(dataToMeasure) || // First pass with options.data
+                this.type === 'heatmap' ||
+                this.type === 'treemap' ||
+                this.options.stacking || // processedYData for the stack (#7481)
+                !this.hasExtremes ||
+                !this.hasExtremes(true)
+            ) {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                dataToMeasure = this.processedXData;
+            }
+
+            // Set the isBoosting flag, second pass with processedXData to see
+            // if we have zoomed.
+            this.isSeriesBoosting = getSeriesBoosting(dataToMeasure);
+
+            // Enter or exit boost mode
+            if (this.isSeriesBoosting) {
+                // Force turbo-mode:
+                let firstPoint;
+                if (this.options.data && this.options.data.length) {
+                    firstPoint = this.getFirstValidPoint(this.options.data);
+                    if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                        error(12, false, this.chart);
+                    }
+                }
+                this.enterBoost();
+            } else if (this.exitBoost) {
+                this.exitBoost();
+            }
+
+            // The series type is not boostable
+        } else {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
     }
-});
+);
 
 addEvent(Series, 'hide', function (): void {
     if (this.canvas && this.renderTarget) {
@@ -456,7 +456,6 @@ addEvent(Series, 'hide', function (): void {
         }
         this.boostClear();
     }
-
 });
 
 /**
@@ -465,7 +464,6 @@ addEvent(Series, 'hide', function (): void {
  * @function Highcharts.Series#enterBoost
  */
 Series.prototype.enterBoost = function (): void {
-
     this.alteredByBoost = [];
 
     // Save the original values, including whether it was an own property or
@@ -479,7 +477,8 @@ Series.prototype.enterBoost = function (): void {
             val: (this as any)[prop],
             own: Object.hasOwnProperty.call(this, prop)
         });
-    }, this);
+    },
+    this);
 
     this.allowDG = false;
     this.directTouch = false;
@@ -512,13 +511,13 @@ Series.prototype.exitBoost = function (): void {
             // Revert to prototype
             delete (this as any)[setting.prop];
         }
-    }, this);
+    },
+    this);
 
     // Clear previous run
     if (this.boostClear) {
         this.boostClear();
     }
-
 };
 
 /**
@@ -531,23 +530,21 @@ Series.prototype.exitBoost = function (): void {
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
     const options = this.options,
-        data: Array<(PointOptions|PointShortOptions)> = options.data as any,
+        data: Array<PointOptions | PointShortOptions> = options.data as any,
         xAxis = this.xAxis && this.xAxis.options,
         yAxis = this.yAxis && this.yAxis.options,
         colorAxis = this.colorAxis && this.colorAxis.options;
 
-    return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
-            // Defined yAxis extremes
-            isNumber(yAxis.min) &&
-            isNumber(yAxis.max) &&
-            // Defined (and required) xAxis extremes
-            (!checkX ||
-                (isNumber(xAxis.min) && isNumber(xAxis.max))
-            ) &&
-            // Defined (e.g. heatmap) colorAxis extremes
-            (!colorAxis ||
-                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-            );
+    return (
+        data.length > (options.boostThreshold || Number.MAX_VALUE) &&
+        // Defined yAxis extremes
+        isNumber(yAxis.min) &&
+        isNumber(yAxis.max) &&
+        // Defined (and required) xAxis extremes
+        (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max))) &&
+        // Defined (e.g. heatmap) colorAxis extremes
+        (!colorAxis || (isNumber(colorAxis.min) && isNumber(colorAxis.max)))
+    );
 };
 
 /**
@@ -578,7 +575,9 @@ Series.prototype.destroyGraphics = function (): void {
     });
 
     if ((this as any).getZonesGraphs) {
-        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        const props: string[][] = (this as any).getZonesGraphs([
+            ['graph', 'highcharts-graph']
+        ]);
         props.forEach((prop): void => {
             const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {
@@ -589,12 +588,10 @@ Series.prototype.destroyGraphics = function (): void {
 };
 
 // Set default options
-boostable.forEach(
-    function (type: string): void {
-        if (plotOptions[type]) {
-            (plotOptions[type] as any).boostThreshold = 5000;
-            (plotOptions[type] as any).boostData = [];
-            seriesTypes[type].prototype.fillOpacity = true;
-        }
+boostable.forEach(function (type: string): void {
+    if (plotOptions[type]) {
+        (plotOptions[type] as any).boostThreshold = 5000;
+        (plotOptions[type] as any).boostData = [];
+        seriesTypes[type].prototype.fillOpacity = true;
     }
-);
+});

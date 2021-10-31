@@ -12,7 +12,6 @@
 
 'use strict';
 
-
 /* *
  *
  *  Imports
@@ -35,7 +34,6 @@ const { describeSeries } = SeriesDescriber;
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 import Tooltip from '../../../Core/Tooltip.js';
 
-
 /* *
  *
  *  Class
@@ -50,8 +48,6 @@ import Tooltip from '../../../Core/Tooltip.js';
  * @name Highcharts.SeriesComponent
  */
 class SeriesComponent extends AccessibilityComponent {
-
-
     /* *
      *
      *  Static Functions
@@ -73,7 +69,6 @@ class SeriesComponent extends AccessibilityComponent {
         SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
 
-
     /* *
      *
      *  Properties
@@ -82,7 +77,6 @@ class SeriesComponent extends AccessibilityComponent {
 
     public keyboardNavigation?: SeriesKeyboardNavigation;
     public newDataAnnouncer?: NewDataAnnouncer;
-
 
     /* *
      *
@@ -98,14 +92,14 @@ class SeriesComponent extends AccessibilityComponent {
         (this.newDataAnnouncer as any).init();
 
         this.keyboardNavigation = new SeriesKeyboardNavigation(
-            this.chart, this.keyCodes
+            this.chart,
+            this.keyCodes
         );
         (this.keyboardNavigation as any).init();
 
         this.hideTooltipFromATWhenShown();
         this.hideSeriesLabelsFromATWhenShown();
     }
-
 
     /**
      * @private
@@ -124,7 +118,6 @@ class SeriesComponent extends AccessibilityComponent {
         });
     }
 
-
     /**
      * @private
      */
@@ -142,7 +135,6 @@ class SeriesComponent extends AccessibilityComponent {
         );
     }
 
-
     /**
      * Called on chart render. It is necessary to do this for render in case
      * markers change on zoom/pixel density.
@@ -153,8 +145,9 @@ class SeriesComponent extends AccessibilityComponent {
         chart.series.forEach(function (
             series: Accessibility.SeriesComposition
         ): void {
-            const shouldDescribeSeries = (series.options.accessibility &&
-                series.options.accessibility.enabled) !== false &&
+            const shouldDescribeSeries =
+                (series.options.accessibility &&
+                    series.options.accessibility.enabled) !== false &&
                 series.visible;
 
             if (shouldDescribeSeries) {
@@ -165,7 +158,6 @@ class SeriesComponent extends AccessibilityComponent {
         });
     }
 
-
     /**
      * Get keyboard navigation handler for this component.
      * @return {Highcharts.KeyboardNavigationHandler}
@@ -174,7 +166,6 @@ class SeriesComponent extends AccessibilityComponent {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
     }
 
-
     /**
      * Remove traces
      */
@@ -182,9 +173,7 @@ class SeriesComponent extends AccessibilityComponent {
         (this as any).newDataAnnouncer.destroy();
         (this as any).keyboardNavigation.destroy();
     }
-
 }
-
 
 /* *
  *
@@ -195,7 +184,6 @@ class SeriesComponent extends AccessibilityComponent {
 interface SeriesComponent {
     chart: SeriesKeyboardNavigation.ChartComposition;
 }
-
 
 /* *
  *

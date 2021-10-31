@@ -21,21 +21,13 @@ import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
-        column: {
-            prototype: colProto
-        },
+        area: { prototype: areaProto },
+        column: { prototype: colProto },
         dumbbell: DumbbellSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    pick,
-    merge,
-    extend
-} = U;
+const { pick, merge, extend } = U;
 
 /* *
  *
@@ -54,7 +46,6 @@ const {
  *
  */
 class LollipopSeries extends DumbbellSeries {
-
     /* *
      *
      *  Static properties
@@ -104,9 +95,11 @@ class LollipopSeries extends DumbbellSeries {
                 }
             },
             tooltip: {
-                pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
+                pointFormat:
+                    '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
             }
-        } as LollipopSeriesOptions);
+        } as LollipopSeriesOptions
+    );
 
     /* *
      *
@@ -121,7 +114,6 @@ class LollipopSeries extends DumbbellSeries {
     public toYData(point: LollipopPoint): Array<number> {
         return [pick(point.y, point.low)];
     }
-
 }
 
 /* *
@@ -251,10 +243,10 @@ export default LollipopSeries;
  */
 
 /**
-* The y value of the point.
-*
-* @type      {number|null}
-* @product   highcharts highstock
-* @apioption series.line.data.y
-*/
-''; // adds doclets above to transpiled file
+ * The y value of the point.
+ *
+ * @type      {number|null}
+ * @product   highcharts highstock
+ * @apioption series.line.data.y
+ */
+(''); // adds doclets above to transpiled file

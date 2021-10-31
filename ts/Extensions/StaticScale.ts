@@ -21,12 +21,7 @@ import type Series from '../Core/Series/Series';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    isNumber,
-    pick
-} = U;
+const { addEvent, defined, isNumber, pick } = U;
 
 /* *
  *
@@ -40,7 +35,7 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         redrawTrigger?: string;
         initiatedScale?: boolean;
@@ -73,13 +68,9 @@ addEvent(Axis, 'afterSetOptions', function (): void {
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&
-        (
-            !(chartOptions as any).height ||
-            (
-                (chartOptions as any).scrollablePlotArea &&
-                (chartOptions as any).scrollablePlotArea.minHeight
-            )
-        )
+        (!(chartOptions as any).height ||
+            ((chartOptions as any).scrollablePlotArea &&
+                (chartOptions as any).scrollablePlotArea.minHeight))
     ) {
         this.staticScale = this.options.staticScale;
     }
@@ -90,18 +81,17 @@ Chart.prototype.adjustHeight = function (): void {
         (this.axes || []).forEach(function (axis): void {
             let chart = axis.chart,
                 animate =
-                    !!chart.initiatedScale &&
-                    (chart.options as any).animation,
+                    !!chart.initiatedScale && (chart.options as any).animation,
                 staticScale = axis.options.staticScale,
                 height,
                 diff;
 
             if (axis.staticScale && defined(axis.min)) {
-                height = pick(
-                    axis.brokenAxis && axis.brokenAxis.unitLength,
-                    (axis.max as any) + axis.tickInterval - axis.min
-                ) * (staticScale as any);
-
+                height =
+                    pick(
+                        axis.brokenAxis && axis.brokenAxis.unitLength,
+                        (axis.max as any) + axis.tickInterval - axis.min
+                    ) * (staticScale as any);
 
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale as any);
@@ -117,19 +107,23 @@ Chart.prototype.adjustHeight = function (): void {
                 // Make sure clip rects have the right height before initial
                 // animation.
                 axis.series.forEach(function (series: Series): void {
-                    const clipRect = series.sharedClipKey &&
+                    const clipRect =
+                        series.sharedClipKey &&
                         chart.sharedClips[series.sharedClipKey];
 
                     if (clipRect) {
-                        clipRect.attr(chart.inverted ? {
-                            width: chart.plotHeight
-                        } : {
-                            height: chart.plotHeight
-                        });
+                        clipRect.attr(
+                            chart.inverted
+                                ? {
+                                      width: chart.plotHeight
+                                  }
+                                : {
+                                      height: chart.plotHeight
+                                  }
+                        );
                     }
                 });
             }
-
         });
         this.initiatedScale = true;
     }

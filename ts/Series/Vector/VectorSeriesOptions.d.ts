@@ -26,7 +26,7 @@ import type VectorSeries from './VectorSeries';
  *
  * */
 
-export type VectorRotationOriginValue = ('start'|'center'|'end');
+export type VectorRotationOriginValue = 'start' | 'center' | 'end';
 
 export interface VectorSeriesOptions extends ScatterSeriesOptions {
     rotationOrigin?: VectorRotationOriginValue;

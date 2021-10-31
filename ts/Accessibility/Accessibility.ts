@@ -32,12 +32,7 @@ const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge
-} = U;
+const { addEvent, extend, fireEvent, merge } = U;
 
 import A11yI18n from './A11yI18n.js';
 import ContainerComponent from './Components/ContainerComponent.js';
@@ -93,20 +88,15 @@ declare module '../Core/Chart/ChartLike' {
  * Chart object
  */
 class Accessibility {
-
-
     /* *
      *
      *  Constructor
      *
      * */
 
-    constructor(
-        chart: Chart
-    ) {
+    constructor(chart: Chart) {
         this.init(chart);
     }
-
 
     /* *
      *
@@ -120,7 +110,6 @@ class Accessibility {
     public proxyProvider: ProxyProvider = void 0 as any;
     public zombie?: boolean; // Zombie object on old browsers
 
-
     /* *
      *
      *  Functions
@@ -129,16 +118,13 @@ class Accessibility {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Initialize the accessibility class
      * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
      */
-    public init(
-        chart: Chart
-    ): void {
+    public init(chart: Chart): void {
         this.chart = chart as Accessibility.ChartComposition;
 
         // Abort on old browsers
@@ -156,11 +142,11 @@ class Accessibility {
         this.proxyProvider = new ProxyProvider(this.chart);
         this.initComponents();
         this.keyboardNavigation = new (KeyboardNavigation as any)(
-            chart, this.components
+            chart,
+            this.components
         );
         this.update();
     }
-
 
     /**
      * @private
@@ -185,12 +171,13 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
     }
-
 
     /**
      * Get order to update components in.
@@ -205,14 +192,14 @@ class Accessibility {
             return Object.keys(this.components);
         }
 
-        const componentsExceptSeries = Object.keys(this.components)
-            .filter((c): boolean => c !== 'series');
+        const componentsExceptSeries = Object.keys(this.components).filter(
+            (c): boolean => c !== 'series'
+        );
 
         // Update series first, so that other components can read accessibility
         // info on points.
         return ['series'].concat(componentsExceptSeries);
     }
-
 
     /**
      * Update all components.
@@ -233,7 +220,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -257,7 +246,6 @@ class Accessibility {
             accessibility: this
         });
     }
-
 
     /**
      * Destroy all elements.
@@ -293,7 +281,6 @@ class Accessibility {
         }
     }
 
-
     /**
      * Return a list of the types of series we have in the chart.
      * @private
@@ -305,7 +292,6 @@ class Accessibility {
         });
         return Object.keys(types);
     }
-
 }
 
 /* *
@@ -315,7 +301,6 @@ class Accessibility {
  * */
 
 namespace Accessibility {
-
     /* *
      *
      *  Declarations
@@ -341,7 +326,7 @@ namespace Accessibility {
     export declare class PointComposition extends Point {
         accessibility?: PointStateObject;
         series: SeriesComposition;
-        value?: (number|null);
+        value?: number | null;
     }
 
     export interface PointStateObject {
@@ -377,9 +362,7 @@ namespace Accessibility {
      * Destroy with chart.
      * @private
      */
-    function chartOnDestroy(
-        this: ChartComposition
-    ): void {
+    function chartOnDestroy(this: ChartComposition): void {
         if (this.accessibility) {
             this.accessibility.destroy();
         }
@@ -389,9 +372,7 @@ namespace Accessibility {
      * Handle updates to the module and send render updates to components.
      * @private
      */
-    function chartOnRender(
-        this: ChartComposition
-    ): void {
+    function chartOnRender(this: ChartComposition): void {
         // Update/destroy
         if (this.a11yDirty && this.renderTo) {
             delete this.a11yDirty;
@@ -441,9 +422,7 @@ namespace Accessibility {
     /**
      * @private
      */
-    function chartUpdateA11yEnabled(
-        this: ChartComposition
-    ): void {
+    function chartUpdateA11yEnabled(this: ChartComposition): void {
         let a11y = this.accessibility;
         const accessibilityOptions = this.options.accessibility;
 
@@ -515,7 +494,8 @@ namespace Accessibility {
                     event,
                     function (): void {
                         this.a11yDirty = true;
-                    });
+                    }
+                );
             });
 
             // Direct updates (events happen after render)
@@ -565,14 +545,11 @@ namespace Accessibility {
      * Mark dirty for update.
      * @private
      */
-    function pointOnUpdate(
-        this: PointComposition
-    ): void {
+    function pointOnUpdate(this: PointComposition): void {
         if (this.series.chart.accessibility) {
             this.series.chart.a11yDirty = true;
         }
     }
-
 }
 
 /* *
@@ -582,17 +559,12 @@ namespace Accessibility {
  * */
 
 // Add default options
-merge(
-    true,
-    defaultOptions,
-    defaultOptionsA11Y,
-    {
-        accessibility: {
-            highContrastTheme: highContrastTheme
-        },
-        lang: defaultLangOptions
-    }
-);
+merge(true, defaultOptions, defaultOptionsA11Y, {
+    accessibility: {
+        highContrastTheme: highContrastTheme
+    },
+    lang: defaultLangOptions
+});
 
 /* *
  *

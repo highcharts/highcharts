@@ -10,21 +10,19 @@
 
 'use strict';
 
-import type {
-    GeoJSONGeometryMultiPoint
-} from 'GeoJSON';
-import type {
-    LonLatArray
-} from './MapViewOptions';
+import type { GeoJSONGeometryMultiPoint } from 'GeoJSON';
+import type { LonLatArray } from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
-import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
+import type {
+    ProjectionOptions,
+    ProjectionRotationOption
+} from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
 const { erase } = U;
 
-
-const deg2rad = Math.PI * 2 / 360;
+const deg2rad = (Math.PI * 2) / 360;
 // Safe padding on either side of the antimeridian to avoid points being
 // projected to the wrong side of the plane
 const floatCorrection = 0.000001;
@@ -44,7 +42,6 @@ const wrapLon = (lon: number): number => {
 };
 
 export default class Projection {
-
     public options: ProjectionOptions;
     // Whether the chart has points, lines or polygons given as coordinates
     // with positive up, as opposed to paths in the SVG plane with positive
@@ -53,16 +50,13 @@ export default class Projection {
     // Whether the chart has true projection as opposed to pre-projected geojson
     // as in the legacy map collection.
     public hasGeoProjection: boolean = false;
-    public rotator: Projector|undefined;
-    public def: ProjectionDefinition|undefined;
+    public rotator: Projector | undefined;
+    public def: ProjectionDefinition | undefined;
 
     public static registry = registry;
 
     // Add a projection definition to the registry, accessible by its `name`.
-    public static add(
-        name: string,
-        definition: ProjectionDefinition
-    ): void {
+    public static add(name: string, definition: ProjectionDefinition): void {
         Projection.registry[name] = definition;
     }
 
@@ -81,7 +75,8 @@ export default class Projection {
         const deltaLat = lat2 - lat1;
         const deltaLng = lon2 - lon1;
 
-        const calcA = sin(deltaLat / 2) * sin(deltaLat / 2) +
+        const calcA =
+            sin(deltaLat / 2) * sin(deltaLat / 2) +
             cos(lat1) * cos(lat2) * sin(deltaLng / 2) * sin(deltaLng / 2);
         const calcB = 2 * atan2(sqrt(calcA), sqrt(1 - calcA));
 
@@ -113,7 +108,6 @@ export default class Projection {
                 const lon3 = atan2(y, x);
                 lineString.push([lon3 / deg2rad, lat3 / deg2rad]);
             }
-
         }
 
         if (inclusive) {
@@ -123,12 +117,9 @@ export default class Projection {
         return lineString;
     }
 
-    public static insertGreatCircles(
-        poly: LonLatArray[]
-    ): void {
+    public static insertGreatCircles(poly: LonLatArray[]): void {
         let i = poly.length - 1;
         while (i--) {
-
             // Distance in degrees, either in lon or lat. Avoid heavy
             // calculation of true distance.
             const roughDistance = Math.max(
@@ -149,11 +140,8 @@ export default class Projection {
 
     public static toString(
         options?: DeepPartial<ProjectionOptions>
-    ): string|undefined {
-        const {
-            name,
-            rotation
-        } = options || {};
+    ): string | undefined {
+        const { name, rotation } = options || {};
 
         return [name, rotation && rotation.join(',')].join(';');
     }
@@ -192,7 +180,9 @@ export default class Projection {
     /*
      * Take the rotation options and return the appropriate projection functions
      */
-    public getRotator(rotation: ProjectionRotationOption): Projector|undefined {
+    public getRotator(
+        rotation: ProjectionRotationOption
+    ): Projector | undefined {
         const deltaLambda = rotation[0] * deg2rad,
             deltaPhi = (rotation[1] || 0) * deg2rad,
             deltaGamma = (rotation[2] || 0) * deg2rad;
@@ -241,18 +231,16 @@ export default class Projection {
                     k = sinLat * cosDeltaGamma - y * sinDeltaGamma;
 
                 return [
-                    (
-                        Math.atan2(
-                            y * cosDeltaGamma + sinLat * sinDeltaGamma,
-                            x * cosDeltaPhi + k * sinDeltaPhi
-                        ) - deltaLambda
-                    ) / deg2rad,
+                    (Math.atan2(
+                        y * cosDeltaGamma + sinLat * sinDeltaGamma,
+                        x * cosDeltaPhi + k * sinDeltaPhi
+                    ) -
+                        deltaLambda) /
+                        deg2rad,
                     Math.asin(k * cosDeltaPhi - x * sinDeltaPhi) / deg2rad
                 ];
-
             }
         };
-
     }
 
     // Project a lonlat coordinate position to xy. Dynamically overridden when
@@ -277,7 +265,7 @@ export default class Projection {
         const intersections: {
             i: number;
             lat: number;
-            direction: (-1|1);
+            direction: -1 | 1;
             previousLonLat: LonLatArray;
             lonLat: LonLatArray;
         }[] = [];
@@ -301,13 +289,14 @@ export default class Projection {
                 (lon1 < -90 || lon1 > 90) &&
                 (lon2 < -90 || lon2 > 90) &&
                 // ... and on either side of the plane
-                (lon1 > 0) !== (lon2 > 0)
+                lon1 > 0 !== lon2 > 0
             ) {
-
                 // Interpolate to the intersection latitude
-                const fraction = (antimeridian - previousLonLat[0]) /
+                const fraction =
+                    (antimeridian - previousLonLat[0]) /
                     (lonLat[0] - previousLonLat[0]);
-                const lat = previousLonLat[1] +
+                const lat =
+                    previousLonLat[1] +
                     fraction * (lonLat[1] - previousLonLat[1]);
 
                 intersections.push({
@@ -323,18 +312,19 @@ export default class Projection {
         let polarIntersection;
         if (intersections.length) {
             if (isPolygon) {
-
                 // Simplified use of the even-odd rule, if there is an odd
                 // amount of intersections between the polygon and the
                 // antimeridian, the pole is inside the polygon. Applies
                 // primarily to Antarctica.
                 if (intersections.length % 2 === 1) {
-                    polarIntersection = intersections.slice().sort(
-                        (a, b): number => Math.abs(b.lat) - Math.abs(a.lat))[0];
+                    polarIntersection = intersections
+                        .slice()
+                        .sort(
+                            (a, b): number => Math.abs(b.lat) - Math.abs(a.lat)
+                        )[0];
 
                     erase(intersections, polarIntersection);
                 }
-
 
                 // Pull out slices of the polygon that is on the opposite side
                 // of the antimeridian compared to the starting point
@@ -343,11 +333,11 @@ export default class Projection {
                     const index = intersections[i].i;
                     const lonPlus = wrapLon(
                         antimeridian +
-                        intersections[i].direction * floatCorrection
+                            intersections[i].direction * floatCorrection
                     );
                     const lonMinus = wrapLon(
                         antimeridian -
-                        intersections[i].direction * floatCorrection
+                            intersections[i].direction * floatCorrection
                     );
                     const slice = poly.splice(
                         index,
@@ -385,34 +375,34 @@ export default class Projection {
                                 this.maxLatitude;
                             const lon1 = wrapLon(
                                 antimeridian +
-                                polarIntersection.direction * floatCorrection
+                                    polarIntersection.direction *
+                                        floatCorrection
                             );
                             const lon2 = wrapLon(
                                 antimeridian -
-                                polarIntersection.direction * floatCorrection
+                                    polarIntersection.direction *
+                                        floatCorrection
                             );
 
                             const polarSegment = Projection.greatCircle(
                                 [lon1, polarIntersection.lat],
                                 [lon1, polarLatitude],
                                 true
-                            ).concat(Projection.greatCircle(
-                                [lon2, polarLatitude],
-                                [lon2, polarIntersection.lat],
-                                true
-                            ));
-
-                            poly.splice(
-                                indexOf,
-                                0,
-                                ...polarSegment
+                            ).concat(
+                                Projection.greatCircle(
+                                    [lon2, polarLatitude],
+                                    [lon2, polarIntersection.lat],
+                                    true
+                                )
                             );
+
+                            poly.splice(indexOf, 0, ...polarSegment);
                             break;
                         }
                     }
                 }
 
-            // Map lines, not closed
+                // Map lines, not closed
             } else {
                 let i = intersections.length;
                 while (i--) {
@@ -424,7 +414,7 @@ export default class Projection {
                         [
                             wrapLon(
                                 antimeridian +
-                                intersections[i].direction * floatCorrection
+                                    intersections[i].direction * floatCorrection
                             ),
                             intersections[i].lat
                         ]
@@ -434,7 +424,7 @@ export default class Projection {
                     slice.unshift([
                         wrapLon(
                             antimeridian -
-                            intersections[i].direction * floatCorrection
+                                intersections[i].direction * floatCorrection
                         ),
                         intersections[i].lat
                     ]);
@@ -453,16 +443,14 @@ export default class Projection {
         return polygons;
     }
 
-
     // Take a GeoJSON geometry and return a translated SVGPath
     public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
-
         const { def, rotator } = this;
         const antimeridian = 180;
 
         const path: SVGPath = [];
-        const isPolygon = geometry.type === 'Polygon' ||
-            geometry.type === 'MultiPolygon';
+        const isPolygon =
+            geometry.type === 'Polygon' || geometry.type === 'MultiPolygon';
 
         // @todo: It doesn't really have to do with whether north is
         // positive. It depends on whether the coordinates are
@@ -474,12 +462,9 @@ export default class Projection {
         // We need to rotate in a separate step before applying antimeridian
         // clipping
         const preclip = projectingToPlane ? rotator : void 0;
-        const postclip = projectingToPlane ? (def || this) : this;
+        const postclip = projectingToPlane ? def || this : this;
 
-        const addToPath = (
-            polygon: LonLatArray[]
-        ): void => {
-
+        const addToPath = (polygon: LonLatArray[]): void => {
             // Create a copy of the original coordinates. The copy applies a
             // correction of points close to the antimeridian in order to
             // prevent the points to be projected to the wrong side of the
@@ -487,7 +472,6 @@ export default class Projection {
             // that.
             const poly = polygon.map((lonLat): LonLatArray => {
                 if (projectingToPlane) {
-
                     if (preclip) {
                         lonLat = preclip.forward(lonLat);
                     }
@@ -506,9 +490,7 @@ export default class Projection {
 
             let polygons = [poly];
 
-
             if (hasGeoProjection) {
-
                 // Insert great circles into long straight lines
                 Projection.insertGreatCircles(poly);
 
@@ -523,8 +505,8 @@ export default class Projection {
                 }
 
                 let movedTo = false;
-                let firstValidLonLat: LonLatArray|undefined;
-                let lastValidLonLat: LonLatArray|undefined;
+                let firstValidLonLat: LonLatArray | undefined;
+                let lastValidLonLat: LonLatArray | undefined;
                 let gap = false;
                 const pushToPath = (point: [number, number]): void => {
                     if (!movedTo) {
@@ -540,21 +522,15 @@ export default class Projection {
 
                     const point = postclip.forward(lonLat);
 
-                    const valid = (
+                    const valid =
                         !isNaN(point[0]) &&
                         !isNaN(point[1]) &&
-                        (
-                            !hasGeoProjection ||
+                        (!hasGeoProjection ||
                             // Limited projections like Web Mercator
-                            (
-                                lonLat[1] <= this.maxLatitude &&
-                                lonLat[1] >= -this.maxLatitude
-                            )
-                        )
-                    );
+                            (lonLat[1] <= this.maxLatitude &&
+                                lonLat[1] >= -this.maxLatitude));
 
                     if (valid) {
-
                         // In order to be able to interpolate if the first or
                         // last point is invalid (on the far side of the globe
                         // in an orthographic projection), we need to push the
@@ -568,7 +544,6 @@ export default class Projection {
                         // invalid points, typically on the far side of the
                         // globe in an orthographic projection.
                         if (gap && lastValidLonLat) {
-
                             // For areas, in an orthographic projection, the
                             // great circle between two visible points will be
                             // close to the horizon. A possible exception may be
@@ -582,9 +557,10 @@ export default class Projection {
                                     lonLat
                                 );
                                 greatCircle.forEach((lonLat): void =>
-                                    pushToPath(postclip.forward(lonLat)));
+                                    pushToPath(postclip.forward(lonLat))
+                                );
 
-                            // For lines, just jump over the gap
+                                // For lines, just jump over the gap
                             } else {
                                 movedTo = false;
                             }
@@ -603,16 +579,13 @@ export default class Projection {
 
         if (geometry.type === 'LineString') {
             addToPath(geometry.coordinates);
-
         } else if (geometry.type === 'MultiLineString') {
             geometry.coordinates.forEach((c): void => addToPath(c));
-
         } else if (geometry.type === 'Polygon') {
             geometry.coordinates.forEach((c): void => addToPath(c));
             if (path.length) {
                 path.push(['Z']);
             }
-
         } else if (geometry.type === 'MultiPolygon') {
             geometry.coordinates.forEach((polygons): void => {
                 polygons.forEach((c): void => addToPath(c));
@@ -620,7 +593,6 @@ export default class Projection {
             if (path.length) {
                 path.push(['Z']);
             }
-
         }
         return path;
     }

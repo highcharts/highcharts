@@ -36,7 +36,6 @@ const { removeElement } = HU;
  * @private
  */
 class DOMElementProvider {
-
     /* *
      *
      *  Constructor
@@ -88,7 +87,6 @@ class DOMElementProvider {
         });
         this.elements = [];
     }
-
 }
 
 /* *

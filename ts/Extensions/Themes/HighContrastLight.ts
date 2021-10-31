@@ -35,7 +35,6 @@ import H from '../../Core/Globals.js';
  * */
 
 namespace HighContrastLightTheme {
-
     /* *
      *
      *  Constants
@@ -76,7 +75,6 @@ namespace HighContrastLightTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *

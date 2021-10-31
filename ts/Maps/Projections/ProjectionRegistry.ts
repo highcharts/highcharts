@@ -13,7 +13,6 @@ import Miller from './Miller.js';
 import Orthographic from './Orthographic.js';
 import WebMercator from './WebMercator.js';
 
-
 const registry: Record<string, ProjectionDefinition> = {
     EqualEarth,
     Miller,

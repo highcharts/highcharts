@@ -42,15 +42,14 @@ symbols.flag = function (x, y, w, h, options): SVGPath {
  * @param {string} shape - circle or square
  * @return {void}
  */
-function createPinSymbol(shape: ('circle'|'square')): void {
-    symbols[(shape + 'pin') as ('circlepin'|'squarepin')] = function (
+function createPinSymbol(shape: 'circle' | 'square'): void {
+    symbols[(shape + 'pin') as 'circlepin' | 'squarepin'] = function (
         x,
         y,
         w,
         h,
         options
     ): SVGPath {
-
         const anchorX = options && options.anchorX,
             anchorY = options && options.anchorY;
 
@@ -63,7 +62,7 @@ function createPinSymbol(shape: ('circle'|'square')): void {
             w = h;
         }
 
-        path = (symbols[shape])(x, y, w, h);
+        path = symbols[shape](x, y, w, h);
 
         if (anchorX && anchorY) {
             /**
@@ -81,20 +80,10 @@ function createPinSymbol(shape: ('circle'|'square')): void {
                     labelX = (startSeg[1] + endSeg[1]) / 2;
                 }
             }
-            const labelY = (y > anchorY) ? y : y + h;
+            const labelY = y > anchorY ? y : y + h;
 
-            path.push([
-                'M',
-                labelX,
-                labelY
-            ], [
-                'L',
-                anchorX,
-                anchorY
-            ]);
-            path = path.concat(
-                symbols.circle(anchorX - 1, anchorY - 1, 2, 2)
-            );
+            path.push(['M', labelX, labelY], ['L', anchorX, anchorY]);
+            path = path.concat(symbols.circle(anchorX - 1, anchorY - 1, 2, 2));
         }
         return path;
     };
@@ -116,9 +105,9 @@ if (Renderer !== SVGRenderer) {
 
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        'circlepin': SymbolFunction;
-        'flag': SymbolFunction;
-        'squarepin': SymbolFunction;
+        circlepin: SymbolFunction;
+        flag: SymbolFunction;
+        squarepin: SymbolFunction;
     }
 }
 

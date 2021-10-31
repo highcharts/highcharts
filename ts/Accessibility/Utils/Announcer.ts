@@ -26,10 +26,7 @@ import DOMElementProvider from './DOMElementProvider.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from './HTMLUtilities.js';
-const {
-    addClass,
-    visuallyHideElement
-} = HU;
+const { addClass, visuallyHideElement } = HU;
 import U from '../../Core/Utilities.js';
 const { attr } = U;
 
@@ -43,7 +40,7 @@ const { attr } = U;
  * Internal types.
  * @private
  */
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         announcerContainer?: HTMLDOMElement;
     }
@@ -56,7 +53,6 @@ declare module '../../Core/Chart/ChartLike'{
  * */
 
 class Announcer {
-
     /* *
      *
      *  Properties
@@ -73,10 +69,7 @@ class Announcer {
      *
      * */
 
-    constructor(
-        private chart: Chart,
-        type: Announcer.Type
-    ) {
+    constructor(private chart: Chart, type: Announcer.Type) {
         this.domElementProvider = new DOMElementProvider();
         this.announceRegion = this.addAnnounceRegion(type);
     }
@@ -106,7 +99,9 @@ class Announcer {
     }
 
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
-        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
+        const chartContainer =
+                this.chart.announcerContainer ||
+                this.createAnnouncerContainer(),
             div = this.domElementProvider.createElement('div');
 
         attr(div, {
@@ -130,6 +125,7 @@ class Announcer {
 
         attr(container, {
             'aria-hidden': false,
+            // prettier-ignore
             'class': 'highcharts-announcer-container'
         });
         container.style.position = 'relative';
@@ -147,7 +143,7 @@ class Announcer {
  * */
 
 namespace Announcer {
-    export type Type = ('assertive'|'polite');
+    export type Type = 'assertive' | 'polite';
 }
 
 /* *

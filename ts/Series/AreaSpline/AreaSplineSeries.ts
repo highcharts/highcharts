@@ -24,10 +24,7 @@ import SplineSeries from '../Spline/SplineSeries.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -45,7 +42,6 @@ const {
  * @augments Highcharts.Series
  */
 class AreaSplineSeries extends SplineSeries {
-
     /* *
      *
      *  Static properties
@@ -92,7 +88,7 @@ class AreaSplineSeries extends SplineSeries {
     public static defaultOptions: AreaSplineSeriesOptions = merge(
         SplineSeries.defaultOptions,
         AreaSeries.defaultOptions
-    )
+    );
 
     /* *
      *
@@ -243,4 +239,4 @@ export default AreaSplineSeries;
  * @apioption series.areaspline.fillOpacity
  */
 
-''; // adds doclets above into transpilat
+(''); // adds doclets above into transpilat

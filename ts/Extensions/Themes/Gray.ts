@@ -32,7 +32,6 @@ const { setOptions } = D;
  * */
 
 namespace GrayTheme {
-
     /* *
      *
      *  Constants
@@ -40,8 +39,19 @@ namespace GrayTheme {
      * */
 
     export const options: DeepPartial<Options> = {
-        colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
-            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+        colors: [
+            '#DDDF0D',
+            '#7798BF',
+            '#55BF3B',
+            '#DF5353',
+            '#aaeeee',
+            '#ff0066',
+            '#eeaaee',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#aaeeee'
+        ],
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -59,14 +69,16 @@ namespace GrayTheme {
         title: {
             style: {
                 color: '#FFF',
-                font: '16px Lucida Grande, Lucida Sans Unicode,' +
+                font:
+                    '16px Lucida Grande, Lucida Sans Unicode,' +
                     ' Verdana, Arial, Helvetica, sans-serif'
             }
         },
         subtitle: {
             style: {
                 color: '#DDD',
-                font: '12px Lucida Grande, Lucida Sans Unicode,' +
+                font:
+                    '12px Lucida Grande, Lucida Sans Unicode,' +
                     ' Verdana, Arial, Helvetica, sans-serif'
             }
         },
@@ -83,8 +95,9 @@ namespace GrayTheme {
             title: {
                 style: {
                     color: '#AAA',
-                    font: 'bold 12px Lucida Grande, Lucida Sans Unicode,' +
-                    ' Verdana, Arial, Helvetica, sans-serif'
+                    font:
+                        'bold 12px Lucida Grande, Lucida Sans Unicode,' +
+                        ' Verdana, Arial, Helvetica, sans-serif'
                 }
             }
         },
@@ -104,8 +117,9 @@ namespace GrayTheme {
             title: {
                 style: {
                     color: '#AAA',
-                    font: 'bold 12px Lucida Grande, Lucida Sans Unicode,' +
-                    ' Verdana, Arial, Helvetica, sans-serif'
+                    font:
+                        'bold 12px Lucida Grande, Lucida Sans Unicode,' +
+                        ' Verdana, Arial, Helvetica, sans-serif'
                 }
             }
         },
@@ -294,7 +308,6 @@ namespace GrayTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *

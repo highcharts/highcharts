@@ -17,7 +17,6 @@ import type CandlestickPointOptions from './CandlestickPointOptions';
 import type CandlestickSeries from './CandlestickSeries';
 import type OHLCPoint from '../OHLC/OHLCPoint';
 
-
 /* *
  *
  *  Declarations

@@ -27,10 +27,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    merge
-} = U;
+const { defined, merge } = U;
 
 /* *
  *
@@ -44,7 +41,6 @@ const {
  * @private
  */
 class LineSeries extends Series {
-
     /* *
      *
      *  Static Functions
@@ -56,9 +52,12 @@ class LineSeries extends Series {
      *
      * @optionparent plotOptions.series
      */
-    public static defaultOptions: LineSeriesOptions = merge(Series.defaultOptions, {
-        // nothing here yet
-    } as LineSeriesOptions);
+    public static defaultOptions: LineSeriesOptions = merge(
+        Series.defaultOptions,
+        {
+            // nothing here yet
+        } as LineSeriesOptions
+    );
 
     /* *
      *
@@ -92,19 +91,14 @@ class LineSeries extends Series {
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
             styledMode = this.chart.styledMode;
-        let props = [[
-            'graph',
-            'highcharts-graph'
-        ]];
+        let props = [['graph', 'highcharts-graph']];
 
         // Presentational properties
         if (!styledMode) {
             props[0].push(
-                (
-                    options.lineColor ||
+                (options.lineColor ||
                     this.color ||
-                    Palette.neutralColor20 // when colorByPoint = true
-                ) as any,
+                    Palette.neutralColor20) as any, // when colorByPoint = true
                 options.dashStyle as any
             );
         }
@@ -119,12 +113,12 @@ class LineSeries extends Series {
             const verb = graph ? 'animate' : 'attr';
 
             if (graph) {
-                graph.endX = series.preventGraphAnimation ?
-                    null :
-                    graphPath.xMap;
+                graph.endX = series.preventGraphAnimation
+                    ? null
+                    : graphPath.xMap;
                 graph.animate({ d: graphPath });
-
-            } else if (graphPath.length) { // #1487
+            } else if (graphPath.length) {
+                // #1487
 
                 /**
                  * SVG element of area-based charts. Can be used for styling
@@ -154,24 +148,23 @@ class LineSeries extends Series {
             }
 
             if (graph && !styledMode) {
-
                 attribs = {
-                    'stroke': prop[2],
+                    stroke: prop[2],
                     'stroke-width': options.lineWidth,
                     // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
+                    fill: (series.fillGraph && series.color) || 'none'
                 };
 
                 if (prop[3]) {
                     attribs.dashstyle = prop[3] as any;
                 } else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] =
-                        attribs['stroke-linejoin'] = 'round';
+                    attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
+                        'round';
                 }
                 graph[verb](attribs)
                     // Add shadow to normal series (0) or to first
                     // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
+                    .shadow(i < 2 && options.shadow);
             }
 
             // Helpers for animation
@@ -196,7 +189,7 @@ class LineSeries extends Series {
         const series = this,
             options = series.options,
             graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>;
+            xMap = [] as Array<number | null>;
         let gap: boolean,
             step = options.step as any;
 
@@ -208,10 +201,14 @@ class LineSeries extends Series {
             points.reverse();
         }
         // Reverse the steps (#5004)
-        step = ({
-            right: 1,
-            center: 2
-        } as Record<string, number>)[step as any] || (step && 3);
+        step =
+            (
+                {
+                    right: 1,
+                    center: 2
+                } as Record<string, number>
+            )[step as any] ||
+            (step && 3);
         if (step && reversed) {
             step = 4 - step;
         }
@@ -225,7 +222,6 @@ class LineSeries extends Series {
 
         // Build the line
         points.forEach(function (point, i): void {
-
             const plotX = point.plotX,
                 plotY = point.plotY,
                 lastPoint = (points as any)[i - 1];
@@ -243,72 +239,55 @@ class LineSeries extends Series {
             if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
                 gap = !options.connectNulls;
 
-            // Area series, nullsAsZeroes is set
+                // Area series, nullsAsZeroes is set
             } else if (point.isNull && !nullsAsZeroes) {
                 gap = true;
-
             } else {
-
                 if (i === 0 || gap) {
-                    pathToPoint = [[
-                        'M',
-                        point.plotX as any,
-                        point.plotY as any
-                    ]];
+                    pathToPoint = [
+                        ['M', point.plotX as any, point.plotY as any]
+                    ];
 
-                // Generate the spline as defined in the SplineSeries object
+                    // Generate the spline as defined in the SplineSeries object
                 } else if (
                     (series as unknown as Partial<SplineSeries>).getPointSpline
                 ) {
-
-                    pathToPoint = [(
-                        series as unknown as SplineSeries
-                    ).getPointSpline(
-                        points as Array<SplinePoint>,
-                        point as SplinePoint,
-                        i
-                    )];
-
+                    pathToPoint = [
+                        (series as unknown as SplineSeries).getPointSpline(
+                            points as Array<SplinePoint>,
+                            point as SplinePoint,
+                            i
+                        )
+                    ];
                 } else if (step) {
-
-                    if (step === 1) { // right
-                        pathToPoint = [[
-                            'L',
-                            lastPoint.plotX as any,
-                            plotY as any
-                        ]];
-
-                    } else if (step === 2) { // center
-                        pathToPoint = [[
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            lastPoint.plotY as any
-                        ], [
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            plotY as any
-                        ]];
-
+                    if (step === 1) {
+                        // right
+                        pathToPoint = [
+                            ['L', lastPoint.plotX as any, plotY as any]
+                        ];
+                    } else if (step === 2) {
+                        // center
+                        pathToPoint = [
+                            [
+                                'L',
+                                ((lastPoint.plotX as any) + plotX) / 2,
+                                lastPoint.plotY as any
+                            ],
+                            [
+                                'L',
+                                ((lastPoint.plotX as any) + plotX) / 2,
+                                plotY as any
+                            ]
+                        ];
                     } else {
-                        pathToPoint = [[
-                            'L',
-                            plotX as any,
-                            lastPoint.plotY as any
-                        ]];
+                        pathToPoint = [
+                            ['L', plotX as any, lastPoint.plotY as any]
+                        ];
                     }
-                    pathToPoint.push([
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]);
-
+                    pathToPoint.push(['L', plotX as any, plotY as any]);
                 } else {
                     // normal line to next point
-                    pathToPoint = [[
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]];
+                    pathToPoint = [['L', plotX as any, plotY as any]];
                 }
 
                 // Prepare for animation. When step is enabled, there are
@@ -316,7 +295,8 @@ class LineSeries extends Series {
                 xMap.push(point.x);
                 if (step) {
                     xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
+                    if (step === 2) {
+                        // step = center (#8073)
                         xMap.push(point.x);
                     }
                 }
@@ -344,7 +324,9 @@ class LineSeries extends Series {
         this.zones.forEach(function (zone, i): void {
             const propset = [
                 'zone-graph-' + i,
-                'highcharts-graph highcharts-zone-graph-' + i + ' ' +
+                'highcharts-graph highcharts-zone-graph-' +
+                    i +
+                    ' ' +
                     (zone.className || '')
             ];
 
@@ -359,7 +341,6 @@ class LineSeries extends Series {
 
         return props;
     }
-
 }
 
 /* *
@@ -523,7 +504,7 @@ export default LineSeries;
  * @sample {highcharts} highcharts/point/color/
  *         Mark the highest point
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */
@@ -654,4 +635,4 @@ export default LineSeries;
  * @apioption series.line.data.marker
  */
 
-''; // include precedent doclets in transpilat
+(''); // include precedent doclets in transpilat

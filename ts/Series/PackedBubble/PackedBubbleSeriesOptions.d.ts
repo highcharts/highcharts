@@ -35,7 +35,7 @@ export interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
     dataLabels?: PackedBubbleDataLabelOptions;
     draggable?: boolean;
     layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
-    minSize?: (number|string);
+    minSize?: number | string;
     states?: SeriesStatesOptions<PackedBubbleSeries>;
     useSimulation?: boolean;
 }

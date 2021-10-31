@@ -33,19 +33,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        pie: PieSeries
-    }
+    seriesTypes: { pie: PieSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    isArray,
-    merge,
-    pick
-} = U;
+const { addEvent, extend, fireEvent, isArray, merge, pick } = U;
 
 /* *
  *
@@ -68,7 +59,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * @augments Highcharts.Series
  */
 class FunnelSeries extends PieSeries {
-
     /* *
      *
      *  Static Properties
@@ -89,117 +79,117 @@ class FunnelSeries extends PieSeries {
      * @requires     modules/funnel
      * @optionparent plotOptions.funnel
      */
-    public static defaultOptions: FunnelSeriesOptions = merge(PieSeries.defaultOptions, {
-
-        /**
-         * Initial animation is by default disabled for the funnel chart.
-         */
-        animation: false,
-
-        /**
-         * The center of the series. By default, it is centered in the middle
-         * of the plot area, so it fills the plot area height.
-         *
-         * @type    {Array<number|string>}
-         * @default ["50%", "50%"]
-         * @since   3.0
-         */
-        center: ['50%', '50%'],
-
-        /**
-         * The width of the funnel compared to the width of the plot area,
-         * or the pixel width if it is a number.
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        width: '90%',
-
-        /**
-         * The width of the neck, the lower part of the funnel. A number defines
-         * pixel width, a percentage string defines a percentage of the plot
-         * area width.
-         *
-         * @sample {highcharts} highcharts/demo/funnel/
-         *         Funnel demo
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        neckWidth: '30%',
-
-        /**
-         * The height of the funnel or pyramid. If it is a number it defines
-         * the pixel height, if it is a percentage string it is the percentage
-         * of the plot area height.
-         *
-         * @sample {highcharts} highcharts/demo/funnel/
-         *         Funnel demo
-         *
-         * @type  {number|string}
-         * @since 3.0
-         */
-        height: '100%',
-
-        /**
-         * The height of the neck, the lower part of the funnel. A number
-         * defines pixel width, a percentage string defines a percentage of the
-         * plot area height.
-         *
-         * @type {number|string}
-         */
-        neckHeight: '25%',
-
-        /**
-         * A reversed funnel has the widest area down. A reversed funnel with
-         * no neck width and neck height is a pyramid.
-         *
-         * @since 3.0.10
-         */
-        reversed: false,
-
-        /**
-         * To avoid adapting the data label size in Pie.drawDataLabels.
-         * @ignore-option
-         */
-        size: true as any,
-
-        dataLabels: {
-            connectorWidth: 1,
-            verticalAlign: 'middle'
-        },
-
-        /**
-         * Options for the series states.
-         */
-        states: {
+    public static defaultOptions: FunnelSeriesOptions = merge(
+        PieSeries.defaultOptions,
+        {
             /**
-             * @excluding halo, marker, lineWidth, lineWidthPlus
-             * @apioption plotOptions.funnel.states.hover
+             * Initial animation is by default disabled for the funnel chart.
              */
+            animation: false,
 
             /**
-             * Options for a selected funnel item.
+             * The center of the series. By default, it is centered in the
+             * middle of the plot area, so it fills the plot area height.
              *
-             * @excluding halo, marker, lineWidth, lineWidthPlus
+             * @type    {Array<number|string>}
+             * @default ["50%", "50%"]
+             * @since   3.0
              */
-            select: {
+            center: ['50%', '50%'],
+
+            /**
+             * The width of the funnel compared to the width of the plot area,
+             * or the pixel width if it is a number.
+             *
+             * @type  {number|string}
+             * @since 3.0
+             */
+            width: '90%',
+
+            /**
+             * The width of the neck, the lower part of the funnel. A number
+             * defines pixel width, a percentage string defines a percentage of
+             * the plot area width.
+             *
+             * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
+             *
+             * @type  {number|string}
+             * @since 3.0
+             */
+            neckWidth: '30%',
+
+            /**
+             * The height of the funnel or pyramid. If it is a number it defines
+             * the pixel height, if it is a percentage string it is the
+             * percentage of the plot area height.
+             *
+             * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
+             *
+             * @type  {number|string}
+             * @since 3.0
+             */
+            height: '100%',
+
+            /**
+             * The height of the neck, the lower part of the funnel. A number
+             * defines pixel width, a percentage string defines a percentage of
+             * the plot area height.
+             *
+             * @type {number|string}
+             */
+            neckHeight: '25%',
+
+            /**
+             * A reversed funnel has the widest area down. A reversed funnel
+             * with no neck width and neck height is a pyramid.
+             *
+             * @since 3.0.10
+             */
+            reversed: false,
+
+            /**
+             * To avoid adapting the data label size in Pie.drawDataLabels.
+             * @ignore-option
+             */
+            size: true as any,
+
+            dataLabels: {
+                connectorWidth: 1,
+                verticalAlign: 'middle'
+            },
+
+            /**
+             * Options for the series states.
+             */
+            states: {
                 /**
-                 * A specific color for the selected point.
-                 *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @excluding halo, marker, lineWidth, lineWidthPlus
+                 * @apioption plotOptions.funnel.states.hover
                  */
-                color: Palette.neutralColor20,
 
                 /**
-                 * A specific border color for the selected point.
+                 * Options for a selected funnel item.
                  *
-                 * @type {Highcharts.ColorString}
+                 * @excluding halo, marker, lineWidth, lineWidthPlus
                  */
-                borderColor: Palette.neutralColor100
+                select: {
+                    /**
+                     * A specific color for the selected point.
+                     *
+                     * @type {Highcharts.ColorType}
+                     */
+                    color: Palette.neutralColor20,
+
+                    /**
+                     * A specific border color for the selected point.
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    borderColor: Palette.neutralColor100
+                }
             }
-        }
-    } as FunnelSeriesOptions);
+        } as FunnelSeriesOptions
+    );
 
     /* *
      *
@@ -238,21 +228,20 @@ class FunnelSeries extends PieSeries {
             dlBox = point.dlBox || point.shapeArgs,
             align = options.align,
             verticalAlign = options.verticalAlign,
-            inside =
-                ((series.options || {}).dataLabels || {}).inside,
+            inside = ((series.options || {}).dataLabels || {}).inside,
             centerY = series.center[1],
-            pointPlotY = (
-                reversed ?
-                    2 * centerY - (point.plotY as any) :
-                    point.plotY
-            ),
+            pointPlotY = reversed
+                ? 2 * centerY - (point.plotY as any)
+                : point.plotY,
             widthAtLabel = series.getWidthAt(
-                (pointPlotY as any) - dlBox.height / 2 +
-                (dataLabel as any).height
+                (pointPlotY as any) -
+                    dlBox.height / 2 +
+                    (dataLabel as any).height
             ),
-            offset = verticalAlign === 'middle' ?
-                (dlBox.topWidth - dlBox.bottomWidth) / 4 :
-                (widthAtLabel - dlBox.bottomWidth) / 2,
+            offset =
+                verticalAlign === 'middle'
+                    ? (dlBox.topWidth - dlBox.bottomWidth) / 4
+                    : (widthAtLabel - dlBox.bottomWidth) / 2,
             y = dlBox.y,
             x = dlBox.x;
 
@@ -265,13 +254,12 @@ class FunnelSeries extends PieSeries {
         if (verticalAlign === 'middle') {
             y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabelHeight +
-                options.padding;
+            y = dlBox.y - dlBox.height + dataLabelHeight + options.padding;
         }
 
         if (
-            verticalAlign === 'top' && !reversed ||
-            verticalAlign === 'bottom' && reversed ||
+            (verticalAlign === 'top' && !reversed) ||
+            (verticalAlign === 'bottom' && reversed) ||
             verticalAlign === 'middle'
         ) {
             if (align === 'right') {
@@ -317,7 +305,6 @@ class FunnelSeries extends PieSeries {
         }
     }
 
-
     /**
      * Extend the pie data label method.
      * @private
@@ -325,8 +312,7 @@ class FunnelSeries extends PieSeries {
     public drawDataLabels(): void {
         let series = this,
             data = series.data,
-            labelDistance: number =
-                (series.options.dataLabels as any).distance,
+            labelDistance: number = (series.options.dataLabels as any).distance,
             leftSide,
             sign,
             point,
@@ -346,8 +332,7 @@ class FunnelSeries extends PieSeries {
             sign = leftSide ? 1 : -1;
             y = point.plotY;
             point.labelDistance = pick(
-                point.options.dataLabels &&
-                point.options.dataLabels.distance,
+                point.options.dataLabels && point.options.dataLabels.distance,
                 labelDistance
             );
 
@@ -365,6 +350,7 @@ class FunnelSeries extends PieSeries {
                     x: 0,
                     y: y as any
                 },
+                // prettier-ignore
                 'final': {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
@@ -375,7 +361,8 @@ class FunnelSeries extends PieSeries {
                 // right - funnel on the right side of the data label
                 alignment: leftSide ? 'right' : 'left',
                 connectorPosition: {
-                    breakAt: { // used in connectorShapes.fixedOffset
+                    breakAt: {
+                        // used in connectorShapes.fixedOffset
                         x: x + (point.labelDistance - 5) * sign,
                         y: y as any
                     },
@@ -397,7 +384,6 @@ class FunnelSeries extends PieSeries {
      * @private
      */
     public translate(): void {
-
         let sum = 0,
             series = this,
             chart = series.chart,
@@ -407,7 +393,7 @@ class FunnelSeries extends PieSeries {
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             cumulative = 0, // start at top
-            center: Array<(number|string)> = options.center as any,
+            center: Array<number | string> = options.center as any,
             centerX = getLength(center[0], plotWidth),
             centerY = getLength(center[1], plotHeight),
             width = getLength(options.width, plotWidth),
@@ -415,22 +401,18 @@ class FunnelSeries extends PieSeries {
             height = getLength(options.height, plotHeight),
             neckWidth = getLength(options.neckWidth, plotWidth),
             neckHeight = getLength(options.neckHeight, plotHeight),
-            neckY = (centerY - height / 2) + height - neckHeight,
+            neckY = centerY - height / 2 + height - neckHeight,
             data = series.data,
             path: SVGPath,
             fraction,
-            half = (
-                (options.dataLabels as any).position === 'left' ?
-                    1 :
-                    0
-            ),
+            half = (options.dataLabels as any).position === 'left' ? 1 : 0,
             x1: number,
             y1: number,
             x2: number,
             x3: number,
             y3: number,
             x4: number,
-            y5: (number|null);
+            y5: number | null;
 
         /**
          * Get positions - either an integer or a percentage string must be
@@ -444,24 +426,22 @@ class FunnelSeries extends PieSeries {
          *         Relative position
          */
         function getLength(
-            length: (number|string|undefined),
+            length: number | string | undefined,
             relativeTo: number
         ): number {
-            return (/%$/).test(length as any) ?
-                relativeTo * parseInt(length as any, 10) / 100 :
-                parseInt(length as any, 10);
+            return /%$/.test(length as any)
+                ? (relativeTo * parseInt(length as any, 10)) / 100
+                : parseInt(length as any, 10);
         }
 
-        series.getWidthAt = function (
-            this: FunnelSeries,
-            y: number
-        ): number {
-            const top = (centerY - height / 2);
+        series.getWidthAt = function (this: FunnelSeries, y: number): number {
+            const top = centerY - height / 2;
 
-            return (y > neckY || height === neckHeight) ?
-                neckWidth :
-                neckWidth + (width - neckWidth) *
-                    (1 - (y - top) / (height - neckHeight));
+            return y > neckY || height === neckHeight
+                ? neckWidth
+                : neckWidth +
+                      (width - neckWidth) *
+                          (1 - (y - top) / (height - neckHeight));
         };
 
         series.getX = function (
@@ -470,9 +450,12 @@ class FunnelSeries extends PieSeries {
             half: boolean,
             point: FunnelPoint
         ): number {
-            return centerX + (half ? -1 : 1) *
-                ((series.getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
-                (point.labelDistance as any));
+            return (
+                centerX +
+                (half ? -1 : 1) *
+                    (series.getWidthAt(reversed ? 2 * centerY - y : y) / 2 +
+                        (point.labelDistance as any))
+            );
         };
 
         // Expose
@@ -524,7 +507,7 @@ class FunnelSeries extends PieSeries {
                 x1 = x3 = centerX - neckWidth / 2;
                 x2 = x4 = centerX + neckWidth / 2;
 
-            // the base of the neck
+                // the base of the neck
             } else if (y3 > neckY) {
                 y5 = y3;
 
@@ -558,17 +541,13 @@ class FunnelSeries extends PieSeries {
             point.shapeType = 'path';
             point.shapeArgs = { d: path };
 
-
             // for tooltips and data labels
             point.percentage = fraction * 100;
             point.plotX = centerX;
             point.plotY = (y1 + (y5 || y3)) / 2;
 
             // Placement of tooltips and data labels
-            point.tooltipPos = [
-                centerX,
-                point.plotY
-            ];
+            point.tooltipPos = [centerX, point.plotY];
 
             point.dlBox = {
                 x: x3,
@@ -604,7 +583,6 @@ class FunnelSeries extends PieSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -653,10 +631,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
  * */
 
 type BBoxObjectImport = BBoxObject;
-namespace FunnelSeries {
-
-
-}
+namespace FunnelSeries {}
 
 /* *
  *
@@ -743,4 +718,4 @@ export default FunnelSeries;
  * @apioption series.funnel.data
  */
 
-''; // keeps doclets above in transpiled file
+(''); // keeps doclets above in transpiled file

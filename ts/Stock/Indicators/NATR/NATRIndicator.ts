@@ -10,22 +10,14 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    NATROptions,
-    NATRParamsOptions
-} from './NATROptions';
+import type { NATROptions, NATRParamsOptions } from './NATROptions';
 import type NATRPoint from './NATRPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        atr: ATRIndicator
-    }
+    seriesTypes: { atr: ATRIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 /**
  * The NATR series type.
  *
@@ -52,11 +44,14 @@ class NATRIndicator extends ATRIndicator {
      * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
      */
-    public static defaultOptions: NATROptions = merge(ATRIndicator.defaultOptions, {
-        tooltip: {
-            valueSuffix: '%'
-        }
-    } as NATROptions);
+    public static defaultOptions: NATROptions = merge(
+        ATRIndicator.defaultOptions,
+        {
+            tooltip: {
+                valueSuffix: '%'
+            }
+        } as NATROptions
+    );
 
     /**
      * @lends Highcharts.Series#
@@ -81,16 +76,12 @@ class NATRIndicator extends ATRIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: NATRParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let atrData: (
-                IndicatorValuesObject<LineSeries>|
-                undefined
-            ) = (
-                ATRIndicator.prototype.getValues.apply(this, arguments)
-            ),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let atrData: IndicatorValuesObject<LineSeries> | undefined =
+                ATRIndicator.prototype.getValues.apply(this, arguments),
             atrLength: number = (atrData as any).values.length,
             period: number = (params.period as any) - 1,
-            yVal: Array<Array<number>> = (series.yData as any),
+            yVal: Array<Array<number>> = series.yData as any,
             i = 0;
 
         if (!atrData) {
@@ -98,9 +89,8 @@ class NATRIndicator extends ATRIndicator {
         }
 
         for (; i < atrLength; i++) {
-            atrData.yData[i] = (
-                (atrData.values as any)[i][1] / yVal[period][3] * 100
-            );
+            atrData.yData[i] =
+                ((atrData.values as any)[i][1] / yVal[period][3]) * 100;
             atrData.values[i][1] = atrData.yData[i];
             period++;
         }
@@ -154,4 +144,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // to include the above in the js output'
+(''); // to include the above in the js output'

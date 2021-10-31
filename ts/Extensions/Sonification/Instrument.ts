@@ -23,12 +23,7 @@ const { win } = H;
 import Sonification from './Sonification.js';
 import SU from './SonificationUtilities.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    merge,
-    pick,
-    uniqueKey
-} = U;
+const { error, merge, pick, uniqueKey } = U;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /* *
@@ -55,7 +50,6 @@ const {
  *        Options for the instrument instance.
  */
 class Instrument {
-
     /* *
      *
      *  Static properties
@@ -82,17 +76,15 @@ class Instrument {
      *
      * */
 
-    public constructor(
-        options: Instrument.Options
-    ) {
+    public constructor(options: Instrument.Options) {
         this.init(options);
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public _play?: Instrument['play'];
     public gainNode?: GainNode;
@@ -109,22 +101,19 @@ class Instrument {
     public stopTimeout?: number;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
-    public init(
-        this: Instrument,
-        options: Instrument.Options
-    ): void {
+    public init(this: Instrument, options: Instrument.Options): void {
         if (!this.initAudioContext()) {
             error(29);
             return;
         }
 
         this.options = merge(Instrument.defaultOptions, options);
-        this.id = this.options.id = options && options.id || uniqueKey();
+        this.id = this.options.id = (options && options.id) || uniqueKey();
         this.masterVolume = this.options.masterVolume || 0;
 
         // Init the audio nodes
@@ -169,10 +158,7 @@ class Instrument {
      * @return {Highcharts.Instrument}
      *         A new Instrument instance with the same options.
      */
-    public copy(
-        this: Instrument,
-        options?: Instrument.Options
-    ): Instrument {
+    public copy(this: Instrument, options?: Instrument.Options): Instrument {
         return new (Instrument as any)(
             merge(this.options, { id: null }, options)
         );
@@ -183,9 +169,7 @@ class Instrument {
      * @private
      * @return {boolean} True if successful, false if not.
      */
-    public initAudioContext(
-        this: Instrument
-    ): boolean {
+    public initAudioContext(this: Instrument): boolean {
         const Context = win.AudioContext || win.webkitAudioContext,
             hasOldContext = !!Instrument.audioContext;
 
@@ -200,8 +184,8 @@ class Instrument {
             }
             return !!(
                 Instrument.audioContext &&
-                (Instrument.audioContext.createOscillator) &&
-                (Instrument.audioContext.createGain)
+                Instrument.audioContext.createOscillator &&
+                Instrument.audioContext.createGain
             );
         }
         return false;
@@ -233,12 +217,12 @@ class Instrument {
      * The pan position to set for the instrument.
      * @return {void}
      */
-    public setPan(
-        this: Instrument,
-        panValue: number
-    ): void {
+    public setPan(this: Instrument, panValue: number): void {
         if (this.panNode) {
-            this.panNode.pan.setValueAtTime(panValue, Instrument.audioContext.currentTime);
+            this.panNode.pan.setValueAtTime(
+                panValue,
+                Instrument.audioContext.currentTime
+            );
         }
     }
 
@@ -262,15 +246,17 @@ class Instrument {
         let newVal = gainValue * this.masterVolume;
         if (gainNode) {
             if (newVal > 1.2) {
-                console.warn( // eslint-disable-line
+                // eslint-disable-next-line no-console
+                console.warn(
                     'Highcharts sonification warning: ' +
-                    'Volume of instrument set too high.'
+                        'Volume of instrument set too high.'
                 );
                 newVal = 1.2;
             }
             if (rampTime) {
                 gainNode.gain.setValueAtTime(
-                    gainNode.gain.value, Instrument.audioContext.currentTime
+                    gainNode.gain.value,
+                    Instrument.audioContext.currentTime
                 );
                 gainNode.gain.linearRampToValueAtTime(
                     newVal,
@@ -278,7 +264,8 @@ class Instrument {
                 );
             } else {
                 gainNode.gain.setValueAtTime(
-                    newVal, Instrument.audioContext.currentTime
+                    newVal,
+                    Instrument.audioContext.currentTime
                 );
             }
         }
@@ -289,9 +276,7 @@ class Instrument {
      * @private
      * @return {void}
      */
-    public cancelGainRamp(
-        this: Instrument
-    ): void {
+    public cancelGainRamp(this: Instrument): void {
         if (this.gainNode) {
             this.gainNode.gain.cancelScheduledValues(0);
         }
@@ -303,10 +288,7 @@ class Instrument {
      * The gain level to set for the instrument.
      * @return {void}
      */
-    public setMasterVolume(
-        this: Instrument,
-        volumeMultiplier: number
-    ): void {
+    public setMasterVolume(this: Instrument, volumeMultiplier: number): void {
         this.masterVolume = volumeMultiplier || 0;
     }
 
@@ -328,33 +310,36 @@ class Instrument {
             maximum = pick(max, Infinity),
             minimum = pick(min, -Infinity);
 
-        return !validFrequencies || !validFrequencies.length ?
-            // No valid frequencies for this instrument, return the target
-            frequency :
-            // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc: number, cur: number): number {
-                // Find the closest allowed value
-                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
-                    cur < maximum && cur > minimum ?
-                    cur : acc;
-            }, Infinity);
+        return !validFrequencies || !validFrequencies.length
+            ? // No valid frequencies for this instrument, return the target
+              frequency
+            : // Use the valid frequencies and return the closest match
+              validFrequencies.reduce(function (
+                  acc: number,
+                  cur: number
+              ): number {
+                  // Find the closest allowed value
+                  return Math.abs(cur - frequency) <
+                      Math.abs(acc - frequency) &&
+                      cur < maximum &&
+                      cur > minimum
+                      ? cur
+                      : acc;
+              },
+              Infinity);
     }
-
 
     /**
      * Clear existing play callback timers.
      * @private
      * @return {void}
      */
-    public clearPlayCallbackTimers(
-        this: Instrument
-    ): void {
+    public clearPlayCallbackTimers(this: Instrument): void {
         this.playCallbackTimers.forEach(function (timer: number): void {
             clearInterval(timer);
         });
         this.playCallbackTimers = [];
     }
-
 
     /**
      * Set the current frequency being played by the instrument. The closest
@@ -372,7 +357,9 @@ class Instrument {
     ): void {
         const limits = frequencyLimits || {},
             validFrequency = this.getValidFrequency(
-                frequency, limits.min, limits.max
+                frequency,
+                limits.min,
+                limits.max
             );
 
         if (this.options.type === 'oscillator') {
@@ -385,29 +372,24 @@ class Instrument {
      * @private
      * @param {number} frequency - The frequency to play.
      */
-    public oscillatorPlay(
-        this: Instrument,
-        frequency: number
-    ): void {
+    public oscillatorPlay(this: Instrument, frequency: number): void {
         if (!this.oscillatorStarted) {
             (this.oscillator as any).start();
             this.oscillatorStarted = true;
         }
 
         (this.oscillator as any).frequency.setValueAtTime(
-            frequency, Instrument.audioContext.currentTime
+            frequency,
+            Instrument.audioContext.currentTime
         );
     }
-
 
     /**
      * Prepare instrument before playing. Resumes the audio context and starts
      * the oscillator.
      * @private
      */
-    public preparePlay(
-        this: Instrument
-    ): void {
+    public preparePlay(this: Instrument): void {
         this.setGain(0.001);
         if (Instrument.audioContext.state === 'suspended') {
             Instrument.audioContext.resume();
@@ -417,7 +399,6 @@ class Instrument {
             this.oscillatorStarted = true;
         }
     }
-
 
     /**
      * Play the instrument according to options.
@@ -434,17 +415,14 @@ class Instrument {
      *
      * @return {void}
      */
-    public play(
-        this: Instrument,
-        options: Instrument.PlayOptions
-    ): void {
+    public play(this: Instrument, options: Instrument.PlayOptions): void {
         const instrument = this,
             duration = options.duration || 0,
             // Set a value, or if it is a function, set it continously as a
             // timer. Pass in the value/function to set, the setter function,
             // and any additional data to pass through to the setter function.
             setOrStartTimer = function (
-                value: (number|Function),
+                value: number | Function,
                 setter: string,
                 setterData?: unknown
             ): void {
@@ -455,15 +433,18 @@ class Instrument {
                 if (typeof value === 'function') {
                     const timer = setInterval(function (): void {
                         currentDurationIx++;
-                        const curTime = (
-                            currentDurationIx * (callbackInterval as any) / target
-                        );
+                        const curTime =
+                            (currentDurationIx * (callbackInterval as any)) /
+                            target;
 
                         if (curTime >= 1) {
                             (instrument as any)[setter](value(1), setterData);
                             clearInterval(timer);
                         } else {
-                            (instrument as any)[setter](value(curTime), setterData);
+                            (instrument as any)[setter](
+                                value(curTime),
+                                setterData
+                            );
                         }
                     }, callbackInterval);
 
@@ -481,7 +462,7 @@ class Instrument {
         // If the AudioContext is suspended we have to resume it before playing
         if (
             Instrument.audioContext.state === 'suspended' ||
-            this.oscillator && !this.oscillatorStarted
+            (this.oscillator && !this.oscillatorStarted)
         ) {
             instrument.preparePlay();
             // Try again in 10ms
@@ -516,7 +497,7 @@ class Instrument {
                 // leads to chaos. We pass in 'cancelled' to indicate that this
                 // note did not finish, but still stopped.
                 instrument._play = instrument.play;
-                instrument.play = function (): void { };
+                instrument.play = function (): void {};
                 instrument.stopCallback('cancelled');
                 instrument.play = instrument._play;
             }
@@ -536,8 +517,7 @@ class Instrument {
         if (duration) {
             instrument.stopTimeout = setTimeout(
                 onStop,
-                immediate ? duration :
-                    duration - Sonification.fadeOutDuration
+                immediate ? duration : duration - Sonification.fadeOutDuration
             );
 
             // Play the note
@@ -564,7 +544,6 @@ class Instrument {
     public mute(this: Instrument): void {
         this.setGain(0.0001, Sonification.fadeOutDuration * 0.8);
     }
-
 
     /**
      * Stop the instrument playing.
@@ -593,10 +572,7 @@ class Instrument {
                 if (instr.stopOscillatorTimeout) {
                     delete instr.stopOscillatorTimeout;
                 }
-                if (
-                    instr.oscillator &&
-                    instr.options.oscillator
-                ) {
+                if (instr.oscillator && instr.options.oscillator) {
                     // The oscillator may have stopped in the meantime here, so
                     // allow this function to fail if so.
                     try {
@@ -633,8 +609,10 @@ class Instrument {
         } else {
             instr.mute();
             // Stop the oscillator after the mute fade-out has finished
-            instr.stopOscillatorTimeout =
-                setTimeout(reset, Sonification.fadeOutDuration + 100);
+            instr.stopOscillatorTimeout = setTimeout(
+                reset,
+                Sonification.fadeOutDuration + 100
+            );
         }
     }
 }
@@ -674,7 +652,6 @@ class Instrument {
  * */
 
 namespace Instrument {
-
     export interface Definitions extends Record<string, Instrument> {
         sawtooth: Instrument;
         sawtoothMajor: Instrument;
@@ -701,20 +678,19 @@ namespace Instrument {
 
     export interface PlayOptions {
         duration: number;
-        frequency: (number|Function);
+        frequency: number | Function;
         maxFrequency?: number;
         minFrequency?: number;
         onEnd?: Function;
-        pan?: (number|Function);
-        volume?: (number|Function);
+        pan?: number | Function;
+        volume?: number | Function;
     }
 
-    export interface OscillatorOptions{
+    export interface OscillatorOptions {
         waveformShape?: Waveform;
     }
 
     export type Waveform = keyof Definitions;
-
 }
 
 /* *
@@ -737,33 +713,33 @@ export default Instrument;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.InstrumentOptionsObject
- *//**
+ */ /**
  * The type of instrument. Currently only `oscillator` is supported. Defaults
  * to `oscillator`.
  * @name Highcharts.InstrumentOptionsObject#type
  * @type {string|undefined}
- *//**
+ */ /**
  * The unique ID of the instrument. Generated if not supplied.
  * @name Highcharts.InstrumentOptionsObject#id
  * @type {string|undefined}
- *//**
+ */ /**
  * The master volume multiplier to apply to the instrument, regardless of other
  * volume changes. Defaults to 1.
  * @name Highcharts.InstrumentPlayOptionsObject#masterVolume
  * @type {number|undefined}
- *//**
+ */ /**
  * When using functions to determine frequency or other parameters during
  * playback, this options specifies how often to call the callback functions.
  * Number given in milliseconds. Defaults to 20.
  * @name Highcharts.InstrumentOptionsObject#playCallbackInterval
  * @type {number|undefined}
- *//**
+ */ /**
  * A list of allowed frequencies for this instrument. If trying to play a
  * frequency not on this list, the closest frequency will be used. Set to `null`
  * to allow all frequencies to be used. Defaults to `null`.
  * @name Highcharts.InstrumentOptionsObject#allowedFrequencies
  * @type {Array<number>|undefined}
- *//**
+ */ /**
  * Options specific to oscillator instruments.
  * @name Highcharts.InstrumentOptionsObject#oscillator
  * @type {Highcharts.OscillatorOptionsObject|undefined}
@@ -775,7 +751,7 @@ export default Instrument;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.InstrumentPlayOptionsObject
- *//**
+ */ /**
  * The frequency of the note to play. Can be a fixed number, or a function. The
  * function receives one argument: the relative time of the note playing (0
  * being the start, and 1 being the end of the note). It should return the
@@ -783,23 +759,23 @@ export default Instrument;
  * is specified by the Instrument.playCallbackInterval option.
  * @name Highcharts.InstrumentPlayOptionsObject#frequency
  * @type {number|Function}
- *//**
+ */ /**
  * The duration of the note in milliseconds.
  * @name Highcharts.InstrumentPlayOptionsObject#duration
  * @type {number}
- *//**
+ */ /**
  * The minimum frequency to allow. If the instrument has a set of allowed
  * frequencies, the closest frequency is used by default. Use this option to
  * stop too low frequencies from being used.
  * @name Highcharts.InstrumentPlayOptionsObject#minFrequency
  * @type {number|undefined}
- *//**
+ */ /**
  * The maximum frequency to allow. If the instrument has a set of allowed
  * frequencies, the closest frequency is used by default. Use this option to
  * stop too high frequencies from being used.
  * @name Highcharts.InstrumentPlayOptionsObject#maxFrequency
  * @type {number|undefined}
- *//**
+ */ /**
  * The volume of the instrument. Can be a fixed number between 0 and 1, or a
  * function. The function receives one argument: the relative time of the note
  * playing (0 being the start, and 1 being the end of the note). It should
@@ -807,7 +783,7 @@ export default Instrument;
  * is specified by the Instrument.playCallbackInterval option. Defaults to 1.
  * @name Highcharts.InstrumentPlayOptionsObject#volume
  * @type {number|Function|undefined}
- *//**
+ */ /**
  * The panning of the instrument. Can be a fixed number between -1 and 1, or a
  * function. The function receives one argument: the relative time of the note
  * playing (0 being the start, and 1 being the end of the note). It should
@@ -816,18 +792,17 @@ export default Instrument;
  * Defaults to 0.
  * @name Highcharts.InstrumentPlayOptionsObject#pan
  * @type {number|Function|undefined}
- *//**
+ */ /**
  * Callback function to be called when the play is completed.
  * @name Highcharts.InstrumentPlayOptionsObject#onEnd
  * @type {Function|undefined}
  */
 
-
 /**
  * @requires module:modules/sonification
  *
  * @interface Highcharts.OscillatorOptionsObject
- *//**
+ */ /**
  * The waveform shape to use for oscillator instruments. Defaults to `sine`.
  * @name Highcharts.OscillatorOptionsObject#waveformShape
  * @type {string|undefined}

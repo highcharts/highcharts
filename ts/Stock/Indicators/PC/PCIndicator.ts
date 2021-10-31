@@ -10,10 +10,7 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    PCOptions,
-    PCParamsOptions
-} from '../PC/PCOptions';
+import type { PCOptions, PCParamsOptions } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
@@ -21,15 +18,10 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 
 /* *
  *
@@ -47,7 +39,6 @@ const {
  * @augments Highcharts.Series
  */
 class PCIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -72,73 +63,76 @@ class PCIndicator extends SMAIndicator {
      * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
      */
-    public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
-            period: 20
-        },
-        lineWidth: 1,
-        topLine: {
-            styles: {
-                /**
-                 * Color of the top line. If not set, it's inherited from
-                 * [plotOptions.pc.color](#plotOptions.pc.color).
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: Palettes.colors[2],
-                /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1
+    public static defaultOptions: PCOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            /**
+             * @excluding index
+             */
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                period: 20
+            },
+            lineWidth: 1,
+            topLine: {
+                styles: {
+                    /**
+                     * Color of the top line. If not set, it's inherited from
+                     * [plotOptions.pc.color](#plotOptions.pc.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: Palettes.colors[2],
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1
+                }
+            },
+            bottomLine: {
+                styles: {
+                    /**
+                     * Color of the bottom line. If not set, it's inherited from
+                     * [plotOptions.pc.color](#plotOptions.pc.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: Palettes.colors[8],
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        bottomLine: {
-            styles: {
-                /**
-                 * Color of the bottom line. If not set, it's inherited from
-                 * [plotOptions.pc.color](#plotOptions.pc.color).
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: Palettes.colors[8],
-                /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1
-            }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as PCOptions);
+        } as PCOptions
+    );
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<PCPoint> = void 0 as any;
     public options: PCOptions = void 0 as any;
     public points: Array<PCPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PCParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PC: Array<Array<number>> = [],
@@ -240,4 +234,4 @@ export default PCIndicator;
  * @apioption    series.pc
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

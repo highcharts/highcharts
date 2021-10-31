@@ -32,18 +32,12 @@ import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const {
-    charts,
-    deg2rad
-} = H;
+const { charts, deg2rad } = H;
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 /* *
  *
@@ -80,10 +74,7 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
         /** @requires CylinderComposition */
         getCurvedPath(points: Array<PositionObject>): SVGPath;
         /** @requires CylinderComposition */
-        getCylinderBack(
-            topPath: SVGPath,
-            bottomPath: SVGPath
-        ): SVGPath;
+        getCylinderBack(topPath: SVGPath, bottomPath: SVGPath): SVGPath;
         /** @requires CylinderComposition */
         getCylinderEnd(
             chart: Chart,
@@ -91,10 +82,7 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
             isBottom?: boolean
         ): SVGPath;
         /** @requires CylinderComposition */
-        getCylinderFront(
-            topPath: SVGPath,
-            bottomPath: SVGPath
-        ): SVGPath;
+        getCylinderFront(topPath: SVGPath, bottomPath: SVGPath): SVGPath;
     }
 }
 
@@ -117,10 +105,7 @@ const cylinderMethods = merge(rendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 
-    fillSetter: function (
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement {
+    fillSetter: function (this: SVGElement, fill: ColorType): SVGElement {
         this.singleSetterForParts('fill', null, {
             front: fill,
             back: fill,
@@ -147,12 +132,10 @@ rendererProto.cylinderPath = function (
 ): CylinderPathsObject {
     const renderer = this,
         chart = charts[renderer.chartIndex],
-
         // decide zIndexes of parts based on cubiod logic, for consistency.
         cuboidData = cuboidPath.call(renderer, shapeArgs),
         isTopFirst = !cuboidData.isTop,
         isFronFirst = !cuboidData.isFront,
-
         top = renderer.getCylinderEnd(chart as any, shapeArgs),
         bottom = renderer.getCylinderEnd(chart as any, shapeArgs, true);
 
@@ -181,24 +164,37 @@ rendererProto.getCylinderFront = function (
     const path = topPath.slice(0, 3);
 
     if (isSimplified(bottomPath)) {
-
         const move = bottomPath[0];
         if (move[0] === 'M') {
             path.push(bottomPath[2]);
             path.push(bottomPath[1]);
             path.push(['L', move[1], move[2]]);
         }
-
     } else {
         const move = bottomPath[0],
             curve1 = bottomPath[1],
             curve2 = bottomPath[2];
         if (move[0] === 'M' && curve1[0] === 'C' && curve2[0] === 'C') {
-
             path.push(['L', curve2[5], curve2[6]]);
 
-            path.push(['C', curve2[3], curve2[4], curve2[1], curve2[2], curve1[5], curve1[6]]);
-            path.push(['C', curve1[3], curve1[4], curve1[1], curve1[2], move[1], move[2]]);
+            path.push([
+                'C',
+                curve2[3],
+                curve2[4],
+                curve2[1],
+                curve2[2],
+                curve1[5],
+                curve1[6]
+            ]);
+            path.push([
+                'C',
+                curve1[3],
+                curve1[4],
+                curve1[1],
+                curve1[2],
+                move[1],
+                move[2]
+            ]);
         }
     }
     path.push(['Z']);
@@ -211,7 +207,6 @@ rendererProto.getCylinderBack = function (
     topPath: SVGPath,
     bottomPath: SVGPath
 ): SVGPath {
-
     const path: SVGPath = [];
 
     if (isSimplified(topPath)) {
@@ -246,8 +241,24 @@ rendererProto.getCylinderBack = function (
             curve4 = bottomPath[4];
         if (curve2[0] === 'C' && curve3[0] === 'C' && curve4[0] === 'C') {
             path.push(['L', curve4[5], curve4[6]]);
-            path.push(['C', curve4[3], curve4[4], curve4[1], curve4[2], curve3[5], curve3[6]]);
-            path.push(['C', curve3[3], curve3[4], curve3[1], curve3[2], curve2[5], curve2[6]]);
+            path.push([
+                'C',
+                curve4[3],
+                curve4[4],
+                curve4[1],
+                curve4[2],
+                curve3[5],
+                curve3[6]
+            ]);
+            path.push([
+                'C',
+                curve3[3],
+                curve3[4],
+                curve3[1],
+                curve3[2],
+                curve2[5],
+                curve2[6]
+            ]);
         }
     }
     path.push(['Z']);
@@ -261,92 +272,111 @@ rendererProto.getCylinderEnd = function (
     shapeArgs: SVGAttributes,
     isBottom?: boolean
 ): SVGPath {
-
-    const { width = 0, height = 0, alphaCorrection = 0 } =
-        shapeArgs;
+    const { width = 0, height = 0, alphaCorrection = 0 } = shapeArgs;
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
     let depth = pick(shapeArgs.depth, width, 0),
         radius = Math.min(width, depth) / 2,
-
         // Approximated longest diameter
-        angleOffset = deg2rad * (
-            (chart.options.chart.options3d as any).beta - 90 +
-            alphaCorrection
-        ),
-
+        angleOffset =
+            deg2rad *
+            ((chart.options.chart.options3d as any).beta -
+                90 +
+                alphaCorrection),
         // Could be top or bottom of the cylinder
         y = (shapeArgs.y || 0) + (isBottom ? height : 0),
-
         // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
         // More math. at spencermortensen.com/articles/bezier-circle/
         c = 0.5519 * radius,
         centerX = width / 2 + (shapeArgs.x || 0),
         centerZ = depth / 2 + (shapeArgs.z || 0),
-
         // points could be generated in a loop, but readability will plummet
-        points: Array<Position3DObject> = [{ // M - starting point
-            x: 0,
-            y: y,
-            z: radius
-
-        }, { // C1 - control point 1
-            x: c,
-            y: y,
-            z: radius
-        }, { // C1 - control point 2
-            x: radius,
-            y: y,
-            z: c
-        }, { // C1 - end point
-            x: radius,
-            y: y,
-            z: 0
-
-        }, { // C2 - control point 1
-            x: radius,
-            y: y,
-            z: -c
-        }, { // C2 - control point 2
-            x: c,
-            y: y,
-            z: -radius
-        }, { // C2 - end point
-            x: 0,
-            y: y,
-            z: -radius
-
-        }, { // C3 - control point 1
-            x: -c,
-            y: y,
-            z: -radius
-        }, { // C3 - control point 2
-            x: -radius,
-            y: y,
-            z: -c
-        }, { // C3 - end point
-            x: -radius,
-            y: y,
-            z: 0
-
-        }, { // C4 - control point 1
-            x: -radius,
-            y: y,
-            z: c
-        }, { // C4 - control point 2
-            x: -c,
-            y: y,
-            z: radius
-        }, { // C4 - end point
-            x: 0,
-            y: y,
-            z: radius
-        }],
+        points: Array<Position3DObject> = [
+            {
+                // M - starting point
+                x: 0,
+                y: y,
+                z: radius
+            },
+            {
+                // C1 - control point 1
+                x: c,
+                y: y,
+                z: radius
+            },
+            {
+                // C1 - control point 2
+                x: radius,
+                y: y,
+                z: c
+            },
+            {
+                // C1 - end point
+                x: radius,
+                y: y,
+                z: 0
+            },
+            {
+                // C2 - control point 1
+                x: radius,
+                y: y,
+                z: -c
+            },
+            {
+                // C2 - control point 2
+                x: c,
+                y: y,
+                z: -radius
+            },
+            {
+                // C2 - end point
+                x: 0,
+                y: y,
+                z: -radius
+            },
+            {
+                // C3 - control point 1
+                x: -c,
+                y: y,
+                z: -radius
+            },
+            {
+                // C3 - control point 2
+                x: -radius,
+                y: y,
+                z: -c
+            },
+            {
+                // C3 - end point
+                x: -radius,
+                y: y,
+                z: 0
+            },
+            {
+                // C4 - control point 1
+                x: -radius,
+                y: y,
+                z: c
+            },
+            {
+                // C4 - control point 2
+                x: -c,
+                y: y,
+                z: radius
+            },
+            {
+                // C4 - end point
+                x: 0,
+                y: y,
+                z: radius
+            }
+        ],
         cosTheta = Math.cos(angleOffset),
         sinTheta = Math.sin(angleOffset),
         perspectivePoints,
         path: SVGPath,
-        x, z;
+        x,
+        z;
 
     // rotete to match chart's beta and translate to the shape center
     points.forEach(function (point, i): void {
@@ -355,8 +385,8 @@ rendererProto.getCylinderEnd = function (
 
         // x′ = (x * cosθ − z * sinθ) + centerX
         // z′ = (z * cosθ + x * sinθ) + centerZ
-        points[i].x = (x * cosTheta - z * sinTheta) + centerX;
-        points[i].z = (z * cosTheta + x * sinTheta) + centerZ;
+        points[i].x = x * cosTheta - z * sinTheta + centerX;
+        points[i].z = z * cosTheta + x * sinTheta + centerZ;
     });
     perspectivePoints = perspective(points, chart, true);
 
@@ -366,12 +396,15 @@ rendererProto.getCylinderEnd = function (
         Math.abs(perspectivePoints[0].y - perspectivePoints[6].y) < 2.5
     ) {
         // use simplied shape
-        path = this.toLinePath([
-            perspectivePoints[0],
-            perspectivePoints[3],
-            perspectivePoints[6],
-            perspectivePoints[9]
-        ], true);
+        path = this.toLinePath(
+            [
+                perspectivePoints[0],
+                perspectivePoints[3],
+                perspectivePoints[6],
+                perspectivePoints[9]
+            ],
+            true
+        );
     } else {
         // or default curved path to imitate ellipse (2D circle)
         path = this.getCurvedPath(perspectivePoints);
@@ -383,7 +416,9 @@ rendererProto.getCylinderEnd = function (
 // Returns curved path in format of:
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
-rendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath {
+rendererProto.getCurvedPath = function (
+    points: Array<PositionObject>
+): SVGPath {
     let path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;
@@ -391,9 +426,12 @@ rendererProto.getCurvedPath = function (points: Array<PositionObject>): SVGPath 
     for (i = 1; i < limit; i += 3) {
         path.push([
             'C',
-            points[i].x, points[i].y,
-            points[i + 1].x, points[i + 1].y,
-            points[i + 2].x, points[i + 2].y
+            points[i].x,
+            points[i].y,
+            points[i + 1].x,
+            points[i + 1].y,
+            points[i + 2].x,
+            points[i + 2].y
         ]);
     }
     return path;

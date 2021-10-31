@@ -26,16 +26,10 @@ import OnSeriesComposition from '../OnSeriesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+const { extend, merge, pick } = U;
 import WindbarbPoint from './WindbarbPoint.js';
 
 /**
@@ -47,7 +41,6 @@ import WindbarbPoint from './WindbarbPoint.js';
  */
 
 class WindbarbSeries extends ColumnSeries {
-
     /* *
      *
      * Static properties
@@ -72,95 +65,100 @@ class WindbarbSeries extends ColumnSeries {
      * @optionparent plotOptions.windbarb
      */
 
-    public static defaultOptions: WindbarbSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * Data grouping options for the wind barbs. In Highcharts, this
-         * requires the `modules/datagrouping.js` module to be loaded. In
-         * Highcharts Stock, data grouping is included.
-         *
-         * @sample  highcharts/plotoptions/windbarb-datagrouping
-         *          Wind barb with data grouping
-         *
-         * @since   7.1.0
-         * @product highcharts highstock
-         */
-        dataGrouping: {
+    public static defaultOptions: WindbarbSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
             /**
-             * Whether to enable data grouping.
+             * Data grouping options for the wind barbs. In Highcharts, this
+             * requires the `modules/datagrouping.js` module to be loaded. In
+             * Highcharts Stock, data grouping is included.
              *
+             * @sample  highcharts/plotoptions/windbarb-datagrouping
+             *          Wind barb with data grouping
+             *
+             * @since   7.1.0
              * @product highcharts highstock
              */
-            enabled: true,
+            dataGrouping: {
+                /**
+                 * Whether to enable data grouping.
+                 *
+                 * @product highcharts highstock
+                 */
+                enabled: true,
+                /**
+                 * Approximation function for the data grouping. The default
+                 * returns an average of wind speed and a vector average
+                 * direction weighted by wind speed.
+                 *
+                 * @product highcharts highstock
+                 *
+                 * @type {string|Function}
+                 */
+                approximation: 'windbarb',
+                /**
+                 * The approximate data group width.
+                 *
+                 * @product highcharts highstock
+                 */
+                groupPixelWidth: 30
+            },
             /**
-             * Approximation function for the data grouping. The default
-             * returns an average of wind speed and a vector average direction
-             * weighted by wind speed.
-             *
-             * @product highcharts highstock
-             *
-             * @type {string|Function}
+             * The line width of the wind barb symbols.
              */
-            approximation: 'windbarb',
+            lineWidth: 2,
             /**
-             * The approximate data group width.
+             * The id of another series in the chart that the wind barbs are
+             * projected on. When `null`, the wind symbols are drawn on the X
+             * axis, but offset up or down by the `yOffset` setting.
              *
-             * @product highcharts highstock
+             * @sample {highcharts|highstock}
+             *         highcharts/plotoptions/windbarb-onseries Projected on
+             *         area series
+             *
+             * @type {string|null}
              */
-            groupPixelWidth: 30
-        },
-        /**
-         * The line width of the wind barb symbols.
-         */
-        lineWidth: 2,
-        /**
-         * The id of another series in the chart that the wind barbs are
-         * projected on. When `null`, the wind symbols are drawn on the X axis,
-         * but offset up or down by the `yOffset` setting.
-         *
-         * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
-         *         Projected on area series
-         *
-         * @type {string|null}
-         */
-        onSeries: null,
-        states: {
-            hover: {
-                lineWidthPlus: 0
-            }
-        },
-        tooltip: {
+            onSeries: null,
+            states: {
+                hover: {
+                    lineWidthPlus: 0
+                }
+            },
+            tooltip: {
+                /**
+                 * The default point format for the wind barb tooltip. Note the
+                 * `point.beaufort` property that refers to the Beaufort wind
+                 * scale. The names can be internationalized by modifying
+                 * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+                 */
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
+            },
             /**
-             * The default point format for the wind barb tooltip. Note the
-             * `point.beaufort` property that refers to the Beaufort wind scale.
-             * The names can be internationalized by modifying
-             * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+             * Pixel length of the stems.
              */
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
-        },
-        /**
-         * Pixel length of the stems.
-         */
-        vectorLength: 20,
-        /**
-         * @default   value
-         */
-        colorKey: 'value',
-        /**
-         * Vertical offset from the cartesian position, in pixels. The default
-         * value makes sure the symbols don't overlap the X axis when `onSeries`
-         * is `null`, and that they don't overlap the linked series when
-         * `onSeries` is given.
-         */
-        yOffset: -20,
-        /**
-         * Horizontal offset from the cartesian position, in pixels. When the
-         * chart is inverted, this option allows translation like
-         * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
-         *
-         * @since 6.1.0
-         */
-        xOffset: 0
-    });
+            vectorLength: 20,
+            /**
+             * @default   value
+             */
+            colorKey: 'value',
+            /**
+             * Vertical offset from the cartesian position, in pixels. The
+             * default value makes sure the symbols don't overlap the X axis
+             * when `onSeries` is `null`, and that they don't overlap the linked
+             * series when `onSeries` is given.
+             */
+            yOffset: -20,
+            /**
+             * Horizontal offset from the cartesian position, in pixels. When
+             * the chart is inverted, this option allows translation like
+             * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
+             *
+             * @since 6.1.0
+             */
+            xOffset: 0
+        }
+    );
 
     /* *
      *
@@ -187,19 +185,19 @@ class WindbarbSeries extends ColumnSeries {
                     len = values.length;
 
                 for (i = 0; i < len; i++) {
-                    vectorX += values[i] * Math.cos(
-                        directions[i] * H.deg2rad
-                    );
-                    vectorY += values[i] * Math.sin(
-                        directions[i] * H.deg2rad
-                    );
+                    vectorX += values[i] * Math.cos(directions[i] * H.deg2rad);
+                    vectorY += values[i] * Math.sin(directions[i] * H.deg2rad);
                 }
 
                 return [
                     // Wind speed
-                    values.reduce(function (sum: number, value: number): number {
+                    values.reduce(function (
+                        sum: number,
+                        value: number
+                    ): number {
                         return sum + value;
-                    }, 0) / values.length,
+                    },
+                    0) / values.length,
                     // Wind direction
                     Math.atan2(vectorY, vectorX) / H.deg2rad
                 ];
@@ -222,10 +220,7 @@ class WindbarbSeries extends ColumnSeries {
      * Functions
      *
      * */
-    public init(
-        chart: Chart,
-        options: WindbarbSeriesOptions
-    ): void {
+    public init(chart: Chart, options: WindbarbSeriesOptions): void {
         WindbarbSeries.registerApproximation();
         Series.prototype.init.call(this, chart, options);
     }
@@ -242,18 +237,18 @@ class WindbarbSeries extends ColumnSeries {
         if (state) {
             stroke = (options.states as any)[state].color || stroke;
             strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+                ((options.states as any)[state].lineWidth || strokeWidth) +
+                ((options.states as any)[state].lineWidthPlus || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke: stroke,
             'stroke-width': strokeWidth
         };
     }
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
-    public windArrow(point: WindbarbPoint): (SVGElement|SVGPath) {
+    public windArrow(point: WindbarbPoint): SVGElement | SVGPath {
         let knots = point.value * 1.943844,
             level = point.beaufortLevel,
             path: SVGPath,
@@ -285,7 +280,7 @@ class WindbarbSeries extends ColumnSeries {
         ];
 
         // For each full 50 knots, add a pennant
-        barbs = (knots - knots % 50) / 50; // pennants
+        barbs = (knots - (knots % 50)) / 50; // pennants
         if (barbs > 0) {
             while (barbs--) {
                 path.push(
@@ -301,26 +296,28 @@ class WindbarbSeries extends ColumnSeries {
         }
 
         // For each full 10 knots, add a full barb
-        barbs = (knots - knots % 10) / 10;
+        barbs = (knots - (knots % 10)) / 10;
         if (barbs > 0) {
             while (barbs--) {
-                path.push(
-                    pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u],
-                    ['L', 7 * u, pos * u]
-                );
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], [
+                    'L',
+                    7 * u,
+                    pos * u
+                ]);
                 knots -= 10;
                 pos += 3;
             }
         }
 
         // For each full 5 knots, add a half barb
-        barbs = (knots - knots % 5) / 5; // half barbs
+        barbs = (knots - (knots % 5)) / 5; // half barbs
         if (barbs > 0) {
             while (barbs--) {
-                path.push(
-                    pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u],
-                    ['L', 4 * u, pos * u]
-                );
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], [
+                    'L',
+                    4 * u,
+                    pos * u
+                ]);
                 knots -= 5;
                 pos += 3;
             }
@@ -334,9 +331,7 @@ class WindbarbSeries extends ColumnSeries {
             inverted = chart.inverted,
             shapeOffset = (this.options.vectorLength as any) / 2;
 
-        this.points.forEach(function (
-            point: WindbarbPoint
-        ): void {
+        this.points.forEach(function (point: WindbarbPoint): void {
             const plotX = point.plotX,
                 plotY = point.plotY;
 
@@ -353,53 +348,53 @@ class WindbarbSeries extends ColumnSeries {
                         .add(this.markerGroup)
                         .addClass(
                             'highcharts-point ' +
-                            'highcharts-color-' +
-                            pick(point.colorIndex, point.series.colorIndex)
+                                'highcharts-color-' +
+                                pick(point.colorIndex, point.series.colorIndex)
                         );
                 }
 
                 // Position the graphic
-                point.graphic
-                    .attr({
-                        d: this.windArrow(point) as any,
-                        translateX: (plotX as any) + this.options.xOffset,
-                        translateY: (plotY as any) + this.options.yOffset,
-                        rotation: point.direction
-                    });
+                point.graphic.attr({
+                    d: this.windArrow(point) as any,
+                    translateX: (plotX as any) + this.options.xOffset,
+                    translateY: (plotY as any) + this.options.yOffset,
+                    rotation: point.direction
+                });
 
                 if (!this.chart.styledMode) {
-                    point.graphic
-                        .attr(this.pointAttribs(point));
+                    point.graphic.attr(this.pointAttribs(point));
                 }
-
             } else if (point.graphic) {
                 point.graphic = point.graphic.destroy();
             }
 
             // Set the tooltip anchor position
             point.tooltipPos = [
-                (plotX as any) + this.options.xOffset +
+                (plotX as any) +
+                    this.options.xOffset +
                     (inverted && !this.onSeries ? shapeOffset : 0),
-                (plotY as any) + this.options.yOffset -
-                    (inverted ?
-                        0 :
-                        shapeOffset + (yAxis.pos as any) - chart.plotTop
-                    )
+                (plotY as any) +
+                    this.options.yOffset -
+                    (inverted
+                        ? 0
+                        : shapeOffset + (yAxis.pos as any) - chart.plotTop)
             ]; // #6327
         }, this);
     }
 
     // Fade in the arrows on initializing series.
-    public animate(
-        init?: boolean): void {
+    public animate(init?: boolean): void {
         if (init) {
             (this.markerGroup as any).attr({
                 opacity: 0.01
             });
         } else {
-            (this.markerGroup as any).animate({
-                opacity: 1
-            }, animObject(this.options.animation));
+            (this.markerGroup as any).animate(
+                {
+                    opacity: 1
+                },
+                animObject(this.options.animation)
+            );
         }
     }
 
@@ -433,18 +428,29 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof WindbarbPoint;
     remove: typeof ColumnSeries.prototype.remove;
-    windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
-
+    windArrow(point: WindbarbPoint): SVGElement | SVGPath;
 }
 
 OnSeriesComposition.compose(WindbarbSeries);
 extend(WindbarbSeries.prototype, {
-    beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
-        24.5, 28.5, 32.7], // @todo dictionary with names?
-    beaufortName: ['Calm', 'Light air', 'Light breeze',
-        'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
-        'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
-        'Violent storm', 'Hurricane'],
+    beaufortFloor: [
+        0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8, 24.5, 28.5, 32.7
+    ], // @todo dictionary with names?
+    beaufortName: [
+        'Calm',
+        'Light air',
+        'Light breeze',
+        'Gentle breeze',
+        'Moderate breeze',
+        'Fresh breeze',
+        'Strong breeze',
+        'Near gale',
+        'Gale',
+        'Strong gale',
+        'Storm',
+        'Violent storm',
+        'Hurricane'
+    ],
     parallelArrays: ['x', 'value', 'direction'],
     pointArrayMap: ['value', 'direction'],
     pointClass: WindbarbPoint,
@@ -456,9 +462,7 @@ extend(WindbarbSeries.prototype, {
 
         OnSeriesComposition.translate.call(this);
 
-        this.points.forEach(function (
-            point: WindbarbPoint
-        ): void {
+        this.points.forEach(function (point: WindbarbPoint): void {
             let level = 0;
 
             // Find the beaufort level (zero based)
@@ -469,7 +473,6 @@ extend(WindbarbSeries.prototype, {
             }
             point.beaufortLevel = level - 1;
             point.beaufort = beaufortName[level - 1];
-
         });
     }
 });
@@ -578,4 +581,4 @@ export default WindbarbSeries;
  * @apioption series.windbarb.data.direction
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

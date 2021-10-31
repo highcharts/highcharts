@@ -26,10 +26,7 @@ import type DataTable from './DataTable.js';
 import type JSON from '../Core/JSON';
 
 import U from './../Core/Utilities.js';
-const {
-    merge,
-    isNumber
-} = U;
+const { merge, isNumber } = U;
 
 /* *
  *
@@ -80,10 +77,9 @@ class DataConverter {
             decimalPoint = void 0;
         }
 
-        this.decimalRegex = (
+        this.decimalRegex =
             decimalPoint &&
-            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
-        );
+            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$');
     }
 
     /* *
@@ -100,12 +96,12 @@ class DataConverter {
     /**
      * Custom parsing function used instead of build-in parseDate method.
      */
-    private parseDateFn: (DataConverter.ParseDateFunction|undefined);
+    private parseDateFn: DataConverter.ParseDateFunction | undefined;
 
     /**
      * Regular expression used in the trim method to change a decimal point.
      */
-    private decimalRegex: (RegExp|undefined);
+    private decimalRegex: RegExp | undefined;
 
     /**
      * A collection of available date formats.
@@ -116,38 +112,32 @@ class DataConverter {
     private dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[1], (match[2] as any) - 1, +match[3]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[1], (match[2] as any) - 1, +match[3])
+                    : NaN;
             }
         },
         'dd/mm/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3], (match[2] as any) - 1, +match[1]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[3], (match[2] as any) - 1, +match[1])
+                    : NaN;
             },
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3], (match[1] as any) - 1, +match[2]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[3], (match[1] as any) - 1, +match[2])
+                    : NaN;
             }
         },
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 const d = new Date();
 
                 if (!match) {
@@ -156,7 +146,7 @@ class DataConverter {
 
                 let year = +match[3];
 
-                if (year > (d.getFullYear() - 2000)) {
+                if (year > d.getFullYear() - 2000) {
                     year += 1900;
                 } else {
                     year += 2000;
@@ -168,12 +158,14 @@ class DataConverter {
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(
+                          +match[3] + 2000,
+                          (match[1] as any) - 1,
+                          +match[2]
+                      )
+                    : NaN;
             }
         }
     };
@@ -189,7 +181,7 @@ class DataConverter {
      *
      * @return {string|undefined}
      */
-    public getDateFormat(): (string|undefined) {
+    public getDateFormat(): string | undefined {
         return this.options.dateFormat;
     }
 
@@ -297,10 +289,7 @@ class DataConverter {
      * @return {string}
      * Trimed string
      */
-    public trim(
-        str: string,
-        inside?: boolean
-    ): string {
+    public trim(str: string, inside?: boolean): string {
         const converter = this;
 
         if (typeof str === 'string') {
@@ -328,32 +317,27 @@ class DataConverter {
      * @return {'number'|'string'|'Date'}
      * `string`, `Date` or `number`
      */
-    public guessType(
-        value: string
-    ): ('number'|'string'|'Date') {
+    public guessType(value: string): 'number' | 'string' | 'Date' {
         const converter = this,
             trimVal = converter.trim(value),
             trimInsideVal = converter.trim(value, true),
             floatVal = parseFloat(trimInsideVal);
 
-        let result: ('string' | 'Date' | 'number') = 'string',
+        let result: 'string' | 'Date' | 'number' = 'string',
             dateVal;
 
         // is numeric
         if (+trimInsideVal === floatVal) {
-
             // If the number is greater than milliseconds in a year, assume
             // datetime.
-            if (
-                floatVal > 365 * 24 * 3600 * 1000
-            ) {
+            if (floatVal > 365 * 24 * 3600 * 1000) {
                 result = 'Date';
             } else {
                 result = 'number';
             }
 
-        // String, continue to determine if it is
-        // a date string or really a string.
+            // String, continue to determine if it is
+            // a date string or really a string.
         } else {
             if (trimVal && trimVal.length) {
                 dateVal = converter.parseDate(value);
@@ -377,12 +361,15 @@ class DataConverter {
      * @return {number|string|Date}
      * The converted value
      */
-    public asGuessedType(value: string): (number|string|Date) {
+    public asGuessedType(value: string): number | string | Date {
         const converter = this,
-            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
-                'number': converter.asNumber,
-                'Date': converter.asDate,
-                'string': converter.asString
+            typeMap: Record<
+                ReturnType<DataConverter['guessType']>,
+                Function
+            > = {
+                number: converter.asNumber,
+                Date: converter.asDate,
+                string: converter.asString
             };
 
         return typeMap[converter.guessType(value)].call(converter, value);
@@ -416,7 +403,8 @@ class DataConverter {
         } else {
             // Auto-detect the date format the first time
             if (!dateFormat) {
-                for (key in converter.dateFormats) { // eslint-disable-line guard-for-in
+                // eslint-disable-next-line guard-for-in
+                for (key in converter.dateFormats) {
                     format = converter.dateFormats[key];
                     match = value.match(format.regex);
                     if (match) {
@@ -429,7 +417,7 @@ class DataConverter {
                     }
                 }
 
-            // Next time, use the one previously found
+                // Next time, use the one previously found
             } else {
                 format = converter.dateFormats[dateFormat];
 
@@ -450,21 +438,21 @@ class DataConverter {
                 // and returns a date.
                 if (
                     typeof match === 'object' &&
-                        match !== null &&
-                        (match as any).getTime
+                    match !== null &&
+                    (match as any).getTime
                 ) {
-                    result = (
+                    result =
                         (match as any).getTime() -
-                            (match as any).getTimezoneOffset() *
-                            60000
-                    );
+                        (match as any).getTimezoneOffset() * 60000;
 
                     // Timestamp
                 } else if (isNumber(match)) {
-                    result = match - (new Date(match)).getTimezoneOffset() * 60000;
-                    if (// reset dates without year in Chrome
+                    result =
+                        match - new Date(match).getTimezoneOffset() * 60000;
+                    if (
+                        // reset dates without year in Chrome
                         value.indexOf('2001') === -1 &&
-                        (new Date(result)).getFullYear() === 2001
+                        new Date(result).getFullYear() === 2001
                     ) {
                         result = NaN;
                     }
@@ -497,7 +485,7 @@ class DataConverter {
      */
     public deduceDateFormat(
         data: Array<string>,
-        limit?: (number|null),
+        limit?: number | null,
         save?: boolean
     ): string {
         const parser = this,
@@ -518,10 +506,7 @@ class DataConverter {
         }
 
         for (; i < limit; i++) {
-            if (
-                typeof data[i] !== 'undefined' &&
-                data[i] && data[i].length
-            ) {
+            if (typeof data[i] !== 'undefined' && data[i] && data[i].length) {
                 thing = data[i]
                     .trim()
                     .replace(/\//g, ' ')
@@ -529,19 +514,14 @@ class DataConverter {
                     .replace(/\./g, ' ')
                     .split(' ');
 
-                guessedFormat = [
-                    '',
-                    '',
-                    ''
-                ];
+                guessedFormat = ['', '', ''];
 
                 for (j = 0; j < thing.length; j++) {
                     if (j < guessedFormat.length) {
                         elem = parseInt(thing[j], 10);
 
                         if (elem) {
-
-                            max[j] = (!max[j] || max[j] < elem) ? elem : max[j];
+                            max[j] = !max[j] || max[j] < elem ? elem : max[j];
 
                             if (typeof stable[j] !== 'undefined') {
                                 if (stable[j] !== elem) {
@@ -558,10 +538,7 @@ class DataConverter {
                                     guessedFormat[j] = 'YYYY';
                                 }
                                 // madeDeduction = true;
-                            } else if (
-                                elem > 12 &&
-                                elem <= 31
-                            ) {
+                            } else if (elem > 12 && elem <= 31) {
                                 guessedFormat[j] = 'dd';
                                 madeDeduction = true;
                             } else if (!guessedFormat[j].length) {
@@ -574,7 +551,6 @@ class DataConverter {
         }
 
         if (madeDeduction) {
-
             // This handles a few edge cases with hard to guess dates
             for (j = 0; j < stable.length; j++) {
                 if (stable[j] !== false) {
@@ -592,9 +568,11 @@ class DataConverter {
 
             // If the middle one is dd, and the last one is dd,
             // the last should likely be year.
-            if (guessedFormat.length === 3 &&
+            if (
+                guessedFormat.length === 3 &&
                 guessedFormat[1] === 'dd' &&
-                guessedFormat[2] === 'dd') {
+                guessedFormat[2] === 'dd'
+            ) {
                 guessedFormat[2] = 'YY';
             }
 
@@ -623,13 +601,17 @@ class DataConverter {
  * Additionally provided types to describe supported value types.
  */
 namespace DataConverter {
-
     /**
      * Contains supported types to convert values from and to.
      */
-    export type Type = (
-        boolean|null|number|string|DataTable|Date|undefined
-    );
+    export type Type =
+        | boolean
+        | null
+        | number
+        | string
+        | DataTable
+        | Date
+        | undefined;
 
     /**
      * Internal options for DataConverter.

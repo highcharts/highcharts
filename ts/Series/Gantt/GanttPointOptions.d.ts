@@ -29,7 +29,7 @@ import type {
  * */
 
 export interface GanttPointOptions extends XRangePointOptions {
-    completed?: (number|XRangePointPartialFillOptions);
+    completed?: number | XRangePointPartialFillOptions;
     dependency?: GanttDependencyOptions;
     end?: number;
     milestone?: boolean;

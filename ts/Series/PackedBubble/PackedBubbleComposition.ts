@@ -25,11 +25,7 @@ import H from '../../Core/Globals.js';
 import '../../Series/Networkgraph/Layouts.js';
 const Reingold = H.layouts['reingold-fruchterman'];
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extendClass,
-    pick
-} = U;
+const { addEvent, extendClass, pick } = U;
 
 /* *
  *
@@ -62,7 +58,6 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
     return selectedParentsNodes;
 };
 
-
 (H.networkgraphIntegrations as any).packedbubble = {
     repulsiveForceFunction: function (
         d: number,
@@ -93,13 +88,13 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
             }
             if (!node.fixedPosition) {
                 (node.plotX as any) -=
-                    ((node.plotX as any) - (centerX as any)) *
-                    (gravitationalConstant as any) /
+                    (((node.plotX as any) - (centerX as any)) *
+                        (gravitationalConstant as any)) /
                     (node.mass * Math.sqrt(nodes.length));
 
                 (node.plotY as any) -=
-                    ((node.plotY as any) - (centerY as any)) *
-                    (gravitationalConstant as any) /
+                    (((node.plotY as any) - (centerY as any)) *
+                        (gravitationalConstant as any)) /
                     (node.mass * Math.sqrt(nodes.length));
             }
         });
@@ -112,10 +107,10 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
         distanceXY: Record<string, number>,
         repNode: PackedBubblePoint
     ): void {
-        const factor = (
-                force * (this.diffTemperature as any) / (node.mass as any) /
-                (node.degree as any)
-            ),
+        const factor =
+                (force * (this.diffTemperature as any)) /
+                (node.mass as any) /
+                (node.degree as any),
             x = distanceXY.x * factor,
             y = distanceXY.y * factor;
 
@@ -132,173 +127,160 @@ Chart.prototype.getSelectedParentNodes = function (): Array<PackedBubblePoint> {
     getK: H.noop
 };
 
-H.layouts.packedbubble = extendClass(
-    Reingold,
-    {
-        beforeStep: function (this: PackedBubbleLayout): void {
-            if (this.options.marker) {
-                this.series.forEach(function (series): void {
-                    if (series) {
-                        (series as any).calculateParentRadius();
-                    }
-                });
-            }
-        },
-        isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
-            const tempDiff = Math.abs(
-                (this.prevSystemTemperature as any) -
+H.layouts.packedbubble = extendClass(Reingold, {
+    beforeStep: function (this: PackedBubbleLayout): void {
+        if (this.options.marker) {
+            this.series.forEach(function (series): void {
+                if (series) {
+                    (series as any).calculateParentRadius();
+                }
+            });
+        }
+    },
+    isStable: function (this: PackedBubbleLayout): boolean {
+        // #14439, new stable check.
+        const tempDiff = Math.abs(
+            (this.prevSystemTemperature as any) -
                 (this.systemTemperature as any)
+        );
+
+        const upScaledTemperature =
+            (10 * (this.systemTemperature as any)) /
+            Math.sqrt(this.nodes.length);
+
+        return (
+            (Math.abs(upScaledTemperature) < 1 && tempDiff < 0.00001) ||
+            (this.temperature as any) <= 0
+        );
+    },
+    setCircularPositions: function (this: PackedBubbleLayout): void {
+        let layout = this,
+            box = layout.box,
+            nodes = layout.nodes,
+            nodesLength = nodes.length + 1,
+            angle = (2 * Math.PI) / nodesLength,
+            centerX,
+            centerY,
+            radius = layout.options.initialPositionRadius;
+        nodes.forEach(function (node, index): void {
+            if (layout.options.splitSeries && !node.isParentNode) {
+                centerX = (node.series.parentNode as any).plotX;
+                centerY = (node.series.parentNode as any).plotY;
+            } else {
+                centerX = box.width / 2;
+                centerY = box.height / 2;
+            }
+
+            node.plotX = node.prevX = pick(
+                node.plotX,
+                (centerX as any) +
+                    (radius as any) * Math.cos(node.index || index * angle)
             );
 
-            const upScaledTemperature = 10 * (this.systemTemperature as any) /
-                Math.sqrt(this.nodes.length);
-
-            return Math.abs(upScaledTemperature) < 1 &&
-                tempDiff < 0.00001 ||
-                (this.temperature as any) <= 0;
-        },
-        setCircularPositions: function (this: PackedBubbleLayout): void {
-            let layout = this,
-                box = layout.box,
-                nodes = layout.nodes,
-                nodesLength = nodes.length + 1,
-                angle = 2 * Math.PI / nodesLength,
-                centerX,
-                centerY,
-                radius = layout.options.initialPositionRadius;
-            nodes.forEach(function (node, index): void {
-                if (
-                    layout.options.splitSeries &&
-                    !node.isParentNode
-                ) {
-                    centerX = (node.series.parentNode as any).plotX;
-                    centerY = (node.series.parentNode as any).plotY;
-                } else {
-                    centerX = box.width / 2;
-                    centerY = box.height / 2;
-                }
-
-                node.plotX = node.prevX = pick(
-                    node.plotX,
-                    (centerX as any) +
-                    (radius as any) * Math.cos(node.index || index * angle)
-                );
-
-                node.plotY = node.prevY = pick(
-                    node.plotY,
-                    (centerY as any) +
+            node.plotY = node.prevY = pick(
+                node.plotY,
+                (centerY as any) +
                     (radius as any) * Math.sin(node.index || index * angle)
-                );
+            );
 
-                node.dispX = 0;
-                node.dispY = 0;
-            });
-        },
-        repulsiveForces: function (this: PackedBubbleLayout): void {
-            let layout = this,
-                force,
-                distanceR,
-                distanceXY,
-                bubblePadding = layout.options.bubblePadding;
+            node.dispX = 0;
+            node.dispY = 0;
+        });
+    },
+    repulsiveForces: function (this: PackedBubbleLayout): void {
+        let layout = this,
+            force,
+            distanceR,
+            distanceXY,
+            bubblePadding = layout.options.bubblePadding;
 
-            layout.nodes.forEach(function (node): void {
-                node.degree = node.mass;
-                node.neighbours = 0;
-                layout.nodes.forEach(function (repNode): void {
-                    force = 0;
-                    if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Only close nodes affect each other:
+        layout.nodes.forEach(function (node): void {
+            node.degree = node.mass;
+            node.neighbours = 0;
+            layout.nodes.forEach(function (repNode): void {
+                force = 0;
+                if (
+                    // Node can not repulse itself:
+                    node !== repNode &&
+                    // Only close nodes affect each other:
 
-                        // Not dragged:
-                        !node.fixedPosition &&
-                        (
-                            layout.options.seriesInteraction ||
-                            node.series === repNode.series
-                        )
-                    ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = (
-                            layout.vectorLength(distanceXY) -
-                            (
-                                (node.marker as any).radius +
-                                (repNode.marker as any).radius +
-                                bubblePadding
-                            )
-                        );
-                        // TODO padding configurable
-                        if (distanceR < 0) {
-                            (node.degree as any) += 0.01;
-                            (node.neighbours as any)++;
-                            force = layout.repulsiveForce(
-                                -distanceR / Math.sqrt(node.neighbours as any),
-                                layout.k,
-                                node,
-                                repNode
-                            );
-                        }
-
-                        layout.force(
-                            'repulsive',
+                    // Not dragged:
+                    !node.fixedPosition &&
+                    (layout.options.seriesInteraction ||
+                        node.series === repNode.series)
+                ) {
+                    distanceXY = layout.getDistXY(node, repNode);
+                    distanceR =
+                        layout.vectorLength(distanceXY) -
+                        ((node.marker as any).radius +
+                            (repNode.marker as any).radius +
+                            bubblePadding);
+                    // TODO padding configurable
+                    if (distanceR < 0) {
+                        (node.degree as any) += 0.01;
+                        (node.neighbours as any)++;
+                        force = layout.repulsiveForce(
+                            -distanceR / Math.sqrt(node.neighbours as any),
+                            layout.k,
                             node,
-                            force * repNode.mass,
-                            distanceXY,
-                            repNode,
-                            distanceR
+                            repNode
                         );
                     }
-                });
-            });
-        },
-        applyLimitBox: function (
-            this: PackedBubbleLayout,
-            node: PackedBubblePoint
-        ): void {
-            let layout = this,
-                distanceXY,
-                distanceR,
-                factor = 0.01;
 
-            // parentNodeLimit should be used together
-            // with seriesInteraction: false
-            if (
-                layout.options.splitSeries &&
-                !node.isParentNode &&
-                layout.options.parentNodeLimit
-            ) {
-                distanceXY = layout.getDistXY(
-                    node,
-                    node.series.parentNode as any
-                );
-                distanceR = (
-                    (node.series.parentNodeRadius as any) -
-                    (node.marker as any).radius -
-                    layout.vectorLength(distanceXY)
-                );
-                if (
-                    distanceR < 0 &&
-                    distanceR > -2 * (node.marker as any).radius
-                ) {
-                    (node.plotX as any) -= distanceXY.x * factor;
-                    (node.plotY as any) -= distanceXY.y * factor;
+                    layout.force(
+                        'repulsive',
+                        node,
+                        force * repNode.mass,
+                        distanceXY,
+                        repNode,
+                        distanceR
+                    );
                 }
-            }
+            });
+        });
+    },
+    applyLimitBox: function (
+        this: PackedBubbleLayout,
+        node: PackedBubblePoint
+    ): void {
+        let layout = this,
+            distanceXY,
+            distanceR,
+            factor = 0.01;
 
-            Reingold.prototype.applyLimitBox.apply(this, arguments as any);
+        // parentNodeLimit should be used together
+        // with seriesInteraction: false
+        if (
+            layout.options.splitSeries &&
+            !node.isParentNode &&
+            layout.options.parentNodeLimit
+        ) {
+            distanceXY = layout.getDistXY(node, node.series.parentNode as any);
+            distanceR =
+                (node.series.parentNodeRadius as any) -
+                (node.marker as any).radius -
+                layout.vectorLength(distanceXY);
+            if (distanceR < 0 && distanceR > -2 * (node.marker as any).radius) {
+                (node.plotX as any) -= distanceXY.x * factor;
+                (node.plotY as any) -= distanceXY.y * factor;
+            }
         }
+
+        Reingold.prototype.applyLimitBox.apply(this, arguments as any);
     }
-);
+});
 
 // Remove accumulated data points to redistribute all of them again
 // (i.e after hiding series by legend)
 
-addEvent(Chart as any, 'beforeRedraw', function (
-    this: PackedBubbleChart
-): void {
-    // eslint-disable-next-line no-invalid-this
-    if (this.allDataPoints) {
+addEvent(
+    Chart as any,
+    'beforeRedraw',
+    function (this: PackedBubbleChart): void {
         // eslint-disable-next-line no-invalid-this
-        delete this.allDataPoints;
+        if (this.allDataPoints) {
+            // eslint-disable-next-line no-invalid-this
+            delete this.allDataPoints;
+        }
     }
-});
+);

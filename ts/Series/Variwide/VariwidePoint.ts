@@ -18,9 +18,7 @@
 import type VariwidePointOptions from './VariwidePointOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import VariwideSeries from './VariwideSeries.js';
 import U from '../../Core/Utilities.js';
@@ -44,7 +42,6 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 class VariwidePoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Properites
@@ -62,7 +59,6 @@ class VariwidePoint extends ColumnSeries.prototype.pointClass {
     public isValid(): boolean {
         return isNumber(this.y) && isNumber(this.z);
     }
-
 }
 
 /* *

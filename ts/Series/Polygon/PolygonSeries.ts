@@ -20,17 +20,10 @@ import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        area: AreaSeries,
-        line: LineSeries,
-        scatter: ScatterSeries
-    }
+    seriesTypes: { area: AreaSeries, line: LineSeries, scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 import '../../Core/Legend/Legend.js';
 
@@ -41,7 +34,6 @@ import '../../Core/Legend/Legend.js';
  * */
 
 class PolygonSeries extends ScatterSeries {
-
     /* *
      *
      * Static properties
@@ -66,22 +58,25 @@ class PolygonSeries extends ScatterSeries {
      * @requires     highcharts-more
      * @optionparent plotOptions.polygon
      */
-    public static defaultOptions: PolygonSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        marker: {
-            enabled: false,
-            states: {
-                hover: {
-                    enabled: false
+    public static defaultOptions: PolygonSeriesOptions = merge(
+        ScatterSeries.defaultOptions,
+        {
+            marker: {
+                enabled: false,
+                states: {
+                    hover: {
+                        enabled: false
+                    }
                 }
-            }
-        },
-        stickyTracking: false,
-        tooltip: {
-            followPointer: true,
-            pointFormat: ''
-        },
-        trackByArea: true
-    }) as PolygonSeriesOptions;
+            },
+            stickyTracking: false,
+            tooltip: {
+                followPointer: true,
+                pointFormat: ''
+            },
+            trackByArea: true
+        }
+    ) as PolygonSeriesOptions;
 
     /* *
      *
@@ -228,4 +223,4 @@ export default PolygonSeries;
  * @apioption series.polygon.data
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

@@ -25,9 +25,7 @@ import type Series from '../../Core/Series/Series';
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
@@ -53,13 +51,13 @@ const binsNumberFormulas: Record<string, Function> = {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
 
-    'sturges': function (baseSeries: Series): number {
+    sturges: function (baseSeries: Series): number {
         return Math.ceil(
             Math.log((baseSeries.options.data as any).length) * Math.LOG2E
         );
     },
 
-    'rice': function (baseSeries: Series): number {
+    rice: function (baseSeries: Series): number {
         return Math.ceil(
             2 * Math.pow((baseSeries.options.data as any).length, 1 / 3)
         );
@@ -97,7 +95,6 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
  * @augments Highcharts.Series
  */
 class HistogramSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -120,42 +117,43 @@ class HistogramSeries extends ColumnSeries {
      * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
-    public static defaultOptions: HistogramSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * A preferable number of bins. It is a suggestion, so a histogram may
-         * have a different number of bins. By default it is set to the square
-         * root of the base series' data length. Available options are:
-         * `square-root`, `sturges`, `rice`. You can also define a function
-         * which takes a `baseSeries` as a parameter and should return a
-         * positive integer.
-         *
-         * @type {"square-root"|"sturges"|"rice"|number|function}
-         */
-        binsNumber: 'square-root',
+    public static defaultOptions: HistogramSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            /**
+             * A preferable number of bins. It is a suggestion, so a histogram
+             * may have a different number of bins. By default it is set to the
+             * square root of the base series' data length. Available options
+             * are: `square-root`, `sturges`, `rice`. You can also define a
+             * function which takes a `baseSeries` as a parameter and should
+             * return a positive integer.
+             *
+             * @type {"square-root"|"sturges"|"rice"|number|function}
+             */
+            binsNumber: 'square-root',
 
-        /**
-         * Width of each bin. By default the bin's width is calculated as
-         * `(max - min) / number of bins`. This option takes precedence over
-         * [binsNumber](#plotOptions.histogram.binsNumber).
-         *
-         * @type {number}
-         */
-        binWidth: void 0,
-        pointPadding: 0,
-        groupPadding: 0,
-        grouping: false,
-        pointPlacement: 'between',
-        tooltip: {
-            headerFormat: '',
-            pointFormat: (
-                '<span style="font-size: 10px">{point.x} - {point.x2}' +
-                '</span><br/>' +
-                '<span style="color:{point.color}">\u25CF</span>' +
-                ' {series.name} <b>{point.y}</b><br/>'
-            )
-        }
-
-    } as HistogramSeriesOptions);
+            /**
+             * Width of each bin. By default the bin's width is calculated as
+             * `(max - min) / number of bins`. This option takes precedence over
+             * [binsNumber](#plotOptions.histogram.binsNumber).
+             *
+             * @type {number}
+             */
+            binWidth: void 0,
+            pointPadding: 0,
+            groupPadding: 0,
+            grouping: false,
+            pointPlacement: 'between',
+            tooltip: {
+                headerFormat: '',
+                pointFormat:
+                    '<span style="font-size: 10px">{point.x} - {point.x2}' +
+                    '</span><br/>' +
+                    '<span style="color:{point.color}">\u25CF</span>' +
+                    ' {series.name} <b>{point.y}</b><br/>'
+            }
+        } as HistogramSeriesOptions
+    );
 
     /* *
      *
@@ -183,17 +181,16 @@ class HistogramSeries extends ColumnSeries {
 
     public binsNumber(): number {
         const binsNumberOption = this.options.binsNumber;
-        const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
+        const binsNumber =
+            binsNumberFormulas[binsNumberOption as any] ||
             // #7457
             (typeof binsNumberOption === 'function' && binsNumberOption);
 
         return Math.ceil(
             (binsNumber && binsNumber(this.baseSeries)) ||
-            (
-                isNumber(binsNumberOption) ?
-                    binsNumberOption :
-                    binsNumberFormulas['square-root'](this.baseSeries)
-            )
+                (isNumber(binsNumberOption)
+                    ? binsNumberOption
+                    : binsNumberFormulas['square-root'](this.baseSeries))
         );
     }
 
@@ -213,12 +210,8 @@ class HistogramSeries extends ColumnSeries {
             x: number,
             fitToBin: Function;
 
-        binWidth = series.binWidth = (
-            correctFloat(
-                isNumber(binWidth) ?
-                    (binWidth || 1) :
-                    (max - min) / binsNumber
-            )
+        binWidth = series.binWidth = correctFloat(
+            isNumber(binWidth) ? binWidth || 1 : (max - min) / binsNumber
         );
 
         // #12077 negative pointRange causes wrong calculations,
@@ -234,17 +227,14 @@ class HistogramSeries extends ColumnSeries {
             // was sometimes noticeable on the graph, because of too small
             // precision of float correction.
             x < max &&
-                (
-                    series.userOptions.binWidth ||
-                    correctFloat(max - x) >= binWidth ||
-                    // #13069 - Every add and subtract operation should
-                    // be corrected, due to general problems with
-                    // operations on float numbers in JS.
-                    correctFloat(
-                        correctFloat(min + (frequencies.length * binWidth)) -
-                        x
-                    ) <= 0
-                );
+            (series.userOptions.binWidth ||
+                correctFloat(max - x) >= binWidth ||
+                // #13069 - Every add and subtract operation should
+                // be corrected, due to general problems with
+                // operations on float numbers in JS.
+                correctFloat(
+                    correctFloat(min + frequencies.length * binWidth) - x
+                ) <= 0);
             x = correctFloat(x + binWidth)
         ) {
             frequencies.push(x);
@@ -303,7 +293,6 @@ class HistogramSeries extends ColumnSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -375,4 +364,4 @@ export default HistogramSeries;
  * @apioption series.histogram.baseSeries
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

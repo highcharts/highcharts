@@ -17,7 +17,7 @@
  *
  * */
 
-export type DataValueType = (string|number|null);
+export type DataValueType = string | number | null;
 
 /* *
  *

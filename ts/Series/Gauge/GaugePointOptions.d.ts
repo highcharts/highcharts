@@ -22,8 +22,7 @@ import type LinePointOptions from '../Line/LinePointOptions';
  *
  * */
 
-interface GaugePointOptions extends LinePointOptions {
-}
+interface GaugePointOptions extends LinePointOptions {}
 
 /* *
  *

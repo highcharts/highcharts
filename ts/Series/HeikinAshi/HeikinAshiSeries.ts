@@ -23,15 +23,10 @@ import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 
 const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
+    seriesTypes: { candlestick: CandlestickSeries }
 } = SeriesRegistry;
 
-const {
-    addEvent,
-    merge
-} = U;
+const { addEvent, merge } = U;
 
 /* *
  *
@@ -49,7 +44,6 @@ const {
  * @augments Highcharts.Series
  */
 class HeikinAshiSeries extends CandlestickSeries {
-
     /* *
      *
      *  Static Properties
@@ -75,7 +69,8 @@ class HeikinAshiSeries extends CandlestickSeries {
             dataGrouping: {
                 groupAll: true
             }
-        } as HeikinAshiSeriesOptions);
+        } as HeikinAshiSeriesOptions
+    );
 
     /* *
      *
@@ -93,7 +88,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public yData: Array<Array<number>> = void 0 as any;
 
-    public processedYData: Array<Array<(number|null)>> = void 0 as any;
+    public processedYData: Array<Array<number | null>> = void 0 as any;
 
     /* *
      *
@@ -159,8 +154,9 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @return {void}
      *
      */
-    public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+    public modifyFirstPointValue(dataPoint: Array<number>): void {
+        const open =
+                (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
             close = (dataPoint[0] + dataPoint[3]) / 2;
 
         this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
@@ -182,11 +178,12 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      */
     public modifyDataPoint(
-        dataPoint: Array<(number)>,
-        previousDataPoint: Array<(number)>
+        dataPoint: Array<number>,
+        previousDataPoint: Array<number>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
-            newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            newClose =
+                (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
             newHigh = Math.max(dataPoint[1], newClose, newOpen),
             newLow = Math.min(dataPoint[2], newClose, newOpen);
 
@@ -217,7 +214,12 @@ addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
 
-        series.processedYData.push([point.open, point.high, point.low, point.close]);
+        series.processedYData.push([
+            point.open,
+            point.high,
+            point.low,
+            point.close
+        ]);
     }
 });
 
@@ -341,4 +343,4 @@ export default HeikinAshiSeries;
  * @apioption series.heikinashi.data
  */
 
-''; // adds doclets above to transpilat
+(''); // adds doclets above to transpilat

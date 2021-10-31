@@ -92,8 +92,11 @@ function getCirclePath(
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class TimeCycles extends CrookedLine {
-
-    public init(annotation: Annotation, options: TimeCyclesOptions, index?: number): void {
+    public init(
+        annotation: Annotation,
+        options: TimeCyclesOptions,
+        index?: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -113,13 +116,14 @@ class TimeCycles extends CrookedLine {
     }
 
     public getPath(): SVGPath {
-
-        return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(getCirclePath(
-            this.pixelInterval,
-            this.numberOfCircles,
-            this.startX,
-            this.y
-        ));
+        return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(
+            getCirclePath(
+                this.pixelInterval,
+                this.numberOfCircles,
+                this.startX,
+                this.y
+            )
+        );
     }
 
     public addShapes(): void {
@@ -140,14 +144,25 @@ class TimeCycles extends CrookedLine {
     public addControlPoints(): void {
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
-        options.controlPointOptions.style.cursor = this.chart.inverted ? 'ns-resize' : 'ew-resize';
+        options.controlPointOptions.style.cursor = this.chart.inverted
+            ? 'ns-resize'
+            : 'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
             (option: Highcharts.AnnotationControlPointOptionsObject): void => {
-                const controlPointsOptions = merge(options.controlPointOptions, option);
-                const controlPoint = new ControlPoint(this.chart, this, controlPointsOptions, 0);
+                const controlPointsOptions = merge(
+                    options.controlPointOptions,
+                    option
+                );
+                const controlPoint = new ControlPoint(
+                    this.chart,
+                    this,
+                    controlPointsOptions,
+                    0
+                );
                 this.controlPoints.push(controlPoint);
-            });
+            }
+        );
     }
 
     public setPathProperties(): void {
@@ -172,7 +187,9 @@ class TimeCycles extends CrookedLine {
             return;
         }
 
-        const y = isNumber(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
+        const y = isNumber(yValue)
+                ? yAxis.toPixels(yValue)
+                : yAxis.top + yAxis.height,
             x = isNumber(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
             x2 = isNumber(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
             xAxisLength = xAxis.len,
@@ -181,7 +198,9 @@ class TimeCycles extends CrookedLine {
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
             // Calculate where the annotation should start drawing
             // relative to first point.
-            pixelShift = (Math.floor((x - xAxis.left) / pixelInterval) + 1) * pixelInterval;
+            pixelShift =
+                (Math.floor((x - xAxis.left) / pixelInterval) + 1) *
+                pixelInterval;
 
         this.startX = x - pixelShift;
         this.y = y;
@@ -214,55 +233,62 @@ TimeCycles.prototype.defaultOptions = merge(
     CrookedLine.prototype.defaultOptions,
     {
         typeOptions: {
-            controlPointOptions: [{
-                positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
-                    target: TimeCycles
-                ): PositionObject {
-                    const point = target.points[0],
-                        position = target.anchor(point).absolutePosition;
-
-                    return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
+            controlPointOptions: [
+                {
+                    positioner: function (
+                        this: Highcharts.AnnotationControlPoint,
                         target: TimeCycles
-                    ): void {
-                        const position = target.anchor(target.points[0]).absolutePosition;
-                        target.translatePoint(e.chartX - position.x, 0, 0);
-                        target.redraw(false);
+                    ): PositionObject {
+                        const point = target.points[0],
+                            position = target.anchor(point).absolutePosition;
+
+                        return {
+                            x: position.x - this.graphic.width / 2,
+                            y: target.y - this.graphic.height
+                        };
+                    },
+                    events: {
+                        drag: function (
+                            this: ControlPoint,
+                            e: Highcharts.AnnotationEventObject,
+                            target: TimeCycles
+                        ): void {
+                            const position = target.anchor(
+                                target.points[0]
+                            ).absolutePosition;
+                            target.translatePoint(e.chartX - position.x, 0, 0);
+                            target.redraw(false);
+                        }
+                    }
+                },
+                {
+                    positioner: function (
+                        this: Highcharts.AnnotationControlPoint,
+                        target: TimeCycles
+                    ): PositionObject {
+                        const point = target.points[1],
+                            position = target.anchor(point).absolutePosition;
+
+                        return {
+                            x: position.x - this.graphic.width / 2,
+                            y: target.y - this.graphic.height
+                        };
+                    },
+                    events: {
+                        drag: function (
+                            this: ControlPoint,
+                            e: Highcharts.AnnotationEventObject,
+                            target: TimeCycles
+                        ): void {
+                            const position = target.anchor(
+                                target.points[1]
+                            ).absolutePosition;
+                            target.translatePoint(e.chartX - position.x, 0, 1);
+                            target.redraw(false);
+                        }
                     }
                 }
-            }, {
-                positioner: function (
-                    this: Highcharts.AnnotationControlPoint,
-                    target: TimeCycles
-                ): PositionObject {
-                    const point = target.points[1],
-                        position = target.anchor(point).absolutePosition;
-
-                    return {
-                        x: position.x - this.graphic.width / 2,
-                        y: target.y - this.graphic.height
-                    };
-                },
-                events: {
-                    drag: function (
-                        this: ControlPoint,
-                        e: Highcharts.AnnotationEventObject,
-                        target: TimeCycles
-                    ): void {
-                        const position = target.anchor(target.points[1]).absolutePosition;
-                        target.translatePoint(e.chartX - position.x, 0, 1);
-                        target.redraw(false);
-                    }
-                }
-            }]
+            ]
         }
     }
 );

@@ -21,26 +21,17 @@ import type LollipopSeries from './LollipopSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
-        prototype: {
-            pointClass: Point
-        }
+        prototype: { pointClass: Point }
     },
     seriesTypes: {
-        area: {
-            prototype: areaProto
-        },
+        area: { prototype: areaProto },
         dumbbell: {
-            prototype: {
-                pointClass: DumbbellPoint
-            }
+            prototype: { pointClass: DumbbellPoint }
         }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    isObject,
-    extend
-} = U;
+const { isObject, extend } = U;
 
 /* *
  *

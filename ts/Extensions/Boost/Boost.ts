@@ -18,9 +18,7 @@ import initCanvasBoost from '../../Extensions/BoostCanvas.js';
 import './BoostOverrides.js';
 import './NamedColors.js';
 import U from '../../Core/Utilities.js';
-const {
-    error
-} = U;
+const { error } = U;
 
 // These need to be fixed when we support named imports
 const hasWebGLSupport = butils.hasWebGLSupport;

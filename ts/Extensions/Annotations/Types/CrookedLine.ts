@@ -23,13 +23,15 @@ declare module '../MockPointOptions' {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class CrookedLine extends Annotation {
-
     /* *
      *
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: CrookedLine.Options
+    ) {
         super(chart, options);
     }
 
@@ -44,8 +46,10 @@ class CrookedLine extends Annotation {
      * @private
      */
     public setClipAxes(): void {
-        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis as any];
-        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
+        this.clipXAxis =
+            this.chart.xAxis[this.options.typeOptions.xAxis as any];
+        this.clipYAxis =
+            this.chart.yAxis[this.options.typeOptions.yAxis as any];
     }
 
     public getPointsOptions(): Array<MockPointOptions> {
@@ -66,27 +70,25 @@ class CrookedLine extends Annotation {
     }
 
     public addControlPoints(): void {
-        this.getControlPointsOptions().forEach(
-            function (
-                pointOptions: MockPointOptions,
-                i: number
-            ): void {
-                const controlPoint = new ControlPoint(
-                    this.chart,
-                    this,
-                    merge(
-                        this.options.controlPointOptions,
-                        pointOptions.controlPoint
-                    ),
-                    i
-                );
+        this.getControlPointsOptions().forEach(function (
+            pointOptions: MockPointOptions,
+            i: number
+        ): void {
+            const controlPoint = new ControlPoint(
+                this.chart,
+                this,
+                merge(
+                    this.options.controlPointOptions,
+                    pointOptions.controlPoint
+                ),
+                i
+            );
 
-                this.controlPoints.push(controlPoint);
+            this.controlPoints.push(controlPoint);
 
-                pointOptions.controlPoint = controlPoint.options;
-            },
-            this
-        );
+            pointOptions.controlPoint = controlPoint.options;
+        },
+        this);
     }
 
     public addShapes(): void {
@@ -234,8 +236,12 @@ CrookedLine.prototype.defaultOptions = merge(
                         );
 
                         // Update options:
-                        (target.options as any).typeOptions.points[this.index].x = target.points[this.index].x;
-                        (target.options as any).typeOptions.points[this.index].y = target.points[this.index].y;
+                        (target.options as any).typeOptions.points[
+                            this.index
+                        ].x = target.points[this.index].x;
+                        (target.options as any).typeOptions.points[
+                            this.index
+                        ].y = target.points[this.index].y;
 
                         target.redraw(false);
                     }
@@ -261,7 +267,7 @@ namespace CrookedLine {
  * */
 
 Annotation.types.crookedLine = CrookedLine;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         crookedLine: typeof CrookedLine;
     }

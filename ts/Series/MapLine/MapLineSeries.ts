@@ -24,10 +24,7 @@ import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -43,7 +40,6 @@ const {
  * @augments Highcharts.Series
  */
 class MapLineSeries extends MapSeries {
-
     /* *
      *
      *  Static Properties
@@ -62,19 +58,22 @@ class MapLineSeries extends MapSeries {
      * @product      highmaps
      * @optionparent plotOptions.mapline
      */
-    public static defaultOptions: MapLineSeriesOptions = merge(MapSeries.defaultOptions, {
-        /**
-         * The width of the map line.
-         */
-        lineWidth: 1,
+    public static defaultOptions: MapLineSeriesOptions = merge(
+        MapSeries.defaultOptions,
+        {
+            /**
+             * The width of the map line.
+             */
+            lineWidth: 1,
 
-        /**
-         * Fill color for the map line shapes
-         *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         */
-        fillColor: 'none'
-    } as MapLineSeriesOptions);
+            /**
+             * Fill color for the map line shapes
+             *
+             * @type {Highcharts.ColorType}
+             */
+            fillColor: 'none'
+        } as MapLineSeriesOptions
+    );
 
     /* *
      *
@@ -109,11 +108,7 @@ class MapLineSeries extends MapSeries {
         point: MapLinePoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        const attr = MapSeries.prototype.pointAttribs.call(
-            this,
-            point,
-            state
-        );
+        const attr = MapSeries.prototype.pointAttribs.call(this, point, state);
 
         // The difference from a map series is that the stroke takes the
         // point color
@@ -123,7 +118,6 @@ class MapLineSeries extends MapSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -138,7 +132,6 @@ interface MapLineSeries {
     pointClass: typeof MapLinePoint;
 }
 extend(MapLineSeries.prototype, {
-
     type: 'mapline',
 
     colorProp: 'stroke',
@@ -146,10 +139,9 @@ extend(MapLineSeries.prototype, {
     drawLegendSymbol: Series.prototype.drawLegendSymbol,
 
     pointAttrToOptions: {
-        'stroke': 'color',
+        stroke: 'color',
         'stroke-width': 'lineWidth'
     }
-
 });
 
 /* *
@@ -236,4 +228,4 @@ export default MapLineSeries;
  * @apioption series.mapline.data
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

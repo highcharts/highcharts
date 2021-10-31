@@ -31,10 +31,7 @@ import DataTable from '../DataTable.js';
 import HU from '../../Core/HttpUtilities.js';
 const { ajax } = HU;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge, objectEach } = U;
 
 /* *
  *
@@ -50,7 +47,6 @@ const {
  * @private
  */
 class CSVStore extends DataStore<CSVStore.Event> {
-
     /* *
      *
      *  Static Properties
@@ -61,19 +57,19 @@ class CSVStore extends DataStore<CSVStore.Event> {
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
-    }
+    };
 
     static readonly defaultExportOptions: CSVStore.ExportOptions = {
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n'
-    }
+    };
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructors
+     *
+     * */
 
     /**
      * Constructs an instance of CSVDataStore.
@@ -94,19 +90,29 @@ class CSVStore extends DataStore<CSVStore.Event> {
     ) {
         super(table);
 
-        const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
+        const {
+            csv,
+            csvURL,
+            enablePolling,
+            dataRefreshRate,
+            ...parserOptions
+        } = options;
 
         this.parserOptions = parserOptions;
-        this.options = merge(CSVStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
+        this.options = merge(CSVStore.defaultOptions, {
+            csv,
+            csvURL,
+            enablePolling,
+            dataRefreshRate
+        });
         this.parser = parser || new CSVParser(parserOptions);
     }
 
-
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * Options related to the handling of the CSV datastore,
@@ -138,8 +144,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * Handles polling of live data
      */
     private poll(): void {
-        const { dataRefreshRate, enablePolling: pollingEnabled, csvURL } = this.options;
-        const updateIntervalMs = (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
+        const {
+            dataRefreshRate,
+            enablePolling: pollingEnabled,
+            csvURL
+        } = this.options;
+        const updateIntervalMs =
+            (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
         if (pollingEnabled && csvURL === this.liveDataURL) {
             // We need to stop doing this if the URL has changed
             this.liveDataTimeout = setTimeout((): void => {
@@ -198,7 +209,6 @@ class CSVStore extends DataStore<CSVStore.Event> {
                     detail: eventDetail,
                     table: store.table
                 });
-
             },
             error: function (xhr, error): void {
                 if (++currentRetries < maxRetries) {
@@ -228,10 +238,7 @@ class CSVStore extends DataStore<CSVStore.Event> {
         const store = this,
             parser = store.parser,
             table = store.table,
-            {
-                csv,
-                csvURL
-            } = store.options;
+            { csv, csvURL } = store.options;
 
         if (csv) {
             // If already loaded, clear the current rows
@@ -253,14 +260,12 @@ class CSVStore extends DataStore<CSVStore.Event> {
         } else if (csvURL) {
             store.fetchCSV(true, eventDetail);
         } else {
-            store.emit(
-                {
-                    type: 'loadError',
-                    detail: eventDetail,
-                    error: 'Unable to load: no CSV string or URL was provided',
-                    table
-                }
-            );
+            store.emit({
+                type: 'loadError',
+                detail: eventDetail,
+                error: 'Unable to load: no CSV string or URL was provided',
+                table
+            });
         }
     }
 
@@ -275,14 +280,15 @@ class CSVStore extends DataStore<CSVStore.Event> {
      */
     public getCSVForExport(exportOptions: CSVStore.ExportOptions): string {
         const { useLocalDecimalPoint, lineDelimiter } = exportOptions,
-            exportNames = (this.parserOptions.firstRowAsNames !== false);
+            exportNames = this.parserOptions.firstRowAsNames !== false;
 
         let { decimalPoint, itemDelimiter } = exportOptions;
 
         if (!decimalPoint) {
-            decimalPoint = itemDelimiter !== ',' && useLocalDecimalPoint ?
-                (1.1).toLocaleString()[1] :
-                '.';
+            decimalPoint =
+                itemDelimiter !== ',' && useLocalDecimalPoint
+                    ? (1.1).toLocaleString()[1]
+                    : '.';
         }
 
         if (!itemDelimiter) {
@@ -299,7 +305,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.map((columnName): string => `"${columnName}"`).join(itemDelimiter));
+            csvRows.push(
+                columnNames
+                    .map((columnName): string => `"${columnName}"`)
+                    .join(itemDelimiter)
+            );
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
@@ -378,7 +388,6 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
         return this.getCSVForExport(merge(exportOptions, csvExportOptions));
     }
-
 }
 
 /**
@@ -391,16 +400,15 @@ class CSVStore extends DataStore<CSVStore.Event> {
  * Types for class-specific options and events
  */
 namespace CSVStore {
-
     /**
      * Event objects fired from CSVDataStore events
      */
-    export type Event = (ErrorEvent | LoadEvent);
+    export type Event = ErrorEvent | LoadEvent;
 
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>
+    export type OptionsType = Partial<CSVStore.Options & CSVParser.OptionsType>;
 
     /**
      * @todo move this to the dataparser?
@@ -413,8 +421,8 @@ namespace CSVStore {
      * The event object that is provided on errors within CSVDataStore
      */
     export interface ErrorEvent extends DataStore.Event {
-        type: ('loadError');
-        error: (string | Error);
+        type: 'loadError';
+        error: string | Error;
         xhr?: XMLHttpRequest;
     }
 
@@ -422,7 +430,7 @@ namespace CSVStore {
      * The event object that is provided on load events within CSVDataStore
      */
     export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
+        type: 'load' | 'afterLoad';
         csv?: string;
     }
 
@@ -446,7 +454,6 @@ namespace CSVStore {
         useLocalDecimalPoint?: boolean;
         usePresentationOrder?: boolean;
     }
-
 }
 
 /* *
@@ -462,7 +469,6 @@ declare module './StoreType' {
         CSVStore: typeof CSVStore;
     }
 }
-
 
 /* *
  *

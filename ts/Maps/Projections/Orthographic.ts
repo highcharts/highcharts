@@ -10,9 +10,7 @@ const deg2rad = Math.PI / 180,
     scale = 6378460.826781007;
 
 const Orthographic: ProjectionDefinition = {
-
     forward: (lonLat): [number, number] => {
-
         const lonDeg = lonLat[0],
             latDeg = lonLat[1];
 
@@ -36,7 +34,7 @@ const Orthographic: ProjectionDefinition = {
 
         return [
             Math.atan2(x * cSin, z * cCos) / deg2rad,
-            Math.asin(z && y * cSin / z) / deg2rad
+            Math.asin(z && (y * cSin) / z) / deg2rad
         ];
     }
 };

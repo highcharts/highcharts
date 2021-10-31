@@ -28,12 +28,7 @@ import type StoreType from './StoreType';
 import DataParser from '../Parsers/DataParser.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge,
-    pick
-} = U;
+const { addEvent, fireEvent, merge, pick } = U;
 
 /* *
  *
@@ -46,8 +41,9 @@ const {
  *
  * @private
  */
-abstract class DataStore<TEventObject extends DataStore.Event> implements DataEventEmitter<TEventObject> {
-
+abstract class DataStore<TEventObject extends DataStore.Event>
+    implements DataEventEmitter<TEventObject>
+{
     /* *
      *
      *  Static Properties
@@ -63,7 +59,8 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * Regular expression to extract the store name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataStore)?\s*\(/;
+    private static readonly nameRegExp =
+        /^function\s+(\w*?)(?:DataStore)?\s*\(/;
 
     /* *
      *
@@ -87,10 +84,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
         const name = DataStore.getName(dataStore),
             registry = DataStore.registry;
 
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
+        if (typeof name === 'undefined' || registry[name]) {
             return false;
         }
 
@@ -130,11 +124,11 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * DataStore name, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(dataStore: (NewableFunction|StoreType)): string {
-        return (
-            dataStore.toString().match(DataStore.nameRegExp) ||
-            ['', '']
-        )[1];
+    private static getName(dataStore: NewableFunction | StoreType): string {
+        return (dataStore.toString().match(DataStore.nameRegExp) || [
+            '',
+            ''
+        ])[1];
     }
 
     /**
@@ -147,7 +141,7 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @return {DataStoreRegistryType|undefined}
      * Class type, if the class name was found, otherwise `undefined`.
      */
-    public static getStore(name: string): (StoreType|undefined) {
+    public static getStore(name: string): StoreType | undefined {
         return DataStore.registry[name];
     }
 
@@ -227,11 +221,13 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @param {Record<string, DataStore.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
-    public describeColumns(columns: Record<string, DataStore.MetaColumn>): void {
+    public describeColumns(
+        columns: Record<string, DataStore.MetaColumn>
+    ): void {
         const store = this,
             columnNames = Object.keys(columns);
 
-        let columnName: (string|undefined);
+        let columnName: string | undefined;
 
         while (typeof (columnName = columnNames.pop()) === 'string') {
             store.describeColumn(columnName, columns[columnName]);
@@ -305,12 +301,12 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
             });
         }
 
-        return ({
+        return {
             columnNames,
             columnValues: columnNames.map(
                 (name: string): DataTable.Column => columnsRecord[name]
             )
-        });
+        };
     }
 
     /**
@@ -363,10 +359,9 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * @return {DataStore.MetaColumn | undefined}
      * Returns a MetaColumn object if found.
      */
-    public whatIs(name: string): (DataStore.MetaColumn | undefined) {
+    public whatIs(name: string): DataStore.MetaColumn | undefined {
         return this.metadata.columns[name];
     }
-
 }
 
 /* *
@@ -376,7 +371,6 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
  * */
 
 namespace DataStore {
-
     /**
      * The default event object for a datastore
      */
@@ -411,7 +405,6 @@ namespace DataStore {
     export interface Metadata extends JSON.Object {
         columns: Record<string, MetaColumn>;
     }
-
 }
 
 /* *

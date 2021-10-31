@@ -34,17 +34,10 @@ const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick,
-    relativeLength
-} = U;
+const { extend, merge, pick, relativeLength } = U;
 
 /* *
  *
@@ -62,7 +55,6 @@ const {
  * @requires modules/funnel3d
  */
 class Funnel3DSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -92,80 +84,84 @@ class Funnel3DSeries extends ColumnSeries {
      * @requires     modules/funnel3d
      * @optionparent plotOptions.funnel3d
      */
-    public static defaultOptions: Funnel3DSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /** @ignore-option */
-        center: ['50%', '50%'],
+    public static defaultOptions: Funnel3DSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            /** @ignore-option */
+            center: ['50%', '50%'],
 
-        /**
-         * The max width of the series compared to the width of the plot area,
-         * or the pixel width if it is a number.
-         *
-         * @type    {number|string}
-         * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-         * @product highcharts
-         */
-        width: '90%',
+            /**
+             * The max width of the series compared to the width of the plot
+             * area, or the pixel width if it is a number.
+             *
+             * @type    {number|string}
+             * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+             * @product highcharts
+             */
+            width: '90%',
 
-        /**
-         * The width of the neck, the lower part of the funnel. A number defines
-         * pixel width, a percentage string defines a percentage of the plot
-         * area width.
-         *
-         * @type    {number|string}
-         * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-         * @product highcharts
-         */
-        neckWidth: '30%',
+            /**
+             * The width of the neck, the lower part of the funnel. A number
+             * defines pixel width, a percentage string defines a percentage of
+             * the plot area width.
+             *
+             * @type    {number|string}
+             * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+             * @product highcharts
+             */
+            neckWidth: '30%',
 
-        /**
-         * The height of the series. If it is a number it defines
-         * the pixel height, if it is a percentage string it is the percentage
-         * of the plot area height.
-         *
-         * @type    {number|string}
-         * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-         * @product highcharts
-         */
-        height: '100%',
+            /**
+             * The height of the series. If it is a number it defines the pixel
+             * height, if it is a percentage string it is the percentage of the
+             * plot area height.
+             *
+             * @type    {number|string}
+             * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+             * @product highcharts
+             */
+            height: '100%',
 
-        /**
-         * The height of the neck, the lower part of the funnel. A number
-         * defines pixel width, a percentage string defines a percentage
-         * of the plot area height.
-         *
-         * @type    {number|string}
-         * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-         * @product highcharts
-         */
-        neckHeight: '25%',
+            /**
+             * The height of the neck, the lower part of the funnel. A number
+             * defines pixel width, a percentage string defines a percentage
+             * of the plot area height.
+             *
+             * @type    {number|string}
+             * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+             * @product highcharts
+             */
+            neckHeight: '25%',
 
-        /**
-         * A reversed funnel has the widest area down. A reversed funnel with
-         * no neck width and neck height is a pyramid.
-         *
-         * @product highcharts
-         */
-        reversed: false,
+            /**
+             * A reversed funnel has the widest area down. A reversed funnel
+             * with no neck width and neck height is a pyramid.
+             *
+             * @product highcharts
+             */
+            reversed: false,
 
-        /**
-         * By deafult sides fill is set to a gradient through this option being
-         * set to `true`. Set to `false` to get solid color for the sides.
-         *
-         * @product highcharts
-         */
-        gradientForSides: true,
+            /**
+             * By deafult sides fill is set to a gradient through this option
+             * being set to `true`. Set to `false` to get solid color for the
+             * sides.
+             *
+             * @product highcharts
+             */
+            gradientForSides: true,
 
-        animation: false,
-        edgeWidth: 0,
-        colorByPoint: true,
-        showInLegend: false,
-        dataLabels: {
-            align: 'right',
-            crop: false,
-            inside: false,
-            overflow: 'allow'
-        }
-    } as Funnel3DSeriesOptions);
+            animation: false,
+            edgeWidth: 0,
+            colorByPoint: true,
+            showInLegend: false,
+            dataLabels: {
+                align: 'right',
+                crop: false,
+                inside: false,
+                overflow: 'allow'
+            }
+        } as Funnel3DSeriesOptions
+    );
 
     /* *
      *
@@ -202,10 +198,9 @@ class Funnel3DSeries extends ColumnSeries {
         const series = this,
             dlBoxRaw = point.dlBoxRaw,
             inverted = series.chart.inverted,
-            below = (point.plotY as any) > pick(
-                series.translatedThreshold,
-                series.yAxis.len
-            ),
+            below =
+                (point.plotY as any) >
+                pick(series.translatedThreshold, series.yAxis.len),
             inside = pick(options.inside, !!series.options.stacking),
             dlBox: BBoxObject = {
                 x: dlBoxRaw.x,
@@ -223,8 +218,8 @@ class Funnel3DSeries extends ColumnSeries {
         );
 
         if (options.verticalAlign !== 'top') {
-            dlBox.y += dlBoxRaw.bottom /
-                (options.verticalAlign === 'bottom' ? 1 : 2);
+            dlBox.y +=
+                dlBoxRaw.bottom / (options.verticalAlign === 'bottom' ? 1 : 2);
         }
 
         dlBox.width = series.getWidthAt(dlBox.y);
@@ -249,10 +244,7 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         point.dlBox = dlBox;
-        ColumnSeries.prototype.alignDataLabel.apply(
-            series,
-            arguments
-        );
+        ColumnSeries.prototype.alignDataLabel.apply(series, arguments);
     }
 
     /**
@@ -292,7 +284,7 @@ class Funnel3DSeries extends ColumnSeries {
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             cumulative = 0, // start at top
-            center: Array<(number|string)> = options.center as any,
+            center: Array<number | string> = options.center as any,
             centerX = relativeLength(center[0], plotWidth),
             centerY = relativeLength(center[1], plotHeight),
             width = relativeLength(options.width as any, plotWidth),
@@ -300,30 +292,28 @@ class Funnel3DSeries extends ColumnSeries {
             getWidthAt: (y: number) => number,
             height = relativeLength(options.height as any, plotHeight),
             neckWidth = relativeLength(options.neckWidth as any, plotWidth),
-            neckHeight = relativeLength(
-                options.neckHeight as any,
-                plotHeight
-            ),
-            neckY = (centerY - height / 2) + height - neckHeight,
+            neckHeight = relativeLength(options.neckHeight as any, plotHeight),
+            neckY = centerY - height / 2 + height - neckHeight,
             data = series.data,
             fraction,
             tooltipPos,
             //
             y1: number,
             y3: number,
-            y5: (number|null),
+            y5: number | null,
             //
             h: number,
             shapeArgs: any; // @todo: Type it. It's an extended SVGAttributes.
 
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y: number): number {
-            const top = (centerY - height / 2);
+            const top = centerY - height / 2;
 
-            return (y > neckY || height === neckHeight) ?
-                neckWidth :
-                neckWidth + (width - neckWidth) *
-                    (1 - (y - top) / (height - neckHeight));
+            return y > neckY || height === neckHeight
+                ? neckWidth
+                : neckWidth +
+                      (width - neckWidth) *
+                          (1 - (y - top) / (height - neckHeight));
         };
 
         // Expose
@@ -331,23 +321,23 @@ class Funnel3DSeries extends ColumnSeries {
         series.centerX = centerX;
 
         /*
-            * Individual point coordinate naming:
-            *
-            *  _________centerX,y1________
-            *  \                         /
-            *   \                       /
-            *    \                     /
-            *     \                   /
-            *      \                 /
-            *        ___centerX,y3___
-            *
-            * Additional for the base of the neck:
-            *
-            *       |               |
-            *       |               |
-            *       |               |
-            *        ___centerX,y5___
-            */
+         * Individual point coordinate naming:
+         *
+         *  _________centerX,y1________
+         *  \                         /
+         *   \                       /
+         *    \                     /
+         *     \                   /
+         *      \                 /
+         *        ___centerX,y3___
+         *
+         * Additional for the base of the neck:
+         *
+         *       |               |
+         *       |               |
+         *       |               |
+         *        ___centerX,y5___
+         */
 
         // get the total sum
         data.forEach(function (point): void {
@@ -403,12 +393,12 @@ class Funnel3DSeries extends ColumnSeries {
             }
 
             if (reversed) {
-                shapeArgs.y = y1 = centerY + height / 2 -
-                    (cumulative + fraction) * height;
+                shapeArgs.y = y1 =
+                    centerY + height / 2 - (cumulative + fraction) * height;
 
                 if (shapeArgs.middle) {
-                    shapeArgs.middle.fraction = 1 -
-                        (h ? shapeArgs.middle.fraction : 0);
+                    shapeArgs.middle.fraction =
+                        1 - (h ? shapeArgs.middle.fraction : 0);
                 }
                 tempWidth = shapeArgs.width;
                 shapeArgs.width = shapeArgs.bottom.width;
@@ -421,20 +411,26 @@ class Funnel3DSeries extends ColumnSeries {
             point.plotX = centerX;
 
             if (reversed) {
-                point.plotY = centerY + height / 2 -
-                    (cumulative + fraction / 2) * height;
+                point.plotY =
+                    centerY + height / 2 - (cumulative + fraction / 2) * height;
             } else {
                 point.plotY = (y1 + (y5 || y3)) / 2;
             }
 
             // Placement of tooltips and data labels in 3D
-            tooltipPos = perspective([{
-                x: centerX,
-                y: point.plotY,
-                z: reversed ?
-                    -(width - getWidthAt(point.plotY)) / 2 :
-                    -(getWidthAt(point.plotY)) / 2
-            }], chart, true)[0];
+            tooltipPos = perspective(
+                [
+                    {
+                        x: centerX,
+                        y: point.plotY,
+                        z: reversed
+                            ? -(width - getWidthAt(point.plotY)) / 2
+                            : -getWidthAt(point.plotY) / 2
+                    }
+                ],
+                chart,
+                true
+            )[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 
             // base to be used when alignment options are known
@@ -455,7 +451,6 @@ class Funnel3DSeries extends ColumnSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -566,7 +561,6 @@ export default Funnel3DSeries;
  * @apioption series.funnel3d.data
  */
 
-
 /**
  * By deafult sides fill is set to a gradient through this option being
  * set to `true`. Set to `false` to get solid color for the sides.
@@ -576,4 +570,4 @@ export default Funnel3DSeries;
  * @apioption series.funnel3d.data.gradientForSides
  */
 
-''; // keeps doclets above in transpiled file
+(''); // keeps doclets above in transpiled file

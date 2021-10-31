@@ -15,19 +15,19 @@ import PCIndicator from './PCIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 declare class PCPoint extends SMAPoint {
     public series: PCIndicator;
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default PCPoint;

@@ -19,15 +19,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        aroon: AroonIndicator
-    }
+    seriesTypes: { aroon: AroonIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 const AROON = SeriesRegistry.seriesTypes.aroon;
 
@@ -47,7 +42,6 @@ const AROON = SeriesRegistry.seriesTypes.aroon;
  * @augments Highcharts.Series
  */
 class AroonOscillatorIndicator extends AroonIndicator {
-
     /* *
      *
      *  Static Properties
@@ -74,11 +68,15 @@ class AroonOscillatorIndicator extends AroonIndicator {
      * @requires     stock/indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
      */
-    public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
-        }
-    } as AroonOscillatorOptions);
+    public static defaultOptions: AroonOscillatorOptions = merge(
+        AroonIndicator.defaultOptions,
+        {
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
+            }
+        } as AroonOscillatorOptions
+    );
 
     /* *
      *
@@ -110,10 +108,11 @@ class AroonOscillatorIndicator extends AroonIndicator {
             oscillator: number,
             i: number;
 
-        aroon = (
-            AROON.prototype.getValues.call(
-                this, series, params
-            ) as IndicatorValuesObject<TLinkedSeries>);
+        aroon = AROON.prototype.getValues.call(
+            this,
+            series,
+            params
+        ) as IndicatorValuesObject<TLinkedSeries>;
 
         for (i = 0; i < aroon.yData.length; i++) {
             aroonUp = (aroon.yData[i] as any)[0];
@@ -139,7 +138,8 @@ class AroonOscillatorIndicator extends AroonIndicator {
  *
  * */
 
-interface AroonOscillatorIndicator extends MultipleLinesComposition.Composition {
+interface AroonOscillatorIndicator
+    extends MultipleLinesComposition.Composition {
     nameBase: string;
     pointClass: typeof AroonOscillatorPoint;
 }
@@ -190,4 +190,4 @@ export default AroonOscillatorIndicator;
  * @apioption series.aroonoscillator
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

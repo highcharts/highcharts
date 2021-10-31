@@ -14,31 +14,20 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    MFIOptions,
-    MFIParamsOptions
-} from '../MFI/MFIOptions';
+import type { MFIOptions, MFIParamsOptions } from '../MFI/MFIOptions';
 import type MFIPoint from './MFIPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    error,
-    isArray
-} = U;
+const { extend, merge, error, isArray } = U;
 
 /* eslint-disable require-jsdoc */
 
 // Utils:
 function sumArray(array: Array<number>): number {
-
     return array.reduce(function (prev: number, cur: number): number {
         return prev + cur;
     });
@@ -88,58 +77,59 @@ class MFIIndicator extends SMAIndicator {
      * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
      */
-    public static defaultOptions: MFIOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+    public static defaultOptions: MFIOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The id of volume series which is mandatory.
-             * For example using OHLC data, volumeSeriesID='volume' means
-             * the indicator will be calculated using OHLC and volume values.
+             * @excluding index
              */
-            volumeSeriesID: 'volume',
-            /**
-             * Number of maximum decimals that are used in MFI calculations.
-             */
-            decimals: 4
-
-        }
-    } as MFIOptions);
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                /**
+                 * The id of volume series which is mandatory. For example using
+                 * OHLC data, volumeSeriesID='volume' means the indicator will
+                 * be calculated using OHLC and volume values.
+                 */
+                volumeSeriesID: 'volume',
+                /**
+                 * Number of maximum decimals that are used in MFI calculations.
+                 */
+                decimals: 4
+            }
+        } as MFIOptions
+    );
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
     public data: Array<MFIPoint> = void 0 as any;
     public options: MFIOptions = void 0 as any;
     public points: Array<MFIPoint> = void 0 as any;
 
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MFIParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            decimals: number = (params.decimals as any),
+            decimals: number = params.decimals as any,
             // MFI starts calculations from the second point
             // Cause we need to calculate change between two points
             range = 1,
-            volumeSeries: (LineSeries | undefined) = (
-                series.chart.get((params.volumeSeriesID as any)) as any
-            ),
-            yValVolume: Array<number> = (
-                volumeSeries && (volumeSeries.yData as any)
-            ),
+            volumeSeries: LineSeries | undefined = series.chart.get(
+                params.volumeSeriesID as any
+            ) as any,
+            yValVolume: Array<number> =
+                volumeSeries && (volumeSeries.yData as any),
             MFI: Array<Array<number>> = [],
             isUp = false,
             xData: Array<number> = [],
@@ -158,8 +148,8 @@ class MFIIndicator extends SMAIndicator {
         if (!volumeSeries) {
             error(
                 'Series ' +
-                params.volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.',
+                    params.volumeSeriesID +
+                    ' not found! Check `volumeSeriesID`.',
                 true,
                 series.chart
             );
@@ -168,7 +158,8 @@ class MFIIndicator extends SMAIndicator {
 
         // MFI requires high low and close values
         if (
-            (xVal.length <= period) || !isArray(yVal[0]) ||
+            xVal.length <= period ||
+            !isArray(yVal[0]) ||
             yVal[0].length !== 4 ||
             !yValVolume
         ) {
@@ -216,10 +207,7 @@ class MFIIndicator extends SMAIndicator {
             positiveMoneyFlowSum = sumArray(positiveMoneyFlow);
 
             moneyFlowRatio = positiveMoneyFlowSum / negativeMoneyFlowSum;
-            MFIPoint = toFixed(
-                100 - (100 / (1 + moneyFlowRatio)),
-                decimals
-            );
+            MFIPoint = toFixed(100 - 100 / (1 + moneyFlowRatio), decimals);
             MFI.push([xVal[i], MFIPoint]);
             xData.push(xVal[i]);
             yData.push(MFIPoint);
@@ -234,10 +222,10 @@ class MFIIndicator extends SMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *   Prototype Properties
+ *
+ * */
 
 interface MFIIndicator {
     nameBase: string;
@@ -283,4 +271,4 @@ export default MFIIndicator;
  * @apioption series.mfi
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

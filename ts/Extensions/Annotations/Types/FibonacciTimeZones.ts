@@ -45,7 +45,6 @@ declare global {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class FibonacciTimeZones extends CrookedLine {
-
     /* *
      *
      *  Functions
@@ -92,8 +91,8 @@ class FibonacciTimeZones extends CrookedLine {
 
             const xAxis = points[0].series.xAxis,
                 // Distance between the two first lines in pixels
-                deltaX = points.length > 1 ?
-                    points[1].plotX - points[0].plotX : 0,
+                deltaX =
+                    points.length > 1 ? points[1].plotX - points[0].plotX : 0,
                 // firstLine.x + fibb * offset
                 x = xAxis.toValue(
                     points[0].plotX + plotLeftOrTop + fibonacciIndex * deltaX
@@ -101,26 +100,18 @@ class FibonacciTimeZones extends CrookedLine {
 
             // We need 2 mock points with the same x coordinate, different y
             points = [
-                new MockPoint(
-                    chart,
-                    points[0].target,
-                    {
-                        x: x,
-                        y: 0,
-                        xAxis: points[0].options.xAxis,
-                        yAxis: points[0].options.yAxis
-                    }
-                ),
-                new MockPoint(
-                    chart,
-                    points[0].target,
-                    {
-                        x: x,
-                        y: 1,
-                        xAxis: points[0].options.xAxis,
-                        yAxis: points[0].options.yAxis
-                    }
-                )
+                new MockPoint(chart, points[0].target, {
+                    x: x,
+                    y: 0,
+                    xAxis: points[0].options.xAxis,
+                    yAxis: points[0].options.yAxis
+                }),
+                new MockPoint(chart, points[0].target, {
+                    x: x,
+                    y: 1,
+                    xAxis: points[0].options.xAxis,
+                    yAxis: points[0].options.yAxis
+                })
             ];
 
             return InfinityLine.findEdgePoint(
@@ -154,13 +145,10 @@ class FibonacciTimeZones extends CrookedLine {
             }
 
             this.initShape(
-                merge(
-                    this.options.typeOptions.line,
-                    {
-                        type: 'path',
-                        points: points
-                    }
-                ),
+                merge(this.options.typeOptions.line, {
+                    type: 'path',
+                    points: points
+                }),
                 i // shape's index. Can be found in annotation.shapes[i].index
             );
         }
@@ -283,7 +271,7 @@ FibonacciTimeZones.prototype.defaultOptions = merge(
  * */
 
 namespace FibonacciTimeZones {
-    export interface Options extends CrookedLine.Options{
+    export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
@@ -299,7 +287,7 @@ namespace FibonacciTimeZones {
  * */
 
 Annotation.types.fibonacciTimeZones = FibonacciTimeZones;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         fibonacciTimeZones: typeof FibonacciTimeZones;
     }

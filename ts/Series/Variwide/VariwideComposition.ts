@@ -26,10 +26,7 @@ import Axis from '../../Core/Axis/Axis.js';
 import H from '../../Core/Globals.js';
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    wrap
-} = U;
+const { addEvent, wrap } = U;
 
 /* *
  *
@@ -83,88 +80,85 @@ Tick.prototype.postTranslate = function (
 /* eslint-disable no-invalid-this */
 
 // Same width as the category (#8083)
-addEvent(Axis, 'afterDrawCrosshair', function (
-    e: {
-        point: VariwidePoint;
+addEvent(
+    Axis,
+    'afterDrawCrosshair',
+    function (e: { point: VariwidePoint }): void {
+        if (this.variwide && this.cross) {
+            this.cross.attr(
+                'stroke-width',
+                (e.point && e.point.crosshairWidth) as any
+            );
+        }
     }
-): void {
-    if (this.variwide && this.cross) {
-        this.cross.attr(
-            'stroke-width',
-            (e.point && e.point.crosshairWidth) as any
-        );
-    }
-});
+);
 
 // On a vertical axis, apply anti-collision logic to the labels.
 addEvent(Axis, 'afterRender', function (): void {
     const axis = this;
 
     if (!this.horiz && this.variwide) {
-        this.chart.labelCollectors.push(
-            function (): Array<SVGElement> {
-                return axis.tickPositions
-                    .filter(function (pos: number): boolean {
-                        return axis.ticks[pos].label as any;
-                    })
-                    .map(function (
-                        pos: number,
-                        i: number
-                    ): SVGElement {
-                        const label: SVGElement =
-                            axis.ticks[pos].label as any;
+        this.chart.labelCollectors.push(function (): Array<SVGElement> {
+            return axis.tickPositions
+                .filter(function (pos: number): boolean {
+                    return axis.ticks[pos].label as any;
+                })
+                .map(function (pos: number, i: number): SVGElement {
+                    const label: SVGElement = axis.ticks[pos].label as any;
 
-                        label.labelrank = (axis.zData as any)[i];
-                        return label;
-                    });
-            }
-        );
+                    label.labelrank = (axis.zData as any)[i];
+                    return label;
+                });
+        });
     }
 });
 
-addEvent(Tick, 'afterGetPosition', function (
-    e: {
-        pos: PositionObject;
-        xOrY: keyof PositionObject;
+addEvent(
+    Tick,
+    'afterGetPosition',
+    function (e: { pos: PositionObject; xOrY: keyof PositionObject }): void {
+        const axis = this.axis,
+            xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
+
+        if (axis.variwide) {
+            (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
+            this.postTranslate(e.pos, xOrY, this.pos);
+        }
     }
-): void {
-    const axis = this.axis,
-        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
+);
 
-    if (axis.variwide) {
-        (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
-        this.postTranslate(e.pos, xOrY, this.pos);
+wrap(
+    Tick.prototype,
+    'getLabelPosition',
+    function (
+        this: Tick,
+        proceed: Function,
+        x: number,
+        y: number,
+        label: SVGElement,
+        horiz: boolean,
+        labelOptions: DataLabelOptions,
+        tickmarkOffset: number,
+        index: number
+    ): PositionObject {
+        let args = Array.prototype.slice.call(arguments, 1),
+            xy: PositionObject,
+            xOrY: keyof PositionObject = horiz ? 'x' : 'y';
+
+        // Replace the x with the original x
+        if (
+            this.axis.variwide &&
+            typeof (this as any)[xOrY + 'Orig'] === 'number'
+        ) {
+            args[horiz ? 0 : 1] = (this as any)[xOrY + 'Orig'];
+        }
+
+        xy = proceed.apply(this, args);
+
+        // Post-translate
+        if (this.axis.variwide && this.axis.categories) {
+            this.postTranslate(xy, xOrY, this.pos);
+        }
+        return xy;
     }
-});
-
-wrap(Tick.prototype, 'getLabelPosition', function (
-    this: Tick,
-    proceed: Function,
-    x: number,
-    y: number,
-    label: SVGElement,
-    horiz: boolean,
-    labelOptions: DataLabelOptions,
-    tickmarkOffset: number,
-    index: number
-): PositionObject {
-    let args = Array.prototype.slice.call(arguments, 1),
-        xy: PositionObject,
-        xOrY: keyof PositionObject = horiz ? 'x' : 'y';
-
-    // Replace the x with the original x
-    if (
-        this.axis.variwide &&
-        typeof (this as any)[xOrY + 'Orig'] === 'number'
-    ) {
-        args[horiz ? 0 : 1] = (this as any)[xOrY + 'Orig'];
-    }
-
-    xy = proceed.apply(this, args);
-
-    // Post-translate
-    if (this.axis.variwide && this.axis.categories) {
-        this.postTranslate(xy, xOrY, this.pos);
-    }
-    return xy;
-});
+);

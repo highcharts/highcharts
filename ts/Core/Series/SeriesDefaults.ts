@@ -248,7 +248,7 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
      */
 
@@ -516,7 +516,7 @@ const seriesDefaults: SeriesOptions = {
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1026,7 +1026,7 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         White fill
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.series.marker.fillColor
          */
 
@@ -1051,7 +1051,7 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         lineColor: Palette.backgroundColor,
 
@@ -1164,7 +1164,7 @@ const seriesDefaults: SeriesOptions = {
                  * `undefined`, the series' or point's fillColor for normal
                  * state is used.
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
 
@@ -1176,7 +1176,7 @@ const seriesDefaults: SeriesOptions = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
                  */
 
@@ -1267,7 +1267,7 @@ const seriesDefaults: SeriesOptions = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type {Highcharts.ColorType}
                  */
                 fillColor: Palette.neutralColor20,
 
@@ -1278,7 +1278,7 @@ const seriesDefaults: SeriesOptions = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type {Highcharts.ColorType}
                  */
                 lineColor: Palette.neutralColor100,
 
@@ -1514,7 +1514,7 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.backgroundColor
          */
@@ -1525,7 +1525,7 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderColor
          */
@@ -1587,7 +1587,7 @@ const seriesDefaults: SeriesOptions = {
          * @sample {highmaps} maps/demo/color-axis/
          *         White data labels
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.series.dataLabels.color
          */
 
@@ -2342,7 +2342,7 @@ const seriesDefaults: SeriesOptions = {
      *
      * @see [series color](#plotOptions.series.color)
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.color
@@ -2367,7 +2367,7 @@ const seriesDefaults: SeriesOptions = {
      *
      * @see [fillColor](#plotOptions.area.fillColor)
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.fillColor

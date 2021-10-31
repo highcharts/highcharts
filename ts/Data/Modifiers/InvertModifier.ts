@@ -39,7 +39,6 @@ const { merge } = U;
  * @private
  */
 class InvertModifier extends DataModifier {
-
     /* *
      *
      *  Static Properties
@@ -118,7 +117,10 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modified = table.modified,
-            modifiedRowIndex = modified.getRowIndexBy('columnNames', columnName);
+            modifiedRowIndex = modified.getRowIndexBy(
+                'columnNames',
+                columnName
+            );
 
         if (typeof modifiedRowIndex === 'undefined') {
             modified.setColumns(
@@ -164,10 +166,10 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modified = table.modified,
-            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+            modifiedColumnNames = modified.getColumn('columnNames') || [];
 
         let columnNames = table.getColumnNames(),
-            reset = (table.getRowCount() !== modifiedColumnNames.length);
+            reset = table.getRowCount() !== modifiedColumnNames.length;
 
         if (!reset) {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -189,21 +191,18 @@ class InvertModifier extends DataModifier {
                 iEnd = columnNames.length,
                 column: DataTable.Column,
                 columnName: string,
-                modifiedRowIndex: (number|undefined);
+                modifiedRowIndex: number | undefined;
             i < iEnd;
             ++i
         ) {
             columnName = columnNames[i];
             column = columns[columnName];
-            modifiedRowIndex = (
+            modifiedRowIndex =
                 modified.getRowIndexBy('columnNames', columnName) ||
-                modified.getRowCount()
-            );
+                modified.getRowCount();
 
             for (
-                let j = 0,
-                    j2 = rowIndex,
-                    jEnd = column.length;
+                let j = 0, j2 = rowIndex, jEnd = column.length;
                 j < jEnd;
                 ++j, ++j2
             ) {
@@ -240,15 +239,15 @@ class InvertModifier extends DataModifier {
      */
     public modifyRows<T extends DataTable>(
         table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rows: Array<DataTable.Row | DataTable.RowObject>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const columnNames = table.getColumnNames(),
             modified = table.modified,
-            modifiedColumnNames = (modified.getColumn('columnNames') || []);
+            modifiedColumnNames = modified.getColumn('columnNames') || [];
 
-        let reset = (table.getRowCount() !== modifiedColumnNames.length);
+        let reset = table.getRowCount() !== modifiedColumnNames.length;
 
         if (!reset) {
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -267,7 +266,7 @@ class InvertModifier extends DataModifier {
             let i = 0,
                 i2 = rowIndex,
                 iEnd = rows.length,
-                row: (DataTable.Row|DataTable.RowObject);
+                row: DataTable.Row | DataTable.RowObject;
             i < iEnd;
             ++i, ++i2
         ) {
@@ -312,19 +311,18 @@ class InvertModifier extends DataModifier {
 
         const modified = table.modified;
 
-        if (table.hasColumns(['columnNames'])) { // inverted table
+        if (table.hasColumns(['columnNames'])) {
+            // inverted table
             const columnNames: Array<string> = (
-                    (table.deleteColumns(['columnNames']) || {})
-                        .columnNames || []
-                ).map(
-                    (column): string => `${column}`
-                ),
+                    (table.deleteColumns(['columnNames']) || {}).columnNames ||
+                    []
+                ).map((column): string => `${column}`),
                 columns: DataTable.ColumnCollection = {};
 
             for (
                 let i = 0,
                     iEnd = table.getRowCount(),
-                    row: (DataTable.Row|undefined);
+                    row: DataTable.Row | undefined;
                 i < iEnd;
                 ++i
             ) {
@@ -336,14 +334,14 @@ class InvertModifier extends DataModifier {
 
             modified.deleteColumns();
             modified.setColumns(columns);
-
-        } else { // regular table
+        } else {
+            // regular table
             const columns: DataTable.ColumnCollection = {};
 
             for (
                 let i = 0,
                     iEnd = table.getRowCount(),
-                    row: (DataTable.Row|undefined);
+                    row: DataTable.Row | undefined;
                 i < iEnd;
                 ++i
             ) {
@@ -362,7 +360,6 @@ class InvertModifier extends DataModifier {
 
         return table;
     }
-
 }
 
 /* *
@@ -376,7 +373,6 @@ class InvertModifier extends DataModifier {
  * conversion.
  */
 namespace InvertModifier {
-
     /**
      * Options to configure the modifier.
      */

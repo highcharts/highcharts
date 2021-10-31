@@ -24,16 +24,10 @@ import type SunburstSeries from './SunburstSeries';
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        treemap: TreemapSeries
-    }
+    seriesTypes: { treemap: TreemapSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    isNumber,
-    isObject,
-    merge
-} = U;
+const { isNumber, isObject, merge } = U;
 
 /* *
  *
@@ -42,7 +36,6 @@ const {
  * */
 
 namespace SunburstUtilities {
-
     /* *
      *
      *  Constants
@@ -75,8 +68,8 @@ namespace SunburstUtilities {
     export function calculateLevelSizes(
         levelOptions: SunburstSeriesLevelOptions,
         params: Record<string, number>
-    ): (SunburstSeriesLevelOptions|undefined) {
-        let result: (SunburstSeriesLevelOptions|undefined),
+    ): SunburstSeriesLevelOptions | undefined {
+        let result: SunburstSeriesLevelOptions | undefined,
             p = isObject(params) ? params : {},
             totalWeight = 0,
             diffRadius: number,
@@ -87,10 +80,7 @@ namespace SunburstUtilities {
             to;
 
         if (isObject(levelOptions)) {
-            result = merge<SunburstSeriesLevelOptions>(
-                {},
-                levelOptions
-            );
+            result = merge<SunburstSeriesLevelOptions>({}, levelOptions);
             from = isNumber(p.from) ? p.from : 0;
             to = isNumber(p.to) ? p.to : 0;
             levels = range(from, to);
@@ -99,7 +89,9 @@ namespace SunburstUtilities {
             ): boolean {
                 return levels.indexOf(+k) === -1;
             });
-            diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+            diffRadius = remainingSize = isNumber(p.diffRadius)
+                ? p.diffRadius
+                : 0;
 
             // Convert percentage to pixels.
             // Calculate the remaining size to divide between "weight" levels.
@@ -152,9 +144,10 @@ namespace SunburstUtilities {
     /**
      * @private
      */
-    export function getLevelFromAndTo(
-        { level, height }: SunburstSeries.NodeObject
-    ): { from: number; to: number } {
+    export function getLevelFromAndTo({
+        level,
+        height
+    }: SunburstSeries.NodeObject): { from: number; to: number } {
         //  Never displays level below 1
         const from = level > 0 ? level : 1;
         const to = level + height;
@@ -178,7 +171,6 @@ namespace SunburstUtilities {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

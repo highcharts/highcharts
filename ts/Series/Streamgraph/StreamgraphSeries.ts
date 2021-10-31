@@ -17,15 +17,10 @@ import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        areaspline: AreaSplineSeries
-    }
+    seriesTypes: { areaspline: AreaSplineSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 
 /**
  * Streamgraph series type
@@ -50,34 +45,37 @@ class StreamgraphSeries extends AreaSplineSeries {
      * @requires     modules/streamgraph
      * @optionparent plotOptions.streamgraph
      */
-    public static defaultOptions: StreamgraphSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
-        /**
-         * @see [fillColor](#plotOptions.streamgraph.fillColor)
-         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
-         *
-         * @apioption plotOptions.streamgraph.color
-         */
+    public static defaultOptions: StreamgraphSeriesOptions = merge(
+        AreaSplineSeries.defaultOptions,
+        {
+            /**
+             * @see [fillColor](#plotOptions.streamgraph.fillColor)
+             * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+             *
+             * @apioption plotOptions.streamgraph.color
+             */
 
-        /**
-         * @see [color](#plotOptions.streamgraph.color)
-         * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
-         *
-         * @apioption plotOptions.streamgraph.fillColor
-         */
+            /**
+             * @see [color](#plotOptions.streamgraph.color)
+             * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+             *
+             * @apioption plotOptions.streamgraph.fillColor
+             */
 
-        /**
-         * @see [color](#plotOptions.streamgraph.color)
-         * @see [fillColor](#plotOptions.streamgraph.fillColor)
-         *
-         * @apioption plotOptions.streamgraph.fillOpacity
-         */
-        fillOpacity: 1,
-        lineWidth: 0,
-        marker: {
-            enabled: false
-        },
-        stacking: 'stream'
-    } as StreamgraphSeriesOptions);
+            /**
+             * @see [color](#plotOptions.streamgraph.color)
+             * @see [fillColor](#plotOptions.streamgraph.fillColor)
+             *
+             * @apioption plotOptions.streamgraph.fillOpacity
+             */
+            fillOpacity: 1,
+            lineWidth: 0,
+            marker: {
+                enabled: false
+            },
+            stacking: 'stream'
+        } as StreamgraphSeriesOptions
+    );
 
     /* *
      *
@@ -246,4 +244,4 @@ export default StreamgraphSeries;
  * @apioption series.streamgraph.fillOpacity
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

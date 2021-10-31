@@ -8,27 +8,17 @@
 
 'use strict';
 
-import type {
-    OBVOptions,
-    OBVParamsOptions
-} from './OBVOptions';
+import type { OBVOptions, OBVParamsOptions } from './OBVOptions';
 import type OBVPoint from './OBVPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import Series from '../../../Core/Series/Series';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isNumber,
-    error,
-    extend,
-    merge
-} = U;
+const { isNumber, error, extend, merge } = U;
 
 /* *
  *
@@ -65,27 +55,30 @@ class OBVIndicator extends SMAIndicator {
      *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.obv
      */
-    public static defaultOptions: OBVOptions = merge(SMAIndicator.defaultOptions, {
-        marker: {
-            enabled: false
-        },
-        /**
-         * @excluding index, period
-         */
-        params: {
-            // Index and period are unchangeable, do not inherit (#15362)
-            index: void 0,
-            period: void 0,
+    public static defaultOptions: OBVOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            marker: {
+                enabled: false
+            },
             /**
-             * The id of another series to use its data as volume data for the
-             * indiator calculation.
+             * @excluding index, period
              */
-            volumeSeriesID: 'volume'
-        },
-        tooltip: {
-            valueDecimals: 0
-        }
-    } as OBVOptions);
+            params: {
+                // Index and period are unchangeable, do not inherit (#15362)
+                index: void 0,
+                period: void 0,
+                /**
+                 * The id of another series to use its data as volume data for
+                 * the indiator calculation.
+                 */
+                volumeSeriesID: 'volume'
+            },
+            tooltip: {
+                valueDecimals: 0
+            }
+        } as OBVOptions
+    );
 
     /* *
      *
@@ -106,10 +99,10 @@ class OBVIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: OBVParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         const volumeSeries = series.chart.get(params.volumeSeriesID as string),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<number> | Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<number> | Array<Array<number>> = series.yData as any,
             OBV: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -125,26 +118,31 @@ class OBVIndicator extends SMAIndicator {
 
         // Checks if volume series exists.
         if (volumeSeries) {
-            volume = ((volumeSeries as Series).yData as any);
+            volume = (volumeSeries as Series).yData as any;
 
             // Add first point and get close value.
             OBVPoint = [xVal[0], previousOBV];
-            previousClose = hasOHLC ?
-                (yVal as Array<Array<number>>)[0][3] : (yVal as Array<number>)[0];
+            previousClose = hasOHLC
+                ? (yVal as Array<Array<number>>)[0][3]
+                : (yVal as Array<number>)[0];
 
             OBV.push(OBVPoint);
             xData.push(xVal[0]);
             yData.push(OBVPoint[1]);
 
             for (i; i < yVal.length; i++) {
-                curentClose = hasOHLC ?
-                    (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
+                curentClose = hasOHLC
+                    ? (yVal as Array<Array<number>>)[i][3]
+                    : (yVal as Array<number>)[i];
 
-                if (curentClose > previousClose) { // up
+                if (curentClose > previousClose) {
+                    // up
                     curentOBV = previousOBV + volume[i];
-                } else if (curentClose === previousClose) { // constant
+                } else if (curentClose === previousClose) {
+                    // constant
                     curentOBV = previousOBV;
-                } else { // down
+                } else {
+                    // down
                     curentOBV = previousOBV - volume[i];
                 }
 
@@ -162,8 +160,8 @@ class OBVIndicator extends SMAIndicator {
         } else {
             error(
                 'Series ' +
-                params.volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.',
+                    params.volumeSeriesID +
+                    ' not found! Check `volumeSeriesID`.',
                 true,
                 series.chart
             );
@@ -228,4 +226,4 @@ export default OBVIndicator;
  * @apioption series.obv
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

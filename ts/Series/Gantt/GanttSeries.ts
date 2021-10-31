@@ -28,18 +28,11 @@ import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        xrange: XRangeSeries
-    }
+    seriesTypes: { xrange: XRangeSeries }
 } = SeriesRegistry;
 import Tick from '../../Core/Axis/Tick.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge,
-    splat
-} = U;
+const { extend, isNumber, merge, splat } = U;
 
 import TreeGridAxis from '../../Core/Axis/TreeGridAxis.js';
 TreeGridAxis.compose(Axis, Chart, Series, Tick);
@@ -61,7 +54,6 @@ import '../../Gantt/Pathfinder.js';
  * @augments Highcharts.Series
  */
 class GanttSeries extends XRangeSeries {
-
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
      * it is inherited from [chart.type](#chart.type).
@@ -71,80 +63,90 @@ class GanttSeries extends XRangeSeries {
      * @requires     highcharts-gantt
      * @optionparent plotOptions.gantt
      */
-    public static defaultOptions: GanttSeriesOptions = merge(XRangeSeries.defaultOptions, {
-        // options - default options merged with parent
+    public static defaultOptions: GanttSeriesOptions = merge(
+        XRangeSeries.defaultOptions,
+        {
+            // options - default options merged with parent
 
-        grouping: false,
+            grouping: false,
 
-        dataLabels: {
-            enabled: true
-        },
-        tooltip: {
-            headerFormat:
-                '<span style="font-size: 10px">{series.name}</span><br/>',
-            pointFormat: null as any,
-            pointFormatter: function (this: GanttPoint): string {
-                let point = this,
-                    series = point.series,
-                    xAxis = series.xAxis,
-                    formats = series.tooltipOptions.dateTimeLabelFormats,
-                    startOfWeek = xAxis.options.startOfWeek,
-                    ttOptions = series.tooltipOptions,
-                    format = ttOptions.xDateFormat,
-                    start: string,
-                    end: string,
-                    milestone = point.options.milestone,
-                    retVal = '<b>' + (point.name || point.yCategory) + '</b>';
+            dataLabels: {
+                enabled: true
+            },
+            tooltip: {
+                headerFormat:
+                    '<span style="font-size: 10px">{series.name}</span><br/>',
+                pointFormat: null as any,
+                pointFormatter: function (this: GanttPoint): string {
+                    let point = this,
+                        series = point.series,
+                        xAxis = series.xAxis,
+                        formats = series.tooltipOptions.dateTimeLabelFormats,
+                        startOfWeek = xAxis.options.startOfWeek,
+                        ttOptions = series.tooltipOptions,
+                        format = ttOptions.xDateFormat,
+                        start: string,
+                        end: string,
+                        milestone = point.options.milestone,
+                        retVal =
+                            '<b>' + (point.name || point.yCategory) + '</b>';
 
-                if (ttOptions.pointFormat) {
-                    return point.tooltipFormatter(ttOptions.pointFormat);
-                }
+                    if (ttOptions.pointFormat) {
+                        return point.tooltipFormatter(ttOptions.pointFormat);
+                    }
 
-                if (!format && isNumber(point.start)) {
-                    format = series.chart.time.getDateFormat(
-                        xAxis.closestPointRange,
-                        point.start,
-                        startOfWeek,
-                        formats || {}
+                    if (!format && isNumber(point.start)) {
+                        format = series.chart.time.getDateFormat(
+                            xAxis.closestPointRange,
+                            point.start,
+                            startOfWeek,
+                            formats || {}
+                        );
+                    }
+
+                    start = series.chart.time.dateFormat(
+                        format as any,
+                        point.start as any
                     );
+                    end = series.chart.time.dateFormat(
+                        format as any,
+                        point.end as any
+                    );
+
+                    retVal += '<br/>';
+
+                    if (!milestone) {
+                        retVal += 'Start: ' + start + '<br/>';
+                        retVal += 'End: ' + end + '<br/>';
+                    } else {
+                        retVal += start + '<br/>';
+                    }
+
+                    return retVal;
                 }
-
-                start = series.chart.time.dateFormat(format as any, point.start as any);
-                end = series.chart.time.dateFormat(format as any, point.end as any);
-
-                retVal += '<br/>';
-
-                if (!milestone) {
-                    retVal += 'Start: ' + start + '<br/>';
-                    retVal += 'End: ' + end + '<br/>';
-                } else {
-                    retVal += start + '<br/>';
+            },
+            connectors: {
+                type: 'simpleConnect',
+                /**
+                 * @declare Highcharts.ConnectorsAnimationOptionsObject
+                 */
+                animation: {
+                    reversed: true // Dependencies go from child to parent
+                },
+                startMarker: {
+                    enabled: true,
+                    symbol: 'arrow-filled',
+                    radius: 4,
+                    fill: '#fa0',
+                    align: 'left' as 'left'
+                },
+                endMarker: {
+                    enabled: false, // Only show arrow on the dependent task
+                    align: 'right' as 'right'
                 }
-
-                return retVal;
             }
-        },
-        connectors: {
-            type: 'simpleConnect',
-            /**
-             * @declare Highcharts.ConnectorsAnimationOptionsObject
-             */
-            animation: {
-                reversed: true // Dependencies go from child to parent
-            },
-            startMarker: {
-                enabled: true,
-                symbol: 'arrow-filled',
-                radius: 4,
-                fill: '#fa0',
-                align: 'left' as 'left'
-            },
-            endMarker: {
-                enabled: false, // Only show arrow on the dependent task
-                align: 'right' as 'right'
-            }
-        }
-    } as GanttSeriesOptions);
+        } as GanttSeriesOptions
+    );
 
     /* *
      *
@@ -183,10 +185,7 @@ class GanttSeries extends XRangeSeries {
      * @param {"animate"|"attr"} verb
      *        'animate' (animates changes) or 'attr' (sets options)
      */
-    public drawPoint(
-        point: GanttPoint,
-        verb: string
-    ): void {
+    public drawPoint(point: GanttPoint, verb: string): void {
         let series = this,
             seriesOpts = series.options,
             renderer = series.chart.renderer,
@@ -198,7 +197,11 @@ class GanttSeries extends XRangeSeries {
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (
+                isNumber(plotY) &&
+                point.y !== null &&
+                point.visible !== false
+            ) {
                 diamondShape = renderer.symbols.diamond(
                     shapeArgs.x || 0,
                     shapeArgs.y || 0,
@@ -211,7 +214,8 @@ class GanttSeries extends XRangeSeries {
                         d: diamondShape
                     });
                 } else {
-                    point.graphic = graphic = renderer.path(diamondShape)
+                    point.graphic = graphic = renderer
+                        .path(diamondShape)
                         .addClass(point.getClassName(), true)
                         .add(point.group || series.group);
                 }
@@ -245,7 +249,7 @@ class GanttSeries extends XRangeSeries {
             shapeArgs = point.shapeArgs as any;
             size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: (shapeArgs.x || 0) - (size / 2),
+                x: (shapeArgs.x || 0) - size / 2,
                 y: shapeArgs.y,
                 width: size,
                 height: size
@@ -254,7 +258,6 @@ class GanttSeries extends XRangeSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -263,18 +266,18 @@ class GanttSeries extends XRangeSeries {
  *
  * */
 
-interface GanttSeries{
+interface GanttSeries {
     keyboardMoveVertical: boolean;
     pointClass: typeof GanttPoint;
 }
-extend(GanttSeries.prototype, { // props - series member overrides
+extend(GanttSeries.prototype, {
+    // props - series member overrides
 
     pointArrayMap: ['start', 'end', 'y'],
 
     pointClass: GanttPoint,
 
     setData: Series.prototype.setData
-
 });
 
 /* *
@@ -400,7 +403,7 @@ export default GanttSeries;
  * The fill of the progress indicator. Defaults to a darkened variety of the
  * main color.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @apioption series.gantt.data.completed.fill
  */
 
@@ -452,4 +455,4 @@ export default GanttSeries;
  * @apioption series.gantt.events
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

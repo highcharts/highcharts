@@ -17,16 +17,16 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
-    center?: Array<(number|string|null)>;
-    data?: Array<(Funnel3DPointOptions|PointShortOptions)>;
+    center?: Array<number | string | null>;
+    data?: Array<Funnel3DPointOptions | PointShortOptions>;
     gradientForSides?: boolean;
-    height?: (number|string);
+    height?: number | string;
     ignoreHiddenPoint?: boolean;
-    neckHeight?: (number|string);
-    neckWidth?: (number|string);
+    neckHeight?: number | string;
+    neckWidth?: number | string;
     reversed?: boolean;
     states?: SeriesStatesOptions<Funnel3DSeries>;
-    width?: (number|string);
+    width?: number | string;
 }
 
 export default Funnel3DSeriesOptions;

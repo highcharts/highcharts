@@ -13,9 +13,7 @@
 'use strict';
 
 import Highcharts from '../Core/Globals.js';
-const {
-    isSafari
-} = Highcharts;
+const { isSafari } = Highcharts;
 
 /**
  * Internal types
@@ -23,8 +21,8 @@ const {
  */
 declare global {
     namespace Highcharts {
-        function dataURLtoBlob(dataURL: string): (string|undefined);
-        function downloadURL(dataURL: (string|URL), filename: string): void;
+        function dataURLtoBlob(dataURL: string): string | undefined;
+        function downloadURL(dataURL: string | URL, filename: string): void;
     }
 }
 
@@ -41,11 +39,12 @@ const win = Highcharts.win,
  * @return {string|undefined}
  *         Blob
  */
-const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
+const dataURLtoBlob = (Highcharts.dataURLtoBlob = function (
+    dataURL: string
+): string | undefined {
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
-
 
     if (
         parts &&
@@ -65,11 +64,10 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (st
             binary[i] = binStr.charCodeAt(i);
         }
 
-        const blob = new win.Blob([binary], { 'type': parts[1] });
+        const blob = new win.Blob([binary], { type: parts[1] });
         return domurl.createObjectURL(blob);
     }
-};
-
+});
 
 /**
  * Download a data URL in the browser. Can also take a blob as first param.
@@ -82,8 +80,8 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (st
  *        The name of the resulting file (w/extension)
  * @return {void}
  */
-const downloadURL = Highcharts.downloadURL = function (
-    dataURL: (string|URL),
+const downloadURL = (Highcharts.downloadURL = function (
+    dataURL: string | URL,
     filename: string
 ): void {
     const nav = win.navigator,
@@ -91,7 +89,8 @@ const downloadURL = Highcharts.downloadURL = function (
 
     // IE specific blob implementation
     // Don't use for normal dataURLs
-    if (typeof dataURL !== 'string' &&
+    if (
+        typeof dataURL !== 'string' &&
         !(dataURL instanceof String) &&
         nav.msSaveOrOpenBlob
     ) {
@@ -105,11 +104,10 @@ const downloadURL = Highcharts.downloadURL = function (
     // Blob or fall back. Edge always needs that blob.
     const isOldEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
     // Safari on iOS needs Blob in order to download PDF
-    const safariBlob = (
+    const safariBlob =
         isSafari &&
         typeof dataURL === 'string' &&
-        dataURL.indexOf('data:application/pdf') === 0
-    );
+        dataURL.indexOf('data:application/pdf') === 0;
     if (safariBlob || isOldEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {
@@ -136,8 +134,7 @@ const downloadURL = Highcharts.downloadURL = function (
             win.location.href = dataURL;
         }
     }
-};
-
+});
 
 const DownloadURL = {
     dataURLtoBlob,

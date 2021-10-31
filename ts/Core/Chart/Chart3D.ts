@@ -812,7 +812,7 @@ namespace Chart3D {
                     /**
                      * The color of the panel.
                      *
-                     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                     * @type      {Highcharts.ColorType}
                      * @default   transparent
                      * @since     4.0
                      * @product   highcharts
@@ -2266,7 +2266,7 @@ export default Chart3D;
  * The color of the panel.
  *
  * @deprecated
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   transparent
  * @since     4.0
  * @product   highcharts

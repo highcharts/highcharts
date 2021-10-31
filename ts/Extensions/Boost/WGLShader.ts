@@ -14,11 +14,7 @@
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    error,
-    pick
-} = U;
+const { clamp, error, pick } = U;
 
 /**
  * Internal types
@@ -30,10 +26,10 @@ declare global {
             bind(): void;
             create(): boolean;
             destroy(): void;
-            fillColorUniform(): (WebGLUniformLocation|null);
-            program(): (WebGLProgram|null|undefined);
-            psUniform(): (WebGLUniformLocation|null);
-            pUniform(): (WebGLUniformLocation|null);
+            fillColorUniform(): WebGLUniformLocation | null;
+            program(): WebGLProgram | null | undefined;
+            psUniform(): WebGLUniformLocation | null;
+            pUniform(): WebGLUniformLocation | null;
             reset(): void;
             setBubbleUniforms(
                 series: BubbleSeries,
@@ -65,7 +61,7 @@ declare global {
  *
  * @return {*}
  */
-function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
+function GLShader(gl: WebGLRenderingContext): false | Highcharts.BoostGLShader {
     let vertShade = [
             /* eslint-disable max-len, @typescript-eslint/indent */
             '#version 100',
@@ -123,110 +119,110 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             'uniform bool  isInverted;',
 
             'float bubbleRadius(){',
-                'float value = aVertexPosition.w;',
-                'float zMax = bubbleZMax;',
-                'float zMin = bubbleZMin;',
-                'float radius = 0.0;',
-                'float pos = 0.0;',
-                'float zRange = zMax - zMin;',
+            'float value = aVertexPosition.w;',
+            'float zMax = bubbleZMax;',
+            'float zMin = bubbleZMin;',
+            'float radius = 0.0;',
+            'float pos = 0.0;',
+            'float zRange = zMax - zMin;',
 
-                'if (bubbleSizeAbs){',
-                    'value = value - bubbleZThreshold;',
-                    'zMax = max(zMax - bubbleZThreshold, zMin - bubbleZThreshold);',
-                    'zMin = 0.0;',
-                '}',
+            'if (bubbleSizeAbs){',
+            'value = value - bubbleZThreshold;',
+            'zMax = max(zMax - bubbleZThreshold, zMin - bubbleZThreshold);',
+            'zMin = 0.0;',
+            '}',
 
-                'if (value < zMin){',
-                    'radius = bubbleZMin / 2.0 - 1.0;',
-                '} else {',
-                    'pos = zRange > 0.0 ? (value - zMin) / zRange : 0.5;',
-                    'if (bubbleSizeByArea && pos > 0.0){',
-                        'pos = sqrt(pos);',
-                    '}',
-                    'radius = ceil(bubbleMinSize + pos * (bubbleMaxSize - bubbleMinSize)) / 2.0;',
-                '}',
+            'if (value < zMin){',
+            'radius = bubbleZMin / 2.0 - 1.0;',
+            '} else {',
+            'pos = zRange > 0.0 ? (value - zMin) / zRange : 0.5;',
+            'if (bubbleSizeByArea && pos > 0.0){',
+            'pos = sqrt(pos);',
+            '}',
+            'radius = ceil(bubbleMinSize + pos * (bubbleMaxSize - bubbleMinSize)) / 2.0;',
+            '}',
 
-                'return radius * 2.0;',
+            'return radius * 2.0;',
             '}',
 
             'float translate(float val,',
-                            'float pointPlacement,',
-                            'float localA,',
-                            'float localMin,',
-                            'float minPixelPadding,',
-                            'float pointRange,',
-                            'float len,',
-                            'bool  cvsCoord,',
-                            'bool  isLog,',
-                            'bool  reversed',
-                            '){',
+            'float pointPlacement,',
+            'float localA,',
+            'float localMin,',
+            'float minPixelPadding,',
+            'float pointRange,',
+            'float len,',
+            'bool  cvsCoord,',
+            'bool  isLog,',
+            'bool  reversed',
+            '){',
 
-                'float sign = 1.0;',
-                'float cvsOffset = 0.0;',
+            'float sign = 1.0;',
+            'float cvsOffset = 0.0;',
 
-                'if (cvsCoord) {',
-                    'sign *= -1.0;',
-                    'cvsOffset = len;',
-                '}',
+            'if (cvsCoord) {',
+            'sign *= -1.0;',
+            'cvsOffset = len;',
+            '}',
 
-                'if (isLog) {',
-                    'val = log(val) / LN10;',
-                '}',
+            'if (isLog) {',
+            'val = log(val) / LN10;',
+            '}',
 
-                'if (reversed) {',
-                    'sign *= -1.0;',
-                    'cvsOffset -= sign * len;',
-                '}',
+            'if (reversed) {',
+            'sign *= -1.0;',
+            'cvsOffset -= sign * len;',
+            '}',
 
-                'return sign * (val - localMin) * localA + cvsOffset + ',
-                    '(sign * minPixelPadding);', // ' + localA * pointPlacement * pointRange;',
+            'return sign * (val - localMin) * localA + cvsOffset + ',
+            '(sign * minPixelPadding);', // ' + localA * pointPlacement * pointRange;',
             '}',
 
             'float xToPixels(float value) {',
-                'if (skipTranslation){',
-                    'return value;// + xAxisPos;',
-                '}',
+            'if (skipTranslation){',
+            'return value;// + xAxisPos;',
+            '}',
 
-                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog, xAxisReversed);// + xAxisPos;',
+            'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog, xAxisReversed);// + xAxisPos;',
             '}',
 
             'float yToPixels(float value, float checkTreshold) {',
-                'float v;',
-                'if (skipTranslation){',
-                    'v = value;// + yAxisPos;',
-                '} else {',
-                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisIsLog, yAxisReversed);// + yAxisPos;',
+            'float v;',
+            'if (skipTranslation){',
+            'v = value;// + yAxisPos;',
+            '} else {',
+            'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisIsLog, yAxisReversed);// + yAxisPos;',
 
-                    'if (v > yAxisLen) {',
-                        'v = yAxisLen;',
-                    '}',
-                '}',
-                'if (checkTreshold > 0.0 && hasThreshold) {',
-                    'v = min(v, translatedThreshold);',
-                '}',
-                'return v;',
+            'if (v > yAxisLen) {',
+            'v = yAxisLen;',
+            '}',
+            '}',
+            'if (checkTreshold > 0.0 && hasThreshold) {',
+            'v = min(v, translatedThreshold);',
+            '}',
+            'return v;',
             '}',
 
             'void main(void) {',
-                'if (isBubble){',
-                    'gl_PointSize = bubbleRadius();',
-                '} else {',
-                    'gl_PointSize = pSize;',
-                '}',
-                // 'gl_PointSize = 10.0;',
-                'vColor = aColor;',
+            'if (isBubble){',
+            'gl_PointSize = bubbleRadius();',
+            '} else {',
+            'gl_PointSize = pSize;',
+            '}',
+            // 'gl_PointSize = 10.0;',
+            'vColor = aColor;',
 
-                'if (skipTranslation && isInverted) {',
-                    // If we get translated values from JS, just swap them (x, y)
-                    'gl_Position = uPMatrix * vec4(aVertexPosition.y + yAxisPos, aVertexPosition.x + xAxisPos, 0.0, 1.0);',
-                '} else if (isInverted) {',
-                    // But when calculating pixel positions directly,
-                    // swap axes and values (x, y)
-                    'gl_Position = uPMatrix * vec4(yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, xToPixels(aVertexPosition.x) + xAxisPos, 0.0, 1.0);',
-                '} else {',
-                    'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x) + xAxisPos, yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, 0.0, 1.0);',
-                '}',
-                // 'gl_Position = uPMatrix * vec4(aVertexPosition.x, aVertexPosition.y, 0.0, 1.0);',
+            'if (skipTranslation && isInverted) {',
+            // If we get translated values from JS, just swap them (x, y)
+            'gl_Position = uPMatrix * vec4(aVertexPosition.y + yAxisPos, aVertexPosition.x + xAxisPos, 0.0, 1.0);',
+            '} else if (isInverted) {',
+            // But when calculating pixel positions directly,
+            // swap axes and values (x, y)
+            'gl_Position = uPMatrix * vec4(yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, xToPixels(aVertexPosition.x) + xAxisPos, 0.0, 1.0);',
+            '} else {',
+            'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x) + xAxisPos, yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, 0.0, 1.0);',
+            '}',
+            // 'gl_Position = uPMatrix * vec4(aVertexPosition.x, aVertexPosition.y, 0.0, 1.0);',
             '}'
             /* eslint-enable max-len, @typescript-eslint/indent */
         ].join('\n'),
@@ -246,50 +242,50 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             // '}',
 
             'void main(void) {',
-                'vec4 col = fillColor;',
-                'vec4 tcol = texture2D(uSampler, gl_PointCoord.st);',
+            'vec4 col = fillColor;',
+            'vec4 tcol = texture2D(uSampler, gl_PointCoord.st);',
 
-                'if (hasColor) {',
-                    'col = vColor;',
-                '}',
+            'if (hasColor) {',
+            'col = vColor;',
+            '}',
 
-                'if (isCircle) {',
-                    'col *= tcol;',
-                    'if (tcol.r < 0.0) {',
-                        'discard;',
-                    '} else {',
-                        'gl_FragColor = col;',
-                    '}',
-                '} else {',
-                    'gl_FragColor = col;',
-                '}',
+            'if (isCircle) {',
+            'col *= tcol;',
+            'if (tcol.r < 0.0) {',
+            'discard;',
+            '} else {',
+            'gl_FragColor = col;',
+            '}',
+            '} else {',
+            'gl_FragColor = col;',
+            '}',
             '}'
             /* eslint-enable max-len, @typescript-eslint/indent */
         ].join('\n'),
         uLocations: Record<string, WebGLUniformLocation> = {},
         // The shader program
-        shaderProgram: (WebGLProgram|null|undefined),
+        shaderProgram: WebGLProgram | null | undefined,
         // Uniform handle to the perspective matrix
-        pUniform: (WebGLUniformLocation|null|undefined),
+        pUniform: WebGLUniformLocation | null | undefined,
         // Uniform for point size
-        psUniform: (WebGLUniformLocation|null|undefined),
+        psUniform: WebGLUniformLocation | null | undefined,
         // Uniform for fill color
-        fillColorUniform: (WebGLUniformLocation|null|undefined),
+        fillColorUniform: WebGLUniformLocation | null | undefined,
         // Uniform for isBubble
-        isBubbleUniform: (WebGLUniformLocation|null|undefined),
+        isBubbleUniform: WebGLUniformLocation | null | undefined,
         // Uniform for bubble abs sizing
-        bubbleSizeAbsUniform: (WebGLUniformLocation|null|undefined),
-        bubbleSizeAreaUniform: (WebGLUniformLocation|null|undefined),
+        bubbleSizeAbsUniform: WebGLUniformLocation | null | undefined,
+        bubbleSizeAreaUniform: WebGLUniformLocation | null | undefined,
         // Skip translation uniform
-        skipTranslationUniform: (WebGLUniformLocation|null|undefined),
+        skipTranslationUniform: WebGLUniformLocation | null | undefined,
         // Set to 1 if circle
-        isCircleUniform: (WebGLUniformLocation|null|undefined),
+        isCircleUniform: WebGLUniformLocation | null | undefined,
         // Uniform for invertion
-        isInverted: (WebGLUniformLocation|null|undefined),
+        isInverted: WebGLUniformLocation | null | undefined,
         // Error stack
-        errors: Array<(string|null)> = [],
+        errors: Array<string | null> = [],
         // Texture uniform
-        uSamplerUniform: (WebGLUniformLocation|null|undefined);
+        uSamplerUniform: WebGLUniformLocation | null | undefined;
 
     /**
      * Handle errors accumulated in errors stack
@@ -311,7 +307,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     function stringToProgram(
         str: string,
         type: string
-    ): (false|WebGLShader|null) {
+    ): false | WebGLShader | null {
         const t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
             shader = gl.createShader(t);
 
@@ -321,9 +317,9 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
         if (!gl.getShaderParameter(shader as any, gl.COMPILE_STATUS)) {
             errors.push(
                 'when compiling ' +
-                type +
-                ' shader:\n' +
-                gl.getShaderInfoLog(shader as any)
+                    type +
+                    ' shader:\n' +
+                    gl.getShaderInfoLog(shader as any)
             );
 
             return false;
@@ -349,7 +345,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
         /**
          * @private
          */
-        function uloc(n: string): (WebGLUniformLocation|null) {
+        function uloc(n: string): WebGLUniformLocation | null {
             return gl.getUniformLocation(shaderProgram as any, n);
         }
 
@@ -417,13 +413,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      */
     function setUniform(name: string, val: number): void {
         if (gl && shaderProgram) {
-            const u = uLocations[name] = (
-                uLocations[name] ||
-                gl.getUniformLocation(
-                    shaderProgram,
-                    name
-                )
-            );
+            const u = (uLocations[name] =
+                uLocations[name] || gl.getUniformLocation(shaderProgram, name));
 
             gl.uniform1f(u, val);
         }
@@ -487,15 +478,18 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             zMax = -Number.MAX_VALUE;
 
         if (gl && shaderProgram && series.is('bubble')) {
-
             const pxSizes = series.getPxExtremes();
 
-            zMin = pick(seriesOptions.zMin, clamp(
-                zCalcMin,
-                seriesOptions.displayNegative === false ?
-                    (seriesOptions.zThreshold as any) : -Number.MAX_VALUE,
-                zMin
-            ));
+            zMin = pick(
+                seriesOptions.zMin,
+                clamp(
+                    zCalcMin,
+                    seriesOptions.displayNegative === false
+                        ? (seriesOptions.zThreshold as any)
+                        : -Number.MAX_VALUE,
+                    zMin
+                )
+            );
 
             zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));
 
@@ -507,8 +501,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             );
             gl.uniform1i(
                 bubbleSizeAbsUniform as any,
-                (series as BubbleSeries).options
-                    .sizeByAbsoluteValue as any
+                (series as BubbleSeries).options.sizeByAbsoluteValue as any
             );
 
             setUniform('bubbleZMin', zMin);
@@ -573,7 +566,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      * @private
      * @return {GLInt} - the handle for the program
      */
-    function getProgram(): (WebGLProgram|null|undefined) {
+    function getProgram(): WebGLProgram | null | undefined {
         return shaderProgram;
     }
 
@@ -584,13 +577,13 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     }
 
     return {
-        psUniform: function (): (WebGLUniformLocation|null) {
+        psUniform: function (): WebGLUniformLocation | null {
             return psUniform as any;
         },
-        pUniform: function (): (WebGLUniformLocation|null) {
+        pUniform: function (): WebGLUniformLocation | null {
             return pUniform as any;
         },
-        fillColorUniform: function (): (WebGLUniformLocation|null) {
+        fillColorUniform: function (): WebGLUniformLocation | null {
             return fillColorUniform as any;
         },
         setBubbleUniforms: setBubbleUniforms,

@@ -9,22 +9,15 @@
 'use strict';
 
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type {
-    TRIXOptions
-} from './TRIXOptions';
+import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        tema: TEMAIndicator
-    }
+    seriesTypes: { tema: TEMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    merge
-} = U;
+const { correctFloat, merge } = U;
 
 /**
  * The TRIX series type.
@@ -55,7 +48,9 @@ class TRIXIndicator extends TEMAIndicator {
      * @requires     stock/indicators/trix
      * @optionparent plotOptions.trix
      */
-    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions)
+    public static defaultOptions: TRIXOptions = merge(
+        TEMAIndicator.defaultOptions
+    );
 
     public data: Array<TRIXPoint> = void 0 as any;
     public options: TRIXOptions = void 0 as any;
@@ -67,13 +62,15 @@ class TRIXIndicator extends TEMAIndicator {
         tripledPeriod: number,
         EMAlevels: TEMAIndicatorType.EMALevelsObject,
         i: number
-    ): ([number, (number|null)]|undefined) {
+    ): [number, number | null] | undefined {
         if (i > tripledPeriod) {
             return [
                 xVal[i - 3],
-                EMAlevels.prevLevel3 !== 0 ?
-                    correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
-                    EMAlevels.prevLevel3 * 100 : null
+                EMAlevels.prevLevel3 !== 0
+                    ? (correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                          EMAlevels.prevLevel3) *
+                      100
+                    : null
             ];
         }
     }
@@ -114,4 +111,4 @@ export default TRIXIndicator;
  * @apioption series.trix
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

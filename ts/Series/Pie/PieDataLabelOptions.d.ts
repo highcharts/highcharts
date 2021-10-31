@@ -27,7 +27,7 @@ export interface PieDataLabelOptions extends DataLabelOptions {
     alignTo?: string;
     connectorColor?: ColorType;
     connectorPadding?: number;
-    connectorShape?: (string|Function);
+    connectorShape?: string | Function;
     connectorWidth?: number;
     crookDistance?: string;
     distance?: number;

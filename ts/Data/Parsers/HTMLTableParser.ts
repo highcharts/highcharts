@@ -42,7 +42,6 @@ const { merge } = U;
  * @private
  */
 class HTMLTableParser extends DataParser<DataParser.Event> {
-
     /* *
      *
      *  Static Properties
@@ -52,9 +51,10 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions
-    }
+    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions =
+        {
+            ...DataParser.defaultOptions
+        };
 
     /* *
      *
@@ -76,7 +76,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
      */
     constructor(
         options?: Partial<HTMLTableParser.OptionsType>,
-        tableElement: (HTMLElement | null) = null,
+        tableElement: HTMLElement | null = null,
         converter?: DataConverter
     ) {
         super();
@@ -104,7 +104,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
-    public tableElement?: HTMLElement
+    public tableElement?: HTMLElement;
     public tableElementID?: string;
 
     /* *
@@ -135,14 +135,8 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
             columns: Array<DataTable.Column> = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
-            {
-                endRow,
-                startColumn,
-                endColumn,
-                firstRowAsNames
-            } = parseOptions,
+            { endRow, startColumn, endColumn, firstRowAsNames } = parseOptions,
             tableHTML = parseOptions.tableHTML || this.tableElement;
-
 
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit<DataParser.Event>({
@@ -181,10 +175,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
                 }
 
                 item = items[i];
-                if (
-                    item.tagName === 'TD' ||
-                    item.tagName === 'TH'
-                ) {
+                if (item.tagName === 'TD' || item.tagName === 'TH') {
                     headers.push(item.innerHTML);
                 }
             }
@@ -206,14 +197,9 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
                     item = columnsInRow[columnIndex];
 
                     if (
-                        (
-                            item.tagName === 'TD' ||
-                            item.tagName === 'TH'
-                        ) &&
-                        (
-                            columnIndex >= startColumn &&
-                            columnIndex <= endColumn
-                        )
+                        (item.tagName === 'TD' || item.tagName === 'TH') &&
+                        columnIndex >= startColumn &&
+                        columnIndex <= endColumn
                     ) {
                         if (!columns[relativeColumnIndex]) {
                             columns[relativeColumnIndex] = [];
@@ -223,9 +209,8 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
-                        columns[relativeColumnIndex][
-                            rowIndex - startRow
-                        ] = cellValue;
+                        columns[relativeColumnIndex][rowIndex - startRow] =
+                            cellValue;
 
                         // Loop over all previous indices and make sure
                         // they are nulls, not undefined.
@@ -265,7 +250,6 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
-
 }
 
 /* *
@@ -275,25 +259,22 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
  * */
 
 namespace HTMLTableParser {
-
     /**
      * The available options for the parser
      */
-    export type OptionsType = Partial<ParserOptions & DataParser.Options>
+    export type OptionsType = Partial<ParserOptions & DataParser.Options>;
 
     /**
      * Options for the parser compatible with ClassJSON
      */
-    export interface ClassJSONOptions extends DataParser.Options {
-    }
+    export interface ClassJSONOptions extends DataParser.Options {}
 
     /**
      * Options not compatible with ClassJSON
      */
     export interface ParserOptions {
-        tableHTML?: (HTMLElement | null);
+        tableHTML?: HTMLElement | null;
     }
-
 }
 
 /* *

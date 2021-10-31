@@ -22,8 +22,7 @@ import type LinePointOptions from '../Line/LinePointOptions';
  *
  * */
 
-interface ParetoPointOptions extends LinePointOptions {
-}
+interface ParetoPointOptions extends LinePointOptions {}
 
 /* *
  *

@@ -25,9 +25,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: {
-            prototype: {
-                pointClass: SankeyPoint
-            }
+            prototype: { pointClass: SankeyPoint }
         }
     }
 } = SeriesRegistry;
@@ -39,7 +37,6 @@ const {
  * */
 
 class OrganizationPoint extends SankeyPoint {
-
     /* *
      *
      *  Properties
@@ -79,7 +76,6 @@ class OrganizationPoint extends SankeyPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

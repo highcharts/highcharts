@@ -23,9 +23,7 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 
 const {
-    prototype: {
-        tooltipFormatter: pointTooltipFormatter
-    }
+    prototype: { tooltipFormatter: pointTooltipFormatter }
 } = Point;
 
 import U from '../Core/Utilities.js';
@@ -49,11 +47,14 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
-        setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
+        setCompare(
+            compare?: 'percent' | 'value' | null,
+            redraw?: boolean
+        ): void;
+        setCumulative(cumulative?: boolean | null, redraw?: boolean): void;
         setModifier(
-            mode: 'compare'|'cumulative',
-            modeState?: boolean|null|'percent'|'value',
+            mode: 'compare' | 'cumulative',
+            modeState?: boolean | null | 'percent' | 'value',
             redraw?: boolean
         ): void;
     }
@@ -69,15 +70,18 @@ declare module '../Core/Series/PointLike' {
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         dataModify?: DataModifyComposition.Additions;
-        setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
-        setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
+        setCompare(
+            compare?: 'percent' | 'value' | null,
+            redraw?: boolean
+        ): void;
+        setCumulative(cumulative?: boolean | null, redraw?: boolean): void;
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        compare?: 'percent'|'value'|null;
-        compareBase?: (0|100);
+        compare?: 'percent' | 'value' | null;
+        compareBase?: 0 | 100;
         compareStart?: boolean;
         cumulative?: boolean;
     }
@@ -90,7 +94,6 @@ declare module '../Core/Series/SeriesOptions' {
  * */
 
 namespace DataModifyComposition {
-
     /* *
      *
      *  Declarations
@@ -100,20 +103,20 @@ namespace DataModifyComposition {
     export declare class AxisComposition extends Axis {
         setCompare(
             this: Axis,
-            compare?: 'percent'|'value'|null,
+            compare?: 'percent' | 'value' | null,
             redraw?: boolean
         ): void;
         setCumulative(
             this: Axis,
-            cumulative?: boolean|null,
+            cumulative?: boolean | null,
             redraw?: boolean
         ): void;
         setModifier(
             this: Axis,
-            mode: 'compare'|'cumulative',
-            modeState?: boolean|null|'percent'|'value',
+            mode: 'compare' | 'cumulative',
+            modeState?: boolean | null | 'percent' | 'value',
             redraw?: boolean
-        ): void
+        ): void;
     }
 
     export declare class PointComposition extends Point {
@@ -124,12 +127,12 @@ namespace DataModifyComposition {
         dataModify: Additions;
         setCompare(
             this: Series,
-            compare?: 'percent'|'value'|null,
+            compare?: 'percent' | 'value' | null,
             redraw?: boolean
         ): void;
         setCumulative(
             this: Series,
-            cumulative?: boolean|null,
+            cumulative?: boolean | null,
             redraw?: boolean
         ): void;
     }
@@ -169,7 +172,7 @@ namespace DataModifyComposition {
         SeriesClass: T,
         AxisClass: typeof Axis,
         PointClass: typeof Point
-    ): (typeof SeriesComposition&T) {
+    ): typeof SeriesComposition & T {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -201,7 +204,7 @@ namespace DataModifyComposition {
             pointProto.tooltipFormatter = tooltipFormatter;
         }
 
-        return SeriesClass as (typeof SeriesComposition&T);
+        return SeriesClass as typeof SeriesComposition & T;
     }
 
     /* ********************************************************************** *
@@ -215,21 +218,15 @@ namespace DataModifyComposition {
      */
     function setModifier(
         this: Axis,
-        mode: 'compare'|'cumulative',
-        modeState?: boolean|null|'percent'|'value',
+        mode: 'compare' | 'cumulative',
+        modeState?: boolean | null | 'percent' | 'value',
         redraw?: boolean
     ): void {
         if (!this.isXAxis) {
             this.series.forEach(function (series): void {
-                if (
-                    mode === 'compare' &&
-                    typeof modeState !== 'boolean'
-                ) {
+                if (mode === 'compare' && typeof modeState !== 'boolean') {
                     series.setCompare(modeState, false);
-                } else if (
-                    mode === 'cumulative' &&
-                    !isString(modeState)
-                ) {
+                } else if (mode === 'cumulative' && !isString(modeState)) {
                     series.setCumulative(modeState, false);
                 }
             });
@@ -285,7 +282,7 @@ namespace DataModifyComposition {
      */
     function afterInit(this: Series): void {
         const compare = this.options.compare;
-        let dataModify: Additions|undefined;
+        let dataModify: Additions | undefined;
 
         if (
             compare === 'percent' ||
@@ -309,7 +306,7 @@ namespace DataModifyComposition {
      * Adjust the extremes (compare and cumulative modify the data).
      * @private
      */
-    function afterGetExtremes(this: Series, e: AnyRecord|Event): void {
+    function afterGetExtremes(this: Series, e: AnyRecord | Event): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
             activeYData = dataExtremes.activeYData;
 
@@ -365,7 +362,7 @@ namespace DataModifyComposition {
      */
     function seriesSetCompare(
         this: Series,
-        compare?: 'percent'|'value'|null,
+        compare?: 'percent' | 'value' | null,
         redraw?: boolean
     ): void {
         // Survive to export, #5485 (and for options generally)
@@ -416,8 +413,10 @@ namespace DataModifyComposition {
 
             // find the first value for comparison
             for (i = 0; i < length - compareStart; i++) {
-                const compareValue = processedYData[i] && keyIndex > -1 ?
-                    (processedYData[i] as any)[keyIndex] : processedYData[i];
+                const compareValue =
+                    processedYData[i] && keyIndex > -1
+                        ? (processedYData[i] as any)[keyIndex]
+                        : processedYData[i];
 
                 if (
                     isNumber(compareValue) &&
@@ -452,7 +451,7 @@ namespace DataModifyComposition {
      */
     function axisSetCompare(
         this: Axis,
-        compare?: 'percent'|'value'|null,
+        compare?: 'percent' | 'value' | null,
         redraw?: boolean
     ): void {
         this.setModifier('compare', compare, redraw);
@@ -485,7 +484,7 @@ namespace DataModifyComposition {
      */
     function seriesSetCumulative(
         this: Series,
-        cumulative?: boolean|null,
+        cumulative?: boolean | null,
         redraw?: boolean
     ): void {
         // Set default value to false
@@ -530,7 +529,7 @@ namespace DataModifyComposition {
      */
     function axisSetCumulative(
         this: Axis,
-        cumulative?: boolean|null,
+        cumulative?: boolean | null,
         redraw?: boolean
     ): void {
         this.setModifier('cumulative', cumulative, redraw);
@@ -546,7 +545,6 @@ namespace DataModifyComposition {
      * @private
      */
     export class Additions {
-
         /* *
          *
          *  Constructors
@@ -567,19 +565,16 @@ namespace DataModifyComposition {
          * */
 
         public series: SeriesComposition;
-        public compare?: 'percent'|'value'|null;
+        public compare?: 'percent' | 'value' | null;
         public compareValue?: number;
 
-        public modifyValue(
-            value?: number|null,
-            index?: number
-        ): number;
+        public modifyValue(value?: number | null, index?: number): number;
 
         /* *
-        *
-        *  Functions
-        *
-        * */
+         *
+         *  Functions
+         *
+         * */
 
         /**
          * @private
@@ -621,10 +616,10 @@ namespace DataModifyComposition {
          * @param {string} [compare]
          *        Can be one of `"percent"` or `"value"`.
          */
-        public initCompare(compare: 'percent'|'value'): void {
+        public initCompare(compare: 'percent' | 'value'): void {
             // Set the modifyValue method
             this.modifyValue = function (
-                value?: number|null,
+                value?: number | null,
                 index?: number
             ): number {
                 if (value === null) {
@@ -636,16 +631,18 @@ namespace DataModifyComposition {
                 if (
                     typeof value !== 'undefined' &&
                     typeof compareValue !== 'undefined'
-                ) { // #2601, #5814
+                ) {
+                    // #2601, #5814
 
                     // Get the modified value
                     if (compare === 'value') {
                         value -= compareValue;
-                    // Compare percent
+                        // Compare percent
                     } else {
                         const compareBase = this.series.options.compareBase;
 
-                        value = 100 * (value / compareValue) -
+                        value =
+                            100 * (value / compareValue) -
                             (compareBase === 100 ? 0 : 100);
                     }
 
@@ -671,7 +668,7 @@ namespace DataModifyComposition {
         public initCumulative(): void {
             // Set the modifyValue method
             this.modifyValue = function (
-                value?: number|null,
+                value?: number | null,
                 index?: number
             ): number {
                 if (value === null) {
@@ -679,8 +676,8 @@ namespace DataModifyComposition {
                 }
 
                 if (value !== void 0 && index !== void 0) {
-                    const prevPoint = index > 0 ?
-                        this.series.points[index - 1] : null;
+                    const prevPoint =
+                        index > 0 ? this.series.points[index - 1] : null;
 
                     // Get the modified value
                     if (prevPoint && prevPoint.cumulativeSum) {
@@ -701,7 +698,6 @@ namespace DataModifyComposition {
             };
         }
     }
-
 }
 
 /* *
@@ -794,4 +790,4 @@ export default DataModifyComposition;
  * @apioption plotOptions.series.cumulative
  */
 
-''; // keeps doclets above in transpiled file
+(''); // keeps doclets above in transpiled file

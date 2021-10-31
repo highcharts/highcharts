@@ -144,7 +144,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Explicit colors
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.color
      */
@@ -244,7 +244,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @sample {highmaps} maps/coloraxis/gridlines/
      *         Grid lines demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @default   #e6e6e6
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.gridLineColor
@@ -329,7 +329,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
         /**
          * The color of the marker.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
         color: Palette.neutralColor40
@@ -374,7 +374,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     minColor: Palette.highlightColor10,
@@ -394,7 +394,7 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     maxColor: Palette.highlightColor100,

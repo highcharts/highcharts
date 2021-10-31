@@ -27,7 +27,7 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 export interface TreemapPointOptions extends ScatterPointOptions {
     name?: string;
     parent?: string;
-    value?: (number|null);
+    value?: number | null;
     width?: number;
 }
 

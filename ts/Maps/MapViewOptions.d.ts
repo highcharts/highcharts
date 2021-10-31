@@ -26,7 +26,6 @@ declare module '../Core/Options' {
     }
 }
 
-
 export type LonLatArray = [number, number];
 
 export interface ProjectedXY {
@@ -46,7 +45,7 @@ export interface MapBounds {
 export interface MapViewOptions {
     center: LonLatArray;
     maxZoom?: number;
-    padding: (number|string);
+    padding: number | string;
     projection?: ProjectionOptions;
     zoom?: number;
 }

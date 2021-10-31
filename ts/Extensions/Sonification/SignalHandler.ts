@@ -35,16 +35,13 @@
  *        List of supported signal names.
  */
 class SignalHandler {
-
     /* *
      *
      *  Constructors
      *
      * */
 
-    public constructor(
-        supportedSignals: Array<string>
-    ) {
+    public constructor(supportedSignals: Array<string>) {
         this.init(supportedSignals || []);
     }
 
@@ -63,9 +60,7 @@ class SignalHandler {
      *
      * */
 
-    public init(
-        supportedSignals: Array<string>
-    ): void {
+    public init(supportedSignals: Array<string>): void {
         this.supportedSignals = supportedSignals;
         this.signals = {};
     }
@@ -81,7 +76,7 @@ class SignalHandler {
      */
     public registerSignalCallbacks(
         this: SignalHandler,
-        signals: Record<string, (Function|undefined)>
+        signals: Record<string, Function | undefined>
     ): void {
         const signalHandler = this;
 
@@ -90,10 +85,8 @@ class SignalHandler {
         ): void {
             const signal = signals[supportedSignal];
             if (signal) {
-                (
-                    signalHandler.signals[supportedSignal] =
-                    signalHandler.signals[supportedSignal] || []
-                ).push(signal);
+                (signalHandler.signals[supportedSignal] =
+                    signalHandler.signals[supportedSignal] || []).push(signal);
             }
         });
     }
@@ -136,11 +129,13 @@ class SignalHandler {
         this: SignalHandler,
         signalName: string,
         data?: unknown
-    ): (unknown|undefined) {
+    ): unknown | undefined {
         let retval: unknown;
 
         if (this.signals[signalName]) {
-            this.signals[signalName].forEach(function (handler: Function): void {
+            this.signals[signalName].forEach(function (
+                handler: Function
+            ): void {
                 const result = handler(data);
 
                 retval = typeof result !== 'undefined' ? result : retval;

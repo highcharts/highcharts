@@ -31,10 +31,7 @@ import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    objectEach
-} = U;
+const { merge, objectEach } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -44,7 +41,6 @@ const {
  * @private
  */
 class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
-
     /* *
      *
      *  Static Properties
@@ -60,7 +56,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportIDColumn: false,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
-    }
+    };
 
     /* *
      *
@@ -89,23 +85,24 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         this.tableElement = null;
 
-
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
+        this.parser =
+            parser || new HTMLTableParser(this.options, this.tableElement);
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
+    public readonly options: HTMLTableStore.Options &
+        HTMLTableParser.OptionsType;
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -116,7 +113,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * The table element to create the store from.
      * Is either supplied directly or is fetched by an ID.
      */
-    public tableElement: (HTMLElement | null);
+    public tableElement: HTMLElement | null;
 
     public tableID?: string;
 
@@ -132,7 +129,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         const store = this,
             { table: tableHTML } = store.options;
 
-        let tableElement: (HTMLElement | null);
+        let tableElement: HTMLElement | null;
 
         if (typeof tableHTML === 'string') {
             store.tableID = tableHTML;
@@ -208,14 +205,16 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportOptions: HTMLTableStore.ExportOptions = {}
     ): string {
         const options = exportOptions,
-            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-            exportNames = (this.parserOptions.firstRowAsNames !== false),
+            decimalPoint = options.useLocalDecimalPoint
+                ? (1.1).toLocaleString()[1]
+                : '.',
+            exportNames = this.parserOptions.firstRowAsNames !== false,
             useMultiLevelHeaders = options.useMultiLevelHeaders,
             useRowspanHeaders = options.useRowspanHeaders;
 
         const isRowEqual = function (
-            row1: Array<(number | string | undefined)>,
-            row2: Array<(number | string | undefined)>
+            row1: Array<number | string | undefined>,
+            row2: Array<number | string | undefined>
         ): boolean {
             let i = row1.length;
 
@@ -233,13 +232,13 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Get table header markup from row data
         const getTableHeaderHTML = function (
-            topheaders: (Array<(number | string)> | null | undefined),
-            subheaders: Array<(number | string | undefined)>,
+            topheaders: Array<number | string> | null | undefined,
+            subheaders: Array<number | string | undefined>,
             rowLength?: number
         ): string {
             let html = '<thead>',
                 i = 0,
-                len = rowLength || subheaders && subheaders.length,
+                len = rowLength || (subheaders && subheaders.length),
                 next,
                 cur,
                 curColspan = 0,
@@ -268,7 +267,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
                             'th',
                             'highcharts-table-topheading',
                             'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"',
+                                'colspan="' +
+                                (curColspan + 1) +
+                                '"',
                             cur
                         );
                         curColspan = 0;
@@ -290,9 +291,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
                             'th',
                             'highcharts-table-topheading',
                             'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''),
+                                (rowspan > 1
+                                    ? ' valign="top" rowspan="' + rowspan + '"'
+                                    : ''),
                             cur
                         );
                     }
@@ -306,7 +307,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
                 for (i = 0, len = subheaders.length; i < len; ++i) {
                     if (typeof subheaders[i] !== 'undefined') {
                         html += getCellHTMLFromValue(
-                            'th', null, 'scope="col"', subheaders[i]
+                            'th',
+                            null,
+                            'scope="col"',
+                            subheaders[i]
                         );
                     }
                 }
@@ -318,9 +322,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         const getCellHTMLFromValue = function (
             tag: string,
-            classes: (string | null),
+            classes: string | null,
             attrs: string,
-            value: (number | string | undefined)
+            value: number | string | undefined
         ): string {
             let val = value,
                 className = 'text' + (classes ? ' ' + classes : '');
@@ -336,9 +340,18 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
                 val = '';
                 className = 'empty';
             }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                ' class="' + className + '">' +
-                val + '</' + tag + '>';
+            return (
+                '<' +
+                tag +
+                (attrs ? ' ' + attrs : '') +
+                ' class="' +
+                className +
+                '">' +
+                val +
+                '</' +
+                tag +
+                '>'
+            );
         };
 
         const { columnNames, columnValues } = this.getColumnsForExport(
@@ -411,9 +424,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
-                        rowArray[rowIndex].join('') +
-                        '</tr>');
+                    htmlRows.push(
+                        '<tr>' + rowArray[rowIndex].join('') + '</tr>'
+                    );
                 }
             }
         }
@@ -424,7 +437,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         // Current exportdata falls back to chart title
         // but that should probably be handled elsewhere?
         if (options.tableCaption) {
-            caption = '<caption class="highcharts-table-caption">' +
+            caption =
+                '<caption class="highcharts-table-caption">' +
                 options.tableCaption +
                 '</caption>';
         }
@@ -454,7 +468,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: HTMLTableStore.ExportOptions,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -466,11 +483,11 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return this.getHTMLTableForExport(
+            merge(exportOptions, htmlExportOptions)
+        );
     }
-
 }
-
 
 /**
  *
@@ -482,16 +499,17 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
  * Types for class-specific options and events
  */
 namespace HTMLTableStore {
-
     /**
      * Type for event object fired from HTMLTableDataStore
      */
-    export type Event = (ErrorEvent|LoadEvent);
+    export type Event = ErrorEvent | LoadEvent;
 
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>
+    export type OptionsType = Partial<
+        HTMLTableStore.Options & HTMLTableParser.OptionsType
+    >;
 
     /**
      * Options for exporting the store as an HTML table
@@ -511,24 +529,23 @@ namespace HTMLTableStore {
      */
     export interface ErrorEvent extends DataStore.Event {
         type: 'loadError';
-        error: (string | Error);
+        error: string | Error;
     }
 
     /**
      * Provided event object on load events within HTMLTableDataStore
      */
     export interface LoadEvent extends DataStore.Event {
-        type: ('load' | 'afterLoad');
-        tableElement?: (HTMLElement | null);
+        type: 'load' | 'afterLoad';
+        tableElement?: HTMLElement | null;
     }
 
     /**
      * Internal options for the HTMLTableDataStore class
      */
     export interface Options {
-        table: (string | HTMLElement);
+        table: string | HTMLElement;
     }
-
 }
 
 /* *

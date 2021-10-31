@@ -26,8 +26,10 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  * */
 
 export interface OrganizationPointOptions extends SankeyPointOptions {
-    dataLabels?: (OrganizationDataLabelOptions|Array<OrganizationDataLabelOptions>);
-    offset?: (number|string);
+    dataLabels?:
+        | OrganizationDataLabelOptions
+        | Array<OrganizationDataLabelOptions>;
+    offset?: number | string;
 }
 
 export default OrganizationPointOptions;

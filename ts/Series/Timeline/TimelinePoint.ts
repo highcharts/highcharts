@@ -20,7 +20,10 @@
  *
  * */
 
-import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointShortOptions,
+    PointOptions
+} from '../../Core/Series/PointOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
@@ -33,21 +36,13 @@ const {
     series: Series,
     seriesTypes: {
         pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
+            prototype: { pointClass: PiePoint }
         }
     }
 } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { defined, isNumber, merge, objectEach, pick } = U;
 
 /* *
  *
@@ -56,7 +51,6 @@ const {
  * */
 
 class TimelinePoint extends Series.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -84,10 +78,10 @@ class TimelinePoint extends Series.prototype.pointClass {
             series = point.series,
             connector: SVGElement = point.connector as any,
             dl: SVGElement = point.dataLabel as any,
-            dlOptions = (point.dataLabel as any).options = merge(
+            dlOptions = ((point.dataLabel as any).options = merge(
                 series.options.dataLabels,
                 point.options.dataLabels
-            ),
+            )),
             chart = point.series.chart,
             bBox = connector.getBBox(),
             plotPos = {
@@ -104,9 +98,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             plotPos.x += dl.options.connectorWidth / 2;
         }
 
-        isVisible = chart.isInsidePlot(
-            plotPos.x, plotPos.y
-        );
+        isVisible = chart.isInsidePlot(plotPos.x, plotPos.y);
 
         connector[isVisible ? 'animate' : 'attr']({
             d: point.getConnectorPath()
@@ -116,9 +108,7 @@ class TimelinePoint extends Series.prototype.pointClass {
             connector.attr({
                 stroke: dlOptions.connectorColor || point.color,
                 'stroke-width': dlOptions.connectorWidth,
-                opacity: dl[
-                    defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
-                ]
+                opacity: dl[defined(dl.newOpacity) ? 'newOpacity' : 'opacity']
             });
         }
     }
@@ -136,9 +126,13 @@ class TimelinePoint extends Series.prototype.pointClass {
                 .add(point.dataLabel);
         }
 
-        if (point.series.chart.isInsidePlot( // #10507
-            (point.dataLabel as any).x, (point.dataLabel as any).y
-        )) {
+        if (
+            point.series.chart.isInsidePlot(
+                // #10507
+                (point.dataLabel as any).x,
+                (point.dataLabel as any).y
+            )
+        ) {
             point.alignConnector();
         }
     }
@@ -151,16 +145,14 @@ class TimelinePoint extends Series.prototype.pointClass {
             direction = inverted ? 'x2' : 'y2',
             dl: SVGLabel = point.dataLabel as any,
             targetDLPos = dl.targetPosition,
-            coords: Record<string, (number|string)> = {
+            coords: Record<string, number | string> = {
                 x1: point.plotX as any,
                 y1: point.plotY as any,
                 x2: point.plotX as any,
                 y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
             },
-            negativeDistance = (
-                (dl.alignAttr || dl)[direction[0]] <
-                    point.series.yAxis.len / 2
-            ),
+            negativeDistance =
+                (dl.alignAttr || dl)[direction[0]] < point.series.yAxis.len / 2,
             path: SVGPath;
 
         // Recalculate coords when the chart is inverted.
@@ -180,10 +172,7 @@ class TimelinePoint extends Series.prototype.pointClass {
         }
 
         // Change coordinates so that they will be relative to data label.
-        objectEach(coords, function (
-            _coord: (number|string),
-            i: string
-        ): void {
+        objectEach(coords, function (_coord: number | string, i: string): void {
             (coords[i] as any) -= (dl.alignAttr || dl)[i[0]];
         });
 
@@ -220,10 +209,7 @@ class TimelinePoint extends Series.prototype.pointClass {
         }
     }
 
-    public setVisible(
-        visible: boolean,
-        redraw?: boolean
-    ): void {
+    public setVisible(visible: boolean, redraw?: boolean): void {
         const point = this,
             series = point.series;
 
@@ -239,7 +225,7 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     public applyOptions(
-        options: (PointOptions|PointShortOptions),
+        options: PointOptions | PointShortOptions,
         x?: number
     ): Point {
         options = Point.prototype.optionsToObject.call(this, options);
@@ -248,7 +234,6 @@ class TimelinePoint extends Series.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

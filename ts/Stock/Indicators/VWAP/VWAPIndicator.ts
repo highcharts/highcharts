@@ -15,24 +15,15 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    VWAPOptions,
-    VWAPParamsOptions
-} from './VWAPOptions';
+import type { VWAPOptions, VWAPParamsOptions } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    error,
-    isArray,
-    merge
-} = U;
+const { error, isArray, merge } = U;
 
 /* *
  *
@@ -66,21 +57,24 @@ class VWAPIndicator extends SMAIndicator {
      * @requires     stock/indicators/vwap
      * @optionparent plotOptions.vwap
      */
-    public static defaultOptions: VWAPOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
-            period: 30,
+    public static defaultOptions: VWAPOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The id of volume series which is mandatory. For example using
-             * OHLC data, volumeSeriesID='volume' means the indicator will be
-             * calculated using OHLC and volume values.
+             * @excluding index
              */
-            volumeSeriesID: 'volume'
-        }
-    } as VWAPOptions);
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                period: 30,
+                /**
+                 * The id of volume series which is mandatory. For example using
+                 * OHLC data, `volumeSeriesID='volume'` means the indicator will
+                 * be calculated using OHLC and volume values.
+                 */
+                volumeSeriesID: 'volume'
+            }
+        } as VWAPOptions
+    );
 
     /* *
      *
@@ -101,25 +95,22 @@ class VWAPIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: VWAPParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let indicator = this,
             chart: Chart = series.chart,
-            xValues: Array<number> = (series.xData as any),
-            yValues: (
-                Array<number>|Array<[number, number, number, number]>
-            ) = (series.yData as any),
-            period: number = (params.period as any),
+            xValues: Array<number> = series.xData as any,
+            yValues: Array<number> | Array<[number, number, number, number]> =
+                series.yData as any,
+            period: number = params.period as any,
             isOHLC = true,
             volumeSeries: TLinkedSeries;
 
         // Checks if volume series exists
-        if (!(volumeSeries = (
-            chart.get(params.volumeSeriesID as any)) as any
-        )) {
+        if (!(volumeSeries = chart.get(params.volumeSeriesID as any) as any)) {
             error(
                 'Series ' +
-                params.volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.',
+                    params.volumeSeriesID +
+                    ' not found! Check `volumeSeriesID`.',
                 true,
                 chart
             );
@@ -127,7 +118,7 @@ class VWAPIndicator extends SMAIndicator {
         }
 
         // Checks if series data fits the OHLC format
-        if (!(isArray(yValues[0]))) {
+        if (!isArray(yValues[0])) {
             isOHLC = false;
         }
 
@@ -156,11 +147,11 @@ class VWAPIndicator extends SMAIndicator {
     public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
         xValues: Array<number>,
-        yValues: (Array<number>|Array<[number, number, number, number]>),
+        yValues: Array<number> | Array<[number, number, number, number]>,
         volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
-        let volumeValues: Array<number> = (volumeSeries.yData as any),
+        let volumeValues: Array<number> = volumeSeries.yData as any,
             volumeLength: number = (volumeSeries.xData as any).length,
             pointsLength: number = xValues.length,
             cumulativePrice: Array<number> = [],
@@ -184,23 +175,23 @@ class VWAPIndicator extends SMAIndicator {
         for (i = 0, j = 0; i < commonLength; i++) {
             // Depending on whether series is OHLC or line type, price is
             // average of the high, low and close or a simple value
-            typicalPrice = isOHLC ?
-                (((yValues[i] as any)[1] + (yValues[i] as any)[2] +
-                (yValues[i] as any)[3]) / 3) :
-                (yValues[i] as any);
+            typicalPrice = isOHLC
+                ? ((yValues[i] as any)[1] +
+                      (yValues[i] as any)[2] +
+                      (yValues[i] as any)[3]) /
+                  3
+                : (yValues[i] as any);
             typicalPrice *= volumeValues[i];
 
-            cPrice = j ?
-                (cumulativePrice[i - 1] + typicalPrice) :
-                typicalPrice;
-            cVolume = j ?
-                (cumulativeVolume[i - 1] + volumeValues[i]) :
-                volumeValues[i];
+            cPrice = j ? cumulativePrice[i - 1] + typicalPrice : typicalPrice;
+            cVolume = j
+                ? cumulativeVolume[i - 1] + volumeValues[i]
+                : volumeValues[i];
 
             cumulativePrice.push(cPrice);
             cumulativeVolume.push(cVolume);
 
-            VWAP.push([xValues[i], (cPrice / cVolume)]);
+            VWAP.push([xValues[i], cPrice / cVolume]);
             xData.push(VWAP[i][0]);
             yData.push(VWAP[i][1]);
 
@@ -265,4 +256,4 @@ export default VWAPIndicator;
  * @apioption series.vwap
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -24,9 +24,7 @@ import type Funnel3DPointOptions from './Funnel3DPointOptions';
 import type Funnel3DSeries from './Funnel3DSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
@@ -38,7 +36,6 @@ const { extend } = U;
  * */
 
 class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -52,7 +49,6 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
     public series: Funnel3DSeries = void 0 as any;
 
     public y: number = void 0 as any;
-
 }
 
 /* *

@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type DataLabelOptions from '../../../Core/Series/DataLabelOptions';
 import type VBPIndicator from './VBPIndicator';
 

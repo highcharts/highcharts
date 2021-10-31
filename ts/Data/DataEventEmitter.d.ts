@@ -29,7 +29,6 @@ import type JSON from '../Core/JSON';
  * Describes methods to attach callbacks to events of a class instance.
  */
 declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
-
     /* *
      *
      *  Properties
@@ -72,7 +71,6 @@ declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
         type: TEvent['type'],
         callback: DataEventEmitter.EventCallback<this, TEvent>
     ): Function;
-
 }
 
 /* *
@@ -86,7 +84,6 @@ declare interface DataEventEmitter<TEvent extends DataEventEmitter.Event> {
  * are available.
  */
 declare namespace DataEventEmitter {
-
     /**
      * Describes the callbacks expected types. This generic interface can be
      * extended by implementing classes.
@@ -113,7 +110,6 @@ declare namespace DataEventEmitter {
      * extended by implementing classes.
      */
     export interface Event {
-
         /**
          * Additional meta information regarding the event.
          */
@@ -122,7 +118,7 @@ declare namespace DataEventEmitter {
         /**
          * Event type as a string.
          */
-        readonly type: ('test'|string);
+        readonly type: 'test' | string;
     }
 
     export interface HCEventObject<TEventObject extends Event> {
@@ -130,14 +126,14 @@ declare namespace DataEventEmitter {
         order?: number;
     }
 
-    export type HCEvents<TEventObject extends Event> = (
-        Array<HCEventObject<TEventObject>>
-    );
+    export type HCEvents<TEventObject extends Event> = Array<
+        HCEventObject<TEventObject>
+    >;
 
-    export type HCEventsCollection<TEventObject extends Event> = (
-        Record<TEventObject['type'], HCEvents<TEventObject>>
-    );
-
+    export type HCEventsCollection<TEventObject extends Event> = Record<
+        TEventObject['type'],
+        HCEvents<TEventObject>
+    >;
 }
 
 /* *

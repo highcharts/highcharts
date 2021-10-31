@@ -22,22 +22,14 @@ import type ColorString from '../../Core/Color/ColorString';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
-const {
-    deg2rad,
-    svg
-} = H;
+const { deg2rad, svg } = H;
 import Pie3DPoint from './Pie3DPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        pie: PieSeries
-    }
+    seriesTypes: { pie: PieSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+const { extend, pick } = U;
 
 /* *
  *
@@ -64,7 +56,6 @@ declare module '../Pie/PieSeriesOptions' {
  * */
 
 class Pie3DSeries extends PieSeries {
-
     /* *
      *
      *  Functions
@@ -97,21 +88,23 @@ class Pie3DSeries extends PieSeries {
                 group = this.group,
                 markerGroup = this.markerGroup;
 
-            if (svg) { // VML is too slow anyway
+            if (svg) {
+                // VML is too slow anyway
 
                 if (animation === true) {
                     animation = {};
                 }
                 // Initialize the animation
                 if (init) {
-
                     // Scale down the group and place it in the center
                     (group as any).oldtranslateX = pick(
                         (group as any).oldtranslateX,
-                        (group as any).translateX);
+                        (group as any).translateX
+                    );
                     (group as any).oldtranslateY = pick(
                         (group as any).oldtranslateY,
-                        (group as any).translateY);
+                        (group as any).translateY
+                    );
                     attribs = {
                         translateX: center[0],
                         translateY: center[1],
@@ -125,7 +118,7 @@ class Pie3DSeries extends PieSeries {
                         markerGroup.attr(attribs);
                     }
 
-                // Run the animation
+                    // Run the animation
                 } else {
                     attribs = {
                         translateX: (group as any).oldtranslateX,
@@ -139,7 +132,6 @@ class Pie3DSeries extends PieSeries {
                         markerGroup.animate(attribs, animation);
                     }
                 }
-
             }
         }
     }
@@ -157,12 +149,15 @@ class Pie3DSeries extends PieSeries {
                 const shapeArgs = point.shapeArgs,
                     r = (shapeArgs as any).r,
                     // #3240 issue with datalabels for 0 and null values
-                    a1 = ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
+                    a1 =
+                        ((shapeArgs as any).alpha || options3d.alpha) * deg2rad,
                     b1 = ((shapeArgs as any).beta || options3d.beta) * deg2rad,
-                    a2 = ((shapeArgs as any).start + (shapeArgs as any).end) / 2,
+                    a2 =
+                        ((shapeArgs as any).start + (shapeArgs as any).end) / 2,
                     labelPosition = point.labelPosition,
-                    connectorPosition = (labelPosition as any).connectorPosition,
-                    yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
+                    connectorPosition = (labelPosition as any)
+                        .connectorPosition,
+                    yOffset = -r * (1 - Math.cos(a1)) * Math.sin(a2),
                     xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
                 // Apply perspective on label positions
@@ -212,9 +207,9 @@ class Pie3DSeries extends PieSeries {
             options3d = series.chart.options.chart.options3d as any,
             alpha = options3d.alpha,
             beta = options3d.beta,
-            z: number = seriesOptions.stacking ?
-                ((seriesOptions.stack as any) || 0) * depth :
-                series._i * depth;
+            z: number = seriesOptions.stacking
+                ? ((seriesOptions.stack as any) || 0) * depth
+                : series._i * depth;
 
         z += depth / 2;
 
@@ -223,7 +218,6 @@ class Pie3DSeries extends PieSeries {
         }
 
         series.data.forEach(function (point): void {
-
             let shapeArgs = point.shapeArgs,
                 angle: number;
 
@@ -240,20 +234,19 @@ class Pie3DSeries extends PieSeries {
             point.slicedTranslation = {
                 translateX: Math.round(
                     Math.cos(angle) *
-                    (seriesOptions.slicedOffset as any) *
-                    Math.cos(alpha * deg2rad)
+                        (seriesOptions.slicedOffset as any) *
+                        Math.cos(alpha * deg2rad)
                 ),
                 translateY: Math.round(
                     Math.sin(angle) *
-                    (seriesOptions.slicedOffset as any) *
-                    Math.cos(alpha * deg2rad)
+                        (seriesOptions.slicedOffset as any) *
+                        Math.cos(alpha * deg2rad)
                 )
             };
         });
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -294,4 +287,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // keeps doclets above after transpilation
+(''); // keeps doclets above after transpilation

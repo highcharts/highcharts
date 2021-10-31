@@ -20,24 +20,22 @@ const A1 = 1.340264,
     scale = 7403120.656864502;
 
 const EqualEarth: ProjectionDefinition = {
-
     forward: (lonLat): [number, number] => {
         const d = Math.PI / 180,
             paramLat = Math.asin(M * Math.sin(lonLat[1] * d)),
             paramLatSq = paramLat * paramLat,
             paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
 
-        const x = lonLat[0] * d * Math.cos(paramLat) * scale / (
-            M *
-            (
-                A1 +
-                3 * A2 * paramLatSq +
-                paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)
-            )
-        );
-        const y = paramLat * scale * (
-            A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq)
-        );
+        const x =
+            (lonLat[0] * d * Math.cos(paramLat) * scale) /
+            (M *
+                (A1 +
+                    3 * A2 * paramLatSq +
+                    paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)));
+        const y =
+            paramLat *
+            scale *
+            (A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq));
 
         return [x, y];
     },
@@ -50,17 +48,26 @@ const EqualEarth: ProjectionDefinition = {
             iterations = 12;
 
         let paramLat = y,
-            paramLatSq, paramLatPow6, fy, fpy, dlat, i;
+            paramLatSq,
+            paramLatPow6,
+            fy,
+            fpy,
+            dlat,
+            i;
 
         for (i = 0; i < iterations; ++i) {
             paramLatSq = paramLat * paramLat;
             paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
-            fy = paramLat * (
-                A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq)
-            ) - y;
-            fpy = A1 + 3 * A2 * paramLatSq + paramLatPow6 * (
-                7 * A3 + 9 * A4 * paramLatSq
-            );
+            fy =
+                paramLat *
+                    (A1 +
+                        A2 * paramLatSq +
+                        paramLatPow6 * (A3 + A4 * paramLatSq)) -
+                y;
+            fpy =
+                A1 +
+                3 * A2 * paramLatSq +
+                paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq);
             paramLat -= dlat = fy / fpy;
             if (Math.abs(dlat) < epsilon) {
                 break;
@@ -69,11 +76,14 @@ const EqualEarth: ProjectionDefinition = {
         paramLatSq = paramLat * paramLat;
         paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
 
-        const lon = d * M * x * (
-            A1 + 3 * A2 * paramLatSq + paramLatPow6 * (
-                7 * A3 + 9 * A4 * paramLatSq
-            )
-        ) / Math.cos(paramLat);
+        const lon =
+            (d *
+                M *
+                x *
+                (A1 +
+                    3 * A2 * paramLatSq +
+                    paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq))) /
+            Math.cos(paramLat);
         const lat = d * Math.asin(Math.sin(paramLat) / M);
 
         return [lon, lat];

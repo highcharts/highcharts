@@ -24,21 +24,15 @@ import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    defined
-} = U;
+const { addEvent, defined } = U;
 
 import Announcer from '../../Utils/Announcer.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
-const {
-    defaultPointDescriptionFormatter,
-    defaultSeriesDescriptionFormatter
-} = SeriesDescriber;
-
+const { defaultPointDescriptionFormatter, defaultSeriesDescriptionFormatter } =
+    SeriesDescriber;
 
 /* *
  *
@@ -55,7 +49,6 @@ function chartHasAnnounceEnabled(chart: Chart): boolean {
     return !!(chart.options.accessibility as any).announceNewData.enabled;
 }
 
-
 /**
  * @private
  */
@@ -63,12 +56,12 @@ function findPointInDataArray<T extends Accessibility.PointComposition>(
     point: T
 ): T {
     const candidates = (point.series.data as Array<T>).filter(
-        (candidate): boolean => (point.x === candidate.x && point.y === candidate.y)
+        (candidate): boolean =>
+            point.x === candidate.x && point.y === candidate.y
     );
 
     return candidates.length === 1 ? candidates[0] : point;
 }
-
 
 /**
  * Get array of unique series from two arrays
@@ -78,19 +71,17 @@ function getUniqueSeries(
     arrayA?: Array<Accessibility.SeriesComposition>,
     arrayB?: Array<Accessibility.SeriesComposition>
 ): Array<Accessibility.SeriesComposition> {
-    const uniqueSeries = (arrayA || []).concat(arrayB || []).reduce(
-        (acc, cur): Record<string, Accessibility.SeriesComposition> => {
+    const uniqueSeries = (arrayA || [])
+        .concat(arrayB || [])
+        .reduce((acc, cur): Record<string, Accessibility.SeriesComposition> => {
             acc[cur.name + cur.index] = cur;
             return acc;
-        },
-        {} as Record<string, Accessibility.SeriesComposition>
+        }, {} as Record<string, Accessibility.SeriesComposition>);
+
+    return Object.keys(uniqueSeries).map(
+        (ix): Accessibility.SeriesComposition => uniqueSeries[ix]
     );
-
-    return Object
-        .keys(uniqueSeries)
-        .map((ix): Accessibility.SeriesComposition => uniqueSeries[ix]);
 }
-
 
 /* *
  *
@@ -103,20 +94,15 @@ function getUniqueSeries(
  * @class
  */
 class NewDataAnnouncer {
-
-
     /* *
      *
      *  Constructor
      *
      * */
 
-    public constructor(
-        chart: Accessibility.ChartComposition
-    ) {
+    public constructor(chart: Accessibility.ChartComposition) {
         this.chart = chart;
     }
-
 
     /* *
      *
@@ -134,7 +120,6 @@ class NewDataAnnouncer {
     public queuedAnnouncement?: NewDataAnnouncer.QueuedAnnouncementObject;
     public queuedAnnouncementTimer?: number;
 
-
     /* *
      *
      *  Functions
@@ -143,15 +128,17 @@ class NewDataAnnouncer {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Initialize the new data announcer.
      * @private
      */
     public init(): void {
         const chart = this.chart;
-        const announceOptions = (chart.options.accessibility as any).announceNewData;
-        const announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
+        const announceOptions = (chart.options.accessibility as any)
+            .announceNewData;
+        const announceType = announceOptions.interruptUser
+            ? 'assertive'
+            : 'polite';
 
         this.lastAnnouncementTime = 0;
         this.dirty = {
@@ -163,7 +150,6 @@ class NewDataAnnouncer {
         this.addEventListeners();
     }
 
-
     /**
      * Remove traces of announcer.
      * @private
@@ -172,7 +158,6 @@ class NewDataAnnouncer {
         this.eventProvider.removeAddedEvents();
         this.announcer.destroy();
     }
-
 
     /**
      * Add event listeners for the announcer
@@ -187,35 +172,34 @@ class NewDataAnnouncer {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(chart, 'afterAddSeries', function (
-            e: { series: Accessibility.SeriesComposition }
-        ): void {
-            announcer.onSeriesAdded(e.series);
-        });
+        e.addEvent(
+            chart,
+            'afterAddSeries',
+            function (e: { series: Accessibility.SeriesComposition }): void {
+                announcer.onSeriesAdded(e.series);
+            }
+        );
 
         e.addEvent(chart, 'redraw', function (): void {
             announcer.announceDirtyData();
         });
     }
 
-
     /**
      * On new data series added, update dirty list.
      * @private
      * @param {Highcharts.Series} series
      */
-    public onSeriesAdded(
-        series: Accessibility.SeriesComposition
-    ): void {
+    public onSeriesAdded(series: Accessibility.SeriesComposition): void {
         if (chartHasAnnounceEnabled(this.chart)) {
             this.dirty.hasDirty = true;
             this.dirty.allSeries[series.name + series.index] = series;
             // Add it to newSeries storage unless we already have one
-            this.dirty.newSeries = defined(this.dirty.newSeries) ?
-                void 0 : series;
+            this.dirty.newSeries = defined(this.dirty.newSeries)
+                ? void 0
+                : series;
         }
     }
-
 
     /**
      * Gather what we know and announce the data to user.
@@ -239,9 +223,10 @@ class NewDataAnnouncer {
             }
 
             this.queueAnnouncement(
-                Object
-                    .keys(this.dirty.allSeries)
-                    .map((ix): Accessibility.SeriesComposition => announcer.dirty.allSeries[ix]),
+                Object.keys(this.dirty.allSeries).map(
+                    (ix): Accessibility.SeriesComposition =>
+                        announcer.dirty.allSeries[ix]
+                ),
                 this.dirty.newSeries,
                 newPoint
             );
@@ -252,7 +237,6 @@ class NewDataAnnouncer {
             };
         }
     }
-
 
     /**
      * Announce to user that there is new data.
@@ -270,8 +254,9 @@ class NewDataAnnouncer {
         newPoint?: Accessibility.PointComposition
     ): void {
         const chart = this.chart;
-        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =
-            (chart.options.accessibility as any).announceNewData;
+        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions = (
+            chart.options.accessibility as any
+        ).announceNewData;
 
         if (annOptions.enabled) {
             const now = +new Date();
@@ -289,7 +274,9 @@ class NewDataAnnouncer {
 
             // Build message and announce
             const message = this.buildAnnouncementMessage(
-                allSeries, newSeries, newPoint
+                allSeries,
+                newSeries,
+                newPoint
             );
             if (message) {
                 // Is there already one queued?
@@ -319,7 +306,6 @@ class NewDataAnnouncer {
         }
     }
 
-
     /**
      * Get announcement message for new data.
      * @private
@@ -337,14 +323,16 @@ class NewDataAnnouncer {
         dirtySeries: Array<Accessibility.SeriesComposition>,
         newSeries?: Accessibility.SeriesComposition,
         newPoint?: Accessibility.PointComposition
-    ): (string|null) {
+    ): string | null {
         const chart = this.chart,
             annOptions = chart.options.accessibility.announceNewData;
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
             const formatterRes = annOptions.announcementFormatter(
-                dirtySeries, newSeries, newPoint
+                dirtySeries,
+                newSeries,
+                newPoint
             );
             if (formatterRes !== false) {
                 return formatterRes.length ? formatterRes : null;
@@ -352,28 +340,28 @@ class NewDataAnnouncer {
         }
 
         // Default formatter - use lang options
-        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
-            langKey = newSeries ? 'newSeriesAnnounce' + multiple :
-                newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
+        const multiple =
+                H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+            langKey = newSeries
+                ? 'newSeriesAnnounce' + multiple
+                : newPoint
+                ? 'newPointAnnounce' + multiple
+                : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);
 
-        return chart.langFormat(
-            'accessibility.announceNewData.' + langKey, {
-                chartTitle: chartTitle,
-                seriesDesc: newSeries ?
-                    defaultSeriesDescriptionFormatter(newSeries) :
-                    null,
-                pointDesc: newPoint ?
-                    defaultPointDescriptionFormatter(newPoint) :
-                    null,
-                point: newPoint,
-                series: newSeries
-            }
-        );
+        return chart.langFormat('accessibility.announceNewData.' + langKey, {
+            chartTitle: chartTitle,
+            seriesDesc: newSeries
+                ? defaultSeriesDescriptionFormatter(newSeries)
+                : null,
+            pointDesc: newPoint
+                ? defaultPointDescriptionFormatter(newPoint)
+                : null,
+            point: newPoint,
+            series: newSeries
+        });
     }
-
 }
-
 
 /* *
  *
@@ -382,7 +370,6 @@ class NewDataAnnouncer {
  * */
 
 namespace NewDataAnnouncer {
-
     /* *
      *
      *  Declarations
@@ -402,7 +389,6 @@ namespace NewDataAnnouncer {
         time: number;
     }
 
-
     /* *
      *
      *  Static Properties
@@ -410,7 +396,6 @@ namespace NewDataAnnouncer {
      * */
 
     export const composedClasses: Array<Function> = [];
-
 
     /* *
      *
@@ -421,10 +406,7 @@ namespace NewDataAnnouncer {
     /**
      * @private
      */
-    export function compose(
-        SeriesClass: typeof Series
-    ): void {
-
+    export function compose(SeriesClass: typeof Series): void {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -440,7 +422,6 @@ namespace NewDataAnnouncer {
             );
         }
     }
-
 
     /**
      * On new point added, update dirty list.
@@ -460,23 +441,20 @@ namespace NewDataAnnouncer {
             chartHasAnnounceEnabled(chart)
         ) {
             // Add it to newPoint storage unless we already have one
-            newDataAnnouncer.dirty.newPoint = (
-                defined(newDataAnnouncer.dirty.newPoint) ?
-                    void 0 :
-                    e.point
-            );
+            newDataAnnouncer.dirty.newPoint = defined(
+                newDataAnnouncer.dirty.newPoint
+            )
+                ? void 0
+                : e.point;
         }
     }
-
 
     /**
      * On new data in the series, make sure we add it to the dirty list.
      * @private
      * @param {Highcharts.Series} series
      */
-    function seriesOnUpdatedData(
-        this: Accessibility.SeriesComposition
-    ): void {
+    function seriesOnUpdatedData(this: Accessibility.SeriesComposition): void {
         const chart = this.chart,
             newDataAnnouncer = this.newDataAnnouncer;
 
@@ -489,10 +467,7 @@ namespace NewDataAnnouncer {
             newDataAnnouncer.dirty.allSeries[this.name + this.index] = this;
         }
     }
-
-
 }
-
 
 /* *
  *

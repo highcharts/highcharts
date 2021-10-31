@@ -26,7 +26,6 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
  * */
 
 namespace DrawPointComposition {
-
     /* *
      *
      *  Declarations
@@ -46,7 +45,7 @@ namespace DrawPointComposition {
         onComplete?: Function;
         isNew?: boolean;
         renderer: SVGRenderer;
-        shadow?: (boolean|Partial<ShadowOptionsObject>);
+        shadow?: boolean | Partial<ShadowOptionsObject>;
         shapeArgs?: SVGAttributes;
         shapeType: string;
     }
@@ -70,7 +69,9 @@ namespace DrawPointComposition {
     /**
      * @private
      */
-    export function compose<T extends typeof Composition>(PointClass: T): (T&typeof Composition) {
+    export function compose<T extends typeof Composition>(
+        PointClass: T
+    ): T & typeof Composition {
         if (composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
 
@@ -83,7 +84,7 @@ namespace DrawPointComposition {
             }
         }
 
-        return PointClass as (T&typeof Composition);
+        return PointClass as T & typeof Composition;
     }
 
     /**
@@ -96,25 +97,15 @@ namespace DrawPointComposition {
      * @todo add type checking.
      * @todo export this function to enable usage
      */
-    function draw(
-        this: Composition,
-        params: DrawParams
-    ): void {
-        const {
-            animatableAttribs,
-            onComplete,
-            css,
-            renderer
-        } = params;
+    function draw(this: Composition, params: DrawParams): void {
+        const { animatableAttribs, onComplete, css, renderer } = params;
 
-        const animation = (this.series && this.series.chart.hasRendered) ?
-            // Chart-level animation on updates
-            void 0 :
-            // Series-level animation on new points
-            (
-                this.series &&
-                this.series.options.animation
-            );
+        const animation =
+            this.series && this.series.chart.hasRendered
+                ? // Chart-level animation on updates
+                  void 0
+                : // Series-level animation on new points
+                  this.series && this.series.options.animation;
 
         let graphic = this.graphic;
 
@@ -126,9 +117,9 @@ namespace DrawPointComposition {
 
         if (this.shouldDraw()) {
             if (!graphic) {
-                this.graphic = graphic =
-                    (renderer as any)[params.shapeType](params.shapeArgs)
-                        .add(params.group);
+                this.graphic = graphic = (renderer as any)
+                    [params.shapeType](params.shapeArgs)
+                    .add(params.group);
             }
             (graphic as any)
                 .css(css)
@@ -140,7 +131,7 @@ namespace DrawPointComposition {
                 );
         } else if (graphic) {
             const destroy = (): void => {
-                this.graphic = graphic = (graphic && graphic.destroy());
+                this.graphic = graphic = graphic && graphic.destroy();
                 if (typeof onComplete === 'function') {
                     onComplete();
                 }
@@ -160,12 +151,9 @@ namespace DrawPointComposition {
     /**
      * @private
      */
-    function shouldDraw(
-        this: Composition
-    ): boolean {
+    function shouldDraw(this: Composition): boolean {
         return !this.isNull;
     }
-
 }
 
 /* *

@@ -27,7 +27,7 @@ import type SeriesSonify from './SeriesSonify';
  *
  * */
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface Options {
         sonification?: ChartSonify.ChartSonificationOptions;
     }
@@ -44,7 +44,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * Constants
  *
  * */
-
 
 // Experimental, disabled by default, not exposed in API
 const options = {

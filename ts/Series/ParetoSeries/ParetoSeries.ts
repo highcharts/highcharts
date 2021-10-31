@@ -22,16 +22,10 @@ import type ParetoSeriesOptions from './ParetoSeriesOptions';
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
+    seriesTypes: { line: LineSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    merge,
-    extend
-} = U;
+const { correctFloat, merge, extend } = U;
 
 /* *
  *
@@ -50,7 +44,6 @@ const {
  */
 
 class ParetoSeries extends LineSeries {
-
     /* *
      *
      *  Static properties
@@ -128,16 +121,16 @@ class ParetoSeries extends LineSeries {
      *
      * @requires modules/pareto
      */
-    public sumPointsPercents<T extends(boolean | undefined)>(
+    public sumPointsPercents<T extends boolean | undefined>(
         yValues: Array<number>,
         xValues: Array<number>,
         sum: number,
         isSum?: T
-    ): (T extends true ? number : Array<Array<number>>) {
+    ): T extends true ? number : Array<Array<number>> {
         let sumY = 0,
             sumPercent = 0,
             percentPoints: Array<Array<number>> = [],
-            percentPoint: (number | undefined);
+            percentPoint: number | undefined;
 
         yValues.forEach(function (point: number, i: number): void {
             if (point !== null) {
@@ -154,9 +147,9 @@ class ParetoSeries extends LineSeries {
             }
         });
 
-        return (isSum ? sumY : percentPoints) as (
-            T extends true ? number : Array<Array<number>>
-        );
+        return (isSum ? sumY : percentPoints) as T extends true
+            ? number
+            : Array<Array<number>>;
     }
 
     /**
@@ -169,12 +162,7 @@ class ParetoSeries extends LineSeries {
     public setDerivedData(): void {
         const xValues = (this.baseSeries as any).xData,
             yValues = (this.baseSeries as any).yData,
-            sum = this.sumPointsPercents(
-                yValues,
-                xValues,
-                null as any,
-                true
-            );
+            sum = this.sumPointsPercents(yValues, xValues, null as any, true);
 
         this.setData(
             this.sumPointsPercents(yValues, xValues, sum, false),
@@ -199,7 +187,6 @@ extend(ParetoSeries.prototype, {
 
 DerivedComposition.compose(ParetoSeries);
 
-
 /* *
  *
  *  Registry
@@ -222,7 +209,6 @@ SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
  * */
 
 export default ParetoSeries;
-
 
 /* *
  *
@@ -262,4 +248,4 @@ export default ParetoSeries;
  * @apioption series.pareto.data
  */
 
-''; // adds the doclets above to the transpiled file
+(''); // adds the doclets above to the transpiled file

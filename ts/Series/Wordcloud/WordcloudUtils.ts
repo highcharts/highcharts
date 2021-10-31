@@ -27,13 +27,7 @@ import type WordcloudSeries from './WordcloudSeries';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    find,
-    isNumber,
-    isObject,
-    merge
-} = U;
+const { extend, find, isNumber, isObject, merge } = U;
 
 /* *
  *
@@ -107,28 +101,27 @@ function getAxesFromPolygon(
     if (!axes.length) {
         axes = [];
         points = points = polygon.concat([polygon[0]]);
-        points.reduce(
-            function findAxis(
-                p1: WordcloudUtils.PolygonPointObject,
-                p2: WordcloudUtils.PolygonPointObject
-            ): WordcloudUtils.PolygonPointObject {
-                const normals = getNormals(p1, p2),
-                    axis = normals[0]; // Use the left normal as axis.
+        points.reduce(function findAxis(
+            p1: WordcloudUtils.PolygonPointObject,
+            p2: WordcloudUtils.PolygonPointObject
+        ): WordcloudUtils.PolygonPointObject {
+            const normals = getNormals(p1, p2),
+                axis = normals[0]; // Use the left normal as axis.
 
-                // Check that the axis is unique.
-                if (!find(axes, (
-                    existing
-                ): boolean =>
-                    existing[0] === axis[0] &&
-                    existing[1] === axis[1]
-                )) {
-                    axes.push(axis);
-                }
-
-                // Return p2 to be used as p1 in next iteration.
-                return p2;
+            // Check that the axis is unique.
+            if (
+                !find(
+                    axes,
+                    (existing): boolean =>
+                        existing[0] === axis[0] && existing[1] === axis[1]
+                )
+            ) {
+                axes.push(axis);
             }
-        );
+
+            // Return p2 to be used as p1 in next iteration.
+            return p2;
+        });
         polygon.axes = axes;
     }
     return axes;
@@ -206,9 +199,8 @@ function isPolygonsColliding(
     const axes1 = getAxesFromPolygon(polygon1),
         axes2 = getAxesFromPolygon(polygon2),
         axes = axes1.concat(axes2),
-        overlappingOnAllAxes = !find(
-            axes,
-            (axis): boolean => isPolygonsOverlappingOnAxis(axis, polygon1, polygon2)
+        overlappingOnAllAxes = !find(axes, (axis): boolean =>
+            isPolygonsOverlappingOnAxis(axis, polygon1, polygon2)
         );
 
     return overlappingOnAllAxes;
@@ -240,13 +232,11 @@ function intersectsAnyWord(
         isIntersecting = function (p: WordcloudPoint): boolean {
             let result = isRectanglesIntersecting(rect, p.rect as any);
 
-            if (result &&
+            if (
+                result &&
                 ((point.rotation as any) % 90 || (p.rotation as any) % 90)
             ) {
-                result = isPolygonsColliding(
-                    polygon,
-                    p.polygon as any
-                );
+                result = isPolygonsColliding(polygon, p.polygon as any);
             }
             return result;
         };
@@ -265,9 +255,7 @@ function intersectsAnyWord(
     // If not already found, then check if we can find a point that is
     // intersecting.
     if (!intersects) {
-        intersects = !!find(points, function (
-            p: WordcloudPoint
-        ): boolean {
+        intersects = !!find(points, function (p: WordcloudPoint): boolean {
             const result = isIntersecting(p);
 
             if (result) {
@@ -298,10 +286,10 @@ function intersectsAnyWord(
 function archimedeanSpiral(
     attempt: number,
     params?: WordcloudSeries.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
+): boolean | PositionObject {
     let field: WordcloudSeries.WordcloudFieldObject = (params as any).field,
-        result: (boolean|PositionObject) = false,
-        maxDelta = (field.width * field.width) + (field.height * field.height),
+        result: boolean | PositionObject = false,
+        maxDelta = field.width * field.width + field.height * field.height,
         t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
 
     // Emergency brake. TODO make spiralling logic more foolproof.
@@ -336,7 +324,7 @@ function archimedeanSpiral(
 function squareSpiral(
     attempt: number,
     params?: WordcloudSeries.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
+): boolean | PositionObject {
     let a = attempt * 4,
         k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
@@ -344,7 +332,7 @@ function squareSpiral(
         isBoolean = function (x: unknown): x is boolean {
             return typeof x === 'boolean';
         },
-        result: (boolean|PositionObject) = false;
+        result: boolean | PositionObject = false;
 
     t -= 1;
     if (attempt <= 10000) {
@@ -401,7 +389,7 @@ function squareSpiral(
 function rectangularSpiral(
     attempt: number,
     params?: WordcloudSeries.WordcloudSpiralParamsObject
-): (boolean|PositionObject) {
+): boolean | PositionObject {
     const result: PositionObject = squareSpiral(attempt, params) as any,
         field: WordcloudSeries.WordcloudFieldObject = (params as any).field;
 
@@ -455,8 +443,8 @@ function getScale(
 ): number {
     const height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = width > 0 ? 1 / width * targetWidth : 1,
-        scaleY = height > 0 ? 1 / height * targetHeight : 1;
+        scaleX = width > 0 ? (1 / width) * targetWidth : 1,
+        scaleY = height > 0 ? (1 / height) * targetHeight : 1;
 
     return Math.min(scaleX, scaleY);
 }
@@ -489,25 +477,28 @@ function getPlayingField(
     targetHeight: number,
     data: Array<WordcloudPoint>
 ): WordcloudSeries.WordcloudFieldObject {
-    const info: Record<string, number> = data.reduce(function (
-            obj: Record<string, number>,
-            point: WordcloudPoint
-        ): Record<string, number> {
-            const dimensions = point.dimensions,
-                x = Math.max(dimensions.width, dimensions.height);
+    const info: Record<string, number> = data.reduce(
+            function (
+                obj: Record<string, number>,
+                point: WordcloudPoint
+            ): Record<string, number> {
+                const dimensions = point.dimensions,
+                    x = Math.max(dimensions.width, dimensions.height);
 
-            // Find largest height.
-            obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
-            // Find largest width.
-            obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total maximum area of all the words.
-            obj.area += x * x;
-            return obj;
-        }, {
-            maxHeight: 0,
-            maxWidth: 0,
-            area: 0
-        }),
+                // Find largest height.
+                obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
+                // Find largest width.
+                obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
+                // Sum up the total maximum area of all the words.
+                obj.area += x * x;
+                return obj;
+            },
+            {
+                maxHeight: 0,
+                maxWidth: 0,
+                area: 0
+            }
+        ),
         /**
          * Use largest width, largest height, or root of total area to give
          * size to the playing field.
@@ -528,7 +519,6 @@ function getPlayingField(
         ratioY: ratioY
     } as any;
 }
-
 
 /**
  * Calculates a number of degrees to rotate, based upon a number of
@@ -558,8 +548,8 @@ function getRotation(
     index?: number,
     from?: number,
     to?: number
-): (boolean|number) {
-    let result: (boolean|number) = false, // Default to false
+): boolean | number {
+    let result: boolean | number = false, // Default to false
         range: number,
         intervals: number,
         orientation: number;
@@ -577,7 +567,7 @@ function getRotation(
         range = to - from;
         intervals = range / (orientations - 1 || 1);
         orientation = index % orientations;
-        result = from + (orientation * intervals);
+        result = from + orientation * intervals;
     }
     return result;
 }
@@ -662,10 +652,7 @@ function movePolygon(
     return polygon.map(function (
         point: WordcloudUtils.PolygonPointObject
     ): WordcloudUtils.PolygonPointObject {
-        return [
-            point[0] + deltaX,
-            point[1] + deltaY
-        ];
+        return [point[0] + deltaX, point[1] + deltaY];
     });
 }
 
@@ -690,7 +677,7 @@ function movePolygon(
 function intersectionTesting(
     point: WordcloudPoint,
     options: WordcloudSeries.WordcloudTestOptionsObject
-): (boolean|PositionObject) {
+): boolean | PositionObject {
     let placed = options.placed,
         field = options.field,
         rectangle = options.rectangle,
@@ -702,10 +689,7 @@ function intersectionTesting(
             y: 0
         },
         // Make a copy to update values during intersection testing.
-        rect = point.rect = extend<PolygonBoxObject>(
-            {} as any,
-            rectangle
-        );
+        rect = (point.rect = extend<PolygonBoxObject>({} as any, rectangle));
 
     point.polygon = polygon;
     point.rotation = options.rotation;
@@ -717,10 +701,7 @@ function intersectionTesting(
                 the spiral radius is still smallish */
     while (
         (delta as any) !== false &&
-        (
-            intersectsAnyWord(point, placed) ||
-            outsidePlayingField(rect, field)
-        )
+        (intersectsAnyWord(point, placed) || outsidePlayingField(rect, field))
     ) {
         delta = spiral(attempt) as any;
         if (isObject(delta)) {
@@ -765,13 +746,13 @@ function extendPlayingField(
         result: WordcloudSeries.WordcloudFieldObject;
 
     if (isObject(field) && isObject(rectangle)) {
-        height = (rectangle.bottom - rectangle.top);
-        width = (rectangle.right - rectangle.left);
+        height = rectangle.bottom - rectangle.top;
+        width = rectangle.right - rectangle.left;
         ratioX = field.ratioX;
         ratioY = field.ratioY;
 
         // Use the same variable to extend both the height and width.
-        x = ((width * ratioX) > (height * ratioY)) ? width : height;
+        x = width * ratioX > height * ratioY ? width : height;
 
         // Multiply variable with ratios to preserve aspect ratio.
         extendWidth = x * ratioX;
@@ -781,9 +762,9 @@ function extendPlayingField(
         // space for the word.
         result = merge(field, {
             // Add space on the left and right.
-            width: field.width + (extendWidth * 2),
+            width: field.width + extendWidth * 2,
             // Add space on the top and bottom.
-            height: field.height + (extendHeight * 2)
+            height: field.height + extendHeight * 2
         });
     } else {
         result = field;
@@ -853,24 +834,27 @@ function correctFloat(number: number, precision?: number): number {
 function getBoundingBoxFromPolygon(
     points: WordcloudUtils.PolygonObject
 ): PolygonBoxObject {
-    return points.reduce(function (
-        obj: PolygonBoxObject,
-        point: WordcloudUtils.PolygonPointObject
-    ): PolygonBoxObject {
-        const x = point[0],
-            y = point[1];
+    return points.reduce(
+        function (
+            obj: PolygonBoxObject,
+            point: WordcloudUtils.PolygonPointObject
+        ): PolygonBoxObject {
+            const x = point[0],
+                y = point[1];
 
-        obj.left = Math.min(x, obj.left);
-        obj.right = Math.max(x, obj.right);
-        obj.bottom = Math.max(y, obj.bottom);
-        obj.top = Math.min(y, obj.top);
-        return obj;
-    }, {
-        left: Number.MAX_VALUE,
-        right: -Number.MAX_VALUE,
-        bottom: -Number.MAX_VALUE,
-        top: Number.MAX_VALUE
-    });
+            obj.left = Math.min(x, obj.left);
+            obj.right = Math.max(x, obj.right);
+            obj.bottom = Math.max(y, obj.bottom);
+            obj.top = Math.min(y, obj.top);
+            return obj;
+        },
+        {
+            left: Number.MAX_VALUE,
+            right: -Number.MAX_VALUE,
+            bottom: -Number.MAX_VALUE,
+            top: Number.MAX_VALUE
+        }
+    );
 }
 
 /**
@@ -884,10 +868,10 @@ function getPolygon(
     rotation: number
 ): WordcloudUtils.PolygonObject {
     const origin: WordcloudUtils.PolygonPointObject = [x, y],
-        left = x - (width / 2),
-        right = x + (width / 2),
-        top = y - (height / 2),
-        bottom = y + (height / 2),
+        left = x - width / 2,
+        right = x + width / 2,
+        top = y - height / 2,
+        bottom = y + height / 2,
         polygon: WordcloudUtils.PolygonObject = [
             [left, top],
             [right, top],
@@ -953,10 +937,7 @@ function rotate2DToPoint(
         y = point[1] - origin[1],
         rotated = rotate2DToOrigin([x, y], angle);
 
-    return [
-        rotated[0] + origin[0],
-        rotated[1] + origin[1]
-    ];
+    return [rotated[0] + origin[0], rotated[1] + origin[1]];
 }
 
 /* *
@@ -966,7 +947,6 @@ function rotate2DToPoint(
  * */
 
 namespace WordcloudUtils {
-
     /* *
      *
      *  Declarations
@@ -981,7 +961,6 @@ namespace WordcloudUtils {
     export interface PolygonObject extends Array<PolygonPointObject> {
         axes?: Array<PolygonPointObject>;
     }
-
 }
 
 /* *

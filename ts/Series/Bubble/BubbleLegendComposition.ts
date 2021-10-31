@@ -29,11 +29,7 @@ import BubbleLegendItem from './BubbleLegendItem.js';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    objectEach,
-    wrap
-} = U;
+const { addEvent, objectEach, wrap } = U;
 
 /* *
  *
@@ -42,7 +38,6 @@ const {
  * */
 
 namespace BubbleLegendComposition {
-
     /* *
      *
      *  Constants
@@ -72,12 +67,14 @@ namespace BubbleLegendComposition {
         const chart = this,
             legend = chart.legend,
             bubbleSeries = getVisibleBubbleSeriesIndex(chart) >= 0;
-        let bubbleLegendOptions: BubbleLegendItem.Options,
-            bubbleSizes;
+        let bubbleLegendOptions: BubbleLegendItem.Options, bubbleSizes;
 
         if (
-            legend && legend.options.enabled && legend.bubbleLegend &&
-            (legend.options.bubbleLegend as any).autoRanges && bubbleSeries
+            legend &&
+            legend.options.enabled &&
+            legend.bubbleLegend &&
+            (legend.options.bubbleLegend as any).autoRanges &&
+            bubbleSeries
         ) {
             bubbleLegendOptions = legend.bubbleLegend.options;
             bubbleSizes = legend.bubbleLegend.predictBubbleSizes();
@@ -98,7 +95,8 @@ namespace BubbleLegendComposition {
             chart.getMargins();
 
             chart.axes.forEach(function (axis): void {
-                if (axis.visible) { // #11448
+                if (axis.visible) {
+                    // #11448
                     axis.render();
                 }
 
@@ -125,7 +123,6 @@ namespace BubbleLegendComposition {
 
             // Correct items positions with different dimensions in legend.
             retranslateItems(legend, getLinesHeights(legend));
-
         } else {
             proceed.call(chart, options, callback);
             // Allow color change on static bubble legend after click on legend
@@ -154,7 +151,6 @@ namespace BubbleLegendComposition {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
@@ -179,7 +175,6 @@ namespace BubbleLegendComposition {
 
             addEvent(SeriesClass, 'legendItemClick', onSeriesLegendItemClick);
         }
-
     }
 
     /**
@@ -222,9 +217,7 @@ namespace BubbleLegendComposition {
      * @return {Array<Highcharts.Dictionary<number>>}
      * Informations about line height and items amount
      */
-    function getLinesHeights(
-        legend: Legend
-    ): Array<Record<string, number>> {
+    function getLinesHeights(legend: Legend): Array<Record<string, number>> {
         const items = legend.allItems,
             lines = [] as Array<Record<string, number>>,
             length = items.length;
@@ -237,11 +230,12 @@ namespace BubbleLegendComposition {
                 // for bubbleLegend
                 (items[i] as any).itemHeight = items[i].legendItemHeight;
             }
-            if ( // Line break
+            if (
+                // Line break
                 items[i] === items[length - 1] ||
-                items[i + 1] &&
-                (items[i]._legendItemPos as any)[1] !==
-                (items[i + 1]._legendItemPos as any)[1]
+                (items[i + 1] &&
+                    (items[i]._legendItemPos as any)[1] !==
+                        (items[i + 1]._legendItemPos as any)[1])
             ) {
                 lines.push({ height: 0 });
                 lastLine = lines[lines.length - 1];
@@ -262,7 +256,7 @@ namespace BubbleLegendComposition {
      */
     function onLegendAfterGetAllItems(
         this: Legend,
-        e: { allItems: Array<(Series|Point)> }
+        e: { allItems: Array<Series | Point> }
     ): void {
         const legend = this,
             bubbleLegend = legend.bubbleLegend,
@@ -274,16 +268,17 @@ namespace BubbleLegendComposition {
         if (bubbleLegend && bubbleLegend.ranges && bubbleLegend.ranges.length) {
             // Allow change the way of calculating ranges in update
             if ((options as any).ranges.length) {
-                (options as any).autoRanges =
-                    !!(options as any).ranges[0].autoRanges;
+                (options as any).autoRanges = !!(options as any).ranges[0]
+                    .autoRanges;
             }
             // Update bubbleLegend dimensions in each redraw
             legend.destroyItem(bubbleLegend);
         }
         // Create bubble legend
-        if (bubbleSeriesIndex >= 0 &&
-                legendOptions.enabled &&
-                (options as any).enabled
+        if (
+            bubbleSeriesIndex >= 0 &&
+            legendOptions.enabled &&
+            (options as any).enabled
         ) {
             (options as any).seriesIndex = bubbleSeriesIndex;
             legend.bubbleLegend = new BubbleLegendItem(options as any, legend);
@@ -346,7 +341,7 @@ namespace BubbleLegendComposition {
             actualLine = 0;
 
         items.forEach(function (
-            item: (BubbleLegendItem|Series|Point),
+            item: BubbleLegendItem | Series | Point,
             index: number
         ): void {
             orgTranslateX = (item.legendGroup as any).translateX;
@@ -355,9 +350,9 @@ namespace BubbleLegendComposition {
             movementX = (item as any).movementX;
 
             if (movementX || (rtl && (item as any).ranges)) {
-                movementX = rtl ?
-                    orgTranslateX - (item as any).options.maxSize / 2 :
-                    orgTranslateX + movementX;
+                movementX = rtl
+                    ? orgTranslateX - (item as any).options.maxSize / 2
+                    : orgTranslateX + movementX;
 
                 (item.legendGroup as any).attr({ translateX: movementX });
             }
@@ -370,13 +365,12 @@ namespace BubbleLegendComposition {
                     orgTranslateY + lines[actualLine].height / 2
                 )
             });
-            (item._legendItemPos as any)[1] = orgTranslateY +
-                lines[actualLine].height / 2;
+            (item._legendItemPos as any)[1] =
+                orgTranslateY + lines[actualLine].height / 2;
         });
     }
 
     /* eslint-disable valid-jsdoc */
-
 }
 
 /* *

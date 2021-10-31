@@ -20,14 +20,7 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    defined,
-    extend,
-    isFunction,
-    pick
-} = U;
+const { addEvent, clamp, defined, extend, isFunction, pick } = U;
 
 declare module '../../Core/Series/PointLike' {
     interface PointLike {
@@ -62,7 +55,7 @@ declare global {
             friction?: number;
             gravitationalConstant?: number;
             initialPositionRadius?: number;
-            initialPositions?: (string|Function);
+            initialPositions?: string | Function;
             integration?: string;
             linkLength?: number;
             maxIterations?: number;
@@ -104,7 +97,7 @@ declare global {
             public quadTree: QuadTree;
             public repulsiveForce: Function;
             public series: Array<NetworkgraphSeries>;
-            public simulation: (boolean|number);
+            public simulation: boolean | number;
             public startTemperature?: number;
             public systemTemperature?: number;
             public temperature?: number;
@@ -112,13 +105,16 @@ declare global {
                 elements: Array<C>,
                 collection: Array<T>
             ): void;
-            public applyLimitBox(node: Point, box: Record<string, number>): void;
+            public applyLimitBox(
+                node: Point,
+                box: Record<string, number>
+            ): void;
             public applyLimits(): void;
             public attractiveForces(): void;
             public barnesHutApproximation(
                 node: Point,
                 quadNode: QuadTreeNode
-            ): (boolean|undefined);
+            ): boolean | undefined;
             public barycenterForces(): void;
             public clear(): void;
             public coolDown(
@@ -131,11 +127,11 @@ declare global {
             public getBarycenter(): Record<string, number>;
             public getDistR(
                 nodeA: NetworkgraphPoint,
-                nodeB: (NetworkgraphPoint|QuadTreeNode)
+                nodeB: NetworkgraphPoint | QuadTreeNode
             ): number;
             public getDistXY(
                 nodeA: Point,
-                nodeB: (Point|QuadTreeNode)
+                nodeB: Point | QuadTreeNode
             ): Record<string, number>;
             public getSystemTemperature(): number;
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
@@ -143,8 +139,9 @@ declare global {
             public isStable(): boolean;
             public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
-                element: T, collection: Array<T>
-            ): void
+                element: T,
+                collection: Array<T>
+            ): void;
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public restartSimulation(): void;
@@ -161,7 +158,7 @@ declare global {
             public setTemperature(): void;
             public vectorLength(vector: Record<string, number>): number;
         }
-        let layouts: Record<string, (typeof NetworkgraphLayout)>;
+        let layouts: Record<string, typeof NetworkgraphLayout>;
     }
 }
 
@@ -171,8 +168,7 @@ import './QuadTree.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 H.layouts = {
-    'reingold-fruchterman': function (): void {
-    }
+    'reingold-fruchterman': function (): void {}
 } as any;
 
 extend(
@@ -229,9 +225,8 @@ extend(
                 series = this.series,
                 options = this.options;
 
-
             layout.currentStep = 0;
-            layout.forces = series[0] && series[0].forces || [];
+            layout.forces = (series[0] && series[0].forces) || [];
             layout.chart = series[0] && series[0].chart;
 
             if (layout.initialRendering) {
@@ -331,7 +326,7 @@ extend(
             // available space around the node:
             this.k = this.options.linkLength || this.integration.getK(this);
         },
-        addElementsToCollection: function<T, C extends T> (
+        addElementsToCollection: function <T, C extends T>(
             this: Highcharts.NetworkgraphLayout,
             elements: Array<C>,
             collection: Array<T>
@@ -342,7 +337,7 @@ extend(
                 }
             });
         },
-        removeElementFromCollection: function<T> (
+        removeElementFromCollection: function <T>(
             this: Highcharts.NetworkgraphLayout,
             element: T,
             collection: Array<T>
@@ -368,8 +363,9 @@ extend(
             this.setDiffTemperature();
         },
 
-        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
-
+        restartSimulation: function (
+            this: Highcharts.NetworkgraphLayout
+        ): void {
             if (!this.simulation) {
                 // When dragging nodes, we don't need to calculate
                 // initial positions and rendering nodes:
@@ -403,14 +399,16 @@ extend(
         },
 
         setTemperature: function (this: Highcharts.NetworkgraphLayout): void {
-            this.temperature = this.startTemperature =
-                Math.sqrt(this.nodes.length);
+            this.temperature = this.startTemperature = Math.sqrt(
+                this.nodes.length
+            );
         },
 
         setDiffTemperature: function (
             this: Highcharts.NetworkgraphLayout
         ): void {
-            this.diffTemperature = (this.startTemperature as any) /
+            this.diffTemperature =
+                (this.startTemperature as any) /
                 ((this.options.maxIterations as any) + 1);
         },
         setInitialRendering: function (
@@ -419,9 +417,7 @@ extend(
         ): void {
             this.initialRendering = enable;
         },
-        createQuadTree: function (
-            this: Highcharts.NetworkgraphLayout
-        ): void {
+        createQuadTree: function (this: Highcharts.NetworkgraphLayout): void {
             this.quadTree = new H.QuadTree(
                 this.box.left,
                 this.box.top,
@@ -431,9 +427,7 @@ extend(
 
             this.quadTree.insertNodes(this.nodes);
         },
-        initPositions: function (
-            this: Highcharts.NetworkgraphLayout
-        ): void {
+        initPositions: function (this: Highcharts.NetworkgraphLayout): void {
             const initialPositions = this.options.initialPositions;
 
             if (isFunction(initialPositions)) {
@@ -449,7 +443,6 @@ extend(
                     node.dispX = 0;
                     node.dispY = 0;
                 });
-
             } else if (initialPositions === 'circle') {
                 this.setCircularPositions();
             } else {
@@ -462,7 +455,7 @@ extend(
             let box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
-                angle = 2 * Math.PI / nodesLength,
+                angle = (2 * Math.PI) / nodesLength,
                 rootNodes = nodes.filter(function (node: Point): boolean {
                     return (node.linksTo as any).length === 0;
                 }),
@@ -495,7 +488,7 @@ extend(
             if (!sortedNodes.length) {
                 sortedNodes = nodes;
 
-            // Dangling, cyclic trees
+                // Dangling, cyclic trees
             } else {
                 nodes.forEach(function (node: Point): void {
                     if (sortedNodes.indexOf(node) === -1) {
@@ -506,10 +499,7 @@ extend(
 
             // Initial positions are laid out along a small circle, appearing
             // as a cluster in the middle
-            sortedNodes.forEach(function (
-                node: Point,
-                index: number
-            ): void {
+            sortedNodes.forEach(function (node: Point, index: number): void {
                 node.plotX = node.prevX = pick(
                     node.plotX,
                     box.width / 2 + (radius as any) * Math.cos(index * angle)
@@ -536,31 +526,26 @@ extend(
              * @private
              */
             function unrandom(n: number): number {
-                let rand = n * n / Math.PI;
+                let rand = (n * n) / Math.PI;
 
                 rand = rand - Math.floor(rand);
                 return rand;
             }
 
             // Initial positions:
-            nodes.forEach(
-                function (
-                    node: Point,
-                    index: number
-                ): void {
-                    node.plotX = node.prevX = pick(
-                        node.plotX,
-                        box.width * unrandom(index)
-                    );
-                    node.plotY = node.prevY = pick(
-                        node.plotY,
-                        box.height * unrandom(nodesLength + index)
-                    );
+            nodes.forEach(function (node: Point, index: number): void {
+                node.plotX = node.prevX = pick(
+                    node.plotX,
+                    box.width * unrandom(index)
+                );
+                node.plotY = node.prevY = pick(
+                    node.plotY,
+                    box.height * unrandom(nodesLength + index)
+                );
 
-                    node.dispX = 0;
-                    node.dispY = 0;
-                }
-            );
+                node.dispX = 0;
+                node.dispY = 0;
+            });
         },
         force: function (
             this: Highcharts.NetworkgraphLayout,
@@ -586,7 +571,7 @@ extend(
                 cx += (node.plotX as any) * (node.mass as any);
                 cy += (node.plotY as any) * (node.mass as any);
 
-                systemMass += (node.mass as any);
+                systemMass += node.mass as any;
             });
 
             this.barycenter = {
@@ -602,7 +587,7 @@ extend(
             this: Highcharts.NetworkgraphLayout,
             node: Point,
             quadNode: Highcharts.QuadTreeNode
-        ): (boolean|undefined) {
+        ): boolean | undefined {
             let layout = this,
                 distanceXY = layout.getDistXY(node, quadNode),
                 distanceR = layout.vectorLength(distanceXY),
@@ -614,7 +599,7 @@ extend(
                     // Internal node:
                     if (
                         quadNode.boxSize / distanceR <
-                        (layout.options.theta as any) &&
+                            (layout.options.theta as any) &&
                         distanceR !== 0
                     ) {
                         // Treat as an external node:
@@ -657,7 +642,7 @@ extend(
                         null,
                         function (
                             quadNode: Highcharts.QuadTreeNode
-                        ): (boolean|undefined) {
+                        ): boolean | undefined {
                             return layout.barnesHutApproximation(
                                 node,
                                 quadNode
@@ -668,9 +653,7 @@ extend(
             } else {
                 layout.nodes.forEach(function (node: Point): void {
                     layout.nodes.forEach(function (repNode: Point): void {
-                        let force,
-                            distanceR,
-                            distanceXY;
+                        let force, distanceR, distanceXY;
 
                         if (
                             // Node can not repulse itself:
@@ -709,10 +692,7 @@ extend(
 
             layout.links.forEach(function (link: Point): void {
                 if (link.fromNode && link.toNode) {
-                    distanceXY = layout.getDistXY(
-                        link.fromNode,
-                        link.toNode
-                    );
+                    distanceXY = layout.getDistXY(link.fromNode, link.toNode);
                     distanceR = layout.vectorLength(distanceXY);
 
                     if (distanceR !== 0) {
@@ -792,12 +772,16 @@ extend(
             */
             // Limit X-coordinates:
             node.plotX = clamp(
-                node.plotX as any, box.left + radius, box.width - radius
+                node.plotX as any,
+                box.left + radius,
+                box.width - radius
             );
 
             // Limit Y-coordinates:
             node.plotY = clamp(
-                node.plotY as any, box.top + radius, box.height - radius
+                node.plotY as any,
+                box.top + radius,
+                box.height - radius
             );
         },
         /**
@@ -829,10 +813,12 @@ extend(
             return temperature - temperatureStep * currentStep;
         },
         isStable: function (this: Highcharts.NetworkgraphLayout): boolean {
-            return Math.abs(
-                (this.systemTemperature as any) -
-                (this.prevSystemTemperature as any)
-            ) < 0.00001 || (this.temperature as any) <= 0;
+            return (
+                Math.abs(
+                    (this.systemTemperature as any) -
+                        (this.prevSystemTemperature as any)
+                ) < 0.00001 || (this.temperature as any) <= 0
+            );
         },
         getSystemTemperature: function (
             this: Highcharts.NetworkgraphLayout
@@ -842,7 +828,8 @@ extend(
                 node: Point
             ): number {
                 return value + (node as any).temperature;
-            }, 0);
+            },
+            0);
         },
         vectorLength: function (
             this: Highcharts.NetworkgraphLayout,
@@ -853,7 +840,7 @@ extend(
         getDistR: function (
             this: Highcharts.NetworkgraphLayout,
             nodeA: Highcharts.NetworkgraphPoint,
-            nodeB: (Highcharts.NetworkgraphPoint|Highcharts.QuadTreeNode)
+            nodeB: Highcharts.NetworkgraphPoint | Highcharts.QuadTreeNode
         ): number {
             const distance = this.getDistXY(nodeA, nodeB);
 
@@ -862,7 +849,7 @@ extend(
         getDistXY: function (
             this: Highcharts.NetworkgraphLayout,
             nodeA: Point,
-            nodeB: (Point|Highcharts.QuadTreeNode)
+            nodeB: Point | Highcharts.QuadTreeNode
         ): Record<string, number> {
             const xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
@@ -881,78 +868,80 @@ extend(
  * Multiple series support:
  * ************************************************************************** */
 // Clear previous layouts
-addEvent(Chart as any, 'predraw', function (
-    this: Highcharts.NetworkgraphChart
-): void {
-    if (this.graphLayoutsLookup) {
-        this.graphLayoutsLookup.forEach(
-            function (layout: Highcharts.NetworkgraphLayout): void {
+addEvent(
+    Chart as any,
+    'predraw',
+    function (this: Highcharts.NetworkgraphChart): void {
+        if (this.graphLayoutsLookup) {
+            this.graphLayoutsLookup.forEach(function (
+                layout: Highcharts.NetworkgraphLayout
+            ): void {
                 layout.stop();
-            }
-        );
-    }
-});
-addEvent(Chart as any, 'render', function (
-    this: Highcharts.NetworkgraphChart
-): void {
-    let systemsStable,
-        afterRender = false;
-
-    /**
-     * @private
-     */
-    function layoutStep(layout: Highcharts.NetworkgraphLayout): void {
-        if (
-            (layout.maxIterations as any)-- &&
-            isFinite(layout.temperature as any) &&
-            !layout.isStable() &&
-            !layout.enableSimulation
-        ) {
-            // Hook similar to build-in addEvent, but instead of
-            // creating whole events logic, use just a function.
-            // It's faster which is important for rAF code.
-            // Used e.g. in packed-bubble series for bubble radius
-            // calculations
-            if (layout.beforeStep) {
-                layout.beforeStep();
-            }
-
-            layout.step();
-            systemsStable = false;
-            afterRender = true;
-        }
-    }
-
-    if (this.graphLayoutsLookup) {
-        setAnimation(false, this);
-        // Start simulation
-        this.graphLayoutsLookup.forEach(
-            function (layout: Highcharts.NetworkgraphLayout): void {
-                layout.start();
-            }
-        );
-
-        // Just one sync step, to run different layouts similar to
-        // async mode.
-        while (!systemsStable) {
-            systemsStable = true;
-            this.graphLayoutsLookup.forEach(layoutStep);
-        }
-
-        if (afterRender) {
-            this.series.forEach(function (s): void {
-                if (s && s.layout) {
-                    s.render();
-                }
             });
         }
     }
-});
+);
+addEvent(
+    Chart as any,
+    'render',
+    function (this: Highcharts.NetworkgraphChart): void {
+        let systemsStable,
+            afterRender = false;
+
+        /**
+         * @private
+         */
+        function layoutStep(layout: Highcharts.NetworkgraphLayout): void {
+            if (
+                (layout.maxIterations as any)-- &&
+                isFinite(layout.temperature as any) &&
+                !layout.isStable() &&
+                !layout.enableSimulation
+            ) {
+                // Hook similar to build-in addEvent, but instead of
+                // creating whole events logic, use just a function.
+                // It's faster which is important for rAF code.
+                // Used e.g. in packed-bubble series for bubble radius
+                // calculations
+                if (layout.beforeStep) {
+                    layout.beforeStep();
+                }
+
+                layout.step();
+                systemsStable = false;
+                afterRender = true;
+            }
+        }
+
+        if (this.graphLayoutsLookup) {
+            setAnimation(false, this);
+            // Start simulation
+            this.graphLayoutsLookup.forEach(function (
+                layout: Highcharts.NetworkgraphLayout
+            ): void {
+                layout.start();
+            });
+
+            // Just one sync step, to run different layouts similar to
+            // async mode.
+            while (!systemsStable) {
+                systemsStable = true;
+                this.graphLayoutsLookup.forEach(layoutStep);
+            }
+
+            if (afterRender) {
+                this.series.forEach(function (s): void {
+                    if (s && s.layout) {
+                        s.render();
+                    }
+                });
+            }
+        }
+    }
+);
 
 // disable simulation before print if enabled
-addEvent(Chart as any, 'beforePrint', function (
-    this: PackedBubbleChart
-): void {
+addEvent(Chart as any, 'beforePrint', function (this: PackedBubbleChart): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {
             layout.updateSimulation(false);
@@ -962,9 +951,7 @@ addEvent(Chart as any, 'beforePrint', function (
 });
 
 // re-enable simulation after print
-addEvent(Chart as any, 'afterPrint', function (
-    this: PackedBubbleChart
-): void {
+addEvent(Chart as any, 'afterPrint', function (this: PackedBubbleChart): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {
             // return to default simulation

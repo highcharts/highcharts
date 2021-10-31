@@ -28,10 +28,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import DataTable from './DataTable.js';
 import U from '../Core/Utilities.js';
-const {
-    defined,
-    uniqueKey
-} = U;
+const { defined, uniqueKey } = U;
 
 /* *
  *
@@ -46,7 +43,6 @@ const {
  * @private
  */
 class DataSeriesConverter {
-
     /* *
      *
      *  Constructor
@@ -112,14 +108,16 @@ class DataSeriesConverter {
             table = converter.table,
             seriesData = [];
 
-        let pointOptions: Record<string, (number|null)>,
+        let pointOptions: Record<string, number | null>,
             cellName,
             cell,
             isCellFound,
             pointArrayMap;
 
         if (seriesId) {
-            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
+            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || [
+                'y'
+            ];
 
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;
@@ -133,7 +131,10 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(cellName, i);
+                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(
+                            cellName,
+                            i
+                        );
                     }
                 }
 
@@ -240,31 +241,45 @@ class DataSeriesConverter {
                         columns[y] = elem;
                         columns.x = j;
                     } else if (elem instanceof Array) {
-                        xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
-                        yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
+                        xIndex =
+                            keys && keys.indexOf('x') > -1
+                                ? keys.indexOf('x')
+                                : 0;
+                        yIndex =
+                            keys && keys.indexOf('y') > -1
+                                ? keys.indexOf('y')
+                                : 1;
 
                         if (needsArrayMap) {
                             for (let k = 0; k < pointArrayMapLength; k++) {
-                                yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
-                                    keys.indexOf(pointArrayMap[k]) : k + elem.length -
-                                        pointArrayMapLength;
+                                yValueIndex =
+                                    keys && keys.indexOf(pointArrayMap[k]) > -1
+                                        ? keys.indexOf(pointArrayMap[k])
+                                        : k + elem.length - pointArrayMapLength;
 
                                 yValueName = pointArrayMap[k];
-                                columns[yValueName + yValueId] = elem[yValueIndex];
+                                columns[yValueName + yValueId] =
+                                    elem[yValueIndex];
                             }
                         } else {
                             columns[y] = elem[yIndex];
                         }
 
-                        columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
-
+                        columns.x =
+                            elem.length - pointArrayMapLength > 0
+                                ? elem[xIndex]
+                                : j;
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, DataTable.CellType>;
+                            const elemSet = elem as Record<
+                                string,
+                                DataTable.CellType
+                            >;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];
-                                columns[yValueName + yValueId] = elemSet[yValueName];
+                                columns[yValueName + yValueId] =
+                                    elemSet[yValueName];
                             }
                         } else {
                             columns[y] = elem.y;

@@ -13,10 +13,7 @@
  * */
 
 import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 
 /* *
  *
@@ -24,7 +21,9 @@ import type {
  *
  * */
 
-export interface BBOptions extends SMAOptions, MultipleLinesComposition.Options{
+export interface BBOptions
+    extends SMAOptions,
+        MultipleLinesComposition.Options {
     params?: BBParamsOptions;
 }
 

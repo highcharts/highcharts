@@ -28,7 +28,7 @@ export interface BubblePointMarkerOptions extends PointMarkerOptions {
 }
 
 export interface BubblePointOptions extends ScatterPointOptions {
-    z?: (number|null);
+    z?: number | null;
 }
 
 export default BubblePointOptions;

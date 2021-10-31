@@ -32,22 +32,12 @@ import Earcon from './Earcon.js';
 import Instrument from './Instrument.js';
 import Point from '../../Core/Series/Point.js';
 import SU from './SonificationUtilities.js';
-const {
-    getExtremesForInstrumentProps,
-    virtualAxisTranslate
-} = SU;
+const { getExtremesForInstrumentProps, virtualAxisTranslate } = SU;
 import Timeline from './Timeline.js';
 import TimelineEvent from './TimelineEvent.js';
 import TimelinePath from './TimelinePath.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    find,
-    isArray,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { extend, find, isArray, merge, objectEach, pick } = U;
 
 /* *
  *
@@ -68,7 +58,6 @@ declare module '../../Core/Series/SeriesLike' {
  * */
 
 namespace SeriesSonify {
-
     /* *
      *
      *  Declarations
@@ -92,11 +81,12 @@ namespace SeriesSonify {
         onPointEnd?: Function;
         onPointStart?: Function;
         onStart?: Function;
-        pointPlayTime: (string|Function);
+        pointPlayTime: string | Function;
         timeExtremes?: RangeSelector.RangeObject;
     }
 
-    export interface SeriesSonificationEventsOptions extends SeriesEventsOptions{
+    export interface SeriesSonificationEventsOptions
+        extends SeriesEventsOptions {
         onPointEnd?: Function;
         onPointStart?: Function;
         onSeriesEnd?: Function;
@@ -132,8 +122,7 @@ namespace SeriesSonify {
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T
-    ): (T&typeof Composition) {
-
+    ): T & typeof Composition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -144,7 +133,7 @@ namespace SeriesSonify {
             });
         }
 
-        return SeriesClass as (T&typeof Composition);
+        return SeriesClass as T & typeof Composition;
     }
 
     /**
@@ -190,17 +179,19 @@ namespace SeriesSonify {
         dataExtremes: Record<string, RangeSelector.RangeObject>,
         chartSonifyOptions: ChartSonify.SonifyChartOptionsObject
     ): Partial<SonifySeriesOptions> {
-        const additionalSeriesOptions: (
-                Partial<SonifySeriesOptions>|
-                Array<Partial<SonifySeriesOptions>>
-            ) = chartSonifyOptions.seriesOptions || {},
-            pointPlayTime = (
-                series.chart.options.sonification &&
-                series.chart.options.sonification.defaultInstrumentOptions &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
-                'x'
-            ),
+        const additionalSeriesOptions:
+                | Partial<SonifySeriesOptions>
+                | Array<Partial<SonifySeriesOptions>> =
+                chartSonifyOptions.seriesOptions || {},
+            pointPlayTime =
+                (series.chart.options.sonification &&
+                    series.chart.options.sonification
+                        .defaultInstrumentOptions &&
+                    series.chart.options.sonification.defaultInstrumentOptions
+                        .mapping &&
+                    series.chart.options.sonification.defaultInstrumentOptions
+                        .mapping.pointPlayTime) ||
+                'x',
             configOptions = chartOptionsToSonifySeriesOptions(series);
 
         return merge(
@@ -215,18 +206,28 @@ namespace SeriesSonify {
                 // calculating twice.
                 timeExtremes: getTimeExtremes(series, pointPlayTime),
                 // Some options we just pass on
-                instruments: chartSonifyOptions.instruments || configOptions.instruments,
-                onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
+                instruments:
+                    chartSonifyOptions.instruments || configOptions.instruments,
+                onStart:
+                    chartSonifyOptions.onSeriesStart || configOptions.onStart,
                 onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
                 earcons: chartSonifyOptions.earcons || configOptions.earcons,
-                masterVolume: pick(chartSonifyOptions.masterVolume, configOptions.masterVolume)
+                masterVolume: pick(
+                    chartSonifyOptions.masterVolume,
+                    configOptions.masterVolume
+                )
             },
             // Merge in the specific series options by ID if any are passed in
-            isArray(additionalSeriesOptions) ? (
-                find(additionalSeriesOptions, function (optEntry: any): boolean {
-                    return optEntry.id === pick(series.id, series.options.id);
-                }) || {}
-            ) : additionalSeriesOptions,
+            isArray(additionalSeriesOptions)
+                ? find(
+                      additionalSeriesOptions,
+                      function (optEntry: any): boolean {
+                          return (
+                              optEntry.id === pick(series.id, series.options.id)
+                          );
+                      }
+                  ) || {}
+                : additionalSeriesOptions,
             {
                 // Forced options
                 pointPlayTime: pointPlayTime
@@ -252,27 +253,44 @@ namespace SeriesSonify {
     ): TimelinePath {
         // options.timeExtremes is internal and used so that the calculations
         // from chart.sonify can be reused.
-        const timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
+        const timeExtremes =
+                options.timeExtremes ||
+                getTimeExtremes(series, options.pointPlayTime),
             // Compute any data extremes that aren't defined yet
             dataExtremes = getExtremesForInstrumentProps(
-                series.chart, options.instruments, options.dataExtremes as any
+                series.chart,
+                options.instruments,
+                options.dataExtremes as any
             ),
             minimumSeriesDurationMs = 10,
             // Get the duration of the final note
-            finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
+            finalNoteDuration = getFinalNoteDuration(
+                series,
+                options.instruments,
+                dataExtremes
+            ),
             // Get time offset for a point, relative to duration
             pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(
                     getPointTimeValue(point, options.pointPlayTime),
                     timeExtremes,
-                    { min: 0, max: Math.max(options.duration - finalNoteDuration, minimumSeriesDurationMs) }
+                    {
+                        min: 0,
+                        max: Math.max(
+                            options.duration - finalNoteDuration,
+                            minimumSeriesDurationMs
+                        )
+                    }
                 );
             },
             masterVolume = pick(options.masterVolume, 1),
             // Make copies of the instruments used for this series, to allow
             // multiple series with the same instrument to play together
             instrumentCopies = makeInstrumentCopies(options.instruments),
-            instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
+            instruments = applyMasterVolumeToInstruments(
+                instrumentCopies,
+                masterVolume
+            ),
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
                 events: Array<TimelineEvent>,
@@ -294,9 +312,7 @@ namespace SeriesSonify {
                         }
                     }),
                     // Earcons
-                    earcons.map(function (
-                        earcon: Earcon
-                    ): TimelineEvent {
+                    earcons.map(function (earcon: Earcon): TimelineEvent {
                         return new TimelineEvent({
                             eventObject: earcon,
                             time: time,
@@ -306,7 +322,8 @@ namespace SeriesSonify {
                         });
                     })
                 );
-            }, []);
+            },
+            []);
 
         // Build the timeline path
         return new TimelinePath({
@@ -316,16 +333,16 @@ namespace SeriesSonify {
                     options.onStart(series);
                 }
             },
-            onEventStart: function (
-                event: TimelineEvent
-            ): (boolean|undefined) {
+            onEventStart: function (event: TimelineEvent): boolean | undefined {
                 const eventObject = event.options && event.options.eventObject;
 
                 if (eventObject instanceof Point) {
                     // Check for hidden series
                     if (
                         !eventObject.series.visible &&
-                        !eventObject.series.chart.series.some(function (series): boolean {
+                        !eventObject.series.chart.series.some(function (
+                            series
+                        ): boolean {
                             return series.visible;
                         })
                     ) {
@@ -341,8 +358,10 @@ namespace SeriesSonify {
                 }
             },
             onEventEnd: function (eventData: Timeline.SignalData): void {
-                const eventObject = eventData.event && eventData.event.options &&
-                        eventData.event.options.eventObject;
+                const eventObject =
+                    eventData.event &&
+                    eventData.event.options &&
+                    eventData.event.options.eventObject;
 
                 if (eventObject instanceof Point && options.onPointEnd) {
                     options.onPointEnd(eventData.event, eventObject);
@@ -367,21 +386,27 @@ namespace SeriesSonify {
     function chartOptionsToSonifySeriesOptions(
         series: Composition
     ): Partial<SonifySeriesOptions> {
-        const seriesOpts = series.options.sonification || {} as SonifySeriesOptions,
-            chartOpts = series.chart.options.sonification || {} as ChartSonify.ChartSonificationOptions,
-            chartEvents = chartOpts.events || {} as ChartSonify.ChartSonificationEventsOptions,
-            seriesEvents = seriesOpts.events || {} as SeriesSonificationEventsOptions;
+        const seriesOpts =
+                series.options.sonification || ({} as SonifySeriesOptions),
+            chartOpts =
+                series.chart.options.sonification ||
+                ({} as ChartSonify.ChartSonificationOptions),
+            chartEvents =
+                chartOpts.events ||
+                ({} as ChartSonify.ChartSonificationEventsOptions),
+            seriesEvents =
+                seriesOpts.events || ({} as SeriesSonificationEventsOptions);
 
-        return { // Chart options
+        return {
+            // Chart options
             onEnd: seriesEvents.onSeriesEnd || chartEvents.onSeriesEnd,
             onStart: seriesEvents.onSeriesStart || chartEvents.onSeriesStart,
             onPointEnd: seriesEvents.onPointEnd || chartEvents.onPointEnd,
             onPointStart: seriesEvents.onPointStart || chartEvents.onPointStart,
-            pointPlayTime: (
+            pointPlayTime:
                 chartOpts.defaultInstrumentOptions &&
                 chartOpts.defaultInstrumentOptions.mapping &&
-                chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
-            ),
+                chartOpts.defaultInstrumentOptions.mapping.pointPlayTime,
             masterVolume: chartOpts.masterVolume,
             instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
             earcons: seriesOpts.earcons || chartOpts.earcons
@@ -432,34 +457,33 @@ namespace SeriesSonify {
         point: Point,
         earconDefinitions: Array<Earcon.Configuration>
     ): Array<Earcon> {
-        return earconDefinitions.reduce(
-            function (
-                earcons: Array<Earcon>,
-                earconDefinition: Earcon.Configuration
-            ): Array<Earcon> {
-                const earcon = earconDefinition.earcon;
-                let cond;
+        return earconDefinitions.reduce(function (
+            earcons: Array<Earcon>,
+            earconDefinition: Earcon.Configuration
+        ): Array<Earcon> {
+            const earcon = earconDefinition.earcon;
+            let cond;
 
-                if (earconDefinition.condition) {
-                    // We have a condition. This overrides onPoint
-                    cond = earconDefinition.condition(point);
-                    if (cond instanceof Earcon) {
-                        // Condition returned an earcon
-                        earcons.push(cond);
-                    } else if (cond) {
-                        // Condition returned true
-                        earcons.push(earcon);
-                    }
-                } else if (
-                    earconDefinition.onPoint &&
-                    point.id === earconDefinition.onPoint
-                ) {
-                    // We have earcon onPoint
+            if (earconDefinition.condition) {
+                // We have a condition. This overrides onPoint
+                cond = earconDefinition.condition(point);
+                if (cond instanceof Earcon) {
+                    // Condition returned an earcon
+                    earcons.push(cond);
+                } else if (cond) {
+                    // Condition returned true
                     earcons.push(earcon);
                 }
-                return earcons;
-            }, []
-        );
+            } else if (
+                earconDefinition.onPoint &&
+                point.id === earconDefinition.onPoint
+            ) {
+                // We have earcon onPoint
+                earcons.push(earcon);
+            }
+            return earcons;
+        },
+        []);
     }
 
     /**
@@ -474,11 +498,11 @@ namespace SeriesSonify {
      */
     function getPointTimeValue(
         point: PointSonify.Composition,
-        timeProp: (string|Function)
+        timeProp: string | Function
     ): number {
-        return typeof timeProp === 'function' ?
-            timeProp(point) :
-            pick((point as any)[timeProp], (point.options as any)[timeProp]);
+        return typeof timeProp === 'function'
+            ? timeProp(point)
+            : pick((point as any)[timeProp], (point.options as any)[timeProp]);
     }
 
     /**
@@ -491,21 +515,18 @@ namespace SeriesSonify {
     function getSeriesInstrumentOptions(
         series: Composition,
         options?: SonifySeriesOptions
-    ): (Array<PointSonify.PointInstrument>|undefined) {
+    ): Array<PointSonify.PointInstrument> | undefined {
         if (options && options.instruments) {
             return options.instruments;
         }
 
-        const defaultInstrOpts: AnyRecord = (
-                series.chart.options.sonification &&
-                series.chart.options.sonification.defaultInstrumentOptions ||
-                {}
-            ),
-            seriesInstrOpts: Array<AnyRecord> = (
-                series.options.sonification &&
-                series.options.sonification.instruments ||
-            [{}]
-            ),
+        const defaultInstrOpts: AnyRecord =
+                (series.chart.options.sonification &&
+                    series.chart.options.sonification
+                        .defaultInstrumentOptions) ||
+                {},
+            seriesInstrOpts: Array<AnyRecord> = (series.options.sonification &&
+                series.options.sonification.instruments) || [{}],
             removeNullsFromObject = (obj: AnyRecord): void => {
                 objectEach(obj, (val: any, key: string): void => {
                     if (val === null) {
@@ -516,7 +537,7 @@ namespace SeriesSonify {
 
         // Convert series options to PointInstrumentObjects and merge with
         // default options
-        return (seriesInstrOpts).map((optionSet): PointSonify.PointInstrument => {
+        return seriesInstrOpts.map((optionSet): PointSonify.PointInstrument => {
             // Allow setting option to null to use default
             removeNullsFromObject(optionSet.mapping || {});
             removeNullsFromObject(optionSet);
@@ -530,7 +551,10 @@ namespace SeriesSonify {
                     mapping: void 0,
                     instrument: void 0
                 }) as Partial<PointSonify.PointInstrumentOptions>,
-                instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+                instrumentMapping: merge(
+                    defaultInstrOpts.mapping,
+                    optionSet.mapping
+                )
             };
         });
     }
@@ -550,10 +574,9 @@ namespace SeriesSonify {
             seriesOpts = series.options.sonification;
         return merge(
             {
-                duration: (
+                duration:
                     (seriesOpts && seriesOpts.duration) ||
                     (chartOpts && chartOpts.duration)
-                )
             },
             chartOptionsToSonifySeriesOptions(series),
             options
@@ -574,22 +597,25 @@ namespace SeriesSonify {
      */
     function getTimeExtremes(
         series: Composition,
-        timeProp: (string|Function)
+        timeProp: string | Function
     ): RangeSelector.RangeObject {
         // Compute the extremes from the visible points.
-        return series.points.reduce(function (
-            acc: RangeSelector.RangeObject,
-            point: PointSonify.Composition
-        ): RangeSelector.RangeObject {
-            const value = getPointTimeValue(point, timeProp);
+        return series.points.reduce(
+            function (
+                acc: RangeSelector.RangeObject,
+                point: PointSonify.Composition
+            ): RangeSelector.RangeObject {
+                const value = getPointTimeValue(point, timeProp);
 
-            acc.min = Math.min(acc.min, value);
-            acc.max = Math.max(acc.max, value);
-            return acc;
-        }, {
-            min: Infinity,
-            max: -Infinity
-        });
+                acc.min = Math.min(acc.min, value);
+                acc.max = Math.max(acc.max, value);
+                return acc;
+            },
+            {
+                min: Infinity,
+                max: -Infinity
+            }
+        );
     }
 
     /**
@@ -608,9 +634,11 @@ namespace SeriesSonify {
             instrumentDef: PointSonify.PointInstrument
         ): PointSonify.PointInstrument {
             const instrument = instrumentDef.instrument,
-                copy = (typeof instrument === 'string' ?
-                    Instrument.definitions[instrument] :
-                    instrument).copy();
+                copy = (
+                    typeof instrument === 'string'
+                        ? Instrument.definitions[instrument]
+                        : instrument
+                ).copy();
 
             return merge(instrumentDef, { instrument: copy });
         });
@@ -636,10 +664,7 @@ namespace SeriesSonify {
      * The options for sonifying this series. If not provided, uses options set
      * on chart and series.
      */
-    function sonify(
-        this: Composition,
-        options?: SonifySeriesOptions
-    ): void {
+    function sonify(this: Composition, options?: SonifySeriesOptions): void {
         const mergedOptions = getSeriesSonifyOptions(this, options),
             timelinePath = buildTimelinePathFromSeries(this, mergedOptions),
             chartSonification = this.chart.sonification;

@@ -12,16 +12,13 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface ROCOptions extends SMAOptions {
     params?: ROCParamsOptions;

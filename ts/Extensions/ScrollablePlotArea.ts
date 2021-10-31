@@ -43,12 +43,7 @@ import Chart from '../Core/Chart/Chart.js';
 import Series from '../Core/Series/Series.js';
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    merge,
-    pick
-} = U;
+const { addEvent, createElement, merge, pick } = U;
 
 /* *
  *
@@ -56,7 +51,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         fixedDiv?: HTMLDOMElement;
         fixedRenderer?: SVGRenderer;
@@ -83,21 +78,17 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
-
     let scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
-        scrollableMinWidth =
-            scrollablePlotArea && scrollablePlotArea.minWidth,
+        scrollableMinWidth = scrollablePlotArea && scrollablePlotArea.minWidth,
         scrollableMinHeight =
             scrollablePlotArea && scrollablePlotArea.minHeight,
         scrollablePixelsX,
         scrollablePixelsY,
-        corrections: (
-            Record<string, Record<string, (number|string)>>|
-            undefined
-        );
+        corrections:
+            | Record<string, Record<string, number | string>>
+            | undefined;
 
     if (!this.renderer.forExport) {
-
         // The amount of pixels to scroll, the difference between chart
         // width and scrollable width
         if (scrollableMinWidth) {
@@ -106,7 +97,8 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox =
+                    merge(this.plotBox);
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -120,14 +112,15 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 };
             }
 
-        // Currently we can only do either X or Y
+            // Currently we can only do either X or Y
         } else if (scrollableMinHeight) {
             this.scrollablePixelsY = scrollablePixelsY = Math.max(
                 0,
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox =
+                    merge(this.plotBox);
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
@@ -148,8 +141,8 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                     // temporarily set it to the adjusted plot width.
                     axis.getPlotLinePath = function (this): SVGPath {
                         let marginName = (corrections as any)[axis.side].name,
-                            correctionValue =
-                                (corrections as any)[axis.side].value,
+                            correctionValue = (corrections as any)[axis.side]
+                                .value,
                             // axis.right or axis.bottom
                             margin = (this as any)[marginName],
                             path: SVGPath;
@@ -164,7 +157,6 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                         (this as any)[marginName] = margin;
                         return path;
                     };
-
                 } else {
                     // Apply the corrected plotWidth
                     axis.setAxisSize();
@@ -181,8 +173,8 @@ addEvent(Chart, 'render', function (): void {
             this.setUpScrolling();
         }
         this.applyFixed();
-
-    } else if (this.fixedDiv) { // Has been in scrollable mode
+    } else if (this.fixedDiv) {
+        // Has been in scrollable mode
         this.applyFixed();
     }
 });
@@ -193,7 +185,6 @@ addEvent(Chart, 'render', function (): void {
  * @return {void}
  */
 Chart.prototype.setUpScrolling = function (): void {
-
     const css: CSSObject = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
@@ -221,9 +212,14 @@ Chart.prototype.setUpScrolling = function (): void {
     );
 
     // Add the necessary divs to provide scrolling
-    this.scrollingContainer = createElement('div', {
-        'className': 'highcharts-scrolling'
-    }, css, this.scrollingParent);
+    this.scrollingContainer = createElement(
+        'div',
+        {
+            className: 'highcharts-scrolling'
+        },
+        css,
+        this.scrollingParent
+    );
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
@@ -233,9 +229,14 @@ Chart.prototype.setUpScrolling = function (): void {
         }
     });
 
-    this.innerContainer = createElement('div', {
-        'className': 'highcharts-inner-container'
-    }, null as any, this.scrollingContainer);
+    this.innerContainer = createElement(
+        'div',
+        {
+            className: 'highcharts-inner-container'
+        },
+        null as any,
+        this.scrollingContainer
+    );
 
     // Now move the container inside
     this.innerContainer.appendChild(this.container);
@@ -290,10 +291,9 @@ Chart.prototype.moveFixedElements = function (): void {
         [].forEach.call(
             container.querySelectorAll(className),
             function (elem: DOMElementType): void {
-                (
-                    elem.namespaceURI === (fixedRenderer as any).SVG_NS ?
-                        (fixedRenderer as any).box :
-                        (fixedRenderer as any).box.parentNode
+                (elem.namespaceURI === (fixedRenderer as any).SVG_NS
+                    ? (fixedRenderer as any).box
+                    : (fixedRenderer as any).box.parentNode
                 ).appendChild(elem);
                 elem.style.pointerEvents = 'auto';
             }
@@ -312,9 +312,7 @@ Chart.prototype.applyFixed = function (): void {
         scrollableOptions = chartOptions.scrollablePlotArea,
         Renderer = RendererRegistry.getRendererType();
 
-    let fixedRenderer,
-        scrollableWidth,
-        scrollableHeight;
+    let fixedRenderer, scrollableWidth, scrollableHeight;
 
     // First render
     if (firstTime) {
@@ -327,7 +325,9 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
+                zIndex:
+                    ((chartOptions.style && chartOptions.style.zIndex) || 0) +
+                    2,
                 top: 0
             },
             null as any,
@@ -361,14 +361,9 @@ Chart.prototype.applyFixed = function (): void {
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
-
     } else {
-
         // Set the size of the fixed renderer to the visible width
-        (this.fixedRenderer as any).setSize(
-            this.chartWidth,
-            this.chartHeight
-        );
+        (this.fixedRenderer as any).setSize(this.chartWidth, this.chartHeight);
     }
 
     if (this.scrollableDirty || firstTime) {
@@ -396,7 +391,6 @@ Chart.prototype.applyFixed = function (): void {
 
     // Set scroll position
     if (firstTime) {
-
         if (scrollableOptions.scrollPositionX) {
             (this.scrollingContainer as any).scrollLeft =
                 (this.scrollablePixelsX as any) *
@@ -415,12 +409,11 @@ Chart.prototype.applyFixed = function (): void {
         maskLeft = this.plotLeft - axisOffset[3] - 1,
         maskBottom = this.plotTop + this.plotHeight + axisOffset[2] + 1,
         maskRight = this.plotLeft + this.plotWidth + axisOffset[1] + 1,
-        maskPlotRight = this.plotLeft + this.plotWidth -
-            (this.scrollablePixelsX || 0),
-        maskPlotBottom = this.plotTop + this.plotHeight -
-            (this.scrollablePixelsY || 0),
+        maskPlotRight =
+            this.plotLeft + this.plotWidth - (this.scrollablePixelsX || 0),
+        maskPlotBottom =
+            this.plotTop + this.plotHeight - (this.scrollablePixelsY || 0),
         d: SVGPath;
-
 
     if (this.scrollablePixelsX) {
         d = [

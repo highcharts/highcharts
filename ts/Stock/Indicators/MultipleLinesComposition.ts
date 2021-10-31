@@ -21,16 +21,10 @@ import type SMAPoint from './SMA/SMAPoint';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge
-} = U;
+const { defined, error, merge } = U;
 
 /* *
  *
@@ -61,7 +55,6 @@ declare module '../../Core/Series/SeriesLike' {
  * @mixin multipleLinesMixin
  */
 namespace MultipleLinesComposition {
-
     /* *
      *
      *  Declarations
@@ -138,25 +131,15 @@ namespace MultipleLinesComposition {
      */
     export function compose<T extends typeof SMAIndicator>(
         IndicatorClass: T
-    ): (T&typeof Composition) {
-
+    ): T & typeof Composition {
         if (composedClasses.indexOf(IndicatorClass) === -1) {
             composedClasses.push(IndicatorClass);
 
             const proto = IndicatorClass.prototype as Composition;
 
-            proto.linesApiNames = (
-                proto.linesApiNames ||
-                linesApiNames.slice()
-            );
-            proto.pointArrayMap = (
-                proto.pointArrayMap ||
-                pointArrayMap.slice()
-            );
-            proto.pointValKey = (
-                proto.pointValKey ||
-                pointValKey
-            );
+            proto.linesApiNames = proto.linesApiNames || linesApiNames.slice();
+            proto.pointArrayMap = proto.pointArrayMap || pointArrayMap.slice();
+            proto.pointValKey = proto.pointValKey || pointValKey;
 
             proto.drawGraph = drawGraph;
             proto.toYData = toYData;
@@ -164,7 +147,7 @@ namespace MultipleLinesComposition {
             proto.getTranslatedLinesNames = getTranslatedLinesNames;
         }
 
-        return IndicatorClass as (T&typeof Composition);
+        return IndicatorClass as T & typeof Composition;
     }
 
     /**
@@ -188,20 +171,17 @@ namespace MultipleLinesComposition {
             },
             // additional lines point place holders:
             secondaryLines = [] as Array<Array<SMAPoint>>,
-            secondaryLinesNames = indicator.getTranslatedLinesNames(
-                pointValKey
-            );
+            secondaryLinesNames =
+                indicator.getTranslatedLinesNames(pointValKey);
 
         let pointsLength = mainLinePoints.length,
             point;
-
 
         // Generate points for additional lines:
         secondaryLinesNames.forEach(function (
             plotLine: string,
             index: number
         ): void {
-
             // create additional lines point place holders
             secondaryLines[index] = [];
 
@@ -229,10 +209,11 @@ namespace MultipleLinesComposition {
                     );
                 } else {
                     error(
-                        'Error: "There is no ' + lineName +
-                        ' in DOCS options declared. Check if linesApiNames' +
-                        ' are consistent with your DOCS line names."' +
-                        ' at mixin/multiple-line.js:34'
+                        'Error: "There is no ' +
+                            lineName +
+                            ' in DOCS options declared. Check if linesApiNames' +
+                            ' are consistent with your DOCS line names."' +
+                            ' at mixin/multiple-line.js:34'
                     );
                 }
 
@@ -243,9 +224,11 @@ namespace MultipleLinesComposition {
                 (indicator as any)['graph' + lineName] = indicator.graph;
             } else {
                 error(
-                    'Error: "' + lineName + ' doesn\'t have equivalent ' +
-                    'in pointArrayMap. To many elements in linesApiNames ' +
-                    'relative to pointArrayMap."'
+                    'Error: "' +
+                        lineName +
+                        " doesn't have equivalent " +
+                        'in pointArrayMap. To many elements in linesApiNames ' +
+                        'relative to pointArrayMap."'
                 );
             }
         });
@@ -273,17 +256,17 @@ namespace MultipleLinesComposition {
     ): Array<string> {
         const translatedLines: Array<string> = [];
 
-        (this.pointArrayMap || []).forEach(
-            function (propertyName: string): void {
-                if (propertyName !== excludedValue) {
-                    translatedLines.push(
-                        'plot' +
+        (this.pointArrayMap || []).forEach(function (
+            propertyName: string
+        ): void {
+            if (propertyName !== excludedValue) {
+                translatedLines.push(
+                    'plot' +
                         propertyName.charAt(0).toUpperCase() +
                         propertyName.slice(1)
-                    );
-                }
+                );
             }
-        );
+        });
 
         return translatedLines;
     }
@@ -302,11 +285,11 @@ namespace MultipleLinesComposition {
     ): Array<number> {
         const pointColl: Array<number> = [];
 
-        (this.pointArrayMap || []).forEach(
-            function (propertyName: string): void {
-                pointColl.push((point as any)[propertyName]);
-            }
-        );
+        (this.pointArrayMap || []).forEach(function (
+            propertyName: string
+        ): void {
+            pointColl.push((point as any)[propertyName]);
+        });
         return pointColl;
     }
 
@@ -319,7 +302,7 @@ namespace MultipleLinesComposition {
      */
     function translate(this: Composition): void {
         const indicator = this,
-            pointArrayMap: Array<string> = (indicator.pointArrayMap as any);
+            pointArrayMap: Array<string> = indicator.pointArrayMap as any;
         let LinesNames = [] as Array<string>,
             value;
 
@@ -349,7 +332,6 @@ namespace MultipleLinesComposition {
             });
         });
     }
-
 }
 
 /* *

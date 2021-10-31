@@ -18,15 +18,10 @@ import type {
 import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        linearRegression: LinearRegressionIndicator
-    }
+    seriesTypes: { linearRegression: LinearRegressionIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -44,7 +39,6 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
-
     /**
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
@@ -139,4 +133,4 @@ export default LinearRegressionSlopesIndicator;
  * @apioption series.linearregressionslope
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

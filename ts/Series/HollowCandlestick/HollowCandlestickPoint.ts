@@ -20,9 +20,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import HollowCandlestickSeries from './HollowCandlestickSeries.js';
 
 const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
+    seriesTypes: { candlestick: CandlestickSeries }
 } = SeriesRegistry;
 
 /* *
@@ -32,7 +30,6 @@ const {
  * */
 
 class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties

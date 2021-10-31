@@ -20,8 +20,7 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  *  Declarations
  *
  * */
-export interface ColumnPyramidPointOptions extends ColumnPointOptions {
-}
+export interface ColumnPyramidPointOptions extends ColumnPointOptions {}
 
 /* *
  *

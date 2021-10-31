@@ -17,7 +17,6 @@
  * */
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
-
 /* *
  *
  *  Declarations
@@ -27,7 +26,6 @@ export interface WordcloudPointOptions extends ColumnPointOptions {
     name?: string;
     weight?: number;
 }
-
 
 /* *
  *

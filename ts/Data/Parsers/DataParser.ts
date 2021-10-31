@@ -27,11 +27,7 @@ import type JSON from '../../Core/JSON';
 
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    uniqueKey
-} = U;
+const { addEvent, fireEvent, uniqueKey } = U;
 
 /* *
  *
@@ -44,8 +40,9 @@ const {
  *
  * @private
  */
-abstract class DataParser<TEventObject extends DataParser.Event> implements DataEventEmitter<TEventObject> {
-
+abstract class DataParser<TEventObject extends DataParser.Event>
+    implements DataEventEmitter<TEventObject>
+{
     /* *
      *
      *  Static Properties
@@ -90,15 +87,11 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
         const table = new DataTable();
 
         for (
-            let i = 0,
-                iEnd = Math.max(headers.length, columns.length);
+            let i = 0, iEnd = Math.max(headers.length, columns.length);
             i < iEnd;
             ++i
         ) {
-            table.setColumn(
-                headers[i] || `${i}`,
-                columns[i]
-            );
+            table.setColumn(headers[i] || `${i}`, columns[i]);
         }
 
         return table;
@@ -170,15 +163,14 @@ abstract class DataParser<TEventObject extends DataParser.Event> implements Data
  * Additionally provided types for events and conversion.
  */
 namespace DataParser {
-
     /**
      * The basic event object for a DataParser instance.
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
     export interface Event extends DataEventEmitter.Event {
-        readonly type: ('parse' | 'afterParse' | 'parseError');
+        readonly type: 'parse' | 'afterParse' | 'parseError';
         readonly columns: Array<DataTable.Column>;
-        readonly error?: (string | Error);
+        readonly error?: string | Error;
         readonly headers: string[];
     }
 
@@ -193,7 +185,6 @@ namespace DataParser {
         firstRowAsNames: boolean;
         switchRowsAndColumns: boolean;
     }
-
 }
 
 export default DataParser;

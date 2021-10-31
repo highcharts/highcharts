@@ -20,16 +20,10 @@ import type LinearRegressionPoint from './LinearRegressionPoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    extend,
-    merge
-} = U;
+const { isArray, extend, merge } = U;
 
 /* *
  *
@@ -62,7 +56,8 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @optionparent plotOptions.linearregression
      */
     public static defaultOptions: LinearRegressionParamsOptions = merge(
-        SMAIndicator.defaultOptions, {
+        SMAIndicator.defaultOptions,
+        {
             params: {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
@@ -116,7 +111,8 @@ class LinearRegressionIndicator extends SMAIndicator {
             tooltip: {
                 valueDecimals: 4
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionParamsOptions
+    );
 
     /* *
      *
@@ -152,22 +148,17 @@ class LinearRegressionIndicator extends SMAIndicator {
         // least squares method
         let yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
-                yValue: (number|Array<number>),
+                yValue: number | Array<number>,
                 yIndex: number
             ): number {
                 return isArray(yValue) ? yValue[yIndex] : yValue;
             },
-            xSum = xData.reduce(
-                function (
-                    accX: number,
-                    val: number
-                ): number {
-                    return val + accX;
-                }, 0),
-            ySum = yData.reduce(
-                function (accY: number, val: number): number {
-                    return getSingleYValue(val, yIndex) + accY;
-                }, 0),
+            xSum = xData.reduce(function (accX: number, val: number): number {
+                return val + accX;
+            }, 0),
+            ySum = yData.reduce(function (accY: number, val: number): number {
+                return getSingleYValue(val, yIndex) + accY;
+            }, 0),
             xMean: number = xSum / xData.length,
             yMean: number = ySum / yData.length,
             xError: number,
@@ -184,15 +175,13 @@ class LinearRegressionIndicator extends SMAIndicator {
             formulaDenominator += Math.pow(xError, 2);
         }
 
-        slope = formulaDenominator ?
-            formulaNumerator / formulaDenominator : 0; // don't divide by 0
+        slope = formulaDenominator ? formulaNumerator / formulaDenominator : 0; // don't divide by 0
 
         return {
             slope: slope,
             intercept: yMean - slope * xMean
         };
     }
-
 
     /**
      * Return the y value on a straight line.
@@ -235,21 +224,15 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @param {Array<number>} xData list of all x coordinates in the base series
      * @return {number} - closest distance between points in the base series
      */
-    public findClosestDistance(
-        xData: Array<number>
-    ): (number|undefined) {
-        let distance: number,
-            closestDistance: (number|undefined),
-            i: number;
+    public findClosestDistance(xData: Array<number>): number | undefined {
+        let distance: number, closestDistance: number | undefined, i: number;
 
         for (i = 1; i < xData.length - 1; i++) {
             distance = xData[i] - xData[i - 1];
             if (
                 distance > 0 &&
-                (
-                    typeof closestDistance === 'undefined' ||
-                    distance < closestDistance
-                )
+                (typeof closestDistance === 'undefined' ||
+                    distance < closestDistance)
             ) {
                 closestDistance = distance;
             }
@@ -262,20 +245,17 @@ class LinearRegressionIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries,
-        regressionSeriesParams:
-        LinearRegressionParamsOptions
+        regressionSeriesParams: LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let xData: Array<number> = (baseSeries.xData as any),
-            yData: Array<number> = (baseSeries.yData as any),
-            period: number = (regressionSeriesParams.period as any),
+        let xData: Array<number> = baseSeries.xData as any,
+            yData: Array<number> = baseSeries.yData as any,
+            period: number = regressionSeriesParams.period as any,
             lineParameters: RegressionLineParametersObject,
             i: number,
             periodStart: number,
             periodEnd: number,
             // format required to be returned
-            indicatorData: IndicatorValuesObject<
-            TLinkedSeries
-            > = {
+            indicatorData: IndicatorValuesObject<TLinkedSeries> = {
                 xData: [], // by getValues() method
                 yData: [],
                 values: []
@@ -285,7 +265,8 @@ class LinearRegressionIndicator extends SMAIndicator {
             periodXData: Array<number>,
             periodYData: Array<number>,
             periodTransformedXData: Array<number>,
-            xAxisUnit: number = (this.options.params as any).xAxisUnit ||
+            xAxisUnit: number =
+                (this.options.params as any).xAxisUnit ||
                 this.findClosestDistance(xData);
 
         // Iteration logic: x value of the last point within the period
@@ -298,15 +279,20 @@ class LinearRegressionIndicator extends SMAIndicator {
             endPointX = xData[i];
             periodXData = xData.slice(periodStart, periodEnd);
             periodYData = yData.slice(periodStart, periodEnd);
-            periodTransformedXData = this.transformXData(periodXData,
-                xAxisUnit);
-
-            lineParameters = this.getRegressionLineParameters(
-                periodTransformedXData, periodYData
+            periodTransformedXData = this.transformXData(
+                periodXData,
+                xAxisUnit
             );
 
-            endPointY = this.getEndPointY(lineParameters,
-                periodTransformedXData[periodTransformedXData.length - 1]);
+            lineParameters = this.getRegressionLineParameters(
+                periodTransformedXData,
+                periodYData
+            );
+
+            endPointY = this.getEndPointY(
+                lineParameters,
+                periodTransformedXData[periodTransformedXData.length - 1]
+            );
 
             // @todo this is probably not used anywhere
             indicatorData.values.push({
@@ -337,7 +323,6 @@ extend(LinearRegressionIndicator.prototype, {
     nameBase: 'Linear Regression Indicator'
 });
 
-
 /**
  *
  * Registry
@@ -350,7 +335,10 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-SeriesRegistry.registerSeriesType('linearRegression', LinearRegressionIndicator);
+SeriesRegistry.registerSeriesType(
+    'linearRegression',
+    LinearRegressionIndicator
+);
 
 /* *
  *
@@ -374,4 +362,4 @@ export default LinearRegressionIndicator;
  * @apioption series.linearregression
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

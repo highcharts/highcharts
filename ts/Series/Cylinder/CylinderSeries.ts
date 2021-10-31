@@ -24,15 +24,10 @@ import type CylinderSeriesOptions from './CylinderSeriesOptions';
 import CylinderPoint from './CylinderPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 import './CylinderComposition.js';
 
 /* *
@@ -54,7 +49,6 @@ import './CylinderComposition.js';
  * @augments Highcharts.Series
  */
 class CylinderSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -76,7 +70,9 @@ class CylinderSeries extends ColumnSeries {
      * @requires     modules/cylinder
      * @optionparent plotOptions.cylinder
      */
-    public static defaultOptions: CylinderSeriesOptions = merge(ColumnSeries.defaultOptions);
+    public static defaultOptions: CylinderSeriesOptions = merge(
+        ColumnSeries.defaultOptions
+    );
 
     /* *
      *
@@ -89,7 +85,6 @@ class CylinderSeries extends ColumnSeries {
     public options: CylinderSeriesOptions = void 0 as any;
 
     public points: Array<CylinderPoint> = void 0 as any;
-
 }
 
 /* *
@@ -206,4 +201,4 @@ export default CylinderSeries;
  * @apioption series.cylinder.data
  */
 
-''; // keeps doclets above in the transpiled file
+(''); // keeps doclets above in the transpiled file

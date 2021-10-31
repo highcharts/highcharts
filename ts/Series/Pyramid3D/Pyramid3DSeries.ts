@@ -23,9 +23,7 @@ import type Pyramid3DPoint from './Pyramid3DPoint';
 import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        funnel3d: Funnel3DSeries
-    }
+    seriesTypes: { funnel3d: Funnel3DSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -47,7 +45,6 @@ const { merge } = U;
  * @requires modules/pyramid3d
  */
 class Pyramid3DSeries extends Funnel3DSeries {
-
     /* *
      *
      *  Static Properties
@@ -72,21 +69,24 @@ class Pyramid3DSeries extends Funnel3DSeries {
      * @requires     modules/pyramid3d
      * @optionparent plotOptions.pyramid3d
      */
-    public static defaultOptions: Pyramid3DSeriesOptions = merge(Funnel3DSeries.defaultOptions, {
-        /**
-         * A reversed pyramid3d is funnel3d, but the latter supports neck
-         * related options: neckHeight and neckWidth
-         *
-         * @product highcharts
-         */
-        reversed: true,
+    public static defaultOptions: Pyramid3DSeriesOptions = merge(
+        Funnel3DSeries.defaultOptions,
+        {
+            /**
+             * A reversed pyramid3d is funnel3d, but the latter supports neck
+             * related options: neckHeight and neckWidth
+             *
+             * @product highcharts
+             */
+            reversed: true,
 
-        neckHeight: 0,
-        neckWidth: 0,
-        dataLabels: {
-            verticalAlign: 'top'
-        }
-    } as Pyramid3DSeriesOptions);
+            neckHeight: 0,
+            neckWidth: 0,
+            dataLabels: {
+                verticalAlign: 'top'
+            }
+        } as Pyramid3DSeriesOptions
+    );
 
     /* *
      *
@@ -200,4 +200,4 @@ export default Pyramid3DSeries;
  * @apioption series.pyramid3d.data
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

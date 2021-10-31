@@ -45,7 +45,9 @@ import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
+const {
+    prototype: { symbols }
+} = SVGRenderer;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -85,10 +87,13 @@ declare module '../Core/Series/PointOptions' {
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         markerClusterInfo?: Highcharts.MarkerClusterInfoObject;
-        markerClusterAlgorithms?: Record<string, Highcharts.MarkerClusterAlgorithmFunction>;
-        markerClusterSeriesData?: (Array<Point|null>|null);
+        markerClusterAlgorithms?: Record<
+            string,
+            Highcharts.MarkerClusterAlgorithmFunction
+        >;
+        markerClusterSeriesData?: Array<Point | null> | null;
         gridValueSize?: number;
-        baseClusters?: (Highcharts.BaseClustersObject|null);
+        baseClusters?: Highcharts.BaseClustersObject | null;
         initMaxX?: number;
         initMinX?: number;
         initMaxY?: number;
@@ -103,13 +108,9 @@ declare module '../Core/Series/SeriesLike' {
         /** @requires modules/marker-clusters */
         getGridOffset(): Record<string, number>;
         /** @requires modules/marker-clusters */
-        animateClusterPoint(
-            clusterObj: Highcharts.ClusterAndNoiseObject
-        ): void;
+        animateClusterPoint(clusterObj: Highcharts.ClusterAndNoiseObject): void;
         /** @requires modules/marker-clusters */
-        onDrillToCluster(
-            event: PointClickEvent
-        ): void;
+        onDrillToCluster(event: PointClickEvent): void;
         /** @requires modules/marker-clusters */
         getClusterDistancesFromPoint(
             clusters: Array<Highcharts.KmeansClusterObject>,
@@ -123,7 +124,9 @@ declare module '../Core/Series/SeriesLike' {
         /** @requires modules/marker-clusters */
         getPointsState(
             clusteredData: Highcharts.MarkerClusterInfoObject,
-            oldMarkerClusterInfo: (Highcharts.MarkerClusterInfoObject|undefined),
+            oldMarkerClusterInfo:
+                | Highcharts.MarkerClusterInfoObject
+                | undefined,
             dataLength: number
         ): Record<string, Highcharts.MarkerClusterPointsState>;
         /** @requires modules/marker-clusters */
@@ -138,7 +141,7 @@ declare module '../Core/Series/SeriesLike' {
         getClusteredData(
             groupedData: Record<string, Highcharts.MarkerClusterSplitDataArray>,
             options: Highcharts.MarkerClusterOptions
-        ): (Highcharts.MarkerClusterInfoObject|boolean);
+        ): Highcharts.MarkerClusterInfoObject | boolean;
         /** @requires modules/marker-clusters */
         destroyClusteredData(): void;
         hideClusteredData(): void;
@@ -157,14 +160,15 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type MarkerClusterAlgorithmValue = (
-            'grid'|'kmeans'|'optimizedKmeans'
-        );
+        type MarkerClusterAlgorithmValue =
+            | 'grid'
+            | 'kmeans'
+            | 'optimizedKmeans';
         interface MarkerClusterLayoutAlgorithmOptions {
-            type?: (MarkerClusterAlgorithmValue | Function);
-            gridSize?: (number | string);
+            type?: MarkerClusterAlgorithmValue | Function;
+            gridSize?: number | string;
             processedGridSize?: number;
-            distance?: (number | string);
+            distance?: number | string;
             processedDistance?: number;
             iterations?: number;
             kmeansThreshold?: number;
@@ -187,7 +191,7 @@ declare global {
             allowOverlap?: boolean;
             minimumClusterSize?: number;
             drillToCluster?: boolean;
-            animation?: (boolean|Partial<AnimationOptions>);
+            animation?: boolean | Partial<AnimationOptions>;
             layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
             marker?: PointMarkerOptions;
             dataLabels?: DataLabelOptions;
@@ -200,7 +204,7 @@ declare global {
             x: number;
             y: number;
             parentStateId?: string;
-            options?: (PointOptions|PointShortOptions);
+            options?: PointOptions | PointShortOptions;
         }
         interface MarkerClusterSplitDataArray
             extends Array<MarkerClusterSplitDataObject> {
@@ -247,7 +251,7 @@ declare global {
         }
         interface GroupMapOptionsObject extends SeriesOptions {
             formatPrefix?: string;
-            userOptions?: (PointOptions|PointShortOptions);
+            userOptions?: PointOptions | PointShortOptions;
             x?: number;
             y?: number;
         }
@@ -259,7 +263,7 @@ declare global {
             y: number;
             id: string;
             parentsId: Array<string>;
-            point: (Point|undefined);
+            point: Point | undefined;
         }
         interface MarkerClusterPointsStateObject {
             oldState?: Record<string, MarkerClusterPointsState>;
@@ -296,7 +300,7 @@ declare global {
  *          Event arguments.
  */
 
-''; // detach doclets from following code
+(''); // detach doclets from following code
 
 /* eslint-disable no-invalid-this */
 
@@ -625,7 +629,8 @@ const clusterDefaultOptions = {
              *
              * @apioption tooltip.clusterFormat
              */
-            clusterFormat: '<span>Clustered points: ' +
+            clusterFormat:
+                '<span>Clustered points: ' +
                 '{point.clusterPointsAmount}</span><br/>'
         }
     }
@@ -662,9 +667,7 @@ const valuesToPixels = (
 };
 
 /* eslint-disable require-jsdoc */
-function getClusterPosition(
-    points: Array<PositionObject>
-): PositionObject {
+function getClusterPosition(points: Array<PositionObject>): PositionObject {
     let pointsLen = points.length,
         sumX = 0,
         sumY = 0,
@@ -686,8 +689,9 @@ function getClusterPosition(
 function getDataState(
     clusteredData: Highcharts.MarkerClusterInfoObject,
     stateDataLen: number
-): Array<Highcharts.MarkerClusterSplitDataObject|undefined> {
-    const state: Array<Highcharts.MarkerClusterSplitDataObject|undefined> = [];
+): Array<Highcharts.MarkerClusterSplitDataObject | undefined> {
+    const state: Array<Highcharts.MarkerClusterSplitDataObject | undefined> =
+        [];
     state.length = stateDataLen;
 
     clusteredData.clusters.forEach(function (
@@ -712,21 +716,22 @@ function getDataState(
 function fadeInElement(
     elem: SVGElement,
     opacity?: number,
-    animation?: (boolean|Partial<AnimationOptions>)
+    animation?: boolean | Partial<AnimationOptions>
 ): void {
-    elem
-        .attr({
-            opacity: opacity
-        })
-        .animate({
+    elem.attr({
+        opacity: opacity
+    }).animate(
+        {
             opacity: 1
-        }, animation);
+        },
+        animation
+    );
 }
 
 function fadeInStatePoint(
     stateObj: Highcharts.MarkerClusterPointsState,
     opacity?: number,
-    animation?: (boolean|Partial<AnimationOptions>),
+    animation?: boolean | Partial<AnimationOptions>,
     fadeinGraphic?: boolean,
     fadeinDataLabel?: boolean
 ): void {
@@ -760,8 +765,7 @@ function hideStatePoint(
 }
 
 function destroyOldPoints(
-    oldState:
-    (Record<string, Highcharts.MarkerClusterPointsState>|undefined)
+    oldState: Record<string, Highcharts.MarkerClusterPointsState> | undefined
 ): void {
     if (oldState) {
         objectEach(oldState, function (state): void {
@@ -775,7 +779,7 @@ function destroyOldPoints(
 function fadeInNewPointAndDestoryOld(
     newPointObj: Highcharts.MarkerClusterPointsState,
     oldPoints: Array<Highcharts.MarkerClusterPointsState>,
-    animation: (boolean|Partial<AnimationOptions>),
+    animation: boolean | Partial<AnimationOptions>,
     opacity: number
 ): void {
     // Fade in new point.
@@ -820,7 +824,6 @@ function getStateId(): string {
 //             }
 //         });
 //     }
-
 
 //     series.debugGridLines = [];
 //     scaledGridSize = series.getScaledGridSize(options);
@@ -995,25 +998,31 @@ Scatter.prototype.animateClusterPoint = function (
                 newPointBBox = newPointObj.point.graphic.getBBox();
 
                 // Marker image does not have the offset (#14342).
-                offset = newPointObj.point.graphic && newPointObj.point.graphic.isImg ?
-                    0 : newPointBBox.width / 2;
+                offset =
+                    newPointObj.point.graphic && newPointObj.point.graphic.isImg
+                        ? 0
+                        : newPointBBox.width / 2;
 
                 newPointObj.point.graphic.attr({
                     x: oldPointObj.point.plotX - offset,
                     y: oldPointObj.point.plotY - offset
                 });
 
-                newPointObj.point.graphic.animate({
-                    x: newX - (newPointObj.point.graphic.radius || 0),
-                    y: newY - (newPointObj.point.graphic.radius || 0)
-                }, animation, function (): void {
-                    isCbHandled = true;
+                newPointObj.point.graphic.animate(
+                    {
+                        x: newX - (newPointObj.point.graphic.radius || 0),
+                        y: newY - (newPointObj.point.graphic.radius || 0)
+                    },
+                    animation,
+                    function (): void {
+                        isCbHandled = true;
 
-                    // Destroy old point.
-                    if (oldPointObj.point && oldPointObj.point.destroy) {
-                        oldPointObj.point.destroy();
+                        // Destroy old point.
+                        if (oldPointObj.point && oldPointObj.point.destroy) {
+                            oldPointObj.point.destroy();
+                        }
                     }
-                });
+                );
 
                 // Data label animation.
                 if (
@@ -1027,10 +1036,13 @@ Scatter.prototype.animateClusterPoint = function (
                         y: oldPointObj.point.dataLabel.alignAttr.y
                     });
 
-                    newPointObj.point.dataLabel.animate({
-                        x: newPointObj.point.dataLabel.alignAttr.x,
-                        y: newPointObj.point.dataLabel.alignAttr.y
-                    }, animation);
+                    newPointObj.point.dataLabel.animate(
+                        {
+                            x: newPointObj.point.dataLabel.alignAttr.x,
+                            y: newPointObj.point.dataLabel.alignAttr.y
+                        },
+                        animation
+                    );
                 }
             }
         } else if (newPointObj.parentsId.length === 0) {
@@ -1054,22 +1066,30 @@ Scatter.prototype.animateClusterPoint = function (
                     oldPointObj = oldState[elem];
                     oldPoints.push(oldPointObj);
 
-                    if (
-                        oldPointObj.point &&
-                        oldPointObj.point.graphic
-                    ) {
+                    if (oldPointObj.point && oldPointObj.point.graphic) {
                         isOldPointGrahic = true;
                         oldPointObj.point.graphic.show();
-                        oldPointObj.point.graphic.animate({
-                            x: newX - (oldPointObj.point.graphic.radius || 0),
-                            y: newY - (oldPointObj.point.graphic.radius || 0),
-                            opacity: 0.4
-                        }, animation, function (): void {
-                            isCbHandled = true;
-                            fadeInNewPointAndDestoryOld(
-                                newPointObj, oldPoints, animation, 0.7
-                            );
-                        });
+                        oldPointObj.point.graphic.animate(
+                            {
+                                x:
+                                    newX -
+                                    (oldPointObj.point.graphic.radius || 0),
+                                y:
+                                    newY -
+                                    (oldPointObj.point.graphic.radius || 0),
+                                opacity: 0.4
+                            },
+                            animation,
+                            function (): void {
+                                isCbHandled = true;
+                                fadeInNewPointAndDestoryOld(
+                                    newPointObj,
+                                    oldPoints,
+                                    animation,
+                                    0.7
+                                );
+                            }
+                        );
 
                         if (
                             oldPointObj.point.dataLabel &&
@@ -1079,11 +1099,14 @@ Scatter.prototype.animateClusterPoint = function (
                             newPointObj.point.dataLabel.alignAttr
                         ) {
                             oldPointObj.point.dataLabel.show();
-                            oldPointObj.point.dataLabel.animate({
-                                x: newPointObj.point.dataLabel.alignAttr.x,
-                                y: newPointObj.point.dataLabel.alignAttr.y,
-                                opacity: 0.4
-                            }, animation);
+                            oldPointObj.point.dataLabel.animate(
+                                {
+                                    x: newPointObj.point.dataLabel.alignAttr.x,
+                                    y: newPointObj.point.dataLabel.alignAttr.y,
+                                    opacity: 0.4
+                                },
+                                animation
+                            );
                         }
                     }
                 }
@@ -1093,7 +1116,10 @@ Scatter.prototype.animateClusterPoint = function (
             syncTimeout(function (): void {
                 if (!isCbHandled) {
                     fadeInNewPointAndDestoryOld(
-                        newPointObj, oldPoints, animation, 0.85
+                        newPointObj,
+                        oldPoints,
+                        animation,
+                        0.85
                     );
                 }
             }, animDuration);
@@ -1101,7 +1127,10 @@ Scatter.prototype.animateClusterPoint = function (
             if (!isOldPointGrahic) {
                 syncTimeout(function (): void {
                     fadeInNewPointAndDestoryOld(
-                        newPointObj, oldPoints, animation, 0.1
+                        newPointObj,
+                        oldPoints,
+                        animation,
+                        0.1
                     );
                 }, animDuration / 2);
             }
@@ -1118,15 +1147,17 @@ Scatter.prototype.getGridOffset = function (): Record<string, number> {
         plotTop = 0;
 
     if (xAxis && series.dataMinX && series.dataMaxX) {
-        plotLeft = xAxis.reversed ?
-            xAxis.toPixels(series.dataMaxX) : xAxis.toPixels(series.dataMinX);
+        plotLeft = xAxis.reversed
+            ? xAxis.toPixels(series.dataMaxX)
+            : xAxis.toPixels(series.dataMinX);
     } else {
         plotLeft = chart.plotLeft;
     }
 
     if (yAxis && series.dataMinY && series.dataMaxY) {
-        plotTop = yAxis.reversed ?
-            yAxis.toPixels(series.dataMinY) : yAxis.toPixels(series.dataMaxY);
+        plotTop = yAxis.reversed
+            ? yAxis.toPixels(series.dataMinY)
+            : yAxis.toPixels(series.dataMaxY);
     } else {
         plotTop = chart.plotTop;
     }
@@ -1140,7 +1171,8 @@ Scatter.prototype.getScaledGridSize = function (
     const series = this,
         xAxis = series.xAxis,
         mapView = this.chart.mapView,
-        processedGridSize = options.processedGridSize ||
+        processedGridSize =
+            options.processedGridSize ||
             clusterDefaultOptions.layoutAlgorithm.gridSize;
 
     let search = true,
@@ -1157,9 +1189,9 @@ Scatter.prototype.getScaledGridSize = function (
         }
     }
 
-    const gridSize = mapView ?
-        series.gridValueSize * mapView.getScale() :
-        xAxis.toPixels(series.gridValueSize) - xAxis.toPixels(0);
+    const gridSize = mapView
+        ? series.gridValueSize * mapView.getScale()
+        : xAxis.toPixels(series.gridValueSize) - xAxis.toPixels(0);
     const scale = +(processedGridSize / gridSize).toFixed(14);
 
     // Find the level and its divider.
@@ -1168,7 +1200,7 @@ Scatter.prototype.getScaledGridSize = function (
 
         if (scale > 0.75 && scale < 1.25) {
             search = false;
-        } else if (scale >= (1 / level) && scale < 2 * (1 / level)) {
+        } else if (scale >= 1 / level && scale < 2 * (1 / level)) {
             search = false;
             divider = level;
         } else if (scale <= level && scale > level / 2) {
@@ -1179,7 +1211,7 @@ Scatter.prototype.getScaledGridSize = function (
         k++;
     }
 
-    return (processedGridSize / divider) / scale;
+    return processedGridSize / divider / scale;
 };
 
 Scatter.prototype.getRealExtremes = function (): Record<string, number> {
@@ -1213,64 +1245,63 @@ Scatter.prototype.onDrillToCluster = function (
 ): void {
     const point = event.point || event.target;
 
-    point.firePointEvent('drillToCluster', event, function (
-        this: Point,
-        e: PointClickEvent
-    ): void {
-        const point = e.point || e.target,
-            series = point.series,
-            xAxis = point.series.xAxis,
-            yAxis = point.series.yAxis,
-            chart = point.series.chart,
-            mapView = chart.mapView,
-            clusterOptions = series.options.cluster,
-            drillToCluster = (clusterOptions || {}).drillToCluster;
+    point.firePointEvent(
+        'drillToCluster',
+        event,
+        function (this: Point, e: PointClickEvent): void {
+            const point = e.point || e.target,
+                series = point.series,
+                xAxis = point.series.xAxis,
+                yAxis = point.series.yAxis,
+                chart = point.series.chart,
+                mapView = chart.mapView,
+                clusterOptions = series.options.cluster,
+                drillToCluster = (clusterOptions || {}).drillToCluster;
 
-        if (drillToCluster && point.clusteredData) {
-            const sortedDataX = point.clusteredData
-                    .map((data): number => data.x)
-                    .sort((a: number, b: number): number => a - b),
+            if (drillToCluster && point.clusteredData) {
+                const sortedDataX = point.clusteredData
+                        .map((data): number => data.x)
+                        .sort((a: number, b: number): number => a - b),
+                    sortedDataY = point.clusteredData
+                        .map((data): number => data.y)
+                        .sort((a: number, b: number): number => a - b),
+                    minX = sortedDataX[0],
+                    maxX = sortedDataX[sortedDataX.length - 1],
+                    minY = sortedDataY[0],
+                    maxY = sortedDataY[sortedDataY.length - 1],
+                    offsetX = Math.abs((maxX - minX) * 0.1),
+                    offsetY = Math.abs((maxY - minY) * 0.1),
+                    x1 = Math.min(minX, maxX) - offsetX,
+                    x2 = Math.max(minX, maxX) + offsetX,
+                    y1 = Math.min(minY, maxY) - offsetY,
+                    y2 = Math.max(minY, maxY) + offsetY;
 
-                sortedDataY = point.clusteredData
-                    .map((data): number => data.y)
-                    .sort((a: number, b: number): number => a - b),
-
-                minX = sortedDataX[0],
-                maxX = sortedDataX[sortedDataX.length - 1],
-                minY = sortedDataY[0],
-                maxY = sortedDataY[sortedDataY.length - 1],
-
-                offsetX = Math.abs((maxX - minX) * 0.1),
-                offsetY = Math.abs((maxY - minY) * 0.1),
-
-                x1 = Math.min(minX, maxX) - offsetX,
-                x2 = Math.max(minX, maxX) + offsetX,
-                y1 = Math.min(minY, maxY) - offsetY,
-                y2 = Math.max(minY, maxY) + offsetY;
-
-            if (mapView) {
-                mapView.fitToBounds({ x1, x2, y1, y2 });
-
-            } else if (xAxis && yAxis) {
-
-                chart.pointer.zoomX = true;
-                chart.pointer.zoomY = true;
-                chart.zoom({
-                    originalEvent: e,
-                    xAxis: [{
-                        axis: xAxis,
-                        min: x1,
-                        max: x2
-                    }],
-                    yAxis: [{
-                        axis: yAxis,
-                        min: y1,
-                        max: y2
-                    }]
-                });
+                if (mapView) {
+                    mapView.fitToBounds({ x1, x2, y1, y2 });
+                } else if (xAxis && yAxis) {
+                    chart.pointer.zoomX = true;
+                    chart.pointer.zoomY = true;
+                    chart.zoom({
+                        originalEvent: e,
+                        xAxis: [
+                            {
+                                axis: xAxis,
+                                min: x1,
+                                max: x2
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                axis: yAxis,
+                                min: y1,
+                                max: y2
+                            }
+                        ]
+                    });
+                }
             }
         }
-    });
+    );
 };
 
 Scatter.prototype.getClusterDistancesFromPoint = function (
@@ -1287,27 +1318,25 @@ Scatter.prototype.getClusterDistancesFromPoint = function (
                 y: clusters[clusterIndex].posY
             }),
             distance = Math.sqrt(
-                Math.pow(p1.x - p2.x, 2) +
-                Math.pow(p1.y - p2.y, 2)
+                Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)
             );
 
         pointClusterDistance.push({ clusterIndex, distance });
     }
 
-    return pointClusterDistance.sort(
-        (a, b): number => a.distance - b.distance
-    );
+    return pointClusterDistance.sort((a, b): number => a.distance - b.distance);
 };
 
 // Point state used when animation is enabled to compare
 // and bind old points with new ones.
 Scatter.prototype.getPointsState = function (
     clusteredData: Highcharts.MarkerClusterInfoObject,
-    oldMarkerClusterInfo: (Highcharts.MarkerClusterInfoObject|undefined),
+    oldMarkerClusterInfo: Highcharts.MarkerClusterInfoObject | undefined,
     dataLength: number
 ): Record<string, Highcharts.MarkerClusterPointsState> {
-    let oldDataStateArr = oldMarkerClusterInfo ?
-            getDataState(oldMarkerClusterInfo, dataLength) : [],
+    let oldDataStateArr = oldMarkerClusterInfo
+            ? getDataState(oldMarkerClusterInfo, dataLength)
+            : [],
         newDataStateArr = getDataState(clusteredData, dataLength),
         state: Record<string, Highcharts.MarkerClusterPointsState> = {},
         newState,
@@ -1354,7 +1383,8 @@ Scatter.prototype.getPointsState = function (
             oldState.parentStateId &&
             state[newState.parentStateId] &&
             state[newState.parentStateId].parentsId.indexOf(
-                oldState.parentStateId) === -1
+                oldState.parentStateId
+            ) === -1
         ) {
             state[newState.parentStateId].parentsId.push(
                 oldState.parentStateId
@@ -1418,7 +1448,8 @@ Scatter.prototype.markerClusterAlgorithms = {
             clusters: Array<Highcharts.KmeansClusterObject> = [],
             noise = [],
             group: Record<string, Highcharts.MarkerClusterSplitDataArray> = {},
-            pointMaxDistance = options.processedDistance ||
+            pointMaxDistance =
+                options.processedDistance ||
                 clusterDefaultOptions.layoutAlgorithm.distance,
             iterations = options.iterations,
             // Max pixel difference beetwen new and old cluster position.
@@ -1429,15 +1460,23 @@ Scatter.prototype.markerClusterAlgorithms = {
             pointY = 0,
             tempPos,
             pointClusterDistance: Array<Record<string, number>> = [],
-            groupedData, key, i, j;
+            groupedData,
+            key,
+            i,
+            j;
 
         options.processedGridSize = options.processedDistance;
 
         // Use grid method to get groupedData object.
-        groupedData = series.markerClusterAlgorithms ?
-            series.markerClusterAlgorithms.grid.call(
-                series, dataX, dataY, dataIndexes, options
-            ) : {};
+        groupedData = series.markerClusterAlgorithms
+            ? series.markerClusterAlgorithms.grid.call(
+                  series,
+                  dataX,
+                  dataY,
+                  dataIndexes,
+                  options
+              )
+            : {};
 
         // Find clusters amount and its start positions
         // based on grid grouped data.
@@ -1505,12 +1544,14 @@ Scatter.prototype.markerClusterAlgorithms = {
 
                     if (pointClusterDistance[1].distance < pointMaxDistance) {
                         // Add point to the next closest cluster.
-                        clusters[pointClusterDistance[1].clusterIndex].points
-                            .push(clusters[j].points[0]);
+                        clusters[
+                            pointClusterDistance[1].clusterIndex
+                        ].points.push(clusters[j].points[0]);
 
                         // Clear points array.
-                        clusters[pointClusterDistance[0].clusterIndex]
-                            .points.length = 0;
+                        clusters[
+                            pointClusterDistance[0].clusterIndex
+                        ].points.length = 0;
                     }
                 }
             }
@@ -1568,33 +1609,37 @@ Scatter.prototype.markerClusterAlgorithms = {
         let series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            pointMaxDistance = options.processedDistance ||
+            pointMaxDistance =
+                options.processedDistance ||
                 clusterDefaultOptions.layoutAlgorithm.gridSize,
-            group: (Record<string, Highcharts.MarkerClusterSplitDataArray>) = {},
+            group: Record<string, Highcharts.MarkerClusterSplitDataArray> = {},
             extremes = series.getRealExtremes(),
-            clusterMarkerOptions =
-                (series.options.cluster || {}).marker,
-            offset, distance, radius;
+            clusterMarkerOptions = (series.options.cluster || {}).marker,
+            offset,
+            distance,
+            radius;
 
-        if (!series.markerClusterInfo || (
-            series.initMaxX && series.initMaxX < extremes.maxX ||
-            series.initMinX && series.initMinX > extremes.minX ||
-            series.initMaxY && series.initMaxY < extremes.maxY ||
-            series.initMinY && series.initMinY > extremes.minY
-        )) {
+        if (
+            !series.markerClusterInfo ||
+            (series.initMaxX && series.initMaxX < extremes.maxX) ||
+            (series.initMinX && series.initMinX > extremes.minX) ||
+            (series.initMaxY && series.initMaxY < extremes.maxY) ||
+            (series.initMinY && series.initMinY > extremes.minY)
+        ) {
             series.initMaxX = extremes.maxX;
             series.initMinX = extremes.minX;
             series.initMaxY = extremes.maxY;
             series.initMinY = extremes.minY;
 
-            group = series.markerClusterAlgorithms ?
-                series.markerClusterAlgorithms.kmeans.call(
-                    series,
-                    processedXData,
-                    processedYData,
-                    dataIndexes,
-                    options
-                ) : {};
+            group = series.markerClusterAlgorithms
+                ? series.markerClusterAlgorithms.kmeans.call(
+                      series,
+                      processedXData,
+                      processedYData,
+                      dataIndexes,
+                      options
+                  )
+                : {};
 
             series.baseClusters = null;
         } else {
@@ -1610,12 +1655,11 @@ Scatter.prototype.markerClusterAlgorithms = {
                 cluster.pointsInside = [];
 
                 cluster.data.forEach(function (dataPoint): void {
-
                     const dataPointPx = valuesToPixels(series, dataPoint),
                         clusterPx = valuesToPixels(series, cluster);
                     distance = Math.sqrt(
                         Math.pow(dataPointPx.x - clusterPx.x, 2) +
-                        Math.pow(dataPointPx.y - clusterPx.y, 2)
+                            Math.pow(dataPointPx.y - clusterPx.y, 2)
                     );
 
                     if (
@@ -1633,8 +1677,10 @@ Scatter.prototype.markerClusterAlgorithms = {
                         radius = clusterDefaultOptions.marker.radius;
                     }
 
-                    offset = pointMaxDistance - radius >= 0 ?
-                        pointMaxDistance - radius : radius;
+                    offset =
+                        pointMaxDistance - radius >= 0
+                            ? pointMaxDistance - radius
+                            : radius;
 
                     if (
                         distance > radius + offset &&
@@ -1681,8 +1727,7 @@ Scatter.prototype.preventClusterCollisions = function (
         gridsToCheckCollision = [],
         pointsLen = 0,
         radius = 0,
-        clusterMarkerOptions =
-            (series.options.cluster || {}).marker,
+        clusterMarkerOptions = (series.options.cluster || {}).marker,
         zoneOptions = (series.options.cluster || {}).zones,
         gridOffset = series.getGridOffset(),
         nextXPixel,
@@ -1707,12 +1752,8 @@ Scatter.prototype.preventClusterCollisions = function (
         signX = i % 2 ? -1 : 1;
         signY = i < 3 ? -1 : 1;
 
-        cornerGridX = Math.floor(
-            (xPixel + signX * clusterRadius) / gridSize
-        );
-        cornerGridY = Math.floor(
-            (yPixel + signY * clusterRadius) / gridSize
-        );
+        cornerGridX = Math.floor((xPixel + signX * clusterRadius) / gridSize);
+        cornerGridY = Math.floor((yPixel + signY * clusterRadius) / gridSize);
 
         keys = [
             cornerGridY + '-' + cornerGridX,
@@ -1734,9 +1775,7 @@ Scatter.prototype.preventClusterCollisions = function (
         if (groupedData[item]) {
             // Cluster or noise position is already computed.
             if (!groupedData[item].posX) {
-                nextClusterPos = getClusterPosition(
-                    groupedData[item]
-                );
+                nextClusterPos = getClusterPosition(groupedData[item]);
 
                 groupedData[item].posX = nextClusterPos.x;
                 groupedData[item].posY = nextClusterPos.y;
@@ -1787,20 +1826,18 @@ Scatter.prototype.preventClusterCollisions = function (
             maxDist = clusterRadius + radius;
             radius = 0;
 
-            if (
-                itemX !== gridX &&
-                Math.abs(xPixel - nextXPixel) < maxDist
-            ) {
-                xPixel = itemX - gridX < 0 ? gridXPx + clusterRadius :
-                    gridXPx + gridSize - clusterRadius;
+            if (itemX !== gridX && Math.abs(xPixel - nextXPixel) < maxDist) {
+                xPixel =
+                    itemX - gridX < 0
+                        ? gridXPx + clusterRadius
+                        : gridXPx + gridSize - clusterRadius;
             }
 
-            if (
-                itemY !== gridY &&
-                Math.abs(yPixel - nextYPixel) < maxDist
-            ) {
-                yPixel = itemY - gridY < 0 ? gridYPx + clusterRadius :
-                    gridYPx + gridSize - clusterRadius;
+            if (itemY !== gridY && Math.abs(yPixel - nextYPixel) < maxDist) {
+                yPixel =
+                    itemY - gridY < 0
+                        ? gridYPx + clusterRadius
+                        : gridYPx + gridSize - clusterRadius;
             }
         }
     });
@@ -1827,23 +1864,24 @@ Scatter.prototype.isValidGroupedDataObject = function (
         return false;
     }
 
-    objectEach(groupedData, function (
-        elem: Highcharts.MarkerClusterSplitDataArray
-    ): void {
-        result = true;
+    objectEach(
+        groupedData,
+        function (elem: Highcharts.MarkerClusterSplitDataArray): void {
+            result = true;
 
-        if (!isArray(elem) || !elem.length) {
-            result = false;
-            return;
-        }
-
-        for (i = 0; i < elem.length; i++) {
-            if (!isObject(elem[i]) || (!elem[i].x || !elem[i].y)) {
+            if (!isArray(elem) || !elem.length) {
                 result = false;
                 return;
             }
+
+            for (i = 0; i < elem.length; i++) {
+                if (!isObject(elem[i]) || !elem[i].x || !elem[i].y) {
+                    result = false;
+                    return;
+                }
+            }
         }
-    });
+    );
 
     return result;
 };
@@ -1851,7 +1889,7 @@ Scatter.prototype.isValidGroupedDataObject = function (
 Scatter.prototype.getClusteredData = function (
     groupedData: Record<string, Highcharts.MarkerClusterSplitDataArray>,
     options: Highcharts.MarkerClusterOptions
-): (Highcharts.MarkerClusterInfoObject | boolean) {
+): Highcharts.MarkerClusterInfoObject | boolean {
     let series = this,
         groupedXData = [],
         groupedYData = [],
@@ -1859,7 +1897,6 @@ Scatter.prototype.getClusteredData = function (
         noise = [], // Container for points not belonging to any cluster.
         groupMap: Array<Highcharts.GroupMapObject> = [],
         index = 0,
-
         // Prevent minimumClusterSize lower than 2.
         minimumClusterSize = Math.max(2, options.minimumClusterSize || 2),
         stateId,
@@ -1884,7 +1921,7 @@ Scatter.prototype.getClusteredData = function (
     ) {
         error(
             'Highcharts marker-clusters module: ' +
-            'The custom algorithm result is not valid!',
+                'The custom algorithm result is not valid!',
             false,
             series.chart
         );
@@ -1894,7 +1931,6 @@ Scatter.prototype.getClusteredData = function (
 
     for (k in groupedData) {
         if (groupedData[k].length >= minimumClusterSize) {
-
             points = groupedData[k];
             stateId = getStateId();
             pointsLen = points.length;
@@ -1927,14 +1963,13 @@ Scatter.prototype.getClusteredData = function (
                     y: clusterTempPos.y,
                     key: k,
                     groupedData: groupedData,
-                    gridSize: series.getScaledGridSize(
-                        options.layoutAlgorithm
-                    ),
+                    gridSize: series.getScaledGridSize(options.layoutAlgorithm),
                     defaultRadius: marker.radius || 3 + (marker.lineWidth || 0),
-                    clusterRadius: (zoneOptions && zoneOptions.radius) ?
-                        zoneOptions.radius :
-                        (options.marker || {}).radius ||
-                            clusterDefaultOptions.marker.radius
+                    clusterRadius:
+                        zoneOptions && zoneOptions.radius
+                            ? zoneOptions.radius
+                            : (options.marker || {}).radius ||
+                              clusterDefaultOptions.marker.radius
                 });
             } else {
                 clusterPos = {
@@ -1965,9 +2000,13 @@ Scatter.prototype.getClusteredData = function (
                 options: {
                     formatPrefix: 'cluster',
                     dataLabels: options.dataLabels,
-                    marker: merge(options.marker, {
-                        states: options.states
-                    }, zoneOptions || {})
+                    marker: merge(
+                        options.marker,
+                        {
+                            states: options.states
+                        },
+                        zoneOptions || {}
+                    )
                 }
             });
 
@@ -1989,8 +2028,9 @@ Scatter.prototype.getClusteredData = function (
                 point = groupedData[k][i];
                 stateId = getStateId();
                 pointOptions = null;
-                pointUserOptions =
-                    ((series.options || {}).data || [])[point.dataIndex];
+                pointUserOptions = ((series.options || {}).data || [])[
+                    point.dataIndex
+                ];
                 groupedXData.push(point.x);
                 groupedYData.push(point.y);
 
@@ -2010,10 +2050,10 @@ Scatter.prototype.getClusteredData = function (
                     typeof pointUserOptions === 'object' &&
                     !isArray(pointUserOptions)
                 ) {
-                    pointOptions = merge(
-                        pointUserOptions,
-                        { x: point.x, y: point.y }
-                    );
+                    pointOptions = merge(pointUserOptions, {
+                        x: point.x,
+                        y: point.y
+                    });
                 } else {
                     pointOptions = {
                         userOptions: pointUserOptions,
@@ -2037,15 +2077,12 @@ Scatter.prototype.getClusteredData = function (
     };
 };
 
-
 // Destroy clustered data points.
 Scatter.prototype.destroyClusteredData = function (): void {
     const clusteredSeriesData = this.markerClusterSeriesData;
 
     // Clear previous groups.
-    (clusteredSeriesData || []).forEach(function (
-        point: (Point | null)
-    ): void {
+    (clusteredSeriesData || []).forEach(function (point: Point | null): void {
         if (point && point.destroy) {
             point.destroy();
         }
@@ -2060,18 +2097,13 @@ Scatter.prototype.hideClusteredData = function (): void {
         clusteredSeriesData = this.markerClusterSeriesData,
         oldState =
             ((series.markerClusterInfo || {}).pointsState || {}).oldState || {},
-        oldPointsId = oldPointsStateId.map((elem): string =>
-            (oldState[elem].point || {}).id || ''
+        oldPointsId = oldPointsStateId.map(
+            (elem): string => (oldState[elem].point || {}).id || ''
         );
 
-    (clusteredSeriesData || []).forEach(function (
-        point: (Point | null)
-    ): void {
+    (clusteredSeriesData || []).forEach(function (point: Point | null): void {
         // If an old point is used in animation hide it, otherwise destroy.
-        if (
-            point &&
-            oldPointsId.indexOf(point.id) !== -1
-        ) {
+        if (point && oldPointsId.indexOf(point.id) !== -1) {
             if (point.graphic) {
                 point.graphic.hide();
             }
@@ -2142,7 +2174,8 @@ Scatter.prototype.generatePoints = function (): void {
             chart.plotWidth
         );
 
-        kmeansThreshold = layoutAlgOptions.kmeansThreshold ||
+        kmeansThreshold =
+            layoutAlgOptions.kmeansThreshold ||
             clusterDefaultOptions.layoutAlgorithm.kmeansThreshold;
 
         // Offset to prevent cluster size changes.
@@ -2152,7 +2185,6 @@ Scatter.prototype.generatePoints = function (): void {
 
         cropDataOffsetX = Math.abs(p1.x - p2.x);
         cropDataOffsetY = Math.abs(p1.y - p2.y);
-
 
         // Get only visible data.
         for (i = 0; i < series.xData.length; i++) {
@@ -2173,10 +2205,12 @@ Scatter.prototype.generatePoints = function (): void {
                     seriesMaxX = Math.max(series.xData[i], seriesMaxX);
                     seriesMinX = Math.min(series.xData[i], seriesMinX);
                     seriesMaxY = Math.max(
-                        (series.yData[i] as any) || seriesMaxY, seriesMaxY
+                        (series.yData[i] as any) || seriesMaxY,
+                        seriesMaxY
                     );
                     seriesMinY = Math.min(
-                        (series.yData[i] as any) || seriesMinY, seriesMinY
+                        (series.yData[i] as any) || seriesMinY,
+                        seriesMinY
                     );
                 }
             }
@@ -2184,12 +2218,12 @@ Scatter.prototype.generatePoints = function (): void {
             // Crop data to visible ones with appropriate offset to prevent
             // cluster size changes on the edge of the plot area.
             if (
-                series.xData[i] >= (realExtremes.minX - cropDataOffsetX) &&
-                series.xData[i] <= (realExtremes.maxX + cropDataOffsetX) &&
+                series.xData[i] >= realExtremes.minX - cropDataOffsetX &&
+                series.xData[i] <= realExtremes.maxX + cropDataOffsetX &&
                 (series.yData[i] || realExtremes.minY) >=
-                    (realExtremes.minY - cropDataOffsetY) &&
+                    realExtremes.minY - cropDataOffsetY &&
                 (series.yData[i] || realExtremes.maxY) <=
-                    (realExtremes.maxY + cropDataOffsetY)
+                    realExtremes.maxY + cropDataOffsetY
             ) {
                 visibleXData.push(series.xData[i]);
                 visibleYData.push(series.yData[i]);
@@ -2199,8 +2233,10 @@ Scatter.prototype.generatePoints = function (): void {
 
         // Save data max values.
         if (
-            defined(seriesMaxX) && defined(seriesMinX) &&
-            isNumber(seriesMaxY) && isNumber(seriesMinY)
+            defined(seriesMaxX) &&
+            defined(seriesMinX) &&
+            isNumber(seriesMaxY) &&
+            isNumber(seriesMinY)
         ) {
             series.dataMaxX = seriesMaxX;
             series.dataMinX = seriesMinX;
@@ -2214,9 +2250,10 @@ Scatter.prototype.generatePoints = function (): void {
             if (type && series.markerClusterAlgorithms[type]) {
                 algorithm = series.markerClusterAlgorithms[type];
             } else {
-                algorithm = visibleXData.length < kmeansThreshold ?
-                    series.markerClusterAlgorithms.kmeans :
-                    series.markerClusterAlgorithms.grid;
+                algorithm =
+                    visibleXData.length < kmeansThreshold
+                        ? series.markerClusterAlgorithms.kmeans
+                        : series.markerClusterAlgorithms.grid;
             }
         } else {
             algorithm = function (): boolean {
@@ -2232,9 +2269,9 @@ Scatter.prototype.generatePoints = function (): void {
             layoutAlgOptions
         );
 
-        clusteredData = groupedData ? series.getClusteredData(
-            groupedData, clusterOptions
-        ) : groupedData;
+        clusteredData = groupedData
+            ? series.getClusteredData(groupedData, clusterOptions)
+            : groupedData;
 
         // When animation is enabled get old points state.
         if (
@@ -2289,14 +2326,13 @@ Scatter.prototype.generatePoints = function (): void {
             });
 
             // When animation is enabled save points state.
-            if (
-                clusterOptions.animation &&
-                series.markerClusterInfo
-            ) {
+            if (clusterOptions.animation && series.markerClusterInfo) {
                 series.markerClusterInfo.pointsState = {
                     oldState: oldPointsState,
                     newState: series.getPointsState(
-                        clusteredData, oldMarkerClusterInfo, oldDataLen
+                        clusteredData,
+                        oldMarkerClusterInfo,
+                        oldDataLen
                     )
                 };
             }
@@ -2309,8 +2345,9 @@ Scatter.prototype.generatePoints = function (): void {
                 this.hideClusteredData();
             }
 
-            this.markerClusterSeriesData =
-                this.hasGroupedData ? this.points : null;
+            this.markerClusterSeriesData = this.hasGroupedData
+                ? this.points
+                : null;
         }
     } else {
         baseGeneratePoints.apply(this);
@@ -2335,11 +2372,11 @@ addEvent(Chart, 'render', function (): void {
                 oldState &&
                 Object.keys(oldState).length
             ) {
-                series.markerClusterInfo.clusters.forEach(
-                    function (cluster): void {
-                        series.animateClusterPoint(cluster);
-                    }
-                );
+                series.markerClusterInfo.clusters.forEach(function (
+                    cluster
+                ): void {
+                    series.animateClusterPoint(cluster);
+                });
 
                 series.markerClusterInfo.noise.forEach(function (noise): void {
                     series.animateClusterPoint(noise);
@@ -2351,12 +2388,12 @@ addEvent(Chart, 'render', function (): void {
 
 // Override point prototype to throw a warning when trying to update
 // clustered point.
-addEvent(Point, 'update', function (): (boolean | void) {
+addEvent(Point, 'update', function (): boolean | void {
     if (this.dataGroup) {
         error(
             'Highcharts marker-clusters module: ' +
-            'Running `Point.update` when point belongs to clustered series' +
-            ' is not supported.',
+                'Running `Point.update` when point belongs to clustered series' +
+                ' is not supported.',
             false,
             this.series.chart
         );
@@ -2395,8 +2432,8 @@ addEvent(Series, 'afterRender', function (): void {
                 if (defined(cluster.clusterZone)) {
                     cluster.point.graphic.addClass(
                         cluster.clusterZoneClassName ||
-                        'highcharts-cluster-zone-' +
-                        cluster.clusterZone.zoneIndex
+                            'highcharts-cluster-zone-' +
+                                cluster.clusterZone.zoneIndex
                     );
                 }
             }
@@ -2404,14 +2441,11 @@ addEvent(Series, 'afterRender', function (): void {
     }
 });
 
-addEvent(Point, 'drillToCluster', function (
-    event: PointClickEvent
-): void {
+addEvent(Point, 'drillToCluster', function (event: PointClickEvent): void {
     const point = event.point || event.target,
         series = point.series,
         clusterOptions = series.options.cluster,
-        onDrillToCluster =
-            ((clusterOptions || {}).events || {}).drillToCluster;
+        onDrillToCluster = ((clusterOptions || {}).events || {}).drillToCluster;
 
     if (isFunction(onDrillToCluster)) {
         onDrillToCluster.call(this, event);

@@ -16,11 +16,7 @@
 
 import type PointOptions from '../Core/Series/PointOptions';
 import U from '../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    pick
-} = U;
+const { extend, isNumber, pick } = U;
 
 /**
  * Internal types
@@ -34,7 +30,7 @@ declare global {
         }
         interface TreeNode {
             children: Array<TreeNode>;
-            data: (TreePointOptionsObject|null);
+            data: TreePointOptionsObject | null;
             depth: number;
             descendants: number;
             height: number;
@@ -72,9 +68,7 @@ const getListOfParents = function (
     ids: Array<string>
 ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
     const listOfParents = data.reduce(function (
-            prev: (
-                Record<string, Array<Highcharts.TreePointOptionsObject>>
-            ),
+            prev: Record<string, Array<Highcharts.TreePointOptionsObject>>,
             curr: Highcharts.TreePointOptionsObject
         ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
             const parent = pick(curr.parent, '');
@@ -84,16 +78,15 @@ const getListOfParents = function (
             }
             prev[parent].push(curr);
             return prev;
-        }, {} as (
-            Record<string, Array<Highcharts.TreePointOptionsObject>>
-        )),
+        },
+        {} as Record<string, Array<Highcharts.TreePointOptionsObject>>),
         parents = Object.keys(listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent: string, list: number): void {
         const children = listOfParents[parent];
 
-        if ((parent !== '') && (ids.indexOf(parent) === -1)) {
+        if (parent !== '' && ids.indexOf(parent) === -1) {
             children.forEach(function (
                 child: Highcharts.TreePointOptionsObject
             ): void {
@@ -106,12 +99,10 @@ const getListOfParents = function (
 };
 const getNode = function (
     id: string,
-    parent: (string|null),
+    parent: string | null,
     level: number,
-    data: (Highcharts.TreePointOptionsObject|null),
-    mapOfIdToChildren: (
-        Record<string, Array<Highcharts.TreePointOptionsObject>>
-    ),
+    data: Highcharts.TreePointOptionsObject | null,
+    mapOfIdToChildren: Record<string, Array<Highcharts.TreePointOptionsObject>>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
     let descendants = 0,
@@ -125,8 +116,8 @@ const getNode = function (
             level: level,
             parent: parent
         } as Highcharts.TreeNode,
-        start: (number|undefined),
-        end: (number|undefined),
+        start: number | undefined,
+        end: number | undefined,
         children: Array<Highcharts.TreeNode>;
 
     // Allow custom logic before the children has been created.
@@ -136,38 +127,29 @@ const getNode = function (
 
     // Call getNode recursively on the children. Calulate the height of the
     // node, and the number of descendants.
-    children = ((mapOfIdToChildren[id] || [])).map(function (
+    children = (mapOfIdToChildren[id] || []).map(function (
         child: Highcharts.TreePointOptionsObject
     ): Highcharts.TreeNode {
         const node = getNode(
                 child.id as any,
                 id,
-                (level + 1),
+                level + 1,
                 child,
                 mapOfIdToChildren,
                 options
             ),
             childStart = child.start,
-            childEnd = (
-                child.milestone === true ?
-                    childStart :
-                    child.end
-            );
+            childEnd = child.milestone === true ? childStart : child.end;
 
         // Start should be the lowest child.start.
-        start = (
-            (!isNumber(start) || (childStart as any) < start) ?
-                childStart :
-                start
-        );
+        start =
+            !isNumber(start) || (childStart as any) < start
+                ? childStart
+                : start;
 
         // End should be the largest child.end.
         // If child is milestone, then use start as end.
-        end = (
-            (!isNumber(end) || (childEnd as any) > end) ?
-                childEnd :
-                end
-        );
+        end = !isNumber(end) || (childEnd as any) > end ? childEnd : end;
 
         descendants = descendants + 1 + node.descendants;
         height = Math.max(node.height + 1, height);
@@ -197,7 +179,9 @@ const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
-    const ids = data.map(function (d: Highcharts.TreePointOptionsObject): string {
+    const ids = data.map(function (
+            d: Highcharts.TreePointOptionsObject
+        ): string {
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);

@@ -17,10 +17,7 @@
  *
  * */
 
-import type {
-    DMIOptions,
-    DMIParamsOptions
-} from './DMIOptions';
+import type { DMIOptions, DMIParamsOptions } from './DMIOptions';
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -29,17 +26,10 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    isArray,
-    merge
-} = U;
+const { correctFloat, extend, isArray, merge } = U;
 
 /* *
  *
@@ -57,7 +47,6 @@ const {
  * @augments Highcharts.Series
  */
 class DMIIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -82,68 +71,72 @@ class DMIIndicator extends SMAIndicator {
      * @requires     stock/indicators/dmi
      * @optionparent plotOptions.dmi
      */
-    public static defaultOptions: DMIOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0 // unused index, do not inherit (#15362)
-        },
-        marker: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
-                '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
+    public static defaultOptions: DMIOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            /**
+             * @excluding index
+             */
+            params: {
+                index: void 0 // unused index, do not inherit (#15362)
+            },
+            marker: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+                    '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
+                    '<span style="color: {point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
                     ': {point.plusDI}<br/>' +
-                '<span style="color: {point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
+                    '<span style="color: {point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
                     ': {point.minusDI}<br/>'
-        },
-        /**
-         * +DI line options.
-         */
-        plusDILine: {
+            },
             /**
-             * Styles for the +DI line.
+             * +DI line options.
              */
-            styles: {
+            plusDILine: {
                 /**
-                 * Pixel width of the line.
+                 * Styles for the +DI line.
                  */
-                lineWidth: 1,
-                /**
-                 * Color of the line.
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: Palette.positiveColor // green-ish
-            }
-        },
-        /**
-         * -DI line options.
-         */
-        minusDILine: {
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line.
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: Palette.positiveColor // green-ish
+                }
+            },
             /**
-             * Styles for the -DI line.
+             * -DI line options.
              */
-            styles: {
+            minusDILine: {
                 /**
-                 * Pixel width of the line.
+                 * Styles for the -DI line.
                  */
-                lineWidth: 1,
-                /**
-                 * Color of the line.
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: Palette.negativeColor // red-ish
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line.
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: Palette.negativeColor // red-ish
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as DMIOptions);
+        } as DMIOptions
+    );
 
     /* *
      *
@@ -182,19 +175,13 @@ class DMIIndicator extends SMAIndicator {
         return correctFloat(DM);
     }
 
-    public calculateDI(
-        smoothedDM: number,
-        tr: number
-    ): number {
-        return smoothedDM / tr * 100;
+    public calculateDI(smoothedDM: number, tr: number): number {
+        return (smoothedDM / tr) * 100;
     }
 
-    public calculateDX(
-        plusDI: number,
-        minusDI: number
-    ): number {
+    public calculateDX(plusDI: number, minusDI: number): number {
         return correctFloat(
-            Math.abs(plusDI - minusDI) / Math.abs(plusDI + minusDI) * 100
+            (Math.abs(plusDI - minusDI) / Math.abs(plusDI + minusDI)) * 100
         );
     }
 
@@ -227,10 +214,10 @@ class DMIIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DMIParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        const period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        const period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             DMI: Array<Array<number>> = [],
             xData: Array<number> = [],
@@ -238,7 +225,7 @@ class DMIIndicator extends SMAIndicator {
 
         if (
             // Check period, if bigger than points length, skip
-            (xVal.length <= period) ||
+            xVal.length <= period ||
             // Only ohlc data is valid
             !isArray(yVal[0]) ||
             yVal[0].length !== 4
@@ -306,29 +293,16 @@ class DMIIndicator extends SMAIndicator {
                     minusDM,
                     period
                 );
-                smoothedTR = this.smoothValues(
-                    prevSmoothedTR,
-                    TR,
-                    period
-                );
+                smoothedTR = this.smoothValues(prevSmoothedTR, TR, period);
                 // Save current smoothed values for the next step
                 prevSmoothedPlusDM = smoothedPlusDM;
                 prevSmoothedMinusDM = smoothedMinusDM;
                 prevSmoothedTR = smoothedTR;
 
                 // Get all next points (except the first one calculated above)
-                plusDI = this.calculateDI(
-                    prevSmoothedPlusDM,
-                    prevSmoothedTR
-                );
-                minusDI = this.calculateDI(
-                    prevSmoothedMinusDM,
-                    prevSmoothedTR
-                );
-                DX = this.calculateDX(
-                    prevSmoothedPlusDM,
-                    prevSmoothedMinusDM
-                );
+                plusDI = this.calculateDI(prevSmoothedPlusDM, prevSmoothedTR);
+                minusDI = this.calculateDI(prevSmoothedMinusDM, prevSmoothedTR);
+                DX = this.calculateDX(prevSmoothedPlusDM, prevSmoothedMinusDM);
 
                 DMI.push([xVal[i], DX, plusDI, minusDI]);
                 xData.push(xVal[i]);
@@ -342,7 +316,6 @@ class DMIIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
 }
 
 interface DMIIndicator extends MultipleLinesComposition.Composition {
@@ -400,4 +373,4 @@ export default DMIIndicator;
  * @apioption series.dmi
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

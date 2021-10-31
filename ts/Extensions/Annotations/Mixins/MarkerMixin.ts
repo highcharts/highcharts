@@ -20,19 +20,14 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../../Core/Chart/Chart.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    merge,
-    uniqueKey
-} = U;
+const { addEvent, defined, merge, uniqueKey } = U;
 
 /* *
  *
  *  Declarations
  *
  * */
-declare module '../../../Core/Options'{
+declare module '../../../Core/Options' {
     interface Options {
         defs?: Record<string, AST.Node>;
     }
@@ -56,7 +51,10 @@ declare global {
         interface AnnotationMarkerMixin {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;
-            setItemMarkers(this: ControllablePath, item: ControllablePath): void;
+            setItemMarkers(
+                this: ControllablePath,
+                item: ControllablePath
+            ): void;
         }
     }
 }
@@ -111,13 +109,15 @@ const defaultMarkers: Record<string, AST.Node> = {
         /**
          * @type {Array<Highcharts.DefsOptions>}
          */
-        children: [{
-            tagName: 'path',
-            attributes: {
-                d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-                'stroke-width': 0
+        children: [
+            {
+                tagName: 'path',
+                attributes: {
+                    d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+                    'stroke-width': 0
+                }
             }
-        }]
+        ]
     },
     /**
      * @type {Highcharts.ASTNode}
@@ -131,14 +131,16 @@ const defaultMarkers: Record<string, AST.Node> = {
             markerWidth: 10,
             markerHeight: 10
         },
-        children: [{
-            tagName: 'path',
-            attributes: {
-                // reverse triangle (used as an arrow)
-                d: 'M 0 5 L 10 0 L 10 10 Z',
-                'stroke-width': 0
+        children: [
+            {
+                tagName: 'path',
+                attributes: {
+                    // reverse triangle (used as an arrow)
+                    d: 'M 0 5 L 10 0 L 10 10 Z',
+                    'stroke-width': 0
+                }
             }
-        }]
+        ]
     }
 };
 
@@ -153,24 +155,26 @@ SVGRenderer.prototype.addMarker = function (
         fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = (
+    options.children =
         markerOptions.children &&
-        markerOptions.children.map(
-            function (child: AST.Node): AST.Node {
-                return merge(attrs, child);
-            }
-        )
-    );
+        markerOptions.children.map(function (child: AST.Node): AST.Node {
+            return merge(attrs, child);
+        });
 
-    const ast = merge(true, {
-        attributes: {
-            markerWidth: 20,
-            markerHeight: 20,
-            refX: 0,
-            refY: 0,
-            orient: 'auto'
-        }
-    }, markerOptions, options);
+    const ast = merge(
+        true,
+        {
+            attributes: {
+                markerWidth: 20,
+                markerHeight: 20,
+                refX: 0,
+                refY: 0,
+                orient: 'auto'
+            }
+        },
+        markerOptions,
+        options
+    );
 
     const marker = this.definition(ast);
 
@@ -184,7 +188,9 @@ SVGRenderer.prototype.addMarker = function (
 /**
  * @private
  */
-function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
+function createMarkerSetter(
+    markerType: string
+): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
     return function (this: SVGElement, value: string): void {
         this.attr(markerType, 'url(#' + value + ')');
     };
@@ -209,11 +215,11 @@ const markerMixin: Highcharts.AnnotationMarkerMixin = {
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
-            color = defined(fill) && fill !== 'none' ?
-                fill :
-                itemOptions.stroke,
-
-            setMarker = function (markerType: ('markerEnd'|'markerStart')): void {
+            color =
+                defined(fill) && fill !== 'none' ? fill : itemOptions.stroke,
+            setMarker = function (
+                markerType: 'markerEnd' | 'markerStart'
+            ): void {
                 let markerId = itemOptions[markerType],
                     def,
                     predefinedMarker,
@@ -221,16 +227,16 @@ const markerMixin: Highcharts.AnnotationMarkerMixin = {
                     marker;
 
                 if (markerId) {
-                    for (key in defs) { // eslint-disable-line guard-for-in
+                    // eslint-disable-next-line guard-for-in
+                    for (key in defs) {
                         def = defs[key];
 
                         if (
-                            (
-                                markerId === (def.attributes && def.attributes.id) ||
+                            (markerId ===
+                                (def.attributes && def.attributes.id) ||
                                 // Legacy, for
                                 // unit-tests/annotations/annotations-shapes
-                                markerId === (def as any).id
-                            ) &&
+                                markerId === (def as any).id) &&
                             def.tagName === 'marker'
                         ) {
                             predefinedMarker = def;
@@ -239,19 +245,19 @@ const markerMixin: Highcharts.AnnotationMarkerMixin = {
                     }
 
                     if (predefinedMarker) {
-                        marker = item[markerType] = chart.renderer
-                            .addMarker(
-                                (itemOptions.id || uniqueKey()) + '-' +
-                                markerId,
-                                merge(predefinedMarker, { color: color })
-                            );
+                        marker = item[markerType] = chart.renderer.addMarker(
+                            (itemOptions.id || uniqueKey()) + '-' + markerId,
+                            merge(predefinedMarker, { color: color })
+                        );
 
                         item.attr(markerType, marker.getAttribute('id'));
                     }
                 }
             };
 
-        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>).forEach(setMarker);
+        (
+            ['markerStart', 'markerEnd'] as Array<'markerEnd' | 'markerStart'>
+        ).forEach(setMarker);
     }
 };
 

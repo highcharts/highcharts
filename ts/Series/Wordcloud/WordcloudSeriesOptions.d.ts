@@ -25,7 +25,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type WordcloudSeries from './WordcloudSeries';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 
-
 /* *
  *
  *  Declarations
@@ -33,7 +32,7 @@ import type WordcloudPointOptions from './WordcloudPointOptions';
  * */
 export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
     allowExtendPlayingField?: boolean;
-    data?: Array<(PointOptions|PointShortOptions|WordcloudPointOptions)>;
+    data?: Array<PointOptions | PointShortOptions | WordcloudPointOptions>;
     maxFontSize?: number;
     minFontSize?: number;
     placementStrategy?: string;

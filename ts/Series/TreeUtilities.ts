@@ -25,14 +25,7 @@ import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    pick
-} = U;
+const { extend, isArray, isNumber, isObject, merge, pick } = U;
 
 /* *
  *
@@ -79,9 +72,9 @@ function getColor(
             index &&
             siblings
         ) {
-            return Color.parse(color).brighten(
-                colorVariation.to * (index / siblings)
-            ).get();
+            return Color.parse(color)
+                .brighten(colorVariation.to * (index / siblings))
+                .get();
         }
 
         return color;
@@ -93,10 +86,11 @@ function getColor(
         getColorByPoint = point && level.colorByPoint;
 
         if (getColorByPoint) {
-            colorIndexByPoint = (point.index as any) % (colors ?
-                colors.length :
-                (chartOptionsChart.colorCount as any)
-            );
+            colorIndexByPoint =
+                (point.index as any) %
+                (colors
+                    ? colors.length
+                    : (chartOptionsChart.colorCount as any));
             colorByPoint = colors && colors[colorIndexByPoint];
         }
 
@@ -144,7 +138,7 @@ function getColor(
  */
 function getLevelOptions<T extends TreeUtilities.Series>(
     params: any
-): (T['mapOptionsToLevel']|null) {
+): T['mapOptionsToLevel'] | null {
     let result: T['mapOptionsToLevel'] = null,
         defaults: any,
         converted,
@@ -161,13 +155,14 @@ function getLevelOptions<T extends TreeUtilities.Series>(
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
             converted = levels.reduce((obj: any, item: any): any => {
-                let level,
-                    levelIsConstant,
-                    options: any;
+                let level, levelIsConstant, options: any;
 
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
-                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
+                    levelIsConstant = pick(
+                        options.levelIsConstant,
+                        defaults.levelIsConstant
+                    );
                     // Delete redundant properties.
                     delete options.levelIsConstant;
                     delete options.level;
@@ -207,20 +202,17 @@ function setTreeValues<T extends TreeUtilities.Series>(
         idRoot = options.idRoot,
         mapIdToNode = options.mapIdToNode,
         nodeRoot = mapIdToNode[idRoot],
-        levelIsConstant = (options.levelIsConstant !== false),
+        levelIsConstant = options.levelIsConstant !== false,
         points = options.points,
         point = points[tree.i],
-        optionsPoint = point && point.options || {},
+        optionsPoint = (point && point.options) || {},
         children: Array<TreeUtilities.NodeObject> = [];
 
     let childrenTotal = 0;
 
     tree.levelDynamic = tree.level - (levelIsConstant ? 0 : nodeRoot.level);
     tree.name = pick(point && point.name, '');
-    tree.visible = (
-        idRoot === tree.id ||
-        options.visible === true
-    );
+    tree.visible = idRoot === tree.id || options.visible === true;
 
     if (typeof before === 'function') {
         tree = before(tree, options);
@@ -228,7 +220,8 @@ function setTreeValues<T extends TreeUtilities.Series>(
     // First give the children some values
     tree.children.forEach((child, i): void => {
         const newOptions = extend<TreeUtilities.SetTreeValuesOptions<T>>(
-            {} as any, options
+            {} as any,
+            options
         );
 
         extend(newOptions, {
@@ -265,11 +258,8 @@ function setTreeValues<T extends TreeUtilities.Series>(
  * @return {string}
  * Returns the resulting rootId after update.
  */
-function updateRootId(
-    series: any
-): string {
-    let rootId,
-        options;
+function updateRootId(series: any): string {
+    let rootId, options;
 
     if (isObject(series)) {
         // Get the series options.
@@ -295,7 +285,6 @@ function updateRootId(
  * */
 
 namespace TreeUtilities {
-
     /* *
      *
      *  Declarations
@@ -336,7 +325,7 @@ namespace TreeUtilities {
     }
 
     export interface PointOptions extends CorePointOptions {
-        value?: (number|null);
+        value?: number | null;
     }
 
     export interface Series extends CoreSeries {
@@ -360,7 +349,6 @@ namespace TreeUtilities {
         siblings?: number;
         visible?: boolean;
     }
-
 }
 
 /* *

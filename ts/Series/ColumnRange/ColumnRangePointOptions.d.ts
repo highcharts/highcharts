@@ -22,8 +22,7 @@ import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
  *
  * */
 
-interface ColumnRangePointOptions extends AreaRangePointOptions {
-}
+interface ColumnRangePointOptions extends AreaRangePointOptions {}
 
 /* *
  *

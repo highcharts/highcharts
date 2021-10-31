@@ -19,12 +19,7 @@ import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    find,
-    pick
-} = U;
+const { defined, extend, find, pick } = U;
 
 /* *
  *
@@ -51,7 +46,6 @@ declare module '../Core/Series/SeriesLike' {
  * */
 
 namespace NodesComposition {
-
     /* *
      *
      *  Declarations
@@ -74,7 +68,7 @@ namespace NodesComposition {
         public to: string;
         public toNode: PointComposition;
         public weight?: number;
-        public y?: (number|null);
+        public y?: number | null;
         public getSum(): number;
         public hasShape(): boolean;
         public init(
@@ -84,10 +78,8 @@ namespace NodesComposition {
         public offset(
             point: PointComposition,
             coll: string
-        ): (number|undefined);
-        public setNodeState(
-            state?: StatesOptionsKey
-        ): void;
+        ): number | undefined;
+        public setNodeState(state?: StatesOptionsKey): void;
     }
 
     export interface PointCompositionOptions extends PointOptions {
@@ -95,7 +87,7 @@ namespace NodesComposition {
         level?: number;
         mass?: number;
         outgoing?: boolean;
-        weight?: (number|null);
+        weight?: number | null;
     }
 
     export declare class SeriesComposition extends Series {
@@ -105,9 +97,7 @@ namespace NodesComposition {
         public options: SeriesCompositionOptions;
         public pointClass: typeof PointComposition;
         public points: Array<PointComposition>;
-        public createNode(
-            id: string
-        ): PointComposition;
+        public createNode(id: string): PointComposition;
         public generatePoints(): void;
     }
 
@@ -138,8 +128,7 @@ namespace NodesComposition {
     export function compose<T extends typeof Series>(
         PointClass: typeof Point,
         SeriesClass: T
-    ): (T&SeriesComposition) {
-
+    ): T & SeriesComposition {
         if (composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
 
@@ -158,7 +147,7 @@ namespace NodesComposition {
             seriesProto.setData = setData;
         }
 
-        return SeriesClass as (T&SeriesComposition);
+        return SeriesClass as T & SeriesComposition;
     }
 
     /**
@@ -170,29 +159,26 @@ namespace NodesComposition {
         this: SeriesComposition,
         id: string
     ): PointComposition {
-
         const PointClass = this.pointClass,
-            findById = <T>(
-                nodes: Array<T>,
-                id: string
-            ): (T|undefined) => find(
-                nodes,
-                (node: T): boolean => (node as any).id === id
-            );
+            findById = <T>(nodes: Array<T>, id: string): T | undefined =>
+                find(nodes, (node: T): boolean => (node as any).id === id);
 
         let node = findById(this.nodes, id),
-            options: (PointCompositionOptions|undefined);
+            options: PointCompositionOptions | undefined;
 
         if (!node) {
             options = this.options.nodes && findById(this.options.nodes, id);
-            node = (new PointClass()).init(
+            node = new PointClass().init(
                 this,
-                extend({
-                    className: 'highcharts-node',
-                    isNode: true,
-                    id: id,
-                    y: 1 // Pass isNull test
-                } as PointCompositionOptions, options as any)
+                extend(
+                    {
+                        className: 'highcharts-node',
+                        isNode: true,
+                        id: id,
+                        y: 1 // Pass isNull test
+                    } as PointCompositionOptions,
+                    options as any
+                )
             );
             node.linksTo = [];
             node.linksFrom = [];
@@ -236,7 +222,7 @@ namespace NodesComposition {
             node.offset = function (
                 point: PointComposition,
                 coll: string
-            ): (number|undefined) {
+            ): number | undefined {
                 let offset = 0;
 
                 for (let i = 0; i < (node as any)[coll].length; i++) {
@@ -276,8 +262,10 @@ namespace NodesComposition {
      */
     export function destroy(this: SeriesComposition): void {
         // Nodes must also be destroyed (#8682, #9300)
-        this.data = ([] as Array<PointComposition>)
-            .concat(this.points || [], this.nodes);
+        this.data = ([] as Array<PointComposition>).concat(
+            this.points || [],
+            this.nodes
+        );
 
         return Series.prototype.destroy.apply(this, arguments as any);
     }
@@ -323,7 +311,6 @@ namespace NodesComposition {
                     point.color =
                         point.options.color || nodeLookup[point.from].color;
                 }
-
             }
             if (defined(point.to)) {
                 if (!nodeLookup[point.to]) {
@@ -358,10 +345,14 @@ namespace NodesComposition {
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    export function setNodeState(this: PointComposition, state?: StatesOptionsKey): void {
+    export function setNodeState(
+        this: PointComposition,
+        state?: StatesOptionsKey
+    ): void {
         const args = arguments,
-            others = this.isNode ? this.linksTo.concat(this.linksFrom) :
-                [this.fromNode, this.toNode];
+            others = this.isNode
+                ? this.linksTo.concat(this.linksFrom)
+                : [this.fromNode, this.toNode];
         if (state !== 'select') {
             others.forEach(function (linkOrNode: PointComposition): void {
                 if (linkOrNode && linkOrNode.series) {
@@ -387,7 +378,6 @@ namespace NodesComposition {
 
         Point.prototype.setState.apply(this, args as any);
     }
-
 }
 
 /* *

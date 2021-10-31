@@ -14,18 +14,17 @@
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
-export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface AroonOptions
+    extends SMAOptions,
+        MultipleLinesComposition.Options {
     aroonDown?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
     params?: AroonParamsOptions;

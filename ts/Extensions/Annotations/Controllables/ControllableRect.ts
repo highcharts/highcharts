@@ -9,9 +9,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * @typedef {Annotation.ControllablePath.AttrsMap}
@@ -41,7 +39,6 @@ const {
  * Index of the rectangle
  */
 class ControllableRect implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -90,7 +87,8 @@ class ControllableRect implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+        ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;

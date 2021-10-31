@@ -15,14 +15,11 @@
 import Point from '../../../Core/Series/Point.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import VBPIndicator from './VBPIndicator';
 
 class VBPPoint extends SMAIndicator.prototype.pointClass {
-
     // Required for destroying negative part of volume
     public destroy(): void {
         // @todo: this.negativeGraphic doesn't seem to be used anywhere

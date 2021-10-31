@@ -22,8 +22,7 @@ import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
  *
  * */
 
-export interface ErrorBarPointOptions extends BoxPlotPointOptions {
-}
+export interface ErrorBarPointOptions extends BoxPlotPointOptions {}
 
 /* *
  *

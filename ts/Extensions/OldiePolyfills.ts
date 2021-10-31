@@ -61,7 +61,7 @@ if (!String.prototype.trim) {
 }
 
 if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function<T, TScope = any> (
+    Array.prototype.forEach = function <T, TScope = any>(
         this: Array<T>,
         fn: ArrayForEachCallbackFunction<T>,
         thisArg?: TScope
@@ -72,7 +72,7 @@ if (!Array.prototype.forEach) {
         for (; i < len; i++) {
             if (
                 typeof this[i] !== 'undefined' && // added check
-                fn.call(thisArg, this[i], i, this) as any === false
+                (fn.call(thisArg, this[i], i, this) as any) === false
             ) {
                 return i as any;
             }
@@ -81,7 +81,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.map) {
-    Array.prototype.map = function<TInput, TOutput> (
+    Array.prototype.map = function <TInput, TOutput>(
         this: Array<TInput>,
         fn: ArrayMapCallbackFunction<TInput, TOutput>
         // @todo support optional ctx
@@ -99,7 +99,7 @@ if (!Array.prototype.map) {
 }
 
 if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function<T> (
+    Array.prototype.indexOf = function <T>(
         this: Array<T>,
         member: T,
         fromIndex?: number
@@ -123,7 +123,7 @@ if (!Array.prototype.indexOf) {
 }
 
 if (!Array.prototype.filter) {
-    Array.prototype.filter = function<T> (
+    Array.prototype.filter = function <T>(
         this: Array<T>,
         fn: ArrayFilterCallbackFunction<T>
         // @todo support optional ctx
@@ -143,11 +143,12 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    Array.prototype.some = function<T, TScope = any> (
+    Array.prototype.some = function <T, TScope = any>(
         this: Array<T>,
         fn: ArraySomeCallbackFunction<T>,
         thisArg?: TScope
-    ): boolean { // legacy
+    ): boolean {
+        // legacy
         let i = 0,
             len = this.length;
 
@@ -161,7 +162,7 @@ if (!Array.prototype.some) {
 }
 
 if (!Array.prototype.reduce) {
-    Array.prototype.reduce = function<T> (
+    Array.prototype.reduce = function <T>(
         this: Array<T>,
         func: ArrayReduceCallbackFunction<T>,
         initialValue?: T
@@ -192,8 +193,10 @@ if (!Function.prototype.bind) {
         if (typeof thatFunc !== 'function') {
             // closest thing possible to the ECMAScript 5
             // internal IsCallable function
-            throw new TypeError('Function.prototype.bind - ' +
-                'what is trying to be bound is not callable');
+            throw new TypeError(
+                'Function.prototype.bind - ' +
+                    'what is trying to be bound is not callable'
+            );
         }
         return function (): unknown {
             const funcArgs = args.concat(Array.prototype.slice.call(arguments));
@@ -204,7 +207,8 @@ if (!Function.prototype.bind) {
 
 // Adapted from https://johnresig.com/blog/objectgetprototypeof/
 if (!Object.getPrototypeOf) {
-    if (typeof ('test' as any).__proto__ === 'object') { // eslint-disable-line no-proto
+    // eslint-disable-next-line no-proto
+    if (typeof ('test' as any).__proto__ === 'object') {
         Object.getPrototypeOf = function (object): any {
             return (object as any).__proto__; // eslint-disable-line no-proto
         };
@@ -221,12 +225,9 @@ if (!Object.getPrototypeOf) {
 }
 
 if (!Object.keys) {
-    Object.keys = function (
-        this: AnyRecord,
-        obj: object
-    ): Array<string> {
+    Object.keys = function (this: AnyRecord, obj: object): Array<string> {
         let result = [] as Array<string>,
-            prop: (number|string|symbol);
+            prop: number | string | symbol;
 
         for (prop in obj) {
             if (Object.hasOwnProperty.call(obj, prop)) {
@@ -242,21 +243,21 @@ if (!Object.keys) {
 // Copyright: Eike Send https://eike.se/nd
 // License: MIT License
 if (!document.getElementsByClassName) {
-    document.getElementsByClassName = function (
-        search: string
-    ): any {
+    document.getElementsByClassName = function (search: string): any {
         let d = document,
             elements,
             pattern,
             i,
             results = [];
 
-        if (d.querySelectorAll) { // IE8
+        if (d.querySelectorAll) {
+            // IE8
             return d.querySelectorAll('.' + search);
         }
-        if (d.evaluate) { // IE6, IE7
-            pattern = './/*[contains(concat(\' \', @class, \' \'), \' ' +
-                search + ' \')]';
+        if (d.evaluate) {
+            // IE6, IE7
+            pattern =
+                ".//*[contains(concat(' ', @class, ' '), ' " + search + " ')]";
             elements = d.evaluate(pattern, d, null, 0, null);
             while ((i = elements.iterateNext())) {
                 results.push(i);

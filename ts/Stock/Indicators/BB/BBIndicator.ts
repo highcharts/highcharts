@@ -14,10 +14,7 @@
  *
  * */
 
-import type {
-    BBOptions,
-    BBParamsOptions
-} from './BBOptions';
+import type { BBOptions, BBParamsOptions } from './BBOptions';
 import type BBPoint from './BBPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -25,16 +22,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+const { extend, isArray, merge } = U;
 
 /* *
  *
@@ -86,7 +77,6 @@ function getStandardDeviation(
  * @augments Highcharts.Series
  */
 class BBIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -107,60 +97,64 @@ class BBIndicator extends SMAIndicator {
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
      */
-    public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 20,
+    public static defaultOptions: BBOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                period: 20,
+                /**
+                 * Standard deviation for top and bottom bands.
+                 */
+                standardDeviation: 2,
+                index: 3
+            },
             /**
-             * Standard deviation for top and bottom bands.
+             * Bottom line options.
              */
-            standardDeviation: 2,
-            index: 3
-        },
-        /**
-         * Bottom line options.
-         */
-        bottomLine: {
+            bottomLine: {
+                /**
+                 * Styles for a bottom line.
+                 */
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * [plotOptions.bb.color](#plotOptions.bb.color).
+                     *
+                     * @type  {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
             /**
-             * Styles for a bottom line.
+             * Top line options.
+             *
+             * @extends plotOptions.bb.bottomLine
              */
-            styles: {
-                /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1,
-                /**
-                 * Color of the line. If not set, it's inherited from
-                 * [plotOptions.bb.color](#plotOptions.bb.color).
-                 *
-                 * @type  {Highcharts.ColorString}
-                 */
-                lineColor: void 0
+            topLine: {
+                styles: {
+                    lineWidth: 1,
+                    /**
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
+            },
+            marker: {
+                enabled: false
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        /**
-         * Top line options.
-         *
-         * @extends plotOptions.bb.bottomLine
-         */
-        topLine: {
-            styles: {
-                lineWidth: 1,
-                /**
-                 * @type {Highcharts.ColorString}
-                 */
-                lineColor: void 0
-            }
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
-        },
-        marker: {
-            enabled: false
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as BBOptions)
+        } as BBOptions
+    );
 
     /* *
      *
@@ -184,28 +178,31 @@ class BBIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
+        this.options = merge(
+            {
+                topLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
+                },
+                bottomLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
                 }
             },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
+            this.options
+        );
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: BBParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            standardDeviation: number = (params.standardDeviation as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            standardDeviation: number = params.standardDeviation as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-middle line, 2-top line, 3-bottom line
             BB: Array<Array<number>> = [],
@@ -216,14 +213,11 @@ class BBIndicator extends SMAIndicator {
             date: number,
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            slicedX: (Array<number>|undefined),
+            slicedX: Array<number> | undefined,
             slicedY: Array<Array<number>>,
             stdDev: number,
             isOHLC: boolean,
-            point: (
-                IndicatorValuesObject<TLinkedSeries>|
-                undefined
-            ),
+            point: IndicatorValuesObject<TLinkedSeries> | undefined,
             i: number;
 
         if (xVal.length < period) {
@@ -238,10 +232,10 @@ class BBIndicator extends SMAIndicator {
 
             point = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
                 this,
-                ({
+                {
                     xData: slicedX,
                     yData: slicedY
-                } as any),
+                } as any,
                 params
             ) as IndicatorValuesObject<TLinkedSeries>;
 
@@ -249,7 +243,7 @@ class BBIndicator extends SMAIndicator {
             ML = (point as any).yData[0];
             stdDev = getStandardDeviation(
                 slicedY,
-                (params.index as any),
+                params.index as any,
                 isOHLC,
                 ML
             );
@@ -325,4 +319,4 @@ export default BBIndicator;
  * @apioption series.bb
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

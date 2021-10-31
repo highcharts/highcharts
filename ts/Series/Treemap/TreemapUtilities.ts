@@ -28,9 +28,8 @@ const { objectEach } = U;
  * */
 
 namespace TreemapUtilities {
-
     interface TreemapRecursiveCallbackFunction<TContext = any, TItem = any> {
-        (this: TContext, item: TItem): (boolean|TItem);
+        (this: TContext, item: TItem): boolean | TItem;
     }
 
     export const AXIS_MAX = 100;
@@ -76,7 +75,6 @@ namespace TreemapUtilities {
             recursive(next, func, context);
         }
     }
-
 }
 
 /* *

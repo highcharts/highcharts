@@ -26,16 +26,10 @@ import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+const { extend, isArray, merge } = U;
 
 /* *
  *
@@ -53,7 +47,6 @@ const {
  * @augments Highcharts.Series
  */
 class StochasticIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -77,54 +70,58 @@ class StochasticIndicator extends SMAIndicator {
      * @requires     stock/indicators/stochastic
      * @optionparent plotOptions.stochastic
      */
-    public static defaultOptions: StochasticOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index, period
-         */
-        params: {
-            // Index and period are unchangeable, do not inherit (#15362)
-            index: void 0,
-            period: void 0,
+    public static defaultOptions: StochasticOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * Periods for Stochastic oscillator: [%K, %D].
-             *
-             * @type    {Array<number,number>}
-             * @default [14, 3]
+             * @excluding index, period
              */
-            periods: [14, 3]
-        },
-        marker: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>%K: {point.y}<br/>%D: {point.smoothed}<br/>'
-        },
-        /**
-         * Smoothed line options.
-         */
-        smoothedLine: {
-            /**
-             * Styles for a smoothed line.
-             */
-            styles: {
+            params: {
+                // Index and period are unchangeable, do not inherit (#15362)
+                index: void 0,
+                period: void 0,
                 /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1,
-                /**
-                 * Color of the line. If not set, it's inherited from
-                 * [plotOptions.stochastic.color
-                 * ](#plotOptions.stochastic.color).
+                 * Periods for Stochastic oscillator: [%K, %D].
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type    {Array<number,number>}
+                 * @default [14, 3]
                  */
-                lineColor: void 0
+                periods: [14, 3]
+            },
+            marker: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>%K: {point.y}<br/>%D: {point.smoothed}<br/>'
+            },
+            /**
+             * Smoothed line options.
+             */
+            smoothedLine: {
+                /**
+                 * Styles for a smoothed line.
+                 */
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * [plotOptions.stochastic.color
+                     * ](#plotOptions.stochastic.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as StochasticOptions)
+        } as StochasticOptions
+    );
 
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
@@ -134,28 +131,31 @@ class StochasticIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
-        this.options = merge({
-            smoothedLine: {
-                styles: {
-                    lineColor: this.color
+        this.options = merge(
+            {
+                smoothedLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
                 }
-            }
-        }, this.options);
+            },
+            this.options
+        );
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: StochasticParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let periodK: number = (params.periods as any)[0],
             periodD: number = (params.periods as any)[1],
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-%K, 2-%D
-            SO: Array<Array<(number|null)>> = [],
+            SO: Array<Array<number | null>> = [],
             xData: Array<number> = [],
-            yData: Array<Array<(number|null)>> = [],
+            yData: Array<Array<number | null>> = [],
             slicedY: Array<Array<number>>,
             close = 3,
             low = 2,
@@ -164,21 +164,13 @@ class StochasticIndicator extends SMAIndicator {
             HL: number,
             LL: number,
             K: number,
-            D: number|null = null,
-            points: (
-                IndicatorValuesObject<LineSeries>|
-                undefined
-            ),
+            D: number | null = null,
+            points: IndicatorValuesObject<LineSeries> | undefined,
             extremes: [number, number],
             i: number;
 
-
         // Stochastic requires close value
-        if (
-            yValLen < periodK ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4
-        ) {
+        if (yValLen < periodK || !isArray(yVal[0]) || yVal[0].length !== 4) {
             return;
         }
 
@@ -193,19 +185,24 @@ class StochasticIndicator extends SMAIndicator {
             LL = extremes[0]; // Lowest low in %K periods
             CL = yVal[i][close] - LL;
             HL = extremes[1] - LL;
-            K = CL / HL * 100;
+            K = (CL / HL) * 100;
 
             xData.push(xVal[i]);
             yData.push([K, null]);
 
             // Calculate smoothed %D, which is SMA of %K
-            if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                    xData: xData.slice(-periodD),
-                    yData: yData.slice(-periodD)
-                } as any), {
-                    period: periodD
-                });
+            if (i >= periodK - 1 + (periodD - 1)) {
+                points =
+                    SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
+                        this,
+                        {
+                            xData: xData.slice(-periodD),
+                            yData: yData.slice(-periodD)
+                        } as any,
+                        {
+                            period: periodD
+                        }
+                    );
                 D = (points as any).yData[0];
             }
 
@@ -283,4 +280,4 @@ export default StochasticIndicator;
  * @apioption series.stochastic
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

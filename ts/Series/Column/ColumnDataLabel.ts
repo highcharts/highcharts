@@ -27,10 +27,7 @@ import DataLabel from '../../Core/Series/DataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 /* *
  *
@@ -39,7 +36,6 @@ const {
  * */
 
 namespace ColumnDataLabel {
-
     /* *
      *
      *  Constants
@@ -71,21 +67,23 @@ namespace ColumnDataLabel {
     ): void {
         let inverted = this.chart.inverted,
             series = point.series,
-            xLen = (series.xAxis ? series.xAxis.len : this.chart.plotSizeX) || 0,
-            yLen = (series.yAxis ? series.yAxis.len : this.chart.plotSizeY) || 0,
+            xLen =
+                (series.xAxis ? series.xAxis.len : this.chart.plotSizeX) || 0,
+            yLen =
+                (series.yAxis ? series.yAxis.len : this.chart.plotSizeY) || 0,
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
                 (point as AreaRangePoint).below, // range series
-                (point.plotY as any) >
-                    pick(this.translatedThreshold, yLen)
+                (point.plotY as any) > pick(this.translatedThreshold, yLen)
             ),
             // draw it inside the box?
             inside = pick(options.inside, !!this.options.stacking),
             overshoot;
 
         // Align to the column itself, or the top of it
-        if (dlBox) { // Area range uses this method but not alignTo
+        if (dlBox) {
+            // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
             if (alignTo.y < 0) {
                 alignTo.height += alignTo.y;
@@ -120,7 +118,6 @@ namespace ColumnDataLabel {
             }
         }
 
-
         // When alignment is undefined (typically columns and bars), display the
         // individual point below or above the point depending on the threshold
         options.align = pick(
@@ -152,7 +149,6 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(ColumnSeriesClass: typeof ColumnSeries): void {
-
         DataLabel.compose(Series);
 
         if (composedClasses.indexOf(ColumnSeriesClass) === -1) {
@@ -160,9 +156,7 @@ namespace ColumnDataLabel {
 
             ColumnSeriesClass.prototype.alignDataLabel = alignDataLabel;
         }
-
     }
-
 }
 
 /* *

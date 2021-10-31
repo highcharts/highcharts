@@ -34,7 +34,6 @@ const { addEvent } = U;
  * @private
  */
 class EventProvider {
-
     /* *
      *
      *  Constructor
@@ -62,9 +61,9 @@ class EventProvider {
     /* eslint-disable valid-jsdoc */
 
     public addEvent<T>(
-        el: (U.Class<T>|T),
+        el: U.Class<T> | T,
         type: string,
-        fn: (EventCallback<T>|Function),
+        fn: EventCallback<T> | Function,
         options?: U.EventOptions
     ): Function;
     /**
@@ -86,7 +85,6 @@ class EventProvider {
         this.eventRemovers.forEach((remover): void => remover());
         this.eventRemovers = [];
     }
-
 }
 
 /* *

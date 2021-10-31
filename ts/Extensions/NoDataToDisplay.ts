@@ -23,10 +23,7 @@ import D from '../Core/DefaultOptions.js';
 const { getOptions } = D;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend
-} = U;
+const { addEvent, extend } = U;
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -36,17 +33,17 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/no-data-to-display */
         hideNoData(): void;
         /** @requires modules/no-data-to-display */
-        hasData(): (boolean|undefined);
+        hasData(): boolean | undefined;
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/LangOptions' {
     interface LangOptions {
         noData?: string;
     }
 }
 
-declare module '../Core/Options'{
+declare module '../Core/Options' {
     interface Options {
         noData?: Highcharts.NoDataOptions;
     }
@@ -110,7 +107,6 @@ extend(
  * @optionparent noData
  */
 defaultOptions.noData = {
-
     /**
      * An object of additional SVG attributes for the no-data label.
      *
@@ -141,7 +137,6 @@ defaultOptions.noData = {
      * @since 3.0.8
      */
     position: {
-
         /**
          * Horizontal offset of the label, in pixels.
          */
@@ -183,7 +178,6 @@ defaultOptions.noData = {
         /** @ignore */
         color: Palette.neutralColor60
     }
-
 };
 
 /**
@@ -202,7 +196,8 @@ chartPrototype.showNoData = function (str?: string): void {
         noDataOptions: Highcharts.NoDataOptions =
             options && (options.noData || {});
 
-    if (chart.renderer) { // Meaning chart is not destroyed
+    if (chart.renderer) {
+        // Meaning chart is not destroyed
 
         if (!chart.noDataLabel) {
             chart.noDataLabel = chart.renderer
@@ -234,7 +229,6 @@ chartPrototype.showNoData = function (str?: string): void {
     }
 };
 
-
 /**
  * Hide no-data message.
  *
@@ -260,7 +254,7 @@ chartPrototype.hideNoData = function (): void {
  * True, if there are data points.
  * @requires modules/no-data-to-display
  */
-chartPrototype.hasData = function (): (boolean|undefined) {
+chartPrototype.hasData = function (): boolean | undefined {
     let chart = this,
         series = chart.series || [],
         i = series.length;

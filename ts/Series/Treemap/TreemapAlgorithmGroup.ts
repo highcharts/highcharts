@@ -28,7 +28,6 @@ import type TreemapSeries from './TreemapSeries';
  * */
 
 class TreemapAlgorithmGroup {
-
     /* *
      *
      *  Constructor
@@ -61,7 +60,7 @@ class TreemapAlgorithmGroup {
             nR: 0,
             lR: 0,
             aspectRatio: function (w: number, h: number): number {
-                return Math.max((w / h), (h / w));
+                return Math.max(w / h, h / w);
             }
         };
     }
@@ -76,7 +75,7 @@ class TreemapAlgorithmGroup {
 
     public elArr: Array<number>;
 
-    public height: number
+    public height: number;
 
     public lH: number;
 
@@ -108,7 +107,7 @@ class TreemapAlgorithmGroup {
         this.lP.total = this.elArr[this.elArr.length - 1];
         this.total = this.total + el;
         if (this.direction === 0) {
-        // Calculate last point old aspect ratio
+            // Calculate last point old aspect ratio
             this.lW = this.nW;
             this.lP.lH = this.lP.total / this.lW;
             this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
@@ -117,7 +116,7 @@ class TreemapAlgorithmGroup {
             this.lP.nH = this.lP.total / this.nW;
             this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
         } else {
-        // Calculate last point old aspect ratio
+            // Calculate last point old aspect ratio
             this.lH = this.nH;
             this.lP.lW = this.lP.total / this.lH;
             this.lP.lR = this.lP.aspectRatio(this.lP.lW, this.lH);
@@ -137,7 +136,6 @@ class TreemapAlgorithmGroup {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

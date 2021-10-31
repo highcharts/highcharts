@@ -22,10 +22,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+const { extend, pick } = U;
 
 /* *
  *
@@ -34,7 +31,6 @@ const {
  * */
 
 class DumbbellPoint extends AreaRangePoint {
-
     /* *
      *
      *  Properties
@@ -130,7 +126,7 @@ class DumbbellPoint extends AreaRangePoint {
  *  Prototype properties
  *
  * */
-interface DumbbellPoint{
+interface DumbbellPoint {
     pointSetState: typeof AreaRangePoint.prototype.setState;
 }
 

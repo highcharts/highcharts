@@ -8,24 +8,16 @@
 
 'use strict';
 
-import type {
-    ATROptions,
-    ATRParamsOptions
-} from './ATROptions';
+import type { ATROptions, ATRParamsOptions } from './ATROptions';
 import type ATRPoint from './ATRPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+const { isArray, merge } = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -48,10 +40,7 @@ function accumulateAverage(
 /**
  * @private
  */
-function getTR(
-    currentPoint: Array<number>,
-    prevPoint: Array<number>
-): number {
+function getTR(currentPoint: Array<number>, prevPoint: Array<number>): number {
     const pointY = currentPoint,
         prevY = prevPoint,
         HL = pointY[1] - pointY[2],
@@ -77,7 +66,7 @@ function populateAverage(
         TR = getTR(yVal[i - 1], yVal[i - 2]),
         y;
 
-    y = (((prevATR * (period - 1)) + TR) / period);
+    y = (prevATR * (period - 1) + TR) / period;
 
     return [x, y];
 }
@@ -114,14 +103,17 @@ class ATRIndicator extends SMAIndicator {
      * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
      */
-    public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0 // unused index, do not inherit (#15362)
-        }
-    } as ATROptions);
+    public static defaultOptions: ATROptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            /**
+             * @excluding index
+             */
+            params: {
+                index: void 0 // unused index, do not inherit (#15362)
+            }
+        } as ATROptions
+    );
 
     /* *
      *
@@ -142,10 +134,10 @@ class ATRIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ATRParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             xValue: number = (xVal as any)[0],
             yValue: Array<number> = yVal[0],
@@ -155,14 +147,14 @@ class ATRIndicator extends SMAIndicator {
             ATR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            point: (Array<number>|undefined),
-            i: (number|undefined),
+            point: Array<number> | undefined,
+            i: number | undefined,
             points: Array<[number, Array<number>]>;
 
         points = [[xValue, yValue]];
 
         if (
-            (xVal.length <= period) ||
+            xVal.length <= period ||
             !isArray(yVal[0]) ||
             yVal[0].length !== 4
         ) {
@@ -170,23 +162,14 @@ class ATRIndicator extends SMAIndicator {
         }
 
         for (i = 1; i <= yValLen; i++) {
-
             accumulateAverage(points, xVal, yVal, i);
 
             if (period < range) {
-                point = populateAverage(
-                    points,
-                    xVal,
-                    yVal,
-                    i,
-                    period,
-                    prevATR
-                );
+                point = populateAverage(points, xVal, yVal, i, period, prevATR);
                 prevATR = point[1];
                 ATR.push(point);
                 xData.push(point[0]);
                 yData.push(point[1]);
-
             } else if (period === range) {
                 prevATR = TR / (i - 1);
                 ATR.push([xVal[i - 1], prevATR]);
@@ -251,4 +234,4 @@ export default ATRIndicator;
  * @apioption series.atr
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

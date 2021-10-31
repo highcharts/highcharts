@@ -11,9 +11,7 @@ import type MockPointOptions from '../MockPointOptions';
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 declare module '../MockPointOptions' {
     interface MockPointOptions {
@@ -24,7 +22,10 @@ declare module '../MockPointOptions' {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: ElliottWave.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: ElliottWave.Options
+    ) {
         super(chart, options);
     }
 
@@ -39,18 +40,21 @@ class ElliottWave extends CrookedLine {
             point: MockPointOptions,
             i: number
         ): void {
-            const typeOptions = this.options.typeOptions as ElliottWave.TypeOptions,
-                label = this.initLabel(merge(
-                    point.label, {
+            const typeOptions = this.options
+                    .typeOptions as ElliottWave.TypeOptions,
+                label = this.initLabel(
+                    merge(point.label, {
                         text: typeOptions.labels[i],
                         point: function (target: any): any {
                             return target.annotation.points[i];
                         }
-                    }
-                ), false as any);
+                    }),
+                    false as any
+                );
 
             point.label = label.options;
-        }, this);
+        },
+        this);
     }
 }
 
@@ -72,7 +76,6 @@ ElliottWave.prototype.defaultOptions = merge(
      */
     {
         typeOptions: {
-
             /**
              * @extends   annotations.crookedLine.labelOptions
              * @apioption annotations.elliottWave.typeOptions.points.label
@@ -121,7 +124,7 @@ namespace ElliottWave {
  *
  * */
 Annotation.types.elliottWave = ElliottWave;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;
     }

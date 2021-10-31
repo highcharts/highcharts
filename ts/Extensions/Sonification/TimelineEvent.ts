@@ -23,10 +23,7 @@ import type PointSonify from './PointSonify';
 import type TimelinePath from './TimelinePath';
 
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    uniqueKey
-} = U;
+const { merge, uniqueKey } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -49,16 +46,13 @@ const {
  * Options for the TimelineEvent.
  */
 class TimelineEvent {
-
     /* *
      *
      *  Constructor
      *
      * */
 
-    public constructor(
-        options: TimelineEvent.Options
-    ) {
+    public constructor(options: TimelineEvent.Options) {
         this.init(options);
     }
 
@@ -71,7 +65,7 @@ class TimelineEvent {
     public id: string = void 0 as any;
     public options: TimelineEvent.Options = void 0 as any;
     public time: number = void 0 as any;
-    public timelinePath: (TimelinePath|undefined);
+    public timelinePath: TimelinePath | undefined;
 
     /* *
      *
@@ -79,10 +73,7 @@ class TimelineEvent {
      *
      * */
 
-    public init(
-        this: TimelineEvent,
-        options: TimelineEvent.Options
-    ): void {
+    public init(this: TimelineEvent, options: TimelineEvent.Options): void {
         this.options = options;
         this.time = options.time || 0;
         this.id = this.options.id = options.id || uniqueKey();
@@ -99,31 +90,30 @@ class TimelineEvent {
      *
      * @return {void}
      */
-    public play(
-        this: TimelineEvent,
-        options?: TimelineEvent.Options
-    ): void {
+    public play(this: TimelineEvent, options?: TimelineEvent.Options): void {
         const eventObject = this.options.eventObject,
             masterOnEnd = this.options.onEnd,
             playOnEnd = options && options.onEnd,
-            playOptionsOnEnd = this.options.playOptions &&
-                this.options.playOptions.onEnd,
+            playOptionsOnEnd =
+                this.options.playOptions && this.options.playOptions.onEnd,
             playOptions = merge(this.options.playOptions, options);
 
         if (eventObject && eventObject.sonify) {
             // If we have multiple onEnds defined, use all
-            playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
-                function (): void {
-                    const args = arguments;
+            playOptions.onEnd =
+                masterOnEnd || playOnEnd || playOptionsOnEnd
+                    ? function (): void {
+                          const args = arguments;
 
-                    [masterOnEnd, playOnEnd, playOptionsOnEnd].forEach(
-                        function (onEnd: (Function|undefined)): void {
-                            if (onEnd) {
-                                onEnd.apply(this, args);
-                            }
-                        }
-                    );
-                } : void 0;
+                          [masterOnEnd, playOnEnd, playOptionsOnEnd].forEach(
+                              function (onEnd: Function | undefined): void {
+                                  if (onEnd) {
+                                      onEnd.apply(this, args);
+                                  }
+                              }
+                          );
+                      }
+                    : void 0;
 
             eventObject.sonify(playOptions);
         } else {
@@ -153,7 +143,6 @@ class TimelineEvent {
             eventObject.cancelSonify(fadeOut);
         }
     }
-
 }
 
 /* *
@@ -171,7 +160,7 @@ namespace TimelineEvent {
         eventObject?: EventObject;
         id?: string;
         onEnd?: Function;
-        playOptions?: PointSonify.Options|Partial<Earcon.Options>;
+        playOptions?: PointSonify.Options | Partial<Earcon.Options>;
         time?: number;
     }
 }
@@ -197,28 +186,28 @@ export default TimelineEvent;
  *
  * @private
  * @interface Highcharts.TimelineEventOptionsObject
- *//**
+ */ /**
  * The object we want to sonify when playing the TimelineEvent. Can be any
  * object that implements the `sonify` and `cancelSonify` functions. If this is
  * not supplied, the TimelineEvent is considered a silent event, and the onEnd
  * event is immediately called.
  * @name Highcharts.TimelineEventOptionsObject#eventObject
  * @type {*}
- *//**
+ */ /**
  * Options to pass on to the eventObject when playing it.
  * @name Highcharts.TimelineEventOptionsObject#playOptions
  * @type {object|undefined}
- *//**
+ */ /**
  * The time at which we want this event to play (in milliseconds offset). This
  * is not used for the TimelineEvent.play function, but rather intended as a
  * property to decide when to call TimelineEvent.play. Defaults to 0.
  * @name Highcharts.TimelineEventOptionsObject#time
  * @type {number|undefined}
- *//**
+ */ /**
  * Unique ID for the event. Generated automatically if not supplied.
  * @name Highcharts.TimelineEventOptionsObject#id
  * @type {string|undefined}
- *//**
+ */ /**
  * Callback called when the play has finished.
  * @name Highcharts.TimelineEventOptionsObject#onEnd
  * @type {Function|undefined}

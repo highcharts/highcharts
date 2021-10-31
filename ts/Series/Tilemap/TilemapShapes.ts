@@ -31,16 +31,10 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        heatmap: HeatmapSeries,
-        scatter: ScatterSeries
-    }
+    seriesTypes: { heatmap: HeatmapSeries, scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    pick
-} = U;
+const { clamp, pick } = U;
 
 /**
  * Utility func to get padding definition from tile size division
@@ -73,7 +67,6 @@ function tilePaddingFromTileSize(
  * */
 
 namespace TilemapShapes {
-
     export interface DefinitionObject {
         alignDataLabel(
             this: TilemapSeries,
@@ -84,10 +77,7 @@ namespace TilemapShapes {
             isNew?: boolean
         ): void;
         getSeriesPadding(series: TilemapSeries): PaddingObject;
-        haloPath(
-            this: TilemapPoint,
-            size: number
-        ): SVGPath;
+        haloPath(this: TilemapPoint, size: number): SVGPath;
         translate(this: TilemapSeries): void;
     }
 
@@ -95,7 +85,6 @@ namespace TilemapShapes {
         xPad: number;
         yPad: number;
     }
-
 }
 
 /* *
@@ -108,418 +97,468 @@ namespace TilemapShapes {
  * Map of shape types.
  * @private
  */
-const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> = {
-
-    // Hexagon shape type.
-    hexagon: {
-        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
-        getSeriesPadding: function (
-            series: TilemapSeries
-        ): TilemapShapes.PaddingObject {
-            return tilePaddingFromTileSize(series, 3, 2);
-        },
-        haloPath: function (
-            this: TilemapPoint,
-            size: number
-        ): SVGPath {
-            if (!size) {
-                return [];
-            }
-            const hexagon = this.tileEdges;
-
-            return [
-                ['M', hexagon.x2 - size, hexagon.y1 + size],
-                ['L', hexagon.x3 + size, hexagon.y1 + size],
-                ['L', hexagon.x4 + size * 1.5, hexagon.y2],
-                ['L', hexagon.x3 + size, hexagon.y3 - size],
-                ['L', hexagon.x2 - size, hexagon.y3 - size],
-                ['L', hexagon.x1 - size * 1.5, hexagon.y2],
-                ['Z']
-            ];
-        },
-        translate: function (this: TilemapSeries): void {
-            let series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                seriesPointPadding = options.pointPadding || 0,
-                xPad = (options.colsize || 1) / 3,
-                yPad = (options.rowsize || 1) / 2,
-                yShift: (number|undefined);
-
-            series.generatePoints();
-
-            series.points.forEach(function (point): void {
-                let x1 = clamp(
-                        Math.floor(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x - xPad * 2,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    x2 = clamp(
-                        Math.floor(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x - xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    x3 = clamp(
-                        Math.floor(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x + xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    x4 = clamp(
-                        Math.floor(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x + xPad * 2,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    y1 = clamp(
-                        Math.floor(yAxis.translate(
-                            point.y - yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    y2 = clamp(
-                        Math.floor(yAxis.translate(
-                            point.y,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    y3 = clamp(
-                        Math.floor(yAxis.translate(
-                            point.y + yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    pointPadding = pick(point.pointPadding, seriesPointPadding),
-                    // We calculate the point padding of the midpoints to
-                    // preserve the angles of the shape.
-                    midPointPadding = pointPadding *
-                        Math.abs(x2 - x1) / Math.abs(y3 - y2),
-                    xMidPadding = xAxis.reversed ?
-                        -midPointPadding : midPointPadding,
-                    xPointPadding = xAxis.reversed ?
-                        -pointPadding : pointPadding,
-                    yPointPadding = yAxis.reversed ?
-                        -pointPadding : pointPadding;
-
-                // Shift y-values for every second grid column
-                if (point.x % 2) {
-                    yShift = yShift || Math.round(Math.abs(y3 - y1) / 2) *
-                        // We have to reverse the shift for reversed y-axes
-                        (yAxis.reversed ? -1 : 1);
-                    y1 += yShift;
-                    y2 += yShift;
-                    y3 += yShift;
+const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
+    {
+        // Hexagon shape type.
+        hexagon: {
+            alignDataLabel: ScatterSeries.prototype.alignDataLabel,
+            getSeriesPadding: function (
+                series: TilemapSeries
+            ): TilemapShapes.PaddingObject {
+                return tilePaddingFromTileSize(series, 3, 2);
+            },
+            haloPath: function (this: TilemapPoint, size: number): SVGPath {
+                if (!size) {
+                    return [];
                 }
+                const hexagon = this.tileEdges;
 
-                // Set plotX and plotY for use in K-D-Tree and more
-                point.plotX = point.clientX = (x2 + x3) / 2;
-                point.plotY = y2;
+                return [
+                    ['M', hexagon.x2 - size, hexagon.y1 + size],
+                    ['L', hexagon.x3 + size, hexagon.y1 + size],
+                    ['L', hexagon.x4 + size * 1.5, hexagon.y2],
+                    ['L', hexagon.x3 + size, hexagon.y3 - size],
+                    ['L', hexagon.x2 - size, hexagon.y3 - size],
+                    ['L', hexagon.x1 - size * 1.5, hexagon.y2],
+                    ['Z']
+                ];
+            },
+            translate: function (this: TilemapSeries): void {
+                let series = this,
+                    options = series.options,
+                    xAxis = series.xAxis,
+                    yAxis = series.yAxis,
+                    seriesPointPadding = options.pointPadding || 0,
+                    xPad = (options.colsize || 1) / 3,
+                    yPad = (options.rowsize || 1) / 2,
+                    yShift: number | undefined;
 
-                // Apply point padding to translated coordinates
-                x1 += xMidPadding + xPointPadding;
-                x2 += xPointPadding;
-                x3 -= xPointPadding;
-                x4 -= xMidPadding + xPointPadding;
-                y1 -= yPointPadding;
-                y3 += yPointPadding;
+                series.generatePoints();
 
-                // Store points for halo creation
-                point.tileEdges = {
-                    x1: x1, x2: x2, x3: x3, x4: x4, y1: y1, y2: y2, y3: y3
-                };
+                series.points.forEach(function (point): void {
+                    let x1 = clamp(
+                            Math.floor(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x - xPad * 2,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        1 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        x2 = clamp(
+                            Math.floor(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x - xPad,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        1 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        x3 = clamp(
+                            Math.floor(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x + xPad,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        1 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        x4 = clamp(
+                            Math.floor(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x + xPad * 2,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        1 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        y1 = clamp(
+                            Math.floor(
+                                yAxis.translate(
+                                    point.y - yPad,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    1 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        y2 = clamp(
+                            Math.floor(
+                                yAxis.translate(
+                                    point.y,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    1 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        y3 = clamp(
+                            Math.floor(
+                                yAxis.translate(
+                                    point.y + yPad,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    1 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        pointPadding = pick(
+                            point.pointPadding,
+                            seriesPointPadding
+                        ),
+                        // We calculate the point padding of the midpoints to
+                        // preserve the angles of the shape.
+                        midPointPadding =
+                            (pointPadding * Math.abs(x2 - x1)) /
+                            Math.abs(y3 - y2),
+                        xMidPadding = xAxis.reversed
+                            ? -midPointPadding
+                            : midPointPadding,
+                        xPointPadding = xAxis.reversed
+                            ? -pointPadding
+                            : pointPadding,
+                        yPointPadding = yAxis.reversed
+                            ? -pointPadding
+                            : pointPadding;
 
-                // Finally set the shape for this point
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: [
-                        ['M', x2, y1],
-                        ['L', x3, y1],
-                        ['L', x4, y2],
-                        ['L', x3, y3],
-                        ['L', x2, y3],
-                        ['L', x1, y2],
-                        ['Z']
-                    ]
-                };
-            });
+                    // Shift y-values for every second grid column
+                    if (point.x % 2) {
+                        yShift =
+                            yShift ||
+                            Math.round(Math.abs(y3 - y1) / 2) *
+                                // We have to reverse the shift for reversed
+                                // y-axes
+                                (yAxis.reversed ? -1 : 1);
+                        y1 += yShift;
+                        y2 += yShift;
+                        y3 += yShift;
+                    }
 
-            series.translateColors();
-        }
-    },
+                    // Set plotX and plotY for use in K-D-Tree and more
+                    point.plotX = point.clientX = (x2 + x3) / 2;
+                    point.plotY = y2;
 
-    // Diamond shape type.
-    diamond: {
-        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
-        getSeriesPadding: function (
-            series: TilemapSeries
-        ): TilemapShapes.PaddingObject {
-            return tilePaddingFromTileSize(series, 2, 2);
-        },
-        haloPath: function (
-            this: TilemapPoint,
-            size: number
-        ): SVGPath {
-            if (!size) {
-                return [];
+                    // Apply point padding to translated coordinates
+                    x1 += xMidPadding + xPointPadding;
+                    x2 += xPointPadding;
+                    x3 -= xPointPadding;
+                    x4 -= xMidPadding + xPointPadding;
+                    y1 -= yPointPadding;
+                    y3 += yPointPadding;
+
+                    // Store points for halo creation
+                    point.tileEdges = {
+                        x1: x1,
+                        x2: x2,
+                        x3: x3,
+                        x4: x4,
+                        y1: y1,
+                        y2: y2,
+                        y3: y3
+                    };
+
+                    // Finally set the shape for this point
+                    point.shapeType = 'path';
+                    point.shapeArgs = {
+                        d: [
+                            ['M', x2, y1],
+                            ['L', x3, y1],
+                            ['L', x4, y2],
+                            ['L', x3, y3],
+                            ['L', x2, y3],
+                            ['L', x1, y2],
+                            ['Z']
+                        ]
+                    };
+                });
+
+                series.translateColors();
             }
-            const diamond = this.tileEdges;
-
-            return [
-                ['M', diamond.x2, diamond.y1 + size],
-                ['L', diamond.x3 + size, diamond.y2],
-                ['L', diamond.x2, diamond.y3 - size],
-                ['L', diamond.x1 - size, diamond.y2],
-                ['Z']
-            ];
         },
-        translate: function (this: TilemapSeries): void {
-            let series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                seriesPointPadding = options.pointPadding || 0,
-                xPad = (options.colsize || 1),
-                yPad = (options.rowsize || 1) / 2,
-                yShift;
 
-            series.generatePoints();
-
-            series.points.forEach(function (point): void {
-                let x1 = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x - xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                0 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    x2 = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                0 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    x3 = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x + xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                0 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    y1 = clamp(
-                        Math.round(yAxis.translate(
-                            point.y - yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            0 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    y2 = clamp(
-                        Math.round(yAxis.translate(
-                            point.y,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            0 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    y3 = clamp(
-                        Math.round(yAxis.translate(
-                            point.y + yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            0 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    pointPadding = pick(point.pointPadding, seriesPointPadding),
-                    // We calculate the point padding of the midpoints to
-                    // preserve the angles of the shape.
-                    midPointPadding = pointPadding *
-                        Math.abs(x2 - x1) / Math.abs(y3 - y2),
-                    xPointPadding = xAxis.reversed ?
-                        -midPointPadding : midPointPadding,
-                    yPointPadding = yAxis.reversed ?
-                        -pointPadding : pointPadding;
-
-                // Shift y-values for every second grid column
-                // We have to reverse the shift for reversed y-axes
-                if (point.x % 2) {
-                    yShift = Math.abs(y3 - y1) / 2 * (yAxis.reversed ? -1 : 1);
-                    y1 += yShift;
-                    y2 += yShift;
-                    y3 += yShift;
+        // Diamond shape type.
+        diamond: {
+            alignDataLabel: ScatterSeries.prototype.alignDataLabel,
+            getSeriesPadding: function (
+                series: TilemapSeries
+            ): TilemapShapes.PaddingObject {
+                return tilePaddingFromTileSize(series, 2, 2);
+            },
+            haloPath: function (this: TilemapPoint, size: number): SVGPath {
+                if (!size) {
+                    return [];
                 }
+                const diamond = this.tileEdges;
 
-                // Set plotX and plotY for use in K-D-Tree and more
-                point.plotX = point.clientX = x2;
-                point.plotY = y2;
+                return [
+                    ['M', diamond.x2, diamond.y1 + size],
+                    ['L', diamond.x3 + size, diamond.y2],
+                    ['L', diamond.x2, diamond.y3 - size],
+                    ['L', diamond.x1 - size, diamond.y2],
+                    ['Z']
+                ];
+            },
+            translate: function (this: TilemapSeries): void {
+                let series = this,
+                    options = series.options,
+                    xAxis = series.xAxis,
+                    yAxis = series.yAxis,
+                    seriesPointPadding = options.pointPadding || 0,
+                    xPad = options.colsize || 1,
+                    yPad = (options.rowsize || 1) / 2,
+                    yShift;
 
-                // Apply point padding to translated coordinates
-                x1 += xPointPadding;
-                x3 -= xPointPadding;
-                y1 -= yPointPadding;
-                y3 += yPointPadding;
+                series.generatePoints();
 
-                // Store points for halo creation
-                point.tileEdges = {
-                    x1: x1, x2: x2, x3: x3, y1: y1, y2: y2, y3: y3
-                };
+                series.points.forEach(function (point): void {
+                    let x1 = clamp(
+                            Math.round(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x - xPad,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        0 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        x2 = clamp(
+                            Math.round(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        0 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        x3 = clamp(
+                            Math.round(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x + xPad,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        0 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        y1 = clamp(
+                            Math.round(
+                                yAxis.translate(
+                                    point.y - yPad,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    0 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        y2 = clamp(
+                            Math.round(
+                                yAxis.translate(
+                                    point.y,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    0 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        y3 = clamp(
+                            Math.round(
+                                yAxis.translate(
+                                    point.y + yPad,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    0 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        pointPadding = pick(
+                            point.pointPadding,
+                            seriesPointPadding
+                        ),
+                        // We calculate the point padding of the midpoints to
+                        // preserve the angles of the shape.
+                        midPointPadding =
+                            (pointPadding * Math.abs(x2 - x1)) /
+                            Math.abs(y3 - y2),
+                        xPointPadding = xAxis.reversed
+                            ? -midPointPadding
+                            : midPointPadding,
+                        yPointPadding = yAxis.reversed
+                            ? -pointPadding
+                            : pointPadding;
 
-                // Set this point's shape parameters
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: [
-                        ['M', x2, y1],
-                        ['L', x3, y2],
-                        ['L', x2, y3],
-                        ['L', x1, y2],
-                        ['Z']
-                    ]
-                };
-            });
+                    // Shift y-values for every second grid column
+                    // We have to reverse the shift for reversed y-axes
+                    if (point.x % 2) {
+                        yShift =
+                            (Math.abs(y3 - y1) / 2) * (yAxis.reversed ? -1 : 1);
+                        y1 += yShift;
+                        y2 += yShift;
+                        y3 += yShift;
+                    }
 
-            series.translateColors();
-        }
-    },
+                    // Set plotX and plotY for use in K-D-Tree and more
+                    point.plotX = point.clientX = x2;
+                    point.plotY = y2;
 
-    // Circle shape type.
-    circle: {
-        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
-        getSeriesPadding: function (
-            series: TilemapSeries
-        ): TilemapShapes.PaddingObject {
-            return tilePaddingFromTileSize(series, 2, 2);
+                    // Apply point padding to translated coordinates
+                    x1 += xPointPadding;
+                    x3 -= xPointPadding;
+                    y1 -= yPointPadding;
+                    y3 += yPointPadding;
+
+                    // Store points for halo creation
+                    point.tileEdges = {
+                        x1: x1,
+                        x2: x2,
+                        x3: x3,
+                        y1: y1,
+                        y2: y2,
+                        y3: y3
+                    };
+
+                    // Set this point's shape parameters
+                    point.shapeType = 'path';
+                    point.shapeArgs = {
+                        d: [
+                            ['M', x2, y1],
+                            ['L', x3, y2],
+                            ['L', x2, y3],
+                            ['L', x1, y2],
+                            ['Z']
+                        ]
+                    };
+                });
+
+                series.translateColors();
+            }
         },
-        haloPath: function (
-            this: TilemapPoint,
-            size: number
-        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
-            return ScatterSeries.prototype.pointClass.prototype.haloPath
-                .call(
+
+        // Circle shape type.
+        circle: {
+            alignDataLabel: ScatterSeries.prototype.alignDataLabel,
+            getSeriesPadding: function (
+                series: TilemapSeries
+            ): TilemapShapes.PaddingObject {
+                return tilePaddingFromTileSize(series, 2, 2);
+            },
+            haloPath: function (this: TilemapPoint, size: number): SVGPath {
+                // eslint-disable-line @typescript-eslint/indent
+                return ScatterSeries.prototype.pointClass.prototype.haloPath.call(
                     this,
                     size + (size && this.radius)
                 );
-        },
-        translate: function (this: TilemapSeries): void {
-            let series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                seriesPointPadding = options.pointPadding || 0,
-                yRadius = (options.rowsize || 1) / 2,
-                colsize = (options.colsize || 1),
-                colsizePx: (number|undefined),
-                yRadiusPx: (number|undefined),
-                xRadiusPx: (number|undefined),
-                radius: number,
-                forceNextRadiusCompute = false;
+            },
+            translate: function (this: TilemapSeries): void {
+                let series = this,
+                    options = series.options,
+                    xAxis = series.xAxis,
+                    yAxis = series.yAxis,
+                    seriesPointPadding = options.pointPadding || 0,
+                    yRadius = (options.rowsize || 1) / 2,
+                    colsize = options.colsize || 1,
+                    colsizePx: number | undefined,
+                    yRadiusPx: number | undefined,
+                    xRadiusPx: number | undefined,
+                    radius: number,
+                    forceNextRadiusCompute = false;
 
-            series.generatePoints();
+                series.generatePoints();
 
-            series.points.forEach(function (point): void {
-                let x = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                0 as any
-                            ) as any)
-                        ), -xAxis.len, 2 * xAxis.len
-                    ),
-                    y = clamp(
-                        Math.round(yAxis.translate(
-                            point.y,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            0 as any
-                        ) as any),
-                        -yAxis.len,
-                        2 * yAxis.len
-                    ),
-                    pointPadding = seriesPointPadding,
-                    hasPerPointPadding = false;
+                series.points.forEach(function (point): void {
+                    let x = clamp(
+                            Math.round(
+                                xAxis.len -
+                                    (xAxis.translate(
+                                        point.x,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        0 as any
+                                    ) as any)
+                            ),
+                            -xAxis.len,
+                            2 * xAxis.len
+                        ),
+                        y = clamp(
+                            Math.round(
+                                yAxis.translate(
+                                    point.y,
+                                    0 as any,
+                                    1 as any,
+                                    0 as any,
+                                    0 as any
+                                ) as any
+                            ),
+                            -yAxis.len,
+                            2 * yAxis.len
+                        ),
+                        pointPadding = seriesPointPadding,
+                        hasPerPointPadding = false;
 
-                // If there is point padding defined on a single point, add it
-                if (typeof point.pointPadding !== 'undefined') {
-                    pointPadding = point.pointPadding;
-                    hasPerPointPadding = true;
-                    forceNextRadiusCompute = true;
-                }
+                    // If there is point padding defined on a single point, add
+                    // it
+                    if (typeof point.pointPadding !== 'undefined') {
+                        pointPadding = point.pointPadding;
+                        hasPerPointPadding = true;
+                        forceNextRadiusCompute = true;
+                    }
 
-                // Find radius if not found already.
-                // Use the smallest one (x vs y) to avoid overlap.
-                // Note that the radius will be recomputed for each series.
-                // Ideal (max) x radius is dependent on y radius:
-                /*
+                    // Find radius if not found already.
+                    // Use the smallest one (x vs y) to avoid overlap.
+                    // Note that the radius will be recomputed for each series.
+                    // Ideal (max) x radius is dependent on y radius:
+                    /*
                                 * (circle 2)
 
                                         * (circle 3)
@@ -533,87 +572,91 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                     and circle 1 is less than 2r, we use half of that distance
                     instead (yRadiusPx).
                 */
-                if (!radius || forceNextRadiusCompute) {
-                    colsizePx = Math.abs(
-                        clamp(
-                            Math.floor(
-                                xAxis.len -
-                                (xAxis.translate(
-                                    point.x + colsize,
-                                    0 as any,
-                                    1 as any,
-                                    0 as any,
-                                    0 as any
-                                ) as any)
-                            ), -xAxis.len, 2 * xAxis.len
-                        ) - x
-                    );
-                    yRadiusPx = Math.abs(
-                        clamp(
-                            Math.floor(
-                                yAxis.translate(
-                                    point.y + yRadius,
-                                    0 as any,
-                                    1 as any,
-                                    0 as any,
-                                    0 as any
-                                ) as any
-                            ), -yAxis.len, 2 * yAxis.len
-                        ) - y
-                    );
-                    xRadiusPx = Math.floor(
-                        Math.sqrt(
-                            (colsizePx * colsizePx + yRadiusPx * yRadiusPx)
-                        ) / 2
-                    );
-                    radius = Math.min(
-                        colsizePx, xRadiusPx, yRadiusPx
-                    ) - pointPadding;
+                    if (!radius || forceNextRadiusCompute) {
+                        colsizePx = Math.abs(
+                            clamp(
+                                Math.floor(
+                                    xAxis.len -
+                                        (xAxis.translate(
+                                            point.x + colsize,
+                                            0 as any,
+                                            1 as any,
+                                            0 as any,
+                                            0 as any
+                                        ) as any)
+                                ),
+                                -xAxis.len,
+                                2 * xAxis.len
+                            ) - x
+                        );
+                        yRadiusPx = Math.abs(
+                            clamp(
+                                Math.floor(
+                                    yAxis.translate(
+                                        point.y + yRadius,
+                                        0 as any,
+                                        1 as any,
+                                        0 as any,
+                                        0 as any
+                                    ) as any
+                                ),
+                                -yAxis.len,
+                                2 * yAxis.len
+                            ) - y
+                        );
+                        xRadiusPx = Math.floor(
+                            Math.sqrt(
+                                colsizePx * colsizePx + yRadiusPx * yRadiusPx
+                            ) / 2
+                        );
+                        radius =
+                            Math.min(colsizePx, xRadiusPx, yRadiusPx) -
+                            pointPadding;
 
-                    // If we have per point padding we need to always compute
-                    // the radius for this point and the next. If we used to
-                    // have per point padding but don't anymore, don't force
-                    // compute next radius.
-                    if (forceNextRadiusCompute && !hasPerPointPadding) {
-                        forceNextRadiusCompute = false;
+                        // If we have per point padding we need to always
+                        // compute the radius for this point and the next. If we
+                        // used to have per point padding but don't anymore,
+                        // don't force compute next radius.
+                        if (forceNextRadiusCompute && !hasPerPointPadding) {
+                            forceNextRadiusCompute = false;
+                        }
                     }
-                }
 
-                // Shift y-values for every second grid column.
-                // Note that we always use the optimal y axis radius for this.
-                // Also note: We have to reverse the shift for reversed y-axes.
-                if (point.x % 2) {
-                    y += (yRadiusPx as any) * (yAxis.reversed ? -1 : 1);
-                }
+                    // Shift y-values for every second grid column. Note that we
+                    // always use the optimal y axis radius for this. Also note:
+                    // We have to reverse the shift for reversed y-axes.
+                    if (point.x % 2) {
+                        y += (yRadiusPx as any) * (yAxis.reversed ? -1 : 1);
+                    }
 
-                // Set plotX and plotY for use in K-D-Tree and more
-                point.plotX = point.clientX = x;
-                point.plotY = y;
+                    // Set plotX and plotY for use in K-D-Tree and more
+                    point.plotX = point.clientX = x;
+                    point.plotY = y;
 
-                // Save radius for halo
-                point.radius = radius;
+                    // Save radius for halo
+                    point.radius = radius;
 
-                // Set this point's shape parameters
-                point.shapeType = 'circle';
-                point.shapeArgs = {
-                    x: x,
-                    y: y,
-                    r: radius
-                };
-            });
+                    // Set this point's shape parameters
+                    point.shapeType = 'circle';
+                    point.shapeArgs = {
+                        x: x,
+                        y: y,
+                        r: radius
+                    };
+                });
 
-            series.translateColors();
+                series.translateColors();
+            }
+        },
+
+        // Square shape type.
+        square: {
+            alignDataLabel: HeatmapSeries.prototype.alignDataLabel,
+            translate: HeatmapSeries.prototype.translate,
+            getSeriesPadding: noop as any,
+            haloPath: HeatmapSeries.prototype.pointClass.prototype.haloPath
         }
-    },
-
-    // Square shape type.
-    square: {
-        alignDataLabel: HeatmapSeries.prototype.alignDataLabel,
-        translate: HeatmapSeries.prototype.translate,
-        getSeriesPadding: noop as any,
-        haloPath: HeatmapSeries.prototype.pointClass.prototype.haloPath
-    }
-};
+    };
 
 /* *
  *

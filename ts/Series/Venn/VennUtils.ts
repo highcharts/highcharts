@@ -39,13 +39,7 @@ const {
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getDistanceBetweenPoints } = GU;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    isString
-} = U;
+const { extend, isArray, isNumber, isObject, isString } = U;
 
 /* *
  *
@@ -93,24 +87,21 @@ function addOverlapToSets(
     // Calculate the amount of overlap per set.
     const mapOfIdToProps = relations
         // Filter out relations consisting of 2 sets.
-        .filter((relation): boolean => (relation.sets.length === 2))
+        .filter((relation): boolean => relation.sets.length === 2)
         // Sum up the amount of overlap for each set.
-        .reduce(
-            (map, relation): Record<string, Highcharts.VennPropsObject> => {
-                relation.sets.forEach((set, i, arr): void => {
-                    if (!isObject(map[set])) {
-                        map[set] = {
-                            overlapping: {},
-                            totalOverlap: 0
-                        };
-                    }
-                    map[set].totalOverlap += relation.value;
-                    map[set].overlapping[arr[1 - i]] = relation.value;
-                });
-                return map;
-            },
-            {} as Record<string, Highcharts.VennPropsObject>
-        );
+        .reduce((map, relation): Record<string, Highcharts.VennPropsObject> => {
+            relation.sets.forEach((set, i, arr): void => {
+                if (!isObject(map[set])) {
+                    map[set] = {
+                        overlapping: {},
+                        totalOverlap: 0
+                    };
+                }
+                map[set].totalOverlap += relation.value;
+                map[set].overlapping[arr[1 - i]] = relation.value;
+            });
+            return map;
+        }, {} as Record<string, Highcharts.VennPropsObject>);
 
     relations
         // Filter out single sets
@@ -160,8 +151,8 @@ function bisect(
         tol = tolerance || 1e-10,
         delta = b - a,
         n = 1,
-        x: (number|undefined),
-        fX: (number|undefined);
+        x: number | undefined,
+        fX: number | undefined;
 
     if (a >= b) {
         throw new Error('a must be smaller than b.');
@@ -194,9 +185,7 @@ function bisect(
 /**
  * @private
  */
-function getCentroid(
-    simplex: Array<NelderMeadPointArray>
-): Array<number> {
+function getCentroid(simplex: Array<NelderMeadPointArray>): Array<number> {
     const arr = simplex.slice(0, -1),
         length = arr.length,
         result = [] as Array<number>,
@@ -246,12 +235,20 @@ function getDistanceBetweenCirclesByOverlap(
         // circle, then it is completely overlapping.
         distance = 0;
     } else {
-        distance = bisect((x: number): number => {
-            const actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
+        distance = bisect(
+            (x: number): number => {
+                const actualOverlap = getOverlapBetweenCirclesByDistance(
+                    r1,
+                    r2,
+                    x
+                );
 
-            // Return the differance between wanted and actual overlap.
-            return overlap - actualOverlap;
-        }, 0, maxDistance);
+                // Return the differance between wanted and actual overlap.
+                return overlap - actualOverlap;
+            },
+            0,
+            maxDistance
+        );
     }
     return distance;
 }
@@ -281,31 +278,32 @@ function getLabelWidth(
             Infinity
         ),
         // Filter out external circles that are completely overlapping.
-        filteredExternals = external.filter(
-            function (circle): boolean {
-                return !isPointInsideCircle(pos, circle);
-            }
-        );
+        filteredExternals = external.filter(function (circle): boolean {
+            return !isPointInsideCircle(pos, circle);
+        });
 
     const findDistance = function (
         maxDistance: number,
         direction: number
     ): number {
-        return bisect(function (x: number): number {
-            const testPos = {
-                    x: pos.x + (direction * x),
-                    y: pos.y
-                },
-                isValid = (
-                    isPointInsideAllCircles(testPos, internal) &&
-                    isPointOutsideAllCircles(testPos, filteredExternals)
-                );
+        return bisect(
+            function (x: number): number {
+                const testPos = {
+                        x: pos.x + direction * x,
+                        y: pos.y
+                    },
+                    isValid =
+                        isPointInsideAllCircles(testPos, internal) &&
+                        isPointOutsideAllCircles(testPos, filteredExternals);
 
-            // If the position is valid, then we want to move towards the
-            // max distance. If not, then we want to  away from the max
-            // distance.
-            return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
-        }, 0, maxDistance);
+                // If the position is valid, then we want to move towards the
+                // max distance. If not, then we want to  away from the max
+                // distance.
+                return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
+            },
+            0,
+            maxDistance
+        );
     };
 
     // Find the smallest distance of left and right.
@@ -335,13 +333,13 @@ function getMarginFromCircles(
     let margin = internal.reduce(function (margin, circle): number {
         const m = circle.r - getDistanceBetweenPoints(point, circle);
 
-        return (m <= margin) ? m : margin;
+        return m <= margin ? m : margin;
     }, Number.MAX_VALUE);
 
     margin = external.reduce(function (margin, circle): number {
         const m = getDistanceBetweenPoints(point, circle) - circle.r;
 
-        return (m <= margin) ? m : margin;
+        return m <= margin ? m : margin;
     }, margin);
 
     return margin;
@@ -356,9 +354,7 @@ function getMarginFromCircles(
  * @return {number}
  * Returns the area of overlap between all the circles.
  */
-function getOverlapBetweenCircles(
-    circles: Array<CircleObject>
-): number {
+function getOverlapBetweenCircles(circles: Array<CircleObject>): number {
     let overlap = 0;
 
     // When there is only two circles we can find the overlap by using their
@@ -378,22 +374,22 @@ function getOverlapBetweenCircles(
 }
 
 // eslint-disable-next-line require-jsdoc
-function isSet(
-    x: (VennPointOptions|Highcharts.VennRelationObject)
-): boolean {
+function isSet(x: VennPointOptions | Highcharts.VennRelationObject): boolean {
     return isArray(x.sets) && x.sets.length === 1;
 }
 
 // eslint-disable-next-line require-jsdoc
 function isValidRelation(
-    x: (VennPointOptions|Highcharts.VennRelationObject)
+    x: VennPointOptions | Highcharts.VennRelationObject
 ): boolean {
     const map: Record<string, boolean> = {};
 
     return (
         isObject(x) &&
-        (isNumber(x.value) && x.value > -1) &&
-        (isArray(x.sets) && x.sets.length > 0) &&
+        isNumber(x.value) &&
+        x.value > -1 &&
+        isArray(x.sets) &&
+        x.sets.length > 0 &&
         !x.sets.some(function (set: string): boolean {
             let invalid = false;
 
@@ -409,9 +405,9 @@ function isValidRelation(
 
 // eslint-disable-next-line require-jsdoc
 function isValidSet(
-    x: (VennPointOptions|Highcharts.VennRelationObject)
+    x: VennPointOptions | Highcharts.VennRelationObject
 ): boolean {
-    return (isValidRelation(x) && isSet(x) && (x.value as any) > 0);
+    return isValidRelation(x) && isSet(x) && (x.value as any) > 0;
 }
 
 /**
@@ -432,7 +428,8 @@ function layoutGreedyVenn(
     relations
         .filter(function (relation: Highcharts.VennRelationObject): boolean {
             return relation.sets.length === 1;
-        }).forEach(function (relation: Highcharts.VennRelationObject): void {
+        })
+        .forEach(function (relation: Highcharts.VennRelationObject): void {
             mapOfIdToCircles[relation.sets[0]] = relation.circle = {
                 x: Number.MAX_VALUE,
                 y: Number.MAX_VALUE,
@@ -465,18 +462,16 @@ function layoutGreedyVenn(
     addOverlapToSets(relations);
 
     // Sort sets by the sum of their size from large to small.
-    const sortedByOverlap = relations
-        .filter(isSet)
-        .sort(sortByTotalOverlap);
+    const sortedByOverlap = relations.filter(isSet).sort(sortByTotalOverlap);
 
     // Position the most overlapped set at 0,0.
     positionSet(sortedByOverlap.shift() as any, { x: 0, y: 0 });
 
-    const relationsWithTwoSets = relations.filter(
-        function (x: Highcharts.VennRelationObject): boolean {
-            return x.sets.length === 2;
-        }
-    );
+    const relationsWithTwoSets = relations.filter(function (
+        x: Highcharts.VennRelationObject
+    ): boolean {
+        return x.sets.length === 2;
+    });
 
     // Iterate and position the remaining sets.
     sortedByOverlap.forEach(function (
@@ -510,30 +505,35 @@ function layoutGreedyVenn(
 
                 // If there are more circles overlapping, then add the
                 // intersection points as possible positions.
-                positionedSets.slice(i + 1).forEach(function (
-                    positionedSet2: Highcharts.VennRelationObject
-                ): void {
-                    const positionedCircle2 = positionedSet2.circle,
-                        overlap2 = overlapping[positionedSet2.sets[0]],
-                        distance2 = getDistanceBetweenCirclesByOverlap(
-                            radius,
-                            positionedCircle2.r,
-                            overlap2
-                        );
+                positionedSets
+                    .slice(i + 1)
+                    .forEach(function (
+                        positionedSet2: Highcharts.VennRelationObject
+                    ): void {
+                        const positionedCircle2 = positionedSet2.circle,
+                            overlap2 = overlapping[positionedSet2.sets[0]],
+                            distance2 = getDistanceBetweenCirclesByOverlap(
+                                radius,
+                                positionedCircle2.r,
+                                overlap2
+                            );
 
-                    // Add intersections to list of coordinates.
-                    possibleCoordinates = possibleCoordinates.concat(
-                        getCircleCircleIntersection({
-                            x: positionedCircle.x,
-                            y: positionedCircle.y,
-                            r: distance
-                        }, {
-                            x: positionedCircle2.x,
-                            y: positionedCircle2.y,
-                            r: distance2
-                        })
-                    );
-                });
+                        // Add intersections to list of coordinates.
+                        possibleCoordinates = possibleCoordinates.concat(
+                            getCircleCircleIntersection(
+                                {
+                                    x: positionedCircle.x,
+                                    y: positionedCircle.y,
+                                    r: distance
+                                },
+                                {
+                                    x: positionedCircle2.x,
+                                    y: positionedCircle2.y,
+                                    r: distance2
+                                }
+                            )
+                        );
+                    });
 
                 // Iterate all suggested coordinates and find the best one.
                 possibleCoordinates.forEach(function (coordinates): void {
@@ -542,7 +542,8 @@ function layoutGreedyVenn(
 
                     // Calculate loss for the suggested coordinates.
                     const currentLoss = loss(
-                        mapOfIdToCircles, relationsWithTwoSets
+                        mapOfIdToCircles,
+                        relationsWithTwoSets
                     );
 
                     // If the loss is better, then use these new coordinates
@@ -554,7 +555,8 @@ function layoutGreedyVenn(
 
                 // Return resulting coordinates.
                 return best;
-            }, {
+            },
+            {
                 loss: Number.MAX_VALUE,
                 coordinates: void 0 as any
             }
@@ -605,14 +607,14 @@ function loss(
 
             const diff = wantedOverlap - actualOverlap;
 
-            loss = Math.round((diff * diff) * precision) / precision;
+            loss = Math.round(diff * diff * precision) / precision;
         }
 
         // Add calculated loss to the sum.
         return totalLoss + loss;
-    }, 0);
+    },
+    0);
 }
-
 
 /**
  * Finds an optimal position for a given point.
@@ -651,9 +653,8 @@ function nelderMead(
         v1: Array<number>,
         weight2: number,
         v2: Array<number>
-    ): Array<number> => v1.map(
-        (x: number, i: number): number => weight1 * x + weight2 * v2[i]
-    );
+    ): Array<number> =>
+        v1.map((x: number, i: number): number => weight1 * x + weight2 * v2[i]);
 
     /**
      * @private
@@ -693,14 +694,19 @@ function nelderMead(
     ): Array<NelderMeadPointArray> => {
         const best = simplex[0];
 
-        return simplex.map((
-            point: NelderMeadPointArray
-        ): NelderMeadPointArray => {
-            const p = weightedSum(1 - pShrink, best, pShrink, point) as NelderMeadPointArray;
+        return simplex.map(
+            (point: NelderMeadPointArray): NelderMeadPointArray => {
+                const p = weightedSum(
+                    1 - pShrink,
+                    best,
+                    pShrink,
+                    point
+                ) as NelderMeadPointArray;
 
-            p.fx = fn(p);
-            return p;
-        });
+                p.fx = fn(p);
+                return p;
+            }
+        );
     };
 
     const getPoint = (
@@ -709,7 +715,12 @@ function nelderMead(
         a: number,
         b: number
     ): NelderMeadPointArray => {
-        const point = weightedSum(a, centroid, b, worst) as NelderMeadPointArray;
+        const point = weightedSum(
+            a,
+            centroid,
+            b,
+            worst
+        ) as NelderMeadPointArray;
 
         point.fx = fn(point);
         return point;
@@ -736,7 +747,7 @@ function nelderMead(
 
             simplex = updateSimplex(
                 simplex,
-                (expanded.fx < reflected.fx) ? expanded : reflected
+                expanded.fx < reflected.fx ? expanded : reflected
             );
         } else if (reflected.fx >= simplex[simplex.length - 2].fx) {
             // If the reflected point is worse than the second worse, then
@@ -793,7 +804,8 @@ function processVennData(
                 arr.push((x.sets as any)[0]);
             }
             return arr;
-        }, [])
+        },
+        [])
         .sort();
 
     const mapOfIdToRelation = d.reduce(function (
@@ -810,37 +822,41 @@ function processVennData(
                 relation as any;
         }
         return mapOfIdToRelation;
-    }, {});
+    },
+    {});
 
-    validSets.reduce(function (
-        combinations: Array<string>,
-        set: string,
-        i: number,
-        arr: Array<string>
-    ): Array<string> {
-        const remaining = arr.slice(i + 1);
+    validSets
+        .reduce(function (
+            combinations: Array<string>,
+            set: string,
+            i: number,
+            arr: Array<string>
+        ): Array<string> {
+            const remaining = arr.slice(i + 1);
 
-        remaining.forEach(function (set2: string): void {
-            combinations.push(set + ',' + set2);
+            remaining.forEach(function (set2: string): void {
+                combinations.push(set + ',' + set2);
+            });
+            return combinations;
+        },
+        [])
+        .forEach(function (combination: string): void {
+            if (!mapOfIdToRelation[combination]) {
+                const obj: Highcharts.VennRelationObject = {
+                    sets: combination.split(','),
+                    value: 0
+                } as any;
+
+                mapOfIdToRelation[combination] = obj;
+            }
         });
-        return combinations;
-    }, []).forEach(function (combination: string): void {
-        if (!mapOfIdToRelation[combination]) {
-            const obj: Highcharts.VennRelationObject = {
-                sets: combination.split(','),
-                value: 0
-            } as any;
-
-            mapOfIdToRelation[combination] = obj;
-        }
-    });
 
     // Transform map into array.
-    return Object
-        .keys(mapOfIdToRelation)
-        .map(function (id): Highcharts.VennRelationObject {
-            return mapOfIdToRelation[id];
-        });
+    return Object.keys(mapOfIdToRelation).map(function (
+        id
+    ): Highcharts.VennRelationObject {
+        return mapOfIdToRelation[id];
+    });
 }
 
 /**

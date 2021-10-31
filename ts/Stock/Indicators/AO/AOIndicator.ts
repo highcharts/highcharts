@@ -17,19 +17,11 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
+    seriesTypes: { sma: SMAIndicator, column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
-const {
-    extend,
-    merge,
-    correctFloat,
-    isArray
-} = U;
+const { extend, merge, correctFloat, isArray } = U;
 
 /* *
  *
@@ -65,49 +57,50 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
-    public static defaultOptions: AOOptions =
-    merge(SMAIndicator.defaultOptions, {
-        params: {
-            // Index and period are unchangeable, do not inherit (#15362)
-            index: void 0,
-            period: void 0
-        },
-        /**
-         * Color of the Awesome oscillator series bar that is greater than the
-         * previous one. Note that if a `color` is defined, the `color`
-         * takes precedence and the `greaterBarColor` is ignored.
-         *
-         * @sample {highstock} stock/indicators/ao/
-         *         greaterBarColor
-         *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since 7.0.0
-         */
-        greaterBarColor: Palette.positiveColor,
-        /**
-         * Color of the Awesome oscillator series bar that is lower than the
-         * previous one. Note that if a `color` is defined, the `color`
-         * takes precedence and the `lowerBarColor` is ignored.
-         *
-         * @sample {highstock} stock/indicators/ao/
-         *         lowerBarColor
-         *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since 7.0.0
-         */
-        lowerBarColor: Palette.negativeColor,
-        threshold: 0,
-        groupPadding: 0.2,
-        pointPadding: 0.2,
-        crisp: false,
-        states: {
-            hover: {
-                halo: {
-                    size: 0
+    public static defaultOptions: AOOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                // Index and period are unchangeable, do not inherit (#15362)
+                index: void 0,
+                period: void 0
+            },
+            /**
+             * Color of the Awesome oscillator series bar that is greater than
+             * the previous one. Note that if a `color` is defined, the `color`
+             * takes precedence and the `greaterBarColor` is ignored.
+             *
+             * @sample {highstock} stock/indicators/ao/ greaterBarColor
+             *
+             * @type  {Highcharts.ColorType}
+             * @since 7.0.0
+             */
+            greaterBarColor: Palette.positiveColor,
+            /**
+             * Color of the Awesome oscillator series bar that is lower than the
+             * previous one. Note that if a `color` is defined, the `color`
+             * takes precedence and the `lowerBarColor` is ignored.
+             *
+             * @sample {highstock} stock/indicators/ao/
+             *         lowerBarColor
+             *
+             * @type  {Highcharts.ColorType}
+             * @since 7.0.0
+             */
+            lowerBarColor: Palette.negativeColor,
+            threshold: 0,
+            groupPadding: 0.2,
+            pointPadding: 0.2,
+            crisp: false,
+            states: {
+                hover: {
+                    halo: {
+                        size: 0
+                    }
                 }
             }
-        }
-    } as AOOptions);
+        } as AOOptions
+    );
 
     /**
      *
@@ -141,9 +134,7 @@ class AOIndicator extends SMAIndicator {
             for (i = 1; i < points.length; i++) {
                 if ((points[i] as any).y > (points[i - 1] as any).y) {
                     points[i].color = positiveColor;
-                } else if (
-                    (points[i] as any).y < (points[i - 1] as any).y
-                ) {
+                } else if ((points[i] as any).y < (points[i - 1] as any).y) {
                     points[i].color = negativeColor;
                 } else {
                     points[i].color = points[i - 1].color;
@@ -154,11 +145,11 @@ class AOIndicator extends SMAIndicator {
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let shortPeriod = 5,
             longPeriod = 34,
             xVal: Array<number> = series.xData || [],
-            yVal: Array<number|null|undefined> =
+            yVal: Array<number | null | undefined> =
                 (series.yData as any) || [],
             yValLen: number = yVal.length,
             AO: Array<Array<number>> = [], // 0- date, 1- Awesome Oscillator
@@ -212,20 +203,17 @@ class AOIndicator extends SMAIndicator {
 
             shortSum = correctFloat(
                 shortSum -
-                (
-                    (yVal[shortLastIndex] as any)[high] +
-                    (yVal[shortLastIndex] as any)[low]
-                ) / 2
+                    ((yVal[shortLastIndex] as any)[high] +
+                        (yVal[shortLastIndex] as any)[low]) /
+                        2
             );
             longSum = correctFloat(
                 longSum -
-                (
-                    (yVal[longLastIndex] as any)[high] +
-                    (yVal[longLastIndex] as any)[low]
-                ) / 2
+                    ((yVal[longLastIndex] as any)[high] +
+                        (yVal[longLastIndex] as any)[low]) /
+                        2
             );
         }
-
 
         return {
             values: AO,
@@ -247,7 +235,7 @@ interface AOIndicator {
 
 extend(AOIndicator.prototype, {
     nameBase: 'AO',
-    nameComponents: (false as any),
+    nameComponents: false as any,
 
     // Columns support:
     markerAttribs: noop as any,
@@ -293,4 +281,4 @@ export default AOIndicator;
  * @requires  stock/indicators/ao
  * @apioption series.ao
  */
-''; // for including the above in the doclets
+(''); // for including the above in the doclets

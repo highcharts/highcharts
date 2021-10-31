@@ -20,7 +20,10 @@ const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-const createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+const createPathDGenerator = function (
+    retracementIndex: number,
+    isBackground?: boolean
+): Function {
     return function (this: Highcharts.AnnotationControllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
         if (!annotation.startRetracements || !annotation.endRetracements) {
@@ -59,7 +62,6 @@ const createPathDGenerator = function (retracementIndex: number, isBackground?: 
 };
 
 class Fibonacci extends Tunnel {
-
     /* *
      *
      * Static properties
@@ -74,7 +76,10 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Fibonacci.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Fibonacci.Options
+    ) {
         super(chart, options);
     }
 
@@ -141,16 +146,12 @@ class Fibonacci extends Tunnel {
             typeOptions = this.options.typeOptions;
 
         if (!point) {
-            retracements[pointIndex] = new MockPoint(
-                this.chart,
-                this,
-                {
-                    x: x,
-                    y: y,
-                    xAxis: typeOptions.xAxis,
-                    yAxis: typeOptions.yAxis
-                }
-            );
+            retracements[pointIndex] = new MockPoint(this.chart, this, {
+                x: x,
+                y: y,
+                xAxis: typeOptions.xAxis,
+                yAxis: typeOptions.yAxis
+            });
         } else {
             (point.options as any).x = x;
             (point.options as any).y = y;
@@ -160,18 +161,22 @@ class Fibonacci extends Tunnel {
     }
 
     public addShapes(): void {
-        Fibonacci.levels.forEach(function (this: Fibonacci, _level: number, i: number): void {
-            const {
-                backgroundColors,
-                lineColor,
-                lineColors
-            } = this.options.typeOptions;
+        Fibonacci.levels.forEach(function (
+            this: Fibonacci,
+            _level: number,
+            i: number
+        ): void {
+            const { backgroundColors, lineColor, lineColors } =
+                this.options.typeOptions;
 
-            this.initShape({
-                type: 'path',
-                d: createPathDGenerator(i),
-                stroke: lineColors[i] || lineColor
-            }, i);
+            this.initShape(
+                {
+                    type: 'path',
+                    d: createPathDGenerator(i),
+                    stroke: lineColors[i] || lineColor
+                },
+                i
+            );
 
             if (i > 0) {
                 (this.initShape as any)({
@@ -181,11 +186,16 @@ class Fibonacci extends Tunnel {
                     d: createPathDGenerator(i, true)
                 });
             }
-        }, this);
+        },
+        this);
     }
 
     public addLabels(): void {
-        Fibonacci.levels.forEach(function (this: Fibonacci, level: number, i: number): void {
+        Fibonacci.levels.forEach(function (
+            this: Fibonacci,
+            level: number,
+            i: number
+        ): void {
             const options = this.options.typeOptions,
                 label = (this.initLabel as any)(
                     merge(options.labels[i], {
@@ -201,7 +211,8 @@ class Fibonacci extends Tunnel {
                 );
 
             options.labels[i] = label.options;
-        }, this);
+        },
+        this);
     }
 }
 

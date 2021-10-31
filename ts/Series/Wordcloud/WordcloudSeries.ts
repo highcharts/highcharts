@@ -35,18 +35,10 @@ const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    merge
-} = U;
+const { extend, isArray, isNumber, isObject, merge } = U;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudUtils from './WordcloudUtils.js';
 const {
@@ -82,7 +74,6 @@ const {
  * @augments Highcharts.Series
  */
 class WordcloudSeries extends ColumnSeries {
-
     /* *
      *
      * Static properties
@@ -113,101 +104,105 @@ class WordcloudSeries extends ColumnSeries {
      * @optionparent plotOptions.wordcloud
      */
 
-    public static defaultOptions: WordcloudSeriesOptions =
-    merge(ColumnSeries.defaultOptions, {
-        /**
-         * If there is no space for a word on the playing field, then this
-         * option will allow the playing field to be extended to fit the word.
-         * If false then the word will be dropped from the visualization.
-         *
-         * NB! This option is currently not decided to be published in the API,
-         * and is therefore marked as private.
-         *
-         * @private
-         */
-        allowExtendPlayingField: true,
-        animation: {
-            /** @internal */
-            duration: 500
-        },
-        borderWidth: 0,
-        clip: false, // Something goes wrong with clip. // @todo fix this
-        colorByPoint: true,
-        /**
-         * A threshold determining the minimum font size that can be applied to
-         * a word.
-         */
-        minFontSize: 1,
-        /**
-         * The word with the largest weight will have a font size equal to this
-         * value. The font size of a word is the ratio between its weight and
-         * the largest occuring weight, multiplied with the value of
-         * maxFontSize.
-         */
-        maxFontSize: 25,
-        /**
-         * This option decides which algorithm is used for placement, and
-         * rotation of a word. The choice of algorith is therefore a crucial
-         * part of the resulting layout of the wordcloud. It is possible for
-         * users to add their own custom placement strategies for use in word
-         * cloud. Read more about it in our
-         * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
-         *
-         * @validvalue: ["center", "random"]
-         */
-        placementStrategy: 'center',
-        /**
-         * Rotation options for the words in the wordcloud.
-         *
-         * @sample highcharts/plotoptions/wordcloud-rotation
-         *         Word cloud with rotation
-         */
-        rotation: {
+    public static defaultOptions: WordcloudSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
             /**
-             * The smallest degree of rotation for a word.
+             * If there is no space for a word on the playing field, then this
+             * option will allow the playing field to be extended to fit the
+             * word. If false then the word will be dropped from the
+             * visualization.
+             *
+             * NB! This option is currently not decided to be published in the
+             * API, and is therefore marked as private.
+             *
+             * @private
              */
-            from: 0,
+            allowExtendPlayingField: true,
+            animation: {
+                /** @internal */
+                duration: 500
+            },
+            borderWidth: 0,
+            clip: false, // Something goes wrong with clip. // @todo fix this
+            colorByPoint: true,
             /**
-             * The number of possible orientations for a word, within the range
-             * of `rotation.from` and `rotation.to`. Must be a number larger
-             * than 0.
+             * A threshold determining the minimum font size that can be applied
+             * to a word.
              */
-            orientations: 2,
+            minFontSize: 1,
             /**
-             * The largest degree of rotation for a word.
+             * The word with the largest weight will have a font size equal to
+             * this value. The font size of a word is the ratio between its
+             * weight and the largest occuring weight, multiplied with the value
+             * of maxFontSize.
              */
-            to: 90
-        },
-        showInLegend: false,
-        /**
-         * Spiral used for placing a word after the initial position
-         * experienced a collision with either another word or the borders.
-         * It is possible for users to add their own custom spiralling
-         * algorithms for use in word cloud. Read more about it in our
-         * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
-         *
-         * @validvalue: ["archimedean", "rectangular", "square"]
-         */
-        spiral: 'rectangular',
-        /**
-         * CSS styles for the words.
-         *
-         * @type    {Highcharts.CSSObject}
-         * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
-         */
-        style: {
-            /** @ignore-option */
-            fontFamily: 'sans-serif',
-            /** @ignore-option */
-            fontWeight: '900',
-            /** @ignore-option */
-            whiteSpace: 'nowrap'
-        },
-        tooltip: {
-            followPointer: true,
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
-        }
-    } as WordcloudSeriesOptions);
+            maxFontSize: 25,
+            /**
+             * This option decides which algorithm is used for placement, and
+             * rotation of a word. The choice of algorith is therefore a crucial
+             * part of the resulting layout of the wordcloud. It is possible for
+             * users to add their own custom placement strategies for use in
+             * word cloud. Read more about it in our
+             * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
+             *
+             * @validvalue: ["center", "random"]
+             */
+            placementStrategy: 'center',
+            /**
+             * Rotation options for the words in the wordcloud.
+             *
+             * @sample highcharts/plotoptions/wordcloud-rotation
+             *         Word cloud with rotation
+             */
+            rotation: {
+                /**
+                 * The smallest degree of rotation for a word.
+                 */
+                from: 0,
+                /**
+                 * The number of possible orientations for a word, within the
+                 * range of `rotation.from` and `rotation.to`. Must be a number
+                 * larger than 0.
+                 */
+                orientations: 2,
+                /**
+                 * The largest degree of rotation for a word.
+                 */
+                to: 90
+            },
+            showInLegend: false,
+            /**
+             * Spiral used for placing a word after the initial position
+             * experienced a collision with either another word or the borders.
+             * It is possible for users to add their own custom spiralling
+             * algorithms for use in word cloud. Read more about it in our
+             * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
+             *
+             * @validvalue: ["archimedean", "rectangular", "square"]
+             */
+            spiral: 'rectangular',
+            /**
+             * CSS styles for the words.
+             *
+             * @type    {Highcharts.CSSObject}
+             * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
+             */
+            style: {
+                /** @ignore-option */
+                fontFamily: 'sans-serif',
+                /** @ignore-option */
+                fontWeight: '900',
+                /** @ignore-option */
+                whiteSpace: 'nowrap'
+            },
+            tooltip: {
+                followPointer: true,
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
+            }
+        } as WordcloudSeriesOptions
+    );
 
     /* *
      *
@@ -243,8 +238,11 @@ class WordcloudSeries extends ColumnSeries {
         point: WordcloudPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const attribs = H.seriesTypes.column.prototype
-            .pointAttribs.call(this, point, state);
+        const attribs = H.seriesTypes.column.prototype.pointAttribs.call(
+            this,
+            point,
+            state
+        );
 
         delete attribs.stroke;
         delete attribs['stroke-width'];
@@ -296,26 +294,21 @@ class WordcloudSeries extends ColumnSeries {
             renderer = chart.renderer,
             testElement: SVGElement = renderer.text().add(group),
             placed: Array<WordcloudPoint> = [],
-            placementStrategy = series.placementStrategy[
-                options.placementStrategy as any
-            ],
+            placementStrategy =
+                series.placementStrategy[options.placementStrategy as any],
             spiral: WordcloudSeries.WordcloudSpiralFunction,
-            rotation: WordcloudSeriesRotationOptions =
-                options.rotation as any,
+            rotation: WordcloudSeriesRotationOptions = options.rotation as any,
             scale,
-            weights = series.points.map(function (
-                p: WordcloudPoint
-            ): number {
+            weights = series.points.map(function (p: WordcloudPoint): number {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
             // concat() prevents from sorting the original array.
-            data = series.points.concat().sort(function (
-                a: WordcloudPoint,
-                b: WordcloudPoint
-            ): number {
-                return b.weight - a.weight; // Sort descending
-            }),
+            data = series.points
+                .concat()
+                .sort(function (a: WordcloudPoint, b: WordcloudPoint): number {
+                    return b.weight - a.weight; // Sort descending
+                }),
             field: WordcloudSeries.WordcloudFieldObject;
 
         // Reset the scale before finding the dimensions (#11993).
@@ -331,15 +324,18 @@ class WordcloudSeries extends ColumnSeries {
         // Get the dimensions for each word.
         // Used in calculating the playing field.
         data.forEach(function (point: WordcloudPoint): void {
-            let relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = (1 / maxWeight) * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
                     options.minFontSize
                 ),
-                css = extend({
-                    fontSize: fontSize + 'px'
-                }, options.style as any),
+                css = extend(
+                    {
+                        fontSize: fontSize + 'px'
+                    },
+                    options.style as any
+                ),
                 bBox: BBoxObject;
 
             testElement.css(css).attr({
@@ -361,15 +357,18 @@ class WordcloudSeries extends ColumnSeries {
         });
         // Draw all the points.
         data.forEach(function (point: WordcloudPoint): void {
-            let relativeWeight = 1 / maxWeight * point.weight,
+            let relativeWeight = (1 / maxWeight) * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
                     options.maxFontSize,
                     options.minFontSize
                 ),
-                css = extend({
-                    fontSize: fontSize + 'px'
-                }, options.style as any),
+                css = extend(
+                    {
+                        fontSize: fontSize + 'px'
+                    },
+                    options.style as any
+                ),
                 placement = placementStrategy(point, {
                     data: data,
                     field: field,
@@ -379,7 +378,7 @@ class WordcloudSeries extends ColumnSeries {
                 attr = extend(
                     series.pointAttribs(
                         point,
-                        (point.selected && 'select' as any)
+                        point.selected && ('select' as any)
                     ),
                     {
                         align: 'center',
@@ -388,9 +387,9 @@ class WordcloudSeries extends ColumnSeries {
                         x: placement.x,
                         y: placement.y,
                         text: point.name,
-                        rotation: isNumber(placement.rotation) ?
-                            placement.rotation :
-                            void 0
+                        rotation: isNumber(placement.rotation)
+                            ? placement.rotation
+                            : void 0
                     }
                 ),
                 polygon = getPolygon(
@@ -409,7 +408,7 @@ class WordcloudSeries extends ColumnSeries {
                     spiral: spiral,
                     rotation: placement.rotation
                 }) as any,
-                animate: (SVGAttributes|undefined);
+                animate: SVGAttributes | undefined;
 
             // If there is no space for the word, extend the playing field.
             if (!delta && allowExtendPlayingField) {
@@ -453,7 +452,7 @@ class WordcloudSeries extends ColumnSeries {
                 if (!hasRendered) {
                     attr.x = 0;
                     attr.y = 0;
-                // or animate from previous position
+                    // or animate from previous position
                 } else {
                     delete attr.x;
                     delete attr.y;
@@ -486,7 +485,7 @@ class WordcloudSeries extends ColumnSeries {
         const series = this;
 
         return (
-            isObject(series) as any &&
+            (isObject(series) as any) &&
             series.visible === true &&
             isArray(series.points) &&
             series.points.length > 0
@@ -498,16 +497,16 @@ class WordcloudSeries extends ColumnSeries {
             chart = series.chart,
             inverted = chart.inverted,
             // Swap axes for inverted (#2339)
-            xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
-            yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
+            xAxis = series[inverted ? 'yAxis' : 'xAxis'],
+            yAxis = series[inverted ? 'xAxis' : 'yAxis'],
             width = xAxis ? xAxis.len : chart.plotWidth,
             height = yAxis ? yAxis.len : chart.plotHeight,
             x = xAxis ? xAxis.left : chart.plotLeft,
             y = yAxis ? yAxis.top : chart.plotTop;
 
         return {
-            translateX: x + (width / 2),
-            translateY: y + (height / 2),
+            translateX: x + width / 2,
+            translateY: y + height / 2,
             scaleX: 1, // #1623
             scaleY: 1
         };
@@ -520,7 +519,10 @@ class WordcloudSeries extends ColumnSeries {
  *
  * */
 interface WordcloudSeries {
-    placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
+    placementStrategy: Record<
+        string,
+        WordcloudSeries.WordcloudPlacementFunction
+    >;
     pointArrayMap: Array<string>;
     pointClass: typeof WordcloudPoint;
     spirals: Record<string, WordcloudSeries.WordcloudSpiralFunction>;
@@ -546,8 +548,8 @@ extend(WordcloudSeries.prototype, {
                 r = options.rotation;
 
             return {
-                x: getRandomPosition(field.width) - (field.width / 2),
-                y: getRandomPosition(field.height) - (field.height / 2),
+                x: getRandomPosition(field.width) - field.width / 2,
+                y: getRandomPosition(field.height) - field.height / 2,
                 rotation: getRotation(r.orientations, point.index, r.from, r.to)
             };
         },
@@ -569,9 +571,9 @@ extend(WordcloudSeries.prototype, {
     // collision with either another word or the borders. To implement a custom
     // spiral, look at the function archimedeanSpiral for example.
     spirals: {
-        'archimedean': archimedeanSpiral,
-        'rectangular': rectangularSpiral,
-        'square': squareSpiral
+        archimedean: archimedeanSpiral,
+        rectangular: rectangularSpiral,
+        square: squareSpiral
     },
     utils: {
         extendPlayingField: extendPlayingField,
@@ -613,7 +615,7 @@ namespace WordcloudSeries {
         ): WordcloudPlacementObject;
     }
     export interface WordcloudPlacementObject extends PositionObject {
-        rotation: (boolean|number);
+        rotation: boolean | number;
     }
     export interface WordcloudPlacementOptionsObject {
         data: WordcloudSeries['data'];
@@ -622,10 +624,9 @@ namespace WordcloudSeries {
         rotation: WordcloudSeriesRotationOptions;
     }
     export interface WordcloudSpiralFunction {
-        (
-            attempt: number,
-            params?: WordcloudSpiralParamsObject
-        ): (boolean|PositionObject);
+        (attempt: number, params?: WordcloudSpiralParamsObject):
+            | boolean
+            | PositionObject;
     }
     export interface WordcloudSpiralParamsObject {
         field: WordcloudFieldObject;
@@ -635,7 +636,7 @@ namespace WordcloudSeries {
         placed: Array<WordcloudPoint>;
         polygon: WordcloudUtils.PolygonObject;
         rectangle: PolygonBoxObject;
-        rotation: (boolean|number);
+        rotation: boolean | number;
         spiral: WordcloudSpiralFunction;
     }
 }
@@ -717,4 +718,4 @@ export default WordcloudSeries;
  * @apioption series.sunburst.data.weight
  */
 
-''; // detach doclets above
+(''); // detach doclets above

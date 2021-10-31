@@ -25,14 +25,16 @@ import type NodesComposition from '../NodesComposition';
  *
  * */
 
-export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition.PointCompositionOptions {
+export interface SankeyPointOptions
+    extends ColumnPointOptions,
+        NodesComposition.PointCompositionOptions {
     column?: number;
     from?: string;
     height?: number;
     level?: number;
-    offset?: (number|string);
-    offsetHorizontal?: (number|string);
-    offsetVertical?: (number|string);
+    offset?: number | string;
+    offsetHorizontal?: number | string;
+    offsetVertical?: number | string;
     to?: string;
     width?: number;
 }

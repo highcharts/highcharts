@@ -24,10 +24,7 @@ const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
-const {
-    defined,
-    stableSort
-} = U;
+const { defined, stableSort } = U;
 
 /* *
  *
@@ -36,7 +33,6 @@ const {
  * */
 
 namespace OnSeriesComposition {
-
     /* *
      *
      *  Declarations
@@ -54,7 +50,7 @@ namespace OnSeriesComposition {
     }
 
     export interface SeriesOptions extends CoreSeriesOptions {
-        onSeries?: (string|null);
+        onSeries?: string | null;
     }
 
     /* *
@@ -78,8 +74,7 @@ namespace OnSeriesComposition {
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T
-    ): (T&SeriesComposition) {
-
+    ): T & SeriesComposition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -89,7 +84,7 @@ namespace OnSeriesComposition {
             seriesProto.translate = translate;
         }
 
-        return SeriesClass as (T&SeriesComposition);
+        return SeriesClass as T & SeriesComposition;
     }
 
     /**
@@ -98,14 +93,10 @@ namespace OnSeriesComposition {
      *
      * @private
      */
-    export function getPlotBox(
-        this: SeriesComposition
-    ): Series.PlotBoxObject {
+    export function getPlotBox(this: SeriesComposition): Series.PlotBoxObject {
         return seriesProto.getPlotBox.call(
-            (
-                this.options.onSeries &&
-                this.chart.get(this.options.onSeries)
-            ) || this
+            (this.options.onSeries && this.chart.get(this.options.onSeries)) ||
+                this
         );
     }
 
@@ -114,10 +105,7 @@ namespace OnSeriesComposition {
      *
      * @private
      */
-    export function translate(
-        this: SeriesComposition
-    ): void {
-
+    export function translate(this: SeriesComposition): void {
         columnProto.translate.apply(this);
 
         const series = this,
@@ -125,20 +113,18 @@ namespace OnSeriesComposition {
             chart = series.chart,
             points = series.points,
             optionsOnSeries = options.onSeries,
-            onSeries: (SeriesComposition|undefined) = (
-                optionsOnSeries &&
-                chart.get(optionsOnSeries)
-            ) as any,
+            onSeries: SeriesComposition | undefined = (optionsOnSeries &&
+                chart.get(optionsOnSeries)) as any,
             step = onSeries && onSeries.options.step,
-            onData: (Array<PointComposition>|undefined) =
-                 (onSeries && onSeries.points),
+            onData: Array<PointComposition> | undefined =
+                onSeries && onSeries.points,
             inverted = chart.inverted,
             xAxis = series.xAxis,
             yAxis = series.yAxis;
 
         let cursor = points.length - 1,
             point: PointComposition,
-            lastPoint: (PointComposition|undefined),
+            lastPoint: PointComposition | undefined,
             onKey = (options as any).onKey || 'y',
             i = onData && onData.length,
             xOffset = 0,
@@ -152,13 +138,12 @@ namespace OnSeriesComposition {
         if (onSeries && onSeries.visible && i) {
             xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
             currentDataGrouping = onSeries.currentDataGrouping;
-            lastX = (
+            lastX =
                 (onData as any)[i - 1].x +
-                (currentDataGrouping ? currentDataGrouping.totalRange : 0)
-            ); // #2374
+                (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
             // sort the data points
-            stableSort(points, (a, b): number => ((a.x as any) - (b.x as any)));
+            stableSort(points, (a, b): number => (a.x as any) - (b.x as any));
 
             onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
             while (i-- && points[cursor]) {
@@ -170,14 +155,13 @@ namespace OnSeriesComposition {
                     leftPoint.x <= (point.x as any) &&
                     typeof leftPoint[onKey] !== 'undefined'
                 ) {
-                    if ((point.x as any) <= lastX) { // #803
+                    if ((point.x as any) <= lastX) {
+                        // #803
 
                         point.plotY = leftPoint[onKey];
 
                         // interpolate between points, #666
-                        if (leftPoint.x < (point.x as any) &&
-                            !step
-                        ) {
+                        if (leftPoint.x < (point.x as any) && !step) {
                             rightPoint = (onData as any)[i + 1];
                             if (
                                 rightPoint &&
@@ -208,7 +192,6 @@ namespace OnSeriesComposition {
 
         // Add plotY position and handle stacking
         points.forEach((point, i): void => {
-
             let stackIndex;
 
             (point.plotX as any) += xOffset; // #2049
@@ -220,29 +203,31 @@ namespace OnSeriesComposition {
             // to calculate position anyway, because series.invertGroups is not
             // defined
             if (typeof point.plotY === 'undefined' || inverted) {
-                if ((point.plotX as any) >= 0 &&
+                if (
+                    (point.plotX as any) >= 0 &&
                     (point.plotX as any) <= xAxis.len
                 ) {
                     // We're inside xAxis range
                     if (inverted) {
                         point.plotY = xAxis.translate(
-                            (point.x as any),
+                            point.x as any,
                             0 as any,
                             1 as any,
                             0 as any,
                             1 as any
                         );
-                        point.plotX = defined(point.y) ?
-                            yAxis.translate(
-                                point.y,
-                                0 as any,
-                                0 as any,
-                                0 as any,
-                                1 as any
-                            ) :
-                            0;
+                        point.plotX = defined(point.y)
+                            ? yAxis.translate(
+                                  point.y,
+                                  0 as any,
+                                  0 as any,
+                                  0 as any,
+                                  1 as any
+                              )
+                            : 0;
                     } else {
-                        point.plotY = (xAxis.opposite ? 0 : series.yAxis.len) +
+                        point.plotY =
+                            (xAxis.opposite ? 0 : series.yAxis.len) +
                             xAxis.offset; // For the windbarb demo
                     }
                 } else {
@@ -263,7 +248,6 @@ namespace OnSeriesComposition {
 
         this.onSeries = onSeries;
     }
-
 }
 
 /* *

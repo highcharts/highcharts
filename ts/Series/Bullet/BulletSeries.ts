@@ -22,18 +22,10 @@ import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import BulletPoint from './BulletPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge,
-    pick,
-    relativeLength
-} = U;
+const { extend, isNumber, merge, pick, relativeLength } = U;
 
 /* *
  *
@@ -51,7 +43,6 @@ const {
  * @augments Highcharts.Series
  */
 class BulletSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -76,78 +67,82 @@ class BulletSeries extends ColumnSeries {
      * @optionparent plotOptions.bullet
      */
 
-    public static defaultOptions: BulletSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        /**
-         * All options related with look and positiong of targets.
-         *
-         * @since 6.0.0
-         */
-        targetOptions: {
+    public static defaultOptions: BulletSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
             /**
-             * The width of the rectangle representing the target. Could be set
-             * as a pixel value or as a percentage of a column width.
-             *
-             * @type  {number|string}
-             * @since 6.0.0
-             */
-            width: '140%',
-
-            /**
-             * The height of the rectangle representing the target.
+             * All options related with look and positiong of targets.
              *
              * @since 6.0.0
              */
-            height: 3,
+            targetOptions: {
+                /**
+                 * The width of the rectangle representing the target. Could be
+                 * set as a pixel value or as a percentage of a column width.
+                 *
+                 * @type  {number|string}
+                 * @since 6.0.0
+                 */
+                width: '140%',
 
-            /**
-             * The border color of the rectangle representing the target. When
-             * not set, the  point's border color is used.
-             *
-             * In styled mode, use class `highcharts-bullet-target` instead.
-             *
-             * @type      {Highcharts.ColorString}
-             * @since     6.0.0
-             * @product   highcharts
-             * @apioption plotOptions.bullet.targetOptions.borderColor
-             */
+                /**
+                 * The height of the rectangle representing the target.
+                 *
+                 * @since 6.0.0
+                 */
+                height: 3,
 
-            /**
-             * The color of the rectangle representing the target. When not set,
-             * point's color (if set in point's options -
-             * [`color`](#series.bullet.data.color)) or zone of the target value
-             * (if [`zones`](#plotOptions.bullet.zones) or
-             * [`negativeColor`](#plotOptions.bullet.negativeColor) are set)
-             * or the same color as the point has is used.
-             *
-             * In styled mode, use class `highcharts-bullet-target` instead.
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     6.0.0
-             * @product   highcharts
-             * @apioption plotOptions.bullet.targetOptions.color
-             */
+                /**
+                 * The border color of the rectangle representing the target.
+                 * When not set, the  point's border color is used.
+                 *
+                 * In styled mode, use class `highcharts-bullet-target` instead.
+                 *
+                 * @type      {Highcharts.ColorString}
+                 * @since     6.0.0
+                 * @product   highcharts
+                 * @apioption plotOptions.bullet.targetOptions.borderColor
+                 */
 
-            /**
-             * The border width of the rectangle representing the target.
-             *
-             * In styled mode, use class `highcharts-bullet-target` instead.
-             *
-             * @since   6.0.0
-             */
-            borderWidth: 0,
+                /**
+                 * The color of the rectangle representing the target. When not
+                 * set, point's color (if set in point's options -
+                 * [`color`](#series.bullet.data.color)) or zone of the target
+                 * value (if [`zones`](#plotOptions.bullet.zones) or
+                 * [`negativeColor`](#plotOptions.bullet.negativeColor) are set)
+                 * or the same color as the point has is used.
+                 *
+                 * In styled mode, use class `highcharts-bullet-target` instead.
+                 *
+                 * @type      {Highcharts.ColorType}
+                 * @since     6.0.0
+                 * @product   highcharts
+                 * @apioption plotOptions.bullet.targetOptions.color
+                 */
 
-            /**
-             * The border radius of the rectangle representing the target.
-             */
-            borderRadius: 0
-        },
+                /**
+                 * The border width of the rectangle representing the target.
+                 *
+                 * In styled mode, use class `highcharts-bullet-target` instead.
+                 *
+                 * @since   6.0.0
+                 */
+                borderWidth: 0,
 
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">\u25CF</span>' +
-            ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
-            '</b><br/>'
-        }
-    } as BulletSeriesOptions);
+                /**
+                 * The border radius of the rectangle representing the target.
+                 */
+                borderRadius: 0
+            },
+
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{series.color}">\u25CF</span>' +
+                    ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
+                    '</b><br/>'
+            }
+        } as BulletSeriesOptions
+    );
 
     /* *
      *
@@ -187,9 +182,7 @@ class BulletSeries extends ColumnSeries {
 
         super.drawPoints.apply(this, arguments);
 
-        series.points.forEach(function (
-            point: BulletPoint
-        ): void {
+        series.points.forEach(function (point: BulletPoint): void {
             const pointOptions = point.options,
                 targetVal = point.target,
                 pointVal = point.y;
@@ -219,37 +212,40 @@ class BulletSeries extends ColumnSeries {
                     targetOptions.width as any,
                     (shapeArgs as any).width
                 );
-                y = (series.yAxis.translate(
-                    targetVal,
-                    false,
-                    true,
-                    false,
-                    true
-                ) as any) - (targetOptions.height as any) / 2 - 0.5;
+                y =
+                    (series.yAxis.translate(
+                        targetVal,
+                        false,
+                        true,
+                        false,
+                        true
+                    ) as any) -
+                    (targetOptions.height as any) / 2 -
+                    0.5;
 
-                targetShapeArgs = series.crispCol.apply({
-                // Use fake series object to set borderWidth of target
-                    chart: chart,
-                    borderWidth: targetOptions.borderWidth,
-                    options: {
-                        crisp: options.crisp
-                    }
-                }, [
-                    (
+                targetShapeArgs = series.crispCol.apply(
+                    {
+                        // Use fake series object to set borderWidth of target
+                        chart: chart,
+                        borderWidth: targetOptions.borderWidth,
+                        options: {
+                            crisp: options.crisp
+                        }
+                    },
+                    [
                         (shapeArgs as any).x +
-                        (shapeArgs as any).width / 2 - width / 2
-                    ),
-                    y,
-                    width,
-                    height as any
-                ]);
+                            (shapeArgs as any).width / 2 -
+                            width / 2,
+                        y,
+                        width,
+                        height as any
+                    ]
+                );
 
                 if (targetGraphic) {
                     // Update
                     targetGraphic[
-                        chart.pointCount < animationLimit ?
-                            'animate' :
-                            'attr'
+                        chart.pointCount < animationLimit ? 'animate' : 'attr'
                     ](targetShapeArgs);
 
                     // Add or remove tooltip reference
@@ -271,12 +267,15 @@ class BulletSeries extends ColumnSeries {
                         fill: pick(
                             targetOptions.color,
                             pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: point.x,
-                                y: targetVal,
-                                options: {}
-                            }).color || series.color)) || void 0,
+                            (series.zones.length &&
+                                (point.getZone.call({
+                                    series: series,
+                                    x: point.x,
+                                    y: targetVal,
+                                    options: {}
+                                }).color ||
+                                    series.color)) ||
+                                void 0,
                             point.color,
                             series.color
                         ),
@@ -295,8 +294,10 @@ class BulletSeries extends ColumnSeries {
                     (targetGraphic.element as any).point = point;
                 }
 
-                targetGraphic.addClass(point.getClassName() +
-                ' highcharts-bullet-target', true);
+                targetGraphic.addClass(
+                    point.getClassName() + ' highcharts-bullet-target',
+                    true
+                );
             } else if (targetGraphic) {
                 // #1269:
                 point.targetGraphic = targetGraphic.destroy() as any;
@@ -317,10 +318,7 @@ class BulletSeries extends ColumnSeries {
         let yMax, yMin;
 
         if (targetData && targetData.length) {
-            const targetExtremes = super.getExtremes.call(
-                this,
-                targetData
-            );
+            const targetExtremes = super.getExtremes.call(this, targetData);
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(
                     pick(dataExtremes.dataMin, Infinity),
@@ -338,7 +336,6 @@ class BulletSeries extends ColumnSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -475,4 +472,4 @@ export default BulletSeries;
  * @apioption series.bullet.states.select
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

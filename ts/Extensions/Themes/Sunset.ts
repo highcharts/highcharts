@@ -35,7 +35,6 @@ import H from '../../Core/Globals.js';
  * */
 
 namespace SunsetTheme {
-
     /* *
      *
      *  Constants
@@ -76,7 +75,6 @@ namespace SunsetTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *

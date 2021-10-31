@@ -9,7 +9,8 @@ import type {
     TreemapSeriesOptions
 } from '../Treemap/TreemapSeriesOptions';
 
-export interface SunburstSeriesLevelsColorVariationOptions extends TreemapSeriesLevelsColorVariationOptions {
+export interface SunburstSeriesLevelsColorVariationOptions
+    extends TreemapSeriesLevelsColorVariationOptions {
     key?: string;
     to?: number;
 }
@@ -32,8 +33,8 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelsOptions {
 }
 
 export interface SunburstSeriesOptions extends TreemapSeriesOptions {
-    center?: Array<(number|string|null)>;
-    dataLabels?: (SunburstDataLabelOptions|Array<SunburstDataLabelOptions>);
+    center?: Array<number | string | null>;
+    dataLabels?: SunburstDataLabelOptions | Array<SunburstDataLabelOptions>;
     endAngle?: number;
     levels?: Array<SunburstSeriesLevelOptions>;
     levelSize?: SunburstSeriesLevelSizeOptions;

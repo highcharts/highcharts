@@ -11,10 +11,10 @@
  * */
 
 /* *
-  *
-  * Import
-  *
-  * */
+ *
+ * Import
+ *
+ * */
 import type WindbarbPointOptions from './WindbarbPointOptions';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
@@ -28,7 +28,6 @@ import ColumnSeries from '../Column/ColumnSeries.js';
  * */
 
 class WindbarbPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Properties

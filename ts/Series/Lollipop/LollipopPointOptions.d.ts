@@ -22,8 +22,7 @@ import type DumbbellPointOptions from '../Dumbbell/DumbbellPointOptions';
  *
  * */
 
-export interface LollipopPointOptions extends DumbbellPointOptions {
-}
+export interface LollipopPointOptions extends DumbbellPointOptions {}
 
 /* *
  *

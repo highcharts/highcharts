@@ -21,17 +21,11 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
-const {
-    charts
-} = H;
+const { charts } = H;
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    find,
-    isNumber
-} = U;
+const { addEvent, find, isNumber } = U;
 
 /* *
  *
@@ -39,13 +33,13 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         errorElements?: Array<SVGElement>;
     }
 }
 
-declare module '../../Core/Chart/ChartOptions'{
+declare module '../../Core/Chart/ChartOptions' {
     interface ChartOptions {
         displayErrors?: boolean;
     }
@@ -88,12 +82,10 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(H, 'displayError', function (
-    e: U.ErrorMessageEventObject
-): void {
+addEvent(H, 'displayError', function (e: U.ErrorMessageEventObject): void {
     // Display error on the chart causing the error or the last created chart.
-    const chart = e.chart ||
-            find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
+    const chart =
+        e.chart || find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
     if (!chart) {
         return;
     }
@@ -115,12 +107,9 @@ addEvent(H, 'displayError', function (
 
     if (options && options.displayErrors && renderer) {
         chart.errorElements = [];
-        msg = isNumber(code) ?
-            (
-                'Highcharts error #' + code + ': ' +
-                ErrorMessages[code].text
-            ) :
-            code;
+        msg = isNumber(code)
+            ? 'Highcharts error #' + code + ': ' + ErrorMessages[code].text
+            : code;
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
 
@@ -134,38 +123,40 @@ addEvent(H, 'displayError', function (
             .replace(/<\/p>/g, '<br>');
 
         // Render red chart frame.
-        chart.errorElements[0] = renderer.rect(
-            2,
-            2,
-            chartWidth - 4,
-            chartHeight - 4
-        ).attr({
-            'stroke-width': 4,
-            stroke: '#ff0000',
-            zIndex: 3
-        }).add();
+        chart.errorElements[0] = renderer
+            .rect(2, 2, chartWidth - 4, chartHeight - 4)
+            .attr({
+                'stroke-width': 4,
+                stroke: '#ff0000',
+                zIndex: 3
+            })
+            .add();
 
         // Render error message
-        chart.errorElements[1] = renderer.label(
-            msg,
-            0,
-            0,
-            'rect',
-            void 0,
-            void 0,
-            void 0,
-            void 0,
-            'debugger'
-        ).css({
-            color: '#ffffff',
-            width: (chartWidth - 16) + 'px',
-            padding: 0
-        }).attr({
-            fill: 'rgba(255, 0, 0, 0.9)',
-            width: chartWidth,
-            padding: 8,
-            zIndex: 10
-        }).add();
+        chart.errorElements[1] = renderer
+            .label(
+                msg,
+                0,
+                0,
+                'rect',
+                void 0,
+                void 0,
+                void 0,
+                void 0,
+                'debugger'
+            )
+            .css({
+                color: '#ffffff',
+                width: chartWidth - 16 + 'px',
+                padding: 0
+            })
+            .attr({
+                fill: 'rgba(255, 0, 0, 0.9)',
+                width: chartWidth,
+                padding: 8,
+                zIndex: 10
+            })
+            .add();
 
         chart.errorElements[1].attr({
             y: chartHeight - chart.errorElements[1].getBBox().height

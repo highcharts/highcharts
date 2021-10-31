@@ -39,11 +39,7 @@ const { charts } = H;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 import SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge
-} = U;
+const { error, extend, merge } = U;
 import '../../Core/Renderer/SVG/SVGRenderer.js';
 
 /* *
@@ -112,7 +108,6 @@ declare global {
  * */
 
 namespace Funnel3DComposition {
-
     /* *
      *
      *  Functions
@@ -130,15 +125,17 @@ namespace Funnel3DComposition {
     function wrapElement3D(elements3d: typeof SVGElement3D): void {
         elements3d.funnel3d = merge(elements3d.cuboid, {
             parts: [
-                'top', 'bottom',
-                'frontUpper', 'backUpper',
-                'frontLower', 'backLower',
-                'rightUpper', 'rightLower'
+                'top',
+                'bottom',
+                'frontUpper',
+                'backUpper',
+                'frontLower',
+                'backLower',
+                'rightUpper',
+                'rightLower'
             ],
             mainParts: ['top', 'bottom'],
-            sideGroups: [
-                'upperGroup', 'lowerGroup'
-            ],
+            sideGroups: ['upperGroup', 'lowerGroup'],
             sideParts: {
                 upperGroup: ['frontUpper', 'backUpper', 'rightUpper'],
                 lowerGroup: ['frontLower', 'backLower', 'rightLower']
@@ -152,8 +149,9 @@ namespace Funnel3DComposition {
             ): SVGElement {
                 const funnel3d = this,
                     parts = funnel3d.parts,
-                    chart: Chart =
-                        H.charts[funnel3d.renderer.chartIndex] as any,
+                    chart: Chart = H.charts[
+                        funnel3d.renderer.chartIndex
+                    ] as any,
                     filterId = 'group-opacity-' + opacity + '-' + chart.index;
 
                 // use default for top and bottom
@@ -164,24 +162,29 @@ namespace Funnel3DComposition {
                 funnel3d.parts = parts;
 
                 if (!(chart.renderer as any).filterId) {
-
                     chart.renderer.definition({
                         tagName: 'filter',
                         attributes: {
                             id: filterId
                         },
-                        children: [{
-                            tagName: 'feComponentTransfer',
-                            children: [{
-                                tagName: 'feFuncA',
-                                attributes: {
-                                    type: 'table',
-                                    tableValues: '0 ' + opacity
-                                }
-                            }]
-                        }]
+                        children: [
+                            {
+                                tagName: 'feComponentTransfer',
+                                children: [
+                                    {
+                                        tagName: 'feFuncA',
+                                        attributes: {
+                                            type: 'table',
+                                            tableValues: '0 ' + opacity
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
                     });
-                    funnel3d.sideGroups.forEach(function (groupName: string): void {
+                    funnel3d.sideGroups.forEach(function (
+                        groupName: string
+                    ): void {
                         funnel3d[groupName].attr({
                             filter: 'url(#' + filterId + ')'
                         });
@@ -191,8 +194,12 @@ namespace Funnel3DComposition {
                     if (funnel3d.renderer.styledMode) {
                         chart.renderer.definition({
                             tagName: 'style',
-                            textContent: '.highcharts-' + filterId +
-                                ' {filter:url(#' + filterId + ')}'
+                            textContent:
+                                '.highcharts-' +
+                                filterId +
+                                ' {filter:url(#' +
+                                filterId +
+                                ')}'
                         });
 
                         (funnel3d.sideGroups as any).forEach(function (
@@ -212,7 +219,7 @@ namespace Funnel3DComposition {
             ): SVGElement {
                 // extract alpha channel to use the opacitySetter
                 let funnel3d = this,
-                    fillColor: (Color|ColorType) = color(fill),
+                    fillColor: Color | ColorType = color(fill),
                     alpha: number = (fillColor as any).rgba[3],
                     partsWithColor: Record<string, ColorType> = {
                         // standard color for top and bottom
@@ -252,12 +259,15 @@ namespace Funnel3DComposition {
                 // gradient support
                 if ((fillColor as any).linearGradient) {
                     // color in steps, as each gradient will generate a key
-                    funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
+                    funnel3d.sideGroups.forEach(function (
+                        sideGroupName: string
+                    ): void {
                         const box = funnel3d[sideGroupName].gradientBox,
-                            gradient: NonNullable<GradientColor['linearGradient']> =
-                                (fillColor as any).linearGradient,
+                            gradient: NonNullable<
+                                GradientColor['linearGradient']
+                            > = (fillColor as any).linearGradient,
                             alteredGradient = merge<GradientColor>(
-                                (fillColor as any),
+                                fillColor as any,
                                 {
                                     linearGradient: {
                                         x1: box.x + gradient.x1 * box.width,
@@ -292,15 +302,20 @@ namespace Funnel3DComposition {
                             const gradBox = funnel3d[sideGroupName].gradientBox,
                                 centerX = gradBox.x + gradBox.width / 2,
                                 centerY = gradBox.y + gradBox.height / 2,
-                                diameter = Math.min(gradBox.width, gradBox.height);
+                                diameter = Math.min(
+                                    gradBox.width,
+                                    gradBox.height
+                                );
 
-                            funnel3d.sideParts[sideGroupName].forEach(
-                                function (partName: string): void {
-                                    funnel3d[partName].setRadialReference([
-                                        centerX, centerY, diameter
-                                    ]);
-                                }
-                            );
+                            funnel3d.sideParts[sideGroupName].forEach(function (
+                                partName: string
+                            ): void {
+                                funnel3d[partName].setRadialReference([
+                                    centerX,
+                                    centerY,
+                                    diameter
+                                ]);
+                            });
                         });
                     }
                 }
@@ -312,18 +327,23 @@ namespace Funnel3DComposition {
 
                 // change gradientUnits to userSpaceOnUse for linearGradient
                 if ((fillColor as any).linearGradient) {
-                    [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (
-                        part: Record<string, SVGElement>
-                    ): void {
-                        const elem: SVGElement = part.element,
-                            grad = elem && funnel3d.renderer.gradients[elem.gradient];
+                    [funnel3d.frontLower, funnel3d.frontUpper].forEach(
+                        function (part: Record<string, SVGElement>): void {
+                            const elem: SVGElement = part.element,
+                                grad =
+                                    elem &&
+                                    funnel3d.renderer.gradients[elem.gradient];
 
-                        if (grad && grad.attr('gradientUnits') !== 'userSpaceOnUse') {
-                            grad.attr({
-                                gradientUnits: 'userSpaceOnUse'
-                            });
+                            if (
+                                grad &&
+                                grad.attr('gradientUnits') !== 'userSpaceOnUse'
+                            ) {
+                                grad.attr({
+                                    gradientUnits: 'userSpaceOnUse'
+                                });
+                            }
                         }
-                    });
+                    );
                 }
 
                 return funnel3d;
@@ -333,7 +353,9 @@ namespace Funnel3DComposition {
                 let funnel3d = this,
                     bbox: BBoxObject;
 
-                funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
+                funnel3d.sideGroups.forEach(function (
+                    sideGroupName: string
+                ): void {
                     // use common extremes for groups for matching gradients
                     let topLeftEdge = {
                             x: Number.MAX_VALUE,
@@ -380,7 +402,8 @@ namespace Funnel3DComposition {
 
                 // run default
                 return this.renderer.Element.prototype.zIndexSetter.apply(
-                    this, arguments
+                    this,
+                    arguments
                 );
             },
 
@@ -400,8 +423,10 @@ namespace Funnel3DComposition {
                 shapeArgs: SVGAttributes
             ): SVGElement {
                 const renderer = this,
-                    funnel3d: SVGElement =
-                        renderer.element3d('funnel3d', shapeArgs) as any,
+                    funnel3d: SVGElement = renderer.element3d(
+                        'funnel3d',
+                        shapeArgs
+                    ) as any,
                     styledMode = renderer.styledMode,
                     // hide stroke for Firefox
                     strokeAttrs: SVGAttributes = {
@@ -410,25 +435,30 @@ namespace Funnel3DComposition {
                     };
 
                 // create groups for sides for oppacity setter
-                funnel3d.upperGroup = renderer.g('funnel3d-upper-group').attr({
-                    zIndex: funnel3d.frontUpper.zIndex
-                }).add(funnel3d);
+                funnel3d.upperGroup = renderer
+                    .g('funnel3d-upper-group')
+                    .attr({
+                        zIndex: funnel3d.frontUpper.zIndex
+                    })
+                    .add(funnel3d);
 
                 [
                     funnel3d.frontUpper,
                     funnel3d.backUpper,
                     funnel3d.rightUpper
                 ].forEach(function (upperElem: SVGElement): void {
-
                     if (!styledMode) {
                         upperElem.attr(strokeAttrs);
                     }
                     upperElem.add(funnel3d.upperGroup);
                 });
 
-                funnel3d.lowerGroup = renderer.g('funnel3d-lower-group').attr({
-                    zIndex: funnel3d.frontLower.zIndex
-                }).add(funnel3d);
+                funnel3d.lowerGroup = renderer
+                    .g('funnel3d-lower-group')
+                    .attr({
+                        zIndex: funnel3d.frontLower.zIndex
+                    })
+                    .add(funnel3d);
 
                 [
                     funnel3d.frontLower,
@@ -467,15 +497,23 @@ namespace Funnel3DComposition {
                     chart: Chart = charts[renderer.chartIndex] as any,
                     // adjust angles for visible edges
                     // based on alpha, selected through visual tests
-                    alphaCorrection = shapeArgs.alphaCorrection = 90 -
-                        Math.abs(((chart.options.chart.options3d as any).alpha % 180) - 90),
-
+                    alphaCorrection = (shapeArgs.alphaCorrection =
+                        90 -
+                        Math.abs(
+                            ((chart.options.chart.options3d as any).alpha %
+                                180) -
+                                90
+                        )),
                     // set zIndexes of parts based on cubiod logic, for
                     // consistency
-                    cuboidData = rendererProto.cuboidPath.call(renderer, merge(shapeArgs, {
-                        depth: shapeArgs.width,
-                        width: (shapeArgs.width + shapeArgs.bottom.width) / 2
-                    })),
+                    cuboidData = rendererProto.cuboidPath.call(
+                        renderer,
+                        merge(shapeArgs, {
+                            depth: shapeArgs.width,
+                            width:
+                                (shapeArgs.width + shapeArgs.bottom.width) / 2
+                        })
+                    ),
                     isTopFirst = cuboidData.isTop,
                     isFrontFirst = !cuboidData.isFront,
                     hasMiddle = !!shapeArgs.middle,
@@ -502,19 +540,24 @@ namespace Funnel3DComposition {
                     middleTop = bottom,
                     middleBottom = bottom,
                     ret: Highcharts.Funnel3dPathsObject,
-
                     // masking for cylinders or a missing part of a side shape
                     useAlphaCorrection;
 
                 if (hasMiddle) {
                     middleWidth = shapeArgs.middle.width;
                     middleTopArgs = merge<SVGAttributes>(shapeArgs, {
-                        y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
+                        y:
+                            shapeArgs.y +
+                            shapeArgs.middle.fraction * shapeArgs.height,
                         width: middleWidth,
                         x: shapeArgs.x - middleWidth / 2,
                         z: shapeArgs.z - middleWidth / 2
                     });
-                    middleTop = renderer.getCylinderEnd(chart, middleTopArgs, false);
+                    middleTop = renderer.getCylinderEnd(
+                        chart,
+                        middleTopArgs,
+                        false
+                    );
 
                     middleBottom = renderer.getCylinderEnd(
                         chart,
@@ -538,8 +581,10 @@ namespace Funnel3DComposition {
                 } as any;
 
                 ret.backUpper = renderer.getCylinderBack(top, middleTop);
-                useAlphaCorrection = (Math.min(middleWidth, shapeArgs.width) /
-                    Math.max(middleWidth, shapeArgs.width)) !== 1;
+                useAlphaCorrection =
+                    Math.min(middleWidth, shapeArgs.width) /
+                        Math.max(middleWidth, shapeArgs.width) !==
+                    1;
 
                 ret.rightUpper = renderer.getCylinderFront(
                     renderer.getCylinderEnd(
@@ -547,40 +592,54 @@ namespace Funnel3DComposition {
                         merge(shapeArgs, {
                             x: shapeArgs.x - shapeArgs.width / 2,
                             z: shapeArgs.z - shapeArgs.width / 2,
-                            alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
+                            alphaCorrection: useAlphaCorrection
+                                ? -alphaCorrection
+                                : 0
                         }),
                         false
                     ),
                     renderer.getCylinderEnd(
                         chart,
                         merge(middleTopArgs, {
-                            alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
+                            alphaCorrection: useAlphaCorrection
+                                ? -alphaCorrection
+                                : 0
                         }),
                         !hasMiddle
                     )
                 );
 
                 if (hasMiddle) {
-                    useAlphaCorrection = (Math.min(middleWidth, bottomWidth) /
-                        Math.max(middleWidth, bottomWidth)) !== 1;
+                    useAlphaCorrection =
+                        Math.min(middleWidth, bottomWidth) /
+                            Math.max(middleWidth, bottomWidth) !==
+                        1;
 
                     merge(true, ret, {
-                        frontLower: renderer.getCylinderFront(middleBottom, bottom),
-                        backLower: renderer.getCylinderBack(middleBottom, bottom),
+                        frontLower: renderer.getCylinderFront(
+                            middleBottom,
+                            bottom
+                        ),
+                        backLower: renderer.getCylinderBack(
+                            middleBottom,
+                            bottom
+                        ),
                         rightLower: renderer.getCylinderFront(
                             renderer.getCylinderEnd(
                                 chart,
                                 merge(bottomArgs, {
-                                    alphaCorrection: useAlphaCorrection ?
-                                        -alphaCorrection : 0
+                                    alphaCorrection: useAlphaCorrection
+                                        ? -alphaCorrection
+                                        : 0
                                 }),
                                 true
                             ),
                             renderer.getCylinderEnd(
                                 chart,
                                 merge(middleTopArgs, {
-                                    alphaCorrection: useAlphaCorrection ?
-                                        -alphaCorrection : 0
+                                    alphaCorrection: useAlphaCorrection
+                                        ? -alphaCorrection
+                                        : 0
                                 }),
                                 false
                             )

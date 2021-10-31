@@ -33,20 +33,20 @@ export interface GanttAnimationOptions extends Partial<AnimationOptions> {
 }
 
 export interface GanttConnectorOptions extends Highcharts.ConnectorsOptions {
-    animation?: (boolean|GanttAnimationOptions);
+    animation?: boolean | GanttAnimationOptions;
     startMarker?: GanttConnectorStartMarkerOptions;
 }
 
-export interface GanttConnectorStartMarkerOptions extends Highcharts.ConnectorsStartMarkerOptions {
+export interface GanttConnectorStartMarkerOptions
+    extends Highcharts.ConnectorsStartMarkerOptions {
     fill: ColorType;
 }
 
-export type GanttDependencyOptions = (
-    string|
-    GanttConnectorOptions|
-    Array<GanttConnectorOptions>|
-    Array<string>
-);
+export type GanttDependencyOptions =
+    | string
+    | GanttConnectorOptions
+    | Array<GanttConnectorOptions>
+    | Array<string>;
 
 export interface GanttSeriesOptions extends XRangeSeriesOptions {
     connectors?: GanttConnectorOptions;

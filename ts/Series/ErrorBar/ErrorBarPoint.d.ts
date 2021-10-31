@@ -29,7 +29,6 @@ declare class ErrorBarPoint extends BoxPlotPoint {
     public series: ErrorBarSeries;
 }
 
-
 /* *
  *
  *  Export

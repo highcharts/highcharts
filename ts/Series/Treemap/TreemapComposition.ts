@@ -22,10 +22,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend
-} = U;
+const { addEvent, extend } = U;
 
 /* *
  *
@@ -62,7 +59,6 @@ addEvent(Series, 'afterBindAxes', function (): void {
             extend(yAxis.options, treeAxis);
             extend(xAxis.options, treeAxis);
             treemapAxisDefaultValues = true;
-
         } else if (treemapAxisDefaultValues) {
             yAxis.setOptions(yAxis.userOptions);
             xAxis.setOptions(xAxis.userOptions);

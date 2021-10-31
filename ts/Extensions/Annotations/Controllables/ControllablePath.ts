@@ -13,9 +13,7 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
 import H from '../../../Core/Globals.js';
 import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
 /**
  * Internal types.
@@ -55,7 +53,6 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  * Index of the path.
  */
 class ControllablePath implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -108,7 +105,8 @@ class ControllablePath implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+        ControllableMixin.setControlPointsVisibility;
     public setMarkers = MarkerMixin.setItemMarkers;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -134,13 +132,11 @@ class ControllablePath implements ControllableMixin.Type {
      * @return {Highcharts.SVGPathArray|null}
      * A path's d attribute.
      */
-    public toD(): (SVGPath|null) {
+    public toD(): SVGPath | null {
         const dOption = this.options.d;
 
         if (dOption) {
-            return typeof dOption === 'function' ?
-                dOption.call(this) :
-                dOption;
+            return typeof dOption === 'function' ? dOption.call(this) : dOption;
         }
 
         let points = this.points,
@@ -172,13 +168,16 @@ class ControllablePath implements ControllableMixin.Type {
             }
         }
 
-        return showPath ?
-            this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
-            null;
+        return showPath
+            ? this.chart.renderer.crispLine(d, this.graphic.strokeWidth())
+            : null;
     }
 
     public shouldBeDrawn(): boolean {
-        return (ControllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
+        return (
+            ControllableMixin.shouldBeDrawn.call(this) ||
+            Boolean(this.options.d)
+        );
     }
 
     public render(parent: SVGElement): void {
@@ -207,8 +206,8 @@ class ControllablePath implements ControllableMixin.Type {
                 'stroke-linejoin': 'round', // #1225
                 stroke: TRACKER_FILL,
                 fill: TRACKER_FILL,
-                'stroke-width': this.graphic.strokeWidth() +
-                    (options.snap as any) * 2
+                'stroke-width':
+                    this.graphic.strokeWidth() + (options.snap as any) * 2
             });
         }
 
@@ -223,7 +222,6 @@ class ControllablePath implements ControllableMixin.Type {
     }
 
     public redraw(animation?: boolean): void {
-
         const d = this.toD(),
             action = animation ? 'animate' : 'attr';
 

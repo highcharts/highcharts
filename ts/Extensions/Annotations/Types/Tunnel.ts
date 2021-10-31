@@ -25,18 +25,20 @@ function getSecondCoordinate(
     p2: PositionObject,
     x: number
 ): number {
-    return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
+    return ((p2.y - p1.y) / (p2.x - p1.x)) * (x - p1.x) + p1.y;
 }
 
 class Tunnel extends CrookedLine {
-
     /* *
      *
      * Constructors
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Tunnel.Options
+    ) {
         super(chart, options);
     }
 
@@ -97,26 +99,23 @@ class Tunnel extends CrookedLine {
 
     public addLine(): void {
         const line = this.initShape(
-            merge(
-                this.options.typeOptions.line,
-                {
-                    type: 'path',
-                    points: [
-                        this.points[0],
-                        this.points[1],
-                        function (target: any): MockPointOptions {
-                            const pointOptions = MockPoint.pointToOptions(
-                                target.annotation.points[2]
-                            );
+            merge(this.options.typeOptions.line, {
+                type: 'path',
+                points: [
+                    this.points[0],
+                    this.points[1],
+                    function (target: any): MockPointOptions {
+                        const pointOptions = MockPoint.pointToOptions(
+                            target.annotation.points[2]
+                        );
 
-                            pointOptions.command = 'M';
+                        pointOptions.command = 'M';
 
-                            return pointOptions;
-                        },
-                        this.points[3]
-                    ]
-                }
-            ),
+                        return pointOptions;
+                    },
+                    this.points[3]
+                ]
+            }),
             0
         );
 
@@ -125,13 +124,10 @@ class Tunnel extends CrookedLine {
 
     public addBackground(): void {
         const background = this.initShape(
-            merge(
-                this.options.typeOptions.background,
-                {
-                    type: 'path',
-                    points: this.points.slice()
-                }
-            ),
+            merge(this.options.typeOptions.background, {
+                type: 'path',
+                points: this.points.slice()
+            }),
             1
         );
 
@@ -162,9 +158,9 @@ class Tunnel extends CrookedLine {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
 
-        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+        this.options.typeOptions.height =
+            (this.points[3].y as any) - (this.points[0].y as any);
     }
-
 }
 
 /**
@@ -206,7 +202,6 @@ Tunnel.prototype.defaultOptions = merge(
              */
             height: -2,
 
-
             /**
              * Options for the control point which controls
              * the annotation's height.
@@ -225,8 +220,9 @@ Tunnel.prototype.defaultOptions = merge(
 
                     return {
                         x: x - this.graphic.width / 2,
-                        y: getSecondCoordinate(startXY, endXY, x) -
-                        this.graphic.height / 2
+                        y:
+                            getSecondCoordinate(startXY, endXY, x) -
+                            this.graphic.height / 2
                     };
                 },
                 events: {
@@ -307,7 +303,7 @@ namespace Tunnel {
  *
  * */
 Annotation.types.tunnel = Tunnel;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;
     }

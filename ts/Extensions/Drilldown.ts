@@ -21,10 +21,7 @@ import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
-import type {
-    CSSObject,
-    CursorValue
-} from '../Core/Renderer/CSSObject';
+import type { CSSObject, CursorValue } from '../Core/Renderer/CSSObject';
 import type Options from '../Core/Options';
 import type {
     PointOptions,
@@ -67,10 +64,10 @@ const {
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
-        ddPoints?: Record<string, Array<(false|Point)>>;
+        ddPoints?: Record<string, Array<false | Point>>;
         oldPos?: number;
         drilldownCategory(x: number, e: MouseEvent): void;
-        getDDPoints(x: number): Array<(false|Point)>;
+        getDDPoints(x: number): Array<false | Point>;
     }
 }
 
@@ -86,22 +83,19 @@ declare module '../Core/Chart/ChartLike' {
         drilldown?: Highcharts.ChartDrilldownObject;
         drilldownLevels?: Array<Highcharts.DrilldownLevelObject>;
         drillUpButton?: SVGElement;
-        addSeriesAsDrilldown(
-            point: Point,
-            options: SeriesTypeOptions
-        ): void;
+        addSeriesAsDrilldown(point: Point, options: SeriesTypeOptions): void;
         addSingleSeriesAsDrilldown(
             point: Point,
             ddOptions: SeriesTypeOptions
         ): void;
         applyDrilldown(): void;
         drillUp(): void;
-        getDrilldownBackText(): (string|undefined);
+        getDrilldownBackText(): string | undefined;
         showDrillUpButton(): void;
     }
 }
 
-declare module '../Core/Options'{
+declare module '../Core/Options' {
     interface Options {
         drilldown?: Highcharts.DrilldownOptions;
     }
@@ -115,7 +109,7 @@ declare module '../Core/LangOptions' {
 
 declare module '../Core/Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
-        fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
+        fadeIn(animation?: boolean | Partial<AnimationOptions>): void;
     }
 }
 
@@ -176,7 +170,7 @@ declare global {
             textDecoration?: string;
         }
         interface DrilldownDrillUpButtonOptions {
-            position?: (AlignObject|DrilldownDrillUpButtonPositionOptions);
+            position?: AlignObject | DrilldownDrillUpButtonPositionOptions;
             relativeTo?: ButtonRelativeToValue;
             theme?: object;
         }
@@ -193,7 +187,7 @@ declare global {
             category?: number;
             originalEvent?: Event;
             point: Point;
-            points?: Array<(boolean|Point)>;
+            points?: Array<boolean | Point>;
             preventDefault: Function;
             seriesOptions?: SeriesTypeOptions;
             target: Chart;
@@ -201,16 +195,16 @@ declare global {
         }
         interface DrilldownOptions {
             activeAxisLabelStyle?: CSSObject;
-            activeDataLabelStyle?: (
-                CSSObject|DrilldownActiveDataLabelStyleOptions
-            );
+            activeDataLabelStyle?:
+                | CSSObject
+                | DrilldownActiveDataLabelStyleOptions;
             allowPointDrilldown?: boolean;
-            animation?: (boolean|Partial<AnimationOptions>);
+            animation?: boolean | Partial<AnimationOptions>;
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
         interface DrilldownLevelObject {
-            bBox: (BBoxObject|Record<string, undefined>);
+            bBox: BBoxObject | Record<string, undefined>;
             color?: ColorType;
             colorIndex?: number;
             levelNumber: number;
@@ -218,9 +212,9 @@ declare global {
             levelSeriesOptions: Array<SeriesOptions>;
             lowerSeries: Series;
             lowerSeriesOptions: SeriesOptions;
-            oldExtremes: Record<string, (number|undefined)>;
+            oldExtremes: Record<string, number | undefined>;
             pointIndex: number;
-            pointOptions: (PointOptions|PointShortOptions);
+            pointOptions: PointOptions | PointShortOptions;
             seriesOptions: SeriesOptions;
             seriesPurgedOptions: SeriesOptions;
             shapeArgs?: SVGAttributes;
@@ -267,37 +261,37 @@ declare global {
  * The event arguments when a drilldown point is clicked.
  *
  * @interface Highcharts.DrilldownEventObject
- *//**
+ */ /**
  * If a category label was clicked, which index.
  * @name Highcharts.DrilldownEventObject#category
  * @type {number|undefined}
- *//**
+ */ /**
  * The original browser event (usually click) that triggered the drilldown.
  * @name Highcharts.DrilldownEventObject#originalEvent
  * @type {global.Event|undefined}
- *//**
+ */ /**
  * Prevents the default behaviour of the event.
  * @name Highcharts.DrilldownEventObject#preventDefault
  * @type {Function}
- *//**
+ */ /**
  * The originating point.
  * @name Highcharts.DrilldownEventObject#point
  * @type {Highcharts.Point}
- *//**
+ */ /**
  * If a category label was clicked, this array holds all points corresponding to
  * the category. Otherwise it is set to false.
  * @name Highcharts.DrilldownEventObject#points
  * @type {boolean|Array<Highcharts.Point>|undefined}
- *//**
+ */ /**
  * Options for the new series. If the event is utilized for async drilldown, the
  * seriesOptions are not added, but rather loaded async.
  * @name Highcharts.DrilldownEventObject#seriesOptions
  * @type {Highcharts.SeriesOptionsType|undefined}
- *//**
+ */ /**
  * The event target.
  * @name Highcharts.DrilldownEventObject#target
  * @type {Highcharts.Chart}
- *//**
+ */ /**
  * The event type.
  * @name Highcharts.DrilldownEventObject#type
  * @type {"drilldown"}
@@ -320,15 +314,15 @@ declare global {
  * The event arguments when all the series have been drilled up.
  *
  * @interface Highcharts.DrillupAllEventObject
- *//**
+ */ /**
  * Prevents the default behaviour of the event.
  * @name Highcharts.DrillupAllEventObject#preventDefault
  * @type {Function}
- *//**
+ */ /**
  * The event target.
  * @name Highcharts.DrillupAllEventObject#target
  * @type {Highcharts.Chart}
- *//**
+ */ /**
  * The event type.
  * @name Highcharts.DrillupAllEventObject#type
  * @type {"drillupall"}
@@ -350,19 +344,19 @@ declare global {
  * The event arguments when drilling up from a drilldown series.
  *
  * @interface Highcharts.DrillupEventObject
- *//**
+ */ /**
  * Prevents the default behaviour of the event.
  * @name Highcharts.DrillupEventObject#preventDefault
  * @type {Function}
- *//**
+ */ /**
  * Options for the new series.
  * @name Highcharts.DrillupEventObject#seriesOptions
  * @type {Highcharts.SeriesOptionsType|undefined}
- *//**
+ */ /**
  * The event target.
  * @name Highcharts.DrillupEventObject#target
  * @type {Highcharts.Chart}
- *//**
+ */ /**
  * The event type.
  * @name Highcharts.DrillupEventObject#type
  * @type {"drillup"}
@@ -411,7 +405,6 @@ extend(
  *         Organization chart drilldown
  */
 defaultOptions.drilldown = {
-
     /**
      * When this option is false, clicking a single point will drill down
      * all points in the same category, equivalent to clicking the X axis
@@ -571,7 +564,6 @@ defaultOptions.drilldown = {
          * @product highcharts highmaps
          */
         position: {
-
             /**
              * Vertical alignment of the button.
              *
@@ -600,7 +592,6 @@ defaultOptions.drilldown = {
         }
     }
 };
-
 
 /**
  * Fires when a drilldown point is clicked, before the new series is added. This
@@ -682,18 +673,19 @@ defaultOptions.drilldown = {
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<AnimationOptions>)
+    animation?: boolean | Partial<AnimationOptions>
 ): void {
-    this
-        .attr({
-            opacity: 0.1,
-            visibility: 'inherit'
-        })
-        .animate({
+    this.attr({
+        opacity: 0.1,
+        visibility: 'inherit'
+    }).animate(
+        {
             opacity: pick(this.newOpacity, 1) // newOpacity used in maps
-        }, animation || {
+        },
+        animation || {
             duration: 250
-        });
+        }
+    );
 };
 
 /**
@@ -733,15 +725,14 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         pointIndex: number,
         levelSeries: Array<Series> = [],
         levelSeriesOptions: Array<SeriesOptions> = [],
-        level: (Highcharts.DrilldownLevelObject),
+        level: Highcharts.DrilldownLevelObject,
         levelNumber: number,
-        last: (Highcharts.DrilldownLevelObject|undefined),
+        last: Highcharts.DrilldownLevelObject | undefined,
         colorProp: SeriesOptions;
 
-
-    colorProp = this.styledMode ?
-        { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
-        { color: point.color || oldSeries.color };
+    colorProp = this.styledMode
+        ? { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) }
+        : { color: point.color || oldSeries.color };
 
     if (!this.drilldownLevels) {
         this.drilldownLevels = [];
@@ -755,9 +746,15 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         last = void 0;
     }
 
-    ddOptions = extend(extend<SeriesOptions>({
-        _ddSeriesId: ddSeriesId++
-    }, colorProp), ddOptions);
+    ddOptions = extend(
+        extend<SeriesOptions>(
+            {
+                _ddSeriesId: ddSeriesId++
+            },
+            colorProp
+        ),
+        ddOptions
+    );
     pointIndex = oldSeries.points.indexOf(point);
 
     // Record options for all current series
@@ -776,11 +773,14 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
                 levelSeries.push(series);
 
                 // (#10597)
-                series.purgedOptions = merge<SeriesTypeOptions>({
-                    _ddSeriesId: series.options._ddSeriesId,
-                    _levelNumber: series.options._levelNumber,
-                    selected: series.options.selected
-                }, series.userOptions);
+                series.purgedOptions = merge<SeriesTypeOptions>(
+                    {
+                        _ddSeriesId: series.options._ddSeriesId,
+                        _levelNumber: series.options._levelNumber,
+                        selected: series.options.selected
+                    },
+                    series.userOptions
+                );
 
                 levelSeriesOptions.push(series.purgedOptions);
             }
@@ -788,29 +788,32 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     });
 
     // Add a record of properties for each drilldown level
-    level = extend<Highcharts.DrilldownLevelObject>({
-        levelNumber: levelNumber,
-        seriesOptions: oldSeries.options,
-        seriesPurgedOptions: oldSeries.purgedOptions as any,
-        levelSeriesOptions: levelSeriesOptions,
-        levelSeries: levelSeries,
-        shapeArgs: point.shapeArgs,
-        // no graphic in line series with markers disabled
-        bBox: point.graphic ? point.graphic.getBBox() : {},
-        color: point.isNull ?
-            Color.parse(colorProp.color).setOpacity(0).get() :
-            colorProp.color,
-        lowerSeriesOptions: ddOptions,
-        pointOptions: (oldSeries.options.data as any)[pointIndex],
-        pointIndex: pointIndex,
-        oldExtremes: {
-            xMin: xAxis && xAxis.userMin,
-            xMax: xAxis && xAxis.userMax,
-            yMin: yAxis && yAxis.userMin,
-            yMax: yAxis && yAxis.userMax
-        },
-        resetZoomButton: this.resetZoomButton as any
-    } as any, colorProp);
+    level = extend<Highcharts.DrilldownLevelObject>(
+        {
+            levelNumber: levelNumber,
+            seriesOptions: oldSeries.options,
+            seriesPurgedOptions: oldSeries.purgedOptions as any,
+            levelSeriesOptions: levelSeriesOptions,
+            levelSeries: levelSeries,
+            shapeArgs: point.shapeArgs,
+            // no graphic in line series with markers disabled
+            bBox: point.graphic ? point.graphic.getBBox() : {},
+            color: point.isNull
+                ? Color.parse(colorProp.color).setOpacity(0).get()
+                : colorProp.color,
+            lowerSeriesOptions: ddOptions,
+            pointOptions: (oldSeries.options.data as any)[pointIndex],
+            pointIndex: pointIndex,
+            oldExtremes: {
+                xMin: xAxis && xAxis.userMin,
+                xMax: xAxis && xAxis.userMax,
+                yMin: yAxis && yAxis.userMin,
+                yMax: yAxis && yAxis.userMax
+            },
+            resetZoomButton: this.resetZoomButton as any
+        } as any,
+        colorProp
+    );
 
     // Push it to the lookup array
     this.drilldownLevels.push(level);
@@ -830,16 +833,17 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
 
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {
-        newSeries.animate = (newSeries.animateDrilldown || noop);
+        newSeries.animate = newSeries.animateDrilldown || noop;
         newSeries.options.animation = true;
     }
 };
 
 Chart.prototype.applyDrilldown = function (): void {
     let drilldownLevels = this.drilldownLevels,
-        levelToRemove: (number|undefined);
+        levelToRemove: number | undefined;
 
-    if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+    if (drilldownLevels && drilldownLevels.length > 0) {
+        // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
         (this.drilldownLevels as any).forEach(function (
             level: Highcharts.DrilldownLevelObject
@@ -872,11 +876,12 @@ Chart.prototype.applyDrilldown = function (): void {
     fireEvent(this, 'afterDrilldown');
 };
 
-Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
+Chart.prototype.getDrilldownBackText = function (): string | undefined {
     let drilldownLevels = this.drilldownLevels,
         lastLevel: Highcharts.DrilldownLevelObject;
 
-    if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+    if (drilldownLevels && drilldownLevels.length > 0) {
+        // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         (lastLevel as any).series = lastLevel.seriesOptions;
         return format(this.options.lang.drillUpText || '', lastLevel);
@@ -889,12 +894,11 @@ Chart.prototype.showDrillUpButton = function (): void {
         buttonOptions = (chart.options.drilldown as any).drillUpButton,
         attr,
         states,
-        alignTo = (
+        alignTo =
             buttonOptions.relativeTo === 'chart' ||
-            buttonOptions.relativeTo === 'spacingBox' ?
-                null :
-                'scrollablePlotBox'
-        );
+            buttonOptions.relativeTo === 'spacingBox'
+                ? null
+                : 'scrollablePlotBox';
 
     if (!this.drillUpButton) {
         attr = buttonOptions.theme;
@@ -920,9 +924,10 @@ Chart.prototype.showDrillUpButton = function (): void {
             .add()
             .align(buttonOptions.position, false, alignTo as any);
     } else {
-        this.drillUpButton.attr({
-            text: backText
-        })
+        this.drillUpButton
+            .attr({
+                text: backText
+            })
             .align();
     }
 };
@@ -951,8 +956,8 @@ Chart.prototype.drillUp = function (): void {
         seriesI: number,
         level: Highcharts.DrilldownLevelObject,
         oldSeries: Series,
-        newSeries: (Series|undefined),
-        oldExtremes: Record<string, (number|undefined)>,
+        newSeries: Series | undefined,
+        oldExtremes: Record<string, number | undefined>,
         addSeries = function (seriesOptions: SeriesOptions): void {
             let addedSeries;
 
@@ -976,14 +981,14 @@ Chart.prototype.drillUp = function (): void {
         };
 
     while (i--) {
-
         level = drilldownLevels[i];
         if (level.levelNumber === levelNumber) {
             drilldownLevels.pop();
 
             // Get the lower series by reference or id
             oldSeries = level.lowerSeries;
-            if (!oldSeries.chart) { // #2786
+            if (!oldSeries.chart) {
+                // #2786
                 seriesI = chartSeries.length; // #2919
                 while (seriesI--) {
                     if (
@@ -991,7 +996,8 @@ Chart.prototype.drillUp = function (): void {
                             level.lowerSeriesOptions.id &&
                         chartSeries[seriesI].options._levelNumber ===
                             levelNumber + 1
-                    ) { // #3867
+                    ) {
+                        // #3867
                         oldSeries = chartSeries[seriesI];
                         break;
                     }
@@ -1002,18 +1008,19 @@ Chart.prototype.drillUp = function (): void {
             level.levelSeriesOptions.forEach(addSeries);
 
             fireEvent(chart, 'drillup', {
-                seriesOptions: level.seriesPurgedOptions ||
-                    level.seriesOptions
+                seriesOptions: level.seriesPurgedOptions || level.seriesOptions
             });
 
             this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
-                (newSeries as any).options.animation =
-                    (chart.options.drilldown as any).animation;
+                (newSeries as any).options.animation = (
+                    chart.options.drilldown as any
+                ).animation;
 
-                if (oldSeries.animateDrillupFrom && oldSeries.chart) { // #2919
+                if (oldSeries.animateDrillupFrom && oldSeries.chart) {
+                    // #2919
                     oldSeries.animateDrillupFrom(level);
                 }
             }
@@ -1050,9 +1057,10 @@ Chart.prototype.drillUp = function (): void {
     if (this.drilldownLevels.length === 0) {
         this.drillUpButton = (this.drillUpButton as any).destroy();
     } else {
-        (this.drillUpButton as any).attr({
-            text: this.getDrilldownBackText()
-        })
+        (this.drillUpButton as any)
+            .attr({
+                text: this.getDrilldownBackText()
+            })
             .align();
     }
 
@@ -1086,16 +1094,24 @@ addEvent(Chart, 'afterInit', function (): void {
 addEvent(Chart, 'afterShowResetZoom', function (): void {
     const chart = this,
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+        buttonOptions =
+            chart.options.drilldown && chart.options.drilldown.drillUpButton;
 
-    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
-        this.drillUpButton.align({
-            x: buttonOptions.position.x - bbox.width - 10,
-            y: buttonOptions.position.y,
-            align: buttonOptions.position.align
-        },
-        false,
-        buttonOptions.relativeTo || 'plotBox'
+    if (
+        this.drillUpButton &&
+        bbox &&
+        buttonOptions &&
+        buttonOptions.position &&
+        buttonOptions.position.x
+    ) {
+        this.drillUpButton.align(
+            {
+                x: buttonOptions.position.x - bbox.width - 10,
+                y: buttonOptions.position.y,
+                align: buttonOptions.position.align
+            },
+            false,
+            buttonOptions.relativeTo || 'plotBox'
         );
     }
 });
@@ -1115,10 +1131,11 @@ addEvent(Chart, 'render', function (): void {
                 // The `drilldown` property can only be set on an array or an
                 // object
                 if (typeof p !== 'number') {
-
                     // Convert array to object (#8008)
-                    p = series.pointClass.prototype.optionsToObject
-                        .call({ series: series }, p);
+                    p = series.pointClass.prototype.optionsToObject.call(
+                        { series: series },
+                        p
+                    );
 
                     if (p.drilldown) {
                         if (!(axis.ddPoints as any)[xData[i]]) {
@@ -1128,9 +1145,9 @@ addEvent(Chart, 'render', function (): void {
                         const index = i - (series.cropStart || 0);
 
                         (axis.ddPoints as any)[xData[i]].push(
-                            (points && index >= 0 && index < points.length) ?
-                                points[index] :
-                                true
+                            points && index >= 0 && index < points.length
+                                ? points[index]
+                                : true
                         );
                     }
                 }
@@ -1142,7 +1159,6 @@ addEvent(Chart, 'render', function (): void {
         objectEach(axis.ticks, Tick.prototype.drillable);
     });
 });
-
 
 /**
  * When drilling up, keep the upper series invisible until the lower series has
@@ -1162,7 +1178,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         this.points.forEach(function (point: Point): void {
             const dataLabel = point.dataLabel;
 
-            if (point.graphic) { // #3407
+            if (point.graphic) {
+                // #3407
                 point.graphic.hide();
             }
 
@@ -1180,10 +1197,10 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
             }
         });
 
-
         // Do dummy animation on first point to get to complete
         syncTimeout(function (): void {
-            if (newSeries.points) { // May be destroyed in the meantime, #3389
+            if (newSeries.points) {
+                // May be destroyed in the meantime, #3389
                 // Unable to drillup with nodes, #13711
                 let pointsWithNodes: Array<any> = [];
                 newSeries.data.forEach(function (el): void {
@@ -1198,16 +1215,19 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                 ): void {
                     // Fade in other points
                     const verb =
-                        i === (level && level.pointIndex) ? 'show' : 'fadeIn',
+                            i === (level && level.pointIndex)
+                                ? 'show'
+                                : 'fadeIn',
                         inherit = verb === 'show' ? true : void 0,
                         dataLabel = point.dataLabel;
 
-
-                    if (point.graphic) { // #3407
+                    if (point.graphic) {
+                        // #3407
                         point.graphic[verb](inherit);
                     }
 
-                    if (dataLabel && !dataLabel.hidden) { // #6127
+                    if (dataLabel && !dataLabel.hidden) {
+                        // #6127
                         dataLabel.fadeIn(); // #7384
                         if (point.connector) {
                             point.connector.fadeIn();
@@ -1216,22 +1236,23 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
                 });
             }
         }, Math.max(
-            (this.chart.options.drilldown as any).animation.duration - 50, 0
+            (this.chart.options.drilldown as any).animation.duration - 50,
+            0
         ));
 
         // Reset to prototype
         delete this.animate;
     }
-
 };
 
 ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
     let series = this,
         chart = this.chart,
         drilldownLevels = chart.drilldownLevels,
-        animateFrom: (SVGAttributes|undefined),
-        animationOptions =
-            animObject((chart.options.drilldown as any).animation),
+        animateFrom: SVGAttributes | undefined,
+        animationOptions = animObject(
+            (chart.options.drilldown as any).animation
+        ),
         xAxis = this.xAxis,
         styledMode = chart.styledMode;
 
@@ -1241,7 +1262,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         ): void {
             if (
                 series.options._ddSeriesId ===
-                    level.lowerSeriesOptions._ddSeriesId
+                level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
                 if (!styledMode) {
@@ -1262,15 +1283,12 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
             }
 
             if (point.graphic) {
-                point.graphic
-                    .attr(animateFrom)
-                    .animate(
-                        extend(
-                            point.shapeArgs,
-                            { fill: point.color || series.color }
-                        ),
-                        animationOptions
-                    );
+                point.graphic.attr(animateFrom).animate(
+                    extend(point.shapeArgs, {
+                        fill: point.color || series.color
+                    }),
+                    animationOptions
+                );
             }
             if (point.dataLabel) {
                 point.dataLabel.fadeIn(animationOptions);
@@ -1280,7 +1298,6 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
         // Reset to prototype
         delete this.animate;
     }
-
 };
 
 /**
@@ -1296,9 +1313,10 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
 ColumnSeries.prototype.animateDrillupFrom = function (
     level: Highcharts.DrilldownLevelObject
 ): void {
-    let animationOptions =
-            animObject((this.chart.options.drilldown as any).animation),
-        group: (SVGElement|undefined) = this.group,
+    let animationOptions = animObject(
+            (this.chart.options.drilldown as any).animation
+        ),
+        group: SVGElement | undefined = this.group,
         // For 3d column series all columns are added to one group
         // so we should not delete the whole group. #5297
         removeGroup = group !== this.chart.columnGroup,
@@ -1306,7 +1324,8 @@ ColumnSeries.prototype.animateDrillupFrom = function (
 
     // Cancel mouse events on the series group (#2787)
     (series.trackerGroups as any).forEach(function (key: string): void {
-        if ((series as any)[key]) { // we don't always have dataLabelsGroup
+        if ((series as any)[key]) {
+            // we don't always have dataLabelsGroup
             (series as any)[key].on('mouseover');
         }
     });
@@ -1326,7 +1345,6 @@ ColumnSeries.prototype.animateDrillupFrom = function (
             };
 
         if (graphic && animateTo) {
-
             delete point.graphic;
 
             if (!series.chart.styledMode) {
@@ -1355,12 +1373,11 @@ if (PieSeries) {
             this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
-            const level: Highcharts.DrilldownLevelObject =
-                (this.chart.drilldownLevels as any)[
-                    (this.chart.drilldownLevels as any).length - 1
-                ],
-                animationOptions =
-                    (this.chart.options.drilldown as any).animation;
+            const level: Highcharts.DrilldownLevelObject = (
+                    this.chart.drilldownLevels as any
+                )[(this.chart.drilldownLevels as any).length - 1],
+                animationOptions = (this.chart.options.drilldown as any)
+                    .animation;
 
             if (this.is('item')) {
                 animationOptions.duration = 0;
@@ -1384,11 +1401,14 @@ if (PieSeries) {
 
                         if (point.graphic) {
                             point.graphic
-                                .attr(merge(animateFrom, {
-                                    start: start + i * startAngle,
-                                    end: start + (i + 1) * startAngle
-                                }))[animationOptions ? 'animate' : 'attr'](
-                                    (animateTo as any),
+                                .attr(
+                                    merge(animateFrom, {
+                                        start: start + i * startAngle,
+                                        end: start + (i + 1) * startAngle
+                                    })
+                                )
+                                [animationOptions ? 'animate' : 'attr'](
+                                    animateTo as any,
                                     animationOptions
                                 );
                         }
@@ -1421,17 +1441,16 @@ Point.prototype.doDrilldown = function (): void {
 };
 
 Point.prototype.runDrilldown = function (
-    holdRedraw: (boolean|undefined),
-    category: (number|undefined),
-    originalEvent: Event|undefined
+    holdRedraw: boolean | undefined,
+    category: number | undefined,
+    originalEvent: Event | undefined
 ): void {
-
     const series = this.series,
         chart = series.chart,
         drilldown = chart.options.drilldown;
 
     let i: number = ((drilldown as any).series || []).length,
-        seriesOptions: (SeriesOptions|undefined);
+        seriesOptions: SeriesOptions | undefined;
 
     if (!chart.ddDupes) {
         chart.ddDupes = [];
@@ -1449,29 +1468,31 @@ Point.prototype.runDrilldown = function (
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
     // for  seriesOptions, and call addSeriesAsDrilldown async if necessary.
-    fireEvent(chart, 'drilldown', {
-        point: this,
-        seriesOptions: seriesOptions,
-        category: category,
-        originalEvent: originalEvent,
-        points: (
-            typeof category !== 'undefined' &&
-            this.series.xAxis.getDDPoints(category).slice(0)
-        )
-    } as Highcharts.DrilldownEventObject, function (
-        e: Highcharts.DrilldownEventObject
-    ): void {
-        const chart = e.point.series && e.point.series.chart,
-            seriesOptions = e.seriesOptions;
+    fireEvent(
+        chart,
+        'drilldown',
+        {
+            point: this,
+            seriesOptions: seriesOptions,
+            category: category,
+            originalEvent: originalEvent,
+            points:
+                typeof category !== 'undefined' &&
+                this.series.xAxis.getDDPoints(category).slice(0)
+        } as Highcharts.DrilldownEventObject,
+        function (e: Highcharts.DrilldownEventObject): void {
+            const chart = e.point.series && e.point.series.chart,
+                seriesOptions = e.seriesOptions;
 
-        if (chart && seriesOptions) {
-            if (holdRedraw) {
-                chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
-            } else {
-                chart.addSeriesAsDrilldown(e.point, seriesOptions);
+            if (chart && seriesOptions) {
+                if (holdRedraw) {
+                    chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
+                } else {
+                    chart.addSeriesAsDrilldown(e.point, seriesOptions);
+                }
             }
         }
-    });
+    );
 };
 
 /**
@@ -1501,7 +1522,8 @@ Axis.prototype.drilldownCategory = function (
             point.series &&
             point.series.visible &&
             point.runDrilldown
-        ) { // #3197
+        ) {
+            // #3197
             point.runDrilldown(true, x, originalEvent);
         }
     });
@@ -1518,12 +1540,9 @@ Axis.prototype.drilldownCategory = function (
  * @return {Array<(false|Highcharts.Point)>}
  *         Drillable points
  */
-Axis.prototype.getDDPoints = function (
-    x: number
-): Array<(false|Point)> {
-    return (this.ddPoints && this.ddPoints[x] || []);
+Axis.prototype.getDDPoints = function (x: number): Array<false | Point> {
+    return (this.ddPoints && this.ddPoints[x]) || [];
 };
-
 
 /**
  * Make a tick label drillable, or remove drilling on update.
@@ -1568,10 +1587,7 @@ Tick.prototype.drillable = function (): void {
                     (axis.chart.options.drilldown as any).activeAxisLabelStyle
                 );
             }
-
         } else if (label && label.drillable && label.removeOnDrillableClick) {
-
-
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
@@ -1582,7 +1598,6 @@ Tick.prototype.drillable = function (): void {
         }
     }
 };
-
 
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
@@ -1613,17 +1628,13 @@ addEvent(Point, 'update', function (e: { options: Options }): void {
     }
 });
 
-const handlePointClick = function (
-    this: Point,
-    e: MouseEvent
-): void {
+const handlePointClick = function (this: Point, e: MouseEvent): void {
     const point = this,
         series = point.series;
 
     if (
         series.xAxis &&
-        (series.chart.options.drilldown as any).allowPointDrilldown ===
-        false
+        (series.chart.options.drilldown as any).allowPointDrilldown === false
     ) {
         // #5822, x changed
         series.xAxis.drilldownCategory(point.x as any, e);
@@ -1646,7 +1657,6 @@ addEvent(Series, 'afterDrawDataLabels', function (): void {
             ) as CSSObject;
 
         if (point.drilldown && point.dataLabel) {
-
             if (css.color === 'contrast' && !styledMode) {
                 pointCSS.color = renderer.getContrast(
                     (point.color as any) || (this.color as any)
@@ -1656,18 +1666,14 @@ addEvent(Series, 'afterDrawDataLabels', function (): void {
             if (dataLabelsOptions && (dataLabelsOptions as any).color) {
                 pointCSS.color = (dataLabelsOptions as any).color;
             }
-            point.dataLabel
-                .addClass('highcharts-drilldown-data-label');
+            point.dataLabel.addClass('highcharts-drilldown-data-label');
 
             if (!styledMode) {
-                point.dataLabel
-                    .css(css)
-                    .css(pointCSS);
+                point.dataLabel.css(css).css(pointCSS);
             }
         }
     }, this);
 });
-
 
 const applyCursorCSS = function (
     element: SVGElement,
@@ -1708,16 +1714,18 @@ addEvent(Point, 'afterSetState', function (): void {
 // After zooming out, shift the drillUpButton to the previous position, #8095.
 addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
-        const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        const buttonOptions =
+            this.options.drilldown && this.options.drilldown.drillUpButton;
 
         if (buttonOptions && buttonOptions.position) {
-            this.drillUpButton.align({
-                x: buttonOptions.position.x,
-                y: buttonOptions.position.y,
-                align: buttonOptions.position.align
-            },
-            false,
-            buttonOptions.relativeTo || 'plotBox'
+            this.drillUpButton.align(
+                {
+                    x: buttonOptions.position.x,
+                    y: buttonOptions.position.y,
+                    align: buttonOptions.position.align
+                },
+                false,
+                buttonOptions.relativeTo || 'plotBox'
             );
         }
     }

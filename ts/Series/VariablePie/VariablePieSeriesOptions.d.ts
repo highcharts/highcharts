@@ -27,14 +27,14 @@ import type VariablePieSeries from './VariablePieSeries';
  * */
 
 export interface VariablePieSeriesOptions extends PieSeriesOptions {
-    maxPointSize?: (number|string);
-    minPointSize?: (number|string);
+    maxPointSize?: number | string;
+    minPointSize?: number | string;
     sizeBy?: VariablePieSizeByValue;
     states?: SeriesStatesOptions<VariablePieSeries>;
     zMax?: number;
     zMin?: number;
 }
 
-export type VariablePieSizeByValue = ('area'|'radius');
+export type VariablePieSizeByValue = 'area' | 'radius';
 
 export default VariablePieSeriesOptions;

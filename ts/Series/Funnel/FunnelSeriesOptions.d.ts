@@ -28,10 +28,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface FunnelSeriesOptions extends PieSeriesOptions {
-    width?: (number|string);
-    neckWidth?: (number|string);
-    height?: (number|string);
-    neckHeight?: (number|string);
+    width?: number | string;
+    neckWidth?: number | string;
+    height?: number | string;
+    neckHeight?: number | string;
     reversed?: boolean;
     size?: undefined;
     dataLabels?: FunnelDataLabelOptions;

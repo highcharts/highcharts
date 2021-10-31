@@ -32,9 +32,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export type OrganizationNodesLayoutValue = ('normal'|'hanging');
+export type OrganizationNodesLayoutValue = 'normal' | 'hanging';
 
-export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions {
+export interface OrganizationSeriesLevelOptions
+    extends SankeySeriesLevelOptions {
     states: SeriesStatesOptions<OrganizationSeries>;
 }
 

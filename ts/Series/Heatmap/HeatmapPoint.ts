@@ -25,19 +25,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
+            prototype: { pointClass: ScatterPoint }
         }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import BBoxObject from '../../Core/Renderer/BBoxObject';
-const {
-    clamp,
-    extend,
-    pick
-} = U;
+const { clamp, extend, pick } = U;
 
 /* *
  *
@@ -46,7 +40,6 @@ const {
  * */
 
 class HeatmapPoint extends ScatterPoint {
-
     /* *
      *
      *  Properties
@@ -59,7 +52,7 @@ class HeatmapPoint extends ScatterPoint {
 
     public series: HeatmapSeries = void 0 as any;
 
-    public value: (number|null) = void 0 as any;
+    public value: number | null = void 0 as any;
 
     public x: number = void 0 as any;
 
@@ -80,9 +73,14 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = super.applyOptions.call(this, options, x) as any;
+        const point: HeatmapPoint = super.applyOptions.call(
+            this,
+            options,
+            x
+        ) as any;
 
-        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
+        point.formatPrefix =
+            point.isNull || point.value === null ? 'null' : 'point';
 
         return point;
     }
@@ -98,82 +96,101 @@ class HeatmapPoint extends ScatterPoint {
             markerOptions = point.options.marker || series.options.marker,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             pointPadding = pick(
-                point.pointPadding, seriesOptions.pointPadding, 0
+                point.pointPadding,
+                seriesOptions.pointPadding,
+                0
             ),
             cellAttr: HeatmapPoint.CellAttributes = {
-                x1: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
-                        point.x - xPad,
-                        false,
-                        true,
-                        false,
-                        true,
-                        -pointPlacement
-                    ) || 0)
-                ), -xAxis.len, 2 * xAxis.len),
+                x1: clamp(
+                    Math.round(
+                        xAxis.len -
+                            (xAxis.translate(
+                                point.x - xPad,
+                                false,
+                                true,
+                                false,
+                                true,
+                                -pointPlacement
+                            ) || 0)
+                    ),
+                    -xAxis.len,
+                    2 * xAxis.len
+                ),
 
-                x2: clamp(Math.round(xAxis.len -
-                    (xAxis.translate(
-                        point.x + xPad,
-                        false,
-                        true,
-                        false,
-                        true,
-                        -pointPlacement
-                    ) || 0)
-                ), -xAxis.len, 2 * xAxis.len),
+                x2: clamp(
+                    Math.round(
+                        xAxis.len -
+                            (xAxis.translate(
+                                point.x + xPad,
+                                false,
+                                true,
+                                false,
+                                true,
+                                -pointPlacement
+                            ) || 0)
+                    ),
+                    -xAxis.len,
+                    2 * xAxis.len
+                ),
 
-                y1: clamp(Math.round(
-                    (yAxis.translate(
-                        point.y - yPad,
-                        false,
-                        true,
-                        false,
-                        true
-                    ) || 0)
-                ), -yAxis.len, 2 * yAxis.len),
+                y1: clamp(
+                    Math.round(
+                        yAxis.translate(
+                            point.y - yPad,
+                            false,
+                            true,
+                            false,
+                            true
+                        ) || 0
+                    ),
+                    -yAxis.len,
+                    2 * yAxis.len
+                ),
 
-                y2: clamp(Math.round(
-                    (yAxis.translate(
-                        point.y + yPad,
-                        false,
-                        true,
-                        false,
-                        true
-                    ) || 0)
-                ), -yAxis.len, 2 * yAxis.len)
+                y2: clamp(
+                    Math.round(
+                        yAxis.translate(
+                            point.y + yPad,
+                            false,
+                            true,
+                            false,
+                            true
+                        ) || 0
+                    ),
+                    -yAxis.len,
+                    2 * yAxis.len
+                )
             };
 
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
-        [['width', 'x'], ['height', 'y']].forEach(function (dimension): void {
+        [
+            ['width', 'x'],
+            ['height', 'y']
+        ].forEach(function (dimension): void {
             const prop = dimension[0],
                 direction = dimension[1];
 
             let start = direction + '1',
                 end = direction + '2';
 
-            const side = Math.abs(
-                    cellAttr[start] - cellAttr[end]
-                ),
-                borderWidth = markerOptions &&
-                    markerOptions.lineWidth || 0,
-                plotPos = Math.abs(
-                    cellAttr[start] + cellAttr[end]
-                ) / 2;
-
+            const side = Math.abs(cellAttr[start] - cellAttr[end]),
+                borderWidth = (markerOptions && markerOptions.lineWidth) || 0,
+                plotPos = Math.abs(cellAttr[start] + cellAttr[end]) / 2;
 
             if (
                 (markerOptions as any)[prop] &&
                 (markerOptions as any)[prop] < side
             ) {
-                cellAttr[start] = plotPos - (
-                    (markerOptions as any)[prop] / 2) -
-                    (borderWidth / 2);
+                cellAttr[start] =
+                    plotPos -
+                    (markerOptions as any)[prop] / 2 -
+                    borderWidth / 2;
 
-                cellAttr[end] = plotPos + (
-                    (markerOptions as any)[prop] / 2) +
-                    (borderWidth / 2);
+                cellAttr[end] =
+                    plotPos +
+                    (markerOptions as any)[prop] / 2 +
+                    borderWidth / 2;
             }
 
             // Handle pointPadding
@@ -221,14 +238,10 @@ class HeatmapPoint extends ScatterPoint {
      */
     public isValid(): boolean {
         // undefined is allowed
-        return (
-            this.value !== Infinity &&
-            this.value !== -Infinity
-        );
+        return this.value !== Infinity && this.value !== -Infinity;
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

@@ -23,9 +23,7 @@ import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
-    seriesTypes: {
-        hlc: HLCSeries
-    }
+    seriesTypes: { hlc: HLCSeries }
 } = SeriesRegistry;
 
 /* *
@@ -35,7 +33,6 @@ const {
  * */
 
 class OHLCPoint extends HLCSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -65,11 +62,11 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * @return {string}
      */
     public getClassName(): string {
-        return super.getClassName.call(this) +
-        (
-            this.open < this.close ?
-                ' highcharts-point-up' :
-                ' highcharts-point-down'
+        return (
+            super.getClassName.call(this) +
+            (this.open < this.close
+                ? ' highcharts-point-up'
+                : ' highcharts-point-down')
         );
     }
 
@@ -126,7 +123,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

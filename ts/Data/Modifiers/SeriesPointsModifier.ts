@@ -37,7 +37,6 @@ const { merge } = U;
  * @private
  */
 class SeriesPointsModifier extends DataModifier {
-
     /* *
      *
      *  Static Properties
@@ -109,7 +108,7 @@ class SeriesPointsModifier extends DataModifier {
 
         const aliasMap = modifier.options.aliasMap || {},
             aliases = Object.keys(aliasMap),
-            modified = table.modified = table.clone(false, eventDetail);
+            modified = (table.modified = table.clone(false, eventDetail));
 
         for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
             alias = aliases[i];
@@ -120,7 +119,6 @@ class SeriesPointsModifier extends DataModifier {
 
         return table;
     }
-
 }
 
 /* *
@@ -134,7 +132,6 @@ class SeriesPointsModifier extends DataModifier {
  * conversion.
  */
 namespace SeriesPointsModifier {
-
     /**
      * Options to configure the modifier.
      */

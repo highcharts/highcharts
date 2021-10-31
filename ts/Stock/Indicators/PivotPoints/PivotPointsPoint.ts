@@ -15,9 +15,7 @@
 import PivotPointsIndicator from './PivotPointsIndicator';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 
 /* eslint-disable valid-jsdoc */
@@ -33,7 +31,9 @@ function destroyExtraLabels(
         prop: string,
         i: number = props.length;
 
-    (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[functionName].call(point);
+    (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[
+        functionName
+    ].call(point);
 
     while (i--) {
         prop = 'dataLabel' + props[i];
@@ -54,7 +54,6 @@ function destroyExtraLabels(
  * */
 
 class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
-
     /**
      *
      * Properties
@@ -66,20 +65,16 @@ class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
     public series: PivotPointsIndicator = void 0 as any;
 
     /**
-      *
-      * Functions
-      *
-      */
+     *
+     * Functions
+     *
+     */
 
-    public destroyElements(
-        this: PivotPointsPoint
-    ): void {
+    public destroyElements(this: PivotPointsPoint): void {
         destroyExtraLabels(this, 'destroyElements');
     }
     // This method is called when removing points, e.g. series.update()
-    public destroy(
-        this: PivotPointsPoint
-    ): void {
+    public destroy(this: PivotPointsPoint): void {
         destroyExtraLabels(this, 'destroyElements');
     }
 }

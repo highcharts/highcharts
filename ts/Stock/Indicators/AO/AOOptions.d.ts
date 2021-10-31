@@ -14,15 +14,13 @@
 import type AOIndicator from './AOIndicator';
 import type ColorString from '../../../Core/Color/ColorString';
 import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
-import type {
-    SMAOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions } from '../SMA/SMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface AOOptions extends SMAOptions {
     greaterBarColor?: ColorString;

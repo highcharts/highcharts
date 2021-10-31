@@ -25,15 +25,10 @@ import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    extend
-} = U;
+const { defined, extend } = U;
 
 /* *
  *
@@ -42,7 +37,6 @@ const {
  * */
 
 class SankeyPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -94,10 +88,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      */
-    public applyOptions(
-        options: SankeyPointOptions,
-        x?: number
-    ): SankeyPoint {
+    public applyOptions(options: SankeyPointOptions, x?: number): SankeyPoint {
         Point.prototype.applyOptions.call(this, options, x);
 
         // Treat point.level as a synonym of point.column
@@ -111,8 +102,10 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      * @private
      */
     public getClassName(): string {
-        return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
-        Point.prototype.getClassName.call(this);
+        return (
+            (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
+            Point.prototype.getClassName.call(this)
+        );
     }
 
     /**
@@ -123,7 +116,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

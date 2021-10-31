@@ -32,7 +32,7 @@ declare class PackedBubbleChart extends Chart {
     maxRadius: number;
     minRadius: number;
     rawPositions: Array<Array<number>>;
-    stages: Array<Array<(number|object|null)>>;
+    stages: Array<Array<number | object | null>>;
 }
 
 /* *

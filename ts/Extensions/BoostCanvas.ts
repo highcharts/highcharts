@@ -29,24 +29,13 @@ import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../Core/Globals.js';
-const {
-    doc,
-    noop
-} = H;
+const { doc, noop } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    wrap
-} = U;
+const { addEvent, extend, fireEvent, isNumber, merge, pick, wrap } = U;
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike extends Highcharts.BoostTargetObject {
@@ -83,7 +72,7 @@ declare module '../Core/Series/SeriesLike' {
             r: number
         ): void;
         /** @requires modules/boost-canvas */
-        getContext(): (CanvasRenderingContext2D|null|undefined);
+        getContext(): CanvasRenderingContext2D | null | undefined;
         /** @requires modules/boost-canvas */
         renderCanvas(): void;
     }
@@ -103,7 +92,7 @@ declare global {
             timeSetup?: boolean;
         }
         interface BoostTargetObject {
-            ctx?: (CanvasRenderingContext2D|null);
+            ctx?: CanvasRenderingContext2D | null;
         }
     }
 }
@@ -120,76 +109,77 @@ let CHUNK_SIZE = 50000,
  */
 const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
-        wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
-            this: HeatmapSeries
-        ): void {
-            const chart = this.chart,
-                ctx = this.getContext(),
-                inverted = this.chart.inverted,
-                xAxis = this.xAxis,
-                yAxis = this.yAxis;
+        wrap(
+            H.seriesTypes.heatmap.prototype,
+            'drawPoints',
+            function (this: HeatmapSeries): void {
+                const chart = this.chart,
+                    ctx = this.getContext(),
+                    inverted = this.chart.inverted,
+                    xAxis = this.xAxis,
+                    yAxis = this.yAxis;
 
-            if (ctx) {
+                if (ctx) {
+                    // draw the columns
+                    this.points.forEach(function (point): void {
+                        let plotY = point.plotY,
+                            pointAttr: SVGAttributes;
 
-                // draw the columns
-                this.points.forEach(function (point): void {
-                    let plotY = point.plotY,
-                        pointAttr: SVGAttributes;
+                        if (
+                            typeof plotY !== 'undefined' &&
+                            !isNaN(plotY) &&
+                            point.y !== null &&
+                            ctx
+                        ) {
+                            const {
+                                x = 0,
+                                y = 0,
+                                width = 0,
+                                height = 0
+                            } = point.shapeArgs || {};
 
-                    if (
-                        typeof plotY !== 'undefined' &&
-                        !isNaN(plotY) &&
-                        point.y !== null &&
-                        ctx
-                    ) {
-                        const { x = 0, y = 0, width = 0, height = 0 } =
-                            point.shapeArgs || {};
+                            if (!chart.styledMode) {
+                                pointAttr = point.series.pointAttribs(point);
+                            } else {
+                                pointAttr = point.series.colorAttribs(point);
+                            }
 
-                        if (!chart.styledMode) {
-                            pointAttr = point.series.pointAttribs(point);
-                        } else {
-                            pointAttr = point.series.colorAttribs(point);
+                            ctx.fillStyle = pointAttr.fill as any;
+
+                            if (inverted) {
+                                ctx.fillRect(
+                                    yAxis.len - y + xAxis.left,
+                                    xAxis.len - x + yAxis.top,
+                                    -height,
+                                    -width
+                                );
+                            } else {
+                                ctx.fillRect(
+                                    x + xAxis.left,
+                                    y + yAxis.top,
+                                    width,
+                                    height
+                                );
+                            }
                         }
+                    });
 
-                        ctx.fillStyle = pointAttr.fill as any;
+                    this.canvasToSVG();
+                } else {
+                    this.chart.showLoading(
+                        "Your browser doesn't support HTML5 canvas, <br>" +
+                            'please use a modern browser'
+                    );
 
-                        if (inverted) {
-                            ctx.fillRect(
-                                yAxis.len - y + xAxis.left,
-                                xAxis.len - x + yAxis.top,
-                                -height,
-                                -width
-                            );
-                        } else {
-                            ctx.fillRect(
-                                x + xAxis.left,
-                                y + yAxis.top,
-                                width,
-                                height
-                            );
-                        }
-                    }
-                });
-
-                this.canvasToSVG();
-
-            } else {
-                this.chart.showLoading(
-                    'Your browser doesn\'t support HTML5 canvas, <br>' +
-                    'please use a modern browser'
-                );
-
-                // Uncomment this to provide low-level (slow) support in oldIE.
-                // It will cause script errors on charts with more than a few
-                // thousand points.
-                // arguments[0].call(this);
+                    // Uncomment this to provide low-level (slow) support in
+                    // oldIE. It will cause script errors on charts with more
+                    // than a few thousand points. arguments[0].call(this);
+                }
             }
-        });
+        );
     }
 
-
     extend(Series.prototype, {
-
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
          * copied over to an SVG image element.
@@ -199,13 +189,13 @@ const initCanvasBoost = function (): void {
          */
         getContext: function (
             this: Series
-        ): (CanvasRenderingContext2D|null|undefined) {
+        ): CanvasRenderingContext2D | null | undefined {
             let chart = this.chart,
                 width = chart.chartWidth,
                 height = chart.chartHeight,
                 targetGroup = chart.seriesGroup || this.group,
                 target: Highcharts.BoostTargetObject = this,
-                ctx: (CanvasRenderingContext2D|null|undefined),
+                ctx: CanvasRenderingContext2D | null | undefined,
                 swapXY = function (
                     this: CanvasRenderingContext2D,
                     proceed: Function,
@@ -266,7 +256,6 @@ const initCanvasBoost = function (): void {
                 target.boostClipRect = chart.renderer.clipRect();
 
                 target.renderTarget.clip(target.boostClipRect);
-
             } else if (!(target instanceof Chart)) {
                 // ctx.clearRect(0, 0, width, height);
             }
@@ -333,11 +322,12 @@ const initCanvasBoost = function (): void {
                         activeBoostSettings.timeSeriesProcessing || false,
                     timeSetup: activeBoostSettings.timeSetup || false
                 },
-                ctx: (CanvasRenderingContext2D|null|undefined),
+                ctx: CanvasRenderingContext2D | null | undefined,
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
+                rawData: Array<PointOptions | PointShortOptions> =
+                    options.data as any,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,
@@ -351,11 +341,8 @@ const initCanvasBoost = function (): void {
                 r = options.marker && options.marker.radius,
                 cvsDrawPoint = this.cvsDrawPoint,
                 cvsLineTo = options.lineWidth ? this.cvsLineTo : void 0,
-                cvsMarker: (typeof this['cvsMarkerCircle']) = (
-                    r && r <= 1 ?
-                        this.cvsMarkerSquare :
-                        this.cvsMarkerCircle
-                ),
+                cvsMarker: typeof this['cvsMarkerCircle'] =
+                    r && r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
                 strokeBatch = this.cvsStrokeBatch || 1000,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 lastPoint: Record<string, number>,
@@ -364,10 +351,9 @@ const initCanvasBoost = function (): void {
                 hasThreshold = isNumber(threshold),
                 translatedThreshold: number = yBottom as any,
                 doFill = this.fill,
-                isRange = (
+                isRange =
                     series.pointArrayMap &&
-                    series.pointArrayMap.join(',') === 'low,high'
-                ),
+                    series.pointArrayMap.join(',') === 'low,high',
                 isStacked = !!options.stacking,
                 cropStart = series.cropStart || 0,
                 loadingOptions = chart.options.loading,
@@ -377,21 +363,15 @@ const initCanvasBoost = function (): void {
                 useRaw = !xData,
                 minVal: number,
                 maxVal: number,
-                minI: (number|undefined),
-                maxI: (number|undefined),
-                index: (number|string),
-                sdata: Array<any> = (
-                    isStacked ?
-                        series.data :
-                        (xData || rawData)
-                ),
-                fillColor = (
-                    series.fillOpacity ?
-                        Color.parse(series.color).setOpacity(
-                            pick((options as any).fillOpacity, 0.75)
-                        ).get() :
-                        series.color
-                ),
+                minI: number | undefined,
+                maxI: number | undefined,
+                index: number | string,
+                sdata: Array<any> = isStacked ? series.data : xData || rawData,
+                fillColor = series.fillOpacity
+                    ? Color.parse(series.color)
+                          .setOpacity(pick((options as any).fillOpacity, 0.75))
+                          .get()
+                    : series.color,
                 //
                 stroke = function (): void {
                     if (doFill) {
@@ -477,12 +457,11 @@ const initCanvasBoost = function (): void {
                 //
                 compareX = options.findNearestPointBy === 'x',
                 //
-                xDataFull: Array<number> = (
+                xDataFull: Array<number> =
                     this.xData ||
                     (this.options as any).xData ||
                     this.processedXData ||
-                    false
-                ),
+                    false,
                 //
                 addKDPoint = function (
                     clientX: number,
@@ -504,9 +483,9 @@ const initCanvasBoost = function (): void {
                         }
 
                         points.push({
-                            x: xDataFull ?
-                                xDataFull[cropStart + i] :
-                                (false as any),
+                            x: xDataFull
+                                ? xDataFull[cropStart + i]
+                                : (false as any),
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
@@ -516,7 +495,7 @@ const initCanvasBoost = function (): void {
                 };
 
             if (this.renderTarget) {
-                this.renderTarget.attr({ 'href': '' });
+                this.renderTarget.attr({ href: '' });
             }
 
             // If we are zooming out from SVG mode, destroy the graphics
@@ -564,7 +543,9 @@ const initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color(Palette.backgroundColor).setOpacity(0.75).get(),
+                        backgroundColor: color(Palette.backgroundColor)
+                            .setOpacity(0.75)
+                            .get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -583,193 +564,203 @@ const initCanvasBoost = function (): void {
             }
 
             // Loop over the points
-            (H as any).eachAsync(sdata, function (d: any, i: number): boolean {
-                let x: number,
-                    y: number,
-                    clientX: number,
-                    plotY: number,
-                    isNull: boolean,
-                    low: (number|undefined),
-                    isNextInside = false,
-                    isPrevInside = false,
-                    nx: number = false as any,
-                    px: number = false as any,
-                    chartDestroyed = typeof chart.index === 'undefined',
-                    isYInside = true;
+            (H as any).eachAsync(
+                sdata,
+                function (d: any, i: number): boolean {
+                    let x: number,
+                        y: number,
+                        clientX: number,
+                        plotY: number,
+                        isNull: boolean,
+                        low: number | undefined,
+                        isNextInside = false,
+                        isPrevInside = false,
+                        nx: number = false as any,
+                        px: number = false as any,
+                        chartDestroyed = typeof chart.index === 'undefined',
+                        isYInside = true;
 
-                if (!chartDestroyed) {
-                    if (useRaw) {
-                        x = d[0];
-                        y = d[1];
-
-                        if (sdata[i + 1]) {
-                            nx = sdata[i + 1][0];
-                        }
-
-                        if (sdata[i - 1]) {
-                            px = sdata[i - 1][0];
-                        }
-                    } else {
-                        x = d;
-                        y = yData[i] as any;
-
-                        if (sdata[i + 1]) {
-                            nx = sdata[i + 1];
-                        }
-
-                        if (sdata[i - 1]) {
-                            px = sdata[i - 1];
-                        }
-                    }
-
-                    if (nx && nx >= xMin && nx <= xMax) {
-                        isNextInside = true;
-                    }
-
-                    if (px && px >= xMin && px <= xMax) {
-                        isPrevInside = true;
-                    }
-
-                    // Resolve low and high for range series
-                    if (isRange) {
+                    if (!chartDestroyed) {
                         if (useRaw) {
-                            y = d.slice(1, 3);
-                        }
-                        low = (y as any)[0];
-                        y = (y as any)[1];
-                    } else if (isStacked) {
-                        x = d.x;
-                        y = d.stackY;
-                        low = y - d.y;
-                    }
+                            x = d[0];
+                            y = d[1];
 
-                    isNull = y === null;
-
-                    // Optimize for scatter zooming
-                    if (!requireSorting) {
-                        isYInside = y >= yMin && y <= yMax;
-                    }
-
-                    if (!isNull &&
-                        (
-                            (x >= xMin && x <= xMax && isYInside) ||
-                            (isNextInside || isPrevInside)
-                        )) {
-
-
-                        clientX = Math.round(xAxis.toPixels(x, true));
-
-                        if (sampling) {
-                            if (
-                                typeof minI === 'undefined' ||
-                                clientX === lastClientX
-                            ) {
-                                if (!isRange) {
-                                    low = y;
-                                }
-                                if (typeof maxI === 'undefined' || y > maxVal) {
-                                    maxVal = y;
-                                    maxI = i;
-                                }
-                                if (
-                                    typeof minI === 'undefined' ||
-                                    (low as any) < minVal
-                                ) {
-                                    minVal = low as any;
-                                    minI = i;
-                                }
-
+                            if (sdata[i + 1]) {
+                                nx = sdata[i + 1][0];
                             }
-                            // Add points and reset
-                            if (clientX !== lastClientX) {
-                                // maxI also a number:
-                                if (typeof minI !== 'undefined') {
-                                    plotY = yAxis.toPixels(maxVal, true);
-                                    yBottom = yAxis.toPixels(minVal, true);
-                                    drawPoint(
-                                        clientX,
-                                        hasThreshold ?
-                                            Math.min(
-                                                plotY,
-                                                translatedThreshold
-                                            ) : plotY,
-                                        hasThreshold ?
-                                            Math.max(
-                                                yBottom,
-                                                translatedThreshold
-                                            ) : yBottom,
-                                        i
-                                    );
-                                    addKDPoint(clientX, plotY, maxI as any);
-                                    if (yBottom !== plotY) {
-                                        addKDPoint(clientX, yBottom, minI);
-                                    }
-                                }
 
-                                minI = maxI = void 0;
-                                lastClientX = clientX;
+                            if (sdata[i - 1]) {
+                                px = sdata[i - 1][0];
                             }
                         } else {
-                            plotY = Math.round(yAxis.toPixels(y, true));
-                            drawPoint(clientX, plotY, yBottom, i);
-                            addKDPoint(clientX, plotY, i);
+                            x = d;
+                            y = yData[i] as any;
+
+                            if (sdata[i + 1]) {
+                                nx = sdata[i + 1];
+                            }
+
+                            if (sdata[i - 1]) {
+                                px = sdata[i - 1];
+                            }
+                        }
+
+                        if (nx && nx >= xMin && nx <= xMax) {
+                            isNextInside = true;
+                        }
+
+                        if (px && px >= xMin && px <= xMax) {
+                            isPrevInside = true;
+                        }
+
+                        // Resolve low and high for range series
+                        if (isRange) {
+                            if (useRaw) {
+                                y = d.slice(1, 3);
+                            }
+                            low = (y as any)[0];
+                            y = (y as any)[1];
+                        } else if (isStacked) {
+                            x = d.x;
+                            y = d.stackY;
+                            low = y - d.y;
+                        }
+
+                        isNull = y === null;
+
+                        // Optimize for scatter zooming
+                        if (!requireSorting) {
+                            isYInside = y >= yMin && y <= yMax;
+                        }
+
+                        if (
+                            !isNull &&
+                            ((x >= xMin && x <= xMax && isYInside) ||
+                                isNextInside ||
+                                isPrevInside)
+                        ) {
+                            clientX = Math.round(xAxis.toPixels(x, true));
+
+                            if (sampling) {
+                                if (
+                                    typeof minI === 'undefined' ||
+                                    clientX === lastClientX
+                                ) {
+                                    if (!isRange) {
+                                        low = y;
+                                    }
+                                    if (
+                                        typeof maxI === 'undefined' ||
+                                        y > maxVal
+                                    ) {
+                                        maxVal = y;
+                                        maxI = i;
+                                    }
+                                    if (
+                                        typeof minI === 'undefined' ||
+                                        (low as any) < minVal
+                                    ) {
+                                        minVal = low as any;
+                                        minI = i;
+                                    }
+                                }
+                                // Add points and reset
+                                if (clientX !== lastClientX) {
+                                    // maxI also a number:
+                                    if (typeof minI !== 'undefined') {
+                                        plotY = yAxis.toPixels(maxVal, true);
+                                        yBottom = yAxis.toPixels(minVal, true);
+                                        drawPoint(
+                                            clientX,
+                                            hasThreshold
+                                                ? Math.min(
+                                                      plotY,
+                                                      translatedThreshold
+                                                  )
+                                                : plotY,
+                                            hasThreshold
+                                                ? Math.max(
+                                                      yBottom,
+                                                      translatedThreshold
+                                                  )
+                                                : yBottom,
+                                            i
+                                        );
+                                        addKDPoint(clientX, plotY, maxI as any);
+                                        if (yBottom !== plotY) {
+                                            addKDPoint(clientX, yBottom, minI);
+                                        }
+                                    }
+
+                                    minI = maxI = void 0;
+                                    lastClientX = clientX;
+                                }
+                            } else {
+                                plotY = Math.round(yAxis.toPixels(y, true));
+                                drawPoint(clientX, plotY, yBottom, i);
+                                addKDPoint(clientX, plotY, i);
+                            }
+                        }
+                        wasNull = isNull && !connectNulls;
+
+                        if (i % CHUNK_SIZE === 0) {
+                            if (series.boostCopy || series.chart.boostCopy) {
+                                (series.boostCopy || series.chart.boostCopy)();
+                            }
                         }
                     }
-                    wasNull = isNull && !connectNulls;
 
-                    if (i % CHUNK_SIZE === 0) {
-                        if (series.boostCopy || series.chart.boostCopy) {
-                            (series.boostCopy || series.chart.boostCopy)();
-                        }
+                    return !chartDestroyed;
+                },
+                function (): void {
+                    const loadingDiv: HTMLElement = chart.loadingDiv as any,
+                        loadingShown = chart.loadingShown;
+
+                    stroke();
+
+                    // if (series.boostCopy || series.chart.boostCopy) {
+                    //     (series.boostCopy || series.chart.boostCopy)();
+                    // }
+
+                    series.canvasToSVG();
+
+                    if (boostSettings.timeRendering) {
+                        console.timeEnd('canvas rendering'); // eslint-disable-line no-console
                     }
-                }
 
-                return !chartDestroyed;
-            }, function (): void {
-                const loadingDiv: HTMLElement =
-                        chart.loadingDiv as any,
-                    loadingShown = chart.loadingShown;
+                    fireEvent(series, 'renderedCanvas');
 
-                stroke();
+                    // Do not use chart.hideLoading, as it runs JS animation and
+                    // will be blocked by buildKDTree. CSS animation looks good,
+                    // but then it must be deleted in timeout. If we add the
+                    // module to core, change hideLoading so we can skip this
+                    // block.
+                    if (loadingShown) {
+                        extend(loadingDiv.style, {
+                            transition: 'opacity 250ms',
+                            opacity: 0 as any
+                        });
+                        chart.loadingShown = false;
+                        destroyLoadingDiv = setTimeout(function (): void {
+                            if (loadingDiv.parentNode) {
+                                // In exporting it is falsy
+                                loadingDiv.parentNode.removeChild(loadingDiv);
+                            }
+                            chart.loadingDiv = chart.loadingSpan = null as any;
+                        }, 250);
+                    }
 
-                // if (series.boostCopy || series.chart.boostCopy) {
-                //     (series.boostCopy || series.chart.boostCopy)();
-                // }
+                    // Go back to prototype, ready to build
+                    delete (series as any).buildKDTree;
 
-                series.canvasToSVG();
+                    series.buildKDTree();
 
-                if (boostSettings.timeRendering) {
-                    console.timeEnd('canvas rendering'); // eslint-disable-line no-console
-                }
-
-                fireEvent(series, 'renderedCanvas');
-
-                // Do not use chart.hideLoading, as it runs JS animation and
-                // will be blocked by buildKDTree. CSS animation looks good, but
-                // then it must be deleted in timeout. If we add the module to
-                // core, change hideLoading so we can skip this block.
-                if (loadingShown) {
-                    extend(loadingDiv.style, {
-                        transition: 'opacity 250ms',
-                        opacity: 0 as any
-                    });
-                    chart.loadingShown = false;
-                    destroyLoadingDiv = setTimeout(function (): void {
-                        if (loadingDiv.parentNode) { // In exporting it is falsy
-                            loadingDiv.parentNode.removeChild(loadingDiv);
-                        }
-                        chart.loadingDiv = chart.loadingSpan = null as any;
-                    }, 250);
-                }
-
-                // Go back to prototype, ready to build
-                delete (series as any).buildKDTree;
-
-                series.buildKDTree();
-
-            // Don't do async on export, the exportChart, getSVGForExport and
-            // getSVG methods are not chained for it.
-            }, chart.renderer.forExport ? Number.MAX_VALUE : void 0);
+                    // Don't do async on export, the exportChart,
+                    // getSVGForExport and getSVG methods are not chained for
+                    // it.
+                },
+                chart.renderer.forExport ? Number.MAX_VALUE : void 0
+            );
         }
     });
 
@@ -851,7 +842,6 @@ const initCanvasBoost = function (): void {
     });
 
     Chart.prototype.callbacks.push(function (chart: Chart): void {
-
         /**
          * @private
          */

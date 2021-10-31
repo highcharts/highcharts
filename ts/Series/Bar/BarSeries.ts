@@ -22,10 +22,7 @@ import type BarSeriesOptions from './BarSeriesOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -43,7 +40,6 @@ const {
  * @augments Highcharts.Series
  */
 class BarSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -61,9 +57,12 @@ class BarSeries extends ColumnSeries {
      * @product      highcharts
      * @optionparent plotOptions.bar
      */
-    public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // nothing here yet
-    });
+    public static defaultOptions: BarSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            // nothing here yet
+        }
+    );
 
     /* *
      *
@@ -74,7 +73,6 @@ class BarSeries extends ColumnSeries {
     public data: Array<BarPoint> = void 0 as any;
     public options: BarSeriesOptions = void 0 as any;
     public points: Array<BarPoint> = void 0 as any;
-
 }
 
 /* *
@@ -201,4 +199,4 @@ export default BarSeries;
  * @apioption series.bar.states.select
  */
 
-''; // gets doclets above into transpilat
+(''); // gets doclets above into transpilat

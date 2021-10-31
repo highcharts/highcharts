@@ -50,11 +50,12 @@ export interface SankeySeriesNodeOptions {
     id?: string;
     level?: number;
     name?: string;
-    offset?: (number|string);
+    offset?: number | string;
 }
 
-
-export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
+export interface SankeySeriesOptions
+    extends ColumnSeriesOptions,
+        NodesComposition.SeriesCompositionOptions {
     curveFactor?: number;
     dataLabels?: SankeyDataLabelOptions;
     height?: number;

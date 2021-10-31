@@ -22,31 +22,20 @@
 
 import type { YAxisOptions } from '../Core/Axis/AxisOptions';
 import type ColorType from '../Core/Color/ColorType';
-import type {
-    CursorValue
-} from '../Core/Renderer/CSSObject';
+import type { CursorValue } from '../Core/Renderer/CSSObject';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import H from '../Core/Globals.js';
-const {
-    hasTouch
-} = H;
+const { hasTouch } = H;
 import Axis from '../Core/Axis/Axis.js';
 import AxisDefaults from '../Core/Axis/AxisDefaults.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    wrap
-} = U;
+const { addEvent, clamp, isNumber, merge, objectEach, relativeLength, wrap } =
+    U;
 
 /* *
  *
@@ -62,8 +51,8 @@ declare module '../Core/Axis/AxisLike' {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        maxLength?: (number|string);
-        minLength?: (number|string);
+        maxLength?: number | string;
+        minLength?: number | string;
         resize?: Highcharts.YAxisResizeOptions;
     }
 }
@@ -81,8 +70,8 @@ declare module '../Core/Chart/ChartLike' {
 declare global {
     namespace Highcharts {
         interface YAxisResizeControlledAxisOptions {
-            next?: Array<number|string>;
-            prev?: Array<number|string>;
+            next?: Array<number | string>;
+            prev?: Array<number | string>;
         }
         interface YAxisResizeOptions {
             controlledAxis?: YAxisResizeControlledAxisOptions;
@@ -137,7 +126,6 @@ declare global {
  *        Main axis for the AxisResizer.
  */
 class AxisResizer {
-
     // Default options for AxisResizer.
     public static resizerOptions: DeepPartial<YAxisOptions> = {
         /**
@@ -180,7 +168,6 @@ class AxisResizer {
          * @optionparent yAxis.resize
          */
         resize: {
-
             /**
              * Contains two arrays of axes that are controlled by control line
              * of the axis.
@@ -188,7 +175,6 @@ class AxisResizer {
              * @requires modules/drag-panes
              */
             controlledAxis: {
-
                 /**
                  * Array of axes that should move out of the way of resizing
                  * being done for the current axis. If not set, the next axis
@@ -299,7 +285,7 @@ class AxisResizer {
              */
             y: 0
         }
-    }
+    };
 
     public constructor(axis: Axis) {
         this.init(axis);
@@ -325,10 +311,7 @@ class AxisResizer {
      * @param {Highcharts.Axis} axis
      *        Main axis for the AxisResizer.
      */
-    public init(
-        axis: Axis,
-        update?: boolean
-    ): void {
+    public init(axis: Axis, update?: boolean): void {
         this.axis = axis;
         this.options = axis.options.resize as any;
         this.render();
@@ -373,7 +356,8 @@ class AxisResizer {
         resizer.lastPos = pos - (y as any);
 
         if (!resizer.controlLine) {
-            resizer.controlLine = chart.renderer.path()
+            resizer.controlLine = chart.renderer
+                .path()
                 .addClass('highcharts-axis-resizer');
         }
 
@@ -381,9 +365,9 @@ class AxisResizer {
         // Do .add() before path is calculated because strokeWidth() needs it.
         resizer.controlLine.add(axis.axisGroup);
 
-        lineWidth = chart.styledMode ?
-            resizer.controlLine.strokeWidth() :
-            (options.lineWidth as any);
+        lineWidth = chart.styledMode
+            ? resizer.controlLine.strokeWidth()
+            : (options.lineWidth as any);
 
         attr.d = chart.renderer.crispLine(
             [
@@ -469,7 +453,7 @@ class AxisResizer {
                 this.hasDragged = true;
                 this.updateAxes(
                     this.axis.chart.pointer.normalize(e).chartY -
-                    (this.options.y as any)
+                        (this.options.y as any)
                 );
             }
         }
@@ -487,13 +471,15 @@ class AxisResizer {
         if (this.hasDragged) {
             this.updateAxes(
                 this.axis.chart.pointer.normalize(e).chartY -
-                (this.options.y as any)
+                    (this.options.y as any)
             );
         }
 
         // Restore runPointActions.
-        this.grabbed = this.hasDragged = this.axis.chart.activeResizer =
-            null as any;
+        this.grabbed =
+            this.hasDragged =
+            this.axis.chart.activeResizer =
+                null as any;
     }
 
     /**
@@ -521,11 +507,14 @@ class AxisResizer {
         let resizer = this,
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
-            nextAxes: Array<(number|string)> = (axes as any).next.length === 0 ?
-                [chart.yAxis.indexOf(resizer.axis) + 1] : (axes as any).next,
+            nextAxes: Array<number | string> =
+                (axes as any).next.length === 0
+                    ? [chart.yAxis.indexOf(resizer.axis) + 1]
+                    : (axes as any).next,
             // Main axis is included in the prev array by default
-            prevAxes: Array<(number|string)> =
-                [resizer.axis as any].concat((axes as any).prev),
+            prevAxes: Array<number | string> = [resizer.axis as any].concat(
+                (axes as any).prev
+            ),
             // prev and next configs
             axesConfigs: Array<AnyRecord> = [],
             stopDrag = false,
@@ -534,7 +523,7 @@ class AxisResizer {
             plotBottom = plotTop + plotHeight,
             yDelta,
             calculatePercent = function (value: number): string {
-                return value * 100 / plotHeight + '%';
+                return (value * 100) / plotHeight + '%';
             },
             normalize = function (
                 val: number,
@@ -556,53 +545,44 @@ class AxisResizer {
 
         // First gather info how axes should behave
         [prevAxes, nextAxes].forEach(function (
-            axesGroup: Array<(number|string)>,
+            axesGroup: Array<number | string>,
             isNext: number
         ): void {
             axesGroup.forEach(function (
-                axisInfo: (number|string),
+                axisInfo: number | string,
                 i: number
             ): void {
                 // Axes given as array index, axis object or axis id
-                let axis: Axis = isNumber(axisInfo) ?
-                        // If it's a number - it's an index
-                        chart.yAxis[axisInfo] :
-                        (
-                            // If it's first elem. in first group
-                            (!isNext && !i) ?
-                                // then it's an Axis object
-                                axisInfo as any :
-                                // else it should be an id
-                                chart.get(axisInfo)
-                        ),
+                let axis: Axis = isNumber(axisInfo)
+                        ? // If it's a number - it's an index
+                          chart.yAxis[axisInfo]
+                        : // If it's first elem. in first group
+                        !isNext && !i
+                        ? // then it's an Axis object
+                          (axisInfo as any)
+                        : // else it should be an id
+                          chart.get(axisInfo),
                     axisOptions = axis && axis.options,
                     optionsToUpdate: DeepPartial<YAxisOptions> = {},
                     hDelta = 0,
-                    height, top,
-                    minLength, maxLength;
+                    height,
+                    top,
+                    minLength,
+                    maxLength;
 
                 // Skip if axis is not found
                 // or it is navigator's yAxis (#7732)
-                if (
-                    !axisOptions ||
-                    axisOptions.id === 'navigator-y-axis'
-                ) {
+                if (!axisOptions || axisOptions.id === 'navigator-y-axis') {
                     return;
                 }
 
                 top = axis.top;
 
                 minLength = Math.round(
-                    relativeLength(
-                        axisOptions.minLength as any,
-                        plotHeight
-                    )
+                    relativeLength(axisOptions.minLength as any, plotHeight)
                 );
                 maxLength = Math.round(
-                    relativeLength(
-                        axisOptions.maxLength as any,
-                        plotHeight
-                    )
+                    relativeLength(axisOptions.maxLength as any, plotHeight)
                 );
 
                 if (isNext) {
@@ -668,9 +648,7 @@ class AxisResizer {
         // If we hit the min/maxLength with dragging, don't do anything:
         if (!stopDrag) {
             // Now update axes:
-            axesConfigs.forEach(function (
-                config: AnyRecord
-            ): void {
+            axesConfigs.forEach(function (config: AnyRecord): void {
                 config.axis.update(config.options, false);
             });
 
@@ -728,7 +706,7 @@ addEvent(Axis, 'afterRender', function (): void {
                 // Update options
                 resizer.init(axis, true);
 
-            // Resizer present, but disabled
+                // Resizer present, but disabled
             } else {
                 // Destroy the resizer
                 resizer.destroy();
@@ -752,25 +730,27 @@ addEvent(Axis, 'destroy', function (e: Event): void {
 });
 
 // Prevent any hover effects while dragging a control line of AxisResizer.
-wrap(Pointer.prototype, 'runPointActions', function (
-    this: Pointer,
-    proceed: Function
-): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+wrap(
+    Pointer.prototype,
+    'runPointActions',
+    function (this: Pointer, proceed: Function): void {
+        if (!this.chart.activeResizer) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
     }
-});
+);
 
 // Prevent default drag action detection while dragging a control line of
 // AxisResizer. (#7563)
-wrap(Pointer.prototype, 'drag', function (
-    this: Pointer,
-    proceed: Function
-): void {
-    if (!this.chart.activeResizer) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+wrap(
+    Pointer.prototype,
+    'drag',
+    function (this: Pointer, proceed: Function): void {
+        if (!this.chart.activeResizer) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
     }
-});
+);
 
 merge(true, AxisDefaults.defaultYAxisOptions, AxisResizer.resizerOptions);
 

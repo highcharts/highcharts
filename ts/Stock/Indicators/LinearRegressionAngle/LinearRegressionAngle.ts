@@ -18,15 +18,10 @@ import type {
 import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        linearRegression: LinearRegressionIndicator
-    }
+    seriesTypes: { linearRegression: LinearRegressionIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -44,7 +39,6 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
-
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.
@@ -60,12 +54,16 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionParamsOptions = merge(
-        LinearRegressionIndicator.defaultOptions, {
-            tooltip: { // add a degree symbol
-                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-                '{series.name}: <b>{point.y}°</b><br/>'
+        LinearRegressionIndicator.defaultOptions,
+        {
+            tooltip: {
+                // add a degree symbol
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span>' +
+                    '{series.name}: <b>{point.y}°</b><br/>'
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionParamsOptions
+    );
 
     /* *
      *
@@ -84,15 +82,13 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * */
 
     /**
-    * Convert a slope of a line to angle (in degrees) between
-    * the line and x axis
-    * @private
-    * @param {number} slope of the straight line function
-    * @return {number} angle in degrees
-    */
-    public slopeToAngle(
-        slope: number
-    ): number {
+     * Convert a slope of a line to angle (in degrees) between
+     * the line and x axis
+     * @private
+     * @param {number} slope of the straight line function
+     * @return {number} angle in degrees
+     */
+    public slopeToAngle(slope: number): number {
         return Math.atan(slope) * (180 / Math.PI); // rad to deg
     }
 
@@ -158,4 +154,4 @@ export default LinearRegressionAngleIndicator;
  * @apioption series.linearregressionangle
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -33,8 +33,9 @@ import type TimelineSeries from './TimelineSeries';
  *
  * */
 
-export interface TimelineDataLabelFormatterCallback extends DataLabelFormatterCallback {
-    (this: (Point.PointLabelObject|TimelineDataLabelContextObject)): string;
+export interface TimelineDataLabelFormatterCallback
+    extends DataLabelFormatterCallback {
+    (this: Point.PointLabelObject | TimelineDataLabelContextObject): string;
 }
 export interface TimelineDataLabelContextObject extends Point.PointLabelObject {
     key?: string;

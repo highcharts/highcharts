@@ -13,26 +13,17 @@
  *
  * */
 
-import type {
-    ADOptions,
-    ADParamsOptions
-} from './ADOptions';
+import type { ADOptions, ADParamsOptions } from './ADOptions';
 import type ADPoint from './ADPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge
-} = U;
+const { error, extend, merge } = U;
 
 /**
  * The AD series type.
@@ -44,7 +35,6 @@ const {
  * @augments Highcharts.Series
  */
 class ADIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -65,22 +55,25 @@ class ADIndicator extends SMAIndicator {
      * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      */
-    public static defaultOptions: ADOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unused index, do not inherit (#15362)
+    public static defaultOptions: ADOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The id of volume series which is mandatory.
-             * For example using OHLC data, volumeSeriesID='volume' means
-             * the indicator will be calculated using OHLC and volume values.
-             *
-             * @since 6.0.0
+             * @excluding index
              */
-            volumeSeriesID: 'volume'
-        }
-    } as ADOptions);
+            params: {
+                index: void 0, // unused index, do not inherit (#15362)
+                /**
+                 * The id of volume series which is mandatory. For example using
+                 * OHLC data, volumeSeriesID='volume' means the indicator will
+                 * be calculated using OHLC and volume values.
+                 *
+                 * @since 6.0.0
+                 */
+                volumeSeriesID: 'volume'
+            }
+        } as ADOptions
+    );
 
     /* *
      *
@@ -99,9 +92,10 @@ class ADIndicator extends SMAIndicator {
             low = yVal[i][2],
             close = yVal[i][3],
             volume = yValVolume[i],
-            adY = close === high && close === low || high === low ?
-                0 :
-                ((2 * close - low - high) / (high - low)) * volume,
+            adY =
+                (close === high && close === low) || high === low
+                    ? 0
+                    : ((2 * close - low - high) / (high - low)) * volume,
             adX = xVal[i];
 
         return [adX, adY];
@@ -126,34 +120,30 @@ class ADIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ADParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<(number|null|undefined)> = (series.yData as any),
-            volumeSeriesID: string = (params.volumeSeriesID as any),
-            volumeSeries: LineSeries = (series.chart.get(volumeSeriesID) as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<number | null | undefined> = series.yData as any,
+            volumeSeriesID: string = params.volumeSeriesID as any,
+            volumeSeries: LineSeries = series.chart.get(volumeSeriesID) as any,
             yValVolume = volumeSeries && volumeSeries.yData,
             yValLen = yVal ? yVal.length : 0,
             AD: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            len: (number|undefined),
-            i: (number|undefined),
+            len: number | undefined,
+            i: number | undefined,
             ADPoint: Array<number>;
 
-        if (
-            xVal.length <= period &&
-            yValLen &&
-            (yVal[0] as any).length !== 4
-        ) {
+        if (xVal.length <= period && yValLen && (yVal[0] as any).length !== 4) {
             return;
         }
 
         if (!volumeSeries) {
             error(
                 'Series ' +
-                volumeSeriesID +
-                ' not found! Check `volumeSeriesID`.',
+                    volumeSeriesID +
+                    ' not found! Check `volumeSeriesID`.',
                 true,
                 series.chart
             );
@@ -163,10 +153,13 @@ class ADIndicator extends SMAIndicator {
         // i = period <-- skip first N-points
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen; i++) {
-
             len = AD.length;
             ADPoint = ADIndicator.populateAverage(
-                xVal, yVal as any, yValVolume as any, i, period
+                xVal,
+                yVal as any,
+                yValVolume as any,
+                i,
+                period
             );
 
             if (len > 0) {
@@ -185,7 +178,6 @@ class ADIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
 }
 
 interface ADIndicator {
@@ -194,7 +186,7 @@ interface ADIndicator {
     nameBase: string;
 }
 extend(ADIndicator.prototype, {
-    nameComponents: (false as any),
+    nameComponents: false as any,
     nameBase: 'Accumulation/Distribution'
 });
 
@@ -238,4 +230,4 @@ export default ADIndicator;
  * @apioption series.ad
  */
 
-''; // add doclet above to transpiled file
+(''); // add doclet above to transpiled file

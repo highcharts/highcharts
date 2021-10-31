@@ -14,10 +14,7 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 
 /* *
  *
@@ -25,7 +22,9 @@ import type {
  *
  * */
 
-export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Options {
+export interface ABandsOptions
+    extends SMAOptions,
+        MultipleLinesComposition.Options {
     bottomLine?: Record<string, CSSObject>;
     lineWidth?: number;
     params?: ABandsParamsOptions;

@@ -17,7 +17,6 @@ const { merge } = U;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class Pitchfork extends InfinityLine {
-
     /**
      *
      * Static Properties
@@ -25,7 +24,6 @@ class Pitchfork extends InfinityLine {
      */
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
     public static bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);
-
 
     /* *
      *
@@ -56,7 +54,8 @@ class Pitchfork extends InfinityLine {
         secondAnglePoint?: Highcharts.AnnotationPointType
     ): PositionObject {
         const angle = Math.atan2(
-                (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
+                (secondAnglePoint as any).plotY -
+                    (firstAnglePoint.plotY as any),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
             ),
             distance = 1e7;
@@ -81,14 +80,16 @@ class Pitchfork extends InfinityLine {
         );
     }
 
-
     /* *
      *
      * Constructors
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Pitchfork.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Pitchfork.Options
+    ) {
         super(chart, options);
     }
 
@@ -115,29 +116,29 @@ class Pitchfork extends InfinityLine {
     }
 
     public addLines(): void {
-        this.initShape({
-            type: 'path',
-            points: [
-                this.points[0],
-                Pitchfork.middleLineEdgePoint as any
-            ]
-        }, 0);
+        this.initShape(
+            {
+                type: 'path',
+                points: [this.points[0], Pitchfork.middleLineEdgePoint as any]
+            },
+            0
+        );
 
-        this.initShape({
-            type: 'path',
-            points: [
-                this.points[1],
-                Pitchfork.topLineEdgePoint as any
-            ]
-        }, 1);
+        this.initShape(
+            {
+                type: 'path',
+                points: [this.points[1], Pitchfork.topLineEdgePoint as any]
+            },
+            1
+        );
 
-        this.initShape({
-            type: 'path',
-            points: [
-                this.points[2],
-                Pitchfork.bottomLineEdgePoint as any
-            ]
-        }, 2);
+        this.initShape(
+            {
+                type: 'path',
+                points: [this.points[2], Pitchfork.bottomLineEdgePoint as any]
+            },
+            2
+        );
     }
 
     public addBackgrounds(): void {
@@ -255,7 +256,7 @@ namespace Pitchfork {
  *
  * */
 Annotation.types.pitchfork = Pitchfork;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;
     }

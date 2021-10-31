@@ -16,18 +16,15 @@ import type ColorType from '../../../Core/Color/ColorType';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface SupertrendOptions extends SMAOptions {
     changeTrendLine?: Record<string, CSSObject>;
@@ -68,7 +65,7 @@ export interface SupertrendGroupedPointsObject {
 }
 
 export interface SupertrendLineObject {
-    [index: string]: (AnyRecord|undefined);
+    [index: string]: AnyRecord | undefined;
 }
 
 export default SupertrendOptions;

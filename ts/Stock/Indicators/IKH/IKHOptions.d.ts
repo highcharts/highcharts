@@ -21,10 +21,10 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type TooltipOptions from '../../../Core/TooltipOptions';
 
 /* *
-*
-* Declarations
-*
-* */
+ *
+ * Declarations
+ *
+ * */
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
@@ -35,7 +35,7 @@ export interface IKHDrawSenkouSpanObject {
     color?: ColorType;
     options: IKHOptions;
     gap: IKHGapExtensionObject;
-    graph: (SVGElement|undefined);
+    graph: SVGElement | undefined;
 }
 
 export interface IKHSenkouSpanOptions {
@@ -51,7 +51,6 @@ export interface IKHGapExtensionObject {
 export interface IKHGapSizeOptions {
     gapSize?: IKHOptions['gapSize'];
 }
-
 
 export interface IKHParamsOptions extends SMAParamsOptions {
     periodTenkan?: number;

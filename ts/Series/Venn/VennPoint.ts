@@ -29,15 +29,10 @@ import type VennSeries from './VennSeries';
 import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
+    seriesTypes: { scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber
-} = U;
+const { extend, isNumber } = U;
 
 /* *
  *
@@ -46,7 +41,6 @@ const {
  * */
 
 class VennPoint extends ScatterSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -79,7 +73,6 @@ class VennPoint extends ScatterSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

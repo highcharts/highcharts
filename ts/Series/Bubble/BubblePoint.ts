@@ -24,9 +24,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
+            prototype: { pointClass: ScatterPoint }
         }
     }
 } = SeriesRegistry;
@@ -40,7 +38,6 @@ const { extend } = U;
  * */
 
 class BubblePoint extends ScatterPoint {
-
     /* *
      *
      *  Properties
@@ -71,7 +68,6 @@ class BubblePoint extends ScatterPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

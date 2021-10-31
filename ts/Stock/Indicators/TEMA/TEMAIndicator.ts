@@ -10,24 +10,15 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    TEMAOptions,
-    TEMAParamsOptions
-} from './TEMAOptions';
+import type { TEMAOptions, TEMAParamsOptions } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
+    seriesTypes: { ema: EMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    merge
-} = U;
+const { correctFloat, isArray, merge } = U;
 
 /* *
  *
@@ -45,7 +36,6 @@ const {
  * @augments Highcharts.Series
  */
 class TEMAIndicator extends EMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -71,7 +61,9 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions)
+    public static defaultOptions: TEMAOptions = merge(
+        EMAIndicator.defaultOptions
+    );
 
     /* *
      *
@@ -91,8 +83,8 @@ class TEMAIndicator extends EMAIndicator {
      * */
 
     public getEMA(
-        yVal: (Array<number>|Array<Array<number>>),
-        prevEMA: (number|undefined),
+        yVal: Array<number> | Array<Array<number>>,
+        prevEMA: number | undefined,
         SMA: number,
         index?: number,
         i?: number,
@@ -114,12 +106,11 @@ class TEMAIndicator extends EMAIndicator {
         tripledPeriod: number,
         EMAlevels: TEMAIndicator.EMALevelsObject,
         i: number
-    ): ([number, (number|null)]|undefined) {
+    ): [number, number | null] | undefined {
         const TEMAPoint: [number, number] = [
             xVal[i - 3],
             correctFloat(
-                3 * EMAlevels.level1 -
-                3 * EMAlevels.level2 + EMAlevels.level3
+                3 * EMAlevels.level1 - 3 * EMAlevels.level2 + EMAlevels.level3
             )
         ];
 
@@ -129,34 +120,34 @@ class TEMAIndicator extends EMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: TEMAParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
             doubledPeriod = 2 * period,
             tripledPeriod = 3 * period,
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             index = -1,
             accumulatePeriodPoints = 0,
             SMA = 0,
-            TEMA: Array<Array<(number|null)>> = [],
-            xDataTema: Array<(number|null)> = [],
-            yDataTema: Array<(number|null)> = [],
+            TEMA: Array<Array<number | null>> = [],
+            xDataTema: Array<number | null> = [],
+            yDataTema: Array<number | null> = [],
             // EMA of previous point
-            prevEMA: (number|undefined),
-            prevEMAlevel2: (number|undefined),
+            prevEMA: number | undefined,
+            prevEMAlevel2: number | undefined,
             // EMA values array
             EMAvalues: Array<number> = [],
             EMAlevel2values: Array<number> = [],
             i: number,
-            TEMAPoint: ([number, (number|null)]|undefined),
+            TEMAPoint: [number, number | null] | undefined,
             // This object contains all EMA EMAlevels calculated like below
             // EMA = level1
             // EMA(EMA) = level2,
             // EMA(EMA(EMA)) = level3,
-            EMAlevels: TEMAIndicator.EMALevelsObject = ({} as any);
+            EMAlevels: TEMAIndicator.EMALevelsObject = {} as any;
 
-        this.EMApercent = (2 / (period + 1));
+        this.EMApercent = 2 / (period + 1);
 
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 3 * period - 2) {
@@ -169,12 +160,11 @@ class TEMAIndicator extends EMAIndicator {
         }
 
         // Accumulate first N-points
-        accumulatePeriodPoints =
-            EMAIndicator.prototype.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
-            );
+        accumulatePeriodPoints = EMAIndicator.prototype.accumulatePeriodPoints(
+            period,
+            index,
+            yVal
+        );
 
         // first point
         SMA = accumulatePeriodPoints / period;
@@ -183,13 +173,7 @@ class TEMAIndicator extends EMAIndicator {
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen + 3; i++) {
             if (i < yValLen + 1) {
-                EMAlevels.level1 = this.getEMA(
-                    yVal,
-                    prevEMA,
-                    SMA,
-                    index,
-                    i
-                )[1];
+                EMAlevels.level1 = this.getEMA(yVal, prevEMA, SMA, index, i)[1];
                 EMAvalues.push(EMAlevels.level1);
             }
             prevEMA = EMAlevels.level1;
@@ -280,7 +264,6 @@ interface TEMAIndicator {
  * */
 
 namespace TEMAIndicator {
-
     /* *
      *
      *  Declarations
@@ -293,7 +276,6 @@ namespace TEMAIndicator {
         level3: number;
         prevLevel3: number;
     }
-
 }
 
 /* *
@@ -338,4 +320,4 @@ export default TEMAIndicator;
  * @apioption series.tema
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

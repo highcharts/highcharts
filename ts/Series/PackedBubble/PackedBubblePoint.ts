@@ -22,11 +22,8 @@ import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
-
 const {
-    seriesTypes: {
-        bubble: BubbleSeries
-    }
+    seriesTypes: { bubble: BubbleSeries }
 } = SeriesRegistry;
 
 /* *
@@ -47,8 +44,10 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
-class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Highcharts.DragNodesPoint {
-
+class PackedBubblePoint
+    extends BubbleSeries.prototype.pointClass
+    implements Highcharts.DragNodesPoint
+{
     /* *
      *
      *  Properties
@@ -87,7 +86,7 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
     public seriesIndex?: number;
 
-    public value: (number|null) = null;
+    public value: number | null = null;
 
     /* *
      *
@@ -105,7 +104,8 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
     public destroy(): void {
         if (this.series.layout) {
             this.series.layout.removeElementFromCollection(
-                this, this.series.layout.nodes
+                this,
+                this.series.layout.nodes
             );
         }
         return Point.prototype.destroy.apply(this, arguments as any);
@@ -118,7 +118,8 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
         if (this.isParentNode && seriesOptions.parentNode) {
             const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            seriesOptions.allowPointSelect =
+                seriesOptions.parentNode.allowPointSelect;
             Point.prototype.firePointEvent.apply(this, arguments);
             seriesOptions.allowPointSelect = temp;
         } else {
@@ -140,7 +141,6 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

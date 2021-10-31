@@ -14,16 +14,10 @@ import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+const { extend, isArray, merge } = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -65,12 +59,14 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
      */
-    public static defaultOptions: MomentumOptions =
-    merge(SMAIndicator.defaultOptions, {
-        params: {
-            index: 3
-        }
-    } as MomentumOptions);
+    public static defaultOptions: MomentumOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                index: 3
+            }
+        } as MomentumOptions
+    );
 
     public data: Array<MomentumPoint> = void 0 as any;
     public options: MomentumOptions = void 0 as any;
@@ -79,13 +75,13 @@ class MomentumIndicator extends SMAIndicator {
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MomentumOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let period: number = params.period,
             index: number = params.index as any,
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            yValue: (Array<number>|number) = yVal[0],
+            yValue: Array<number> | number = yVal[0],
             MM: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -98,13 +94,13 @@ class MomentumIndicator extends SMAIndicator {
 
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {
-            yValue = (yVal[0][index] as any);
+            yValue = yVal[0][index] as any;
         } else {
             return;
         }
 
         // Calculate value one-by-one for each period in visible data
-        for (i = (period + 1); i < yValLen; i++) {
+        for (i = period + 1; i < yValLen; i++) {
             MMPoint = populateAverage(xVal, yVal, i, period, index);
             MM.push(MMPoint);
             xData.push(MMPoint[0]);
@@ -159,7 +155,6 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
 
 export default MomentumIndicator;
 
-
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
@@ -173,4 +168,4 @@ export default MomentumIndicator;
  * @apioption series.momentum
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -33,12 +33,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { extend, merge, objectEach, pick } = U;
 
 import '../Column/ColumnSeries.js';
 
@@ -57,23 +52,25 @@ import '../Column/ColumnSeries.js';
  */
 
 class DotPlotSeries extends ColumnSeries {
-
     /* *
      *
      * Static Properties
      *
      * */
 
-    public static defaultOptions: DotPlotSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        itemPadding: 0.2,
-        marker: {
-            symbol: 'circle',
-            states: {
-                hover: {},
-                select: {}
+    public static defaultOptions: DotPlotSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            itemPadding: 0.2,
+            marker: {
+                symbol: 'circle',
+                states: {
+                    hover: {},
+                    select: {}
+                }
             }
-        }
-    } as DotPlotSeriesOptions);
+        } as DotPlotSeriesOptions
+    );
 
     /* *
      *
@@ -97,8 +94,8 @@ class DotPlotSeries extends ColumnSeries {
         const series = this,
             renderer = series.chart.renderer,
             seriesMarkerOptions = this.options.marker,
-            itemPaddingTranslated = this.yAxis.transA *
-                (series.options.itemPadding as any),
+            itemPaddingTranslated =
+                this.yAxis.transA * (series.options.itemPadding as any),
             borderWidth = this.borderWidth,
             crisp = borderWidth % 2 ? 0.5 : 1;
 
@@ -106,13 +103,12 @@ class DotPlotSeries extends ColumnSeries {
             let yPos: number,
                 attr: SVGAttributes,
                 graphics: Record<string, SVGElement>,
-                itemY: (number|undefined),
+                itemY: number | undefined,
                 pointAttr,
                 pointMarkerOptions = point.marker || {},
-                symbol = (
+                symbol =
                     pointMarkerOptions.symbol ||
-                    (seriesMarkerOptions as any).symbol
-                ),
+                    (seriesMarkerOptions as any).symbol,
                 radius = pick(
                     pointMarkerOptions.radius,
                     (seriesMarkerOptions as any).radius
@@ -124,12 +120,13 @@ class DotPlotSeries extends ColumnSeries {
                 y: number;
 
             point.graphics = graphics = point.graphics || {};
-            pointAttr = point.pointAttr ?
-                (
-                    (point.pointAttr as any)[point.selected ? 'selected' : ''] ||
-                    (series.pointAttr as any)['']
-                ) :
-                series.pointAttribs(point, (point.selected as any) && 'select');
+            pointAttr = point.pointAttr
+                ? (point.pointAttr as any)[point.selected ? 'selected' : ''] ||
+                  (series.pointAttr as any)['']
+                : series.pointAttribs(
+                      point,
+                      (point.selected as any) && 'select'
+                  );
             delete pointAttr.r;
 
             if (series.chart.styledMode) {
@@ -138,7 +135,6 @@ class DotPlotSeries extends ColumnSeries {
             }
 
             if (point.y !== null) {
-
                 if (!point.graphic) {
                     point.graphic = renderer.g('point').add(series.group);
                 }
@@ -150,13 +146,11 @@ class DotPlotSeries extends ColumnSeries {
                     series.yAxis.transA - itemPaddingTranslated
                 );
                 for (yPos = yTop; yPos > yTop - (point.y as any); yPos--) {
-
-                    x = point.barX + (
-                        isSquare ?
-                            point.pointWidth / 2 - size / 2 :
-                            0
-                    );
-                    y = series.yAxis.toPixels(yPos, true) +
+                    x =
+                        point.barX +
+                        (isSquare ? point.pointWidth / 2 - size / 2 : 0);
+                    y =
+                        series.yAxis.toPixels(yPos, true) +
                         itemPaddingTranslated / 2;
 
                     if (series.options.crisp) {
@@ -174,7 +168,8 @@ class DotPlotSeries extends ColumnSeries {
                     if (graphics[itemY as any]) {
                         graphics[itemY as any].animate(attr);
                     } else {
-                        graphics[itemY as any] = renderer.symbol(symbol)
+                        graphics[itemY as any] = renderer
+                            .symbol(symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
@@ -182,17 +177,17 @@ class DotPlotSeries extends ColumnSeries {
                     (itemY as any)--;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
-                if (!graphic.isActive) {
-                    graphic.destroy();
-                    delete graphic[key];
-                } else {
-                    graphic.isActive = false;
+            objectEach(
+                graphics,
+                function (graphic: SVGElement, key: string): void {
+                    if (!graphic.isActive) {
+                        graphic.destroy();
+                        delete graphic[key];
+                    } else {
+                        graphic.isActive = false;
+                    }
                 }
-            });
+            );
         });
     }
 }

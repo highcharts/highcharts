@@ -29,7 +29,6 @@ const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 class InfinityLine extends CrookedLine {
-
     /**
      *
      * Static Properties
@@ -56,17 +55,13 @@ class InfinityLine extends CrookedLine {
                 // make a copy of it:
                 points = [
                     points[0],
-                    new MockPoint(
-                        annotation.chart,
-                        points[0].target,
-                        {
-                            // add 0 or 1 to x or y depending on type
-                            x: points[0].x + +(type === 'horizontalLine'),
-                            y: points[0].y + +(type === 'verticalLine'),
-                            xAxis: points[0].options.xAxis,
-                            yAxis: points[0].options.yAxis
-                        }
-                    )
+                    new MockPoint(annotation.chart, points[0].target, {
+                        // add 0 or 1 to x or y depending on type
+                        x: points[0].x + +(type === 'horizontalLine'),
+                        y: points[0].y + +(type === 'verticalLine'),
+                        xAxis: points[0].options.xAxis,
+                        yAxis: points[0].options.yAxis
+                    })
                 ];
             }
 
@@ -80,17 +75,17 @@ class InfinityLine extends CrookedLine {
     public static findEdgeCoordinate(
         firstPoint: PositionObject,
         secondPoint: PositionObject,
-        xOrY: ('x'|'y'),
+        xOrY: 'x' | 'y',
         edgePointFirstCoordinate: number
     ): number {
-        const xOrYOpposite: ('x'|'y') = xOrY === 'x' ? 'y' : 'x';
+        const xOrYOpposite: 'x' | 'y' = xOrY === 'x' ? 'y' : 'x';
 
         // solves equation for x or y
         // y - y1 = (y2 - y1) / (x2 - x1) * (x - x1)
         return (
-            (secondPoint[xOrY] - firstPoint[xOrY]) *
-            (edgePointFirstCoordinate - firstPoint[xOrYOpposite]) /
-            (secondPoint[xOrYOpposite] - firstPoint[xOrYOpposite]) +
+            ((secondPoint[xOrY] - firstPoint[xOrY]) *
+                (edgePointFirstCoordinate - firstPoint[xOrYOpposite])) /
+                (secondPoint[xOrYOpposite] - firstPoint[xOrYOpposite]) +
             firstPoint[xOrY]
         );
     }
@@ -162,7 +157,10 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: InfinityLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: InfinityLine.Options
+    ) {
         super(chart, options);
     }
 
@@ -173,11 +171,9 @@ class InfinityLine extends CrookedLine {
      * */
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions as InfinityLine.TypeOptions,
-            points = [
-                this.points[0],
-                InfinityLine.endEdgePoint
-            ];
+        const typeOptions = this.options
+                .typeOptions as InfinityLine.TypeOptions,
+            points = [this.points[0], InfinityLine.endEdgePoint];
 
         // Be case-insensitive (#15155) e.g.:
         // - line
@@ -197,7 +193,6 @@ class InfinityLine extends CrookedLine {
 
         typeOptions.line = line.options;
     }
-
 }
 
 /* *
@@ -221,7 +216,7 @@ InfinityLine.prototype.defaultOptions = merge(
  * */
 
 namespace InfinityLine {
-    export interface Options extends CrookedLine.Options{
+    export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
@@ -236,7 +231,7 @@ namespace InfinityLine {
  * */
 
 Annotation.types.infinityLine = InfinityLine;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         infinityLine: typeof InfinityLine;
     }

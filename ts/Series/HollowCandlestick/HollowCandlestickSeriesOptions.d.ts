@@ -22,9 +22,8 @@ import CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
  *
  * */
 
-export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions {
-
-}
+export interface HollowCandlestickSeriesOptions
+    extends CandlestickSeriesOptions {}
 
 /* *
  *

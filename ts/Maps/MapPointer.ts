@@ -14,12 +14,7 @@ import type Chart from '../Core/Chart/Chart';
 import type PointerEvent from '../Core/PointerEvent';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    pick,
-    wrap
-} = U;
+const { defined, extend, pick, wrap } = U;
 
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
@@ -54,8 +49,7 @@ let totalWheelDelta = 0;
 let totalWheelDeltaTimer: number;
 
 // Extend the Pointer
-extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
-
+extend<Pointer | Highcharts.MapPointer>(Pointer.prototype, {
     // The event handler for the doubleclick event
     onContainerDblClick: function (
         this: Highcharts.MapPointer,
@@ -78,13 +72,7 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
                 e.chartY - chart.plotTop
             )
         ) {
-            chart.mapZoom(
-                0.5,
-                void 0,
-                void 0,
-                e.chartX,
-                e.chartY
-            );
+            chart.mapZoom(0.5, void 0, void 0, e.chartX, e.chartY);
         }
     },
 
@@ -99,8 +87,10 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
         // Firefox uses e.deltaY or e.detail, WebKit and IE uses wheelDelta
         // try wheelDelta first #15656
-        const delta = (defined(e.wheelDelta) && -(e.wheelDelta as any) / 120) ||
-            e.deltaY || e.detail;
+        const delta =
+            (defined(e.wheelDelta) && -(e.wheelDelta as any) / 120) ||
+            e.deltaY ||
+            e.detail;
 
         // Wheel zooming on trackpads have different behaviours in Firefox vs
         // WebKit. In Firefox the delta increments in steps by 1, so it is not
@@ -118,12 +108,18 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
             }, 50);
         }
 
-        if (totalWheelDelta < 10 && chart.isInsidePlot(
-            e.chartX - chart.plotLeft,
-            e.chartY - chart.plotTop
-        ) && chart.mapView) {
+        if (
+            totalWheelDelta < 10 &&
+            chart.isInsidePlot(
+                e.chartX - chart.plotLeft,
+                e.chartY - chart.plotTop
+            ) &&
+            chart.mapView
+        ) {
             chart.mapView.zoomBy(
-                ((chart.options.mapNavigation as any).mouseWheelSensitivity - 1) * -delta,
+                ((chart.options.mapNavigation as any).mouseWheelSensitivity -
+                    1) *
+                    -delta,
                 void 0,
                 [e.chartX, e.chartY],
                 // Delta less than 1 indicates stepless/trackpad zooming, avoid
@@ -135,25 +131,25 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 });
 
 // The pinchType is inferred from mapNavigation options.
-wrap(Pointer.prototype, 'zoomOption', function (
-    this: Pointer,
-    proceed: Function
-): void {
+wrap(
+    Pointer.prototype,
+    'zoomOption',
+    function (this: Pointer, proceed: Function): void {
+        const mapNavigation = this.chart.options.mapNavigation;
 
+        // Pinch status
+        if (
+            pick(
+                (mapNavigation as any).enableTouchZoom,
+                (mapNavigation as any).enabled
+            )
+        ) {
+            this.chart.options.chart.pinchType = 'xy';
+        }
 
-    const mapNavigation = this.chart.options.mapNavigation;
-
-    // Pinch status
-    if (pick(
-        (mapNavigation as any).enableTouchZoom,
-        (mapNavigation as any).enabled)
-    ) {
-        this.chart.options.chart.pinchType = 'xy';
+        proceed.apply(this, [].slice.call(arguments, 1));
     }
-
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-});
+);
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
 wrap(

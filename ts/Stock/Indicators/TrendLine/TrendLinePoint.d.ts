@@ -15,19 +15,19 @@ import TrendLineIndicator from './TrendLineIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
-*
-*  Class
-*
-* */
+ *
+ *  Class
+ *
+ * */
 
 declare class TrendLinePoint extends SMAPoint {
     public series: TrendLineIndicator;
 }
 
 /* *
-*
-*  Default Export
-*
-* */
+ *
+ *  Default Export
+ *
+ * */
 
 export default TrendLinePoint;

@@ -34,10 +34,7 @@ const {
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 import './TilemapComposition.js';
 
 /* *
@@ -78,7 +75,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * @augments Highcharts.Series
  */
 class TilemapSeries extends HeatmapSeries {
-
     /* *
      *
      *  Static Properties
@@ -110,82 +106,75 @@ class TilemapSeries extends HeatmapSeries {
      * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
      */
-    public static defaultOptions: TilemapSeriesOptions = merge(HeatmapSeries.defaultOptions, {
-        // Remove marker from tilemap default options, as it was before
-        // heatmap refactoring.
-        marker: null as any,
-        states: {
+    public static defaultOptions: TilemapSeriesOptions = merge(
+        HeatmapSeries.defaultOptions,
+        {
+            // Remove marker from tilemap default options, as it was before
+            // heatmap refactoring.
+            marker: null as any,
+            states: {
+                hover: {
+                    halo: {
+                        enabled: true,
 
-            hover: {
+                        size: 2,
 
-                halo: {
+                        opacity: 0.5,
 
-                    enabled: true,
-
-                    size: 2,
-
-                    opacity: 0.5,
-
-                    attributes: {
-
-                        zIndex: 3
+                        attributes: {
+                            zIndex: 3
+                        }
                     }
                 }
-            }
-        },
+            },
 
-        /**
-         * The padding between points in the tilemap.
-         *
-         * @sample maps/plotoptions/tilemap-pointpadding
-         *         Point padding on tiles
-         */
-        pointPadding: 2,
+            /**
+             * The padding between points in the tilemap.
+             *
+             * @sample maps/plotoptions/tilemap-pointpadding
+             *         Point padding on tiles
+             */
+            pointPadding: 2,
 
-        /**
-         * The column size - how many X axis units each column in the tilemap
-         * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
-         *
-         * @sample {highcharts} maps/demo/heatmap/
-         *         One day
-         * @sample {highmaps} maps/demo/heatmap/
-         *         One day
-         *
-         * @type      {number}
-         * @default   1
-         * @product   highcharts highmaps
-         * @apioption plotOptions.tilemap.colsize
-         */
+            /**
+             * The column size - how many X axis units each column in the
+             * tilemap should span. Works as in
+             * [Heatmaps](#plotOptions.heatmap.colsize).
+             *
+             * @sample {highcharts} maps/demo/heatmap/ One day
+             * @sample {highmaps} maps/demo/heatmap/ One day
+             *
+             * @type      {number}
+             * @default   1
+             * @product   highcharts highmaps
+             * @apioption plotOptions.tilemap.colsize
+             */
 
-        /**
-         * The row size - how many Y axis units each tilemap row should span.
-         * Analogous to [colsize](#plotOptions.tilemap.colsize).
-         *
-         * @sample {highcharts} maps/demo/heatmap/
-         *         1 by default
-         * @sample {highmaps} maps/demo/heatmap/
-         *         1 by default
-         *
-         * @type      {number}
-         * @default   1
-         * @product   highcharts highmaps
-         * @apioption plotOptions.tilemap.rowsize
-         */
+            /**
+             * The row size - how many Y axis units each tilemap row should
+             * span. Analogous to [colsize](#plotOptions.tilemap.colsize).
+             *
+             * @sample {highcharts} maps/demo/heatmap/ 1 by default
+             * @sample {highmaps} maps/demo/heatmap/ 1 by default
+             *
+             * @type      {number}
+             * @default   1
+             * @product   highcharts highmaps
+             * @apioption plotOptions.tilemap.rowsize
+             */
 
-        /**
-         * The shape of the tiles in the tilemap. Possible values are `hexagon`,
-         * `circle`, `diamond`, and `square`.
-         *
-         * @sample maps/demo/circlemap-africa
-         *         Circular tile shapes
-         * @sample maps/demo/diamondmap
-         *         Diamond tile shapes
-         *
-         * @type {Highcharts.TilemapShapeValue}
-         */
-        tileShape: 'hexagon'
-
-    } as TilemapSeriesOptions);
+            /**
+             * The shape of the tiles in the tilemap. Possible values are
+             * `hexagon`, `circle`, `diamond`, and `square`.
+             *
+             * @sample maps/demo/circlemap-africa Circular tile shapes
+             * @sample maps/demo/diamondmap Diamond tile shapes
+             *
+             * @type {Highcharts.TilemapShapeValue}
+             */
+            tileShape: 'hexagon'
+        } as TilemapSeriesOptions
+    );
 
     /* *
      *
@@ -224,14 +213,12 @@ class TilemapSeries extends HeatmapSeries {
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
         ColumnSeries.prototype.drawPoints.call(this);
-        this.points.forEach(
-            (point: TilemapPoint): void => {
-                point.graphic &&
-                    (point.graphic as any)[
-                        this.chart.styledMode ? 'css' : 'animate'
-                    ](this.colorAttribs(point));
-            }
-        );
+        this.points.forEach((point: TilemapPoint): void => {
+            point.graphic &&
+                (point.graphic as any)[
+                    this.chart.styledMode ? 'css' : 'animate'
+                ](this.colorAttribs(point));
+        });
     }
 
     /**
@@ -256,9 +243,7 @@ class TilemapSeries extends HeatmapSeries {
         // draw, and use this difference as padding.
         coord1 = Math.round(
             axis.translate(
-                isX ?
-                    padding.xPad * 2 :
-                    padding.yPad,
+                isX ? padding.xPad * 2 : padding.yPad,
                 0 as any,
                 1 as any,
                 0 as any,
@@ -315,7 +300,6 @@ class TilemapSeries extends HeatmapSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -327,7 +311,8 @@ class TilemapSeries extends HeatmapSeries {
 interface TilemapSeries {
     pointClass: typeof TilemapPoint;
 }
-extend(TilemapSeries.prototype, { // Prototype functions
+extend(TilemapSeries.prototype, {
+    // Prototype functions
     // Revert the noop on getSymbol.
     getSymbol: noop,
     // Use drawPoints, markerAttribs, pointAttribs methods from the old
@@ -370,7 +355,7 @@ export default TilemapSeries;
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
 /* *
  *
@@ -456,7 +441,7 @@ export default TilemapSeries;
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts highmaps
  * @apioption series.tilemap.data.color
  */
@@ -489,4 +474,4 @@ export default TilemapSeries;
  * @apioption series.tilemap.data.y
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

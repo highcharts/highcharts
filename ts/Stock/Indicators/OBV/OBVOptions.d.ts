@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type TooltipOptions from '../../../Core/TooltipOptions';
 

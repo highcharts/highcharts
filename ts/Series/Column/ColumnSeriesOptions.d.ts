@@ -37,7 +37,7 @@ declare module '../../Core/Series/SeriesOptions' {
         grouping?: boolean;
         groupPadding?: number;
         negativeFillColor?: ColorType;
-        pointRange?: (number|null);
+        pointRange?: number | null;
     }
     interface SeriesStateHoverOptions {
         borderColor?: ColorType;

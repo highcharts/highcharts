@@ -21,14 +21,12 @@ import WaterfallSeries from './WaterfallSeries';
 const { isNumber } = U;
 import U from '../../Core/Utilities.js';
 
-
 /* *
  *
  * Class
  *
  * */
 class WaterfallPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Properties
@@ -66,9 +64,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
     // Pass the null test in ColumnSeries.translate.
     public isValid(): boolean {
         return (
-            isNumber(this.y) ||
-            this.isSum ||
-            Boolean(this.isIntermediateSum)
+            isNumber(this.y) || this.isSum || Boolean(this.isIntermediateSum)
         );
     }
 }

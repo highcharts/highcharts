@@ -26,29 +26,19 @@ import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
-        prototype: {
-            pointClass: Point
-        }
+        prototype: { pointClass: Point }
     },
     seriesTypes: {
         pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
+            prototype: { pointClass: PiePoint }
         },
         scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
+            prototype: { pointClass: ScatterPoint }
         }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    pick
-} = U;
+const { extend, isNumber, pick } = U;
 
 /* *
  *
@@ -57,14 +47,13 @@ const {
  * */
 
 class TreemapPoint extends ScatterPoint {
-
     /* *
      *
      *  Properties
      *
      * */
 
-    public drillId?: (boolean|string);
+    public drillId?: boolean | string;
 
     public name: string = void 0 as any;
 
@@ -78,7 +67,7 @@ class TreemapPoint extends ScatterPoint {
 
     public sortIndex?: number;
 
-    public value: (number|null) = void 0 as any;
+    public value: number | null = void 0 as any;
 
     /* *
      *
@@ -96,13 +85,11 @@ class TreemapPoint extends ScatterPoint {
         // Above the current level
         if (this.node.level <= series.nodeMap[series.rootNode].level) {
             className += ' highcharts-above-level';
-
         } else if (
             !this.node.isLeaf &&
-        !pick(options.interactByLeaf, !options.allowTraversingTree)
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
         ) {
             className += ' highcharts-internal-node-interactive';
-
         } else if (!this.node.isLeaf) {
             className += ' highcharts-internal-node';
         }
@@ -136,7 +123,6 @@ class TreemapPoint extends ScatterPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

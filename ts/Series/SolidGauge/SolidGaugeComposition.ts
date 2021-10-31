@@ -22,7 +22,12 @@ import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols, symbols: { arc } } } = SVGRenderer;
+const {
+    prototype: {
+        symbols,
+        symbols: { arc }
+    }
+} = SVGRenderer;
 
 /**
  * Internal types
@@ -38,7 +43,7 @@ declare module '../../Core/Renderer/SVG/SymbolOptions' {
  * Additional options, depending on the actual symbol drawn.
  *
  * @interface Highcharts.SymbolOptionsObject
- *//**
+ */ /**
  * Whether to draw rounded edges.
  * @name Highcharts.SymbolOptionsObject#rounded
  * @type {boolean|undefined}
@@ -88,7 +93,16 @@ symbols.arc = function (
                 y1 = outerArcStart[2],
                 x2 = innerArcStart[1],
                 y2 = innerArcStart[2],
-                roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                roundStart: SVGPath.Arc = [
+                    'A',
+                    smallR,
+                    smallR,
+                    0,
+                    1,
+                    1,
+                    x1,
+                    y1
+                ],
                 roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
 
             // Replace the line segment and the last close segment

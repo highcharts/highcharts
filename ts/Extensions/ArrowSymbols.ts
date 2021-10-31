@@ -20,7 +20,9 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
+const {
+    prototype: { symbols }
+} = SVGRenderer;
 
 /* *
  *
@@ -58,12 +60,7 @@ const { prototype: { symbols } } = SVGRenderer;
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-function arrow(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
+function arrow(x: number, y: number, w: number, h: number): SVGPath {
     return [
         ['M', x, y + h / 2],
         ['L', x + w, y],
@@ -100,12 +97,7 @@ function arrow(
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-function arrowHalf(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
+function arrowHalf(x: number, y: number, w: number, h: number): SVGPath {
     return arrow(x, y, w / 2, h);
 }
 
@@ -137,18 +129,8 @@ function arrowHalf(
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-function triangleLeft(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x + w, y],
-        ['L', x, y + h / 2],
-        ['L', x + w, y + h],
-        ['Z']
-    ];
+function triangleLeft(x: number, y: number, w: number, h: number): SVGPath {
+    return [['M', x + w, y], ['L', x, y + h / 2], ['L', x + w, y + h], ['Z']];
 }
 
 /**
@@ -179,12 +161,7 @@ function triangleLeft(
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-function triangleLeftHalf(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
+function triangleLeftHalf(x: number, y: number, w: number, h: number): SVGPath {
     return triangleLeft(x, y, w / 2, h);
 }
 

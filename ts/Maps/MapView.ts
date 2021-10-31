@@ -23,16 +23,7 @@ import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewOptionsDefault.js';
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    relativeLength
-} = U;
-
+const { addEvent, clamp, fireEvent, isNumber, merge, pick, relativeLength } = U;
 
 /**
  * The world size equals meters in the Web Mercator projection, to match a
@@ -56,31 +47,25 @@ const tileSize = 256;
  *        MapView options
  */
 class MapView {
-
     /* *
      * Return the composite bounding box of a collection of bounding boxes
      */
     public static compositeBounds = (
         arrayOfBounds: MapBounds[]
-    ): MapBounds|undefined => {
+    ): MapBounds | undefined => {
         if (arrayOfBounds.length) {
-            return arrayOfBounds
-                .slice(1)
-                .reduce((acc, cur): MapBounds => {
-                    acc.x1 = Math.min(acc.x1, cur.x1);
-                    acc.y1 = Math.min(acc.y1, cur.y1);
-                    acc.x2 = Math.max(acc.x2, cur.x2);
-                    acc.y2 = Math.max(acc.y2, cur.y2);
-                    return acc;
-                }, merge(arrayOfBounds[0]));
+            return arrayOfBounds.slice(1).reduce((acc, cur): MapBounds => {
+                acc.x1 = Math.min(acc.x1, cur.x1);
+                acc.y1 = Math.min(acc.y1, cur.y1);
+                acc.x2 = Math.max(acc.x2, cur.x2);
+                acc.y2 = Math.max(acc.y2, cur.y2);
+                return acc;
+            }, merge(arrayOfBounds[0]));
         }
         return;
     };
 
-    public constructor(
-        chart: Chart,
-        options?: DeepPartial<MapViewOptions>
-    ) {
+    public constructor(chart: Chart, options?: DeepPartial<MapViewOptions>) {
         this.userOptions = options || {};
 
         const o = merge(defaultOptions, options);
@@ -105,14 +90,12 @@ class MapView {
          */
         this.zoom = o.zoom || 0;
 
-
         // Initialize and respond to chart size changes
         addEvent(chart, 'afterSetChartSize', (): void => {
             if (
                 this.minZoom === void 0 || // When initializing the chart
                 this.minZoom === this.zoom // When resizing the chart
             ) {
-
                 this.fitToBounds(void 0, void 0, false);
 
                 if (isNumber(this.userOptions.zoom)) {
@@ -124,20 +107,15 @@ class MapView {
             }
         });
 
-
         // Set up panning for maps. In orthographic projections the globe will
         // rotate, otherwise adjust the map center.
         let mouseDownCenterProjected: [number, number];
         let mouseDownKey: string;
-        let mouseDownRotation: number[]|undefined;
+        let mouseDownRotation: number[] | undefined;
         const onPan = (e: PointerEvent): void => {
-
             const pinchDown = chart.pointer.pinchDown;
 
-            let {
-                mouseDownX,
-                mouseDownY
-            } = chart;
+            let { mouseDownX, mouseDownY } = chart;
 
             if (pinchDown.length === 1) {
                 mouseDownX = pinchDown[0].chartX;
@@ -155,8 +133,9 @@ class MapView {
                 if (key !== mouseDownKey) {
                     mouseDownKey = key;
 
-                    mouseDownCenterProjected = this.projection
-                        .forward(this.center);
+                    mouseDownCenterProjected = this.projection.forward(
+                        this.center
+                    );
 
                     mouseDownRotation = (
                         this.projection.options.rotation || [0, 0]
@@ -166,22 +145,21 @@ class MapView {
                 // Panning rotates the globe
                 if (
                     this.projection.options.name === 'Orthographic' &&
-
                     // ... but don't rotate if we're loading only a part of the
                     // world
                     (this.minZoom || Infinity) < 3
                 ) {
-
                     // Empirical ratio where the globe rotates roughly the same
                     // speed as moving the pointer across the center of the
                     // projection
-                    const ratio = 0.0044 / (this.getScale() * Math.min(
-                        chart.plotWidth,
-                        chart.plotHeight
-                    ));
+                    const ratio =
+                        0.0044 /
+                        (this.getScale() *
+                            Math.min(chart.plotWidth, chart.plotHeight));
 
                     if (mouseDownRotation) {
-                        const lon = (mouseDownX - chartX) * ratio -
+                        const lon =
+                            (mouseDownX - chartX) * ratio -
                             mouseDownRotation[0];
                         const lat = clamp(
                             -mouseDownRotation[1] -
@@ -189,19 +167,19 @@ class MapView {
                             -80,
                             80
                         );
-                        this.update({
-                            projection: {
-                                rotation: [-lon, -lat]
+                        this.update(
+                            {
+                                projection: {
+                                    rotation: [-lon, -lat]
+                                },
+                                center: [lon, lat],
+                                zoom: this.zoom
                             },
-                            center: [lon, lat],
-                            zoom: this.zoom
-                        }, true, false);
-
+                            true,
+                            false
+                        );
                     }
-
-
                 } else {
-
                     const scale = this.getScale();
 
                     const newCenter = this.projection.inverse([
@@ -212,7 +190,6 @@ class MapView {
                     ]);
 
                     this.setView(newCenter, void 0, true, false);
-
                 }
 
                 e.preventDefault();
@@ -221,7 +198,6 @@ class MapView {
         addEvent(chart, 'pan', onPan);
         addEvent(chart, 'touchpan', onPan);
 
-
         // Perform the map zoom by selection
         addEvent(chart, 'selection', (evt: PointerEvent): void => {
             // Zoom in
@@ -229,34 +205,34 @@ class MapView {
                 const x = evt.x - chart.plotLeft;
                 const y = evt.y - chart.plotTop;
                 const { y: y1, x: x1 } = this.pixelsToProjectedUnits({ x, y });
-                const { y: y2, x: x2 } = this.pixelsToProjectedUnits(
-                    { x: x + evt.width, y: y + evt.height }
-                );
+                const { y: y2, x: x2 } = this.pixelsToProjectedUnits({
+                    x: x + evt.width,
+                    y: y + evt.height
+                });
                 this.fitToBounds(
                     { x1, y1, x2, y2 },
                     void 0,
                     true,
-                    (evt as any).originalEvent.touches ?
-                        // On touch zoom, don't animate, since we're already in
-                        // transformed zoom preview
-                        false :
-                        // On mouse zoom, obey the chart-level animation
-                        void 0
+                    (evt as any).originalEvent.touches
+                        ? // On touch zoom, don't animate, since we're already in
+                          // transformed zoom preview
+                          false
+                        : // On mouse zoom, obey the chart-level animation
+                          void 0
                 );
 
                 // Only for mouse. Touch users can pinch out.
-                if (!/^touch/.test(((evt as any).originalEvent.type))) {
+                if (!/^touch/.test((evt as any).originalEvent.type)) {
                     chart.showResetZoom();
                 }
 
                 evt.preventDefault();
 
-            // Reset zoom
+                // Reset zoom
             } else {
                 this.zoomBy();
             }
         });
-
     }
 
     public center: LonLatArray;
@@ -286,11 +262,10 @@ class MapView {
      */
     public fitToBounds(
         bounds?: MapBounds,
-        padding?: (number|string),
+        padding?: number | string,
         redraw = true,
-        animation?: boolean|Partial<AnimationOptions>
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
-
         const b = bounds || this.getProjectedBounds();
 
         if (b) {
@@ -319,17 +294,14 @@ class MapView {
         }
     }
 
-    public getProjectedBounds(): MapBounds|undefined {
-        const allBounds = this.chart.series.reduce(
-            (acc, s): MapBounds[] => {
-                const bounds = s.getProjectedBounds && s.getProjectedBounds();
-                if (bounds) {
-                    acc.push(bounds);
-                }
-                return acc;
-            },
-            [] as MapBounds[]
-        );
+    public getProjectedBounds(): MapBounds | undefined {
+        const allBounds = this.chart.series.reduce((acc, s): MapBounds[] => {
+            const bounds = s.getProjectedBounds && s.getProjectedBounds();
+            if (bounds) {
+                acc.push(bounds);
+            }
+            return acc;
+        }, [] as MapBounds[]);
         return MapView.compositeBounds(allBounds);
     }
 
@@ -339,7 +311,7 @@ class MapView {
         return (tileSize / worldSize) * Math.pow(2, this.zoom);
     }
 
-    public redraw(animation?: boolean|Partial<AnimationOptions>): void {
+    public redraw(animation?: boolean | Partial<AnimationOptions>): void {
         this.chart.series.forEach((s): void => {
             if (s.useMapGeometry) {
                 s.isDirty = true;
@@ -368,7 +340,7 @@ class MapView {
         center?: LonLatArray,
         zoom?: number,
         redraw = true,
-        animation?: boolean|Partial<AnimationOptions>
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         let zoomingIn = false;
         if (center) {
@@ -419,12 +391,12 @@ class MapView {
             if (x2 - x1 < plotWidth) {
                 projectedCenter[0] = boundsCenterProjected[0];
 
-            // Off west
+                // Off west
             } else if (x1 < 0 && x2 < plotWidth) {
                 // Adjust eastwards
                 projectedCenter[0] += Math.max(x1, x2 - plotWidth) / scale;
 
-            // Off east
+                // Off east
             } else if (x2 > plotWidth && x1 > 0) {
                 // Adjust westwards
                 projectedCenter[0] += Math.min(x2 - plotWidth, x1) / scale;
@@ -434,12 +406,12 @@ class MapView {
             if (y2 - y1 < plotHeight) {
                 projectedCenter[1] = boundsCenterProjected[1];
 
-            // Off north
+                // Off north
             } else if (y1 < 0 && y2 < plotHeight) {
                 // Adjust southwards
                 projectedCenter[1] -= Math.max(y1, y2 - plotHeight) / scale;
 
-            // Off south
+                // Off south
             } else if (y2 > plotHeight && y1 > 0) {
                 // Adjust northwards
                 projectedCenter[1] -= Math.min(y2 - plotHeight, y1) / scale;
@@ -511,15 +483,13 @@ class MapView {
     public update(
         options: DeepPartial<MapViewOptions>,
         redraw: boolean = true,
-        animation?: (boolean|Partial<AnimationOptions>)
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         const newProjection = options.projection;
-        const isDirtyProjection = newProjection && (
-            (
-                Projection.toString(newProjection) !==
-                Projection.toString(this.options.projection)
-            )
-        );
+        const isDirtyProjection =
+            newProjection &&
+            Projection.toString(newProjection) !==
+                Projection.toString(this.options.projection);
 
         merge(true, this.userOptions, options);
         merge(true, this.options, options);
@@ -548,7 +518,6 @@ class MapView {
         if (redraw) {
             this.chart.redraw(animation);
         }
-
     }
 
     /**
@@ -571,7 +540,7 @@ class MapView {
         howMuch?: number,
         coords?: LonLatArray,
         chartCoords?: [number, number],
-        animation?: boolean|Partial<AnimationOptions>
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         const chart = this.chart;
         const projectedCenter = this.projection.forward(this.center);
@@ -579,11 +548,10 @@ class MapView {
         // let { x, y } = coords || {};
         let [x, y] = coords ? this.projection.forward(coords) : [];
 
-
         if (typeof howMuch === 'number') {
             const zoom = this.zoom + howMuch;
 
-            let center: LonLatArray|undefined;
+            let center: LonLatArray | undefined;
 
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {
@@ -613,11 +581,10 @@ class MapView {
 
             this.setView(center, zoom, void 0, animation);
 
-        // Undefined howMuch => reset zoom
+            // Undefined howMuch => reset zoom
         } else {
             this.fitToBounds(void 0, void 0, void 0, animation);
         }
-
     }
 }
 export default MapView;

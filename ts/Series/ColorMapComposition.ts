@@ -17,10 +17,7 @@ import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import U from '../Core/Utilities.js';
-const {
-    defined,
-    wrap
-} = U;
+const { defined, wrap } = U;
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -79,7 +76,6 @@ const colorMapSeriesMixinOld = {
     // pointAttribs: seriesTypes.column.prototype.pointAttribs,
 
     /* eslint-disable valid-jsdoc */
-
 };
 
 /* *
@@ -89,7 +85,6 @@ const colorMapSeriesMixinOld = {
  * */
 
 namespace ColorMapComposition {
-
     export const colorMapSeriesMixin = colorMapSeriesMixinOld;
 
     /* *
@@ -108,7 +103,7 @@ namespace ColorMapComposition {
         dataLabelOnNull: boolean;
         moveToTopOnHover?: boolean;
         series: SeriesComposition;
-        value: (number|null);
+        value: number | null;
         isValid(): boolean;
     }
 
@@ -134,8 +129,7 @@ namespace ColorMapComposition {
     export function compose<T extends typeof ScatterSeries>(
         SeriesClass: T,
         PointClass?: T['prototype']['pointClass']
-    ): (T&typeof SeriesComposition) {
-
+    ): T & typeof SeriesComposition {
         if (PointClass && composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
 
@@ -156,7 +150,7 @@ namespace ColorMapComposition {
             wrap(seriesProto, 'pointAttribs', seriesWrapPointAttribs);
         }
 
-        return SeriesClass as (T&typeof SeriesComposition);
+        return SeriesClass as T & typeof SeriesComposition;
     }
 
     /**
@@ -208,7 +202,6 @@ namespace ColorMapComposition {
         }
         return attribs;
     }
-
 }
 
 /* *

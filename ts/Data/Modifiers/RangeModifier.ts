@@ -25,9 +25,7 @@ import type JSON from '../../Core/JSON';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -41,7 +39,6 @@ const {
  * @private
  */
 class RangeModifier extends DataModifier {
-
     /* *
      *
      *  Static Properties
@@ -112,10 +109,7 @@ class RangeModifier extends DataModifier {
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
-        const {
-            ranges,
-            strict
-        } = modifier.options;
+        const { ranges, strict } = modifier.options;
 
         if (ranges.length) {
             const columns = table.getColumns(),
@@ -132,20 +126,17 @@ class RangeModifier extends DataModifier {
             ) {
                 range = ranges[i];
 
-                if (
-                    strict &&
-                    typeof range.minValue !== typeof range.maxValue
-                ) {
+                if (strict && typeof range.minValue !== typeof range.maxValue) {
                     continue;
                 }
 
-                rangeColumn = (columns[range.column] || []);
+                rangeColumn = columns[range.column] || [];
 
                 for (
                     let j = 0,
                         jEnd = rangeColumn.length,
                         cell: DataTable.CellType,
-                        row: (DataTable.Row|undefined);
+                        row: DataTable.Row | undefined;
                     j < jEnd;
                     ++j
                 ) {
@@ -160,17 +151,11 @@ class RangeModifier extends DataModifier {
                             break;
                     }
 
-                    if (
-                        strict &&
-                        typeof cell !== typeof range.minValue
-                    ) {
+                    if (strict && typeof cell !== typeof range.minValue) {
                         continue;
                     }
 
-                    if (
-                        cell >= range.minValue &&
-                        cell <= range.maxValue
-                    ) {
+                    if (cell >= range.minValue && cell <= range.maxValue) {
                         row = table.getRow(j);
 
                         if (row) {
@@ -188,7 +173,6 @@ class RangeModifier extends DataModifier {
 
         return table;
     }
-
 }
 
 /* *
@@ -202,7 +186,6 @@ class RangeModifier extends DataModifier {
  * conversion.
  */
 namespace RangeModifier {
-
     /**
      * Options to configure the modifier.
      */
@@ -229,13 +212,12 @@ namespace RangeModifier {
         /**
          * Maximum including value (`<=` operator).
          */
-        maxValue: (boolean|number|string);
+        maxValue: boolean | number | string;
         /**
          * Minimum including value (`>=` operator).
          */
-        minValue: (boolean|number|string);
+        minValue: boolean | number | string;
     }
-
 }
 
 /* *

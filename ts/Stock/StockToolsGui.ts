@@ -12,9 +12,7 @@
 
 import type ChartOptions from '../Core/Chart/ChartOptions';
 import type Options from '../Core/Options';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
@@ -38,7 +36,7 @@ const {
  * Declarations
  *
  * */
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
@@ -46,13 +44,13 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/LangOptions'{
+declare module '../Core/LangOptions' {
     interface LangOptions {
         stockTools?: Highcharts.LangStockToolsOptions;
     }
 }
 
-declare module '../Core/Options'{
+declare module '../Core/Options' {
     interface Options {
         stockTools?: Highcharts.StockToolsOptions;
     }
@@ -71,14 +69,15 @@ declare global {
             symbol?: string;
         }
         interface StockToolsGuiDefinitionsButtonsOptions {
-            [key: string]: (Array<string>|StockToolsGuiDefinitionsButtonOptions);
+            [key: string]:
+                | Array<string>
+                | StockToolsGuiDefinitionsButtonOptions;
             items: Array<string>;
         }
         interface StockToolsGuiDefinitionsOptions {
-            [key: string]: (
-                StockToolsGuiDefinitionsButtonOptions|
-                StockToolsGuiDefinitionsButtonsOptions
-            );
+            [key: string]:
+                | StockToolsGuiDefinitionsButtonOptions
+                | StockToolsGuiDefinitionsButtonsOptions;
             advanced: StockToolsGuiDefinitionsButtonsOptions;
             crookedLines: StockToolsGuiDefinitionsButtonsOptions;
             currentPriceIndicator: StockToolsGuiDefinitionsButtonOptions;
@@ -111,7 +110,7 @@ declare global {
         class Toolbar {
             public constructor(
                 options: StockToolsGuiOptions,
-                langOptions: (Record<string, string>|undefined),
+                langOptions: Record<string, string> | undefined,
                 chart: Chart
             );
             public arrowDown: HTMLDOMElement;
@@ -120,13 +119,13 @@ declare global {
             public chart: Chart;
             public classMapping: Record<string, string>;
             public eventsToUnbind: Array<Function>;
-            public guiEnabled: (boolean|undefined);
+            public guiEnabled: boolean | undefined;
             public iconsURL: string;
-            public lang: (Record<string, string>|undefined);
+            public lang: Record<string, string> | undefined;
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
             public placed: boolean;
-            public prevOffsetWidth: (number|undefined);
+            public prevOffsetWidth: number | undefined;
             public showhideBtn: HTMLDOMElement;
             public submenu: HTMLDOMElement;
             public toolbar: HTMLDOMElement;
@@ -134,10 +133,9 @@ declare global {
             public wrapper: HTMLDOMElement;
             public addButton(
                 target: HTMLDOMElement,
-                options: (
-                    StockToolsGuiDefinitionsButtonsOptions|
-                    StockToolsGuiDefinitionsOptions
-                ),
+                options:
+                    | StockToolsGuiDefinitionsButtonsOptions
+                    | StockToolsGuiDefinitionsOptions,
                 btnName: string,
                 lang: Record<string, string>
             ): Record<string, HTMLDOMElement>;
@@ -647,7 +645,6 @@ setOptions({
                      */
                     linearRegressionSlope: ['Linear Regression Slope'],
 
-
                     /**
                      *  Moving Average Convergence Divergence alias.
                      *
@@ -864,12 +861,7 @@ setOptions({
                      * ]
                      *
                      */
-                    items: [
-                        'label',
-                        'circle',
-                        'ellipse',
-                        'rectangle'
-                    ],
+                    items: ['label', 'circle', 'ellipse', 'rectangle'],
                     circle: {
                         /**
                          * A predefined background symbol for the button.
@@ -1068,12 +1060,7 @@ setOptions({
                      * ]
                      *
                      */
-                    items: [
-                        'elliott3',
-                        'elliott5',
-                        'crooked3',
-                        'crooked5'
-                    ],
+                    items: ['elliott3', 'elliott5', 'crooked3', 'crooked5'],
                     crooked3: {
                         /**
                          * A predefined background symbol for the button.
@@ -1223,11 +1210,7 @@ setOptions({
                      *   'measureY'
                      * ]
                      */
-                    items: [
-                        'measureXY',
-                        'measureX',
-                        'measureY'
-                    ],
+                    items: ['measureXY', 'measureX', 'measureY'],
                     measureX: {
                         /**
                          * A predefined background symbol for the button.
@@ -1289,11 +1272,7 @@ setOptions({
                      *   'zoomXY'
                      * ]
                      */
-                    items: [
-                        'zoomX',
-                        'zoomY',
-                        'zoomXY'
-                    ],
+                    items: ['zoomX', 'zoomY', 'zoomXY'],
                     zoomX: {
                         /**
                          * A predefined background symbol for the button.
@@ -1417,45 +1396,49 @@ addEvent(Chart, 'afterGetContainer', function (): void {
     this.setStockTools();
 });
 
-addEvent(Chart, 'getMargins', function (): void {
-    const listWrapper = this.stockTools && this.stockTools.listWrapper,
-        offsetWidth = listWrapper && (
-            (
-                (listWrapper as any).startWidth +
-                getStyle(listWrapper, 'padding-left') +
-                getStyle(listWrapper, 'padding-right')
-            ) || listWrapper.offsetWidth
-        );
+addEvent(
+    Chart,
+    'getMargins',
+    function (): void {
+        const listWrapper = this.stockTools && this.stockTools.listWrapper,
+            offsetWidth =
+                listWrapper &&
+                ((listWrapper as any).startWidth +
+                    getStyle(listWrapper, 'padding-left') +
+                    getStyle(listWrapper, 'padding-right') ||
+                    listWrapper.offsetWidth);
 
-    if (offsetWidth && offsetWidth < this.plotWidth) {
-        this.plotLeft += offsetWidth;
-        this.spacing[3] += offsetWidth;
+        if (offsetWidth && offsetWidth < this.plotWidth) {
+            this.plotLeft += offsetWidth;
+            this.spacing[3] += offsetWidth;
+        }
+    },
+    {
+        order: 0
     }
-}, {
-    order: 0
-});
+);
 
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
             const optionsChart = this.options.chart as ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
-                offsetWidth = listWrapper && (
-                    (
-                        (listWrapper as any).startWidth +
+                offsetWidth =
+                    listWrapper &&
+                    ((listWrapper as any).startWidth +
                         getStyle(listWrapper, 'padding-left') +
-                        getStyle(listWrapper, 'padding-right')
-                    ) || listWrapper.offsetWidth
-                );
+                        getStyle(listWrapper, 'padding-right') ||
+                        listWrapper.offsetWidth);
 
             let dirty = false;
 
             if (offsetWidth && offsetWidth < this.plotWidth) {
-                const nextX = pick(
-                    optionsChart.spacingLeft,
-                    optionsChart.spacing && optionsChart.spacing[3],
-                    0
-                ) + offsetWidth;
+                const nextX =
+                    pick(
+                        optionsChart.spacingLeft,
+                        optionsChart.spacing && optionsChart.spacing[3],
+                        0
+                    ) + offsetWidth;
                 const diff = nextX - this.spacingBox.x;
                 this.spacingBox.x = nextX;
                 this.spacingBox.width -= diff;
@@ -1497,7 +1480,7 @@ addEvent(Chart, 'redraw', function (): void {
 class Toolbar {
     public constructor(
         options: Highcharts.StockToolsGuiOptions,
-        langOptions: (Record<string, string>|undefined),
+        langOptions: Record<string, string> | undefined,
         chart: Chart
     ) {
         this.chart = chart;
@@ -1529,13 +1512,13 @@ class Toolbar {
     public arrowWrapper: HTMLDOMElement = void 0 as any;
     public chart: Chart;
     public eventsToUnbind: Array<Function>;
-    public guiEnabled: (boolean|undefined);
+    public guiEnabled: boolean | undefined;
     public iconsURL: string;
-    public lang: (Record<string, string>|undefined);
+    public lang: Record<string, string> | undefined;
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
     public placed: boolean;
-    public prevOffsetWidth: (number|undefined);
+    public prevOffsetWidth: number | undefined;
     public showhideBtn: HTMLDOMElement = void 0 as any;
     public submenu: HTMLDOMElement = void 0 as any;
     public toolbar: HTMLDOMElement = void 0 as any;
@@ -1557,11 +1540,10 @@ class Toolbar {
             defs: Highcharts.StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes,
-            button: (Record<string, HTMLDOMElement>|undefined);
+            button: Record<string, HTMLDOMElement> | undefined;
 
         // create buttons
         buttons.forEach(function (btnName: string): void {
-
             button = _self.addButton(toolbar, defs, btnName, lang);
 
             _self.eventsToUnbind.push(
@@ -1604,12 +1586,17 @@ class Toolbar {
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
             topMargin = 0,
-            submenuWrapper: (HTMLDOMElement|undefined);
+            submenuWrapper: HTMLDOMElement | undefined;
 
         // create submenu container
-        this.submenu = submenuWrapper = createElement(UL, {
-            className: PREFIX + 'submenu-wrapper'
-        }, void 0, buttonWrapper);
+        this.submenu = submenuWrapper = createElement(
+            UL,
+            {
+                className: PREFIX + 'submenu-wrapper'
+            },
+            void 0,
+            buttonWrapper
+        );
 
         // create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
@@ -1617,7 +1604,6 @@ class Toolbar {
         // show / hide submenu
         _self.eventsToUnbind.push(
             addEvent(submenuArrow, 'click', function (e: Event): void {
-
                 e.stopPropagation();
                 // Erase active class on all other buttons
                 _self.eraseActiveButtons(allButtons as any, buttonWrapper);
@@ -1633,33 +1619,40 @@ class Toolbar {
                     // to calculate height of element
                     (submenuWrapper as any).style.display = 'block';
 
-                    topMargin = (submenuWrapper as any).offsetHeight -
-                                buttonWrapper.offsetHeight - 3;
+                    topMargin =
+                        (submenuWrapper as any).offsetHeight -
+                        buttonWrapper.offsetHeight -
+                        3;
 
                     // calculate position of submenu in the box
                     // if submenu is inside, reset top margin
                     if (
                         // cut on the bottom
-                        !((submenuWrapper as any).offsetHeight +
-                            buttonWrapper.offsetTop >
-                        wrapper.offsetHeight &&
-                        // cut on the top
-                        buttonWrapper.offsetTop > topMargin)
+                        !(
+                            (submenuWrapper as any).offsetHeight +
+                                buttonWrapper.offsetTop >
+                                wrapper.offsetHeight &&
+                            // cut on the top
+                            buttonWrapper.offsetTop > topMargin
+                        )
                     ) {
                         topMargin = 0;
                     }
 
                     // apply calculated styles
-                    css((submenuWrapper as any), {
+                    css(submenuWrapper as any, {
                         top: -topMargin + 'px',
                         left: buttonWidth + 3 + 'px'
                     });
 
                     buttonWrapper.className += ' ' + PREFIX + 'current';
                     (menuWrapper as any).startWidth = wrapper.offsetWidth;
-                    menuWrapper.style.width = (menuWrapper as any).startWidth +
+                    menuWrapper.style.width =
+                        (menuWrapper as any).startWidth +
                         getStyle(menuWrapper, 'padding-left') +
-                        (submenuWrapper as any).offsetWidth + 3 + 'px';
+                        (submenuWrapper as any).offsetWidth +
+                        3 +
+                        'px';
                 }
             })
         );
@@ -1683,35 +1676,27 @@ class Toolbar {
             menuWrapper = this.listWrapper,
             items = button.items,
             firstSubmenuItem: HTMLDOMElement,
-            submenuBtn: (Record<string, HTMLDOMElement>|undefined);
+            submenuBtn: Record<string, HTMLDOMElement> | undefined;
 
         // add items to submenu
         items.forEach(function (btnName: string): void {
             // add buttons to submenu
-            submenuBtn = _self.addButton(
-                submenuWrapper,
-                button,
-                btnName,
-                lang
-            );
+            submenuBtn = _self.addButton(submenuWrapper, button, btnName, lang);
 
             _self.eventsToUnbind.push(
-                addEvent(
-                    submenuBtn.mainButton,
-                    'click',
-                    function (): void {
-                        (_self.switchSymbol as any)(this, buttonWrapper, true);
-                        menuWrapper.style.width =
-                            (menuWrapper as any).startWidth + 'px';
-                        submenuWrapper.style.display = 'none';
-                    }
-                )
+                addEvent(submenuBtn.mainButton, 'click', function (): void {
+                    (_self.switchSymbol as any)(this, buttonWrapper, true);
+                    menuWrapper.style.width =
+                        (menuWrapper as any).startWidth + 'px';
+                    submenuWrapper.style.display = 'none';
+                })
             );
         });
 
         // select first submenu item
-        firstSubmenuItem = submenuWrapper
-            .querySelectorAll<HTMLDOMElement>('li > .' + PREFIX + 'menu-item-btn')[0];
+        firstSubmenuItem = submenuWrapper.querySelectorAll<HTMLDOMElement>(
+            'li > .' + PREFIX + 'menu-item-btn'
+        )[0];
 
         // replace current symbol, in main button, with submenu's button style
         _self.switchSymbol(firstSubmenuItem, false);
@@ -1732,8 +1717,9 @@ class Toolbar {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
-                submenuItems =
-                    btn.querySelectorAll('.' + PREFIX + 'submenu-wrapper');
+                submenuItems = btn.querySelectorAll(
+                    '.' + PREFIX + 'submenu-wrapper'
+                );
 
                 // hide submenu
                 if (submenuItems.length > 0) {
@@ -1758,10 +1744,9 @@ class Toolbar {
      */
     public addButton(
         target: HTMLDOMElement,
-        options: (
-            Highcharts.StockToolsGuiDefinitionsButtonsOptions|
-            Highcharts.StockToolsGuiDefinitionsOptions
-        ),
+        options:
+            | Highcharts.StockToolsGuiDefinitionsButtonsOptions
+            | Highcharts.StockToolsGuiDefinitionsOptions,
         btnName: string,
         lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
@@ -1770,35 +1755,50 @@ class Toolbar {
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '',
-            mainButton: (HTMLDOMElement|undefined),
-            submenuArrow: (HTMLDOMElement|undefined),
-            buttonWrapper: (HTMLDOMElement|undefined);
+            mainButton: HTMLDOMElement | undefined,
+            submenuArrow: HTMLDOMElement | undefined,
+            buttonWrapper: HTMLDOMElement | undefined;
 
         // main button wrapper
-        buttonWrapper = createElement(LI, {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: lang[btnName] || btnName
-        }, void 0, target);
+        buttonWrapper = createElement(
+            LI,
+            {
+                className:
+                    pick(classMapping[btnName], '') + ' ' + userClassName,
+                title: lang[btnName] || btnName
+            },
+            void 0,
+            target
+        );
 
         // single button
-        mainButton = createElement(SPAN, {
-            className: PREFIX + 'menu-item-btn'
-        }, void 0, buttonWrapper);
+        mainButton = createElement(
+            SPAN,
+            {
+                className: PREFIX + 'menu-item-btn'
+            },
+            void 0,
+            buttonWrapper
+        );
 
         // submenu
         if (items && items.length) {
-
             // arrow is a hook to show / hide submenu
-            submenuArrow = createElement(SPAN, {
-                className: PREFIX + 'submenu-item-arrow ' +
-                    PREFIX + 'arrow-right'
-            }, void 0, buttonWrapper);
+            submenuArrow = createElement(
+                SPAN,
+                {
+                    className:
+                        PREFIX + 'submenu-item-arrow ' + PREFIX + 'arrow-right'
+                },
+                void 0,
+                buttonWrapper
+            );
 
-            submenuArrow.style.backgroundImage = 'url(' +
-                this.iconsURL + 'arrow-bottom.svg)';
+            submenuArrow.style.backgroundImage =
+                'url(' + this.iconsURL + 'arrow-bottom.svg)';
         } else {
-            mainButton.style.backgroundImage = 'url(' +
-                this.iconsURL + btnOptions.symbol + ')';
+            mainButton.style.backgroundImage =
+                'url(' + this.iconsURL + btnOptions.symbol + ')';
         }
 
         return {
@@ -1820,24 +1820,31 @@ class Toolbar {
             className: PREFIX + 'arrow-wrapper'
         });
 
-        stockToolbar.arrowUp = createElement(DIV, {
-            className: PREFIX + 'arrow-up'
-        }, void 0, stockToolbar.arrowWrapper);
+        stockToolbar.arrowUp = createElement(
+            DIV,
+            {
+                className: PREFIX + 'arrow-up'
+            },
+            void 0,
+            stockToolbar.arrowWrapper
+        );
 
         stockToolbar.arrowUp.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
-        stockToolbar.arrowDown = createElement(DIV, {
-            className: PREFIX + 'arrow-down'
-        }, void 0, stockToolbar.arrowWrapper);
+        stockToolbar.arrowDown = createElement(
+            DIV,
+            {
+                className: PREFIX + 'arrow-down'
+            },
+            void 0,
+            stockToolbar.arrowWrapper
+        );
 
         stockToolbar.arrowDown.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
 
-        wrapper.insertBefore(
-            stockToolbar.arrowWrapper,
-            wrapper.childNodes[0]
-        );
+        wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
 
         // attach scroll events
         stockToolbar.scrollButtons();
@@ -1890,31 +1897,30 @@ class Toolbar {
             toolbar;
 
         // create main container
-        const wrapper = stockToolbar.wrapper = createElement(DIV, {
-            className: PREFIX + 'stocktools-wrapper ' +
-                guiOptions.className + ' ' + bindingsClassName
-        });
+        const wrapper = (stockToolbar.wrapper = createElement(DIV, {
+            className:
+                PREFIX +
+                'stocktools-wrapper ' +
+                guiOptions.className +
+                ' ' +
+                bindingsClassName
+        }));
         container.appendChild(wrapper);
 
         // Mimic event behaviour of being outside chart.container
-        [
-            'mousedown',
-            'mousemove',
-            'click',
-            'touchstart'
-        ].forEach((eventType): void => {
-            addEvent(wrapper, eventType, (e): void =>
-                e.stopPropagation()
-            );
-        });
+        ['mousedown', 'mousemove', 'click', 'touchstart'].forEach(
+            (eventType): void => {
+                addEvent(wrapper, eventType, (e): void => e.stopPropagation());
+            }
+        );
         addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
             chart.pointer.onContainerMouseLeave(e)
         );
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
-            className: PREFIX + 'stocktools-toolbar ' +
-                    guiOptions.toolbarClassName
+            className:
+                PREFIX + 'stocktools-toolbar ' + guiOptions.toolbarClassName
         });
 
         // add container for list of buttons
@@ -1939,7 +1945,7 @@ class Toolbar {
         // 50px space for arrows
         if (
             this.visible &&
-            this.toolbar.offsetHeight > (this.wrapper.offsetHeight - 50)
+            this.toolbar.offsetHeight > this.wrapper.offsetHeight - 50
         ) {
             this.arrowWrapper.style.display = 'block';
         } else {
@@ -1961,12 +1967,17 @@ class Toolbar {
             toolbar = this.listWrapper,
             submenu = this.submenu,
             visible = this.visible,
-            showhideBtn: (HTMLDOMElement|undefined);
+            showhideBtn: HTMLDOMElement | undefined;
 
         // Show hide toolbar
-        this.showhideBtn = showhideBtn = createElement(DIV, {
-            className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
-        }, void 0, wrapper);
+        this.showhideBtn = showhideBtn = createElement(
+            DIV,
+            {
+                className: PREFIX + 'toggle-toolbar ' + PREFIX + 'arrow-left'
+            },
+            void 0,
+            wrapper
+        );
 
         showhideBtn.style.backgroundImage =
             'url(' + this.iconsURL + 'arrow-right.svg)';
@@ -1984,10 +1995,10 @@ class Toolbar {
         } else {
             wrapper.style.height = '100%';
             showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
-            showhideBtn.style.left = (
+            showhideBtn.style.left =
                 wrapper.offsetWidth +
-                (getStyle(toolbar, 'padding-left') as any)
-            ) + 'px';
+                (getStyle(toolbar, 'padding-left') as any) +
+                'px';
         }
 
         // Toggle menu
@@ -2012,10 +2023,7 @@ class Toolbar {
      * @param {Boolean} - true or false
      *
      */
-    public switchSymbol(
-        button: HTMLDOMElement,
-        redraw?: boolean
-    ): void {
+    public switchSymbol(button: HTMLDOMElement, redraw?: boolean): void {
         const buttonWrapper = button.parentNode,
             buttonWrapperClass = buttonWrapper.className,
             // main button in first level og GUI
@@ -2032,10 +2040,9 @@ class Toolbar {
         }
 
         // set icon
-        mainNavButton
-            .querySelectorAll<HTMLElement>('.' + PREFIX + 'menu-item-btn')[0]
-            .style.backgroundImage =
-            button.style.backgroundImage;
+        mainNavButton.querySelectorAll<HTMLElement>(
+            '.' + PREFIX + 'menu-item-btn'
+        )[0].style.backgroundImage = button.style.backgroundImage;
 
         // set active class
         if (redraw) {
@@ -2062,23 +2069,28 @@ class Toolbar {
      *
      */
     public unselectAllButtons(button: HTMLDOMElement): void {
-        const activeButtons = button.parentNode
-            .querySelectorAll('.' + activeClass);
+        const activeButtons = button.parentNode.querySelectorAll(
+            '.' + activeClass
+        );
 
-        [].forEach.call(activeButtons, function (
-            activeBtn: HTMLDOMElement
-        ): void {
-            if (activeBtn !== button) {
-                activeBtn.classList.remove(activeClass);
+        [].forEach.call(
+            activeButtons,
+            function (activeBtn: HTMLDOMElement): void {
+                if (activeBtn !== button) {
+                    activeBtn.classList.remove(activeClass);
+                }
             }
-        });
+        );
     }
     /*
      * Update GUI with given options.
      *
      * @param {Object} - general options for Stock Tools
      */
-    public update(options: Highcharts.StockToolsOptions, redraw?: boolean): void {
+    public update(
+        options: Highcharts.StockToolsOptions,
+        redraw?: boolean
+    ): void {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
@@ -2120,9 +2132,11 @@ class Toolbar {
     }
 
     public getIconsURL(): string {
-        return (this.chart.options.navigation as any).iconsURL ||
+        return (
+            (this.chart.options.navigation as any).iconsURL ||
             this.options.iconsURL ||
-            'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
+            'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+        );
     }
 }
 
@@ -2210,58 +2224,75 @@ extend(Chart.prototype, {
 });
 
 // Comunication with bindings:
-addEvent(NavigationBindings, 'selectButton', function (
-    event: Record<string, HTMLDOMElement>
-): void {
-    let button = event.button,
-        className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockTools;
+addEvent(
+    NavigationBindings,
+    'selectButton',
+    function (event: Record<string, HTMLDOMElement>): void {
+        let button = event.button,
+            className = PREFIX + 'submenu-wrapper',
+            gui = this.chart.stockTools;
 
-    if (gui && gui.guiEnabled) {
-        // Unslect other active buttons
-        gui.unselectAllButtons(event.button);
+        if (gui && gui.guiEnabled) {
+            // Unslect other active buttons
+            gui.unselectAllButtons(event.button);
 
-        // If clicked on a submenu, select state for it's parent
-        if (button.parentNode.className.indexOf(className) >= 0) {
-            button = button.parentNode.parentNode;
+            // If clicked on a submenu, select state for it's parent
+            if (button.parentNode.className.indexOf(className) >= 0) {
+                button = button.parentNode.parentNode;
+            }
+            // Set active class on the current button
+            gui.toggleButtonAciveClass(button);
         }
-        // Set active class on the current button
-        gui.toggleButtonAciveClass(button);
     }
-});
+);
 
-addEvent(NavigationBindings, 'deselectButton', function (
-    event: Record<string, HTMLDOMElement>
-): void {
-    let button = event.button,
-        className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockTools;
+addEvent(
+    NavigationBindings,
+    'deselectButton',
+    function (event: Record<string, HTMLDOMElement>): void {
+        let button = event.button,
+            className = PREFIX + 'submenu-wrapper',
+            gui = this.chart.stockTools;
 
-    if (gui && gui.guiEnabled) {
-        // If deselecting a button from a submenu, select state for it's parent
-        if (button.parentNode.className.indexOf(className) >= 0) {
-            button = button.parentNode.parentNode;
+        if (gui && gui.guiEnabled) {
+            // If deselecting a button from a submenu, select state for it's
+            // parent
+            if (button.parentNode.className.indexOf(className) >= 0) {
+                button = button.parentNode.parentNode;
+            }
+            gui.toggleButtonAciveClass(button);
         }
-        gui.toggleButtonAciveClass(button);
     }
-});
+);
 
 // Check if the correct price indicator button is displayed, #15029.
 addEvent(Chart, 'render', function (): void {
     const chart = this,
         stockTools = chart.stockTools,
-        button = stockTools &&
+        button =
+            stockTools &&
             stockTools.toolbar &&
-            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+            (stockTools.toolbar.querySelector(
+                '.highcharts-current-price-indicator'
+            ) as any);
 
     // Change the initial button background.
-    if (stockTools && chart.navigationBindings && chart.options.series && button) {
-        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+    if (
+        stockTools &&
+        chart.navigationBindings &&
+        chart.options.series &&
+        button
+    ) {
+        if (
+            chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(
+                chart.series
+            )
+        ) {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+                'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
         } else {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+                'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
         }
     }
 });

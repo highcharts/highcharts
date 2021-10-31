@@ -73,7 +73,7 @@ declare module '../Core/Axis/AxisType' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
@@ -81,7 +81,7 @@ declare module '../Core/Chart/ChartLike'{
         setParallelInfo(options: Partial<Options>): void;
     }
 }
-declare module '../Core/Chart/ChartOptions'{
+declare module '../Core/Chart/ChartOptions' {
     interface ChartOptions {
         parallelAxes?: DeepPartial<AxisOptions>;
         parallelCoordinates?: boolean;
@@ -210,11 +210,7 @@ setOptions({
 /* eslint-disable no-invalid-this */
 
 // Initialize parallelCoordinates
-addEvent(Chart, 'init', function (
-    e: {
-        args: { 0: Partial<Options> };
-    }
-): void {
+addEvent(Chart, 'init', function (e: { args: { 0: Partial<Options> } }): void {
     const options = e.args[0],
         defaultYAxis = splat(options.yAxis || {}),
         newYAxes = [];
@@ -230,15 +226,15 @@ addEvent(Chart, 'init', function (
      * @name Highcharts.Chart#hasParallelCoordinates
      * @type {boolean}
      */
-    this.hasParallelCoordinates = options.chart &&
-        options.chart.parallelCoordinates;
+    this.hasParallelCoordinates =
+        options.chart && options.chart.parallelCoordinates;
 
     if (this.hasParallelCoordinates) {
-
         this.setParallelInfo(options);
 
         // Push empty yAxes in case user did not define them:
-        for (;
+        for (
+            ;
             yAxisLength <= (this.parallelInfo as any).counter;
             yAxisLength++
         ) {
@@ -304,48 +300,48 @@ addEvent(Chart, 'update', function (e: { options: Partial<Options> }): void {
 
 /* eslint-disable valid-jsdoc */
 
-extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
-    /**
-     * Define how many parellel axes we have according to the longest dataset.
-     * This is quite heavy - loop over all series and check series.data.length
-     * Consider:
-     *
-     * - make this an option, so user needs to set this to get better
-     *   performance
-     *
-     * - check only first series for number of points and assume the rest is the
-     *   same
-     *
-     * @private
-     * @function Highcharts.Chart#setParallelInfo
-     * @param {Highcharts.Options} options
-     * User options
-     * @return {void}
-     * @requires modules/parallel-coordinates
-     */
-    setParallelInfo: function (
-        this: Highcharts.ParallelChart,
-        options: Partial<Options>
-    ): void {
-        const chart = this,
-            seriesOptions: Array<SeriesOptions> =
-                options.series as any;
+extend(
+    ChartProto,
+    /** @lends Highcharts.Chart.prototype */ {
+        /**
+         * Define how many parellel axes we have according to the longest
+         * dataset. This is quite heavy - loop over all series and check
+         * series.data.length Consider:
+         *
+         * - make this an option, so user needs to set this to get better
+         *   performance
+         *
+         * - check only first series for number of points and assume the rest is
+         *   the same
+         *
+         * @private
+         * @function Highcharts.Chart#setParallelInfo
+         * @param {Highcharts.Options} options User options
+         * @return {void}
+         * @requires modules/parallel-coordinates
+         */
+        setParallelInfo: function (
+            this: Highcharts.ParallelChart,
+            options: Partial<Options>
+        ): void {
+            const chart = this,
+                seriesOptions: Array<SeriesOptions> = options.series as any;
 
-        chart.parallelInfo = {
-            counter: 0
-        };
+            chart.parallelInfo = {
+                counter: 0
+            };
 
-        seriesOptions.forEach(function (series): void {
-            if (series.data) {
-                chart.parallelInfo.counter = Math.max(
-                    chart.parallelInfo.counter,
-                    series.data.length - 1
-                );
-            }
-        });
+            seriesOptions.forEach(function (series): void {
+                if (series.data) {
+                    chart.parallelInfo.counter = Math.max(
+                        chart.parallelInfo.counter,
+                        series.data.length - 1
+                    );
+                }
+            });
+        }
     }
-});
-
+);
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
@@ -364,57 +360,67 @@ addEvent(Series, 'bindAxes', function (e: Event): void {
     }
 });
 
-
 // Translate each point using corresponding yAxis.
-addEvent(Series, 'afterTranslate', function (): void {
-    let series = this,
-        chart = this.chart,
-        points = series.points,
-        dataLength = points && points.length,
-        closestPointRangePx = Number.MAX_VALUE,
-        lastPlotX,
-        point,
-        i;
+addEvent(
+    Series,
+    'afterTranslate',
+    function (): void {
+        let series = this,
+            chart = this.chart,
+            points = series.points,
+            dataLength = points && points.length,
+            closestPointRangePx = Number.MAX_VALUE,
+            lastPlotX,
+            point,
+            i;
 
-    if (this.chart.hasParallelCoordinates) {
-        for (i = 0; i < dataLength; i++) {
-            point = points[i];
-            if (defined(point.y)) {
-                if (chart.polar) {
-                    point.plotX = (chart.yAxis[i] as RadialAxis.AxisComposition).angleRad || 0;
-                } else if (chart.inverted) {
-                    point.plotX = (
-                        chart.plotHeight -
-                        chart.yAxis[i].top +
-                        chart.plotTop
+        if (this.chart.hasParallelCoordinates) {
+            for (i = 0; i < dataLength; i++) {
+                point = points[i];
+                if (defined(point.y)) {
+                    if (chart.polar) {
+                        point.plotX =
+                            (chart.yAxis[i] as RadialAxis.AxisComposition)
+                                .angleRad || 0;
+                    } else if (chart.inverted) {
+                        point.plotX =
+                            chart.plotHeight -
+                            chart.yAxis[i].top +
+                            chart.plotTop;
+                    } else {
+                        point.plotX = chart.yAxis[i].left - chart.plotLeft;
+                    }
+                    point.clientX = point.plotX;
+
+                    point.plotY = chart.yAxis[i].translate(
+                        point.y,
+                        false,
+                        true,
+                        null,
+                        true
+                    );
+
+                    if (typeof lastPlotX !== 'undefined') {
+                        closestPointRangePx = Math.min(
+                            closestPointRangePx,
+                            Math.abs(point.plotX - lastPlotX)
+                        );
+                    }
+                    lastPlotX = point.plotX;
+                    point.isInside = chart.isInsidePlot(
+                        point.plotX,
+                        point.plotY as any,
+                        { inverted: chart.inverted }
                     );
                 } else {
-                    point.plotX = chart.yAxis[i].left - chart.plotLeft;
+                    point.isNull = true;
                 }
-                point.clientX = point.plotX;
-
-                point.plotY = chart.yAxis[i]
-                    .translate(point.y, false, true, null, true);
-
-                if (typeof lastPlotX !== 'undefined') {
-                    closestPointRangePx = Math.min(
-                        closestPointRangePx,
-                        Math.abs(point.plotX - lastPlotX)
-                    );
-                }
-                lastPlotX = point.plotX;
-                point.isInside = chart.isInsidePlot(
-                    point.plotX,
-                    point.plotY as any,
-                    { inverted: chart.inverted }
-                );
-            } else {
-                point.isNull = true;
             }
+            this.closestPointRangePx = closestPointRangePx;
         }
-        this.closestPointRangePx = closestPointRangePx;
-    }
-}, { order: 1 });
+    },
+    { order: 1 }
+);
 
 // On destroy, we need to remove series from each axis.series
 addEvent(Series, 'destroy', function (): void {
@@ -431,10 +437,7 @@ addEvent(Series, 'destroy', function (): void {
 /**
  * @private
  */
-function addFormattedValue(
-    this: Point,
-    proceed: Function
-): void {
+function addFormattedValue(this: Point, proceed: Function): void {
     let chart = this.series && this.series.chart,
         config = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
         formattedValue,
@@ -486,10 +489,7 @@ function addFormattedValue(
         if (labelFormat) {
             formattedValue = format(
                 labelFormat,
-                extend(
-                    this,
-                    { value: this.y } as any
-                ),
+                extend(this, { value: this.y } as any),
                 chart
             );
         } else if (yAxis.dateTime) {
@@ -527,7 +527,6 @@ function addFormattedValue(
  * @class
  */
 class ParallelAxisAdditions {
-
     /* *
      *
      *  Constructors
@@ -567,13 +566,15 @@ class ParallelAxisAdditions {
      * Axis options.
      */
     public setPosition(
-        axisPosition: Array<('left'|'width'|'height'|'top')>,
+        axisPosition: Array<'left' | 'width' | 'height' | 'top'>,
         options: AxisOptions
     ): void {
         const parallel = this,
             axis = parallel.axis,
             chart = axis.chart,
-            fraction = ((parallel.position || 0) + 0.5) / (chart.parallelInfo.counter + 1);
+            fraction =
+                ((parallel.position || 0) + 0.5) /
+                (chart.parallelInfo.counter + 1);
 
         if (chart.polar) {
             options.angle = 360 * fraction;
@@ -586,7 +587,6 @@ class ParallelAxisAdditions {
             axis[axisPosition[3]] = options[axisPosition[3]] = null as any;
         }
     }
-
 }
 
 /**
@@ -594,13 +594,11 @@ class ParallelAxisAdditions {
  * @private
  */
 namespace ParallelAxis {
-
     /**
      * Adds support for parallel axes.
      * @private
      */
     export function compose(AxisClass: typeof Axis): void {
-
         /* eslint-disable no-invalid-this */
 
         // On update, keep parallel additions.
@@ -623,7 +621,12 @@ namespace ParallelAxis {
             chart = axis.chart,
             parallelCoordinates = axis.parallelCoordinates;
 
-        let axisPosition: Array<('left'|'width'|'height'|'top')> = ['left', 'width', 'height', 'top'];
+        let axisPosition: Array<'left' | 'width' | 'height' | 'top'> = [
+            'left',
+            'width',
+            'height',
+            'top'
+        ];
 
         if (chart.hasParallelCoordinates) {
             if (chart.inverted) {
@@ -659,10 +662,7 @@ namespace ParallelAxis {
      * series.yData.
      * @private
      */
-    function onGetSeriesExtremes(
-        this: Axis,
-        e: Event
-    ): void {
+    function onGetSeriesExtremes(this: Axis, e: Event): void {
         const axis = this;
         const chart = axis.chart;
         const parallelCoordinates = axis.parallelCoordinates;
@@ -700,7 +700,9 @@ namespace ParallelAxis {
         const axis = this;
 
         if (!axis.parallelCoordinates) {
-            axis.parallelCoordinates = new ParallelAxisAdditions(axis as ParallelAxis);
+            axis.parallelCoordinates = new ParallelAxisAdditions(
+                axis as ParallelAxis
+            );
         }
     }
 }

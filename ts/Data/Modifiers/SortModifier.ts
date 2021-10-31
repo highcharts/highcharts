@@ -38,7 +38,6 @@ const { merge } = U;
  * @private
  */
 class SortModifier extends DataModifier {
-
     /* *
      *
      *  Static Properties
@@ -64,22 +63,14 @@ class SortModifier extends DataModifier {
         a: DataTable.CellType,
         b: DataTable.CellType
     ): number {
-        return (
-            (a || 0) < (b || 0) ? -1 :
-                (a || 0) > (b || 0) ? 1 :
-                    0
-        );
+        return (a || 0) < (b || 0) ? -1 : (a || 0) > (b || 0) ? 1 : 0;
     }
 
     private static descending(
         a: DataTable.CellType,
         b: DataTable.CellType
     ): number {
-        return (
-            (b || 0) < (a || 0) ? -1 :
-                (b || 0) > (a || 0) ? 1 :
-                    0
-        );
+        return (b || 0) < (a || 0) ? -1 : (b || 0) > (a || 0) ? 1 : 0;
     }
 
     /* *
@@ -144,10 +135,7 @@ class SortModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modifier = this,
-            {
-                orderByColumn,
-                orderInColumn
-            } = modifier.options;
+            { orderByColumn, orderInColumn } = modifier.options;
 
         if (columnName === orderByColumn) {
             if (orderInColumn) {
@@ -155,11 +143,12 @@ class SortModifier extends DataModifier {
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
-                        .modified
-                        .getColumn(orderInColumn)
+                        .modifyTable(
+                            new DataTable(
+                                table.getColumns([orderByColumn, orderInColumn])
+                            )
+                        )
+                        .modified.getColumn(orderInColumn)
                 );
             } else {
                 modifier.modifyTable(table, eventDetail);
@@ -194,28 +183,22 @@ class SortModifier extends DataModifier {
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
-
         const modifier = this,
-            {
-                orderByColumn,
-                orderInColumn
-            } = modifier.options,
+            { orderByColumn, orderInColumn } = modifier.options,
             columnNames = Object.keys(columns);
 
         if (columnNames.indexOf(orderByColumn) > -1) {
-            if (
-                orderInColumn &&
-                columns[columnNames[0]].length
-            ) {
+            if (orderInColumn && columns[columnNames[0]].length) {
                 table.modified.setColumns(columns, rowIndex);
                 table.modified.setColumn(
                     orderInColumn,
                     modifier
-                        .modifyTable(new DataTable(
-                            table.getColumns([orderByColumn, orderInColumn])
-                        ))
-                        .modified
-                        .getColumn(orderInColumn)
+                        .modifyTable(
+                            new DataTable(
+                                table.getColumns([orderByColumn, orderInColumn])
+                            )
+                        )
+                        .modified.getColumn(orderInColumn)
                 );
             } else {
                 modifier.modifyTable(table, eventDetail);
@@ -224,7 +207,6 @@ class SortModifier extends DataModifier {
 
         return table;
     }
-
 
     /**
      * Applies partial modifications of row changes to the property `modified`
@@ -247,30 +229,24 @@ class SortModifier extends DataModifier {
      */
     public modifyRows<T extends DataTable>(
         table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rows: Array<DataTable.Row | DataTable.RowObject>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
-
         const modifier = this,
-            {
-                orderByColumn,
-                orderInColumn
-            } = modifier.options;
+            { orderByColumn, orderInColumn } = modifier.options;
 
-        if (
-            orderInColumn &&
-            rows.length
-        ) {
+        if (orderInColumn && rows.length) {
             table.modified.setRows(rows, rowIndex);
             table.modified.setColumn(
                 orderInColumn,
                 modifier
-                    .modifyTable(new DataTable(
-                        table.getColumns([orderByColumn, orderInColumn])
-                    ))
-                    .modified
-                    .getColumn(orderInColumn)
+                    .modifyTable(
+                        new DataTable(
+                            table.getColumns([orderByColumn, orderInColumn])
+                        )
+                    )
+                    .modified.getColumn(orderInColumn)
             );
         } else {
             modifier.modifyTable(table, eventDetail);
@@ -307,24 +283,18 @@ class SortModifier extends DataModifier {
                     row
                 })
             ),
-            {
-                direction,
-                orderByColumn,
-                orderInColumn
-            } = modifier.options,
-            compare = (
-                direction === 'asc' ?
-                    SortModifier.ascending :
-                    SortModifier.descending
-            ),
+            { direction, orderByColumn, orderInColumn } = modifier.options,
+            compare =
+                direction === 'asc'
+                    ? SortModifier.ascending
+                    : SortModifier.descending,
             orderByColumnIndex = columnNames.indexOf(orderByColumn),
             modified = table.modified;
 
         if (orderByColumnIndex !== -1) {
-            rowReferences.sort((a, b): number => compare(
-                a.row[orderByColumnIndex],
-                b.row[orderByColumnIndex]
-            ));
+            rowReferences.sort((a, b): number =>
+                compare(a.row[orderByColumnIndex], b.row[orderByColumnIndex])
+            );
         }
 
         if (orderInColumn) {
@@ -345,7 +315,6 @@ class SortModifier extends DataModifier {
 
         return table;
     }
-
 }
 
 /* *
@@ -359,18 +328,16 @@ class SortModifier extends DataModifier {
  * conversion.
  */
 namespace SortModifier {
-
     /**
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
-
         /**
          * Direction of sorting.
          *
          * @default "desc"
          */
-        direction: ('asc'|'desc');
+        direction: 'asc' | 'desc';
 
         /**
          * Column with values to order.
@@ -383,7 +350,6 @@ namespace SortModifier {
          * Column to update with order index instead of change order of rows.
          */
         orderInColumn?: string;
-
     }
 
     /** @private */
@@ -391,7 +357,6 @@ namespace SortModifier {
         index: number;
         row: DataTable.Row;
     }
-
 }
 
 /* *

@@ -32,16 +32,10 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import ChartUtilities from '../Utils/ChartUtilities.js';
-const {
-    getChartTitle,
-    unhideChartElementFromAT
-} = ChartUtilities;
+const { getChartTitle, unhideChartElementFromAT } = ChartUtilities;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    getFakeMouseEvent
-} = HTMLUtilities;
-
+const { getFakeMouseEvent } = HTMLUtilities;
 
 /* *
  *
@@ -51,7 +45,6 @@ const {
 
 /* eslint-disable valid-jsdoc */
 
-
 /**
  * Get the wrapped export button element of a chart.
  *
@@ -59,10 +52,9 @@ const {
  * @param {Highcharts.Chart} chart
  * @returns {Highcharts.SVGElement}
  */
-function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
+function getExportMenuButtonElement(chart: Chart): SVGElement | undefined {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
-
 
 /**
  * @private
@@ -82,13 +74,11 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
     );
 }
 
-
 /* *
  *
  *  Class
  *
  * */
-
 
 /**
  * The MenuComponent class
@@ -98,19 +88,15 @@ function exportingShouldHaveA11y(chart: Chart): boolean {
  * @name Highcharts.MenuComponent
  */
 class MenuComponent extends AccessibilityComponent {
-
-
     /* *
      *
      *  Properties
      *
      * */
 
-
     public exportButtonProxy?: ProxyElement;
 
     public isExportMenuShown?: boolean;
-
 
     /* *
      *
@@ -119,7 +105,6 @@ class MenuComponent extends AccessibilityComponent {
      * */
 
     /* eslint-disable valid-jsdoc */
-
 
     /**
      * Init the component
@@ -139,13 +124,12 @@ class MenuComponent extends AccessibilityComponent {
         this.createProxyGroup();
     }
 
-
     /**
      * @private
      */
     public onMenuHidden(): void {
-        const menu: Exporting.DivElement =
-            (this.chart as any).exportContextMenu;
+        const menu: Exporting.DivElement = (this.chart as any)
+            .exportContextMenu;
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
         }
@@ -153,7 +137,6 @@ class MenuComponent extends AccessibilityComponent {
         this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
     }
-
 
     /**
      * @private
@@ -171,19 +154,18 @@ class MenuComponent extends AccessibilityComponent {
         this.setExportButtonExpandedState('true');
     }
 
-
     /**
      * @private
      * @param {string} stateStr
      */
-    public setExportButtonExpandedState(
-        stateStr: string
-    ): void {
+    public setExportButtonExpandedState(stateStr: string): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
-
 
     /**
      * Called on each render of the chart. We need to update positioning of the
@@ -193,7 +175,6 @@ class MenuComponent extends AccessibilityComponent {
         this.proxyProvider.clearGroup('chartMenu');
         this.proxyMenuButton();
     }
-
 
     /**
      * @private
@@ -221,7 +202,6 @@ class MenuComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      */
@@ -231,7 +211,6 @@ class MenuComponent extends AccessibilityComponent {
             this.proxyProvider.addGroup('chartMenu', 'div');
         }
     }
-
 
     /**
      * @private
@@ -245,8 +224,10 @@ class MenuComponent extends AccessibilityComponent {
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach((item): void => {
                 if (item) {
-                    if (item.tagName === 'LI' &&
-                        !(item.children && item.children.length)) {
+                    if (
+                        item.tagName === 'LI' &&
+                        !(item.children && item.children.length)
+                    ) {
                         item.setAttribute('tabindex', -1);
                     } else {
                         item.setAttribute('aria-hidden', 'true');
@@ -255,19 +236,19 @@ class MenuComponent extends AccessibilityComponent {
             });
 
             // Set accessibility properties on parent div
-            const parentDiv = (exportList[0] && exportList[0].parentNode);
+            const parentDiv = exportList[0] && exportList[0].parentNode;
             if (parentDiv) {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart: chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });
             }
         }
     }
-
 
     /**
      * Get keyboard navigation handler for this component.
@@ -283,9 +264,7 @@ class MenuComponent extends AccessibilityComponent {
                 // Arrow prev handler
                 [
                     [keys.left, keys.up],
-                    function (
-                        this: KeyboardNavigationHandler
-                    ): number {
+                    function (this: KeyboardNavigationHandler): number {
                         return component.onKbdPrevious(this);
                     }
                 ],
@@ -293,9 +272,7 @@ class MenuComponent extends AccessibilityComponent {
                 // Arrow next handler
                 [
                     [keys.right, keys.down],
-                    function (
-                        this: KeyboardNavigationHandler
-                    ): number {
+                    function (this: KeyboardNavigationHandler): number {
                         return component.onKbdNext(this);
                     }
                 ],
@@ -303,9 +280,7 @@ class MenuComponent extends AccessibilityComponent {
                 // Click handler
                 [
                     [keys.enter, keys.space],
-                    function (
-                        this: KeyboardNavigationHandler
-                    ): number {
+                    function (this: KeyboardNavigationHandler): number {
                         return component.onKbdClick(this);
                     }
                 ]
@@ -314,10 +289,12 @@ class MenuComponent extends AccessibilityComponent {
             // Only run exporting navigation if exporting support exists and is
             // enabled on chart
             validate: function (): boolean {
-                return !!chart.exporting &&
+                return (
+                    !!chart.exporting &&
                     chart.options.exporting.enabled !== false &&
                     (chart.options.exporting.accessibility as any).enabled !==
-                    false;
+                        false
+                );
             },
 
             // Focus export menu button
@@ -335,7 +312,6 @@ class MenuComponent extends AccessibilityComponent {
             }
         });
     }
-
 
     /**
      * @private
@@ -365,7 +341,6 @@ class MenuComponent extends AccessibilityComponent {
         }
         return response.prev;
     }
-
 
     /**
      * @private
@@ -399,7 +374,6 @@ class MenuComponent extends AccessibilityComponent {
         return response.next;
     }
 
-
     /**
      * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
@@ -412,7 +386,9 @@ class MenuComponent extends AccessibilityComponent {
         const curHighlightedItem = (chart.exportDivElements as any)[
             chart.highlightedExportItemIx as any
         ];
-        const exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
+        const exportButtonElement: SVGDOMElement = (
+            getExportMenuButtonElement(chart) as any
+        ).element;
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);
@@ -423,9 +399,7 @@ class MenuComponent extends AccessibilityComponent {
 
         return keyboardNavigationHandler.response.success;
     }
-
 }
-
 
 /* *
  *
@@ -433,11 +407,9 @@ class MenuComponent extends AccessibilityComponent {
  *
  * */
 
-
 interface MenuComponent {
     chart: MenuComponent.ChartComposition;
 }
-
 
 /* *
  *
@@ -446,27 +418,23 @@ interface MenuComponent {
  * */
 
 namespace MenuComponent {
-
-
     /* *
      *
      *  Declarations
      *
      * */
 
-
     export declare class ChartComposition extends Accessibility.ChartComposition {
         public highlightedExportItemIx?: number;
         /** @requires modules/accessibility */
         public hideExportMenu(): void;
         /** @requires modules/accessibility */
-        public highlightExportItem(ix: number): (boolean|undefined);
+        public highlightExportItem(ix: number): boolean | undefined;
         /** @requires modules/accessibility */
         public highlightLastExportItem(): boolean;
         /** @requires modules/accessibility */
         public showExportMenu(): void;
     }
-
 
     /* *
      *
@@ -474,9 +442,7 @@ namespace MenuComponent {
      *
      * */
 
-
     const composedClasses: Array<Function> = [];
-
 
     /* *
      *
@@ -486,14 +452,10 @@ namespace MenuComponent {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * @private
      */
-    export function compose(
-        ChartClass: typeof Chart
-    ): void {
-
+    export function compose(ChartClass: typeof Chart): void {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
@@ -512,9 +474,7 @@ namespace MenuComponent {
      * @private
      * @function Highcharts.Chart#showExportMenu
      */
-    function chartShowExportMenu(
-        this: ChartComposition
-    ): void {
+    function chartShowExportMenu(this: ChartComposition): void {
         const exportButton = getExportMenuButtonElement(this);
 
         if (exportButton) {
@@ -525,14 +485,11 @@ namespace MenuComponent {
         }
     }
 
-
     /**
      * @private
      * @function Highcharts.Chart#hideExportMenu
      */
-    function chartHideExportMenu(
-        this: ChartComposition
-    ): void {
+    function chartHideExportMenu(this: ChartComposition): void {
         const chart = this,
             exportList = chart.exportDivElements;
 
@@ -555,7 +512,6 @@ namespace MenuComponent {
         }
     }
 
-
     /**
      * Highlight export menu item by index.
      *
@@ -572,8 +528,8 @@ namespace MenuComponent {
     ): boolean {
         const listItem = this.exportDivElements && this.exportDivElements[ix];
         const curHighlighted =
-                this.exportDivElements &&
-                this.exportDivElements[this.highlightedExportItemIx as any];
+            this.exportDivElements &&
+            this.exportDivElements[this.highlightedExportItemIx as any];
 
         if (
             listItem &&
@@ -603,7 +559,6 @@ namespace MenuComponent {
         return false;
     }
 
-
     /**
      * Try to highlight the last valid export menu item.
      *
@@ -611,9 +566,7 @@ namespace MenuComponent {
      * @function Highcharts.Chart#highlightLastExportItem
      * @return {boolean}
      */
-    function chartHighlightLastExportItem(
-        this: ChartComposition
-    ): boolean {
+    function chartHighlightLastExportItem(this: ChartComposition): boolean {
         const chart = this;
         if (chart.exportDivElements) {
             let i = chart.exportDivElements.length;
@@ -625,8 +578,6 @@ namespace MenuComponent {
         }
         return false;
     }
-
-
 }
 
 /* *

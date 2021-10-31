@@ -24,17 +24,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
+    seriesTypes: { scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    fireEvent,
-    isNumber,
-    merge
-} = U;
+const { extend, fireEvent, isNumber, merge } = U;
 
 import '../../Core/DefaultOptions.js';
 import '../Scatter/ScatterSeries.js';
@@ -53,7 +46,6 @@ import '../Scatter/ScatterSeries.js';
  * @augments Highcharts.Series
  */
 class MapPointSeries extends ScatterSeries {
-
     /* *
      *
      *  Static Properties
@@ -71,23 +63,27 @@ class MapPointSeries extends ScatterSeries {
      * @product      highmaps
      * @optionparent plotOptions.mappoint
      */
-    public static defaultOptions: MapPointSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        dataLabels: {
-            crop: false,
-            defer: false,
-            enabled: true,
-            formatter: function (
-                this: Point.PointLabelObject
-            ): (string|undefined) { // #2945
-                return this.point.name;
-            },
-            overflow: false as any,
-            style: {
-                /** @internal */
-                color: Palette.neutralColor100
+    public static defaultOptions: MapPointSeriesOptions = merge(
+        ScatterSeries.defaultOptions,
+        {
+            dataLabels: {
+                crop: false,
+                defer: false,
+                enabled: true,
+                formatter: function (
+                    this: Point.PointLabelObject
+                ): string | undefined {
+                    // #2945
+                    return this.point.name;
+                },
+                overflow: false as any,
+                style: {
+                    /** @internal */
+                    color: Palette.neutralColor100
+                }
             }
-        }
-    } as MapPointSeriesOptions);
+        } as MapPointSeriesOptions
+    );
 
     /* *
      *
@@ -128,21 +124,19 @@ class MapPointSeries extends ScatterSeries {
         if (mapView) {
             const { forward, hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
-
                 let { x = void 0, y = void 0 } = p;
 
                 const geometry = p.options.geometry,
-                    coordinates = (
+                    coordinates =
                         geometry &&
                         geometry.type === 'Point' &&
-                        geometry.coordinates
-                    );
+                        geometry.coordinates;
                 if (coordinates) {
                     const xy = forward(coordinates);
                     x = xy[0];
                     y = xy[1];
 
-                // Map bubbles getting geometry from shape
+                    // Map bubbles getting geometry from shape
                 } else if (p.bounds) {
                     x = p.bounds.midX;
                     y = p.bounds.midY;
@@ -151,9 +145,9 @@ class MapPointSeries extends ScatterSeries {
                 if (isNumber(x) && isNumber(y)) {
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
-                    p.plotY = hasCoordinates ?
-                        plotCoords.y :
-                        this.chart.plotHeight - plotCoords.y;
+                    p.plotY = hasCoordinates
+                        ? plotCoords.y
+                        : this.chart.plotHeight - plotCoords.y;
                 } else {
                     p.plotX = void 0;
                     p.plotY = void 0;
@@ -170,7 +164,6 @@ class MapPointSeries extends ScatterSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -368,4 +361,4 @@ export default MapPointSeries;
  * @apioption series.mappoint.data.y
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

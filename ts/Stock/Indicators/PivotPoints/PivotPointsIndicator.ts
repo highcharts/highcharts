@@ -20,17 +20,10 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend,
-    defined,
-    isArray
-} = U;
+const { merge, extend, defined, isArray } = U;
 
 /**
  *
@@ -62,33 +55,35 @@ class PivotPointsIndicator extends SMAIndicator {
      * @requires     stock/indicators/pivotpoints
      * @optionparent plotOptions.pivotpoints
      */
-    public static defaultOptions: PivotPointsOptions =
-    merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
-            period: 28,
+    public static defaultOptions: PivotPointsOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * Algorithm used to calculate ressistance and support lines based
-             * on pivot points. Implemented algorithms: `'standard'`,
-             * `'fibonacci'` and `'camarilla'`
+             * @excluding index
              */
-            algorithm: 'standard'
-        },
-        marker: {
-            enabled: false
-        },
-        enableMouseTracking: false,
-        dataLabels: {
-            enabled: true,
-            format: '{point.pivotLine}'
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as PivotPointsOptions);
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                period: 28,
+                /**
+                 * Algorithm used to calculate ressistance and support lines
+                 * based on pivot points. Implemented algorithms: `'standard'`,
+                 * `'fibonacci'` and `'camarilla'`
+                 */
+                algorithm: 'standard'
+            },
+            marker: {
+                enabled: false
+            },
+            enableMouseTracking: false,
+            dataLabels: {
+                enabled: true,
+                format: '{point.pivotLine}'
+            },
+            dataGrouping: {
+                approximation: 'averages'
+            }
+        } as PivotPointsOptions
+    );
 
     /**
      *
@@ -108,9 +103,7 @@ class PivotPointsIndicator extends SMAIndicator {
      *
      */
 
-    public toYData(
-        point: PivotPointsPoint
-    ): Array<number> {
+    public toYData(point: PivotPointsPoint): Array<number> {
         return [point.P]; // The rest should not affect extremes
     }
 
@@ -119,24 +112,16 @@ class PivotPointsIndicator extends SMAIndicator {
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
-        indicator.points.forEach(
-            function (
-                point: PivotPointsPoint
-            ): void {
-                indicator.pointArrayMap.forEach(
-                    function (value: string): void {
-                        if (defined((point as any)[value])) {
-                            (point as any)['plot' + value] = (
-                                indicator.yAxis.toPixels(
-                                    (point as any)[value],
-                                    true
-                                )
-                            );
-                        }
-                    }
-                );
-            }
-        );
+        indicator.points.forEach(function (point: PivotPointsPoint): void {
+            indicator.pointArrayMap.forEach(function (value: string): void {
+                if (defined((point as any)[value])) {
+                    (point as any)['plot' + value] = indicator.yAxis.toPixels(
+                        (point as any)[value],
+                        true
+                    );
+                }
+            });
+        });
 
         // Pivot points are rendered as horizontal lines
         // And last point start not from the next one (as it's the last one)
@@ -147,14 +132,25 @@ class PivotPointsIndicator extends SMAIndicator {
         );
     }
 
-    public getGraphPath(this: PivotPointsIndicator, points: Array<LinePoint>): SVGPath {
+    public getGraphPath(
+        this: PivotPointsIndicator,
+        points: Array<LinePoint>
+    ): SVGPath {
         let indicator = this,
             pointsLength: number = points.length,
-            allPivotPoints: Array<Array<LinePoint>> = (
-                [[], [], [], [], [], [], [], [], []]
-            ),
+            allPivotPoints: Array<Array<LinePoint>> = [
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                []
+            ],
             path: SVGPath = [],
-            endPoint: (number|undefined) = indicator.plotEndPoint,
+            endPoint: number | undefined = indicator.plotEndPoint,
             pointArrayMapLength: number = indicator.pointArrayMap.length,
             position: string,
             point: LinePoint,
@@ -166,31 +162,36 @@ class PivotPointsIndicator extends SMAIndicator {
                 position = indicator.pointArrayMap[i];
 
                 if (defined((point as any)[position])) {
-                    allPivotPoints[i].push(({
-                        // Start left:
-                        plotX: point.plotX,
-                        plotY: (point as any)['plot' + position],
-                        isNull: false
-                    } as any), ({
-                        // Go to right:
-                        plotX: endPoint,
-                        plotY: (point as any)['plot' + position],
-                        isNull: false
-                    } as any), ({
-                        // And add null points in path to generate breaks:
-                        plotX: endPoint,
-                        plotY: null,
-                        isNull: true
-                    } as any));
+                    allPivotPoints[i].push(
+                        {
+                            // Start left:
+                            plotX: point.plotX,
+                            plotY: (point as any)['plot' + position],
+                            isNull: false
+                        } as any,
+                        {
+                            // Go to right:
+                            plotX: endPoint,
+                            plotY: (point as any)['plot' + position],
+                            isNull: false
+                        } as any,
+                        {
+                            // And add null points in path to generate breaks:
+                            plotX: endPoint,
+                            plotY: null,
+                            isNull: true
+                        } as any
+                    );
                 }
             }
             endPoint = point.plotX;
         }
-        allPivotPoints.forEach(function (
-            pivotPoints: Array<LinePoint>
-        ): void {
+        allPivotPoints.forEach(function (pivotPoints: Array<LinePoint>): void {
             path = path.concat(
-                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
+                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                    indicator,
+                    pivotPoints
+                )
             );
         });
 
@@ -200,8 +201,8 @@ class PivotPointsIndicator extends SMAIndicator {
     // TODO: Rewrite this logic to use multiple datalabels
     public drawDataLabels(this: PivotPointsIndicator): void {
         let indicator = this,
-            pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
-            currentLabel: (SVGElement|null),
+            pointMapping: Array<string | boolean> = indicator.pointArrayMap,
+            currentLabel: SVGElement | null,
             pointsLength: number,
             point: PivotPointsPoint,
             i: number;
@@ -212,21 +213,23 @@ class PivotPointsIndicator extends SMAIndicator {
             // For every Ressitance/Support group we need to render labels.
             // Add one more item, which will just store dataLabels from
             // previous iteration
-            pointMapping.concat([false]).forEach(
-                function (position: (string|boolean), k: number): void {
+            pointMapping
+                .concat([false])
+                .forEach(function (
+                    position: string | boolean,
+                    k: number
+                ): void {
                     i = pointsLength;
                     while (i--) {
                         point = indicator.points[i];
 
                         if (!position) {
                             // Store S4 dataLabel too:
-                            (point as any)[
-                                'dataLabel' + pointMapping[k - 1]
-                            ] =
+                            (point as any)['dataLabel' + pointMapping[k - 1]] =
                                 point.dataLabel;
                         } else {
-                            point.y = (point as any)[(position as any)];
-                            point.pivotLine = (position as any);
+                            point.y = (point as any)[position as any];
+                            point.pivotLine = position as any;
                             point.plotY = (point as any)['plot' + position];
                             currentLabel = (point as any)[
                                 'dataLabel' + position
@@ -242,20 +245,19 @@ class PivotPointsIndicator extends SMAIndicator {
                             if (!point.dataLabels) {
                                 point.dataLabels = [];
                             }
-                            (point.dataLabels[0] as any) = (
-                                point.dataLabel as any
-                            ) =
+                            (point.dataLabels[0] as any) =
+                                (point.dataLabel as any) =
                                 currentLabel =
-                                currentLabel && currentLabel.element ?
-                                    currentLabel :
-                                    null;
+                                    currentLabel && currentLabel.element
+                                        ? currentLabel
+                                        : null;
                         }
                     }
                     SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(
-                        indicator, arguments
+                        indicator,
+                        arguments
                     );
-                }
-            );
+                });
         }
     }
 
@@ -263,21 +265,19 @@ class PivotPointsIndicator extends SMAIndicator {
         this: PivotPointsIndicator,
         series: TLinkedSeries,
         params: PivotPointsParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            placement: Function = (this as any)[
-                params.algorithm + 'Placement'
-            ],
+            placement: Function = (this as any)[params.algorithm + 'Placement'],
             // 0- from, 1- to, 2- R1, 3- R2, 4- pivot, 5- S1 etc.
             PP: Array<Array<number>> = [],
-            endTimestamp: (number|undefined),
+            endTimestamp: number | undefined,
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            slicedXLen: (number|undefined),
-            slicedX: (Array<number>|undefined),
+            slicedXLen: number | undefined,
+            slicedX: Array<number> | undefined,
             slicedY: Array<Array<number>>,
             lastPP: number,
             pivot: [number, number, number, number],
@@ -285,11 +285,7 @@ class PivotPointsIndicator extends SMAIndicator {
             i: number;
 
         // Pivot Points requires high, low and close values
-        if (
-            xVal.length < period ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4
-        ) {
+        if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
             return;
         }
 
@@ -304,10 +300,7 @@ class PivotPointsIndicator extends SMAIndicator {
             pivot = this.getPivotAndHLC(slicedY);
             avg = placement(pivot);
 
-            lastPP = PP.push(
-                [endTimestamp]
-                    .concat(avg)
-            );
+            lastPP = PP.push([endTimestamp].concat(avg));
 
             xData.push(endTimestamp);
             yData.push(PP[lastPP - 1].slice(1));
@@ -317,10 +310,11 @@ class PivotPointsIndicator extends SMAIndicator {
         // So we use simple logic:
         // Get first point in last range, calculate visible average range
         // and multiply by period
-        this.endPoint = (slicedX as any)[0] + (
-            ((endTimestamp as any) - (slicedX as any)[0]) /
-            (slicedXLen as any)
-        ) * period;
+        this.endPoint =
+            (slicedX as any)[0] +
+            (((endTimestamp as any) - (slicedX as any)[0]) /
+                (slicedXLen as any)) *
+                period;
 
         return {
             values: PP,
@@ -346,11 +340,9 @@ class PivotPointsIndicator extends SMAIndicator {
         return [pivot, high, low, close];
     }
 
-    public standardPlacement(
-        values: Array<number>
-    ): Array<(number|null)> {
+    public standardPlacement(values: Array<number>): Array<number | null> {
         const diff: number = values[1] - values[2],
-            avg: Array<(number|null)> = [
+            avg: Array<number | null> = [
                 null,
                 null,
                 values[0] + diff,
@@ -365,9 +357,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return avg;
     }
 
-    public camarillaPlacement(
-        values: Array<number>
-    ): Array<number> {
+    public camarillaPlacement(values: Array<number>): Array<number> {
         const diff: number = values[1] - values[2],
             avg = [
                 values[3] + diff * 1.5,
@@ -384,9 +374,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return avg;
     }
 
-    public fibonacciPlacement(
-        values: Array<number>
-    ): Array<(number|null)> {
+    public fibonacciPlacement(values: Array<number>): Array<number | null> {
         const diff: number = values[1] - values[2],
             avg = [
                 null,
@@ -404,7 +392,7 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 }
 
-interface PivotPointsIndicator{
+interface PivotPointsIndicator {
     nameBase: string;
     pointArrayMap: Array<string>;
     pointClass: typeof PivotPointsPoint;
@@ -445,4 +433,4 @@ export default PivotPointsIndicator;
  * @apioption series.pivotpoints
  */
 
-''; // to include the above in the js output'
+(''); // to include the above in the js output'

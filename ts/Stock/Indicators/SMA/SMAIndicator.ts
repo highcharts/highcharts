@@ -18,29 +18,16 @@ import type AxisType from '../../../Core/Axis/AxisType';
 import type IndicatorLike from '../IndicatorLike';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type SeriesType from '../../../Core/Series/SeriesType';
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from './SMAOptions';
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
+    seriesTypes: { line: LineSeries }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    error,
-    extend,
-    isArray,
-    merge,
-    pick,
-    splat
-} = U;
+const { addEvent, error, extend, isArray, merge, pick, splat } = U;
 
 import './SMAComposition.js';
 
@@ -73,7 +60,6 @@ declare module '../../../Core/Series/SeriesOptions' {
  * @private
  */
 class SMAIndicator extends LineSeries {
-
     /* *
      *
      *  Static Properties
@@ -109,57 +95,60 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-    public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
-        /**
-         * The name of the series as shown in the legend, tooltip etc. If not
-         * set, it will be based on a technical indicator type and default
-         * params.
-         *
-         * @type {string}
-         */
-        name: void 0,
-        tooltip: {
+    public static defaultOptions: SMAOptions = merge(
+        LineSeries.defaultOptions,
+        {
             /**
-             * Number of decimals in indicator series.
+             * The name of the series as shown in the legend, tooltip etc. If
+             * not set, it will be based on a technical indicator type and
+             * default params.
+             *
+             * @type {string}
              */
-            valueDecimals: 4
-        },
-        /**
-         * The main series ID that indicator will be based on. Required for this
-         * indicator.
-         *
-         * @type {string}
-         */
-        linkedTo: void 0,
-        /**
-         * Whether to compare indicator to the main series values
-         * or indicator values.
-         *
-         * @sample {highstock} stock/plotoptions/series-comparetomain/
-         *         Difference between comparing SMA values to the main series
-         *         and its own values.
-         *
-         * @type {boolean}
-         */
-        compareToMain: false,
-        /**
-         * Paramters used in calculation of regression series' points.
-         */
-        params: {
+            name: void 0,
+            tooltip: {
+                /**
+                 * Number of decimals in indicator series.
+                 */
+                valueDecimals: 4
+            },
             /**
-             * The point index which indicator calculations will base. For
-             * example using OHLC data, index=2 means the indicator will be
-             * calculated using Low values.
+             * The main series ID that indicator will be based on. Required for
+             * this indicator.
+             *
+             * @type {string}
              */
-            index: 3,
+            linkedTo: void 0,
             /**
-             * The base period for indicator calculations. This is the number of
-             * data points which are taken into account for the indicator
-             * calculations.
+             * Whether to compare indicator to the main series values or
+             * indicator values.
+             *
+             * @sample {highstock} stock/plotoptions/series-comparetomain/
+             *         Difference between comparing SMA values to the main
+             *         series and its own values.
+             *
+             * @type {boolean}
              */
-            period: 14
-        }
-    } as SMAOptions);
+            compareToMain: false,
+            /**
+             * Paramters used in calculation of regression series' points.
+             */
+            params: {
+                /**
+                 * The point index which indicator calculations will base. For
+                 * example using OHLC data, index=2 means the indicator will be
+                 * calculated using Low values.
+                 */
+                index: 3,
+                /**
+                 * The base period for indicator calculations. This is the
+                 * number of data points which are taken into account for the
+                 * indicator calculations.
+                 */
+                period: 14
+            }
+        } as SMAOptions
+    );
 
     /* *
      *
@@ -191,9 +180,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public destroy(): void {
-        this.dataEventsToUnbind.forEach(function (
-            unbinder: Function
-        ): void {
+        this.dataEventsToUnbind.forEach(function (unbinder: Function): void {
             unbinder();
         });
         super.destroy.apply(this, arguments);
@@ -207,18 +194,19 @@ class SMAIndicator extends LineSeries {
             params: Array<string> = [];
 
         if (!name) {
-
-            (this.nameComponents || []).forEach(
-                function (component: string, index: number): void {
-                    params.push(
-                        (this.options.params as any)[component] +
+            (this.nameComponents || []).forEach(function (
+                component: string,
+                index: number
+            ): void {
+                params.push(
+                    (this.options.params as any)[component] +
                         pick(this.nameSuffixes[index], '')
-                    );
-                },
-                this
-            );
+                );
+            },
+            this);
 
-            name = (this.nameBase || this.type.toUpperCase()) +
+            name =
+                (this.nameBase || this.type.toUpperCase()) +
                 (this.nameComponents ? ' (' + params.join(', ') + ')' : '');
         }
 
@@ -231,10 +219,11 @@ class SMAIndicator extends LineSeries {
     public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
         series: TLinkedSeries,
         params: SMAParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
-            yVal: Array<(number|Array<(number|null)>|null)> = series.yData as any,
+            yVal: Array<number | Array<number | null> | null> =
+                series.yData as any,
             yValLen = yVal.length,
             range = 0,
             sum = 0,
@@ -242,8 +231,8 @@ class SMAIndicator extends LineSeries {
             xData: Array<number> = [],
             yData: Array<number> = [],
             index = -1,
-            i: (number|undefined),
-            SMAPoint: (Array<number>|undefined);
+            i: number | undefined,
+            SMAPoint: Array<number> | undefined;
 
         if (xVal.length < period) {
             return;
@@ -269,11 +258,8 @@ class SMAIndicator extends LineSeries {
             xData.push(SMAPoint[0]);
             yData.push(SMAPoint[1]);
 
-            sum -= (
-                index < 0 ?
-                    yVal[i - range] :
-                    (yVal as any)[i - range][index]
-            );
+            sum -=
+                index < 0 ? yVal[i - range] : (yVal as any)[i - range][index];
         }
 
         return {
@@ -286,66 +272,64 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public init(
-        chart: Chart,
-        options: SMAOptions
-    ): void {
+    public init(chart: Chart, options: SMAOptions): void {
         const indicator = this;
 
-        super.init.call(
-            indicator,
-            chart,
-            options
-        );
+        super.init.call(indicator, chart, options);
 
         // Only after series are linked indicator can be processed.
-        const linkedSeriesUnbiner = addEvent(Chart, 'afterLinkSeries', function (): void {
-            const hasEvents = !!indicator.dataEventsToUnbind.length;
+        const linkedSeriesUnbiner = addEvent(
+            Chart,
+            'afterLinkSeries',
+            function (): void {
+                const hasEvents = !!indicator.dataEventsToUnbind.length;
 
-            if (indicator.linkedParent) {
-                if (!hasEvents) {
-                    indicator.dataEventsToUnbind.push(
-                        addEvent<AxisType|SeriesType>(
-                            indicator.bindTo.series ?
-                                indicator.linkedParent :
-                                indicator.linkedParent.xAxis,
-                            indicator.bindTo.eventName,
-                            function (): void {
-                                indicator.recalculateValues();
-                            }
-                        )
-                    );
-                }
-
-                if (indicator.calculateOn === 'init') {
-                    if (!indicator.processedYData) {
-                        indicator.recalculateValues();
-                    }
-                } else {
+                if (indicator.linkedParent) {
                     if (!hasEvents) {
-                        const unbinder = addEvent(
-                            indicator.chart,
-                            indicator.calculateOn,
-                            function (): void {
-                                indicator.recalculateValues();
-                                // Call this just once, on init
-                                unbinder();
-                            }
+                        indicator.dataEventsToUnbind.push(
+                            addEvent<AxisType | SeriesType>(
+                                indicator.bindTo.series
+                                    ? indicator.linkedParent
+                                    : indicator.linkedParent.xAxis,
+                                indicator.bindTo.eventName,
+                                function (): void {
+                                    indicator.recalculateValues();
+                                }
+                            )
                         );
                     }
+
+                    if (indicator.calculateOn === 'init') {
+                        if (!indicator.processedYData) {
+                            indicator.recalculateValues();
+                        }
+                    } else {
+                        if (!hasEvents) {
+                            const unbinder = addEvent(
+                                indicator.chart,
+                                indicator.calculateOn,
+                                function (): void {
+                                    indicator.recalculateValues();
+                                    // Call this just once, on init
+                                    unbinder();
+                                }
+                            );
+                        }
+                    }
+                } else {
+                    return error(
+                        'Series ' +
+                            indicator.options.linkedTo +
+                            ' not found! Check `linkedTo`.',
+                        false,
+                        chart
+                    ) as any;
                 }
-            } else {
-                return error(
-                    'Series ' +
-                    indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.',
-                    false,
-                    chart
-                ) as any;
+            },
+            {
+                order: 0
             }
-        }, {
-            order: 0
-        });
+        );
 
         // Make sure we find series which is a base for an indicator
         // chart.linkSeries();
@@ -362,7 +346,7 @@ class SMAIndicator extends LineSeries {
         let indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
+            processedData: IndicatorValuesObject<typeof LineSeries.prototype> =
                 indicator.getValues(
                     indicator.linkedParent,
                     indicator.options.params as any
@@ -370,7 +354,7 @@ class SMAIndicator extends LineSeries {
                     values: [],
                     xData: [],
                     yData: []
-                }),
+                },
             croppedDataValues = [],
             overwriteData = true,
             oldFirstPointIndex,
@@ -405,11 +389,11 @@ class SMAIndicator extends LineSeries {
 
                 for (i = 0; i < croppedData.xData.length; i++) {
                     // (#10774)
-                    croppedDataValues.push([
-                        croppedData.xData[i]
-                    ].concat(
-                        splat(croppedData.yData[i])
-                    ));
+                    croppedDataValues.push(
+                        [croppedData.xData[i]].concat(
+                            splat(croppedData.yData[i])
+                        )
+                    );
                 }
 
                 oldFirstPointIndex = processedData.xData.indexOf(
@@ -433,7 +417,7 @@ class SMAIndicator extends LineSeries {
 
                 indicator.updateData(croppedDataValues);
 
-            // Omit addPoint() and removePoint() cases
+                // Omit addPoint() and removePoint() cases
             } else if (
                 processedData.xData.length !== oldDataLength - 1 &&
                 processedData.xData.length !== oldDataLength + 1
@@ -445,8 +429,8 @@ class SMAIndicator extends LineSeries {
 
         if (overwriteData) {
             indicator.xData = processedData.xData;
-            indicator.yData = (processedData.yData as any);
-            indicator.options.data = (processedData.values as any);
+            indicator.yData = processedData.yData as any;
+            indicator.options.data = processedData.values as any;
         }
 
         // Removal of processedXData property is required because on
@@ -463,7 +447,7 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public processData(): (boolean|undefined) {
+    public processData(): boolean | undefined {
         const series = this,
             compareToMain = series.options.compareToMain,
             linkedParent = series.linkedParent;
@@ -485,7 +469,6 @@ class SMAIndicator extends LineSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -554,4 +537,4 @@ export default SMAIndicator;
  * @apioption series.sma
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

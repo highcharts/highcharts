@@ -38,7 +38,6 @@ const { merge } = U;
  * @private
  */
 class CSVParser extends DataParser<DataParser.Event> {
-
     /* *
      *
      *  Static Properties
@@ -91,7 +90,6 @@ class CSVParser extends DataParser<DataParser.Event> {
     private options: CSVParser.ClassJSONOptions;
     public converter: DataConverter;
 
-
     /**
      * Initiates parsing of CSV
      *
@@ -112,20 +110,12 @@ class CSVParser extends DataParser<DataParser.Event> {
             dataTypes = parser.dataTypes,
             converter = parser.converter,
             parserOptions = merge(this.options, options),
-            {
-                beforeParse,
-                lineDelimiter,
-                firstRowAsNames,
-                itemDelimiter
-            } = parserOptions;
+            { beforeParse, lineDelimiter, firstRowAsNames, itemDelimiter } =
+                parserOptions;
 
         let lines,
             rowIt = 0,
-            {
-                csv,
-                startRow,
-                endRow
-            } = parserOptions,
+            { csv, startRow, endRow } = parserOptions,
             column;
 
         parser.columns = [];
@@ -162,8 +152,9 @@ class CSVParser extends DataParser<DataParser.Event> {
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                const headers = lines[0]
-                    .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+                const headers = lines[0].split(
+                    itemDelimiter || parser.guessedItemDelimiter || ','
+                );
 
                 // Remove ""s from the headers
                 for (let i = 0; i < headers.length; i++) {
@@ -185,13 +176,16 @@ class CSVParser extends DataParser<DataParser.Event> {
                 }
             }
 
-            if (dataTypes.length &&
+            if (
+                dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' && // format is a string date
                 !parser.converter.getDateFormat()
             ) {
                 parser.converter.deduceDateFormat(
-                    parser.columns[0] as Array<string>, null, true
+                    parser.columns[0] as Array<string>,
+                    null,
+                    true
                 );
             }
 
@@ -201,7 +195,9 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        let cellValue = converter.asGuessedType(column[j] as string);
+                        let cellValue = converter.asGuessedType(
+                            column[j] as string
+                        );
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
@@ -222,16 +218,14 @@ class CSVParser extends DataParser<DataParser.Event> {
     /**
      * Internal method that parses a single CSV row
      */
-    private parseCSVRow(
-        columnStr: string,
-        rowNumber: number
-    ): void {
+    private parseCSVRow(columnStr: string, rowNumber: number): void {
         const parser = this,
             converter = this.converter,
             columns = parser.columns || [],
             dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
-            itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+            itemDelimiter =
+                parser.options.itemDelimiter || parser.guessedItemDelimiter;
 
         let { decimalPoint } = parser.options;
         if (!decimalPoint || decimalPoint === itemDelimiter) {
@@ -242,7 +236,7 @@ class CSVParser extends DataParser<DataParser.Event> {
             c = '',
             cl = '',
             cn = '',
-            token: (number|string) = '',
+            token: number | string = '',
             actualColumn = 0,
             column = 0;
 
@@ -353,7 +347,6 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                     read(++i);
                 }
-
             } else if (c === itemDelimiter) {
                 push();
 
@@ -364,7 +357,6 @@ class CSVParser extends DataParser<DataParser.Event> {
         }
 
         push();
-
     }
 
     /**
@@ -374,7 +366,6 @@ class CSVParser extends DataParser<DataParser.Event> {
      * The CSV, split into lines
      */
     private guessDelimiter(lines: Array<string>): string {
-
         let points = 0,
             commas = 0,
             guessed: string;
@@ -429,7 +420,6 @@ class CSVParser extends DataParser<DataParser.Event> {
                         inStr = true;
                     }
                 } else if (typeof potDelimiters[c] !== 'undefined') {
-
                     token = token.trim();
 
                     if (!isNaN(Date.parse(token))) {
@@ -442,7 +432,6 @@ class CSVParser extends DataParser<DataParser.Event> {
                     }
 
                     token = '';
-
                 } else {
                     token += c;
                 }
@@ -489,11 +478,9 @@ class CSVParser extends DataParser<DataParser.Event> {
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
-
 }
 
 namespace CSVParser {
-
     /**
      * Interface for the BeforeParse callback function
      *

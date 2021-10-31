@@ -58,7 +58,7 @@ declare module '../../Core/Legend/LegendOptions' {
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface Options {
         accessibility?: Highcharts.AccessibilityOptions;
     }
@@ -86,8 +86,8 @@ declare global {
             (
                 updatedSeries: Array<Series>,
                 addedSeries?: Series,
-                addedPoint?: Point,
-            ): false|string;
+                addedPoint?: Point
+            ): false | string;
         }
         interface AccessibilityAnnounceNewDataOptions {
             announcementFormatter?: AccessibilityAnnouncementFormatter;
@@ -105,14 +105,12 @@ declare global {
             enabled: boolean;
             focusBorder: AccessibilityKeyboardNavigationFocusBorderOptions;
             order: Array<string>;
-            seriesNavigation: (
-                AccessibilityKeyboardNavigationSeriesNavigationOptions
-            );
+            seriesNavigation: AccessibilityKeyboardNavigationSeriesNavigationOptions;
             wrapAround: boolean;
         }
         interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
             mode?: string;
-            pointNavigationEnabledThreshold: (boolean|number);
+            pointNavigationEnabledThreshold: boolean | number;
             skipNullPoints: boolean;
         }
         interface AccessibilityOptions {
@@ -123,7 +121,7 @@ declare global {
             highContrastTheme: AnyRecord;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
-            linkedDescription: (string|HTMLDOMElement);
+            linkedDescription: string | HTMLDOMElement;
             point: AccessibilityPointOptions;
             series: AccessibilitySeriesOptions;
             screenReaderSection: AccessibilityScreenReaderSectionOptions;
@@ -148,11 +146,9 @@ declare global {
             onViewDataTableClick?: ScreenReaderClickCallbackFunction;
         }
         interface AccessibilitySeriesOptions {
-            descriptionFormatter?: (
-                ScreenReaderFormatterCallbackFunction<Series>
-            );
+            descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Series>;
             describeSingleSeries: boolean;
-            pointDescriptionEnabledThreshold: (boolean|number);
+            pointDescriptionEnabledThreshold: boolean | number;
         }
         interface ExportingAccessibilityOptions {
             enabled: boolean;
@@ -186,9 +182,7 @@ declare global {
             description?: string;
             enabled?: boolean;
             exposeAsGroupOnly?: boolean;
-            keyboardNavigation?: (
-                SeriesAccessibilityKeyboardNavigationOptions
-            );
+            keyboardNavigation?: SeriesAccessibilityKeyboardNavigationOptions;
             point: AccessibilityPointOptions;
         }
     }
@@ -221,13 +215,13 @@ declare global {
 
 /**
  * @interface Highcharts.PointAccessibilityOptionsObject
- *//**
+ */ /**
  * Provide a description of the data point, announced to screen readers.
  * @name Highcharts.PointAccessibilityOptionsObject#description
  * @type {string|undefined}
  * @requires modules/accessibility
  * @since 7.1.0
- *//**
+ */ /**
  * Enable or disable exposing the point to assistive technology
  * @name Highcharts.PointAccessibilityOptionsObject#enabled
  * @type {boolean|undefined}
@@ -237,7 +231,7 @@ declare global {
 
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
+ */ /**
  * @name Highcharts.PointOptionsObject#accessibility
  * @type {Highcharts.PointAccessibilityOptionsObject|undefined}
  * @requires modules/accessibility
@@ -266,7 +260,6 @@ declare global {
  */
 
 const Options: DeepPartial<OptionsType> = {
-
     /**
      * Options for configuring accessibility for the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
@@ -589,7 +582,8 @@ const Options: DeepPartial<OptionsType> = {
          * @type  {string|Highcharts.HTMLDOMElement}
          * @since 8.0.0
          */
-        linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line
+        linkedDescription:
+            '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line
 
         /**
          * A hook for adding custom components to the accessibility module.
@@ -664,7 +658,6 @@ const Options: DeepPartial<OptionsType> = {
          * @since   5.0.0
          */
         keyboardNavigation: {
-
             /**
              * Enable keyboard navigation for the chart.
              *
@@ -683,7 +676,6 @@ const Options: DeepPartial<OptionsType> = {
              * @since   6.0.3
              */
             focusBorder: {
-
                 /**
                  * Enable/disable focus border for chart.
                  *
@@ -725,7 +717,6 @@ const Options: DeepPartial<OptionsType> = {
                  * @since 6.0.3
                  */
                 margin: 2
-
             },
 
             /**
@@ -1032,7 +1023,6 @@ const Options: DeepPartial<OptionsType> = {
          * @requires  modules/accessibility
          */
         accessibility: {
-
             /**
              * Enable accessibility support for the legend.
              *
@@ -1079,7 +1069,6 @@ const Options: DeepPartial<OptionsType> = {
             enabled: true
         }
     }
-
 };
 
 namespace Options {

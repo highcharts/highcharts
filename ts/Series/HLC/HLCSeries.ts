@@ -24,15 +24,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import HLCPoint from './HLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -50,7 +45,6 @@ const {
  * @augments Highcharts.Series
  */
 class HLCSeries extends ColumnSeries {
-
     /* *
      *
      *  Static Properties
@@ -71,100 +65,100 @@ class HLCSeries extends ColumnSeries {
      * @product      highstock
      * @optionparent plotOptions.hlc
      */
-    public static defaultOptions: HLCSeriesOptions = merge(ColumnSeries.defaultOptions, {
-
-        /**
-         * The approximate pixel width of each group. If for example a series
-         * with 30 points is displayed over a 600 pixel wide plot area, no
-         * grouping is performed. If however the series contains so many points
-         * that the spacing is less than the groupPixelWidth, Highcharts will
-         * try to group it into appropriate groups so that each is more or less
-         * two pixels wide. Defaults to `5`.
-         *
-         * @type      {number}
-         * @default   5
-         * @product   highstock
-         * @apioption plotOptions.hlc.dataGrouping.groupPixelWidth
-         */
-
-        /**
-         * @type      {Highcharts.DataGroupingApproximationValue|Function}
-         * @default   hlc
-         * @product   highstock
-         * @apioption plotOptions.hlc.dataGrouping.approximation
-         */
-
-        /**
-         * @default   close
-         * @apioption plotOptions.hlc.colorKey
-         */
-
-        /**
-         * The pixel width of the line/border. Defaults to `1`.
-         *
-         * @sample {highstock} stock/plotoptions/hlc-linewidth/
-         *         A greater line width
-         *
-         * @type    {number}
-         * @default 1
-         * @product highstock
-         *
-         * @public
-         */
-        lineWidth: 1,
-
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<b> {series.name}</b><br/>' +
-            'High: {point.high}<br/>' +
-            'Low: {point.low}<br/>' +
-            'Close: {point.close}<br/>'
-        },
-
-        threshold: null as any,
-
-        states: {
+    public static defaultOptions: HLCSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            /**
+             * The approximate pixel width of each group. If for example a
+             * series with 30 points is displayed over a 600 pixel wide plot
+             * area, no grouping is performed. If however the series contains so
+             * many points that the spacing is less than the groupPixelWidth,
+             * Highcharts will try to group it into appropriate groups so that
+             * each is more or less two pixels wide. Defaults to `5`.
+             *
+             * @type      {number}
+             * @default   5
+             * @product   highstock
+             * @apioption plotOptions.hlc.dataGrouping.groupPixelWidth
+             */
 
             /**
-             * @extends plotOptions.column.states.hover
-             * @product highstock
+             * @type      {Highcharts.DataGroupingApproximationValue|Function}
+             * @default   hlc
+             * @product   highstock
+             * @apioption plotOptions.hlc.dataGrouping.approximation
              */
-            hover: {
 
+            /**
+             * @default   close
+             * @apioption plotOptions.hlc.colorKey
+             */
+
+            /**
+             * The pixel width of the line/border. Defaults to `1`.
+             *
+             * @sample {highstock} stock/plotoptions/hlc-linewidth/
+             *         A greater line width
+             *
+             * @type    {number}
+             * @default 1
+             * @product highstock
+             *
+             * @public
+             */
+            lineWidth: 1,
+
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '<b> {series.name}</b><br/>' +
+                    'High: {point.high}<br/>' +
+                    'Low: {point.low}<br/>' +
+                    'Close: {point.close}<br/>'
+            },
+
+            threshold: null as any,
+
+            states: {
                 /**
-                 * The pixel width of the line representing the HLC point.
-                 *
-                 * @type    {number}
-                 * @default 3
+                 * @extends plotOptions.column.states.hover
                  * @product highstock
                  */
-                lineWidth: 3
-            }
-        },
+                hover: {
+                    /**
+                     * The pixel width of the line representing the HLC point.
+                     *
+                     * @type    {number}
+                     * @default 3
+                     * @product highstock
+                     */
+                    lineWidth: 3
+                }
+            },
 
-        /**
-         * Determines which one of  `high`, `low`, `close` values should
-         * be represented as `point.y`, which is later used to set dataLabel
-         * position and [compare](#plotOptions.series.compare).
-         *
-         * @sample {highstock} stock/plotoptions/hlc-pointvalkey/
-         *         Possible values
-         *
-         * @type       {string}
-         * @default    close
-         * @validvalue ["high", "low", "close"]
-         * @product    highstock
-         * @apioption  plotOptions.hlc.pointValKey
-         */
+            /**
+             * Determines which one of  `high`, `low`, `close` values should
+             * be represented as `point.y`, which is later used to set dataLabel
+             * position and [compare](#plotOptions.series.compare).
+             *
+             * @sample {highstock} stock/plotoptions/hlc-pointvalkey/
+             *         Possible values
+             *
+             * @type       {string}
+             * @default    close
+             * @validvalue ["high", "low", "close"]
+             * @product    highstock
+             * @apioption  plotOptions.hlc.pointValKey
+             */
 
-        /**
-         * @default   close
-         * @apioption plotOptions.hlc.colorKey
-         */
+            /**
+             * @default   close
+             * @apioption plotOptions.hlc.colorKey
+             */
 
-        stickyTracking: true
-
-    } as HLCSeriesOptions);
+            stickyTracking: true
+        } as HLCSeriesOptions
+    );
 
     /* *
      *
@@ -207,18 +201,11 @@ class HLCSeries extends ColumnSeries {
         // We don't need to worry about crisp - close value
         // is already crisped and halfStrokeWidth should remove it.
         if (typeof start[2] === 'number') {
-            start[2] = Math.max(
-                value + halfStrokeWidth,
-                start[2]
-            );
+            start[2] = Math.max(value + halfStrokeWidth, start[2]);
         }
         if (typeof end[2] === 'number') {
-            end[2] = Math.min(
-                value - halfStrokeWidth,
-                end[2]
-            );
+            end[2] = Math.min(value - halfStrokeWidth, end[2]);
         }
-
     }
 
     /**
@@ -261,13 +248,11 @@ class HLCSeries extends ColumnSeries {
         return path;
     }
 
-
     /**
      * Draw single point
      * @private
      */
     public drawSinglePoint(point: HLCPoint): void {
-
         const series = point.series,
             chart = series.chart;
         let path: SVGPath,
@@ -275,10 +260,10 @@ class HLCSeries extends ColumnSeries {
             isNew = !graphic;
 
         if (typeof point.plotY !== 'undefined') {
-
             // Create and/or update the graphic
             if (!graphic) {
-                point.graphic = graphic = chart.renderer.path()
+                point.graphic = graphic = chart.renderer
+                    .path()
                     .add(series.group);
             }
 
@@ -293,9 +278,10 @@ class HLCSeries extends ColumnSeries {
 
             // crisp vector coordinates
             path = series.getPointPath(point, graphic);
-            graphic[isNew ? 'attr' : 'animate']({ d: path })
-                .addClass(point.getClassName(), true);
-
+            graphic[isNew ? 'attr' : 'animate']({ d: path }).addClass(
+                point.getClassName(),
+                true
+            );
         }
     }
 
@@ -327,11 +313,7 @@ class HLCSeries extends ColumnSeries {
         point: HLCPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        const attribs = super.pointAttribs.call(
-            this,
-            point,
-            state
-        );
+        const attribs = super.pointAttribs.call(this, point, state);
 
         delete attribs.fill;
 
@@ -365,17 +347,15 @@ class HLCSeries extends ColumnSeries {
 
         // Do the translation
         series.points.forEach(function (point): void {
-            names.forEach(
-                function (name: string, i: number): void {
-                    let value = (point as any)[name];
-                    if (value !== null) {
-                        if (series.dataModify) {
-                            value = series.dataModify.modifyValue(value);
-                        }
-                        (point as any)[translated[i]] =
-                            yAxis.toPixels(value, true);
+            names.forEach(function (name: string, i: number): void {
+                let value = (point as any)[name];
+                if (value !== null) {
+                    if (series.dataModify) {
+                        value = series.dataModify.modifyValue(value);
                     }
-                });
+                    (point as any)[translated[i]] = yAxis.toPixels(value, true);
+                }
+            });
 
             // Align the tooltip to the high value to avoid covering the
             // point
@@ -385,7 +365,6 @@ class HLCSeries extends ColumnSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -507,4 +486,4 @@ export default HLCSeries;
  * @apioption series.hlc.data.close
  */
 
-''; // adds doclets above to transpilat
+(''); // adds doclets above to transpilat

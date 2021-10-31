@@ -10,23 +10,15 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    RSIOptions,
-    RSIParamsOptions
-} from './RSIOptions';
+import type { RSIOptions, RSIParamsOptions } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isNumber,
-    merge
-} = U;
+const { isNumber, merge } = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -61,12 +53,15 @@ class RSIIndicator extends SMAIndicator {
      * @requires     stock/indicators/rsi
      * @optionparent plotOptions.rsi
      */
-    public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            decimals: 4,
-            index: 3
-        }
-    } as RSIOptions);
+    public static defaultOptions: RSIOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                decimals: 4,
+                index: 3
+            }
+        } as RSIOptions
+    );
 
     /* *
      *
@@ -87,19 +82,19 @@ class RSIIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: RSIParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<number> | Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<number> | Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            decimals: number = (params.decimals as any),
+            decimals: number = params.decimals as any,
             // RSI starts calculations from the second point
             // Cause we need to calculate change between two points
             range = 1,
             RSI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            index = (params.index as number),
+            index = params.index as number,
             gain = 0,
             loss = 0,
             RSIPoint: number,
@@ -109,7 +104,7 @@ class RSIIndicator extends SMAIndicator {
             i: number,
             values: Array<number>;
 
-        if ((xVal.length < period)) {
+        if (xVal.length < period) {
             return;
         }
 
@@ -120,15 +115,14 @@ class RSIIndicator extends SMAIndicator {
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
-            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
+            values = (yVal as Array<Array<number>>).map(
+                (value: Array<number>): number => value[index]
+            );
         }
 
         // Calculate changes for first N points
         while (range < period) {
-            change = toFixed(
-                values[range] - values[range - 1],
-                decimals
-            );
+            change = toFixed(values[range] - values[range - 1], decimals);
 
             if (change > 0) {
                 gain += change;
@@ -167,13 +161,13 @@ class RSIIndicator extends SMAIndicator {
             // to 100:
             if (avgLoss === 0) {
                 RSIPoint = 100;
-            // If average-gain is equal zero, then by definition RSI is set
-            // to 0:
+                // If average-gain is equal zero, then by definition RSI is set
+                // to 0:
             } else if (avgGain === 0) {
                 RSIPoint = 0;
             } else {
                 RSIPoint = toFixed(
-                    100 - (100 / (1 + (avgGain / avgLoss))),
+                    100 - 100 / (1 + avgGain / avgLoss),
                     decimals
                 );
             }
@@ -235,4 +229,4 @@ export default RSIIndicator;
  * @apioption series.rsi
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -26,9 +26,7 @@ import type {
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import XRangeSeries from './XRangeSeries.js';
 import U from '../../Core/Utilities.js';
@@ -53,7 +51,6 @@ declare module '../../Core/Series/PointLike' {
  * */
 
 class XRangePoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Static properties
@@ -74,14 +71,11 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      * @return {object}
      *         Returns an object containing the properties color and colorIndex.
      */
-    public static getColorByCategory(
-        series: Series,
-        point: Point
-    ): AnyRecord {
+    public static getColorByCategory(series: Series, point: Point): AnyRecord {
         const colors = series.options.colors || series.chart.options.colors,
-            colorCount = colors ?
-                colors.length :
-                series.chart.options.chart.colorCount as any,
+            colorCount = colors
+                ? colors.length
+                : (series.chart.options.chart.colorCount as any),
             colorIndex = (point.y as any) % colorCount,
             color = colors && colors[colorIndex];
 
@@ -143,7 +137,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
         } else if (!this.color) {
             this.color = series.color;
         }
-
     }
     /**
      * Extend init to have y default to 0.
@@ -198,8 +191,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      * @return {boolean}
      */
     public isValid(): boolean {
-        return typeof this.x === 'number' &&
-        typeof this.x2 === 'number';
+        return typeof this.x === 'number' && typeof this.x2 === 'number';
     }
     /* eslint-enable valid-jsdoc */
 }
@@ -231,13 +223,11 @@ interface XRangePoint {
     tooltipDateKeys: Array<string>;
     x2?: number;
     yCategory?: string;
-
 }
 extend(XRangePoint.prototype, {
     ttBelow: false,
     tooltipDateKeys: ['x', 'x2']
 });
-
 
 /* *
  *

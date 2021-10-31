@@ -9,25 +9,16 @@
 'use strict';
 
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
+    seriesTypes: { ema: EMAIndicator }
 } = SeriesRegistry;
-import type {
-    APOOptions,
-    APOParamsOptions
-} from './APOOptions';
+import type { APOOptions, APOParamsOptions } from './APOOptions';
 import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    error
-} = U;
+const { extend, merge, error } = U;
 
 /* *
  *
@@ -45,7 +36,6 @@ const {
  * @augments Highcharts.Series
  */
 class APOIndicator extends EMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -69,25 +59,28 @@ class APOIndicator extends EMAIndicator {
      * @requires     stock/indicators/apo
      * @optionparent plotOptions.apo
      */
-    public static defaultOptions: APOOptions = merge(EMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of Absolute Price Oscillator
-         * series points.
-         *
-         * @excluding period
-         */
-        params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+    public static defaultOptions: APOOptions = merge(
+        EMAIndicator.defaultOptions,
+        {
             /**
-             * Periods for Absolute Price Oscillator calculations.
+             * Paramters used in calculation of Absolute Price Oscillator
+             * series points.
              *
-             * @type    {Array<number>}
-             * @default [10, 20]
-             * @since   7.0.0
+             * @excluding period
              */
-            periods: [10, 20]
-        }
-    } as APOOptions);
+            params: {
+                period: void 0, // unchangeable period, do not inherit (#15362)
+                /**
+                 * Periods for Absolute Price Oscillator calculations.
+                 *
+                 * @type    {Array<number>}
+                 * @default [10, 20]
+                 * @since   7.0.0
+                 */
+                periods: [10, 20]
+            }
+        } as APOOptions
+    );
 
     /* *
      *
@@ -108,24 +101,18 @@ class APOIndicator extends EMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: APOParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let periods: Array<number> = (params.periods as number[]),
-            index: number = (params.index as number),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let periods: Array<number> = params.periods as number[],
+            index: number = params.index as number,
             // 0- date, 1- Absolute price oscillator
             APO: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             periodsOffset: number,
             // Shorter Period EMA
-            SPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
+            SPE: IndicatorValuesObject<TLinkedSeries> | undefined,
             // Longer Period EMA
-            LPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
+            LPE: IndicatorValuesObject<TLinkedSeries> | undefined,
             oscillator: number,
             i: number;
 
@@ -133,7 +120,7 @@ class APOIndicator extends EMAIndicator {
         if (periods.length !== 2 || periods[1] <= periods[0]) {
             error(
                 'Error: "APO requires two periods. Notice, first period ' +
-                'should be lower than the second one."'
+                    'should be lower than the second one."'
             );
             return;
         }
@@ -156,10 +143,8 @@ class APOIndicator extends EMAIndicator {
         periodsOffset = periods[1] - periods[0];
 
         for (i = 0; i < LPE.yData.length; i++) {
-            oscillator = (
-                (SPE as any).yData[i + periodsOffset] -
-                (LPE as any).yData[i]
-            );
+            oscillator =
+                (SPE as any).yData[i + periodsOffset] - (LPE as any).yData[i];
 
             APO.push([(LPE as any).xData[i], oscillator]);
             xData.push((LPE as any).xData[i]);
@@ -175,10 +160,10 @@ class APOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *   Prototype Properties
+ *
+ * */
 
 interface APOIndicator {
     nameBase: string;
@@ -228,4 +213,4 @@ export default APOIndicator;
  * @apioption series.apo
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

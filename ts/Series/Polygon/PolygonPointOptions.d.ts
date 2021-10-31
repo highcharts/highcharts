@@ -20,8 +20,7 @@ import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
  * Declarations
  *
  * */
-export interface PolygonPointOptions extends ScatterPointOptions {
-}
+export interface PolygonPointOptions extends ScatterPointOptions {}
 
 /* *
  *

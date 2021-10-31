@@ -12,28 +12,22 @@
 
 'use strict';
 
-
 /* *
  *
  *  Imports
  *
  * */
 
-
 import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT,
-    getChartTitle
-} = CU;
+const { unhideChartElementFromAT, getChartTitle } = CU;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from '../Utils/HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
-
 
 /**
  * The ContainerComponent class
@@ -43,7 +37,6 @@ const { stripHTMLTagsFromString: stripHTMLTags } = HU;
  * @name Highcharts.ContainerComponent
  */
 class ContainerComponent extends AccessibilityComponent {
-
     /* *
      *
      *  Properties
@@ -60,7 +53,6 @@ class ContainerComponent extends AccessibilityComponent {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Called on first render/updates to the chart, including options changes.
      */
@@ -72,34 +64,31 @@ class ContainerComponent extends AccessibilityComponent {
         this.makeCreditsAccessible();
     }
 
-
     /**
      * @private
      */
     public handleSVGTitleElement(): void {
         const chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
-            titleContents = stripHTMLTags(chart.langFormat(
-                'accessibility.svgContainerTitle', {
+            titleContents = stripHTMLTags(
+                chart.langFormat('accessibility.svgContainerTitle', {
                     chartTitle: getChartTitle(chart)
-                }
-            ));
+                })
+            );
 
         if (titleContents.length) {
-            const titleElement = this.svgTitleElement =
-                this.svgTitleElement || doc.createElementNS(
-                    'http://www.w3.org/2000/svg',
-                    'title'
-                );
+            const titleElement = (this.svgTitleElement =
+                this.svgTitleElement ||
+                doc.createElementNS('http://www.w3.org/2000/svg', 'title'));
 
             titleElement.textContent = titleContents;
             titleElement.id = titleId;
             chart.renderTo.insertBefore(
-                titleElement, chart.renderTo.firstChild
+                titleElement,
+                chart.renderTo.firstChild
             );
         }
     }
-
 
     /**
      * @private
@@ -107,7 +96,8 @@ class ContainerComponent extends AccessibilityComponent {
     public setSVGContainerLabel(): void {
         const chart = this.chart,
             svgContainerLabel = chart.langFormat(
-                'accessibility.svgContainerLabel', {
+                'accessibility.svgContainerLabel',
+                {
                     chartTitle: getChartTitle(chart)
                 }
             );
@@ -116,7 +106,6 @@ class ContainerComponent extends AccessibilityComponent {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
     }
-
 
     /**
      * @private
@@ -132,7 +121,6 @@ class ContainerComponent extends AccessibilityComponent {
         }
     }
 
-
     /**
      * @private
      */
@@ -147,16 +135,12 @@ class ContainerComponent extends AccessibilityComponent {
 
         chart.renderTo.setAttribute(
             'aria-label',
-            chart.langFormat(
-                'accessibility.chartContainerLabel',
-                {
-                    title: getChartTitle(chart),
-                    chart: chart
-                }
-            )
+            chart.langFormat('accessibility.chartContainerLabel', {
+                title: getChartTitle(chart),
+                chart: chart
+            })
         );
     }
-
 
     /**
      * @private
@@ -168,16 +152,15 @@ class ContainerComponent extends AccessibilityComponent {
         if (credits) {
             if (credits.textStr) {
                 credits.element.setAttribute(
-                    'aria-label', chart.langFormat(
-                        'accessibility.credits',
-                        { creditsStr: stripHTMLTags(credits.textStr) }
-                    )
+                    'aria-label',
+                    chart.langFormat('accessibility.credits', {
+                        creditsStr: stripHTMLTags(credits.textStr)
+                    })
                 );
             }
             unhideChartElementFromAT(chart, credits.element);
         }
     }
-
 
     /**
      * Empty handler to just set focus on chart
@@ -188,7 +171,7 @@ class ContainerComponent extends AccessibilityComponent {
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return true;
             },
 
@@ -201,22 +184,18 @@ class ContainerComponent extends AccessibilityComponent {
         });
     }
 
-
     /**
      * Accessibility disabled/chart destroyed.
      */
     public destroy(): void {
         this.chart.renderTo.setAttribute('aria-hidden', true);
     }
-
 }
-
 
 /* *
  *
  *  Default Export
  *
  * */
-
 
 export default ContainerComponent;

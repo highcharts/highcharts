@@ -16,10 +16,10 @@ import type IKHIndicator from './IKHIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *
-*
-* Class
-*
-* */
+ *
+ * Class
+ *
+ * */
 
 declare class IKHPoint extends SMAPoint {
     public series: IKHIndicator;
@@ -33,7 +33,6 @@ declare class IKHPoint extends SMAPoint {
     public isNull: boolean;
     public intersectPoint?: boolean;
 }
-
 
 /* *
  *

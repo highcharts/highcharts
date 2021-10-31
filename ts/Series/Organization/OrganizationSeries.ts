@@ -40,18 +40,10 @@ import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sankey: SankeySeries
-    }
+    seriesTypes: { sankey: SankeySeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    css,
-    extend,
-    merge,
-    pick,
-    wrap
-} = U;
+const { css, extend, merge, pick, wrap } = U;
 
 /* *
  *
@@ -67,7 +59,6 @@ const {
  * @augments Highcharts.seriesTypes.sankey
  */
 class OrganizationSeries extends SankeySeries {
-
     /* *
      *
      *  Static Properties
@@ -95,194 +86,217 @@ class OrganizationSeries extends SankeySeries {
      * @requires     modules/organization
      * @optionparent plotOptions.organization
      */
-    public static defaultOptions: OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
-        /**
-         * The border color of the node cards.
-         *
-         * @type {Highcharts.ColorString}
-         * @private
-         */
-        borderColor: Palette.neutralColor60,
-        /**
-         * The border radius of the node cards.
-         *
-         * @private
-         */
-        borderRadius: 3,
-        /**
-         * Radius for the rounded corners of the links between nodes.
-         *
-         * @sample   highcharts/series-organization/link-options
-         *           Square links
-         *
-         * @private
-         */
-        linkRadius: 10,
-        borderWidth: 1,
-        /**
-         * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
-         *
-         * @private
-         */
-        dataLabels: {
-
-            /* eslint-disable valid-jsdoc */
+    public static defaultOptions: OrganizationSeriesOptions = merge(
+        SankeySeries.defaultOptions,
+        {
             /**
-             * A callback for defining the format for _nodes_ in the
-             * organization chart. The `nodeFormat` option takes precedence
-             * over `nodeFormatter`.
+             * The border color of the node cards.
              *
-             * In an organization chart, the `nodeFormatter` is a quite complex
-             * function of the available options, striving for a good default
-             * layout of cards with or without images. In organization chart,
-             * the data labels come with `useHTML` set to true, meaning they
-             * will be rendered as true HTML above the SVG.
-             *
-             * @sample highcharts/series-organization/datalabels-nodeformatter
-             *         Modify the default label format output
-             *
-             * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
-             * @since 6.0.2
+             * @type {Highcharts.ColorString}
+             * @private
              */
-            nodeFormatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    OrganizationDataLabelFormatterContext|
-                    SankeyDataLabelFormatterContext
-                )
-            ): string {
-
-                const outerStyle: CSSObject = {
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        'flex-direction': 'row',
-                        'align-items': 'center',
-                        'justify-content': 'center'
-                    },
-                    imageStyle: CSSObject = {
-                        'max-height': '100%',
-                        'border-radius': '50%'
-                    },
-                    innerStyle: CSSObject = {
-                        width: '100%',
-                        padding: 0,
-                        'text-align': 'center',
-                        'white-space': 'normal'
-                    },
-                    nameStyle: CSSObject = {
-                        margin: 0
-                    },
-                    titleStyle: CSSObject = {
-                        margin: 0
-                    },
-                    descriptionStyle: CSSObject = {
-                        opacity: 0.75,
-                        margin: '5px'
-                    };
-
-                // eslint-disable-next-line valid-jsdoc
+            borderColor: Palette.neutralColor60,
+            /**
+             * The border radius of the node cards.
+             *
+             * @private
+             */
+            borderRadius: 3,
+            /**
+             * Radius for the rounded corners of the links between nodes.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            linkRadius: 10,
+            borderWidth: 1,
+            /**
+             * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
+             *
+             * @private
+             */
+            dataLabels: {
+                /* eslint-disable valid-jsdoc */
                 /**
-                 * @private
+                 * A callback for defining the format for _nodes_ in the
+                 * organization chart. The `nodeFormat` option takes precedence
+                 * over `nodeFormatter`.
+                 *
+                 * In an organization chart, the `nodeFormatter` is a quite
+                 * complex function of the available options, striving for a
+                 * good default layout of cards with or without images. In
+                 * organization chart, the data labels come with `useHTML` set
+                 * to true, meaning they will be rendered as true HTML above the
+                 * SVG.
+                 *
+                 * @sample
+                 *         highcharts/series-organization/datalabels-nodeformatter
+                 *         Modify the default label format output
+                 *
+                 * @type
+                 * {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+                 * @since 6.0.2
                  */
-                function styleAttr(style: CSSObject): string {
-                    return Object.keys(style).reduce(function (
-                        str: string,
-                        key: string
-                    ): string {
-                        return str + key + ':' + (style as any)[key] + ';';
-                    }, 'style="') + '"';
-                }
+                nodeFormatter: function (
+                    this:
+                        | Point.PointLabelObject
+                        | OrganizationDataLabelFormatterContext
+                        | SankeyDataLabelFormatterContext
+                ): string {
+                    const outerStyle: CSSObject = {
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            'flex-direction': 'row',
+                            'align-items': 'center',
+                            'justify-content': 'center'
+                        },
+                        imageStyle: CSSObject = {
+                            'max-height': '100%',
+                            'border-radius': '50%'
+                        },
+                        innerStyle: CSSObject = {
+                            width: '100%',
+                            padding: 0,
+                            'text-align': 'center',
+                            'white-space': 'normal'
+                        },
+                        nameStyle: CSSObject = {
+                            margin: 0
+                        },
+                        titleStyle: CSSObject = {
+                            margin: 0
+                        },
+                        descriptionStyle: CSSObject = {
+                            opacity: 0.75,
+                            margin: '5px'
+                        };
 
-                if ((this.point as any).image) {
-                    imageStyle['max-width'] = '30%';
-                    innerStyle.width = '70%';
-                }
+                    // eslint-disable-next-line valid-jsdoc
+                    /**
+                     * @private
+                     */
+                    function styleAttr(style: CSSObject): string {
+                        return (
+                            Object.keys(style).reduce(function (
+                                str: string,
+                                key: string
+                            ): string {
+                                return (
+                                    str + key + ':' + (style as any)[key] + ';'
+                                );
+                            },
+                            'style="') + '"'
+                        );
+                    }
 
-                // PhantomJS doesn't support flex, roll back to absolute
-                // positioning
-                if ((this as any).series.chart.renderer.forExport) {
-                    outerStyle.display = 'block';
-                    innerStyle.position = 'absolute';
-                    innerStyle.left = (this.point as any).image ? '30%' : 0;
-                    innerStyle.top = 0;
-                }
+                    if ((this.point as any).image) {
+                        imageStyle['max-width'] = '30%';
+                        innerStyle.width = '70%';
+                    }
 
-                let html = '<div ' + styleAttr(outerStyle) + '>';
+                    // PhantomJS doesn't support flex, roll back to absolute
+                    // positioning
+                    if ((this as any).series.chart.renderer.forExport) {
+                        outerStyle.display = 'block';
+                        innerStyle.position = 'absolute';
+                        innerStyle.left = (this.point as any).image ? '30%' : 0;
+                        innerStyle.top = 0;
+                    }
 
-                if ((this.point as any).image) {
-                    html += '<img src="' + (this.point as any).image + '" ' +
-                        styleAttr(imageStyle) + '>';
-                }
+                    let html = '<div ' + styleAttr(outerStyle) + '>';
 
-                html += '<div ' + styleAttr(innerStyle) + '>';
+                    if ((this.point as any).image) {
+                        html +=
+                            '<img src="' +
+                            (this.point as any).image +
+                            '" ' +
+                            styleAttr(imageStyle) +
+                            '>';
+                    }
 
-                if (this.point.name) {
-                    html += '<h4 ' + styleAttr(nameStyle) + '>' +
-                        this.point.name + '</h4>';
-                }
+                    html += '<div ' + styleAttr(innerStyle) + '>';
 
-                if ((this.point as any).title) {
-                    html += '<p ' + styleAttr(titleStyle) + '>' +
-                        ((this.point as any).title || '') + '</p>';
-                }
+                    if (this.point.name) {
+                        html +=
+                            '<h4 ' +
+                            styleAttr(nameStyle) +
+                            '>' +
+                            this.point.name +
+                            '</h4>';
+                    }
 
-                if ((this.point as any).description) {
-                    html += '<p ' + styleAttr(descriptionStyle) + '>' +
-                        (this.point as any).description + '</p>';
-                }
+                    if ((this.point as any).title) {
+                        html +=
+                            '<p ' +
+                            styleAttr(titleStyle) +
+                            '>' +
+                            ((this.point as any).title || '') +
+                            '</p>';
+                    }
 
-                html += '</div>' +
-                    '</div>';
-                return html;
+                    if ((this.point as any).description) {
+                        html +=
+                            '<p ' +
+                            styleAttr(descriptionStyle) +
+                            '>' +
+                            (this.point as any).description +
+                            '</p>';
+                    }
+
+                    html += '</div></div>';
+                    return html;
+                },
+                /* eslint-enable valid-jsdoc */
+
+                style: {
+                    /** @internal */
+                    fontWeight: 'normal',
+                    /** @internal */
+                    fontSize: '13px'
+                },
+
+                useHTML: true
             },
-            /* eslint-enable valid-jsdoc */
-
-            style: {
-                /** @internal */
-                fontWeight: 'normal',
-                /** @internal */
-                fontSize: '13px'
-            },
-
-            useHTML: true
-
-        },
-        /**
-         * The indentation in pixels of hanging nodes, nodes which parent has
-         * [layout](#series.organization.nodes.layout) set to `hanging`.
-         *
-         * @private
-         */
-        hangingIndent: 20,
-        /**
-         * The color of the links between nodes.
-         *
-         * @type {Highcharts.ColorString}
-         * @private
-         */
-        linkColor: Palette.neutralColor60,
-        /**
-         * The line width of the links connecting nodes, in pixels.
-         *
-         * @sample   highcharts/series-organization/link-options
-         *           Square links
-         *
-         * @private
-         */
-        linkLineWidth: 1,
-        /**
-         * In a horizontal chart, the width of the nodes in pixels. Node that
-         * most organization charts are vertical, so the name of this option
-         * is counterintuitive.
-         *
-         * @private
-         */
-        nodeWidth: 50,
-        tooltip: {
-            nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
-        }
-    } as OrganizationSeriesOptions);
+            /**
+             * The indentation in pixels of hanging nodes, nodes which parent
+             * has [layout](#series.organization.nodes.layout) set to `hanging`.
+             *
+             * @private
+             */
+            hangingIndent: 20,
+            /**
+             * The color of the links between nodes.
+             *
+             * @type {Highcharts.ColorString}
+             * @private
+             */
+            linkColor: Palette.neutralColor60,
+            /**
+             * The line width of the links connecting nodes, in pixels.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            linkLineWidth: 1,
+            /**
+             * In a horizontal chart, the width of the nodes in pixels. Node
+             * that most organization charts are vertical, so the name of this
+             * option is counterintuitive.
+             *
+             * @private
+             */
+            nodeWidth: 50,
+            tooltip: {
+                nodeFormat:
+                    '{point.name}<br>{point.title}<br>{point.description}'
+            }
+        } as OrganizationSeriesOptions
+    );
 
     /* *
      *
@@ -297,10 +311,7 @@ class OrganizationSeries extends SankeySeries {
      * renderer or utilities if we need it elsewhere.
      * @private
      */
-    public static curvedPath(
-        path: SVGPath,
-        r: number
-    ): SVGPath {
+    public static curvedPath(path: SVGPath, r: number): SVGPath {
         const d: SVGPath = [];
 
         for (let i = 0; i < path.length; i++) {
@@ -311,11 +322,10 @@ class OrganizationSeries extends SankeySeries {
                 // moveTo
                 if (i === 0) {
                     d.push(['M', x, y]);
-
                 } else if (i === path.length - 1) {
                     d.push(['L', x, y]);
 
-                // curveTo
+                    // curveTo
                 } else if (r) {
                     const prevSeg = path[i - 1];
                     const nextSeg = path[i + 1];
@@ -336,24 +346,34 @@ class OrganizationSeries extends SankeySeries {
                         ) {
                             const directionX = x1 < x2 ? 1 : -1,
                                 directionY = y1 < y2 ? 1 : -1;
-                            d.push([
-                                'L',
-                                x - directionX * Math.min(Math.abs(x - x1), r),
-                                y - directionY * Math.min(Math.abs(y - y1), r)
-                            ], [
-                                'C',
-                                x,
-                                y,
-                                x,
-                                y,
-                                x + directionX * Math.min(Math.abs(x - x2), r),
-                                y + directionY * Math.min(Math.abs(y - y2), r)
-                            ]);
+                            d.push(
+                                [
+                                    'L',
+                                    x -
+                                        directionX *
+                                            Math.min(Math.abs(x - x1), r),
+                                    y -
+                                        directionY *
+                                            Math.min(Math.abs(y - y1), r)
+                                ],
+                                [
+                                    'C',
+                                    x,
+                                    y,
+                                    x,
+                                    y,
+                                    x +
+                                        directionX *
+                                            Math.min(Math.abs(x - x2), r),
+                                    y +
+                                        directionY *
+                                            Math.min(Math.abs(y - y2), r)
+                                ]
+                            );
                         }
-
                     }
 
-                // lineTo
+                    // lineTo
                 } else {
                     d.push(['L', x, y]);
                 }
@@ -361,7 +381,6 @@ class OrganizationSeries extends SankeySeries {
         }
 
         return d;
-
     }
 
     /* eslint-enable valid-jsdoc */
@@ -395,10 +414,9 @@ class OrganizationSeries extends SankeySeries {
         if (options.useHTML) {
             let width = (point.shapeArgs as any).width,
                 height = (point.shapeArgs as any).height,
-                padjust = (
+                padjust =
                     (this.options.borderWidth as any) +
-                    2 * (this.options.dataLabels as any).padding
-                );
+                    2 * (this.options.dataLabels as any).padding;
 
             if (this.chart.inverted) {
                 width = height;
@@ -452,31 +470,35 @@ class OrganizationSeries extends SankeySeries {
         };
 
         return node;
-
     }
 
     public createNodeColumn(): OrganizationSeries.ColumnArray {
-        const column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
+        const column: OrganizationSeries.ColumnArray =
+            super.createNodeColumn.call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
-        wrap(column, 'offset', function (
-            this: OrganizationPoint,
-            proceed: SankeySeriesType.ColumnArray['offset'],
-            node: OrganizationPoint,
-            factor: number
-        ): (Record<string, number>|undefined) {
-            const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
+        wrap(
+            column,
+            'offset',
+            function (
+                this: OrganizationPoint,
+                proceed: SankeySeriesType.ColumnArray['offset'],
+                node: OrganizationPoint,
+                factor: number
+            ): Record<string, number> | undefined {
+                const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
 
-            // Modify the default output if the parent's layout is 'hanging'
-            if (node.hangsFrom) {
-                return {
-                    absoluteTop: node.hangsFrom.nodeY
-                };
+                // Modify the default output if the parent's layout is 'hanging'
+                if (node.hangsFrom) {
+                    return {
+                        absoluteTop: node.hangsFrom.nodeY
+                    };
+                }
+
+                return offset;
             }
-
-            return offset;
-        });
+        );
 
         return column;
     }
@@ -486,30 +508,36 @@ class OrganizationSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+            attribs = SankeySeries.prototype.pointAttribs.call(
+                series,
+                point,
+                state
+            ),
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: OrganizationSeriesOptions = (
-                levelOptions.states && (levelOptions.states as any)[state as any]
-            ) || {},
-            values: (
-                OrganizationPointOptions &
-                OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
-                .reduce(function (
-                    obj: Record<string, unknown>,
-                    key: string
-                ): Record<string, unknown> {
-                    obj[key] = pick(
-                        (stateOptions as any)[key],
-                        (options as any)[key],
-                        (levelOptions as any)[key],
-                        (series.options as any)[key]
-                    );
-                    return obj;
-                }, {});
+            stateOptions: OrganizationSeriesOptions =
+                (levelOptions.states &&
+                    (levelOptions.states as any)[state as any]) ||
+                {},
+            values: OrganizationPointOptions & OrganizationSeriesOptions = [
+                'borderRadius',
+                'linkColor',
+                'linkLineWidth'
+            ].reduce(function (
+                obj: Record<string, unknown>,
+                key: string
+            ): Record<string, unknown> {
+                obj[key] = pick(
+                    (stateOptions as any)[key],
+                    (options as any)[key],
+                    (levelOptions as any)[key],
+                    (series.options as any)[key]
+                );
+                return obj;
+            },
+            {});
 
         if (!point.isNode) {
             attribs.stroke = values.linkColor;
@@ -526,20 +554,23 @@ class OrganizationSeries extends SankeySeries {
     public translateLink(point: OrganizationPoint): void {
         let fromNode = point.fromNode,
             toNode = point.toNode,
-            crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
-            x1 = Math.floor(
-                (fromNode.shapeArgs as any).x +
-                (fromNode.shapeArgs as any).width
-            ) + crisp,
-            y1 = Math.floor(
-                (fromNode.shapeArgs as any).y +
-                (fromNode.shapeArgs as any).height / 2
-            ) + crisp,
+            crisp = (Math.round(this.options.linkLineWidth as any) % 2) / 2,
+            x1 =
+                Math.floor(
+                    (fromNode.shapeArgs as any).x +
+                        (fromNode.shapeArgs as any).width
+                ) + crisp,
+            y1 =
+                Math.floor(
+                    (fromNode.shapeArgs as any).y +
+                        (fromNode.shapeArgs as any).height / 2
+                ) + crisp,
             x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 = Math.floor(
-                (toNode.shapeArgs as any).y +
-                (toNode.shapeArgs as any).height / 2
-            ) + crisp,
+            y2 =
+                Math.floor(
+                    (toNode.shapeArgs as any).y +
+                        (toNode.shapeArgs as any).height / 2
+                ) + crisp,
             xMiddle,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,
@@ -551,22 +582,23 @@ class OrganizationSeries extends SankeySeries {
             x1 -= (fromNode.shapeArgs as any).width;
             x2 += (toNode.shapeArgs as any).width;
         }
-        xMiddle = Math.floor(
-            x2 +
-            (inverted ? 1 : -1) *
-            (this.colDistance - this.nodeWidth) / 2
-        ) + crisp;
+        xMiddle =
+            Math.floor(
+                x2 +
+                    ((inverted ? 1 : -1) *
+                        (this.colDistance - this.nodeWidth)) /
+                        2
+            ) + crisp;
 
         // Put the link on the side of the node when an offset is given. HR
         // node in the main demo.
-        if (
-            percentOffset &&
-            (percentOffset >= 50 || percentOffset <= -50)
-        ) {
-            xMiddle = x2 = Math.floor(
-                x2 + (inverted ? -0.5 : 0.5) *
-                (toNode.shapeArgs as any).width
-            ) + crisp;
+        if (percentOffset && (percentOffset >= 50 || percentOffset <= -50)) {
+            xMiddle = x2 =
+                Math.floor(
+                    x2 +
+                        (inverted ? -0.5 : 0.5) *
+                            (toNode.shapeArgs as any).width
+                ) + crisp;
             y2 = (toNode.shapeArgs as any).y;
             if (percentOffset > 0) {
                 y2 += (toNode.shapeArgs as any).height;
@@ -575,37 +607,40 @@ class OrganizationSeries extends SankeySeries {
 
         if (toNode.hangsFrom === fromNode) {
             if (this.chart.inverted) {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    (fromNode.shapeArgs as any).height -
-                    hangingIndent / 2
-                ) + crisp;
-                y2 = (
+                y1 =
+                    Math.floor(
+                        (fromNode.shapeArgs as any).y +
+                            (fromNode.shapeArgs as any).height -
+                            hangingIndent / 2
+                    ) + crisp;
+                y2 =
                     (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height
-                );
+                    (toNode.shapeArgs as any).height;
             } else {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    hangingIndent / 2
-                ) + crisp;
-
+                y1 =
+                    Math.floor(
+                        (fromNode.shapeArgs as any).y + hangingIndent / 2
+                    ) + crisp;
             }
-            xMiddle = x2 = Math.floor(
-                (toNode.shapeArgs as any).x +
-                (toNode.shapeArgs as any).width / 2
-            ) + crisp;
+            xMiddle = x2 =
+                Math.floor(
+                    (toNode.shapeArgs as any).x +
+                        (toNode.shapeArgs as any).width / 2
+                ) + crisp;
         }
 
         point.plotY = 1;
         point.shapeType = 'path';
         point.shapeArgs = {
-            d: OrganizationSeries.curvedPath([
-                ['M', x1, y1],
-                ['L', xMiddle, y1],
-                ['L', xMiddle, y2],
-                ['L', x2, y2]
-            ], this.options.linkRadius as any)
+            d: OrganizationSeries.curvedPath(
+                [
+                    ['M', x1, y1],
+                    ['L', xMiddle, y1],
+                    ['L', xMiddle, y2],
+                    ['L', x2, y2]
+                ],
+                this.options.linkRadius as any
+            )
         };
     }
 
@@ -616,19 +651,17 @@ class OrganizationSeries extends SankeySeries {
         SankeySeries.prototype.translateNode.call(this, node, column);
 
         if (node.hangsFrom) {
-            (node.shapeArgs as any).height -=
-                this.options.hangingIndent as any;
+            (node.shapeArgs as any).height -= this.options.hangingIndent as any;
             if (!this.chart.inverted) {
                 (node.shapeArgs as any).y += this.options.hangingIndent;
             }
         }
-        node.nodeHeight = this.chart.inverted ?
-            (node.shapeArgs as any).width :
-            (node.shapeArgs as any).height;
+        node.nodeHeight = this.chart.inverted
+            ? (node.shapeArgs as any).width
+            : (node.shapeArgs as any).height;
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -651,8 +684,9 @@ extend(OrganizationSeries.prototype, {
  * */
 
 namespace OrganizationSeries {
-    export interface ColumnArray<T = OrganizationPoint> extends SankeySeriesType.ColumnArray<T> {
-        offset(node: T, factor: number): (Record<string, number>|undefined);
+    export interface ColumnArray<T = OrganizationPoint>
+        extends SankeySeriesType.ColumnArray<T> {
+        offset(node: T, factor: number): Record<string, number> | undefined;
     }
 }
 
@@ -691,7 +725,7 @@ export default OrganizationSeries;
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
 /* *
  *
@@ -813,4 +847,4 @@ export default OrganizationSeries;
  * @apioption series.organization.data
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

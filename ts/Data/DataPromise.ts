@@ -40,7 +40,6 @@ const delay = setTimeout;
  * Simplified wrapper for Promise-support in outdated browsers.
  */
 class DataPromise<T> implements Promise<T> {
-
     /* *
      *
      *  Static Properties
@@ -55,7 +54,9 @@ class DataPromise<T> implements Promise<T> {
      *
      * */
 
-    private static isPromiseLike<T>(promise: unknown): promise is PromiseLike<T> {
+    private static isPromiseLike<T>(
+        promise: unknown
+    ): promise is PromiseLike<T> {
         return (
             typeof promise === 'object' &&
             promise !== null &&
@@ -63,23 +64,18 @@ class DataPromise<T> implements Promise<T> {
         );
     }
 
-    public static reject<T = never>(
-        reason: unknown
-    ): DataPromise<T> {
+    public static reject<T = never>(reason: unknown): DataPromise<T> {
         if (win.Promise && !DataPromise.onlyPolyfill) {
             return win.Promise.reject(reason);
         }
         return new DataPromise<T>((resolve, reject): void => reject(reason));
     }
 
-
+    public static resolve<T>(value: T | PromiseLike<T>): DataPromise<T>;
+    public static resolve<T>(): DataPromise<T | void>;
     public static resolve<T>(
-        value: (T|PromiseLike<T>)
-    ): DataPromise<T>;
-    public static resolve<T>(): DataPromise<(T|void)>;
-    public static resolve<T>(
-        value?: (T|PromiseLike<T>)
-    ): DataPromise<(T|void)> {
+        value?: T | PromiseLike<T>
+    ): DataPromise<T | void> {
         if (win.Promise && !DataPromise.onlyPolyfill) {
             return win.Promise.resolve(value);
         }
@@ -99,7 +95,7 @@ class DataPromise<T> implements Promise<T> {
 
     public constructor(
         executor: (
-            resolve: (value?: (T|PromiseLike<T>)) => void,
+            resolve: (value?: T | PromiseLike<T>) => void,
             reject: (reason?: unknown) => void
         ) => void
     ) {
@@ -112,7 +108,8 @@ class DataPromise<T> implements Promise<T> {
         delay((): void => {
             try {
                 executor(
-                    (value?: (T|PromiseLike<T>)): void => promise.resolved(value),
+                    (value?: T | PromiseLike<T>): void =>
+                        promise.resolved(value),
                     (reason?: unknown): void => promise.rejected(reason)
                 );
             } catch (e) {
@@ -141,9 +138,11 @@ class DataPromise<T> implements Promise<T> {
      *
      * */
 
-    public 'catch'<TResult = never>(
-        onrejected?: (((reason: unknown) => (TResult|PromiseLike<TResult>))|null)
-    ): DataPromise<(T|TResult)> {
+    public catch<TResult = never>(
+        onrejected?:
+            | ((reason: unknown) => TResult | PromiseLike<TResult>)
+            | null
+    ): DataPromise<T | TResult> {
         return this.then(null, onrejected);
     }
 
@@ -157,7 +156,7 @@ class DataPromise<T> implements Promise<T> {
         }
     }
 
-    private resolved(value?: (T|PromiseLike<T>)): void {
+    private resolved(value?: T | PromiseLike<T>): void {
         const promise = this;
 
         if (promise.state === DataPromise.State.Pending) {
@@ -175,19 +174,27 @@ class DataPromise<T> implements Promise<T> {
     }
 
     public then<TResult1 = T, TResult2 = never>(
-        onfulfilled?: (((value: T) => (TResult1|PromiseLike<TResult1>))|null),
-        onrejected?: (((reason: unknown) => (TResult2|PromiseLike<TResult2>))|null)
-    ): DataPromise<(TResult1|TResult2)> {
+        onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+        onrejected?:
+            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
+            | null
+    ): DataPromise<TResult1 | TResult2> {
         const promise = this,
-            newPromise = new DataPromise<(TResult1|TResult2)>((): void => void 0),
+            newPromise = new DataPromise<TResult1 | TResult2>(
+                (): void => void 0
+            ),
             rejecter = (reason: unknown): void => {
                 if (onrejected) {
                     try {
                         const result = onrejected(reason);
                         if (result instanceof DataPromise) {
                             result.then(
-                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
-                                    newPromise.resolved(value),
+                                (
+                                    value?:
+                                        | TResult1
+                                        | TResult2
+                                        | PromiseLike<TResult1 | TResult2>
+                                ): void => newPromise.resolved(value),
                                 (reason?: unknown): void =>
                                     newPromise.rejected(reason)
                             );
@@ -213,8 +220,12 @@ class DataPromise<T> implements Promise<T> {
                         const result = onfulfilled(value);
                         if (result instanceof DataPromise) {
                             result.then(
-                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
-                                    newPromise.resolved(value),
+                                (
+                                    value?:
+                                        | TResult1
+                                        | TResult2
+                                        | PromiseLike<TResult1 | TResult2>
+                                ): void => newPromise.resolved(value),
                                 (reason?: unknown): void =>
                                     newPromise.rejected(reason)
                             );
@@ -251,8 +262,8 @@ class DataPromise<T> implements Promise<T> {
         const promise = this,
             jobs = promise.jobs;
 
-        let job: (DataPromise.Job<T>|undefined),
-            rejectHandled: (boolean|undefined);
+        let job: DataPromise.Job<T> | undefined,
+            rejectHandled: boolean | undefined;
 
         while ((job = jobs.shift())) {
             try {
@@ -277,7 +288,6 @@ class DataPromise<T> implements Promise<T> {
             }
         }
     }
-
 }
 
 /* *
@@ -297,7 +307,6 @@ interface DataPromise<T> extends Promise<T> {
  * */
 
 namespace DataPromise {
-
     /* *
      *
      *  Declarations
@@ -320,7 +329,6 @@ namespace DataPromise {
         Pending = 0,
         Rejected = 1
     }
-
 }
 
 /* *

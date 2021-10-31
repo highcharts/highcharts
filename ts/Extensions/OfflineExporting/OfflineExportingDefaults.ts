@@ -61,7 +61,6 @@ const OfflineExportingDefaults: ExportingOptions = {
                 });
             }
         }
-
     }
 };
 

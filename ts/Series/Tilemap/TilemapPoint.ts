@@ -27,15 +27,11 @@ import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js'
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
-        prototype: {
-            pointClass: Point
-        }
+        prototype: { pointClass: Point }
     },
     seriesTypes: {
         heatmap: {
-            prototype: {
-                pointClass: HeatmapPoint
-            }
+            prototype: { pointClass: HeatmapPoint }
         }
     }
 } = SeriesRegistry;
@@ -49,7 +45,6 @@ const { extend } = U;
  * */
 
 class TilemapPoint extends HeatmapPoint {
-
     /* *
      *
      *  Properties
@@ -85,7 +80,6 @@ class TilemapPoint extends HeatmapPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

@@ -35,20 +35,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    isNumber,
-    extend,
-    merge,
-    pick,
-    pInt
-} = U;
-
+const { clamp, isNumber, extend, merge, pick, pInt } = U;
 
 /* *
  *
@@ -56,7 +46,7 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         angular?: boolean;
     }
@@ -86,7 +76,6 @@ declare module '../../Core/Series/SeriesLike' {
  * @augments Highcharts.Series
  */
 class GaugeSeries extends Series {
-
     /* *
      *
      *  Static properties
@@ -239,7 +228,7 @@ class GaugeSeries extends Series {
              * @sample {highcharts} highcharts/plotoptions/gauge-dial/
              *         Dial options demonstrated
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @default   #000000
              * @since     2.3.0
              * @product   highcharts
@@ -254,7 +243,7 @@ class GaugeSeries extends Series {
              * @sample {highcharts} highcharts/plotoptions/gauge-dial/
              *         Dial options demonstrated
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @default   #cccccc
              * @since     2.3.0
              * @product   highcharts
@@ -340,7 +329,7 @@ class GaugeSeries extends Series {
              * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
              *         Pivot options demonstrated
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @default   #cccccc
              * @since     2.3.0
              * @product   highcharts
@@ -353,7 +342,7 @@ class GaugeSeries extends Series {
              * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
              *         Pivot options demonstrated
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @default   #000000
              * @since     2.3.0
              * @product   highcharts
@@ -374,7 +363,8 @@ class GaugeSeries extends Series {
             showInLegend: false
 
             // Prototype members
-        } as GaugeSeriesOptions);
+        } as GaugeSeriesOptions
+    );
 
     /* *
      *
@@ -402,7 +392,6 @@ class GaugeSeries extends Series {
      * @private
      */
     public translate(): void {
-
         const series = this,
             yAxis = series.yAxis,
             options = series.options,
@@ -411,33 +400,35 @@ class GaugeSeries extends Series {
         series.generatePoints();
 
         series.points.forEach((point): void => {
-
-            const dialOptions: GaugeSeriesDialOptions =
-                    merge(options.dial, point.dial) as any,
-                radius = (
-                    (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
-                    200
-                ),
-                baseLength = (
-                    (pInt(pick(dialOptions.baseLength, '70%')) * radius) /
-                    100
-                ),
-                rearLength = (
-                    (pInt(pick(dialOptions.rearLength, '10%')) * radius) /
-                    100
-                ),
+            const dialOptions: GaugeSeriesDialOptions = merge(
+                    options.dial,
+                    point.dial
+                ) as any,
+                radius =
+                    (pInt(pick(dialOptions.radius, '80%')) * center[2]) / 200,
+                baseLength =
+                    (pInt(pick(dialOptions.baseLength, '70%')) * radius) / 100,
+                rearLength =
+                    (pInt(pick(dialOptions.rearLength, '10%')) * radius) / 100,
                 baseWidth = dialOptions.baseWidth || 3,
                 topWidth = dialOptions.topWidth || 1;
 
             let overshoot = options.overshoot,
-                rotation = yAxis.startAngleRad + (yAxis.translate(
-                    point.y as any, null, null, null, true
-                ) as any);
+                rotation =
+                    yAxis.startAngleRad +
+                    (yAxis.translate(
+                        point.y as any,
+                        null,
+                        null,
+                        null,
+                        true
+                    ) as any);
 
             // Handle the wrap and overshoot options
             if (isNumber(overshoot) || options.wrap === false) {
-                overshoot = isNumber(overshoot) ?
-                    (overshoot / 180 * Math.PI) : 0;
+                overshoot = isNumber(overshoot)
+                    ? (overshoot / 180) * Math.PI
+                    : 0;
                 rotation = clamp(
                     rotation,
                     yAxis.startAngleRad - overshoot,
@@ -445,7 +436,7 @@ class GaugeSeries extends Series {
                 );
             }
 
-            rotation = rotation * 180 / Math.PI;
+            rotation = (rotation * 180) / Math.PI;
 
             point.shapeType = 'path';
             const d: SVGPath = dialOptions.path || [
@@ -475,7 +466,6 @@ class GaugeSeries extends Series {
      * @private
      */
     public drawPoints(): void {
-
         const series = this,
             chart = series.chart,
             center = series.yAxis.center,
@@ -485,7 +475,6 @@ class GaugeSeries extends Series {
             renderer = chart.renderer;
 
         series.points.forEach((point): void => {
-
             const graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
                 d = shapeArgs.d,
@@ -495,15 +484,15 @@ class GaugeSeries extends Series {
                 graphic.animate(shapeArgs);
                 shapeArgs.d = d; // animate alters it
             } else {
-                point.graphic =
-                    (renderer as any)[point.shapeType as any](shapeArgs)
-                        .attr({
-                            // required by VML when animation is false
-                            rotation: shapeArgs.rotation,
-                            zIndex: 1
-                        })
-                        .addClass('highcharts-dial')
-                        .add(series.group);
+                point.graphic = (renderer as any)
+                    [point.shapeType as any](shapeArgs)
+                    .attr({
+                        // required by VML when animation is false
+                        rotation: shapeArgs.rotation,
+                        zIndex: 1
+                    })
+                    .addClass('highcharts-dial')
+                    .add(series.group);
             }
 
             // Presentational attributes
@@ -511,35 +500,37 @@ class GaugeSeries extends Series {
                 (point.graphic as any)[graphic ? 'animate' : 'attr']({
                     stroke: dialOptions.borderColor || 'none',
                     'stroke-width': dialOptions.borderWidth || 0,
-                    fill: dialOptions.backgroundColor ||
-                        Palette.neutralColor100
+                    fill: dialOptions.backgroundColor || Palette.neutralColor100
                 });
             }
         });
 
         // Add or move the pivot
         if (pivot) {
-            pivot.animate({ // #1235
+            pivot.animate({
+                // #1235
                 translateX: center[0],
                 translateY: center[1]
             });
         } else {
-            series.pivot =
-                renderer.circle(0, 0, pick((pivotOptions as any).radius, 5))
-                    .attr({
-                        zIndex: 2
-                    })
-                    .addClass('highcharts-pivot')
-                    .translate(center[0], center[1])
-                    .add(series.group);
+            series.pivot = renderer
+                .circle(0, 0, pick((pivotOptions as any).radius, 5))
+                .attr({
+                    zIndex: 2
+                })
+                .addClass('highcharts-pivot')
+                .translate(center[0], center[1])
+                .add(series.group);
 
             // Presentational attributes
             if (!chart.styledMode) {
                 series.pivot.attr({
                     'stroke-width': (pivotOptions as any).borderWidth || 0,
-                    stroke: (pivotOptions as any).borderColor ||
+                    stroke:
+                        (pivotOptions as any).borderColor ||
                         Palette.neutralColor20,
-                    fill: (pivotOptions as any).backgroundColor ||
+                    fill:
+                        (pivotOptions as any).backgroundColor ||
                         Palette.neutralColor100
                 });
             }
@@ -560,13 +551,16 @@ class GaugeSeries extends Series {
                 if (graphic) {
                     // start value
                     graphic.attr({
-                        rotation: series.yAxis.startAngleRad * 180 / Math.PI
+                        rotation: (series.yAxis.startAngleRad * 180) / Math.PI
                     });
 
                     // animate
-                    graphic.animate({
-                        rotation: point.shapeArgs.rotation
-                    }, series.options.animation);
+                    graphic.animate(
+                        {
+                            rotation: point.shapeArgs.rotation
+                        },
+                        series.options.animation
+                    );
                 }
             });
         }
@@ -592,7 +586,7 @@ class GaugeSeries extends Series {
      * @private
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>,
+        data: Array<PointOptions | PointShortOptions>,
         redraw?: boolean
     ): void {
         Series.prototype.setData.call(this, data, false);
@@ -731,4 +725,4 @@ export default GaugeSeries;
  * @apioption series.gauge.data
  */
 
-''; // adds the doclets above in the transpiled file
+(''); // adds the doclets above in the transpiled file

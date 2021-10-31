@@ -24,9 +24,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        pie: PieSeries
-    }
+    seriesTypes: { pie: PieSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
@@ -38,7 +36,6 @@ const { extend } = U;
  * */
 
 class ItemPoint extends PieSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -50,7 +47,6 @@ class ItemPoint extends PieSeries.prototype.pointClass {
     public options: ItemPointOptions = void 0 as any;
 
     public series: ItemSeries = void 0 as any;
-
 }
 
 /* *

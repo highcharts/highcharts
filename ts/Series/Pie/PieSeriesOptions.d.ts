@@ -28,15 +28,15 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface PieSeriesOptions extends LineSeriesOptions {
     endAngle?: number;
-    center?: [(number|string|null), (number|string|null)];
+    center?: [number | string | null, number | string | null];
     colorByPoint?: boolean;
     dataLabels?: PieDataLabelOptions;
     fillColor?: ColorType;
     ignoreHiddenPoint?: boolean;
     inactiveOtherPoints?: boolean;
-    innerSize?: (number|string);
-    minSize?: (number|string);
-    size?: (number|string);
+    innerSize?: number | string;
+    minSize?: number | string;
+    size?: number | string;
     slicedOffset?: number;
     startAngle?: number;
     states?: SeriesStatesOptions<PieSeries>;

@@ -29,7 +29,7 @@ export interface MapPointPointOptions extends ScatterPointOptions {
     lon?: number;
     type?: 'Point';
     x?: number;
-    y?: (number|null);
+    y?: number | null;
 }
 
 export default MapPointPointOptions;

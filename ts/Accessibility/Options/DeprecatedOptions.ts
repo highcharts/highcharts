@@ -76,10 +76,7 @@ import type Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    pick
-} = U;
+const { error, pick } = U;
 
 /* *
  *
@@ -94,12 +91,10 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface Options {
         /** @deprecated */
-        exposeElementToA11y?: (
-            Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly']
-        );
+        exposeElementToA11y?: Highcharts.SeriesAccessibilityOptions['exposeAsGroupOnly'];
     }
 }
 
@@ -122,7 +117,7 @@ function traverseSetOption<T>(
     let opt = root,
         prop,
         i = 0;
-    for (;i < optionAsArray.length - 1; ++i) {
+    for (; i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
         opt = opt[prop] = pick(opt[prop], {}) as any;
     }
@@ -151,7 +146,8 @@ function deprecateFromOptionsMap(
             cur: string
         ): Record<string, unknown> {
             return acc[cur] as any;
-        }, root as any);
+        },
+        root as any);
     }
 
     const rootOld = getChildProp(chart.options, rootOldAsArray),
@@ -160,20 +156,14 @@ function deprecateFromOptionsMap(
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey: string): void {
         const val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
-            traverseSetOption(
-                rootNew,
-                mapToNewOptions[oldOptionKey],
-                val
-            );
-            error(
-                32,
-                false,
-                chart,
-                {
-                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
-                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
-                }
-            );
+            traverseSetOption(rootNew, mapToNewOptions[oldOptionKey], val);
+            error(32, false, chart, {
+                [`${rootOldAsArray.join(
+                    '.'
+                )}.${oldOptionKey}`]: `${rootNewAsArray.join(
+                    '.'
+                )}.${mapToNewOptions[oldOptionKey].join('.')}`
+            });
         }
     });
 }
@@ -184,12 +174,12 @@ function deprecateFromOptionsMap(
 function copyDeprecatedChartOptions(chart: Chart): void {
     const chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
-    ['description', 'typeDescription'].forEach(function (
-        prop: string
-    ): void {
+    ['description', 'typeDescription'].forEach(function (prop: string): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
+            error(32, false, chart, {
+                [`chart.${prop}`]: `use accessibility.${prop}`
+            });
         }
     });
 }
@@ -203,7 +193,9 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
+            error(32, false, chart, {
+                'axis.description': 'use axis.accessibility.description'
+            });
         }
     });
 }
@@ -218,13 +210,19 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
         pointDescriptionFormatter: [
-            'accessibility', 'point', 'descriptionFormatter'
+            'accessibility',
+            'point',
+            'descriptionFormatter'
         ],
         skipKeyboardNavigation: [
-            'accessibility', 'keyboardNavigation', 'enabled'
+            'accessibility',
+            'keyboardNavigation',
+            'enabled'
         ],
         'accessibility.pointDescriptionFormatter': [
-            'accessibility', 'point', 'descriptionFormatter'
+            'accessibility',
+            'point',
+            'descriptionFormatter'
         ]
     };
     chart.series.forEach(function (series: Series): void {
@@ -236,8 +234,10 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
 
             // Special case
             if (oldOption === 'accessibility.pointDescriptionFormatter') {
-                optionVal = series.options.accessibility &&
-                    (series.options.accessibility as any).pointDescriptionFormatter;
+                optionVal =
+                    series.options.accessibility &&
+                    (series.options.accessibility as any)
+                        .pointDescriptionFormatter;
             }
 
             if (typeof optionVal !== 'undefined') {
@@ -247,15 +247,15 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     (oldToNewSeriesOptions as any)[oldOption],
                     // Note that skipKeyboardNavigation has inverted option
                     // value, since we set enabled rather than disabled
-                    oldOption === 'skipKeyboardNavigation' ?
-                        !optionVal : optionVal
+                    oldOption === 'skipKeyboardNavigation'
+                        ? !optionVal
+                        : optionVal
                 );
-                error(
-                    32,
-                    false,
-                    chart,
-                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
-                );
+                error(32, false, chart, {
+                    [`series.${oldOption}`]: `series.${(
+                        oldToNewSeriesOptions as any
+                    )[oldOption].join('.')}`
+                });
             }
         });
     });
@@ -264,40 +264,38 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
 /**
  * @private
  */
-function copyDeprecatedTopLevelAccessibilityOptions(
-    chart: Chart
-): void {
-    deprecateFromOptionsMap(
-        chart,
-        ['accessibility'],
-        ['accessibility'],
-        {
-            pointDateFormat: ['point', 'dateFormat'],
-            pointDateFormatter: ['point', 'dateFormatter'],
-            pointDescriptionFormatter: ['point', 'descriptionFormatter'],
-            pointDescriptionThreshold: ['series',
-                'pointDescriptionEnabledThreshold'],
-            pointNavigationThreshold: ['keyboardNavigation', 'seriesNavigation',
-                'pointNavigationEnabledThreshold'],
-            pointValueDecimals: ['point', 'valueDecimals'],
-            pointValuePrefix: ['point', 'valuePrefix'],
-            pointValueSuffix: ['point', 'valueSuffix'],
-            screenReaderSectionFormatter: ['screenReaderSection',
-                'beforeChartFormatter'],
-            describeSingleSeries: ['series', 'describeSingleSeries'],
-            seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
-            onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
-            axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
-        }
-    );
+function copyDeprecatedTopLevelAccessibilityOptions(chart: Chart): void {
+    deprecateFromOptionsMap(chart, ['accessibility'], ['accessibility'], {
+        pointDateFormat: ['point', 'dateFormat'],
+        pointDateFormatter: ['point', 'dateFormatter'],
+        pointDescriptionFormatter: ['point', 'descriptionFormatter'],
+        pointDescriptionThreshold: [
+            'series',
+            'pointDescriptionEnabledThreshold'
+        ],
+        pointNavigationThreshold: [
+            'keyboardNavigation',
+            'seriesNavigation',
+            'pointNavigationEnabledThreshold'
+        ],
+        pointValueDecimals: ['point', 'valueDecimals'],
+        pointValuePrefix: ['point', 'valuePrefix'],
+        pointValueSuffix: ['point', 'valueSuffix'],
+        screenReaderSectionFormatter: [
+            'screenReaderSection',
+            'beforeChartFormatter'
+        ],
+        describeSingleSeries: ['series', 'describeSingleSeries'],
+        seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
+        onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
+        axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
+    });
 }
 
 /**
  * @private
  */
-function copyDeprecatedKeyboardNavigationOptions(
-    chart: Chart
-): void {
+function copyDeprecatedKeyboardNavigationOptions(chart: Chart): void {
     deprecateFromOptionsMap(
         chart,
         ['accessibility', 'keyboardNavigation'],
@@ -323,8 +321,10 @@ function copyDeprecatedLangOptions(chart: Chart): void {
             mapZoomIn: ['zoom', 'mapZoomIn'],
             mapZoomOut: ['zoom', 'mapZoomOut'],
             resetZoomButton: ['zoom', 'resetZoomButton'],
-            screenReaderRegionLabel: ['screenReaderSection',
-                'beforeRegionLabel'],
+            screenReaderRegionLabel: [
+                'screenReaderSection',
+                'beforeRegionLabel'
+            ],
             rangeSelectorButton: ['rangeSelector', 'buttonText'],
             rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
             rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
@@ -334,7 +334,6 @@ function copyDeprecatedLangOptions(chart: Chart): void {
         }
     );
 }
-
 
 /**
  * Copy options that are deprecated over to new options. Logs warnings to

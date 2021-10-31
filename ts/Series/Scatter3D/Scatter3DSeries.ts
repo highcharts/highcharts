@@ -26,18 +26,14 @@ import Scatter3DPoint from './Scatter3DPoint.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /**
  * Internal types
  * @private
  */
 declare global {
-    namespace Highcharts {
-    }
+    namespace Highcharts {}
 }
 
 /* *
@@ -54,7 +50,6 @@ declare global {
  * @augments Highcharts.Series
  */
 class Scatter3DSeries extends ScatterSeries {
-
     /* *
      *
      *  Static Properties
@@ -76,11 +71,15 @@ class Scatter3DSeries extends ScatterSeries {
      * @requires     highcharts-3d
      * @optionparent plotOptions.scatter3d
      */
-    public static defaultOptions: Scatter3DSeriesOptions = merge(ScatterSeries.defaultOptions, {
-        tooltip: {
-            pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
-        }
-    } as Scatter3DSeriesOptions);
+    public static defaultOptions: Scatter3DSeriesOptions = merge(
+        ScatterSeries.defaultOptions,
+        {
+            tooltip: {
+                pointFormat:
+                    'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+            }
+        } as Scatter3DSeriesOptions
+    );
 
     /* *
      *
@@ -104,8 +103,7 @@ class Scatter3DSeries extends ScatterSeries {
         const attribs = super.pointAttribs.apply(this, arguments);
 
         if (this.chart.is3d() && point) {
-            attribs.zIndex =
-                pointCameraDistance(point as any, this.chart);
+            attribs.zIndex = pointCameraDistance(point as any, this.chart);
         }
 
         return attribs;
@@ -134,7 +132,6 @@ extend(Scatter3DSeries.prototype, {
     pointArrayMap: ['x', 'y', 'z'],
 
     pointClass: Scatter3DPoint
-
 });
 
 /* *
@@ -240,4 +237,4 @@ export default Scatter3DSeries;
  * @apioption series.scatter3d.data.z
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

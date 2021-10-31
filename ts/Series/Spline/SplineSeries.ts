@@ -21,15 +21,10 @@ import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: LineSeries
-    }
+    seriesTypes: { line: LineSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 /**
  * Spline series type.
@@ -37,7 +32,6 @@ const {
  * @private
  */
 class SplineSeries extends LineSeries {
-
     /* *
      *
      *  Static Properties
@@ -58,7 +52,9 @@ class SplineSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions);
+    public static defaultOptions: SplineSeriesOptions = merge(
+        LineSeries.defaultOptions
+    );
 
     /* *
      *
@@ -100,8 +96,7 @@ class SplineSeries extends LineSeries {
         point: SplinePoint,
         i: number
     ): SVGPath.CurveTo {
-        let
-            // 1 means control points midway between points, 2 means 1/3
+        let // 1 means control points midway between points, 2 means 1/3
             // from the point, 3 is 1/4 etc
             smoothing = 1.5,
             denom = smoothing + 1,
@@ -119,11 +114,13 @@ class SplineSeries extends LineSeries {
          * @private
          */
         function doCurve(otherPoint: SplinePoint): boolean {
-            return otherPoint &&
+            return (
+                otherPoint &&
                 !otherPoint.isNull &&
                 otherPoint.doCurve !== false &&
                 // #6387, area splines next to null:
-                !point.isCliff;
+                !point.isCliff
+            );
         }
 
         // Find control points
@@ -141,12 +138,13 @@ class SplineSeries extends LineSeries {
 
             // Have the two control points make a straight line through main
             // point
-            if (rightContX !== leftContX) { // #5016, division by zero
-                correction = (
-                    ((rightContY - leftContY) *
-                    (rightContX - plotX)) /
-                    (rightContX - leftContX) + plotY - rightContY
-                );
+            if (rightContX !== leftContX) {
+                // #5016, division by zero
+                correction =
+                    ((rightContY - leftContY) * (rightContX - plotX)) /
+                        (rightContX - leftContX) +
+                    plotY -
+                    rightContY;
             }
 
             leftContY += correction;
@@ -158,7 +156,6 @@ class SplineSeries extends LineSeries {
                 leftContY = Math.max(lastY, plotY);
                 // mirror of left control point
                 rightContY = 2 * plotY - leftContY;
-
             } else if (leftContY < lastY && leftContY < plotY) {
                 leftContY = Math.min(lastY, plotY);
                 rightContY = 2 * plotY - leftContY;
@@ -167,7 +164,6 @@ class SplineSeries extends LineSeries {
             if (rightContY > nextY && rightContY > plotY) {
                 rightContY = Math.max(nextY, plotY);
                 leftContY = 2 * plotY - rightContY;
-
             } else if (rightContY < nextY && rightContY < plotY) {
                 rightContY = Math.min(nextY, plotY);
                 leftContY = 2 * plotY - rightContY;
@@ -176,8 +172,6 @@ class SplineSeries extends LineSeries {
             // record for drawing in next point
             point.rightContX = rightContX;
             point.rightContY = rightContY;
-
-
         }
 
         // Visualize control points for debugging
@@ -245,7 +239,6 @@ class SplineSeries extends LineSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -355,4 +348,4 @@ export default SplineSeries;
  * @apioption series.spline.data
  */
 
-''; // adds doclets above intro transpilat
+(''); // adds doclets above intro transpilat

@@ -18,16 +18,10 @@ import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+const { extend, isArray, merge } = U;
 
 /* *
  *
@@ -68,59 +62,63 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @requires     stock/indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
      */
-    public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
-        marker: {
-            enabled: false
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
-        },
-        params: {
-            period: 20,
-            /**
-             * Percentage above the moving average that should be displayed.
-             * 0.1 means 110%. Relative to the calculated value.
-             */
-            topBand: 0.1,
-            /**
-             * Percentage below the moving average that should be displayed.
-             * 0.1 means 90%. Relative to the calculated value.
-             */
-            bottomBand: 0.1
-        },
-        /**
-         * Bottom line options.
-         */
-        bottomLine: {
-            styles: {
+    public static defaultOptions: PriceEnvelopesOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            marker: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Top: {point.top}<br/>Middle: {point.middle}<br/>Bottom: {point.bottom}<br/>'
+            },
+            params: {
+                period: 20,
                 /**
-                 * Pixel width of the line.
+                 * Percentage above the moving average that should be displayed.
+                 * 0.1 means 110%. Relative to the calculated value.
                  */
-                lineWidth: 1,
+                topBand: 0.1,
                 /**
-                 * Color of the line. If not set, it's inherited from
-                 * [plotOptions.priceenvelopes.color](
-                 * #plotOptions.priceenvelopes.color).
-                 *
-                 * @type {Highcharts.ColorString}
+                 * Percentage below the moving average that should be displayed.
+                 * 0.1 means 90%. Relative to the calculated value.
                  */
-                lineColor: void 0
+                bottomBand: 0.1
+            },
+            /**
+             * Bottom line options.
+             */
+            bottomLine: {
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * [plotOptions.priceenvelopes.color](
+                     * #plotOptions.priceenvelopes.color).
+                     *
+                     * @type {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
+            /**
+             * Top line options.
+             *
+             * @extends plotOptions.priceenvelopes.bottomLine
+             */
+            topLine: {
+                styles: {
+                    lineWidth: 1
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        /**
-         * Top line options.
-         *
-         * @extends plotOptions.priceenvelopes.bottomLine
-         */
-        topLine: {
-            styles: {
-                lineWidth: 1
-            }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as PriceEnvelopesOptions)
+        } as PriceEnvelopesOptions
+    );
 
     public data: Array<PriceEnvelopesPoint> = void 0 as any;
     public options: PriceEnvelopesOptions = void 0 as any;
@@ -130,23 +128,24 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
+        this.options = merge(
+            {
+                topLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
+                },
+                bottomLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
                 }
             },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
+            this.options
+        );
     }
 
-    public toYData(
-        point: PriceEnvelopesPoint
-    ): [number, number, number] {
+    public toYData(point: PriceEnvelopesPoint): [number, number, number] {
         return [point.top, point.middle, point.bottom];
     }
 
@@ -156,43 +155,32 @@ class PriceEnvelopesIndicator extends SMAIndicator {
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
-        indicator.points.forEach(
-            function (
-                point: PriceEnvelopesPoint
+        indicator.points.forEach(function (point: PriceEnvelopesPoint): void {
+            [point.top, point.middle, point.bottom].forEach(function (
+                value: number,
+                i: number
             ): void {
-                [point.top, point.middle, point.bottom].forEach(
-                    function (value: number, i: number): void {
-                        if (value !== null) {
-                            (point as any)[translatedEnvelopes[i]] =
-                                indicator.yAxis.toPixels(value, true);
-                        }
-                    }
-                );
-            }
-        );
+                if (value !== null) {
+                    (point as any)[translatedEnvelopes[i]] =
+                        indicator.yAxis.toPixels(value, true);
+                }
+            });
+        });
     }
 
     public drawGraph(): void {
         let indicator = this,
-            middleLinePoints: Array<
-            PriceEnvelopesPoint
-            > = indicator.points,
+            middleLinePoints: Array<PriceEnvelopesPoint> = indicator.points,
             pointsLength: number = middleLinePoints.length,
-            middleLineOptions: PriceEnvelopesOptions = (
-                indicator.options
-            ),
-            middleLinePath: (
-                SVGElement|undefined
-            ) = indicator.graph,
-            gappedExtend:
-            PriceEnvelopesIndicator.PriceEnvelopesIndicatorGappedExtensionObject = {
-                options: {
-                    gapSize: middleLineOptions.gapSize
-                }
-            },
-            deviations: Array<Array<(
-                Partial<PriceEnvelopesPoint>
-            )>> = [[], []], // top and bottom point place holders
+            middleLineOptions: PriceEnvelopesOptions = indicator.options,
+            middleLinePath: SVGElement | undefined = indicator.graph,
+            gappedExtend: PriceEnvelopesIndicator.PriceEnvelopesIndicatorGappedExtensionObject =
+                {
+                    options: {
+                        gapSize: middleLineOptions.gapSize
+                    }
+                },
+            deviations: Array<Array<Partial<PriceEnvelopesPoint>>> = [[], []], // top and bottom point place holders
             point: PriceEnvelopesPoint;
 
         // Generate points for top and bottom lines:
@@ -211,20 +199,21 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }
 
         // Modify options and generate lines:
-        ['topLine', 'bottomLine'].forEach(
-            function (lineName: string, i: number): void {
-                indicator.points = (deviations[i] as any);
-                indicator.options = merge(
-                    (middleLineOptions as any)[lineName].styles,
-                    gappedExtend
-                );
-                indicator.graph = (indicator as any)['graph' + lineName];
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+        ['topLine', 'bottomLine'].forEach(function (
+            lineName: string,
+            i: number
+        ): void {
+            indicator.points = deviations[i] as any;
+            indicator.options = merge(
+                (middleLineOptions as any)[lineName].styles,
+                gappedExtend
+            );
+            indicator.graph = (indicator as any)['graph' + lineName];
+            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 
-                // Now save lines:
-                (indicator as any)['graph' + lineName] = indicator.graph;
-            }
-        );
+            // Now save lines:
+            (indicator as any)['graph' + lineName] = indicator.graph;
+        });
 
         // Restore options and draw a middle line:
         indicator.points = middleLinePoints;
@@ -233,15 +222,15 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PriceEnvelopesParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            topPercent: number = (params.topBand as any),
-            botPercent: number = (params.bottomBand as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            topPercent: number = params.topBand as any,
+            botPercent: number = params.bottomBand as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // 0- date, 1-top line, 2-middle line, 3-bottom line
             PE: Array<Array<number>> = [],
@@ -258,11 +247,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             i: number;
 
         // Price envelopes requires close value
-        if (
-            xVal.length < period ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4
-        ) {
+        if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
             return;
         }
 
@@ -270,10 +255,14 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
 
-            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                xData: slicedX,
-                yData: slicedY
-            } as any), params) as any);
+            point = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
+                this,
+                {
+                    xData: slicedX,
+                    yData: slicedY
+                } as any,
+                params
+            ) as any;
 
             date = (point as any).xData[0];
             ML = (point as any).yData[0];
@@ -339,4 +328,4 @@ export default PriceEnvelopesIndicator;
  * @apioption series.priceenvelopes
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

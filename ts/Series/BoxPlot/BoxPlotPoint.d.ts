@@ -37,7 +37,7 @@ declare class BoxPlotPoint extends ColumnPoint {
     public low: number;
     public lowPlot: number;
     public median: number;
-    public medianColor: (ColorString|GradientColor);
+    public medianColor: ColorString | GradientColor;
     public medianDashStyle: DashStyleValue;
     public medianPlot: number;
     public medianShape: SVGElement;
@@ -56,7 +56,7 @@ declare class BoxPlotPoint extends ColumnPoint {
     public whiskerColor: ColorType;
     public whiskerDashStyle: DashStyleValue;
     public whiskers: SVGElement;
-    public whiskerLength: (number|string);
+    public whiskerLength: number | string;
     public whiskerWidth: number;
 }
 

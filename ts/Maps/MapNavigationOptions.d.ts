@@ -32,7 +32,7 @@ declare module '../Core/Options' {
     }
 }
 
-export type ButtonRelativeToValue = ('plotBox'|'spacingBox');
+export type ButtonRelativeToValue = 'plotBox' | 'spacingBox';
 
 export interface MapNavigationButtonOptions {
     align?: AlignValue;

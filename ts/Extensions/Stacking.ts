@@ -62,7 +62,7 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         getStacks(): void;
     }
@@ -84,7 +84,7 @@ declare module '../Core/Series/SeriesLike' {
         stackedYData?: Array<number>;
         stackKey?: string;
         getStackIndicator(
-            stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+            stackIndicator: Highcharts.StackItemIndicatorObject | undefined,
             x: number,
             index: number,
             key?: string
@@ -96,15 +96,13 @@ declare module '../Core/Series/SeriesLike' {
             i: number
         ): void;
         setGroupedPoints(): void;
-        setStackedPoints(
-            stackingParam?: string
-        ): void;
+        setStackedPoints(stackingParam?: string): void;
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        stack?: (number|string);
+        stack?: number | string;
         stacking?: Highcharts.OptionsStackingValue;
     }
 }
@@ -115,7 +113,12 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
+        type OptionsStackingValue =
+            | 'normal'
+            | 'overlap'
+            | 'percent'
+            | 'stream'
+            | 'group';
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
@@ -136,7 +139,7 @@ declare global {
             x: number;
         }
         interface YAxisStackLabelsOptions {
-            animation?: (false|Partial<AnimationOptions>);
+            animation?: false | Partial<AnimationOptions>;
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: ColorType;
@@ -170,7 +173,7 @@ declare global {
             public alignOptions: AlignObject;
             public axis: StackingAxis.Composition;
             public base?: string;
-            public cumulative?: (null|number);
+            public cumulative?: null | number;
             public hasValidPoints: boolean;
             public isNegative: boolean;
             public label?: SVGLabel;
@@ -180,7 +183,7 @@ declare global {
             public rightCliff: number;
             public stack?: OptionsStackingValue;
             public textAlign: AlignValue;
-            public total: (null|number);
+            public total: null | number;
             public touched?: number;
             public x: number;
             public destroy(): void;
@@ -234,7 +237,6 @@ class StackItem {
         x: number,
         stackOption?: Highcharts.OptionsStackingValue
     ) {
-
         const inverted = axis.chart.inverted;
 
         this.axis = axis;
@@ -266,21 +268,24 @@ class StackItem {
         // negative and if the chart is inverted or not.
         // First test the user supplied value, then use the dynamic.
         this.alignOptions = {
-            align: options.align ||
+            align:
+                options.align ||
                 (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-            verticalAlign: options.verticalAlign ||
-                (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+            verticalAlign:
+                options.verticalAlign ||
+                (inverted ? 'middle' : isNegative ? 'bottom' : 'top'),
             y: options.y,
             x: options.x
         };
-        this.textAlign = options.textAlign ||
-        (inverted ? (isNegative ? 'right' : 'left') : 'center');
+        this.textAlign =
+            options.textAlign ||
+            (inverted ? (isNegative ? 'right' : 'left') : 'center');
     }
 
     public alignOptions: AlignObject;
     public axis: StackingAxis.Composition;
     public base?: string;
-    public cumulative?: (null|number);
+    public cumulative?: null | number;
     public hasValidPoints: boolean;
     public isNegative: boolean;
     public label?: SVGLabel;
@@ -290,7 +295,7 @@ class StackItem {
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
     public textAlign: AlignValue;
-    public total: (null|number);
+    public total: null | number;
     public touched?: number;
     public x: number;
 
@@ -314,9 +319,9 @@ class StackItem {
             options = this.options,
             formatOption = options.format,
             attr: Highcharts.AttrObject = {},
-            str = formatOption ? // format the text in the label
-                format(formatOption, this, chart) :
-                (options.formatter as any).call(this);
+            str = formatOption // format the text in the label
+                ? format(formatOption, this, chart)
+                : (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
@@ -324,18 +329,17 @@ class StackItem {
             this.label.attr({ text: str, visibility: 'hidden' });
         } else {
             // Create new label
-            this.label = chart.renderer
-                .label(
-                    str,
-                    null as any,
-                    null as any,
-                    (options as any).shape,
-                    null as any,
-                    null as any,
-                    options.useHTML,
-                    false,
-                    'stack-labels'
-                );
+            this.label = chart.renderer.label(
+                str,
+                null as any,
+                null as any,
+                (options as any).shape,
+                null as any,
+                null as any,
+                options.useHTML,
+                false,
+                'stack-labels'
+            );
 
             attr = {
                 r: options.borderRadius || 0,
@@ -387,11 +391,11 @@ class StackItem {
             chart = axis.chart,
             // stack value translated mapped to chart coordinates
             y = axis.translate(
-                axis.stacking.usePercentage ?
-                    100 :
-                    (boxTop ?
-                        boxTop :
-                        (stackItem.total as any)),
+                axis.stacking.usePercentage
+                    ? 100
+                    : boxTop
+                    ? boxTop
+                    : (stackItem.total as any),
                 0 as any,
                 0 as any,
                 0 as any,
@@ -401,21 +405,24 @@ class StackItem {
             // stack height:
             h = defined(y) && Math.abs((y as any) - (yZero as any)),
             // x position:
-            x = pick(defaultX, (chart.xAxis[0].translate(stackItem.x) as any)) +
+            x =
+                pick(defaultX, chart.xAxis[0].translate(stackItem.x) as any) +
                 xOffset,
-            stackBox = defined(y) && stackItem.getStackBox(
-                chart,
-                stackItem,
-                x,
-                y as any,
-                xWidth,
-                h as any,
-                axis
-            ),
+            stackBox =
+                defined(y) &&
+                stackItem.getStackBox(
+                    chart,
+                    stackItem,
+                    x,
+                    y as any,
+                    xWidth,
+                    h as any,
+                    axis
+                ),
             label = stackItem.label,
             isNegative = stackItem.isNegative,
-            isJustify = pick(stackItem.options.overflow,
-                'justify') === 'justify',
+            isJustify =
+                pick(stackItem.options.overflow, 'justify') === 'justify',
             textAlign = stackItem.textAlign,
             visible;
 
@@ -433,13 +440,19 @@ class StackItem {
                 if (chart.inverted && textAlign === 'center') {
                     boxOffsetX = bBox.width / 2;
                 } else {
-                    boxOffsetX = chart.inverted ?
-                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                    boxOffsetX = chart.inverted
+                        ? isNegative
+                            ? bBox.width + padding
+                            : -padding
+                        : bBox.width / 2;
                 }
             }
 
-            boxOffsetY = chart.inverted ?
-                bBox.height / 2 : (isNegative ? -padding : bBox.height);
+            boxOffsetY = chart.inverted
+                ? bBox.height / 2
+                : isNegative
+                ? -padding
+                : bBox.height;
 
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
@@ -453,10 +466,12 @@ class StackItem {
             label.align(stackItem.alignOptions, null as any, stackBox);
 
             // Check if label is inside the plotArea #12294
-            if (chart.isInsidePlot(
-                label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
-                label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y
-            )) {
+            if (
+                chart.isInsidePlot(
+                    label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
+                    label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y
+                )
+            ) {
                 label.show();
             } else {
                 // Move label away to avoid the overlapping issues
@@ -484,7 +499,10 @@ class StackItem {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
-                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                    chart.isInsidePlot(
+                        label.x - padding + label.width,
+                        label.y
+                    ) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {
@@ -525,20 +543,26 @@ class StackItem {
     ): BBoxObject {
         const reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
-            axisPos = axis.height + (axis.pos as any) -
+            axisPos =
+                axis.height +
+                (axis.pos as any) -
                 (inverted ? chart.plotLeft : chart.plotTop),
-            neg = (stackItem.isNegative && !reversed) ||
+            neg =
+                (stackItem.isNegative && !reversed) ||
                 (!stackItem.isNegative && reversed); // #4056
 
-        return { // this is the box for the complete stack
-            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
-                x + chart.xAxis[0].transB - chart.plotLeft,
-            y: inverted ?
-                axis.height - x - xWidth :
-                (neg ?
-                    (axisPos - y - h) :
-                    axisPos - y
-                ),
+        return {
+            // this is the box for the complete stack
+            x: inverted
+                ? neg
+                    ? y - axis.right
+                    : y - h + axis.pos - chart.plotLeft
+                : x + chart.xAxis[0].transB - chart.plotLeft,
+            y: inverted
+                ? axis.height - x - xWidth
+                : neg
+                ? axisPos - y - h
+                : axisPos - y,
             width: inverted ? h : xWidth,
             height: inverted ? xWidth : h
         };
@@ -563,14 +587,12 @@ Chart.prototype.getStacks = function (this: Chart): void {
     });
 
     chart.series.forEach(function (series): void {
-        const xAxisOptions = series.xAxis && series.xAxis.options || {};
+        const xAxisOptions = (series.xAxis && series.xAxis.options) || {};
 
         if (
             series.options.stacking &&
-            (
-                series.visible === true ||
-                chart.options.chart.ignoreHiddenSeries === false
-            )
+            (series.visible === true ||
+                chart.options.chart.ignoreHiddenSeries === false)
         ) {
             series.stackKey = [
                 series.type,
@@ -582,11 +604,9 @@ Chart.prototype.getStacks = function (this: Chart): void {
     });
 };
 
-
 // Stacking methods defined on the Axis prototype
 
 StackingAxis.compose(Axis);
-
 
 // Stacking methods defined for Series prototype
 
@@ -600,7 +620,6 @@ StackingAxis.compose(Axis);
  * @return {void}
  */
 Series.prototype.setGroupedPoints = function (): void {
-
     const stacking = this.yAxis.stacking;
 
     if (
@@ -614,8 +633,8 @@ Series.prototype.setGroupedPoints = function (): void {
     ) {
         Series.prototype.setStackedPoints.call(this, 'group');
 
-    // After updating, if we now have proper stacks, we must delete the group
-    // pseudo stacks (#14986)
+        // After updating, if we now have proper stacks, we must delete the
+        // group pseudo stacks (#14986)
     } else if (stacking) {
         objectEach(stacking.stacks, (type, key): void => {
             if (key.slice(-5) === 'group') {
@@ -633,13 +652,13 @@ Series.prototype.setGroupedPoints = function (): void {
  * @function Highcharts.Series#setStackedPoints
  */
 Series.prototype.setStackedPoints = function (stackingParam?: string): void {
-
     const stacking = stackingParam || this.options.stacking;
 
-    if (!stacking || (
-        this.visible !== true &&
-        this.chart.options.chart.ignoreHiddenSeries !== false
-    )) {
+    if (
+        !stacking ||
+        (this.visible !== true &&
+            this.chart.options.chart.ignoreHiddenSeries !== false)
+    ) {
         return;
     }
 
@@ -652,13 +671,15 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
         stackOption = seriesOptions.stack,
-        stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
+        stackKey = stackingParam
+            ? `${series.type},${stacking}`
+            : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
         yAxis = series.yAxis as StackingAxis.Composition,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks,
-        stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+        stackIndicator: Highcharts.StackItemIndicatorObject | undefined,
         isNegative,
         stack,
         other,
@@ -667,7 +688,6 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         i,
         x,
         y;
-
 
     yAxis.stacking.stacksTouched += 1;
 
@@ -694,7 +714,8 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
         // Initialize StackItem for this x
         if (!stacks[key as any][x]) {
-            if ((oldStacks as any)[key as any] &&
+            if (
+                (oldStacks as any)[key as any] &&
                 (oldStacks as any)[key as any][x]
             ) {
                 stacks[key as any][x] = (oldStacks as any)[key as any][x];
@@ -702,9 +723,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
             } else {
                 stacks[key as any][x] = new StackItem(
                     yAxis,
-                    (
-                        yAxis.options as YAxisOptions
-                    ).stackLabels as any,
+                    (yAxis.options as YAxisOptions).stackLabels as any,
                     isNegative,
                     x,
                     stackOption as any
@@ -731,7 +750,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
                     stack.points[series.index + ',' + x + ',0'][0];
             }
 
-        // When updating to null, reset the point stack (#7493)
+            // When updating to null, reset the point stack (#7493)
         } else {
             stack.points[pointKey as any] = stack.points[series.index as any] =
                 null as any;
@@ -739,7 +758,6 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
         // Add value to the stack total
         if (stacking === 'percent') {
-
             // Percent stacked column, totals are the same for the positive and
             // negative stacks
             other = isNegative ? stackKey : negKey;
@@ -747,15 +765,14 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
                 other = stacks[other as any][x];
                 stack.total = other.total =
                     Math.max(other.total as any, stack.total as any) +
-                    Math.abs(y) ||
-                    0;
+                        Math.abs(y) || 0;
 
-            // Percent stacked areas
+                // Percent stacked areas
             } else {
-                stack.total =
-                    correctFloat((stack.total as any) + (Math.abs(y) || 0));
+                stack.total = correctFloat(
+                    (stack.total as any) + (Math.abs(y) || 0)
+                );
             }
-
         } else if (stacking === 'group') {
             if (isArray(y)) {
                 y = y[0];
@@ -765,7 +782,6 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;
             }
-
         } else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
@@ -812,9 +828,10 @@ Series.prototype.modifyStacks = function (): void {
         stackIndicator: Highcharts.StackItemIndicatorObject,
         stacking = series.options.stacking;
 
-    if ((series as any)[stacking + 'Stacker']) { // Modifier function exists
+    if ((series as any)[stacking + 'Stacker']) {
+        // Modifier function exists
         [stackKey, '-' + stackKey].forEach(function (
-            key: (string|undefined)
+            key: string | undefined
         ): void {
             let i = (processedXData as any).length,
                 x,
@@ -834,7 +851,9 @@ Series.prototype.modifyStacks = function (): void {
                     stack && stack.points[stackIndicator.key as any];
                 if (pointExtremes) {
                     (series as any)[stacking + 'Stacker'](
-                        pointExtremes, stack, i
+                        pointExtremes,
+                        stack,
+                        i
                     );
                 }
             }
@@ -875,7 +894,7 @@ Series.prototype.percentStacker = function (
  * @return {Highcharts.StackItemIndicatorObject}
  */
 Series.prototype.getStackIndicator = function (
-    stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+    stackIndicator: Highcharts.StackItemIndicatorObject | undefined,
     x: number,
     index: number,
     key?: string
@@ -883,7 +902,8 @@ Series.prototype.getStackIndicator = function (
     // Update stack indicator, when:
     // first point in a stack || x changed || stack type (negative vs positive)
     // changed:
-    if (!defined(stackIndicator) ||
+    if (
+        !defined(stackIndicator) ||
         stackIndicator.x !== x ||
         (key && stackIndicator.key !== key)
     ) {
@@ -893,11 +913,10 @@ Series.prototype.getStackIndicator = function (
             key: key
         };
     } else {
-        (stackIndicator).index++;
+        stackIndicator.index++;
     }
 
-    stackIndicator.key =
-        [index, x, stackIndicator.index].join(',');
+    stackIndicator.key = [index, x, stackIndicator.index].join(',');
 
     return stackIndicator;
 };
@@ -918,38 +937,38 @@ export default H.StackItem;
  * @product highcharts
  *
  * @interface Highcharts.StackItemObject
- *//**
+ */ /**
  * Alignment settings
  * @name Highcharts.StackItemObject#alignOptions
  * @type {Highcharts.AlignObject}
- *//**
+ */ /**
  * Related axis
  * @name Highcharts.StackItemObject#axis
  * @type {Highcharts.Axis}
- *//**
+ */ /**
  * Cumulative value of the stacked data points
  * @name Highcharts.StackItemObject#cumulative
  * @type {number}
- *//**
+ */ /**
  * True if on the negative side
  * @name Highcharts.StackItemObject#isNegative
  * @type {boolean}
- *//**
+ */ /**
  * Related SVG element
  * @name Highcharts.StackItemObject#label
  * @type {Highcharts.SVGElement}
- *//**
+ */ /**
  * Related stack options
  * @name Highcharts.StackItemObject#options
  * @type {Highcharts.YAxisStackLabelsOptions}
- *//**
+ */ /**
  * Total value of the stacked data points
  * @name Highcharts.StackItemObject#total
  * @type {number}
- *//**
+ */ /**
  * Shared x value of the stack
  * @name Highcharts.StackItemObject#x
  * @type {number}
  */
 
-''; // keeps doclets above in JS file
+(''); // keeps doclets above in JS file

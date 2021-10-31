@@ -12,57 +12,47 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    ROCOptions,
-    ROCParamsOptions
-} from './ROCOptions';
+import type { ROCOptions, ROCParamsOptions } from './ROCOptions';
 import type ROCPoint from './ROCPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 
-const {
-    isArray,
-    merge,
-    extend
-} = U;
+const { isArray, merge, extend } = U;
 
 /* eslint-disable require-jsdoc */
 
 // Utils:
 function populateAverage(
     xVal: Array<number>,
-    yVal: (Array<number>|Array<Array<number>>),
+    yVal: Array<number> | Array<Array<number>>,
     i: number,
     period: number,
     index: number
-): [number, (number|null)] {
+): [number, number | null] {
     /* Calculated as:
 
        (Closing Price [today] - Closing Price [n days ago]) /
         Closing Price [n days ago] * 100
 
        Return y as null when avoiding division by zero */
-    let nDaysAgoY: number,
-        rocY: (number|null);
+    let nDaysAgoY: number, rocY: number | null;
 
     if (index < 0) {
         // y data given as an array of values
-        nDaysAgoY = (yVal[i - period] as any);
-        rocY = nDaysAgoY ?
-            ((yVal as any)[i] - nDaysAgoY) / nDaysAgoY * 100 :
-            null;
+        nDaysAgoY = yVal[i - period] as any;
+        rocY = nDaysAgoY
+            ? (((yVal as any)[i] - nDaysAgoY) / nDaysAgoY) * 100
+            : null;
     } else {
         // y data given as an array of arrays and the index should be used
         nDaysAgoY = (yVal as any)[i - period][index];
-        rocY = nDaysAgoY ?
-            ((yVal as any)[i][index] - nDaysAgoY) / nDaysAgoY * 100 :
-            null;
+        rocY = nDaysAgoY
+            ? (((yVal as any)[i][index] - nDaysAgoY) / nDaysAgoY) * 100
+            : null;
     }
 
     return [xVal[i], rocY];
@@ -108,12 +98,15 @@ class ROCIndicator extends SMAIndicator {
      * @requires     stock/indicators/roc
      * @optionparent plotOptions.roc
      */
-    public static defaultOptions: ROCOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            index: 3,
-            period: 9
-        }
-    } as ROCOptions);
+    public static defaultOptions: ROCOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                index: 3,
+                period: 9
+            }
+        } as ROCOptions
+    );
 
     /* *
      *
@@ -134,17 +127,17 @@ class ROCIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ROCParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            ROC: Array<Array<(number|null)>> = [],
+            ROC: Array<Array<number | null>> = [],
             xData: Array<number> = [],
-            yData: Array<(number|null)> = [],
+            yData: Array<number | null> = [],
             i: number,
             index = -1,
-            ROCPoint: [number, (number|null)];
+            ROCPoint: [number, number | null];
 
         // Period is used as a number of time periods ago, so we need more
         // (at least 1 more) data than the period value
@@ -154,7 +147,7 @@ class ROCIndicator extends SMAIndicator {
 
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {
-            index = (params.index as any);
+            index = params.index as any;
         }
 
         // i = period <-- skip first N-points
@@ -233,4 +226,4 @@ export default ROCIndicator;
  * @apioption series.roc
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

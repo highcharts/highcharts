@@ -12,23 +12,15 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    WMAOptions,
-    WMAParamsOptions
-} from './WMAOptions';
+import type { WMAOptions, WMAParamsOptions } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+const { isArray, merge } = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -36,14 +28,14 @@ const {
  * @private
  */
 function accumulateAverage(
-    points: Array<[number, (number|Array<number>)]>,
+    points: Array<[number, number | Array<number>]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number,
     index: number
 ): void {
     const xValue: number = xVal[i],
-        yValue: (number|Array<number>) = index < 0 ? yVal[i] : yVal[i][index];
+        yValue: number | Array<number> = index < 0 ? yVal[i] : yVal[i][index];
 
     points.push([xValue, yValue]);
 }
@@ -52,30 +44,31 @@ function accumulateAverage(
  * @private
  */
 function weightedSumArray(
-    array: Array<[(number|null), (number|Array<number>)]>,
+    array: Array<[number | null, number | Array<number>]>,
     pLen: number
 ): number {
     // The denominator is the sum of the number of days as a triangular number.
     // If there are 5 days, the triangular numbers are 5, 4, 3, 2, and 1.
     // The sum is 5 + 4 + 3 + 2 + 1 = 15.
-    const denominator = (pLen + 1) / 2 * pLen;
+    const denominator = ((pLen + 1) / 2) * pLen;
 
     // reduce VS loop => reduce
-    return (array.reduce(
-        function (
-            prev: [(number|null), (number|Array<number>)],
-            cur: [(number|null), (number|Array<number>)],
+    return (
+        (array.reduce(function (
+            prev: [number | null, number | Array<number>],
+            cur: [number | null, number | Array<number>],
             i: number
-        ): [(number|null), (number|Array<number>)] {
+        ): [number | null, number | Array<number>] {
             return [null, (prev[1] as any) + (cur[1] as any) * (i + 1)];
-        })[1] as any) / denominator;
+        })[1] as any) / denominator
+    );
 }
 
 /**
  * @private
  */
 function populateAverage(
-    points: Array<[number, (number|Array<number>)]>,
+    points: Array<[number, number | Array<number>]>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number
@@ -114,36 +107,38 @@ class WMAIndicator extends SMAIndicator {
      * @requires     stock/indicators/wma
      * @optionparent plotOptions.wma
      */
-    public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            index: 3,
-            period: 9
-        }
-    } as WMAOptions)
+    public static defaultOptions: WMAOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                index: 3,
+                period: 9
+            }
+        } as WMAOptions
+    );
 
     public data: Array<WMAPoint> = void 0 as any;
     public options: WMAOptions = void 0 as any;
     public points: Array<WMAPoint> = void 0 as any;
 
-
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: WMAParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let period: number = params.period as any,
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             yValLen = yVal ? yVal.length : 0,
             range = 1,
             xValue: number = xVal[0],
-            yValue: (number|Array<number>) = yVal[0],
+            yValue: number | Array<number> = yVal[0],
             WMA: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             index = -1,
-            i: (number|undefined),
-            points: Array<[number, (number|Array<number>)]>,
-            WMAPoint: (Array<number>|undefined);
+            i: number | undefined,
+            points: Array<[number, number | Array<number>]>,
+            WMAPoint: Array<number> | undefined;
 
         if (xVal.length < period) {
             return;
@@ -151,7 +146,7 @@ class WMAIndicator extends SMAIndicator {
 
         // Switch index for OHLC / Candlestick
         if (isArray(yVal[0])) {
-            index = (params.index as any);
+            index = params.index as any;
             yValue = yVal[0][index];
         }
         // Starting point
@@ -218,4 +213,4 @@ export default WMAIndicator;
  * @apioption series.wma
  */
 
-''; // adds doclet above to the transpiled file
+(''); // adds doclet above to the transpiled file

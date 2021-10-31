@@ -36,11 +36,7 @@ import Axis from '../Core/Axis/Axis.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    wrap
-} = U;
+const { addEvent, merge, wrap } = U;
 
 /* *
  *
@@ -50,7 +46,7 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        currentDateIndicator?: (boolean|Highcharts.CurrentDateIndicatorOptions);
+        currentDateIndicator?: boolean | Highcharts.CurrentDateIndicatorOptions;
     }
 }
 
@@ -150,12 +146,11 @@ addEvent(Axis, 'afterSetOptions', function (): void {
     const options = this.options,
         cdiOptions = options.currentDateIndicator;
 
-
     if (cdiOptions) {
         const plotLineOptions: PlotLineOptions =
-            typeof cdiOptions === 'object' ?
-                merge(defaultOptions, cdiOptions) :
-                merge(defaultOptions);
+            typeof cdiOptions === 'object'
+                ? merge(defaultOptions, cdiOptions)
+                : merge(defaultOptions);
 
         plotLineOptions.value = Date.now();
         plotLineOptions.className = 'highcharts-current-date-indicator';
@@ -166,7 +161,6 @@ addEvent(Axis, 'afterSetOptions', function (): void {
 
         options.plotLines.push(plotLineOptions);
     }
-
 });
 
 addEvent(PlotLineOrBand, 'render', function (): void {
@@ -178,24 +172,31 @@ addEvent(PlotLineOrBand, 'render', function (): void {
     }
 });
 
-wrap(PlotLineOrBand.prototype, 'getLabelText', function (
-    this: PlotLineOrBand,
-    defaultMethod: Function,
-    defaultLabelOptions: (PlotBandLabelOptions|PlotLineLabelOptions)
-): string {
-    const options = this.options;
+wrap(
+    PlotLineOrBand.prototype,
+    'getLabelText',
+    function (
+        this: PlotLineOrBand,
+        defaultMethod: Function,
+        defaultLabelOptions: PlotBandLabelOptions | PlotLineLabelOptions
+    ): string {
+        const options = this.options;
 
-    if (
-        options &&
-        options.className &&
-        options.className.indexOf('highcharts-current-date-indicator') !== -1 &&
-        options.label &&
-        typeof options.label.formatter === 'function'
-    ) {
-
-        (options as any).value = Date.now();
-        return (options as any).label.formatter
-            .call(this, (options as any).value, (options as any).label.format);
+        if (
+            options &&
+            options.className &&
+            options.className.indexOf('highcharts-current-date-indicator') !==
+                -1 &&
+            options.label &&
+            typeof options.label.formatter === 'function'
+        ) {
+            (options as any).value = Date.now();
+            return (options as any).label.formatter.call(
+                this,
+                (options as any).value,
+                (options as any).label.format
+            );
+        }
+        return defaultMethod.call(this, defaultLabelOptions);
     }
-    return defaultMethod.call(this, defaultLabelOptions);
-});
+);

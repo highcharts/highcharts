@@ -31,7 +31,6 @@ import H from '../../Core/Globals.js';
  * */
 
 namespace DarkGreenTheme {
-
     /* *
      *
      *  Constants
@@ -39,8 +38,19 @@ namespace DarkGreenTheme {
      * */
 
     export const options: DeepPartial<Options> = {
-        colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee',
-            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+        colors: [
+            '#DDDF0D',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#aaeeee',
+            '#ff0066',
+            '#eeaaee',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#aaeeee'
+        ],
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
@@ -84,7 +94,6 @@ namespace DarkGreenTheme {
                     fontWeight: 'bold',
                     fontSize: '12px',
                     fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-
                 }
             }
         },
@@ -165,7 +174,6 @@ namespace DarkGreenTheme {
                 color: '#CCC'
             }
         },
-
 
         navigation: {
             buttonOptions: {
@@ -291,7 +299,6 @@ namespace DarkGreenTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *

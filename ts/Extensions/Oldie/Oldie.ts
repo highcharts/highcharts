@@ -38,13 +38,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../Core/Globals.js';
-const {
-    deg2rad,
-    doc,
-    noop,
-    svg,
-    win
-} = H;
+const { deg2rad, doc, noop, svg, win } = H;
 import D from '../../Core/DefaultOptions.js';
 const { getOptions } = D;
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -122,10 +116,7 @@ declare module '../../Core/Renderer/SVG/SVGRendererLike' {
         /** @requires highcharts/modules/oldies */
         getSpanWidth(wrapper: SVGElement, tspan: HTMLDOMElement): number;
         /** @requires highcharts/modules/oldies */
-        invertChild(
-            element: HTMLDOMElement,
-            parentNode: HTMLDOMElement
-        ): void;
+        invertChild(element: HTMLDOMElement, parentNode: HTMLDOMElement): void;
         /** @requires highcharts/modules/oldies */
         measureSpanWidth(text: string, style: CSSObject): number;
     }
@@ -138,7 +129,6 @@ type OldInterface = typeof Highcharts;
  * @private
  */
 declare global {
-
     /**
      * [[include:README.md]]
      * @deprecated
@@ -190,7 +180,7 @@ declare global {
             stroked?: boolean;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLPathArray extends Array<(number|string)> {
+        interface VMLPathArray extends Array<number | string> {
             isArc?: boolean;
         }
         interface VMLPathString extends String {
@@ -255,7 +245,7 @@ declare global {
                 key: string,
                 element: VMLDOMElement
             ): void;
-            public getAttr(key: string): (null|string);
+            public getAttr(key: string): null | string;
             public getSpanCorrection(
                 width: number,
                 baseline: number,
@@ -263,14 +253,8 @@ declare global {
                 rotation: number,
                 align: AlignValue
             ): void;
-            public init(
-                renderer: VMLRenderer,
-                nodeName: string
-            ): void;
-            public on(
-                eventType: string,
-                handler: Function
-            ): VMLElement;
+            public init(renderer: VMLRenderer, nodeName: string): void;
+            public on(eventType: string, handler: Function): VMLElement;
             public pathToVML(value: VMLPathArray): string;
             public rotationSetter(
                 value: string,
@@ -363,8 +347,8 @@ declare global {
                 parentNode: HTMLDOMElement
             ): void;
             public isHidden(): boolean;
-            public path(path?: (VMLAttributes|VMLPathArray)): VMLElement;
-            public prepVML(markup: Array<number|string>): string;
+            public path(path?: VMLAttributes | VMLPathArray): VMLElement;
+            public prepVML(markup: Array<number | string>): string;
             public symbol(name: string): VMLElement;
             public text(str: string, x: number, y: number): HTMLElement;
         }
@@ -375,7 +359,7 @@ declare global {
             fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
-        function removeEventListenerPolyfill<T extends EventTarget> (
+        function removeEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
             fn: EventCallback<T>
@@ -402,7 +386,7 @@ declare global {
         /** @deprecated */
         attachEvent(event: string, pDisp: Function): boolean;
         /** @deprecated */
-        detachEvent(event: string, pDisp: Function): (number|true);
+        detachEvent(event: string, pDisp: Function): number | true;
     }
 
     interface Document {
@@ -456,9 +440,12 @@ declare global {
     interface TridentNamespace {
         readonly name: string;
         onreadystatechange?: Function;
-        readonly readyState: (
-            'complete'|'interactive'|'loaded'|'loading'|'uninitialized'
-        );
+        readonly readyState:
+            | 'complete'
+            | 'interactive'
+            | 'loaded'
+            | 'loading'
+            | 'uninitialized';
         readonly urn: string;
         attachEvent(evtName: string, fn: Function): boolean;
         detachEvent(evtName: string, fn: Function): void;
@@ -467,14 +454,14 @@ declare global {
 
     /** @deprecated */
     interface TridentNamespaceCollection {
-        [key: string]: (Function|TridentNamespace);
+        [key: string]: Function | TridentNamespace;
         add(name: string, urn: string, url?: string): TridentNamespace;
         item(name: string): TridentNamespace;
     }
 
     interface Window {
         /** @deprecated */
-        createObjectURL?: (typeof URL)['createObjectURL'];
+        createObjectURL?: typeof URL['createObjectURL'];
         /** @deprecated */
         opera?: unknown;
         /** @deprecated */
@@ -482,10 +469,9 @@ declare global {
         /** @deprecated */
         webkitURL?: typeof URL;
     }
-
 }
 
-let VMLRenderer: ((typeof SVGRenderer)&(typeof Highcharts.VMLRenderer)),
+let VMLRenderer: typeof SVGRenderer & typeof Highcharts.VMLRenderer,
     VMLElement: typeof Highcharts.VMLElement;
 
 /**
@@ -501,7 +487,6 @@ let VMLRenderer: ((typeof SVGRenderer)&(typeof Highcharts.VMLRenderer)),
 (getOptions().global as any).VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 
-
 // Utilites
 if (doc && !doc.defaultView) {
     (H as any).getStyle = U.getStyle = function getStyle(
@@ -509,10 +494,12 @@ if (doc && !doc.defaultView) {
         prop: string
     ): number {
         let val: string,
-            alias = ({
-                width: 'clientWidth',
-                height: 'clientHeight'
-            } as Record<string, string>)[prop];
+            alias = (
+                {
+                    width: 'clientWidth',
+                    height: 'clientHeight'
+                } as Record<string, string>
+            )[prop];
 
         if (el.style[prop as any]) {
             return pInt(el.style[prop as any]);
@@ -530,12 +517,11 @@ if (doc && !doc.defaultView) {
             );
         }
 
-        val = (el.currentStyle as any)[prop.replace(
-            /\-(\w)/g,
-            function (a: string, b: string): string {
+        val = (el.currentStyle as any)[
+            prop.replace(/\-(\w)/g, function (a: string, b: string): string {
                 return b.toUpperCase();
-            }
-        )];
+            })
+        ];
         if (prop === 'filter') {
             val = val.replace(
                 /alpha\(opacity=([0-9]+)\)/,
@@ -552,14 +538,11 @@ if (doc && !doc.defaultView) {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 if (!svg) {
-
     // Prevent wrapping from creating false offsetWidths in export in legacy IE.
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    addEvent(SVGElement, 'afterInit', function (
-        this: SVGElement
-    ): void {
+    addEvent(SVGElement, 'afterInit', function (this: SVGElement): void {
         if (this.element.nodeName === 'text') {
             this.css({
                 position: 'absolute'
@@ -577,11 +560,10 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    Pointer.prototype.normalize = function<T extends PointerEvent> (
-        e: (T|MouseEvent|PointerEvent|TouchEvent),
+    Pointer.prototype.normalize = function <T extends PointerEvent>(
+        e: T | MouseEvent | PointerEvent | TouchEvent,
         chartPosition?: Pointer.ChartPositionObject
     ): T {
-
         e = e || win.event;
         if (!e.target) {
             (e as any).target = e.srcElement;
@@ -595,7 +577,9 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartX: Math.round(
+                Math.max((e as any).x, (e as any).clientX - chartPosition.left)
+            ),
             chartY: Math.round((e as any).y)
         }) as T;
     };
@@ -636,9 +620,10 @@ if (!svg) {
         const chart = this;
 
         // Note: win == win.top is required
-        if (!svg &&
-            (win == win.top && // eslint-disable-line eqeqeq
-            doc.readyState !== 'complete')
+        if (
+            !svg &&
+            win == win.top && // eslint-disable-line eqeqeq
+            doc.readyState !== 'complete'
         ) {
             doc.attachEvent('onreadystatechange', function (): void {
                 doc.detachEvent('onreadystatechange', chart.firstRender);
@@ -672,7 +657,7 @@ if (!svg) {
      * @param {Highcharts.EventCallbackFunction<T>} fn
      * @return {void}
      */
-    H.addEventListenerPolyfill = function<T extends EventTarget> (
+    H.addEventListenerPolyfill = function <T extends EventTarget>(
         this: T,
         type: string,
         fn: EventCallback<T>
@@ -703,7 +688,6 @@ if (!svg) {
 
             el.attachEvent('on' + type, wrappedFn);
         }
-
     };
     /**
      * @private
@@ -712,7 +696,7 @@ if (!svg) {
      * @param {Highcharts.EventCallbackFunction<T>} fn
      * @return {void}
      */
-    H.removeEventListenerPolyfill = function<T extends EventTarget> (
+    H.removeEventListenerPolyfill = function <T extends EventTarget>(
         this: T,
         type: string,
         fn: EventCallback<T>
@@ -722,7 +706,6 @@ if (!svg) {
             this.detachEvent('on' + type, fn);
         }
     };
-
 
     /**
      * The VML element wrapper.
@@ -734,7 +717,6 @@ if (!svg) {
      * @augments Highcharts.SVGElement
      */
     VMLElement = {
-
         docMode8: doc && doc.documentMode === 8,
 
         /**
@@ -765,9 +747,10 @@ if (!svg) {
 
             // create element with default attributes and style
             if (nodeName) {
-                markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-                    (markup.join('')as any) :
-                    renderer.prepVML(markup);
+                markup =
+                    isDiv || nodeName === 'span' || nodeName === 'img'
+                        ? (markup.join('') as any)
+                        : renderer.prepVML(markup);
                 wrapper.element = createElement(markup as any);
             }
 
@@ -790,18 +773,16 @@ if (!svg) {
                 element = wrapper.element,
                 box = renderer.box,
                 inverted = parent && parent.inverted,
-
                 // get the parent node
-                parentNode = parent ?
-                    parent.element || parent :
-                    box;
+                parentNode = parent ? parent.element || parent : box;
 
             if (parent) {
                 this.parentGroup = parent;
             }
 
             // if the parent group is inverted, apply inversion on all children
-            if (inverted) { // only on groups
+            if (inverted) {
+                // only on groups
                 renderer.invertChild(element, parentNode);
             }
 
@@ -833,7 +814,8 @@ if (!svg) {
          *
          * @function Highcharts.VMLElement#updateTransform
          */
-        updateTransform: SVGElement.prototype.htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
+        updateTransform: SVGElement.prototype
+            .htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
 
         /**
          * Set the rotation of a span with oldIE's filter
@@ -854,11 +836,19 @@ if (!svg) {
                 sintheta = Math.sin((rotation as any) * deg2rad);
 
             css(this.element, {
-                filter: rotation ? [
-                    'progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
-                    ', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-                    ', sizingMethod=\'auto expand\')'
-                ].join('') : 'none'
+                filter: rotation
+                    ? [
+                          'progid:DXImageTransform.Microsoft.Matrix(M11=',
+                          costheta,
+                          ', M12=',
+                          -sintheta,
+                          ', M21=',
+                          sintheta,
+                          ', M22=',
+                          costheta,
+                          ", sizingMethod='auto expand')"
+                      ].join('')
+                    : 'none'
             });
         },
 
@@ -875,7 +865,6 @@ if (!svg) {
             rotation: number,
             align: AlignValue
         ): void {
-
             let costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
                 sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
                 height = pick(this.elemHeight, this.element.offsetHeight),
@@ -888,26 +877,21 @@ if (!svg) {
 
             // correct for baseline and corners spilling out after rotation
             quad = costheta * sintheta < 0;
-            (this.xCorr as any) += (
+            (this.xCorr as any) +=
                 sintheta *
                 baseline *
-                (quad ? 1 - alignCorrection : alignCorrection)
-            );
-            (this.yCorr as any) -= (
+                (quad ? 1 - alignCorrection : alignCorrection);
+            (this.yCorr as any) -=
                 costheta *
                 baseline *
-                (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1)
-            );
+                (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
             // correct for the length/height of the text
             if (nonLeft) {
                 (this.xCorr as any) -=
                     width * alignCorrection * (costheta < 0 ? -1 : 1);
                 if (rotation) {
-                    (this.yCorr as any) -= (
-                        height *
-                        alignCorrection *
-                        (sintheta < 0 ? -1 : 1)
-                    );
+                    (this.yCorr as any) -=
+                        height * alignCorrection * (sintheta < 0 ? -1 : 1);
                 }
                 css(this.element, {
                     textAlign: align
@@ -930,13 +914,13 @@ if (!svg) {
                 path = [];
 
             while (i--) {
-
                 // Multiply by 10 to allow subpixel precision.
                 // Substracting half a pixel seems to make the coordinates
                 // align with SVG, but this hasn't been tested thoroughly
                 if (isNumber(value[i])) {
                     path[i] = Math.round((value[i] as any) * 10) - 5;
-                } else if (value[i] === 'Z') { // close the path
+                } else if (value[i] === 'Z') {
+                    // close the path
                     path[i] = 'x';
                 } else {
                     path[i] = value[i];
@@ -991,7 +975,6 @@ if (!svg) {
                     erase(clipMembers, wrapper);
                 };
                 cssRet = clipRect.getCSS(wrapper);
-
             } else {
                 if (wrapper.destroyClip) {
                     wrapper.destroyClip();
@@ -1002,7 +985,6 @@ if (!svg) {
             }
 
             return wrapper.css(cssRet);
-
         },
 
         /**
@@ -1084,7 +1066,6 @@ if (!svg) {
             path: string,
             length: number
         ): string {
-
             let len;
 
             // The extra comma tricks the trailing comma remover in
@@ -1139,8 +1120,7 @@ if (!svg) {
                 shadowElementOpacity =
                     (shadowOptions.opacity || 0.15) / shadowWidth;
                 for (i = 1; i <= 3; i++) {
-
-                    strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                    strokeWidth = shadowWidth * 2 + 1 - 2 * i;
 
                     // Cut off shadows for stacked column items
                     if (cutOff) {
@@ -1151,9 +1131,12 @@ if (!svg) {
                     }
 
                     markup = [
-                        '<shape isShadow="true" strokeweight="', strokeWidth,
-                        '" filled="false" path="', modifiedPath,
-                        '" coordsize="10 10" style="', element.style.cssText,
+                        '<shape isShadow="true" strokeweight="',
+                        strokeWidth,
+                        '" filled="false" path="',
+                        modifiedPath,
+                        '" coordsize="10 10" style="',
+                        element.style.cssText,
                         '" />'
                     ];
 
@@ -1161,10 +1144,14 @@ if (!svg) {
                         renderer.prepVML(markup as any),
                         null as any,
                         {
-                            left: (pInt(elemStyle.left) +
-                                pick(shadowOptions.offsetX, 1)) + 'px',
-                            top: (pInt(elemStyle.top) +
-                                pick(shadowOptions.offsetY, 1)) + 'px'
+                            left:
+                                pInt(elemStyle.left) +
+                                pick(shadowOptions.offsetX, 1) +
+                                'px',
+                            top:
+                                pInt(elemStyle.top) +
+                                pick(shadowOptions.offsetY, 1) +
+                                'px'
                         }
                     );
                     if (cutOff) {
@@ -1175,7 +1162,10 @@ if (!svg) {
                     markup = [
                         '<stroke color="',
                         shadowOptions.color || Palette.neutralColor100,
-                        '" opacity="', shadowElementOpacity * i, '"/>'];
+                        '" opacity="',
+                        shadowElementOpacity * i,
+                        '"/>'
+                    ];
                     createElement(
                         renderer.prepVML(markup),
                         null as any,
@@ -1183,18 +1173,18 @@ if (!svg) {
                         shadow
                     );
 
-
                     // insert it
                     if (group) {
                         group.element.appendChild(shadow);
                     } else {
-                        (element.parentNode as any)
-                            .insertBefore(shadow, element);
+                        (element.parentNode as any).insertBefore(
+                            shadow,
+                            element
+                        );
                     }
 
                     // record it
                     shadows.push(shadow);
-
                 }
 
                 this.shadows = shadows;
@@ -1208,7 +1198,8 @@ if (!svg) {
             key: string,
             value: string
         ): void {
-            if (this.docMode8) { // IE8 setAttribute bug
+            if (this.docMode8) {
+                // IE8 setAttribute bug
                 this.element[key] = value;
             } else {
                 this.element.setAttribute(key, value);
@@ -1217,8 +1208,9 @@ if (!svg) {
         getAttr: function (
             this: Highcharts.VMLElement,
             key: string
-        ): (null|string) {
-            if (this.docMode8) { // IE8 setAttribute bug
+        ): null | string {
+            if (this.docMode8) {
+                // IE8 setAttribute bug
                 return this.element[key];
             }
             return this.element.getAttribute(key);
@@ -1239,9 +1231,9 @@ if (!svg) {
             element: HTMLDOMElement
         ): void {
             const strokeElem =
-                element.getElementsByTagName('stroke')[0] as (
-                    Highcharts.VMLDOMElement
-                ) ||
+                (element.getElementsByTagName(
+                    'stroke'
+                )[0] as Highcharts.VMLDOMElement) ||
                 createElement(
                     this.renderer.prepVML(['<stroke/>']),
                     null as any,
@@ -1273,11 +1265,12 @@ if (!svg) {
             if (shadows) {
                 i = shadows.length;
                 while (i--) {
-                    shadows[i].path = shadows[i].cutOff ?
-                        this.cutOffPath(
-                            value as any, shadows[i].cutOff as any
-                        ) :
-                        (value as any);
+                    shadows[i].path = shadows[i].cutOff
+                        ? this.cutOffPath(
+                              value as any,
+                              shadows[i].cutOff as any
+                          )
+                        : (value as any);
                 }
             }
             this.setAttr(key, value as any);
@@ -1290,9 +1283,11 @@ if (!svg) {
         ): void {
             const nodeName = element.nodeName;
 
-            if (nodeName === 'SPAN') { // text color
+            if (nodeName === 'SPAN') {
+                // text color
                 element.style.color = value;
-            } else if (nodeName !== 'IMG') { // #1336
+            } else if (nodeName !== 'IMG') {
+                // #1336
                 element.filled = value !== 'none';
                 this.setAttr(
                     'fillcolor',
@@ -1307,9 +1302,13 @@ if (!svg) {
             element: Highcharts.VMLDOMElement
         ): void {
             createElement(
-                this.renderer.prepVML(
-                    ['<', key.split('-')[0], ' opacity="', value, '"/>']
-                ),
+                this.renderer.prepVML([
+                    '<',
+                    key.split('-')[0],
+                    ' opacity="',
+                    value,
+                    '"/>'
+                ]),
                 null as any,
                 null as any,
                 element
@@ -1332,8 +1331,7 @@ if (!svg) {
             // needles.
             style.left =
                 -Math.round(Math.sin((value as any) * deg2rad) + 1) + 'px';
-            style.top =
-                Math.round(Math.cos((value as any) * deg2rad)) + 'px';
+            style.top = Math.round(Math.cos((value as any) * deg2rad)) + 'px';
         },
         strokeSetter: function (
             this: Highcharts.VMLElement,
@@ -1348,7 +1346,7 @@ if (!svg) {
         },
         'stroke-widthSetter': function (
             this: Highcharts.VMLElement,
-            value: (number|string),
+            value: number | string,
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
@@ -1372,7 +1370,6 @@ if (!svg) {
             key: string,
             element: Highcharts.VMLDOMElement
         ): void {
-
             // Handle inherited visibility
             if (value === 'inherit') {
                 value = 'visible';
@@ -1446,16 +1443,16 @@ if (!svg) {
             return this.getAttr('className') || '';
         }
     } as any;
-    (VMLElement as any)['stroke-opacitySetter'] =
-        (VMLElement as any)['fill-opacitySetter'];
+    (VMLElement as any)['stroke-opacitySetter'] = (VMLElement as any)[
+        'fill-opacitySetter'
+    ];
     H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
     // Some shared setters
     VMLElement.prototype.ySetter =
         VMLElement.prototype.widthSetter =
         VMLElement.prototype.heightSetter =
-        VMLElement.prototype.xSetter;
-
+            VMLElement.prototype.xSetter;
 
     /**
      * The VML renderer
@@ -1466,11 +1463,11 @@ if (!svg) {
      *
      * @augments Highcharts.SVGRenderer
      */
-    const VMLRendererExtension = { // inherit SVGRenderer
+    const VMLRendererExtension = {
+        // inherit SVGRenderer
 
         Element: VMLElement,
         isIE8: win.navigator.userAgent.indexOf('MSIE 8.0') > -1,
-
 
         /**
          * Initialize the VMLRenderer.
@@ -1497,11 +1494,11 @@ if (!svg) {
 
             renderer.alignedObjects = [];
 
-            boxWrapper = renderer.createElement('div')
+            boxWrapper = renderer
+                .createElement('div')
                 .css({ position: 'relative' });
             box = boxWrapper.element;
             container.appendChild(boxWrapper.element);
-
 
             // generate the containing box
             renderer.isVML = true;
@@ -1512,7 +1509,6 @@ if (!svg) {
             renderer.cacheKeys = [];
             renderer.imgCount = 0;
 
-
             renderer.setSize(width, height, false);
 
             // The only way to make IE6 and IE7 print is to use a global
@@ -1520,23 +1516,22 @@ if (!svg) {
             // shapes visible in screen and print mode seems to be to add the
             // xmlns attribute and the behaviour style inline.
             if (!(doc.namespaces as any).hcv) {
-
                 (doc.namespaces as any).add(
-                    'hcv', 'urn:schemas-microsoft-com:vml'
+                    'hcv',
+                    'urn:schemas-microsoft-com:vml'
                 );
 
                 // Setup default CSS (#2153, #2368, #2384)
-                css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
+                css =
+                    'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
                     '{ behavior:url(#default#VML); display: inline-block; } ';
                 try {
                     doc.createStyleSheet().cssText = css;
                 } catch (e) {
                     (doc.styleSheets[0] as any).cssText += css;
                 }
-
             }
         },
-
 
         /**
          * Detect whether the renderer is hidden. This happens when one of the
@@ -1561,12 +1556,11 @@ if (!svg) {
          */
         clipRect: function (
             this: Highcharts.VMLRenderer,
-            x: (number|SizeObject),
+            x: number | SizeObject,
             y: number,
             width: number,
             height: number
         ): Highcharts.VMLClipRectObject {
-
             // create a dummy element
             const clipRect = (this.createElement as any)(),
                 isObj = isObject(x);
@@ -1594,11 +1588,16 @@ if (!svg) {
                         right = left + rect.width,
                         bottom = top + rect.height,
                         ret: CSSObject = {
-                            clip: 'rect(' +
-                                Math.round(inverted ? left : top) + 'px,' +
-                                Math.round(inverted ? bottom : right) + 'px,' +
-                                Math.round(inverted ? right : bottom) + 'px,' +
-                                Math.round(inverted ? top : left) + 'px)'
+                            clip:
+                                'rect(' +
+                                Math.round(inverted ? left : top) +
+                                'px,' +
+                                Math.round(inverted ? bottom : right) +
+                                'px,' +
+                                Math.round(inverted ? right : bottom) +
+                                'px,' +
+                                Math.round(inverted ? top : left) +
+                                'px)'
                         };
 
                     // issue 74 workaround
@@ -1626,9 +1625,7 @@ if (!svg) {
                     });
                 }
             });
-
         },
-
 
         /**
          * Take a color and return it if it's a string, make it a gradient if
@@ -1641,7 +1638,7 @@ if (!svg) {
          *
          * @return {T}
          */
-        color: function<T extends ColorType> (
+        color: function <T extends ColorType>(
             this: Highcharts.VMLRenderer,
             colorOption: T,
             elem: Highcharts.VMLDOMElement,
@@ -1651,15 +1648,12 @@ if (!svg) {
             let renderer = this,
                 colorObject,
                 regexRgba = /^rgba/,
-                markup: Array<number|string>,
-                fillType: ('gradient'|'pattern'|undefined),
+                markup: Array<number | string>,
+                fillType: 'gradient' | 'pattern' | undefined,
                 ret = 'none' as T;
 
             // Check for linear or radial gradient
-            if (
-                colorOption &&
-                (colorOption as GradientColor).linearGradient
-            ) {
+            if (colorOption && (colorOption as GradientColor).linearGradient) {
                 fillType = 'gradient';
             } else if (
                 colorOption &&
@@ -1668,30 +1662,23 @@ if (!svg) {
                 fillType = 'pattern';
             }
 
-
             if (fillType) {
-
-                let stopColor: (ColorString|undefined),
+                let stopColor: ColorString | undefined,
                     stopOpacity: number,
-                    gradient: (
-                        GradientColor['linearGradient']|
-                        GradientColor['radialGradient']
-                    ) = (
-                        (
-                            colorOption as GradientColor
-                        ).linearGradient ||
-                        (
-                            colorOption as GradientColor
-                        ).radialGradient
-                    ) as any,
+                    gradient:
+                        | GradientColor['linearGradient']
+                        | GradientColor['radialGradient'] = ((
+                        colorOption as GradientColor
+                    ).linearGradient ||
+                        (colorOption as GradientColor).radialGradient) as any,
                     x1,
                     y1,
                     x2,
                     y2,
                     opacity1: number,
                     opacity2: number,
-                    color1: (ColorString|undefined),
-                    color2: (ColorString|undefined),
+                    color1: ColorString | undefined,
+                    color2: ColorString | undefined,
                     fillAttr = '',
                     stops = (colorOption as GradientColor).stops,
                     firstStop,
@@ -1700,10 +1687,17 @@ if (!svg) {
                     addFillNode = function (): void {
                         // Add the fill subnode. When colors attribute is used,
                         // the meanings of opacity and o:opacity2 are reversed.
-                        markup = ['<fill colors="' + colors.join(',') +
-                            '" opacity="', opacity2, '" o:opacity2="',
-                        opacity1, '" type="', fillType as any, '" ', fillAttr,
-                        'focus="100%" method="any" />'];
+                        markup = [
+                            '<fill colors="' + colors.join(',') + '" opacity="',
+                            opacity2,
+                            '" o:opacity2="',
+                            opacity1,
+                            '" type="',
+                            fillType as any,
+                            '" ',
+                            fillAttr,
+                            'focus="100%" method="any" />'
+                        ];
                         createElement(
                             renderer.prepVML(markup),
                             null as any,
@@ -1716,16 +1710,10 @@ if (!svg) {
                 firstStop = stops[0];
                 lastStop = stops[stops.length - 1];
                 if (firstStop[0] > 0) {
-                    stops.unshift([
-                        0,
-                        firstStop[1]
-                    ]);
+                    stops.unshift([0, firstStop[1]]);
                 }
                 if (lastStop[0] < 1) {
-                    stops.push([
-                        1,
-                        lastStop[1]
-                    ]);
+                    stops.push([1, lastStop[1]]);
                 }
 
                 // Compute the stops
@@ -1743,7 +1731,7 @@ if (!svg) {
                     }
 
                     // Build the color attribute
-                    colors.push((stop[0] * 100) + '% ' + stopColor);
+                    colors.push(stop[0] * 100 + '% ' + stopColor);
 
                     // Only start and end opacities are allowed, so we use the
                     // first and the last
@@ -1758,23 +1746,27 @@ if (!svg) {
 
                 // Apply the gradient to fills only.
                 if (prop === 'fill') {
-
                     // Handle linear gradient angle
                     if (fillType === 'gradient') {
                         x1 = (gradient as any).x1 || (gradient as any)[0] || 0;
                         y1 = (gradient as any).y1 || (gradient as any)[1] || 0;
                         x2 = (gradient as any).x2 || (gradient as any)[2] || 0;
                         y2 = (gradient as any).y2 || (gradient as any)[3] || 0;
-                        fillAttr = 'angle="' + (90 - Math.atan(
-                            (y2 - y1) / // y vector
-                            (x2 - x1) // x vector
-                        ) * 180 / Math.PI) + '"';
+                        fillAttr =
+                            'angle="' +
+                            (90 -
+                                (Math.atan(
+                                    (y2 - y1) / // y vector
+                                        (x2 - x1) // x vector
+                                ) *
+                                    180) /
+                                    Math.PI) +
+                            '"';
 
                         addFillNode();
 
-                    // Radial (circular) gradient
+                        // Radial (circular) gradient
                     } else {
-
                         let r = (gradient as any).r,
                             sizex = r * 2,
                             sizey = r * 2,
@@ -1785,22 +1777,36 @@ if (!svg) {
                             applyRadialGradient = function (): void {
                                 if (radialReference) {
                                     bBox = wrapper.getBBox();
-                                    cx += (radialReference[0] - bBox.x) /
-                                        bBox.width - 0.5;
-                                    cy += (radialReference[1] - bBox.y) /
-                                        bBox.height - 0.5;
+                                    cx +=
+                                        (radialReference[0] - bBox.x) /
+                                            bBox.width -
+                                        0.5;
+                                    cy +=
+                                        (radialReference[1] - bBox.y) /
+                                            bBox.height -
+                                        0.5;
                                     sizex *= radialReference[2] / bBox.width;
                                     sizey *= radialReference[2] / bBox.height;
                                 }
                                 fillAttr =
-                                    'src="' + (
-                                        getOptions().global as any
-                                    ).VMLRadialGradientURL +
+                                    'src="' +
+                                    (getOptions().global as any)
+                                        .VMLRadialGradientURL +
                                     '" ' +
-                                    'size="' + sizex + ',' + sizey + '" ' +
+                                    'size="' +
+                                    sizex +
+                                    ',' +
+                                    sizey +
+                                    '" ' +
                                     'origin="0.5,0.5" ' +
-                                    'position="' + cx + ',' + cy + '" ' +
-                                    'color2="' + color2 + '" ';
+                                    'position="' +
+                                    cx +
+                                    ',' +
+                                    cy +
+                                    '" ' +
+                                    'color2="' +
+                                    color2 +
+                                    '" ';
 
                                 addFillNode();
                             };
@@ -1820,16 +1826,18 @@ if (!svg) {
                         ret = color1 as any;
                     }
 
-                // Gradients are not supported for VML stroke, return the first
-                // color. #722.
+                    // Gradients are not supported for VML stroke, return the
+                    // first color. #722.
                 } else {
                     ret = stopColor as any;
                 }
 
-            // If the color is an rgba color, split it and add a fill node
-            // to hold the opacity component
-            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
-
+                // If the color is an rgba color, split it and add a fill node
+                // to hold the opacity component
+            } else if (
+                regexRgba.test(colorOption as any) &&
+                elem.tagName !== 'IMG'
+            ) {
                 colorObject = color(colorOption);
 
                 (wrapper as any)[prop + '-opacitySetter'](
@@ -1839,8 +1847,6 @@ if (!svg) {
                 );
 
                 ret = colorObject.get('rgb') as any;
-
-
             } else {
                 // 'stroke' or 'fill' node
                 const propNodes = elem.getElementsByTagName(prop) as any;
@@ -1867,14 +1873,15 @@ if (!svg) {
          */
         prepVML: function (
             this: Highcharts.VMLRenderer,
-            markup: Array<(number|string)>
+            markup: Array<number | string>
         ): string {
             const vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
                 isIE8 = this.isIE8;
 
             markup = markup.join('') as any;
 
-            if (isIE8) { // add xmlns and style inline
+            if (isIE8) {
+                // add xmlns and style inline
                 markup = (markup as any).replace(
                     '/>',
                     ' xmlns="urn:schemas-microsoft-com:vml" />'
@@ -1890,8 +1897,8 @@ if (!svg) {
                         'style="' + vmlStyle
                     );
                 }
-
-            } else { // add namespace
+            } else {
+                // add namespace
                 markup = (markup as any).replace('<', '<hcv:');
             }
 
@@ -1920,7 +1927,7 @@ if (!svg) {
          */
         path: function (
             this: Highcharts.VMLRenderer,
-            path?: (Highcharts.VMLAttributes|Highcharts.VMLPathArray)
+            path?: Highcharts.VMLAttributes | Highcharts.VMLPathArray
         ): Highcharts.VMLElement {
             const attr = {
                 // subpixel precision down to 0.1 (width and height = 1px)
@@ -1929,7 +1936,8 @@ if (!svg) {
 
             if (isArray(path)) {
                 attr.d = path as any;
-            } else if (isObject(path)) { // attributes
+            } else if (isObject(path)) {
+                // attributes
                 extend(attr, path as any);
             }
             // create the shape
@@ -1980,13 +1988,13 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             name: string
         ): Highcharts.VMLElement {
-            let wrapper,
-                attribs: (Highcharts.VMLAttributes|undefined);
+            let wrapper, attribs: Highcharts.VMLAttributes | undefined;
 
             // set the class name
             if (name) {
                 attribs = {
-                    'className': 'highcharts-' + name,
+                    className: 'highcharts-' + name,
+                    // prettier-ignore
                     'class': 'highcharts-' + name
                 };
             }
@@ -2046,9 +2054,12 @@ if (!svg) {
             this: Highcharts.VMLRenderer,
             nodeName: string
         ): Highcharts.VMLElement {
-            return nodeName === 'rect' ?
-                this.symbol(nodeName) :
-                SVGRenderer.prototype.createElement.call(this, nodeName) as any;
+            return nodeName === 'rect'
+                ? this.symbol(nodeName)
+                : (SVGRenderer.prototype.createElement.call(
+                      this,
+                      nodeName
+                  ) as any);
         },
 
         /**
@@ -2072,20 +2083,25 @@ if (!svg) {
 
             css(element, {
                 flip: 'x',
-                left: (pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
-                top: (pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
+                left:
+                    pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1) +
+                    'px',
+                top:
+                    pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1) +
+                    'px',
                 rotation: -90
             });
 
             // Recursively invert child elements, needed for nested composite
             // shapes like box plots and error bars. #1680, #1806.
-            [].forEach.call(element.childNodes, function (
-                child: HTMLDOMElement
-            ): void {
-                ren.invertChild(child, element);
-            });
+            [].forEach.call(
+                element.childNodes,
+                function (child: HTMLDOMElement): void {
+                    ren.invertChild(child, element);
+                }
+            );
         },
 
         /**
@@ -2113,7 +2129,8 @@ if (!svg) {
                     sinEnd = Math.sin(end),
                     ret: Highcharts.VMLPathArray;
 
-                if (end - start === 0) { // no angle, don't show it.
+                if (end - start === 0) {
+                    // no angle, don't show it.
                     return ['x'];
                 }
 
@@ -2154,7 +2171,6 @@ if (!svg) {
 
                 ret.isArc = true;
                 return ret;
-
             },
             // Add circle symbol path. This performs significantly faster than
             // v:oval.
@@ -2165,7 +2181,6 @@ if (!svg) {
                 h: number,
                 wrapper: SVGElement
             ): Highcharts.VMLPathArray {
-
                 if (wrapper && defined(wrapper.r)) {
                     w = h = 2 * (wrapper.r as any);
                 }
@@ -2268,7 +2283,6 @@ SVGRenderer.prototype.measureSpanWidth = function (
  * */
 
 namespace Oldie {
-
     /* *
      *
      *  Declarations
@@ -2294,7 +2308,6 @@ namespace Oldie {
         items?: Array<LabelsItemsOptions>;
         style?: CSSObject;
     }
-
 }
 
 /* *

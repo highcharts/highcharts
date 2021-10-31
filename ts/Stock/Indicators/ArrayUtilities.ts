@@ -39,10 +39,7 @@ function getArrayExtremes<T extends Array<number>>(
     maxIndex: number
 ): ArrayUtilities.Extremes {
     return arr.reduce(
-        (
-            prev,
-            target
-        ): [number, number] => [
+        (prev, target): [number, number] => [
             Math.min(prev[0], target[minIndex]),
             Math.max(prev[1], target[maxIndex])
         ],
@@ -57,10 +54,8 @@ function getArrayExtremes<T extends Array<number>>(
  * */
 
 namespace ArrayUtilities {
-
     /** 0: min, 1: max */
     export type Extremes = [number, number];
-
 }
 
 /* *

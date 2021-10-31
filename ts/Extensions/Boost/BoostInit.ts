@@ -20,14 +20,9 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    wrap
-} = U;
+const { addEvent, extend, fireEvent, wrap } = U;
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         didBoost?: boolean;
         isBoosting?: boolean;
@@ -84,38 +79,35 @@ function init(): void {
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
                 pointTaken: Record<string, boolean> = {},
-                lastClientX: (number|undefined),
+                lastClientX: number | undefined,
                 sampling = !!series.sampling,
                 points: Array<Record<string, number>>,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 threshold: number = options.threshold as any,
                 yBottom = yAxis.getThreshold(threshold),
-                isRange = series.pointArrayMap &&
+                isRange =
+                    series.pointArrayMap &&
                     series.pointArrayMap.join(',') === 'low,high',
                 isStacked = !!options.stacking,
                 cropStart = series.cropStart || 0,
                 requireSorting = series.requireSorting,
                 useRaw = !xData,
-                minVal: (number|undefined),
-                maxVal: (number|undefined),
-                minI: (number|undefined),
-                maxI: (number|undefined),
+                minVal: number | undefined,
+                maxVal: number | undefined,
+                minI: number | undefined,
+                maxI: number | undefined,
                 boostOptions: Highcharts.BoostGLOptions,
                 compareX = options.findNearestPointBy === 'x',
-
-                xDataFull = (
+                xDataFull =
                     this.xData ||
                     (this.options as any).xData ||
                     this.processedXData ||
-                    false
-                ),
-
+                    false,
                 addKDPoint = function (
                     clientX: number,
                     plotY: number,
                     i: number
                 ): void {
-
                     // We need to do ceil on the clientX to make things
                     // snap to pixel values. The renderer will frequently
                     // draw stuff on "sub-pixels".
@@ -213,7 +205,7 @@ function init(): void {
              * @private
              */
             function processPoint(
-                d: (number|Array<number>|Record<string, number>),
+                d: number | Array<number> | Record<string, number>,
                 i: number
             ): boolean {
                 let x: number,
@@ -259,7 +251,6 @@ function init(): void {
                     }
 
                     if (!isNull && x >= xMin && x <= xMax && isYInside) {
-
                         clientX = xAxis.toPixels(x, true);
 
                         if (sampling) {
@@ -284,16 +275,16 @@ function init(): void {
                                     minVal = low;
                                     minI = i;
                                 }
-
                             }
                             // Add points and reset
                             if (clientX !== lastClientX) {
                                 // maxI is number too:
                                 if (typeof minI !== 'undefined') {
-                                    plotY =
-                                        yAxis.toPixels(maxVal as any, true);
-                                    yBottom =
-                                        yAxis.toPixels(minVal as any, true);
+                                    plotY = yAxis.toPixels(maxVal as any, true);
+                                    yBottom = yAxis.toPixels(
+                                        minVal as any,
+                                        true
+                                    );
 
                                     addKDPoint(clientX, plotY, maxI as any);
                                     if (yBottom !== plotY) {
@@ -337,7 +328,7 @@ function init(): void {
                 }
 
                 eachAsync(
-                    isStacked ? series.data : (xData || rawData),
+                    isStacked ? series.data : xData || rawData,
                     processPoint,
                     doneProcessing
                 );
@@ -351,13 +342,11 @@ function init(): void {
      *
      * This likely needs future optimization.
      */
-    ['heatmap', 'treemap'].forEach(
-        function (t: string): void {
-            if (seriesTypes[t]) {
-                wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-            }
+    ['heatmap', 'treemap'].forEach(function (t: string): void {
+        if (seriesTypes[t]) {
+            wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
         }
-    );
+    });
 
     /* eslint-disable no-invalid-this */
 
@@ -371,10 +360,7 @@ function init(): void {
         wrap(
             seriesTypes.bubble.prototype,
             'markerAttribs',
-            function (
-                this: BubbleSeries,
-                proceed: Function
-            ): boolean {
+            function (this: BubbleSeries, proceed: Function): boolean {
                 if (this.isSeriesBoosting) {
                     return false;
                 }
@@ -399,10 +385,7 @@ function init(): void {
     Chart.prototype.propsRequireUpdateSeries.push('boost');
 
     // Take care of the canvas blitting
-    Chart.prototype.callbacks.push(function (
-        chart: Chart
-    ): void {
-
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
         /**
          * Convert chart-level canvas to image.
          * @private
@@ -489,7 +472,6 @@ function init(): void {
     });
 
     /* eslint-enable no-invalid-this */
-
 }
 
 export default init;

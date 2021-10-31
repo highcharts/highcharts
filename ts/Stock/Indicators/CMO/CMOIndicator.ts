@@ -121,10 +121,10 @@ class CMOIndicator extends SMAIndicator {
         // You might devide by 0 if all values are equal,
         // so return 0 in this case.
         y =
-            sumOfHigherValues + sumOfLowerValues > 0 ?
-                (100 * (sumOfHigherValues - sumOfLowerValues)) /
-                (sumOfHigherValues + sumOfLowerValues) :
-                0;
+            sumOfHigherValues + sumOfLowerValues > 0
+                ? (100 * (sumOfHigherValues - sumOfLowerValues)) /
+                  (sumOfHigherValues + sumOfLowerValues)
+                : 0;
 
         xData.push(xVal[period]);
         yData.push(y);
@@ -149,10 +149,10 @@ class CMOIndicator extends SMAIndicator {
             }
             // Same as above.
             y =
-                sumOfHigherValues + sumOfLowerValues > 0 ?
-                    (100 * (sumOfHigherValues - sumOfLowerValues)) /
-                    (sumOfHigherValues + sumOfLowerValues) :
-                    0;
+                sumOfHigherValues + sumOfLowerValues > 0
+                    ? (100 * (sumOfHigherValues - sumOfLowerValues)) /
+                      (sumOfHigherValues + sumOfLowerValues)
+                    : 0;
 
             xData.push(xVal[i]);
             yData.push(y);

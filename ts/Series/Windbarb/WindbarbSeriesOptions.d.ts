@@ -25,7 +25,7 @@ import WindbarbSeries from './WindbarbSeries.js';
  *
  * */
 export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
-    onSeries?: (string|null);
+    onSeries?: string | null;
     states?: SeriesStatesOptions<WindbarbSeries>;
     vectorLength?: number;
     xOffset?: number;

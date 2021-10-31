@@ -15,15 +15,8 @@
         "outDir": "../js",
         "rootDir": ".",
         "target": "es5",
-        "lib": [
-            "dom",
-            "es5"
-        ],
-        "types": [
-            "jquery"
-        ]
+        "lib": ["dom", "es5"],
+        "types": ["jquery"]
     },
-    "include": [
-        "**/*.ts"
-    ]
+    "include": ["**/*.ts"]
 }

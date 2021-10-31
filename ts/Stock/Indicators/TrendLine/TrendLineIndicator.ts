@@ -18,16 +18,10 @@ import type TrendLinePoint from './TrendLinePoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    isArray
-} = U;
+const { extend, merge, isArray } = U;
 
 /* *
  *
@@ -60,28 +54,31 @@ class TrendLineIndicator extends SMAIndicator {
      * @requires     stock/indicators/trendline
      * @optionparent plotOptions.trendline
      */
-    public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * @excluding period
-         */
-        params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+    public static defaultOptions: TrendLineOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * The point index which indicator calculations will base. For
-             * example using OHLC data, index=2 means the indicator will be
-             * calculated using Low values.
-             *
-             * @default 3
+             * @excluding period
              */
-            index: 3
-        }
-    } as TrendLineOptions);
+            params: {
+                period: void 0, // unchangeable period, do not inherit (#15362)
+                /**
+                 * The point index which indicator calculations will base. For
+                 * example using OHLC data, index=2 means the indicator will be
+                 * calculated using Low values.
+                 *
+                 * @default 3
+                 */
+                index: 3
+            }
+        } as TrendLineOptions
+    );
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<TrendLinePoint> = void 0 as any;
     public options: TrendLineOptions = void 0 as any;
@@ -97,8 +94,8 @@ class TrendLineIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
-        let xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+        let xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             LR: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -107,7 +104,7 @@ class TrendLineIndicator extends SMAIndicator {
             sumXY = 0,
             sumX2 = 0,
             xValLength: number = xVal.length,
-            index: number = (params.index as any),
+            index: number = params.index as any,
             alpha: number,
             beta: number,
             i: number,
@@ -125,7 +122,8 @@ class TrendLineIndicator extends SMAIndicator {
         }
 
         // Get slope and offset:
-        alpha = (xValLength * sumXY - sumX * sumY) /
+        alpha =
+            (xValLength * sumXY - sumX * sumY) /
             (xValLength * sumX2 - sumX * sumX);
 
         if (isNaN(alpha)) {
@@ -161,7 +159,7 @@ interface TrendLineIndicator {
 
 extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
-    nameComponents: (false as any)
+    nameComponents: false as any
 });
 
 /* *
@@ -199,4 +197,4 @@ export default TrendLineIndicator;
  * @apioption series.trendline
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

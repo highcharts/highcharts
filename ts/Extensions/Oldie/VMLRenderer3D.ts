@@ -53,14 +53,16 @@ declare global {
 }
 
 class VMLRenderer3D {
-
     /* *
      *
      *  Static Properties
      *
      * */
 
-    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer): void {
+    public static compose(
+        vmlClass: typeof Highcharts.VMLRenderer,
+        svgClass: typeof SVGRenderer
+    ): void {
         const svgProto = svgClass.prototype;
         const vmlProto = vmlClass.prototype;
 

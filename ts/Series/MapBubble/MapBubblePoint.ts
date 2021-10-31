@@ -20,16 +20,10 @@ import type MapBubblePointOptions from './MapBubblePointOptions';
 import MapPoint from '../Map/MapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        bubble: BubbleSeries,
-        map: MapSeries
-    }
+    seriesTypes: { bubble: BubbleSeries, map: MapSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 /* *
  *
@@ -38,7 +32,6 @@ const {
  * */
 
 class MapBubblePoint extends BubbleSeries.prototype.pointClass {
-
     /* *
      *
      *  Functions
@@ -70,10 +63,11 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
                 x
             ) as MapBubblePoint;
         } else {
-            point = MapSeries.prototype.pointClass.prototype
-                .applyOptions.call(
-                    this, options as any, x as any
-                ) as any;
+            point = MapSeries.prototype.pointClass.prototype.applyOptions.call(
+                this,
+                options as any,
+                x as any
+            ) as any;
         }
         return point;
     }
@@ -86,7 +80,6 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

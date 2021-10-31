@@ -31,14 +31,7 @@ const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    clamp,
-    defined,
-    merge,
-    pick,
-    relativeLength
-} = U;
+const { arrayMax, clamp, defined, merge, pick, relativeLength } = U;
 
 /* *
  *
@@ -47,7 +40,6 @@ const {
  * */
 
 namespace ColumnDataLabel {
-
     /* *
      *
      *  Constants
@@ -57,7 +49,6 @@ namespace ColumnDataLabel {
     const composedClasses: Array<Function> = [];
 
     const dataLabelPositioners = {
-
         // Based on the value computed in Highcharts' distribute algorithm.
         radialDistributionY: function (point: PiePoint): number {
             return point.top + (point.distributeBox as any).pos;
@@ -74,9 +65,9 @@ namespace ColumnDataLabel {
             naturalY: number
         ): number {
             return series.getX(
-                y < (point.top as any) + 2 || y > (point.bottom as any) - 2 ?
-                    naturalY :
-                    y,
+                y < (point.top as any) + 2 || y > (point.bottom as any) - 2
+                    ? naturalY
+                    : y,
                 point.half as any,
                 point
             );
@@ -88,8 +79,10 @@ namespace ColumnDataLabel {
             radius: number,
             seriesCenter: Array<number>
         ): number {
-            return seriesCenter[0] + (point.half ? -1 : 1) *
-            (radius + (point.labelDistance as any));
+            return (
+                seriesCenter[0] +
+                (point.half ? -1 : 1) * (radius + (point.labelDistance as any))
+            );
         },
 
         // Left edges of the left-half labels touch the left edge of the plot
@@ -103,8 +96,9 @@ namespace ColumnDataLabel {
         ): number {
             const dataLabelWidth = dataLabel.getBBox().width;
 
-            return half ? dataLabelWidth + plotLeft :
-                plotWidth - dataLabelWidth - plotLeft;
+            return half
+                ? dataLabelWidth + plotLeft
+                : plotWidth - dataLabelWidth - plotLeft;
         },
 
         // Connectors of each side end in the same x position. Labels are
@@ -127,8 +121,9 @@ namespace ColumnDataLabel {
                     maxDataLabelWidth = dataLabelWidth;
                 }
             });
-            return half ? maxDataLabelWidth + plotLeft :
-                plotWidth - maxDataLabelWidth - plotLeft;
+            return half
+                ? maxDataLabelWidth + plotLeft
+                : plotWidth - maxDataLabelWidth - plotLeft;
         }
     };
 
@@ -142,7 +137,6 @@ namespace ColumnDataLabel {
 
     /** @private */
     export function compose(PieSeriesClass: typeof PieSeries): void {
-
         DataLabel.compose(Series);
 
         if (composedClasses.indexOf(PieSeriesClass) === -1) {
@@ -156,16 +150,13 @@ namespace ColumnDataLabel {
             pieProto.placeDataLabels = placeDataLabels;
             pieProto.verifyDataLabelOverflow = verifyDataLabelOverflow;
         }
-
     }
 
     /**
      * Override the base drawDataLabels method by pie specific functionality
      * @private
      */
-    function drawDataLabels(
-        this: PieSeries
-    ): void {
+    function drawDataLabels(this: PieSeries): void {
         const series = this,
             data = series.data,
             chart = series.chart,
@@ -201,9 +192,9 @@ namespace ColumnDataLabel {
             pointDataLabelsOptions;
 
         // get out if not enabled
-        if (!series.visible ||
-            (!(options as any).enabled &&
-            !series._hasPointLabels)
+        if (
+            !series.visible ||
+            (!(options as any).enabled && !series._hasPointLabels)
         ) {
             return;
         }
@@ -214,7 +205,8 @@ namespace ColumnDataLabel {
                 point.dataLabel
                     .attr({
                         width: 'auto'
-                    } as unknown as SVGAttributes).css({
+                    } as unknown as SVGAttributes)
+                    .css({
                         width: 'auto',
                         textOverflow: 'clip'
                     });
@@ -222,14 +214,13 @@ namespace ColumnDataLabel {
             }
         });
 
-
         // run parent method
         Series.prototype.drawDataLabels.apply(series);
 
         data.forEach(function (point): void {
             if (point.dataLabel) {
-
-                if (point.visible) { // #407, #2510
+                if (point.visible) {
+                    // #407, #2510
 
                     // Arrange points for detection collision
                     halves[point.half as any].push(point);
@@ -238,11 +229,12 @@ namespace ColumnDataLabel {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    if (!defined((options as any).style.width) &&
+                    if (
+                        !defined((options as any).style.width) &&
                         !defined(
                             point.options.dataLabels &&
-                            (point.options.dataLabels as any).style &&
-                            (point.options.dataLabels as any).style.width
+                                (point.options.dataLabels as any).style &&
+                                (point.options.dataLabels as any).style.width
                         )
                     ) {
                         if (point.dataLabel.getBBox().width > maxWidth) {
@@ -289,10 +281,7 @@ namespace ColumnDataLabel {
             // Only do anti-collision when we have dataLabels outside the pie
             // and have connectors. (#856)
             if (series.maxLabelDistance > 0) {
-                top = Math.max(
-                    0,
-                    centerY - radius - series.maxLabelDistance
-                );
+                top = Math.max(0, centerY - radius - series.maxLabelDistance);
                 bottom = Math.min(
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
@@ -316,8 +305,10 @@ namespace ColumnDataLabel {
                         // parameter related to specific point inside positions
                         // array - not every point is in positions array.
                         point.distributeBox = {
-                            target: (point.labelPosition as any).natural.y -
-                                point.top + size / 2,
+                            target:
+                                (point.labelPosition as any).natural.y -
+                                point.top +
+                                size / 2,
                             size: size,
                             rank: point.y
                         };
@@ -334,7 +325,6 @@ namespace ColumnDataLabel {
 
             // Now the used slots are sorted, fill them up sequentially
             for (j = 0; j < length; j++) {
-
                 point = points[j];
                 // labelPos = point.labelPos;
                 labelPosition = point.labelPosition;
@@ -351,8 +341,9 @@ namespace ColumnDataLabel {
                     } else {
                         labelHeight = (point.distributeBox as any).size;
                         // Find label's y position
-                        y = (dataLabelPositioners as any)
-                            .radialDistributionY(point);
+                        y = (dataLabelPositioners as any).radialDistributionY(
+                            point
+                        );
                     }
                 }
 
@@ -388,12 +379,9 @@ namespace ColumnDataLabel {
                             );
                             break;
                         default:
-                            x = (dataLabelPositioners as any).radialDistributionX(
-                                series,
-                                point,
-                                y,
-                                naturalY
-                            );
+                            x = (
+                                dataLabelPositioners as any
+                            ).radialDistributionX(series, point, y, naturalY);
                     }
                 }
 
@@ -406,21 +394,21 @@ namespace ColumnDataLabel {
                 pointDataLabelsOptions = point.options.dataLabels || {};
 
                 (dataLabel as any)._pos = {
-                    x: (
+                    x:
                         x +
                         pick(pointDataLabelsOptions.x, options.x) + // (#12985)
-                        (({
-                            left: connectorPadding,
-                            right: -connectorPadding
-                        } as any)[(labelPosition as any).alignment] || 0)
-                    ),
+                        ((
+                            {
+                                left: connectorPadding,
+                                right: -connectorPadding
+                            } as any
+                        )[(labelPosition as any).alignment] || 0),
 
                     // 10 is for the baseline (label vs text)
-                    y: (
+                    y:
                         y +
                         pick(pointDataLabelsOptions.y, options.y) - // (#12985)
                         10
-                    )
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -442,7 +430,7 @@ namespace ColumnDataLabel {
                         );
                         overflow[3] = Math.max(sideOverflow, overflow[3]);
 
-                    // Overflow right
+                        // Overflow right
                     } else if (
                         x + dataLabelWidth > plotWidth - connectorPadding &&
                         i === 0 // right half
@@ -460,7 +448,7 @@ namespace ColumnDataLabel {
                             overflow[0]
                         );
 
-                    // Overflow left
+                        // Overflow left
                     } else if (y + labelHeight / 2 > plotHeight) {
                         overflow[2] = Math.max(
                             Math.round(y + labelHeight / 2 - plotHeight),
@@ -474,20 +462,23 @@ namespace ColumnDataLabel {
 
         // Do not apply the final placement and draw the connectors until we
         // have verified that labels are not spilling over.
-        if (arrayMax(overflow) === 0 ||
+        if (
+            arrayMax(overflow) === 0 ||
             (this.verifyDataLabelOverflow as any)(overflow)
         ) {
-
             // Place the labels in the final position
             (this.placeDataLabels as any)();
 
-
             this.points.forEach(function (point): void {
                 // #8864: every connector can have individual options
-                pointDataLabelsOptions =
-                    merge(options, point.options.dataLabels);
-                connectorWidth =
-                    pick((pointDataLabelsOptions as any).connectorWidth, 1);
+                pointDataLabelsOptions = merge(
+                    options,
+                    point.options.dataLabels
+                );
+                connectorWidth = pick(
+                    (pointDataLabelsOptions as any).connectorWidth,
+                    1
+                );
 
                 // Draw the connector
                 if (connectorWidth) {
@@ -496,7 +487,8 @@ namespace ColumnDataLabel {
                     connector = point.connector;
                     dataLabel = point.dataLabel;
 
-                    if (dataLabel &&
+                    if (
+                        dataLabel &&
                         dataLabel._pos &&
                         point.visible &&
                         (point.labelDistance as any) > 0
@@ -510,26 +502,22 @@ namespace ColumnDataLabel {
                                 .path()
                                 .addClass(
                                     'highcharts-data-label-connector ' +
-                                    ' highcharts-color-' + point.colorIndex +
-                                    (
-                                        point.className ?
-                                            ' ' + point.className :
-                                            ''
-                                    )
+                                        ' highcharts-color-' +
+                                        point.colorIndex +
+                                        (point.className
+                                            ? ' ' + point.className
+                                            : '')
                                 )
                                 .add(series.dataLabelsGroup);
-
 
                             if (!chart.styledMode) {
                                 connector.attr({
                                     'stroke-width': connectorWidth,
-                                    'stroke': (
-                                        (
-                                            pointDataLabelsOptions as any
-                                        ).connectorColor ||
+                                    stroke:
+                                        (pointDataLabelsOptions as any)
+                                            .connectorColor ||
                                         point.color ||
                                         Palette.neutralColor60
-                                    )
                                 });
                             }
                         }
@@ -537,7 +525,6 @@ namespace ColumnDataLabel {
                             d: point.getConnectorPath()
                         });
                         (connector as any).attr('visibility', visibility);
-
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
@@ -551,9 +538,7 @@ namespace ColumnDataLabel {
      * that they fall within the plot area.
      * @private
      */
-    function placeDataLabels(
-        this: PieSeries
-    ): void {
+    function placeDataLabels(this: PieSeries): void {
         this.points.forEach(function (point: Point): void {
             let dataLabel = point.dataLabel,
                 _pos;
@@ -561,21 +546,19 @@ namespace ColumnDataLabel {
             if (dataLabel && point.visible) {
                 _pos = dataLabel._pos;
                 if (_pos) {
-
                     // Shorten data labels with ellipsis if they still overflow
                     // after the pie has reached minSize (#223).
                     if (dataLabel.sideOverflow) {
-                        dataLabel._attr.width =
-                            Math.max(dataLabel.getBBox().width -
-                            dataLabel.sideOverflow, 0);
+                        dataLabel._attr.width = Math.max(
+                            dataLabel.getBBox().width - dataLabel.sideOverflow,
+                            0
+                        );
 
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
-                            textOverflow: (
+                            textOverflow:
                                 ((this.options.dataLabels as any).style || {})
-                                    .textOverflow ||
-                                'ellipsis'
-                            )
+                                    .textOverflow || 'ellipsis'
                         });
                         dataLabel.shortened = true;
                     }
@@ -602,7 +585,6 @@ namespace ColumnDataLabel {
         this: PieSeries,
         overflow: Array<number>
     ): boolean {
-
         let center = this.center,
             options = this.options,
             centerOption = options.center,
@@ -614,11 +596,14 @@ namespace ColumnDataLabel {
 
         if (!ret) {
             // Handle horizontal size and center
-            if ((centerOption as any)[0] !== null) { // Fixed center
-                newSize = Math.max(center[2] -
-                    Math.max(overflow[1], overflow[3]), minSize as any);
-
-            } else { // Auto center
+            if ((centerOption as any)[0] !== null) {
+                // Fixed center
+                newSize = Math.max(
+                    center[2] - Math.max(overflow[1], overflow[3]),
+                    minSize as any
+                );
+            } else {
+                // Auto center
                 newSize = Math.max(
                     // horizontal overflow
                     center[2] - overflow[1] - overflow[3],
@@ -629,13 +614,15 @@ namespace ColumnDataLabel {
             }
 
             // Handle vertical size and center
-            if ((centerOption as any)[1] !== null) { // Fixed center
+            if ((centerOption as any)[1] !== null) {
+                // Fixed center
                 newSize = clamp(
                     newSize,
                     minSize as any,
                     center[2] - Math.max(overflow[0], overflow[2])
                 );
-            } else { // Auto center
+            } else {
+                // Auto center
                 newSize = clamp(
                     newSize,
                     minSize as any,
@@ -650,7 +637,8 @@ namespace ColumnDataLabel {
             // drawDataLabels again
             if (newSize < center[2]) {
                 center[2] = newSize;
-                center[3] = Math.min( // #3632
+                center[3] = Math.min(
+                    // #3632
                     relativeLength(options.innerSize || 0, newSize),
                     newSize
                 );
@@ -659,15 +647,14 @@ namespace ColumnDataLabel {
                 if (this.drawDataLabels) {
                     this.drawDataLabels();
                 }
-            // Else, return true to indicate that the pie and its labels is
-            // within the plot area
+                // Else, return true to indicate that the pie and its labels is
+                // within the plot area
             } else {
                 ret = true;
             }
         }
         return ret;
     }
-
 }
 
 /* *

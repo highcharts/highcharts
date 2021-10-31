@@ -41,7 +41,6 @@ const { merge } = U;
  * @augments Highcharts.Series
  */
 class PyramidSeries extends FunnelSeries {
-
     /* *
      *
      *  Static Properties
@@ -60,31 +59,34 @@ class PyramidSeries extends FunnelSeries {
      * @requires     modules/funnel
      * @optionparent plotOptions.pyramid
      */
-    public static defaultOptions: PyramidSeriesOptions = merge(FunnelSeries.defaultOptions, {
-        /**
-         * The pyramid neck width is zero by default, as opposed to the funnel,
-         * which shares the same layout logic.
-         *
-         * @since 3.0.10
-         */
-        neckWidth: '0%',
+    public static defaultOptions: PyramidSeriesOptions = merge(
+        FunnelSeries.defaultOptions,
+        {
+            /**
+             * The pyramid neck width is zero by default, as opposed to the
+             * funnel, which shares the same layout logic.
+             *
+             * @since 3.0.10
+             */
+            neckWidth: '0%',
 
-        /**
-         * The pyramid neck width is zero by default, as opposed to the funnel,
-         * which shares the same layout logic.
-         *
-         * @since 3.0.10
-         */
-        neckHeight: '0%',
+            /**
+             * The pyramid neck width is zero by default, as opposed to the
+             * funnel, which shares the same layout logic.
+             *
+             * @since 3.0.10
+             */
+            neckHeight: '0%',
 
-        /**
-         * The pyramid is reversed by default, as opposed to the funnel, which
-         * shares the layout engine, and is not reversed.
-         *
-         * @since 3.0.10
-         */
-        reversed: true
-    } as PyramidSeriesOptions);
+            /**
+             * The pyramid is reversed by default, as opposed to the funnel,
+             * which shares the layout engine, and is not reversed.
+             *
+             * @since 3.0.10
+             */
+            reversed: true
+        } as PyramidSeriesOptions
+    );
 
     /* *
      *
@@ -97,7 +99,6 @@ class PyramidSeries extends FunnelSeries {
     public options: PyramidSeriesOptions = void 0 as any;
 
     public points: Array<PyramidPoint> = void 0 as any;
-
 }
 
 /* *
@@ -188,4 +189,4 @@ export default PyramidSeries;
  * @apioption series.pyramid.data
  */
 
-''; // adds doclets above into transpiled file
+(''); // adds doclets above into transpiled file

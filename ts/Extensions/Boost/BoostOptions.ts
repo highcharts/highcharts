@@ -19,7 +19,7 @@ import '../../Core/Globals.js';
  * Declarations
  *
  * */
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface Options {
         boost?: Highcharts.BoostOptions;
     }
@@ -53,7 +53,7 @@ declare global {
             useGPUTranslations?: boolean;
             usePreallocated?: boolean;
         }
-        type BoostBlendingValue = ('add'|'darken'|'multiply');
+        type BoostBlendingValue = 'add' | 'darken' | 'multiply';
     }
 }
 
@@ -277,4 +277,4 @@ declare global {
  * @apioption  plotOptions.series.boostBlending
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

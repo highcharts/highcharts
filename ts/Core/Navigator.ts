@@ -434,14 +434,14 @@ extend(defaultOptions, {
             /**
              * The fill for the handle.
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              */
             backgroundColor: Palette.neutralColor5,
 
             /**
              * The stroke for the handle border and the stripes inside.
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              */
             borderColor: Palette.neutralColor40
         },
@@ -458,7 +458,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/maskfill/
          *         Blue, semi transparent mask
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default rgba(102,133,194,0.3)
          */
         maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
@@ -470,7 +470,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/outline/
          *         2px blue outline
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default #cccccc
          */
         outlineColor: Palette.neutralColor20,
@@ -607,7 +607,7 @@ extend(defaultOptions, {
             /**
              * Sets the fill color of the navigator series.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @apioption navigator.series.color
              */
 

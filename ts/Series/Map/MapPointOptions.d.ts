@@ -37,10 +37,10 @@ export interface MapPointOptions extends ScatterPointOptions {
     middleX?: number;
     middleY?: number;
     name?: string;
-    path?: (string|SVGPath);
+    path?: string | SVGPath;
     properties?: AnyRecord;
     // type?: 'LineString'|'Polygon'|'MultiLineString'|'MultiPolygon';
-    value?: (number|null);
+    value?: number | null;
 }
 
 export default MapPointOptions;

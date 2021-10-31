@@ -32,7 +32,6 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
  * Index of the image.
  */
 class ControllableImage implements ControllableMixin.Type {
-
     /* *
      *
      *  Static Properties
@@ -49,7 +48,7 @@ class ControllableImage implements ControllableMixin.Type {
         width: 'width',
         height: 'height',
         zIndex: 'zIndex'
-    }
+    };
 
     /* *
      *
@@ -83,7 +82,8 @@ class ControllableImage implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility =
+        ControllableMixin.setControlPointsVisibility;
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -115,10 +115,7 @@ class ControllableImage implements ControllableMixin.Type {
 
     public redraw(animation?: boolean): void {
         const anchor = this.anchor(this.points[0]),
-            position = ControllableLabel.prototype.position.call(
-                this,
-                anchor
-            );
+            position = ControllableLabel.prototype.position.call(this, anchor);
 
         if (position) {
             this.graphic[animation ? 'animate' : 'attr']({
@@ -136,7 +133,6 @@ class ControllableImage implements ControllableMixin.Type {
 
         ControllableMixin.redraw.call(this, animation);
     }
-
 }
 
 interface ControllableImage extends ControllableMixin.Type {

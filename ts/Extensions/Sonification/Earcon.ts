@@ -21,12 +21,7 @@ import type InstrumentType from './Instrument';
 
 import Instrument from './Instrument.js';
 import U from '../../Core/Utilities.js';
-const {
-    error,
-    merge,
-    pick,
-    uniqueKey
-} = U;
+const { error, merge, pick, uniqueKey } = U;
 
 /* *
  *
@@ -52,17 +47,13 @@ const {
  *        Options for the Earcon instance.
  */
 class Earcon {
-
-
     /* *
      *
      *  Constructor
      *
      * */
 
-    public constructor(
-        options: Earcon.Options
-    ) {
+    public constructor(options: Earcon.Options) {
         this.init(options || {});
     }
 
@@ -82,9 +73,7 @@ class Earcon {
      *
      * */
 
-    public init(
-        options: Earcon.Options
-    ): void {
+    public init(options: Earcon.Options): void {
         this.options = options;
         if (!this.options.id) {
             this.options.id = this.id = uniqueKey();
@@ -103,9 +92,7 @@ class Earcon {
      * @param {Highcharts.EarconOptionsObject} options
      * Override existing options.
      */
-    public sonify(
-        options: Partial<Earcon.Options>
-    ): void {
+    public sonify(options: Partial<Earcon.Options>): void {
         const playOptions = merge(this.options, options),
             // Find master volume/pan settings
             masterVolume = pick(playOptions.volume, 1),
@@ -118,10 +105,12 @@ class Earcon {
         playOptions.instruments.forEach(function (
             opts: Earcon.Instrument
         ): void {
-            const instrument = typeof opts.instrument === 'string' ?
-                    Instrument.definitions[opts.instrument] : opts.instrument,
+            const instrument =
+                    typeof opts.instrument === 'string'
+                        ? Instrument.definitions[opts.instrument]
+                        : opts.instrument,
                 instrumentOpts = merge(opts.playOptions);
-            let instrOnEnd: (Function|undefined),
+            let instrOnEnd: Function | undefined,
                 instrumentCopy,
                 copyId = '';
 
@@ -168,9 +157,7 @@ class Earcon {
      *        Whether or not to fade out as we stop. If false, the earcon is
      *        cancelled synchronously.
      */
-    public cancelSonify(
-        fadeOut?: boolean
-    ): void {
+    public cancelSonify(fadeOut?: boolean): void {
         const playing = this.instrumentsPlaying,
             instrIds = playing && Object.keys(playing);
 
@@ -190,7 +177,6 @@ class Earcon {
  * */
 
 namespace Earcon {
-
     export interface Configuration {
         condition: Function;
         earcon: Earcon;
@@ -198,11 +184,11 @@ namespace Earcon {
     }
 
     export interface Instrument {
-        instrument: (string|InstrumentType);
+        instrument: string | InstrumentType;
         playOptions: InstrumentType.PlayOptions;
     }
 
-    export interface Options{
+    export interface Options {
         id?: string;
         instruments: Array<Instrument>;
         onEnd?: Function;
@@ -231,17 +217,16 @@ export default Earcon;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.EarconInstrument
- *//**
+ */ /**
  * An instrument instance or the name of the instrument in the
  * Highcharts.sonification.instruments map.
  * @name Highcharts.EarconInstrument#instrument
  * @type {string|Highcharts.Instrument}
- *//**
+ */ /**
  * The options to pass to Instrument.play.
  * @name Highcharts.EarconInstrument#playOptions
  * @type {Highcharts.InstrumentPlayOptionsObject}
  */
-
 
 /**
  * Options for an Earcon.
@@ -249,27 +234,27 @@ export default Earcon;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.EarconOptionsObject
- *//**
+ */ /**
  * The instruments and their options defining this earcon.
  * @name Highcharts.EarconOptionsObject#instruments
  * @type {Array<Highcharts.EarconInstrument>}
- *//**
+ */ /**
  * The unique ID of the Earcon. Generated if not supplied.
  * @name Highcharts.EarconOptionsObject#id
  * @type {string|undefined}
- *//**
+ */ /**
  * Global panning of all instruments. Overrides all panning on individual
  * instruments. Can be a number between -1 and 1.
  * @name Highcharts.EarconOptionsObject#pan
  * @type {number|undefined}
- *//**
+ */ /**
  * Master volume for all instruments. Volume settings on individual instruments
  * can still be used for relative volume between the instruments. This setting
  * does not affect volumes set by functions in individual instruments. Can be a
  * number between 0 and 1. Defaults to 1.
  * @name Highcharts.EarconOptionsObject#volume
  * @type {number|undefined}
- *//**
+ */ /**
  * Callback function to call when earcon has finished playing.
  * @name Highcharts.EarconOptionsObject#onEnd
  * @type {Function|undefined}

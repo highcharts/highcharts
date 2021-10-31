@@ -28,21 +28,12 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         gauge: GaugeSeries,
-        pie: {
-            prototype: pieProto
-        }
+        pie: { prototype: pieProto }
     }
 } = SeriesRegistry;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    extend,
-    isNumber,
-    merge,
-    pick,
-    pInt
-} = U;
+const { clamp, extend, isNumber, merge, pick, pInt } = U;
 
 import './SolidGaugeComposition.js';
 
@@ -148,9 +139,7 @@ const solidGaugeOptions: SolidGaugeSeriesOptions = {
     dataLabels: {
         y: 0
     }
-
 };
-
 
 /* *
  *
@@ -168,15 +157,16 @@ const solidGaugeOptions: SolidGaugeSeriesOptions = {
  * @augments Highcarts.Series
  */
 class SolidGaugeSeries extends GaugeSeries {
-
     /* *
      *
      *  Static properties
      *
      * */
 
-    public static defaultOptions: SolidGaugeSeriesOptions = merge(GaugeSeries.defaultOptions,
-        solidGaugeOptions as SolidGaugeSeriesOptions);
+    public static defaultOptions: SolidGaugeSeriesOptions = merge(
+        GaugeSeries.defaultOptions,
+        solidGaugeOptions as SolidGaugeSeriesOptions
+    );
 
     /* *
      *
@@ -224,58 +214,55 @@ class SolidGaugeSeries extends GaugeSeries {
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
-            overshootVal = isNumber(overshoot) ?
-                overshoot / 180 * Math.PI :
-                0,
-            thresholdAngleRad: (number | undefined);
+            overshootVal = isNumber(overshoot)
+                ? (overshoot / 180) * Math.PI
+                : 0,
+            thresholdAngleRad: number | undefined;
 
         // Handle the threshold option
         if (isNumber(options.threshold)) {
-            thresholdAngleRad = yAxis.startAngleRad + (yAxis.translate(
-                options.threshold,
-                null,
-                null,
-                null,
-                true
-            ) as any);
+            thresholdAngleRad =
+                yAxis.startAngleRad +
+                (yAxis.translate(
+                    options.threshold,
+                    null,
+                    null,
+                    null,
+                    true
+                ) as any);
         }
-        this.thresholdAngleRad = pick(
-            thresholdAngleRad, yAxis.startAngleRad
-        );
-
+        this.thresholdAngleRad = pick(thresholdAngleRad, yAxis.startAngleRad);
 
         series.points.forEach(function (point): void {
             // #10630 null point should not be draw
-            if (!point.isNull) { // condition like in pie chart
+            if (!point.isNull) {
+                // condition like in pie chart
                 let graphic = point.graphic,
-                    rotation = (yAxis.startAngleRad +
+                    rotation =
+                        yAxis.startAngleRad +
                         (yAxis.translate(
                             point.y as any,
                             null,
                             null,
                             null,
                             true
-                        ) as any)),
-                    radius = ((
-                        pInt(
-                            pick(
-                                point.options.radius,
-                                options.radius,
-                                100
-                            )
-                        ) * center[2]
-                    ) / 200),
-                    innerRadius = ((
-                        pInt(
+                        ) as any),
+                    radius =
+                        (pInt(pick(point.options.radius, options.radius, 100)) *
+                            center[2]) /
+                        200,
+                    innerRadius =
+                        (pInt(
                             pick(
                                 point.options.innerRadius,
                                 options.innerRadius,
                                 60
                             )
-                        ) * center[2]
-                    ) / 200),
-                    shapeArgs: (SVGAttributes | undefined),
-                    d: (string | SVGPath | undefined),
+                        ) *
+                            center[2]) /
+                        200,
+                    shapeArgs: SVGAttributes | undefined,
+                    d: string | SVGPath | undefined,
                     toColor = yAxis.toColor(point.y as any, point),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
@@ -288,7 +275,8 @@ class SolidGaugeSeries extends GaugeSeries {
                     minAngle,
                     maxAngle;
 
-                if (toColor === 'none') { // #3708
+                if (toColor === 'none') {
+                    // #3708
                     toColor = point.color || series.color || 'none';
                 }
                 if (toColor !== 'none') {
@@ -332,7 +320,8 @@ class SolidGaugeSeries extends GaugeSeries {
                         shapeArgs.d = d; // animate alters it
                     }
                 } else {
-                    point.graphic = graphic = renderer.arc(shapeArgs)
+                    point.graphic = graphic = renderer
+                        .arc(shapeArgs)
                         .attr({
                             fill: toColor,
                             'sweep-flag': 0
@@ -383,13 +372,11 @@ extend(SolidGaugeSeries.prototype, {
     drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
-
 /* *
  *
  *  Registry
  *
  * */
-
 
 /**
  * @private
@@ -493,4 +480,4 @@ export default SolidGaugeSeries;
  * @apioption series.solidgauge.data.radius
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

@@ -15,9 +15,9 @@
 declare global {
     namespace Highcharts {
         interface BoostGLVertexBuffer {
-            data: (Array<number>|undefined);
+            data: Array<number> | undefined;
             allocate(size: number): void;
-            bind(): (boolean|undefined);
+            bind(): boolean | undefined;
             build(
                 dataIn: Array<number>,
                 attrib: string,
@@ -54,13 +54,13 @@ function GLVertexBuffer(
     dataComponents?: number
     /* , type */
 ): Highcharts.BoostGLVertexBuffer {
-    let buffer: (false|WebGLBuffer|null) = false,
-        vertAttribute: (false|number) = false,
+    let buffer: false | WebGLBuffer | null = false,
+        vertAttribute: false | number = false,
         components = dataComponents || 2,
-        preAllocated: (false|Float32Array) = false,
+        preAllocated: false | Float32Array = false,
         iterator = 0,
         // farray = false,
-        data: (Array<number>|undefined);
+        data: Array<number> | undefined;
 
     // type = type || 'float';
 
@@ -91,7 +91,7 @@ function GLVertexBuffer(
         attrib: string,
         dataComponents?: number
     ): boolean {
-        let farray: (false|Float32Array|undefined);
+        let farray: false | Float32Array | undefined;
 
         data = dataIn || [];
 
@@ -133,7 +133,7 @@ function GLVertexBuffer(
      * Bind the buffer
      * @private
      */
-    function bind(): (boolean|undefined) {
+    function bind(): boolean | undefined {
         if (!buffer) {
             return false;
         }
@@ -142,7 +142,12 @@ function GLVertexBuffer(
         // gl.enableVertexAttribArray(vertAttribute);
         // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.vertexAttribPointer(
-            vertAttribute as any, components, gl.FLOAT, false, 0, 0
+            vertAttribute as any,
+            components,
+            gl.FLOAT,
+            false,
+            0,
+            0
         );
         // gl.enableVertexAttribArray(vertAttribute);
     }
@@ -155,7 +160,9 @@ function GLVertexBuffer(
      * @param drawMode {String} - the draw mode
      */
     function render(from: number, to: number, drawMode: string): boolean {
-        const length = preAllocated ? preAllocated.length : (data as any).length;
+        const length = preAllocated
+            ? preAllocated.length
+            : (data as any).length;
 
         if (!buffer) {
             return false;
@@ -192,7 +199,8 @@ function GLVertexBuffer(
      * @private
      */
     function push(x: number, y: number, a: number, b: number): void {
-        if (preAllocated) { // && iterator <= preAllocated.length - 4) {
+        if (preAllocated) {
+            // && iterator <= preAllocated.length - 4) {
             preAllocated[++iterator] = x;
             preAllocated[++iterator] = y;
             preAllocated[++iterator] = a;

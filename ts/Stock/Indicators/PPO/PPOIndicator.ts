@@ -10,25 +10,15 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    PPOOptions,
-    PPOParamsOptions
-} from './PPOOptions';
+import type { PPOOptions, PPOParamsOptions } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        ema: EMAIndicator
-    }
+    seriesTypes: { ema: EMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    merge,
-    error
-} = U;
+const { correctFloat, extend, merge, error } = U;
 
 /* *
  *
@@ -64,30 +54,33 @@ class PPOIndicator extends EMAIndicator {
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
      */
-    public static defaultOptions: PPOOptions = merge(EMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of Percentage Price Oscillator series
-         * points.
-         *
-         * @excluding period
-         */
-        params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
+    public static defaultOptions: PPOOptions = merge(
+        EMAIndicator.defaultOptions,
+        {
             /**
-             * Periods for Percentage Price Oscillator calculations.
+             * Paramters used in calculation of Percentage Price Oscillator
+             * series points.
              *
-             * @type    {Array<number>}
-             * @default [12, 26]
+             * @excluding period
              */
-            periods: [12, 26]
-        }
-    } as PPOOptions);
+            params: {
+                period: void 0, // unchangeable period, do not inherit (#15362)
+                /**
+                 * Periods for Percentage Price Oscillator calculations.
+                 *
+                 * @type    {Array<number>}
+                 * @default [12, 26]
+                 */
+                periods: [12, 26]
+            }
+        } as PPOOptions
+    );
 
     /* *
-    *
-    *   Properties
-    *
-    * */
+     *
+     *   Properties
+     *
+     * */
 
     public data: Array<PPOPoint> = void 0 as any;
     public options: PPOOptions = void 0 as any;
@@ -102,24 +95,18 @@ class PPOIndicator extends EMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PPOParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
-        let periods: Array<number> = (params.periods as any),
-            index: number = (params.index as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let periods: Array<number> = params.periods as any,
+            index: number = params.index as any,
             // 0- date, 1- Percentage Price Oscillator
             PPO: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             periodsOffset: number,
             // Shorter Period EMA
-            SPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
+            SPE: IndicatorValuesObject<TLinkedSeries> | undefined,
             // Longer Period EMA
-            LPE: (
-                IndicatorValuesObject<TLinkedSeries> |
-                undefined
-            ),
+            LPE: IndicatorValuesObject<TLinkedSeries> | undefined,
             oscillator: number,
             i: number;
 
@@ -127,7 +114,7 @@ class PPOIndicator extends EMAIndicator {
         if (periods.length !== 2 || periods[1] <= periods[0]) {
             error(
                 'Error: "PPO requires two periods. Notice, first period ' +
-                'should be lower than the second one."'
+                    'should be lower than the second one."'
             );
             return;
         }
@@ -151,10 +138,10 @@ class PPOIndicator extends EMAIndicator {
 
         for (i = 0; i < LPE.yData.length; i++) {
             oscillator = correctFloat(
-                ((SPE as any).yData[i + periodsOffset] -
+                (((SPE as any).yData[i + periodsOffset] -
                     (LPE as any).yData[i]) /
-                (LPE as any).yData[i] *
-                100
+                    (LPE as any).yData[i]) *
+                    100
             );
 
             PPO.push([(LPE as any).xData[i], oscillator]);
@@ -171,10 +158,10 @@ class PPOIndicator extends EMAIndicator {
 }
 
 /* *
-*
-*   Prototype Properties
-*
-* */
+ *
+ *   Prototype Properties
+ *
+ * */
 
 interface PPOIndicator {
     nameBase: string;
@@ -224,4 +211,4 @@ export default PPOIndicator;
  * @apioption series.ppo
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -1928,7 +1928,7 @@ export default Tooltip;
  * @interface Highcharts.TooltipFormatterContextObject
  */ /**
  * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorType}
  */ /**
  * @name Highcharts.TooltipFormatterContextObject#colorIndex
  * @type {number|undefined}

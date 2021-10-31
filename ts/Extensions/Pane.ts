@@ -21,13 +21,7 @@ import H from '../Core/Globals.js';
 import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    splat
-} = U;
+const { addEvent, extend, merge, pick, splat } = U;
 
 declare module '../Core/Axis/AxisLike' {
     interface AxisLike {
@@ -35,17 +29,17 @@ declare module '../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         pane?: Array<Highcharts.Pane>;
         hoverPane?: Highcharts.Pane;
-        getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
+        getHoverPane?(eventArgs: any): Highcharts.Pane | undefined;
     }
 }
 
-declare module '../Core/Options'{
+declare module '../Core/Options' {
     interface Options {
-        pane?: Highcharts.PaneOptions|Array<Highcharts.PaneOptions>;
+        pane?: Highcharts.PaneOptions | Array<Highcharts.PaneOptions>;
     }
 }
 
@@ -55,28 +49,28 @@ declare module '../Core/Options'{
  */
 declare global {
     namespace Highcharts {
-        type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
+        type PaneBackgroundShapeValue = 'arc' | 'circle' | 'solid';
         interface PaneBackgroundOptions {
             backgroundColor?: ColorType;
             borderColor?: ColorType;
             borderWidth?: number;
             className?: string;
             from?: number;
-            innerRadius?: (number|string);
-            outerRadius?: (number|string);
+            innerRadius?: number | string;
+            outerRadius?: number | string;
             shape?: PaneBackgroundShapeValue;
             to?: number;
         }
         interface PaneChart extends Chart {
             pane: Array<Pane>;
-            getHoverPane(eventArgs: any): Highcharts.Pane|undefined;
+            getHoverPane(eventArgs: any): Highcharts.Pane | undefined;
         }
         interface PaneOptions {
             background?: Array<PaneBackgroundOptions>;
-            center?: Array<(string|number)>;
+            center?: Array<string | number>;
             endAngle?: number;
-            innerSize?: (number|string);
-            size?: (number|string);
+            innerSize?: number | string;
+            size?: number | string;
             startAngle?: number;
             zIndex?: number;
         }
@@ -169,7 +163,6 @@ class Pane {
      * @param {Highcharts.PaneOptions} options
      */
     public setOptions(options: Highcharts.PaneOptions): void {
-
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
             this.defaultOptions,
@@ -192,7 +185,8 @@ class Pane {
             i;
 
         if (!this.group) {
-            this.group = renderer.g('pane-group')
+            this.group = renderer
+                .g('pane-group')
                 .attr({ zIndex: options.zIndex || 0 })
                 .add();
         }
@@ -245,33 +239,30 @@ class Pane {
     ): void {
         let method = 'animate',
             attribs: SVGAttributes = {
-                'class':
-                    'highcharts-pane ' + (backgroundOptions.className || '')
+                // prettier-ignore
+                'class': 'highcharts-pane ' + (backgroundOptions.className || '')
             };
 
         if (!this.chart.styledMode) {
             extend(attribs, {
-                'fill': backgroundOptions.backgroundColor,
-                'stroke': backgroundOptions.borderColor,
+                fill: backgroundOptions.backgroundColor,
+                stroke: backgroundOptions.borderColor,
                 'stroke-width': backgroundOptions.borderWidth
             });
         }
 
         if (!this.background[i]) {
-            this.background[i] = this.chart.renderer
-                .path()
-                .add(this.group);
+            this.background[i] = this.chart.renderer.path().add(this.group);
             method = 'attr';
         }
 
         this.background[i][method]({
-            'd': (this.axis as any).getPlotBandPath(
+            d: (this.axis as any).getPlotBandPath(
                 backgroundOptions.from,
                 backgroundOptions.to,
                 backgroundOptions
             )
         }).attr(attribs);
-
     }
 
     /**
@@ -284,7 +275,6 @@ class Pane {
      * @optionparent pane
      */
     public defaultOptions: Highcharts.PaneOptions = {
-
         /**
          * The end angle of the polar X axis or gauge value axis, given in
          * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
@@ -362,7 +352,6 @@ class Pane {
      * @optionparent pane.background
      */
     public defaultBackgroundOptions: Highcharts.PaneBackgroundOptions = {
-
         /**
          * The class name for this background.
          *
@@ -401,7 +390,7 @@ class Pane {
         /**
          * The pane background border color.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @since   2.3.0
          * @product highcharts
          */
@@ -410,13 +399,12 @@ class Pane {
         /**
          * The background color or gradient for the pane.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
          * @since   2.3.0
          * @product highcharts
          */
         backgroundColor: {
-
             /** @ignore-option */
             linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 
@@ -425,7 +413,6 @@ class Pane {
                 [0, Palette.backgroundColor],
                 [1, Palette.neutralColor10]
             ]
-
         },
 
         /** @ignore-option */
@@ -453,7 +440,6 @@ class Pane {
          * @product  highcharts
          */
         outerRadius: '105%'
-
     };
 
     /**
@@ -499,10 +485,7 @@ class Pane {
      * @param {boolean} [redraw]
      * @return {void}
      */
-    public update(
-        options: Highcharts.PaneOptions,
-        redraw?: boolean
-    ): void {
+    public update(options: Highcharts.PaneOptions, redraw?: boolean): void {
         merge(true, this.options, options);
 
         this.setOptions(this.options);
@@ -524,14 +507,11 @@ class Pane {
  * @param  {Array<number>} center Pane's center (x, y) and diameter
  * @return {boolean}
  */
-function isInsidePane(
-    x: number,
-    y: number,
-    center: Array<number>
-): boolean {
-    return Math.sqrt(
-        Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
-    ) <= center[2] / 2;
+function isInsidePane(x: number, y: number, center: Array<number>): boolean {
+    return (
+        Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) <=
+        center[2] / 2
+    );
 }
 
 Chart.prototype.getHoverPane = function (
@@ -539,10 +519,10 @@ Chart.prototype.getHoverPane = function (
     eventArgs: {
         chartX: number;
         chartY: number;
-        shared: boolean|undefined;
+        shared: boolean | undefined;
         filter?: Function;
     }
-): Highcharts.Pane|undefined {
+): Highcharts.Pane | undefined {
     const chart = this;
     let hoverPane;
     if (eventArgs) {
@@ -559,66 +539,68 @@ Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-addEvent(Chart, 'afterIsInsidePlot', function (
-    e: {
-        x: number;
-        y: number;
-        isInsidePlot: boolean;
+addEvent(
+    Chart,
+    'afterIsInsidePlot',
+    function (e: { x: number; y: number; isInsidePlot: boolean }): void {
+        const chart = this;
+        if (chart.polar) {
+            e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
+                (pane): boolean => isInsidePane(e.x, e.y, pane.center)
+            );
+        }
     }
-): void {
-    const chart = this;
-    if (chart.polar) {
-        e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
-            (pane): boolean => isInsidePane(e.x, e.y, pane.center)
-        );
-    }
-});
+);
 
-addEvent(Pointer, 'beforeGetHoverData', function (
-    eventArgs: {
+addEvent(
+    Pointer,
+    'beforeGetHoverData',
+    function (eventArgs: {
         chartX: number;
         chartY: number;
-        shared: boolean|undefined;
+        shared: boolean | undefined;
         filter?: Function;
-    }
-): void {
-    const chart = (this.chart as Highcharts.PaneChart);
-    if (chart.polar) {
-        // Find pane we are currently hovering over.
-        chart.hoverPane = chart.getHoverPane(eventArgs);
+    }): void {
+        const chart = this.chart as Highcharts.PaneChart;
+        if (chart.polar) {
+            // Find pane we are currently hovering over.
+            chart.hoverPane = chart.getHoverPane(eventArgs);
 
-        // Edit filter method to handle polar
-        eventArgs.filter = function (s: Series): boolean {
-            return (
-                s.visible &&
-                !(!eventArgs.shared && s.directTouch) && // #3821
-                pick(s.options.enableMouseTracking, true) &&
-                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
-            );
-        };
-    } else {
-        chart.hoverPane = void 0;
+            // Edit filter method to handle polar
+            eventArgs.filter = function (s: Series): boolean {
+                return (
+                    s.visible &&
+                    !(!eventArgs.shared && s.directTouch) && // #3821
+                    pick(s.options.enableMouseTracking, true) &&
+                    (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
+                );
+            };
+        } else {
+            chart.hoverPane = void 0;
+        }
     }
-});
+);
 
-addEvent(Pointer, 'afterGetHoverData', function (
-    eventArgs: Pointer.EventArgsObject
-): void {
-    const chart = this.chart;
-    if (
-        eventArgs.hoverPoint &&
-        eventArgs.hoverPoint.plotX &&
-        eventArgs.hoverPoint.plotY &&
-        chart.hoverPane &&
-        !isInsidePane(
-            eventArgs.hoverPoint.plotX,
-            eventArgs.hoverPoint.plotY,
-            chart.hoverPane.center
-        )
-    ) {
-        eventArgs.hoverPoint = void 0;
+addEvent(
+    Pointer,
+    'afterGetHoverData',
+    function (eventArgs: Pointer.EventArgsObject): void {
+        const chart = this.chart;
+        if (
+            eventArgs.hoverPoint &&
+            eventArgs.hoverPoint.plotX &&
+            eventArgs.hoverPoint.plotY &&
+            chart.hoverPane &&
+            !isInsidePane(
+                eventArgs.hoverPoint.plotX,
+                eventArgs.hoverPoint.plotY,
+                chart.hoverPane.center
+            )
+        ) {
+            eventArgs.hoverPoint = void 0;
+        }
     }
-});
+);
 
 H.Pane = Pane as any;
 export default H.Pane;

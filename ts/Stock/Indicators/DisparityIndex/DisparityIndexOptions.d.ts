@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 
 /* *
  *
@@ -28,7 +25,7 @@ export interface DisparityIndexOptions extends SMAOptions {
 }
 
 export interface DisparityIndexParamsOptions extends SMAParamsOptions {
-    average: 'sma'|'ema'|'dema'|'tema'|'wma';
+    average: 'sma' | 'ema' | 'dema' | 'tema' | 'wma';
 }
 
 export default DisparityIndexOptions;

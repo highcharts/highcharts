@@ -17,27 +17,17 @@ import type {
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
-import type {
-    SeriesZonesOptions
-} from '../../../Core/Series/SeriesOptions';
+import type { SeriesZonesOptions } from '../../../Core/Series/SeriesOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        column: ColumnSeries
-    }
+    seriesTypes: { sma: SMAIndicator, column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    correctFloat,
-    defined,
-    merge
-} = U;
+const { extend, correctFloat, defined, merge } = U;
 
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -76,96 +66,99 @@ class MACDIndicator extends SMAIndicator {
      * @requires     stock/indicators/macd
      * @optionparent plotOptions.macd
      */
-    public static defaultOptions: MACDOptions =
-    merge(SMAIndicator.defaultOptions, {
-        params: {
-            /**
-             * The short period for indicator calculations.
-             */
-            shortPeriod: 12,
-            /**
-             * The long period for indicator calculations.
-             */
-            longPeriod: 26,
-            /**
-             * The base period for signal calculations.
-             */
-            signalPeriod: 9,
-            period: 26
-        },
-        /**
-         * The styles for signal line
-         */
-        signalLine: {
-            /**
-             * @sample stock/indicators/macd-zones
-             *         Zones in MACD
-             *
-             * @extends plotOptions.macd.zones
-             */
-            zones: [],
-            styles: {
+    public static defaultOptions: MACDOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
                 /**
-                 * Pixel width of the line.
+                 * The short period for indicator calculations.
                  */
-                lineWidth: 1,
+                shortPeriod: 12,
                 /**
-                 * Color of the line.
+                 * The long period for indicator calculations.
+                 */
+                longPeriod: 26,
+                /**
+                 * The base period for signal calculations.
+                 */
+                signalPeriod: 9,
+                period: 26
+            },
+            /**
+             * The styles for signal line
+             */
+            signalLine: {
+                /**
+                 * @sample stock/indicators/macd-zones
+                 *         Zones in MACD
                  *
-                 * @type  {Highcharts.ColorString}
+                 * @extends plotOptions.macd.zones
                  */
-                lineColor: void 0
-            }
-        },
-        /**
-         * The styles for macd line
-         */
-        macdLine: {
-            /**
-             * @sample stock/indicators/macd-zones
-             *         Zones in MACD
-             *
-             * @extends plotOptions.macd.zones
-             */
-            zones: [],
-            styles: {
-                /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1,
-                /**
-                 * Color of the line.
-                 *
-                 * @type  {Highcharts.ColorString}
-                 */
-                lineColor: void 0
-            }
-        },
-        /**
-         * @type {number|null}
-         */
-        threshold: 0,
-        groupPadding: 0.1,
-        pointPadding: 0.1,
-        crisp: false,
-        states: {
-            hover: {
-                halo: {
-                    size: 0
+                zones: [],
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line.
+                     *
+                     * @type  {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
                 }
-            }
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
-                'Value: {point.MACD}<br/>' +
-                'Signal: {point.signal}<br/>' +
-                'Histogram: {point.y}<br/>'
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        },
-        minPointLength: 0
-    } as MACDOptions);
+            },
+            /**
+             * The styles for macd line
+             */
+            macdLine: {
+                /**
+                 * @sample stock/indicators/macd-zones
+                 *         Zones in MACD
+                 *
+                 * @extends plotOptions.macd.zones
+                 */
+                zones: [],
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line.
+                     *
+                     * @type  {Highcharts.ColorString}
+                     */
+                    lineColor: void 0
+                }
+            },
+            /**
+             * @type {number|null}
+             */
+            threshold: 0,
+            groupPadding: 0.1,
+            pointPadding: 0.1,
+            crisp: false,
+            states: {
+                hover: {
+                    halo: {
+                        size: 0
+                    }
+                }
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+                    'Value: {point.MACD}<br/>' +
+                    'Signal: {point.signal}<br/>' +
+                    'Histogram: {point.y}<br/>'
+            },
+            dataGrouping: {
+                approximation: 'averages'
+            },
+            minPointLength: 0
+        } as MACDOptions
+    );
 
     /**
      *
@@ -176,11 +169,11 @@ class MACDIndicator extends SMAIndicator {
     public data: Array<MACDPoint> = void 0 as any;
     public options: MACDOptions = void 0 as any;
     public points: Array<MACDPoint> = void 0 as any;
-    public currentLineZone: (string|null) = void 0 as any;
-    public graphmacd: (SVGElement|undefined) = void 0 as any;
-    public graphsignal: (SVGElement|undefined) = void 0 as any;
+    public currentLineZone: string | null = void 0 as any;
+    public graphmacd: SVGElement | undefined = void 0 as any;
+    public graphsignal: SVGElement | undefined = void 0 as any;
     public macdZones: MACDZonesOptions = void 0 as any;
-    public signalZones: MACDZonesOptions= void 0 as any;
+    public signalZones: MACDZonesOptions = void 0 as any;
 
     /**
      *
@@ -195,18 +188,21 @@ class MACDIndicator extends SMAIndicator {
         // when any of required indicators is missing.
         if (this.options) {
             // Set default color for a signal line and the histogram:
-            this.options = merge({
-                signalLine: {
-                    styles: {
-                        lineColor: this.color
+            this.options = merge(
+                {
+                    signalLine: {
+                        styles: {
+                            lineColor: this.color
+                        }
+                    },
+                    macdLine: {
+                        styles: {
+                            color: this.color
+                        }
                     }
                 },
-                macdLine: {
-                    styles: {
-                        color: this.color
-                    }
-                }
-            }, this.options);
+                this.options
+            );
 
             // Zones have indexes automatically calculated, we need to
             // translate them to support multiple lines within one indicator
@@ -224,9 +220,7 @@ class MACDIndicator extends SMAIndicator {
         }
     }
 
-    public toYData(
-        point: MACDPoint
-    ): Array<number> {
+    public toYData(point: MACDPoint): Array<number> {
         return [point.y, point.signal, point.MACD];
     }
 
@@ -236,26 +230,24 @@ class MACDIndicator extends SMAIndicator {
 
         H.seriesTypes.column.prototype.translate.apply(indicator);
 
-        indicator.points.forEach(
-            function (point: MACDPoint): void {
-                [point.signal, point.MACD].forEach(
-                    function (value: number, i: number): void {
-                        if (value !== null) {
-                            (point as any)[plotNames[i]] =
-                            indicator.yAxis.toPixels(
-                                value,
-                                true
-                            );
-                        }
-                    }
-                );
-            }
-        );
+        indicator.points.forEach(function (point: MACDPoint): void {
+            [point.signal, point.MACD].forEach(function (
+                value: number,
+                i: number
+            ): void {
+                if (value !== null) {
+                    (point as any)[plotNames[i]] = indicator.yAxis.toPixels(
+                        value,
+                        true
+                    );
+                }
+            });
+        });
     }
 
     public destroy(): void {
         // this.graph is null due to removing two times the same SVG element
-        this.graph = (null as any);
+        this.graph = null as any;
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
 
@@ -264,61 +256,58 @@ class MACDIndicator extends SMAIndicator {
 
     public drawGraph(): void {
         let indicator = this,
-            mainLinePoints: Array<(
-                MACDPoint
-            )> = indicator.points,
+            mainLinePoints: Array<MACDPoint> = indicator.points,
             pointsLength: number = mainLinePoints.length,
-            mainLineOptions: MACDOptions =
-            indicator.options,
-            histogramZones: Array<(SeriesZonesOptions)> = indicator.zones,
+            mainLineOptions: MACDOptions = indicator.options,
+            histogramZones: Array<SeriesZonesOptions> = indicator.zones,
             gappedExtend: MACDGappedExtensionObject = {
                 options: {
                     gapSize: mainLineOptions.gapSize
                 }
             },
-            otherSignals: Array<(
-                Array<MACDPoint>
-            )> = [[], []],
+            otherSignals: Array<Array<MACDPoint>> = [[], []],
             point: MACDPoint;
 
         // Generate points for top and bottom lines:
         while (pointsLength--) {
             point = mainLinePoints[pointsLength];
             if (defined(point.plotMACD)) {
-                otherSignals[0].push(({
+                otherSignals[0].push({
                     plotX: point.plotX,
                     plotY: point.plotMACD,
                     isNull: !defined(point.plotMACD)
-                } as any));
+                } as any);
             }
             if (defined(point.plotSignal)) {
-                otherSignals[1].push(({
+                otherSignals[1].push({
                     plotX: point.plotX,
                     plotY: point.plotSignal,
                     isNull: !defined(point.plotMACD)
-                } as any));
+                } as any);
             }
         }
 
         // Modify options and generate smoothing line:
-        ['macd', 'signal'].forEach(
-            function (lineName: string, i: number): void {
-                indicator.points = otherSignals[i];
-                indicator.options = merge(
-                    (mainLineOptions as any)[lineName + 'Line'].styles,
-                    gappedExtend
-                );
-                indicator.graph = (indicator as any)['graph' + lineName];
+        ['macd', 'signal'].forEach(function (
+            lineName: string,
+            i: number
+        ): void {
+            indicator.points = otherSignals[i];
+            indicator.options = merge(
+                (mainLineOptions as any)[lineName + 'Line'].styles,
+                gappedExtend
+            );
+            indicator.graph = (indicator as any)['graph' + lineName];
 
-                // Zones extension:
-                indicator.currentLineZone = lineName + 'Zones';
-                indicator.zones =
-                (indicator as any)[indicator.currentLineZone].zones;
+            // Zones extension:
+            indicator.currentLineZone = lineName + 'Zones';
+            indicator.zones = (indicator as any)[
+                indicator.currentLineZone
+            ].zones;
 
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
-                (indicator as any)['graph' + lineName] = indicator.graph;
-            }
-        );
+            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+            (indicator as any)['graph' + lineName] = indicator.graph;
+        });
 
         // Restore options:
         indicator.points = mainLinePoints;
@@ -328,11 +317,8 @@ class MACDIndicator extends SMAIndicator {
         // indicator.graph = null;
     }
 
-    public getZonesGraphs(
-        props: Array<Array<string>>
-    ): Array<Array<string>> {
-        let allZones: Array<Array<string>> =
-        super.getZonesGraphs(props),
+    public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
+        let allZones: Array<Array<string>> = super.getZonesGraphs(props),
             currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
@@ -358,7 +344,7 @@ class MACDIndicator extends SMAIndicator {
         const histogramZones = this.zones;
 
         // signalZones.zones contains all zones:
-        this.zones = (this.signalZones.zones as any);
+        this.zones = this.signalZones.zones as any;
         SeriesRegistry.seriesTypes.sma.prototype.applyZones.call(this);
 
         // applyZones hides only main series.graph, hide macd line manually
@@ -372,43 +358,38 @@ class MACDIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MACDParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let indexToShift: number =
+                (params.longPeriod as any) - (params.shortPeriod as any), // #14197
             j = 0,
-            MACD: Array<Array<(number|null)>> = [],
-            xMACD: Array<(number|null)> = [],
-            yMACD: Array<Array<(number|null)>> = [],
+            MACD: Array<Array<number | null>> = [],
+            xMACD: Array<number | null> = [],
+            yMACD: Array<Array<number | null>> = [],
             signalLine: Array<Array<number>> = [],
             shortEMA: Array<Array<number>>,
             longEMA: Array<Array<number>>,
             i;
 
-        if ((series.xData as any).length <
+        if (
+            (series.xData as any).length <
             (params.longPeriod as any) + params.signalPeriod
         ) {
             return;
         }
 
         // Calculating the short and long EMA used when calculating the MACD
-        shortEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
-            series,
-            {
-                period: params.shortPeriod,
-                index: params.index
-            }
-        ) as any);
+        shortEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
+            period: params.shortPeriod,
+            index: params.index
+        }) as any;
 
-        longEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
-            series,
-            {
-                period: params.longPeriod,
-                index: params.index
-            }
-        ) as any);
+        longEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
+            period: params.longPeriod,
+            index: params.index
+        }) as any;
 
         shortEMA = (shortEMA as any).values;
         longEMA = (longEMA as any).values;
-
 
         // Subtract each Y value from the EMA's and create the new dataset
         // (MACD)
@@ -423,8 +404,7 @@ class MACDIndicator extends SMAIndicator {
                     shortEMA[i + indexToShift][0],
                     0,
                     null,
-                    shortEMA[i + indexToShift][1] -
-                        longEMA[i][1]
+                    shortEMA[i + indexToShift][1] - longEMA[i][1]
                 ]);
             }
         }
@@ -437,16 +417,16 @@ class MACDIndicator extends SMAIndicator {
         }
 
         // Setting the signalline (Signal Line: X-day EMA of MACD line).
-        signalLine = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
-            ({
+        signalLine = SeriesRegistry.seriesTypes.ema.prototype.getValues(
+            {
                 xData: xMACD,
                 yData: yMACD
-            } as any),
+            } as any,
             {
                 period: params.signalPeriod,
                 index: 2
             }
-        ) as any);
+        ) as any;
 
         signalLine = (signalLine as any).values;
 
@@ -455,7 +435,6 @@ class MACDIndicator extends SMAIndicator {
         for (i = 0; i < MACD.length; i++) {
             // detect the first point
             if ((MACD[i] as any)[0] >= signalLine[0][0]) {
-
                 MACD[i][2] = signalLine[j][1];
                 yMACD[i] = [0, signalLine[j][1], MACD[i][3]];
 
@@ -463,10 +442,12 @@ class MACDIndicator extends SMAIndicator {
                     MACD[i][1] = 0;
                     yMACD[i][0] = 0;
                 } else {
-                    MACD[i][1] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
-                    yMACD[i][0] = correctFloat((MACD[i] as any)[3] -
-                    signalLine[j][1]);
+                    MACD[i][1] = correctFloat(
+                        (MACD[i] as any)[3] - signalLine[j][1]
+                    );
+                    yMACD[i][0] = correctFloat(
+                        (MACD[i] as any)[3] - signalLine[j][1]
+                    );
                 }
 
                 j++;
@@ -539,4 +520,4 @@ export default MACDIndicator;
  * @apioption series.macd
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

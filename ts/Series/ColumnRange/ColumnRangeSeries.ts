@@ -25,20 +25,12 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        column: ColumnSeries
-    }
+    seriesTypes: { arearange: AreaRangeSeries, column: ColumnSeries }
 } = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 const { prototype: arearangeProto } = AreaRangeSeries;
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    merge,
-    pick,
-    extend
-} = U;
+const { clamp, merge, pick, extend } = U;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -56,7 +48,6 @@ const {
  * @optionparent plotOptions.columnrange
  */
 const columnRangeOptions: ColumnRangeSeriesOptions = {
-
     /**
      * Extended data labels for range series types. Range series data labels
      * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
@@ -100,7 +91,6 @@ const columnRangeOptions: ColumnRangeSeriesOptions = {
  */
 
 class ColumnRangeSeries extends AreaRangeSeries {
-
     /* *
      *
      *  Static properties
@@ -111,7 +101,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
         columnRangeOptions as ColumnRangeSeriesOptions
-    )
+    );
 
     /* *
      *
@@ -159,13 +149,10 @@ class ColumnRangeSeries extends AreaRangeSeries {
             return clamp(pixelPos, -safeDistance, safeDistance);
         }
 
-
         columnProto.translate.apply(series);
 
         // Set plotLow and plotHigh
-        series.points.forEach(function (
-            point: ColumnRangePoint
-        ): void {
+        series.points.forEach(function (point: ColumnRangePoint): void {
             let shapeArgs = point.shapeArgs || {},
                 minPointLength = series.options.minPointLength,
                 heightDifference,
@@ -174,7 +161,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
             point.plotHigh = plotHigh = safeBounds(
                 yAxis.translate(
-                    point.high, 0 as any, 1 as any, 0 as any, 1 as any
+                    point.high,
+                    0 as any,
+                    1 as any,
+                    0 as any,
+                    1 as any
                 ) as any
             );
             point.plotLow = safeBounds(point.plotY as any);
@@ -185,18 +176,17 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
             // Adjust for minPointLength
             if (Math.abs(height) < (minPointLength as any)) {
-                heightDifference = ((minPointLength as any) - height);
+                heightDifference = (minPointLength as any) - height;
                 height += heightDifference;
                 y -= heightDifference / 2;
 
-            // Adjust for negative ranges or reversed Y axis (#1457)
+                // Adjust for negative ranges or reversed Y axis (#1457)
             } else if (height < 0) {
                 height *= -1;
                 y -= height;
             }
 
             if (isRadial) {
-
                 start = (point.barX as any) + startAngleRad;
                 point.shapeType = 'arc';
                 point.shapeArgs = series.polarArc(
@@ -206,24 +196,29 @@ class ColumnRangeSeries extends AreaRangeSeries {
                     start + point.pointWidth
                 );
             } else {
-
                 shapeArgs.height = height;
                 shapeArgs.y = y;
                 const { x = 0, width = 0 } = shapeArgs;
 
-                point.tooltipPos = chart.inverted ?
-                    [
-                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - y -
-                        height / 2,
-                        xAxis.len + (xAxis.pos as any) - chart.plotTop -
-                        x - width / 2,
-                        height
-                    ] : [
-                        xAxis.left - chart.plotLeft + x +
-                        width / 2,
-                        (yAxis.pos as any) - chart.plotTop + y + height / 2,
-                        height
-                    ]; // don't inherit from column tooltip position - #3372
+                point.tooltipPos = chart.inverted
+                    ? [
+                          yAxis.len +
+                              (yAxis.pos as any) -
+                              chart.plotLeft -
+                              y -
+                              height / 2,
+                          xAxis.len +
+                              (xAxis.pos as any) -
+                              chart.plotTop -
+                              x -
+                              width / 2,
+                          height
+                      ]
+                    : [
+                          xAxis.left - chart.plotLeft + x + width / 2,
+                          (yAxis.pos as any) - chart.plotTop + y + height / 2,
+                          height
+                      ]; // don't inherit from column tooltip position - #3372
             }
         });
     }
@@ -396,4 +391,4 @@ export default ColumnRangeSeries;
  * @apioption series.columnrange.states.select
  */
 
-''; // adds doclets above into transpiled
+(''); // adds doclets above into transpiled

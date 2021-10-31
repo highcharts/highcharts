@@ -28,13 +28,7 @@ import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import U from '../../Core/Utilities.js';
-const {
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { isNumber, isObject, merge, objectEach, pick } = U;
 
 /**
  * Internal types
@@ -78,7 +72,7 @@ declare global {
             inited(): boolean;
             orthoMatrix(width: number, height: number): Array<number>;
             pushSeries(s: Series): void;
-            render(chart: Chart): (false|undefined);
+            render(chart: Chart): false | undefined;
             setOptions(options: BoostOptions): void;
             setSize(w: number, h: number): void;
             setThreshold(has: boolean, translation: number): void;
@@ -105,22 +99,22 @@ declare global {
         interface BoostGLTextureObject {
             isReady: boolean;
             texture: HTMLCanvasElement;
-            handle: (WebGLTexture|null);
+            handle: WebGLTexture | null;
         }
-        type BoostGLDrawModeValue = ('line_strip'|'lines'|'points'|'triangles');
+        type BoostGLDrawModeValue =
+            | 'line_strip'
+            | 'lines'
+            | 'points'
+            | 'triangles';
     }
     interface CanvasRenderingContext2D {
         FUNC_MIN: number;
         /** @deprecated */
-        mozImageSmoothingEnabled?: (
-            CanvasImageSmoothing['imageSmoothingEnabled']
-        );
+        mozImageSmoothingEnabled?: CanvasImageSmoothing['imageSmoothingEnabled'];
         /** @deprecated */
         msImageSmoothingEnabled?: CanvasImageSmoothing['imageSmoothingEnabled'];
         /** @deprecated */
-        webkitImageSmoothingEnabled?: (
-            CanvasImageSmoothing['imageSmoothingEnabled']
-        );
+        webkitImageSmoothingEnabled?: CanvasImageSmoothing['imageSmoothingEnabled'];
     }
     interface WebGLRenderingContext {
         /** @deprecated */
@@ -147,7 +141,7 @@ declare global {
  */
 function GLRenderer(
     postRenderCallback: Function
-): (false|Highcharts.BoostGLRenderer) {
+): false | Highcharts.BoostGLRenderer {
     //  // Shader
     let shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
@@ -164,26 +158,24 @@ function GLRenderer(
         // The marker data
         markerData: Array<number> = false as any,
         // Exports
-        exports: (object|Highcharts.BoostGLRenderer) = {},
+        exports: object | Highcharts.BoostGLRenderer = {},
         // Is it inited?
         isInited = false,
         // The series stack
         series: Array<Highcharts.BoostGLSeriesObject> = [],
         // Texture handles
-        textureHandles: Record<string, (
-            Highcharts.BoostGLTextureObject
-        )> = {},
+        textureHandles: Record<string, Highcharts.BoostGLTextureObject> = {},
         // Things to draw as "rectangles" (i.e lines)
         asBar: Record<string, boolean> = {
-            'column': true,
-            'columnrange': true,
-            'bar': true,
-            'area': true,
-            'arearange': true
+            column: true,
+            columnrange: true,
+            bar: true,
+            area: true,
+            arearange: true
         },
         asCircle: Record<string, boolean> = {
-            'scatter': true,
-            'bubble': true
+            scatter: true,
+            bubble: true
         },
         // Render settings
         settings: Highcharts.BoostGLOptions = {
@@ -216,19 +208,15 @@ function GLRenderer(
      * @private
      */
     function seriesPointCount(series: Series): number {
-        let isStacked: boolean,
-            xData: Array<number>,
-            s: number;
+        let isStacked: boolean, xData: Array<number>, s: number;
 
         if (series.isSeriesBoosting) {
             isStacked = !!series.options.stacking;
-            xData = (
+            xData =
                 series.xData ||
                 (series.options as any).xData ||
-                series.processedXData
-            );
-            s = (isStacked ? series.data : (xData || series.options.data))
-                .length;
+                series.processedXData;
+            s = (isStacked ? series.data : xData || series.options.data).length;
 
             if (series.type === 'treemap') {
                 s *= 12;
@@ -292,10 +280,22 @@ function GLRenderer(
             far = 1;
 
         return [
-            2 / width, 0, 0, 0,
-            0, -(2 / height), 0, 0,
-            0, 0, -2 / (far - near), 0,
-            -1, 1, -(far + near) / (far - near), 1
+            2 / width,
+            0,
+            0,
+            0,
+            0,
+            -(2 / height),
+            0,
+            0,
+            0,
+            0,
+            -2 / (far - near),
+            0,
+            -1,
+            1,
+            -(far + near) / (far - near),
+            1
         ];
     }
 
@@ -326,10 +326,9 @@ function GLRenderer(
         series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
-        let isRange = (
+        let isRange =
                 series.pointArrayMap &&
-                series.pointArrayMap.join(',') === 'low,high'
-            ),
+                series.pointArrayMap.join(',') === 'low,high',
             chart = series.chart,
             options = series.options,
             isStacked = !!options.stacking,
@@ -344,10 +343,10 @@ function GLRenderer(
                 series.xData || (options as any).xData || series.processedXData,
             yData =
                 series.yData || (options as any).yData || series.processedYData,
-            zData = (
-                series.zData || (options as any).zData ||
-                (series as any).processedZData
-            ),
+            zData =
+                series.zData ||
+                (options as any).zData ||
+                (series as any).processedZData,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
             // plotHeight = series.chart.plotHeight,
@@ -370,9 +369,9 @@ function GLRenderer(
                 series.points || (false as any),
             lastX: number = false as any,
             lastY: number = false as any,
-            minVal: (number|undefined),
+            minVal: number | undefined,
             scolor: Color.RGBA,
-            sdata = isStacked ? series.data : (xData || rawData),
+            sdata = isStacked ? series.data : xData || rawData,
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
             closestRight = { x: -Number.MAX_VALUE, y: 0 },
             //
@@ -384,12 +383,12 @@ function GLRenderer(
             // The following are used in the builder while loop
             x: number,
             y: number,
-            d: (number|Array<number>|Record<string, number>),
-            z: (number|undefined),
+            d: number | Array<number> | Record<string, number>,
+            z: number | undefined,
             i = -1,
             px: number = false as any,
             nx: number = false as any,
-            low: (number|undefined),
+            low: number | undefined,
             chartDestroyed = typeof chart.index === 'undefined',
             nextInside = false,
             prevInside = false,
@@ -401,7 +400,7 @@ function GLRenderer(
             zoneAxis = options.zoneAxis || 'y',
             zones = options.zones || false,
             zoneColors: Array<Color.RGBA>,
-            zoneDefColor: (Color.RGBA|undefined) = false as any,
+            zoneDefColor: Color.RGBA | undefined = false as any,
             threshold: number = options.threshold as any,
             gapSize: number = false as any;
 
@@ -410,9 +409,10 @@ function GLRenderer(
         }
 
         if (options.gapSize) {
-            gapSize = options.gapUnit !== 'value' ?
-                options.gapSize * (series.closestPointRange as any) :
-                options.gapSize;
+            gapSize =
+                options.gapUnit !== 'value'
+                    ? options.gapSize * (series.closestPointRange as any)
+                    : options.gapSize;
         }
 
         if (zones) {
@@ -433,10 +433,9 @@ function GLRenderer(
             });
 
             if (!zoneDefColor) {
-                const seriesColor = (
+                const seriesColor =
                     (series.pointAttribs && series.pointAttribs().fill) ||
-                    series.color
-                );
+                    series.color;
                 zoneDefColor = color(seriesColor).rgba as Color.RGBA;
                 zoneDefColor[0] /= 255.0;
                 zoneDefColor[1] /= 255.0;
@@ -492,7 +491,8 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length || vlen;
+                inst.segments[inst.segments.length - 1].to =
+                    data.length || vlen;
             }
         }
 
@@ -506,8 +506,10 @@ function GLRenderer(
             // When adding a segment, if one exists from before, it should
             // set the previous segment's end
 
-            if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
+            if (
+                inst.segments.length &&
+                inst.segments[inst.segments.length - 1].from ===
+                    (data.length || vlen)
             ) {
                 return;
             }
@@ -517,7 +519,6 @@ function GLRenderer(
             inst.segments.push({
                 from: data.length || vlen
             });
-
         }
 
         /**
@@ -551,7 +552,6 @@ function GLRenderer(
 
         // Special case for point shapes
         if (points && points.length > 0) {
-
             // If we're doing points, we assume that the points are already
             // translated, so we skip the shader translation.
             inst.skipTranslation = true;
@@ -593,13 +593,20 @@ function GLRenderer(
                     point.y !== null &&
                     point.shapeArgs
                 ) {
-                    let { x = 0, y = 0, width = 0, height = 0 } =
-                        point.shapeArgs;
+                    let {
+                        x = 0,
+                        y = 0,
+                        width = 0,
+                        height = 0
+                    } = point.shapeArgs;
 
-                    pointAttr = chart.styledMode ?
-                        (point.series as ColorMapComposition.SeriesComposition)
-                            .colorAttribs(point as ColorMapComposition.PointComposition) :
-                        pointAttr = point.series.pointAttribs(point);
+                    pointAttr = chart.styledMode
+                        ? (
+                              point.series as ColorMapComposition.SeriesComposition
+                          ).colorAttribs(
+                              point as ColorMapComposition.PointComposition
+                          )
+                        : (pointAttr = point.series.pointAttribs(point));
 
                     swidth = pointAttr['stroke-width'] || 0;
 
@@ -648,8 +655,8 @@ function GLRenderer(
                     pushRect(
                         x + swidth,
                         y + swidth,
-                        width - (swidth * 2),
-                        height - (swidth * 2),
+                        width - swidth * 2,
+                        height - swidth * 2,
                         pcolor
                     );
                 }
@@ -730,7 +737,6 @@ function GLRenderer(
                         inst.zMin = (d as any)[2];
                     }
                 }
-
             } else {
                 x = d as any;
                 y = yData[i];
@@ -776,14 +782,14 @@ function GLRenderer(
 
                 low = (y as any)[0];
                 y = (y as any)[1];
-
             } else if (isStacked) {
                 x = (d as any).x;
                 y = (d as any).stackY;
                 low = (y as any) - (d as any).y;
             }
 
-            if (yMin !== null &&
+            if (
+                yMin !== null &&
                 typeof yMin !== 'undefined' &&
                 yMax !== null &&
                 typeof yMax !== 'undefined'
@@ -813,10 +819,7 @@ function GLRenderer(
 
             // The first point before and first after extremes should be
             // rendered (#9962)
-            if (
-                (nx >= xMin || x >= xMin) &&
-                (px <= xMax || x <= xMax)
-            ) {
+            if ((nx >= xMin || x >= xMin) && (px <= xMax || x <= xMax)) {
                 isXInside = true;
             }
 
@@ -830,16 +833,23 @@ function GLRenderer(
 
             // Note: Boost requires that zones are sorted!
             if (zones) {
-                let zoneColor: Color.RGBA|undefined;
-                zones.some(function ( // eslint-disable-line no-loop-func
+                let zoneColor: Color.RGBA | undefined;
+                // eslint-disable-next-line no-loop-func
+                zones.some(function (
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
                     const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
-                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                        if (
+                            typeof zone.value !== 'undefined' &&
+                            x <= zone.value
+                        ) {
+                            if (
+                                zoneColors[i] &&
+                                (!last || x >= (last.value as any))
+                            ) {
                                 zoneColor = zoneColors[i];
                             }
                             return true;
@@ -848,7 +858,10 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                        if (
+                            zoneColors[i] &&
+                            (!last || y >= (last.value as any))
+                        ) {
                             zoneColor = zoneColors[i];
                         }
                         return true;
@@ -885,9 +898,7 @@ function GLRenderer(
                     // Having this here will clamp markers and make the angle
                     // of the last line wrong. See 9166.
                     // x = plotWidth;
-
                 }
-
             }
 
             // No markers on out of bounds things.
@@ -916,10 +927,13 @@ function GLRenderer(
 
             // If the last _drawn_ point is closer to this point than the
             // threshold, skip it. Shaves off 20-100ms in processing.
-            if (!settings.useGPUTranslations &&
+            if (
+                !settings.useGPUTranslations &&
                 !settings.usePreallocated &&
-                (lastX && Math.abs(x - lastX) < cullXThreshold) &&
-                (lastY && Math.abs(y - lastY) < cullYThreshold)
+                lastX &&
+                Math.abs(x - lastX) < cullXThreshold &&
+                lastY &&
+                Math.abs(y - lastY) < cullYThreshold
             ) {
                 if (settings.debug.showSkipSummary) {
                     ++skipped;
@@ -959,20 +973,14 @@ function GLRenderer(
             // See #6976.
 
             if (options.step && !firstPoint) {
-                vertice(
-                    x,
-                    lastY,
-                    0 as any,
-                    2,
-                    pcolor
-                );
+                vertice(x, lastY, 0 as any, 2, pcolor);
             }
 
             vertice(
                 x,
                 y,
                 0 as any,
-                series.type === 'bubble' ? (z || 1) : 2,
+                series.type === 'bubble' ? z || 1 : 2,
                 pcolor
             );
 
@@ -1018,12 +1026,7 @@ function GLRenderer(
                 return;
             }
 
-            vertice(
-                point.x,
-                point.y,
-                0 as any,
-                2
-            );
+            vertice(point.x, point.y, 0 as any, 2);
         }
 
         if (
@@ -1073,25 +1076,26 @@ function GLRenderer(
             series: s,
             zMin: Number.MAX_VALUE,
             zMax: -Number.MAX_VALUE,
-            hasMarkers: s.options.marker ?
-                s.options.marker.enabled !== false :
-                false,
+            hasMarkers: s.options.marker
+                ? s.options.marker.enabled !== false
+                : false,
             showMarkers: true,
-            drawMode: (
-                {
-                    'area': 'lines',
-                    'arearange': 'lines',
-                    'areaspline': 'line_strip',
-                    'column': 'lines',
-                    'columnrange': 'lines',
-                    'bar': 'lines',
-                    'line': 'line_strip',
-                    'scatter': 'points',
-                    'heatmap': 'triangles',
-                    'treemap': 'triangles',
-                    'bubble': 'points'
-                } as Record<string, Highcharts.BoostGLDrawModeValue>
-            )[s.type] || 'line_strip'
+            drawMode:
+                (
+                    {
+                        area: 'lines',
+                        arearange: 'lines',
+                        areaspline: 'line_strip',
+                        column: 'lines',
+                        columnrange: 'lines',
+                        bar: 'lines',
+                        line: 'line_strip',
+                        scatter: 'points',
+                        heatmap: 'triangles',
+                        treemap: 'triangles',
+                        bubble: 'points'
+                    } as Record<string, Highcharts.BoostGLDrawModeValue>
+                )[s.type] || 'line_strip'
         };
 
         if (s.index >= series.length) {
@@ -1140,9 +1144,9 @@ function GLRenderer(
         shader.setUniform('xAxisPointRange', axis.pointRange);
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
-        shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
-        shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
+        shader.setUniform('xAxisCVSCoord', !axis.horiz as any);
+        shader.setUniform('xAxisIsLog', !!axis.logarithmic as any);
+        shader.setUniform('xAxisReversed', !!axis.reversed as any);
     }
 
     /**
@@ -1161,9 +1165,9 @@ function GLRenderer(
         shader.setUniform('yAxisPointRange', axis.pointRange);
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
-        shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
-        shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
+        shader.setUniform('yAxisCVSCoord', !axis.horiz as any);
+        shader.setUniform('yAxisIsLog', !!axis.logarithmic as any);
+        shader.setUniform('yAxisReversed', !!axis.reversed as any);
     }
 
     /**
@@ -1182,8 +1186,7 @@ function GLRenderer(
      * This renders all pushed series.
      * @private
      */
-    function render(chart: Chart): (false|undefined) {
-
+    function render(chart: Chart): false | undefined {
         if (chart) {
             if (!chart.chartHeight || !chart.chartWidth) {
                 // chart.setChartSize();
@@ -1228,11 +1231,10 @@ function GLRenderer(
             let options = s.series.options,
                 shapeOptions = options.marker,
                 sindex,
-                lineWidth = (
-                    typeof options.lineWidth !== 'undefined' ?
-                        options.lineWidth :
-                        1
-                ),
+                lineWidth =
+                    typeof options.lineWidth !== 'undefined'
+                        ? options.lineWidth
+                        : 1,
                 threshold: number = options.threshold as any,
                 hasThreshold = isNumber(threshold),
                 yBottom = s.series.yAxis.getThreshold(threshold),
@@ -1242,17 +1244,16 @@ function GLRenderer(
                     options.marker ? options.marker.enabled : null,
                     s.series.xAxis.isRadial ? true : null,
                     (s.series.closestPointRangePx as any) >
-                        2 * ((
-                            options.marker ?
-                                options.marker.radius :
-                                10
-                        ) || 10)
+                        2 *
+                            ((options.marker ? options.marker.radius : 10) ||
+                                10)
                 ),
                 fillColor,
-                shapeTexture = textureHandles[
-                    (shapeOptions && shapeOptions.symbol) ||
-                    (s.series.symbol as any)
-                ] || textureHandles.circle,
+                shapeTexture =
+                    textureHandles[
+                        (shapeOptions && shapeOptions.symbol) ||
+                            (s.series.symbol as any)
+                    ] || textureHandles.circle,
                 scolor = [];
 
             if (
@@ -1268,18 +1269,14 @@ function GLRenderer(
             }
 
             if (chart.styledMode) {
-                fillColor = (
+                fillColor =
                     s.series.markerGroup &&
-                    s.series.markerGroup.getStyle('fill')
-                );
-
+                    s.series.markerGroup.getStyle('fill');
             } else {
                 fillColor =
-                    (
-                        s.drawMode === 'points' && // #14260
+                    (s.drawMode === 'points' && // #14260
                         s.series.pointAttribs &&
-                        s.series.pointAttribs().fill
-                    ) ||
+                        s.series.pointAttribs().fill) ||
                     s.series.color;
 
                 if (options.colorByPoint) {
@@ -1288,9 +1285,9 @@ function GLRenderer(
             }
 
             if (s.series.fillOpacity && (options as any).fillOpacity) {
-                fillColor = new Color(fillColor).setOpacity(
-                    pick((options as any).fillOpacity, 1.0)
-                ).get();
+                fillColor = new Color(fillColor)
+                    .setOpacity(pick((options as any).fillOpacity, 1.0))
+                    .get();
             }
 
             scolor = color(fillColor).rgba;
@@ -1312,16 +1309,14 @@ function GLRenderer(
             if (options.boostBlending === 'add') {
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 gl.blendEquation(gl.FUNC_ADD);
-
-            } else if ((options.boostBlending as any) === 'mult' ||
+            } else if (
+                (options.boostBlending as any) === 'mult' ||
                 options.boostBlending === 'multiply'
             ) {
                 gl.blendFunc(gl.DST_COLOR, gl.ZERO);
-
             } else if (options.boostBlending === 'darken') {
                 gl.blendFunc(gl.ONE, gl.ONE);
                 gl.blendEquation(gl.FUNC_MIN);
-
             } else {
                 // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
                 // gl.blendEquation(gl.FUNC_ADD);
@@ -1371,9 +1366,7 @@ function GLRenderer(
                 shader.setBubbleUniforms(s.series as any, s.zMin, s.zMax);
             }
 
-            shader.setDrawAsCircle(
-                asCircle[s.series.type] || false
-            );
+            shader.setDrawAsCircle(asCircle[s.series.type] || false);
 
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
@@ -1419,7 +1412,7 @@ function GLRenderer(
      * Render the data when ready
      * @private
      */
-    function renderWhenReady(chart: Chart): (false|undefined) {
+    function renderWhenReady(chart: Chart): false | undefined {
         clear();
 
         if (chart.renderer.forExport) {
@@ -1481,7 +1474,7 @@ function GLRenderer(
 
         for (; i < contexts.length; i++) {
             gl = canvas.getContext(contexts[i], {
-            //    premultipliedAlpha: false
+                //    premultipliedAlpha: false
             }) as any;
             if (gl) {
                 break;
@@ -1524,8 +1517,9 @@ function GLRenderer(
                     texture: doc.createElement('canvas'),
                     handle: gl.createTexture()
                 },
-                ctx: CanvasRenderingContext2D =
-                    props.texture.getContext('2d') as any;
+                ctx: CanvasRenderingContext2D = props.texture.getContext(
+                    '2d'
+                ) as any;
 
             textureHandles[name] = props;
 
@@ -1543,7 +1537,6 @@ function GLRenderer(
             fn(ctx);
 
             try {
-
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, props.handle);
                 // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
@@ -1605,41 +1598,44 @@ function GLRenderer(
         });
 
         // Diamond shape
-        createTexture('diamond', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
-            ctx.beginPath();
-            ctx.moveTo(256, 0);
-            ctx.lineTo(512, 256);
-            ctx.lineTo(256, 512);
-            ctx.lineTo(0, 256);
-            ctx.lineTo(256, 0);
-            ctx.fill();
-        });
+        createTexture(
+            'diamond',
+            function (ctx: CanvasRenderingContext2D): void {
+                ctx.beginPath();
+                ctx.moveTo(256, 0);
+                ctx.lineTo(512, 256);
+                ctx.lineTo(256, 512);
+                ctx.lineTo(0, 256);
+                ctx.lineTo(256, 0);
+                ctx.fill();
+            }
+        );
 
         // Triangle shape
-        createTexture('triangle', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
-            ctx.beginPath();
-            ctx.moveTo(0, 512);
-            ctx.lineTo(256, 0);
-            ctx.lineTo(512, 512);
-            ctx.lineTo(0, 512);
-            ctx.fill();
-        });
+        createTexture(
+            'triangle',
+            function (ctx: CanvasRenderingContext2D): void {
+                ctx.beginPath();
+                ctx.moveTo(0, 512);
+                ctx.lineTo(256, 0);
+                ctx.lineTo(512, 512);
+                ctx.lineTo(0, 512);
+                ctx.fill();
+            }
+        );
 
         // Triangle shape (rotated)
-        createTexture('triangle-down', function (
-            ctx: CanvasRenderingContext2D
-        ): void {
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(256, 512);
-            ctx.lineTo(512, 0);
-            ctx.lineTo(0, 0);
-            ctx.fill();
-        });
+        createTexture(
+            'triangle-down',
+            function (ctx: CanvasRenderingContext2D): void {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(256, 512);
+                ctx.lineTo(512, 0);
+                ctx.lineTo(0, 0);
+                ctx.fill();
+            }
+        );
 
         isInited = true;
 
@@ -1676,7 +1672,6 @@ function GLRenderer(
         vbuffer.destroy();
         shader.destroy();
         if (gl) {
-
             objectEach(textureHandles, function (texture): void {
                 if (texture.handle) {
                     gl.deleteTexture(texture.handle);

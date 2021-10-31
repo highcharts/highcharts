@@ -14,22 +14,14 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    PSAROptions,
-    PSARParamsOptions
-} from './PSAROptions';
+import type { PSAROptions, PSARParamsOptions } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -40,7 +32,10 @@ function toFixed(a: number, n: number): number {
 }
 
 function calculateDirection(
-    previousDirection: number, low: number, high: number, PSAR: number
+    previousDirection: number,
+    low: number,
+    high: number,
+    PSAR: number
 ): number {
     if (
         (previousDirection === 1 && low > PSAR) ||
@@ -72,11 +67,11 @@ function getAccelerationFactor(
     initAcc: number
 ): number {
     if (dir === pDir) {
-        if (dir === 1 && (eP > pEP)) {
-            return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
+        if (dir === 1 && eP > pEP) {
+            return pAcc === maxAcc ? maxAcc : toFixed(pAcc + inc, 2);
         }
-        if (dir === -1 && (eP < pEP)) {
-            return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
+        if (dir === -1 && eP < pEP) {
+            return pAcc === maxAcc ? maxAcc : toFixed(pAcc + inc, 2);
         }
         return pAcc;
     }
@@ -90,9 +85,9 @@ function getExtremePoint(
     previousExtremePoint: number
 ): number {
     if (previousDirection === 1) {
-        return (high > previousExtremePoint) ? high : previousExtremePoint;
+        return high > previousExtremePoint ? high : previousExtremePoint;
     }
-    return (low < previousExtremePoint) ? low : previousExtremePoint;
+    return low < previousExtremePoint ? low : previousExtremePoint;
 }
 
 function getEPMinusPSAR(EP: number, PSAR: number): number {
@@ -131,13 +126,13 @@ function getPSAR(
 ): number {
     if (pdir === sDir) {
         if (pdir === 1) {
-            return (PSAR + pACCMulti < Math.min(sLow, pLow)) ?
-                PSAR + pACCMulti :
-                Math.min(sLow, pLow);
+            return PSAR + pACCMulti < Math.min(sLow, pLow)
+                ? PSAR + pACCMulti
+                : Math.min(sLow, pLow);
         }
-        return (PSAR + pACCMulti > Math.max(sHigh, pHigh)) ?
-            PSAR + pACCMulti :
-            Math.max(sHigh, pHigh);
+        return PSAR + pACCMulti > Math.max(sHigh, pHigh)
+            ? PSAR + pACCMulti
+            : Math.max(sHigh, pHigh);
     }
     return pEP;
 }
@@ -175,57 +170,61 @@ class PSARIndicator extends SMAIndicator {
      * @requires     stock/indicators/psar
      * @optionparent plotOptions.psar
      */
-    public static defaultOptions: PSAROptions = merge(SMAIndicator.defaultOptions, {
-        lineWidth: 0,
-        marker: {
-            enabled: true
-        },
-        states: {
-            hover: {
-                lineWidthPlus: 0
+    public static defaultOptions: PSAROptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            lineWidth: 0,
+            marker: {
+                enabled: true
+            },
+            states: {
+                hover: {
+                    lineWidthPlus: 0
+                }
+            },
+            /**
+             * @excluding period
+             */
+            params: {
+                period: void 0, // unchangeable period, do not inherit (#15362)
+                /**
+                 * The initial value for acceleration factor.
+                 * Acceleration factor is starting with this value
+                 * and increases by specified increment each time
+                 * the extreme point makes a new high.
+                 * AF can reach a maximum of maxAccelerationFactor,
+                 * no matter how long the uptrend extends.
+                 */
+                initialAccelerationFactor: 0.02,
+                /**
+                 * The Maximum value for acceleration factor.
+                 * AF can reach a maximum of maxAccelerationFactor,
+                 * no matter how long the uptrend extends.
+                 */
+                maxAccelerationFactor: 0.2,
+                /**
+                 * Acceleration factor increases by increment each time
+                 * the extreme point makes a new high.
+                 *
+                 * @since 6.0.0
+                 */
+                increment: 0.02,
+                /**
+                 * Index from which PSAR is starting calculation
+                 *
+                 * @since 6.0.0
+                 */
+                index: 2,
+                /**
+                 * Number of maximum decimals that are used in PSAR
+                 * calculations.
+                 *
+                 * @since 6.0.0
+                 */
+                decimals: 4
             }
-        },
-        /**
-         * @excluding period
-         */
-        params: {
-            period: void 0, // unchangeable period, do not inherit (#15362)
-            /**
-             * The initial value for acceleration factor.
-             * Acceleration factor is starting with this value
-             * and increases by specified increment each time
-             * the extreme point makes a new high.
-             * AF can reach a maximum of maxAccelerationFactor,
-             * no matter how long the uptrend extends.
-             */
-            initialAccelerationFactor: 0.02,
-            /**
-             * The Maximum value for acceleration factor.
-             * AF can reach a maximum of maxAccelerationFactor,
-             * no matter how long the uptrend extends.
-             */
-            maxAccelerationFactor: 0.2,
-            /**
-             * Acceleration factor increases by increment each time
-             * the extreme point makes a new high.
-             *
-             * @since 6.0.0
-             */
-            increment: 0.02,
-            /**
-             * Index from which PSAR is starting calculation
-             *
-             * @since 6.0.0
-             */
-            index: 2,
-            /**
-             * Number of maximum decimals that are used in PSAR calculations.
-             *
-             * @since 6.0.0
-             */
-            decimals: 4
-        }
-    } as PSAROptions);
+        } as PSAROptions
+    );
 
     /* *
      *
@@ -244,26 +243,22 @@ class PSARIndicator extends SMAIndicator {
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PSARParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let xVal: Array<number> = series.xData as any,
+            yVal: Array<Array<number>> = series.yData as any,
             // Extreme point is the lowest low for falling and highest high
             // for rising psar - and we are starting with falling
             extremePoint: number = yVal[0][1],
-            accelerationFactor: number = (
-                params.initialAccelerationFactor as any
-            ),
-            maxAccelerationFactor: number = (
-                params.maxAccelerationFactor as any
-            ),
-            increment: number = (params.increment as any),
+            accelerationFactor: number =
+                params.initialAccelerationFactor as any,
+            maxAccelerationFactor: number = params.maxAccelerationFactor as any,
+            increment: number = params.increment as any,
             // Set initial acc factor (for every new trend!)
-            initialAccelerationFactor: number = (
-                params.initialAccelerationFactor as any
-            ),
+            initialAccelerationFactor: number =
+                params.initialAccelerationFactor as any,
             PSAR: number = yVal[0][2],
-            decimals: number = (params.decimals as any),
-            index: number = (params.index as any),
+            decimals: number = params.decimals as any,
+            index: number = params.index as any,
             PSARArr: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
@@ -290,9 +285,9 @@ class PSARIndicator extends SMAIndicator {
             PSAR = Math.min(yVal[ind][2], toFixed(PSAR, decimals));
         }
 
-        direction = (yVal[ind][1] > PSAR) ? 1 : -1;
+        direction = yVal[ind][1] > PSAR ? 1 : -1;
         EPMinusPSAR = getEPMinusPSAR(extremePoint, PSAR);
-        accelerationFactor = (params.initialAccelerationFactor as any);
+        accelerationFactor = params.initialAccelerationFactor as any;
         accelerationFactorMultiply = getAccelerationFactorMultiply(
             accelerationFactor,
             EPMinusPSAR
@@ -303,7 +298,6 @@ class PSARIndicator extends SMAIndicator {
         yData.push(toFixed(PSAR, decimals));
 
         for (ind = index + 1; ind < yVal.length; ind++) {
-
             prevLow = yVal[ind - 1][2];
             prevPrevLow = yVal[ind - 2][2];
             prevHigh = yVal[ind - 1][1];
@@ -331,7 +325,6 @@ class PSARIndicator extends SMAIndicator {
                     prevPrevHigh,
                     extremePoint
                 );
-
 
                 newExtremePoint = getExtremePoint(
                     high,
@@ -428,4 +421,4 @@ export default PSARIndicator;
  * @apioption series.psar
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

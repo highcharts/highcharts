@@ -33,7 +33,6 @@ const { createElement } = U;
  * */
 
 namespace GridLightTheme {
-
     /* *
      *
      *  Constants
@@ -41,8 +40,19 @@ namespace GridLightTheme {
      * */
 
     export const options: DeepPartial<Options> = {
-        colors: ['#7cb5ec', '#f7a35c', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
-            '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+        colors: [
+            '#7cb5ec',
+            '#f7a35c',
+            '#90ee7e',
+            '#7798BF',
+            '#aaeeee',
+            '#ff0066',
+            '#eeaaee',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#aaeeee'
+        ],
         chart: {
             backgroundColor: null as any,
             style: {
@@ -94,7 +104,6 @@ namespace GridLightTheme {
                 lineColor: '#404048'
             }
         }
-
     };
 
     /* *
@@ -108,16 +117,20 @@ namespace GridLightTheme {
      */
     export function apply(): void {
         // Load the fonts
-        createElement('link', {
-            href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
-            rel: 'stylesheet',
-            type: 'text/css'
-        }, null as any, document.getElementsByTagName('head')[0]);
+        createElement(
+            'link',
+            {
+                href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
+                rel: 'stylesheet',
+                type: 'text/css'
+            },
+            null as any,
+            document.getElementsByTagName('head')[0]
+        );
 
         // Apply the theme
         setOptions(options);
     }
-
 }
 
 /* *

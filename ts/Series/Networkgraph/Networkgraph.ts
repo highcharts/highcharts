@@ -45,14 +45,7 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    extend,
-    merge,
-    pick
-} = U;
+const { addEvent, css, defined, extend, merge, pick } = U;
 
 import '../../Core/DefaultOptions.js';
 import './Layouts.js';
@@ -67,9 +60,8 @@ const dragNodesMixin = H.dragNodesMixin;
  * */
 
 declare module '../../Core/Series/PointOptions' {
-    interface PointStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface PointStateInactiveOptions {
+        animation?: boolean | Partial<AnimationOptions>;
     }
 }
 
@@ -80,9 +72,8 @@ declare module '../../Core/Series/SeriesLike' {
 }
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface SeriesStateInactiveOptions {
+        animation?: boolean | Partial<AnimationOptions>;
         linkOpacity?: number;
     }
 }
@@ -98,14 +89,14 @@ declare global {
             graphLayoutsStorage: Record<string, NetworkgraphLayout>;
         }
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
-            (this: (
-                NetworkgraphDataLabelsFormatterContextObject|
-                Point.PointLabelObject
-            )): (number|string|null|undefined);
+            (
+                this:
+                    | NetworkgraphDataLabelsFormatterContextObject
+                    | Point.PointLabelObject
+            ): number | string | null | undefined;
         }
         interface NetworkgraphDataLabelsFormatterContextObject
-            extends Point.PointLabelObject
-        {
+            extends Point.PointLabelObject {
             color: ColorType;
             key: string;
             point: NetworkgraphPoint;
@@ -117,7 +108,9 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends PointOptions, NodesComposition.PointCompositionOptions {
+        interface NetworkgraphPointOptions
+            extends PointOptions,
+                NodesComposition.PointCompositionOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -126,7 +119,9 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesComposition.SeriesCompositionOptions {
+        interface NetworkgraphSeriesOptions
+            extends SeriesOptions,
+                NodesComposition.SeriesCompositionOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -135,7 +130,10 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesComposition.PointComposition {
+        class NetworkgraphPoint
+            extends Point
+            implements DragNodesPoint, NodesComposition.PointComposition
+        {
             public className: NodesComposition.PointComposition['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -164,7 +162,7 @@ declare global {
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
                 series: NetworkgraphSeries,
-                options: (NetworkgraphPointOptions|PointShortOptions),
+                options: NetworkgraphPointOptions | PointShortOptions,
                 x?: number
             ): NetworkgraphPoint;
             public redrawLink(): void;
@@ -192,26 +190,26 @@ declare global {
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
  * @extends Highcharts.PointLabelObject
  * @since 7.0.0
- *//**
+ */ /**
  * The color of the node.
  * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#color
  * @type {Highcharts.ColorString}
  * @since 7.0.0
- *//**
+ */ /**
  * The point (node) object. The node name, if defined, is available through
  * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
  * contains all nodes connected to this point.
  * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#point
  * @type {Highcharts.Point}
  * @since 7.0.0
- *//**
+ */ /**
  * The ID of the node.
  * @name Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject#key
  * @type {string}
  * @since 7.0.0
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
 /* *
  *
@@ -226,8 +224,10 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.SeriesComposition {
-
+class NetworkgraphSeries
+    extends Series
+    implements Highcharts.DragNodesSeries, NodesComposition.SeriesComposition
+{
     /* *
      *
      *  Static Properties
@@ -253,30 +253,57 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
-    public static defaultOptions: Highcharts.NetworkgraphSeriesOptions = merge(Series.defaultOptions, {
-        stickyTracking: false,
+    public static defaultOptions: Highcharts.NetworkgraphSeriesOptions = merge(
+        Series.defaultOptions,
+        {
+            stickyTracking: false,
 
-        /**
-         * @ignore-option
-         * @private
-         */
-        inactiveOtherPoints: true,
+            /**
+             * @ignore-option
+             * @private
+             */
+            inactiveOtherPoints: true,
 
-        marker: {
-            enabled: true,
+            marker: {
+                enabled: true,
+                states: {
+                    /**
+                     * The opposite state of a hover for a single point node.
+                     * Applied to all not connected nodes to the hovered one.
+                     *
+                     * @declare Highcharts.PointStatesInactiveOptionsObject
+                     */
+                    inactive: {
+                        /**
+                         * Opacity of inactive markers.
+                         */
+                        opacity: 0.3,
+
+                        /**
+                         * Animation when not hovering over the node.
+                         *
+                         * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                         */
+                        animation: {
+                            /** @internal */
+                            duration: 50
+                        }
+                    }
+                }
+            },
             states: {
                 /**
-                 * The opposite state of a hover for a single point node.
-                 * Applied to all not connected nodes to the hovered one.
+                 * The opposite state of a hover for a single point link.
+                 * Applied to all links that are not comming from the hovered
+                 * node.
                  *
-                 * @declare Highcharts.PointStatesInactiveOptionsObject
+                 * @declare Highcharts.SeriesStatesInactiveOptionsObject
                  */
                 inactive: {
-
                     /**
-                     * Opacity of inactive markers.
+                     * Opacity of inactive links.
                      */
-                    opacity: 0.3,
+                    linkOpacity: 0.3,
 
                     /**
                      * Animation when not hovering over the node.
@@ -288,352 +315,333 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
                         duration: 50
                     }
                 }
-            }
-        },
-        states: {
+            },
             /**
-             * The opposite state of a hover for a single point link. Applied
-             * to all links that are not comming from the hovered node.
+             * @sample highcharts/series-networkgraph/link-datalabels
+             *         Networkgraph with labels on links
+             * @sample highcharts/series-networkgraph/textpath-datalabels
+             *         Networkgraph with labels around nodes
+             * @sample highcharts/series-networkgraph/link-datalabels
+             *         Data labels moved into the nodes
+             * @sample highcharts/series-networkgraph/link-datalabels
+             *         Data labels moved under the links
              *
-             * @declare Highcharts.SeriesStatesInactiveOptionsObject
+             * @declare Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
+             *
+             * @private
              */
-            inactive: {
+            dataLabels: {
                 /**
-                 * Opacity of inactive links.
-                 */
-                linkOpacity: 0.3,
-
-                /**
-                 * Animation when not hovering over the node.
+                 * The [format
+                 * string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+                 * specifying what to show for _node_ in the networkgraph. In
+                 * v7.0 defaults to `{key}`, since v7.1 defaults to `undefined`
+                 * and `formatter` is used instead.
                  *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                 * @type      {string}
+                 * @since     7.0.0
+                 * @apioption plotOptions.networkgraph.dataLabels.format
                  */
-                animation: {
-                    /** @internal */
-                    duration: 50
+
+                // eslint-disable-next-line valid-jsdoc
+                /**
+                 * Callback JavaScript function to format the data label for a
+                 * node. Note that if a `format` is defined, the format takes
+                 * precedence and the formatter is ignored.
+                 *
+                 * @type
+                 * {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
+                 * @since 7.0.0
+                 */
+                formatter: function (
+                    this:
+                        | Point.PointLabelObject
+                        | Highcharts.NetworkgraphDataLabelsFormatterContextObject
+                ): string {
+                    return (
+                        this as Highcharts.NetworkgraphDataLabelsFormatterContextObject
+                    ).key;
+                },
+
+                /**
+                 * The
+                 * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+                 * specifying what to show for _links_ in the networkgraph.
+                 * (Default: `undefined`)
+                 *
+                 * @type      {string}
+                 * @since     7.1.0
+                 * @apioption plotOptions.networkgraph.dataLabels.linkFormat
+                 */
+
+                // eslint-disable-next-line valid-jsdoc
+                /**
+                 * Callback to format data labels for _links_ in the sankey
+                 * diagram. The `linkFormat` option takes precedence over the
+                 * `linkFormatter`.
+                 *
+                 * @type
+                 * {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
+                 * @since 7.1.0
+                 */
+                linkFormatter: function (
+                    this:
+                        | Point.PointLabelObject
+                        | Highcharts.NetworkgraphDataLabelsFormatterContextObject
+                ): string {
+                    return (
+                        (this.point as Highcharts.NetworkgraphPoint).fromNode
+                            .name +
+                        '<br>' +
+                        (this.point as Highcharts.NetworkgraphPoint).toNode.name
+                    );
+                },
+
+                /**
+                 * Options for a _link_ label text which should follow link
+                 * connection. Border and background are disabled for a label
+                 * that follows a path.
+                 *
+                 * **Note:** Only SVG-based renderer supports this option.
+                 * Setting `useHTML` to true will disable this option.
+                 *
+                 * @extends plotOptions.networkgraph.dataLabels.textPath
+                 * @since   7.1.0
+                 */
+                linkTextPath: {
+                    enabled: true
+                },
+
+                textPath: {
+                    enabled: false
+                },
+                style: {
+                    transition: 'opacity 2000ms'
                 }
-            }
-        },
-        /**
-         * @sample highcharts/series-networkgraph/link-datalabels
-         *         Networkgraph with labels on links
-         * @sample highcharts/series-networkgraph/textpath-datalabels
-         *         Networkgraph with labels around nodes
-         * @sample highcharts/series-networkgraph/link-datalabels
-         *         Data labels moved into the nodes
-         * @sample highcharts/series-networkgraph/link-datalabels
-         *         Data labels moved under the links
-         *
-         * @declare Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
-         *
-         * @private
-         */
-        dataLabels: {
-
-            /**
-             * The
-             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * specifying what to show for _node_ in the networkgraph. In v7.0
-             * defaults to `{key}`, since v7.1 defaults to `undefined` and
-             * `formatter` is used instead.
-             *
-             * @type      {string}
-             * @since     7.0.0
-             * @apioption plotOptions.networkgraph.dataLabels.format
-             */
-
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * Callback JavaScript function to format the data label for a node.
-             * Note that if a `format` is defined, the format takes precedence
-             * and the formatter is ignored.
-             *
-             * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
-             * @since 7.0.0
-             */
-            formatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    Highcharts.NetworkgraphDataLabelsFormatterContextObject
-                )
-            ): string {
-                return (
-                    this as (
-                        Highcharts.NetworkgraphDataLabelsFormatterContextObject
-                    )
-                ).key;
             },
-
             /**
-             * The
-             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * specifying what to show for _links_ in the networkgraph.
-             * (Default: `undefined`)
-             *
-             * @type      {string}
-             * @since     7.1.0
-             * @apioption plotOptions.networkgraph.dataLabels.linkFormat
+             * Link style options
+             * @private
              */
+            link: {
+                /**
+                 * A name for the dash style to use for links.
+                 *
+                 * @type      {string}
+                 * @apioption plotOptions.networkgraph.link.dashStyle
+                 */
 
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * Callback to format data labels for _links_ in the sankey diagram.
-             * The `linkFormat` option takes precedence over the
-             * `linkFormatter`.
-             *
-             * @type  {Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction}
-             * @since 7.1.0
-             */
-            linkFormatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    Highcharts.NetworkgraphDataLabelsFormatterContextObject
-                )
-            ): string {
-                return (
-                    (this.point as Highcharts.NetworkgraphPoint).fromNode.name +
-                    '<br>' +
-                    (this.point as Highcharts.NetworkgraphPoint).toNode.name
-                );
+                /**
+                 * Color of the link between two nodes.
+                 */
+                color: 'rgba(100, 100, 100, 0.5)',
+                /**
+                 * Width (px) of the link between two nodes.
+                 */
+                width: 1
             },
-
             /**
-             * Options for a _link_ label text which should follow link
-             * connection. Border and background are disabled for a label that
-             * follows a path.
-             *
-             * **Note:** Only SVG-based renderer supports this option. Setting
-             * `useHTML` to true will disable this option.
-             *
-             * @extends plotOptions.networkgraph.dataLabels.textPath
-             * @since   7.1.0
+             * Flag to determine if nodes are draggable or not.
+             * @private
              */
-            linkTextPath: {
-                enabled: true
+            draggable: true,
+            layoutAlgorithm: {
+                /**
+                 * Repulsive force applied on a node. Passed are two arguments:
+                 * - `d` - which is current distance between two nodes
+                 * - `k` - which is desired distance between two nodes
+                 *
+                 * In `verlet` integration, defaults to:
+                 * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
+                 *
+                 * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+                 *
+                 * @sample highcharts/series-networkgraph/forces/
+                 *         Custom forces with Euler integration
+                 * @sample highcharts/series-networkgraph/cuboids/
+                 *         Custom forces with Verlet integration
+                 *
+                 * @type      {Function}
+                 * @default   function (d, k) { return k * k / d; }
+                 * @apioption plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
+                 */
+
+                /**
+                 * Attraction force applied on a node which is conected to
+                 * another node by a link. Passed are two arguments:
+                 * - `d` - which is current distance between two nodes
+                 * - `k` - which is desired distance between two nodes
+                 *
+                 * In `verlet` integration, defaults to: `function (d, k) {
+                 * return (k - d) / d; }`
+                 *
+                 * @see
+                 * [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+                 *
+                 * @sample highcharts/series-networkgraph/forces/ Custom forces
+                 *         with Euler integration
+                 * @sample highcharts/series-networkgraph/cuboids/ Custom forces
+                 *         with Verlet integration
+                 *
+                 * @type      {Function}
+                 * @default   function (d, k) { return k * k / d; }
+                 * @apioption
+                 * plotOptions.networkgraph.layoutAlgorithm.attractiveForce
+                 */
+
+                /**
+                 * Ideal length (px) of the link between two nodes. When not
+                 * defined, length is calculated as: `Math.pow(availableWidth *
+                 * availableHeight / nodesLength, 0.4);`
+                 *
+                 * Note: Because of the algorithm specification, length of each
+                 * link might be not exactly as specified.
+                 *
+                 * @sample highcharts/series-networkgraph/styled-links/
+                 *         Numerical values
+                 *
+                 * @type      {number}
+                 * @apioption plotOptions.networkgraph.layoutAlgorithm.linkLength
+                 */
+
+                /**
+                 * Initial layout algorithm for positioning nodes. Can be one of
+                 * built-in options ("circle", "random") or a function where
+                 * positions should be set on each node (`this.nodes`) as
+                 * `node.plotX` and `node.plotY`
+                 *
+                 * @sample highcharts/series-networkgraph/initial-positions/
+                 *         Initial positions with callback
+                 *
+                 * @type {"circle"|"random"|Function}
+                 */
+                initialPositions: 'circle',
+                /**
+                 * When `initialPositions` are set to 'circle',
+                 * `initialPositionRadius` is a distance from the center of
+                 * circle, in which nodes are created.
+                 *
+                 * @type    {number}
+                 * @default 1
+                 * @since   7.1.0
+                 */
+                initialPositionRadius: 1,
+                /**
+                 * Experimental. Enables live simulation of the algorithm
+                 * implementation. All nodes are animated as the forces applies
+                 * on them.
+                 *
+                 * @sample highcharts/demo/network-graph/ Live simulation
+                 *         enabled
+                 */
+                enableSimulation: false,
+                /**
+                 * Barnes-Hut approximation only. Deteremines when distance
+                 * between cell and node is small enough to caculate forces.
+                 * Value of `theta` is compared directly with quotient `s / d`,
+                 * where `s` is the size of the cell, and `d` is distance
+                 * between center of cell's mass and currently compared node.
+                 *
+                 * @see
+                 * [layoutAlgorithm.approximation](#series.networkgraph.layoutAlgorithm.approximation)
+                 *
+                 * @since 7.1.0
+                 */
+                theta: 0.5,
+                /**
+                 * Verlet integration only. Max speed that node can get in one
+                 * iteration. In terms of simulation, it's a maximum translation
+                 * (in pixels) that node can move (in both, x and y,
+                 * dimensions). While `friction` is applied on all nodes, max
+                 * speed is applied only for nodes that move very fast, for
+                 * example small or disconnected ones.
+                 *
+                 * @see
+                 * [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+                 * @see
+                 * [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
+                 *
+                 * @since 7.1.0
+                 */
+                maxSpeed: 10,
+                /**
+                 * Approximation used to calculate repulsive forces affecting
+                 * nodes. By default, when calculateing net force, nodes are
+                 * compared against each other, which gives O(N^2) complexity.
+                 * Using Barnes-Hut approximation, we decrease this to O(N log
+                 * N), but the resulting graph will have different layout.
+                 * Barnes-Hut approximation divides space into rectangles via
+                 * quad tree, where forces exerted on nodes are calculated
+                 * directly for nearby cells, and for all others, cells are
+                 * treated as a separate node with center of mass.
+                 *
+                 * @see
+                 * [layoutAlgorithm.theta](#series.networkgraph.layoutAlgorithm.theta)
+                 *
+                 * @sample
+                 *         highcharts/series-networkgraph/barnes-hut-approximation/
+                 *         A graph with Barnes-Hut approximation
+                 *
+                 * @type       {string}
+                 * @validvalue ["barnes-hut", "none"]
+                 * @since      7.1.0
+                 */
+                approximation: 'none',
+                /**
+                 * Type of the algorithm used when positioning nodes.
+                 *
+                 * @type       {string}
+                 * @validvalue ["reingold-fruchterman"]
+                 */
+                type: 'reingold-fruchterman',
+                /**
+                 * Integration type. Available options are `'euler'` and
+                 * `'verlet'`. Integration determines how forces are applied on
+                 * particles. In Euler integration, force is applied direct as
+                 * `newPosition += velocity;`. In Verlet integration, new
+                 * position is based on a previous posittion without velocity:
+                 * `newPosition += previousPosition - newPosition`.
+                 *
+                 * Note that different integrations give different results as
+                 * forces are different.
+                 *
+                 * In Highcharts v7.0.x only `'euler'` integration was
+                 * supported.
+                 *
+                 * @sample
+                 *         highcharts/series-networkgraph/integration-comparison/
+                 *         Comparison of Verlet and Euler integrations
+                 *
+                 * @type       {string}
+                 * @validvalue ["euler", "verlet"]
+                 * @since      7.1.0
+                 */
+                integration: 'euler',
+                /**
+                 * Max number of iterations before algorithm will stop. In
+                 * general, algorithm should find positions sooner, but when
+                 * rendering huge number of nodes, it is recommended to increase
+                 * this value as finding perfect graph positions can require
+                 * more time.
+                 */
+                maxIterations: 1000,
+                /**
+                 * Gravitational const used in the barycenter force of the
+                 * algorithm.
+                 *
+                 * @sample highcharts/series-networkgraph/forces/
+                 *         Custom forces with Euler integration
+                 */
+                gravitationalConstant: 0.0625,
+                /**
+                 * Friction applied on forces to prevent nodes rushing to fast
+                 * to the desired positions.
+                 */
+                friction: -0.981
             },
-
-            textPath: {
-                enabled: false
-            },
-            style: {
-                transition: 'opacity 2000ms'
-            }
-
-        },
-        /**
-         * Link style options
-         * @private
-         */
-        link: {
-            /**
-             * A name for the dash style to use for links.
-             *
-             * @type      {string}
-             * @apioption plotOptions.networkgraph.link.dashStyle
-             */
-
-            /**
-             * Color of the link between two nodes.
-             */
-            color: 'rgba(100, 100, 100, 0.5)',
-            /**
-             * Width (px) of the link between two nodes.
-             */
-            width: 1
-        },
-        /**
-         * Flag to determine if nodes are draggable or not.
-         * @private
-         */
-        draggable: true,
-        layoutAlgorithm: {
-            /**
-             * Repulsive force applied on a node. Passed are two arguments:
-             * - `d` - which is current distance between two nodes
-             * - `k` - which is desired distance between two nodes
-             *
-             * In `verlet` integration, defaults to:
-             * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
-             *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
-             * @sample highcharts/series-networkgraph/cuboids/
-             *         Custom forces with Verlet integration
-             *
-             * @type      {Function}
-             * @default   function (d, k) { return k * k / d; }
-             * @apioption plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
-             */
-
-            /**
-             * Attraction force applied on a node which is conected to another
-             * node by a link. Passed are two arguments:
-             * - `d` - which is current distance between two nodes
-             * - `k` - which is desired distance between two nodes
-             *
-             * In `verlet` integration, defaults to:
-             * `function (d, k) { return (k - d) / d; }`
-             *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
-             * @sample highcharts/series-networkgraph/cuboids/
-             *         Custom forces with Verlet integration
-             *
-             * @type      {Function}
-             * @default   function (d, k) { return k * k / d; }
-             * @apioption plotOptions.networkgraph.layoutAlgorithm.attractiveForce
-             */
-
-            /**
-             * Ideal length (px) of the link between two nodes. When not
-             * defined, length is calculated as:
-             * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
-             *
-             * Note: Because of the algorithm specification, length of each link
-             * might be not exactly as specified.
-             *
-             * @sample highcharts/series-networkgraph/styled-links/
-             *         Numerical values
-             *
-             * @type      {number}
-             * @apioption plotOptions.networkgraph.layoutAlgorithm.linkLength
-             */
-
-            /**
-             * Initial layout algorithm for positioning nodes. Can be one of
-             * built-in options ("circle", "random") or a function where
-             * positions should be set on each node (`this.nodes`) as
-             * `node.plotX` and `node.plotY`
-             *
-             * @sample highcharts/series-networkgraph/initial-positions/
-             *         Initial positions with callback
-             *
-             * @type {"circle"|"random"|Function}
-             */
-            initialPositions: 'circle',
-            /**
-             * When `initialPositions` are set to 'circle',
-             * `initialPositionRadius` is a distance from the center of circle,
-             * in which nodes are created.
-             *
-             * @type    {number}
-             * @default 1
-             * @since   7.1.0
-             */
-            initialPositionRadius: 1,
-            /**
-             * Experimental. Enables live simulation of the algorithm
-             * implementation. All nodes are animated as the forces applies on
-             * them.
-             *
-             * @sample highcharts/demo/network-graph/
-             *         Live simulation enabled
-             */
-            enableSimulation: false,
-            /**
-             * Barnes-Hut approximation only.
-             * Deteremines when distance between cell and node is small enough
-             * to caculate forces. Value of `theta` is compared directly with
-             * quotient `s / d`, where `s` is the size of the cell, and `d` is
-             * distance between center of cell's mass and currently compared
-             * node.
-             *
-             * @see [layoutAlgorithm.approximation](#series.networkgraph.layoutAlgorithm.approximation)
-             *
-             * @since 7.1.0
-             */
-            theta: 0.5,
-            /**
-             * Verlet integration only.
-             * Max speed that node can get in one iteration. In terms of
-             * simulation, it's a maximum translation (in pixels) that node can
-             * move (in both, x and y, dimensions). While `friction` is applied
-             * on all nodes, max speed is applied only for nodes that move very
-             * fast, for example small or disconnected ones.
-             *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @see [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
-             *
-             * @since 7.1.0
-             */
-            maxSpeed: 10,
-            /**
-             * Approximation used to calculate repulsive forces affecting nodes.
-             * By default, when calculateing net force, nodes are compared
-             * against each other, which gives O(N^2) complexity. Using
-             * Barnes-Hut approximation, we decrease this to O(N log N), but the
-             * resulting graph will have different layout. Barnes-Hut
-             * approximation divides space into rectangles via quad tree, where
-             * forces exerted on nodes are calculated directly for nearby cells,
-             * and for all others, cells are treated as a separate node with
-             * center of mass.
-             *
-             * @see [layoutAlgorithm.theta](#series.networkgraph.layoutAlgorithm.theta)
-             *
-             * @sample highcharts/series-networkgraph/barnes-hut-approximation/
-             *         A graph with Barnes-Hut approximation
-             *
-             * @type       {string}
-             * @validvalue ["barnes-hut", "none"]
-             * @since      7.1.0
-             */
-            approximation: 'none',
-            /**
-             * Type of the algorithm used when positioning nodes.
-             *
-             * @type       {string}
-             * @validvalue ["reingold-fruchterman"]
-             */
-            type: 'reingold-fruchterman',
-            /**
-             * Integration type. Available options are `'euler'` and `'verlet'`.
-             * Integration determines how forces are applied on particles. In
-             * Euler integration, force is applied direct as
-             * `newPosition += velocity;`.
-             * In Verlet integration, new position is based on a previous
-             * posittion without velocity:
-             * `newPosition += previousPosition - newPosition`.
-             *
-             * Note that different integrations give different results as forces
-             * are different.
-             *
-             * In Highcharts v7.0.x only `'euler'` integration was supported.
-             *
-             * @sample highcharts/series-networkgraph/integration-comparison/
-             *         Comparison of Verlet and Euler integrations
-             *
-             * @type       {string}
-             * @validvalue ["euler", "verlet"]
-             * @since      7.1.0
-             */
-            integration: 'euler',
-            /**
-             * Max number of iterations before algorithm will stop. In general,
-             * algorithm should find positions sooner, but when rendering huge
-             * number of nodes, it is recommended to increase this value as
-             * finding perfect graph positions can require more time.
-             */
-            maxIterations: 1000,
-            /**
-             * Gravitational const used in the barycenter force of the
-             * algorithm.
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
-             */
-            gravitationalConstant: 0.0625,
-            /**
-             * Friction applied on forces to prevent nodes rushing to fast to
-             * the desired positions.
-             */
-            friction: -0.981
-        },
-        showInLegend: false
-    } as Highcharts.NetworkgraphSeriesOptions);
+            showInLegend: false
+        } as Highcharts.NetworkgraphSeriesOptions
+    );
 
     /* *
      *
@@ -648,7 +656,6 @@ class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, N
     public options: Highcharts.NetworkgraphSeriesOptions = void 0 as any;
 
     public points: Array<NetworkgraphPoint> = void 0 as any;
-
 }
 
 /* *
@@ -726,10 +733,7 @@ extend(NetworkgraphSeries.prototype, {
     createNode: NodesComposition.createNode,
     destroy: function (this: NetworkgraphSeries): void {
         if (this.layout) {
-            this.layout.removeElementFromCollection(
-                this,
-                this.layout.series
-            );
+            this.layout.removeElementFromCollection(this, this.layout.series);
         }
         NodesComposition.destroy.call(this);
     },
@@ -741,10 +745,7 @@ extend(NetworkgraphSeries.prototype, {
      * update. After data is updated, `chart.render` resumes the simulation.
      * @private
      */
-    init: function (
-        this: NetworkgraphSeries
-    ): NetworkgraphSeries {
-
+    init: function (this: NetworkgraphSeries): NetworkgraphSeries {
         Series.prototype.init.apply(this, arguments as any);
 
         addEvent(this, 'updatedData', (): void => {
@@ -770,23 +771,23 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     generatePoints: function (this: NetworkgraphSeries): void {
-        let node,
-            i;
+        let node, i;
 
         NodesComposition.generatePoints.apply(this, arguments as any);
 
         // In networkgraph, it's fine to define stanalone nodes, create
         // them:
         if (this.options.nodes) {
-            this.options.nodes.forEach(
-                function (nodeOptions: NodesComposition.PointCompositionOptions): void {
-                    if (!this.nodeLookup[nodeOptions.id as any]) {
-                        this.nodeLookup[nodeOptions.id as any] =
-                            this.createNode(nodeOptions.id as any);
-                    }
-                },
-                this
-            );
+            this.options.nodes.forEach(function (
+                nodeOptions: NodesComposition.PointCompositionOptions
+            ): void {
+                if (!this.nodeLookup[nodeOptions.id as any]) {
+                    this.nodeLookup[nodeOptions.id as any] = this.createNode(
+                        nodeOptions.id as any
+                    );
+                }
+            },
+            this);
         }
 
         for (i = this.nodes.length - 1; i >= 0; i--) {
@@ -805,7 +806,6 @@ extend(NetworkgraphSeries.prototype, {
                 node.remove();
             }
         }
-
 
         this.data.forEach(function (link): void {
             link.formatPrefix = 'link';
@@ -851,8 +851,7 @@ extend(NetworkgraphSeries.prototype, {
         point: NetworkgraphPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const attribs =
-            Series.prototype.markerAttribs.call(this, point, state);
+        const attribs = Series.prototype.markerAttribs.call(this, point, state);
 
         // series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
@@ -881,7 +880,6 @@ extend(NetworkgraphSeries.prototype, {
             node.linksFrom.forEach(function (
                 point: Highcharts.NetworkgraphPoint
             ): void {
-
                 point.shapeType = 'path';
 
                 // Pass test in drawPoints
@@ -920,20 +918,17 @@ extend(NetworkgraphSeries.prototype, {
         layout = graphLayoutsStorage[(layoutOptions as any).type];
 
         if (!layout) {
-            (layoutOptions as any).enableSimulation =
-                !defined(chartOptions.forExport) ?
-                    (layoutOptions as any).enableSimulation :
-                    !chartOptions.forExport;
+            (layoutOptions as any).enableSimulation = !defined(
+                chartOptions.forExport
+            )
+                ? (layoutOptions as any).enableSimulation
+                : !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new H.layouts[(layoutOptions as any).type]();
 
             layout.init(layoutOptions as any);
-            graphLayoutsLookup.splice(
-                (layout as any).index,
-                0,
-                layout as any
-            );
+            graphLayoutsLookup.splice((layout as any).index, 0, layout as any);
         }
 
         this.layout = layout;
@@ -960,9 +955,7 @@ extend(NetworkgraphSeries.prototype, {
         seriesTypes.line.prototype.render.call(this);
         series.points = points;
 
-        points.forEach(function (
-            point: Highcharts.NetworkgraphPoint
-        ): void {
+        points.forEach(function (point: Highcharts.NetworkgraphPoint): void {
             if (point.fromNode && point.toNode) {
                 point.renderLink();
                 point.redrawLink();
@@ -973,7 +966,8 @@ extend(NetworkgraphSeries.prototype, {
             series.redrawHalo(hoverPoint);
         }
 
-        if (series.chart.hasRendered &&
+        if (
+            series.chart.hasRendered &&
             !(series.options.dataLabels as any).allowOverlap
         ) {
             series.nodes.concat(series.points).forEach(function (node): void {
@@ -995,8 +989,9 @@ extend(NetworkgraphSeries.prototype, {
 
         // Render link labels:
         this.points = this.data;
-        (this.options.dataLabels as any).textPath =
-            (this.options.dataLabels as any).linkTextPath;
+        (this.options.dataLabels as any).textPath = (
+            this.options.dataLabels as any
+        ).linkTextPath;
         Series.prototype.drawDataLabels.apply(this, arguments as any);
 
         // Restore nodes
@@ -1011,7 +1006,7 @@ extend(NetworkgraphSeries.prototype, {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        let pointState = state || point && point.state || 'normal',
+        let pointState = state || (point && point.state) || 'normal',
             attribs = Series.prototype.pointAttribs.call(
                 this,
                 point,
@@ -1026,14 +1021,10 @@ extend(NetworkgraphSeries.prototype, {
                 attribs = {
                     // TO DO: API?
                     stroke: stateOptions.linkColor || attribs.stroke,
-                    dashstyle: (
-                        stateOptions.linkDashStyle || attribs.dashstyle
-                    ),
-                    opacity: pick(
-                        stateOptions.linkOpacity, attribs.opacity
-                    ),
-                    'stroke-width': stateOptions.linkColor ||
-                        attribs['stroke-width']
+                    dashstyle: stateOptions.linkDashStyle || attribs.dashstyle,
+                    opacity: pick(stateOptions.linkOpacity, attribs.opacity),
+                    'stroke-width':
+                        stateOptions.linkColor || attribs['stroke-width']
                 };
             }
         }
@@ -1101,8 +1092,8 @@ extend(NetworkgraphSeries.prototype, {
 
 class NetworkgraphPoint
     extends Series.prototype.pointClass
-    implements Highcharts.DragNodesPoint, NodesComposition.PointComposition {
-
+    implements Highcharts.DragNodesPoint, NodesComposition.PointComposition
+{
     /* *
      *
      *  Properties
@@ -1122,7 +1113,6 @@ class NetworkgraphPoint
     public series: NetworkgraphSeries = void 0 as any;
 
     public toNode: NetworkgraphPoint = void 0 as any;
-
 }
 
 /* *
@@ -1153,7 +1143,7 @@ interface NetworkgraphPoint {
     getPointsCollection(): Array<NetworkgraphPoint>;
     init(
         series: NetworkgraphSeries,
-        options: (Highcharts.NetworkgraphPointOptions|PointShortOptions),
+        options: Highcharts.NetworkgraphPointOptions | PointShortOptions,
         x?: number
     ): Highcharts.NetworkgraphPoint;
     redrawLink(): void;
@@ -1172,17 +1162,12 @@ extend(NetworkgraphPoint.prototype, {
     ): Highcharts.NetworkgraphPoint {
         Point.prototype.init.apply(this, arguments as any);
 
-        if (
-            this.series.options.draggable &&
-            !this.series.chart.styledMode
-        ) {
+        if (this.series.options.draggable && !this.series.chart.styledMode) {
             addEvent(this, 'mouseOver', function (): void {
                 css(this.series.chart.container, { cursor: 'move' });
             });
             addEvent(this, 'mouseOut', function (): void {
-                css(
-                    this.series.chart.container, { cursor: 'default' }
-                );
+                css(this.series.chart.container, { cursor: 'default' });
             });
         }
 
@@ -1195,9 +1180,9 @@ extend(NetworkgraphPoint.prototype, {
      * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
-        const deg = this.isNode ?
-            this.linksFrom.length + this.linksTo.length :
-            0;
+        const deg = this.isNode
+            ? this.linksFrom.length + this.linksTo.length
+            : 0;
 
         return deg === 0 ? 1 : deg;
     },
@@ -1218,17 +1203,9 @@ extend(NetworkgraphPoint.prototype, {
                 pointOptions.width,
                 (linkOptions as any).width
             ),
-            stroke: (
-                pointOptions.color || (linkOptions as any).color
-            ),
-            dashstyle: (
-                pointOptions.dashStyle || (linkOptions as any).dashStyle
-            ),
-            opacity: pick(
-                pointOptions.opacity,
-                (linkOptions as any).opacity,
-                1
-            )
+            stroke: pointOptions.color || (linkOptions as any).color,
+            dashstyle: pointOptions.dashStyle || (linkOptions as any).dashStyle,
+            opacity: pick(pointOptions.opacity, (linkOptions as any).opacity, 1)
         };
     },
     /**
@@ -1240,9 +1217,7 @@ extend(NetworkgraphPoint.prototype, {
 
         if (!this.graphic) {
             this.graphic = this.series.chart.renderer
-                .path(
-                    this.getLinkPath()
-                )
+                .path(this.getLinkPath())
                 .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
@@ -1327,9 +1302,7 @@ extend(NetworkgraphPoint.prototype, {
      * @return {Array<Highcharts.SVGPathArray>}
      *         Path: `['M', x, y, 'L', x, y]`
      */
-    getLinkPath: function (
-        this: Highcharts.NetworkgraphPoint
-    ): SVGPath {
+    getLinkPath: function (this: Highcharts.NetworkgraphPoint): SVGPath {
         let left = this.fromNode,
             right = this.toNode;
 
@@ -1398,41 +1371,29 @@ extend(NetworkgraphPoint.prototype, {
             ([] as Array<Highcharts.NetworkgraphPoint>)
                 .concat(point.linksFrom)
                 .concat(point.linksTo)
-                .forEach(
-                    function (
-                        linkFromTo: Highcharts.NetworkgraphPoint
-                    ): void {
-                        // Incoming links
-                        index = linkFromTo.fromNode.linksFrom.indexOf(
-                            linkFromTo
-                        );
-                        if (index > -1) {
-                            linkFromTo.fromNode.linksFrom.splice(
-                                index,
-                                1
-                            );
-                        }
-
-                        // Outcoming links
-                        index = linkFromTo.toNode.linksTo.indexOf(
-                            linkFromTo
-                        );
-                        if (index > -1) {
-                            linkFromTo.toNode.linksTo.splice(
-                                index,
-                                1
-                            );
-                        }
-
-                        // Remove link from data/points collections
-                        Series.prototype.removePoint.call(
-                            series,
-                            series.data.indexOf(linkFromTo),
-                            false,
-                            false
-                        );
+                .forEach(function (
+                    linkFromTo: Highcharts.NetworkgraphPoint
+                ): void {
+                    // Incoming links
+                    index = linkFromTo.fromNode.linksFrom.indexOf(linkFromTo);
+                    if (index > -1) {
+                        linkFromTo.fromNode.linksFrom.splice(index, 1);
                     }
-                );
+
+                    // Outcoming links
+                    index = linkFromTo.toNode.linksTo.indexOf(linkFromTo);
+                    if (index > -1) {
+                        linkFromTo.toNode.linksTo.splice(index, 1);
+                    }
+
+                    // Remove link from data/points collections
+                    Series.prototype.removePoint.call(
+                        series,
+                        series.data.indexOf(linkFromTo),
+                        false,
+                        false
+                    );
+                });
 
             // Restore points array, after links are removed
             series.points = series.data.slice();
@@ -1460,11 +1421,7 @@ extend(NetworkgraphPoint.prototype, {
                 series.chart.redraw(redraw);
             }
         } else {
-            series.removePoint(
-                series.data.indexOf(point),
-                redraw,
-                animation
-            );
+            series.removePoint(series.data.indexOf(point), redraw, animation);
         }
     },
 
@@ -1476,15 +1433,15 @@ extend(NetworkgraphPoint.prototype, {
      */
     destroy: function (this: Highcharts.NetworkgraphPoint): void {
         if (this.isNode) {
-            this.linksFrom.concat(this.linksTo).forEach(
-                function (link: Highcharts.NetworkgraphPoint): void {
+            this.linksFrom
+                .concat(this.linksTo)
+                .forEach(function (link: Highcharts.NetworkgraphPoint): void {
                     // Removing multiple nodes at the same time
                     // will try to remove link between nodes twice
                     if (link.destroyElements) {
                         link.destroyElements();
                     }
-                }
-            );
+                });
         }
 
         this.series.layout.removeElementFromCollection(
@@ -1677,4 +1634,4 @@ export default NetworkgraphSeries;
  * @apioption series.networkgraph.nodes.dataLabels
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

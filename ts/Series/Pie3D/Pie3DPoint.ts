@@ -24,9 +24,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
+            prototype: { pointClass: PiePoint }
         }
     }
 } = SeriesRegistry;
@@ -46,7 +44,6 @@ const superHaloPath = PiePoint.prototype.haloPath;
  * */
 
 class Pie3DPoint extends PiePoint {
-
     /* *
      *
      *  Properties
@@ -67,11 +64,12 @@ class Pie3DPoint extends PiePoint {
      * @private
      */
     public haloPath(): SVGPath {
-        return this.series.chart.is3d() ? [] : superHaloPath.apply(this, arguments);
+        return this.series.chart.is3d()
+            ? []
+            : superHaloPath.apply(this, arguments);
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

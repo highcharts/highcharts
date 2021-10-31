@@ -12,16 +12,13 @@
  *
  * */
 
-import type {
-    EMAOptions,
-    EMAParamsOptions
-} from '../EMA/EMAOptions';
+import type { EMAOptions, EMAParamsOptions } from '../EMA/EMAOptions';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
 export interface ChaikinOptions extends EMAOptions {
     params?: ChaikinParamsOptions;

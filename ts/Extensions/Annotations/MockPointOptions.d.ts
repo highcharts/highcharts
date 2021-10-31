@@ -8,15 +8,13 @@
  *
  * */
 
-
 /* *
  *
  *  Declarations
  *
  * */
 
-export interface MockPointOptions {
-}
+export interface MockPointOptions {}
 
 /* *
  *

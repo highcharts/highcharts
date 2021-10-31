@@ -25,13 +25,9 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 
 import H from '../../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
+const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const { css } = U;
-
 
 /* *
  *
@@ -40,7 +36,6 @@ const { css } = U;
  * */
 
 /* eslint-disable valid-jsdoc */
-
 
 /**
  * @private
@@ -59,7 +54,6 @@ function addClass(el: HTMLDOMElement, className: string): void {
     }
 }
 
-
 /**
  * @private
  * @param {Highcharts.HTMLDOMElement} el
@@ -75,7 +69,6 @@ function removeClass(el: HTMLDOMElement, className: string): void {
         el.className = el.className.replace(new RegExp(className, 'g'), '');
     }
 }
-
 
 /**
  * Utility function to clone a mouse event for re-dispatching.
@@ -113,7 +106,6 @@ function cloneMouseEvent(e: MouseEvent): MouseEvent {
 
     return getFakeMouseEvent(e.type);
 }
-
 
 /**
  * Utility function to clone a touch event for re-dispatching.
@@ -154,13 +146,14 @@ function cloneTouchEvent(e: TouchEvent): TouchEvent {
 
     // Fallback to mouse event
     type Writeable<T> = { -readonly [P in keyof T]: T[P] };
-    const fakeEvt = cloneMouseEvent(e as unknown as MouseEvent) as unknown as Writeable<TouchEvent>;
+    const fakeEvt = cloneMouseEvent(
+        e as unknown as MouseEvent
+    ) as unknown as Writeable<TouchEvent>;
     fakeEvt.touches = e.touches;
     fakeEvt.changedTouches = e.changedTouches;
     fakeEvt.targetTouches = e.targetTouches;
     return fakeEvt;
 }
-
 
 /**
  * @private
@@ -177,19 +170,15 @@ function escapeStringForHTML(str: string): string {
         .replace(/\//g, '&#x2F;');
 }
 
-
 /**
  * Get an element by ID
  * @param {string} id
  * @private
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|null}
  */
-function getElement(
-    id: string
-): (DOMElementType|null) {
+function getElement(id: string): DOMElementType | null {
     return doc.getElementById(id);
 }
-
 
 /**
  * Get a fake mouse event of a given type
@@ -247,7 +236,6 @@ function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
     return { type: type } as MouseEvent;
 }
 
-
 /**
  * Get an appropriate heading level for an element. Corresponds to the
  * heading level below the previous heading in the DOM.
@@ -273,8 +261,9 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
     const isHeading = (tagName: string): boolean => /H[1-6]/.test(tagName);
 
     const getPreviousSiblingsHeading = (el: HTMLDOMElement): string => {
-        let sibling: ChildNode|null = el;
-        while (sibling = sibling.previousSibling) { // eslint-disable-line
+        let sibling: ChildNode | null = el;
+        while ((sibling = sibling.previousSibling)) {
+            // eslint-disable-line
             const tagName = (sibling as HTMLDOMElement).tagName || '';
             if (isHeading(tagName)) {
                 return tagName;
@@ -303,7 +292,6 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
     return getHeadingRecursive(element);
 }
 
-
 /**
  * Remove an element from the DOM.
  * @private
@@ -316,7 +304,6 @@ function removeElement(element?: DOMElementType): void {
     }
 }
 
-
 /**
  * Remove all child nodes from an element.
  * @private
@@ -328,7 +315,6 @@ function removeChildNodes(element: DOMElementType): void {
         element.removeChild(element.lastChild);
     }
 }
-
 
 /**
  * Utility function. Reverses child nodes of a DOM element.
@@ -343,7 +329,6 @@ function reverseChildNodes(node: DOMElementType): void {
     }
 }
 
-
 /**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
@@ -352,10 +337,8 @@ function reverseChildNodes(node: DOMElementType): void {
  * @return {string}
  */
 function stripHTMLTagsFromString(str: string): string {
-    return typeof str === 'string' ?
-        str.replace(/<\/?[^>]+(>|$)/g, '') : str;
+    return typeof str === 'string' ? str.replace(/<\/?[^>]+(>|$)/g, '') : str;
 }
-
 
 /**
  * Utility function for hiding an element visually, but still keeping it
@@ -378,7 +361,6 @@ function visuallyHideElement(element: HTMLDOMElement): void {
         opacity: 0.01
     });
 }
-
 
 /* *
  *

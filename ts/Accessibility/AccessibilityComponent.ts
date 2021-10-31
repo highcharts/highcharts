@@ -58,7 +58,6 @@ const { extend } = U;
  * @name Highcharts.AccessibilityComponent
  */
 class AccessibilityComponent {
-
     /* *
      *
      *  Properties
@@ -112,21 +111,19 @@ class AccessibilityComponent {
         };
     }
 
-
     /**
      * Add an event to an element and keep track of it for later removal.
      * See EventProvider for details.
      * @private
      */
     public addEvent<T>(
-        el: (T|U.Class<T>),
+        el: T | U.Class<T>,
         type: string,
-        fn: (Function|EventCallback<T>),
+        fn: Function | EventCallback<T>,
         options?: U.EventOptions
     ): Function {
         return this.eventProvider.addEvent<T>(el, type, fn, options);
     }
-
 
     /**
      * Create an element and keep track of it for later removal.
@@ -140,18 +137,14 @@ class AccessibilityComponent {
         return this.domElementProvider.createElement(tagName, options);
     }
 
-
     /**
      * Fire a fake click event on an element. It is useful to have this on
      * AccessibilityComponent for users of custom components.
      */
-    public fakeClickEvent(
-        el: (HTMLElement|SVGElement|DOMElementType)
-    ): void {
+    public fakeClickEvent(el: HTMLElement | SVGElement | DOMElementType): void {
         const fakeEvent = getFakeMouseEvent('click');
         fireEventOnWrappedOrUnwrappedElement(el, fakeEvent);
     }
-
 
     /**
      * Remove traces of the component.
@@ -161,7 +154,6 @@ class AccessibilityComponent {
         this.domElementProvider.destroyCreatedElements();
         this.eventProvider.removeAddedEvents();
     }
-
 }
 
 /* *
@@ -172,7 +164,9 @@ class AccessibilityComponent {
 
 interface AccessibilityComponent {
     destroy(): void;
-    getKeyboardNavigation(): (KeyboardNavigationHandler|Array<KeyboardNavigationHandler>);
+    getKeyboardNavigation():
+        | KeyboardNavigationHandler
+        | Array<KeyboardNavigationHandler>;
     init(): void;
     onChartRender(): void;
     onChartUpdate(): void;

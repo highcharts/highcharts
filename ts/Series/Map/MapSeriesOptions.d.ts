@@ -25,16 +25,16 @@ import type {
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
-
 /* *
  *
  *  Declarations
  *
  * */
 
-export interface MapSeriesOptions extends ColorAxisComposition.SeriesCompositionOptions, ScatterSeriesOptions
-{
-    data?: Array<(PointOptions|PointShortOptions|MapPointOptions)>;
+export interface MapSeriesOptions
+    extends ColorAxisComposition.SeriesCompositionOptions,
+        ScatterSeriesOptions {
+    data?: Array<PointOptions | PointShortOptions | MapPointOptions>;
     nullColor?: ColorType;
     nullInteraction?: boolean;
     states?: SeriesStatesOptions<MapSeries>;

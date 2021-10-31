@@ -28,21 +28,12 @@ import Earcon from './Earcon.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesSonify from './SeriesSonify.js';
 import SU from './SonificationUtilities.js';
-const {
-    getExtremesForInstrumentProps,
-    virtualAxisTranslate
-} = SU;
+const { getExtremesForInstrumentProps, virtualAxisTranslate } = SU;
 import Timeline from './Timeline.js';
 import TimelineEvent from './TimelineEvent.js';
 import TimelinePath from './TimelinePath.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    splat
-} = U;
+const { addEvent, extend, merge, pick, splat } = U;
 
 /* *
  *
@@ -50,7 +41,7 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike' {
     interface ChartLike {
         sonification?: ChartSonify.SonifyableChart['sonification'];
         sonify?: typeof chartSonify;
@@ -62,7 +53,8 @@ interface SonifySeriesOrderObject {
     seriesOptions: SeriesSonify.SonifySeriesOptions;
 }
 
-declare class Composition { // = interface SonifyableChart extends Chart {
+declare class Composition {
+    // = interface SonifyableChart extends Chart {
     series: Array<SeriesSonify.Composition>;
     sonification: ChartSonify.ChartSonificationStateObject;
     cancelSonify: typeof cancel;
@@ -101,18 +93,15 @@ declare class Composition { // = interface SonifyableChart extends Chart {
  * series) or TimelinePaths (for earcons and delays).
  */
 function buildPathOrder(
-    orderOptions: (
-        string|Array<(string|Earcon|
-        Array<(string|Earcon)>)>
-    ),
+    orderOptions: string | Array<string | Earcon | Array<string | Earcon>>,
     chart: ChartSonify.SonifyableChart,
     seriesOptionsCallback: Function
-): Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)> {
-    let order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)>;
+): Array<
+    SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+> {
+    let order: Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    >;
 
     if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
         // Just add the series from the chart
@@ -122,10 +111,8 @@ function buildPathOrder(
         ): Array<SonifySeriesOrderObject> {
             if (
                 series.visible &&
-                (
-                    series.options.sonification &&
-                    series.options.sonification.enabled
-                ) !== false
+                (series.options.sonification &&
+                    series.options.sonification.enabled) !== false
             ) {
                 seriesList.push({
                     series: series,
@@ -133,7 +120,8 @@ function buildPathOrder(
                 });
             }
             return seriesList;
-        }, []);
+        },
+        []);
 
         // If order is simultaneous, group all series together
         if (orderOptions === 'simultaneous') {
@@ -143,75 +131,67 @@ function buildPathOrder(
         // We have a specific order, and potentially custom items - like
         // earcons or silent waits.
         order = (orderOptions as any).reduce(function (
-            orderList: Array<Array<(
-                SonifySeriesOrderObject|TimelinePath
-            )>>,
-            orderDef: (
-                string|Earcon|Array<string|Earcon>
-            )
-        ): Array<Array<(
-                SonifySeriesOrderObject|TimelinePath
-            )>> {
+            orderList: Array<Array<SonifySeriesOrderObject | TimelinePath>>,
+            orderDef: string | Earcon | Array<string | Earcon>
+        ): Array<Array<SonifySeriesOrderObject | TimelinePath>> {
             // Return set of items to play simultaneously. Could be only one.
-            const simulItems: Array<(
-                SonifySeriesOrderObject|TimelinePath
-            )> = splat(orderDef).reduce(function (
-                items: Array<(
-                    SonifySeriesOrderObject|TimelinePath
-                )>,
-                item: (string|Earcon)
-            ): Array<(
-                    SonifySeriesOrderObject|TimelinePath
-                )> {
-                let itemObject: (
-                    SonifySeriesOrderObject|TimelinePath|
-                    undefined
-                );
+            const simulItems: Array<SonifySeriesOrderObject | TimelinePath> =
+                splat(orderDef).reduce(function (
+                    items: Array<SonifySeriesOrderObject | TimelinePath>,
+                    item: string | Earcon
+                ): Array<SonifySeriesOrderObject | TimelinePath> {
+                    let itemObject:
+                        | SonifySeriesOrderObject
+                        | TimelinePath
+                        | undefined;
 
-                // Is this item a series ID?
-                if (typeof item === 'string') {
-                    const series: SeriesSonify.Composition = (
-                        chart.get(item) as any
-                    );
+                    // Is this item a series ID?
+                    if (typeof item === 'string') {
+                        const series: SeriesSonify.Composition = chart.get(
+                            item
+                        ) as any;
 
-                    if (series.visible) {
-                        itemObject = {
-                            series: series,
-                            seriesOptions: seriesOptionsCallback(series)
-                        };
+                        if (series.visible) {
+                            itemObject = {
+                                series: series,
+                                seriesOptions: seriesOptionsCallback(series)
+                            };
+                        }
+
+                        // Is it an earcon? If so, just create the path.
+                    } else if (item instanceof Earcon) {
+                        // Path with a single event
+                        itemObject = new TimelinePath({
+                            events: [
+                                new TimelineEvent({
+                                    eventObject: item
+                                })
+                            ]
+                        });
                     }
 
-                // Is it an earcon? If so, just create the path.
-                } else if (item instanceof Earcon) {
-                    // Path with a single event
-                    itemObject = new TimelinePath({
-                        events: [new TimelineEvent({
-                            eventObject: item
-                        })]
-                    });
+                    // Is this item a silent wait? If so, just create the path.
+                    if ((item as any).silentWait) {
+                        itemObject = new TimelinePath({
+                            silentWait: (item as any).silentWait
+                        } as any);
+                    }
 
-                }
-
-                // Is this item a silent wait? If so, just create the path.
-                if ((item as any).silentWait) {
-                    itemObject = new TimelinePath({
-                        silentWait: (item as any).silentWait
-                    } as any);
-                }
-
-                // Add to items to play simultaneously
-                if (itemObject) {
-                    items.push(itemObject);
-                }
-                return items;
-            }, []);
+                    // Add to items to play simultaneously
+                    if (itemObject) {
+                        items.push(itemObject);
+                    }
+                    return items;
+                },
+                []);
 
             // Add to order list
             if (simulItems.length) {
                 orderList.push(simulItems);
             }
             return orderList;
-        }, []);
+        },
+        []);
     }
     return order;
 }
@@ -227,32 +207,31 @@ function buildPathOrder(
  * The order with waits inserted.
  */
 function addAfterSeriesWaits(
-    order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)>,
+    order: Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    >,
     wait: number
-): Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)> {
+): Array<
+    SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+> {
     if (!wait) {
         return order;
     }
 
     return order.reduce(function (
-        newOrder: Array<(SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>)>,
-        orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>),
+        newOrder: Array<
+            | SonifySeriesOrderObject
+            | Array<SonifySeriesOrderObject | TimelinePath>
+        >,
+        orderDef:
+            | SonifySeriesOrderObject
+            | Array<SonifySeriesOrderObject | TimelinePath>,
         i: number
-    ): Array<(SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>)> {
-        const simultaneousPaths: Array<(
-            SonifySeriesOrderObject|
-            TimelinePath
-        )> = splat(orderDef);
+    ): Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    > {
+        const simultaneousPaths: Array<SonifySeriesOrderObject | TimelinePath> =
+            splat(orderDef);
 
         newOrder.push(simultaneousPaths);
 
@@ -260,22 +239,23 @@ function addAfterSeriesWaits(
         if (
             i < order.length - 1 && // Do not add wait after last series
             simultaneousPaths.some(function (
-                item: (
-                    SonifySeriesOrderObject|TimelinePath
-                )
-            ): (SeriesSonify.Composition|undefined) {
+                item: SonifySeriesOrderObject | TimelinePath
+            ): SeriesSonify.Composition | undefined {
                 return (item as any).series;
             })
         ) {
             // We have a series, meaning we should add a wait after these
             // paths have finished.
-            newOrder.push(new TimelinePath({
-                silentWait: wait
-            } as any) as any);
+            newOrder.push(
+                new TimelinePath({
+                    silentWait: wait
+                } as any) as any
+            );
         }
 
         return newOrder;
-    }, []);
+    },
+    []);
 }
 
 /**
@@ -286,26 +266,28 @@ function addAfterSeriesWaits(
  * @return {number} The total time in ms spent on wait paths between playing.
  */
 function getWaitTime(
-    order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)>
+    order: Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    >
 ): number {
     return order.reduce(function (
         waitTime: number,
-        orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>)
+        orderDef:
+            | SonifySeriesOrderObject
+            | Array<SonifySeriesOrderObject | TimelinePath>
     ): number {
-        const def: Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )> = splat(orderDef);
+        const def: Array<SonifySeriesOrderObject | TimelinePath> =
+            splat(orderDef);
 
-        return waitTime + (
-            def.length === 1 &&
-            (def[0] as any).options &&
-            (def[0] as any).options.silentWait || 0
+        return (
+            waitTime +
+            ((def.length === 1 &&
+                (def[0] as any).options &&
+                (def[0] as any).options.silentWait) ||
+                0)
         );
-    }, 0);
+    },
+    0);
 }
 
 /**
@@ -316,23 +298,27 @@ function getWaitTime(
  */
 function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
     // Find the extremes for these paths
-    const extremes = paths.reduce(function (
-        extremes: RangeSelector.RangeObject,
-        path: TimelinePath
-    ): RangeSelector.RangeObject {
-        const events = path.events;
+    const extremes = paths.reduce(
+        function (
+            extremes: RangeSelector.RangeObject,
+            path: TimelinePath
+        ): RangeSelector.RangeObject {
+            const events = path.events;
 
-        if (events && events.length) {
-            extremes.min = Math.min(events[0].time, extremes.min);
-            extremes.max = Math.max(
-                events[events.length - 1].time, extremes.max
-            );
+            if (events && events.length) {
+                extremes.min = Math.min(events[0].time, extremes.min);
+                extremes.max = Math.max(
+                    events[events.length - 1].time,
+                    extremes.max
+                );
+            }
+            return extremes;
+        },
+        {
+            min: Infinity,
+            max: -Infinity
         }
-        return extremes;
-    }, {
-        min: Infinity,
-        max: -Infinity
-    });
+    );
 
     // Go through the paths and add events to make them fit the same timespan
     paths.forEach(function (path: TimelinePath): void {
@@ -341,14 +327,18 @@ function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
             eventsToAdd = [];
 
         if (!(hasEvents && events[0].time <= extremes.min)) {
-            eventsToAdd.push(new TimelineEvent({
-                time: extremes.min
-            }));
+            eventsToAdd.push(
+                new TimelineEvent({
+                    time: extremes.min
+                })
+            );
         }
         if (!(hasEvents && events[events.length - 1].time >= extremes.max)) {
-            eventsToAdd.push(new TimelineEvent({
-                time: extremes.max
-            }));
+            eventsToAdd.push(
+                new TimelineEvent({
+                    time: extremes.max
+                })
+            );
         }
         if (eventsToAdd.length) {
             path.addTimelineEvents(eventsToAdd);
@@ -365,37 +355,38 @@ function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
  * @return {number} The total time value span difference for all series.
  */
 function getSimulPathDurationTotal(
-    order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)>
+    order: Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    >
 ): number {
     return order.reduce(function (
         durationTotal: number,
-        orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>)
+        orderDef:
+            | SonifySeriesOrderObject
+            | Array<SonifySeriesOrderObject | TimelinePath>
     ): number {
-        return durationTotal + splat(orderDef).reduce(
-            function (
+        return (
+            durationTotal +
+            splat(orderDef).reduce(function (
                 maxPathDuration: number,
-                item: (
-                    SonifySeriesOrderObject|TimelinePath
-                )
+                item: SonifySeriesOrderObject | TimelinePath
             ): number {
-                const timeExtremes: RangeSelector.RangeObject = (
+                const timeExtremes: RangeSelector.RangeObject =
                     (item as any).series &&
                     (item as any).seriesOptions &&
-                    (item as any).seriesOptions.timeExtremes
-                );
+                    (item as any).seriesOptions.timeExtremes;
 
-                return timeExtremes ?
-                    Math.max(
-                        maxPathDuration, timeExtremes.max - timeExtremes.min
-                    ) : maxPathDuration;
+                return timeExtremes
+                    ? Math.max(
+                          maxPathDuration,
+                          timeExtremes.max - timeExtremes.min
+                      )
+                    : maxPathDuration;
             },
-            0
+            0)
         );
-    }, 0);
+    },
+    0);
 }
 
 /**
@@ -433,16 +424,14 @@ function getSeriesDurationMs(
  * to play.
  */
 function buildPathsFromOrder(
-    order: Array<(SonifySeriesOrderObject|Array<(
-        SonifySeriesOrderObject|TimelinePath
-    )>)>,
+    order: Array<
+        SonifySeriesOrderObject | Array<SonifySeriesOrderObject | TimelinePath>
+    >,
     duration: number
 ): Array<Array<TimelinePath>> {
     // Find time used for waits (custom or after series), and subtract it from
     // available duration.
-    const totalAvailableDurationMs = Math.max(
-            duration - getWaitTime(order), 0
-        ),
+    const totalAvailableDurationMs = Math.max(duration - getWaitTime(order), 0),
         // Add up simultaneous path durations to find total value span duration
         // of everything
         totalUsedDuration = getSimulPathDurationTotal(order);
@@ -450,16 +439,14 @@ function buildPathsFromOrder(
     // Go through the order list and convert the items
     return order.reduce(function (
         allPaths: Array<Array<TimelinePath>>,
-        orderDef: (SonifySeriesOrderObject|Array<(
-            SonifySeriesOrderObject|TimelinePath
-        )>)
+        orderDef:
+            | SonifySeriesOrderObject
+            | Array<SonifySeriesOrderObject | TimelinePath>
     ): Array<Array<TimelinePath>> {
-        const simultaneousPaths: Array<TimelinePath> =
-            splat(orderDef).reduce(function (
+        const simultaneousPaths: Array<TimelinePath> = splat(orderDef).reduce(
+            function (
                 simulPaths: Array<TimelinePath>,
-                item: (
-                    SonifySeriesOrderObject|TimelinePath
-                )
+                item: SonifySeriesOrderObject | TimelinePath
             ): Array<TimelinePath> {
                 if (item instanceof TimelinePath) {
                     // This item is already a path object
@@ -468,26 +455,32 @@ function buildPathsFromOrder(
                     // We have a series.
                     // We need to set the duration of the series
                     item.seriesOptions.duration =
-                        item.seriesOptions.duration || getSeriesDurationMs(
+                        item.seriesOptions.duration ||
+                        getSeriesDurationMs(
                             (item.seriesOptions.timeExtremes as any).max -
-                            (item.seriesOptions.timeExtremes as any).min,
+                                (item.seriesOptions.timeExtremes as any).min,
                             totalUsedDuration,
                             totalAvailableDurationMs
                         );
 
                     // Add the path
-                    simulPaths.push(SeriesSonify.buildTimelinePathFromSeries(
-                        item.series,
-                        item.seriesOptions
-                    ));
+                    simulPaths.push(
+                        SeriesSonify.buildTimelinePathFromSeries(
+                            item.series,
+                            item.seriesOptions
+                        )
+                    );
                 }
                 return simulPaths;
-            }, []);
+            },
+            []
+        );
 
         // Add in the simultaneous paths
         allPaths.push(simultaneousPaths);
         return allPaths;
-    }, []);
+    },
+    []);
 }
 
 /**
@@ -507,15 +500,14 @@ function getChartSonifyOptions(
         {
             duration: chartOpts.duration,
             afterSeriesWait: chartOpts.afterSeriesWait,
-            pointPlayTime: (
+            pointPlayTime:
                 chartOpts.defaultInstrumentOptions &&
                 chartOpts.defaultInstrumentOptions.mapping &&
-                chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
-            ),
+                chartOpts.defaultInstrumentOptions.mapping.pointPlayTime,
             order: chartOpts.order,
-            onSeriesStart: (chartOpts.events && chartOpts.events.onSeriesStart),
-            onSeriesEnd: (chartOpts.events && chartOpts.events.onSeriesEnd),
-            onEnd: (chartOpts.events && chartOpts.events.onEnd)
+            onSeriesStart: chartOpts.events && chartOpts.events.onSeriesStart,
+            onSeriesEnd: chartOpts.events && chartOpts.events.onSeriesEnd,
+            onEnd: chartOpts.events && chartOpts.events.onEnd
         },
         options
     );
@@ -559,15 +551,25 @@ function chartSonify(
 
     // Calculate data extremes for the props used
     const dataExtremes = getExtremesForInstrumentProps(
-        this, opts.instruments, opts.dataExtremes
+        this,
+        opts.instruments,
+        opts.dataExtremes
     );
 
     // Figure out ordering of series and custom paths
-    let order = buildPathOrder(opts.order, this, function (
-        series: SeriesSonify.Composition
-    ): Partial<SeriesSonify.SonifySeriesOptions> {
-        return SeriesSonify.buildChartSonifySeriesOptions(series, dataExtremes, opts);
-    });
+    let order = buildPathOrder(
+        opts.order,
+        this,
+        function (
+            series: SeriesSonify.Composition
+        ): Partial<SeriesSonify.SonifySeriesOptions> {
+            return SeriesSonify.buildChartSonifySeriesOptions(
+                series,
+                dataExtremes,
+                opts
+            );
+        }
+    );
 
     // Add waits after simultaneous paths with series in them.
     order = addAfterSeriesWaits(order, opts.afterSeriesWait || 0);
@@ -577,9 +579,7 @@ function chartSonify(
     const paths = buildPathsFromOrder(order, opts.duration);
 
     // Sync simultaneous paths
-    paths.forEach(function (
-        simultaneousPaths: Array<TimelinePath>
-    ): void {
+    paths.forEach(function (simultaneousPaths: Array<TimelinePath>): void {
         syncSimultaneousPaths(simultaneousPaths);
     });
 
@@ -601,22 +601,20 @@ function chartSonify(
  * @return {Array<Highcharts.Point>}
  *         The points currently under the cursor.
  */
-function getCurrentPoints(
-    this: ChartSonify.SonifyableChart
-): Array<Point> {
+function getCurrentPoints(this: ChartSonify.SonifyableChart): Array<Point> {
     let cursorObj: Record<string, TimelineEvent>;
 
     if (this.sonification.timeline) {
         cursorObj = this.sonification.timeline.getCursor(); // Cursor per pathID
-        return Object.keys(cursorObj).map(function (
-            path: string
-        ): any {
-            // Get the event objects under cursor for each path
-            return cursorObj[path].options.eventObject;
-        }).filter(function (eventObj: any): boolean {
-            // Return the events that are points
-            return eventObj instanceof Point;
-        });
+        return Object.keys(cursorObj)
+            .map(function (path: string): any {
+                // Get the event objects under cursor for each path
+                return cursorObj[path].options.eventObject;
+            })
+            .filter(function (eventObj: any): boolean {
+                // Return the events that are points
+                return eventObj instanceof Point;
+            });
     }
     return [];
 }
@@ -635,7 +633,7 @@ function getCurrentPoints(
  */
 function setCursor(
     this: ChartSonify.SonifyableChart,
-    points: (Point|Array<Point>)
+    points: Point | Array<Point>
 ): void {
     const timeline: Timeline = this.sonification.timeline as any;
 
@@ -760,8 +758,9 @@ const composedClasses: Array<Function> = [];
  * @private
  * @todo move to composition namespace with all functions
  */
-function compose<T extends typeof Chart>(ChartClass: typeof Chart): (T&typeof Composition) {
-
+function compose<T extends typeof Chart>(
+    ChartClass: typeof Chart
+): T & typeof Composition {
     if (composedClasses.indexOf(ChartClass) === -1) {
         composedClasses.push(ChartClass);
 
@@ -785,18 +784,19 @@ function compose<T extends typeof Chart>(ChartClass: typeof Chart): (T&typeof Co
         });
 
         // Update with chart/series/point updates
-        addEvent(ChartClass, 'update', function (
-            e: { options: Options }
-        ): void {
-            const newOptions = e.options.sonification;
-            if (newOptions) {
-                merge(true, this.options.sonification, newOptions);
+        addEvent(
+            ChartClass,
+            'update',
+            function (e: { options: Options }): void {
+                const newOptions = e.options.sonification;
+                if (newOptions) {
+                    merge(true, this.options.sonification, newOptions);
+                }
             }
-        });
-
+        );
     }
 
-    return ChartClass as (T&typeof Composition);
+    return ChartClass as T & typeof Composition;
 }
 
 /* *
@@ -806,7 +806,6 @@ function compose<T extends typeof Chart>(ChartClass: typeof Chart): (T&typeof Co
  * */
 
 namespace ChartSonify {
-
     /* *
      *
      *  Declarations
@@ -830,7 +829,7 @@ namespace ChartSonify {
         enabled?: boolean;
         events?: ChartSonificationEventsOptions;
         masterVolume?: number;
-        order: (string|Array<string|Earcon|Array<string|Earcon>>);
+        order: string | Array<string | Earcon | Array<string | Earcon>>;
     }
 
     export interface ChartSonificationStateObject {
@@ -863,15 +862,13 @@ namespace ChartSonify {
         onSeriesEnd?: Function;
         onSeriesStart?: Function;
         onEnd?: Function;
-        order: (string|Array<string|Earcon|Array<string|Earcon>>);
-        pointPlayTime: (string|Function);
-        seriesOptions?: (
-            SeriesSonify.SonifySeriesOptions|Array<SeriesSonify.SonifySeriesOptions>
-        );
+        order: string | Array<string | Earcon | Array<string | Earcon>>;
+        pointPlayTime: string | Function;
+        seriesOptions?:
+            | SeriesSonify.SonifySeriesOptions
+            | Array<SeriesSonify.SonifySeriesOptions>;
     }
-
 }
-
 
 /* *
  *
@@ -906,15 +903,15 @@ export default ChartSonify;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.EarconConfiguration
- *//**
+ */ /**
  * An Earcon instance.
  * @name Highcharts.EarconConfiguration#earcon
  * @type {Highcharts.Earcon}
- *//**
+ */ /**
  * The ID of the point to play the Earcon on.
  * @name Highcharts.EarconConfiguration#onPoint
  * @type {string|undefined}
- *//**
+ */ /**
  * A function to determine whether or not to play this earcon on a point. The
  * function is called for every point, receiving that point as parameter. It
  * should return either a boolean indicating whether or not to play the earcon,
@@ -929,7 +926,7 @@ export default ChartSonify;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.SonificationOptions
- *//**
+ */ /**
  * Duration for sonifying the entire chart. The duration is distributed across
  * the different series intelligently, but does not take earcons into account.
  * It is also possible to set the duration explicitly per series, using
@@ -937,7 +934,7 @@ export default ChartSonify;
  * passed, but no new points will start playing.
  * @name Highcharts.SonificationOptions#duration
  * @type {number}
- *//**
+ */ /**
  * Define the order to play the series in. This can be given as a string, or an
  * array specifying a custom ordering. If given as a string, valid values are
  * `sequential` - where each series is played in order - or `simultaneous`,
@@ -949,7 +946,7 @@ export default ChartSonify;
  * the elements in an array.
  * @name Highcharts.SonificationOptions#order
  * @type {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>}
- *//**
+ */ /**
  * The axis to use for when to play the points. Can be a string with a data
  * property (e.g. `x`), or a function. If it is a function, this function
  * receives the point as argument, and should return a numeric value. The points
@@ -958,28 +955,28 @@ export default ChartSonify;
  * option can not be overridden per series.
  * @name Highcharts.SonificationOptions#pointPlayTime
  * @type {string|Function}
- *//**
+ */ /**
  * Milliseconds of silent waiting to add between series. Note that waiting time
  * is considered part of the sonify duration.
  * @name Highcharts.SonificationOptions#afterSeriesWait
  * @type {number|undefined}
- *//**
+ */ /**
  * Options as given to `series.sonify` to override options per series. If the
  * option is supplied as an array of options objects, the `id` property of the
  * object should correspond to the series' id. If the option is supplied as a
  * single object, the options apply to all series.
  * @name Highcharts.SonificationOptions#seriesOptions
  * @type {Object|Array<object>|undefined}
- *//**
+ */ /**
  * The instrument definitions for the points in this chart.
  * @name Highcharts.SonificationOptions#instruments
  * @type {Array<Highcharts.PointInstrumentObject>|undefined}
- *//**
+ */ /**
  * Earcons to add to the chart. Note that earcons can also be added per series
  * using `seriesOptions`.
  * @name Highcharts.SonificationOptions#earcons
  * @type {Array<Highcharts.EarconConfiguration>|undefined}
- *//**
+ */ /**
  * Optionally provide the minimum/maximum data values for the points. If this is
  * not supplied, it is calculated from all points in the chart on demand. This
  * option is supplied in the following format, as a map of point data properties
@@ -999,15 +996,15 @@ export default ChartSonify;
  *  ```
  * @name Highcharts.SonificationOptions#dataExtremes
  * @type {Highcharts.Dictionary<Highcharts.RangeObject>|undefined}
- *//**
+ */ /**
  * Callback before a series is played.
  * @name Highcharts.SonificationOptions#onSeriesStart
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback after a series has finished playing.
  * @name Highcharts.SonificationOptions#onSeriesEnd
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback after the chart has played.
  * @name Highcharts.SonificationOptions#onEnd
  * @type {Function|undefined}
@@ -1019,12 +1016,12 @@ export default ChartSonify;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.SonifySeriesOptionsObject
- *//**
+ */ /**
  * The duration for playing the points. Note that points might continue to play
  * after the duration has passed, but no new points will start playing.
  * @name Highcharts.SonifySeriesOptionsObject#duration
  * @type {number}
- *//**
+ */ /**
  * The axis to use for when to play the points. Can be a string with a data
  * property (e.g. `x`), or a function. If it is a function, this function
  * receives the point as argument, and should return a numeric value. The points
@@ -1032,15 +1029,15 @@ export default ChartSonify;
  * points will be proportional to the distance between the numeric values.
  * @name Highcharts.SonifySeriesOptionsObject#pointPlayTime
  * @type {string|Function}
- *//**
+ */ /**
  * The instrument definitions for the points in this series.
  * @name Highcharts.SonifySeriesOptionsObject#instruments
  * @type {Array<Highcharts.PointInstrumentObject>}
- *//**
+ */ /**
  * Earcons to add to the series.
  * @name Highcharts.SonifySeriesOptionsObject#earcons
  * @type {Array<Highcharts.EarconConfiguration>|undefined}
- *//**
+ */ /**
  * Optionally provide the minimum/maximum data values for the points. If this is
  * not supplied, it is calculated from all points in the chart on demand. This
  * option is supplied in the following format, as a map of point data properties
@@ -1060,18 +1057,18 @@ export default ChartSonify;
  * ```
  * @name Highcharts.SonifySeriesOptionsObject#dataExtremes
  * @type {Highcharts.Dictionary<Highcharts.RangeObject>|undefined}
- *//**
+ */ /**
  * Callback before a point is played.
  * @name Highcharts.SonifySeriesOptionsObject#onPointStart
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback after a point has finished playing.
  * @name Highcharts.SonifySeriesOptionsObject#onPointEnd
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback after the series has played.
  * @name Highcharts.SonifySeriesOptionsObject#onEnd
  * @type {Function|undefined}
  */
 
-''; // detach doclets above
+(''); // detach doclets above

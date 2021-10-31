@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    EMAOptions,
-    EMAParamsOptions
-} from '../EMA/EMAOptions';
+import type { EMAOptions, EMAParamsOptions } from '../EMA/EMAOptions';
 
 /* *
  *

@@ -15,15 +15,10 @@ import type AreaSplineRangeSeriesOptions from './AreaSplineRangeSeriesOptions';
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        spline: SplineSeries
-    }
+    seriesTypes: { spline: SplineSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+const { merge, extend } = U;
 
 /* *
  *
@@ -41,7 +36,6 @@ const {
  * @augments Highcharts.Series
  */
 class AreaSplineRangeSeries extends AreaRangeSeries {
-
     /* *
      *
      *  Static properties
@@ -86,7 +80,9 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      * @default   {highstock} 0.75
      * @apioption plotOptions.areasplinerange.fillOpacity
      */
-    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(AreaRangeSeries.defaultOptions);
+    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
+        AreaRangeSeries.defaultOptions
+    );
 
     /* *
      *
@@ -227,4 +223,4 @@ export default AreaSplineRangeSeries;
  * @apioption series.areasplinerange.fillOpacity
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

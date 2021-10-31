@@ -26,9 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
+            prototype: { pointClass: ColumnPoint }
         }
     }
 } = SeriesRegistry;
@@ -42,7 +40,6 @@ const { extend } = U;
  * */
 
 class CylinderPoint extends ColumnPoint {
-
     /* *
      *
      *  Properties
@@ -52,7 +49,6 @@ class CylinderPoint extends ColumnPoint {
     public options: CylinderPointOptions = void 0 as any;
 
     public series: CylinderSeries = void 0 as any;
-
 }
 
 /* *

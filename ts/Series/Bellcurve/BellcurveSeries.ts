@@ -28,25 +28,17 @@ import type {
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        areaspline: AreaSplineSeries
-    }
+    seriesTypes: { areaspline: AreaSplineSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    isNumber,
-    merge
-} = U;
+const { correctFloat, extend, isNumber, merge } = U;
 
 /**
  * Internal types
  * @private
  */
 declare global {
-    namespace Highcharts {
-    }
+    namespace Highcharts {}
 }
 
 /**
@@ -59,7 +51,6 @@ declare global {
  * @augments Highcharts.Series
  */
 class BellcurveSeries extends AreaSplineSeries {
-
     /* *
      *
      *  Static Properties
@@ -83,53 +74,56 @@ class BellcurveSeries extends AreaSplineSeries {
      * @requires     modules/bellcurve
      * @optionparent plotOptions.bellcurve
      */
-    public static defaultOptions: BellcurveSeriesOptions = merge(AreaSplineSeries.defaultOptions, {
-        /**
-         * @see [fillColor](#plotOptions.bellcurve.fillColor)
-         * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
-         *
-         * @apioption plotOptions.bellcurve.color
-         */
+    public static defaultOptions: BellcurveSeriesOptions = merge(
+        AreaSplineSeries.defaultOptions,
+        {
+            /**
+             * @see [fillColor](#plotOptions.bellcurve.fillColor)
+             * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+             *
+             * @apioption plotOptions.bellcurve.color
+             */
 
-        /**
-         * @see [color](#plotOptions.bellcurve.color)
-         * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
-         *
-         * @apioption plotOptions.bellcurve.fillColor
-         */
+            /**
+             * @see [color](#plotOptions.bellcurve.color)
+             * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+             *
+             * @apioption plotOptions.bellcurve.fillColor
+             */
 
-        /**
-         * @see [color](#plotOptions.bellcurve.color)
-         * @see [fillColor](#plotOptions.bellcurve.fillColor)
-         *
-         * @default   {highcharts} 0.75
-         * @default   {highstock} 0.75
-         * @apioption plotOptions.bellcurve.fillOpacity
-         */
+            /**
+             * @see [color](#plotOptions.bellcurve.color)
+             * @see [fillColor](#plotOptions.bellcurve.fillColor)
+             *
+             * @default   {highcharts} 0.75
+             * @default   {highstock} 0.75
+             * @apioption plotOptions.bellcurve.fillOpacity
+             */
 
-        /**
-         * This option allows to define the length of the bell curve. A unit of
-         * the length of the bell curve is standard deviation.
-         *
-         * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
-         *         Intervals and points in interval
-         */
-        intervals: 3,
+            /**
+             * This option allows to define the length of the bell curve. A unit
+             * of the length of the bell curve is standard deviation.
+             *
+             * @sample
+             *         highcharts/plotoptions/bellcurve-intervals-pointsininterval
+             *         Intervals and points in interval
+             */
+            intervals: 3,
 
-        /**
-         * Defines how many points should be plotted within 1 interval. See
-         * `plotOptions.bellcurve.intervals`.
-         *
-         * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
-         *         Intervals and points in interval
-         */
-        pointsInInterval: 3,
+            /**
+             * Defines how many points should be plotted within 1 interval. See
+             * `plotOptions.bellcurve.intervals`.
+             *
+             * @sample highcharts/plotoptions/bellcurve-intervals-pointsininterval
+             *         Intervals and points in interval
+             */
+            pointsInInterval: 3,
 
-        marker: {
-            enabled: false
-        }
-
-    } as BellcurveSeriesOptions);
+            marker: {
+                enabled: false
+            }
+        } as BellcurveSeriesOptions
+    );
 
     /* *
      *
@@ -142,7 +136,7 @@ class BellcurveSeries extends AreaSplineSeries {
     /**
      * @private
      */
-    private static mean(data: Array<number>): (number|false) {
+    private static mean(data: Array<number>): number | false {
         const length = data.length,
             sum = data.reduce(function (sum: number, value: number): number {
                 return (sum += value);
@@ -157,11 +151,13 @@ class BellcurveSeries extends AreaSplineSeries {
     private static standardDeviation(
         data: Array<number>,
         average?: number
-    ): (number|false) {
+    ): number | false {
         let len = data.length,
             sum;
 
-        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+        average = isNumber(average)
+            ? average
+            : (BellcurveSeries.mean(data) as any);
 
         sum = data.reduce(function (sum: number, value: number): number {
             const diff = value - (average as any);
@@ -182,10 +178,13 @@ class BellcurveSeries extends AreaSplineSeries {
     ): number {
         const translation = x - mean;
 
-        return Math.exp(
-            -(translation * translation) /
-            (2 * standardDeviation * standardDeviation)
-        ) / (standardDeviation * Math.sqrt(2 * Math.PI));
+        return (
+            Math.exp(
+                -(translation * translation) /
+                    (2 * standardDeviation * standardDeviation)
+            ) /
+            (standardDeviation * Math.sqrt(2 * Math.PI))
+        );
     }
 
     /* eslint-enable valid-jsdoc */
@@ -227,14 +226,17 @@ class BellcurveSeries extends AreaSplineSeries {
             i: number;
 
         for (i = 0; i < stop; i++) {
-            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            data.push([
+                x,
+                BellcurveSeries.normalDensity(x, mean, standardDeviation)
+            ]);
             x += increment;
         }
 
         return data;
     }
 
-    public setDerivedData(): Array<(PointOptions|PointShortOptions)> {
+    public setDerivedData(): Array<PointOptions | PointShortOptions> {
         if ((this.baseSeries as any).yData.length > 1) {
             this.setMean();
             this.setStandardDeviation();
@@ -246,14 +248,12 @@ class BellcurveSeries extends AreaSplineSeries {
                 false
             );
         }
-        return (void 0) as any;
+        return void 0 as any;
     }
 
     public setMean(): void {
         this.mean = correctFloat(
-            BellcurveSeries.mean(
-                (this.baseSeries as any).yData
-            ) as any
+            BellcurveSeries.mean((this.baseSeries as any).yData) as any
         );
     }
 
@@ -267,7 +267,6 @@ class BellcurveSeries extends AreaSplineSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -358,4 +357,4 @@ export default BellcurveSeries;
  * @apioption series.bellcurve.fillOpacity
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

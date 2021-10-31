@@ -48,7 +48,7 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
         data?: Highcharts.Data;
         hasDataDef?: boolean;
@@ -67,7 +67,7 @@ declare module '../Core/Options' {
  */
 declare global {
     namespace Highcharts {
-        type DataValueType = (number|string|null);
+        type DataValueType = number | string | null;
         interface DataAfterCompleteCallbackFunction {
             (dataOptions?: Partial<Options>): void;
         }
@@ -117,13 +117,13 @@ declare global {
             startColumn?: number;
             startRow?: number;
             switchRowsAndColumns?: boolean;
-            table?: (string|HTMLElement);
+            table?: string | HTMLElement;
         }
         interface DataParseDateCallbackFunction {
             (dateValue: string): number;
         }
         interface DataParsedCallbackFunction {
-            (columns: Array<Array<DataValueType>>): (boolean|undefined);
+            (columns: Array<Array<DataValueType>>): boolean | undefined;
         }
         interface DataValueCountObject {
             global: number;
@@ -133,7 +133,7 @@ declare global {
             xColumns: Array<number>;
         }
         interface SeriesBuilderReaderObject {
-            columnIndex: (number|undefined);
+            columnIndex: number | undefined;
             configName: string;
         }
         class Data {
@@ -156,9 +156,9 @@ declare global {
             public valueCount?: DataValueCountObject;
             public complete(): void;
             public dataFound(): void;
-            public fetchLiveData(): (boolean|string);
+            public fetchLiveData(): boolean | string;
             public getColumnDistribution(): void;
-            public getData(): (Array<Array<DataValueType>>|undefined);
+            public getData(): Array<Array<DataValueType>> | undefined;
             public getFreeIndexes(
                 numberOfColumns: number,
                 seriesBuilders: Array<SeriesBuilder>
@@ -172,15 +172,15 @@ declare global {
             public parseColumn(column: Array<DataValueType>, col: number): void;
             public parseCSV(
                 inOptions?: Highcharts.DataOptions
-            ): Array<Array<(number|string)>>;
-            public parsed(): (boolean|undefined);
+            ): Array<Array<number | string>>;
+            public parsed(): boolean | undefined;
             public parseDate(val: string): number;
             public parseGoogleSpreadsheet(): boolean;
-            public parseTable(): Array<Array<(number|string)>>;
+            public parseTable(): Array<Array<number | string>>;
             public parseTypes(): void;
             public rowsToColumns(
-                rows: (Array<Array<DataValueType>>|undefined)
-            ): (Array<Array<DataValueType>>|undefined);
+                rows: Array<Array<DataValueType>> | undefined
+            ): Array<Array<DataValueType>> | undefined;
             public trim(str: string, inside?: boolean): string;
         }
         class SeriesBuilder {
@@ -188,16 +188,16 @@ declare global {
             public readers: Array<SeriesBuilderReaderObject>;
             public pointIsArray: boolean;
             public addColumnReader(
-                columnIndex: (number|undefined),
+                columnIndex: number | undefined,
                 configName: string
             ): void;
             public getReferencedColumnIndexes(): Array<number>;
-            public hasReader(configName: string): (boolean|undefined);
+            public hasReader(configName: string): boolean | undefined;
             public populateColumns(freeIndexes: Array<number>): boolean;
             public read<DataItemType>(
                 columns: Array<Array<DataItemType>>,
                 rowIndex: number
-            ): (Array<DataItemType>|Record<string, DataItemType>);
+            ): Array<DataItemType> | Record<string, DataItemType>;
         }
         function data(
             dataOptions: DataOptions,
@@ -242,13 +242,13 @@ declare global {
  * Structure for alternative date formats to parse.
  *
  * @interface Highcharts.DataDateFormatObject
- *//**
+ */ /**
  * @name Highcharts.DataDateFormatObject#alternative
  * @type {string|undefined}
- *//**
+ */ /**
  * @name Highcharts.DataDateFormatObject#parser
  * @type {Highcharts.DataDateFormatCallbackFunction}
- *//**
+ */ /**
  * @name Highcharts.DataDateFormatObject#regex
  * @type {global.RegExp}
  */
@@ -732,7 +732,6 @@ declare global {
  * @param {Highcharts.Chart} [chart]
  */
 class Data {
-
     /* *
      *
      *  Constructors
@@ -762,7 +761,7 @@ class Data {
     public firstRowAsNames: boolean = void 0 as any;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>> = void 0 as any;
-    public options: Highcharts.DataOptions= void 0 as any;
+    public options: Highcharts.DataOptions = void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
 
     /* *
@@ -785,7 +784,6 @@ class Data {
         chartOptions?: Options,
         chart?: Chart
     ): void {
-
         let decimalPoint = options.decimalPoint,
             hasData;
 
@@ -801,11 +799,8 @@ class Data {
         }
 
         this.options = options;
-        this.columns = (
-            options.columns ||
-            this.rowsToColumns(options.rows) ||
-            []
-        );
+        this.columns =
+            options.columns || this.rowsToColumns(options.rows) || [];
 
         this.firstRowAsNames = pick(
             options.firstRowAsNames,
@@ -813,10 +808,9 @@ class Data {
             true
         );
 
-        this.decimalRegex = (
+        this.decimalRegex =
             decimalPoint &&
-            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$')
-        );
+            new RegExp('^(-?[0-9]+)' + decimalPoint + '([0-9]+)$');
 
         // This is a two-dimensional array holding the raw, trimmed string
         // values with the same organisation as the columns array. It makes it
@@ -863,8 +857,7 @@ class Data {
 
     public hasURLOption(options: Highcharts.DataOptions): boolean {
         return Boolean(
-            options &&
-            (options.rowsURL || options.csvURL || options.columnsURL)
+            options && (options.rowsURL || options.csvURL || options.columnsURL)
         );
     }
 
@@ -886,44 +879,38 @@ class Data {
             },
             getPointArrayMap = function (
                 type: string
-            ): (Array<string>|undefined) {
+            ): Array<string> | undefined {
                 return seriesTypes[type || 'line'].prototype.pointArrayMap;
             },
-            globalType: string = (
-                chartOptions &&
+            globalType: string = (chartOptions &&
                 chartOptions.chart &&
-                chartOptions.chart.type
-            ) as any,
+                chartOptions.chart.type) as any,
             individualCounts: Array<number> = [],
             seriesBuilders: Array<Highcharts.SeriesBuilder> = [],
             seriesIndex = 0,
-
             // If no series mapping is defined, check if the series array is
             // defined with types.
-            seriesMapping = (
+            seriesMapping =
                 (options && options.seriesMapping) ||
-                (
-                    chartOptions &&
+                (chartOptions &&
                     chartOptions.series &&
-                    chartOptions.series.map(function (
-                    ): Record<string, number> {
+                    chartOptions.series.map(function (): Record<
+                        string,
+                        number
+                    > {
                         return { x: 0 };
-                    })
-                ) ||
-                []
-            ),
+                    })) ||
+                [],
             i;
 
-        ((chartOptions && chartOptions.series) || []).forEach(
-            function (series): void {
-                individualCounts.push(getValueCount(series.type || globalType));
-            }
-        );
+        ((chartOptions && chartOptions.series) || []).forEach(function (
+            series
+        ): void {
+            individualCounts.push(getValueCount(series.type || globalType));
+        });
 
         // Collect the x-column indexes from seriesMapping
-        seriesMapping.forEach(function (
-            mapping: Record<string, number>
-        ): void {
+        seriesMapping.forEach(function (mapping: Record<string, number>): void {
             xColumns.push(mapping.x || 0);
         });
 
@@ -935,12 +922,10 @@ class Data {
 
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
-        seriesMapping.forEach(function (
-            mapping: Record<string, number>
-        ): void {
+        seriesMapping.forEach(function (mapping: Record<string, number>): void {
             const builder = new SeriesBuilder(),
-                numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
-                    getValueCount(globalType),
+                numberOfValueColumnsNeeded =
+                    individualCounts[seriesIndex] || getValueCount(globalType),
                 seriesArr = (chartOptions && chartOptions.series) || [],
                 series = seriesArr[seriesIndex] || {},
                 defaultPointArrayMap = getPointArrayMap(
@@ -1017,11 +1002,9 @@ class Data {
 
         // Handle columns if a handleColumns callback is given
         if (this.parsed() !== false) {
-
             // Complete if a complete callback is given
             this.complete();
         }
-
     }
 
     /**
@@ -1033,21 +1016,23 @@ class Data {
      *
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
+    public parseCSV(
+        inOptions?: Highcharts.DataOptions
+    ): Array<Array<Highcharts.DataValueType>> {
         let self = this,
             options = inOptions || this.options,
             csv = options.csv,
             columns: Array<Array<Highcharts.DataValueType>>,
-            startRow = (
-                typeof options.startRow !== 'undefined' && options.startRow ?
-                    options.startRow :
-                    0
-            ),
+            startRow =
+                typeof options.startRow !== 'undefined' && options.startRow
+                    ? options.startRow
+                    : 0,
             endRow = options.endRow || Number.MAX_VALUE,
-            startColumn = (
+            startColumn =
                 typeof options.startColumn !== 'undefined' &&
                 options.startColumn
-            ) ? options.startColumn : 0,
+                    ? options.startColumn
+                    : 0,
             endColumn = options.endColumn || Number.MAX_VALUE,
             itemDelimiter: string,
             lines,
@@ -1203,24 +1188,23 @@ class Data {
                         read(++i);
                     }
 
-                // Perform "plugin" handling
+                    // Perform "plugin" handling
                 } else if (callbacks && callbacks[c]) {
                     if (callbacks[c](c, token)) {
                         push();
                     }
 
-                // Delimiter - push current token
+                    // Delimiter - push current token
                 } else if (c === itemDelimiter) {
                     push();
 
-                // Actual column data
+                    // Actual column data
                 } else {
                     token += c;
                 }
             }
 
             push();
-
         }
 
         /**
@@ -1237,13 +1221,12 @@ class Data {
             lines.some(function (
                 columnStr: string,
                 i: number
-            ): (boolean|undefined) {
+            ): boolean | undefined {
                 let inStr = false,
                     c,
                     cn,
                     cl,
                     token = '';
-
 
                 // We should be able to detect dateformats within 13 rows
                 if (i > 13) {
@@ -1281,7 +1264,6 @@ class Data {
                             inStr = true;
                         }
                     } else if (typeof potDelimiters[c] !== 'undefined') {
-
                         token = token.trim();
 
                         if (!isNaN(Date.parse(token))) {
@@ -1294,7 +1276,6 @@ class Data {
                         }
 
                         token = '';
-
                     } else {
                         token += c;
                     }
@@ -1333,9 +1314,7 @@ class Data {
 
                 // Apply a new decimal regex based on the presumed decimal sep.
                 self.decimalRegex = new RegExp(
-                    '^(-?[0-9]+)' +
-                    options.decimalPoint +
-                    '([0-9]+)$'
+                    '^(-?[0-9]+)' + options.decimalPoint + '([0-9]+)$'
                 );
             }
 
@@ -1370,7 +1349,8 @@ class Data {
             for (; i < limit; i++) {
                 if (
                     typeof data[i] !== 'undefined' &&
-                    data[i] && data[i].length
+                    data[i] &&
+                    data[i].length
                 ) {
                     thing = data[i]
                         .trim()
@@ -1379,24 +1359,17 @@ class Data {
                         .replace(/\./g, ' ')
                         .split(' ');
 
-                    guessedFormat = [
-                        '',
-                        '',
-                        ''
-                    ];
-
+                    guessedFormat = ['', '', ''];
 
                     for (j = 0; j < thing.length; j++) {
                         if (j < guessedFormat.length) {
                             thing[j] = parseInt(thing[j] as any, 10);
 
                             if (thing[j]) {
-
-                                max[j] = (
+                                max[j] =
                                     !max[j] || max[j] < (thing[j] as any)
-                                ) ?
-                                    (thing[j] as any) :
-                                    max[j];
+                                        ? (thing[j] as any)
+                                        : max[j];
 
                                 if (typeof stable[j] !== 'undefined') {
                                     if (stable[j] !== thing[j]) {
@@ -1429,7 +1402,6 @@ class Data {
             }
 
             if (madeDeduction) {
-
                 // This handles a few edge cases with hard to guess dates
                 for (j = 0; j < stable.length; j++) {
                     if (stable[j] !== false) {
@@ -1447,9 +1419,11 @@ class Data {
 
                 // If the middle one is dd, and the last one is dd,
                 // the last should likely be year.
-                if (guessedFormat.length === 3 &&
+                if (
+                    guessedFormat.length === 3 &&
                     guessedFormat[1] === 'dd' &&
-                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] === 'dd'
+                ) {
                     guessedFormat[2] = 'YY';
                 }
 
@@ -1480,16 +1454,13 @@ class Data {
          * - If the first column is a string, set to categories
          * @private
          */
-        function deduceAxisTypes(): void {
-
-        }
+        function deduceAxisTypes(): void {}
 
         if (csv && options.beforeParse) {
             csv = options.beforeParse.call(this, csv);
         }
 
         if (csv) {
-
             lines = csv
                 .replace(/\r\n/g, '\n') // Unix
                 .replace(/\r/g, '\n') // Mac
@@ -1527,14 +1498,15 @@ class Data {
 
             deduceAxisTypes();
 
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
+            if (
+                (!options.columnTypes || options.columnTypes.length === 0) &&
                 dataTypes.length &&
                 dataTypes[0].length &&
                 dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
+                !options.dateFormat
+            ) {
                 options.dateFormat = deduceDateFormat(columns[0] as any);
             }
-
 
             // lines.forEach(function (line, rowNo) {
             //    let trimmed = self.trim(line),
@@ -1585,58 +1557,59 @@ class Data {
             endColumn = options.endColumn || Number.MAX_VALUE;
 
         if (table) {
-
             if (typeof table === 'string') {
                 table = doc.getElementById(table) as any;
             }
 
-            [].forEach.call(table.getElementsByTagName('tr'), function (
-                tr: HTMLTableRowElement,
-                rowNo: number
-            ): void {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (
-                        item: Element,
-                        colNo: number
-                    ): void {
-                        const row = (columns as any)[colNo - startColumn];
-                        let i = 1;
+            [].forEach.call(
+                table.getElementsByTagName('tr'),
+                function (tr: HTMLTableRowElement, rowNo: number): void {
+                    if (rowNo >= startRow && rowNo <= endRow) {
+                        [].forEach.call(
+                            tr.children,
+                            function (item: Element, colNo: number): void {
+                                const row = (columns as any)[
+                                    colNo - startColumn
+                                ];
+                                let i = 1;
 
-                        if (
-                            (
-                                item.tagName === 'TD' ||
-                                item.tagName === 'TH'
-                            ) &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn
-                        ) {
-                            if (!(columns as any)[colNo - startColumn]) {
-                                (columns as any)[colNo - startColumn] = [];
+                                if (
+                                    (item.tagName === 'TD' ||
+                                        item.tagName === 'TH') &&
+                                    colNo >= startColumn &&
+                                    colNo <= endColumn
+                                ) {
+                                    if (
+                                        !(columns as any)[colNo - startColumn]
+                                    ) {
+                                        (columns as any)[colNo - startColumn] =
+                                            [];
+                                    }
+
+                                    (columns as any)[colNo - startColumn][
+                                        rowNo - startRow
+                                    ] = item.innerHTML;
+
+                                    // Loop over all previous indices and make
+                                    // sure they are nulls, not undefined.
+                                    while (
+                                        rowNo - startRow >= i &&
+                                        row[rowNo - startRow - i] === void 0
+                                    ) {
+                                        row[rowNo - startRow - i] = null;
+                                        i++;
+                                    }
+                                }
                             }
-
-                            (columns as any)[colNo - startColumn][
-                                rowNo - startRow
-                            ] = item.innerHTML;
-
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (
-                                rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0
-                            ) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                    });
+                        );
+                    }
                 }
-            });
+            );
 
             this.dataFound(); // continue
         }
         return columns;
     }
-
 
     /**
      * Fetch or refetch live data
@@ -1673,20 +1646,16 @@ class Data {
          * @private
          */
         function performFetch(initialFetch?: boolean): void {
-
             /**
              * Helper function for doing the data fetch + polling.
              * @private
              */
             function request(
-                url: (string|undefined),
+                url: string | undefined,
                 done: Function,
                 tp?: string
             ): boolean {
-                if (
-                    !url ||
-                    !/^(http|\/|\.\/|\.\.\/)/.test(url)
-                ) {
+                if (!url || !/^(http|\/|\.\/|\.\.\/)/.test(url)) {
                     if (url && options.error) {
                         options.error('Invalid URL');
                     }
@@ -1705,8 +1674,10 @@ class Data {
                     // Poll
                     if (pollingEnabled && chart.liveDataURL === url) {
                         // We need to stop doing this if the URL has changed
-                        data.liveDataTimeout =
-                            setTimeout(performFetch, updateIntervalMs);
+                        data.liveDataTimeout = setTimeout(
+                            performFetch,
+                            updateIntervalMs
+                        );
                     }
                 }
 
@@ -1714,18 +1685,17 @@ class Data {
                     url: url,
                     dataType: tp || 'json',
                     success: function (
-                        res: (string|Highcharts.JSONType)
+                        res: string | Highcharts.JSONType
                     ): void {
                         if (chart && chart.series) {
                             done(res);
                         }
 
                         poll();
-
                     },
                     error: function (
                         xhr: XMLHttpRequest,
-                        text: (string|Error)
+                        text: string | Error
                     ): void {
                         if (++currentRetries < maxRetries) {
                             poll();
@@ -1738,37 +1708,41 @@ class Data {
                 return true;
             }
 
-            if (!request(
-                originalOptions.csvURL,
-                function (
-                    res: (string|Highcharts.JSONType)
-                ): void {
-                    chart.update({
-                        data: {
-                            csv: res
-                        }
-                    });
-                },
-                'text'
-            )) {
-                if (!request(originalOptions.rowsURL, function (
-                    res: (string|Highcharts.JSONType)
-                ): void {
-                    chart.update({
-                        data: {
-                            rows: res
-                        }
-                    });
-                })) {
-                    request(originalOptions.columnsURL, function (
-                        res: (string|Highcharts.JSONType)
-                    ): void {
+            if (
+                !request(
+                    originalOptions.csvURL,
+                    function (res: string | Highcharts.JSONType): void {
                         chart.update({
                             data: {
-                                columns: res
+                                csv: res
                             }
                         });
-                    });
+                    },
+                    'text'
+                )
+            ) {
+                if (
+                    !request(
+                        originalOptions.rowsURL,
+                        function (res: string | Highcharts.JSONType): void {
+                            chart.update({
+                                data: {
+                                    rows: res
+                                }
+                            });
+                        }
+                    )
+                ) {
+                    request(
+                        originalOptions.columnsURL,
+                        function (res: string | Highcharts.JSONType): void {
+                            chart.update({
+                                data: {
+                                    columns: res
+                                }
+                            });
+                        }
+                    );
                 }
             }
         }
@@ -1777,7 +1751,6 @@ class Data {
 
         return this.hasURLOption(options);
     }
-
 
     /**
      * Parse a Google spreadsheet.
@@ -1804,7 +1777,8 @@ class Data {
             }
 
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const start = (alphabet.charAt(options.startColumn || 0) || 'A') +
+            const start =
+                (alphabet.charAt(options.startColumn || 0) || 'A') +
                 ((options.startRow || 0) + 1);
 
             let end = alphabet.charAt(pick(options.endColumn, -1)) || 'ZZ';
@@ -1826,11 +1800,11 @@ class Data {
                 'values',
                 getRange(),
                 '?alt=json&' +
-                'majorDimension=COLUMNS&' +
-                'valueRenderOption=UNFORMATTED_VALUE&' +
-                'dateTimeRenderOption=FORMATTED_STRING&' +
-                'key=' + options.googleAPIKey
-
+                    'majorDimension=COLUMNS&' +
+                    'valueRenderOption=UNFORMATTED_VALUE&' +
+                    'dateTimeRenderOption=FORMATTED_STRING&' +
+                    'key=' +
+                    options.googleAPIKey
             ].join('/');
 
             ajax({
@@ -1840,17 +1814,14 @@ class Data {
                     fn(json);
 
                     if (options.enablePolling) {
-                        setTimeout(
-                            function (): void {
-                                fetchSheet(fn);
-                            },
-                            refreshRate
-                        );
+                        setTimeout(function (): void {
+                            fetchSheet(fn);
+                        }, refreshRate);
                     }
                 },
                 error: function (
                     xhr: XMLHttpRequest,
-                    text: (string|Error)
+                    text: string | Error
                 ): void {
                     return options.error && options.error(text, xhr);
                 }
@@ -1858,12 +1829,11 @@ class Data {
         }
 
         if (googleSpreadsheetKey) {
-
             delete options.googleSpreadsheetKey;
 
             fetchSheet(function (
                 json: Highcharts.JSONType
-            ): (boolean|undefined) {
+            ): boolean | undefined {
                 // Prepare the data from the spreadsheat
                 const columns: Array<Array<Highcharts.DataValueType>> =
                     json.values;
@@ -1874,10 +1844,8 @@ class Data {
 
                 // Find the maximum row count in order to extend shorter columns
                 const rowCount = columns.reduce(
-                    (rowCount, column): number => Math.max(
-                        rowCount,
-                        column.length
-                    ),
+                    (rowCount, column): number =>
+                        Math.max(rowCount, column.length),
                     0
                 );
 
@@ -1896,7 +1864,8 @@ class Data {
                             columns: columns
                         }
                     });
-                } else { // #8245
+                } else {
+                    // #8245
                     data.columns = columns;
                     data.dataFound();
                 }
@@ -1921,10 +1890,7 @@ class Data {
      * @return {string}
      *         Trimed string
      */
-    public trim(
-        str: string,
-        inside?: boolean
-    ): string {
+    public trim(str: string, inside?: boolean): string {
         if (typeof str === 'string') {
             str = str.replace(/^\s+|\s+$/g, '');
 
@@ -1952,7 +1918,6 @@ class Data {
         while (col--) {
             this.parseColumn((columns as any)[col], col);
         }
-
     }
 
     /**
@@ -1986,11 +1951,12 @@ class Data {
             descending,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
-            forceCategory = isXColumn && ((
-                chartOptions &&
-                chartOptions.xAxis &&
-                splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string');
+            forceCategory =
+                isXColumn &&
+                ((chartOptions &&
+                    chartOptions.xAxis &&
+                    splat(chartOptions.xAxis)[0].type === 'category') ||
+                    columnType === 'string');
 
         if (!rawColumns[col]) {
             rawColumns[col] = [];
@@ -2011,8 +1977,8 @@ class Data {
             // category
             if (forceCategory || (row === 0 && firstRowAsNames)) {
                 column[row] = '' + trimVal;
-
-            } else if (+trimInsideVal === floatVal) { // is numeric
+            } else if (+trimInsideVal === floatVal) {
+                // is numeric
 
                 column[row] = floatVal;
 
@@ -2031,8 +1997,8 @@ class Data {
                     descending = floatVal > (column[row + 1] as any);
                 }
 
-            // String, continue to determine if it is a date string or really a
-            // string
+                // String, continue to determine if it is a date string or
+                // really a string
             } else {
                 if (trimVal && trimVal.length) {
                     dateVal = this.parseDate(val as any);
@@ -2057,23 +2023,22 @@ class Data {
                                 this.dateFormat = this.alternativeFormat;
                                 row = column.length;
                                 this.alternativeFormat =
-                                    this.dateFormats[this.dateFormat]
-                                        .alternative;
+                                    this.dateFormats[
+                                        this.dateFormat
+                                    ].alternative;
                             } else {
                                 (column as any).unsorted = true;
                             }
                         }
                         descending = diff;
                     }
-
-                } else { // string
+                } else {
+                    // string
                     column[row] = trimVal === '' ? null : trimVal;
                     if (
                         row !== 0 &&
-                        (
-                            (column as any).isDatetime ||
-                            (column as any).isNumeric
-                        )
+                        ((column as any).isDatetime ||
+                            (column as any).isNumeric)
                     ) {
                         (column as any).mixed = true;
                     }
@@ -2112,45 +2077,39 @@ class Data {
     public dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[1], (match[2] as any) - 1, +match[3]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[1], (match[2] as any) - 1, +match[3])
+                    : NaN;
             }
         },
         'dd/mm/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3], (match[2] as any) - 1, +match[1]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[3], (match[2] as any) - 1, +match[1])
+                    : NaN;
             },
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3], (match[1] as any) - 1, +match[2]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(+match[3], (match[1] as any) - 1, +match[2])
+                    : NaN;
             }
         },
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 if (!match) {
                     return NaN;
                 }
                 let year = +match[3],
                     d = new Date();
 
-                if (year > (d.getFullYear() - 2000)) {
+                if (year > d.getFullYear() - 2000) {
                     year += 1900;
                 } else {
                     year += 2000;
@@ -2162,12 +2121,14 @@ class Data {
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
-                return (
-                    match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
-                        NaN
-                );
+            parser: function (match: RegExpMatchArray | null): number {
+                return match
+                    ? Date.UTC(
+                          +match[3] + 2000,
+                          (match[1] as any) - 1,
+                          +match[2]
+                      )
+                    : NaN;
             }
         }
     };
@@ -2193,11 +2154,11 @@ class Data {
 
         if (parseDate) {
             ret = parseDate(val);
-
         } else if (typeof val === 'string') {
             // Auto-detect the date format the first time
             if (!dateFormat) {
-                for (key in this.dateFormats) { // eslint-disable-line guard-for-in
+                // eslint-disable-next-line guard-for-in
+                for (key in this.dateFormats) {
                     format = this.dateFormats[key];
                     match = val.match(format.regex);
                     if (match) {
@@ -2207,10 +2168,9 @@ class Data {
                         break;
                     }
                 }
-            // Next time, use the one previously found
+                // Next time, use the one previously found
             } else {
                 format = this.dateFormats[dateFormat];
-
 
                 if (!format) {
                     // The selected format is invalid
@@ -2221,13 +2181,15 @@ class Data {
                 if (match) {
                     ret = format.parser(match);
                 }
-
             }
             // Fall back to Date.parse
             if (!match) {
                 if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
                     val = val
-                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(
+                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            '$1$2:$3'
+                        )
                         .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
@@ -2239,15 +2201,13 @@ class Data {
                     match !== null &&
                     (match as Date).getTime
                 ) {
-                    ret = (
+                    ret =
                         (match as Date).getTime() -
-                        (match as Date).getTimezoneOffset() *
-                        60000
-                    );
+                        (match as Date).getTimezoneOffset() * 60000;
 
-                // Timestamp
+                    // Timestamp
                 } else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    ret = match - new Date(match).getTimezoneOffset() * 60000;
                 }
             }
         }
@@ -2263,13 +2223,14 @@ class Data {
      *
      * @return {Array<Array<Highcharts.DataValueType>>|undefined}
      */
-    public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
-    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
+    public rowsToColumns(
+        rows: Array<Array<Highcharts.DataValueType>> | undefined
+    ): Array<Array<Highcharts.DataValueType>> | undefined {
         let row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<Highcharts.DataValueType>>|undefined);
+            columns: Array<Array<Highcharts.DataValueType>> | undefined;
 
         if (rows) {
             columns = [];
@@ -2301,7 +2262,7 @@ class Data {
      *
      * @return {Array<Array<(number|string)>>|undefined} Data rows
      */
-    public getData(): (Array<Array<(number|string)>>|undefined) {
+    public getData(): Array<Array<number | string>> | undefined {
         if (this.columns) {
             return (this.rowsToColumns(this.columns) as any).slice(1);
         }
@@ -2314,7 +2275,7 @@ class Data {
      *
      * @return {boolean|undefined}
      */
-    public parsed(): (boolean|undefined) {
+    public parsed(): boolean | undefined {
         if (this.options.parsed) {
             return this.options.parsed.call(this, this.columns as any);
         }
@@ -2365,7 +2326,6 @@ class Data {
      * @function Highcharts.Data#complete
      */
     public complete(): void {
-
         let columns = this.columns,
             xColumns = [],
             type,
@@ -2385,7 +2345,6 @@ class Data {
 
         xColumns.length = (columns as any).length;
         if (options.complete || options.afterComplete) {
-
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
                 for (i = 0; i < (columns as any).length; i++) {
@@ -2502,7 +2461,6 @@ class Data {
                 }
             }
 
-
             // Do the callback
             chartOptions = {
                 series: series
@@ -2526,7 +2484,6 @@ class Data {
                 options.afterComplete(chartOptions);
             }
         }
-
     }
 
     /**
@@ -2538,10 +2495,7 @@ class Data {
      *
      * @param {boolean} [redraw=true]
      */
-    public update(
-        options: Highcharts.DataOptions,
-        redraw?: boolean
-    ): void {
+    public update(options: Highcharts.DataOptions, redraw?: boolean): void {
         const chart = this.chart;
 
         if (options) {
@@ -2557,7 +2511,7 @@ class Data {
                         dataOptions.xAxis &&
                         chart.xAxis[0] &&
                         (dataOptions.xAxis as any).type ===
-                        chart.xAxis[0].options.type
+                            chart.xAxis[0].options.type
                     ) {
                         delete dataOptions.xAxis;
                     }
@@ -2605,13 +2559,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Partial<Options>|undefined),
-                (Chart.CallbackFunction|undefined)
+                Partial<Options> | undefined,
+                Chart.CallbackFunction | undefined
             ];
         }
     ): void {
         let chart = this, // eslint-disable-line no-invalid-this
-            userOptions: Partial<Options> = (e.args[0] || {}),
+            userOptions: Partial<Options> = e.args[0] || {},
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2622,48 +2576,47 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new G.Data(extend(userOptions.data, {
+            chart.data = new G.Data(
+                extend(userOptions.data, {
+                    afterComplete: function (
+                        dataOptions?: Partial<Options>
+                    ): void {
+                        let i, series;
 
-                afterComplete: function (
-                    dataOptions?: Partial<Options>
-                ): void {
-                    let i, series;
-
-                    // Merge series configs
-                    if (
-                        Object.hasOwnProperty.call(
-                            userOptions,
-                            'series'
-                        )
-                    ) {
-                        if (typeof userOptions.series === 'object') {
-                            i = Math.max(
-                                userOptions.series.length,
-                                dataOptions && dataOptions.series ?
-                                    dataOptions.series.length :
-                                    0
-                            );
-                            while (i--) {
-                                series = userOptions.series[i] || {};
-                                userOptions.series[i] = merge(
-                                    series,
-                                    dataOptions && dataOptions.series ?
-                                        dataOptions.series[i] :
-                                        {}
+                        // Merge series configs
+                        if (Object.hasOwnProperty.call(userOptions, 'series')) {
+                            if (typeof userOptions.series === 'object') {
+                                i = Math.max(
+                                    userOptions.series.length,
+                                    dataOptions && dataOptions.series
+                                        ? dataOptions.series.length
+                                        : 0
                                 );
+                                while (i--) {
+                                    series = userOptions.series[i] || {};
+                                    userOptions.series[i] = merge(
+                                        series,
+                                        dataOptions && dataOptions.series
+                                            ? dataOptions.series[i]
+                                            : {}
+                                    );
+                                }
+                            } else {
+                                // Allow merging in dataOptions.series (#2856)
+                                delete userOptions.series;
                             }
-                        } else { // Allow merging in dataOptions.series (#2856)
-                            delete userOptions.series;
                         }
+
+                        // Do the merge
+                        userOptions = merge(dataOptions, userOptions);
+
+                        // Run chart.init again
+                        chart.init(userOptions, callback);
                     }
-
-                    // Do the merge
-                    userOptions = merge(dataOptions, userOptions);
-
-                    // Run chart.init again
-                    chart.init(userOptions, callback);
-                }
-            }), userOptions, chart);
+                }),
+                userOptions,
+                chart
+            );
 
             e.preventDefault();
         }
@@ -2744,14 +2697,13 @@ class SeriesBuilder {
      *
      * @returns {Array<T>|Highcharts.Dictionary<T>}
      */
-    public read <T>(
+    public read<T>(
         columns: Array<Array<T>>,
         rowIndex: number
-    ): (Array<T>|Record<string, T>) {
+    ): Array<T> | Record<string, T> {
         let builder = this,
             pointIsArray = builder.pointIsArray,
-            point =
-                pointIsArray ? [] as Array<T> : {} as Record<string, T>,
+            point = pointIsArray ? ([] as Array<T>) : ({} as Record<string, T>),
             columnIndexes;
 
         // Loop each reader and ask it to read its value.
@@ -2767,7 +2719,9 @@ class SeriesBuilder {
                 if (reader.configName.indexOf('.') > 0) {
                     // Handle nested property names
                     Point.prototype.setNestedProperty(
-                        point, value, reader.configName
+                        point,
+                        value,
+                        reader.configName
                     );
                 } else {
                     (point as any)[reader.configName] = value;
@@ -2807,7 +2761,7 @@ class SeriesBuilder {
      * @param {string} configName
      */
     public addColumnReader(
-        columnIndex: (number|undefined),
+        columnIndex: number | undefined,
         configName: string
     ): void {
         this.readers.push({
@@ -2815,11 +2769,13 @@ class SeriesBuilder {
             configName: configName
         });
 
-        if (!(
-            configName === 'x' ||
-            configName === 'y' ||
-            typeof configName === 'undefined'
-        )) {
+        if (
+            !(
+                configName === 'x' ||
+                configName === 'y' ||
+                typeof configName === 'undefined'
+            )
+        ) {
             this.pointIsArray = false;
         }
     }
@@ -2856,7 +2812,7 @@ class SeriesBuilder {
      *
      * @returns {boolean|undefined}
      */
-    public hasReader(configName: string): (boolean|undefined) {
+    public hasReader(configName: string): boolean | undefined {
         let i, columnReader;
 
         for (i = 0; i < this.readers.length; i = i + 1) {

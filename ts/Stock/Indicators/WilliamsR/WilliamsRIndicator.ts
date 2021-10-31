@@ -19,16 +19,10 @@ import type WilliamsRPoint from './WilliamsRPoint';
 import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+const { extend, isArray, merge } = U;
 
 /**
  * The Williams %R series type.
@@ -57,29 +51,32 @@ class WilliamsRIndicator extends SMAIndicator {
      * @requires     stock/indicators/williams-r
      * @optionparent plotOptions.williamsr
      */
-    public static defaultOptions: WilliamsROptions = merge(SMAIndicator.defaultOptions, {
-        /**
-         * Paramters used in calculation of Williams %R series points.
-         * @excluding index
-         */
-        params: {
-            index: void 0, // unchangeable index, do not inherit (#15362)
+    public static defaultOptions: WilliamsROptions = merge(
+        SMAIndicator.defaultOptions,
+        {
             /**
-             * Period for Williams %R oscillator
+             * Paramters used in calculation of Williams %R series points.
+             * @excluding index
              */
-            period: 14
-        }
-    } as WilliamsROptions)
+            params: {
+                index: void 0, // unchangeable index, do not inherit (#15362)
+                /**
+                 * Period for Williams %R oscillator
+                 */
+                period: 14
+            }
+        } as WilliamsROptions
+    );
 
     public data: Array<WilliamsRPoint> = void 0 as any;
     public options: WilliamsROptions = void 0 as any;
     public points: Array<WilliamsRPoint> = void 0 as any;
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
         params: WilliamsRParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         let period: number = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<Array<number>> = series.yData as any,
@@ -99,11 +96,7 @@ class WilliamsRIndicator extends SMAIndicator {
             i: number;
 
         // Williams %R requires close value
-        if (
-            xVal.length < period ||
-            !isArray(yVal[0]) ||
-            yVal[0].length !== 4
-        ) {
+        if (xVal.length < period || !isArray(yVal[0]) || yVal[0].length !== 4) {
             return;
         }
 
@@ -174,4 +167,4 @@ export default WilliamsRIndicator;
  * @apioption series.williamsr
  */
 
-''; // adds doclets above to the transpiled file
+(''); // adds doclets above to the transpiled file

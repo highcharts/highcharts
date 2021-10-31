@@ -21,9 +21,7 @@
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 import Instrument from './Instrument.js';
 import SU from './SonificationUtilities.js';
 import sonificationOptions from './Options.js';
@@ -37,11 +35,7 @@ import sonificationOptions from './Options.js';
 // Expose on the Highcharts object
 
 // Add default options
-merge(
-    true,
-    defaultOptions,
-    sonificationOptions
-);
+merge(true, defaultOptions, sonificationOptions);
 
 const Sonification = {
     fadeOutDuration: 20,
@@ -73,41 +67,41 @@ export default Sonification;
  * @requires module:modules/sonification
  *
  * @interface Highcharts.SonificationObject
- *//**
+ */ /**
  * Note fade-out-time in milliseconds. Most notes are faded out quickly by
  * default if there is time. This is to avoid abrupt stops which will cause
  * perceived clicks.
  * @name Highcharts.SonificationObject#fadeOutDuration
  * @type {number}
- *//**
+ */ /**
  * Utility functions.
  * @name Highcharts.SonificationObject#utilities
  * @private
  * @type {object}
- *//**
+ */ /**
  * The Instrument class.
  * @name Highcharts.SonificationObject#Instrument
  * @type {Function}
- *//**
+ */ /**
  * Predefined instruments, given as an object with a map between the instrument
  * name and the Highcharts.Instrument object.
  * @name Highcharts.SonificationObject#instruments
  * @type {Object}
- *//**
+ */ /**
  * The Earcon class.
  * @name Highcharts.SonificationObject#Earcon
  * @type {Function}
- *//**
+ */ /**
  * The TimelineEvent class.
  * @private
  * @name Highcharts.SonificationObject#TimelineEvent
  * @type {Function}
- *//**
+ */ /**
  * The TimelinePath class.
  * @private
  * @name Highcharts.SonificationObject#TimelinePath
  * @type {Function}
- *//**
+ */ /**
  * The Timeline class.
  * @private
  * @name Highcharts.SonificationObject#Timeline

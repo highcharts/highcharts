@@ -30,14 +30,10 @@ import GeoJSONGeometry from '../../Maps/GeoJSON';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
+    seriesTypes: { scatter: ScatterSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
 /* *
  *
@@ -46,7 +42,6 @@ const {
  * */
 
 class MapPoint extends ScatterSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -63,7 +58,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public path: SVGPath = void 0 as any;
 
-    public projectedPath: SVGPath|undefined;
+    public projectedPath: SVGPath | undefined;
 
     public series: MapSeries = void 0 as any;
 
@@ -83,13 +78,12 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     ): SVGPath {
         if (!point.projectedPath) {
             if (projection && point.geometry) {
-
                 // Always true when given GeoJSON coordinates
                 projection.hasCoordinates = true;
 
                 point.projectedPath = projection.path(point.geometry);
 
-            // SVG path given directly in point options
+                // SVG path given directly in point options
             } else {
                 point.projectedPath = point.path;
             }
@@ -102,22 +96,21 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * @private
      */
     public applyOptions(
-        options: (MapPointOptions|PointShortOptions),
+        options: MapPointOptions | PointShortOptions,
         x?: number
     ): MapPoint {
-
         let series = this.series,
-            point: MapPoint = (
-                super.applyOptions.call(this, options, x) as any
-            ),
+            point: MapPoint = super.applyOptions.call(this, options, x) as any,
             joinBy = series.joinBy,
             mapPoint;
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(point, joinKey) as string;
-            mapPoint = typeof mapKey !== 'undefined' &&
-                series.mapMap[mapKey];
+            const mapKey = super.getNestedProperty.call(
+                point,
+                joinKey
+            ) as string;
+            mapPoint = typeof mapKey !== 'undefined' && series.mapMap[mapKey];
             if (mapPoint) {
                 extend(point, mapPoint); // copy over properties
             } else {
@@ -153,7 +146,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point = this as (MapPoint&MapPoint.CacheObject);
+        const point = this as MapPoint & MapPoint.CacheObject;
         const chart = point.series.chart;
 
         if (chart.mapView && point.bounds) {
@@ -165,7 +158,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -175,7 +167,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPointProperties {
-    [key: string]: number|string;
+    [key: string]: number | string;
 }
 
 interface MapPoint extends ColorMapComposition.PointComposition {

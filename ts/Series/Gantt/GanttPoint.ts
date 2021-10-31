@@ -24,9 +24,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         xrange: {
-            prototype: {
-                pointClass: XRangePoint
-            }
+            prototype: { pointClass: XRangePoint }
         }
     }
 } = SeriesRegistry;
@@ -40,7 +38,6 @@ const { pick } = U;
  * */
 
 class GanttPoint extends XRangePoint {
-
     /* *
      *
      *  Static Functions
@@ -52,7 +49,9 @@ class GanttPoint extends XRangePoint {
     /**
      * @private
      */
-    public static setGanttPointAliases(options: (GanttPoint|GanttPointOptions)): void {
+    public static setGanttPointAliases(
+        options: GanttPoint | GanttPointOptions
+    ): void {
         /**
          * Add a value to options if the value exists.
          * @private
@@ -66,7 +65,8 @@ class GanttPoint extends XRangePoint {
         addIfExists('x', pick(options.start, options.x));
         addIfExists('x2', pick(options.end, options.x2));
         addIfExists(
-            'partialFill', pick(options.completed, options.partialFill)
+            'partialFill',
+            pick(options.completed, options.partialFill)
         );
     }
 
@@ -116,10 +116,7 @@ class GanttPoint extends XRangePoint {
      * @return {Highcharts.Point}
      *         The Point instance
      */
-    public applyOptions(
-        options: GanttPointOptions,
-        x: number
-    ): GanttPoint {
+    public applyOptions(options: GanttPointOptions, x: number): GanttPoint {
         let point = this,
             ganttPoint: GanttPoint;
 
@@ -131,22 +128,15 @@ class GanttPoint extends XRangePoint {
 
     public isValid(): boolean {
         return (
-            (
-                typeof this.start === 'number' ||
-                typeof this.x === 'number'
-            ) &&
-            (
-                typeof this.end === 'number' ||
+            (typeof this.start === 'number' || typeof this.x === 'number') &&
+            (typeof this.end === 'number' ||
                 typeof this.x2 === 'number' ||
-                (this.milestone as any)
-            )
+                (this.milestone as any))
         );
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
-
 
 /* *
  *

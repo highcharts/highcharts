@@ -35,7 +35,6 @@ const { addEvent } = U;
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
 addEvent(Axis, 'afterSetAxisTranslation', function (): void {
-
     if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }
@@ -43,19 +42,20 @@ addEvent(Axis, 'afterSetAxisTranslation', function (): void {
     const axis = this,
         // Find which series' padding to use
         seriesPadding = axis.series
-            .map(function (series): Record<string, number>|undefined {
-                return series.getSeriesPixelPadding &&
-                    series.getSeriesPixelPadding(axis);
+            .map(function (series): Record<string, number> | undefined {
+                return (
+                    series.getSeriesPixelPadding &&
+                    series.getSeriesPixelPadding(axis)
+                );
             })
-            .reduce(function (a, b): Record<string, number>|undefined {
-                return (a && (a.padding as any)) > (b && (b.padding as any)) ?
-                    a :
-                    b;
-            }, void 0) ||
-            {
-                padding: 0,
-                axisLengthFactor: 1
-            },
+            .reduce(function (a, b): Record<string, number> | undefined {
+                return (a && (a.padding as any)) > (b && (b.padding as any))
+                    ? a
+                    : b;
+            }, void 0) || {
+            padding: 0,
+            axisLengthFactor: 1
+        },
         lengthPadding = Math.round(
             seriesPadding.padding * seriesPadding.axisLengthFactor
         );

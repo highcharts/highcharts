@@ -19,16 +19,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    merge
-} = U;
+const { correctFloat, extend, merge } = U;
 
 /**
  * The Keltner Channels series type.
@@ -59,67 +53,71 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
      */
-    public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
+    public static defaultOptions: KeltnerChannelsOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                /**
+                 * The point index which indicator calculations will base. For
+                 * example using OHLC data, index=2 means the indicator will be
+                 * calculated using Low values.
+                 */
+                index: 0,
+                period: 20,
+                /**
+                 * The ATR period.
+                 */
+                periodATR: 10,
+                /**
+                 * The ATR multiplier.
+                 */
+                multiplierATR: 2
+            },
             /**
-             * The point index which indicator calculations will base. For
-             * example using OHLC data, index=2 means the indicator will be
-             * calculated using Low values.
-             */
-            index: 0,
-            period: 20,
-            /**
-             * The ATR period.
-             */
-            periodATR: 10,
-            /**
-             * The ATR multiplier.
-             */
-            multiplierATR: 2
-        },
-        /**
-         * Bottom line options.
-         *
-         */
-        bottomLine: {
-            /**
-             * Styles for a bottom line.
+             * Bottom line options.
              *
              */
-            styles: {
+            bottomLine: {
                 /**
-                 * Pixel width of the line.
+                 * Styles for a bottom line.
+                 *
                  */
-                lineWidth: 1,
-                /**
-                 * Color of the line. If not set, it's inherited from
-                 * `plotOptions.keltnerchannels.color`
-                 */
-                lineColor: void 0
-            }
-        },
-        /**
-         * Top line options.
-         *
-         * @extends plotOptions.keltnerchannels.bottomLine
-         */
-        topLine: {
-            styles: {
-                lineWidth: 1,
-                lineColor: void 0
-            }
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Upper Channel: {point.top}<br/>EMA({series.options.params.period}): {point.middle}<br/>Lower Channel: {point.bottom}<br/>'
-        },
-        marker: {
-            enabled: false
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        },
-        lineWidth: 1
-    } as KeltnerChannelsOptions)
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1,
+                    /**
+                     * Color of the line. If not set, it's inherited from
+                     * `plotOptions.keltnerchannels.color`
+                     */
+                    lineColor: void 0
+                }
+            },
+            /**
+             * Top line options.
+             *
+             * @extends plotOptions.keltnerchannels.bottomLine
+             */
+            topLine: {
+                styles: {
+                    lineWidth: 1,
+                    lineColor: void 0
+                }
+            },
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>Upper Channel: {point.top}<br/>EMA({series.options.params.period}): {point.middle}<br/>Lower Channel: {point.bottom}<br/>'
+            },
+            marker: {
+                enabled: false
+            },
+            dataGrouping: {
+                approximation: 'averages'
+            },
+            lineWidth: 1
+        } as KeltnerChannelsOptions
+    );
 
     public data: Array<KeltnerChannelsPoint> = void 0 as any;
     public options: KeltnerChannelsOptions = void 0 as any;
@@ -128,28 +126,31 @@ class KeltnerChannelsIndicator extends SMAIndicator {
     public init(this: KeltnerChannelsIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
-        this.options = merge({
-            topLine: {
-                styles: {
-                    lineColor: this.color
+        this.options = merge(
+            {
+                topLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
+                },
+                bottomLine: {
+                    styles: {
+                        lineColor: this.color
+                    }
                 }
             },
-            bottomLine: {
-                styles: {
-                    lineColor: this.color
-                }
-            }
-        }, this.options);
+            this.options
+        );
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period = (params.period as any),
-            periodATR: number = (params.periodATR as any),
-            multiplierATR: number = (params.multiplierATR as any),
-            index: number = (params.index as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period = params.period as any,
+            periodATR: number = params.periodATR as any,
+            multiplierATR: number = params.multiplierATR as any,
+            index: number = params.index as any,
             yVal: Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // Keltner Channels array structure:
@@ -160,19 +161,13 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             TL: number,
             BL: number,
             date: number,
-            seriesEMA: (
-                IndicatorValuesObject<TLinkedSeries>|
-                undefined
-            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
-                {
+            seriesEMA: IndicatorValuesObject<TLinkedSeries> | undefined =
+                SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
                     period: period,
                     index: index
                 }),
-            seriesATR: (
-                IndicatorValuesObject<TLinkedSeries>|undefined
-            ) =
-            SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
-                {
+            seriesATR: IndicatorValuesObject<TLinkedSeries> | undefined =
+                SeriesRegistry.seriesTypes.atr.prototype.getValues(series, {
                     period: periodATR
                 }),
             pointEMA: Array<number>,
@@ -189,8 +184,8 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             pointEMA = (seriesEMA as any).values[i - period];
             pointATR = (seriesATR as any).values[i - periodATR];
             date = pointEMA[0];
-            TL = correctFloat(pointEMA[1] + (multiplierATR * pointATR[1]));
-            BL = correctFloat(pointEMA[1] - (multiplierATR * pointATR[1]));
+            TL = correctFloat(pointEMA[1] + multiplierATR * pointATR[1]);
+            BL = correctFloat(pointEMA[1] - multiplierATR * pointATR[1]);
             ML = pointEMA[1];
             KC.push([date, TL, ML, BL]);
             xData.push(date);
@@ -211,7 +206,8 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
-interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition {
+interface KeltnerChannelsIndicator
+    extends MultipleLinesComposition.Composition {
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: MultipleLinesComposition.Composition['pointArrayMap'];
@@ -265,4 +261,4 @@ export default KeltnerChannelsIndicator;
  * @apioption    series.keltnerchannels
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

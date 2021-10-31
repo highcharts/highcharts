@@ -14,10 +14,7 @@
  *
  * */
 
-import type {
-    ABandsOptions,
-    ABandsParamsOptions
-} from './ABandsOptions';
+import type { ABandsOptions, ABandsParamsOptions } from './ABandsOptions';
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
@@ -25,40 +22,35 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    merge
-} = U;
+const { correctFloat, extend, merge } = U;
 
 /* eslint-disable valid-jsdoc */
 /**
  * @private
  */
 function getBaseForBand(low: number, high: number, factor: number): number {
-    return ((
-        (correctFloat(high - low)) /
-        ((correctFloat(high + low)) / 2)
-    ) * 1000) * factor;
+    return (
+        (correctFloat(high - low) / (correctFloat(high + low) / 2)) *
+        1000 *
+        factor
+    );
 }
 
 /**
  * @private
  */
 function getPointUB(high: number, base: number): number {
-    return high * (correctFloat(1 + 2 * base));
+    return high * correctFloat(1 + 2 * base);
 }
 
 /**
  * @private
  */
 function getPointLB(low: number, base: number): number {
-    return low * (correctFloat(1 - 2 * base));
+    return low * correctFloat(1 - 2 * base);
 }
 
 /* eslint-enable valid-jsdoc */
@@ -73,7 +65,6 @@ function getPointLB(low: number, base: number): number {
  * @augments Highcharts.Series
  */
 class ABandsIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -100,38 +91,41 @@ class ABandsIndicator extends SMAIndicator {
      * @requires     stock/indicators/acceleration-bands
      * @optionparent plotOptions.abands
      */
-    public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 20,
-            /**
-             * The algorithms factor value used to calculate bands.
-             *
-             * @product highstock
-             */
-            factor: 0.001,
-            index: 3
-        },
-        lineWidth: 1,
-        topLine: {
-            styles: {
+    public static defaultOptions: ABandsOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                period: 20,
                 /**
-                 * Pixel width of the line.
+                 * The algorithms factor value used to calculate bands.
+                 *
+                 * @product highstock
                  */
-                lineWidth: 1
+                factor: 0.001,
+                index: 3
+            },
+            lineWidth: 1,
+            topLine: {
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1
+                }
+            },
+            bottomLine: {
+                styles: {
+                    /**
+                     * Pixel width of the line.
+                     */
+                    lineWidth: 1
+                }
+            },
+            dataGrouping: {
+                approximation: 'averages'
             }
-        },
-        bottomLine: {
-            styles: {
-                /**
-                 * Pixel width of the line.
-                 */
-                lineWidth: 1
-            }
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as ABandsOptions);
+        } as ABandsOptions
+    );
 
     /* *
      *
@@ -155,12 +149,12 @@ class ABandsIndicator extends SMAIndicator {
         this: ABandsIndicator,
         series: TLinkedSeries,
         params: ABandsParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let period: number = (params.period as any),
-            factor: number = (params.factor as any),
-            index: number = (params.index as any),
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<number|null|undefined> = (series.yData as any),
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
+        let period: number = params.period as any,
+            factor: number = params.factor as any,
+            index: number = params.index as any,
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<number | null | undefined> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             // Upperbands
             UB: Array<number> = [],
@@ -168,13 +162,13 @@ class ABandsIndicator extends SMAIndicator {
             LB: Array<number> = [],
             // ABANDS array structure:
             // 0-date, 1-top line, 2-middle line, 3-bottom line
-            ABANDS: Array<Array<(number|null|undefined)>> = [],
+            ABANDS: Array<Array<number | null | undefined>> = [],
             // middle line, top line and bottom line
             ML: number,
             TL: number,
             BL: number,
             date: number,
-            bandBase: (number|undefined),
+            bandBase: number | undefined,
             pointSMA: IndicatorValuesObject<TLinkedSeries>,
             ubSMA: IndicatorValuesObject<TLinkedSeries>,
             lbSMA: IndicatorValuesObject<TLinkedSeries>,
@@ -182,9 +176,9 @@ class ABandsIndicator extends SMAIndicator {
             high = 1,
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            slicedX: (Array<number>|undefined),
-            slicedY: (Array<number|null|undefined>|undefined),
-            i: (number|undefined);
+            slicedX: Array<number> | undefined,
+            slicedY: Array<number | null | undefined> | undefined,
+            i: number | undefined;
 
         if (yValLen < period) {
             return;
@@ -207,29 +201,41 @@ class ABandsIndicator extends SMAIndicator {
             if (i >= period) {
                 slicedX = xVal.slice(i - period, i);
                 slicedY = yVal.slice(i - period, i);
-                ubSMA = super.getValues.call(this, ({
-                    xData: slicedX,
-                    yData: UB.slice(i - period, i)
-                } as any), {
-                    period: period
-                }) as IndicatorValuesObject<TLinkedSeries>;
-                lbSMA = super.getValues.call(this, ({
-                    xData: slicedX,
-                    yData: LB.slice(i - period, i)
-                } as any), {
-                    period: period
-                }) as IndicatorValuesObject<TLinkedSeries>;
-                pointSMA = (super.getValues.call(this, ({
-                    xData: slicedX,
-                    yData: slicedY
-                } as any), {
-                    period: period,
-                    index: index
-                }) as IndicatorValuesObject<TLinkedSeries>);
+                ubSMA = super.getValues.call(
+                    this,
+                    {
+                        xData: slicedX,
+                        yData: UB.slice(i - period, i)
+                    } as any,
+                    {
+                        period: period
+                    }
+                ) as IndicatorValuesObject<TLinkedSeries>;
+                lbSMA = super.getValues.call(
+                    this,
+                    {
+                        xData: slicedX,
+                        yData: LB.slice(i - period, i)
+                    } as any,
+                    {
+                        period: period
+                    }
+                ) as IndicatorValuesObject<TLinkedSeries>;
+                pointSMA = super.getValues.call(
+                    this,
+                    {
+                        xData: slicedX,
+                        yData: slicedY
+                    } as any,
+                    {
+                        period: period,
+                        index: index
+                    }
+                ) as IndicatorValuesObject<TLinkedSeries>;
                 date = pointSMA.xData[0];
-                TL = (ubSMA.yData[0] as any);
-                BL = (lbSMA.yData[0] as any);
-                ML = (pointSMA.yData[0] as any);
+                TL = ubSMA.yData[0] as any;
+                BL = lbSMA.yData[0] as any;
+                ML = pointSMA.yData[0] as any;
                 ABANDS.push([date, TL, ML, BL]);
                 xData.push(date);
                 yData.push([TL, ML, BL]);
@@ -242,7 +248,6 @@ class ABandsIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
 }
 
 /* *
@@ -311,4 +316,4 @@ export default ABandsIndicator;
  * @apioption series.abands
  */
 
-''; // to include the above in jsdoc
+(''); // to include the above in jsdoc

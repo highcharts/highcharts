@@ -24,10 +24,7 @@ import type TimelinePath from './TimelinePath';
 
 import Sonification from './Sonification.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    splat
-} = U;
+const { merge, splat } = U;
 
 /**
  * Internal types.
@@ -58,16 +55,13 @@ import SU from './SonificationUtilities.js';
  *        Options for the Timeline.
  */
 class Timeline {
-
     /* *
      *
      *  Constructor
      *
      * */
 
-    public constructor(
-        options: Timeline.Options
-    ) {
+    public constructor(options: Timeline.Options) {
         this.init(options || {});
     }
 
@@ -79,7 +73,7 @@ class Timeline {
 
     public cursor: number = void 0 as any;
     public options: Timeline.Options = void 0 as any;
-    public paths: Array<(TimelinePath|Array<TimelinePath>)> = void 0 as any;
+    public paths: Array<TimelinePath | Array<TimelinePath>> = void 0 as any;
     public pathsPlaying: Record<string, TimelinePath> = void 0 as any;
     public signalHandler: SignalHandler = void 0 as any;
 
@@ -89,17 +83,17 @@ class Timeline {
      *
      * */
 
-    public init(
-        this: Timeline,
-        options: Timeline.Options
-    ): void {
+    public init(this: Timeline, options: Timeline.Options): void {
         this.options = options;
         this.cursor = 0;
         this.paths = options.paths || [];
         this.pathsPlaying = {};
-        this.signalHandler = new SU.SignalHandler(
-            ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
-        );
+        this.signalHandler = new SU.SignalHandler([
+            'playOnEnd',
+            'masterOnEnd',
+            'onPathStart',
+            'onPathEnd'
+        ]);
         this.signalHandler.registerSignalCallbacks(
             merge(options as any, { masterOnEnd: options.onEnd })
         );
@@ -113,10 +107,7 @@ class Timeline {
      * callbacks.
      * @return {void}
      */
-    public play(
-        this: Timeline,
-        onEnd?: Function
-    ): void {
+    public play(this: Timeline, onEnd?: Function): void {
         this.pause();
         this.signalHandler.clearSignalCallbacks(['playOnEnd']);
         this.signalHandler.registerSignalCallbacks({ playOnEnd: onEnd });
@@ -145,10 +136,7 @@ class Timeline {
      * Direction to play in. 1 for forwards, -1 for backwards.
      * @return {void}
      */
-    public playPaths(
-        this: Timeline,
-        direction: number
-    ): void {
+    public playPaths(this: Timeline, direction: number): void {
         const timeline = this,
             signalHandler = timeline.signalHandler;
 
@@ -161,8 +149,7 @@ class Timeline {
             return;
         }
 
-        const curPaths: Array<TimelinePath> =
-                splat(this.paths[this.cursor]),
+        const curPaths: Array<TimelinePath> = splat(this.paths[this.cursor]),
             nextPaths = this.paths[this.cursor + direction],
             // Play a path
             playPath = function (path: TimelinePath): void {
@@ -198,7 +185,9 @@ class Timeline {
                                 nextPath: TimelinePath
                             ): void {
                                 nextPath[
-                                    direction > 0 ? 'resetCursor' : 'resetCursorEnd'
+                                    direction > 0
+                                        ? 'resetCursor'
+                                        : 'resetCursorEnd'
                                 ]();
                             });
                             // Play next
@@ -236,10 +225,7 @@ class Timeline {
      * cancelled synchronously.
      * @return {void}
      */
-    public pause(
-        this: Timeline,
-        fadeOut?: boolean
-    ): void {
+    public pause(this: Timeline, fadeOut?: boolean): void {
         const timeline = this;
 
         // Cancel currently playing events
@@ -258,7 +244,7 @@ class Timeline {
      */
     public resetCursor(this: Timeline): void {
         this.paths.forEach(function (
-            paths: (TimelinePath|Array<TimelinePath>)
+            paths: TimelinePath | Array<TimelinePath>
         ): void {
             splat(paths).forEach(function (path: TimelinePath): void {
                 path.resetCursor();
@@ -274,7 +260,7 @@ class Timeline {
      */
     public resetCursorEnd(this: Timeline): void {
         this.paths.forEach(function (
-            paths: (TimelinePath|Array<TimelinePath>)
+            paths: TimelinePath | Array<TimelinePath>
         ): void {
             splat(paths).forEach(function (path: TimelinePath): void {
                 path.resetCursorEnd();
@@ -294,16 +280,11 @@ class Timeline {
      * True if the cursor was set, false if no TimelineEvent was found for
      * this ID.
      */
-    public setCursor(
-        this: Timeline,
-        eventId: string
-    ): boolean {
+    public setCursor(this: Timeline, eventId: string): boolean {
         return this.paths.some(function (
-            paths: (TimelinePath|Array<TimelinePath>)
+            paths: TimelinePath | Array<TimelinePath>
         ): boolean {
-            return splat(paths).some(function (
-                path: TimelinePath
-            ): boolean {
+            return splat(paths).some(function (path: TimelinePath): boolean {
                 return path.setCursor(eventId);
             });
         });
@@ -318,16 +299,15 @@ class Timeline {
      * @return {Highcharts.Dictionary<Highcharts.TimelineEvent>}
      * The TimelineEvents under each path's cursors.
      */
-    public getCursor(
-        this: Timeline
-    ): Record<string, TimelineEvent> {
+    public getCursor(this: Timeline): Record<string, TimelineEvent> {
         return this.getCurrentPlayingPaths().reduce(function (
             acc: Record<string, TimelineEvent>,
             cur: TimelinePath
         ): Record<string, TimelineEvent> {
             acc[cur.id] = cur.getCursor();
             return acc;
-        }, {});
+        },
+        {});
     }
 
     /**
@@ -353,9 +333,7 @@ class Timeline {
      * @return {Array<Highcharts.TimelinePath>}
      * The TimelinePaths currently being played.
      */
-    public getCurrentPlayingPaths(
-        this: Timeline
-    ): Array<TimelinePath> {
+    public getCurrentPlayingPaths(this: Timeline): Array<TimelinePath> {
         if (!this.paths.length) {
             return [];
         }
@@ -375,7 +353,7 @@ namespace Timeline {
         cancelled?: boolean;
         path?: TimelinePath;
     }
-    export interface Classes{
+    export interface Classes {
         Timeline: typeof Timeline;
         TimelineEvent: typeof TimelineEvent;
         TimelinePath: typeof TimelinePath;
@@ -384,7 +362,7 @@ namespace Timeline {
         onEnd?: Function;
         onPathEnd?: Function;
         onPathStart?: Function;
-        paths: Array<(TimelinePath|Array<TimelinePath>)>;
+        paths: Array<TimelinePath | Array<TimelinePath>>;
     }
 }
 
@@ -409,21 +387,21 @@ export default Timeline;
  *
  * @private
  * @interface Highcharts.TimelineOptionsObject
- *//**
+ */ /**
  * List of TimelinePaths to play. Multiple paths can be grouped together and
  * played simultaneously by supplying an array of paths in place of a single
  * path.
  * @name Highcharts.TimelineOptionsObject#paths
  * @type {Array<(Highcharts.TimelinePath|Array<Highcharts.TimelinePath>)>}
- *//**
+ */ /**
  * Callback function to call before a path plays.
  * @name Highcharts.TimelineOptionsObject#onPathStart
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback function to call after a path has stopped playing.
  * @name Highcharts.TimelineOptionsObject#onPathEnd
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback called when the whole path is finished.
  * @name Highcharts.TimelineOptionsObject#onEnd
  * @type {Function|undefined}

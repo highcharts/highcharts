@@ -27,11 +27,7 @@ import type ModifierType from './ModifierType';
 
 import DataPromise from '../DataPromise.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+const { addEvent, fireEvent, merge } = U;
 
 /** eslint-disable valid-jsdoc */
 
@@ -46,9 +42,10 @@ const {
  *
  * @private
  */
-abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
-implements DataEventEmitter<(TEvent|DataModifier.Event)> {
-
+abstract class DataModifier<
+    TEvent extends DataEventEmitter.Event = DataModifier.Event
+> implements DataEventEmitter<TEvent | DataModifier.Event>
+{
     /* *
      *
      *  Static Properties
@@ -59,7 +56,8 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
+    private static readonly nameRegExp =
+        /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
 
     /**
      * Registry as a record object with modifier names and their class.
@@ -88,10 +86,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         const name = DataModifier.getName(modifier),
             registry = DataModifier.registry;
 
-        if (
-            typeof name === 'undefined' ||
-            registry[name]
-        ) {
+        if (typeof name === 'undefined' || registry[name]) {
             return false;
         }
 
@@ -131,7 +126,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @return {DataModifier|undefined}
      * Class type, if the class name was found, otherwise `undefined`.
      */
-    public static getModifier(name: string): (ModifierType|undefined) {
+    public static getModifier(name: string): ModifierType | undefined {
         return DataModifier.registry[name];
     }
 
@@ -145,11 +140,11 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * Modifier name, if the extraction was successful, otherwise an empty
      * string.
      */
-    private static getName(modifier: (NewableFunction|ModifierType)): string {
-        return (
-            modifier.toString().match(DataModifier.nameRegExp) ||
-            ['', '']
-        )[1];
+    private static getName(modifier: NewableFunction | ModifierType): string {
+        return (modifier.toString().match(DataModifier.nameRegExp) || [
+            '',
+            ''
+        ])[1];
     }
 
     /* *
@@ -188,7 +183,9 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
-        const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
+        const modifier = this as DataModifier<
+            DataModifier.BenchmarkEvent | DataModifier.Event
+        >;
         const execute = (): void => {
             modifier.modifyTable(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
@@ -198,10 +195,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
             iterations: 1
         };
 
-        const { iterations } = merge(
-            defaultOptions,
-            options
-        );
+        const { iterations } = merge(defaultOptions, options);
 
         modifier.on('afterBenchmarkIteration', (): void => {
             if (results.length === iterations) {
@@ -243,7 +237,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * @param {DataEventEmitter.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: (TEvent|DataModifier.Event)): void {
+    public emit(e: TEvent | DataModifier.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -362,7 +356,7 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      */
     public modifyRows<T extends DataTable>(
         table: T,
-        rows: Array<(DataTable.Row|DataTable.RowObject)>,
+        rows: Array<DataTable.Row | DataTable.RowObject>,
         rowIndex: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
@@ -405,7 +399,6 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
     ): Function {
         return addEvent(this, type, callback);
     }
-
 }
 
 /* *
@@ -419,7 +412,6 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
  * conversion.
  */
 namespace DataModifier {
-
     /**
      * Class constructor of modifiers.
      *
@@ -427,17 +419,14 @@ namespace DataModifier {
      * Options to configure the modifier.
      */
     export interface ClassConstructor {
-        new(options?: DeepPartial<Options>): DataModifier;
+        new (options?: DeepPartial<Options>): DataModifier;
     }
 
     /**
      * Benchmark event with additional event information.
      */
     export interface BenchmarkEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'afterBenchmark'|
-            'afterBenchmarkIteration'
-        );
+        readonly type: 'afterBenchmark' | 'afterBenchmarkIteration';
         readonly results?: Array<number>;
     }
 
@@ -459,15 +448,13 @@ namespace DataModifier {
     /**
      * Event information.
      */
-    export type Event = (BenchmarkEvent|ErrorEvent|ModifyEvent);
+    export type Event = BenchmarkEvent | ErrorEvent | ModifyEvent;
 
     /**
      * Modify event with additional event information.
      */
     export interface ModifyEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'modify'|'afterModify'
-        );
+        readonly type: 'modify' | 'afterModify';
         readonly table: DataTable;
     }
 
@@ -480,7 +467,6 @@ namespace DataModifier {
          */
         modifier: string;
     }
-
 }
 
 /* *

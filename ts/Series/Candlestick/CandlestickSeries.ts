@@ -27,15 +27,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
-    seriesTypes: {
-        column: ColumnSeries,
-        ohlc: OHLCSeries
-    }
+    seriesTypes: { column: ColumnSeries, ohlc: OHLCSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -53,7 +48,6 @@ const {
  * @augments Highcharts.seriesTypes.ohlc
  */
 class CandlestickSeries extends OHLCSeries {
-
     /* *
      *
      * Static Properties
@@ -83,7 +77,7 @@ class CandlestickSeries extends OHLCSeries {
              * @sample {highstock} stock/plotoptions/candlestick-linecolor/
              *         Candlestick line colors
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @since     1.3.6
              * @product   highstock
              * @apioption plotOptions.candlestick.upLineColor
@@ -120,7 +114,7 @@ class CandlestickSeries extends OHLCSeries {
              * @sample {highstock} stock/plotoptions/candlestick-linecolor/
              *         Candlestick line colors
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              * @default #000000
              * @product highstock
              */
@@ -146,10 +140,10 @@ class CandlestickSeries extends OHLCSeries {
              * @sample {highstock} highcharts/css/candlestick/
              *         Colors in styled mode
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              * @default #ffffff
              * @product highstock
-            */
+             */
 
             upColor: Palette.backgroundColor,
             /**
@@ -199,10 +193,11 @@ class CandlestickSeries extends OHLCSeries {
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point.options.color ||
-            (isUp ? (options.upColor || color) : color);
-        attribs.stroke = point.options.lineColor ||
-            (isUp ? (options.upLineColor || stroke) : stroke);
+        attribs.fill =
+            point.options.color || (isUp ? options.upColor || color : color);
+        attribs.stroke =
+            point.options.lineColor ||
+            (isUp ? options.upLineColor || stroke : stroke);
 
         // Select or hover states
         if (state) {
@@ -230,7 +225,6 @@ class CandlestickSeries extends OHLCSeries {
             reversedYAxis = series.yAxis.reversed;
 
         points.forEach(function (point: CandlestickPoint): void {
-
             let graphic = point.graphic,
                 plotOpen,
                 plotClose,
@@ -245,9 +239,9 @@ class CandlestickSeries extends OHLCSeries {
                 isNew = !graphic;
 
             if (typeof point.plotY !== 'undefined') {
-
                 if (!graphic) {
-                    point.graphic = graphic = chart.renderer.path()
+                    point.graphic = graphic = chart.renderer
+                        .path()
                         .add(series.group);
                 }
 
@@ -271,14 +265,12 @@ class CandlestickSeries extends OHLCSeries {
                 topBox = Math.min(plotOpen, plotClose);
                 bottomBox = Math.max(plotOpen, plotClose);
                 halfWidth = Math.round((point.shapeArgs as any).width / 2);
-                hasTopWhisker = reversedYAxis ?
-                    bottomBox !== point.yBottom :
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh as any);
-                hasBottomWhisker = reversedYAxis ?
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh as any) :
-                    bottomBox !== point.yBottom;
+                hasTopWhisker = reversedYAxis
+                    ? bottomBox !== point.yBottom
+                    : Math.round(topBox) !== Math.round(point.plotHigh as any);
+                hasBottomWhisker = reversedYAxis
+                    ? Math.round(topBox) !== Math.round(point.plotHigh as any)
+                    : bottomBox !== point.yBottom;
                 topBox = Math.round(topBox) + crispCorr;
                 bottomBox = Math.round(bottomBox) + crispCorr;
 
@@ -299,40 +291,41 @@ class CandlestickSeries extends OHLCSeries {
                         'L',
                         // #460, #2094
                         crispX,
-                        hasTopWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    point.yBottom :
-                                    (point.plotHigh as any)
-                            ) :
-                            topBox
+                        hasTopWhisker
+                            ? Math.round(
+                                  reversedYAxis
+                                      ? point.yBottom
+                                      : (point.plotHigh as any)
+                              )
+                            : topBox
                     ],
                     ['M', crispX, bottomBox],
                     [
                         'L',
                         // #460, #2094
                         crispX,
-                        hasBottomWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    (point.plotHigh as any) :
-                                    point.yBottom
-                            ) :
-                            bottomBox
-                    ]);
+                        hasBottomWhisker
+                            ? Math.round(
+                                  reversedYAxis
+                                      ? (point.plotHigh as any)
+                                      : point.yBottom
+                              )
+                            : bottomBox
+                    ]
+                );
 
-                graphic[isNew ? 'attr' : 'animate']({ d: path })
-                    .addClass(point.getClassName(), true);
-
+                graphic[isNew ? 'attr' : 'animate']({ d: path }).addClass(
+                    point.getClassName(),
+                    true
+                );
             }
         });
 
         /* eslint-enable valid-jsdoc */
     }
-
 }
 
-interface CandlestickSeries{
+interface CandlestickSeries {
     pointClass: typeof CandlestickPoint;
 }
 
@@ -342,7 +335,7 @@ interface CandlestickSeries{
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
     }
@@ -425,4 +418,4 @@ export default CandlestickSeries;
  * @apioption series.candlestick.data
  */
 
-''; // adds doclets above to transpilat
+(''); // adds doclets above to transpilat

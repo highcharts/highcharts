@@ -21,7 +21,6 @@ import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { addEvent } = U;
 
-
 /**
  * Internal types
  * @private
@@ -224,9 +223,11 @@ addEvent(
                             chart.container,
                             'mousemove',
                             function (e: PointerEvent): void {
-                                return point &&
+                                return (
+                                    point &&
                                     point.series &&
-                                    point.series.onMouseMove(point, e);
+                                    point.series.onMouseMove(point, e)
+                                );
                             }
                         );
                         mouseupUnbinder = addEvent(
@@ -235,9 +236,11 @@ addEvent(
                             function (e: PointerEvent): void {
                                 mousemoveUnbinder();
                                 mouseupUnbinder();
-                                return point &&
+                                return (
+                                    point &&
                                     point.series &&
-                                    point.series.onMouseUp(point, e);
+                                    point.series.onMouseUp(point, e)
+                                );
                             }
                         );
                     }

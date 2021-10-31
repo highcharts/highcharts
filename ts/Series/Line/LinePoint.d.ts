@@ -41,7 +41,7 @@ declare module '../../Core/Series/PointLike' {
         plotX?: number;
         plotY?: number;
         stackTotal?: number;
-        stackY?: (number|null);
+        stackY?: number | null;
         yBottom?: number;
         zone?: SeriesZonesOptions;
     }

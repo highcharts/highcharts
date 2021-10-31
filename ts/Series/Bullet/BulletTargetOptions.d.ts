@@ -28,7 +28,7 @@ export interface BulletTargetOptions {
     borderWidth?: number;
     color?: ColorType;
     height?: number;
-    width?: (number|string);
+    width?: number | string;
 }
 
 /* *

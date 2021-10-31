@@ -12,10 +12,7 @@
  *
  * */
 
-import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+import type { SMAOptions, SMAParamsOptions } from '../SMA/SMAOptions';
 import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
 import type WMAIndicator from './WMAIndicator';
 

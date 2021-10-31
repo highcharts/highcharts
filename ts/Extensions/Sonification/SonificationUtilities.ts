@@ -31,10 +31,7 @@ import type Series from '../../Core/Series/Series';
 import MusicalFrequencies from './MusicalFrequencies.js';
 import SignalHandler from './SignalHandler.js';
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    merge
-} = U;
+const { clamp, merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -45,7 +42,6 @@ const {
  * */
 
 const SonificationUtilities = {
-
     // List of musical frequencies from C0 to C8
     musicalFrequencies: MusicalFrequencies,
 
@@ -70,11 +66,9 @@ const SonificationUtilities = {
             freq: number,
             i: number
         ): boolean {
-            const interval = i % 12 + 1;
+            const interval = (i % 12) + 1;
 
-            return semitones.some(function (
-                allowedInterval: number
-            ): boolean {
+            return semitones.some(function (allowedInterval: number): boolean {
                 return allowedInterval === interval;
             });
         });
@@ -91,24 +85,29 @@ const SonificationUtilities = {
         chart: Chart,
         prop: string
     ): RangeSelector.RangeObject {
-        return chart.series.reduce(function (
-            extremes: RangeSelector.RangeObject,
-            series: Series
-        ): RangeSelector.RangeObject {
-            // We use cropped points rather than series.data here, to allow
-            // users to zoom in for better fidelity.
-            series.points.forEach(function (point: Point): void {
-                const val = typeof (point as any)[prop] !== 'undefined' ?
-                    (point as any)[prop] : (point.options as any)[prop];
+        return chart.series.reduce(
+            function (
+                extremes: RangeSelector.RangeObject,
+                series: Series
+            ): RangeSelector.RangeObject {
+                // We use cropped points rather than series.data here, to allow
+                // users to zoom in for better fidelity.
+                series.points.forEach(function (point: Point): void {
+                    const val =
+                        typeof (point as any)[prop] !== 'undefined'
+                            ? (point as any)[prop]
+                            : (point.options as any)[prop];
 
-                extremes.min = Math.min(extremes.min, val);
-                extremes.max = Math.max(extremes.max, val);
-            });
-            return extremes;
-        }, {
-            min: Infinity,
-            max: -Infinity
-        });
+                    extremes.min = Math.min(extremes.min, val);
+                    extremes.max = Math.max(extremes.max, val);
+                });
+                return extremes;
+            },
+            {
+                min: Infinity,
+                max: -Infinity
+            }
+        );
     },
 
     /**
@@ -134,15 +133,15 @@ const SonificationUtilities = {
     ): number {
         const lenValueAxis = dataExtremes.max - dataExtremes.min,
             lenVirtualAxis = Math.abs(limits.max - limits.min),
-            valueDelta = invert ?
-                dataExtremes.max - value :
-                value - dataExtremes.min,
-            virtualValueDelta = lenVirtualAxis * valueDelta / lenValueAxis,
+            valueDelta = invert
+                ? dataExtremes.max - value
+                : value - dataExtremes.min,
+            virtualValueDelta = (lenVirtualAxis * valueDelta) / lenValueAxis,
             virtualAxisValue = limits.min + virtualValueDelta;
 
-        return lenValueAxis > 0 ?
-            clamp(virtualAxisValue, limits.min, limits.max) :
-            limits.min;
+        return lenValueAxis > 0
+            ? clamp(virtualAxisValue, limits.min, limits.max)
+            : limits.min;
     }
 };
 
@@ -170,52 +169,59 @@ function getExtremesForInstrumentProps(
     instruments?: Array<PointSonify.PointInstrument>,
     dataExtremes?: Record<string, RangeSelector.RangeObject>
 ): Record<string, RangeSelector.RangeObject> {
-    const defaultInstrumentDef = (
+    const defaultInstrumentDef =
             chart.options.sonification &&
-            chart.options.sonification.defaultInstrumentOptions
-        ),
+            chart.options.sonification.defaultInstrumentOptions,
         optionDefToInstrDef = (
-            optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
-        ): PointSonify.PointInstrument => ({
-            instrumentMapping: optionDef.mapping
-        } as PointSonify.PointInstrument);
+            optionDef:
+                | SonificationInstrumentOptions
+                | DefaultSonificationInstrumentOptions
+        ): PointSonify.PointInstrument =>
+            ({
+                instrumentMapping: optionDef.mapping
+            } as PointSonify.PointInstrument);
     let allInstrumentDefinitions = (instruments || []).slice(0);
 
     if (defaultInstrumentDef) {
-        allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
+        allInstrumentDefinitions.push(
+            optionDefToInstrDef(defaultInstrumentDef)
+        );
     }
 
     chart.series.forEach((series): void => {
-        const instrOptions = (
+        const instrOptions =
             series.options.sonification &&
-            series.options.sonification.instruments
-        );
+            series.options.sonification.instruments;
         if (instrOptions) {
-            allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
+            allInstrumentDefinitions = allInstrumentDefinitions.concat(
+                instrOptions.map(optionDefToInstrDef)
+            );
         }
     });
 
-    return (allInstrumentDefinitions).reduce(function (
+    return allInstrumentDefinitions.reduce(function (
         newExtremes: Record<string, RangeSelector.RangeObject>,
         instrumentDefinition: PointSonify.PointInstrument
     ): Record<string, RangeSelector.RangeObject> {
         Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
             function (instrumentParameter: string): void {
-                const value = instrumentDefinition.instrumentMapping[
-                    instrumentParameter
-                ];
+                const value =
+                    instrumentDefinition.instrumentMapping[instrumentParameter];
 
                 if (typeof value === 'string' && !newExtremes[value]) {
                     // This instrument parameter is mapped to a data prop.
                     // If we don't have predefined data extremes, find them.
-                    newExtremes[value] = SonificationUtilities.calculateDataExtremes(
-                        chart, value
-                    );
+                    newExtremes[value] =
+                        SonificationUtilities.calculateDataExtremes(
+                            chart,
+                            value
+                        );
                 }
             }
         );
         return newExtremes;
-    }, merge(dataExtremes));
+    },
+    merge(dataExtremes));
 }
 
 /* *

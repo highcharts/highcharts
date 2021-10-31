@@ -15,12 +15,7 @@ import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
-const {
-    isObject,
-    isString,
-    merge,
-    splat
-} = U;
+const { isObject, isString, merge, splat } = U;
 
 /**
  * Internal types.
@@ -39,7 +34,7 @@ declare global {
             controlPoints: Array<AnnotationControlPoint>;
             graphic: SVGElement;
             index: number;
-            itemType?: ('label'|'shape');
+            itemType?: 'label' | 'shape';
             markerEnd?: SVGElement;
             markerStart?: SVGElement;
             options: AnnotationControllableOptionsObject;
@@ -48,28 +43,55 @@ declare global {
         }
         interface AnnotationControllableMixin {
             addControlPoints(this: AnnotationControllable): void;
-            anchor(this: AnnotationControllable, point: AnnotationPointType): AnnotationAnchorObject;
+            anchor(
+                this: AnnotationControllable,
+                point: AnnotationPointType
+            ): AnnotationAnchorObject;
             attr: SVGElement['attr'];
-            attrsFromOptions(this: AnnotationControllable, options: AnnotationControllableOptionsObject): SVGAttributes;
+            attrsFromOptions(
+                this: AnnotationControllable,
+                options: AnnotationControllableOptionsObject
+            ): SVGAttributes;
             destroy(this: AnnotationControllable): void;
-            getPointsOptions(this: AnnotationControllable): Array<MockPointOptions>;
+            getPointsOptions(
+                this: AnnotationControllable
+            ): Array<MockPointOptions>;
             init(
                 this: AnnotationControllable,
                 annotation: Annotation,
                 options: AnnotationControllableOptionsObject,
                 index: number
             ): void;
-            linkPoints(this: AnnotationControllable): (Array<AnnotationPointType>|undefined);
+            linkPoints(
+                this: AnnotationControllable
+            ): Array<AnnotationPointType> | undefined;
             point(
                 this: AnnotationControllable,
-                pointOptions: (string|Function|MockPointOptions),
+                pointOptions: string | Function | MockPointOptions,
                 point: AnnotationPointType
-            ): (AnnotationPointType|null);
+            ): AnnotationPointType | null;
             redraw(this: AnnotationControllable, animation?: boolean): void;
-            render(this: AnnotationControllable, parentGroup?: SVGElement): void;
-            rotate(this: AnnotationControllable, cx: number, cy: number, radians: number): void;
-            scale(this: AnnotationControllable, cx: number, cy: number, sx: number, sy: number): void;
-            setControlPointsVisibility(this: Highcharts.AnnotationControllable, visible: boolean): void;
+            render(
+                this: AnnotationControllable,
+                parentGroup?: SVGElement
+            ): void;
+            rotate(
+                this: AnnotationControllable,
+                cx: number,
+                cy: number,
+                radians: number
+            ): void;
+            scale(
+                this: AnnotationControllable,
+                cx: number,
+                cy: number,
+                sx: number,
+                sy: number
+            ): void;
+            setControlPointsVisibility(
+                this: Highcharts.AnnotationControllable,
+                visible: boolean
+            ): void;
             shouldBeDrawn(this: AnnotationControllable): boolean;
             transform(
                 this: AnnotationControllable,
@@ -89,38 +111,50 @@ declare global {
             transform(
                 this: AnnotationControllable,
                 transformation: string,
-                cx: (number|null),
-                cy: (number|null),
+                cx: number | null,
+                cy: number | null,
                 p1: number,
                 p2?: number
             ): void;
             transformPoint(
                 this: AnnotationControllable,
                 transformation: string,
-                cx: (number|null),
-                cy: (number|null),
+                cx: number | null,
+                cy: number | null,
                 p1: number,
-                p2: (number|undefined),
+                p2: number | undefined,
                 i: number
             ): void;
-            translate(this: AnnotationControllable, dx: number, dy: number): void;
-            translatePoint(this: Highcharts.AnnotationControllable, dx: number, dy: number, i: number): void;
+            translate(
+                this: AnnotationControllable,
+                dx: number,
+                dy: number
+            ): void;
+            translatePoint(
+                this: Highcharts.AnnotationControllable,
+                dx: number,
+                dy: number,
+                i: number
+            ): void;
             translateShape(
                 this: Highcharts.AnnotationControllable,
                 dx: number,
                 dy: number,
                 translateSecondPoint?: boolean
             ): void;
-            update(this: Highcharts.AnnotationControllable, newOptions: AnnotationControllableOptionsObject): void;
+            update(
+                this: Highcharts.AnnotationControllable,
+                newOptions: AnnotationControllableOptionsObject
+            ): void;
         }
         interface AnnotationControllableOptionsObject {
             className?: string;
             controlPoints?: Array<AnnotationControlPointOptionsObject>;
-            id?: (number|string);
+            id?: number | string;
             markerEnd?: string;
             markerStart?: string;
-            point?: (string|MockPointOptions);
-            points?: Array<(string|MockPointOptions)>;
+            point?: string | MockPointOptions;
+            points?: Array<string | MockPointOptions>;
             r?: number;
             rx?: number;
             ry?: number;
@@ -136,11 +170,11 @@ declare global {
  *
  * @private
  * @interface Highcharts.AnnotationAnchorObject
- *//**
+ */ /**
  * Relative to the plot area position
  * @name Highcharts.AnnotationAnchorObject#relativePosition
  * @type {Highcharts.BBoxObject}
- *//**
+ */ /**
  * Absolute position
  * @name Highcharts.AnnotationAnchorObject#absolutePosition
  * @type {Highcharts.BBoxObject}
@@ -148,20 +182,20 @@ declare global {
 
 /**
  * @interface Highcharts.AnnotationControllable
- *//**
+ */ /**
  * @name Highcharts.AnnotationControllable#annotation
  * @type {Highcharts.Annotation}
- *//**
+ */ /**
  * @name Highcharts.AnnotationControllable#chart
  * @type {Highcharts.Chart}
- *//**
+ */ /**
  * @name Highcharts.AnnotationControllable#collection
  * @type {string}
- *//**
+ */ /**
  * @private
  * @name Highcharts.AnnotationControllable#controlPoints
  * @type {Array<Highcharts.AnnotationControlPoint>}
- *//**
+ */ /**
  * @name Highcharts.AnnotationControllable#points
  * @type {Array<Highcharts.Point>}
  */
@@ -204,7 +238,6 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         this.graphic.attr.apply(this.graphic, arguments);
     } as any,
 
-
     /**
      * Get the controllable's points options.
      *
@@ -216,7 +249,8 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     ): Array<MockPointOptions> {
         const options = this.options;
 
-        return (options.points || (options.point && splat(options.point))) as any;
+        return (options.points ||
+            (options.point && splat(options.point))) as any;
     },
 
     /**
@@ -238,16 +272,15 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             mappedKey,
             styledMode = this.chart.styledMode;
 
-        for (key in options) { // eslint-disable-line guard-for-in
+        // eslint-disable-next-line guard-for-in
+        for (key in options) {
             mappedKey = (map as any)[key];
 
             if (
                 mappedKey &&
-                (
-                    !styledMode ||
-                    ['fill', 'stroke', 'stroke-width']
-                        .indexOf(mappedKey) === -1
-                )
+                (!styledMode ||
+                    ['fill', 'stroke', 'stroke-width'].indexOf(mappedKey) ===
+                        -1)
             ) {
                 (attrs as any)[mappedKey] = (options as any)[key];
             }
@@ -270,12 +303,14 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     ): Highcharts.AnnotationAnchorObject {
         const plotBox = point.series.getPlotBox(),
             chart = point.series.chart,
-            box = point.mock ?
-                point.toAnchor() :
-                Tooltip.prototype.getAnchor.call({
-                    chart: point.series.chart
-                }, point),
-
+            box = point.mock
+                ? point.toAnchor()
+                : Tooltip.prototype.getAnchor.call(
+                      {
+                          chart: point.series.chart
+                      },
+                      point
+                  ),
             anchor = {
                 x: box[0] + (this.options.x || 0),
                 y: box[1] + (this.options.y || 0),
@@ -286,7 +321,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         return {
             relativePosition: anchor,
             absolutePosition: merge(anchor, {
-                x: anchor.x + (point.mock ? plotBox.translateX : chart.plotLeft),
+                x:
+                    anchor.x +
+                    (point.mock ? plotBox.translateX : chart.plotLeft),
                 y: anchor.y + (point.mock ? plotBox.translateY : chart.plotTop)
             })
         };
@@ -306,33 +343,25 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     point: function (
         this: Highcharts.AnnotationControllable,
-        pointOptions: (string|Function|MockPointOptions|MockPoint),
-        point: (Highcharts.AnnotationPointType|null)
-    ): (Highcharts.AnnotationPointType|null) {
+        pointOptions: string | Function | MockPointOptions | MockPoint,
+        point: Highcharts.AnnotationPointType | null
+    ): Highcharts.AnnotationPointType | null {
         if (pointOptions && (pointOptions as MockPointOptions).series) {
             return pointOptions as any;
         }
 
         if (!point || point.series === null) {
             if (isObject(pointOptions)) {
-                point = new MockPoint(
-                    this.chart,
-                    this,
-                    pointOptions as any
-                );
+                point = new MockPoint(this.chart, this, pointOptions as any);
             } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
-                const pointConfig: (MockPoint|MockPointOptions) =
+                const pointConfig: MockPoint | MockPointOptions =
                     pointOptions.call(point, this);
 
-                point = pointConfig.series ?
-                    pointConfig :
-                    new MockPoint(
-                        this.chart,
-                        this,
-                        pointOptions
-                    );
+                point = pointConfig.series
+                    ? pointConfig
+                    : new MockPoint(this.chart, this, pointOptions);
             }
         }
 
@@ -344,12 +373,14 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @return {Array<Annotation.PointLike>} an array of point-like objects
      */
-    linkPoints: function (this: Highcharts.AnnotationControllable): (Array<Highcharts.AnnotationPointType>|undefined) {
+    linkPoints: function (
+        this: Highcharts.AnnotationControllable
+    ): Array<Highcharts.AnnotationPointType> | undefined {
         let pointsOptions = this.getPointsOptions(),
             points = this.points,
             len = (pointsOptions && pointsOptions.length) || 0,
             i: number,
-            point: (Highcharts.AnnotationPointType|null);
+            point: Highcharts.AnnotationPointType | null;
 
         for (i = 0; i < len; i++) {
             point = this.point(pointsOptions[i], points[i]);
@@ -370,35 +401,32 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         return points;
     },
 
-
     /**
      * Add control points to a controllable.
      */
     addControlPoints: function (this: Highcharts.AnnotationControllable): void {
         const controlPointsOptions = this.options.controlPoints;
 
-        (controlPointsOptions || []).forEach(
-            function (
-                controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
-                i: number
-            ): void {
-                const options = merge(
-                    (this.options as any).controlPointOptions,
-                    controlPointOptions
-                );
+        (controlPointsOptions || []).forEach(function (
+            controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
+            i: number
+        ): void {
+            const options = merge(
+                (this.options as any).controlPointOptions,
+                controlPointOptions
+            );
 
-                if (!options.index) {
-                    options.index = i;
-                }
+            if (!options.index) {
+                options.index = i;
+            }
 
-                (controlPointsOptions as any)[i] = options;
+            (controlPointsOptions as any)[i] = options;
 
-                this.controlPoints.push(
-                    new ControlPoint(this.chart, this, options)
-                );
-            },
-            this
-        );
+            this.controlPoints.push(
+                new ControlPoint(this.chart, this, options)
+            );
+        },
+        this);
     },
 
     /**
@@ -414,7 +442,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Render a controllable.
      */
-    render: function (this: Highcharts.AnnotationControllable, _parentGroup?: SVGElement): void {
+    render: function (
+        this: Highcharts.AnnotationControllable,
+        _parentGroup?: SVGElement
+    ): void {
         this.controlPoints.forEach(function (controlPoint): void {
             controlPoint.render();
         });
@@ -425,8 +456,13 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {boolean} [animation]
      */
-    redraw: function (this: Highcharts.AnnotationControllable, animation?: boolean): void {
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+    redraw: function (
+        this: Highcharts.AnnotationControllable,
+        animation?: boolean
+    ): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.redraw(animation);
         });
     },
@@ -443,8 +479,8 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     transform: function (
         this: Highcharts.AnnotationControllable,
         transformation: string,
-        cx: (number|null),
-        cy: (number|null),
+        cx: number | null,
+        cy: number | null,
         p1: number,
         p2?: number
     ): void {
@@ -455,9 +491,13 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             cy = temp;
         }
 
-        this.points.forEach(function (point: Highcharts.AnnotationPointType, i: number): void {
+        this.points.forEach(function (
+            point: Highcharts.AnnotationPointType,
+            i: number
+        ): void {
             this.transformPoint(transformation, cx, cy, p1, p2, i);
-        }, this);
+        },
+        this);
     },
 
     /**
@@ -475,10 +515,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     transformPoint: function (
         this: Highcharts.AnnotationControllable,
         transformation: string,
-        cx: (number|null),
-        cy: (number|null),
+        cx: number | null,
+        cy: number | null,
         p1: number,
-        p2: (number|undefined),
+        p2: number | undefined,
         i: number
     ): void {
         let point = this.points[i];
@@ -496,7 +536,11 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
      **/
-    translate: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
+    translate: function (
+        this: Highcharts.AnnotationControllable,
+        dx: number,
+        dy: number
+    ): void {
         this.transform('translate', null, null, dx, dy);
     },
 
@@ -507,7 +551,12 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dy translation for y coordinate
      * @param {number} i index of the point
      **/
-    translatePoint: function (this: Highcharts.AnnotationControllable, dx: number, dy: number, i: number): void {
+    translatePoint: function (
+        this: Highcharts.AnnotationControllable,
+        dx: number,
+        dy: number,
+        i: number
+    ): void {
         this.transformPoint('translate', null, null, dx, dy, i);
     },
 
@@ -543,8 +592,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         // Options stored in:
         // - chart (for exporting)
         // - current config (for redraws)
-        (chartOptions as any)[this.collection][this.index].point = this.options.point;
-        (shapeOptions as any)[this.collection][this.index].point = this.options.point;
+        (chartOptions as any)[this.collection][this.index].point =
+            this.options.point;
+        (shapeOptions as any)[this.collection][this.index].point =
+            this.options.point;
     },
 
     /**
@@ -554,7 +605,12 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} cy origin y rotation
      * @param {number} radians
      **/
-    rotate: function (this: Highcharts.AnnotationControllable, cx: number, cy: number, radians: number): void {
+    rotate: function (
+        this: Highcharts.AnnotationControllable,
+        cx: number,
+        cy: number,
+        radians: number
+    ): void {
         this.transform('rotate', cx, cy, radians);
     },
 
@@ -566,7 +622,13 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} sx scale factor x
      * @param {number} sy scale factor y
      */
-    scale: function (this: Highcharts.AnnotationControllable, cx: number, cy: number, sx: number, sy: number): void {
+    scale: function (
+        this: Highcharts.AnnotationControllable,
+        cx: number,
+        cy: number,
+        sx: number,
+        sy: number
+    ): void {
         this.transform('scale', cx, cy, sx, sy);
     },
 
@@ -575,8 +637,13 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {boolean} visible
      */
-    setControlPointsVisibility: function (this: Highcharts.AnnotationControllable, visible: boolean): void {
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+    setControlPointsVisibility: function (
+        this: Highcharts.AnnotationControllable,
+        visible: boolean
+    ): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.setVisibility(visible);
         });
     },
@@ -593,7 +660,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             this.tracker = this.tracker.destroy();
         }
 
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.destroy();
         });
 

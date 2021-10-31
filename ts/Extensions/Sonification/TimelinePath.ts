@@ -24,10 +24,7 @@ import type SignalHandler from './SignalHandler';
 import TimelineEvent from './TimelineEvent.js';
 import SU from './SonificationUtilities.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    uniqueKey
-} = U;
+const { merge, uniqueKey } = U;
 
 /* *
  *
@@ -51,35 +48,32 @@ const {
  *        Options for the TimelinePath.
  */
 class TimelinePath {
-
     /* *
      *
      *  Constructors
      *
      * */
 
-    public constructor(
-        options: TimelinePath.Options
-    ) {
+    public constructor(options: TimelinePath.Options) {
         this.init(options);
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public cursor: number = void 0 as any;
     public events: Array<TimelineEvent> = void 0 as any;
-    public eventIdMap: Record<string, (number|undefined)> = void 0 as any;
+    public eventIdMap: Record<string, number | undefined> = void 0 as any;
     public eventsPlaying: Record<string, TimelineEvent> = void 0 as any;
     public id: string = void 0 as any;
     public nextScheduledPlay?: number;
     public options: TimelinePath.Options = void 0 as any;
     public signalHandler: SignalHandler = void 0 as any;
     public targetDuration?: number;
-    public timeline: (Timeline|undefined);
+    public timeline: Timeline | undefined;
 
     /* *
      *
@@ -87,22 +81,19 @@ class TimelinePath {
      *
      * */
 
-    public init(
-        this: TimelinePath,
-        options: TimelinePath.Options
-    ): void {
+    public init(this: TimelinePath, options: TimelinePath.Options): void {
         this.options = options;
         this.id = this.options.id = options.id || uniqueKey();
         this.cursor = 0;
         this.eventsPlaying = {};
 
         // Handle silent wait, otherwise use events from options
-        this.events = options.silentWait ?
-            [
-                new (TimelineEvent as any)({ time: 0 }),
-                new (TimelineEvent as any)({ time: options.silentWait })
-            ] :
-            this.options.events;
+        this.events = options.silentWait
+            ? [
+                  new (TimelineEvent as any)({ time: 0 }),
+                  new (TimelineEvent as any)({ time: options.silentWait })
+              ]
+            : this.options.events;
 
         // Reference optionally provided by the user that indicates the intended
         // duration of the path. Unused by TimelinePath itself.
@@ -115,9 +106,13 @@ class TimelinePath {
         this.updateEventIdMap();
 
         // Signal events to fire
-        this.signalHandler = new SU.SignalHandler(
-            ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
-        );
+        this.signalHandler = new SU.SignalHandler([
+            'playOnEnd',
+            'masterOnEnd',
+            'onStart',
+            'onEventStart',
+            'onEventEnd'
+        ]);
         this.signalHandler.registerSignalCallbacks(
             merge(options as any, { masterOnEnd: options.onEnd })
         );
@@ -127,9 +122,7 @@ class TimelinePath {
      * Sort the internal event list by time.
      * @private
      */
-    public sortEvents(
-        this: TimelinePath
-    ): void {
+    public sortEvents(this: TimelinePath): void {
         this.events = this.events.sort(function (
             a: TimelineEvent,
             b: TimelineEvent
@@ -142,9 +135,7 @@ class TimelinePath {
      * Update the internal eventId to index map.
      * @private
      */
-    public updateEventIdMap(
-        this: TimelinePath
-    ): void {
+    public updateEventIdMap(this: TimelinePath): void {
         this.eventIdMap = this.events.reduce(function (
             acc: Record<string, number>,
             cur: TimelineEvent,
@@ -152,7 +143,8 @@ class TimelinePath {
         ): Record<string, number> {
             acc[cur.id] = i;
             return acc;
-        }, {});
+        },
+        {});
     }
 
     /**
@@ -176,9 +168,7 @@ class TimelinePath {
      * @private
      * @return {Highcharts.TimelineEvent} The current timeline event.
      */
-    public getCursor(
-        this: TimelinePath
-    ): TimelineEvent {
+    public getCursor(this: TimelinePath): TimelineEvent {
         return this.events[this.cursor];
     }
 
@@ -190,10 +180,7 @@ class TimelinePath {
      * @return {boolean}
      * True if there is an event with this ID in the path. False otherwise.
      */
-    public setCursor(
-        this: TimelinePath,
-        eventId: string
-    ): boolean {
+    public setCursor(this: TimelinePath, eventId: string): boolean {
         const ix = this.eventIdMap[eventId];
 
         if (typeof ix !== 'undefined') {
@@ -239,9 +226,7 @@ class TimelinePath {
      * Reset the cursor to the beginning.
      * @private
      */
-    public resetCursor(
-        this: TimelinePath
-    ): void {
+    public resetCursor(this: TimelinePath): void {
         this.cursor = 0;
     }
 
@@ -249,9 +234,7 @@ class TimelinePath {
      * Reset the cursor to the end.
      * @private
      */
-    public resetCursorEnd(
-        this: TimelinePath
-    ): void {
+    public resetCursorEnd(this: TimelinePath): void {
         this.cursor = this.events.length - 1;
     }
 
@@ -261,10 +244,7 @@ class TimelinePath {
      * @param {boolean} [fadeOut=false] - Whether or not to fade out as we stop. If
      * false, the path is cancelled synchronously.
      */
-    public pause(
-        this: TimelinePath,
-        fadeOut?: boolean
-    ): void {
+    public pause(this: TimelinePath, fadeOut?: boolean): void {
         const timelinePath = this;
 
         // Cancel next scheduled play
@@ -289,31 +269,26 @@ class TimelinePath {
      * The direction to play, 1 for forwards and -1 for backwards.
      * @return {void}
      */
-    public playEvents(
-        this: TimelinePath,
-        direction: number
-    ): void {
+    public playEvents(this: TimelinePath, direction: number): void {
         const timelinePath = this,
             curEvent = timelinePath.events[this.cursor],
             nextEvent = timelinePath.events[this.cursor + direction],
             onEnd = function (signalData: Timeline.SignalData): void {
                 timelinePath.signalHandler.emitSignal(
-                    'masterOnEnd', signalData
+                    'masterOnEnd',
+                    signalData
                 );
-                timelinePath.signalHandler.emitSignal(
-                    'playOnEnd', signalData
-                );
+                timelinePath.signalHandler.emitSignal('playOnEnd', signalData);
             };
-        let timeDiff: (number|undefined);
+        let timeDiff: number | undefined;
 
         // Store reference to path on event
         curEvent.timelinePath = timelinePath;
 
         // Emit event, cancel if returns false
         if (
-            timelinePath.signalHandler.emitSignal(
-                'onEventStart', curEvent
-            ) === false
+            timelinePath.signalHandler.emitSignal('onEventStart', curEvent) ===
+            false
         ) {
             onEnd({
                 event: curEvent,
@@ -402,32 +377,32 @@ export default TimelinePath;
  *
  * @private
  * @interface Highcharts.TimelinePathOptionsObject
- *//**
+ */ /**
  * List of TimelineEvents to play on this track.
  * @name Highcharts.TimelinePathOptionsObject#events
  * @type {Array<Highcharts.TimelineEvent>}
- *//**
+ */ /**
  * If this option is supplied, this path ignores all events and just waits for
  * the specified number of milliseconds before calling onEnd.
  * @name Highcharts.TimelinePathOptionsObject#silentWait
  * @type {number|undefined}
- *//**
+ */ /**
  * Unique ID for this timeline path. Automatically generated if not supplied.
  * @name Highcharts.TimelinePathOptionsObject#id
  * @type {string|undefined}
- *//**
+ */ /**
  * Callback called before the path starts playing.
  * @name Highcharts.TimelinePathOptionsObject#onStart
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback function to call before an event plays.
  * @name Highcharts.TimelinePathOptionsObject#onEventStart
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback function to call after an event has stopped playing.
  * @name Highcharts.TimelinePathOptionsObject#onEventEnd
  * @type {Function|undefined}
- *//**
+ */ /**
  * Callback called when the whole path is finished.
  * @name Highcharts.TimelinePathOptionsObject#onEnd
  * @type {Function|undefined}

@@ -19,10 +19,7 @@ import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined
-} = U;
+const { addEvent, defined } = U;
 
 /* *
  *
@@ -48,7 +45,6 @@ declare module '../Core/Series/SeriesLike' {
  * @private
  */
 namespace DerivedComposition {
-
     /* *
      *
      *  Declarations
@@ -70,7 +66,7 @@ namespace DerivedComposition {
     }
 
     export interface SeriesOptions extends CoreSeriesOptions {
-        baseSeries?: (number|string);
+        baseSeries?: number | string;
     }
 
     /* *
@@ -105,8 +101,7 @@ namespace DerivedComposition {
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T
-    ): (T&typeof SeriesComposition) {
-
+    ): T & typeof SeriesComposition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
@@ -119,7 +114,7 @@ namespace DerivedComposition {
             seriesProto.setBaseSeries = setBaseSeries;
         }
 
-        return SeriesClass as (T&typeof SeriesComposition);
+        return SeriesClass as T & typeof SeriesComposition;
     }
 
     /**
@@ -143,15 +138,12 @@ namespace DerivedComposition {
     export function setBaseSeries(this: SeriesComposition): void {
         const chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
-            baseSeries = (
+            baseSeries =
                 defined(baseSeriesOptions) &&
-                (
-                    chart.series[baseSeriesOptions as any] ||
-                    chart.get(baseSeriesOptions as any)
-                )
-            );
+                (chart.series[baseSeriesOptions as any] ||
+                    chart.get(baseSeriesOptions as any));
 
-        this.baseSeries = baseSeries || null as any;
+        this.baseSeries = baseSeries || (null as any);
     }
 
     /**
@@ -160,19 +152,15 @@ namespace DerivedComposition {
      */
     export function addEvents(this: SeriesComposition): void {
         this.eventRemovers.push(
-            addEvent(
-                this.chart,
-                'afterLinkSeries',
-                (): void => {
-                    this.setBaseSeries();
+            addEvent(this.chart, 'afterLinkSeries', (): void => {
+                this.setBaseSeries();
 
-                    if (this.baseSeries && !this.initialised) {
-                        this.setDerivedData();
-                        this.addBaseSeriesEvents();
-                        this.initialised = true;
-                    }
+                if (this.baseSeries && !this.initialised) {
+                    this.setDerivedData();
+                    this.addBaseSeriesEvents();
+                    this.initialised = true;
                 }
-            )
+            })
         );
     }
 
@@ -183,21 +171,13 @@ namespace DerivedComposition {
      */
     export function addBaseSeriesEvents(this: SeriesComposition): void {
         this.eventRemovers.push(
-            addEvent(
-                this.baseSeries,
-                'updatedData',
-                (): void => {
-                    this.setDerivedData();
-                }
-            ),
-            addEvent(
-                this.baseSeries,
-                'destroy',
-                (): void => {
-                    this.baseSeries = null as any;
-                    this.initialised = false;
-                }
-            )
+            addEvent(this.baseSeries, 'updatedData', (): void => {
+                this.setDerivedData();
+            }),
+            addEvent(this.baseSeries, 'destroy', (): void => {
+                this.baseSeries = null as any;
+                this.initialised = false;
+            })
         );
     }
 
@@ -211,7 +191,6 @@ namespace DerivedComposition {
         });
         Series.prototype.destroy.apply(this, arguments);
     }
-
 }
 
 /* *

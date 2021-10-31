@@ -39,13 +39,22 @@ declare global {
             public redraw(animation?: boolean): void;
             public render(): void;
             public setVisibility(visible: boolean): void;
-            public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
+            public update(
+                userOptions: Partial<AnnotationControlPointOptionsObject>
+            ): void;
         }
         interface AnnotationControlPointDragEventFunction {
-            (this: Annotation, e: AnnotationEventObject, target: AnnotationControllable): void;
+            (
+                this: Annotation,
+                e: AnnotationEventObject,
+                target: AnnotationControllable
+            ): void;
         }
         interface AnnotationControlPointPositionerFunction {
-            (this: AnnotationControlPoint, target: AnnotationControllable): PositionObject;
+            (
+                this: AnnotationControlPoint,
+                target: AnnotationControllable
+            ): PositionObject;
         }
     }
 }
@@ -60,10 +69,7 @@ declare global {
  */
 
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 import eventEmitterMixin from './Mixins/EventEmitterMixin.js';
 
@@ -138,7 +144,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
      * @type {Array<string>}
      */
-    public nonDOMEvents = ['drag']
+    public nonDOMEvents = ['drag'];
 
     /**
      * Set the visibility of the control point.
@@ -165,13 +171,7 @@ class ControlPoint implements eventEmitterMixin.Type {
             options = this.options;
 
         this.graphic = chart.renderer
-            .symbol(
-                options.symbol,
-                0,
-                0,
-                options.width,
-                options.height
-            )
+            .symbol(options.symbol, 0, 0, options.width, options.height)
             .add(chart.controlPointsGroup)
             .css(options.style);
 
@@ -190,7 +190,6 @@ class ControlPoint implements eventEmitterMixin.Type {
             this.options.positioner.call(this, this.target)
         );
     }
-
 
     /**
      * Destroy the control point.

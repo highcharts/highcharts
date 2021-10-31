@@ -15,9 +15,7 @@
 import type Point from '../../Core/Series/Point';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
 /**
  * Internal types
@@ -38,14 +36,14 @@ declare global {
             public calculateMassAndCenter(): void;
             public insertNodes(nodes: Array<Point>): void;
             public visitNodeRecursive(
-                node: (QuadTreeNode|null),
-                beforeCallback?: (Function|null),
-                afterCallback?: (Function|null)
+                node: QuadTreeNode | null,
+                beforeCallback?: Function | null,
+                afterCallback?: Function | null
             ): void;
         }
         class QuadTreeNode {
             public constructor(box: Record<string, number>);
-            public body: (boolean|Point);
+            public body: boolean | Point;
             public box: Record<string, number>;
             public boxSize: number;
             public isEmpty: boolean;
@@ -75,7 +73,7 @@ declare global {
  *
  * @param {Highcharts.Dictionary<number>} box Available space for the node
  */
-const QuadTreeNode = H.QuadTreeNode = function (
+const QuadTreeNode = (H.QuadTreeNode = function (
     this: Highcharts.QuadTreeNode,
     box: Record<string, number>
 ): void {
@@ -126,7 +124,7 @@ const QuadTreeNode = H.QuadTreeNode = function (
      * @type {boolean}
      */
     this.isEmpty = true;
-} as any;
+} as any);
 
 extend(
     QuadTreeNode.prototype,
@@ -165,13 +163,17 @@ extend(
                         this.divideBox();
                         // Reinsert main body only once:
                         if (this.body !== true) {
-                            this.nodes[this.getBoxPosition(this.body)]
-                                .insert(this.body, depth - 1);
+                            this.nodes[this.getBoxPosition(this.body)].insert(
+                                this.body,
+                                depth - 1
+                            );
                             this.body = true;
                         }
                         // Add second body:
-                        this.nodes[this.getBoxPosition(point)]
-                            .insert(point, depth - 1);
+                        this.nodes[this.getBoxPosition(point)].insert(
+                            point,
+                            depth - 1
+                        );
                     } else {
                         // We are below max allowed depth. That means either:
                         // - really huge number of points
@@ -194,7 +196,6 @@ extend(
 
                         this.nodes.push(newQuadTreeNode);
                     }
-
                 }
             }
         },
@@ -213,7 +214,7 @@ extend(
                     pointMass: Highcharts.QuadTreeNode
                 ): void {
                     if (!pointMass.isEmpty) {
-                        mass += (pointMass.mass as any);
+                        mass += pointMass.mass as any;
                         plotX +=
                             (pointMass.plotX as any) * (pointMass.mass as any);
                         plotY +=
@@ -300,8 +301,7 @@ extend(
         ): number {
             let left =
                     (point.plotX as any) < this.box.left + this.box.width / 2,
-                top =
-                    (point.plotY as any) < this.box.top + this.box.height / 2,
+                top = (point.plotY as any) < this.box.top + this.box.height / 2,
                 index: number;
 
             if (left) {
@@ -339,7 +339,7 @@ extend(
  * @param {number} width width of the plotting area
  * @param {number} height height of the plotting area
  */
-const QuadTree = H.QuadTree = function (
+const QuadTree = (H.QuadTree = function (
     this: Highcharts.QuadTree,
     x: number,
     y: number,
@@ -361,8 +361,7 @@ const QuadTree = H.QuadTree = function (
     this.root.isInternal = true;
     this.root.isRoot = true;
     this.root.divideBox();
-} as any;
-
+} as any);
 
 extend(
     QuadTree.prototype,
@@ -405,11 +404,11 @@ extend(
          */
         visitNodeRecursive: function (
             this: Highcharts.QuadTree,
-            node: (Highcharts.QuadTreeNode|null),
-            beforeCallback?: (Function|null),
-            afterCallback?: (Function|null)
+            node: Highcharts.QuadTreeNode | null,
+            beforeCallback?: Function | null,
+            afterCallback?: Function | null
         ): void {
-            let goFurther: (boolean|undefined);
+            let goFurther: boolean | undefined;
 
             if (!node) {
                 node = this.root;
@@ -423,34 +422,32 @@ extend(
                 return;
             }
 
-            node.nodes.forEach(
-                function (
-                    this: Highcharts.QuadTree,
-                    qtNode: Highcharts.QuadTreeNode
-                ): void {
-                    if (qtNode.isInternal) {
-                        if (beforeCallback) {
-                            goFurther = beforeCallback(qtNode);
-                        }
-                        if (goFurther === false) {
-                            return;
-                        }
-                        this.visitNodeRecursive(
-                            qtNode,
-                            beforeCallback,
-                            afterCallback
-                        );
-                    } else if (qtNode.body) {
-                        if (beforeCallback) {
-                            beforeCallback(qtNode.body);
-                        }
+            node.nodes.forEach(function (
+                this: Highcharts.QuadTree,
+                qtNode: Highcharts.QuadTreeNode
+            ): void {
+                if (qtNode.isInternal) {
+                    if (beforeCallback) {
+                        goFurther = beforeCallback(qtNode);
                     }
-                    if (afterCallback) {
-                        afterCallback(qtNode);
+                    if (goFurther === false) {
+                        return;
                     }
-                },
-                this
-            );
+                    this.visitNodeRecursive(
+                        qtNode,
+                        beforeCallback,
+                        afterCallback
+                    );
+                } else if (qtNode.body) {
+                    if (beforeCallback) {
+                        beforeCallback(qtNode.body);
+                    }
+                }
+                if (afterCallback) {
+                    afterCallback(qtNode);
+                }
+            },
+            this);
             if (node === this.root && afterCallback) {
                 afterCallback(node);
             }

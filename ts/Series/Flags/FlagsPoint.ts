@@ -22,9 +22,7 @@ import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    seriesTypes: { column: ColumnSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
@@ -36,7 +34,6 @@ const { isNumber } = U;
  * */
 
 class FlagsPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -83,7 +80,7 @@ class FlagsPoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      */
-    public hasNewShapeType(): (boolean|undefined) {
+    public hasNewShapeType(): boolean | undefined {
         const shape = this.options.shape || this.series.options.shape;
 
         return this.graphic && shape && shape !== this.graphic.symbolKey;

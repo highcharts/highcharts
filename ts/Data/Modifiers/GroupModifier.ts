@@ -39,7 +39,6 @@ const { merge } = U;
  * @private
  */
 class GroupModifier extends DataModifier {
-
     /* *
      *
      *  Static Properties
@@ -117,35 +116,21 @@ class GroupModifier extends DataModifier {
         const byGroups: Array<string> = [],
             tableGroups: Array<DataTable> = [],
             valueGroups: Array<JSON.Primitive> = [],
-            groupColumn = (
-                modifier.options.groupColumn ||
-                table.getColumnNames()[0]
-            ),
-            valueColumn = (
-                table.getColumn(groupColumn) ||
-                []
-            ),
-            {
-                invalidValues,
-                validValues
-            } = modifier.options,
-            modified = table.modified = table.clone(true, eventDetail);
+            groupColumn =
+                modifier.options.groupColumn || table.getColumnNames()[0],
+            valueColumn = table.getColumn(groupColumn) || [],
+            { invalidValues, validValues } = modifier.options,
+            modified = (table.modified = table.clone(true, eventDetail));
 
-        let value: DataTable.CellType,
-            valueIndex: number;
+        let value: DataTable.CellType, valueIndex: number;
 
         for (let i = 0, iEnd = valueColumn.length; i < iEnd; ++i) {
             value = valueColumn[i];
             if (typeof value !== 'undefined') {
                 if (
                     value instanceof DataTable ||
-                    (
-                        invalidValues &&
-                        invalidValues.indexOf(value) >= 0
-                    ) || (
-                        validValues &&
-                        validValues.indexOf(value) === -1
-                    )
+                    (invalidValues && invalidValues.indexOf(value) >= 0) ||
+                    (validValues && validValues.indexOf(value) === -1)
                 ) {
                     continue;
                 }
@@ -177,7 +162,6 @@ class GroupModifier extends DataModifier {
 
         return table;
     }
-
 }
 
 /* *
@@ -191,7 +175,6 @@ class GroupModifier extends DataModifier {
  * conversion.
  */
 namespace GroupModifier {
-
     /**
      * Options to configure the modifier.
      */
@@ -209,7 +192,6 @@ namespace GroupModifier {
          */
         validValues?: Array<JSON.Primitive>;
     }
-
 }
 
 /* *

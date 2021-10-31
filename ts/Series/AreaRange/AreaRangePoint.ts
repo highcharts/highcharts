@@ -24,10 +24,7 @@ import AreaSeries from '../Area/AreaSeries.js';
 import Point from '../../Core/Series/Point.js';
 const { prototype: pointProto } = Point;
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isNumber
-} = U;
+const { defined, isNumber } = U;
 
 /* *
  *
@@ -49,7 +46,6 @@ declare module '../../Core/Series/PointLike' {
  * */
 
 class AreaRangePoint extends AreaSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -87,7 +83,6 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         const prevState = this.state,
             series = this.series,
             isPolar = series.chart.polar;
-
 
         if (!defined(this.plotHigh)) {
             // Boost doesn't calculate plotHigh

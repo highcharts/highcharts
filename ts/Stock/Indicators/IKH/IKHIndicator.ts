@@ -9,10 +9,10 @@
 'use strict';
 
 /* *
-*
-* Import
-*
-* */
+ *
+ * Import
+ *
+ * */
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type {
@@ -61,16 +61,14 @@ function minLow(arr: Array<Array<number>>): number {
     }, Infinity);
 }
 
-function highlowLevel(
-    arr: Array<Array<number>>
-): Record<string, number> {
+function highlowLevel(arr: Array<Array<number>>): Record<string, number> {
     return {
         high: maxHigh(arr),
         low: minLow(arr)
     };
 }
 
-function getClosestPointRange(axis: Axis): (number|undefined) {
+function getClosestPointRange(axis: Axis): number | undefined {
     let closestDataRange: number | undefined,
         loopLength: number,
         distance: number,
@@ -132,9 +130,7 @@ function checkLineIntersection(
 
 // Parameter opt (indicator options object) include indicator, points,
 // nextPoints, color, options, gappedExtend and graph properties
-function drawSenkouSpan(
-    opt: IKHDrawSenkouSpanObject
-): void {
+function drawSenkouSpan(opt: IKHDrawSenkouSpanObject): void {
     const indicator = opt.indicator;
 
     indicator.points = opt.points;
@@ -153,7 +149,8 @@ function drawSenkouSpan(
 // Point: [undefined, value, value, ...] is correct
 // Point: [undefined, undefined, undefined, ...] is incorrect
 H.approximations['ichimoku-averages'] = function ():
-Array<number | null | undefined> | undefined {
+    | Array<number | null | undefined>
+    | undefined {
     let ret: Array<number | null | undefined> = [],
         isEmptyRange: boolean | undefined;
 
@@ -180,10 +177,10 @@ Array<number | null | undefined> | undefined {
  */
 
 /* *
-*
-* Class
-*
-* */
+ *
+ * Class
+ *
+ * */
 class IKHIndicator extends SMAIndicator {
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
@@ -333,7 +330,7 @@ class IKHIndicator extends SMAIndicator {
                  * @sample stock/indicators/ichimoku-kinko-hyo
                  *         Ichimoku Kinko Hyo color
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.color
                  */
@@ -345,7 +342,7 @@ class IKHIndicator extends SMAIndicator {
                  * @sample stock/indicators/ikh-negative-color
                  *         Ichimoku Kinko Hyo negativeColor
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.negativeColor
                  */
@@ -355,7 +352,7 @@ class IKHIndicator extends SMAIndicator {
                      * Color of the area between Senkou Span A and B.
                      *
                      * @deprecated
-                     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                     * @type {Highcharts.ColorType}
                      */
                     fill: 'rgba(255, 0, 0, 0.5)'
                 }
@@ -363,12 +360,13 @@ class IKHIndicator extends SMAIndicator {
             dataGrouping: {
                 approximation: 'ichimoku-averages'
             }
-        } as IKHOptions);
+        } as IKHOptions
+    );
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<IKHPoint> = void 0 as any;
     public options: IKHOptions = void 0 as any;
@@ -379,10 +377,10 @@ class IKHIndicator extends SMAIndicator {
     public nextPoints?: Array<IKHPoint> = void 0 as any;
 
     /* *
-    *
-    * Functions
-    *
-    * */
+     *
+     * Functions
+     *
+     * */
 
     public init(this: IKHIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -442,9 +440,7 @@ class IKHIndicator extends SMAIndicator {
 
         SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
-        indicator.points.forEach(function (
-            point: IKHPoint
-        ): void {
+        indicator.points.forEach(function (point: IKHPoint): void {
             indicator.pointArrayMap.forEach(function (
                 key: keyof IKHPoint
             ): void {
@@ -470,8 +466,7 @@ class IKHIndicator extends SMAIndicator {
 
     public drawGraph(): void {
         let indicator = this,
-            mainLinePoints: Array<IKHPoint> =
-                indicator.points,
+            mainLinePoints: Array<IKHPoint> = indicator.points,
             pointsLength: number = mainLinePoints.length,
             mainLineOptions: IKHOptions = indicator.options,
             mainLinePath = indicator.graph,
@@ -490,9 +485,7 @@ class IKHIndicator extends SMAIndicator {
                 [],
                 []
             ],
-            ikhMap: Record<string,
-            Array<IKHPoint>
-            > = {
+            ikhMap: Record<string, Array<IKHPoint>> = {
                 tenkanLine: allIchimokuPoints[0],
                 kijunLine: allIchimokuPoints[1],
                 chikouLine: allIchimokuPoints[2],
@@ -501,8 +494,8 @@ class IKHIndicator extends SMAIndicator {
                 senkouSpan: allIchimokuPoints[5]
             },
             intersectIndexColl: Array<number> = [],
-            senkouSpanOptions: IKHSenkouSpanOptions = indicator
-                .options.senkouSpan as any,
+            senkouSpanOptions: IKHSenkouSpanOptions = indicator.options
+                .senkouSpan as any,
             color: ColorType =
                 senkouSpanOptions.color ||
                 (senkouSpanOptions.styles as any).fill,
@@ -588,10 +581,7 @@ class IKHIndicator extends SMAIndicator {
         // Modify options and generate lines:
         objectEach(
             ikhMap,
-            function (
-                values: Array<IKHPoint>,
-                lineName: string
-            ): void {
+            function (values: Array<IKHPoint>, lineName: string): void {
                 if (
                     (mainLineOptions as any)[lineName] &&
                     lineName !== 'senkouSpan'
@@ -606,7 +596,9 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                        indicator
+                    );
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -672,38 +664,40 @@ class IKHIndicator extends SMAIndicator {
                         concatArrIndex =
                             pointsPlotYSum > nextPointsPlotYSum ? 0 : 1;
 
-                        points[concatArrIndex] = points[concatArrIndex].concat(
-                            sectionPoints
-                        );
+                        points[concatArrIndex] =
+                            points[concatArrIndex].concat(sectionPoints);
 
-                        nextPoints[concatArrIndex] = nextPoints[
-                            concatArrIndex
-                        ].concat(sectionNextPoints);
+                        nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex].concat(
+                                sectionNextPoints
+                            );
                     } else {
                         // Compare middle point of the section
                         concatArrIndex =
-                            sectionPoints[x].plotY > sectionNextPoints[x].plotY ? 0 : 1;
+                            sectionPoints[x].plotY > sectionNextPoints[x].plotY
+                                ? 0
+                                : 1;
 
-                        points[concatArrIndex] = points[concatArrIndex].concat(
-                            sectionPoints
-                        );
+                        points[concatArrIndex] =
+                            points[concatArrIndex].concat(sectionPoints);
 
-                        nextPoints[concatArrIndex] = nextPoints[
-                            concatArrIndex
-                        ].concat(sectionNextPoints);
+                        nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex].concat(
+                                sectionNextPoints
+                            );
                     }
                 } else {
                     // Compare first point of the section
                     concatArrIndex =
-                        sectionPoints[0].plotY > sectionNextPoints[0].plotY ? 0 : 1;
+                        sectionPoints[0].plotY > sectionNextPoints[0].plotY
+                            ? 0
+                            : 1;
 
-                    points[concatArrIndex] = points[concatArrIndex].concat(
-                        sectionPoints
-                    );
+                    points[concatArrIndex] =
+                        points[concatArrIndex].concat(sectionPoints);
 
-                    nextPoints[concatArrIndex] = nextPoints[
-                        concatArrIndex
-                    ].concat(sectionNextPoints);
+                    nextPoints[concatArrIndex] =
+                        nextPoints[concatArrIndex].concat(sectionNextPoints);
                 }
             }
 
@@ -775,7 +769,11 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path =
+                    SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                        indicator,
+                        points
+                    );
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -784,13 +782,16 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(
+                indicator,
+                arguments
+            );
         }
 
         return path;
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
@@ -912,10 +913,10 @@ class IKHIndicator extends SMAIndicator {
 /* eslint-disable @typescript-eslint/interface-name-prefix */
 
 /* *
-*
-* Prototype Properties
-*
-* */
+ *
+ * Prototype Properties
+ *
+ * */
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;

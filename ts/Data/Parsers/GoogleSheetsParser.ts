@@ -29,10 +29,7 @@ import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    uniqueKey
-} = U;
+const { merge, uniqueKey } = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
@@ -48,7 +45,6 @@ const {
  * @private
  */
 class GoogleSheetsParser extends DataParser<DataParser.Event> {
-
     /* *
      *
      *  Static Properties
@@ -58,10 +54,11 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: GoogleSheetsParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions,
-        json: {}
-    }
+    protected static readonly defaultOptions: GoogleSheetsParser.ClassJSONOptions =
+        {
+            ...DataParser.defaultOptions,
+            json: {}
+        };
 
     /* *
      *
@@ -106,14 +103,11 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
      *
      * */
 
-    private getSheetColumns(json: Highcharts.JSONType): Array<Array<DataValueType>> {
+    private getSheetColumns(
+        json: Highcharts.JSONType
+    ): Array<Array<DataValueType>> {
         const parser = this,
-            {
-                startColumn,
-                endColumn,
-                startRow,
-                endRow
-            } = parser.options,
+            { startColumn, endColumn, startRow, endRow } = parser.options,
             columns: Array<Array<DataValueType>> = [],
             cells = json.feed.entry,
             cellCount = (cells || []).length;
@@ -154,17 +148,22 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
             // If both row and col falls inside start and end set the
             // transposed cell value in the newly created columns
-            if (gc >= startColumn && gc <= endColumn &&
-                gr >= startRow && gr <= endRow) {
-
+            if (
+                gc >= startColumn &&
+                gc <= endColumn &&
+                gr >= startRow &&
+                gr <= endRow
+            ) {
                 cellInner = cell.gs$cell || cell.content;
 
                 val = null;
 
                 if (cellInner.numericValue) {
-                    if (cellInner.$t.indexOf('/') >= 0 || (
-                        cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1
-                    )) {
+                    if (
+                        cellInner.$t.indexOf('/') >= 0 ||
+                        (cellInner.$t.indexOf('-') >= 0 &&
+                            cellInner.$t.indexOf('.') === -1)
+                    ) {
                         // This is a date - for future reference.
                         val = cellInner.$t;
                     } else if (cellInner.$t.indexOf('%') > 0) {
@@ -213,7 +212,7 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
     public parse(
         jsonProp: Highcharts.JSONType,
         eventDetail?: DataEventEmitter.EventDetail
-    ): (boolean|undefined) {
+    ): boolean | undefined {
         const parser = this,
             parserOptions = merge(true, parser.options, { json: jsonProp }),
             converter = parser.converter,
@@ -240,11 +239,15 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
             column = parser.columns[i];
-            parser.headers[i] = parserOptions.firstRowAsNames ? column.splice(0, 1).toString() : uniqueKey();
+            parser.headers[i] = parserOptions.firstRowAsNames
+                ? column.splice(0, 1).toString()
+                : uniqueKey();
 
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
-                    let cellValue = converter.asGuessedType(column[j] as string);
+                    let cellValue = converter.asGuessedType(
+                        column[j] as string
+                    );
                     if (cellValue instanceof Date) {
                         cellValue = cellValue.getTime();
                     }
@@ -270,7 +273,6 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
-
 }
 
 /* *
@@ -280,7 +282,6 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
  * */
 
 namespace GoogleSheetsParser {
-
     /**
      * The available options for the parser
      */

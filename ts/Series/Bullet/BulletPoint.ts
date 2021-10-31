@@ -20,7 +20,6 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
  * */
 
 class BulletPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      * Properties
@@ -53,7 +52,6 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

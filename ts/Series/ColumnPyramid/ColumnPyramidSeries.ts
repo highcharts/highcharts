@@ -22,12 +22,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    extend,
-    merge,
-    pick
-} = U;
+const { clamp, extend, merge, pick } = U;
 
 /**
  * The ColumnPyramidSeries class
@@ -40,7 +35,6 @@ const {
  */
 
 class ColumnPyramidSeries extends ColumnSeries {
-
     /* *
      *
      * Static properties
@@ -69,9 +63,12 @@ class ColumnPyramidSeries extends ColumnSeries {
      * @optionparent plotOptions.columnpyramid
      */
 
-    public static defaultOptions: ColumnPyramidSeriesOptions = merge(ColumnSeries.defaultOptions, {
-        // Nothing here
-    });
+    public static defaultOptions: ColumnPyramidSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        {
+            // Nothing here
+        }
+    );
 
     /* *
      *
@@ -100,23 +97,25 @@ class ColumnPyramidSeries extends ColumnSeries {
         let series = this,
             chart = series.chart,
             options = series.options,
-            dense = series.dense =
-                (series.closestPointRange as any) * series.xAxis.transA < 2,
-            borderWidth = series.borderWidth = pick(
+            dense = (series.dense =
+                (series.closestPointRange as any) * series.xAxis.transA < 2),
+            borderWidth = (series.borderWidth = pick(
                 options.borderWidth,
                 dense ? 0 : 1 // #3635
-            ),
+            )),
             yAxis = series.yAxis,
             threshold = options.threshold,
-            translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
+            translatedThreshold = (series.translatedThreshold =
+                yAxis.getThreshold(threshold as any)),
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
             pointWidth = metrics.width,
             // postprocessed for border width
-            seriesBarW = series.barW =
-                Math.max(pointWidth, 1 + 2 * borderWidth),
-            pointXOffset = series.pointXOffset = metrics.offset;
+            seriesBarW = (series.barW = Math.max(
+                pointWidth,
+                1 + 2 * borderWidth
+            )),
+            pointXOffset = (series.pointXOffset = metrics.offset);
 
         if (chart.inverted) {
             (translatedThreshold as any) -= 0.5; // #3355
@@ -134,11 +133,10 @@ class ColumnPyramidSeries extends ColumnSeries {
         colProto.translate.apply(series);
 
         // Record the new values
-        series.points.forEach(function (
-            point: ColumnPyramidPoint
-        ): void {
-            let yBottom = pick<number|undefined, number>(
-                    point.yBottom, translatedThreshold as any
+        series.points.forEach(function (point: ColumnPyramidPoint): void {
+            let yBottom = pick<number | undefined, number>(
+                    point.yBottom,
+                    translatedThreshold as any
                 ),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotY = clamp(
@@ -158,51 +156,57 @@ class ColumnPyramidSeries extends ColumnSeries {
                 topXwidth: number,
                 bottomXwidth: number,
                 invBarPos: number,
-                x1, x2, x3, x4, y1, y2;
-
+                x1,
+                x2,
+                x3,
+                x4,
+                y1,
+                y2;
 
             point.barX = barX;
             point.pointWidth = pointWidth;
 
             // Fix the tooltip on center of grouped pyramids
             // (#1216, #424, #3648)
-            point.tooltipPos = chart.inverted ?
-                [
-                    yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
-                    series.xAxis.len - barX - barW,
-                    barH
-                ] :
-                [
-                    barX + barW,
-                    plotY + (yAxis.pos as any) - chart.plotTop,
-                    barH
-                ];
+            point.tooltipPos = chart.inverted
+                ? [
+                      yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
+                      series.xAxis.len - barX - barW,
+                      barH
+                  ]
+                : [
+                      barX + barW,
+                      plotY + (yAxis.pos as any) - chart.plotTop,
+                      barH
+                  ];
 
-            stackTotal =
-                (threshold as any) + ((point.total || point.y) as any);
+            stackTotal = (threshold as any) + ((point.total || point.y) as any);
 
             // overwrite stacktotal (always 100 / -100)
             if (options.stacking === 'percent') {
                 stackTotal =
-                    (threshold as any) + ((point.y as any) < 0) ?
-                        -100 :
-                        100;
+                    (threshold as any) + ((point.y as any) < 0) ? -100 : 100;
             }
 
             // get the highest point (if stack, extract from total)
-            topPointY = yAxis.toPixels((stackTotal), true);
+            topPointY = yAxis.toPixels(stackTotal, true);
 
             // calculate height of stack (in pixels)
             stackHeight =
-                chart.plotHeight - topPointY -
+                chart.plotHeight -
+                topPointY -
                 (chart.plotHeight - (translatedThreshold as any));
 
             // topXwidth and bottomXwidth = width of lines from the center
             // calculated from tanges proportion.
             // Can not be a NaN #12514
-            topXwidth = stackHeight ? (barW * (barY - topPointY)) / stackHeight : 0;
+            topXwidth = stackHeight
+                ? (barW * (barY - topPointY)) / stackHeight
+                : 0;
             // like topXwidth, but with height of point
-            bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
+            bottomXwidth = stackHeight
+                ? (barW * (barY + barH - topPointY)) / stackHeight
+                : 0;
 
             /*
                     /\
@@ -233,10 +237,9 @@ class ColumnPyramidSeries extends ColumnSeries {
                     topPointY - (yAxis.width - (translatedThreshold as any));
 
                 // proportion tanges
-                topXwidth = (barW *
-                (topPointY - invBarPos)) / stackHeight;
-                bottomXwidth = (barW *
-                (topPointY - (invBarPos - barH))) / stackHeight;
+                topXwidth = (barW * (topPointY - invBarPos)) / stackHeight;
+                bottomXwidth =
+                    (barW * (topPointY - (invBarPos - barH))) / stackHeight;
 
                 x1 = barX + barW + topXwidth; // top bottom
                 x2 = x1 - 2 * topXwidth; // top top
@@ -254,7 +257,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             // Register shape type and arguments to be used in drawPoints
             point.shapeType = 'path';
             point.shapeArgs = {
-            // args for datalabels positioning
+                // args for datalabels positioning
                 x: x1,
                 y: y1,
                 width: x2 - x1,
@@ -393,4 +396,4 @@ export default ColumnPyramidSeries;
  * @apioption series.columnpyramid.data
  */
 
-''; // adds doclets above to transpiled file;
+(''); // adds doclets above to transpiled file;

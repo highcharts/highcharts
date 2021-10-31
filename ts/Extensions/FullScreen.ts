@@ -10,14 +10,10 @@
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import AST from '../Core/Renderer/HTML/AST.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+const { addEvent } = U;
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
@@ -34,33 +30,30 @@ declare global {
         class Fullscreen {
             public constructor(chart: Chart);
             public browserProps?: {
-                fullscreenChange: (
-                    'fullscreenchange'|
-                    'mozfullscreenchange'|
-                    'webkitfullscreenchange'|
-                    'MSFullscreenChange'
-                );
-                requestFullscreen: (
-                    'msRequestFullscreen'|
-                    'mozRequestFullScreen'|
-                    'requestFullscreen'|
-                    'webkitRequestFullScreen'
-                );
-                exitFullscreen: (
-                    'exitFullscreen'|
-                    'mozCancelFullScreen'|
-                    'webkitExitFullscreen'|
-                    'msExitFullscreen'
-                );
+                fullscreenChange:
+                    | 'fullscreenchange'
+                    | 'mozfullscreenchange'
+                    | 'webkitfullscreenchange'
+                    | 'MSFullscreenChange';
+                requestFullscreen:
+                    | 'msRequestFullscreen'
+                    | 'mozRequestFullScreen'
+                    | 'requestFullscreen'
+                    | 'webkitRequestFullScreen';
+                exitFullscreen:
+                    | 'exitFullscreen'
+                    | 'mozCancelFullScreen'
+                    | 'webkitExitFullscreen'
+                    | 'msExitFullscreen';
             };
             public chart: Chart;
             public close(): void;
             public isOpen: boolean;
             public open(): void;
             public origHeight?: number;
-            public origHeightOption?: (number|string|null);
+            public origHeightOption?: number | string | null;
             public origWidth?: number;
-            public origWidthOption?: (number|string|null);
+            public origWidthOption?: number | string | null;
             public toggle(): void;
             public unbindFullscreenEvent?: Function;
         }
@@ -87,7 +80,6 @@ declare global {
  * @requires modules/full-screen
  */
 class Fullscreen {
-
     /* *
      *
      *  Constructors
@@ -160,11 +152,11 @@ class Fullscreen {
     /** @private */
     public origHeight?: number;
     /** @private */
-    public origHeightOption?: (number|string|null);
+    public origHeightOption?: number | string | null;
     /** @private */
     public origWidth?: number;
     /** @private */
-    public origWidthOption?: (number|null);
+    public origWidthOption?: number | null;
 
     /** @private */
     public unbindFullscreenEvent?: Function;
@@ -203,7 +195,8 @@ class Fullscreen {
 
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
-            fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
+            fullscreen.unbindFullscreenEvent =
+                fullscreen.unbindFullscreenEvent();
         }
 
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
@@ -269,16 +262,14 @@ class Fullscreen {
                 unbindDestroy();
             };
 
-            const promise = chart.renderTo[
-                fullscreen.browserProps.requestFullscreen
-            ]();
+            const promise =
+                chart.renderTo[fullscreen.browserProps.requestFullscreen]();
 
             if (promise) {
                 // No dot notation because of IE8 compatibility
-                promise['catch'](function (): void { // eslint-disable-line dot-notation
-                    alert( // eslint-disable-line no-alert
-                        'Full screen is not supported inside a frame.'
-                    );
+                promise['catch'](function (): void {
+                    // eslint-disable-next-line no-alert
+                    alert('Full screen is not supported inside a frame.');
                 });
             }
         }
@@ -298,11 +289,10 @@ class Fullscreen {
         const chart = this.chart,
             exportDivElements = chart.exportDivElements,
             exportingOptions = chart.options.exporting,
-            menuItems = (
+            menuItems =
                 exportingOptions &&
                 exportingOptions.buttons &&
-                exportingOptions.buttons.contextButton.menuItems
-            ),
+                exportingOptions.buttons.contextButton.menuItems,
             lang = chart.options.lang;
 
         if (
@@ -314,15 +304,15 @@ class Fullscreen {
             menuItems &&
             exportDivElements
         ) {
-            const exportDivElement = exportDivElements[menuItems.indexOf('viewFullscreen')];
+            const exportDivElement =
+                exportDivElements[menuItems.indexOf('viewFullscreen')];
             if (exportDivElement) {
                 AST.setElementHTML(
                     exportDivElement,
-                    !this.isOpen ?
-                        (
-                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                            lang.viewFullscreen
-                        ) : lang.exitFullscreen
+                    !this.isOpen
+                        ? exportingOptions.menuItemDefinitions.viewFullscreen
+                              .text || lang.viewFullscreen
+                        : lang.exitFullscreen
                 );
             }
         }

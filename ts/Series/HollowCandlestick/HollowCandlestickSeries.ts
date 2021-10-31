@@ -27,18 +27,13 @@ import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
 
 const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
+    seriesTypes: { candlestick: CandlestickSeries }
 } = SeriesRegistry;
 
-const {
-    addEvent,
-    merge
-} = U;
+const { addEvent, merge } = U;
 interface HollowcandleInfo {
     isBullish: boolean;
-    trendDirection: 'down'|'up';
+    trendDirection: 'down' | 'up';
 }
 
 /* *
@@ -57,7 +52,6 @@ interface HollowcandleInfo {
  * @augments Highcharts.seriesTypes.candlestick
  */
 class HollowCandlestickSeries extends CandlestickSeries {
-
     /* *
      *
      * Static properties
@@ -76,69 +70,71 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @requires     modules/hollowcandlestick
      * @optionparent plotOptions.hollowcandlestick
      */
-    public static defaultOptions: HollowCandlestickSeriesOptions = merge(CandlestickSeries.defaultOptions, {
-        /**
-         * The fill color of the candlestick when the current
-         * close is lower than the previous one.
-         *
-         * @sample stock/plotoptions/hollow-candlestick-color/
-         *     Custom colors
-         * @sample {highstock} highcharts/css/hollow-candlestick/
-         *         Colors in styled mode
-         *
-         * @type    {ColorType}
-         * @product highstock
-         */
-        color: Palette.negativeColor,
+    public static defaultOptions: HollowCandlestickSeriesOptions = merge(
+        CandlestickSeries.defaultOptions,
+        {
+            /**
+             * The fill color of the candlestick when the current
+             * close is lower than the previous one.
+             *
+             * @sample stock/plotoptions/hollow-candlestick-color/
+             *     Custom colors
+             * @sample {highstock} highcharts/css/hollow-candlestick/
+             *         Colors in styled mode
+             *
+             * @type    {ColorType}
+             * @product highstock
+             */
+            color: Palette.negativeColor,
 
-        dataGrouping: {
-            groupAll: true,
-            groupPixelWidth: 10
-        },
+            dataGrouping: {
+                groupAll: true,
+                groupPixelWidth: 10
+            },
 
-        /**
-         * The color of the line/border of the hollow candlestick when
-         * the current close is lower than the previous one.
-         *
-         * @sample stock/plotoptions/hollow-candlestick-color/
-         *     Custom colors
-         * @sample {highstock} highcharts/css/hollow-candlestick/
-         *         Colors in styled mode
-         *
-         * @type    {ColorType}
-         * @product highstock
-         */
-        lineColor: Palette.negativeColor,
+            /**
+             * The color of the line/border of the hollow candlestick when
+             * the current close is lower than the previous one.
+             *
+             * @sample stock/plotoptions/hollow-candlestick-color/
+             *     Custom colors
+             * @sample {highstock} highcharts/css/hollow-candlestick/
+             *         Colors in styled mode
+             *
+             * @type    {ColorType}
+             * @product highstock
+             */
+            lineColor: Palette.negativeColor,
 
-        /**
-         * The fill color of the candlestick when the current
-         * close is higher than the previous one.
-         *
-         * @sample stock/plotoptions/hollow-candlestick-color/
-         *     Custom colors
-         * @sample {highstock} highcharts/css/hollow-candlestick/
-         *         Colors in styled mode
-         *
-         * @type    {ColorType}
-         * @product highstock
-         */
-        upColor: Palette.positiveColor,
+            /**
+             * The fill color of the candlestick when the current
+             * close is higher than the previous one.
+             *
+             * @sample stock/plotoptions/hollow-candlestick-color/
+             *     Custom colors
+             * @sample {highstock} highcharts/css/hollow-candlestick/
+             *         Colors in styled mode
+             *
+             * @type    {ColorType}
+             * @product highstock
+             */
+            upColor: Palette.positiveColor,
 
-        /**
-         * The color of the line/border of the hollow candlestick when
-         * the current close is higher than the previous one.
-         *
-         * @sample stock/plotoptions/hollow-candlestick-color/
-         *     Custom colors
-         * @sample {highstock} highcharts/css/hollow-candlestick/
-         *         Colors in styled mode
-         *
-         * @type    {ColorType}
-         * @product highstock
-         */
-        upLineColor: Palette.positiveColor
-
-    } as HollowCandlestickSeriesOptions);
+            /**
+             * The color of the line/border of the hollow candlestick when
+             * the current close is higher than the previous one.
+             *
+             * @sample stock/plotoptions/hollow-candlestick-color/
+             *     Custom colors
+             * @sample {highstock} highcharts/css/hollow-candlestick/
+             *         Colors in styled mode
+             *
+             * @type    {ColorType}
+             * @product highstock
+             */
+            upLineColor: Palette.positiveColor
+        } as HollowCandlestickSeriesOptions
+    );
 
     /* *
      *
@@ -173,8 +169,11 @@ class HollowCandlestickSeries extends CandlestickSeries {
             processedYData = series.allGroupedData || series.yData, // procesed and grouped data
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (!hollowCandlestickData.length && processedYData && processedYData.length) {
-
+        if (
+            !hollowCandlestickData.length &&
+            processedYData &&
+            processedYData.length
+        ) {
             // First point is allways bullish (transparent).
             hollowCandlestickData.push({
                 isBullish: true,
@@ -185,7 +184,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 const dataPoint: any = processedYData[i],
                     previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(dataPoint, previousDataPoint));
+                hollowCandlestickData.push(
+                    series.isBullish(dataPoint, previousDataPoint)
+                );
             }
         }
     }
@@ -202,13 +203,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @return {ColorType}
      *
      */
-    public getLineColor(trendDirection: 'up'|'down'): ColorType {
+    public getLineColor(trendDirection: 'up' | 'down'): ColorType {
         const series = this;
 
         // Return line color based on trend direction
-        return trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+        return trendDirection === 'up'
+            ? series.options.upColor || Palette.positiveColor
+            : series.options.color || Palette.negativeColor;
     }
 
     /**
@@ -230,9 +231,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
         if (hollowcandleInfo.isBullish) {
             return 'transparent';
         }
-        return hollowcandleInfo.trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+        return hollowcandleInfo.trendDirection === 'up'
+            ? series.options.upColor || Palette.positiveColor
+            : series.options.color || Palette.negativeColor;
     }
 
     /**
@@ -261,7 +262,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @return {HollowcandleInfo}
      *
      */
-    public isBullish(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): HollowcandleInfo {
+    public isBullish(
+        dataPoint: Array<number>,
+        previousDataPoint: Array<number>
+    ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
             isBullish: dataPoint[0] <= dataPoint[3],
@@ -294,7 +298,9 @@ class HollowCandlestickSeries extends CandlestickSeries {
             hollowcandleInfo = this.hollowCandlestickData[index];
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
-        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) || attribs.stroke;
+        attribs.stroke =
+            this.getLineColor(hollowcandleInfo.trendDirection) ||
+            attribs.stroke;
 
         // Select or hover states
         if (state) {
@@ -347,7 +353,7 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hollowcandlestick: typeof HollowCandlestickSeries;
     }
@@ -430,4 +436,4 @@ export default HollowCandlestickSeries;
  * @apioption series.hollowcandlestick.data
  */
 
-''; // adds doclets above to transpilat
+(''); // adds doclets above to transpilat

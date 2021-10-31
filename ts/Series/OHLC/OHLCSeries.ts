@@ -25,18 +25,12 @@ import OHLCPoint from './OHLCPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
-    seriesTypes: {
-        hlc: HLCSeries
-    }
+    seriesTypes: { hlc: HLCSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import LineSeriesOptions from '../Line/LineSeriesOptions';
 
-const {
-    addEvent,
-    extend,
-    merge
-} = U;
+const { addEvent, extend, merge } = U;
 
 /* *
  *
@@ -92,44 +86,46 @@ class OHLCSeries extends HLCSeries {
      * @apioption plotOptions.line.useOhlcData
      */
 
-    public static defaultOptions: OHLCSeriesOptions = merge(HLCSeries.defaultOptions, {
+    public static defaultOptions: OHLCSeriesOptions = merge(
+        HLCSeries.defaultOptions,
+        {
+            /**
+             * @type      {Highcharts.DataGroupingApproximationValue|Function}
+             * @default   ohlc
+             * @product   highstock
+             * @apioption plotOptions.ohlc.dataGrouping.approximation
+             */
 
-        /**
-         * @type      {Highcharts.DataGroupingApproximationValue|Function}
-         * @default   ohlc
-         * @product   highstock
-         * @apioption plotOptions.ohlc.dataGrouping.approximation
-         */
+            tooltip: {
+                pointFormat:
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '<b> {series.name}</b><br/>' +
+                    'Open: {point.open}<br/>' +
+                    'High: {point.high}<br/>' +
+                    'Low: {point.low}<br/>' +
+                    'Close: {point.close}<br/>'
+            }
 
-        tooltip: {
-            pointFormat:
-                '<span style="color:{point.color}">\u25CF</span> ' +
-                '<b> {series.name}</b><br/>' +
-                'Open: {point.open}<br/>' +
-                'High: {point.high}<br/>' +
-                'Low: {point.low}<br/>' +
-                'Close: {point.close}<br/>'
-        }
+            /**
+             * Determines which one of `open`, `high`, `low`, `close` values
+             * should be represented as `point.y`, which is later used to set
+             * dataLabel position and [compare](#plotOptions.series.compare).
+             *
+             * @default    close
+             * @validvalue ["open", "high", "low", "close"]
+             * @product    highstock
+             * @apioption  plotOptions.ohlc.pointValKey
+             */
 
-        /**
-         * Determines which one of  `open`, `high`, `low`, `close` values should
-         * be represented as `point.y`, which is later used to set dataLabel
-         * position and [compare](#plotOptions.series.compare).
-         *
-         * @default    close
-         * @validvalue ["open", "high", "low", "close"]
-         * @product    highstock
-         * @apioption  plotOptions.ohlc.pointValKey
-         */
-
-        /**
-         * Line color for up points.
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @product   highstock
-         * @apioption plotOptions.ohlc.upColor
-         */
-    } as OHLCSeriesOptions);
+            /**
+             * Line color for up points.
+             *
+             * @type      {Highcharts.ColorType}
+             * @product   highstock
+             * @apioption plotOptions.ohlc.upColor
+             */
+        } as OHLCSeriesOptions
+    );
 
     /* *
      *
@@ -171,7 +167,6 @@ class OHLCSeries extends HLCSeries {
         return path;
     }
 
-
     /* eslint-disable valid-jsdoc */
 
     /**
@@ -202,7 +197,6 @@ class OHLCSeries extends HLCSeries {
         // return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     }
-
 }
 
 /* *
@@ -245,41 +239,44 @@ SeriesRegistry.registerSeriesType('ohlc', OHLCSeries);
 export default OHLCSeries;
 
 // Add useOhlcData option
-addEvent(Series, 'init', function (
-    eventOptions: { options: OHLCSeriesOptions }
-): void {
-    // eslint-disable-next-line no-invalid-this
-    const series = this,
-        options = eventOptions.options;
+addEvent(
+    Series,
+    'init',
+    function (eventOptions: { options: OHLCSeriesOptions }): void {
+        // eslint-disable-next-line no-invalid-this
+        const series = this,
+            options = eventOptions.options;
 
-    if (
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        extend(series, {
-            pointValKey: OHLCSeries.prototype.pointValKey,
-            // keys: ohlcProto.keys, // @todo potentially nonsense
-            pointArrayMap: OHLCSeries.prototype.pointArrayMap,
-            toYData: OHLCSeries.prototype.toYData
-        });
+        if (
+            options.useOhlcData &&
+            options.id !== 'highcharts-navigator-series'
+        ) {
+            extend(series, {
+                pointValKey: OHLCSeries.prototype.pointValKey,
+                // keys: ohlcProto.keys, // @todo potentially nonsense
+                pointArrayMap: OHLCSeries.prototype.pointArrayMap,
+                toYData: OHLCSeries.prototype.toYData
+            });
+        }
     }
-});
+);
 
-addEvent(Series, 'afterSetOptions', function (
-    e: { options: LineSeriesOptions }
-): void {
-    const options = e.options,
-        dataGrouping = options.dataGrouping;
+addEvent(
+    Series,
+    'afterSetOptions',
+    function (e: { options: LineSeriesOptions }): void {
+        const options = e.options,
+            dataGrouping = options.dataGrouping;
 
-    if (
-        dataGrouping &&
-        options.useOhlcData &&
-        options.id !== 'highcharts-navigator-series'
-    ) {
-        dataGrouping.approximation = 'ohlc';
+        if (
+            dataGrouping &&
+            options.useOhlcData &&
+            options.id !== 'highcharts-navigator-series'
+        ) {
+            dataGrouping.approximation = 'ohlc';
+        }
     }
-});
-
+);
 
 /* *
  *
@@ -356,4 +353,4 @@ addEvent(Series, 'afterSetOptions', function (
  * @apioption series.ohlc.data.open
  */
 
-''; // adds doclets above to transpilat
+(''); // adds doclets above to transpilat

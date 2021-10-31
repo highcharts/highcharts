@@ -27,18 +27,10 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    defined,
-    extend,
-    isArray,
-    merge
-} = U;
+const { correctFloat, defined, extend, isArray, merge } = U;
 
 /* *
  *
@@ -56,7 +48,6 @@ const {
  * @augments Highcharts.Series
  */
 class DisparityIndexIndicator extends SMAIndicator {
-
     /* *
      *
      *  Static Properties
@@ -81,28 +72,30 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @requires     stock/indicators/disparity-index
      * @optionparent plotOptions.disparityindex
      */
-    public static defaultOptions: DisparityIndexOptions =
-    merge(SMAIndicator.defaultOptions, {
-        params: {
-            /**
-             * The average used to calculate the Disparity Index indicator.
-             * By default it uses SMA, with EMA as an option. To use other
-             * averages, e.g. TEMA, the `stock/indicators/tema.js` file needs to
-             * be loaded.
-             *
-             * If value is different than `ema`, `dema`, `tema` or `wma`,
-             * then sma is used.
-             */
-            average: 'sma',
-            index: 3
-        },
-        marker: {
-            enabled: false
-        },
-        dataGrouping: {
-            approximation: 'averages'
-        }
-    } as DisparityIndexOptions);
+    public static defaultOptions: DisparityIndexOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                /**
+                 * The average used to calculate the Disparity Index indicator.
+                 * By default it uses SMA, with EMA as an option. To use other
+                 * averages, e.g. TEMA, the `stock/indicators/tema.js` file
+                 * needs to be loaded.
+                 *
+                 * If value is different than `ema`, `dema`, `tema` or `wma`,
+                 * then sma is used.
+                 */
+                average: 'sma',
+                index: 3
+            },
+            marker: {
+                enabled: false
+            },
+            dataGrouping: {
+                approximation: 'averages'
+            }
+        } as DisparityIndexOptions
+    );
 
     /* *
      *
@@ -127,7 +120,9 @@ class DisparityIndexIndicator extends SMAIndicator {
             params = args[1].params, // options.params
             averageType = params && params.average ? params.average : void 0;
 
-        ctx.averageIndicator = SeriesRegistry.seriesTypes[averageType] as typeof SMAIndicator || SMAIndicator;
+        ctx.averageIndicator =
+            (SeriesRegistry.seriesTypes[averageType] as typeof SMAIndicator) ||
+            SMAIndicator;
         ctx.averageIndicator.prototype.init.apply(ctx, args);
     }
 
@@ -135,16 +130,16 @@ class DisparityIndexIndicator extends SMAIndicator {
         curPrice: number,
         periodAverage: number
     ): number {
-        return correctFloat(curPrice - periodAverage) / periodAverage * 100;
+        return (correctFloat(curPrice - periodAverage) / periodAverage) * 100;
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DisparityIndexParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+    ): IndicatorValuesObject<TLinkedSeries> | undefined {
         const index = params.index,
-            xVal: Array<number> = (series.xData as any),
-            yVal: Array<number>|Array<Array<number>> = (series.yData as any),
+            xVal: Array<number> = series.xData as any,
+            yVal: Array<number> | Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             disparityIndexPoint: Array<Array<number>> = [],
             xData: Array<number> = [],
@@ -159,7 +154,8 @@ class DisparityIndexIndicator extends SMAIndicator {
 
         // Check period, if bigger than points length, skip
         if (
-            !yValues || yValues.length === 0 ||
+            !yValues ||
+            yValues.length === 0 ||
             !defined(index) ||
             yVal.length <= start
         ) {
@@ -173,10 +169,7 @@ class DisparityIndexIndicator extends SMAIndicator {
                 yValues[i - start]
             );
 
-            disparityIndexPoint.push([
-                xVal[i],
-                disparityIndexValue
-            ]);
+            disparityIndexPoint.push([xVal[i], disparityIndexValue]);
             xData.push(xVal[i]);
             yData.push(disparityIndexValue);
         }
@@ -187,7 +180,6 @@ class DisparityIndexIndicator extends SMAIndicator {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-
 }
 
 /* *
@@ -220,7 +212,6 @@ declare module '../../../Core/Series/SeriesType' {
 }
 SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
 
-
 /* *
  *
  *  Default Export
@@ -251,4 +242,4 @@ export default DisparityIndexIndicator;
  * @apioption series.disparityindex
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output

@@ -27,16 +27,10 @@ import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-const {
-    doc,
-    win
-} = H;
+const { doc, win } = H;
 import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+const { addEvent, fireEvent } = U;
 
 import EventProvider from './Utils/EventProvider.js';
 import HTMLUtilities from './Utils/HTMLUtilities.js';
@@ -63,7 +57,6 @@ const { getElement } = HTMLUtilities;
  * @name Highcharts.KeyboardNavigation
  */
 class KeyboardNavigation {
-
     /* *
      *
      *  Constructor
@@ -104,7 +97,6 @@ class KeyboardNavigation {
 
     /* eslint-disable valid-jsdoc */
 
-
     /**
      * Initialize the class
      * @private
@@ -117,7 +109,7 @@ class KeyboardNavigation {
         chart: Chart,
         components: Accessibility.ComponentsObject
     ): void {
-        const ep = this.eventProvider = new EventProvider();
+        const ep = (this.eventProvider = new EventProvider());
 
         this.chart = chart;
         this.components = components;
@@ -126,20 +118,26 @@ class KeyboardNavigation {
 
         this.update();
 
-        ep.addEvent(this.tabindexContainer, 'keydown',
-            (e: KeyboardEvent): void => this.onKeydown(e));
-
-        ep.addEvent(this.tabindexContainer, 'focus',
-            (e: FocusEvent): void => this.onFocus(e));
-
-        ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+        ep.addEvent(
+            this.tabindexContainer,
+            'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e)
         );
 
-        ['mousedown', 'touchstart'].forEach((eventName): Function =>
-            ep.addEvent(chart.renderTo, eventName, (): void => {
-                this.isClickingChart = true;
-            })
+        ep.addEvent(this.tabindexContainer, 'focus', (e: FocusEvent): void =>
+            this.onFocus(e)
+        );
+
+        ['mouseup', 'touchend'].forEach(
+            (eventName): Function =>
+                ep.addEvent(doc, eventName, (): void => this.onMouseUp())
+        );
+
+        ['mousedown', 'touchstart'].forEach(
+            (eventName): Function =>
+                ep.addEvent(chart.renderTo, eventName, (): void => {
+                    this.isClickingChart = true;
+                })
         );
 
         ep.addEvent(chart.renderTo, 'mouseover', (): void => {
@@ -151,15 +149,12 @@ class KeyboardNavigation {
         });
     }
 
-
     /**
      * Update the modules for the keyboard navigation.
      * @param {Array<string>} [order]
      *        Array specifying the tab order of the components.
      */
-    public update(
-        order?: Array<(keyof Accessibility.ComponentsObject)>
-    ): void {
+    public update(order?: Array<keyof Accessibility.ComponentsObject>): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
             components = this.components;
@@ -177,19 +172,19 @@ class KeyboardNavigation {
                 modules: Array<KeyboardNavigationHandler>,
                 componentName: keyof Accessibility.ComponentsObject
             ): Array<KeyboardNavigationHandler> {
-                const navModules = components[componentName].getKeyboardNavigation();
+                const navModules =
+                    components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
-            }, []);
+            },
+            []);
 
             this.updateExitAnchor();
-
         } else {
             this.modules = [];
             this.currentModuleIx = 0;
             this.removeExitAnchor();
         }
     }
-
 
     /**
      * Function to run on container focus
@@ -198,10 +193,8 @@ class KeyboardNavigation {
      */
     public onFocus(e: FocusEvent): void {
         const chart = this.chart;
-        const focusComesFromChart = (
-            e.relatedTarget &&
-            chart.container.contains(e.relatedTarget as any)
-        );
+        const focusComesFromChart =
+            e.relatedTarget && chart.container.contains(e.relatedTarget as any);
 
         // Init keyboard nav if tabbing into chart
         if (
@@ -217,7 +210,6 @@ class KeyboardNavigation {
         this.exiting = false;
     }
 
-
     /**
      * Reset chart navigation state if we click outside the chart and it's
      * not already reset.
@@ -228,8 +220,8 @@ class KeyboardNavigation {
 
         if (!this.keyboardReset && !this.pointerIsOverChart) {
             const chart = this.chart,
-                curMod = this.modules &&
-                    this.modules[this.currentModuleIx || 0];
+                curMod =
+                    this.modules && this.modules[this.currentModuleIx || 0];
 
             if (curMod && curMod.terminate) {
                 curMod.terminate();
@@ -242,21 +234,17 @@ class KeyboardNavigation {
         }
     }
 
-
     /**
      * Function to run on keydown
      * @private
      * @param {global.KeyboardEvent} ev Browser keydown event.
      */
-    public onKeydown(
-        ev: KeyboardEvent
-    ): void {
+    public onKeydown(ev: KeyboardEvent): void {
         const e = ev || win.event,
-            curNavModule = (
+            curNavModule =
                 this.modules &&
                 this.modules.length &&
-                this.modules[this.currentModuleIx]
-            );
+                this.modules[this.currentModuleIx];
 
         let preventDefault;
 
@@ -284,7 +272,6 @@ class KeyboardNavigation {
         }
     }
 
-
     /**
      * Go to previous module.
      * @private
@@ -292,7 +279,6 @@ class KeyboardNavigation {
     public prev(): boolean {
         return this.move(-1);
     }
-
 
     /**
      * Go to next module.
@@ -302,7 +288,6 @@ class KeyboardNavigation {
         return this.move(1);
     }
 
-
     /**
      * Move to prev/next module.
      * @private
@@ -311,9 +296,7 @@ class KeyboardNavigation {
      * @return {boolean}
      * True if there was a valid module in direction.
      */
-    public move(
-        direction: number
-    ): boolean {
+    public move(direction: number): boolean {
         const curModule = this.modules && this.modules[this.currentModuleIx];
         if (curModule && curModule.terminate) {
             curModule.terminate(direction);
@@ -350,7 +333,6 @@ class KeyboardNavigation {
         return false;
     }
 
-
     /**
      * We use an exit anchor to move focus out of chart whenever we want, by
      * setting focus to this div and not preventing the default tab action. We
@@ -359,7 +341,8 @@ class KeyboardNavigation {
      * @private
      */
     public updateExitAnchor(): void {
-        const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+        const endMarkerId =
+                'highcharts-end-of-chart-marker-' + this.chart.index,
             endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
@@ -372,7 +355,6 @@ class KeyboardNavigation {
         }
     }
 
-
     /**
      * Chart container should have tabindex if navigation is enabled.
      * @private
@@ -380,7 +362,9 @@ class KeyboardNavigation {
     public updateContainerTabindex(): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
-            shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false),
+            shouldHaveTabindex = !(
+                keyboardOptions && keyboardOptions.enabled === false
+            ),
             chart = this.chart,
             container = chart.container;
 
@@ -402,14 +386,12 @@ class KeyboardNavigation {
         }
     }
 
-
     /**
      * @private
      */
-    public makeElementAnExitAnchor(
-        el: DOMElementType
-    ): void {
-        const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
+    public makeElementAnExitAnchor(el: DOMElementType): void {
+        const chartTabindex =
+            this.tabindexContainer.getAttribute('tabindex') || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
         el.setAttribute('tabindex', chartTabindex);
         el.setAttribute('aria-hidden', false);
@@ -418,7 +400,6 @@ class KeyboardNavigation {
         this.addExitAnchorEventsToEl(el);
     }
 
-
     /**
      * Add new exit anchor to the chart.
      *
@@ -426,31 +407,26 @@ class KeyboardNavigation {
      */
     public createExitAnchor(): void {
         const chart = this.chart,
-            exitAnchor = this.exitAnchor = doc.createElement('div');
+            exitAnchor = (this.exitAnchor = doc.createElement('div'));
 
         chart.renderTo.appendChild(exitAnchor);
         this.makeElementAnExitAnchor(exitAnchor);
     }
-
 
     /**
      * @private
      */
     public removeExitAnchor(): void {
         if (this.exitAnchor && this.exitAnchor.parentNode) {
-            this.exitAnchor.parentNode
-                .removeChild(this.exitAnchor);
+            this.exitAnchor.parentNode.removeChild(this.exitAnchor);
             delete this.exitAnchor;
         }
     }
 
-
     /**
      * @private
      */
-    public addExitAnchorEventsToEl(
-        element: DOMElementType
-    ): void {
+    public addExitAnchorEventsToEl(element: DOMElementType): void {
         const chart = this.chart,
             keyboardNavigation = this;
 
@@ -459,10 +435,9 @@ class KeyboardNavigation {
             'focus',
             function (ev: MouseEvent): void {
                 const e = ev || win.event,
-                    focusComesFromChart = (
+                    focusComesFromChart =
                         e.relatedTarget &&
-                        chart.container.contains(e.relatedTarget as any)
-                    ),
+                        chart.container.contains(e.relatedTarget as any),
                     comingInBackwards = !(
                         focusComesFromChart || keyboardNavigation.exiting
                     );
@@ -482,14 +457,16 @@ class KeyboardNavigation {
                     ) {
                         keyboardNavigation.currentModuleIx =
                             keyboardNavigation.modules.length - 1;
-                        const curModule = keyboardNavigation.modules[
-                            keyboardNavigation.currentModuleIx
-                        ];
+                        const curModule =
+                            keyboardNavigation.modules[
+                                keyboardNavigation.currentModuleIx
+                            ];
 
                         // Validate the module
                         if (
                             curModule &&
-                            curModule.validate && !curModule.validate()
+                            curModule.validate &&
+                            !curModule.validate()
                         ) {
                             // Invalid. Try moving backwards to find next valid.
                             keyboardNavigation.prev();
@@ -506,7 +483,6 @@ class KeyboardNavigation {
         );
     }
 
-
     /**
      * Remove all traces of keyboard navigation.
      * @private
@@ -516,7 +492,6 @@ class KeyboardNavigation {
         this.eventProvider.removeAddedEvents();
         this.chart.container.removeAttribute('tabindex');
     }
-
 }
 
 /* *
@@ -526,7 +501,6 @@ class KeyboardNavigation {
  * */
 
 namespace KeyboardNavigation {
-
     /* *
      *
      *  Declarations
@@ -543,7 +517,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    const composedItems: Array<(Document|Function)> = [];
+    const composedItems: Array<Document | Function> = [];
 
     /* *
      *
@@ -558,7 +532,7 @@ namespace KeyboardNavigation {
      */
     export function compose<T extends typeof Chart>(
         ChartClass: T
-    ): (T&typeof ChartComposition) {
+    ): T & typeof ChartComposition {
         MenuComponent.compose(ChartClass);
 
         if (composedItems.indexOf(ChartClass) === -1) {
@@ -575,16 +549,14 @@ namespace KeyboardNavigation {
             addEvent(doc, 'keydown', documentOnKeydown);
         }
 
-        return ChartClass as (T&typeof ChartComposition);
+        return ChartClass as T & typeof ChartComposition;
     }
 
     /**
      * Dismiss popup content in chart, including export menu and tooltip.
      * @private
      */
-    function chartDismissPopupContent(
-        this: ChartComposition
-    ): void {
+    function chartDismissPopupContent(this: ChartComposition): void {
         const chart = this;
 
         fireEvent(this, 'dismissPopupContent', {}, function (): void {
@@ -611,7 +583,6 @@ namespace KeyboardNavigation {
             });
         }
     }
-
 }
 
 /* *

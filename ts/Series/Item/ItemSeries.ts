@@ -31,20 +31,10 @@ import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        pie: PieSeries
-    }
+    seriesTypes: { pie: PieSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
+const { defined, extend, fireEvent, isNumber, merge, objectEach, pick } = U;
 
 /* *
  *
@@ -66,7 +56,6 @@ const {
  * @augments Highcharts.seriesTypes.pie
  */
 class ItemSeries extends PieSeries {
-
     /* *
      *
      *  Static Properties
@@ -98,72 +87,71 @@ class ItemSeries extends PieSeries {
      * @requires     modules/item-series
      * @optionparent plotOptions.item
      */
-    public static defaultOptions: ItemSeriesOptions = merge(PieSeries.defaultOptions, {
-        /**
-         * In circular view, the end angle of the item layout, in degrees where
-         * 0 is up.
-         *
-         * @sample highcharts/demo/parliament-chart
-         *         Parliament chart
-         * @type {undefined|number}
-         */
-        endAngle: void 0,
-        /**
-         * In circular view, the size of the inner diameter of the circle. Can
-         * be a percentage or pixel value. Percentages are relative to the outer
-         * perimeter. Pixel values are given as integers.
-         *
-         * If the `rows` option is set, it overrides the `innerSize` setting.
-         *
-         * @sample highcharts/demo/parliament-chart
-         *         Parliament chart
-         * @type {string|number}
-         */
-        innerSize: '40%',
-        /**
-         * The padding between the items, given in relative size where the size
-         * of the item is 1.
-         * @type {number}
-         */
-        itemPadding: 0.1,
-        /**
-         * The layout of the items in rectangular view. Can be either
-         * `horizontal` or `vertical`.
-         * @sample highcharts/series-item/symbols
-         *         Horizontal layout
-         * @type {string}
-         */
-        layout: 'vertical',
-        /**
-         * @extends plotOptions.series.marker
-         */
-        marker: merge(
-            (defaultOptions.plotOptions as any).line.marker,
-            {
+    public static defaultOptions: ItemSeriesOptions = merge(
+        PieSeries.defaultOptions,
+        {
+            /**
+             * In circular view, the end angle of the item layout, in degrees
+             * where 0 is up.
+             *
+             * @sample highcharts/demo/parliament-chart Parliament chart
+             * @type {undefined|number}
+             */
+            endAngle: void 0,
+            /**
+             * In circular view, the size of the inner diameter of the circle.
+             * Can be a percentage or pixel value. Percentages are relative to
+             * the outer perimeter. Pixel values are given as integers.
+             *
+             * If the `rows` option is set, it overrides the `innerSize`
+             * setting.
+             *
+             * @sample highcharts/demo/parliament-chart Parliament chart
+             * @type {string|number}
+             */
+            innerSize: '40%',
+            /**
+             * The padding between the items, given in relative size where the
+             * size of the item is 1.
+             * @type {number}
+             */
+            itemPadding: 0.1,
+            /**
+             * The layout of the items in rectangular view. Can be either
+             * `horizontal` or `vertical`.
+             * @sample highcharts/series-item/symbols
+             *         Horizontal layout
+             * @type {string}
+             */
+            layout: 'vertical',
+            /**
+             * @extends plotOptions.series.marker
+             */
+            marker: merge((defaultOptions.plotOptions as any).line.marker, {
                 radius: null
-            }
-        ),
-        /**
-         * The number of rows to display in the rectangular or circular view. If
-         * the `innerSize` is set, it will be overridden by the `rows` setting.
-         *
-         * @sample highcharts/series-item/rows-columns
-         *         Fixed row count
-         * @type {number}
-         */
-        rows: void 0,
-        crisp: false,
-        showInLegend: true,
-        /**
-         * In circular view, the start angle of the item layout, in degrees
-         * where 0 is up.
-         *
-         * @sample highcharts/demo/parliament-chart
-         *         Parliament chart
-         * @type {undefined|number}
-         */
-        startAngle: void 0
-    } as ItemSeriesOptions);
+            }),
+            /**
+             * The number of rows to display in the rectangular or circular
+             * view. If the `innerSize` is set, it will be overridden by the
+             * `rows` setting.
+             *
+             * @sample highcharts/series-item/rows-columns Fixed row count
+             * @type {number}
+             */
+            rows: void 0,
+            crisp: false,
+            showInLegend: true,
+            /**
+             * In circular view, the start angle of the item layout, in degrees
+             * where 0 is up.
+             *
+             * @sample highcharts/demo/parliament-chart
+             *         Parliament chart
+             * @type {undefined|number}
+             */
+            startAngle: void 0
+        } as ItemSeriesOptions
+    );
 
     /* *
      *
@@ -201,9 +189,12 @@ class ItemSeries extends PieSeries {
                 opacity: 0
             });
         } else {
-            (this.group as any).animate({
-                opacity: 1
-            }, this.options.animation);
+            (this.group as any).animate(
+                {
+                    opacity: 1
+                },
+                this.options.animation
+            );
         }
     }
 
@@ -211,8 +202,8 @@ class ItemSeries extends PieSeries {
         if (this.center && this.slots) {
             H.seriesTypes.pie.prototype.drawDataLabels.call(this);
 
-        // else, it's just a dot chart with no natural place to put the
-        // data labels
+            // else, it's just a dot chart with no natural place to put the
+            // data labels
         } else {
             this.points.forEach(function (point): void {
                 point.destroyElements({ dataLabel: 1 });
@@ -247,16 +238,12 @@ class ItemSeries extends PieSeries {
         this.points.forEach(function (point): void {
             let attr: SVGAttributes,
                 graphics: Record<string, SVGElement>,
-                pointAttr: (SVGAttributes|undefined),
+                pointAttr: SVGAttributes | undefined,
                 pointMarkerOptions = point.marker || {},
-                symbol: SymbolKey = (
+                symbol: SymbolKey =
                     pointMarkerOptions.symbol ||
-                    (seriesMarkerOptions.symbol as any)
-                ),
-                r = pick(
-                    pointMarkerOptions.radius,
-                    seriesMarkerOptions.radius
-                ),
+                    (seriesMarkerOptions.symbol as any),
+                r = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius),
                 size = defined(r) ? 2 * r : itemSize,
                 padding = size * (options.itemPadding as any),
                 x: number,
@@ -274,23 +261,18 @@ class ItemSeries extends PieSeries {
             }
 
             if (!point.isNull && point.visible) {
-
                 if (!point.graphic) {
-                    point.graphic = renderer.g('point')
-                        .add(series.group);
+                    point.graphic = renderer.g('point').add(series.group);
                 }
 
                 for (let val = 0; val < (point.y as any); val++) {
-
                     // Semi-circle
                     if (series.center && series.slots) {
-
                         // Fill up the slots from left to right
                         const slot: ItemSeries.GeometryObject =
                             series.slots.shift() as any;
                         x = slot.x - itemSize / 2;
                         y = slot.y - itemSize / 2;
-
                     } else if (options.layout === 'horizontal') {
                         x = cellWidth * (i % cols);
                         y = cellHeight * Math.floor(i / cols);
@@ -317,7 +299,6 @@ class ItemSeries extends PieSeries {
                         attr.r = r;
                     }
 
-
                     if (graphics[val]) {
                         graphics[val].animate(attr);
                     } else {
@@ -337,21 +318,20 @@ class ItemSeries extends PieSeries {
                     }
                     graphics[val].isActive = true;
 
-
                     i++;
                 }
             }
-            objectEach(graphics, function (
-                graphic: SVGElement,
-                key: string
-            ): void {
-                if (!graphic.isActive) {
-                    graphic.destroy();
-                    delete graphics[key];
-                } else {
-                    graphic.isActive = false;
+            objectEach(
+                graphics,
+                function (graphic: SVGElement, key: string): void {
+                    if (!graphic.isActive) {
+                        graphic.destroy();
+                        delete graphics[key];
+                    } else {
+                        graphic.isActive = false;
+                    }
                 }
-            });
+            );
         });
     }
 
@@ -392,7 +372,7 @@ class ItemSeries extends PieSeries {
      * Get the semi-circular slots.
      * @private
      */
-    public getSlots(): (Array<ItemSeries.GeometryObject>|undefined) {
+    public getSlots(): Array<ItemSeries.GeometryObject> | undefined {
         let center = this.center,
             diameter = center[2],
             innerSize = center[3],
@@ -408,21 +388,21 @@ class ItemSeries extends PieSeries {
             col: number,
             itemSize = 0,
             rowCount: number,
-            fullAngle = (
-                (this.endAngleRad as any) - (this.startAngleRad as any)
-            ),
+            fullAngle = (this.endAngleRad as any) - (this.startAngleRad as any),
             itemCount = Number.MAX_VALUE,
-            finalItemCount: (number|undefined),
-            rows: (Array<ItemSeries.RowObject>|undefined),
-            testRows: (Array<ItemSeries.RowObject>|undefined),
+            finalItemCount: number | undefined,
+            rows: Array<ItemSeries.RowObject> | undefined,
+            testRows: Array<ItemSeries.RowObject> | undefined,
             rowsOption = this.options.rows,
             // How many rows (arcs) should be used
             rowFraction = (diameter - innerSize) / diameter,
             isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
 
         // Increase the itemSize until we find the best fit
-        while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
-
+        while (
+            itemCount >
+            (this.total as any) + (rows && isCircle ? rows.length : 0)
+        ) {
             finalItemCount = itemCount;
 
             // Reset
@@ -445,22 +425,22 @@ class ItemSeries extends PieSeries {
                 if (innerSize >= 0) {
                     rowCount = rowsOption;
 
-                // If innerSize is negative, we are trying to set too
-                // many rows in the rows option, so fall back to
-                // treating it as innerSize 0
+                    // If innerSize is negative, we are trying to set too
+                    // many rows in the rows option, so fall back to
+                    // treating it as innerSize 0
                 } else {
                     innerSize = 0;
                     rowFraction = 1;
                 }
-
-
             } else {
                 rowCount = Math.floor(rowCount * rowFraction);
             }
 
             for (row = rowCount; row > 0; row--) {
-                rowRadius = (innerSize + (row / rowCount) *
-                    (diameter - innerSize - itemSize)) / 2;
+                rowRadius =
+                    (innerSize +
+                        (row / rowCount) * (diameter - innerSize - itemSize)) /
+                    2;
                 rowLength = fullAngle * rowRadius;
                 colCount = Math.ceil(rowLength / itemSize);
                 testRows.push({
@@ -481,7 +461,9 @@ class ItemSeries extends PieSeries {
         // the rows and remove the last slot until the count is correct.
         // For each iteration we sort the last slot by the angle, and
         // remove those with the highest angles.
-        let overshoot = (finalItemCount as any) - (this.total as any) -
+        let overshoot =
+            (finalItemCount as any) -
+            (this.total as any) -
             (isCircle ? rows.length : 0);
         /**
          * @private
@@ -511,10 +493,7 @@ class ItemSeries extends PieSeries {
                 })
                 // ...so that we can ignore the items with the lowest
                 // angles...
-                .slice(
-                    0,
-                    Math.min(overshoot, Math.ceil(rows.length / 2))
-                )
+                .slice(0, Math.min(overshoot, Math.ceil(rows.length / 2)))
                 // ...and remove the ones with the highest angles
                 .forEach(cutOffRow);
         }
@@ -541,11 +520,9 @@ class ItemSeries extends PieSeries {
 
         this.itemSize = itemSize;
         return slots;
-
     }
 
     public translate(_positions?: Array<number>): void {
-
         // Initialize chart without setting data, #13379.
         if (this.total === 0) {
             this.center = this.getCenter();
@@ -566,7 +543,6 @@ class ItemSeries extends PieSeries {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *
@@ -696,4 +672,4 @@ export default ItemSeries;
  * @apioption series.pie.data.legendIndex
  */
 
-''; // adds the doclets above to the transpiled file
+(''); // adds the doclets above to the transpiled file

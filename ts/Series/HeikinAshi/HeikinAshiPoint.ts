@@ -16,14 +16,11 @@
  *
  * */
 
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import HeikinAshiSeries from './HeikinAshiSeries';
 
 const {
-    seriesTypes: {
-        candlestick: CandlestickSeries
-    }
+    seriesTypes: { candlestick: CandlestickSeries }
 } = SeriesRegistry;
 
 /* *
@@ -33,7 +30,6 @@ const {
  * */
 
 class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -47,7 +43,6 @@ class HeikinAshiPoint extends CandlestickSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
 }
 
 /* *

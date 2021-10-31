@@ -10,15 +10,11 @@ import Annotation from '../Annotations.js';
 import type MockPointOptions from '../MockPointOptions';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+const { merge, pick } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class VerticalLine extends Annotation {
-
     /* *
      *
      *  Static Functions
@@ -40,8 +36,10 @@ class VerticalLine extends Annotation {
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + offset +
-                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
+            y:
+                y +
+                offset +
+                (inverted ? left - chart.plotLeft : top - chart.plotTop)
         };
     }
 
@@ -65,8 +63,10 @@ class VerticalLine extends Annotation {
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + yOffset +
-                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
+            y:
+                y +
+                yOffset +
+                (inverted ? left - chart.plotLeft : top - chart.plotTop)
         };
     }
 
@@ -135,7 +135,6 @@ class VerticalLine extends Annotation {
 
         typeOptions.label = label.options;
     }
-
 }
 
 interface VerticalLine {
@@ -170,7 +169,9 @@ VerticalLine.prototype.defaultOptions = merge(
              */
             label: {
                 offset: -40,
-                point: function (target: Highcharts.AnnotationControllable): Highcharts.AnnotationPointType {
+                point: function (
+                    target: Highcharts.AnnotationControllable
+                ): Highcharts.AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
                 allowOverlap: true,
@@ -200,7 +201,8 @@ namespace VerticalLine {
     export interface Options extends Highcharts.AnnotationsOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeLabelOptions extends Highcharts.AnnotationsLabelOptions {
+    export interface TypeLabelOptions
+        extends Highcharts.AnnotationsLabelOptions {
         offset: number;
     }
     export interface TypeOptions extends Highcharts.AnnotationsTypeOptions {
@@ -216,7 +218,7 @@ namespace VerticalLine {
  *
  * */
 Annotation.types.verticalLine = VerticalLine;
-declare module './AnnotationType'{
+declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         verticalLine: typeof VerticalLine;
     }

@@ -28,15 +28,11 @@ import DrawPointComposition from '../DrawPointComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: {
-        prototype: {
-            pointClass: Point
-        }
+        prototype: { pointClass: Point }
     },
     seriesTypes: {
         treemap: {
-            prototype: {
-                pointClass: TreemapPoint
-            }
+            prototype: { pointClass: TreemapPoint }
         }
     }
 } = SeriesRegistry;
@@ -50,7 +46,6 @@ const { correctFloat, extend } = U;
  * */
 
 class SunburstPoint extends TreemapPoint {
-
     /* *
      *
      *  Properties
@@ -87,10 +82,8 @@ class SunburstPoint extends TreemapPoint {
             start = shapeArgs.start,
             end = shapeArgs.end,
             angle = start + (end - start) / 2, // arc middle value
-            upperHalf = angle < 0 &&
-                angle > -Math.PI ||
-                angle > Math.PI,
-            r = (shapeArgs.r + (label.options.distance || 0)),
+            upperHalf = (angle < 0 && angle > -Math.PI) || angle > Math.PI,
+            r = shapeArgs.r + (label.options.distance || 0),
             moreThanHalf;
 
         // Check if point is a full circle
@@ -123,8 +116,8 @@ class SunburstPoint extends TreemapPoint {
             .add(label);
 
         this.dataLabelPath.attr({
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
+            start: upperHalf ? start : end,
+            end: upperHalf ? end : start,
             clockwise: +upperHalf,
             x: shapeArgs.x,
             y: shapeArgs.y,
@@ -138,7 +131,6 @@ class SunburstPoint extends TreemapPoint {
     }
 
     /* eslint-enable valid-jsdoc */
-
 }
 
 /* *

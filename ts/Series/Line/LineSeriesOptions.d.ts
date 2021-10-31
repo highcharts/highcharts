@@ -29,14 +29,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface LineSeriesOptions extends SeriesOptions {
     allAreas?: boolean;
-    animation?: (boolean|DeepPartial<AnimationOptions>);
+    animation?: boolean | DeepPartial<AnimationOptions>;
     animationLimit?: number;
     boostThreshold?: number;
     borderColor?: ColorType;
     borderWidth?: number;
     colorAxis?: boolean;
     connectEnds?: boolean;
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: DataLabelOptions | Array<DataLabelOptions>;
     description?: string;
     linkedTo?: string;
     pointDescriptionFormatter?: Function;

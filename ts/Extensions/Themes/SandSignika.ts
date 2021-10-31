@@ -12,7 +12,6 @@
 
 'use strict';
 
-
 /* *
  *
  *  Imports
@@ -25,10 +24,7 @@ import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    createElement
-} = U;
+const { addEvent, createElement } = U;
 
 /* *
  *
@@ -37,7 +33,6 @@ const {
  * */
 
 namespace SandSignikaTheme {
-
     /* *
      *
      *  Constants
@@ -45,8 +40,19 @@ namespace SandSignikaTheme {
      * */
 
     export const options: DeepPartial<Options> = {
-        colors: ['#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee',
-            '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
+        colors: [
+            '#f45b5b',
+            '#8085e9',
+            '#8d4654',
+            '#7798BF',
+            '#aaeeee',
+            '#ff0066',
+            '#eeaaee',
+            '#55BF3B',
+            '#DF5353',
+            '#7798BF',
+            '#aaeeee'
+        ],
         chart: {
             backgroundColor: null as any,
             style: {
@@ -127,7 +133,6 @@ namespace SandSignikaTheme {
         scrollbar: {
             trackBorderColor: '#C0C0C8'
         }
-
     };
 
     /* *
@@ -141,11 +146,16 @@ namespace SandSignikaTheme {
      */
     export function apply(): void {
         // Load the fonts
-        createElement('link', {
-            href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
-            rel: 'stylesheet',
-            type: 'text/css'
-        }, null as any, document.getElementsByTagName('head')[0]);
+        createElement(
+            'link',
+            {
+                href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
+                rel: 'stylesheet',
+                type: 'text/css'
+            },
+            null as any,
+            document.getElementsByTagName('head')[0]
+        );
 
         // Add the background image to the container
         addEvent((H as any).Chart, 'afterGetContainer', function (): void {
@@ -157,7 +167,6 @@ namespace SandSignikaTheme {
         // Apply the theme
         setOptions(options);
     }
-
 }
 
 /* *

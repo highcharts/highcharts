@@ -23,15 +23,10 @@ import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        mappoint: MapPointSeries
-    }
+    seriesTypes: { mappoint: MapPointSeries }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { extend, merge } = U;
 
 import '../../Core/DefaultOptions.js';
 import '../Bubble/BubbleSeries.js';
@@ -51,7 +46,6 @@ import '../Map/MapSeries.js';
  * @augments Highcharts.Series
  */
 class MapBubbleSeries extends BubbleSeries {
-
     /* *
      *
      *  Static Properties
@@ -70,132 +64,134 @@ class MapBubbleSeries extends BubbleSeries {
      * @product      highmaps
      * @optionparent plotOptions.mapbubble
      */
-    public static defaultOptions: MapBubbleSeriesOptions = merge(BubbleSeries.defaultOptions, {
+    public static defaultOptions: MapBubbleSeriesOptions = merge(
+        BubbleSeries.defaultOptions,
+        {
+            /**
+             * The main color of the series. This color affects both the fill
+             * and the stroke of the bubble. For enhanced control, use `marker`
+             * options.
+             *
+             * @sample {highmaps} maps/plotoptions/mapbubble-color/
+             *         Pink bubbles
+             *
+             * @type      {Highcharts.ColorType}
+             * @apioption plotOptions.mapbubble.color
+             */
 
-        /**
-         * The main color of the series. This color affects both the fill
-         * and the stroke of the bubble. For enhanced control, use `marker`
-         * options.
-         *
-         * @sample {highmaps} maps/plotoptions/mapbubble-color/
-         *         Pink bubbles
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.mapbubble.color
-         */
+            /**
+             * Whether to display negative sized bubbles. The threshold is
+             * given by the [zThreshold](#plotOptions.mapbubble.zThreshold)
+             * option, and negative bubbles can be visualized by setting
+             * [negativeColor](#plotOptions.bubble.negativeColor).
+             *
+             * @type      {boolean}
+             * @default   true
+             * @apioption plotOptions.mapbubble.displayNegative
+             */
 
-        /**
-         * Whether to display negative sized bubbles. The threshold is
-         * given by the [zThreshold](#plotOptions.mapbubble.zThreshold)
-         * option, and negative bubbles can be visualized by setting
-         * [negativeColor](#plotOptions.bubble.negativeColor).
-         *
-         * @type      {boolean}
-         * @default   true
-         * @apioption plotOptions.mapbubble.displayNegative
-         */
+            /**
+             * @sample {highmaps} maps/demo/map-bubble/
+             *         Bubble size
+             *
+             * @apioption plotOptions.mapbubble.maxSize
+             */
 
-        /**
-         * @sample {highmaps} maps/demo/map-bubble/
-         *         Bubble size
-         *
-         * @apioption plotOptions.mapbubble.maxSize
-         */
+            /**
+             * @sample {highmaps} maps/demo/map-bubble/
+             *         Bubble size
+             *
+             * @apioption plotOptions.mapbubble.minSize
+             */
 
-        /**
-         * @sample {highmaps} maps/demo/map-bubble/
-         *         Bubble size
-         *
-         * @apioption plotOptions.mapbubble.minSize
-         */
+            /**
+             * When a point's Z value is below the
+             * [zThreshold](#plotOptions.mapbubble.zThreshold) setting, this
+             * color is used.
+             *
+             * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
+             *         Negative color below a threshold
+             *
+             * @type      {Highcharts.ColorType}
+             * @apioption plotOptions.mapbubble.negativeColor
+             */
 
-        /**
-         * When a point's Z value is below the
-         * [zThreshold](#plotOptions.mapbubble.zThreshold) setting, this
-         * color is used.
-         *
-         * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
-         *         Negative color below a threshold
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.mapbubble.negativeColor
-         */
+            /**
+             * Whether the bubble's value should be represented by the area or
+             * the width of the bubble. The default, `area`, corresponds best to
+             * the human perception of the size of each bubble.
+             *
+             * @type       {Highcharts.BubbleSizeByValue}
+             * @default    area
+             * @apioption  plotOptions.mapbubble.sizeBy
+             */
 
-        /**
-         * Whether the bubble's value should be represented by the area or
-         * the width of the bubble. The default, `area`, corresponds best to
-         * the human perception of the size of each bubble.
-         *
-         * @type       {Highcharts.BubbleSizeByValue}
-         * @default    area
-         * @apioption  plotOptions.mapbubble.sizeBy
-         */
+            /**
+             * When this is true, the absolute value of z determines the size
+             * of the bubble. This means that with the default `zThreshold` of
+             * 0, a bubble of value -1 will have the same size as a bubble of
+             * value 1, while a bubble of value 0 will have a smaller size
+             * according to `minSize`.
+             *
+             * @sample {highmaps} highcharts/plotoptions/bubble-sizebyabsolutevalue/
+             *         Size by absolute value, various thresholds
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     1.1.9
+             * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
+             */
 
-        /**
-         * When this is true, the absolute value of z determines the size
-         * of the bubble. This means that with the default `zThreshold` of
-         * 0, a bubble of value -1 will have the same size as a bubble of
-         * value 1, while a bubble of value 0 will have a smaller size
-         * according to `minSize`.
-         *
-         * @sample {highmaps} highcharts/plotoptions/bubble-sizebyabsolutevalue/
-         *         Size by absolute value, various thresholds
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     1.1.9
-         * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
-         */
+            /**
+             * The minimum for the Z value range. Defaults to the highest Z
+             * value in the data.
+             *
+             * @see [zMax](#plotOptions.mapbubble.zMin)
+             *
+             * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
+             *         Z has a possible range of 0-100
+             *
+             * @type      {number}
+             * @since     1.0.3
+             * @apioption plotOptions.mapbubble.zMax
+             */
 
-        /**
-         * The minimum for the Z value range. Defaults to the highest Z
-         * value in the data.
-         *
-         * @see [zMax](#plotOptions.mapbubble.zMin)
-         *
-         * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
-         *         Z has a possible range of 0-100
-         *
-         * @type      {number}
-         * @since     1.0.3
-         * @apioption plotOptions.mapbubble.zMax
-         */
+            /**
+             * The minimum for the Z value range. Defaults to the lowest Z value
+             * in the data.
+             *
+             * @see [zMax](#plotOptions.mapbubble.zMax)
+             *
+             * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
+             *         Z has a possible range of 0-100
+             *
+             * @type      {number}
+             * @since     1.0.3
+             * @apioption plotOptions.mapbubble.zMin
+             */
 
-        /**
-         * The minimum for the Z value range. Defaults to the lowest Z value
-         * in the data.
-         *
-         * @see [zMax](#plotOptions.mapbubble.zMax)
-         *
-         * @sample {highmaps} highcharts/plotoptions/bubble-zmin-zmax/
-         *         Z has a possible range of 0-100
-         *
-         * @type      {number}
-         * @since     1.0.3
-         * @apioption plotOptions.mapbubble.zMin
-         */
+            /**
+             * When [displayNegative](#plotOptions.mapbubble.displayNegative)
+             * is `false`, bubbles with lower Z values are skipped. When
+             * `displayNegative` is `true` and a
+             * [negativeColor](#plotOptions.mapbubble.negativeColor) is given,
+             * points with lower Z is colored.
+             *
+             * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
+             *         Negative color below a threshold
+             *
+             * @type      {number}
+             * @default   0
+             * @apioption plotOptions.mapbubble.zThreshold
+             */
 
-        /**
-         * When [displayNegative](#plotOptions.mapbubble.displayNegative)
-         * is `false`, bubbles with lower Z values are skipped. When
-         * `displayNegative` is `true` and a
-         * [negativeColor](#plotOptions.mapbubble.negativeColor) is given,
-         * points with lower Z is colored.
-         *
-         * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
-         *         Negative color below a threshold
-         *
-         * @type      {number}
-         * @default   0
-         * @apioption plotOptions.mapbubble.zThreshold
-         */
+            animationLimit: 500,
 
-        animationLimit: 500,
-
-        tooltip: {
-            pointFormat: '{point.name}: {point.z}'
-        }
-    } as MapBubbleSeriesOptions);
+            tooltip: {
+                pointFormat: '{point.name}: {point.z}'
+            }
+        } as MapBubbleSeriesOptions
+    );
 
     /* *
      *
@@ -345,4 +341,4 @@ export default MapBubbleSeries;
  * @apioption series.mapbubble.marker
  */
 
-''; // adds doclets above to transpiled file
+(''); // adds doclets above to transpiled file

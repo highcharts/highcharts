@@ -36,7 +36,6 @@ import H from '../../Core/Globals.js';
  * */
 
 namespace HighContrastDarkTheme {
-
     /* *
      *
      *  Constants
@@ -89,7 +88,6 @@ namespace HighContrastDarkTheme {
             title: {
                 style: {
                     color: textBright
-
                 }
             }
         },
@@ -263,7 +261,6 @@ namespace HighContrastDarkTheme {
     export function apply(): void {
         setOptions(options);
     }
-
 }
 
 /* *
