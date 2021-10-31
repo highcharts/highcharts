@@ -8,13 +8,15 @@ $(function () {
                 beta: 0
             }
         },
-        series: [{
-            depth: 100,
-            startAngle: 180,
-            type: 'pie',
-            innerSize: "30%",
-            name: 'Browser share',
-            data: [10]
-        }]
+        series: [
+            {
+                depth: 100,
+                startAngle: 180,
+                type: 'pie',
+                innerSize: '30%',
+                name: 'Browser share',
+                data: [10]
+            }
+        ]
     });
 });

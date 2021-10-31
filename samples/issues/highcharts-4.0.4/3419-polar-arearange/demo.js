@@ -1,7 +1,5 @@
 $(function () {
-
     $('#container').highcharts({
-
         chart: {
             polar: true,
             type: 'arearange'
@@ -15,17 +13,17 @@ $(function () {
             max: 2
         },
 
-        series: [{
-            data: [
-                [1, 2],
-                [1, 2],
-                [1, 2],
-                [1, 2],
-                [1, 2],
-                [1, 2]
-            ]
-        }]
-
+        series: [
+            {
+                data: [
+                    [1, 2],
+                    [1, 2],
+                    [1, 2],
+                    [1, 2],
+                    [1, 2],
+                    [1, 2]
+                ]
+            }
+        ]
     });
-
 });

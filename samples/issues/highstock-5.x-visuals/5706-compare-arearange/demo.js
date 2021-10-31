@@ -13,7 +13,6 @@ $(function () {
     ];
 
     $('#container').highcharts('StockChart', {
-
         chart: {
             type: 'areasplinerange'
         },
@@ -27,59 +26,69 @@ $(function () {
             }
         },
 
-        yAxis: [{
-            height: '25%',
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            endOnTick: false
-        }, {
-            height: '25%',
-            top: '25%',
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            endOnTick: false
-        }, {
-            height: '25%',
-            top: '50%',
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            endOnTick: false
-        }, {
-            height: '25%',
-            top: '75%',
-            minPadding: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            endOnTick: false
-        }],
+        yAxis: [
+            {
+                height: '25%',
+                minPadding: 0,
+                maxPadding: 0,
+                startOnTick: false,
+                endOnTick: false
+            },
+            {
+                height: '25%',
+                top: '25%',
+                minPadding: 0,
+                maxPadding: 0,
+                startOnTick: false,
+                endOnTick: false
+            },
+            {
+                height: '25%',
+                top: '50%',
+                minPadding: 0,
+                maxPadding: 0,
+                startOnTick: false,
+                endOnTick: false
+            },
+            {
+                height: '25%',
+                top: '75%',
+                minPadding: 0,
+                maxPadding: 0,
+                startOnTick: false,
+                endOnTick: false
+            }
+        ],
 
-        series: [{
-            name: 'areasplinerange - percent',
-            type: 'areasplinerange',
-            compare: 'percent',
-            data: data
-        }, {
-            name: 'areasplinerange - value',
-            type: 'areasplinerange',
-            compare: 'value',
-            data: data,
-            yAxis: 1
-        }, {
-            name: 'arearange - percent',
-            type: 'arearange',
-            compare: 'percent',
-            data: data,
-            yAxis: 2
-        }, {
-            name: 'arearange - value',
-            type: 'arearange',
-            compare: 'value',
-            data: data,
-            yAxis: 3
-        }],
+        series: [
+            {
+                name: 'areasplinerange - percent',
+                type: 'areasplinerange',
+                compare: 'percent',
+                data: data
+            },
+            {
+                name: 'areasplinerange - value',
+                type: 'areasplinerange',
+                compare: 'value',
+                data: data,
+                yAxis: 1
+            },
+            {
+                name: 'arearange - percent',
+                type: 'arearange',
+                compare: 'percent',
+                data: data,
+                yAxis: 2
+            },
+            {
+                name: 'arearange - value',
+                type: 'arearange',
+                compare: 'value',
+                data: data,
+                yAxis: 3
+            }
+        ],
 
         navigator: {
             enabled: false
@@ -87,7 +96,5 @@ $(function () {
         scrollbar: {
             enabled: false
         }
-
     });
-
 });

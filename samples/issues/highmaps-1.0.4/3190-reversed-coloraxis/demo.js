@@ -1,8 +1,6 @@
 $(function () {
-
     // Initialize the chart
     $('#container').highcharts('Map', {
-
         title: {
             text: 'Reversed color axis'
         },
@@ -16,15 +14,19 @@ $(function () {
             reversed: true
         },
 
-        series: [{
-            data: [{
-                path: 'M 0 0 L 1 0 1 1 0 1',
-                value: 1
-            }, {
-                path: 'M 1 0 L 2 0 2 1 1 1',
-                value: 999
-            }]
-
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 1 0 1 1 0 1',
+                        value: 1
+                    },
+                    {
+                        path: 'M 1 0 L 2 0 2 1 1 1',
+                        value: 999
+                    }
+                ]
+            }
+        ]
     });
 });

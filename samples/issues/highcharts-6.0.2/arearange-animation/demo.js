@@ -1,11 +1,9 @@
 var chart;
 var x = 0;
 
-
 var clock = TestUtilities.lolexInstall();
 
 chart = Highcharts.chart('container', {
-
     title: {
         text: 'Arearange animation'
     },
@@ -21,21 +19,19 @@ chart = Highcharts.chart('container', {
         }
     },
 
-    series: [{
-        data: [
-            [x++, 9, 18],
-            [x++, 1, 8]
-        ],
-        lineColor: 'black',
-        lineWidth: 2
-    }]
+    series: [
+        {
+            data: [
+                [x++, 9, 18],
+                [x++, 1, 8]
+            ],
+            lineColor: 'black',
+            lineWidth: 2
+        }
+    ]
 });
 
-chart.series[0].addPoint([
-    x++,
-    10,
-    20
-]);
+chart.series[0].addPoint([x++, 10, 20]);
 
 clock.tick(26);
 

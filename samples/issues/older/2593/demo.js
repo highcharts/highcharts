@@ -1,31 +1,46 @@
 $(function () {
-
     Highcharts.chart('container', {
         chart: {
             type: 'gauge'
-
         },
         title: {
             text: 'Regression in 3.0.8 caused mispositioned categories'
         },
 
-        pane: [{
-            startAngle: -120,
-            endAngle: 120,
-            background: null
-        }],
+        pane: [
+            {
+                startAngle: -120,
+                endAngle: 120,
+                background: null
+            }
+        ],
 
         yAxis: {
             min: 0,
             max: 14,
-            categories: ['', 'Ingen bestand', '', 'Svært god', '', 'God', '', 'Moderat påvirket', '', 'Dårlig', '', 'Svært dårlig', '', 'Kritisk<br/> eller tapt', ''],
+            categories: [
+                '',
+                'Ingen bestand',
+                '',
+                'Svært god',
+                '',
+                'God',
+                '',
+                'Moderat påvirket',
+                '',
+                'Dårlig',
+                '',
+                'Svært dårlig',
+                '',
+                'Kritisk<br/> eller tapt',
+                ''
+            ],
             tickPosition: 'outside',
             labels: {
                 rotation: 0,
                 distance: 30,
                 y: 5
             }
-
         },
 
         plotOptions: {
@@ -40,8 +55,10 @@ $(function () {
             }
         },
 
-        series: [{
-            data: [1]
-        }]
+        series: [
+            {
+                data: [1]
+            }
+        ]
     });
 });

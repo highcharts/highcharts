@@ -1,7 +1,5 @@
 $(function () {
-
     $('#container').highcharts({
-
         chart: {
             type: 'gauge'
         },
@@ -28,13 +26,14 @@ $(function () {
             }
         },
 
-        series: [{
-            name: 'Speed',
-            data: [80],
-            tooltip: {
-                valueSuffix: ' km/h'
+        series: [
+            {
+                name: 'Speed',
+                data: [80],
+                tooltip: {
+                    valueSuffix: ' km/h'
+                }
             }
-        }]
-
+        ]
     });
 });

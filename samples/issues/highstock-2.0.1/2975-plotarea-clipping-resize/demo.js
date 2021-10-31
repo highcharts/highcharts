@@ -1,8 +1,6 @@
 $(function () {
     // create the chart
     $('#container').highcharts('StockChart', {
-
-
         rangeSelector: {
             enabled: false
         },
@@ -11,13 +9,13 @@ $(function () {
             enabled: false
         },
 
-
-        series: [{
-            type: 'column',
-            data: [4, 2, 3, 1]
-        }]
+        series: [
+            {
+                type: 'column',
+                data: [4, 2, 3, 1]
+            }
+        ]
     });
-
 
     $('#resize').click(function () {
         $('#container').highcharts().setSize(400, 400, false);

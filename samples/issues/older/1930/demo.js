@@ -1,6 +1,5 @@
 $(function () {
     Highcharts.chart('container', {
-
         chart: {
             type: 'arearange',
             inverted: true
@@ -14,12 +13,14 @@ $(function () {
             minTickInterval: 1
         },
 
-        series: [{
-            data: [
-                ['Ein', 1, 2],
-                ['To', 2, 3],
-                ['Tre', 3, 4]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['Ein', 1, 2],
+                    ['To', 2, 3],
+                    ['Tre', 3, 4]
+                ]
+            }
+        ]
     });
 });

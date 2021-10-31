@@ -16,30 +16,40 @@ $(function () {
             verticalAlign: 'middle'
         },
 
-        series: [{
-            data: [{
-                y: 1
-            }, {
-                y: 1
-            }, {
-                name: 'Series<br>- line 2',
-                y: 1
-            }, {
-                y: 1
-            }, {
-                y: 1
-            }, {
-                y: 1
-            }, {
-                y: 1
-            }, {
-                y: 1
-            }],
-            dataLabels: {
-                enabled: false
-            },
-            showInLegend: true
-        }]
-
+        series: [
+            {
+                data: [
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    },
+                    {
+                        name: 'Series<br>- line 2',
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    },
+                    {
+                        y: 1
+                    }
+                ],
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        ]
     });
 });

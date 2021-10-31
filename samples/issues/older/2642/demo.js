@@ -9,18 +9,25 @@ $(function () {
             enabled: false
         },
         title: {
-            text: "Highcharts 3.0.9: skipped labels"
+            text: 'Highcharts 3.0.9: skipped labels'
         },
         xAxis: {
-            categories: ["category1", "longer category", "category 3", "longer category"],
+            categories: [
+                'category1',
+                'longer category',
+                'category 3',
+                'longer category'
+            ],
             labels: {
                 align: 'right',
                 step: 0
             }
         },
-        series: [{
-            data: [25, 3, 100, 8]
-        }],
+        series: [
+            {
+                data: [25, 3, 100, 8]
+            }
+        ],
         credits: {
             enabled: false
         },

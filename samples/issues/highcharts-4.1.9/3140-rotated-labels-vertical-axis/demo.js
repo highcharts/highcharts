@@ -17,10 +17,12 @@ $(function () {
             }
         },
 
-        series: [{
-            name: 'Year 1800',
-            animation: false,
-            data: [107, 31, 635, 203, 2]
-        }]
+        series: [
+            {
+                name: 'Year 1800',
+                animation: false,
+                data: [107, 31, 635, 203, 2]
+            }
+        ]
     });
 });

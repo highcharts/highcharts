@@ -11,8 +11,10 @@ $(function () {
             }
         },
 
-        series: [{
-            data: [1, 2]
-        }]
+        series: [
+            {
+                data: [1, 2]
+            }
+        ]
     });
 });

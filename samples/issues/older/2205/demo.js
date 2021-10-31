@@ -8,13 +8,14 @@ window.onload = function () {
             text: 'Tooltip position using standalone framework in a scrollable container'
         },
 
-        series: [{
-            data: [1]
-        }],
+        series: [
+            {
+                data: [1]
+            }
+        ],
 
         tooltip: {
             animation: false
         }
-
     });
 };

@@ -7,9 +7,11 @@ $(function () {
         rangeSelector: {
             selected: 2
         },
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
+        series: [
+            {
+                name: 'USD to EUR',
+                data: usdeur
+            }
+        ]
     });
 });

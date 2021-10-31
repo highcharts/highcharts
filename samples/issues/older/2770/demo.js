@@ -9,13 +9,15 @@ Highcharts.chart('container', {
             }
         }
     },
-    series: [{
-        name: 'Rainfall error',
-        type: 'errorbar',
-        data: [
-            [48, 51],
-            [68, 73],
-            [92, 110]
-        ]
-    }]
+    series: [
+        {
+            name: 'Rainfall error',
+            type: 'errorbar',
+            data: [
+                [48, 51],
+                [68, 73],
+                [92, 110]
+            ]
+        }
+    ]
 });

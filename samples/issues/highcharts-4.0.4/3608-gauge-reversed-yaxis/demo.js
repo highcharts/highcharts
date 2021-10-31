@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge'
     },
@@ -29,23 +28,28 @@ Highcharts.chart('container', {
         min: 0,
         max: 200,
         reversed: true,
-        plotBands: [{
-            from: 0,
-            to: 120,
-            color: '#55BF3B' // green
-        }, {
-            from: 120,
-            to: 160,
-            color: '#DDDF0D' // yellow
-        }, {
-            from: 160,
-            to: 200,
-            color: '#DF5353' // red
-        }]
+        plotBands: [
+            {
+                from: 0,
+                to: 120,
+                color: '#55BF3B' // green
+            },
+            {
+                from: 120,
+                to: 160,
+                color: '#DDDF0D' // yellow
+            },
+            {
+                from: 160,
+                to: 200,
+                color: '#DF5353' // red
+            }
+        ]
     },
 
-    series: [{
-        data: [80]
-    }]
-
+    series: [
+        {
+            data: [80]
+        }
+    ]
 });

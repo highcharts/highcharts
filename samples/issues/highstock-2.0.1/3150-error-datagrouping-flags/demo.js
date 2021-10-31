@@ -5,16 +5,16 @@ for (var i = 0; i < 100; i++) {
 }
 
 Highcharts.stockChart('container', {
-    series: [{
-        data: data,
-        type: 'flags',
-        allowOverlapX: true,
-        dataGrouping: {
-            enabled: true,
-            groupPixelWidth: 10,
-            units: [
-                ['second', 86400]
-            ]
+    series: [
+        {
+            data: data,
+            type: 'flags',
+            allowOverlapX: true,
+            dataGrouping: {
+                enabled: true,
+                groupPixelWidth: 10,
+                units: [['second', 86400]]
+            }
         }
-    }]
+    ]
 });

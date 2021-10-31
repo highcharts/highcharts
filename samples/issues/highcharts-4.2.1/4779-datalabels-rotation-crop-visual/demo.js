@@ -37,108 +37,117 @@ $(function () {
                 }
             }
         },
-        series: [{
-            data: getData(),
-            dataLabels: {
-                align: 'left'
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'center'
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'right'
-            }
-        },
+        series: [
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'left'
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'center'
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'right'
+                }
+            },
 
-        // -90
-        {
-            data: getData(),
-            dataLabels: {
-                align: 'left',
-                rotation: -90
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'center',
-                rotation: -90
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'right',
-                rotation: -90
-            }
-        },
+            // -90
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'left',
+                    rotation: -90
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'center',
+                    rotation: -90
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'right',
+                    rotation: -90
+                }
+            },
 
+            // -45
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'left',
+                    rotation: -45
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'center',
+                    rotation: -45
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'right',
+                    rotation: -45
+                }
+            },
 
-        // -45
-        {
-            data: getData(),
-            dataLabels: {
-                align: 'left',
-                rotation: -45
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'center',
-                rotation: -45
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'right',
-                rotation: -45
-            }
-        },
+            // 45
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'left',
+                    rotation: 45
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'center',
+                    rotation: 45
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'right',
+                    rotation: 45
+                }
+            },
 
-        // 45
-        {
-            data: getData(),
-            dataLabels: {
-                align: 'left',
-                rotation: 45
+            // 90
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'left',
+                    rotation: 90
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'center',
+                    rotation: 90
+                }
+            },
+            {
+                data: getData(),
+                dataLabels: {
+                    align: 'right',
+                    rotation: 90
+                }
             }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'center',
-                rotation: 45
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'right',
-                rotation: 45
-            }
-        },
-
-        // 90
-        {
-            data: getData(),
-            dataLabels: {
-                align: 'left',
-                rotation: 90
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'center',
-                rotation: 90
-            }
-        }, {
-            data: getData(),
-            dataLabels: {
-                align: 'right',
-                rotation: 90
-            }
-        }]
-
+        ]
     });
-
 });

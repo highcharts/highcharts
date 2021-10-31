@@ -1,10 +1,11 @@
 (function () {
-
-    var MapSeriesData = [{
-        name: '',
-        allAreas: true,
-        showInLegend: false
-    }];
+    var MapSeriesData = [
+        {
+            name: '',
+            allAreas: true,
+            showInLegend: false
+        }
+    ];
 
     var MapSeries1 = {};
     MapSeries1.name = 'United States';
@@ -43,5 +44,4 @@
         },
         series: MapSeriesData
     });
-
-}());
+})();

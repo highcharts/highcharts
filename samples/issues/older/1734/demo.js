@@ -1,6 +1,5 @@
 $(function () {
     Highcharts.chart('container', {
-
         chart: {
             zoomType: 'x'
         },
@@ -14,16 +13,17 @@ $(function () {
             max: 20
         },
 
-        series: [{
-            data: [
-                [5, 1],
-                [6, 2],
-                [7, 1],
-                [8, 3],
-                [9, 2],
-                [10, 1]
-            ]
-        }]
-
+        series: [
+            {
+                data: [
+                    [5, 1],
+                    [6, 2],
+                    [7, 1],
+                    [8, 3],
+                    [9, 2],
+                    [10, 1]
+                ]
+            }
+        ]
     });
 });

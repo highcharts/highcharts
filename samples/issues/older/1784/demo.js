@@ -1,6 +1,5 @@
 $(function () {
     $('#container').highcharts({
-
         chart: {
             plotBackgroundColor: '#F8F8FF'
         },
@@ -14,9 +13,10 @@ $(function () {
             lineWidth: 2
         },
 
-        series: [{
-            data: [0, 2, 1, 3]
-        }]
-
+        series: [
+            {
+                data: [0, 2, 1, 3]
+            }
+        ]
     });
 });

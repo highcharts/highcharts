@@ -1,5 +1,4 @@
 $(function () {
-
     $('#container').highcharts({
         chart: {
             inverted: true,
@@ -17,8 +16,10 @@ $(function () {
         title: {
             text: 'Highcharts <= 3.0.9. Attributes were applied outside elements.'
         },
-        series: [{
-            data: [1, 2, 1, 2]
-        }]
+        series: [
+            {
+                data: [1, 2, 1, 2]
+            }
+        ]
     });
 });

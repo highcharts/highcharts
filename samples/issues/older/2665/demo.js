@@ -1,7 +1,5 @@
 $(function () {
-
     $('#container').highcharts({
-
         chart: {
             polar: true
         },
@@ -15,10 +13,10 @@ $(function () {
             endAngle: 90
         },
 
-        series: [{
-            data: [1, 1, 1, 1, 1, 1, 1]
-        }]
+        series: [
+            {
+                data: [1, 1, 1, 1, 1, 1, 1]
+            }
+        ]
     });
-
-
 });

@@ -19,10 +19,12 @@ Highcharts.chart('container', {
             stacking: 'normal'
         }
     },
-    series: [{
-        data: [100, 300, 200, 400]
-    }, {
-        data: [300, 400, 200, 500]
-    }]
-
+    series: [
+        {
+            data: [100, 300, 200, 400]
+        },
+        {
+            data: [300, 400, 200, 500]
+        }
+    ]
 });

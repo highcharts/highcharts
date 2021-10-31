@@ -1,5 +1,4 @@
 $(function () {
-
     $('#container').highcharts({
         chart: {
             type: 'column'
@@ -22,20 +21,21 @@ $(function () {
             }
         },
 
-        series: [{
-            data: [
-                [2, 70],
-                [3, 60],
-                [4, 50],
-                [5, 40]
-            ],
-            pointRange: 1
-            //  pointPlacement: 0.25
-        }, {
-            pointRange: 2,
-            data: [
-                [0, 80]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [2, 70],
+                    [3, 60],
+                    [4, 50],
+                    [5, 40]
+                ],
+                pointRange: 1
+                //  pointPlacement: 0.25
+            },
+            {
+                pointRange: 2,
+                data: [[0, 80]]
+            }
+        ]
     });
 });
