@@ -8,6 +8,8 @@
  *
  * */
 
+/* eslint-disable node/no-unsupported-features/es-builtins */
+
 'use strict';
 
 /* *
@@ -118,8 +120,7 @@ const w = (
         : typeof window !== 'undefined'
         ? window
         : {}
-) as // eslint-disable-next-line node/no-unsupported-features/es-builtins
-Window & typeof globalThis;
+) as Window & typeof globalThis;
 
 /* *
  *

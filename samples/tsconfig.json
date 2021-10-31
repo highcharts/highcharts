@@ -10,18 +10,11 @@
         "module": "none",
         "moduleResolution": "node",
         "target": "es5",
-        "lib": [
-            "dom",
-            "es5"
-        ],
+        "lib": ["dom", "es5"],
         "types": [
             // disable node types
         ]
     },
-    "files": [
-        "tsglobal.d.ts",
-    ],
-    "include": [
-        "unit-tests/**/*.ts"
-    ]
+    "files": ["tsglobal.d.ts"],
+    "include": ["unit-tests/**/*.ts"]
 }

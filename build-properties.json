@@ -1,22 +1,22 @@
 {
-  "date": "",
-  "version": "9.3.0-modified",
-  "products": {
-    "Highcharts": {
-      "cdnpath": "",
-      "distpath": "/highcharts"
-    },
-    "Highcharts Stock": {
-      "cdnpath": "/stock",
-      "distpath": "/highstock"
-    },
-    "Highcharts Maps": {
-      "cdnpath": "/maps",
-      "distpath": "/highmaps"
-    },
-    "Highcharts Gantt": {
-      "cdnpath": "/gantt",
-      "distpath": "/gantt"
+    "date": "",
+    "version": "9.3.0-modified",
+    "products": {
+        "Highcharts": {
+            "cdnpath": "",
+            "distpath": "/highcharts"
+        },
+        "Highcharts Stock": {
+            "cdnpath": "/stock",
+            "distpath": "/highstock"
+        },
+        "Highcharts Maps": {
+            "cdnpath": "/maps",
+            "distpath": "/highmaps"
+        },
+        "Highcharts Gantt": {
+            "cdnpath": "/gantt",
+            "distpath": "/gantt"
+        }
     }
-  }
 }

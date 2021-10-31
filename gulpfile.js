@@ -18,10 +18,8 @@ Gulp.registry(new GulpForwardReference());
  * */
 
 (function (tasks) {
-    tasks.forEach(
-        gulpTask => require('./tools/gulptasks/' + gulpTask)
-    );
-}([
+    tasks.forEach((gulpTask) => require('./tools/gulptasks/' + gulpTask));
+})([
     'default',
     'dist',
     'dist-ant',
@@ -85,7 +83,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/upload-files',
     'update-pr-testresults',
     'pr-size-table'
-]));
+]);
 
 /* *
  *
@@ -94,19 +92,19 @@ Gulp.registry(new GulpForwardReference());
  * */
 
 (function (tasks) {
-    Object
-        .keys(tasks)
-        .forEach(alias => Gulp.task(alias, Gulp.series(tasks[alias])));
-}({
+    Object.keys(tasks).forEach((alias) =>
+        Gulp.task(alias, Gulp.series(tasks[alias]))
+    );
+})({
     'clean-api': 'jsdoc-clean',
     'clean-code': 'series-clean',
     'clean-dist': 'dist-clean',
-    'compile': 'scripts-compile',
+    compile: 'scripts-compile',
     'compile-lib': 'scripts-vendor',
     'copy-graphics-to-dist': 'dist-copy',
     'copy-to-dist': 'dist-copy',
     'create-productjs': 'dist-productsjs',
-    'examples': 'dist-examples',
+    examples: 'dist-examples',
     'start-api-server': 'jsdoc-server',
-    'styles': 'scripts-css'
-}));
+    styles: 'scripts-css'
+});
