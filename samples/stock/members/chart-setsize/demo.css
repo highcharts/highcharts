@@ -5,6 +5,7 @@
     min-width: 360px;
     min-height: 250px;
 }
-#inner-resizer { /* make room for the resize handle */
+#inner-resizer {
+    /* make room for the resize handle */
     padding: 10px;
 }

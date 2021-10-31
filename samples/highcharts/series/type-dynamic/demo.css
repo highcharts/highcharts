@@ -27,7 +27,8 @@
     border-top-right-radius: 0.3em;
     border-bottom-right-radius: 0.3em;
 }
-#button-row button:focus, #button-row button:hover {
+#button-row button:focus,
+#button-row button:hover {
     background: #ccc;
     outline: none;
 }

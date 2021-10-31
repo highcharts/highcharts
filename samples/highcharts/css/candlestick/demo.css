@@ -1,9 +1,9 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
 .highcharts-candlestick-series .highcharts-point {
-	stroke: #2f7ed8;
+    stroke: #2f7ed8;
 }
 .highcharts-candlestick-series .highcharts-point-up {
-	stroke: silver;
-	fill: silver;
+    stroke: silver;
+    fill: silver;
 }

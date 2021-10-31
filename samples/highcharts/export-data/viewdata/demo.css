@@ -2,7 +2,7 @@
     max-width: 800px;
     margin: 2em auto;
 }
-#container {    
+#container {
     height: 300px;
     margin-top: 2em;
 }
@@ -11,7 +11,8 @@
     border-spacing: 0;
     background: white;
 }
-.highcharts-data-table td, .highcharts-data-table th {
+.highcharts-data-table td,
+.highcharts-data-table th {
     font-family: sans-serif;
     font-size: 10pt;
     border: 1px solid silver;

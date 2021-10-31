@@ -5,7 +5,8 @@
 .data-table {
     border-collapse: collapse;
 }
-.data-table th, .data-table td {
+.data-table th,
+.data-table td {
     border: 1px solid silver;
     padding: 0.5em;
 }

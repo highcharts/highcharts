@@ -6,7 +6,8 @@
     min-height: 200px;
     width: 800px;
 }
-#inner-resizer { /* make room for the resize handle */
+#inner-resizer {
+    /* make room for the resize handle */
     padding: 10px;
 }
 .loading {

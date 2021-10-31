@@ -6,12 +6,12 @@
     width: 1000px;
     margin: 0 auto;
     padding: 0;
-    overflow:visible;
+    overflow: visible;
 }
 #container {
     float: left;
-    height: 500px; 
-    width: 700px; 
+    height: 500px;
+    width: 700px;
     margin: 0;
 }
 #info {
@@ -34,7 +34,9 @@
 }
 
 @media screen and (max-width: 920px) {
-    #wrapper, #container,  #info {
+    #wrapper,
+    #container,
+    #info {
         float: none;
         width: 100%;
         height: auto;

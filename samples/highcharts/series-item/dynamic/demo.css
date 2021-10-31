@@ -3,6 +3,6 @@
     margin: 1em auto;
 }
 
-input[type="number"] {
-	min-width: 50px;
+input[type='number'] {
+    min-width: 50px;
 }

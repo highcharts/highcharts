@@ -5,28 +5,28 @@
 }
 
 table {
-	font-family: 'Verdana';
-	font-size: 12pt;
-	color:#555555;              
-	border-collapse: collapse;
-	border: 3px solid #CCCCCC;
-	margin: 2px auto;	
+    font-family: 'Verdana';
+    font-size: 12pt;
+    color: #555555;
+    border-collapse: collapse;
+    border: 3px solid #cccccc;
+    margin: 2px auto;
 }
 
 tr {
-  	border-bottom: 2px solid #EEEEEE;
+    border-bottom: 2px solid #eeeeee;
 }
 
 th {
-	border-left: 2px solid #EEEEEE;
-	border-right: 2px solid #EEEEEE;
-	padding: 12px 15px;
-	border-collapse: collapse;
+    border-left: 2px solid #eeeeee;
+    border-right: 2px solid #eeeeee;
+    padding: 12px 15px;
+    border-collapse: collapse;
 }
 
 td {
-  	border-left: 2px solid #EEEEEE;
-  	border-right: 2px solid #EEEEEE;
-  	padding: 12px 15px;
-  	border-collapse: collapse;
+    border-left: 2px solid #eeeeee;
+    border-right: 2px solid #eeeeee;
+    padding: 12px 15px;
+    border-collapse: collapse;
 }

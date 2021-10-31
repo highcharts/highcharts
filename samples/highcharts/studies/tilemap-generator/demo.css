@@ -39,7 +39,7 @@
     margin-left: -10px;
 }
 #default {
-    display: inline-block
+    display: inline-block;
 }
 #appContainer button {
     border: none;
@@ -56,17 +56,17 @@
     display: inline-block;
 }
 #appContainer button:hover {
-	background: #40818b;
-	color: white;
+    background: #40818b;
+    color: white;
 }
 #appContainer button.active {
-	background: #40818b;
-	color: white;
+    background: #40818b;
+    color: white;
 }
 #appContainer input {
     margin: 10px;
 }
-#appContainer input:not([type="checkbox"]) {
+#appContainer input:not([type='checkbox']) {
     display: block;
     width: 90%;
 }
@@ -84,7 +84,8 @@
     border-radius: 0;
     height: 24px;
     display: block;
-    background: url(https://www.highcharts.com/samples/graphics/search.png) 5px 5px no-repeat white;
+    background: url(https://www.highcharts.com/samples/graphics/search.png) 5px
+        5px no-repeat white;
     padding: 1px 5px 1px 30px;
     width: 100%;
 }

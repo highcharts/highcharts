@@ -2,27 +2,27 @@
 
 .highcharts-yaxis-grid .highcharts-grid-line,
 .highcharts-yaxis-grid .highcharts-minor-grid-line {
-	display: none;
+    display: none;
 }
 .highcharts-plot-band {
-	fill-opacity: 1;
+    fill-opacity: 1;
 }
 .highcharts-plot-band.good {
-	fill: #90ed7d;
+    fill: #90ed7d;
 }
 .highcharts-plot-band.bad {
-	fill: #DDDF0D;
+    fill: #dddf0d;
 }
 .highcharts-plot-band.ugly {
-	fill: #f45b5b;
+    fill: #f45b5b;
 }
 .highcharts-pane:nth-child(1) {
-	fill: #efffff;
-	stroke-width: 1px;
-	stroke: gray;
+    fill: #efffff;
+    stroke-width: 1px;
+    stroke: gray;
 }
 .highcharts-pane:nth-child(2) {
-	fill: white;
-	stroke-width: 1px;
-	stroke: #eeeeee;
+    fill: white;
+    stroke-width: 1px;
+    stroke: #eeeeee;
 }

@@ -6,21 +6,21 @@
 }
 
 .shape {
-  fill: none;
-  stroke-width: 1;
-  stroke: red;
+    fill: none;
+    stroke-width: 1;
+    stroke: red;
 }
 
 #shape-custom-shape path {
-  fill: red;
+    fill: red;
 }
 
 #shape-circle circle:first-child {
-  fill: rgba(224, 101, 0, 0.6);
+    fill: rgba(224, 101, 0, 0.6);
 }
 
 #shape-circle circle:nth-child(2) {
-  fill: none;
-  stroke-width: 2;
-  stroke: black;
+    fill: none;
+    stroke-width: 2;
+    stroke: black;
 }

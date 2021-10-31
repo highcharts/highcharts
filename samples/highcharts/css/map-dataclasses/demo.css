@@ -1,10 +1,10 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
 #container {
-    height: 500px; 
-    min-width: 310px; 
-    max-width: 800px; 
-    margin: 0 auto; 
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 .loading {
     margin-top: 10em;
@@ -18,7 +18,7 @@
 
 /* Data class colors */
 .highcharts-color-0 {
-	fill: rgb(239, 239, 255);
+    fill: rgb(239, 239, 255);
     stroke: rgb(239, 239, 255);
 }
 .highcharts-color-1 {

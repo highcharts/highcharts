@@ -8,22 +8,22 @@
 }
 
 .highcharts-color-0 {
-	fill: #666666;
+    fill: #666666;
 }
 .highcharts-color-1 {
-	fill: #7cb5ec;
+    fill: #7cb5ec;
 }
 .highcharts-color-2 {
-	fill: #000000;
+    fill: #000000;
 }
 .highcharts-color-3 {
-	fill: #90ed7d;
+    fill: #90ed7d;
 }
 .highcharts-color-4 {
-	fill: #f7a35c;
+    fill: #f7a35c;
 }
 
 .highcharts-sankey-series .highcharts-data-label text {
-	fill: white;
-	text-shadow: 1px 0 0 black, 1px 1px 1px black;
+    fill: white;
+    text-shadow: 1px 0 0 black, 1px 1px 1px black;
 }

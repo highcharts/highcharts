@@ -2,7 +2,7 @@
 
 .highcharts-hollowcandlestick-series .highcharts-point-down {
     fill: #ff5e00;
-    stroke: #ff5e00
+    stroke: #ff5e00;
 }
 .highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
     fill: #35bd00;

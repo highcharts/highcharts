@@ -23,7 +23,8 @@
     position: relative;
 }
 
-#outer-container label:before, #outer-container label:after {
+#outer-container label:before,
+#outer-container label:after {
     content: '';
     position: absolute;
     right: 11px;
@@ -65,7 +66,7 @@
     height: 500px;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
     #outer-container label {
         display: block;
         width: 190px;
@@ -77,5 +78,4 @@
     #outer-container label:after {
         top: 22px;
     }
-
 }
