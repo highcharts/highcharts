@@ -7,7 +7,11 @@ function getLinearRegression(xData, yData) {
         linearXData = [],
         linearYData = [],
         n = xData.length,
-        alpha, beta, i, x, y;
+        alpha,
+        beta,
+        i,
+        x,
+        y;
 
     // Get sums:
     for (i = 0; i < n; i++) {
@@ -46,14 +50,16 @@ function getLinearRegression(xData, yData) {
 
 Highcharts.seriesType(
     'linearregression',
-    'sma', {
+    'sma',
+    {
         name: 'Linear Regression',
         enableMouseTracking: false,
         marker: {
             enabled: false
         },
         params: {} // linear regression doesn’t need params
-    }, {
+    },
+    {
         getValues: function (series) {
             return this.getLinearRegression(series.xData, series.yData);
         },
@@ -71,39 +77,58 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Source: WorldClimate.com'
     },
-    xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        crosshair: true
-    }],
-    yAxis: [{ // Primary yAxis
-        labels: {
-            format: '{value}°C',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
-        },
-        title: {
-            text: 'Temperature',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
+    xAxis: [
+        {
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ],
+            crosshair: true
         }
-    }, { // Secondary yAxis
-        title: {
-            text: 'Rainfall',
-            style: {
-                color: Highcharts.getOptions().colors[0]
+    ],
+    yAxis: [
+        {
+            // Primary yAxis
+            labels: {
+                format: '{value}°C',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            title: {
+                text: 'Temperature',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
             }
         },
-        labels: {
-            format: '{value} mm',
-            style: {
-                color: Highcharts.getOptions().colors[0]
-            }
-        },
-        opposite: true
-    }],
+        {
+            // Secondary yAxis
+            title: {
+                text: 'Rainfall',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            labels: {
+                format: '{value} mm',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            opposite: true
+        }
+    ],
     tooltip: {
         shared: true
     },
@@ -116,32 +141,42 @@ Highcharts.chart('container', {
         floating: true,
         backgroundColor: '#FFFFFF'
     },
-    series: [{
-        name: 'Rainfall',
-        id: 'rainfall',
-        type: 'column',
-        yAxis: 1,
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-        tooltip: {
-            valueSuffix: ' mm'
+    series: [
+        {
+            name: 'Rainfall',
+            id: 'rainfall',
+            type: 'column',
+            yAxis: 1,
+            data: [
+                49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,
+                194.1, 95.6, 54.4
+            ],
+            tooltip: {
+                valueSuffix: ' mm'
+            }
+        },
+        {
+            name: 'Temperature',
+            id: 'temp',
+            type: 'spline',
+            data: [
+                7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9,
+                9.6
+            ],
+            tooltip: {
+                valueSuffix: '°C'
+            }
+        },
+        {
+            type: 'linearregression',
+            linkedTo: 'rainfall',
+            color: Highcharts.getOptions().colors[0],
+            yAxis: 1
+        },
+        {
+            type: 'linearregression',
+            color: Highcharts.getOptions().colors[1],
+            linkedTo: 'temp'
         }
-
-    }, {
-        name: 'Temperature',
-        id: 'temp',
-        type: 'spline',
-        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
-        tooltip: {
-            valueSuffix: '°C'
-        }
-    }, {
-        type: 'linearregression',
-        linkedTo: 'rainfall',
-        color: Highcharts.getOptions().colors[0],
-        yAxis: 1
-    }, {
-        type: 'linearregression',
-        color: Highcharts.getOptions().colors[1],
-        linkedTo: 'temp'
-    }]
+    ]
 });

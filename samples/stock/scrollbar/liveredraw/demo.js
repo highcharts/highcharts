@@ -1,24 +1,27 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+    function (data) {
+        // create the chart
+        Highcharts.stockChart('container', {
+            scrollbar: {
+                liveRedraw: false
+            },
 
-    // create the chart
-    Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 1
+            },
 
-        scrollbar: {
-            liveRedraw: false
-        },
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 1
-        },
-
-        title: {
-            text: 'AAPL Stock Price'
-        },
-
-        series: [{
-            type: 'candlestick',
-            name: 'AAPL Stock Price',
-            data: data
-        }]
-    });
-});
+            series: [
+                {
+                    type: 'candlestick',
+                    name: 'AAPL Stock Price',
+                    data: data
+                }
+            ]
+        });
+    }
+);

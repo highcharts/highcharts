@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     chart: {
         margin: 0,
         borderWidth: 1
@@ -14,11 +13,12 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    yAxis: {
-    },
+    yAxis: {},
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

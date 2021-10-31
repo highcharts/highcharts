@@ -1,28 +1,30 @@
 // Notice that the dataset has missing data
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json', function (data) {
+Highcharts.getJSON(
+    'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            chart: {
+                type: 'arearange'
+            },
 
-    Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-        chart: {
-            type: 'arearange'
-        },
+            title: {
+                text: 'Temperature variation by day'
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            tooltip: {
+                valueSuffix: '°C'
+            },
 
-        title: {
-            text: 'Temperature variation by day'
-        },
-
-        tooltip: {
-            valueSuffix: '°C'
-        },
-
-        series: [{
-            name: 'Temperatures',
-            data: data
-        }]
-
-    });
-});
+            series: [
+                {
+                    name: 'Temperatures',
+                    data: data
+                }
+            ]
+        });
+    }
+);

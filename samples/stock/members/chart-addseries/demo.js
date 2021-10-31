@@ -11,13 +11,15 @@ const chart = Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'MSFT',
-        data: MSFT
-    }]
+    series: [
+        {
+            name: 'MSFT',
+            data: MSFT
+        }
+    ]
 });
 
-document.getElementById('button').addEventListener('click', e => {
+document.getElementById('button').addEventListener('click', (e) => {
     chart.addSeries({
         name: 'ADBE',
         data: ADBE

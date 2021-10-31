@@ -1,47 +1,53 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 1
+            },
 
-    Highcharts.stockChart('container', {
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 1
-        },
+            legend: {
+                enabled: true
+            },
 
-        title: {
-            text: 'AAPL Stock Price'
-        },
+            yAxis: [
+                {
+                    height: '55%'
+                },
+                {
+                    height: '40%',
+                    top: '60%'
+                }
+            ],
 
-        legend: {
-            enabled: true
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        yAxis: [{
-            height: '55%'
-        }, {
-            height: '40%',
-            top: '60%'
-        }],
-
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        series: [{
-            type: 'candlestick',
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            data: data
-        }, {
-            type: 'apo',
-            linkedTo: 'aapl',
-            yAxis: 1,
-            color: 'grey',
-            lineWidth: 2,
-            params: {
-                periods: [10, 20]
-            }
-        }]
-
-    });
-});
+            series: [
+                {
+                    type: 'candlestick',
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    data: data
+                },
+                {
+                    type: 'apo',
+                    linkedTo: 'aapl',
+                    yAxis: 1,
+                    color: 'grey',
+                    lineWidth: 2,
+                    params: {
+                        periods: [10, 20]
+                    }
+                }
+            ]
+        });
+    }
+);

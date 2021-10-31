@@ -451,27 +451,24 @@ Highcharts.stockChart('container', {
         inputEnabled: false
     },
 
-    series: [{
-        data: usdeur,
-        dataGrouping: {
-            units: [[
-                'week',
-                [1]
-            ], [
-                'month',
-                [1, 2, 3, 4, 6]
-            ]]
+    series: [
+        {
+            data: usdeur,
+            dataGrouping: {
+                units: [
+                    ['week', [1]],
+                    ['month', [1, 2, 3, 4, 6]]
+                ]
+            }
+        },
+        {
+            data: usdrand,
+            dataGrouping: {
+                units: [
+                    ['week', [1]],
+                    ['month', [1, 2, 3, 4, 6]]
+                ]
+            }
         }
-    }, {
-        data: usdrand,
-        dataGrouping: {
-            units: [[
-                'week',
-                [1]
-            ], [
-                'month',
-                [1, 2, 3, 4, 6]
-            ]]
-        }
-    }]
+    ]
 });

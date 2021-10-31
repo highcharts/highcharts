@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     plotOptions: {
         series: {
             marker: {
@@ -16,17 +15,20 @@ Highcharts.stockChart('container', {
         selected: 4
     },
 
-    series: [{
-        name: 'ADBE',
-        data: ADBE,
-        dataGrouping: {
-            groupPixelWidth: 10
+    series: [
+        {
+            name: 'ADBE',
+            data: ADBE,
+            dataGrouping: {
+                groupPixelWidth: 10
+            }
+        },
+        {
+            name: 'MSFT',
+            data: MSFT,
+            dataGrouping: {
+                groupPixelWidth: 50
+            }
         }
-    }, {
-        name: 'MSFT',
-        data: MSFT,
-        dataGrouping: {
-            groupPixelWidth: 50
-        }
-    }]
+    ]
 });

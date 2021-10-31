@@ -7,17 +7,17 @@ function afterSetExtremes(e) {
     const { chart } = e.target;
     chart.showLoading('Loading data from server...');
     fetch(`${dataURL}?start=${Math.round(e.min)}&end=${Math.round(e.max)}`)
-        .then(res => res.ok && res.json())
-        .then(data => {
+        .then((res) => res.ok && res.json())
+        .then((data) => {
             chart.series[0].setData(data);
             chart.hideLoading();
-        }).catch(error => console.error(error.message));
+        })
+        .catch((error) => console.error(error.message));
 }
 
 fetch(dataURL)
-    .then(res => res.ok && res.json())
-    .then(data => {
-
+    .then((res) => res.ok && res.json())
+    .then((data) => {
         // Add a null value for the end date
         data.push([Date.UTC(2011, 9, 14, 18), null, null, null, null]);
 
@@ -50,26 +50,32 @@ fetch(dataURL)
             },
 
             rangeSelector: {
-                buttons: [{
-                    type: 'hour',
-                    count: 1,
-                    text: '1h'
-                }, {
-                    type: 'day',
-                    count: 1,
-                    text: '1d'
-                }, {
-                    type: 'month',
-                    count: 1,
-                    text: '1m'
-                }, {
-                    type: 'year',
-                    count: 1,
-                    text: '1y'
-                }, {
-                    type: 'all',
-                    text: 'All'
-                }],
+                buttons: [
+                    {
+                        type: 'hour',
+                        count: 1,
+                        text: '1h'
+                    },
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: '1d'
+                    },
+                    {
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    },
+                    {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    },
+                    {
+                        type: 'all',
+                        text: 'All'
+                    }
+                ],
                 inputEnabled: false, // it supports only days
                 selected: 4 // all
             },
@@ -85,11 +91,14 @@ fetch(dataURL)
                 floor: 0
             },
 
-            series: [{
-                data: data,
-                dataGrouping: {
-                    enabled: false
+            series: [
+                {
+                    data: data,
+                    dataGrouping: {
+                        enabled: false
+                    }
                 }
-            }]
+            ]
         });
-    }).catch(error => console.error(error.message));
+    })
+    .catch((error) => console.error(error.message));

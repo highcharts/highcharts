@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'pie'
     },
@@ -8,7 +7,9 @@ Highcharts.chart('container', {
         text: 'Pie chart on highstock.js'
     },
 
-    series: [{
-        data: [1, 3, 2, 4]
-    }]
+    series: [
+        {
+            data: [1, 3, 2, 4]
+        }
+    ]
 });

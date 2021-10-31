@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     rangeSelector: {
         selected: 1
     },
@@ -10,8 +9,10 @@ Highcharts.stockChart('container', {
         minorTickInterval: 'auto'
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

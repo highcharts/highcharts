@@ -3,13 +3,15 @@ var chart = Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });
 
-document.getElementById('button').addEventListener('click', e => {
+document.getElementById('button').addEventListener('click', (e) => {
     chart.destroy();
     e.target.disabled = true;
 });

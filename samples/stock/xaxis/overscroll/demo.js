@@ -9,7 +9,6 @@ Highcharts.stockChart('container', {
     chart: {
         events: {
             load: function () {
-
                 // set up the updating of the chart each second
                 var series = this.series[0];
                 setInterval(function () {
@@ -21,18 +20,22 @@ Highcharts.stockChart('container', {
     },
 
     rangeSelector: {
-        buttons: [{
-            count: 1,
-            type: 'minute',
-            text: '1M'
-        }, {
-            count: 5,
-            type: 'minute',
-            text: '5M'
-        }, {
-            type: 'all',
-            text: 'All'
-        }],
+        buttons: [
+            {
+                count: 1,
+                type: 'minute',
+                text: '1M'
+            },
+            {
+                count: 5,
+                type: 'minute',
+                text: '5M'
+            },
+            {
+                type: 'all',
+                text: 'All'
+            }
+        ],
         inputEnabled: false,
         selected: 0
     },
@@ -55,21 +58,21 @@ Highcharts.stockChart('container', {
         }
     },
 
-    series: [{
-        name: 'Random data',
-        pointStart: Date.UTC(2017, 0, 1),
-        pointInterval: 1000, // 1s
-        data: (function () {
-            // generate an array of random data
-            var data = [],
-                i;
+    series: [
+        {
+            name: 'Random data',
+            pointStart: Date.UTC(2017, 0, 1),
+            pointInterval: 1000, // 1s
+            data: (function () {
+                // generate an array of random data
+                var data = [],
+                    i;
 
-            for (i = 0; i <= 1000; i += 1) {
-                data.push(
-                    Math.round(Math.random() * 100)
-                );
-            }
-            return data;
-        }())
-    }]
+                for (i = 0; i <= 1000; i += 1) {
+                    data.push(Math.round(Math.random() * 100));
+                }
+                return data;
+            })()
+        }
+    ]
 });

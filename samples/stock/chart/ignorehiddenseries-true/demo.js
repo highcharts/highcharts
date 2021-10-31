@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     chart: {
         // ignoreHiddenSeries: true // by default
     },
@@ -12,11 +11,14 @@ Highcharts.stockChart('container', {
         enabled: true
     },
 
-    series: [{
-        name: 'GOOGL',
-        data: GOOGL
-    }, {
-        name: 'MSFT',
-        data: MSFT
-    }]
+    series: [
+        {
+            name: 'GOOGL',
+            data: GOOGL
+        },
+        {
+            name: 'MSFT',
+            data: MSFT
+        }
+    ]
 });

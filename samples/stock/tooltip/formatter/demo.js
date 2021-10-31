@@ -1,9 +1,10 @@
 Highcharts.stockChart('container', {
     tooltip: {
         formatter() {
-            let s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
+            let s =
+                '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
 
-            this.points.forEach(point => {
+            this.points.forEach((point) => {
                 s += '<br/>1 USD = ' + point.y + ' EUR';
             });
 
@@ -15,8 +16,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

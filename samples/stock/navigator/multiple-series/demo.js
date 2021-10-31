@@ -6,9 +6,7 @@ var seriesOptions = [],
  * Create the chart when all data is loaded
  */
 function createChart() {
-
     Highcharts.stockChart('container', {
-
         rangeSelector: {
             selected: 4
         },
@@ -20,7 +18,8 @@ function createChart() {
         },
 
         tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} USD</b><br/>',
+            pointFormat:
+                '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} USD</b><br/>',
             valueDecimals: 2
         },
 

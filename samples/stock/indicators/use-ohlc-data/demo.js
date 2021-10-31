@@ -1,42 +1,49 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-    Highcharts.stockChart('container', {
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            legend: {
+                enabled: true
+            },
+            yAxis: [
+                {
+                    height: '70%'
+                },
+                {
+                    height: '30%',
+                    top: '70%'
+                }
+            ],
 
-        title: {
-            text: 'AAPL Stock Price'
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        legend: {
-            enabled: true
-        },
-        yAxis: [{
-            height: '70%'
-        }, {
-            height: '30%',
-            top: '70%'
-        }],
-
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        series: [{
-            type: 'line',
-            useOhlcData: true,
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            yAxis: 0,
-            data: data
-        }, {
-            type: 'atr',
-            yAxis: 1,
-            linkedTo: 'aapl'
-        }]
-    });
-});
+            series: [
+                {
+                    type: 'line',
+                    useOhlcData: true,
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    yAxis: 0,
+                    data: data
+                },
+                {
+                    type: 'atr',
+                    yAxis: 1,
+                    linkedTo: 'aapl'
+                }
+            ]
+        });
+    }
+);

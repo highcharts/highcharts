@@ -8,7 +8,9 @@ Highcharts.stockChart('container', {
             align: 'left'
         }
     },
-    series: [{
-        data: [10, 30, 20, 40, 30, 11]
-    }]
+    series: [
+        {
+            data: [10, 30, 20, 40, 30, 11]
+        }
+    ]
 });

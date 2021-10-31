@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     plotOptions: {
         candlestick: {
             color: 'blue',
@@ -11,9 +10,11 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        type: 'candlestick',
-        name: 'USD to EUR',
-        data: ohlcdata
-    }]
+    series: [
+        {
+            type: 'candlestick',
+            name: 'USD to EUR',
+            data: ohlcdata
+        }
+    ]
 });

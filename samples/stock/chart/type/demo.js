@@ -1,6 +1,6 @@
 Highcharts.stockChart('container', {
     title: {
-        text: 'chart.type is set to \'areaspline\''
+        text: "chart.type is set to 'areaspline'"
     },
     chart: {
         type: 'areaspline'
@@ -10,9 +10,11 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur,
-        threshold: null // default is 0
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur,
+            threshold: null // default is 0
+        }
+    ]
 });

@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     chart: {
         zoomType: 'x'
     },
@@ -8,8 +7,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

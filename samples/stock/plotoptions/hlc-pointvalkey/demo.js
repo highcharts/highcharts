@@ -25,32 +25,42 @@ Highcharts.chart('container', {
         categories: ['on high', 'on low', 'on close (default)']
     },
 
-    series: [{
-        name: 'high',
-        pointValKey: 'high',
-        data: [{
-            x: 1,
-            low: 0,
-            open: 30,
-            close: 50
-        }]
-    }, {
-        name: 'low',
-        pointValKey: 'low',
-        data: [{
-            x: 2,
-            low: 0,
-            open: 30,
-            close: 50
-        }]
-    }, {
-        name: 'close',
-        pointValKey: 'close', // default
-        data: [{
-            x: 3,
-            low: 0,
-            open: 30,
-            close: 50
-        }]
-    }]
+    series: [
+        {
+            name: 'high',
+            pointValKey: 'high',
+            data: [
+                {
+                    x: 1,
+                    low: 0,
+                    open: 30,
+                    close: 50
+                }
+            ]
+        },
+        {
+            name: 'low',
+            pointValKey: 'low',
+            data: [
+                {
+                    x: 2,
+                    low: 0,
+                    open: 30,
+                    close: 50
+                }
+            ]
+        },
+        {
+            name: 'close',
+            pointValKey: 'close', // default
+            data: [
+                {
+                    x: 3,
+                    low: 0,
+                    open: 30,
+                    close: 50
+                }
+            ]
+        }
+    ]
 });

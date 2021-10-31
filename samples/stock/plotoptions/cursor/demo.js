@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     plotOptions: {
         series: {
             cursor: 'pointer',
@@ -15,8 +14,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

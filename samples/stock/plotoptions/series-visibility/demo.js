@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     rangeSelector: {
         selected: 1
     },
@@ -12,12 +11,15 @@ Highcharts.stockChart('container', {
         y: 100
     },
 
-    series: [{
-        name: 'ADBE',
-        data: ADBE
-    }, {
-        name: 'MSFT',
-        data: MSFT,
-        visible: false
-    }]
+    series: [
+        {
+            name: 'ADBE',
+            data: ADBE
+        },
+        {
+            name: 'MSFT',
+            data: MSFT,
+            visible: false
+        }
+    ]
 });

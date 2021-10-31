@@ -6,10 +6,12 @@ const chart = Highcharts.stockChart('container', {
         }
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }],
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ],
 
     exporting: {
         chartOptions: {

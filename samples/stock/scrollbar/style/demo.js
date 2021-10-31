@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     scrollbar: {
         barBackgroundColor: 'gray',
         barBorderRadius: 7,
@@ -19,8 +18,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

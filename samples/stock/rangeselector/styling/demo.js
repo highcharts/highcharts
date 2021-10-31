@@ -7,9 +7,9 @@ Highcharts.setOptions({
 });
 
 Highcharts.stockChart('container', {
-
     rangeSelector: {
-        buttonTheme: { // styles for the buttons
+        buttonTheme: {
+            // styles for the buttons
             fill: 'none',
             stroke: 'none',
             'stroke-width': 0,
@@ -19,8 +19,7 @@ Highcharts.stockChart('container', {
                 fontWeight: 'bold'
             },
             states: {
-                hover: {
-                },
+                hover: {},
                 select: {
                     fill: '#039',
                     style: {
@@ -44,8 +43,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

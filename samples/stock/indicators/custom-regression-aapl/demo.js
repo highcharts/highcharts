@@ -7,7 +7,11 @@ function getLinearRegression(xData, yData) {
         linearXData = [],
         linearYData = [],
         n = xData.length,
-        alpha, beta, i, x, y;
+        alpha,
+        beta,
+        i,
+        x,
+        y;
 
     // Get sums:
     for (i = 0; i < n; i++) {
@@ -46,14 +50,16 @@ function getLinearRegression(xData, yData) {
 
 Highcharts.seriesType(
     'linearregression',
-    'sma', {
+    'sma',
+    {
         name: 'Linear Regression',
         enableMouseTracking: false,
         marker: {
             enabled: false
         },
         params: {} // linear regression doesn’t need params
-    }, {
+    },
+    {
         getValues: function (series) {
             return this.getLinearRegression(series.xData, series.yData);
         },
@@ -61,35 +67,39 @@ Highcharts.seriesType(
     }
 );
 
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-c.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-    Highcharts.stockChart('container', {
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            legend: {
+                enabled: true
+            },
 
-        title: {
-            text: 'AAPL Stock Price'
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        legend: {
-            enabled: true
-        },
-
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        series: [{
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            data: data
-        }, {
-            type: 'linearregression',
-            linkedTo: 'aapl'
-        }]
-    });
-});
+            series: [
+                {
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    data: data
+                },
+                {
+                    type: 'linearregression',
+                    linkedTo: 'aapl'
+                }
+            ]
+        });
+    }
+);

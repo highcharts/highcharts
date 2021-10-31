@@ -2,7 +2,6 @@ var day = 1000 * 60 * 60 * 24;
 
 // Create the chart
 Highcharts.stockChart('container', {
-
     title: {
         text: 'Cumulative Sum'
     },
@@ -24,7 +23,8 @@ Highcharts.stockChart('container', {
     },
 
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>',
+        pointFormat:
+            '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.cumulativeSum})<br/>',
         changeDecimals: 2,
         valueDecimals: 2
     },
@@ -34,9 +34,12 @@ Highcharts.stockChart('container', {
         max: Date.UTC(2021, 0, 6)
     },
 
-    series: [{
-        data: [1, 2, 5, 10, 20, 50, 100, -100, 100, -100]
-    }, {
-        data: [100, -50, -15, 15, -50, -20, -30, 100, -100, 100]
-    }]
+    series: [
+        {
+            data: [1, 2, 5, 10, 20, 50, 100, -100, 100, -100]
+        },
+        {
+            data: [100, -50, -15, 15, -50, -20, -30, 100, -100, 100]
+        }
+    ]
 });

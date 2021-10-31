@@ -7,9 +7,16 @@ function getLinearRegressionZones(xData, yData) {
         linearXData = [],
         linearYData = [],
         n = xData.length,
-        alpha, beta, i, x, y,
+        alpha,
+        beta,
+        i,
+        x,
+        y,
         zoneDistance = this.options.params.zoneDistance / 100,
-        y1, y2, y3, y4;
+        y1,
+        y2,
+        y3,
+        y4;
 
     // Get sums:
     for (i = 0; i < n; i++) {
@@ -60,7 +67,8 @@ Highcharts.seriesType(
             zoneDistance: 3
         },
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>' +
+            pointFormat:
+                '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>' +
                 '110%: <b>{point.y4}</b><br/>' +
                 '105%: <b>{point.y3}</b><br/>' +
                 '100%: <b>{point.y}</b><br/>' +
@@ -98,7 +106,12 @@ Highcharts.seriesType(
         },
         getLinearRegressionZones: getLinearRegressionZones,
 
-        linesApiNames: ['highRangeBottomLine', 'closeRangeBottomLine', 'closeRangeTopLine', 'highRangeTopLine'],
+        linesApiNames: [
+            'highRangeBottomLine',
+            'closeRangeBottomLine',
+            'closeRangeTopLine',
+            'highRangeTopLine'
+        ],
         nameBase: 'Linear regression zones',
         nameComponents: ['zoneDistance'],
         nameSuffixes: ['%'],
@@ -112,51 +125,53 @@ Highcharts.seriesType(
 var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 if (multipleLinesMixin) {
-    Highcharts.extend(
-        Highcharts.seriesTypes.linearregressionzones.prototype,
-        {
-            drawGraph: multipleLinesMixin.drawGraph,
-            getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
-            translate: multipleLinesMixin.translate,
-            toYData: multipleLinesMixin.toYData
-        }
-    );
-} else { // Highcharts v9.2.3+
+    Highcharts.extend(Highcharts.seriesTypes.linearregressionzones.prototype, {
+        drawGraph: multipleLinesMixin.drawGraph,
+        getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
+        translate: multipleLinesMixin.translate,
+        toYData: multipleLinesMixin.toYData
+    });
+} else {
+    // Highcharts v9.2.3+
     Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
         Highcharts.seriesTypes.linearregressionzones
     );
 }
 /* eslint-enable no-underscore-dangle */
 
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
-    Highcharts.stockChart('container', {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-c.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            title: {
+                text: 'AAPL Stock Price with Linear Regression zones'
+            },
 
-        title: {
-            text: 'AAPL Stock Price with Linear Regression zones'
-        },
+            legend: {
+                enabled: true
+            },
 
-        legend: {
-            enabled: true
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        series: [{
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            data: data
-        }, {
-            type: 'linearregressionzones',
-            linkedTo: 'aapl'
-        }]
-
-    });
-});
+            series: [
+                {
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    data: data
+                },
+                {
+                    type: 'linearregressionzones',
+                    linkedTo: 'aapl'
+                }
+            ]
+        });
+    }
+);

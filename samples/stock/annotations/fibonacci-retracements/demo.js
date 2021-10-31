@@ -62,13 +62,14 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     });
 
     // defining the trend line
-    var trendLine = [{
-        type: 'path',
-        dashStyle: 'Dash',
-        points: [point(x1, y1), point(x2, y2)],
-        stroke: 'black'
-    }];
-
+    var trendLine = [
+        {
+            type: 'path',
+            dashStyle: 'Dash',
+            points: [point(x1, y1), point(x2, y2)],
+            stroke: 'black'
+        }
+    ];
 
     // Putting pieces together into an annotation
     return {
@@ -90,49 +91,54 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     };
 }
 
-Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
-    // create the chart
-    Highcharts.stockChart('container', {
+Highcharts.getJSON(
+    'https://www.highcharts.com/samples/data/aapl-ohlc.json',
+    function (data) {
+        // create the chart
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 4
+            },
 
-        rangeSelector: {
-            selected: 4
-        },
+            title: {
+                text: 'Highcharts Stock Annotations'
+            },
 
-        title: {
-            text: 'Highcharts Stock Annotations'
-        },
+            subtitle: {
+                text: 'Fibonacci Retracements'
+            },
 
-        subtitle: {
-            text: 'Fibonacci Retracements'
-        },
+            yAxis: {
+                labels: {
+                    enabled: false
+                }
+            },
 
-        yAxis: {
-            labels: {
-                enabled: false
-            }
-        },
+            annotations: [
+                fibonacciRetracements(
+                    Date.UTC(2016, 10, 14),
+                    105,
+                    Date.UTC(2017, 8, 4),
+                    170
+                )
+            ],
 
-        annotations: [
-            fibonacciRetracements(
-                Date.UTC(2016, 10, 14),
-                105,
-                Date.UTC(2017, 8, 4), 170
-            )
-        ],
-
-        series: [{
-            type: 'candlestick',
-            name: 'AAPL Stock Price',
-            data: data,
-            dataGrouping: {
-                units: [[
-                    'week', // unit name
-                    [1] // allowed multiples
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ]]
-            }
-        }]
-    });
-});
+            series: [
+                {
+                    type: 'candlestick',
+                    name: 'AAPL Stock Price',
+                    data: data,
+                    dataGrouping: {
+                        units: [
+                            [
+                                'week', // unit name
+                                [1] // allowed multiples
+                            ],
+                            ['month', [1, 2, 3, 4, 6]]
+                        ]
+                    }
+                }
+            ]
+        });
+    }
+);

@@ -3,8 +3,9 @@ const chart = Highcharts.stockChart('container', {
         text: 'Input types'
     },
     subtitle: {
-        text: 'Try selecting different inputDateFormats and using the date ' +
-        'inputs'
+        text:
+            'Try selecting different inputDateFormats and using the date ' +
+            'inputs'
     },
     xAxis: {
         minRange: 3600 * 1000 // one hour
@@ -17,7 +18,7 @@ const chart = Highcharts.stockChart('container', {
     ]
 });
 
-document.getElementById('format').addEventListener('click', e => {
+document.getElementById('format').addEventListener('click', (e) => {
     const format = e.target.dataset.format;
     if (format) {
         chart.update({

@@ -8,8 +8,10 @@ Highcharts.stockChart('container', {
         max: Date.UTC(2014, 8, 1)
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

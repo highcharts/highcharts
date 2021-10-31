@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     chart: {
         type: 'area'
     },
@@ -14,8 +13,10 @@ Highcharts.stockChart('container', {
         }
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

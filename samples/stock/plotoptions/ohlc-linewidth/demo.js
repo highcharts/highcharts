@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     title: {
         text: 'OHLC series with line width 3'
     },
@@ -14,9 +13,11 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        type: 'ohlc',
-        name: 'USD to EUR',
-        data: ohlcdata
-    }]
+    series: [
+        {
+            type: 'ohlc',
+            name: 'USD to EUR',
+            data: ohlcdata
+        }
+    ]
 });

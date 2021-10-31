@@ -14,10 +14,12 @@ var chart = Highcharts.stockChart('container', {
             enabled: true
         }
     },
-    series: [{
-        name: 'Random data',
-        data: []
-    }]
+    series: [
+        {
+            name: 'Random data',
+            data: []
+        }
+    ]
 });
 
 // Add random point when clicking button

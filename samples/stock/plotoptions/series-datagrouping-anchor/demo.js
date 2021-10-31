@@ -17,27 +17,31 @@ Highcharts.stockChart('container', {
     chart: {
         height: 800
     },
-    yAxis: [{
-        height: '33.33%',
-        offset: 0,
-        title: {
-            text: 'Anchor start- default'
+    yAxis: [
+        {
+            height: '33.33%',
+            offset: 0,
+            title: {
+                text: 'Anchor start- default'
+            }
+        },
+        {
+            height: '33.33%',
+            top: '33.33%',
+            offset: 0,
+            title: {
+                text: 'Anchor middle'
+            }
+        },
+        {
+            height: '33.33%',
+            top: '66.66%',
+            offset: 0,
+            title: {
+                text: 'Anchor end'
+            }
         }
-    }, {
-        height: '33.33%',
-        top: '33.33%',
-        offset: 0,
-        title: {
-            text: 'Anchor middle'
-        }
-    }, {
-        height: '33.33%',
-        top: '66.66%',
-        offset: 0,
-        title: {
-            text: 'Anchor end'
-        }
-    }],
+    ],
     plotOptions: {
         series: {
             data: data,
@@ -46,23 +50,25 @@ Highcharts.stockChart('container', {
                 approximation: 'average',
                 enabled: true,
                 forced: true,
-                units: [
-                    ['hour', [2]]
-                ]
+                units: [['hour', [2]]]
             }
         }
     },
-    series: [{
-        yAxis: 0
-    }, {
-        yAxis: 1,
-        dataGrouping: {
-            anchor: 'middle'
+    series: [
+        {
+            yAxis: 0
+        },
+        {
+            yAxis: 1,
+            dataGrouping: {
+                anchor: 'middle'
+            }
+        },
+        {
+            yAxis: 2,
+            dataGrouping: {
+                anchor: 'end'
+            }
         }
-    }, {
-        yAxis: 2,
-        dataGrouping: {
-            anchor: 'end'
-        }
-    }]
+    ]
 });

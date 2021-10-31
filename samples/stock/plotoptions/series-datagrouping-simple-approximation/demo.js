@@ -9,30 +9,32 @@ Highcharts.stockChart('container', {
             },
             dataGrouping: {
                 forced: true,
-                units: [
-                    ['week', [1]]
-                ]
+                units: [['week', [1]]]
             }
         }
     },
-    series: [{
-        name: 'ADBE default (average)',
-        data: ADBE
-    }, {
-        name: 'ADBE start',
-        data: ADBE,
-        dataGrouping: {
-            approximation: function (groupData) {
-                return groupData[0];
+    series: [
+        {
+            name: 'ADBE default (average)',
+            data: ADBE
+        },
+        {
+            name: 'ADBE start',
+            data: ADBE,
+            dataGrouping: {
+                approximation: function (groupData) {
+                    return groupData[0];
+                }
+            }
+        },
+        {
+            name: 'ADBE end',
+            data: ADBE,
+            dataGrouping: {
+                approximation: function (groupData) {
+                    return groupData[groupData.length - 1];
+                }
             }
         }
-    }, {
-        name: 'ADBE end',
-        data: ADBE,
-        dataGrouping: {
-            approximation: function (groupData) {
-                return groupData[groupData.length - 1];
-            }
-        }
-    }]
+    ]
 });

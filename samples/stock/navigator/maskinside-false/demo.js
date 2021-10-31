@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     title: {
         text: 'Navigator mask is outside zoomed range'
     },
@@ -12,8 +11,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

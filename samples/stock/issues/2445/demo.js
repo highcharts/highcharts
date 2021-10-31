@@ -51,10 +51,7 @@ Highcharts.stockChart('container', {
             stacking: 'percent',
             dataGrouping: {
                 forced: true,
-                units: [[
-                    'week',
-                    [1]
-                ]]
+                units: [['week', [1]]]
             }
         }
     },

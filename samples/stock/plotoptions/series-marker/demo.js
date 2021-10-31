@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     plotOptions: {
         series: {
             marker: {
@@ -12,11 +11,14 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'ADBE',
-        data: ADBE
-    }, {
-        name: 'MSFT',
-        data: MSFT
-    }]
+    series: [
+        {
+            name: 'ADBE',
+            data: ADBE
+        },
+        {
+            name: 'MSFT',
+            data: MSFT
+        }
+    ]
 });

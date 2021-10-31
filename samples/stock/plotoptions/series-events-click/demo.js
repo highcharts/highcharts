@@ -1,13 +1,21 @@
 Highcharts.stockChart('container', {
-
     plotOptions: {
         series: {
             events: {
                 click: function (event) {
-                    alert(this.name + ' clicked\n' +
-                        'Alt: ' + event.altKey + '\n' +
-                        'Control: ' + event.ctrlKey + '\n' +
-                          'Shift: ' + event.shiftKey + '\n');
+                    alert(
+                        this.name +
+                            ' clicked\n' +
+                            'Alt: ' +
+                            event.altKey +
+                            '\n' +
+                            'Control: ' +
+                            event.ctrlKey +
+                            '\n' +
+                            'Shift: ' +
+                            event.shiftKey +
+                            '\n'
+                    );
                 }
             }
         }
@@ -17,11 +25,14 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'ADBE',
-        data: ADBE
-    }, {
-        name: 'MSFT',
-        data: MSFT
-    }]
+    series: [
+        {
+            name: 'ADBE',
+            data: ADBE
+        },
+        {
+            name: 'MSFT',
+            data: MSFT
+        }
+    ]
 });

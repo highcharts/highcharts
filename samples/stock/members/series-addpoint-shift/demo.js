@@ -7,13 +7,15 @@ const chart = Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: data
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: data
+        }
+    ]
 });
 
-document.getElementById('button').addEventListener('click', e => {
+document.getElementById('button').addEventListener('click', (e) => {
     data = usdeur.slice(cursor, cursor + chunk);
     cursor += chunk;
 

@@ -1,41 +1,48 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-    Highcharts.stockChart('container', {
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            legend: {
+                enabled: true
+            },
 
-        title: {
-            text: 'AAPL Stock Price'
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        legend: {
-            enabled: true
-        },
+            yAxis: [
+                {
+                    height: '48%'
+                },
+                {
+                    height: '48%',
+                    top: '52%'
+                }
+            ],
 
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        yAxis: [{
-            height: '48%'
-        }, {
-            height: '48%',
-            top: '52%'
-        }],
-
-        series: [{
-            type: 'ohlc',
-            id: 'aapl',
-            name: 'AAPL Stock Price',
-            data: data
-        }, {
-            yAxis: 1,
-            type: 'slowstochastic',
-            linkedTo: 'aapl'
-        }]
-    });
-});
+            series: [
+                {
+                    type: 'ohlc',
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    data: data
+                },
+                {
+                    yAxis: 1,
+                    type: 'slowstochastic',
+                    linkedTo: 'aapl'
+                }
+            ]
+        });
+    }
+);

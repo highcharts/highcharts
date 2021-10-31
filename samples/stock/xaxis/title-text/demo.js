@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     xAxis: {
         title: {
             text: 'This is a Date/time axis'
@@ -16,8 +15,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

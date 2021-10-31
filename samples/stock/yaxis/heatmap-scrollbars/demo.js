@@ -43,7 +43,9 @@ Highcharts.chart('container', {
         min: -10,
         max: 20
     },
-    series: [{
-        colsize: 24 * 36e5
-    }]
+    series: [
+        {
+            colsize: 24 * 36e5
+        }
+    ]
 });

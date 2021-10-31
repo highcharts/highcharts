@@ -1,48 +1,55 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-ohlc.json',
+    function (data) {
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
+            },
 
-    Highcharts.stockChart('container', {
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-        rangeSelector: {
-            selected: 2
-        },
+            legend: {
+                enabled: true
+            },
 
-        title: {
-            text: 'AAPL Stock Price'
-        },
+            plotOptions: {
+                series: {
+                    showInLegend: true
+                }
+            },
 
-        legend: {
-            enabled: true
-        },
+            yAxis: [
+                {
+                    height: '60%'
+                },
+                {
+                    top: '65%',
+                    height: '35%',
+                    offset: 0
+                }
+            ],
 
-        plotOptions: {
-            series: {
-                showInLegend: true
-            }
-        },
-
-        yAxis: [{
-            height: '60%'
-        }, {
-            top: '65%',
-            height: '35%',
-            offset: 0
-        }],
-
-        series: [{
-            type: 'candlestick',
-            id: 'AAPL',
-            name: 'AAPL',
-            data: data,
-            tooltip: {
-                valueDecimals: 2
-            }
-        }, {
-            type: 'ao',
-            yAxis: 1,
-            greaterBarColor: '#00cc66',
-            lowerBarColor: '#FF5E5E',
-            linkedTo: 'AAPL',
-            showInLegend: true
-        }]
-    });
-});
+            series: [
+                {
+                    type: 'candlestick',
+                    id: 'AAPL',
+                    name: 'AAPL',
+                    data: data,
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                },
+                {
+                    type: 'ao',
+                    yAxis: 1,
+                    greaterBarColor: '#00cc66',
+                    lowerBarColor: '#FF5E5E',
+                    linkedTo: 'AAPL',
+                    showInLegend: true
+                }
+            ]
+        });
+    }
+);

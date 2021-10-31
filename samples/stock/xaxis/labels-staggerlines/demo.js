@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     xAxis: {
         labels: {
             staggerLines: 2
@@ -11,8 +10,10 @@ Highcharts.stockChart('container', {
         selected: 1
     },
 
-    series: [{
-        name: 'USD to EUR',
-        data: usdeur
-    }]
+    series: [
+        {
+            name: 'USD to EUR',
+            data: usdeur
+        }
+    ]
 });

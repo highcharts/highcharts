@@ -1,33 +1,35 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (data) {
-
-    // Create the chart
-    Highcharts.stockChart('container', {
-
-
-        rangeSelector: {
-            selected: 2
-        },
-
-        title: {
-            text: 'AAPL Stock Price'
-        },
-
-        series: [{
-            name: 'AAPL Stock Price',
-            data: data,
-            lineWidth: 0,
-            marker: {
-                enabled: true,
-                radius: 2
+Highcharts.getJSON(
+    'https://demo-live-data.highcharts.com/aapl-c.json',
+    function (data) {
+        // Create the chart
+        Highcharts.stockChart('container', {
+            rangeSelector: {
+                selected: 2
             },
-            tooltip: {
-                valueDecimals: 2
+
+            title: {
+                text: 'AAPL Stock Price'
             },
-            states: {
-                hover: {
-                    lineWidthPlus: 0
+
+            series: [
+                {
+                    name: 'AAPL Stock Price',
+                    data: data,
+                    lineWidth: 0,
+                    marker: {
+                        enabled: true,
+                        radius: 2
+                    },
+                    tooltip: {
+                        valueDecimals: 2
+                    },
+                    states: {
+                        hover: {
+                            lineWidthPlus: 0
+                        }
+                    }
                 }
-            }
-        }]
-    });
-});
+            ]
+        });
+    }
+);

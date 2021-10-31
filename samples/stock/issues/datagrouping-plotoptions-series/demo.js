@@ -1,5 +1,4 @@
 Highcharts.stockChart('container', {
-
     title: {
         text: 'Data grouping on plotOptions.series. Should group to weeks'
     },
@@ -23,8 +22,10 @@ Highcharts.stockChart('container', {
         }
     },
 
-    series: [{
-        name: 'ADBE',
-        data: ADBE
-    }]
+    series: [
+        {
+            name: 'ADBE',
+            data: ADBE
+        }
+    ]
 });

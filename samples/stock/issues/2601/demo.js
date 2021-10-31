@@ -12,15 +12,18 @@ Highcharts.stockChart('container', {
     title: {
         text: 'In Highcharts Stock <= 1.3.9, comparing against an empty series would fail'
     },
-    series: [{
-        type: 'line',
-        name: 'Price',
-        data: price,
-        compare: 'value'
-    }, {
-        type: 'line',
-        name: 'test',
-        data: [],
-        compare: 'value'
-    }]
+    series: [
+        {
+            type: 'line',
+            name: 'Price',
+            data: price,
+            compare: 'value'
+        },
+        {
+            type: 'line',
+            name: 'test',
+            data: [],
+            compare: 'value'
+        }
+    ]
 });

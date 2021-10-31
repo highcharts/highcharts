@@ -622,11 +622,14 @@ Highcharts.stockChart('container', {
     title: {
         text: 'Both series should have same data grouping'
     },
-    series: [{
-        data: data1,
-        type: 'column'
-    }, {
-        data: data2,
-        type: 'line'
-    }]
+    series: [
+        {
+            data: data1,
+            type: 'column'
+        },
+        {
+            data: data2,
+            type: 'line'
+        }
+    ]
 });
