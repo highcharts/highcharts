@@ -47,25 +47,31 @@ Highcharts.mapChart('container', {
         min: 0
     },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+    series: [
+        {
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
+        {
+            name: 'Separators',
+            type: 'mapline',
+            data: Highcharts.geojson(
+                Highcharts.maps['countries/fr/fr-all'],
+                'mapline'
+            ),
+            color: 'silver',
+            nullColor: 'silver',
+            showInLegend: false,
+            enableMouseTracking: false
         }
-    }, {
-        name: 'Separators',
-        type: 'mapline',
-        data: Highcharts.geojson(Highcharts.maps['countries/fr/fr-all'], 'mapline'),
-        color: 'silver',
-        nullColor: 'silver',
-        showInLegend: false,
-        enableMouseTracking: false
-    }]
+    ]
 });
