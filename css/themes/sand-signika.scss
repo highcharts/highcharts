@@ -5,7 +5,8 @@
 $background-color: none;
 
 // Colors for data series and points.
-$colors: #f45b5b #8085e9 #8d4654 #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee;
+$colors: #f45b5b #8085e9 #8d4654 #7798bf #aaeeee #ff0066 #eeaaee #55bf3b #df5353
+    #7798bf #aaeeee;
 
 // Neutral colors
 $neutral-color-100: #fff;
@@ -26,11 +27,11 @@ $tooltip-background: $neutral-color-100;
 
 // Buttons
 $highcharts-button-background: $neutral-color-100;
-$highcharts-button-border: #C0C0C8;
-$highcharts-button-text:  #000;
+$highcharts-button-border: #c0c0c8;
+$highcharts-button-text: #000;
 
-$highcharts-button-pressed-background: #D0D0D8;
-$highcharts-button-pressed-text:  #000;
+$highcharts-button-pressed-background: #d0d0d8;
+$highcharts-button-pressed-text: #000;
 
 $context-button-background: $neutral-color-100;
 
@@ -39,36 +40,36 @@ $navigator-series-fill: #f45b5b;
 $navigator-series-border: #f45b5b;
 
 // Scrollbar
-$scrollbar-track-border: #C0C0C8;
+$scrollbar-track-border: #c0c0c8;
 
 // General
 .highcharts-container {
-  background: url(https://www.highcharts.com/samples/graphics/sand.png);
+    background: url(https://www.highcharts.com/samples/graphics/sand.png);
 }
 
 // Boxplot
 .highcharts-boxplot-box {
-   fill: #505053;
+    fill: #505053;
 }
 
 // Navigator
 .highcharts-navigator-xaxis .highcharts-grid-line {
-  stroke: #D0D0D8;
+    stroke: #d0d0d8;
 }
 
 // Scrollbar
 .highcharts-scrollbar-track {
-  stroke: #C0C0C8;
+    stroke: #c0c0c8;
 }
 
 // Title
 .highcharts-title {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 // Buttons
 .highcharts-button-box {
-	stroke-width: 1px;
+    stroke-width: 1px;
 }
 
 @import '../highcharts';
