@@ -11,29 +11,34 @@ Highcharts.stockChart('container', {
         text: 'Using the time navigation features from Highcharts Stock'
     },
 
-    xAxis: [{
-        id: 'bottom-datetime-axis',
-        grid: {
-            enabled: true
+    xAxis: [
+        {
+            id: 'bottom-datetime-axis',
+            grid: {
+                enabled: true
+            },
+            opposite: true,
+            type: 'datetime'
         },
-        opposite: true,
-        type: 'datetime'
-    }, {
-        grid: {
-            enabled: true
-        },
-        type: 'datetime',
-        opposite: true,
-        labels: {
-            style: {
-                fontSize: '15px'
-            }
-        },
-        linkedTo: 0
-    }],
-    series: [{
-        name: 'Project 1',
-        xAxis: 0,
-        data: usdeur
-    }]
+        {
+            grid: {
+                enabled: true
+            },
+            type: 'datetime',
+            opposite: true,
+            labels: {
+                style: {
+                    fontSize: '15px'
+                }
+            },
+            linkedTo: 0
+        }
+    ],
+    series: [
+        {
+            name: 'Project 1',
+            xAxis: 0,
+            data: usdeur
+        }
+    ]
 });

@@ -1,7 +1,7 @@
 /* eslint-env node, es6 */
 
-const request = require("request");
-const cheerio = require("cheerio");
+const request = require('request');
+const cheerio = require('cheerio');
 require('colors');
 
 const data = {};
@@ -42,7 +42,8 @@ const print = (data) => {
 
 for (let year = fromYear; year <= toYear; year += 2) {
     let url = `https://www.sports-reference.com/olympics/winter/${year}/`;
-    request(url, (err, res, body) => { // eslint-disable-line no-loop-func
+    request(url, (err, res, body) => {
+        // eslint-disable-line no-loop-func
         if (err) {
             throw err;
         }
@@ -57,16 +58,18 @@ for (let year = fromYear; year <= toYear; year += 2) {
             let trs = $('table#countries tbody tr');
             let row = 0;
             while (trs[row]) {
-                let country = trs[row].children[3].children[0].children[0].data.trim();
+                let country =
+                    trs[row].children[3].children[0].children[0].data.trim();
 
-                let medals = parseInt(trs[row].children[11].children[0].data, 10);
+                let medals = parseInt(
+                    trs[row].children[11].children[0].data,
+                    10
+                );
 
                 if (!data[country]) {
                     data[country] = {
                         name: country,
-                        values: {
-
-                        },
+                        values: {},
                         data: []
                     };
                 }
@@ -76,7 +79,7 @@ for (let year = fromYear; year <= toYear; year += 2) {
         }
 
         done++;
-        if (done === ((toYear - fromYear) / 2) + 1) {
+        if (done === (toYear - fromYear) / 2 + 1) {
             print(data);
         }
     });

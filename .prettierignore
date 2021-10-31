@@ -1,4 +1,7 @@
+.prettierignore
 build
 code
 node_modules
+samples/.eslintrc
+samples/static
 vendor

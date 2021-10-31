@@ -26,22 +26,19 @@ today.setUTCSeconds(0);
 today.setUTCMilliseconds(0);
 today = today.getTime();
 
-
 // Update disabled status of the remove button, depending on whether or not we
 // have any selected points.
 function updateRemoveButtonStatus() {
     var chart = this.series.chart;
     // Run in a timeout to allow the select to update
     setTimeout(function () {
-        btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
-            isAddingTask;
+        btnRemoveTask.disabled =
+            !chart.getSelectedPoints().length || isAddingTask;
     }, 10);
 }
 
-
 // Create the chart
 var chart = Highcharts.ganttChart('container', {
-
     chart: {
         spacingLeft: 1
     },
@@ -98,53 +95,62 @@ var chart = Highcharts.ganttChart('container', {
         xDateFormat: '%a %b %d, %H:%M'
     },
 
-    series: [{
-        name: 'Project 1',
-        data: [{
-            start: today + 2 * day,
-            end: today + day * 5,
-            name: 'Prototype',
-            id: 'prototype',
-            y: 0
-        },  {
-            start: today + day * 6,
-            name: 'Prototype done',
-            milestone: true,
-            dependency: 'prototype',
-            id: 'proto_done',
-            y: 0
-        }, {
-            start: today + day * 7,
-            end: today + day * 11,
-            name: 'Testing',
-            dependency: 'proto_done',
-            y: 0
-        }, {
-            start: today + day * 5,
-            end: today + day * 8,
-            name: 'Product pages',
-            y: 1
-        }, {
-            start: today + day * 9,
-            end: today + day * 10,
-            name: 'Newsletter',
-            y: 1
-        }, {
-            start: today + day * 9,
-            end: today + day * 11,
-            name: 'Licensing',
-            id: 'testing',
-            y: 2
-        }, {
-            start: today + day * 11.5,
-            end: today + day * 12.5,
-            name: 'Publish',
-            dependency: 'testing',
-            y: 2
-        }]
-    }]
+    series: [
+        {
+            name: 'Project 1',
+            data: [
+                {
+                    start: today + 2 * day,
+                    end: today + day * 5,
+                    name: 'Prototype',
+                    id: 'prototype',
+                    y: 0
+                },
+                {
+                    start: today + day * 6,
+                    name: 'Prototype done',
+                    milestone: true,
+                    dependency: 'prototype',
+                    id: 'proto_done',
+                    y: 0
+                },
+                {
+                    start: today + day * 7,
+                    end: today + day * 11,
+                    name: 'Testing',
+                    dependency: 'proto_done',
+                    y: 0
+                },
+                {
+                    start: today + day * 5,
+                    end: today + day * 8,
+                    name: 'Product pages',
+                    y: 1
+                },
+                {
+                    start: today + day * 9,
+                    end: today + day * 10,
+                    name: 'Newsletter',
+                    y: 1
+                },
+                {
+                    start: today + day * 9,
+                    end: today + day * 11,
+                    name: 'Licensing',
+                    id: 'testing',
+                    y: 2
+                },
+                {
+                    start: today + day * 11.5,
+                    end: today + day * 12.5,
+                    name: 'Publish',
+                    dependency: 'testing',
+                    y: 2
+                }
+            ]
+        }
+    ]
 });
-
 
 /* Add button handlers for add/remove tasks */
 
@@ -159,8 +165,8 @@ btnShowDialog.onclick = function () {
     // Update dependency list
     var depInnerHTML = '<option value=""></option>';
     each(chart.series[0].points, function (point) {
-        depInnerHTML += '<option value="' + point.id + '">' + point.name +
-            ' </option>';
+        depInnerHTML +=
+            '<option value="' + point.id + '">' + point.name + ' </option>';
     });
     selectDependency.innerHTML = depInnerHTML;
 
@@ -185,9 +191,15 @@ btnAddTask.onclick = function () {
             selectDepartment.options[selectDepartment.selectedIndex].value,
             10
         ),
-        maxEnd = reduce(series.points, function (acc, point) {
-            return point.y === y && point.end ? Math.max(acc, point.end) : acc;
-        }, 0),
+        maxEnd = reduce(
+            series.points,
+            function (acc, point) {
+                return point.y === y && point.end
+                    ? Math.max(acc, point.end)
+                    : acc;
+            },
+            0
+        ),
         milestone = chkMilestone.checked || undef;
 
     // Empty category

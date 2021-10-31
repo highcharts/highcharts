@@ -19,31 +19,37 @@ Highcharts.ganttChart('container', {
         max: 2
     },
 
-    series: [{
-        name: 'Project 1',
-        dragDrop: {
-            liveRedraw: false,
-            draggableX: true,
-            draggableY: true,
-            dragMinY: 0,
-            dragMaxY: 2,
-            groupBy: 'groupId'
-        },
-        data: [{
-            start: Date.UTC(2014, 11, 1),
-            end: Date.UTC(2014, 11, 2),
-            completed: 0.95,
-            groupId: 'group1',
-            y: 0
-        }, {
-            start: Date.UTC(2014, 11, 3),
-            end: Date.UTC(2014, 11, 5),
-            groupId: 'group1',
-            y: 0
-        }, {
-            start: Date.UTC(2014, 11, 2),
-            end: Date.UTC(2014, 11, 5),
-            y: 1
-        }]
-    }]
+    series: [
+        {
+            name: 'Project 1',
+            dragDrop: {
+                liveRedraw: false,
+                draggableX: true,
+                draggableY: true,
+                dragMinY: 0,
+                dragMaxY: 2,
+                groupBy: 'groupId'
+            },
+            data: [
+                {
+                    start: Date.UTC(2014, 11, 1),
+                    end: Date.UTC(2014, 11, 2),
+                    completed: 0.95,
+                    groupId: 'group1',
+                    y: 0
+                },
+                {
+                    start: Date.UTC(2014, 11, 3),
+                    end: Date.UTC(2014, 11, 5),
+                    groupId: 'group1',
+                    y: 0
+                },
+                {
+                    start: Date.UTC(2014, 11, 2),
+                    end: Date.UTC(2014, 11, 5),
+                    y: 1
+                }
+            ]
+        }
+    ]
 });
