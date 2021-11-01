@@ -103,11 +103,14 @@ class ABandsIndicator extends SMAIndicator {
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Option for fill color between lines in BoiligerBands Indicator.
-         * @type {Highcharts.Color}
-         * @apioption plotOptions.bb.fillColor
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      background fill between lines
+         *
+         * @type {Highcharts.Color}
+         * @since next
+         * @apioption plotOptions.bb.fillColor
+         *
          */
         params: {
             period: 20,

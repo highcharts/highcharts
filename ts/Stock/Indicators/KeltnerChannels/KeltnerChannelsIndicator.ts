@@ -62,11 +62,14 @@ class KeltnerChannelsIndicator extends SMAIndicator {
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * Option for fill color between lines in Keltner Channels Indicator.
-         * @type {Highcharts.Color}
-         * @apioption plotOptions.keltnerchannels.fillColor
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      background fill between lines
+         *
+         * @type {Highcharts.Color}
+         * @since     next
+         * @apioption plotOptions.keltnerchannels.fillColor
+         *
          */
         params: {
             /**
