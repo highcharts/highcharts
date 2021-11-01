@@ -1,7 +1,7 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
 body{
-	margin:opx;
+	margin:0px;
 }
 .chart-container .thick{
 	stroke-width:1;
