@@ -5,6 +5,7 @@ changelog/**/*.md
 code
 node_modules
 samples/.eslintrc
+samples/data/maps
 samples/static
 tools/ant-contrib-0.6-bin
 tools/apache-ant
