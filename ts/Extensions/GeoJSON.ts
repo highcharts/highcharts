@@ -620,7 +620,7 @@ const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
  *
  * @function Highcharts.geojson
  *
- * @param {Highcharts.GeoJSON} json
+ * @param {Highcharts.GeoJSON|Highcharts.TopoJSON} json
  *        The GeoJSON or TopoJSON structure to parse, represented as a
  *        JavaScript object.
  *
@@ -629,6 +629,7 @@ const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
  *        GeoJSON polygons and multipolygons. Setting "mapline" will return
  *        GeoJSON linestrings and multilinestrings. Setting "mappoint" will
  *        return GeoJSON points and multipoints.
+ *
  *
  * @return {Array<*>}
  *         An object ready for the `mapData` option.

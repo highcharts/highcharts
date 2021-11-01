@@ -57,7 +57,7 @@ const Highcharts = require('highcharts/highmaps.js'),
 
 Highcharts.mapChart('container', {
     chart: {
-        map: geojson
+        map
     },
     // ...
 });
