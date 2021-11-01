@@ -16,26 +16,26 @@ const sign = (Math as any).sign ||
 let n = 0,
     c = 0;
 
-const init = (options: ProjectionOptions): void => {
-    const parallels = (options.parallels || [])
-            .map((n): number => n * deg2rad),
-        lat1 = parallels[0] || 0,
-        lat2 = parallels[1] || lat1,
-        cosLat1 = Math.cos(lat1);
-
-    // Apply the global variables
-    n = lat1 === lat2 ?
-        Math.sin(lat1) :
-        Math.log(cosLat1 / Math.cos(lat2)) / Math.log(tany(lat2) / tany(lat1));
-    if (Math.abs(n) < 1e-10) {
-        n = (sign(n) || 1) * 1e-10;
-    }
-    c = cosLat1 * Math.pow(tany(lat1), n) / n;
-};
-
 const LambertConformalConic: ProjectionDefinition = {
 
-    init,
+    init: (options: ProjectionOptions): void => {
+        const parallels = (options.parallels || [])
+                .map((n): number => n * deg2rad),
+            lat1 = parallels[0] || 0,
+            lat2 = parallels[1] || lat1,
+            cosLat1 = Math.cos(lat1);
+
+        // Apply the global variables
+        n = lat1 === lat2 ?
+            Math.sin(lat1) :
+            Math.log(
+                cosLat1 / Math.cos(lat2)) / Math.log(tany(lat2) / tany(lat1)
+            );
+        if (Math.abs(n) < 1e-10) {
+            n = (sign(n) || 1) * 1e-10;
+        }
+        c = cosLat1 * Math.pow(tany(lat1), n) / n;
+    },
 
     forward: (lonLat): [number, number] => {
         const lon = lonLat[0] * deg2rad;
@@ -73,6 +73,5 @@ const LambertConformalConic: ProjectionDefinition = {
 
     }
 };
-init({});
 
 export default LambertConformalConic;
