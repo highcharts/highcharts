@@ -54,10 +54,7 @@ const {
 
 /**
  * Get the wrapped export button element of a chart.
- *
  * @private
- * @param {Highcharts.Chart} chart
- * @returns {Highcharts.SVGElement}
  */
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
@@ -66,7 +63,6 @@ function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
 
 /**
  * @private
- * @param {Highcharts.Chart} chart
  */
 function exportingShouldHaveA11y(chart: Chart): boolean {
     const exportingOpts = chart.options.exporting,
@@ -271,7 +267,7 @@ class MenuComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -561,10 +557,6 @@ namespace MenuComponent {
      *
      * @private
      * @function Highcharts.Chart#highlightExportItem
-     *
-     * @param {number} ix
-     *
-     * @return {boolean}
      */
     function chartHighlightExportItem(
         this: ChartComposition,
@@ -609,7 +601,6 @@ namespace MenuComponent {
      *
      * @private
      * @function Highcharts.Chart#highlightLastExportItem
-     * @return {boolean}
      */
     function chartHighlightLastExportItem(
         this: ChartComposition

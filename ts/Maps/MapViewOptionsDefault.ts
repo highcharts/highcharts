@@ -79,7 +79,7 @@ const defaultOptions: MapViewOptions = {
      * which in practice can be used for example to render a world map with the
      * Americas centered (`[90, 0]`), or to rotate an orthographic projection.
      *
-     * @type   {object}
+     * @type   {Object}
      * @sample {highmaps} maps/demo/topojson-projection
      *         Orthographic projection
      */

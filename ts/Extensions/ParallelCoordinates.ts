@@ -320,7 +320,6 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#setParallelInfo
      * @param {Highcharts.Options} options
      * User options
-     * @return {void}
      * @requires modules/parallel-coordinates
      */
     setParallelInfo: function (

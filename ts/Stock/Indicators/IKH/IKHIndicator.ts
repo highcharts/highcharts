@@ -909,13 +909,12 @@ class IKHIndicator extends SMAIndicator {
     }
 }
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 /* *
-*
-* Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;

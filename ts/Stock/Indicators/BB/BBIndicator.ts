@@ -160,7 +160,7 @@ class BBIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as BBOptions)
+    } as BBOptions);
 
     /* *
      *

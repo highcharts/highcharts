@@ -244,7 +244,6 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public _defaultSetter(
         value: string,
@@ -1289,7 +1288,6 @@ class SVGElement implements SVGElementLike {
      * @private
      * @function Highcharts.SVGElement#destroyShadows
      *
-     * @return {void}
      */
     public destroyShadows(): void {
         (this.shadows || []).forEach(function (
@@ -2415,12 +2413,13 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#translate
      *
      * @param {number} x
-     *        The x value.
+     * The x value.
      *
      * @param {number} y
-     *        The y value.
+     * The y value.
      *
      * @return {Highcharts.SVGElement}
+     * Translated element.
      */
     public translate(
         x: number,
@@ -2545,7 +2544,6 @@ class SVGElement implements SVGElementLike {
      *
      * @param {Highcharts.SVGDOMElement} element
      *
-     * @return {void}
      */
     public visibilitySetter(
         value: string,
@@ -2565,10 +2563,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#xGetter
-     *
-     * @param {string} key
-     *
-     * @return {number|string|null}
      */
     public xGetter(key: string): (number|string|null) {
         if (this.element.nodeName === 'circle') {
@@ -2584,9 +2578,6 @@ class SVGElement implements SVGElementLike {
     /**
      * @private
      * @function Highcharts.SVGElement#zIndexSetter
-     * @param {number} [value]
-     * @param {string} [key]
-     * @return {boolean}
      */
     public zIndexSetter(
         value?: number,

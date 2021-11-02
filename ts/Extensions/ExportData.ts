@@ -509,7 +509,7 @@ Chart.prototype.setUpKeyToAxis = function (): void {
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
  *
- * @fires Highcharts.Chart#event:exportData
+ * @emits Highcharts.Chart#event:exportData
  */
 Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
@@ -930,7 +930,7 @@ Chart.prototype.getCSV = function (
  * @return {string}
  *         HTML representation of the data.
  *
- * @fires Highcharts.Chart#event:afterGetTable
+ * @emits Highcharts.Chart#event:afterGetTable
  */
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
@@ -1334,7 +1334,7 @@ Chart.prototype.downloadXLS = function (
  *
  * @function Highcharts.Chart#viewData
  *
- * @fires Highcharts.Chart#event:afterViewData
+ * @emits Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
     this.toggleDataTable(true);

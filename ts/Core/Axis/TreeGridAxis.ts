@@ -265,7 +265,7 @@ namespace TreeGridAxis {
      *
      * @param {number} numberOfSeries
      *
-     * @return {object}
+     * @return {Object}
      * Returns an object containing categories, mapOfIdToNode,
      * mapOfPosToGridNode, and tree.
      *
@@ -450,8 +450,8 @@ namespace TreeGridAxis {
     /**
      * Builds the tree of categories and calculates its positions.
      * @private
-     * @param {object} e Event object
-     * @param {object} e.target The chart instance which the event was fired on.
+     * @param {Object} e Event object
+     * @param {Object} e.target The chart instance which the event was fired on.
      * @param {object[]} e.target.axes The axes of the chart.
      */
     function onBeforeRender(
@@ -1027,7 +1027,7 @@ namespace TreeGridAxis {
          * @param {Highcharts.Axis} axis
          * The axis to check against.
          *
-         * @param {object} node
+         * @param {Object} node
          * The node to check if is collapsed.
          *
          * @param {number} pos

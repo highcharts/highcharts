@@ -92,7 +92,7 @@ class AreaSplineSeries extends SplineSeries {
     public static defaultOptions: AreaSplineSeriesOptions = merge(
         SplineSeries.defaultOptions,
         AreaSeries.defaultOptions
-    )
+    );
 
     /* *
      *

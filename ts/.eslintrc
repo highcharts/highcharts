@@ -20,13 +20,14 @@
                 "properties": "always"
             }
         ],
-        "class-methods-use-this": 0, // @todo
+        "class-methods-use-this": 1, // @todo
         "comma-dangle": [
             2,
             "never"
         ],
         "consistent-return": 0,
         "default-case": 0,
+        "default-param-last": 0,
         "dot-notation": 0,
         "function-paren-newline": 0,
         "func-style": 0,
@@ -57,17 +58,11 @@
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
-        "valid-jsdoc": [ // @todo EOL 2018-11
-            "error",
-            {
-                "prefer": {
-                    "returns": "return"
-                },
-                "requireReturn": false,
-                "requireReturnDescription": false
-            }
-        ],
+        "require-unicode-regexp": 1,
+        "semi": 0,
+        "valid-jsdoc": 0,
         "@typescript-eslint/array-type": 0,
+        "@typescript-eslint/ban-types": 0, // @todo
         "@typescript-eslint/explicit-function-return-type": [
             "error",
             {
@@ -86,17 +81,26 @@
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-floating-promises": 1, // @todo
         "@typescript-eslint/no-inferrable-types": 0, // @todo ?
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
         "@typescript-eslint/no-this-alias": 0, // @todo
         "@typescript-eslint/no-unnecessary-type-assertion": 0, // @todo
+        "@typescript-eslint/no-unsafe-argument": 0, // @todo
+        "@typescript-eslint/no-unsafe-assignment": 0, // @todo
+        "@typescript-eslint/no-unsafe-call": 1, // @todo
+        "@typescript-eslint/no-unsafe-member-access": 0, // @todo
+        "@typescript-eslint/no-unsafe-return": 1, // @todo
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
+        "@typescript-eslint/restrict-plus-operands": 1, // @todo
+        "@typescript-eslint/restrict-template-expressions": 1, // @todo
+        "@typescript-eslint/semi": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
         "highcharts/doclet-apioption-last": 2,
         "highcharts/no-highcharts-namespace": 1, // @todo
@@ -106,7 +110,60 @@
         "highcharts/no-private-constructor-doclet": 0,
         "highcharts/no-wrap": 1, // @todo
         "highcharts/quote-members": 2,
+        "jsdoc/check-alignment": 1,
+        "jsdoc/check-param-names": 1,
+        "jsdoc/check-tag-names": [
+            "error",
+            {
+                "definedTags": [
+                    "apioption",
+                    "context",
+                    "declare",
+                    "exclude",
+                    "excluding",
+                    "ignore-declaration",
+                    "ignore-option",
+                    "internal",
+                    "optionparent",
+                    "product",
+                    "productdesc",
+                    "sample",
+                    "validvalue"
+                ]
+            }
+        ],
+        "jsdoc/newline-after-description": 0,
+        "jsdoc/require-description": 1, // @todo
+        "jsdoc/require-jsdoc": 1, // @todo
+        "jsdoc/require-param": 0, // @todo
+        "jsdoc/require-param-description": 1, // @todo
+        "jsdoc/require-param-type": 1, // @todo
+        "jsdoc/require-returns": 0,
         "node/no-missing-import": 0, // @todo
-        "node/no-unsupported-features/es-syntax": 0, // @todo
+        "node/no-unsupported-features/es-builtins": 0, // @todo
+        "node/no-unsupported-features/es-syntax": 0 // @todo
+    },
+    "settings": {
+        "jsdoc": {
+            "mode": "typescript",
+            "preferredTypes": {
+                "array": "Array",
+                "function": "Function",
+                "object": "Object",
+                "Boolean": "boolean",
+                "Number": "number",
+                "Object": "Object",
+                "String": "string"
+            },
+            "tagNamePreference": {
+                "augments": "augments",
+                "class": "class",
+                "constructor": "class",
+                "emits": "emits",
+                "extends": "extends",
+                "fires": "emits",
+                "returns": "return"
+            }
+        }
     }
 }

@@ -61,13 +61,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
         csvURL: '',
         enablePolling: false,
         dataRefreshRate: 1
-    }
+    };
 
     static readonly defaultExportOptions: CSVStore.ExportOptions = {
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n'
-    }
+    };
 
     /* *
     *
@@ -400,7 +400,7 @@ namespace CSVStore {
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>
+    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?

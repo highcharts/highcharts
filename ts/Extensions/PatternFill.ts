@@ -137,7 +137,7 @@ const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
  * @private
  * @function hashFromObject
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The javascript object to compute the hash from.
  *
  * @param {boolean} [preSeed=false]

@@ -762,7 +762,7 @@ class Data {
     public firstRowAsNames: boolean = void 0 as any;
     public liveDataTimeout?: number;
     public rawColumns: Array<Array<string>> = void 0 as any;
-    public options: Highcharts.DataOptions= void 0 as any;
+    public options: Highcharts.DataOptions = void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
 
     /* *
@@ -776,9 +776,6 @@ class Data {
      *
      * @private
      * @function Highcharts.Data#init
-     * @param {Highcharts.DataOptions} options
-     * @param {Highcharts.Options} [chartOptions]
-     * @param {Highcharts.Chart} [chart]
      */
     public init(
         options: Highcharts.DataOptions,
@@ -1028,10 +1025,6 @@ class Data {
      * Parse a CSV input string
      *
      * @function Highcharts.Data#parseCSV
-     *
-     * @param {Highcharts.DataOptions} [inOptions]
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
         let self = this,
@@ -1572,8 +1565,6 @@ class Data {
      * Parse a HTML table
      *
      * @function Highcharts.Data#parseTable
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseTable(): Array<Array<Highcharts.DataValueType>> {
         let options = this.options,
@@ -2177,10 +2168,6 @@ class Data {
      * `options.parseDate`.
      *
      * @function Highcharts.Data#parseDate
-     *
-     * @param {string} val
-     *
-     * @return {number}
      */
     public parseDate(val: string): number {
         const parseDate = this.options.parseDate;
@@ -2258,10 +2245,6 @@ class Data {
      * Reorganize rows into columns.
      *
      * @function Highcharts.Data#rowsToColumns
-     *
-     * @param {Array<Array<Highcharts.DataValueType>>} rows
-     *
-     * @return {Array<Array<Highcharts.DataValueType>>|undefined}
      */
     public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
     ): (Array<Array<Highcharts.DataValueType>>|undefined) {
@@ -2311,8 +2294,6 @@ class Data {
      * A hook for working directly on the parsed columns
      *
      * @function Highcharts.Data#parsed
-     *
-     * @return {boolean|undefined}
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
@@ -2580,14 +2561,6 @@ class Data {
  * Creates a data object to parse data for a chart.
  *
  * @function Highcharts.data
- *
- * @param {Highcharts.DataOptions} dataOptions
- *
- * @param {Highcharts.Options} [chartOptions]
- *
- * @param {Highcharts.Chart} [chart]
- *
- * @return {Highcharts.Data}
  */
 G.data = function (
     dataOptions: Highcharts.DataOptions,
@@ -2698,10 +2671,6 @@ class SeriesBuilder {
      * from the free columns (this is handled by the ColumnCursor instance).
      *
      * @function SeriesBuilder#populateColumns
-     *
-     * @param {Array<number>} freeIndexes
-     *
-     * @returns {boolean}
      */
     public populateColumns(freeIndexes: Array<number>): boolean {
         let builder = this,
@@ -2737,12 +2706,6 @@ class SeriesBuilder {
      * on the names of the readers.
      *
      * @function SeriesBuilder#read<T>
-     *
-     * @param {Array<Array<T>>} columns
-     *
-     * @param {number} rowIndex
-     *
-     * @returns {Array<T>|Highcharts.Dictionary<T>}
      */
     public read <T>(
         columns: Array<Array<T>>,
@@ -2801,10 +2764,6 @@ class SeriesBuilder {
      * an index when columns are populated.
      *
      * @function SeriesBuilder#addColumnReader
-     *
-     * @param {number} columnIndex
-     *
-     * @param {string} configName
      */
     public addColumnReader(
         columnIndex: (number|undefined),
@@ -2829,8 +2788,6 @@ class SeriesBuilder {
      * reading data.
      *
      * @function SeriesBuilder#getReferencedColumnIndexes
-     *
-     * @returns {Array<number>}
      */
     public getReferencedColumnIndexes(): Array<number> {
         let i,
@@ -2851,10 +2808,6 @@ class SeriesBuilder {
      * Returns true if the builder has a reader for the given configName.
      *
      * @function SeriesBuider#hasReader
-     *
-     * @param {string} configName
-     *
-     * @returns {boolean|undefined}
      */
     public hasReader(configName: string): (boolean|undefined) {
         let i, columnReader;

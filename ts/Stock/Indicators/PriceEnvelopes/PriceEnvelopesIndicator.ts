@@ -120,7 +120,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as PriceEnvelopesOptions)
+    } as PriceEnvelopesOptions);
 
     public data: Array<PriceEnvelopesPoint> = void 0 as any;
     public options: PriceEnvelopesOptions = void 0 as any;

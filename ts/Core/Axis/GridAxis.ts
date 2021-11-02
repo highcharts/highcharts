@@ -1352,13 +1352,11 @@ namespace GridAxis {
 
         /**
          * Add extra border based on the provided path.
-         *  *
          * @private
-         *
          * @param {SVGPath} path
          * The path of the border.
-         *
          * @return {Highcharts.SVGElement}
+         * Border
          */
         public renderBorder(path: SVGPath): SVGElement {
             const axis = this.axis,

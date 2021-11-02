@@ -111,7 +111,6 @@ class Timeline {
      * @param {Function} [onEnd]
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
     public play(
         this: Timeline,
@@ -129,7 +128,6 @@ class Timeline {
      * @param {Function} onEnd
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
     public rewind(onEnd: Function): void {
         this.pause();
@@ -143,7 +141,6 @@ class Timeline {
      * @private
      * @param {number} direction
      * Direction to play in. 1 for forwards, -1 for backwards.
-     * @return {void}
      */
     public playPaths(
         this: Timeline,
@@ -234,7 +231,6 @@ class Timeline {
      * @param {boolean} [fadeOut=false]
      * Whether or not to fade out as we stop. If false, the timeline is
      * cancelled synchronously.
-     * @return {void}
      */
     public pause(
         this: Timeline,
@@ -254,7 +250,6 @@ class Timeline {
     /**
      * Reset the cursor to the beginning of the timeline.
      * @private
-     * @return {void}
      */
     public resetCursor(this: Timeline): void {
         this.paths.forEach(function (
@@ -270,7 +265,6 @@ class Timeline {
     /**
      * Reset the cursor to the end of the timeline.
      * @private
-     * @return {void}
      */
     public resetCursorEnd(this: Timeline): void {
         this.paths.forEach(function (

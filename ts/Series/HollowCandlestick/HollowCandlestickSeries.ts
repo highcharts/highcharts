@@ -165,7 +165,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPriceMovement
      *
-     * @return {void}
      *
      */
     public getPriceMovement(): void {
@@ -197,10 +196,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#getLineColor
      *
      * @param {string} trendDirection
-     *        Type of candle direction (bearish/bullish)(down/up).
+     * Type of candle direction (bearish/bullish)(down/up).
      *
      * @return {ColorType}
-     *
+     * Line color
      */
     public getLineColor(trendDirection: 'up'|'down'): ColorType {
         const series = this;
@@ -221,7 +220,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *        Information about the current candle.
      *
      * @return {ColorType}
-     *
+     * Point fill color
      */
     public getPointFill(hollowcandleInfo: HollowcandleInfo): ColorType {
         const series = this;
@@ -238,7 +237,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * @private
      * @function Highcarts.seriesTypes.hollowcandlestick#init
-     * @return {void}
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -253,13 +251,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
      *
      * @param {Array<(number)>} dataPoint
-     *        Current point which we calculate.
-
-      * @param {Array<(number)>} previousDataPoint
-     *        Previous point.
+     * Current point which we calculate.
      *
-     * @return {HollowcandleInfo}
-     *
+     * @param {Array<(number)>} previousDataPoint
+     * Previous point.
      */
     public isBullish(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): HollowcandleInfo {
         return {
@@ -273,15 +268,15 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add color and fill attribute for each point.
      *
+     * @private
+     *
      * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
      *
      * @param {HollowCandlestickPoint} point
-     *        Point to which we are adding attributes.
+     * Point to which we are adding attributes.
+     *
      * @param {StatesOptionsKey} state
-     *        Current point state.
-     *
-     * @return {SVGAttributes}
-     *
+     * Current point state.
      */
     public pointAttribs(
         point: HollowCandlestickPoint,

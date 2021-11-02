@@ -71,7 +71,7 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
      */
-    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions)
+    public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions);
 
     /* *
      *

@@ -77,8 +77,6 @@ class TilemapPoint extends HeatmapPoint {
     /**
      * @private
      * @function Highcharts.Point#haloPath
-     *
-     * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
      */
     public haloPath(): SVGPath {
         return this.series.tileShape.haloPath.apply(this, arguments);

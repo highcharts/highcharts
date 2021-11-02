@@ -1458,6 +1458,7 @@ Scatter.prototype.markerClusterAlgorithms = {
 
         // Start kmeans iteration process.
         while (repeat) {
+            // eslint-disable-next-line no-loop-func
             clusters.map((c): Highcharts.KmeansClusterObject => {
                 c.points.length = 0;
                 return c;

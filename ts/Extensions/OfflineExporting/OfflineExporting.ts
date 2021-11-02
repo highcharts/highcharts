@@ -185,7 +185,6 @@ namespace OfflineExporting {
      * @param {Function} [successCallback]
      * The callback function in case of success
      *
-     * @return {void}
      */
     export function downloadSVGLocal(
         svg: string,
@@ -213,8 +212,7 @@ namespace OfflineExporting {
 
         /**
          * @private
-         * @return {void}
-         */
+             */
         const downloadPDF = (): void => {
             dummySVGContainer.innerHTML = svg;
             const textElements = dummySVGContainer.getElementsByTagName('text'),
@@ -412,7 +410,6 @@ namespace OfflineExporting {
      *         a different background color can be added here, or
      *         `dataLabels` for export only.
      *
-     * @return {void}
      *
      * @requires modules/exporting
      */
@@ -580,7 +577,6 @@ namespace OfflineExporting {
      * @param {Highcharts.Options} chartOptions
      * @param {Function} failCallback
      * @param {Function} successCallback
-     * @return {void}
      */
     function getSVGForLocalExport(
         this: Chart,
@@ -820,8 +816,6 @@ namespace OfflineExporting {
      *
      * @private
      * @function Highcharts.svgToDataURL
-     * @param {string} svg
-     * @return {string}
      */
     export function svgToDataUrl(svg: string): string {
         // Webkit and not chrome
