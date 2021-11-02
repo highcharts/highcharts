@@ -1053,7 +1053,7 @@ Highcharts.getJSON(
                 maxZoom: 30,
                 projection: {
                     name: 'Orthographic',
-                    rotation: [60, -30]
+                    rotation: [60, 0]
                 }
             },
 

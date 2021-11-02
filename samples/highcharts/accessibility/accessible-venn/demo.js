@@ -62,6 +62,10 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
+Highcharts.setOptions({
+    colors: ['#8085ef', '#8bf0b6', '#569ba3', '#7bb5ec']
+});
+
 Highcharts.chart('container', {
     lang: {
         accessibility: {
@@ -83,7 +87,8 @@ Highcharts.chart('container', {
     },
 
     chart: {
-        margin: 0
+        margin: 0,
+        backgroundColor: 'transparent'
     },
 
     credits: {
@@ -161,7 +166,7 @@ Highcharts.chart('container', {
                 description: 'Enhance your brand - Accessible content will not only enhance customer loyalty and brand awareness, but also improve organic search results.'
             },
             name: 'brand',
-            color: Highcharts.getOptions().colors[2],
+            color: Highcharts.getOptions().colors[1],
             borderColor: '#333',
             dataLabels: {
                 y: 110,
@@ -172,7 +177,7 @@ Highcharts.chart('container', {
             sets: ['4'],
             value: 5,
             name: 'reach',
-            color: Highcharts.getOptions().colors[3],
+            color: Highcharts.getOptions().colors[2],
             accessibility: {
                 description: 'Extend Market Reach - Reach the 1.3 billion people world-wide who are affected by a visual impairment with accessible content.'
             },
@@ -189,7 +194,7 @@ Highcharts.chart('container', {
             accessibility: {
                 description: 'Minimize Legal Risk - You or your customer might be facing a lawsuit if your software products are not accessible.'
             },
-            color: Highcharts.getOptions().colors[5],
+            color: Highcharts.getOptions().colors[3],
             dataLabels: {
                 y: 5,
                 x: -10,
@@ -205,7 +210,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: false
             },
-            color: Highcharts.getOptions().colors[5],
+            color: Highcharts.getOptions().colors[3],
             borderColor: '#333'
         }, {
             sets: ['3', '2'],
@@ -214,7 +219,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             name: 'brand,innovation',
-            color: Highcharts.getOptions().colors[2],
+            color: Highcharts.getOptions().colors[1],
             borderColor: '#333',
             dataLabels: {
                 enabled: false
@@ -226,7 +231,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             name: 'brand,reach',
-            color: Highcharts.getOptions().colors[2],
+            color: Highcharts.getOptions().colors[1],
             dataLabels: {
                 enabled: false
             }
@@ -237,7 +242,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             name: 'legal,innovation,reach',
-            color: Highcharts.getOptions().colors[5],
+            color: Highcharts.getOptions().colors[3],
             dataLabels: {
                 enabled: false
             }
@@ -248,7 +253,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             name: 'legal,innovation',
-            color: Highcharts.getOptions().colors[5],
+            color: Highcharts.getOptions().colors[3],
             dataLabels: {
                 enabled: false
             }
@@ -305,7 +310,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             name: 'brand,innovation,reach',
-            color: Highcharts.getOptions().colors[2],
+            color: Highcharts.getOptions().colors[1],
             dataLabels: {
                 enabled: false
             }
