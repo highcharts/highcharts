@@ -338,10 +338,18 @@ if (window.QUnit) {
             }
 
             var containerStyle = document.getElementById('container').style;
+            containerStyle.display = '';
+            containerStyle.float = '';
             containerStyle.width = '';
+            containerStyle.maxWidth = '';
+            containerStyle.minWidth = '';
             containerStyle.height = '';
+            containerStyle.maxHeight = '';
+            containerStyle.minHeight = '';
             containerStyle.position = '';
+            containerStyle.bottom = '';
             containerStyle.left = '';
+            containerStyle.right = '';
             containerStyle.top = '';
             containerStyle.zIndex = '';
 

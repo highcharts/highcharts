@@ -1,5 +1,9 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
+body{
+	margin:0px;
+}
+
 .chart-container .highcharts-container {
     position: relative;
     overflow: hidden;
