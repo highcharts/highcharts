@@ -256,7 +256,10 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
         console.log(
             'unit-tests/tooltip/split',
             ttRight,
-            mainContainer.clientWidth
+            mainContainer.clientWidth,
+            points[points.length - 1].x,
+            tt.text.textStr,
+            tt.x
         );
         assert.strictEqual(
             ttRight <= mainContainer.clientWidth,
