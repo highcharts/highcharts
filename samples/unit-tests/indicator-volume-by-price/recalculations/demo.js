@@ -184,6 +184,27 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'volumeDataArray is correct after point remove on the base and the volume series.'
     );
 
+    chart.series[0].points[14].update({
+        open: 60,
+        high: 90,
+        low: 55,
+        close: 80
+    });
+    const yData = chart.series[2].yData.slice();
+    chart.series[0].points[14].update({
+        open: 60,
+        high: 150,
+        low: 55,
+        close: 140
+    });
+
+    assert.notDeepEqual(
+        yData,
+        chart.series[2].yData,
+        `After multiple updates on the base series' point,
+        the indicator should recalculate its values, #16397.`
+    );
+
     const negativeGraphic = indicator.points[0].negativeGraphic;
     indicator.points[0].destroy();
     assert.notOk(

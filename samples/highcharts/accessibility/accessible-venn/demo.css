@@ -11,9 +11,10 @@
 }
 
 .btn {
+    font-family: 'IBM Plex Sans', sans-serif;
     white-space: normal;
-    background-color: #25386f;
-    border: 1px solid #25386f;
+    background-color: #2f2b38;
+    border: 1px solid #2f2b38;
     cursor: pointer;
     color: #fff;
     min-height: 40px;
@@ -104,35 +105,36 @@
 }
 
 #dyncaption.content-innovation {
-    border-color: rgb(124, 181, 236);
+    border-color: #d9dbfb;
 }
 .content-innovation > .caption-arrow {
-    border-bottom-color: rgb(124, 181, 236);
+    border-bottom-color: #8085ef;
 }
 #dyncaption.content-brand {
-    border-color: rgb(144, 237, 125);
+    border-color: #d9fae6;
 }
 .content-brand > .caption-arrow {
-    border-bottom-color: rgb(144, 237, 125);
+    border-bottom-color: #8bf0b6;
 }
 #dyncaption.content-reach {
-    border-color: rgb(247, 163, 92);
+    border-color: #ddebed;
 }
 .content-reach > .caption-arrow {
-    border-bottom-color: rgb(247, 163, 92);
+    border-bottom-color: #569ba3;
 }
 #dyncaption.content-legal {
-    border-color: #fa6d80;
+    border-color: #e1f3ff;
 }
 .content-legal > .caption-arrow {
-    border-bottom-color: #fa6d80;
+    border-bottom-color: #7cb5ec;
 }
 
 .dataLabel {
+    font-family: 'IBM Plex Sans', sans-serif;
     position: absolute;
     display: grid;
-    font-family: 'Roboto', sans-serif;
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     justify-items: center;
     border: 0px solid #000;
     width: 300px;
@@ -175,6 +177,7 @@
 }
 
 .dataLabel .info {
+    font-family: 'IBM Plex Sans', sans-serif;
     font-weight: normal;
     font-size: 16px;
     line-height: 24px;
@@ -400,7 +403,7 @@
 }
 
 #innovation h4.open {
-    margin-top: 50px;
+    margin-top: 70px;
     color: #252525;
 }
 
@@ -409,7 +412,7 @@
 }
 
 #innovation.over {
-    background-color: #7cb5ec;
+    background-color: #d9dbfb;
     clip-path: ellipse(150px 116px at 50% 34%);
     height: 340px;
 }
@@ -434,7 +437,7 @@
 }
 
 #legal.over {
-    background-color: #fa6d80;
+    background-color: #e4f3ff;
     clip-path: ellipse(150px 117px at 50% 35%);
     height: 340px;
     left: -260px;
@@ -448,7 +451,7 @@
 }
 
 #legal.over h4 {
-    margin-top: -55px;
+    margin-top: -35px;
     margin-left: 45px;
     color: #252525;
 }
@@ -463,7 +466,7 @@
 }
 
 #reach.over {
-    background-color: rgb(247, 163, 92);
+    background-color: #ddebed;
     clip-path: ellipse(150px 120px at 50% 36%);
     height: 355px;
     left: -150px;
@@ -504,7 +507,7 @@
 }
 
 #brand.over {
-    background-color: rgb(144, 237, 125);
+    background-color: #d9fae6;
     clip-path: ellipse(150px 117px at 50% 35%);
     height: 340px;
     left: -5px;
@@ -547,6 +550,10 @@
     cursor: pointer;
     position: absolute;
     z-index: 100;
+}
+.over .fas,
+.over .far {
+    color: #252525;
 }
 
 @media (max-width: 575px) {
