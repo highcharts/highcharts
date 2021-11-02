@@ -1,5 +1,8 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
+body{
+	margin:0px;
+}
 .chart-container .thick{
 	stroke-width:1;
 	stroke:white;
@@ -26,7 +29,6 @@
 .chart-container .highcharts-arearange{
 	fill-opacity:1;
 	stroke:transparent;
-
 }
 
 .line{
@@ -36,17 +38,17 @@
 }
 
 .chart-container .highcharts-container {
-  position: relative;
-  overflow: hidden;
-  text-align: left;
-  line-height: normal;
-  z-index: 0;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
-  user-select: none;
-  touch-action: manipulation;
-  outline: none;
+	position: relative;
+	overflow: hidden;
+	text-align: left;
+	line-height: normal;
+	z-index: 0;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	font-family: 'IBM Plex Sans', sans-serif;
+	font-size: 12px;
+	user-select: none;
+	touch-action: manipulation;
+	outline: none;
 }
 
 .chart-container .highcharts-background{
