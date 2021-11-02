@@ -212,7 +212,6 @@ class AroonIndicator extends SMAIndicator {
 * */
 
 interface AroonIndicator extends MultipleLinesComposition.Composition {
-    areaLinesNames: Array<string>;
     pointArrayMap: Array<string>;
     pointValKey: string;
     nameComponents: Array<string>;
