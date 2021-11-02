@@ -3403,6 +3403,11 @@ class Axis {
                 Math.max((clipOffset as any)[invertedSide], clip);
         }
 
+        if (coll === 'colorAxis') {
+            this.chart.legend.render();
+            chart.getMargins(true);
+        }
+
         fireEvent(this, 'afterGetOffset');
     }
 

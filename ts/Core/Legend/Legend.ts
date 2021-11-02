@@ -658,7 +658,7 @@ class Legend {
      * The item to render.
      */
     public renderItem(
-        item: Legend.Item
+        item: Legend.Item | ColorAxis
     ): void {
         const legend = this,
             chart = legend.chart,
@@ -764,18 +764,18 @@ class Legend {
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
-                legend.setItemEvents(item, li, useHTML);
+                legend.setItemEvents(item as Legend.Item, li, useHTML);
             }
 
         }
 
         // Add the HTML checkbox on top
         if (showCheckbox && !item.checkbox && legend.createCheckboxForItem) {
-            legend.createCheckboxForItem(item);
+            legend.createCheckboxForItem(item as Legend.Item);
         }
 
         // Colorize the items
-        legend.colorizeItem(item, item.visible);
+        legend.colorizeItem(item as Legend.Item, item.visible);
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
@@ -789,15 +789,19 @@ class Legend {
         }
 
         // Always update the text
-        legend.setText(item);
+        legend.setText(item as Legend.Item);
 
         // calculate the positions for the next line
         const bBox = li.getBBox();
 
         item.itemWidth = item.checkboxOffset =
-            options.itemWidth ||
+            (options.itemWidth ||
             item.legendItemWidth ||
-            bBox.width + itemExtraWidth;
+            bBox.width + itemExtraWidth) + (
+                (item as ColorAxis).maxLabelLength &&
+                ((item as ColorAxis).maxLabelLength - 20) ||
+                0
+            );
         legend.maxItemWidth = Math.max(
             legend.maxItemWidth, (item.itemWidth as any)
         );
