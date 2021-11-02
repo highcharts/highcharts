@@ -88,21 +88,6 @@ namespace MultipleLinesComposition {
     export interface Options {
         fillColor?: SVGAttributes['fill'];
         gapSize?: number;
-        styles?: any;
-    }
-    interface GapOptions {
-        options: {
-            gapSize?: number;
-        };
-    }
-    interface IndicatorSpanObject {
-        indicator: Composition;
-        points: Array<SMAPoint>;
-        nextPoints: Array<SMAPoint>;
-        color: SVGAttributes['fill'];
-        options: Options;
-        gap: GapOptions;
-        graph: SVGElement | undefined;
     }
 
     /* *
@@ -224,7 +209,6 @@ namespace MultipleLinesComposition {
         if (indicator.fillGraph && indicator.nextPoints) {
             areaPath = SMAIndicator.prototype.getGraphPath.call(
                 indicator,
-                // Reverse points, so that the areaFill will start from the end:
                 indicator.nextPoints
             );
 
@@ -235,6 +219,7 @@ namespace MultipleLinesComposition {
 
                 higherAreaPath = areaPath.slice(0, path.length);
 
+                // Reverse points, so that the areaFill will start from the end:
                 for (let i = higherAreaPath.length - 1; i >= 0; i--) {
                     path.push(higherAreaPath[i]);
                 }
@@ -346,7 +331,6 @@ namespace MultipleLinesComposition {
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
-                // Save points as well when areaFill is available.
             } else {
                 error(
                     'Error: "' + lineName + ' doesn\'t have equivalent ' +

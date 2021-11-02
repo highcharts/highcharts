@@ -113,7 +113,7 @@ class BBIndicator extends SMAIndicator {
          * Option for fill color between lines in BoiligerBands Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
-         *      background fill between lines
+         *      Background fill between lines.
          *
          * @type      {Highcharts.Color}
          * @since     next

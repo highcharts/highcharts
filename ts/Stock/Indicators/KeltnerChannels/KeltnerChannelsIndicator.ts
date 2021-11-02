@@ -64,7 +64,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
          * Option for fill color between lines in Keltner Channels Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
-         *      background fill between lines
+         *      Background fill between lines.
          *
          * @type {Highcharts.Color}
          * @since     next
