@@ -116,11 +116,17 @@
     "*.js": [
       "eslint",
       "git add"
+    ],
+    "*.css": [
+      "stylelint",
+      "git add"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
     "jspdf-yworks": "^2.0.1",
+    "stylelint": "^14.0.1",
+    "stylelint-config-standard": "^23.0.0",
     "svg2pdf.js": "^1.3.3"
   }
 }
