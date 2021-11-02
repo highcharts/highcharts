@@ -8,6 +8,7 @@ import type ProjectionOptions from '../ProjectionOptions';
 
 const sign = (Math as any).sign ||
     ((n: number): number => (n === 0 ? 0 : n > 0 ? 1 : -1)),
+    scale = 6378137,
     deg2rad = Math.PI / 180,
     halfPI = Math.PI / 2,
     eps10 = 1e-6,
@@ -52,13 +53,14 @@ const LambertConformalConic: ProjectionDefinition = {
         const r = c / Math.pow(tany(lat), n);
 
         return [
-            r * Math.sin(n * lon),
-            c - r * Math.cos(n * lon)
+            r * Math.sin(n * lon) * scale,
+            (c - r * Math.cos(n * lon)) * scale
         ];
     },
 
     inverse: (xy): [number, number] => {
-        const [x, y] = xy,
+        const x = xy[0] / scale,
+            y = xy[1] / scale,
             cy = c - y,
             rho = sign(n) * Math.sqrt(x * x + cy * cy);
 
