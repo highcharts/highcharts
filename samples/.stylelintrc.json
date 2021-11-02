@@ -1,7 +1,8 @@
 {
-  "extends": "stylelint-config-standard",
-  "rules": {
-      "indentation": 4,
-      "selector-no-vendor-prefix": null
-  }
+    "extends": "stylelint-config-standard",
+    "rules": {
+        "indentation": 4,
+        "property-no-vendor-prefix": null,
+        "selector-no-vendor-prefix": null
+    }
 }
