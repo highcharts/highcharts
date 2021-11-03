@@ -308,7 +308,7 @@ The idea behind creating a custom indicator that is calculated after some chart 
 
 The most important object to add while creating the indicators is `calculateOn` where inside are specified two properties:
 *   `chart` - on which chart's event the indicator should be calculated, mainly you can choose from `init` (before the linked series is processed) and `render` (after processing the linked series).
-*   `xAxis` - on which xAxis' event the indicator should be recalculated,
+*   `xAxis` - on which xAxis' event the indicator should be recalculated (e.g. `afterSetExtremes`),
 
 Example configuration should look like:
 ``` JS
