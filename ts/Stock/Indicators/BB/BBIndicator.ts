@@ -110,7 +110,7 @@ class BBIndicator extends SMAIndicator {
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
 
         /**
-         * Option for fill color between lines in BoiligerBands Indicator.
+         * Option for fill color between lines in Boiliger Bands Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      Background fill between lines.
