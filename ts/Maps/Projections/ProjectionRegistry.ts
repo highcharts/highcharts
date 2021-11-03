@@ -8,6 +8,7 @@
 
 import type ProjectionDefinition from '../ProjectionDefinition';
 
+import LambertConformalConic from './LambertConformalConic.js';
 import EqualEarth from './EqualEarth.js';
 import Miller from './Miller.js';
 import Orthographic from './Orthographic.js';
@@ -16,6 +17,7 @@ import WebMercator from './WebMercator.js';
 
 const registry: Record<string, ProjectionDefinition> = {
     EqualEarth,
+    LambertConformalConic,
     Miller,
     Orthographic,
     WebMercator
