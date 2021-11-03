@@ -8,6 +8,8 @@
  *
  * */
 
+import type ProjectionOptions from './ProjectionOptions';
+
 export interface ProjectionFunction {
     (coords: [number, number]): [number, number];
 }
@@ -20,6 +22,7 @@ export interface Projector {
 export interface ProjectionDefinition {
     forward: ProjectionFunction;
     inverse: ProjectionFunction;
+    init?(options: ProjectionOptions): void;
     maxLatitude?: number;
 }
 
