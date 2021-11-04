@@ -3,7 +3,6 @@
 // of the pies.
 Highcharts.seriesType('mappie', 'pie', {
     center: null, // Can't be array by default anymore
-    clip: true, // For map navigation
     states: {
         hover: {
             halo: {
