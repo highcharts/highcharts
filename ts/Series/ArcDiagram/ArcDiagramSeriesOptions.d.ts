@@ -36,6 +36,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     scale?: number;
     nodeShape?: string; // experimental
     centerPos?: boolean;
+    linkWeight?: number;
 }
 
 export default ArcDiagramSeriesOptions;

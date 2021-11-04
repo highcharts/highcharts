@@ -287,7 +287,9 @@ class ArcDiagramSeries extends SankeySeries {
             chart = this.chart,
             translationFactor = this.translationFactor,
             pointOptions = point.options,
-            linkWeight = pick(pointOptions.linkWeight, Math.max(
+            seriesOptions = this.options,
+            linkWeight = pick(pointOptions.linkWeight, seriesOptions.linkWeight, Math.max(
+                
                 (point.weight || 0) * translationFactor * (fromNode as any).scale,
                 (this.options.minLinkWidth || 0)
             )),
