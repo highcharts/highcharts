@@ -175,7 +175,7 @@ class MapView {
                     // Empirical ratio where the globe rotates roughly the same
                     // speed as moving the pointer across the center of the
                     // projection
-                    const ratio = 0.0044 / (this.getScale() * Math.min(
+                    const ratio = 440 / (this.getScale() * Math.min(
                         chart.plotWidth,
                         chart.plotHeight
                     ));
