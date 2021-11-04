@@ -798,8 +798,10 @@ class Legend {
             (options.itemWidth ||
             item.legendItemWidth ||
             bBox.width + itemExtraWidth) + (
+                (options.align === 'right' ||
+                    options.align === 'left') &&
                 (item as ColorAxis).maxLabelLength &&
-                ((item as ColorAxis).maxLabelLength - 20) ||
+                ((item as ColorAxis).maxLabelLength) ||
                 0
             );
         legend.maxItemWidth = Math.max(
