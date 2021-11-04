@@ -412,6 +412,7 @@ namespace OfflineExporting {
      *
      *
      * @requires modules/exporting
+     * @requires modules/offline-exporting
      */
     function exportChartLocal(
         this: Chart,
