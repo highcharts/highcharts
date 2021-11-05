@@ -8,7 +8,7 @@ import type ProjectionDefinition from '../ProjectionDefinition';
 
 const quarterPI = Math.PI / 4,
     deg2rad = Math.PI / 180,
-    scale = 6378137;
+    scale = 63.78137;
 
 const Miller: ProjectionDefinition = {
 

@@ -598,7 +598,7 @@ const polarAnimate = function (
         animation = this.options.animation,
         group = this.group,
         markerGroup = this.markerGroup,
-        center = this.xAxis.center,
+        center = this.xAxis && this.xAxis.center,
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
         attribs: SVGAttributes,

@@ -17,7 +17,7 @@ const A1 = 1.340264,
     A3 = 0.000893,
     A4 = 0.003796,
     M = Math.sqrt(3) / 2.0,
-    scale = 7403120.656864502;
+    scale = 74.03120656864502;
 
 const EqualEarth: ProjectionDefinition = {
 
