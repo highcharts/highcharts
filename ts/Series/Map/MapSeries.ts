@@ -33,8 +33,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -106,17 +105,17 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
+        class MapPoint extends ScatterPoint {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
-            public isValid: ColorMapComposition.PointComposition['isValid'];
+            public dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
+            public isValid: ColorMapMixin.ColorMapPoint['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
             public path: SVGPath;
             public properties?: object;
             public series: MapSeries;
-            public value: (number|null);
+            public value: ColorMapMixin.ColorMapPoint['value'];
             public applyOptions(options: (MapPointOptions|PointShortOptions), x?: number): MapPoint;
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
@@ -1183,13 +1182,14 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries extends ColorMapComposition.SeriesComposition {
+interface MapSeries {
+    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
-    pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
+    pointArrayMap: ColorMapMixin.ColorMapSeries['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
-    trackerGroups: typeof colorMapSeriesMixin['trackerGroups'];
+    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
     animate(init?: boolean): void;
     animateDrilldown(init?: boolean): void;
     animateDrillupTo(init?: boolean): void;
@@ -1206,9 +1206,11 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: ['colorAxis'],
+    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
 
-    colorKey: 'value',
+    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+
+    colorKey: ColorMapMixin.SeriesMixin.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1229,13 +1231,13 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: noop,
+    getSymbol: ColorMapMixin.SeriesMixin.getSymbol,
 
     isCartesian: false,
 
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
 
-    pointArrayMap: colorMapSeriesMixin.pointArrayMap,
+    pointArrayMap: ColorMapMixin.SeriesMixin.pointArrayMap,
 
     pointClass: MapPoint,
 
@@ -1244,14 +1246,12 @@ extend(MapSeries.prototype, {
 
     searchPoint: noop as any,
 
-    trackerGroups: colorMapSeriesMixin.trackerGroups,
+    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups,
 
     // Get axis extremes from paths, not values
     useMapGeometry: true
 
 });
-
-ColorMapComposition.compose(MapSeries, MapPoint);
 
 /* *
  *

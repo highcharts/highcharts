@@ -38,8 +38,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -1300,9 +1299,7 @@ class TreemapSeries extends ScatterSeries {
             setOptionsEvent;
 
         // If color series logic is loaded, add some properties
-        if (colorMapSeriesMixin) {
-            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
-        }
+        this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
@@ -1880,7 +1877,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends TU.Series {
-    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
+    colorAttribs?: ColorMapMixin.ColorMapSeries['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
@@ -1949,8 +1946,6 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
-
-ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *
