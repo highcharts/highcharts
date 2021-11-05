@@ -799,9 +799,9 @@ class Legend {
             (options.itemWidth ||
             item.legendItemWidth ||
             bBox.width + itemExtraWidth) + (
-                (options.align === 'right' ||
-                    options.align === 'left') &&
+                (options.layout === 'vertical') &&
                 (item as ColorAxis).maxLabelLength &&
+                ((item as ColorAxis).maxLabelLength > itemExtraWidth) &&
                 ((item as ColorAxis).maxLabelLength) ||
                 0
             );
