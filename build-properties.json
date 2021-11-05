@@ -1,6 +1,6 @@
 {
-  "date": "",
-  "version": "9.3.0-modified",
+  "date": "2021-11-05",
+  "version": "9.3.1",
   "products": {
     "Highcharts": {
       "cdnpath": "",

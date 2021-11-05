@@ -13,11 +13,31 @@
  *                 that are not used in the changelog.
  * --fromCache     Re-format pulls from cache, do not load new from GitHub.
  */
-
+const https = require('https');
 const marked = require('marked');
 const prLog = require('./pr-log');
 const params = require('yargs').argv;
 const childProcess = require('child_process');
+
+const getFile = url => new Promise((resolve, reject) => {
+    https.get(url, resp => {
+        let data = '';
+
+        // A chunk of data has been received.
+        resp.on('data', chunk => {
+            data += chunk;
+        });
+
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+            resolve(data);
+            // console.log(JSON.parse(data).explanation);
+        });
+
+    }).on('error', err => {
+        reject(err);
+    });
+});
 
 (function () {
     'use strict';
@@ -177,7 +197,10 @@ const childProcess = require('child_process');
 
         if (name !== 'Highcharts') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
+        } else if (log.length === 0) {
+            outputString += '- No changes for the basic Highcharts package.';
         }
+
         log.forEach((change, i) => {
 
             const desc = addLinks(change.description || change, apiFolder);
@@ -247,15 +270,9 @@ const childProcess = require('child_process');
         const review = [];
 
         // Load the current products and versions, and create one log each
-        fs.readFile(
-            path.join(__dirname, '/../build/dist/products.js'),
-            'utf8',
-            function (err, products) {
+        getFile('https://code.highcharts.com/products.js')
+            .then(products => {
                 var name;
-
-                if (err) {
-                    throw err;
-                }
 
                 if (products) {
                     products = products.replace('var products = ', '');
@@ -287,7 +304,9 @@ const childProcess = require('child_process');
                 if (params.review) {
                     saveReview(review.join('\n\n___\n'));
                 }
-            }
-        );
+            })
+            .catch(err => {
+                throw err;
+            });
     });
 }());
