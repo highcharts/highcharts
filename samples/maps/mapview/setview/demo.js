@@ -38,7 +38,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
 const zoomToEurope = () => chart.mapView.setView(
     [4500, 8300], // In terms of pre-projected units
-    15
+    -1
 );
 
 document.getElementById('setextremes').onclick = zoomToEurope;

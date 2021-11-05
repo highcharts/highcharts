@@ -58,7 +58,6 @@
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
-        "require-unicode-regexp": 1,
         "semi": 0,
         "valid-jsdoc": 0,
         "@typescript-eslint/array-type": 0,
@@ -132,13 +131,11 @@
                 ]
             }
         ],
-        "jsdoc/newline-after-description": 0,
-        "jsdoc/require-description": 1, // @todo
+        "jsdoc/require-description": 1,
         "jsdoc/require-jsdoc": 1, // @todo
         "jsdoc/require-param": 0, // @todo
         "jsdoc/require-param-description": 1, // @todo
         "jsdoc/require-param-type": 1, // @todo
-        "jsdoc/require-returns": 0,
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-builtins": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0 // @todo
