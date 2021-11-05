@@ -27,5 +27,27 @@
         "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}], // JSLint style
         "strict": 0,
         "quotes": [2, "single"]
+    },
+    "settings": {
+        "jsdoc": {
+            "preferredTypes": {
+                "array": "Array",
+                "function": "Function",
+                "object": "Object",
+                "Boolean": "boolean",
+                "Number": "number",
+                "Object": "Object",
+                "String": "string"
+            },
+            "tagNamePreference": {
+                "augments": "augments",
+                "class": "class",
+                "constructor": "class",
+                "emits": "emits",
+                "extends": "extends",
+                "fires": "emits",
+                "returns": "return"
+            }
+        }
     }
 }

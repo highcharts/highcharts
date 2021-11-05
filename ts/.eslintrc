@@ -145,25 +145,7 @@
     },
     "settings": {
         "jsdoc": {
-            "mode": "typescript",
-            "preferredTypes": {
-                "array": "Array",
-                "function": "Function",
-                "object": "Object",
-                "Boolean": "boolean",
-                "Number": "number",
-                "Object": "Object",
-                "String": "string"
-            },
-            "tagNamePreference": {
-                "augments": "augments",
-                "class": "class",
-                "constructor": "class",
-                "emits": "emits",
-                "extends": "extends",
-                "fires": "emits",
-                "returns": "return"
-            }
+            "mode": "typescript"
         }
     }
 }
