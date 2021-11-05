@@ -801,7 +801,7 @@ class Legend {
                 (options.layout === 'vertical') &&
                 (item as ColorAxis).maxLabelLength &&
                 ((item as ColorAxis).maxLabelLength > itemExtraWidth) &&
-                ((item as ColorAxis).maxLabelLength) ||
+                ((item as ColorAxis).maxLabelLength - itemExtraWidth) ||
                 0
             );
         legend.maxItemWidth = Math.max(
