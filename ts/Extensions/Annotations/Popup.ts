@@ -496,12 +496,10 @@ H.Popup.prototype = {
      * @private
      *
      * @param {Highcharts.HTMLDOMElement} parentDiv
-     *        The container where inputs and selections are created.
+     * The container where inputs and selections are created.
      *
      * @param {string} type
-     *         Type of the popup bookmark (add|edit|remove).
-     *
-     * @return {Highcharts.PopupFieldsObject}
+     * Type of the popup bookmark (add|edit|remove).
      */
     getFields: function (
         parentDiv: HTMLDOMElement,
@@ -1370,15 +1368,13 @@ H.Popup.prototype = {
          * @private
          *
          * @param {string} indicatorType
-         *        Type of the indicator i.e. sma, ema...
+         * Type of the indicator i.e. sma, ema...
          *
          * @param {string} [optionName]
-         *        Name of the option into which selection is being added.
+         * Name of the option into which selection is being added.
          *
          * @param {HTMLDOMElement} [parentDiv]
-         *        HTML parent element.
-         *
-         * @return {HTMLSelectElement}
+         * HTML parent element.
          */
         addSelection: function (
             this: Highcharts.Popup,
@@ -1514,14 +1510,14 @@ H.Popup.prototype = {
          * @private
          *
          * @param {Highcharts.Series} series
-         *        Series which name is needed(EDITmode - defaultOptions.series,
-         *        ADDmode - indicator series).
+         * Series which name is needed(EDITmode - defaultOptions.series,
+         * ADDmode - indicator series).
          *
-         * @param {string} [IndicatorType]
-         *        Type of the indicator i.e. sma, ema...
+         * @param {string} [indicatorType]
+         * Type of the indicator i.e. sma, ema...
          *
-         * @return Highcharts.Dictionary<string>
-         *        Full name and series type.
+         * @return {Highcharts.Dictionary<string>}
+         * Full name and series type.
          */
         getNameType: function (
             series: Series,

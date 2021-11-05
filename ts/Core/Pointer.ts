@@ -708,6 +708,7 @@ class Pointer {
      * Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
+     * Axis coordinates.
      */
     public getCoordinates(e: PointerEvent): Pointer.AxesCoordinatesObject {
 
@@ -750,7 +751,7 @@ class Pointer {
      * @param {Highcharts.PointerEventObject} [e]
      * The triggering event, containing chart coordinates of the pointer.
      *
-     * @return {object}
+     * @return {Object}
      * Object containing resulting hover data: hoverPoint, hoverSeries, and
      * hoverPoints.
      */
@@ -1665,8 +1666,8 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @fires Highcharts.Point#event:mouseOut
-     * @fires Highcharts.Point#event:mouseOver
+     * @emits Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e: PointerEvent, p?: Point): void {
         const pointer = this,

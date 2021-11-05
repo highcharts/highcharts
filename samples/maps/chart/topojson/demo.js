@@ -27,8 +27,9 @@ Highcharts.getJSON(
 
             mapView: {
                 projection: {
-                    name: 'Orthographic',
-                    rotation: [-15, -40]
+                    name: 'LambertConformalConic',
+                    parallels: [43, 62],
+                    rotation: [-10]
                 }
             },
 

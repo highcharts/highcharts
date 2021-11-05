@@ -76,8 +76,7 @@ class MACDIndicator extends SMAIndicator {
      * @requires     stock/indicators/macd
      * @optionparent plotOptions.macd
      */
-    public static defaultOptions: MACDOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: MACDOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The short period for indicator calculations.
@@ -180,7 +179,7 @@ class MACDIndicator extends SMAIndicator {
     public graphmacd: (SVGElement|undefined) = void 0 as any;
     public graphsignal: (SVGElement|undefined) = void 0 as any;
     public macdZones: MACDZonesOptions = void 0 as any;
-    public signalZones: MACDZonesOptions= void 0 as any;
+    public signalZones: MACDZonesOptions = void 0 as any;
 
     /**
      *

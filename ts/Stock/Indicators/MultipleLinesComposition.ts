@@ -172,7 +172,6 @@ namespace MultipleLinesComposition {
      *
      * @private
      * @function multipleLinesMixin.drawGraph
-     * @return {void}
      */
     function drawGraph(this: MultipleLinesComposition.Composition): void {
         const indicator = this,
@@ -315,7 +314,6 @@ namespace MultipleLinesComposition {
      *
      * @private
      * @function multipleLinesMixin.translate
-     * @return {void}
      */
     function translate(this: Composition): void {
         const indicator = this,

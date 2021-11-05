@@ -1079,7 +1079,6 @@ if (seriesTypes.xrange) {
      * @private
      * @param {string} type
      *        Unsupported series type
-     * @return {void}
      */
     function (type: string): void {
         if (seriesTypes[type]) {
@@ -1683,7 +1682,7 @@ function hasDraggedPastSensitivity(
  * @param {Highcharts.SVGElement} [guideBox]
  *        The guide box to take snapshot of.
  *
- * @return {object}
+ * @return {Object}
  *         Snapshot object. Point properties are placed in a hashmap with IDs as
  *         keys.
  */
@@ -1880,7 +1879,7 @@ function initDragDrop(
  * @private
  * @function getNewPoints
  *
- * @param {object} dragDropData
+ * @param {Object} dragDropData
  *        A chart's dragDropData with drag/drop origin information, and info on
  *        which points are being dragged.
  *
@@ -2150,7 +2149,7 @@ Chart.prototype.setGuideBoxState = function (
  * @private
  * @function Highcharts.Point#getDropValues
  *
- * @param {object} origin
+ * @param {Object} origin
  *        Mouse position (chartX/Y) and point props at current data values.
  *        Point props should be organized per point.id in a hashmap.
  *
@@ -2582,7 +2581,7 @@ Chart.prototype.hideDragHandles = function (): void {
  * @private
  * @function countProps
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The object to count.
  *
  * @return {number}

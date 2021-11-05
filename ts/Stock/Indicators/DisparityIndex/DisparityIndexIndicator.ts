@@ -81,8 +81,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @requires     stock/indicators/disparity-index
      * @optionparent plotOptions.disparityindex
      */
-    public static defaultOptions: DisparityIndexOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: DisparityIndexOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The average used to calculate the Disparity Index indicator.

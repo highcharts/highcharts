@@ -69,7 +69,7 @@ function getChartAnnotationLabels(
  * Get the text of an annotation label.
  *
  * @private
- * @param {object} label The annotation label object
+ * @param {Object} label The annotation label object
  * @return {string} The text in the label.
  */
 function getLabelText(label: Highcharts.AnnotationLabelType): string {
@@ -93,7 +93,7 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * Describe an annotation label.
  *
  * @private
- * @param {object} label The annotation label object to describe
+ * @param {Object} label The annotation label object to describe
  * @return {string} The description for the label.
  */
 function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {

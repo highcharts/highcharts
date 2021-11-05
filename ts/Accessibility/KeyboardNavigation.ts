@@ -58,7 +58,7 @@ const { getElement } = HTMLUtilities;
  * @class
  * @param {Highcharts.Chart} chart
  *        Chart object
- * @param {object} components
+ * @param {Object} components
  *        Map of component names to AccessibilityComponent objects.
  * @name Highcharts.KeyboardNavigation
  */
@@ -110,7 +110,7 @@ class KeyboardNavigation {
      * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
-     * @param {object} components
+     * @param {Object} components
      *        Map of component names to AccessibilityComponent objects.
      */
     public init(

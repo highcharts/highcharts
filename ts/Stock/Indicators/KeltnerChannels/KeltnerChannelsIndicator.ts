@@ -119,7 +119,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             approximation: 'averages'
         },
         lineWidth: 1
-    } as KeltnerChannelsOptions)
+    } as KeltnerChannelsOptions);
 
     public data: Array<KeltnerChannelsPoint> = void 0 as any;
     public options: KeltnerChannelsOptions = void 0 as any;

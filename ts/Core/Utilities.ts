@@ -365,8 +365,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -1402,7 +1402,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -1716,9 +1716,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
      */
     function removeOneEvent(
         type: string,
@@ -1735,8 +1732,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,

@@ -186,8 +186,6 @@ class DataConverter {
 
     /**
      * Getter for a date format.
-     *
-     * @return {string|undefined}
      */
     public getDateFormat(): (string|undefined) {
         return this.options.dateFormat;
@@ -399,8 +397,6 @@ class DataConverter {
      * @param {string} dateFormatProp
      * Which of the predefined date formats
      * to use to parse date values.
-     *
-     * @return {number}
      */
     public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this;
@@ -492,8 +488,6 @@ class DataConverter {
      *
      * @param {boolean} save
      * Whether to save the date format in the converter options.
-     *
-     * @return {string}
      */
     public deduceDateFormat(
         data: Array<string>,

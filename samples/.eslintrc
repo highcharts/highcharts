@@ -49,4 +49,4 @@ rules:
     spaced-comment: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
-    valid-jsdoc: 0
+    jsdoc/valid-jsdoc: 0

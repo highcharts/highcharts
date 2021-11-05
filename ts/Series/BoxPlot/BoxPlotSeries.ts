@@ -603,7 +603,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 /* *
  *
- * Prototype Properties
+ * Class Prototype
  *
  * */
 interface BoxPlotSeries extends ColumnSeries {

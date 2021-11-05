@@ -1,47 +1,55 @@
-
 #demo-wrapper {
     max-width: 1000px;
     margin: 0 auto;
     height: 560px;
     background: white;
 }
+
 #mapBox {
     width: 80%;
     float: left;
 }
+
 #container {
     height: 500px;
 }
+
 #sideBox {
     float: right;
-    width: 16%;   
-    margin: 100px 1% 0 1%;
+    width: 16%;
+    margin: 100px 1% 0;
     padding-left: 1%;
     border-left: 1px solid silver;
     display: none;
 }
+
 #infoBox {
     margin-top: 10px;
 }
+
 .or-view-as {
     margin: 0.5em 0;
 }
+
 #up {
     line-height: 30px;
     height: 30px;
     max-width: 400px;
     margin: 0 auto;
 }
+
 #up a {
     cursor: pointer;
     padding-left: 40px;
 }
+
 .selector {
     height: 40px;
     max-width: 400px;
     margin: 0 auto;
     position: relative;
 }
+
 .selector .prev-next {
     position: absolute;
     padding: 0 10px;
@@ -54,12 +62,14 @@
     display: none;
     border: none;
 }
+
 .selector .custom-combobox {
     display: block;
     position: absolute;
     left: 40px;
     right: 65px;
 }
+
 .selector .custom-combobox .custom-combobox-input {
     position: absolute;
     font-size: 14px;
@@ -72,12 +82,15 @@
     width: 100%;
     box-sizing: border-box;
 }
+
 .selector .custom-combobox .ui-autocomplete-input:focus {
     color: black;
 }
+
 .selector .custom-combobox .ui-autocomplete-input.valid {
     color: black;
 }
+
 .selector .custom-combobox-toggle {
     position: absolute;
     display: block;
@@ -90,10 +103,12 @@
 .selector #btn-next-map {
     right: -12px;
 }
+
 .ui-autocomplete {
     max-height: 500px;
     overflow: auto;
 }
+
 .ui-autocomplete .option-header {
     font-style: italic;
     font-weight: bold;
@@ -107,11 +122,13 @@
     text-align: center;
     color: gray;
 }
+
 .ui-button-icon-only .ui-button-text {
     height: 26px;
     padding: 0 !important;
     background: white;
 }
+
 #infoBox .button {
     border: none;
     border-radius: 3px;
@@ -131,13 +148,16 @@
         width: auto;
         height: auto;
     }
+
     #mapBox {
         width: auto;
         float: none;
     }
+
     #container {
         height: 310px;
     }
+
     #sideBox {
         float: none;
         width: auto;

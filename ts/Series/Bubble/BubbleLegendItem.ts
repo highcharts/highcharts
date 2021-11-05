@@ -139,7 +139,7 @@ class BubbleLegendItem {
     public ranges: Array<BubbleLegendItem.RangesOptions> = void 0 as any;
     public selected: undefined = void 0 as any;
     public visible: boolean = void 0 as any;
-    public symbols: Record<string, Array<SVGElement>>= void 0 as any;
+    public symbols: Record<string, Array<SVGElement>> = void 0 as any;
     public options: BubbleLegendItem.Options = void 0 as any;
 
     /**
@@ -151,7 +151,6 @@ class BubbleLegendItem {
      *        Bubble legend options
      * @param {Highcharts.Legend} legend
      *        Legend
-     * @return {void}
      */
     public init(
         options: BubbleLegendItem.Options,
@@ -170,9 +169,8 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#addToLegend
-     * @param {Array<(Highcharts.Point|Highcharts.Series)>}
-     *        All legend items
-     * @return {void}
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
+     * All legend items
      */
     public addToLegend(items: Array<(Series|Point)>): void {
         // Insert bubbleLegend into legend items
@@ -187,7 +185,6 @@ class BubbleLegendItem {
      * @function Highcharts.BubbleLegend#drawLegendSymbol
      * @param {Highcharts.Legend} legend
      *        Legend instance
-     * @return {void}
      */
     public drawLegendSymbol(legend: Legend): void {
         const chart = this.chart,
@@ -246,7 +243,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#setOptions
-     * @return {void}
      */
     public setOptions(): void {
         const ranges = this.ranges,
@@ -353,7 +349,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#render
-     * @return {void}
      */
     public render(): void {
         const renderer = this.chart.renderer,
@@ -396,7 +391,6 @@ class BubbleLegendItem {
      * @function Highcharts.BubbleLegend#renderRange
      * @param {Highcharts.LegendBubbleLegendRangesOptions} range
      *        Range options
-     * @return {void}
      */
     public renderRange(range: BubbleLegendItem.RangesOptions): void {
         const mainRange = this.ranges[0],
@@ -520,7 +514,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#getMaxLabelSize
-     * @return {Highcharts.BBoxObject}
      */
     public getMaxLabelSize(): BBoxObject {
         const labels = this.symbols.labels;
@@ -568,7 +561,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#hideOverlappingLabels
-     * @return {void}
      */
     public hideOverlappingLabels(): void {
         const chart = this.chart,
@@ -717,7 +709,6 @@ class BubbleLegendItem {
      * @function Highcharts.BubbleLegend#updateRanges
      * @param {number} min
      * @param {number} max
-     * @return {void}
      */
     public updateRanges(min: number, max: number): void {
         const bubbleLegendOptions = this.legend.options.bubbleLegend;
@@ -734,7 +725,6 @@ class BubbleLegendItem {
      *
      * @private
      * @function Highcharts.BubbleLegend#correctSizes
-     * @return {void}
      */
     public correctSizes(): void {
         const legend = this.legend,

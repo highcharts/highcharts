@@ -19,8 +19,8 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         mapView: {
-            center: [4500, 8300], // In terms of pre-projected units
-            zoom: 15
+            center: [4500, 8600], // In terms of pre-projected units
+            zoom: 0
         },
 
         colorAxis: {
