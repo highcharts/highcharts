@@ -167,6 +167,9 @@ export default class Projection {
         const { def, rotator } = this;
 
         if (def) {
+            if (def.init) {
+                def.init(options);
+            }
             this.maxLatitude = def.maxLatitude || 90;
             this.hasGeoProjection = true;
         }

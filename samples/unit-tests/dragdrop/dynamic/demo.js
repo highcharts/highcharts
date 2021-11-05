@@ -3,14 +3,17 @@ QUnit.test(
     function (assert) {
         var chart1, chart2, offset1, offset2, y, start, end;
 
-        document.getElementById('container').style.maxWidth = '1210px';
-        document.getElementById('container').style.width = '1210px';
-        const container1 = document.createElement('div');
-        document.getElementById('container').appendChild(container1);
+        var mainContainer = document.getElementById('container');
+        var initialMaxWidth = mainContainer.style.maxWidth;
+        var initialWidth = mainContainer.style.width;
+        mainContainer.style.maxWidth = '1210px';
+        mainContainer.style.width = '1210px';
+        var container1 = document.createElement('div');
+        mainContainer.appendChild(container1);
         container1.style.width = '600px';
         container1.style.cssFloat = 'left';
-        const container2 = document.createElement('div');
-        document.getElementById('container').appendChild(container2);
+        var container2 = document.createElement('div');
+        mainContainer.appendChild(container2);
         container2.style.width = '600px';
         container2.style.cssFloat = 'left';
 
@@ -104,10 +107,13 @@ QUnit.test(
 
         chart1.destroy();
         chart2.destroy();
-        container1.parentNode.removeChild(container1);
-        container2.parentNode.removeChild(container2);
+        container1.remove();
+        container2.remove();
+        mainContainer.style.width = initialWidth;
+        mainContainer.style.maxWidth = initialMaxWidth;
     }
 );
+
 QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     var chart = Highcharts.chart('container', {
             series: []
