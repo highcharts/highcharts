@@ -207,7 +207,7 @@ class AroonIndicator extends SMAIndicator {
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 

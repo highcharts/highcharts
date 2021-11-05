@@ -519,7 +519,7 @@ class SunburstSeries extends TreemapSeries {
         /**
          * Can set a `levelSize` on all points which lies on the same level.
          *
-         * @type      {object}
+         * @type      {Object}
          * @apioption plotOptions.sunburst.levels.levelSize
          */
 

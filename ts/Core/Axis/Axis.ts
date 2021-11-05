@@ -295,8 +295,8 @@ class Axis {
      * @param {AxisOptions} userOptions
      * Axis options.
      *
-     * @fires Highcharts.Axis#event:afterInit
-     * @fires Highcharts.Axis#event:init
+     * @emits Highcharts.Axis#event:afterInit
+     * @emits Highcharts.Axis#event:init
      */
     public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
 
@@ -540,7 +540,7 @@ class Axis {
      * @param {Highcharts.AxisOptions} userOptions
      * Axis options.
      *
-     * @fires Highcharts.Axis#event:afterSetOptions
+     * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
         this.options = merge(
@@ -650,8 +650,8 @@ class Axis {
      * @private
      * @function Highcharts.Axis#getSeriesExtremes
      *
-     * @fires Highcharts.Axis#event:afterGetSeriesExtremes
-     * @fires Highcharts.Axis#event:getSeriesExtremes
+     * @emits Highcharts.Axis#event:afterGetSeriesExtremes
+     * @emits Highcharts.Axis#event:getSeriesExtremes
      */
     public getSeriesExtremes(): void {
         const axis = this,
@@ -788,26 +788,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#translate
-     *
-     * @param {number} val
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [backwards]
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [cvsCoord]
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [old]
-     * TO-DO: parameter description
-     *
-     * @param {boolean} [handleLog]
-     * TO-DO: parameter description
-     *
-     * @param {number} [pointPlacement]
-     * TO-DO: parameter description
-     *
-     * @return {number|undefined}
      */
     public translate(
         val: number,
@@ -1106,6 +1086,7 @@ class Axis {
      * @function Highcharts.Axis#getMinorTickInterval
      *
      * @return {number|"auto"|null}
+     * Legacy option
      */
     public getMinorTickInterval(): ('auto'|null|number) {
         const options = this.options;
@@ -1321,8 +1302,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#getClosest
-     *
-     * @return {number}
      */
     public getClosest(): number {
         let ret: any;
@@ -1469,7 +1448,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @fires Highcharts.Axis#event:afterSetAxisTranslation
+     * @emits Highcharts.Axis#event:afterSetAxisTranslation
      */
     public setAxisTranslation(): void {
         const axis = this,
@@ -1581,8 +1560,6 @@ class Axis {
     /**
      * @private
      * @function Highcharts.Axis#minFromRange
-     *
-     * @return {number|undefined}
      */
     public minFromRange(): (number|undefined) {
         const axis = this;
@@ -1599,7 +1576,7 @@ class Axis {
      * @param {boolean} secondPass
      * TO-DO: parameter description
      *
-     * @fires Highcharts.Axis#event:foundExtremes
+     * @emits Highcharts.Axis#event:foundExtremes
      */
     public setTickInterval(secondPass?: boolean): void {
         const axis = this,
@@ -1915,7 +1892,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setTickPositions
      *
-     * @fires Highcharts.Axis#event:afterSetTickPositions
+     * @emits Highcharts.Axis#event:afterSetTickPositions
      */
     public setTickPositions(): void {
         const axis = this,
@@ -2310,7 +2287,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setScale
      *
-     * @fires Highcharts.Axis#event:afterSetScale
+     * @emits Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
         const axis = this;
@@ -2414,7 +2391,7 @@ class Axis {
      * @param {*} [eventArguments]
      * Arguments to be accessed in event handler.
      *
-     * @fires Highcharts.Axis#event:setExtremes
+     * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
         newMin?: number,
@@ -2457,14 +2434,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#zoom
-     *
-     * @param {number} newMin
-     * TO-DO: parameter description
-     *
-     * @param {number} newMax
-     * TO-DO: parameter description
-     *
-     * @return {boolean}
      */
     public zoom(newMin: number, newMax: number): void {
         const axis = this,
@@ -2720,8 +2689,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#labelMetrics
-     *
-     * @return {Highcharts.FontMetricsObject}
      */
     public labelMetrics(): FontMetricsObject {
         const index = this.tickPositions && this.tickPositions[0] || 0;
@@ -2739,8 +2706,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#unsquish
-     *
-     * @return {number}
      */
     public unsquish(): number {
         const labelOptions = this.options.labels,
@@ -3200,7 +3165,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#getOffset
      *
-     * @fires Highcharts.Axis#event:afterGetOffset
+     * @emits Highcharts.Axis#event:afterGetOffset
      */
     public getOffset(): void {
         const axis = this,
@@ -3623,7 +3588,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#render
      *
-     * @fires Highcharts.Axis#event:afterRender
+     * @emits Highcharts.Axis#event:afterRender
      */
     public render(): void {
         const axis = this,
@@ -3859,8 +3824,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#getKeepProps
-     *
-     * @return {Array<string>}
      */
     public getKeepProps(): Array<string> {
         return (this.keepProps || Axis.keepProps);
@@ -3943,8 +3906,8 @@ class Axis {
      * @param {Highcharts.Point} [point]
      * The Point object if the crosshair snaps to points.
      *
-     * @fires Highcharts.Axis#event:afterDrawCrosshair
-     * @fires Highcharts.Axis#event:drawCrosshair
+     * @emits Highcharts.Axis#event:afterDrawCrosshair
+     * @emits Highcharts.Axis#event:drawCrosshair
      */
     public drawCrosshair(e?: PointerEvent, point?: Point): void {
 
@@ -4096,8 +4059,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#hasVerticalPanning
-     *
-     * @return {boolean}
      */
     public hasVerticalPanning(): boolean {
         const panningOptions = this.chart.options.chart.panning;
@@ -4116,8 +4077,6 @@ class Axis {
     *
     * @param {unknown} value
     * The axis value
-    *
-    * @return {boolean}
     */
     public validatePositiveValue(value: unknown): boolean {
         return isNumber(value) && value > 0;

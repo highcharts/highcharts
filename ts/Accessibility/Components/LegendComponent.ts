@@ -150,10 +150,6 @@ function shouldDoLegendA11y(chart: Chart): boolean {
  *
  * @private
  * @function Highcharts.Chart#highlightLegendItem
- *
- * @param {number} ix
- *
- * @return {boolean}
  */
 Chart.prototype.highlightLegendItem = function (ix: number): boolean {
     const items = this.legend.allItems;
@@ -466,7 +462,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     getKeyboardNavigation: function (
         this: Highcharts.LegendComponent
@@ -591,7 +587,6 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @return {boolean|undefined}
      */
     shouldHaveLegendNavigation: function (
         this: Highcharts.LegendComponent

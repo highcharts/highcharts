@@ -36,7 +36,7 @@ QUnit.module('Projection', function () {
 
         assert.close(
             x2[0] - x1[0],
-            2.2263898158654713,
+            2.226389815865471, // precision lost: 2.2263898158654713
             0.0001,
             'X scale should be similar to that of the WebMercator projection'
         );

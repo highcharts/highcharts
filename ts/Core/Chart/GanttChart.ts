@@ -78,10 +78,9 @@ class GanttChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.GanttChart#event:init
-     * @fires Highcharts.GanttChart#event:afterInit
+     * @emits Highcharts.GanttChart#event:init
+     * @emits Highcharts.GanttChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,

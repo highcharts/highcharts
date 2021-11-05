@@ -69,7 +69,7 @@ declare module '../Core/Chart/ChartLike' {
         a11yDirty?: boolean;
         accessibility?: Accessibility;
         types?: Array<string>;
-        /** @require modules/accessibility */
+        /** @requires modules/accessibility */
         updateA11yEnabled(): void;
     }
 }

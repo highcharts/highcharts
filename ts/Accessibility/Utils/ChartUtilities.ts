@@ -48,7 +48,8 @@ const {
 
 /**
  * Fire an event on an element that is either wrapped by Highcharts,
- * or a DOM element
+ * or a DOM element.
+ * @private
  */
 function fireEventOnWrappedOrUnwrappedElement(
     el: (HTMLElement|SVGElement|DOMElementType),
@@ -72,7 +73,7 @@ function fireEventOnWrappedOrUnwrappedElement(
 
 
 /**
- * @return {string}
+ * @private
  */
 function getChartTitle(chart: Accessibility.ChartComposition): string {
     return stripHTMLTags(
@@ -86,8 +87,7 @@ function getChartTitle(chart: Accessibility.ChartComposition): string {
 
 /**
  * Return string with the axis name/title.
- * @param {Highcharts.Axis} axis
- * @return {string}
+ * @private
  */
 function getAxisDescription(axis: Axis): string {
     return axis && (
@@ -104,8 +104,11 @@ function getAxisDescription(axis: Axis): string {
 
 /**
  * Return string with text description of the axis range.
- * @param {Highcharts.Axis} axis The axis to get range desc of.
- * @return {string} A string with the range description for the axis.
+ * @private
+ * @param {Highcharts.Axis} axis
+ * The axis to get range desc of.
+ * @return {string}
+ * A string with the range description for the axis.
  */
 function getAxisRangeDescription(axis: Axis): string {
     const axisOptions = axis.options || {};
@@ -136,8 +139,7 @@ function getAxisRangeDescription(axis: Axis): string {
 
 /**
  * Describe the range of a category axis.
- * @param {Highcharts.Axis} axis
- * @return {string}
+ * @private
  */
 function getCategoryAxisRangeDesc(axis: Axis): string {
     const chart = axis.chart;
@@ -159,8 +161,7 @@ function getCategoryAxisRangeDesc(axis: Axis): string {
 
 /**
  * Describe the length of the time window shown on an axis.
- * @param {Highcharts.Axis} axis
- * @return {string}
+ * @private
  */
 function getAxisTimeLengthDesc(axis: Axis): string {
     const chart = axis.chart,
@@ -197,8 +198,7 @@ function getAxisTimeLengthDesc(axis: Axis): string {
 
 /**
  * Describe an axis from-to range.
- * @param {Highcharts.Axis} axis
- * @return {string}
+ * @private
  */
 function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart,
@@ -273,8 +273,6 @@ function getSeriesA11yElement(
  * Remove aria-hidden from element. Also unhides parents of the element, and
  * hides siblings that are not explicitly unhidden.
  * @private
- * @param {Highcharts.Chart} chart
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
  */
 function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
     element.setAttribute('aria-hidden', false);
@@ -303,9 +301,6 @@ function unhideChartElementFromAT(chart: Chart, element: DOMElementType): void {
 /**
  * Hide series from screen readers.
  * @private
- * @param {Highcharts.Series} series
- * The series to hide
- * @return {void}
  */
 function hideSeriesFromAT(series: Series): void {
     const seriesEl = getSeriesA11yElement(series);
@@ -319,9 +314,6 @@ function hideSeriesFromAT(series: Series): void {
 /**
  * Get series objects by series name.
  * @private
- * @param {Highcharts.Chart} chart
- * @param {string} name
- * @return {Array<Highcharts.Series>}
  */
 function getSeriesFromName<T extends Chart>(
     chart: T,
@@ -340,10 +332,6 @@ function getSeriesFromName<T extends Chart>(
 /**
  * Get point in a series from x/y values.
  * @private
- * @param {Array<Highcharts.Series>} series
- * @param {number} x
- * @param {number} y
- * @return {Highcharts.Point|undefined}
  */
 function getPointFromXY<T extends Series>(
     series: Array<T>,
@@ -367,9 +355,6 @@ function getPointFromXY<T extends Series>(
 /**
  * Get relative position of point on an x/y axis from 0 to 1.
  * @private
- * @param {Highcharts.Axis} axis
- * @param {Highcharts.Point} point
- * @return {number}
  */
 function getRelativePointAxisPosition(axis: Axis, point: Point): number {
     if (!defined(axis.dataMin) || !defined(axis.dataMax)) {
@@ -389,7 +374,6 @@ function getRelativePointAxisPosition(axis: Axis, point: Point): number {
 /**
  * Get relative position of point on an x/y axis from 0 to 1.
  * @private
- * @param {Highcharts.Point} point
  */
 function scrollToPoint(point: Point): void {
     const xAxis = point.series.xAxis,

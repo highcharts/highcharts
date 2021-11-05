@@ -134,10 +134,9 @@ class StockChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.StockChart#event:init
-     * @fires Highcharts.StockChart#event:afterInit
+     * @emits Highcharts.StockChart#event:init
+     * @emits Highcharts.StockChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -239,14 +238,10 @@ class StockChart extends Chart {
      *
      * @private
      * @function Highcharts.StockChart#createAxis
-     *
      * @param {string} type
-     *        An axis type.
-     *
+     * An axis type.
      * @param {Chart.CreateAxisOptionsObject} options
-     *        The axis creation options.
-     *
-     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     * The axis creation options.
      */
     public createAxis(
         type: string,
@@ -314,9 +309,6 @@ namespace StockChart {
  *
  * @private
  * @function getDefaultAxisOptions
- * @param {string} type
- * @param {Highcharts.AxisOptions} options
- * @return {Highcharts.AxisOptions}
  */
 function getDefaultAxisOptions(
     type: string,
@@ -370,9 +362,6 @@ function getDefaultAxisOptions(
  *
  * @private
  * @function getForcedAxisOptions
- * @param {string} type
- * @param {Highcharts.Options} chartOptions
- * @return {Highcharts.AxisOptions}
  */
 function getForcedAxisOptions(
     type: string,
@@ -653,9 +642,6 @@ addEvent(Axis, 'getPlotLinePath', function (
  *
  * @private
  * @function Highcharts.SVGRenderer#crispPolyLine
- * @param {Highcharts.SVGPathArray} points
- * @param {number} width
- * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: SVGRenderer,

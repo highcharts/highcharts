@@ -21,7 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  * */
 
 declare class ADPoint extends SMAPoint {
-    public series: ADIndicator
+    public series: ADIndicator;
 }
 
 /* *

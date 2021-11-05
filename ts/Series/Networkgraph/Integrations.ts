@@ -132,8 +132,7 @@ H.networkgraphIntegrations = {
          * `plotX` and `plotY` position.
          *
          * @private
-         * @return {void}
-         */
+             */
         barycenter: function (this: Highcharts.NetworkgraphLayout): void {
             let gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
@@ -167,8 +166,7 @@ H.networkgraphIntegrations = {
          *        Force calcualated in `repulsiveForceFunction`
          * @param {Highcharts.PositionObject} distance
          *        Distance between two nodes e.g. `{x, y}`
-         * @return {void}
-         */
+             */
         repulsive: function (
             this: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint,
@@ -196,8 +194,7 @@ H.networkgraphIntegrations = {
          *        Force calcualated in `repulsiveForceFunction`
          * @param {Highcharts.PositionObject} distance
          *        Distance between two nodes e.g. `{x, y}`
-         * @return {void}
-         */
+             */
         attractive: function (
             this: Highcharts.NetworkgraphLayout,
             link: Highcharts.NetworkgraphPoint,
@@ -253,8 +250,7 @@ H.networkgraphIntegrations = {
          * @private
          * @param {Highcharts.NetworkgraphLayout} layout layout object
          * @param {Highcharts.Point} node node that should be translated
-         * @return {void}
-         */
+             */
         integrate: function (
             layout: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint
@@ -296,10 +292,7 @@ H.networkgraphIntegrations = {
         /**
          * Estiamte the best possible distance between two nodes, making graph
          * readable.
-         *
          * @private
-         * @param {Highcharts.NetworkgraphLayout} layout layout object
-         * @return {number}
          */
         getK: function (layout: Highcharts.NetworkgraphLayout): number {
             return Math.pow(
@@ -357,8 +350,7 @@ H.networkgraphIntegrations = {
          * position. Later, in `integrate()` forces are applied on nodes.
          *
          * @private
-         * @return {void}
-         */
+             */
         barycenter: function (this: Highcharts.NetworkgraphLayout): void {
             const gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = (this.barycenter as any).xFactor,
@@ -393,8 +385,7 @@ H.networkgraphIntegrations = {
          *        Force calcualated in `repulsiveForceFunction`
          * @param {Highcharts.PositionObject} distanceXY
          *        Distance between two nodes e.g. `{x, y}`
-         * @return {void}
-         */
+             */
         repulsive: function (
             node: Highcharts.NetworkgraphPoint,
             force: number,
@@ -420,8 +411,7 @@ H.networkgraphIntegrations = {
          * @param {Highcharts.PositionObject} distanceXY
          *        Distance between two nodes e.g. `{x, y}`
          * @param {number} distanceR
-         * @return {void}
-         */
+             */
         attractive: function (
             link: Highcharts.NetworkgraphPoint,
             force: number,
@@ -477,8 +467,7 @@ H.networkgraphIntegrations = {
          *        Layout object
          * @param {Highcharts.Point} node
          *        Node that should be translated
-         * @return {void}
-         */
+             */
         integrate: function (
             layout: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint
@@ -515,10 +504,7 @@ H.networkgraphIntegrations = {
         /**
          * Estiamte the best possible distance between two nodes, making graph
          * readable.
-         *
          * @private
-         * @param {object} layout layout object
-         * @return {number}
          */
         getK: function (layout: Highcharts.NetworkgraphLayout): number {
             return Math.pow(

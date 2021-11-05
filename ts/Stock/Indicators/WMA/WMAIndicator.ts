@@ -119,7 +119,7 @@ class WMAIndicator extends SMAIndicator {
             index: 3,
             period: 9
         }
-    } as WMAOptions)
+    } as WMAOptions);
 
     public data: Array<WMAPoint> = void 0 as any;
     public options: WMAOptions = void 0 as any;
