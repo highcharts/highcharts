@@ -553,7 +553,10 @@ namespace TreeGridAxis {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
                                 data.forEach(function (point: GanttPointOptions): void {
-                                    if ((d as any).indexOf(point.x) >= 0 && (d as any).indexOf(point.x2) >= 0) {
+                                    if (
+                                        (d as any).indexOf(point.x) >= 0 &&
+                                        (d as any).indexOf(point.x2) >= 0
+                                    ) {
                                         d = point;
                                     }
                                 });
@@ -673,9 +676,17 @@ namespace TreeGridAxis {
             // Add new collapsed nodes on addseries
             addEvent(chart, 'addSeries', function (e: ChartAddSeriesEventObject): void {
                 if (e.options.data) {
-                    const treeGrid = getTreeGridFromData((e.options.data as any), userOptions.uniqueNames || false, 1);
+                    const treeGrid = getTreeGridFromData(
+                        (e.options.data as any),
+                        userOptions.uniqueNames || false,
+                        1
+                    );
 
-                    axis.treeGrid.collapsedNodes = (axis.treeGrid.collapsedNodes || []).concat(treeGrid.collapsedNodes);
+                    axis.treeGrid.collapsedNodes = (
+                        axis.treeGrid.collapsedNodes || []
+                    ).concat(
+                        treeGrid.collapsedNodes
+                    );
                 }
             });
 
@@ -693,9 +704,13 @@ namespace TreeGridAxis {
 
                             // remove the node from the axis collapsedNodes
                             if (axis.treeGrid.collapsedNodes) {
-                                axis.treeGrid.collapsedNodes = axis.treeGrid.collapsedNodes.filter((n): boolean =>
-                                    node.collapseStart !== n.collapseStart ||
-                                    node.collapseEnd !== n.collapseEnd);
+                                axis.treeGrid.collapsedNodes = (
+                                    axis.treeGrid.collapsedNodes.filter(
+                                        (n): boolean =>
+                                            node.collapseStart !== n.collapseStart ||
+                                            node.collapseEnd !== n.collapseEnd
+                                    )
+                                );
                             }
                         }
                     });

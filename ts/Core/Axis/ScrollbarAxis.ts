@@ -71,7 +71,10 @@ class ScrollbarAxis {
      * @param ScrollbarClass
      * Scrollbar class to use.
      */
-    public static compose<T extends typeof Axis>(AxisClass: T, ScrollbarClass: typeof Scrollbar): (T&ScrollbarAxis) {
+    public static compose<T extends typeof Axis>(
+        AxisClass: T,
+        ScrollbarClass: typeof Scrollbar
+    ): (T&ScrollbarAxis) {
         if (ScrollbarAxis.composed.indexOf(AxisClass) === -1) {
             ScrollbarAxis.composed.push(AxisClass);
         } else {

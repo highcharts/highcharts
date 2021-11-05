@@ -397,7 +397,11 @@ function getPointValue(
 ): string {
     const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
-        seriesA11yPointOpts = series.chart.options.accessibility && series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = (
+            series.chart.options.accessibility &&
+            series.chart.options.accessibility.point ||
+            {}
+        ),
         tooltipOptions = series.tooltipOptions || {},
         valuePrefix = seriesA11yPointOpts.valuePrefix ||
             a11yPointOpts.valuePrefix ||

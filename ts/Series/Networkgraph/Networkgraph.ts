@@ -226,7 +226,12 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, NodesComposition.SeriesComposition {
+class NetworkgraphSeries
+    extends
+    Series
+    implements
+    Highcharts.DragNodesSeries,
+    NodesComposition.SeriesComposition {
 
     /* *
      *

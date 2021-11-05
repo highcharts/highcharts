@@ -565,14 +565,14 @@ class AxisResizer {
             ): void {
                 // Axes given as array index, axis object or axis id
                 let axis: Axis = isNumber(axisInfo) ?
-                        // If it's a number - it's an index
+                    // If it's a number - it's an index
                         chart.yAxis[axisInfo] :
                         (
-                            // If it's first elem. in first group
+                    // If it's first elem. in first group
                             (!isNext && !i) ?
                                 // then it's an Axis object
                                 axisInfo as any :
-                                // else it should be an id
+                            // else it should be an id
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,

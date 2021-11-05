@@ -108,7 +108,10 @@ namespace TreeGridTick {
             (TickClass.prototype as any).expand = function (this: TreeGridTick, redraw?: boolean): void {
                 this.treeGrid.expand(redraw);
             };
-            (TickClass.prototype as any).toggleCollapse = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).toggleCollapse = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.toggleCollapse(redraw);
             };
 

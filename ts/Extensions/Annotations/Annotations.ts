@@ -507,7 +507,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                 if (newOptions[name]) {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
-                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            basicOptions: (
+                                Highcharts.AnnotationsLabelsOptions|
+                                Highcharts.AnnotationsShapesOptions
+                            ),
                             i: number
                         ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
                             return merge(baseOptions[name][i], basicOptions);
@@ -568,7 +571,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                 .reduce(
                     function (
                         axes: Array<AxisType>,
-                        labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
+                        labelOrShape: (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                        )
                     ): Array<AxisType> {
                         const point = labelOrShape &&
                             (

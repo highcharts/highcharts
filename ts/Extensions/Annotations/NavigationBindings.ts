@@ -429,12 +429,12 @@ class NavigationBindings {
         // Shorthand object for getting events for buttons:
         navigation.boundClassNames = {};
 
-        objectEach((options.bindings || {}), function (value: Highcharts.NavigationBindingsOptionsObject): void {
+        objectEach((options.bindings || {}), (value: Highcharts.NavigationBindingsOptionsObject): void => {
             navigation.boundClassNames[value.className] = value;
         });
 
         // Handle multiple containers with the same class names:
-        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (subContainer: HTMLElement): void {
+        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, (subContainer: HTMLElement): void => {
             navigation.eventsToUnbind.push(
                 addEvent(subContainer, 'click', function (event: PointerEvent): void {
                     const bindings = navigation.getButtonEvents(

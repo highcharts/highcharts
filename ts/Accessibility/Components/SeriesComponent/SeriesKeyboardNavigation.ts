@@ -197,7 +197,9 @@ function highlightFirstValidPointInChart(
     delete chart.highlightedPoint;
 
     res = chart.series.reduce(
-        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) => acc || cur.highlightFirstValidPoint(),
+        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) => (
+            acc || cur.highlightFirstValidPoint()
+        ),
         false as (boolean|SeriesKeyboardNavigation.PointComposition)
     );
 

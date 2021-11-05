@@ -823,7 +823,9 @@ class RangeSelector {
      * */
     public buttons: Array<SVGElement> = void 0 as any;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = RangeSelector.prototype.defaultButtons;
+    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = (
+        RangeSelector.prototype.defaultButtons
+    );
     public chart: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;

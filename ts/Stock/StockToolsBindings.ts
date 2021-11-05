@@ -120,7 +120,9 @@ declare global {
     }
 }
 
-const bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = NavigationBindings.prototype.utils as any,
+const bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = (
+        NavigationBindings.prototype.utils as any
+    ),
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

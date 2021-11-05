@@ -110,7 +110,12 @@ declare global {
                 storage: Array<unknown>,
                 isRoot?: boolean
             ): void;
-            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addToolbar(
+                this: Popup,
+                chart: AnnotationChart,
+                options: AnnotationsOptions,
+                callback: Function
+            ): void;
         }
         interface PopupConfigObject {
             annotation: Annotation;
@@ -132,7 +137,12 @@ declare global {
             type?: string;
         }
         interface PopupIndicatorsObject {
-            addForm(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addForm(
+                this: Popup,
+                chart: AnnotationChart,
+                options: AnnotationsOptions,
+                callback: Function
+            ): void;
             addSelection(
                 this: Highcharts.Popup,
                 type: string,
@@ -248,7 +258,12 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
+H.Popup = function (
+    this: Highcharts.Popup,
+    parentDiv: HTMLDOMElement,
+    iconsURL: string,
+    chart?: Chart
+): void {
     this.init(parentDiv, iconsURL, chart);
 } as any;
 
