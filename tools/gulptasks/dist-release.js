@@ -254,7 +254,9 @@ function checkIfLoggedInOnNpm() {
     try {
         childProcess.execSync('npm whoami', { cwd: pathToDistRepo });
     } catch (error) {
-        throw new Error('You are not logged in on npm. Please login using npm login and try again.');
+        throw new Error(`Not able to run npm whoami. It may be caused by
+        - Not being logged into npm, or
+        - The highcharts-dist folder not existing next to highcharts`);
     }
 }
 
