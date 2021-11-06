@@ -65,7 +65,8 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionParamsOptions
+    );
 
     /* *
      *

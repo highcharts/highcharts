@@ -165,7 +165,10 @@ Chart.prototype.highlightLegendItem = function (ix: number): boolean {
         scrollLegendToItem(this.legend, ix);
 
         const legendItemProp = itemToHighlight.legendItem;
-        const proxyBtn = itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement;
+        const proxyBtn = (
+            itemToHighlight.a11yProxyElement &&
+            itemToHighlight.a11yProxyElement.buttonElement
+        );
         if (legendItemProp && legendItemProp.element && proxyBtn) {
             this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
         }
@@ -304,7 +307,10 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
-    highlightAdjacentLegendPage: function (this: Highcharts.LegendComponent, direction: number): void {
+    highlightAdjacentLegendPage: function (
+        this: Highcharts.LegendComponent,
+        direction: number
+    ): void {
         const chart = this.chart;
         const legend = chart.legend;
         const curPageIx = legend.currentPage || 1;
@@ -518,7 +524,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             terminate: function (): void {
                 component.highlightedLegendItemIx = -1;
                 chart.legend.allItems.forEach(
-                    (item): unknown => item.setState('', true));
+                    (item): unknown => item.setState('', true)
+                );
             }
         });
     },

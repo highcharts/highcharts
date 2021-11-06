@@ -139,7 +139,7 @@ namespace DateTimeAxis{
 
             AxisClass.keepProps.push('dateTime');
 
-            const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
+            const axisProto = AxisClass.prototype as Composition;
 
             axisProto.getTimeTicks = getTimeTicks;
 
@@ -188,7 +188,7 @@ namespace DateTimeAxis{
         }
 
         if (!axis.dateTime) {
-            axis.dateTime = new Additions(axis as DateTimeAxis.Composition);
+            axis.dateTime = new Additions(axis as Composition);
         }
     }
 
@@ -206,7 +206,7 @@ namespace DateTimeAxis{
          *
          * */
 
-        public constructor(axis: DateTimeAxis.Composition) {
+        public constructor(axis: Composition) {
             this.axis = axis;
         }
 
@@ -237,7 +237,7 @@ namespace DateTimeAxis{
         public normalizeTimeTickInterval(
             tickInterval: number,
             unitsOption?: AxisOptions['units']
-        ): DateTimeAxis.NormalizedObject {
+        ): NormalizedObject {
             const units = (
                 unitsOption || [[
                     'millisecond', // unit name

@@ -173,7 +173,7 @@ namespace RadialAxis {
     }
 
     export declare class TickComposition extends Tick {
-        axis: RadialAxis.AxisComposition;
+        axis: AxisComposition;
     }
 
     /* *
@@ -390,7 +390,8 @@ namespace RadialAxis {
             addEvent(
                 TickClass as typeof TickComposition,
                 'afterGetPosition',
-                onTickAfterGetPosition);
+                onTickAfterGetPosition
+            );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
 
@@ -416,11 +417,9 @@ namespace RadialAxis {
             ) {
                 return this.tickPositions
                     .map((pos: number): (SVGElement|undefined) =>
-                        this.ticks[pos] && this.ticks[pos].label
-                    )
+                        this.ticks[pos] && this.ticks[pos].label)
                     .filter((label: (SVGElement|undefined)): boolean =>
-                        Boolean(label)
-                    );
+                        Boolean(label));
             }
         };
     }
@@ -487,7 +486,8 @@ namespace RadialAxis {
                 value = this.translate(Math.min(
                     Math.sqrt(
                         Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
-                    ), center[2] / 2) - center[3] / 2, true);
+                    ), center[2] / 2
+                ) - center[3] / 2, true);
             }
         }
 
@@ -734,7 +734,7 @@ namespace RadialAxis {
             distance,
             a,
             b,
-            otherAxis: (RadialAxis.AxisComposition|undefined),
+            otherAxis: (AxisComposition|undefined),
             xy: PositionObject,
             tickPositions: number[],
             crossPos,
@@ -811,7 +811,7 @@ namespace RadialAxis {
                 // Find the other axis (a circular one) in the same pane
                 chart[inverted ? 'yAxis' : 'xAxis'].forEach((a): void => {
                     if (a.pane === this.pane) {
-                        otherAxis = a as RadialAxis.AxisComposition;
+                        otherAxis = a as AxisComposition;
                     }
                 });
 
@@ -911,7 +911,7 @@ namespace RadialAxis {
      * @param {Highcharts.Axis} radialAxis
      * Radial axis to modify.
      */
-    function modify(axis: RadialAxis.AxisComposition): void {
+    function modify(axis: AxisComposition): void {
         axis.beforeSetTickPositions = beforeSetTickPositions;
         axis.createLabelCollector = createLabelCollector;
         axis.getCrosshairPosition = getCrosshairPosition;

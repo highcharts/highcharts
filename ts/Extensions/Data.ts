@@ -147,7 +147,7 @@ declare global {
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
-            public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
+            public dateFormats: Record<string, DataDateFormatObject>;
             public decimalRegex?: RegExp;
             public firstRowAsNames: boolean;
             public liveDataTimeout?: number;
@@ -171,7 +171,7 @@ declare global {
             ): void;
             public parseColumn(column: Array<DataValueType>, col: number): void;
             public parseCSV(
-                inOptions?: Highcharts.DataOptions
+                inOptions?: DataOptions
             ): Array<Array<(number|string)>>;
             public parsed(): (boolean|undefined);
             public parseDate(val: string): number;
@@ -2246,8 +2246,7 @@ class Data {
      *
      * @function Highcharts.Data#rowsToColumns
      */
-    public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
-    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
+    public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)): (Array<Array<Highcharts.DataValueType>>|undefined) {
         let row,
             rowsLength,
             col,

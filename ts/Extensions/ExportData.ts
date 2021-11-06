@@ -609,8 +609,7 @@ Chart.prototype.getDataRows = function (
             xAxis: Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
-                (typeof d.y !== 'undefined') && d.name
-            );
+                (typeof d.y !== 'undefined') && d.name);
 
             if (
                 namedPoints.length &&

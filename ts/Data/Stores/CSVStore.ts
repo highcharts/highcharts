@@ -97,7 +97,10 @@ class CSVStore extends DataStore<CSVStore.Event> {
         const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
 
         this.parserOptions = parserOptions;
-        this.options = merge(CSVStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
+        this.options = merge(
+            CSVStore.defaultOptions,
+            { csv, csvURL, enablePolling, dataRefreshRate }
+        );
         this.parser = parser || new CSVParser(parserOptions);
     }
 
@@ -400,7 +403,7 @@ namespace CSVStore {
     /**
      * Options for the CSVDataStore class constructor
      */
-    export type OptionsType = Partial<(CSVStore.Options & CSVParser.OptionsType)>;
+    export type OptionsType = Partial<(Options & CSVParser.OptionsType)>;
 
     /**
      * @todo move this to the dataparser?

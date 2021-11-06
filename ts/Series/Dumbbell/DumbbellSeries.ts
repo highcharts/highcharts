@@ -151,7 +151,8 @@ class DumbbellSeries extends AreaRangeSeries {
                     halo: false
                 }
             }
-        } as DumbbellSeriesOptions);
+        } as DumbbellSeriesOptions
+    );
 
     /* *
      *

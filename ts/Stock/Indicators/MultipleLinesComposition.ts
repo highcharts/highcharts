@@ -173,7 +173,7 @@ namespace MultipleLinesComposition {
      * @private
      * @function multipleLinesMixin.drawGraph
      */
-    function drawGraph(this: MultipleLinesComposition.Composition): void {
+    function drawGraph(this: Composition): void {
         const indicator = this,
             pointValKey = indicator.pointValKey,
             linesApiNames = indicator.linesApiNames,
@@ -267,7 +267,7 @@ namespace MultipleLinesComposition {
      *         Returns translated lines names without excluded value.
      */
     function getTranslatedLinesNames(
-        this: MultipleLinesComposition.Composition,
+        this: Composition,
         excludedValue?: string
     ): Array<string> {
         const translatedLines: Array<string> = [];
@@ -296,7 +296,7 @@ namespace MultipleLinesComposition {
      *         Returns point Y value for all lines
      */
     function toYData(
-        this: MultipleLinesComposition.Composition,
+        this: Composition,
         point: Point
     ): Array<number> {
         const pointColl: Array<number> = [];

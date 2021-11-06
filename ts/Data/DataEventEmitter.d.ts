@@ -126,7 +126,7 @@ declare namespace DataEventEmitter {
     }
 
     export interface HCEventObject<TEventObject extends Event> {
-        fn: DataEventEmitter.EventCallback<unknown, TEventObject>;
+        fn: EventCallback<unknown, TEventObject>;
         order?: number;
     }
 

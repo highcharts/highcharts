@@ -1093,8 +1093,7 @@ class Tooltip {
                     chart.polar ||
                     currentSeries.options.clip === false ||
                     points.some((p): boolean => // #16004
-                        p.series.shouldShowTooltip(checkX, checkY)
-                    )
+                        p.series.shouldShowTooltip(checkX, checkY))
                 ) {
                     const label = tooltip.getLabel();
 
@@ -1510,7 +1509,11 @@ class Tooltip {
                 if (tooltip.outside && chartLeft + x < boxExtremes.left) {
                     boxExtremes.left = chartLeft + x;
                 }
-                if (!isHeader && tooltip.outside && boxExtremes.left + boxWidth > boxExtremes.right) {
+                if (
+                    !isHeader &&
+                    tooltip.outside &&
+                    boxExtremes.left + boxWidth > boxExtremes.right
+                ) {
                     boxExtremes.right = chartLeft + x;
                 }
             }
@@ -1679,7 +1682,10 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
      */
-    public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
+    public tooltipFooterHeaderFormatter(
+        labelConfig: Point.PointLabelObject,
+        isFooter?: boolean
+    ): string {
         const series = labelConfig.series,
             tooltipOptions = series.tooltipOptions,
             xAxis = series.xAxis,

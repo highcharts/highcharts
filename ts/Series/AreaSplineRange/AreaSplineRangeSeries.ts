@@ -48,45 +48,45 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      *
      * */
 
-    /**
-     * The area spline range is a cartesian series type with higher and
-     * lower Y values along an X axis. The area inside the range is colored, and
-     * the graph outlining the area is a smoothed spline.
-     *
-     * @sample {highstock|highstock} stock/demo/areasplinerange/
-     *         Area spline range
-     *
-     * @extends   plotOptions.arearange
-     * @since     2.3.0
-     * @excluding step, boostThreshold, boostBlending
-     * @product   highcharts highstock
-     * @requires  highcharts-more
-     * @apioption plotOptions.areasplinerange
-     */
-
-    /**
-     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
-     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
-     *
-     * @apioption plotOptions.areasplinerange.color
-     */
-
-    /**
-     * @see [color](#plotOptions.areasplinerange.color)
-     * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
-     *
-     * @apioption plotOptions.areasplinerange.fillColor
-     */
-
-    /**
-     * @see [color](#plotOptions.areasplinerange.color)
-     * @see [fillColor](#plotOptions.areasplinerange.fillColor)
-     *
-     * @default   {highcharts} 0.75
-     * @default   {highstock} 0.75
-     * @apioption plotOptions.areasplinerange.fillOpacity
-     */
-    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(AreaRangeSeries.defaultOptions);
+    public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
+        AreaRangeSeries.defaultOptions,
+        /**
+         * The area spline range is a cartesian series type with higher and
+         * lower Y values along an X axis. The area inside the range is colored,
+         * and the graph outlining the area is a smoothed spline.
+         *
+         * @sample {highstock|highstock} stock/demo/areasplinerange/
+         *         Area spline range
+         *
+         * @extends   plotOptions.arearange
+         * @since     2.3.0
+         * @excluding step, boostThreshold, boostBlending
+         * @product   highcharts highstock
+         * @requires  highcharts-more
+         * @apioption plotOptions.areasplinerange
+         */
+        /**
+         * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+         * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+         *
+         * @apioption plotOptions.areasplinerange.color
+         */
+        /**
+         * @see [color](#plotOptions.areasplinerange.color)
+         * @see [fillOpacity](#plotOptions.areasplinerange.fillOpacity)
+         *
+         * @apioption plotOptions.areasplinerange.fillColor
+         */
+        /**
+         * @see [color](#plotOptions.areasplinerange.color)
+         * @see [fillColor](#plotOptions.areasplinerange.fillColor)
+         *
+         * @default   {highcharts} 0.75
+         * @default   {highstock} 0.75
+         * @apioption plotOptions.areasplinerange.fillOpacity
+         */
+        {}
+    );
 
     /* *
      *

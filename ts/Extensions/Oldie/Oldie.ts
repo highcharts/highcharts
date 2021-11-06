@@ -375,7 +375,7 @@ declare global {
             fn: EventCallback<T>
         ): void;
         /** @requires highcharts/modules/oldies */
-        function removeEventListenerPolyfill<T extends EventTarget> (
+        function removeEventListenerPolyfill<T extends EventTarget>(
             this: T,
             type: string,
             fn: EventCallback<T>

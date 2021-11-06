@@ -149,7 +149,10 @@ namespace ForcedMarkersComposition {
             delete point.hasForcedA11yMarker;
 
             if (pointOptions.marker) {
-                const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+                const isStillForcedMarker = (
+                    hadForcedMarker &&
+                    getPointMarkerOpacity(pointOptions) === 0
+                );
 
                 if (pointOptions.marker.enabled && !isStillForcedMarker) {
                     unforcePointMarkerOptions(pointOptions);

@@ -407,7 +407,7 @@ namespace OrdinalAxis {
      * @param {number} index
      * The index value of searched point
      */
-    function index2val(this: OrdinalAxis.Composition, index: number): number {
+    function index2val(this: Composition, index: number): number {
         const axis = this,
             ordinal = axis.ordinal,
             // Context could be changed to extendedOrdinalPositions.
@@ -448,7 +448,7 @@ namespace OrdinalAxis {
      * @param {number} val
      * The linear abstracted value.
      */
-    function lin2val(this: OrdinalAxis.Composition, val: number): number {
+    function lin2val(this: Composition, val: number): number {
         const axis = this,
             ordinal = axis.ordinal,
             localMin = axis.old ? axis.old.min : axis.min,
@@ -517,7 +517,7 @@ namespace OrdinalAxis {
      */
     function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
         const index =
-        OrdinalAxis.Additions.findIndexOf(ordinalPositions, val, true);
+        Additions.findIndexOf(ordinalPositions, val, true);
         if (ordinalPositions[index] === val) {
             return index;
         }
@@ -534,7 +534,7 @@ namespace OrdinalAxis {
         const axis = this;
 
         if (!axis.ordinal) {
-            axis.ordinal = new OrdinalAxis.Additions(axis as Composition);
+            axis.ordinal = new Additions(axis as Composition);
         }
     }
 
@@ -602,7 +602,7 @@ namespace OrdinalAxis {
      */
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,
-            xAxis = chart.xAxis[0] as OrdinalAxis.Composition,
+            xAxis = chart.xAxis[0] as Composition,
             overscroll = xAxis.options.overscroll,
             chartX = (e as any).originalEvent.chartX,
             panning = chart.options.chart.panning;
@@ -748,7 +748,7 @@ namespace OrdinalAxis {
      * @param {boolean} [toIndex]
      * Whether to return the index in the ordinalPositions or the new value.
      */
-    function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
+    function val2lin(this: Composition, val: number, toIndex?: boolean): number {
         const axis = this,
             ordinal = axis.ordinal,
             ordinalPositions = ordinal.positions;
@@ -808,7 +808,10 @@ namespace OrdinalAxis {
                     ]
             ) {
                 // Return Value
-                ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
+                ordinalIndex = (
+                    getIndexInArray(extendedOrdinalPositions, val) -
+                    originalPositionsReference
+                );
             } else {
                 // Since ordinal.slope is the average distance between 2
                 // points on visible plotArea, this can be used to calculete
@@ -1342,8 +1345,11 @@ namespace OrdinalAxis {
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
-            const ordinalPointPixelInterval = axis.translationSlope *
-                (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+            const ordinalPointPixelInterval = axis.translationSlope * (
+                    ordinal.slope ||
+                    axis.closestPointRange ||
+                    ordinal.overscrollPointsRange as number
+                ),
                 // toValue for the first point.
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 

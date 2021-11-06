@@ -439,13 +439,13 @@ class InfoRegionsComponent extends AccessibilityComponent {
         sectionDiv: HTMLDOMElement,
         regionKey: string
     ): void {
-        const labelLangKey = (
-                'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
-            ),
+        const labelLangKey = `accessibility.screenReaderSection.${regionKey}RegionLabel`,
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
-            sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
-                chart.index;
+            labelText = chart.langFormat(
+                labelLangKey,
+                { chart: chart, chartTitle: getChartTitle(chart) }
+            ),
+            sectionId = `highcharts-screen-reader-region-${regionKey}-${chart.index}`;
 
         attr(sectionDiv, {
             id: sectionId,

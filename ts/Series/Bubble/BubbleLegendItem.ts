@@ -802,8 +802,7 @@ namespace BubbleLegendItem {
         zThreshold?: number;
     }
     export interface RangesOptions
-        extends Partial<FormatterContextObject>
-    {
+        extends Partial<FormatterContextObject> {
         autoRanges?: boolean;
         borderColor?: ColorType;
         color?: ColorType;

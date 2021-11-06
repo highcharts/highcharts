@@ -207,8 +207,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
         );
         if (dropdown) {
             const label = chart.langFormat('accessibility.rangeSelector.dropdownLabel',
-                { rangeTitle: chart.options.lang.rangeSelectorZoom }
-            );
+                { rangeTitle: chart.options.lang.rangeSelectorZoom });
             dropdown.setAttribute('aria-label', label);
             dropdown.setAttribute('tabindex', -1);
         }
@@ -328,7 +327,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
     ): void {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
-        const newIx = chart.highlightedInputRangeIx = (chart.highlightedInputRangeIx || 0) + direction;
+        const newIx = chart.highlightedInputRangeIx = (
+            (chart.highlightedInputRangeIx || 0) + direction
+        );
         const newIxOutOfRange = newIx > 1 || newIx < 0;
 
         if (newIxOutOfRange) {

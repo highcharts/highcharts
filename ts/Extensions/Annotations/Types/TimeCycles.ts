@@ -147,7 +147,8 @@ class TimeCycles extends CrookedLine {
                 const controlPointsOptions = merge(options.controlPointOptions, option);
                 const controlPoint = new ControlPoint(this.chart, this, controlPointsOptions, 0);
                 this.controlPoints.push(controlPoint);
-            });
+            }
+        );
     }
 
     public setPathProperties(): void {

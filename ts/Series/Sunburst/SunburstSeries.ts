@@ -243,7 +243,8 @@ function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabel
             // Setting width and padding
             (options.style as any).width = Math.max(
                 (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         } else if (
             point.dlOptions &&
             point.dlOptions.textPath &&
@@ -260,7 +261,8 @@ function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabel
             (options.style as any).width = Math.max(
                 ((point.outerArcLength as any) +
                 (point.innerArcLength as any)) / 2 -
-                2 * (options.padding || 0), 1);
+                2 * (options.padding || 0), 1
+            );
         }
     }
     // NOTE: alignDataLabel positions the data label differntly when rotation is
@@ -1173,8 +1175,7 @@ namespace SunburstSeries {
         extends
         CU.RadianAngles,
         TreemapSeriesType.NodeValuesObject,
-        TU.SetTreeValuesOptions<SunburstSeries>
-    {
+        TU.SetTreeValuesOptions<SunburstSeries> {
         color: ColorType;
         mapOptionsToLevel: SunburstSeriesOptions['levels'];
         index: number;

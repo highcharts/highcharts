@@ -1911,12 +1911,10 @@ class Toolbar {
             'touchstart'
         ].forEach((eventType): void => {
             addEvent(wrapper, eventType, (e): void =>
-                e.stopPropagation()
-            );
+                e.stopPropagation());
         });
         addEvent(wrapper, 'mouseover', (e: MouseEvent): void =>
-            chart.pointer.onContainerMouseLeave(e)
-        );
+            chart.pointer.onContainerMouseLeave(e));
 
         // toolbar
         stockToolbar.toolbar = toolbar = createElement(UL, {
@@ -2263,7 +2261,10 @@ addEvent(Chart, 'render', function (): void {
 
     // Change the initial button background.
     if (stockTools && chart.navigationBindings && chart.options.series && button) {
-        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+        if (
+            chart.navigationBindings.constructor.prototype.utils
+                .isPriceIndicatorEnabled(chart.series)
+        ) {
             button.firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
         } else {

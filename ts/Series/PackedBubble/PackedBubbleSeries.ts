@@ -686,7 +686,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             };
 
         if (layoutOptions.parentNodeOptions) {
-            parentMarkerOptions = merge(layoutOptions.parentNodeOptions.marker || {}, parentMarkerOptions);
+            parentMarkerOptions = merge(
+                layoutOptions.parentNodeOptions.marker || {},
+                parentMarkerOptions
+            );
         }
         series.parentNodeMass = 0;
 

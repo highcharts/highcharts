@@ -663,7 +663,8 @@ namespace DataLabel {
                                     labelText,
                                     0,
                                     -9999,
-                                    labelOptions.useHTML)
+                                    labelOptions.useHTML
+                                )
                                     .addClass('highcharts-data-label') as any :
 
                                 // We can use label

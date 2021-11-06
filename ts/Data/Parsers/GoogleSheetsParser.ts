@@ -240,7 +240,11 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
             column = parser.columns[i];
-            parser.headers[i] = parserOptions.firstRowAsNames ? column.splice(0, 1).toString() : uniqueKey();
+            parser.headers[i] = (
+                parserOptions.firstRowAsNames ?
+                    column.splice(0, 1).toString() :
+                    uniqueKey()
+            );
 
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {

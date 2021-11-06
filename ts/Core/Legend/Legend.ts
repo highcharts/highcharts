@@ -1120,8 +1120,7 @@ class Legend {
         // sort by legendIndex
         stableSort(allItems, (a, b): number =>
             ((a.options && a.options.legendIndex) || 0) -
-            ((b.options && b.options.legendIndex) || 0)
-        );
+            ((b.options && b.options.legendIndex) || 0));
 
         // reversed legend
         if (options.reversed) {

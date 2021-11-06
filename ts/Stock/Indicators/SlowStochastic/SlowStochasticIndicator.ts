@@ -39,33 +39,38 @@ const {
  * @augments Highcharts.Series
  */
 class SlowStochasticIndicator extends StochasticIndicator {
-    /**
-     * Slow Stochastic oscillator. This series requires the `linkedTo` option
-     * to be set and should be loaded after `stock/indicators/indicators.js`
-     * and `stock/indicators/stochastic.js` files.
-     *
-     * @sample stock/indicators/slow-stochastic
-     *         Slow Stochastic oscillator
-     *
-     * @extends      plotOptions.stochastic
-     * @since        8.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/stochastic
-     * @requires     stock/indicators/slowstochastic
-     * @optionparent plotOptions.slowstochastic
-     */
-    public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
-        params: {
-            /**
-             * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
-             *
-             * @type    {Array<number,number,number>}
-             * @default [14, 3, 3]
-             */
-            periods: [14, 3, 3]
-        }
-    } as SlowStochasticOptions);
+
+    public static defaultOptions: SlowStochasticOptions = merge(
+        StochasticIndicator.defaultOptions,
+        /**
+         * Slow Stochastic oscillator. This series requires the `linkedTo`
+         * option to be set and should be loaded after
+         * `stock/indicators/indicators.js` and `stock/indicators/stochastic.js`
+         * files.
+         *
+         * @sample stock/indicators/slow-stochastic
+         *         Slow Stochastic oscillator
+         *
+         * @extends      plotOptions.stochastic
+         * @since        8.0.0
+         * @product      highstock
+         * @requires     stock/indicators/indicators
+         * @requires     stock/indicators/stochastic
+         * @requires     stock/indicators/slowstochastic
+         * @optionparent plotOptions.slowstochastic
+         */
+        {
+            params: {
+                /**
+                 * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
+                 *
+                 * @type    {Array<number,number,number>}
+                 * @default [14, 3, 3]
+                 */
+                periods: [14, 3, 3]
+            }
+        } as SlowStochasticOptions
+    );
 
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;

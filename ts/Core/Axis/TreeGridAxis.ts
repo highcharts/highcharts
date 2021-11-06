@@ -497,7 +497,11 @@ namespace TreeGridAxis {
                                 // For using keys - rebuild the data structure
                                 if (s.options.keys && s.options.keys.length) {
 
-                                    data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                    data = s.pointClass.prototype
+                                        .optionsToObject.call(
+                                            { series: s },
+                                            data
+                                        );
                                     s.pointClass.setGanttPointAliases(data);
 
                                 }
@@ -612,7 +616,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (DeepPartial<TreeGridAxis.Options> | undefined),
+            options: (DeepPartial<Options> | undefined),
             gridNode;
 
         if (
@@ -656,7 +660,7 @@ namespace TreeGridAxis {
         this: TreeGridAxis,
         proceed: Function,
         chart: Chart,
-        userOptions: TreeGridAxis.Options
+        userOptions: Options
     ): void {
         const axis = this,
             isTreeGrid = userOptions.type === 'treegrid';

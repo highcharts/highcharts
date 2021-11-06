@@ -769,7 +769,9 @@ class Measure extends Annotation {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach((
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void => {
             controlPoint.redraw();
         });
     }

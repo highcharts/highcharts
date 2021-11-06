@@ -2035,8 +2035,7 @@ class Axis {
                 tickPositions.length < 2 &&
                 !this.categories &&
                 !this.series.some((s): boolean =>
-                    (s.is('heatmap') && s.options.pointPlacement === 'between')
-                )
+                    (s.is('heatmap') && s.options.pointPlacement === 'between'))
             ) {
                 (this.min as any) -= 0.5;
                 (this.max as any) += 0.5;
@@ -3699,7 +3698,8 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }

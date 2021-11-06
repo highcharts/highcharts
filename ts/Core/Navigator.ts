@@ -2029,7 +2029,8 @@ class Navigator {
 
             navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
             navigator.xAxis.navigatorAxis.toFixedRange = (
-                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
+                NavigatorAxis.AdditionsClass.prototype.toFixedRange
+                    .bind(navigator.xAxis.navigatorAxis)
             );
         }
 

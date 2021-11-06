@@ -323,9 +323,7 @@ class VennSeries extends ScatterSeries {
             data.internal.some((internalCircle): boolean =>
                 !isCircle1CompletelyOverlappingCircle2(
                     externalCircle, internalCircle
-                )
-            )
-        );
+                )));
 
         // Calulate the label position.
         const position = VennSeries.getLabelPosition(data.internal, data.external);

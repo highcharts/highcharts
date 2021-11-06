@@ -133,14 +133,12 @@ class KeyboardNavigation {
             (e: FocusEvent): void => this.onFocus(e));
 
         ['mouseup', 'touchend'].forEach((eventName): Function =>
-            ep.addEvent(doc, eventName, (): void => this.onMouseUp())
-        );
+            ep.addEvent(doc, eventName, (): void => this.onMouseUp()));
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
             ep.addEvent(chart.renderTo, eventName, (): void => {
                 this.isClickingChart = true;
-            })
-        );
+            }));
 
         ep.addEvent(chart.renderTo, 'mouseover', (): void => {
             this.pointerIsOverChart = true;

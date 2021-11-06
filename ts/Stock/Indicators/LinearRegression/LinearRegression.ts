@@ -116,7 +116,8 @@ class LinearRegressionIndicator extends SMAIndicator {
             tooltip: {
                 valueDecimals: 4
             }
-        } as LinearRegressionParamsOptions);
+        } as LinearRegressionParamsOptions
+    );
 
     /* *
      *
@@ -167,11 +168,13 @@ class LinearRegressionIndicator extends SMAIndicator {
                     val: number
                 ): number {
                     return val + accX;
-                }, 0),
+                }, 0
+            ),
             ySum = yData.reduce(
                 function (accY: number, val: number): number {
                     return getSingleYValue(val, yIndex) + accY;
-                }, 0),
+                }, 0
+            ),
             xMean: number = xSum / xData.length,
             yMean: number = ySum / yData.length,
             xError: number,

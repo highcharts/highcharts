@@ -408,7 +408,9 @@ class MenuComponent extends AccessibilityComponent {
         const curHighlightedItem = (chart.exportDivElements as any)[
             chart.highlightedExportItemIx as any
         ];
-        const exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
+        const exportButtonElement: SVGDOMElement = (
+            (getExportMenuButtonElement(chart) as any).element
+        );
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);

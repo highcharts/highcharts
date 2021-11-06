@@ -48,7 +48,10 @@ declare global {
         }
         interface AnnotationControllableMixin {
             addControlPoints(this: AnnotationControllable): void;
-            anchor(this: AnnotationControllable, point: AnnotationPointType): AnnotationAnchorObject;
+            anchor(
+                this: AnnotationControllable,
+                point: AnnotationPointType
+            ): AnnotationAnchorObject;
             attr: SVGElement['attr'];
             attrsFromOptions(
                 this: AnnotationControllable,
@@ -71,8 +74,14 @@ declare global {
             redraw(this: AnnotationControllable, animation?: boolean): void;
             render(this: AnnotationControllable, parentGroup?: SVGElement): void;
             rotate(this: AnnotationControllable, cx: number, cy: number, radians: number): void;
-            scale(this: AnnotationControllable, cx: number, cy: number, sx: number, sy: number): void;
-            setControlPointsVisibility(this: Highcharts.AnnotationControllable, visible: boolean): void;
+            scale(
+                this: AnnotationControllable,
+                cx: number,
+                cy: number,
+                sx: number,
+                sy: number
+            ): void;
+            setControlPointsVisibility(this: AnnotationControllable, visible: boolean): void;
             shouldBeDrawn(this: AnnotationControllable): boolean;
             transform(
                 this: AnnotationControllable,
@@ -107,15 +116,15 @@ declare global {
                 i: number
             ): void;
             translate(this: AnnotationControllable, dx: number, dy: number): void;
-            translatePoint(this: Highcharts.AnnotationControllable, dx: number, dy: number, i: number): void;
+            translatePoint(this: AnnotationControllable, dx: number, dy: number, i: number): void;
             translateShape(
-                this: Highcharts.AnnotationControllable,
+                this: AnnotationControllable,
                 dx: number,
                 dy: number,
                 translateSecondPoint?: boolean
             ): void;
             update(
-                this: Highcharts.AnnotationControllable,
+                this: AnnotationControllable,
                 newOptions: AnnotationControllableOptionsObject
             ): void;
         }
@@ -434,7 +443,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {boolean} [animation]
      */
     redraw: function (this: Highcharts.AnnotationControllable, animation?: boolean): void {
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach((
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void => {
             controlPoint.redraw(animation);
         });
     },
@@ -603,8 +614,13 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {boolean} visible
      */
-    setControlPointsVisibility: function (this: Highcharts.AnnotationControllable, visible: boolean): void {
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+    setControlPointsVisibility: function (
+        this: Highcharts.AnnotationControllable,
+        visible: boolean
+    ): void {
+        this.controlPoints.forEach((
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void => {
             controlPoint.setVisibility(visible);
         });
     },
@@ -621,7 +637,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             this.tracker = this.tracker.destroy();
         }
 
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach((
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void => {
             controlPoint.destroy();
         });
 

@@ -39,7 +39,7 @@ declare global {
         svg2pdf: Function;
     }
     class jsPDF {
-        constructor (a: string, b: string, c: Array<number>);
+        constructor(a: string, b: string, c: Array<number>);
         output: Function;
     }
 }

@@ -194,7 +194,9 @@ function getExtremesForInstrumentProps(
             series.options.sonification.instruments
         );
         if (instrOptions) {
-            allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
+            allInstrumentDefinitions = allInstrumentDefinitions.concat(
+                instrOptions.map(optionDefToInstrDef)
+            );
         }
     });
 

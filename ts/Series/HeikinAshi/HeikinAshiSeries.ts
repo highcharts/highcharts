@@ -75,7 +75,8 @@ class HeikinAshiSeries extends CandlestickSeries {
             dataGrouping: {
                 groupAll: true
             }
-        } as HeikinAshiSeriesOptions);
+        } as HeikinAshiSeriesOptions
+    );
 
     /* *
      *

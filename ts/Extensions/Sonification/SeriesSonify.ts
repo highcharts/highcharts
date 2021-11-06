@@ -265,7 +265,13 @@ namespace SeriesSonify {
                 return virtualAxisTranslate(
                     getPointTimeValue(point, options.pointPlayTime),
                     timeExtremes,
-                    { min: 0, max: Math.max(options.duration - finalNoteDuration, minimumSeriesDurationMs) }
+                    {
+                        min: 0,
+                        max: Math.max(
+                            options.duration - finalNoteDuration,
+                            minimumSeriesDurationMs
+                        )
+                    }
                 );
             },
             masterVolume = pick(options.masterVolume, 1),
@@ -370,7 +376,10 @@ namespace SeriesSonify {
         series: Composition
     ): Partial<SonifySeriesOptions> {
         const seriesOpts = series.options.sonification || {} as SonifySeriesOptions,
-            chartOpts = series.chart.options.sonification || {} as ChartSonify.ChartSonificationOptions,
+            chartOpts = (
+                series.chart.options.sonification ||
+                {} as ChartSonify.ChartSonificationOptions
+            ),
             chartEvents = chartOpts.events || {} as ChartSonify.ChartSonificationEventsOptions,
             seriesEvents = seriesOpts.events || {} as SeriesSonificationEventsOptions;
 
@@ -399,7 +408,7 @@ namespace SeriesSonify {
      * @return {number} The duration of the final note in milliseconds.
      */
     function getFinalNoteDuration(
-        series: SeriesSonify.Composition,
+        series: Composition,
         instruments: Array<PointSonify.PointInstrument>,
         dataExtremes: Record<string, RangeSelector.RangeObject>
     ): number {

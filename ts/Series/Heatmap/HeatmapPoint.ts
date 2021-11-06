@@ -109,8 +109,7 @@ class HeatmapPoint extends ScatterPoint {
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
-                ), -xAxis.len, 2 * xAxis.len),
+                    ) || 0)), -xAxis.len, 2 * xAxis.len),
 
                 x2: clamp(Math.round(xAxis.len -
                     (xAxis.translate(
@@ -120,8 +119,7 @@ class HeatmapPoint extends ScatterPoint {
                         false,
                         true,
                         -pointPlacement
-                    ) || 0)
-                ), -xAxis.len, 2 * xAxis.len),
+                    ) || 0)), -xAxis.len, 2 * xAxis.len),
 
                 y1: clamp(Math.round(
                     (yAxis.translate(

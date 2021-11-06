@@ -105,8 +105,7 @@ declare global {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Record<string, (Function|undefined)>
-        {
+            extends Record<string, (Function|undefined)> {
             average: (
                 arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);

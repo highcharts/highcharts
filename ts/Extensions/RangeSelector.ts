@@ -210,7 +210,7 @@ declare global {
             public setSelected(selected: number): void;
             public showInput(name: string): void;
             public titleCollision(chart: Chart): boolean;
-            public update(options: Highcharts.RangeSelectorOptions): void;
+            public update(options: RangeSelectorOptions): void;
             public updateButtonStates(): void;
         }
     }
@@ -2774,11 +2774,9 @@ function preferredInputType(format: string): string {
     }
 
     const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some((char: string): boolean =>
-        format.indexOf('%' + char) !== -1
-    );
+        format.indexOf('%' + char) !== -1);
     const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
-        format.indexOf('%' + char) !== -1
-    );
+        format.indexOf('%' + char) !== -1);
 
     if (date && time) {
         return 'datetime-local';
@@ -2902,7 +2900,10 @@ if (!H.RangeSelector) {
         }
 
         if (rangeSelector) {
-            const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === chart);
+            const events = find(
+                chartDestroyEvents,
+                (e: [Chart, Function[]]): boolean => e[0] === chart
+            );
 
             if (!events) {
                 chartDestroyEvents.push([chart, [

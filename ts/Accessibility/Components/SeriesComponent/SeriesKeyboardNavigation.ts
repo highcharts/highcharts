@@ -645,7 +645,11 @@ namespace SeriesKeyboardNavigation {
             curPointIndex = curPoint && getPointIndex(curPoint) || 0,
             curPoints = curPoint && curPoint.series.points || [],
             lastSeries = chart.series && chart.series[chart.series.length - 1],
-            lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
+            lastPoint = (
+                lastSeries &&
+                lastSeries.points &&
+                lastSeries.points[lastSeries.points.length - 1]
+            );
 
         let newSeries: SeriesComposition,
             newPoint: PointComposition;

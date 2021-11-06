@@ -645,7 +645,9 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
             } else {
                 if (top <= allAxesHeight) {
-                    allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                    allAxesHeight = correctFloat(
+                        Math.max(allAxesHeight, (top || 0) + (height || 0))
+                    );
                 } else {
                     top = correctFloat(top - removedHeight);
                     allAxesHeight = correctFloat(allAxesHeight + height);
@@ -2566,7 +2568,10 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 series.forEach(function (series): void {
                     series.update({
                         lastPrice: { enabled: !priceIndicatorEnabled },
-                        lastVisiblePrice: { enabled: !priceIndicatorEnabled, label: { enabled: true } }
+                        lastVisiblePrice: {
+                            enabled: !priceIndicatorEnabled,
+                            label: { enabled: true }
+                        }
                     }, false);
                 });
                 chart.redraw();

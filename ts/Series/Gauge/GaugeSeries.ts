@@ -374,7 +374,8 @@ class GaugeSeries extends Series {
             showInLegend: false
 
             // Prototype members
-        } as GaugeSeriesOptions);
+        } as GaugeSeriesOptions
+    );
 
     /* *
      *

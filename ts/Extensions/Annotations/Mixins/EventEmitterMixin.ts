@@ -50,7 +50,10 @@ declare global {
                 cx: number,
                 cy: number
             ): PositionObject;
-            mouseMoveToTranslation(this: AnnotationEventEmitter, e: AnnotationEventObject): PositionObject;
+            mouseMoveToTranslation(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): PositionObject;
             onDrag(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             onMouseDown(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;

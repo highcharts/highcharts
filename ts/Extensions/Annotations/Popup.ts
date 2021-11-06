@@ -56,7 +56,7 @@ declare global {
             public popup: Popup;
             public chart?: Chart;
             public tabs: PopupTabsObject;
-            public addButton (
+            public addButton(
                 parentDiv: HTMLDOMElement,
                 label: string,
                 type: string,
@@ -144,14 +144,14 @@ declare global {
                 callback: Function
             ): void;
             addSelection(
-                this: Highcharts.Popup,
+                this: Popup,
                 type: string,
                 optionName: string,
                 parentDiv: HTMLDOMElement,
             ): HTMLSelectElement;
             addSelectionOptions(
-                this: Highcharts.Popup,
-                chart: Highcharts.AnnotationChart,
+                this: Popup,
+                chart: AnnotationChart,
                 optionName: string,
                 selectBox: HTMLSelectElement,
                 indicatorType?: string,
@@ -182,8 +182,8 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
-            filterSeries(series: SeriesTypePlotOptions, filter?: string): Array<Highcharts.FilteredSeries>;
-            filterSeriesArray(series: Array<Series>): Array<Highcharts.FilteredSeries>;
+            filterSeries(series: SeriesTypePlotOptions, filter?: string): Array<FilteredSeries>;
+            filterSeriesArray(series: Array<Series>): Array<FilteredSeries>;
             getAmount(this: Chart): number;
             getNameType(series: Series, type: string): IndicatorNameCouple;
             listAllSeries(
@@ -1595,7 +1595,9 @@ H.Popup.prototype = {
             }
 
             // Add selection boxes.
-            const selectBox = indicators.addSelection.call(popup, indicatorType, optionName, parentDiv);
+            const selectBox = indicators.addSelection.call(
+                popup, indicatorType, optionName, parentDiv
+            );
 
             // Add possible dropdown options.
             indicators.addSelectionOptions.call(

@@ -221,11 +221,11 @@ declare global {
             points?: Array<(string|MockPointOptions)>;
         }
         interface AnnotationsTypeOptions {
-            background?: Highcharts.AnnotationsShapeOptions;
+            background?: AnnotationsShapeOptions;
             height?: number;
-            line?: Highcharts.AnnotationsShapeOptions;
+            line?: AnnotationsShapeOptions;
             point: MockPointOptions;
-            points?: Array<Highcharts.AnnotationsTypePointsOptions>;
+            points?: Array<AnnotationsTypePointsOptions>;
             xAxis?: number;
             yAxis?: number;
         }
@@ -512,7 +512,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                                 Highcharts.AnnotationsShapesOptions
                             ),
                             i: number
-                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                        ): (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                            ) {
                             return merge(baseOptions[name][i], basicOptions);
                         }
                     ) as any;
@@ -1846,8 +1849,7 @@ chartProto.callbacks.push(function (
         if (
             // Verify that it has not been previously added in a responsive rule
             !chart.annotations.some((annotation): boolean =>
-                annotation.options === annotationOptions
-            )
+                annotation.options === annotationOptions)
         ) {
             const annotation = chart.initAnnotation(annotationOptions);
 

@@ -97,8 +97,7 @@ declare module '../../Core/Series/SeriesOptions' {
         /** @requires modules/map */
         mapData?: (Array<MapPointOptions>|any);
     }
-    interface SeriesStateHoverOptions
-    {
+    interface SeriesStateHoverOptions {
         brightness?: number;
         color?: ColorType;
     }

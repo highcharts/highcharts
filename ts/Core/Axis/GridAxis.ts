@@ -373,7 +373,7 @@ namespace GridAxis {
                 (horiz ? 1 : -1) * // horizontal axis reverses the margin
                 (opposite ? -1 : 1) * // so does opposite axes
                 crispCorr +
-                (axis.side === GridAxis.Side.bottom ? titleFontSize : 0)
+                (axis.side === Side.bottom ? titleFontSize : 0)
             );
 
             e.titlePosition.x = horiz ?
@@ -499,8 +499,8 @@ namespace GridAxis {
                         // Subtract 1px to draw the line at the end of the tick
                         tickLength = (axis.tickSize('tick') || [1])[0],
                         distance = (tickLength - 1) * ((
-                            axis.side === GridAxis.Side.top ||
-                            axis.side === GridAxis.Side.left
+                            axis.side === Side.top ||
+                            axis.side === Side.left
                         ) ? -1 : 1);
 
                     // If axis is horizontal, reposition line path vertically
@@ -707,7 +707,7 @@ namespace GridAxis {
     ): void {
         const options = this.options,
             userOptions = e.userOptions,
-            gridOptions: GridAxis.Options = (
+            gridOptions: Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
 
@@ -1038,7 +1038,7 @@ namespace GridAxis {
             align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign: string = 'middle', // labelOpts.verticalAlign,
-            side = GridAxis.Side[axis.side],
+            side = Side[axis.side],
             tickmarkOffset = e.tickmarkOffset,
             tickPositions = axis.tickPositions,
             tickPos = tick.pos - tickmarkOffset,

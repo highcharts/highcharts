@@ -1088,15 +1088,20 @@ addEvent(Chart, 'afterShowResetZoom', function (): void {
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
         buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
 
-    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+    if (
+        this.drillUpButton &&
+        bbox &&
+        buttonOptions &&
+        buttonOptions.position &&
+        buttonOptions.position.x
+    ) {
         this.drillUpButton.align({
             x: buttonOptions.position.x - bbox.width - 10,
             y: buttonOptions.position.y,
             align: buttonOptions.position.align
         },
         false,
-        buttonOptions.relativeTo || 'plotBox'
-        );
+        buttonOptions.relativeTo || 'plotBox');
     }
 });
 
@@ -1717,8 +1722,7 @@ addEvent(Chart, 'selection', function (event: any): void {
                 align: buttonOptions.position.align
             },
             false,
-            buttonOptions.relativeTo || 'plotBox'
-            );
+            buttonOptions.relativeTo || 'plotBox');
         }
     }
 });

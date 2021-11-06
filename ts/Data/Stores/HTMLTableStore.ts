@@ -494,7 +494,7 @@ namespace HTMLTableStore {
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
+    export type OptionsType = Partial<(Options & HTMLTableParser.OptionsType)>;
 
     /**
      * Options for exporting the store as an HTML table

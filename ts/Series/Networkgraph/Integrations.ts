@@ -23,8 +23,7 @@ import H from '../../Core/Globals.js';
 declare global {
     namespace Highcharts {
         interface NetworkgraphEulerIntegrationObject
-            extends NetworkgraphIntegrationObject
-        {
+            extends NetworkgraphIntegrationObject {
             attractive(
                 this: NetworkgraphLayout,
                 link: NetworkgraphPoint,
@@ -67,8 +66,7 @@ declare global {
             temperature?: number;
         }
         interface NetworkgraphVerletIntegrationObject
-            extends NetworkgraphIntegrationObject
-        {
+            extends NetworkgraphIntegrationObject {
             attractive(
                 this: NetworkgraphLayout,
                 link: NetworkgraphPoint,

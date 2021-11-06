@@ -68,7 +68,12 @@ declare global {
             public scale(cx: number, cy: number, sx: number, sy: number): void;
             public setAxis(options: MockPointOptions, xOrY: ('x'|'y')): void;
             public toAnchor(): Array<number>;
-            public translate(cx: (number|undefined), cy: (number|undefined), dx: number, dy: number): void
+            public translate(
+                cx: (number|undefined),
+                cy: (number|undefined),
+                dx: number,
+                dy: number
+            ): void
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;

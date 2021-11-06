@@ -318,7 +318,8 @@ class CandlestickSeries extends OHLCSeries {
                                     point.yBottom
                             ) :
                             bottomBox
-                    ]);
+                    ]
+                );
 
                 graphic[isNew ? 'attr' : 'animate']({ d: path })
                     .addClass(point.getClassName(), true);

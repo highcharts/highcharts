@@ -106,7 +106,8 @@ class LollipopSeries extends DumbbellSeries {
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
             }
-        } as LollipopSeriesOptions);
+        } as LollipopSeriesOptions
+    );
 
     /* *
      *

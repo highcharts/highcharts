@@ -60,7 +60,14 @@ class VMLRenderer3D {
      *
      * */
 
-    public static compose(vmlClass: typeof Highcharts.VMLRenderer, svgClass: typeof SVGRenderer): void {
+    /**
+     * @todo double compose protection
+     * @private
+     */
+    public static compose(
+        vmlClass: typeof Highcharts.VMLRenderer,
+        svgClass: typeof SVGRenderer
+    ): void {
         const svgProto = svgClass.prototype;
         const vmlProto = vmlClass.prototype;
 

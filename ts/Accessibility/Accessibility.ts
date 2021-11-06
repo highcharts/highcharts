@@ -515,7 +515,8 @@ namespace Accessibility {
                     event,
                     function (): void {
                         this.a11yDirty = true;
-                    });
+                    }
+                );
             });
 
             // Direct updates (events happen after render)

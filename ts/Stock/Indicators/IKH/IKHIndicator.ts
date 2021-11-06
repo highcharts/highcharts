@@ -169,6 +169,12 @@ Array<number | null | undefined> | undefined {
 
 /* eslint-enable require-jsdoc */
 
+/* *
+ *
+ * Class
+ *
+ * */
+
 /**
  * The IKH series type.
  *
@@ -178,13 +184,8 @@ Array<number | null | undefined> | undefined {
  *
  * @augments Highcharts.Series
  */
-
-/* *
-*
-* Class
-*
-* */
 class IKHIndicator extends SMAIndicator {
+
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
@@ -363,12 +364,14 @@ class IKHIndicator extends SMAIndicator {
             dataGrouping: {
                 approximation: 'ichimoku-averages'
             }
-        } as IKHOptions);
+        } as IKHOptions
+    );
+
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     public data: Array<IKHPoint> = void 0 as any;
     public options: IKHOptions = void 0 as any;
@@ -775,7 +778,8 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype
+                    .getGraphPath.call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -784,7 +788,8 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype
+                .getGraphPath.apply(indicator, arguments);
         }
 
         return path;
