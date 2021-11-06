@@ -83,6 +83,10 @@ const drawMap = projectionKey => {
         equalearth: {
             name: 'EqualEarth'
         },
+        lcc: {
+            name: 'LambertConformalConic',
+            parallels: [-30, -40]
+        },
         miller: {
             name: 'Miller'
         },

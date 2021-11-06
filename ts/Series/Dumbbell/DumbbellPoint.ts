@@ -59,7 +59,6 @@ class DumbbellPoint extends AreaRangePoint {
      * @private
      * @param {Highcharts.Point} this The point to inspect.
      *
-     * @return {void}
      */
     setState(): void {
         let point = this,

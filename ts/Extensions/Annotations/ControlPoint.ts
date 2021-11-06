@@ -138,7 +138,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
      * @type {Array<string>}
      */
-    public nonDOMEvents = ['drag']
+    public nonDOMEvents = ['drag'];
 
     /**
      * Set the visibility of the control point.
@@ -148,7 +148,6 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @param {boolean} visible
      * Visibility of the control point.
      *
-     * @return {void}
      */
     public setVisibility(visible: boolean): void {
         this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
@@ -216,7 +215,6 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @param {Partial<Highcharts.AnnotationControlPointOptionsObject>} userOptions
      * New options for the control point.
      *
-     * @return {void}
      */
     public update(
         userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>

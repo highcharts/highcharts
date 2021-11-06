@@ -14,14 +14,14 @@ QUnit.module('Projection', function () {
             assert.close(
                 result[0],
                 coordinates[0],
-                0.0000001,
+                0.0001,
                 `Roundtrip projection of ${coordinates} should result in the ` +
                     'same longitude'
             );
             assert.close(
                 result[1],
                 coordinates[1],
-                0.0000001,
+                0.0001,
                 `Roundtrip projection of ${coordinates} should result in the ` +
                     'same latitude'
             );
@@ -36,8 +36,8 @@ QUnit.module('Projection', function () {
 
         assert.close(
             x2[0] - x1[0],
-            222638.98158654713,
-            1,
+            2.226389815865471, // precision lost: 2.2263898158654713
+            0.0001,
             'X scale should be similar to that of the WebMercator projection'
         );
     };

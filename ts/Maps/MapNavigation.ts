@@ -403,7 +403,6 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *        Keep this chart position stationary if possible.
      *
      * @deprecated
-     * @return {void}
      */
     mapZoom: function (
         this: Highcharts.MapNavigationChart,

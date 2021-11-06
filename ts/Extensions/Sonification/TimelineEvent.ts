@@ -97,7 +97,6 @@ class TimelineEvent {
      * @param {Highcharts.TimelineEventOptionsObject} [options]
      *        Options to pass in to the eventObject when playing it.
      *
-     * @return {void}
      */
     public play(
         this: TimelineEvent,

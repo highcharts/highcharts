@@ -2757,6 +2757,7 @@ const defaultTime = new Time(merge(
  * @function Highcharts.getOptions
  *
  * @return {Highcharts.Options}
+ * Default options.
  */
 function getOptions(): Options {
     return defaultOptions;
@@ -2772,10 +2773,10 @@ function getOptions(): Options {
  * @function Highcharts.setOptions
  *
  * @param {Highcharts.Options} options
- *        The new custom chart options.
+ * The new custom chart options.
  *
  * @return {Highcharts.Options}
- *         Updated options.
+ * Updated options.
  */
 function setOptions(
     options: DeepPartial<Options>

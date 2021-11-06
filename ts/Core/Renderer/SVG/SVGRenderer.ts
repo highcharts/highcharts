@@ -512,6 +512,7 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#destroy
      *
      * @return {null}
+     * Pass through value.
      */
     public destroy(): null {
         const renderer = this,
@@ -1336,6 +1337,7 @@ class SVGRenderer implements SVGRendererLike {
      * Additional options, depending on the actual symbol drawn.
      *
      * @return {Highcharts.SVGElement}
+     * SVG symbol.
      */
     public symbol(
         symbol: SymbolKey,
@@ -1724,14 +1726,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#rotCorr
-     *
-     * @param {number} baseline
-     *
-     * @param {number} rotation
-     *
-     * @param {boolean} [alterY]
-     *
-     * @param {Highcharts.PositionObject}
      */
     public rotCorr(
         baseline: number,
@@ -2075,7 +2069,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#alignElements
-     * @return {void}
      */
     public alignElements(): void {
         this.alignedObjects.forEach((el): SVGElement => el.align());

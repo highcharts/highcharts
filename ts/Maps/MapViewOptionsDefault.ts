@@ -73,13 +73,15 @@ const defaultOptions: MapViewOptions = {
      * GeoJSON.
      *
      * Sub-options are:
-     * * `projection.name`, which as of v9.3 can be `EqualEarth`, `Miller`,
-     * `Orthographic` or `WebMercator`.
+     * * `name`, which as of v9.3 can be `EqualEarth`,
+     * `LambertConformalConic`, `Miller`, `Orthographic` or `WebMercator`.
+     * * `parallels`, the standard parallels for the LambertConformalConic
+     * projection.
      * * `rotation`, a three-axis rotation of the globe prior to projection,
      * which in practice can be used for example to render a world map with the
      * Americas centered (`[90, 0]`), or to rotate an orthographic projection.
      *
-     * @type   {object}
+     * @type   {Object}
      * @sample {highmaps} maps/demo/topojson-projection
      *         Orthographic projection
      */

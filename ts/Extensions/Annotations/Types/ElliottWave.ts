@@ -79,7 +79,7 @@ ElliottWave.prototype.defaultOptions = merge(
              */
 
             /**
-             * @ignore-options
+             * @ignore-option
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {

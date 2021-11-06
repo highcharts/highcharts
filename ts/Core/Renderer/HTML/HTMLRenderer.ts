@@ -16,7 +16,6 @@
  *
  * */
 
-import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
 
@@ -100,18 +99,18 @@ class HTMLRenderer extends SVGRenderer {
      * @function Highcharts.SVGRenderer#html
      *
      * @param {string} str
-     *        The text of (subset) HTML to draw.
+     * The text of (subset) HTML to draw.
      *
      * @param {number} x
-     *        The x position of the text's lower left corner.
+     * The x position of the text's lower left corner.
      *
      * @param {number} y
-     *        The y position of the text's lower left corner.
+     * The y position of the text's lower left corner.
      *
      * @return {Highcharts.HTMLDOMElement}
+     * HTML element.
      */
     public html(
-        this: HTMLRenderer,
         str: string,
         x: number,
         y: number
@@ -257,8 +256,7 @@ class HTMLRenderer extends SVGRenderer {
                              * @private
                              * @param {*} value
                              * @param {string} key
-                             * @return {void}
-                             */
+                                                     */
                             function translateSetter(
                                 value: any,
                                 key: string

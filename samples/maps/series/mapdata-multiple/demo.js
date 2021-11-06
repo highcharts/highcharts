@@ -24,8 +24,9 @@
 
         mapView: {
             projection: {
-                name: 'Orthographic',
-                rotation: [-16, -63]
+                name: 'LambertConformalConic',
+                rotation: [-16],
+                parallels: [60, 70]
             }
         },
 
