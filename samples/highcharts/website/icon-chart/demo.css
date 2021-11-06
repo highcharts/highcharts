@@ -707,15 +707,12 @@ body {
         transform: rotate(90deg) scale(0.8);
     }
 
-
-
     #charts .particles .particle.rotate {
         background-repeat: no-repeat;
         transition: all 3s;
         position: absolute;
         transform: rotate(90deg) scale(1.5);
     }
-
 
     #charts .highcharts-axis-labels {
         font-size: 0.9em;
