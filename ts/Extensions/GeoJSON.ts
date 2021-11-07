@@ -266,16 +266,15 @@ function pointInPolygon(
         rel2,
         c = false,
         x = point.x,
-        y = point.y;
+        y = point.y || 0;
 
     for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        rel1 = polygon[i][1] > (y as any);
-        rel2 = polygon[j][1] > (y as any);
+        rel1 = polygon[i][1] > y;
+        rel2 = polygon[j][1] > y;
         if (
             rel1 !== rel2 &&
             (
-                x < (polygon[j][0] -
-                    polygon[i][0]) * ((y as any) - polygon[i][1]) /
+                x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) /
                     (polygon[j][1] - polygon[i][1]) +
                     polygon[i][0]
             )
