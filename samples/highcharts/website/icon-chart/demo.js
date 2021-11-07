@@ -275,14 +275,14 @@ const charts = {
     },
 
     title: {
-        text: 'Iceberg Topologies & Distribution',
+        text: 'Distribution of Icebergs in "Iceberg Alley<p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
         floating: true,
         y: 0
 
     },
     subtitle: {
-        text: '<p class="iceberg-subtitle">Above-water characterization and distribution of icebergs in "Iceberg Alley," Newfoundland, Canada</p>',
+        text: '<p class="iceberg-subtitle"></p>',
         useHTML: true,
         floating: true
     },
@@ -658,26 +658,22 @@ const charts = {
             //     pointFormatter: function () {
             //         const texts = [
             //             `<p class="berg-tip"><span>
-            //                 Pinnacle icebergs</span> have a
-            //                 large central spire or pyramid of one
-            //                 or more spires dominating the space.</p>`,
+            //                 Pinnacle icebergs</span> - a
+            //                 large central spire or pyramid.</p>`,
             //             `<p class="berg-tip">
-            //                 <span>Tabular icebergs</span> are horizontal
-            //                 and flat-topped
-            //                 with a length/height ratio of 5:1 or more.</p>`,
+            //                 <span>Tabular icebergs</span> - horizontal
+            //                 and flat-topped.</p>`,
             //             `<p class="berg-tip">
-            //                 <span>Dry Dock icebergs</span> are
-            //                 eroded such that large
-            //                 U shape slot is formed with twin
-            //                 columns or pinnacles.</p>`,
+            //                 <span>Dry Dock icebergs</span> -
+            //                 eroded into a
+            //                 U shape.</p>`,
             //             `<p class="berg-tip">
-            //                 <span>Dome icebergs</span> have large,
+            //                 <span>Dome icebergs</span> - large,
             //                 smooth, rounded tops.</p>`,
             //             `<p class="berg-tip">
-            //                 <span>Wedge icebergs</span> are tabular
+            //                 <span>Wedge icebergs</span> - tabular
             //                 icebergs that have
-            //                 altered their positions of stability so
-            //                 that they now appear tilted.</p>`
+            //                 tilted.</p>`
             //         ];
             //         return texts[this.index];
             //     }
@@ -721,9 +717,8 @@ const charts = {
                     if (done) {
                         return `<p class="berg-tip">
                                 <span>
-                                Pinnacle icebergs</span> have a 
-                                large central spire or pyramid of one or more 
-                                spires dominating the space.</p>`;
+                                Pinnacle icebergs</span> - a 
+                                large central spire or pyramid.</p>`;
                     }
                 }
             },
@@ -790,9 +785,8 @@ const charts = {
                 pointFormatter: function () {
                     if (done) {
                         return `<p class="berg-tip">
-                                <span>Tabular icebergs</span> are 
-                                horizontal and flat-topped 
-                                with a length/height ratio of 5:1 or more.</p>`;
+                                <span>Tabular icebergs</span> - 
+                                horizontal and flat-topped.</p>`;
                     }
                 }
             },
@@ -877,8 +871,8 @@ const charts = {
                 pointFormatter: function () {
                     if (done) {
                         return `<p class="berg-tip">
-                    <span>Dry Dock icebergs</span> are eroded such that large 
-                    U shape slot is formed with twin columns or pinnacles.</p>`;
+                    <span>Dry Dock icebergs</span> - eroded into a 
+                    U shape.</p>`;
                     }
                 }
             },
@@ -969,7 +963,7 @@ const charts = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip">
-                            <span>Dome icebergs</span> have large, 
+                            <span>Dome icebergs</span> - large, 
                             smooth, rounded tops.</p>`;
                 }
             },
@@ -1058,10 +1052,9 @@ const charts = {
                 pointFormatter: function () {
                     if (done) {
                         return `<p class="berg-tip">
-                                <span>Wedge icebergs</span> are tabular 
+                                <span>Wedge icebergs</span> - tabular 
                                 icebergs that have
-                                altered their positions of stability so 
-                                that they now appear tilted.</p>`;
+                                tilted.</p>`;
                     }
                 }
             },
