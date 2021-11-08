@@ -94,6 +94,7 @@ const SeriesMixin = {
      * @function Highcharts.colorMapSeriesMixin.colorAttribs
      * @param {Highcharts.Point} point
      * @return {Highcharts.SVGAttributes}
+     *         The SVG attributes
      */
     colorAttribs: function (
         this: ColorMapMixin.ColorMapSeries,
