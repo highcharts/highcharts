@@ -46,12 +46,11 @@ body {
 .cardTitle {
     display: none;
     text-align: center;
-    font-family: "Roboto,Calibri,Arial";
+    font-family: Roboto, Calibri, Arial, sans-serif;
     font-size: 36px;
     position: absolute;
     font-weight: bold;
     background-color: transparent;
-    padding: 10px;
     color: #fff;
     margin: 10px 0 0;
     padding: 0;

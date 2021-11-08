@@ -7,10 +7,10 @@
     margin: 0 auto;
 }
 
-/* Since we're redefining colors after highcharts.css, we need to be specific 
-because otherwise some properties would be overwritten. Note that the preferred and 
-much simpler way to change the color scheme is to set the colors array in the highcharts.scss 
-SASS file and build it to CSS. */
+/* Since we're redefining colors after highcharts.css, we need to be specific
+because otherwise some properties would be overwritten. Note that the preferred
+and much simpler way to change the color scheme is to set the colors array in
+the highcharts.scss SASS file and build it to CSS. */
 .highcharts-point.highcharts-color-0,
 .highcharts-legend-item.highcharts-color-0 .highcharts-point,
 .highcharts-tooltip .highcharts-color-0 {

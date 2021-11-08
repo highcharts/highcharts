@@ -20,7 +20,7 @@
 }
 
 .highcharts-demo #container-area {
-    width: 80%x;
+    width: 80%;
 }
 
 .highcharts-demo .btn-sm {
@@ -42,7 +42,6 @@
 }
 
 .highcharts-demo label {
-    text-align: left;
     line-height: 12px;
     white-space: normal;
     display: block !important;
