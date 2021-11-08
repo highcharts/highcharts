@@ -62,7 +62,6 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * Extend the parent method by adding up or down to the class name.
      * @private
      * @function Highcharts.seriesTypes.ohlc#getClassName
-     * @return {string}
      */
     public getClassName(): string {
         return super.getClassName.call(this) +

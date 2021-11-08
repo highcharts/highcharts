@@ -15,7 +15,6 @@ import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
 import type PointerEvent from '../../Core/PointerEvent';
-
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
@@ -99,7 +98,14 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Record<string, string>;
+            popup?: PopupOptions;
+        }
+        interface PopupOptions {
+            [key: string]: string | IndicatorAliases | undefined;
+            indicatorAliases?: IndicatorAliases;
+        }
+        interface IndicatorAliases {
+            [key: string]: Array<string>;
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -266,8 +272,9 @@ const bindingsUtils = {
         coords: Array<Pointer.AxisCoordinateObject>
     ): Pointer.AxisCoordinateObject {
         return coords.filter(function (coord): boolean {
-            const axisMin = coord.axis.min,
-                axisMax = coord.axis.max,
+            const extremes = coord.axis.getExtremes(),
+                axisMin = extremes.min,
+                axisMax = extremes.max,
                 // Correct axis edges when axis has series
                 // with pointRange (like column)
                 minPointOffset = pick(coord.axis.minPointOffset, 0);
@@ -512,7 +519,7 @@ class NavigationBindings {
      * @param {Highcharts.HTMLDOMElement} [button]
      *        Clicked button
      *
-     * @param {object} events
+     * @param {Object} events
      *        Events passed down from bindings (`init`, `start`, `step`, `end`)
      *
      * @param {Highcharts.PointerEventObject} clickEvent
@@ -524,9 +531,15 @@ class NavigationBindings {
         clickEvent: PointerEvent
     ): void {
         const navigation = this,
-            chart = navigation.chart;
+            chart = navigation.chart,
+            svgContainer = chart.renderer.boxWrapper;
+        let shouldEventBeFired = true;
 
         if (navigation.selectedButtonElement) {
+            if (navigation.selectedButtonElement.classList === button.classList) {
+                shouldEventBeFired = false;
+            }
+
             fireEvent(
                 navigation,
                 'deselectButton',
@@ -545,17 +558,25 @@ class NavigationBindings {
             }
         }
 
-        navigation.selectedButton = events;
-        navigation.selectedButtonElement = button;
+        if (shouldEventBeFired) {
+            navigation.selectedButton = events;
+            navigation.selectedButtonElement = button;
 
-        fireEvent(navigation, 'selectButton', { button: button });
-        // Call "init" event, for example to open modal window
-        if (events.init) {
-            events.init.call(navigation, button, clickEvent);
-        }
+            fireEvent(navigation, 'selectButton', { button: button });
+            // Call "init" event, for example to open modal window
+            if (events.init) {
+                events.init.call(navigation, button, clickEvent);
+            }
 
-        if (events.start || events.steps) {
-            chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+            if (events.start || events.steps) {
+                chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+            }
+        } else {
+            chart.stockTools && chart.stockTools.toggleButtonAciveClass(button);
+            svgContainer.removeClass(PREFIX + 'draw-mode');
+            navigation.nextEvent = false;
+            navigation.mouseMoveEvent = false;
+            navigation.selectedButton = null;
         }
     }
     /**
@@ -818,10 +839,10 @@ class NavigationBindings {
          * @param {string} key
          *        Option name, for example "visible" or "x", "y"
          *
-         * @param {object} parentEditables
+         * @param {Object} parentEditables
          *        Editables from NavigationBindings.annotationsEditable
          *
-         * @param {object} parent
+         * @param {Object} parent
          *        Where new options will be assigned
          */
         function traverse(option: any, key: (0|string), parentEditables: any, parent: any): void {
@@ -931,14 +952,14 @@ class NavigationBindings {
      *
      * @function Highcharts.NavigationBindings#getClickedClassNames
      *
-     * @param {Highcharts.HTMLDOMElement}
-     *        Container that event is bound to.
+     * @param {Highcharts.HTMLDOMElement} container
+     * Container that event is bound to.
      *
      * @param {global.Event} event
-     *        Browser's event.
+     * Browser's event.
      *
      * @return {Array<Array<string, Highcharts.HTMLDOMElement>>}
-     *         Array of class names with corresponding elements
+     * Array of class names with corresponding elements
      */
     public getClickedClassNames(
         container: HTMLDOMElement,
@@ -985,7 +1006,7 @@ class NavigationBindings {
      * @param {global.Event} event
      *        Browser's event.
      *
-     * @return {object}
+     * @return {Object}
      *         Object with events (init, start, steps, and end)
      */
     public getButtonEvents(
@@ -1188,7 +1209,6 @@ setOptions({
          * Configure the Popup strings in the chart. Requires the
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
-         *
          * @since   7.0.0
          * @product highcharts highstock
          */
@@ -1494,7 +1514,8 @@ setOptions({
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
                                         { xAxis, yAxis, x, y },
-                                        { xAxis, yAxis, x, y }
+                                        { xAxis, yAxis, x, y },
+                                        { command: 'Z' }
                                     ]
                                 }]
                             },

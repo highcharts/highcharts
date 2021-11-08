@@ -10,50 +10,30 @@
  *
  * */
 
-import type {
-    SVGDOMElement
-} from '../../Core/Renderer/DOMElementType';
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
+
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import ChartUtilities from '../Utils/ChartUtilities.js';
+import CU from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
     getChartTitle
-} = ChartUtilities;
+} = CU;
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const {
-    stripHTMLTagsFromString: stripHTMLTags
-} = HTMLUtilities;
-import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { doc } = H;
+import HU from '../Utils/HTMLUtilities.js';
+const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ContainerComponent extends AccessibilityComponent {
-            public constructor();
-            public svgTitleElement: SVGDOMElement;
-            public destroy(): void;
-            public handleSVGTitleElement(): void;
-            public makeCreditsAccessible(): void;
-            public onChartUpdate(): void;
-            public setGraphicContainerAttrs(): void;
-            public setRenderToAttrs(): void;
-            public setSVGContainerLabel(): void;
-        }
-    }
-}
-
-/* eslint-disable valid-jsdoc */
 
 /**
  * The ContainerComponent class
@@ -62,29 +42,41 @@ declare global {
  * @class
  * @name Highcharts.ContainerComponent
  */
-const ContainerComponent: typeof Highcharts.ContainerComponent =
-    function (): void {} as any;
-ContainerComponent.prototype = new (AccessibilityComponent as any)();
-extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ {
+class ContainerComponent extends AccessibilityComponent {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public svgTitleElement?: SVGDOMElement;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Called on first render/updates to the chart, including options changes.
      */
-    onChartUpdate: function (this: Highcharts.ContainerComponent): void {
+    public onChartUpdate(): void {
         this.handleSVGTitleElement();
         this.setSVGContainerLabel();
         this.setGraphicContainerAttrs();
         this.setRenderToAttrs();
         this.makeCreditsAccessible();
-    },
+    }
 
 
     /**
      * @private
      */
-    handleSVGTitleElement: function (
-        this: Highcharts.ContainerComponent
-    ): void {
+    public handleSVGTitleElement(): void {
         const chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
             titleContents = stripHTMLTags(chart.langFormat(
@@ -106,13 +98,13 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                 titleElement, chart.renderTo.firstChild
             );
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    setSVGContainerLabel: function (this: Highcharts.ContainerComponent): void {
+    public setSVGContainerLabel(): void {
         const chart = this.chart,
             svgContainerLabel = chart.langFormat(
                 'accessibility.svgContainerLabel', {
@@ -123,15 +115,13 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    setGraphicContainerAttrs: function (
-        this: Highcharts.ContainerComponent
-    ): void {
+    public setGraphicContainerAttrs(): void {
         const chart = this.chart,
             label = chart.langFormat('accessibility.graphicContainerLabel', {
                 chartTitle: getChartTitle(chart)
@@ -140,13 +130,13 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         if (label.length) {
             chart.container.setAttribute('aria-label', label);
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    setRenderToAttrs: function (this: Highcharts.ContainerComponent): void {
+    public setRenderToAttrs(): void {
         const chart = this.chart;
 
         if (chart.options.accessibility.landmarkVerbosity !== 'disabled') {
@@ -165,15 +155,13 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                 }
             )
         );
-    },
+    }
 
 
     /**
      * @private
      */
-    makeCreditsAccessible: function (
-        this: Highcharts.ContainerComponent
-    ): void {
+    public makeCreditsAccessible(): void {
         const chart = this.chart,
             credits = chart.credits;
 
@@ -188,15 +176,14 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             }
             unhideChartElementFromAT(chart, credits.element);
         }
-    },
+    }
+
 
     /**
      * Empty handler to just set focus on chart
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
-    getKeyboardNavigation: function (
-        this: Highcharts.ContainerComponent
-    ): KeyboardNavigationHandler {
+    public getKeyboardNavigation(): KeyboardNavigationHandler {
         const chart = this.chart;
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [],
@@ -212,15 +199,24 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
                 }
             }
         });
-    },
+    }
+
 
     /**
      * Accessibility disabled/chart destroyed.
      */
-    destroy: function (this: Highcharts.ContainerComponent): void {
+    public destroy(): void {
         this.chart.renderTo.setAttribute('aria-hidden', true);
     }
 
-});
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 
 export default ContainerComponent;

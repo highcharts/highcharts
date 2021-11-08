@@ -355,6 +355,7 @@ interface DMIIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
+    areaLinesNames: [],
     nameBase: 'DMI',
     linesApiNames: ['plusDILine', 'minusDILine'],
     pointArrayMap: ['y', 'plusDI', 'minusDI'],

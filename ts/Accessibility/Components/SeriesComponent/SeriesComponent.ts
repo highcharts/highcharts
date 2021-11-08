@@ -20,7 +20,9 @@
  * */
 
 import type Accessibility from '../../Accessibility';
+import type Chart from '../../../Core/Chart/Chart';
 import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
+import type Point from '../../../Core/Series/Point';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
@@ -62,10 +64,14 @@ class SeriesComponent extends AccessibilityComponent {
      * @private
      */
     public static compose(
+        ChartClass: typeof Chart,
+        PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
         // Handle forcing markers
+        NewDataAnnouncer.compose(SeriesClass);
         ForcedMarkers.compose(SeriesClass);
+        SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
 
 
@@ -75,7 +81,7 @@ class SeriesComponent extends AccessibilityComponent {
      *
      * */
 
-    public keyboardNavigation?: Highcharts.SeriesKeyboardNavigation;
+    public keyboardNavigation?: SeriesKeyboardNavigation;
     public newDataAnnouncer?: NewDataAnnouncer;
 
 
@@ -92,7 +98,7 @@ class SeriesComponent extends AccessibilityComponent {
         this.newDataAnnouncer = new NewDataAnnouncer(this.chart);
         (this.newDataAnnouncer as any).init();
 
-        this.keyboardNavigation = new (SeriesKeyboardNavigation as any)(
+        this.keyboardNavigation = new SeriesKeyboardNavigation(
             this.chart, this.keyCodes
         );
         (this.keyboardNavigation as any).init();
@@ -163,7 +169,7 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
@@ -172,12 +178,24 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Remove traces
+     * @private
      */
     public destroy(): void {
         (this as any).newDataAnnouncer.destroy();
         (this as any).keyboardNavigation.destroy();
     }
 
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface SeriesComponent {
+    chart: SeriesKeyboardNavigation.ChartComposition;
 }
 
 

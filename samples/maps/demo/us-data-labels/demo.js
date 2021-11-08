@@ -19,28 +19,43 @@ Highcharts.data({
 
 // Process mapdata
 mapData.forEach(function (p) {
-    var path = p.path,
-        copy = {
-            path: path
-        };
+    const coordinates = p.geometry.coordinates;
 
     // This point has a square legend to the right
-    if (path[0][1] === 9727) {
+    // @todo: Add hs-middle-x and hs-middle-y to the geojson map data instead of
+    // this hack
+    const legendBox = coordinates[0][0];
+    if (legendBox[0][0] === 9727) {
 
         // Identify the box
-        Highcharts.seriesTypes.map.prototype.getBox.call({}, [copy]);
+        const bounds = Highcharts.seriesTypes.map.prototype
+            .getProjectedBounds
+            .call({
+                chart: {
+                    mapView: {
+                        projection: new Highcharts._modules[// eslint-disable-line no-underscore-dangle
+                            'Maps/Projection.js'
+                        ]()
+                    }
+                },
+                points: [p]
+            });
 
-        // Place the center of the data label in the center of the point legend box
-        p.middleX = ((path[0][1] + path[1][1]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
-        p.middleY = ((path[0][2] + path[2][2]) / 2 - copy._minY) / (copy._maxY - copy._minY); // eslint-disable-line no-underscore-dangle
+        // Place the center of the data label in the center of the point legend
+        // box
+        p.middleX = ((legendBox[0][0] + legendBox[1][0]) / 2 - bounds.x1) /
+            (bounds.x2 - bounds.x1);
+        p.middleY = ((legendBox[0][1] + legendBox[2][1]) / 2 - bounds.y2) /
+            (bounds.y1 - bounds.y2);
 
+        delete p.bounds;
     }
 
     // Tag it for joining
     p.ucName = p.name.toUpperCase();
 });
 
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {

@@ -31,6 +31,7 @@ const {
     doc,
     win
 } = H;
+import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -57,7 +58,7 @@ const { getElement } = HTMLUtilities;
  * @class
  * @param {Highcharts.Chart} chart
  *        Chart object
- * @param {object} components
+ * @param {Object} components
  *        Map of component names to AccessibilityComponent objects.
  * @name Highcharts.KeyboardNavigation
  */
@@ -109,7 +110,7 @@ class KeyboardNavigation {
      * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
-     * @param {object} components
+     * @param {Object} components
      *        Map of component names to AccessibilityComponent objects.
      */
     public init(
@@ -532,7 +533,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    export declare class ChartComposition extends Chart {
+    export declare class ChartComposition extends MenuComponent.ChartComposition {
         dismissPopupContent(): void;
     }
 
@@ -558,6 +559,7 @@ namespace KeyboardNavigation {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof ChartComposition) {
+        MenuComponent.compose(ChartClass);
 
         if (composedItems.indexOf(ChartClass) === -1) {
             composedItems.push(ChartClass);

@@ -261,6 +261,7 @@ bindingsUtils.indicatorsWithAxes = [
     'cci',
     'chaikin',
     'cmf',
+
     'cmo',
     'disparityindex',
     'dmi',
@@ -272,6 +273,7 @@ bindingsUtils.indicatorsWithAxes = [
     'macd',
     'mfi',
     'momentum',
+
     'natr',
     'obv',
     'ppo',
@@ -281,6 +283,7 @@ bindingsUtils.indicatorsWithAxes = [
     'stochastic',
     'trix',
     'williamsr'
+
 ];
 
 bindingsUtils.manageIndicators = function (
@@ -507,7 +510,7 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  * @private
  * @function bindingsUtils.isLastPriceEnabled
  *
- * @param {array} series
+ * @param {Array} series
  *        Array of series.
  *
  * @return {boolean}
@@ -1964,6 +1967,51 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
+    timeCycles: {
+        className: 'highcharts-time-cycles',
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
+            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                navigation = this.chart.options.navigation,
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'timeCycles',
+                    type: 'timeCycles',
+                    typeOptions: {
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis,
+                        points: [{
+                            x: closestPoint.x
+                        }, {
+                            x: closestPoint.x
+                        }],
+                        line: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            fill: 'transparent',
+                            strokeWidth: 2
+                        }
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).timeCycles.annotationsOptions
+            );
+            annotation = this.chart.addAnnotation(options);
+            (annotation.options.events.click as any).call(annotation, {});
+
+            return annotation;
+        },
+
+        steps: [
+            bindingsUtils.updateNthPoint(1)
+        ]
+    },
     verticalLabel: {
         /** @ignore-option */
         className: 'highcharts-vertical-label',

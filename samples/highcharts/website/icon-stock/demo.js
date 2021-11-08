@@ -345,6 +345,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                 greenLine.classList.add('fade-out');
                             }, 6000);
 
+
+                            setTimeout(function () {
+                                bottomArea.classList.add('fade-out');
+                                topArea.classList.add('fade-out');
+                            }, 6300);
+
+                            setTimeout(function () {
+                                bottomArea.classList.add('hide');
+                                topArea.classList.add('hide');
+                                chart.series[2].hide();
+                            }, 6500);
+
                             setTimeout(function () {
                                 ///get the margins ready for the real chart
                                 let margins = [50, 10, 30, 10];
@@ -356,23 +368,18 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                         margin: margins
                                     }
                                 });
-                                bottomArea.classList.add('fade-out');
-                                topArea.classList.add('fade-out');
-                            }, 6300);
+                            }, 6800);
 
                             setTimeout(function () {
+
                                 chart.series[12].update({
                                     visible: true
                                 });
                                 chart.series[13].update({
                                     visible: true
                                 });
-                                bottomArea.classList.add('fade-out');
-                                topArea.classList.add('fade-out');
-
-                            }, 6500);
-
-                            setTimeout(function () {
+                                candlestick.classList.add('hide');
+                                column.classList.add('hide');
                                 ///fade in the candlestick and the column series, axis labels, title
                                 candlestick.classList.add('fade-in');
                                 title.style.opacity = 1;
@@ -380,7 +387,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                                     subtitle.style.opacity = 1;
                                 }
                                 column.classList.add('fade-in');
-                            }, 6800);
+                            }, 7000);
 
                             setTimeout(function () {
                                 //turn on the axes
@@ -449,11 +456,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }]
             },
             title: {
-                text: 'Two panes, candlestick and volume',
+                text: '',
                 y: 30
             },
             subtitle: {
-                text: 'The demo is divided into two panes, with a resizer handle between the panes',
+                text: '',
                 y: 50
             },
             xAxis: [
@@ -956,6 +963,31 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             responsive: {
                 rules: [{
                     condition: {
+                        maxWidth: 250
+                    },
+                    chartOptions: {
+                        rangeSelector: {
+                            enabled: true,
+                            dropdown: 'always',
+                            inputEnabled: false,
+                            buttonPosition: {
+                                x: 90,
+                                y: -70
+                            }
+                        },
+                        plotOptions: {
+                            arearange: {
+                                marker: {
+                                    symbol: 'square',
+                                    radius: 40
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 251,
                         maxWidth: 300
                     },
                     chartOptions: {
@@ -965,7 +997,32 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             inputEnabled: false,
                             buttonPosition: {
                                 x: 120,
-                                y: -60
+                                y: -70
+                            }
+                        },
+                        plotOptions: {
+                            arearange: {
+                                marker: {
+                                    symbol: 'square',
+                                    radius: 40
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 301,
+                        maxWidth: 400
+                    },
+                    chartOptions: {
+                        rangeSelector: {
+                            enabled: true,
+                            dropdown: 'always',
+                            inputEnabled: true,
+                            buttonPosition: {
+                                x: 0,
+                                y: -70
                             }
                         },
                         plotOptions: {

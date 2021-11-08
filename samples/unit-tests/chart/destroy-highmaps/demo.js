@@ -53,7 +53,7 @@ QUnit.test('Destroy map', function (assert) {
         }
     ];
 
-    // Initiate the chart
+    // Initialize the chart
     var chart = Highcharts.mapChart('container', {
         title: {
             text: 'Destroy chart from button'

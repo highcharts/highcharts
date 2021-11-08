@@ -246,8 +246,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
-     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
-     * @return {Array<string>}
      */
     public bodyFormatter(items: Array<Point>): Array<string> {
         return items.map(function (item): string {
@@ -275,7 +273,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#cleanSplit
      *
      * @param {boolean} [force]
-     *        Force destroy all tooltips.
+     * Force destroy all tooltips.
      */
     public cleanSplit(force?: boolean): void {
         this.chart.series.forEach(function (series): void {
@@ -296,10 +294,6 @@ class Tooltip {
      * the context here is an object holding point, series, x, y etc.
      *
      * @function Highcharts.Tooltip#defaultFormatter
-     *
-     * @param {Highcharts.Tooltip} tooltip
-     *
-     * @return {Array<string>}
      */
     public defaultFormatter(
         this: Tooltip.FormatterContextObject,
@@ -348,12 +342,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#getAnchor
-     *
-     * @param {Highcharts.Point|Array<Highcharts.Point>} points
-     *
-     * @param {Highcharts.PointerEventObject} [mouseEvent]
-     *
-     * @return {Array<number>}
      */
     public getAnchor(
         points: (Point|Array<Point>),
@@ -439,6 +427,7 @@ class Tooltip {
      * @function Highcharts.Tooltip#getLabel
      *
      * @return {Highcharts.SVGElement}
+     * Tooltip label
      */
     public getLabel(): SVGElement { // getLabel
 
@@ -620,14 +609,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#getPosition
-     *
-     * @param {number} boxWidth
-     *
-     * @param {number} boxHeight
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @return {Highcharts.PositionObject}
      */
     public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
 
@@ -692,6 +673,7 @@ class Tooltip {
         // Handle negative points or reversed axis (#13780)
         let flipped = !!point.negative;
         if (
+            !chart.polar &&
             chart.hoverSeries &&
             chart.hoverSeries.yAxis &&
             chart.hoverSeries.yAxis.reversed
@@ -1239,7 +1221,7 @@ class Tooltip {
          *
          * @private
          * @param {Highcharts.Point} point The point related to the tooltip
-         * @return {object} Returns an object with anchorX and anchorY
+         * @return {Object} Returns an object with anchorX and anchorY
          */
         function getAnchor(
             point: Point & { isHeader?: boolean }
@@ -1696,9 +1678,6 @@ class Tooltip {
      *
      * @private
      * @function Highcharts.Tooltip#tooltipFooterHeaderFormatter
-     * @param {Highcharts.PointLabelObject} labelConfig
-     * @param {boolean} [isFooter]
-     * @return {string}
      */
     public tooltipFooterHeaderFormatter(labelConfig: Point.PointLabelObject, isFooter?: boolean): string {
         const series = labelConfig.series,

@@ -12,9 +12,16 @@
 
 'use strict';
 
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import type Accessibility from '../Accessibility';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import RangeSelector from '../../Extensions/RangeSelector.js';
@@ -30,64 +37,25 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr,
-    extend
+    attr
 } = U;
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
-        highlightedInputRangeIx?: number;
-        highlightedRangeSelectorItemIx?: number;
-        oldRangeSelectorItemState?: number;
-        /** @requires modules/accessibility */
-        highlightRangeSelectorButton(ix: number): boolean;
-    }
-}
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class RangeSelectorComponent extends AccessibilityComponent {
-            public constructor ();
-            public announcer: Announcer;
-            public getKeyboardNavigation(): Array<KeyboardNavigationHandler>;
-            public getRangeSelectorButtonNavigation(
-            ): KeyboardNavigationHandler;
-            public getRangeSelectorInputNavigation(): KeyboardNavigationHandler;
-            public initDropdownNav(): void;
-            public onAfterBtnClick(): void;
-            public onButtonNavKbdArrowKey(
-                keyboardNavigationHandler: KeyboardNavigationHandler,
-                keyCode: number
-            ): number;
-            public onButtonNavKbdClick(keyboardNavigationHandler: KeyboardNavigationHandler): number;
-            public onChartUpdate(): void;
-            public onInputKbdMove(direction: number): void;
-            public onInputNavInit(direction: number): void;
-            public onInputNavTerminate(): void;
-            public removeDropdownKeydownHandler?: Function;
-            public removeInputKeydownHandler?: Function;
-            public setDropdownAttrs(): void;
-            public setRangeButtonAttrs(button: SVGElement): void;
-            public setRangeInputAttrs(
-                input: HTMLDOMElement,
-                langKey: string
-            ): void;
-            public updateSelectorVisibility(): void;
-        }
-    }
-}
+/* *
+ *
+ *  Functions
+ *
+ * */
 
+/* eslint-disable valid-jsdoc */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * @private
  */
-function shouldRunInputNavigation(chart: Chart): boolean {
+function shouldRunInputNavigation(
+    chart: Chart
+): boolean {
     return Boolean(
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
@@ -99,67 +67,11 @@ function shouldRunInputNavigation(chart: Chart): boolean {
 }
 
 
-/**
- * Highlight range selector button by index.
+/* *
  *
- * @private
- * @function Highcharts.Chart#highlightRangeSelectorButton
+ *  Class
  *
- * @param {number} ix
- *
- * @return {boolean}
- */
-Chart.prototype.highlightRangeSelectorButton = function (
-    ix: number
-): boolean {
-    const buttons: Array<SVGElement> = (
-        this.rangeSelector &&
-        this.rangeSelector.buttons ||
-        []
-    );
-    const curHighlightedIx = this.highlightedRangeSelectorItemIx;
-    const curSelectedIx = (
-        this.rangeSelector &&
-        this.rangeSelector.selected
-    );
-
-    // Deselect old
-    if (
-        typeof curHighlightedIx !== 'undefined' &&
-        buttons[curHighlightedIx] &&
-        curHighlightedIx !== curSelectedIx
-    ) {
-        buttons[curHighlightedIx].setState(
-            this.oldRangeSelectorItemState || 0
-        );
-    }
-
-    // Select new
-    this.highlightedRangeSelectorItemIx = ix;
-    if (buttons[ix]) {
-        this.setFocusToElement(buttons[ix].box, buttons[ix].element);
-
-        if (ix !== curSelectedIx) {
-            this.oldRangeSelectorItemState = buttons[ix].state;
-            buttons[ix].setState(1);
-        }
-
-        return true;
-    }
-    return false;
-};
-
-
-// Range selector does not have destroy-setup for class instance events - so
-// we set it on the class and call the component from here.
-addEvent(RangeSelector, 'afterBtnClick', function (): void {
-    if (
-        this.chart.accessibility &&
-        this.chart.accessibility.components.rangeSelector
-    ) {
-        return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
-    }
-});
+ * */
 
 
 /**
@@ -169,25 +81,46 @@ addEvent(RangeSelector, 'afterBtnClick', function (): void {
  * @class
  * @name Highcharts.RangeSelectorComponent
  */
-const RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
-    function (): void {} as any;
-RangeSelectorComponent.prototype = new (AccessibilityComponent as any)();
-extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
+class RangeSelectorComponent extends AccessibilityComponent {
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+
+    public announcer: Announcer = void 0 as any;
+
+    public removeDropdownKeydownHandler?: Function;
+
+    public removeInputKeydownHandler?: Function;
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Init the component
      * @private
      */
-    init: function (this: Highcharts.RangeSelectorComponent): void {
+    public init(): void {
         const chart = this.chart;
         this.announcer = new Announcer(chart, 'polite');
-    },
+    }
 
 
     /**
      * Called on first render/updates to the chart, including options changes.
      */
-    onChartUpdate: function (this: Highcharts.RangeSelectorComponent): void {
+    public onChartUpdate(): void {
         const chart = this.chart,
             component = this,
             rangeSelector = chart.rangeSelector;
@@ -225,14 +158,14 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 }
             });
         }
-    },
+    }
 
 
     /**
      * Hide buttons from AT when showing dropdown, and vice versa.
      * @private
      */
-    updateSelectorVisibility: function (this: Highcharts.RangeSelectorComponent): void {
+    public updateSelectorVisibility(): void {
         const chart = this.chart;
         const rangeSelector = chart.rangeSelector;
         const dropdown = (
@@ -259,14 +192,14 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             }
             buttons.forEach((btn): void => unhideChartElementFromAT(chart, btn.element));
         }
-    },
+    }
 
 
     /**
      * Set accessibility related attributes on dropdown element.
      * @private
      */
-    setDropdownAttrs: function (this: Highcharts.RangeSelectorComponent): void {
+    public setDropdownAttrs(): void {
         const chart = this.chart;
         const dropdown = (
             chart.rangeSelector &&
@@ -279,29 +212,27 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             dropdown.setAttribute('aria-label', label);
             dropdown.setAttribute('tabindex', -1);
         }
-    },
+    }
 
 
     /**
      * @private
      * @param {Highcharts.SVGElement} button
      */
-    setRangeButtonAttrs: function (
-        this: Highcharts.RangeSelectorComponent,
+    public setRangeButtonAttrs(
         button: SVGElement
     ): void {
         attr(button.element, {
             tabindex: -1,
             role: 'button'
         });
-    },
+    }
 
 
     /**
      * @private
      */
-    setRangeInputAttrs: function (
-        this: Highcharts.RangeSelectorComponent,
+    public setRangeInputAttrs(
         input: HTMLDOMElement,
         langKey: string
     ): void {
@@ -311,7 +242,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             tabindex: -1,
             'aria-label': chart.langFormat(langKey, { chart: chart })
         });
-    },
+    }
 
 
     /**
@@ -320,8 +251,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @param {number} keyCode
      * @return {number} Response code
      */
-    onButtonNavKbdArrowKey: function (
-        this: Highcharts.RangeSelectorComponent,
+    public onButtonNavKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
@@ -346,14 +276,13 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         }
 
         return response.success;
-    },
+    }
 
 
     /**
      * @private
      */
-    onButtonNavKbdClick: function (
-        this: Highcharts.RangeSelectorComponent,
+    public onButtonNavKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
         const response = keyboardNavigationHandler.response,
@@ -369,7 +298,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         }
 
         return response.success;
-    },
+    }
 
 
     /**
@@ -377,9 +306,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * mouse, touch, or kbd/voice/other.
      * @private
      */
-    onAfterBtnClick: function (
-        this: Highcharts.RangeSelectorComponent
-    ): void {
+    public onAfterBtnClick(): void {
         const chart = this.chart;
         const axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
         const announcement = chart.langFormat(
@@ -390,14 +317,13 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         if (announcement) {
             this.announcer.announce(announcement);
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    onInputKbdMove: function (
-        this: Highcharts.RangeSelectorComponent,
+    public onInputKbdMove(
         direction: number
     ): void {
         const chart = this.chart;
@@ -419,15 +345,14 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 chart.setFocusToElement(svgEl, inputEl);
             }
         }
-    },
+    }
 
 
     /**
      * @private
      * @param {number} direction
      */
-    onInputNavInit: function (
-        this: Highcharts.RangeSelectorComponent,
+    public onInputNavInit(
         direction: number
     ): void {
         const component = this;
@@ -467,15 +392,13 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 maxRemover();
             };
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    onInputNavTerminate: function (
-        this: Highcharts.RangeSelectorComponent
-    ): void {
+    public onInputNavTerminate(): void {
         const rangeSel: Highcharts.RangeSelector = (
             (this.chart as any).rangeSelector || {}
         );
@@ -491,13 +414,13 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.removeInputKeydownHandler();
             delete this.removeInputKeydownHandler;
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    initDropdownNav: function (this: Highcharts.RangeSelectorComponent): void {
+    public initDropdownNav(): void {
         const chart = this.chart;
         const rangeSelector = chart.rangeSelector;
         const dropdown = (rangeSelector && rangeSelector.dropdown);
@@ -524,7 +447,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                     }
                 });
         }
-    },
+    }
 
 
     /**
@@ -532,9 +455,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @private
      * @return {Highcharts.KeyboardNavigationHandler} The module object.
      */
-    getRangeSelectorButtonNavigation: function (
-        this: Highcharts.RangeSelectorComponent
-    ): KeyboardNavigationHandler {
+    public getRangeSelectorButtonNavigation(): KeyboardNavigationHandler {
         const chart = this.chart;
         const keys = this.keyCodes;
         const component = this;
@@ -587,7 +508,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 }
             }
         });
-    },
+    }
 
 
     /**
@@ -596,9 +517,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @return {Highcharts.KeyboardNavigationHandler}
      *         The module object.
      */
-    getRangeSelectorInputNavigation: function (
-        this: Highcharts.RangeSelectorComponent
-    ): KeyboardNavigationHandler {
+    public getRangeSelectorInputNavigation(): KeyboardNavigationHandler {
         const chart = this.chart;
         const component = this;
 
@@ -617,7 +536,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 component.onInputNavTerminate();
             }
         });
-    },
+    }
 
 
     /**
@@ -625,20 +544,18 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
      * @return {Array<Highcharts.KeyboardNavigationHandler>}
      *         List of module objects.
      */
-    getKeyboardNavigation: function (
-        this: Highcharts.RangeSelectorComponent
-    ): Array<KeyboardNavigationHandler> {
+    public getKeyboardNavigation(): Array<KeyboardNavigationHandler> {
         return [
             this.getRangeSelectorButtonNavigation(),
             this.getRangeSelectorInputNavigation()
         ];
-    },
+    }
 
 
     /**
      * Remove component traces
      */
-    destroy: function (this: Highcharts.RangeSelectorComponent): void {
+    public destroy(): void {
         if (this.removeDropdownKeydownHandler) {
             this.removeDropdownKeydownHandler();
         }
@@ -649,6 +566,162 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.announcer.destroy();
         }
     }
-});
+
+
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+
+interface RangeSelectorComponent {
+    chart: RangeSelectorComponent.ChartComposition;
+}
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+
+namespace RangeSelectorComponent {
+
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+
+    export declare class ChartComposition extends Accessibility.ChartComposition {
+        highlightedInputRangeIx?: number;
+        highlightedRangeSelectorItemIx?: number;
+        oldRangeSelectorItemState?: number;
+        /** @requires modules/accessibility */
+        highlightRangeSelectorButton(ix: number): boolean;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+
+    const composedClasses: Array<Function> = [];
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+
+    /**
+     * Highlight range selector button by index.
+     *
+     * @private
+     * @function Highcharts.Chart#highlightRangeSelectorButton
+     */
+    function chartHighlightRangeSelectorButton(
+        this: ChartComposition,
+        ix: number
+    ): boolean {
+        const buttons: Array<SVGElement> = (
+            this.rangeSelector &&
+            this.rangeSelector.buttons ||
+            []
+        );
+        const curHighlightedIx = this.highlightedRangeSelectorItemIx;
+        const curSelectedIx = (
+            this.rangeSelector &&
+            this.rangeSelector.selected
+        );
+
+        // Deselect old
+        if (
+            typeof curHighlightedIx !== 'undefined' &&
+            buttons[curHighlightedIx] &&
+            curHighlightedIx !== curSelectedIx
+        ) {
+            buttons[curHighlightedIx].setState(
+                this.oldRangeSelectorItemState || 0
+            );
+        }
+
+        // Select new
+        this.highlightedRangeSelectorItemIx = ix;
+        if (buttons[ix]) {
+            this.setFocusToElement(buttons[ix].box, buttons[ix].element);
+
+            if (ix !== curSelectedIx) {
+                this.oldRangeSelectorItemState = buttons[ix].state;
+                buttons[ix].setState(1);
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        RangeSelectorClass: typeof RangeSelector
+    ): void {
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.highlightRangeSelectorButton = chartHighlightRangeSelectorButton;
+        }
+        if (composedClasses.indexOf(RangeSelectorClass) === -1) {
+            composedClasses.push(RangeSelectorClass);
+
+            addEvent(RangeSelector, 'afterBtnClick', rangeSelectorAfterBtnClick);
+        }
+    }
+
+
+    /**
+     * Range selector does not have destroy-setup for class instance events - so
+     * we set it on the class and call the component from here.
+     * @private
+     */
+    function rangeSelectorAfterBtnClick(
+        this: RangeSelector
+    ): void {
+        if (
+            this.chart.accessibility &&
+            this.chart.accessibility.components.rangeSelector
+        ) {
+            return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
+        }
+    }
+
+}
+
+
+/* *
+ *
+ *  Export Default
+ *
+ * */
+
 
 export default RangeSelectorComponent;

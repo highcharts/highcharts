@@ -5,7 +5,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         p.value = (p.value < 1 ? 1 : p.value);
     });
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
         chart: {
             map: 'custom/world'

@@ -9,11 +9,11 @@ describe('An indicator on indicator, #15696.', () => {
 
     it('There should be a possibility to add indicators based on other indicator, #15696.', () => {
         cy.openIndicators();
-
+        cy.selectIndicator('SMA')
         cy.addIndicator(); // Add SMA indicator.
 
         cy.openIndicators();
-
+        cy.selectIndicator('SMA')
         cy.get('#highcharts-select-series')
             .contains('SMA (14)')
 
