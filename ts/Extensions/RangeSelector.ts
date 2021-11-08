@@ -35,7 +35,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
@@ -721,7 +721,7 @@ extend(defaultOptions, {
          */
         inputStyle: {
             /** @ignore */
-            color: palette.highlightColor80,
+            color: Palette.highlightColor80,
             /** @ignore */
             cursor: 'pointer'
         },
@@ -739,7 +739,7 @@ extend(defaultOptions, {
          */
         labelStyle: {
             /** @ignore */
-            color: palette.neutralColor60
+            color: Palette.neutralColor60
         }
     } as Highcharts.RangeSelectorOptions
 });
@@ -856,7 +856,6 @@ class RangeSelector {
      * @param {number} i
      *        The index of the button
      * @param {boolean} [redraw]
-     * @return {void}
      */
     public clickButton(
         i: number,
@@ -1033,7 +1032,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#setSelected
      * @param {number} [selected]
-     * @return {void}
      */
     public setSelected(
         selected?: number
@@ -1047,7 +1045,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#init
      * @param {Highcharts.Chart} chart
-     * @return {void}
      */
     public init(
         chart: Chart
@@ -1117,7 +1114,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#updateButtonStates
-     * @return {void}
      */
     public updateButtonStates(): void {
         let rangeSelector = this,
@@ -1255,7 +1251,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#computeButtonRange
      * @param {Highcharts.RangeSelectorButtonsOptions} rangeOptions
-     * @return {void}
      */
     public computeButtonRange(
         rangeOptions: Highcharts.RangeSelectorButtonsOptions
@@ -1295,8 +1290,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#getInputValue
-     * @param {string} name
-     * @return {number}
      */
     public getInputValue(name: string): number {
         const input = name === 'min' ? this.minInput : this.maxInput;
@@ -1317,9 +1310,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#setInputValue
-     * @param {string} name
-     * @param {number} [inputTime]
-     * @return {void}
      */
     public setInputValue(
         name: string,
@@ -1363,10 +1353,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#setInputExtremes
-     * @param {string} name
-     * @param {number} min
-     * @param {number} max
-     * @return {void}
      */
     public setInputExtremes(
         name: string,
@@ -1395,7 +1381,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#showInput
      * @param {string} name
-     * @return {void}
      */
     public showInput(name: ('min'|'max')): void {
         const dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
@@ -1442,7 +1427,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#hideInput
      * @param {string} name
-     * @return {void}
      */
     public hideInput(name: ('min'|'max')): void {
         const input = name === 'min' ? this.minInput : this.maxInput;
@@ -1502,8 +1486,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#drawInput
-     * @param {string} name
-     * @return {RangeSelectorInputElements}
      */
     public drawInput(name: ('min'|'max')): Highcharts.RangeSelectorInputElements {
         const {
@@ -1570,9 +1552,9 @@ class RangeSelector {
         }
 
         // Create the text label
-        const text: string = (lang as any)[
+        const text = lang[
             isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'
-        ];
+        ] || '';
         const label = renderer
             .label(text, 0)
             .addClass('highcharts-range-label')
@@ -1626,7 +1608,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: palette.neutralColor80
+                color: Palette.neutralColor80
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({
@@ -1703,8 +1685,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#getPosition
-     *
-     * @return {Highcharts.Dictionary<number>}
      */
     public getPosition(): Record<string, number> {
         const chart = this.chart,
@@ -1726,13 +1706,8 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#getYTDExtremes
-     *
-     * @param {number} dataMax
-     *
-     * @param {number} dataMin
-     *
      * @return {*}
-     *         Returns min and max for the YTD
+     * Returns min and max for the YTD
      */
     public getYTDExtremes(
         dataMax: number,
@@ -1766,7 +1741,6 @@ class RangeSelector {
      *        X axis minimum
      * @param {number} [max]
      *        X axis maximum
-     * @return {void}
      */
     public render(
         min?: number,
@@ -1887,7 +1861,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#renderButtons
-     * @return {void}
      */
     public renderButtons(): void {
         const {
@@ -2016,7 +1989,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#alignElements
-     * @return {void}
      */
     public alignElements(): void {
         const {
@@ -2234,7 +2206,6 @@ class RangeSelector {
      * @function Highcharts.RangeSelector#alignButtonGroup
      * @param {number} xOffsetForExportButton
      * @param {number} [width]
-     * @return {void}
      */
     public alignButtonGroup(xOffsetForExportButton: number, width?: number): void {
         const { chart, options, buttonGroup, buttons } = this;
@@ -2262,7 +2233,6 @@ class RangeSelector {
     /**
      * @private
      * @function Highcharts.RangeSelector#positionButtons
-     * @return {void}
      */
     public positionButtons(): void {
         const {
@@ -2312,7 +2282,6 @@ class RangeSelector {
      * @param  {number} xOffsetForExportButton
      *                  The X offset of the group required to make room for the
      *                  exporting button
-     * @return {void}
      */
     public handleCollision(xOffsetForExportButton: number): void {
         const {
@@ -2434,7 +2403,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#collapseButtons
      * @param {number} xOffsetForExportButton
-     * @return {void}
      */
     public collapseButtons(xOffsetForExportButton: number): void {
         const {
@@ -2515,7 +2483,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#expandButtons
-     * @return {void}
      */
     public expandButtons(): void {
         const {
@@ -2558,7 +2525,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#currentButtonIndex
-     * @return {number}
      */
     public currentButtonIndex(): number {
         const { dropdown } = this;
@@ -2574,7 +2540,6 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#showDropdown
-     * @return {void}
      */
     public showDropdown(): void {
         const {
@@ -2600,7 +2565,6 @@ class RangeSelector {
     /**
      * @private
      * @function Highcharts.RangeSelector#hideDropdown
-     * @return {void}
      */
     public hideDropdown(): void {
         const { dropdown } = this;
@@ -2621,7 +2585,7 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#getHeight
      * @return {number}
-     *         Returns rangeSelector height
+     * Returns rangeSelector height
      */
     public getHeight(): number {
         let rangeSelector = this,
@@ -2665,11 +2629,8 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#titleCollision
-     *
-     * @param {Highcharts.Chart} chart
-     *
      * @return {boolean}
-     *         Returns collision status
+     * Returns collision status
      */
     public titleCollision(
         chart: Chart
@@ -2686,7 +2647,6 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#update
      * @param {Highcharts.RangeSelectorOptions} options
-     * @return {void}
      */
     public update(
         this: Highcharts.RangeSelector,
@@ -2803,8 +2763,6 @@ RangeSelector.prototype.inputTypeFormats = {
  *
  * @private
  * @function preferredInputType
- * @param {string} format
- * @return {string}
  */
 function preferredInputType(format: string): string {
     const ms = format.indexOf('%L') !== -1;

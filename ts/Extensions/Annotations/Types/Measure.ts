@@ -18,6 +18,7 @@ import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
+    defined,
     extend,
     isNumber,
     merge,
@@ -348,7 +349,7 @@ class Measure extends Annotation {
 
             return bins;
         }
-    }
+    };
 
     /* *
      *
@@ -402,7 +403,6 @@ class Measure extends Annotation {
     /**
      * Get measure points configuration objects.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
@@ -411,7 +411,6 @@ class Measure extends Annotation {
     /**
      * Get points configuration objects for shapes.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -448,8 +447,21 @@ class Measure extends Annotation {
     }
 
     public addControlPoints(): void {
+        const inverted = this.chart.inverted,
+            options = this.options.controlPointOptions;
         let selectType = this.options.typeOptions.selectType,
             controlPoint;
+
+        if (!defined(
+            this.userOptions.controlPointOptions &&
+            this.userOptions.controlPointOptions.style.cursor
+        )) {
+            if (selectType === 'x') {
+                options.style.cursor = inverted ? 'ns-resize' : 'ew-resize';
+            } else if (selectType === 'y') {
+                options.style.cursor = inverted ? 'ew-resize' : 'ns-resize';
+            }
+        }
 
         controlPoint = new ControlPoint(
             this.chart,
@@ -546,10 +558,16 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-            type: 'path',
-            points: this.shapePointsOptions()
-        }, this.options.typeOptions.background), false as any);
+        this.initShape(
+            extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                {
+                    type: 'path',
+                    points: this.shapePointsOptions()
+                },
+                this.options.typeOptions.background
+            ),
+            2
+        );
     }
 
     /**
@@ -624,13 +642,21 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathH
-            }, crosshairOptionsX), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathH },
+                    crosshairOptionsX
+                ),
+                0
+            );
 
-            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
-                d: pathV
-            }, crosshairOptionsY), false as any);
+            this.initShape(
+                extend<Partial<Highcharts.AnnotationsShapeOptions>>(
+                    { d: pathV },
+                    crosshairOptionsY
+                ),
+                1
+            );
 
         }
     }
@@ -654,10 +680,14 @@ class Measure extends Annotation {
      * Translate start or end ("left" or "right") side of the measure.
      * Update start points (startXMin, startXMax, startYMin, startYMax)
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {number} cpIndex - index of control point
-     * @param {Highcharts.AnnotationDraggableValue} selectType - x / y / xy
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {number} cpIndex
+     * index of control point
+     * @param {Highcharts.AnnotationDraggableValue} selectType
+     * x / y / xy
      */
     public resize(
         dx: number,
@@ -707,8 +737,10 @@ class Measure extends Annotation {
      * Redraw event which render elements and update start points if needed.
      * @private
      * @param {boolean} animation
-     * @param {boolean} [resize] - flag if resized
-     * @param {boolean} [setStartPoints] - update position of start points
+     * @param {boolean} [resize]
+     * flag if resized
+     * @param {boolean} [setStartPoints]
+     * update position of start points
      */
     public redraw(
         animation: boolean,
@@ -951,7 +983,7 @@ Measure.prototype.defaultOptions = merge(
                  *
                  * </table>
                  *
-                 * @type      {function}
+                 * @type {Function}
                  *
                  */
                 formatter: void 0

@@ -1,0 +1,70 @@
+@import "https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css";
+
+.wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.chart {
+    height: 150px;
+    clear: both;
+}
+
+.ui-datepicker {
+    width: 309px;
+    margin-right: 30px;
+}
+
+#date-picker {
+    display: inline-block;
+    float: left;
+}
+
+.custom-tooltip {
+    display: inline-block;
+    width: calc(100% - 310px - 4em);
+    height: 100%;
+}
+
+.col-right {
+    width: 50%;
+    display: inline-block;
+}
+
+.col-left {
+    float: left;
+    width: 50%;
+    display: inline-block;
+}
+
+#tooltip-values {
+    width: 100%;
+    display: inline-block;
+}
+
+.info-cell {
+    margin: 30px 20px 20px 0;
+}
+
+.info-cell strong {
+    font-size: 1.2em;
+}
+
+@media (max-width: 768px) {
+    .custom-tooltip {
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+
+    .ui-datepicker {
+        float: unset;
+        margin: 0 auto;
+    }
+
+    #date-picker {
+        width: 100%;
+        float: unset;
+        margin: 0 auto;
+    }
+}

@@ -29,7 +29,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -189,14 +189,14 @@ class FunnelSeries extends PieSeries {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                color: palette.neutralColor20,
+                color: Palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
                  *
                  * @type {Highcharts.ColorString}
                  */
-                borderColor: palette.neutralColor100
+                borderColor: Palette.neutralColor100
             }
         }
     } as FunnelSeriesOptions);
@@ -256,10 +256,16 @@ class FunnelSeries extends PieSeries {
             y = dlBox.y,
             x = dlBox.x;
 
+        // #16176: Only SVGLabel has height set
+        const dataLabelHeight = pick(
+            dataLabel.height,
+            dataLabel.getBBox().height
+        );
+
         if (verticalAlign === 'middle') {
-            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+            y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabel.height +
+            y = dlBox.y - dlBox.height + dataLabelHeight +
                 options.padding;
         }
 
@@ -603,7 +609,7 @@ class FunnelSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

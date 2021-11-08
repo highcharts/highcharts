@@ -45,7 +45,10 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                 enabled: true,
                 color: '#FFFFFF',
                 formatter: function () {
-                    if (this.point.graphic.getBBox().width > 30) {
+                    if (
+                        this.point.graphic.getBBox().width *
+                        this.series.chart.mapView.getScale() > 30
+                    ) {
                         return Highcharts.numberFormat(this.point.value, 1);
                     }
                 },

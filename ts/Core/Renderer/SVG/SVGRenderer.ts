@@ -49,7 +49,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette.js';
+import { Palette } from '../../Color/Palettes.js';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -512,6 +512,7 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#destroy
      *
      * @return {null}
+     * Pass through value.
      */
     public destroy(): null {
         const renderer = this,
@@ -1248,8 +1249,7 @@ class SVGRenderer implements SVGRendererLike {
         height?: number,
         onload?: Function
     ): SVGElement {
-        const attribs: SVGAttributes =
-            { preserveAspectRatio: 'none' },
+        const attribs: SVGAttributes = { preserveAspectRatio: 'none' },
             setSVGImageSource = function (
                 el: SVGElement,
                 src: string
@@ -1267,15 +1267,20 @@ class SVGRenderer implements SVGRendererLike {
                 }
             };
 
-        // optional properties
-        if (arguments.length > 1) {
-            extend(attribs, {
-                x: x,
-                y: y,
-                width: width,
-                height: height
-            });
+        // Optional properties (#11756)
+        if (isNumber(x)) {
+            attribs.x = x;
         }
+        if (isNumber(y)) {
+            attribs.y = y;
+        }
+        if (isNumber(width)) {
+            attribs.width = width;
+        }
+        if (isNumber(height)) {
+            attribs.height = height;
+        }
+
 
         const elemWrapper = this.createElement('image').attr(attribs) as any,
             onDummyLoad = function (e: Event): void {
@@ -1332,6 +1337,7 @@ class SVGRenderer implements SVGRendererLike {
      * Additional options, depending on the actual symbol drawn.
      *
      * @return {Highcharts.SVGElement}
+     * SVG symbol.
      */
     public symbol(
         symbol: SymbolKey,
@@ -1631,7 +1637,7 @@ class SVGRenderer implements SVGRendererLike {
 
         const wrapper = renderer.createElement('text').attr(attribs);
 
-        if (!useHTML) {
+        if (!useHTML || (renderer.forExport && !renderer.allowHTML)) {
             wrapper.xSetter = function (
                 value: string,
                 key: string,
@@ -1720,14 +1726,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#rotCorr
-     *
-     * @param {number} baseline
-     *
-     * @param {number} rotation
-     *
-     * @param {boolean} [alterY]
-     *
-     * @param {Highcharts.PositionObject}
      */
     public rotCorr(
         baseline: number,
@@ -2071,7 +2069,6 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @private
      * @function Highcharts.SVGRenderer#alignElements
-     * @return {void}
      */
     public alignElements(): void {
         this.alignedObjects.forEach((el): SVGElement => el.align());

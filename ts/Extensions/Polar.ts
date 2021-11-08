@@ -146,8 +146,8 @@ declare global {
                     PolarSeries['searchPointByAngle'] :
                     Series['searchPoint']
             );
-            xAxis: RadialAxis;
-            yAxis: RadialAxis;
+            xAxis: RadialAxis.AxisComposition;
+            yAxis: RadialAxis.AxisComposition;
             getConnectors(
                 segment: Array<Point>,
                 index: number,
@@ -598,7 +598,7 @@ const polarAnimate = function (
         animation = this.options.animation,
         group = this.group,
         markerGroup = this.markerGroup,
-        center = this.xAxis.center,
+        center = this.xAxis && this.xAxis.center,
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
         attribs: SVGAttributes,
@@ -1153,7 +1153,8 @@ addEvent(Chart, 'getAxes', function (): void {
     if (!this.pane) {
         this.pane = [];
     }
-    splat(this.options.pane).forEach(function (
+    this.options.pane = splat(this.options.pane);
+    this.options.pane.forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
         new Pane( // eslint-disable-line no-new

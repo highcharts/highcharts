@@ -235,7 +235,7 @@ class MFIIndicator extends SMAIndicator {
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 

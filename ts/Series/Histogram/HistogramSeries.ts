@@ -21,7 +21,8 @@ import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type Series from '../../Core/Series/Series';
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -68,9 +69,9 @@ const binsNumberFormulas: Record<string, Function> = {
 /**
  * Returns a function for mapping number to the closed (right opened) bins
  * @private
- * @param {Array<number>} bins - Width of the bins
- * @return {Function}
- **/
+ * @param {Array<number>} bins
+ * Width of the bins
+ */
 function fitToBinLeftClosed(bins: Array<number>): Function {
     return function (y: number): number {
         let i = 1;
@@ -128,7 +129,7 @@ class HistogramSeries extends ColumnSeries {
          * which takes a `baseSeries` as a parameter and should return a
          * positive integer.
          *
-         * @type {"square-root"|"sturges"|"rice"|number|function}
+         * @type {"square-root"|"sturges"|"rice"|number|Function}
          */
         binsNumber: 'square-root',
 
@@ -307,28 +308,25 @@ class HistogramSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface HistogramSeries {
-    addBaseSeriesEvents: Highcharts.DerivedSeriesMixin['addBaseSeriesEvents'];
-    addEvents: Highcharts.DerivedSeriesMixin['addEvents'];
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-    init: Highcharts.DerivedSeriesMixin['init'];
-    initialised: Highcharts.DerivedSeries['initialised'];
+interface HistogramSeries extends DerivedComposition.SeriesComposition {
+    animate: typeof ColumnSeries.prototype.animate;
+    destroy: typeof ColumnSeries.prototype.destroy;
+    group: typeof ColumnSeries.prototype.group;
+    init: typeof ColumnSeries.prototype.init;
+    pointAttribs: typeof ColumnSeries.prototype.pointAttribs;
     pointClass: typeof HistogramPoint;
-    setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
+    remove: typeof ColumnSeries.prototype.remove;
 }
+
 extend(HistogramSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
+    hasDerivedData: DerivedComposition.hasDerivedData
 });
+
+DerivedComposition.compose(HistogramSeries);
 
 /* *
  *

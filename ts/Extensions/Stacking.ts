@@ -123,7 +123,7 @@ declare global {
         }
         interface StackItemObject {
             alignOptions: AlignObject;
-            axis: StackingAxis;
+            axis: StackingAxis.Composition;
             cumulative?: number;
             crop?: boolean;
             isNegative: boolean;
@@ -161,14 +161,14 @@ declare global {
         }
         class StackItem {
             public constructor(
-                axis: StackingAxis,
+                axis: StackingAxis.Composition,
                 options: YAxisStackLabelsOptions,
                 isNegative: boolean,
                 x: number,
                 stackOption?: OptionsStackingValue
             );
             public alignOptions: AlignObject;
-            public axis: StackingAxis;
+            public axis: StackingAxis.Composition;
             public base?: string;
             public cumulative?: (null|number);
             public hasValidPoints: boolean;
@@ -228,7 +228,7 @@ declare global {
  */
 class StackItem {
     public constructor(
-        axis: StackingAxis,
+        axis: StackingAxis.Composition,
         options: Highcharts.YAxisStackLabelsOptions,
         isNegative: boolean,
         x: number,
@@ -278,7 +278,7 @@ class StackItem {
     }
 
     public alignOptions: AlignObject;
-    public axis: StackingAxis;
+    public axis: StackingAxis.Composition;
     public base?: string;
     public cumulative?: (null|number);
     public hasValidPoints: boolean;
@@ -497,22 +497,6 @@ class StackItem {
     /**
      * @private
      * @function Highcharts.StackItem#getStackBox
-     *
-     * @param {Highcharts.Chart} chart
-     *
-     * @param {Highcharts.StackItem} stackItem
-     *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {number} xWidth
-     *
-     * @param {number} h
-     *
-     * @param {Highcharts.Axis} axis
-     *
-     * @return {Highcharts.BBoxObject}
      */
     public getStackBox(
         chart: Chart,
@@ -655,7 +639,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
         stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stacks = yAxis.stacking.stacks,
         oldStacks = yAxis.stacking.oldStacks,
         stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
@@ -805,7 +789,7 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
  */
 Series.prototype.modifyStacks = function (): void {
     let series = this,
-        yAxis = series.yAxis as StackingAxis,
+        yAxis = series.yAxis as StackingAxis.Composition,
         stackKey = series.stackKey,
         stacks = yAxis.stacking.stacks,
         processedXData = series.processedXData,
@@ -868,11 +852,6 @@ Series.prototype.percentStacker = function (
  *
  * @private
  * @function Highcharts.Series#getStackIndicator
- * @param {Highcharts.StackItemIndicatorObject|undefined} stackIndicator
- * @param {number} x
- * @param {number} index
- * @param {string} [key]
- * @return {Highcharts.StackItemIndicatorObject}
  */
 Series.prototype.getStackIndicator = function (
     stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),

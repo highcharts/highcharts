@@ -38,5 +38,20 @@ Highcharts.chart('container', {
         size: '170%',
         startAngle: -100,
         endAngle: 100
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 600
+            },
+            chartOptions: {
+                series: [{
+                    dataLabels: {
+                        distance: -30
+                    }
+                }]
+            }
+        }]
+    }
 });

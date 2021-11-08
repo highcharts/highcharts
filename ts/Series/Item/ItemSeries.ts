@@ -18,6 +18,7 @@
  *
  * */
 
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
 import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -486,8 +487,7 @@ class ItemSeries extends PieSeries {
          * @private
          * @param {Highcharts.ItemRowContainerObject} item
          * Wrapped object with angle and row
-         * @return {void}
-         */
+             */
         function cutOffRow(item: ItemSeries.RowContainerObject): void {
             if (overshoot > 0) {
                 item.row.colCount--;
@@ -570,7 +570,7 @@ class ItemSeries extends PieSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
@@ -588,7 +588,7 @@ extend(ItemSeries.prototype, {
  * */
 
 namespace ItemSeries {
-    export interface GeometryObject extends Highcharts.GeometryObject {
+    export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
     export interface RowContainerObject {
@@ -682,7 +682,7 @@ export default ItemSeries;
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
- * @excludes  sliced
+ * @exclude   sliced
  * @product   highcharts
  * @apioption series.item.data
  */

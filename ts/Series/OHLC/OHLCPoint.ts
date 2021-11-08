@@ -19,11 +19,12 @@
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
+import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
     seriesTypes: {
-        column: ColumnSeries
+        hlc: HLCSeries
     }
 } = SeriesRegistry;
 
@@ -33,7 +34,7 @@ const {
  *
  * */
 
-class OHLCPoint extends ColumnSeries.prototype.pointClass {
+class OHLCPoint extends HLCSeries.prototype.pointClass {
 
     /* *
      *
@@ -41,27 +42,13 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
-    public close: number = void 0 as any;
-
-    public high: number = void 0 as any;
-
-    public low: number = void 0 as any;
-
     public open: number = void 0 as any;
 
     public options: OHLCPointOptions = void 0 as any;
 
-    public plotClose: number = void 0 as any;
-
-    public plotHigh?: number;
-
-    public plotLow?: number;
-
     public plotOpen: number = void 0 as any;
 
     public series: OHLCSeries = void 0 as any;
-
-    public yBottom?: number;
 
     /* *
      *
@@ -75,7 +62,6 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
      * Extend the parent method by adding up or down to the class name.
      * @private
      * @function Highcharts.seriesTypes.ohlc#getClassName
-     * @return {string}
      */
     public getClassName(): string {
         return super.getClassName.call(this) +
@@ -126,6 +112,18 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
         return zone;
     }
 
+    /**
+     * Extend the parent method by resolving up/down colors (#15849)
+     * @private
+     **/
+    public applyOptions(): Point {
+        super.applyOptions.apply(this, arguments);
+        if (this.resolveColor) {
+            this.resolveColor();
+        }
+        return this;
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
@@ -137,7 +135,7 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 namespace OHLCPoint {
-    export type PointShortOptions = [number, number, number, number];
+    export type PointShortOptions = Array<number>;
 }
 
 /* *

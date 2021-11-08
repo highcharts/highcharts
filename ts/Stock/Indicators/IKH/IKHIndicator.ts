@@ -143,7 +143,7 @@ function drawSenkouSpan(
     indicator.options = merge(
         (opt.options.senkouSpan as any).styles,
         opt.gap
-    ) as any;
+    );
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
@@ -909,13 +909,12 @@ class IKHIndicator extends SMAIndicator {
     }
 }
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 /* *
-*
-* Prototype Properties
-*
-* */
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;

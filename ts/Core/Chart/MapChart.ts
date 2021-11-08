@@ -18,17 +18,29 @@
 
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
+import type { ProjectionRotationOption } from '../../Maps/ProjectionOptions';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
 import D from '../DefaultOptions.js';
 const { getOptions } = D;
+import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
+    addEvent,
+    clamp,
+    isNumber,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+
+
+declare module './ChartLike'{
+    interface ChartLike {
+        mapView?: MapView;
+    }
+}
 
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -53,29 +65,21 @@ class MapChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.MapChart#event:init
-     * @fires Highcharts.MapChart#event:afterInit
+     * @emits Highcharts.MapChart#event:init
+     * @emits Highcharts.MapChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        const hiddenAxis = {
-                endOnTick: false,
-                visible: false,
-                minPadding: 0,
-                maxPadding: 0,
-                startOnTick: false
-            },
-            defaultCreditsOptions = getOptions().credits;
 
-        /* For visual testing
-        hiddenAxis.gridLineWidth = 1;
-        hiddenAxis.gridZIndex = 10;
-        hiddenAxis.tickPositions = undefined;
-        // */
+        // Initialize the MapView after initialization, but before firstRender
+        addEvent(this, 'afterInit', function (): void {
+            this.mapView = new MapView(this, this.options.mapView);
+        });
+
+        const defaultCreditsOptions = getOptions().credits;
 
         const options = merge(
             {
@@ -97,20 +101,12 @@ class MapChart extends Chart {
                         '{geojson.copyright}'
                     )
                 },
+                mapView: {}, // Required to enable Chart.mapView
                 tooltip: {
                     followTouchMove: false
-                },
-                xAxis: hiddenAxis,
-                yAxis: merge(hiddenAxis, { reversed: true })
-            },
-            userOptions, // user's options
-
-            { // forced options
-                chart: {
-                    inverted: false,
-                    alignTicks: false
                 }
-            }
+            },
+            userOptions // user's options
         );
 
         super.init(options, callback);
@@ -177,6 +173,7 @@ namespace MapChart {
      * @param {string|Array<string|number>} path
      *
      * @return {Highcharts.SVGPathArray}
+     * Splitted SVG path
      */
     export function splitPath(
         path: string|Array<string|number>

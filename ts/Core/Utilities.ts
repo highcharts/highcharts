@@ -10,6 +10,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type {
@@ -32,349 +38,16 @@ const {
  *  Declarations
  *
  * */
+
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
 
-/**
- * An animation configuration. Animation configurations can also be defined as
- * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms and defer of 0ms.
+/* *
  *
- * @interface Highcharts.AnimationOptionsObject
- *//**
- * A callback function to exectute when the animation finishes.
- * @name Highcharts.AnimationOptionsObject#complete
- * @type {Function|undefined}
- *//**
- * The animation defer in milliseconds.
- * @name Highcharts.AnimationOptionsObject#defer
- * @type {number|undefined}
- *//**
- * The animation duration in milliseconds.
- * @name Highcharts.AnimationOptionsObject#duration
- * @type {number|undefined}
- *//**
- * The name of an easing function as defined on the `Math` object.
- * @name Highcharts.AnimationOptionsObject#easing
- * @type {string|Function|undefined}
- *//**
- * A callback function to execute on each step of each attribute or CSS property
- * that's being animated. The first argument contains information about the
- * animation and progress.
- * @name Highcharts.AnimationOptionsObject#step
- * @type {Function|undefined}
- */
-
-/**
- * Creates a frame for the animated SVG element.
+ *  Functions
  *
- * @callback Highcharts.AnimationStepCallbackFunction
- *
- * @param {Highcharts.SVGElement} this
- *        The SVG element to animate.
- *
- * @return {void}
- */
-
-/**
- * Interface description for a class.
- *
- * @interface Highcharts.Class<T>
- * @extends Function
- *//**
- * Class costructor.
- * @function Highcharts.Class<T>#new
- * @param {...Array<*>} args
- *        Constructor arguments.
- * @return {T}
- *         Class instance.
- */
-
-/**
- * A style object with camel case property names to define visual appearance of
- * a SVG element or HTML element. The properties can be whatever styles are
- * supported on the given SVG or HTML element.
- *
- * @example
- * {
- *    fontFamily: 'monospace',
- *    fontSize: '1.2em'
- * }
- *
- * @interface Highcharts.CSSObject
- *//**
- * @name Highcharts.CSSObject#[key:string]
- * @type {boolean|number|string|undefined}
- *//**
- * Background style for the element.
- * @name Highcharts.CSSObject#background
- * @type {string|undefined}
- *//**
- * Background color of the element.
- * @name Highcharts.CSSObject#backgroundColor
- * @type {Highcharts.ColorString|undefined}
- *//**
- * Border style for the element.
- * @name Highcharts.CSSObject#border
- * @type {string|undefined}
- *//**
- * Radius of the element border.
- * @name Highcharts.CSSObject#borderRadius
- * @type {number|undefined}
- *//**
- * Color used in the element. The 'contrast' option is a Highcharts custom
- * property that results in black or white, depending on the background of the
- * element.
- * @name Highcharts.CSSObject#color
- * @type {'contrast'|Highcharts.ColorString|undefined}
- *//**
- * Style of the mouse cursor when resting over the element.
- * @name Highcharts.CSSObject#cursor
- * @type {Highcharts.CursorValue|undefined}
- *//**
- * Font family of the element text. Multiple values have to be in decreasing
- * preference order and separated by comma.
- * @name Highcharts.CSSObject#fontFamily
- * @type {string|undefined}
- *//**
- * Font size of the element text.
- * @name Highcharts.CSSObject#fontSize
- * @type {string|undefined}
- *//**
- * Font weight of the element text.
- * @name Highcharts.CSSObject#fontWeight
- * @type {string|undefined}
- *//**
- * Height of the element.
- * @name Highcharts.CSSObject#height
- * @type {number|undefined}
- *//**
- * Width of the element border.
- * @name Highcharts.CSSObject#lineWidth
- * @type {number|undefined}
- *//**
- * Opacity of the element.
- * @name Highcharts.CSSObject#opacity
- * @type {number|undefined}
- *//**
- * Space around the element content.
- * @name Highcharts.CSSObject#padding
- * @type {string|undefined}
- *//**
- * Behaviour of the element when the mouse cursor rests over it.
- * @name Highcharts.CSSObject#pointerEvents
- * @type {string|undefined}
- *//**
- * Positioning of the element.
- * @name Highcharts.CSSObject#position
- * @type {string|undefined}
- *//**
- * Alignment of the element text.
- * @name Highcharts.CSSObject#textAlign
- * @type {string|undefined}
- *//**
- * Additional decoration of the element text.
- * @name Highcharts.CSSObject#textDecoration
- * @type {string|undefined}
- *//**
- * Outline style of the element text.
- * @name Highcharts.CSSObject#textOutline
- * @type {string|undefined}
- *//**
- * Line break style of the element text. Highcharts SVG elements support
- * `ellipsis` when a `width` is set.
- * @name Highcharts.CSSObject#textOverflow
- * @type {string|undefined}
- *//**
- * Top spacing of the element relative to the parent element.
- * @name Highcharts.CSSObject#top
- * @type {string|undefined}
- *//**
- * Animated transition of selected element properties.
- * @name Highcharts.CSSObject#transition
- * @type {string|undefined}
- *//**
- * Line break style of the element text.
- * @name Highcharts.CSSObject#whiteSpace
- * @type {string|undefined}
- *//**
- * Width of the element.
- * @name Highcharts.CSSObject#width
- * @type {number|undefined}
- */
-
-/**
- * All possible cursor styles.
- *
- * @typedef {'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|'copy'|'crosshair'|'default'|'e-resize'|'ew-resize'|'grab'|'grabbing'|'help'|'move'|'n-resize'|'ne-resize'|'nesw-resize'|'no-drop'|'none'|'not-allowed'|'ns-resize'|'nw-resize'|'nwse-resize'|'pointer'|'progress'|'row-resize'|'s-resize'|'se-resize'|'sw-resize'|'text'|'vertical-text'|'w-resize'|'wait'|'zoom-in'|'zoom-out'} Highcharts.CursorValue
- */
-
-/**
- * All possible dash styles.
- *
- * @typedef {'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'} Highcharts.DashStyleValue
- */
-
-/**
- * Generic dictionary in TypeScript notation.
- * Use the native `AnyRecord` instead.
- *
- * @deprecated
- * @interface Highcharts.Dictionary<T>
- *//**
- * @name Highcharts.Dictionary<T>#[key:string]
- * @type {T}
- */
-
-/**
- * The function callback to execute when the event is fired. The `this` context
- * contains the instance, that fired the event.
- *
- * @callback Highcharts.EventCallbackFunction<T>
- *
- * @param {T} this
- *
- * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
- *        Event arguments.
- *
- * @return {boolean|void}
- */
-
-/**
- * The event options for adding function callback.
- *
- * @interface Highcharts.EventOptionsObject
- *//**
- * The order the event handler should be called. This opens for having one
- * handler be called before another, independent of in which order they were
- * added.
- * @name Highcharts.EventOptionsObject#order
- * @type {number}
- *//**
- * Whether an event should be passive or not.
- * When set to `true`, the function specified by listener will never call
- * `preventDefault()`.
- * @name Highcharts.EventOptionsObject#passive
- * @type boolean
- */
-
-/**
- * Formats data as a string. Usually the data is accessible throught the `this`
- * keyword.
- *
- * @callback Highcharts.FormatterCallbackFunction<T>
- *
- * @param {T} this
- *        Context to format
- *
- * @return {string}
- *         Formatted text
- */
-
-/**
- * An object of key-value pairs for HTML attributes.
- *
- * @typedef {Highcharts.Dictionary<boolean|number|string|Function>} Highcharts.HTMLAttributes
- */
-
-/**
- * An HTML DOM element. The type is a reference to the regular HTMLElement in
- * the global scope.
- *
- * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
- */
-
-/**
- * The iterator callback.
- *
- * @callback Highcharts.ObjectEachCallbackFunction<T>
- *
- * @param {T} this
- *        The context.
- *
- * @param {*} value
- *        The property value.
- *
- * @param {string} key
- *        The property key.
- *
- * @param {*} obj
- *        The object that objectEach is being applied to.
- */
-
-/**
- * An object containing `left` and `top` properties for the position in the
- * page.
- *
- * @interface Highcharts.OffsetObject
- *//**
- * Left distance to the page border.
- * @name Highcharts.OffsetObject#left
- * @type {number}
- *//**
- * Top distance to the page border.
- * @name Highcharts.OffsetObject#top
- * @type {number}
- */
-
-/**
- * Describes a range.
- *
- * @interface Highcharts.RangeObject
- *//**
- * Maximum number of the range.
- * @name Highcharts.RangeObject#max
- * @type {number}
- *//**
- * Minimum number of the range.
- * @name Highcharts.RangeObject#min
- * @type {number}
- */
-
-/**
- * If a number is given, it defines the pixel length. If a percentage string is
- * given, like for example `'50%'`, the setting defines a length relative to a
- * base size, for example the size of a container.
- *
- * @typedef {number|string} Highcharts.RelativeSize
- */
-
-/**
- * Proceed function to call original (wrapped) function.
- *
- * @callback Highcharts.WrapProceedFunction
- *
- * @param {*} [arg1]
- *        Optional argument. Without any arguments defaults to first argument of
- *        the wrapping function.
- *
- * @param {*} [arg2]
- *        Optional argument. Without any arguments defaults to second argument
- *        of the wrapping function.
- *
- * @param {*} [arg3]
- *        Optional argument. Without any arguments defaults to third argument of
- *        the wrapping function.
- *
- * @return {*}
- *         Return value of the original function.
- */
-
-/**
- * The Highcharts object is the placeholder for all other members, and various
- * utility functions. The most important member of the namespace would be the
- * chart constructor.
- *
- * @example
- * let chart = Highcharts.chart('container', { ... });
- *
- * @namespace Highcharts
- */
-
-''; // detach doclets above
+ * */
 
 /**
  * Provide error messages for debugging, with links to online explanation. This
@@ -683,8 +356,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -816,9 +489,13 @@ function attr(
     value: (number|string)
 ): undefined;
 /**
- * Set or get an attribute or an object of attributes. To use as a setter, pass
- * a key and a value, or let the second argument be a collection of keys and
- * values. To use as a getter, pass only a string as the second argument.
+ * Set or get an attribute or an object of attributes.
+ *
+ * To use as a setter, pass a key and a value, or let the second argument be a
+ * collection of keys and values. When using a collection, passing a value of
+ * `null` or `undefined` will remove the attribute.
+ *
+ * To use as a getter, pass only a string as the second argument.
  *
  * @function Highcharts.attr
  *
@@ -860,7 +537,11 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val as any);
+            if (defined(val)) {
+                elem.setAttribute(key, val as any);
+            } else {
+                elem.removeAttribute(key);
+            }
         });
     }
     return ret;
@@ -1323,10 +1004,11 @@ function normalizeTickInterval(
  *
  * @param {Function} sortFunction
  *        The function to sort it with, like with regular Array.prototype.sort.
- *
- * @return {void}
  */
-function stableSort(arr: Array<any>, sortFunction: Function): void {
+function stableSort<T>(
+    arr: Array<T>,
+    sortFunction: (a: T, b: T) => number
+): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -1337,7 +1019,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        arr[i].safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1347,7 +1029,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete arr[i].safeI; // stable sort index
+        delete (arr[i] as any).safeI; // stable sort index
     }
 }
 
@@ -1467,7 +1149,9 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-    return parseFloat(
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
         num.toPrecision(prec || 14)
     );
 }
@@ -1709,7 +1393,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -2023,9 +1707,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
      */
     function removeOneEvent(
         type: string,
@@ -2042,8 +1723,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,
@@ -2338,6 +2017,62 @@ if ((win as any).jQuery) {
     };
 }
 
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+namespace Utilities {
+    export type RelativeSize = (number|string);
+    export interface Class<T = any> extends Function {
+        new(...args: Array<any>): T;
+    }
+    export interface ErrorMessageEventObject {
+        chart?: Chart;
+        code: number;
+        message?: string;
+        params?: Record<string, string>;
+    }
+    export interface EventOptions {
+        order?: number;
+        passive?: boolean;
+    }
+    export interface EventWrapperObject<T> {
+        fn: EventCallback<T>;
+        order: number;
+    }
+    export interface FindCallback<T> {
+        (
+            value: T,
+            index: number
+        ): unknown;
+    }
+    export interface ObjectEachCallback<TObject, TContext> {
+        (
+            this: TContext,
+            value: TObject[keyof TObject],
+            key: keyof TObject,
+            obj: TObject
+        ): void;
+    }
+    export interface OffsetObject {
+        height: number;
+        left: number;
+        top: number;
+        width: number;
+    }
+    export interface WrapProceedFunction {
+        (...args: Array<any>): any;
+    }
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 // TODO use named exports when supported.
 const Utilities = {
     addEvent,
@@ -2389,48 +2124,351 @@ const Utilities = {
     wrap
 };
 
-namespace Utilities {
-    export type RelativeSize = (number|string);
-    export interface Class<T = any> extends Function {
-        new(...args: Array<any>): T;
-    }
-    export interface ErrorMessageEventObject {
-        chart?: Chart;
-        code: number;
-        message?: string;
-        params?: Record<string, string>;
-    }
-    export interface EventOptions {
-        order?: number;
-        passive?: boolean;
-    }
-    export interface EventWrapperObject<T> {
-        fn: EventCallback<T>;
-        order: number;
-    }
-    export interface FindCallback<T> {
-        (
-            value: T,
-            index: number
-        ): unknown;
-    }
-    export interface ObjectEachCallback<TObject, TContext> {
-        (
-            this: TContext,
-            value: TObject[keyof TObject],
-            key: keyof TObject,
-            obj: TObject
-        ): void;
-    }
-    export interface OffsetObject {
-        height: number;
-        left: number;
-        top: number;
-        width: number;
-    }
-    export interface WrapProceedFunction {
-        (...args: Array<any>): any;
-    }
-}
-
 export default Utilities;
+
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * An animation configuration. Animation configurations can also be defined as
+ * booleans, where `false` turns off animation and `true` defaults to a duration
+ * of 500ms and defer of 0ms.
+ *
+ * @interface Highcharts.AnimationOptionsObject
+ *//**
+ * A callback function to exectute when the animation finishes.
+ * @name Highcharts.AnimationOptionsObject#complete
+ * @type {Function|undefined}
+ *//**
+ * The animation defer in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#defer
+ * @type {number|undefined}
+ *//**
+ * The animation duration in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#duration
+ * @type {number|undefined}
+ *//**
+ * The name of an easing function as defined on the `Math` object.
+ * @name Highcharts.AnimationOptionsObject#easing
+ * @type {string|Function|undefined}
+ *//**
+ * A callback function to execute on each step of each attribute or CSS property
+ * that's being animated. The first argument contains information about the
+ * animation and progress.
+ * @name Highcharts.AnimationOptionsObject#step
+ * @type {Function|undefined}
+ */
+
+/**
+ * Creates a frame for the animated SVG element.
+ *
+ * @callback Highcharts.AnimationStepCallbackFunction
+ *
+ * @param {Highcharts.SVGElement} this
+ *        The SVG element to animate.
+ *
+ * @return {void}
+ */
+
+/**
+ * Interface description for a class.
+ *
+ * @interface Highcharts.Class<T>
+ * @extends Function
+ *//**
+ * Class costructor.
+ * @function Highcharts.Class<T>#new
+ * @param {...Array<*>} args
+ *        Constructor arguments.
+ * @return {T}
+ *         Class instance.
+ */
+
+/**
+ * A style object with camel case property names to define visual appearance of
+ * a SVG element or HTML element. The properties can be whatever styles are
+ * supported on the given SVG or HTML element.
+ *
+ * @example
+ * {
+ *    fontFamily: 'monospace',
+ *    fontSize: '1.2em'
+ * }
+ *
+ * @interface Highcharts.CSSObject
+ *//**
+ * @name Highcharts.CSSObject#[key:string]
+ * @type {boolean|number|string|undefined}
+ *//**
+ * Background style for the element.
+ * @name Highcharts.CSSObject#background
+ * @type {string|undefined}
+ *//**
+ * Background color of the element.
+ * @name Highcharts.CSSObject#backgroundColor
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * Border style for the element.
+ * @name Highcharts.CSSObject#border
+ * @type {string|undefined}
+ *//**
+ * Radius of the element border.
+ * @name Highcharts.CSSObject#borderRadius
+ * @type {number|undefined}
+ *//**
+ * Color used in the element. The 'contrast' option is a Highcharts custom
+ * property that results in black or white, depending on the background of the
+ * element.
+ * @name Highcharts.CSSObject#color
+ * @type {'contrast'|Highcharts.ColorString|undefined}
+ *//**
+ * Style of the mouse cursor when resting over the element.
+ * @name Highcharts.CSSObject#cursor
+ * @type {Highcharts.CursorValue|undefined}
+ *//**
+ * Font family of the element text. Multiple values have to be in decreasing
+ * preference order and separated by comma.
+ * @name Highcharts.CSSObject#fontFamily
+ * @type {string|undefined}
+ *//**
+ * Font size of the element text.
+ * @name Highcharts.CSSObject#fontSize
+ * @type {string|undefined}
+ *//**
+ * Font weight of the element text.
+ * @name Highcharts.CSSObject#fontWeight
+ * @type {string|undefined}
+ *//**
+ * Height of the element.
+ * @name Highcharts.CSSObject#height
+ * @type {number|undefined}
+ *//**
+ * Width of the element border.
+ * @name Highcharts.CSSObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * Opacity of the element.
+ * @name Highcharts.CSSObject#opacity
+ * @type {number|undefined}
+ *//**
+ * Space around the element content.
+ * @name Highcharts.CSSObject#padding
+ * @type {string|undefined}
+ *//**
+ * Behaviour of the element when the mouse cursor rests over it.
+ * @name Highcharts.CSSObject#pointerEvents
+ * @type {string|undefined}
+ *//**
+ * Positioning of the element.
+ * @name Highcharts.CSSObject#position
+ * @type {string|undefined}
+ *//**
+ * Alignment of the element text.
+ * @name Highcharts.CSSObject#textAlign
+ * @type {string|undefined}
+ *//**
+ * Additional decoration of the element text.
+ * @name Highcharts.CSSObject#textDecoration
+ * @type {string|undefined}
+ *//**
+ * Outline style of the element text.
+ * @name Highcharts.CSSObject#textOutline
+ * @type {string|undefined}
+ *//**
+ * Line break style of the element text. Highcharts SVG elements support
+ * `ellipsis` when a `width` is set.
+ * @name Highcharts.CSSObject#textOverflow
+ * @type {string|undefined}
+ *//**
+ * Top spacing of the element relative to the parent element.
+ * @name Highcharts.CSSObject#top
+ * @type {string|undefined}
+ *//**
+ * Animated transition of selected element properties.
+ * @name Highcharts.CSSObject#transition
+ * @type {string|undefined}
+ *//**
+ * Line break style of the element text.
+ * @name Highcharts.CSSObject#whiteSpace
+ * @type {string|undefined}
+ *//**
+ * Width of the element.
+ * @name Highcharts.CSSObject#width
+ * @type {number|undefined}
+ */
+
+/**
+ * All possible cursor styles.
+ *
+ * @typedef {'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|'copy'|'crosshair'|'default'|'e-resize'|'ew-resize'|'grab'|'grabbing'|'help'|'move'|'n-resize'|'ne-resize'|'nesw-resize'|'no-drop'|'none'|'not-allowed'|'ns-resize'|'nw-resize'|'nwse-resize'|'pointer'|'progress'|'row-resize'|'s-resize'|'se-resize'|'sw-resize'|'text'|'vertical-text'|'w-resize'|'wait'|'zoom-in'|'zoom-out'} Highcharts.CursorValue
+ */
+
+/**
+ * All possible dash styles.
+ *
+ * @typedef {'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'} Highcharts.DashStyleValue
+ */
+
+/**
+ * Generic dictionary in TypeScript notation.
+ * Use the native `AnyRecord` instead.
+ *
+ * @deprecated
+ * @interface Highcharts.Dictionary<T>
+ *//**
+ * @name Highcharts.Dictionary<T>#[key:string]
+ * @type {T}
+ */
+
+/**
+ * The function callback to execute when the event is fired. The `this` context
+ * contains the instance, that fired the event.
+ *
+ * @callback Highcharts.EventCallbackFunction<T>
+ *
+ * @param {T} this
+ *
+ * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
+ *        Event arguments.
+ *
+ * @return {boolean|void}
+ */
+
+/**
+ * The event options for adding function callback.
+ *
+ * @interface Highcharts.EventOptionsObject
+ *//**
+ * The order the event handler should be called. This opens for having one
+ * handler be called before another, independent of in which order they were
+ * added.
+ * @name Highcharts.EventOptionsObject#order
+ * @type {number}
+ *//**
+ * Whether an event should be passive or not.
+ * When set to `true`, the function specified by listener will never call
+ * `preventDefault()`.
+ * @name Highcharts.EventOptionsObject#passive
+ * @type boolean
+ */
+
+/**
+ * Formats data as a string. Usually the data is accessible throught the `this`
+ * keyword.
+ *
+ * @callback Highcharts.FormatterCallbackFunction<T>
+ *
+ * @param {T} this
+ *        Context to format
+ *
+ * @return {string}
+ *         Formatted text
+ */
+
+/**
+ * An object of key-value pairs for HTML attributes.
+ *
+ * @typedef {Highcharts.Dictionary<boolean|number|string|Function>} Highcharts.HTMLAttributes
+ */
+
+/**
+ * An HTML DOM element. The type is a reference to the regular HTMLElement in
+ * the global scope.
+ *
+ * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+ */
+
+/**
+ * The iterator callback.
+ *
+ * @callback Highcharts.ObjectEachCallbackFunction<T>
+ *
+ * @param {T} this
+ *        The context.
+ *
+ * @param {*} value
+ *        The property value.
+ *
+ * @param {string} key
+ *        The property key.
+ *
+ * @param {*} obj
+ *        The object that objectEach is being applied to.
+ */
+
+/**
+ * An object containing `left` and `top` properties for the position in the
+ * page.
+ *
+ * @interface Highcharts.OffsetObject
+ *//**
+ * Left distance to the page border.
+ * @name Highcharts.OffsetObject#left
+ * @type {number}
+ *//**
+ * Top distance to the page border.
+ * @name Highcharts.OffsetObject#top
+ * @type {number}
+ */
+
+/**
+ * Describes a range.
+ *
+ * @interface Highcharts.RangeObject
+ *//**
+ * Maximum number of the range.
+ * @name Highcharts.RangeObject#max
+ * @type {number}
+ *//**
+ * Minimum number of the range.
+ * @name Highcharts.RangeObject#min
+ * @type {number}
+ */
+
+/**
+ * If a number is given, it defines the pixel length. If a percentage string is
+ * given, like for example `'50%'`, the setting defines a length relative to a
+ * base size, for example the size of a container.
+ *
+ * @typedef {number|string} Highcharts.RelativeSize
+ */
+
+/**
+ * Proceed function to call original (wrapped) function.
+ *
+ * @callback Highcharts.WrapProceedFunction
+ *
+ * @param {*} [arg1]
+ *        Optional argument. Without any arguments defaults to first argument of
+ *        the wrapping function.
+ *
+ * @param {*} [arg2]
+ *        Optional argument. Without any arguments defaults to second argument
+ *        of the wrapping function.
+ *
+ * @param {*} [arg3]
+ *        Optional argument. Without any arguments defaults to third argument of
+ *        the wrapping function.
+ *
+ * @return {*}
+ *         Return value of the original function.
+ */
+
+/**
+ * The Highcharts object is the placeholder for all other members, and various
+ * utility functions. The most important member of the namespace would be the
+ * chart constructor.
+ *
+ * @example
+ * let chart = Highcharts.chart('container', { ... });
+ *
+ * @namespace Highcharts
+ */
+
+''; // detach doclets above

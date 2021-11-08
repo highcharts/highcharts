@@ -15,7 +15,7 @@ import CrookedLine from './CrookedLine';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
-import palette from '../../../Core/Color/Palette.js';
+import { Palette } from '../../../Core/Color/Palettes.js';
 const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -171,7 +171,7 @@ class Fibonacci extends Tunnel {
                 type: 'path',
                 d: createPathDGenerator(i),
                 stroke: lineColors[i] || lineColor
-            }, false as any);
+            }, i);
 
             if (i > 0) {
                 (this.initShape as any)({
@@ -254,7 +254,7 @@ Fibonacci.prototype.defaultOptions = merge(
             /**
              * The color of line.
              */
-            lineColor: palette.neutralColor40,
+            lineColor: Palette.neutralColor40,
 
             /**
              * An array of colors for the lines.

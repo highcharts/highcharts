@@ -21,6 +21,6 @@ Mousewheeling zooms in and out the map around the point under the mouse.
 
 Doubleclick by default zooms in, focused on the point under the mouse. Following the [enableDoubleClickZoomTo](https://api.highcharts.com/highmaps/mapNavigation.enableDoubleClickZoomTo) option, double clicking may zoom fully in to a specific point.
 
-### Programmatic
+### Programmatic control through MapView
 
-The map may be zoomed programmatically through the [Chart.mapZoom](https://api.highcharts.com/class-reference/Highcharts.Chart#mapZoom) or [Point.zoomTo](https://api.highcharts.com/class-reference/Highcharts.Point#zoomTo) methods.
+Setting the map view programmatically is done through the [Chart.mapView](https://api.highcharts.com/class-reference/Highcharts.MapView) object. It can be zoomed through the `mapView.zoomBy` function or directly by [Point.zoomTo](https://api.highcharts.com/class-reference/Highcharts.Point#zoomTo) methods.

@@ -336,7 +336,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#destroy
-     * @return {void}
      */
     public destroy(): void {
 
@@ -377,7 +376,6 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#drawScrollbarButton
      * @param {number} index
      *        0 is left, 1 is right
-     * @return {void}
      */
     public drawScrollbarButton(index: number): void {
         const scroller = this,
@@ -569,7 +567,6 @@ class Scrollbar {
      *        width of the scrollbar
      * @param {number} height
      *        height of the scorllbar
-     * @return {void}
      */
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,
@@ -624,7 +621,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#removeEvents
-     * @return {void}
      */
     public removeEvents(): void {
         this._events.forEach(function (args): void {
@@ -732,7 +728,6 @@ class Scrollbar {
      *        scale (0-1) where bar should start
      * @param {number} to
      *        scale (0-1) where bar should end
-     * @return {void}
      */
     public setRange(from: number, to: number): void {
         const scroller = this,
@@ -823,8 +818,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#shouldUpdateExtremes
-     * @param {string} [eventType]
-     * @return {boolean}
      */
     public shouldUpdateExtremes(eventType?: string): boolean {
         return (
@@ -895,7 +888,6 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#updatePosition
      * @param  {number} from
      * @param  {number} to
-     * @return {void}
      */
     public updatePosition(from: number, to: number): void {
         if (to > 1) {

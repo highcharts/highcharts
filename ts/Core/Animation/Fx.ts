@@ -10,16 +10,21 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptions from './AnimationOptions';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+
 import Color from '../Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
@@ -29,6 +34,13 @@ const {
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * An animator object used internally. One instance applies to one property
  * (attribute or style prop) on one element. Animation is always initiated
@@ -41,12 +53,22 @@ const {
  * @private
  * @class
  * @name Highcharts.Fx
+ *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
+ * The element to animate.
+ *
+ * @param {Partial<Highcharts.AnimationOptionsObject>} options
+ * Animation options.
+ *
+ * @param {string} prop
+ * The single attribute or CSS property to animate.
  */
+
 class Fx {
 
     /* *
      *
-     * Static properties
+     *  Static Properties
      *
      * */
 
@@ -58,17 +80,6 @@ class Fx {
      *
      * */
 
-    /**
-     *
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
-     *        The element to animate.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} options
-     *        Animation options.
-     *
-     * @param {string} prop
-     *        The single attribute or CSS property to animate.
-     */
     public constructor(
         elem: (HTMLElement|SVGElement),
         options: Partial<AnimationOptions>,
@@ -109,7 +120,6 @@ class Fx {
      *
      * @function Highcharts.Fx#dSetter
      *
-     * @return {void}
      */
     public dSetter(): void {
         const paths = this.paths,
@@ -167,7 +177,6 @@ class Fx {
      *
      * @function Highcharts.Fx#update
      *
-     * @return {void}
      */
     public update(): void {
         const elem = this.elem,
@@ -210,7 +219,6 @@ class Fx {
      * @param {string} unit
      *        The property unit, for example `px`.
      *
-     * @return {void}
      */
     public run(from: number, to: number, unit: string): void {
         const self = this,
@@ -354,9 +362,6 @@ class Fx {
         /**
          * If shifting points, prepend a dummy point to the end path.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function prepend(
             arr: SVGPath,
@@ -399,9 +404,6 @@ class Fx {
         /**
          * Copy and append last point until the length matches the end length.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function append(
             arr: SVGPath,
@@ -489,7 +491,6 @@ class Fx {
      *
      * @function Highcharts.Fx#fillSetter
      *
-     * @return {void}
      */
     public fillSetter(): void {
         Fx.prototype.strokeSetter.apply(this, arguments as any);
@@ -500,7 +501,6 @@ class Fx {
      *
      * @function Highcharts.Fx#strokeSetter
      *
-     * @return {void}
      */
     public strokeSetter(): void {
         this.elem.attr(
@@ -512,9 +512,21 @@ class Fx {
     }
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
 interface Fx extends FxLike {
     // Nothing here yet
 }
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
 
 namespace Fx {
     export interface Timer {

@@ -1,6 +1,21 @@
-.container {
+#container {
     max-width: 800px;
     min-width: 360px;
-    height: 300px;
     margin: 0 auto;
+    display: flex;
+}
+
+.inner-container {
+    width: 33.33%;
+    height: 300px;
+}
+
+@media only screen and (max-width: 600px) {
+    #container {
+        display: block;
+    }
+
+    .inner-container {
+        width: auto;
+    }
 }

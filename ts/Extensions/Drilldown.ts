@@ -46,7 +46,7 @@ import H from '../Core/Globals.js';
 const { noop } = H;
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
@@ -460,7 +460,7 @@ defaultOptions.drilldown = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: palette.highlightColor100,
+        color: Palette.highlightColor100,
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -485,7 +485,7 @@ defaultOptions.drilldown = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: palette.highlightColor100,
+        color: Palette.highlightColor100,
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
@@ -560,7 +560,7 @@ defaultOptions.drilldown = {
          * @sample {highmaps} highcharts/drilldown/drillupbutton/
          *         Button theming
          *
-         * @type      {object}
+         * @type      {Object}
          * @since     3.0.8
          * @product   highcharts highmaps
          * @apioption drilldown.drillUpButton.theme
@@ -802,7 +802,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new Color(colorProp.color).setOpacity(0).get() :
+            Color.parse(colorProp.color).setOpacity(0).get() :
             colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
@@ -884,7 +884,7 @@ Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         (lastLevel as any).series = lastLevel.seriesOptions;
-        return format((this.options.lang as any).drillUpText, lastLevel);
+        return format(this.options.lang.drillUpText || '', lastLevel);
     }
 };
 

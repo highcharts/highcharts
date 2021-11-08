@@ -68,6 +68,7 @@ declare module './AxisComposition' {
 declare module './AxisLike' {
     interface AxisLike {
         axisBorder?: SVGElement;
+        hiddenLabels: Array<SVGElement>;
         rightWall?: SVGElement;
         getMaxLabelDimensions(
             ticks: Record<string, Tick>,
@@ -599,11 +600,17 @@ namespace GridAxis {
                     lastTick = axis.tickPositions[axis.tickPositions.length - 1],
                     firstTick = axis.tickPositions[0];
 
+                let label: SVGElement|undefined;
+
+                while ((label = axis.hiddenLabels.pop()) && label.element) {
+                    label.show(); // #15453
+                }
+
                 // Hide/show firts tick label.
-                let label = axis.ticks[firstTick].label;
+                label = axis.ticks[firstTick].label;
                 if (label) {
                     if (min - firstTick > tickmarkOffset) {
-                        label.hide();
+                        axis.hiddenLabels.push(label.hide());
                     } else {
                         label.show();
                     }
@@ -613,7 +620,7 @@ namespace GridAxis {
                 label = axis.ticks[lastTick].label;
                 if (label) {
                     if (lastTick - max > tickmarkOffset) {
-                        label.hide();
+                        axis.hiddenLabels.push(label.hide());
                     } else {
                         label.show();
                     }
@@ -1000,6 +1007,8 @@ namespace GridAxis {
         if (!axis.grid) {
             axis.grid = new Additions(axis as GridAxis);
         }
+
+        axis.hiddenLabels = [];
     }
 
     /**
@@ -1343,13 +1352,11 @@ namespace GridAxis {
 
         /**
          * Add extra border based on the provided path.
-         *  *
          * @private
-         *
          * @param {SVGPath} path
          * The path of the border.
-         *
          * @return {Highcharts.SVGElement}
+         * Border
          */
         public renderBorder(path: SVGPath): SVGElement {
             const axis = this.axis,

@@ -16,11 +16,11 @@
  *
  * */
 
+import type ColorMapMixin from '../ColorMapMixin';
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -233,17 +233,18 @@ class HeatmapPoint extends ScatterPoint {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface HeatmapPoint {
-    dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    moveToTopOnHover: typeof colorMapPointMixin.moveToTopOnHover;
+    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
+    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
 }
 extend(HeatmapPoint.prototype, {
-    dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    moveToTopOnHover: colorMapPointMixin.moveToTopOnHover
+    dataLabelOnNull: true,
+    moveToTopOnHover: true,
+    ttBelow: false
 });
 
 /* *

@@ -33,6 +33,7 @@ import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions'
 import type EventCallback from '../../Core/EventCallback';
 import type FormatUtilities from '../../Core/FormatUtilities';
 import type MockPointOptions from './MockPointOptions';
+import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -48,6 +49,7 @@ const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './Mixins/ControllableMixin.js';
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
+import ControllableEllipse from './Controllables/ControllableEllipse.js';
 import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
@@ -57,7 +59,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 const {
     addEvent,
     defined,
@@ -184,6 +186,7 @@ declare global {
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
+            crop: boolean;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -202,6 +205,7 @@ declare global {
             fill: ColorType;
             height?: number;
             r: number;
+            ry: number;
             shapes: Array<AnnotationsShapeOptions>;
             snap: number;
             src: string;
@@ -315,6 +319,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public static shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
         'circle': ControllableCircle,
+        'ellipse': ControllableEllipse,
         'path': ControllablePath,
         'image': ControllableImage
     };
@@ -499,14 +504,18 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
             if (baseOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(
-                    function (
-                        basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
-                        i: number
-                    ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
-                        return merge(baseOptions[name][i], basicOptions);
-                    }
-                ) as any;
+                if (newOptions[name]) {
+                    mergedOptions[name] = splat(newOptions[name]).map(
+                        function (
+                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            i: number
+                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    ) as any;
+                } else {
+                    mergedOptions[name] = baseOptions[name] as any;
+                }
             }
         });
 
@@ -540,7 +549,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public addClipPaths(): void {
         this.setClipAxes();
 
-        if (this.clipXAxis && this.clipYAxis) {
+        if (
+            this.clipXAxis &&
+            this.clipYAxis &&
+            this.options.crop // #15399
+        ) {
             this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
         }
     }
@@ -557,17 +570,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                         axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                     ): Array<AxisType> {
+                        const point = labelOrShape &&
+                            (
+                                labelOrShape.point ||
+                                (labelOrShape.points && labelOrShape.points[0])
+                            );
+
                         return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
+                            xAxes[point && (point as any).xAxis] || axes[0],
+                            yAxes[point && (point as any).yAxis] || axes[1]
                         ];
                     },
                     []
@@ -688,8 +699,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.shapesGroup = renderer
             .g('annotation-shapes')
-            .add(this.graphic)
-            .clip(this.chart.plotBoxClip);
+            .add(this.graphic);
+
+        if (this.options.crop) { // #15399
+            this.shapesGroup.clip(this.chart.plotBoxClip);
+        }
 
         this.labelsGroup = renderer
             .g('annotation-labels')
@@ -724,6 +738,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      */
     public setVisibility(visible?: boolean): void {
         const options = this.options,
+            navigation = this.chart.navigationBindings,
             visibility = pick(visible, !options.visible);
 
         this.graphic.attr(
@@ -733,6 +748,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         if (!visibility) {
             this.setControlPointsVisibility(false);
+
+            if (
+                navigation.activeAnnotation === this &&
+                navigation.popup &&
+                navigation.popup.formType === 'annotation-toolbar'
+            ) {
+                fireEvent(navigation, 'closePopup');
+            }
         }
 
         options.visible = visibility;
@@ -800,7 +823,6 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
      * New user options for the annotation.
      *
-     * @return {void}
      */
     public update(
         userOptions: DeepPartial<Highcharts.AnnotationsOptions>,
@@ -840,7 +862,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * Initialisation of a single shape
      * @private
-     * @param {Object} shapeOptions - a confg object for a single shape
+     * @param {Object} shapeOptions
+     * a confg object for a single shape
+     * @param {number} index
+     * annotation may have many shapes, this is the shape's index saved in
+     * shapes.index.
      */
     public initShape(
         shapeOptions: Partial<Highcharts.AnnotationsShapesOptions>,
@@ -1057,9 +1083,19 @@ merge<Annotation>(
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @since 8.2.0
-                 * @apioption annotations.animation
                  */
                 animation: {},
+
+                /**
+                 * Whether to hide the part of the annotation
+                 * that is outside the plot area.
+                 *
+                 * @sample highcharts/annotations/label-crop-overflow/
+                 *         Crop line annotation
+                 * @type  {boolean}
+                 * @since 9.3.0
+                 */
+                crop: true,
 
                 /**
                  * The animation delay time in milliseconds.
@@ -1131,7 +1167,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: palette.neutralColor100,
+                    borderColor: Palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1349,51 +1385,18 @@ merge<Annotation>(
                  *
                  * @sample highcharts/annotations/mock-point/
                  *         Attach annotation to a mock point
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point with different ways
                  *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|*}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @requires  modules/annotations
                  * @apioption annotations.labels.point
                  */
-
-                /**
-                 * The x position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.x
-                 */
-
-                /**
-                 * The y position of the point. Units can be either in axis
-                 * or chart pixel coordinates.
-                 *
-                 * @type      {number}
-                 * @apioption annotations.labels.point.y
-                 */
-
-                /**
-                 * This number defines which xAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the xAxis array. If the option is not configured or the axis
-                 * is not found the point's x coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.xAxis
-                 */
-
-                /**
-                 * This number defines which yAxis the point is connected to.
-                 * It refers to either the axis id or the index of the axis in
-                 * the yAxis array. If the option is not configured or the axis
-                 * is not found the point's y coordinate refers to the chart
-                 * pixels.
-                 *
-                 * @type      {number|string|null}
-                 * @apioption annotations.labels.point.yAxis
-                 */
-
 
                 /**
                  * An array of shapes for the annotation. For options that apply
@@ -1411,21 +1414,31 @@ merge<Annotation>(
                  * series - it is referenced by the point's id - or a new point
                  * with defined x, y properties and optionally axes.
                  *
+                 * @sample highcharts/annotations/mock-points/
+                 *         Attach annotation to a mock point with different ways
+                 *
                  * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
+                 * @type      {
+                 *               string|
+                 *               Highcharts.AnnotationMockPointOptionsObject|
+                 *               Highcharts.AnnotationMockPointFunction
+                 *            }
                  * @extends   annotations.labels.point
+                 * @requires  modules/annotations
                  * @apioption annotations.shapes.point
                  */
 
                 /**
-                 * An array of points for the shape. This option is available
+                 * An array of points for the shape
+                 * or a callback function that returns that shape point.
+                 *
+                 * This option is available
                  * for shapes which can use multiple points such as path. A
                  * point can be either a point object or a point's id.
                  *
                  * @see [annotations.shapes.point](annotations.shapes.point.html)
                  *
-                 * @declare   Highcharts.AnnotationMockPointOptionsObject
-                 * @type      {Array<string|*>}
+                 * @type      {Array<Highcharts.AnnotationShapePointOptions>}
                  * @extends   annotations.labels.point
                  * @apioption annotations.shapes.points
                  */
@@ -1479,6 +1492,36 @@ merge<Annotation>(
                 shapeOptions: {
 
                     /**
+                     *
+                     * The radius of the shape in y direction.
+                     * Used for the ellipse.
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.ry
+                     **/
+
+                    /**
+                     *
+                     * The xAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.xAxis
+                     **/
+
+                    /**
+                     * The yAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.yAxis
+                     **/
+
+
+                    /**
                      * The width of the shape.
                      *
                      * @sample highcharts/annotations/shape/
@@ -1499,10 +1542,14 @@ merge<Annotation>(
                      */
 
                     /**
-                     * The type of the shape, e.g. circle or rectangle.
+                     * The type of the shape.
+                     * Avaliable options are circle, rect and ellipse.
                      *
                      * @sample highcharts/annotations/shape/
                      *         Basic shape annotation
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
                      *
                      * @type      {string}
                      * @default   rect
@@ -1595,9 +1642,10 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: palette.neutralColor100,
-                        'stroke-width': 2,
-                        fill: palette.backgroundColor
+                        cursor: 'pointer',
+                        fill: Palette.backgroundColor,
+                        stroke: Palette.neutralColor100,
+                        'stroke-width': 2
                     },
                     visible: false,
                     events: {}
@@ -1692,7 +1740,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
      * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
-     *
+     * @sample highcharts/annotations/add-annotation/
+     *         Add annotation
      * @return {Highcharts.Annotation} - The newly generated annotation.
      */
     addAnnotation: function (
@@ -1967,3 +2016,70 @@ wrap(
 (H as any).Annotation = Annotation as any;
 
 export default Annotation;
+
+/* eslint-enable no-invalid-this, valid-jsdoc */
+
+/**
+ * Object of shape point.
+ *
+ * @interface Highcharts.AnnotationMockPointOptionsObject
+ *
+ */
+/**
+ * The x position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.x
+ */
+/**
+ * The y position of the point. Units can be either in axis
+ * or chart pixel coordinates.
+ *
+ * @type      {number}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.y
+ */
+/**
+ * This number defines which xAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the xAxis array. If the option is not configured or the axis
+ * is not found the point's x coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
+ */
+/**
+ * This number defines which yAxis the point is connected to.
+ * It refers to either the axis id or the index of the axis in
+ * the yAxis array. If the option is not configured or the axis
+ * is not found the point's y coordinate refers to the chart
+ * pixels.
+ *
+ * @type      {number|string|null}
+ * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
+ */
+
+/**
+ * Callback function that returns the annotation shape point.
+ *
+ * @callback Highcharts.AnnotationMockPointFunction
+ *
+ * @param  {Highcharts.Annotation} annotation
+ *         An annotation instance.
+ *
+ * @return {Highcharts.AnnotationMockPointOptionsObject}
+ *         Annotations shape point.
+ */
+
+/**
+ * Shape point as string, object or function.
+ *
+ * @typedef {
+ *          string|
+ *          Highcharts.AnnotationMockPointOptionsObject|
+ *          Highcharts.AnnotationMockPointFunction
+ *     }Highcharts.AnnotationShapePointOptions
+ */
+
+''; // required by JSDoc parsing

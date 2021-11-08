@@ -86,7 +86,7 @@ declare module './AxisOptions' {
  * @param {boolean} [noLabel=false]
  * Whether to disable the label or not. Defaults to false.
  *
- * @param {object} [parameters]
+ * @param {Object} [parameters]
  * Optional parameters for the tick.
  */
 class Tick {
@@ -195,7 +195,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#addLabel
-     * @return {void}
      */
     public addLabel(): void {
         const tick = this,
@@ -235,17 +234,24 @@ class Tick {
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.dateTime && tickPositionInfo) {
-            dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                (options.dateTimeLabelFormats as any)[
-                    (
-                        !options.grid &&
-                        tickPositionInfo.higherRanks[pos]
-                    ) ||
-                    tickPositionInfo.unitName
-                ]
-            );
-            dateTimeLabelFormat = dateTimeLabelFormats.main;
+        if (axis.dateTime) {
+            if (tickPositionInfo) {
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(
+                    (options.dateTimeLabelFormats as any)[
+                        (
+                            !options.grid &&
+                            tickPositionInfo.higherRanks[pos]
+                        ) ||
+                        tickPositionInfo.unitName
+                    ]
+                );
+                dateTimeLabelFormat = dateTimeLabelFormats.main;
+            } else if (isNumber(value)) { // #1441
+                dateTimeLabelFormat = axis.dateTime.getXDateFormat(
+                    value,
+                    (options.dateTimeLabelFormats || {}) as any
+                );
+            }
         }
 
         // set properties for access in render method
@@ -369,10 +375,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#createLabel
-     * @param {Highcharts.PositionObject} xy
-     * @param {string} str
-     * @param {Highcharts.XAxisLabelsOptions} labelOptions
-     * @return {Highcharts.SVGElement|undefined}
      */
     public createLabel(
         xy: PositionObject,
@@ -410,7 +412,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#destroy
-     * @return {void}
      */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
@@ -437,7 +438,7 @@ class Tick {
      * @return {Highcharts.PositionObject}
      * The tick position.
      *
-     * @fires Highcharts.Tick#event:afterGetPosition
+     * @emits Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
         horiz: boolean|undefined,
@@ -500,9 +501,7 @@ class Tick {
 
     /**
      * Get the x, y position of the tick label
-     *
      * @private
-     * @return {Highcharts.PositionObject}
      */
     public getLabelPosition(
         x: number,
@@ -587,7 +586,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#getLabelSize
-     * @return {number}
      */
     public getLabelSize(): number {
         return this.label ?
@@ -597,9 +595,7 @@ class Tick {
 
     /**
      * Extendible method to return the path of the marker
-     *
      * @private
-     *
      */
     public getMarkPath(
         x: number,
@@ -626,8 +622,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#handleOverflow
-     * @param {Highcharts.PositionObject} xy
-     * @return {void}
      */
     public handleOverflow(xy: PositionObject): void {
         const tick = this,
@@ -744,10 +738,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#moveLabel
-     * @param {string} str
-     * @param {Highcharts.XAxisLabelsOptions} labelOptions
-     *
-     * @return {void}
      */
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
         const tick = this,
@@ -807,10 +797,11 @@ class Tick {
      *
      * @private
      * @param {number} index
+     *
      * @param {boolean} [old]
-     *        Use old coordinates to prepare an animation into new position
+     * Use old coordinates to prepare an animation into new position
+     *
      * @param {number} [opacity]
-     * @return {voids}
      */
     public render(
         index: number,
@@ -854,10 +845,10 @@ class Tick {
      * Renders the gridLine.
      *
      * @private
+     * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
-     * @return {void}
      */
     public renderGridLine(
         old: boolean|undefined,
@@ -936,10 +927,10 @@ class Tick {
      * Renders the tick mark.
      *
      * @private
+     * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
-     * @return {void}
      */
     public renderMark(
         xy: PositionObject,
@@ -1012,11 +1003,11 @@ class Tick {
      * have to be moved into place.
      *
      * @private
+     * @function Highcharts.Tick#renderLabel
      * @param {Highcharts.PositionObject} xy  The position vector of the label
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the label
      * @param {number} index  The index of the tick
-     * @return {void}
      */
     public renderLabel(
         xy: Tick.LabelObject,
@@ -1100,7 +1091,6 @@ class Tick {
      *
      * @private
      * @function Highcharts.Tick#replaceMovedLabel
-     * @return {void}
      */
     public replaceMovedLabel(): void {
         const tick = this,
@@ -1152,6 +1142,13 @@ interface Tick extends TickLike {
  * */
 
 namespace Tick {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface ParametersObject {
         category?: string;
         options?: AnyRecord;
@@ -1206,4 +1203,4 @@ export default Tick;
  * @type {number}
  */
 
-''; // detach doclets above
+(''); // keeps doclets above in JS file

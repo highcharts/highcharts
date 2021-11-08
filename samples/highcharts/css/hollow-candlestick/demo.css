@@ -1,0 +1,16 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+.highcharts-hollowcandlestick-series .highcharts-point-down {
+    fill: #ff5e00;
+    stroke: #ff5e00;
+}
+
+.highcharts-hollowcandlestick-series .highcharts-point-down-bearish-up {
+    fill: #35bd00;
+    stroke: #35bd00;
+}
+
+.highcharts-hollowcandlestick-series .highcharts-point-up {
+    fill: transparent;
+    stroke: #35bd00;
+}

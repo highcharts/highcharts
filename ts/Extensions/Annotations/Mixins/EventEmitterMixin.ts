@@ -78,7 +78,6 @@ const {
  *
  * @private
  * @mixin
- * @memberOf Annotation
  */
 const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
@@ -130,7 +129,6 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         if (emitter.options.draggable) {
 
             addEvent(emitter, 'drag', emitter.onDrag);
-
 
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {
@@ -216,11 +214,25 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             H.doc,
             H.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
+                // Sometimes the target is the annotation and sometimes its the
+                // controllable
+                const annotation = pick(
+                    emitter.target && emitter.target.annotation,
+                    emitter.target
+                );
+                if (annotation) {
+                    // Keep annotation selected after dragging control point
+                    (annotation as Annotation).cancelClick = emitter.hasDragged;
+                }
+
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
                 emitter.chart.hasDraggedAnnotation = false;
                 // ControlPoints vs Annotation:
-                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
+                fireEvent(pick(
+                    annotation, // #15952
+                    emitter
+                ), 'afterUpdate');
                 emitter.onMouseUp(e);
             },
             H.isTouchDevice ? { passive: false } : void 0

@@ -25,16 +25,17 @@ import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import H from '../Core/Globals.js';
-import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import D from '../Core/DefaultOptions.js';
 const {
     getOptions,
     setOptions
 } = D;
+import H from '../Core/Globals.js';
+import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import palette from '../Core/Color/Palette.js';
+import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
 const {
     correctFloat,
     defined,
@@ -45,6 +46,12 @@ const {
     pick,
     uniqueKey
 } = U;
+
+declare module '../Extensions/Exporting/NavigationOptions' {
+    interface NavigationOptions {
+        bindings?: Record<string, Highcharts.NavigationBindingsOptionsObject>;
+    }
+}
 
 /**
  * Internal types
@@ -96,6 +103,8 @@ declare global {
             enabled: boolean;
         }
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
+            indicatorsWithAxes: Array<string>;
+
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject|void;
             isNotNavigatorYAxis(axis: AxisType): boolean;
@@ -104,9 +113,7 @@ declare global {
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
-        interface NavigationOptions {
-            bindings?: Record<string, NavigationBindingsOptionsObject>;
-        }
+
         interface StockToolsFieldsObject {
             [key: string]: any;
         }
@@ -244,6 +251,41 @@ bindingsUtils.addFlagFromForm = function (
     };
 };
 
+bindingsUtils.indicatorsWithAxes = [
+    'apo',
+    'ad',
+    'aroon',
+    'aroonoscillator',
+    'atr',
+    'ao',
+    'cci',
+    'chaikin',
+    'cmf',
+
+    'cmo',
+    'disparityindex',
+    'dmi',
+    'dpo',
+    'linearRegressionAngle',
+    'linearRegressionIntercept',
+    'linearRegressionSlope',
+    'klinger',
+    'macd',
+    'mfi',
+    'momentum',
+
+    'natr',
+    'obv',
+    'ppo',
+    'roc',
+    'rsi',
+    'slowstochastic',
+    'stochastic',
+    'trix',
+    'williamsr'
+
+];
+
 bindingsUtils.manageIndicators = function (
     this: Highcharts.StockToolsNavigationBindings,
     data: Highcharts.StockToolsFieldsObject
@@ -263,36 +305,7 @@ bindingsUtils.manageIndicators = function (
             'vbp',
             'vwap'
         ],
-        indicatorsWithAxes = [
-            'ad',
-            'atr',
-            'cci',
-            'cmf',
-            'disparityindex',
-            'cmo',
-            'dmi',
-            'macd',
-            'mfi',
-            'roc',
-            'rsi',
-            'ao',
-            'aroon',
-            'aroonoscillator',
-            'trix',
-            'apo',
-            'dpo',
-            'ppo',
-            'natr',
-            'obv',
-            'williamsr',
-            'stochastic',
-            'slowstochastic',
-            'linearRegression',
-            'linearRegressionSlope',
-            'linearRegressionIntercept',
-            'linearRegressionAngle',
-            'klinger'
-        ],
+        indicatorsWithAxes = bindingsUtils.indicatorsWithAxes,
         yAxis,
         parentSeries,
         defaultOptions,
@@ -412,14 +425,14 @@ bindingsUtils.updateHeight = function (
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    const coordsY =
-        this.utils.getAssignedAxis(this.chart.pointer.getCoordinates(e).yAxis);
+    const options = annotation.options.typeOptions,
+        yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
-    if (coordsY) {
+    if (yAxis && options.points) {
         annotation.update({
             typeOptions: {
-                height: coordsY.value -
-                    (annotation.options.typeOptions.points as any)[1].y
+                height: yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']) -
+                    (options.points[1].y || 0)
             }
         });
     }
@@ -497,7 +510,7 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  * @private
  * @function bindingsUtils.isLastPriceEnabled
  *
- * @param {array} series
+ * @param {Array} series
  *        Array of series.
  *
  * @return {boolean}
@@ -534,18 +547,18 @@ bindingsUtils.updateNthPoint = function (
         annotation: Annotation
     ): void {
         const options = annotation.options.typeOptions,
-            coords = this.chart.pointer.getCoordinates(e),
-            coordsX = this.utils.getAssignedAxis(coords.xAxis),
-            coordsY = this.utils.getAssignedAxis(coords.yAxis);
+            xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
+            yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
-        if (coordsX && coordsY) {
+
+        if (xAxis && yAxis) {
             (options.points as any).forEach(function (
                 point: Point,
                 index: number
             ): void {
                 if (index >= startIndex) {
-                    point.x = coordsX.value;
-                    point.y = coordsY.value;
+                    point.x = xAxis.toValue(e[xAxis.horiz ? 'chartX' : 'chartY']);
+                    point.y = yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']);
                 }
             });
             annotation.update({
@@ -1303,7 +1316,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
+     * @default {"className": "highcharts-crooked5", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
      */
     crooked5: {
         /** @ignore-option */
@@ -1328,7 +1341,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
-                        langKey: 'crookedLine',
+                        langKey: 'crooked5',
                         type: 'crookedLine',
                         typeOptions: {
                             xAxis: coordsX.axis.options.index,
@@ -1401,7 +1414,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1465,7 +1478,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1524,23 +1537,23 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: palette.backgroundColor
+                                stroke: Palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1596,22 +1609,22 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             crosshairX: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: palette.backgroundColor
+                                stroke: Palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1671,16 +1684,16 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                             },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: palette.neutralColor100
+                                stroke: Palette.neutralColor100
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1739,7 +1752,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         },
                         labelOptions: {
                             style: {
-                                color: palette.neutralColor60
+                                color: Palette.neutralColor60
                             }
                         }
                     },
@@ -1850,7 +1863,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: palette.negativeColor
+                                        fill: Palette.negativeColor
                                     }
                                 }
                             },
@@ -1925,7 +1938,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     },
                     labelOptions: {
                         style: {
-                            color: palette.neutralColor60,
+                            color: Palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
@@ -1954,6 +1967,51 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
+    timeCycles: {
+        className: 'highcharts-time-cycles',
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
+            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                navigation = this.chart.options.navigation,
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'timeCycles',
+                    type: 'timeCycles',
+                    typeOptions: {
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis,
+                        points: [{
+                            x: closestPoint.x
+                        }, {
+                            x: closestPoint.x
+                        }],
+                        line: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            fill: 'transparent',
+                            strokeWidth: 2
+                        }
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).timeCycles.annotationsOptions
+            );
+            annotation = this.chart.addAnnotation(options);
+            (annotation.options.events.click as any).call(annotation, {});
+
+            return annotation;
+        },
+
+        steps: [
+            bindingsUtils.updateNthPoint(1)
+        ]
+    },
     verticalLabel: {
         /** @ignore-option */
         className: 'highcharts-vertical-label',
@@ -1990,7 +2048,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     },
                     labelOptions: {
                         style: {
-                            color: palette.neutralColor60,
+                            color: Palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
@@ -2056,7 +2114,7 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         connector: {
                             fill: 'none',
                             stroke: closestPoint.below ?
-                                palette.negativeColor : palette.positiveColor
+                                Palette.negativeColor : Palette.positiveColor
                         }
                     },
                     shapeOptions: {
@@ -2072,6 +2130,79 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
 
             (annotation.options.events.click as any).call(annotation, {});
         }
+    },
+    /**
+     * The Fibonacci Time Zones annotation bindings. Includes `start` and one
+     * event in `steps` array.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-fibonacci-time-zones", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
+     */
+    fibonacciTimeZones: {
+        /** @ignore-option */
+        className: 'highcharts-fibonacci-time-zones',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        type: 'fibonacciTimeZones',
+                        langKey: 'fibonacciTimeZones',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).fibonacciTimeZones.annotationsOptions
+                );
+
+            return this.chart.addAnnotation(options);
+        },
+        /** @ignore-option */
+        // eslint-disable-next-line valid-jsdoc
+        steps: [
+            function (
+                this: NavigationBindings,
+                e: PointerEvent,
+                annotation: FibonacciTimeZones
+            ): void {
+                const mockPointOpts = annotation.options.typeOptions.points,
+                    x = mockPointOpts && mockPointOpts[0].x,
+                    coords = this.chart.pointer.getCoordinates(e),
+                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                    coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+                annotation.update({
+                    typeOptions: {
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: x
+                        }, {
+                            x: coordsX.value
+                        }]
+                    }
+                });
+            }
+        ]
     },
     // Flag types:
     /**
@@ -2295,6 +2426,81 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
         ): void {
             this.chart.series[0].update({
                 type: 'candlestick'
+            });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
+        }
+    },
+    /**
+     * Changes main series to `'heikinashi'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-heikinashi", "init": function() {}}
+     */
+    seriesTypeHeikinAshi: {
+        /** @ignore-option */
+        className: 'highcharts-series-type-heikinashi',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'heikinashi'
+            });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
+        }
+    },
+    /**
+     * Change main series to `'hlc'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hlc", "init": function () {}}
+     */
+
+    seriesTypeHLC: {
+        className: 'highcharts-series-type-hlc',
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hlc',
+                useOhlcData: true
+            });
+            fireEvent(this, 'deselectButton', { button });
+        }
+    },
+    /**
+     * Changes main series to `'hollowcandlestick'` type.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-series-type-hollowcandlestick", "init": function() {}}
+     */
+    seriesTypeHollowCandlestick: {
+        /** @ignore-option */
+        className: 'highcharts-series-type-hollowcandlestick',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        init: function (
+            this: NavigationBindings,
+            button: HTMLDOMElement
+        ): void {
+            this.chart.series[0].update({
+                type: 'hollowcandlestick'
             });
 
             fireEvent(

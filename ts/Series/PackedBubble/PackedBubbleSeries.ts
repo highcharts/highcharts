@@ -19,6 +19,7 @@
 import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
 import type PackedBubbleChart from './PackedBubbleChart';
 import type { PackedBubbleDataLabelFormatterObject } from './PackedBubbleDataLabelOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
@@ -207,8 +208,11 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     Point.PointLabelObject|
                     PackedBubbleDataLabelFormatterObject
                 )
-            ): (number|null) {
-                return (this.point as any).value;
+            ): string {
+                const { numberFormatter } = this.series.chart;
+                const { value } = this.point as PackedBubblePoint;
+
+                return isNumber(value) ? numberFormatter(value, -1) : '';
             },
 
             /**
@@ -357,7 +361,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 marker: {
                     fillColor: null as any,
                     fillOpacity: 1,
-                    lineWidth: 1,
+                    lineWidth: null as any,
                     lineColor: null as any,
                     symbol: 'circle'
                 }
@@ -647,9 +651,6 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     /**
      * Check if two bubbles overlaps.
      * @private
-     * @param {Array} first bubble
-     * @param {Array} second bubble
-     * @return {Boolean} overlap or not
      */
     public checkOverlap(
         bubble1: Array<number>,
@@ -676,8 +677,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
             nodeAdded,
             parentNode = series.parentNode,
-            PackedBubblePoint = series.pointClass;
+            PackedBubblePoint = series.pointClass,
+            layoutOptions = series.layout.options,
+            parentMarkerOptions: BubblePointMarkerOptions = {
+                radius: series.parentNodeRadius,
+                lineColor: series.color,
+                fillColor: color(series.color).brighten(0.4).get()
+            };
 
+        if (layoutOptions.parentNodeOptions) {
+            parentMarkerOptions = merge(layoutOptions.parentNodeOptions.marker || {}, parentMarkerOptions);
+        }
         series.parentNodeMass = 0;
 
         series.points.forEach(function (p): void {
@@ -700,11 +710,17 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     this,
                     {
                         mass: (series.parentNodeRadius as any) / 2,
-                        marker: {
-                            radius: series.parentNodeRadius
-                        },
+                        marker: parentMarkerOptions,
                         dataLabels: {
                             inside: false
+                        },
+                        states: {
+                            normal: {
+                                marker: parentMarkerOptions
+                            },
+                            hover: {
+                                marker: parentMarkerOptions
+                            }
                         },
                         dataLabelOnNull: true,
                         degree: series.parentNodeRadius,
@@ -815,7 +831,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
-                'stroke-width': nodeMarker.lineWidth
+                'stroke-width': pick(nodeMarker.lineWidth, series.options.lineWidth)
             };
 
         // create the group for parent Nodes if doesn't exist
@@ -1152,6 +1168,46 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     /**
+     * Function that checks for a parentMarker and sets the correct opacity.
+     * @private
+     * @param {Highcharts.Pack} point
+     * Candidate point for opacity correction.
+     * @param {string} [state]
+     * The point state, can be either `hover`, `select` or 'normal'. If
+     * undefined, normal state is assumed.
+     *
+     * @return {Highcharts.SVGAttributes}
+     * The presentational attributes to be set on the point.
+     */
+    public pointAttribs(
+        point?: PackedBubblePoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        const options = this.options,
+            hasParentMarker = point && point.isParentNode;
+        let attr,
+            fillOpacity,
+            markerOptions = options.marker;
+
+        if (
+            hasParentMarker &&
+            options.layoutAlgorithm &&
+            options.layoutAlgorithm.parentNodeOptions
+        ) {
+            markerOptions = options.layoutAlgorithm.parentNodeOptions.marker;
+        }
+
+        fillOpacity = (markerOptions as BubblePointMarkerOptions).fillOpacity;
+        attr = Series.prototype.pointAttribs.call(this, point, state);
+
+        if (fillOpacity !== 1) {
+            attr['fill-opacity'] = fillOpacity;
+        }
+
+        return attr;
+    }
+
+    /**
      * Function that is adding one bubble based on positions and sizes of
      * two other bubbles, lastBubble is the last added bubble, newOrigin is
      * the bubble for positioning new bubbles. nextBubble is the curently
@@ -1465,7 +1521,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

@@ -50,6 +50,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -1078,7 +1079,6 @@ if (seriesTypes.xrange) {
      * @private
      * @param {string} type
      *        Unsupported series type
-     * @return {void}
      */
     function (type: string): void {
         if (seriesTypes[type]) {
@@ -1682,7 +1682,7 @@ function hasDraggedPastSensitivity(
  * @param {Highcharts.SVGElement} [guideBox]
  *        The guide box to take snapshot of.
  *
- * @return {object}
+ * @return {Object}
  *         Snapshot object. Point properties are placed in a hashmap with IDs as
  *         keys.
  */
@@ -1801,29 +1801,29 @@ function resizeRect(
     let resizeAttrs;
 
     switch (updateSide) {
-    case 'left':
-        resizeAttrs = {
-            x: (rect.attr('x') as any) + update.x,
-            width: Math.max(1, (rect.attr('width') as any) - update.x)
-        };
-        break;
-    case 'right':
-        resizeAttrs = {
-            width: Math.max(1, (rect.attr('width') as any) + update.x)
-        };
-        break;
-    case 'top':
-        resizeAttrs = {
-            y: (rect.attr('y') as any) + update.y,
-            height: Math.max(1, (rect.attr('height') as any) - update.y)
-        };
-        break;
-    case 'bottom':
-        resizeAttrs = {
-            height: Math.max(1, (rect.attr('height') as any) + update.y)
-        };
-        break;
-    default:
+        case 'left':
+            resizeAttrs = {
+                x: (rect.attr('x') as any) + update.x,
+                width: Math.max(1, (rect.attr('width') as any) - update.x)
+            };
+            break;
+        case 'right':
+            resizeAttrs = {
+                width: Math.max(1, (rect.attr('width') as any) + update.x)
+            };
+            break;
+        case 'top':
+            resizeAttrs = {
+                y: (rect.attr('y') as any) + update.y,
+                height: Math.max(1, (rect.attr('height') as any) - update.y)
+            };
+            break;
+        case 'bottom':
+            resizeAttrs = {
+                height: Math.max(1, (rect.attr('height') as any) + update.y)
+            };
+            break;
+        default:
     }
     rect.attr(resizeAttrs);
 }
@@ -1879,7 +1879,7 @@ function initDragDrop(
  * @private
  * @function getNewPoints
  *
- * @param {object} dragDropData
+ * @param {Object} dragDropData
  *        A chart's dragDropData with drag/drop origin information, and info on
  *        which points are being dragged.
  *
@@ -2149,7 +2149,7 @@ Chart.prototype.setGuideBoxState = function (
  * @private
  * @function Highcharts.Point#getDropValues
  *
- * @param {object} origin
+ * @param {Object} origin
  *        Mouse position (chartX/Y) and point props at current data values.
  *        Point props should be organized per point.id in a hashmap.
  *
@@ -2287,12 +2287,45 @@ Series.prototype.getGuideBox = function (
     points.forEach(function (point: Point): void {
         const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
 
-        if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
+        if (bBox) {
+            let plotX2;
+            const x2 = (point as XRangePoint).x2;
+            if (isNumber(x2)) {
+                plotX2 = point.series.xAxis.translate(
+                    x2,
+                    false,
+                    false,
+                    false,
+                    true
+                );
+            }
+
+            // Avoid a 0 min when some of the points being dragged are
+            // completely outside the plot
+            const skipBBox = !(bBox.width || bBox.height || bBox.x || bBox.y);
+
             changed = true;
-            minX = Math.min(point.plotX || 0, bBox.x || 0, minX);
-            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
-            minY = Math.min(point.plotY || 0, bBox.y || 0, minY);
-            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
+            minX = Math.min(
+                point.plotX || 0,
+                plotX2 || 0,
+                skipBBox ? Infinity : bBox.x || 0,
+                minX
+            );
+            maxX = Math.max(
+                point.plotX || 0,
+                plotX2 || 0,
+                (bBox.x || 0) + (bBox.width || 0),
+                maxX
+            );
+            minY = Math.min(
+                point.plotY || 0,
+                skipBBox ? Infinity : bBox.y || 0,
+                minY
+            );
+            maxY = Math.max(
+                (bBox.y || 0) + (bBox.height || 0),
+                maxY
+            );
         }
     });
 
@@ -2548,7 +2581,7 @@ Chart.prototype.hideDragHandles = function (): void {
  * @private
  * @function countProps
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The object to count.
  *
  * @return {number}
