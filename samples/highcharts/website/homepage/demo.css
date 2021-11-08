@@ -49,16 +49,3 @@
     font-weight: 700;
     border-bottom: 1px dotted #856eff;
 }
-
-/* .highcharts-series-label{
-		transition: opacity 1s;
-		opacity:0;
-	} */
-
-/* .highcharts-series-label.on{
-		opacity:1
-	} */
-
-@media (prefers-reduced-motion: reduce) {
-
-}

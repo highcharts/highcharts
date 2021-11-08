@@ -63,7 +63,7 @@ body {
 
 .chart-container .highcharts-tooltip text {
     fill: #333;
-    font-family: "Arial";
+    font-family: Arial, sans-serif;
 }
 
 .chart-container .highcharts-tooltip {

@@ -20,21 +20,69 @@
 }
 
 /* GENERAL */
-.chart { float: left; height: 400px; position: relative; width: 100%; }
+.chart {
+    float: left;
+    height: 400px;
+    position: relative;
+    width: 100%;
+}
 .highcharts-draw-mode { cursor: crosshair; }
 .left { float: left; }
+
 .right,
 .highcharts-dropdown li.right { float: right; }
 
 /* GUI */
-.highcharts-dropdown { margin: 0 0 0 10px; padding: 0; width: calc(100% - 63px); }
-.highcharts-dropdown li { background-color: #f7f7f7; background-repeat: no-repeat; cursor: pointer; float: left; height: 40px; list-style: none; margin-right: 2px; margin-bottom: 3px; padding: 0; position: relative; width: auto; }
-.highcharts-dropdown li ul { display: none; left: 0; padding-left: 0; position: absolute; z-index: 125; }
+.highcharts-dropdown {
+    margin: 0 0 0 10px;
+    padding: 0;
+    width: calc(100% - 63px);
+}
+
+.highcharts-dropdown li {
+    background-color: #f7f7f7;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    float: left;
+    height: 40px;
+    list-style: none;
+    margin-right: 2px;
+    margin-bottom: 3px;
+    padding: 0;
+    position: relative;
+    width: auto;
+}
+
+.highcharts-dropdown li ul {
+    display: none;
+    left: 0;
+    padding-left: 0;
+    position: absolute;
+    z-index: 125;
+}
 .highcharts-dropdown li:hover { background-color: #e6ebf5; }
 .highcharts-dropdown li:hover ul { display: block; }
-.highcharts-dropdown li ul li { margin-bottom: 0; width: 160px; }
-.highcharts-dropdown li > span.highcharts-menu-item-btn { background-repeat: no-repeat; background-position: 50% 50%; display: block; float: left; height: 100%; width: 40px; }
-.highcharts-dropdown li > .highcharts-menu-item-title { color: #666; line-height: 40px; font-size: 0.876em; padding: 0 10px 0 5px; }
+
+.highcharts-dropdown li ul li {
+    margin-bottom: 0;
+    width: 160px;
+}
+
+.highcharts-dropdown li > span.highcharts-menu-item-btn {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    display: block;
+    float: left;
+    height: 100%;
+    width: 40px;
+}
+
+.highcharts-dropdown li > .highcharts-menu-item-title {
+    color: #666;
+    line-height: 40px;
+    font-size: 0.876em;
+    padding: 0 10px 0 5px;
+}
 
 .highcharts-label-annotation > .highcharts-menu-item-btn { background-image: url("https://code.highcharts.com/gfx/stock-icons/label.svg"); }
 .highcharts-circle-annotation > .highcharts-menu-item-btn { background-image: url("https://code.highcharts.com/gfx/stock-icons/circle.svg"); }
@@ -44,7 +92,11 @@
 li.highcharts-active { background-color: #e6ebf5; }
 
 /* Popup */
-.chart-wrapper { float: left; position: relative; width: 100%; }
+.chart-wrapper {
+    float: left;
+    position: relative;
+    width: 100%;
+}
 
 /* Responsive design */
 @media screen and (max-width: 1024px) {
