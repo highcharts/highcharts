@@ -55,7 +55,8 @@ const {
 /**
  * The funnel3d series type.
  *
- * @constructor seriesTypes.funnel3d
+ * @class
+ * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
  * @requires highcharts-3d
  * @requires modules/cylinder

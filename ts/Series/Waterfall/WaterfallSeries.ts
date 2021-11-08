@@ -58,9 +58,12 @@ import '../../Core/DefaultOptions.js';
 /**
  * Returns true if the key is a direct property of the object.
  * @private
- * @param {*} obj - Object with property to test
- * @param {string} key - Property key to test
- * @return {boolean} - Whether it is a direct property
+ * @param {*} obj
+ * Object with property to test
+ * @param {string} key
+ * Property key to test
+ * @return {boolean}
+ * Whether it is a direct property
  */
 function ownProp(obj: unknown, key: string): boolean {
     return Object.hasOwnProperty.call(obj, key);

@@ -1,15 +1,18 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #main {
-	max-width: 800px;
-	margin: 0 auto;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 #container {
-	height: 400px;
+    height: 400px;
 }
+
 .highcharts-loading {
-	background: silver;
+    background: silver;
 }
+
 .highcharts-loading-inner {
-	color: blue;
+    color: blue;
 }

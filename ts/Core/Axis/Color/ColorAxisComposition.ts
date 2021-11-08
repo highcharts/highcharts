@@ -330,7 +330,6 @@ namespace ColorAxisComposition {
      * @private
      * @function Highcharts.colorPointMixin.setVisible
      * @param {boolean} visible
-     * @return {void}
      */
     export function pointSetVisible(this: PointComposition, vis?: boolean): void {
         const point = this,
@@ -352,7 +351,6 @@ namespace ColorAxisComposition {
      * translation too
      * @private
      * @function Highcharts.colorSeriesMixin.translateColors
-     * @return {void}
      */
     function seriesTranslateColors(this: SeriesComposition): void {
         const series = this,

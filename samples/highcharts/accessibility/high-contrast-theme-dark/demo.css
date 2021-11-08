@@ -1,10 +1,10 @@
 body {
-	background-color: #1f1f20;
+    background-color: #1f1f20;
 }
 
 .container {
     width: 50%;
-	height: 400px;
-	margin-bottom: 15px;
-	float: left;
+    height: 400px;
+    margin-bottom: 15px;
+    float: left;
 }

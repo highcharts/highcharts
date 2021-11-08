@@ -65,10 +65,9 @@ class MapChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.MapChart#event:init
-     * @fires Highcharts.MapChart#event:afterInit
+     * @emits Highcharts.MapChart#event:init
+     * @emits Highcharts.MapChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -174,6 +173,7 @@ namespace MapChart {
      * @param {string|Array<string|number>} path
      *
      * @return {Highcharts.SVGPathArray}
+     * Splitted SVG path
      */
     export function splitPath(
         path: string|Array<string|number>

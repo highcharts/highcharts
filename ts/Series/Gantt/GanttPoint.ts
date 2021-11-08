@@ -107,7 +107,7 @@ class GanttPoint extends XRangePoint {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param {object} options
+     * @param {Object} options
      *        The point options
      *
      * @param {number} x

@@ -186,9 +186,7 @@ declare global {
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
         type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
-        type AnchorChoiceType = {
-            [key: string]: number;
-        }
+        type AnchorChoiceType = Record<string, number>;
     }
 }
 
@@ -1484,7 +1482,7 @@ export default dataGrouping;
  * to two weeks, the second and third item of the week array are used,
  *  and applied to the start and end date of the time span.
  *
- * @type      {object}
+ * @type      {Object}
  * @apioption plotOptions.series.dataGrouping.dateTimeLabelFormats
  */
 

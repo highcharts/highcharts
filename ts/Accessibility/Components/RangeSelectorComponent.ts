@@ -633,10 +633,6 @@ namespace RangeSelectorComponent {
      *
      * @private
      * @function Highcharts.Chart#highlightRangeSelectorButton
-     *
-     * @param {number} ix
-     *
-     * @return {boolean}
      */
     function chartHighlightRangeSelectorButton(
         this: ChartComposition,

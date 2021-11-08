@@ -347,7 +347,6 @@ namespace PointSonify {
      *        Whether or not to fade out as we stop. If false, the points are
      *        cancelled synchronously.
      *
-     * @return {void}
      */
     function pointCancelSonify(
         this: Composition,

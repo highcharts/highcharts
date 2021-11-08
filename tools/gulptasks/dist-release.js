@@ -20,8 +20,10 @@ const pathToDistRepo = '../' + releaseRepo + '/';
 
 /**
  * Asks user a question, and waits for input.
- * @param {String} question to ask.
- * @return {Promise<unknown>} answer.
+ * @param {string} question
+ * Question to ask.
+ * @return {Promise<*>}
+ * Answer.
  */
 async function askUser(question) {
     if (argv.forceYes) {
@@ -40,10 +42,13 @@ async function askUser(question) {
 
 /**
  * Commit, tag and push
- * @param {String|number} version to commit, tag and push.
- * @param {boolean} push, if true will commit, tag and push.
- *                  If false it will only print the commands to be run.
- * @return {Promise<any>} result
+ * @param {string|number} version
+ * To commit, tag and push.
+ * @param {boolean} [push]
+ * If true will commit, tag and push. If false it will only print the commands
+ * to be run.
+ * @return {Promise<*>}
+ * Result
  */
 async function runGit(version, push = false) {
     const commands = [
@@ -72,9 +77,11 @@ async function runGit(version, push = false) {
 }
 
 /**
- * Publishes to npm if the --push is part of the argument
- * @param {boolean} push, if true if will publish to npm. If false it will only do a dry-run.
- * @return {Promise<any>} result
+ * Publishes to npm if the --push is part of the argument.
+ * @param {boolean} [push]
+ * If true it will publish to npm. If false it will only do a dry-run.
+ * @return {Promise<*>}
+ * Result
  */
 async function npmPublish(push = false) {
     if (push) {
@@ -103,9 +110,11 @@ async function npmPublish(push = false) {
 
 /**
  * Removes all files in the folder apart form the paths specified in exceptions.
- * @param {String} folder to delete .
- * @param {Array<String>} exceptions of files in folder to not delete.
- * @return {Promise<[unknown]>} result
+ * @param {string} folder
+ * Fodler to delete.
+ * @param {Array<string>} exceptions
+ * Exceptions of files in folder to not delete.
+ * @return {Promise<Array<*>>} result
  */
 async function removeFilesInFolder(folder, exceptions) {
     const files = getFilesInFolder(folder, true, '');
@@ -118,9 +127,10 @@ async function removeFilesInFolder(folder, exceptions) {
 
 /**
  * Add the current version to the Bower and package.json files
- * @param {String} version to replace with
- * @param {String} name which is only used for logging purposes.
- * @return {undefined}
+ * @param {string} version
+ * To replace with
+ * @param {string} name
+ * Which is only used for logging purposes.
  */
 function updateJSONFiles(version, name) {
     log.message('Updating bower.json and package.json for ' + name + '...');
@@ -142,7 +152,6 @@ function updateJSONFiles(version, name) {
 
 /**
  * Copy the JavaScript files over
- * @return {undefined} void
  */
 function copyFiles() {
     const mapFromTo = {};
@@ -187,7 +196,8 @@ function copyFiles() {
 
 /**
  * Reads the products from file build/dist/products.js folder.
- * @return {Promise<unknown>} result
+ * @return {Promise<*>}
+ * Result
  */
 async function getProductsJs() {
     return new Promise((resolve, reject) => {
@@ -207,8 +217,8 @@ async function getProductsJs() {
 
 /**
  * Checks for any untracked or unstaged git changes in the workingDir
- * @param {String} workingDir to use
- * @return {undefined}
+ * @param {string} workingDir
+ * Dicrectory to use
  */
 function checkForCleanWorkingDirectory(workingDir) {
     log.message(`Checking that ${workingDir} does not contain any uncommitted changes..`);
@@ -232,9 +242,12 @@ function checkForCleanWorkingDirectory(workingDir) {
 
 /**
  * Checks if the branch is something else than master branch and asks the user if it is ok.
- * @param {String} repoName, name of repo
- * @param {String} workingDir to check the branch name in.
- * @return {Promise<void>} result
+ * @param {string} repoName
+ * Name of repo
+ * @param {string} workingDir
+ * To check the branch name in.
+ * @return {Promise<void>}
+ * Result
  */
 async function checkIfNotMasterBranch(repoName, workingDir) {
     const branch = childProcess.execSync('git rev-parse --abbrev-ref HEAD', { cwd: workingDir });
@@ -254,7 +267,9 @@ function checkIfLoggedInOnNpm() {
     try {
         childProcess.execSync('npm whoami', { cwd: pathToDistRepo });
     } catch (error) {
-        throw new Error('You are not logged in on npm. Please login using npm login and try again.');
+        throw new Error(`Not able to run npm whoami. It may be caused by
+        - Not being logged into npm, or
+        - The highcharts-dist folder not existing next to highcharts`);
     }
 }
 

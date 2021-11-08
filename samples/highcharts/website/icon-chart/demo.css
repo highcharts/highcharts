@@ -56,14 +56,14 @@ body {
     transition: all 1s;
 }
 
-.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
-    stroke-width: 1px;
-}
-
 .chart-container .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
 }
 
 .chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
@@ -187,6 +187,12 @@ body {
     transform: rotate(90deg) scale(1.5);
 }
 
+#charts .highcharts-grid-line {
+    fill: none;
+    stroke: rgb(255 255 255 / 50%);
+    z-index: 40;
+}
+
 #charts .highcharts-axis,
 #charts .highcharts-grid {
     display: block;
@@ -201,19 +207,13 @@ body {
     stroke-width: 1px;
 }
 
-#charts .highcharts-grid-line {
-    fill: none;
-    stroke: rgb(255 255 255 / 50%);
-    z-index: 40;
-}
-
 #charts .highcharts-data-labels.iceberg-types {
     color: #000;
     transition: color 300ms;
 }
 
 #charts #particle-1 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p1.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p1.svg");
     top: -80px;
     left: 154px;
     width: 100px;
@@ -245,7 +245,7 @@ body {
 }
 
 #charts #particle-2 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p2.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p2.svg");
     width: 56px;
     height: 105px;
     top: 70px;
@@ -269,7 +269,7 @@ body {
 }
 
 #charts #particle-3 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p3.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p3.svg");
     width: 60px;
     height: 86px;
     top: 154px;
@@ -300,7 +300,7 @@ body {
 }
 
 #charts #particle-4 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p4.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p4.svg");
     width: 67px;
     height: 48px;
     top: 268px;
@@ -332,7 +332,7 @@ body {
 }
 
 #charts #particle-5 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p5.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p5.svg");
     width: 88px;
     height: 127px;
     top: 11px;
@@ -364,7 +364,7 @@ body {
 }
 
 #charts #particle-6 {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p6.svg);
+    background-image: url("https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/p6.svg");
     width: 113px;
     height: 114px;
     top: -60px;
@@ -506,7 +506,7 @@ body {
     width: 100%;
     opacity: 100%;
     text-transform: uppercase;
-    transform: none;
+    transform: translateY(0);
 }
 
 #charts .highcharts-title {
@@ -549,10 +549,6 @@ body {
 
 #charts .highcharts-axis-labels {
     font-size: 0.6em;
-}
-
-#charts .highcharts-axis-title {
-    transform: translateY(0);
 }
 
 #charts .highcharts-data-label-color-5 .berg-label {
@@ -611,14 +607,8 @@ body {
         color: #fff;
         width: 300px;
         white-space: normal;
-        opacity: 0%;
-    }
-
-    #charts .highcharts-subtitle .iceberg-subtitle {
-        color: #fff;
-        width: 300px;
-        white-space: normal;
         font-size: 1.1em;
+        opacity: 0%;
     }
 
     #charts .label-title {
@@ -707,18 +697,11 @@ body {
         transform: rotate(90deg) scale(0.8);
     }
 
-
-
     #charts .particles .particle.rotate {
         background-repeat: no-repeat;
         transition: all 3s;
         position: absolute;
         transform: rotate(90deg) scale(1.5);
-    }
-
-
-    #charts .highcharts-axis-labels {
-        font-size: 0.9em;
     }
 
     #charts .highcharts-axis-labels {
@@ -729,8 +712,4 @@ body {
         transform: translate(-10px, -70px);
         font-size: 0.8em;
     }
-}
-
-@media screen  and (prefers-reduced-motion: reduce) {
-
 }

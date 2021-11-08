@@ -98,12 +98,8 @@ class MapLineSeries extends MapSeries {
 
     /**
      * Get presentational attributes
-     *
      * @private
      * @function Highcharts.seriesTypes.mapline#pointAttribs
-     * @param {Highcharts.Point} point
-     * @param {string} state
-     * @return {Highcharts.SVGAttributes}
      */
     public pointAttribs(
         point: MapLinePoint,

@@ -63,7 +63,7 @@ namespace SunburstUtilities {
      * @private
      * @function calculateLevelSizes
      *
-     * @param {object} levelOptions
+     * @param {Object} levelOptions
      * Map of level to its options.
      *
      * @param {Highcharts.Dictionary<number>} params

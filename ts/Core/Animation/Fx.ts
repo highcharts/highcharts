@@ -120,7 +120,6 @@ class Fx {
      *
      * @function Highcharts.Fx#dSetter
      *
-     * @return {void}
      */
     public dSetter(): void {
         const paths = this.paths,
@@ -178,7 +177,6 @@ class Fx {
      *
      * @function Highcharts.Fx#update
      *
-     * @return {void}
      */
     public update(): void {
         const elem = this.elem,
@@ -221,7 +219,6 @@ class Fx {
      * @param {string} unit
      *        The property unit, for example `px`.
      *
-     * @return {void}
      */
     public run(from: number, to: number, unit: string): void {
         const self = this,
@@ -365,9 +362,6 @@ class Fx {
         /**
          * If shifting points, prepend a dummy point to the end path.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function prepend(
             arr: SVGPath,
@@ -410,9 +404,6 @@ class Fx {
         /**
          * Copy and append last point until the length matches the end length.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function append(
             arr: SVGPath,
@@ -500,7 +491,6 @@ class Fx {
      *
      * @function Highcharts.Fx#fillSetter
      *
-     * @return {void}
      */
     public fillSetter(): void {
         Fx.prototype.strokeSetter.apply(this, arguments as any);
@@ -511,7 +501,6 @@ class Fx {
      *
      * @function Highcharts.Fx#strokeSetter
      *
-     * @return {void}
      */
     public strokeSetter(): void {
         this.elem.attr(

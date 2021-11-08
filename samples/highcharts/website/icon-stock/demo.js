@@ -456,11 +456,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }]
             },
             title: {
-                text: 'Candlestick and Volume',
+                text: '',
                 y: 30
             },
             subtitle: {
-                text: 'The demo is divided into two panes, with a resizer handle between the panes',
+                text: '',
                 y: 50
             },
             xAxis: [

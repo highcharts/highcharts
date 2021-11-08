@@ -39,14 +39,10 @@ declare global {
  *
  * @private
  * @function GLVertexBuffer
- *
  * @param {WebGLContext} gl
- *        the context in which to create the buffer
- *
+ * the context in which to create the buffer
  * @param {GLShader} shader
- *        the shader to use
- *
- * @return {*}
+ * the shader to use
  */
 function GLVertexBuffer(
     gl: WebGLRenderingContext,
