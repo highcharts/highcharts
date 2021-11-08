@@ -5,6 +5,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
         },
         series: [{}]
     });
+
     assert.strictEqual(
         chart.series[0].mapData.length,
         7,
@@ -13,29 +14,40 @@ QUnit.test('Set basemap on chart object', function (assert) {
 
     chart = new Highcharts.MapChart('container', {
         chart: {
-            map: Highcharts.maps['countries/ad/ad-all']
+            map: Highcharts.maps['countries/us/us-all']
         },
         series: [{}]
     });
+
     assert.strictEqual(
         chart.series[0].mapData.length,
-        7,
+        51,
         'Set map on chart object by GeoJSON object'
     );
 
-    chart = new Highcharts.MapChart('container', {
+    chart.update({
         chart: {
             map: 'invalid-map'
-        },
-        series: [
-            {
-                mapData: Highcharts.maps['countries/ad/ad-all']
-            }
-        ]
+        }
+    }, false);
+
+    chart.series[0].update({
+        mapData: Highcharts.maps['countries/bn-all.js']
     });
+
+    assert.strictEqual(
+        chart.series[0].mapData.length,
+        51,
+        'Map on the series object should overrule chart-wide setting.'
+    );
+
+    chart.series[0].update({
+        mapData: Highcharts.maps['countries/ad/ad-all']
+    });
+
     assert.strictEqual(
         chart.series[0].mapData.length,
         7,
-        'Map on series object overrules chart-wide setting'
+        'Update new map on series should overrule old series map, #11636.'
     );
 });
