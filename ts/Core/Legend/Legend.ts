@@ -802,6 +802,7 @@ class Legend {
             legend.maxItemWidth, (item.itemWidth as any)
         );
         legend.totalItemWidth += item.itemWidth as any;
+        console.log('bBox.height', bBox.height, 'fontMetricsH', fontMetricsH);
         legend.itemHeight = item.itemHeight = Math.round(
             item.legendItemHeight ||
             // use bBox for multiline (#16398)
