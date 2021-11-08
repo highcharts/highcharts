@@ -19,6 +19,7 @@ import type {
 import type {
     CSSObject
 } from '../Core/Renderer/CSSObject';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -201,6 +202,18 @@ class Breadcrumbs {
          */
 
         /**
+         * What box to align the button to. Can be either `plotBox` or
+         * `spacingBox`.
+         *
+         * @type       {Highcharts.ButtonRelativeToValue}
+         * @default    plotBox
+         * @since      3.0.8
+         * @product    highcharts highmaps
+         * @apioption  drilldown.breadcrumbs.relativeTo
+         */
+        relativeTo: 'plotBox',
+
+        /**
          * Positioning for the button row. The breadcrumbs buttons
          * will be aligned properly for the default chart layout
          * (title,  subtitle, legend, range selector) for the custom chart
@@ -273,7 +286,7 @@ class Breadcrumbs {
          * @sample {highcharts} highcharts/breadcrumbs/show-full-path
          *          Show full path.
          */
-        showFullPath: true,
+        showFullPath: false,
 
         /**
          * CSS styles for all breadcrumbs.
@@ -320,69 +333,19 @@ class Breadcrumbs {
     public level: number = -1;
     public options: Breadcrumbs.BreadcrumbsOptions = void 0 as any;
 
-    public constructor(chart: Chart, userOptions?: Breadcrumbs.BreadcrumbsOptions, isTreemap?: boolean) {
-        const chartOptions = merge(Breadcrumbs.defaultBreadcrumbsOptions, userOptions);
+    public constructor(chart: Chart, userOptions?: Partial<Breadcrumbs.BreadcrumbsOptions>, isTreemap?: boolean) {
+        const chartOptions = merge(
+            chart.options.drilldown &&
+                chart.options.drilldown.drillUpButton,
+            Breadcrumbs.defaultBreadcrumbsOptions,
+            chart.userOptions.drilldown &&
+            chart.userOptions.drilldown.drillUpButton,
+            userOptions
+        );
 
         this.chart = chart;
         this.options = chartOptions || {};
         this.isTreemap = isTreemap;
-    }
-
-    /**
-     * Align the breadcrumbs group depending on the alignment.
-     *
-     * @requires  modules/breadcrumbs
-     *
-     * @function Highcharts.Breadcrumbs#alingGroup
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     */
-    public alignGroup(this: Breadcrumbs): void {
-        const chart = this.chart,
-            breadcrumbsOptions = this.options,
-            bBox = this.breadcrumbsGroup && this.breadcrumbsGroup.getBBox(),
-            rangeSelector = chart.rangeSelector,
-            positionOptions = breadcrumbsOptions.position;
-
-        if (positionOptions) {
-            // Create a deep copy.
-            const calcPosition = merge(positionOptions);
-
-            // Change the initial position based on other elements on the chart.
-            if (positionOptions.verticalAlign === 'top') {
-                calcPosition.y += chart.titleOffset && chart.titleOffset[0] || 0;
-
-                if (rangeSelector && rangeSelector.group) {
-                    const rangeSelectorBBox = rangeSelector.group.getBBox(),
-                        rangeSelectorY = rangeSelectorBBox.y,
-                        rangeSelectorHight = rangeSelectorBBox.height;
-
-                    calcPosition.y += (rangeSelectorY + rangeSelectorHight) || 0;
-                }
-            }
-
-            if (positionOptions.verticalAlign === 'bottom' && chart.marginBottom) {
-                if (chart.legend && chart.legend.group && chart.legend.options.verticalAlign === 'bottom') {
-                    (calcPosition.y as number) -= chart.marginBottom -
-                            bBox.height -
-                            chart.legend.legendHeight;
-                } else {
-                    (calcPosition.y as number) -= bBox.height;
-                }
-            }
-
-            if (positionOptions.align === 'right') {
-                (calcPosition.x as number) -= bBox.width;
-            } else if (positionOptions.align === 'center') {
-                (calcPosition.x as number) -= bBox.width / 2;
-            }
-            this.breadcrumbsGroup
-                .align(
-                    calcPosition,
-                    true,
-                    chart.spacingBox
-                );
-        }
     }
 
     /**
@@ -521,11 +484,11 @@ class Breadcrumbs {
      *
      * @requires  modules/breadcrumbs
      *
-     * @function Highcharts.Breadcrumbs#jumpTo
+     * @function Highcharts.Breadcrumbs#jumpToStart
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public jumpTo(this: Breadcrumbs): void {
+    public jumpToStart(this: Breadcrumbs): void {
         const breadcrumbs = this,
             chart = breadcrumbs.chart;
 
@@ -556,7 +519,7 @@ class Breadcrumbs {
         if (this.options.showFullPath) {
             if (breadcrumbsList && breadcrumbsList.length) {
                 for (let i = 0; i < drillNumber; i++) {
-                    this.jumpTo();
+                    this.jumpToStart();
                 }
                 if (breadcrumbsList.length === 1) {
                     this.destroyGroup();
@@ -568,7 +531,7 @@ class Breadcrumbs {
             }
             this.breadcrumbsList.pop();
             this.level = this.breadcrumbsList.length - 2;
-            this.jumpTo();
+            this.jumpToStart();
         }
     }
 
@@ -587,7 +550,7 @@ class Breadcrumbs {
         }
 
         if (this.breadcrumbsGroup && this.breadcrumbsList.length) {
-            this.alignGroup();
+            this.breadcrumbsGroup.align();
         }
 
         this.isDirty = false;
@@ -643,23 +606,32 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             breadcrumbsList = breadcrumbs.breadcrumbsList,
             breadcrumbsOptions = breadcrumbs.options,
+            positionOptions = breadcrumbsOptions.position,
             lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2] &&
                 breadcrumbsList[breadcrumbsList.length - 2][2],
-            buttonSpacing = breadcrumbsOptions && breadcrumbsOptions.buttonSpacing;
+            buttonSpacing = breadcrumbsOptions.buttonSpacing,
+            alignTo = (
+                breadcrumbsOptions.relativeTo === 'chart' ||
+                breadcrumbsOptions.relativeTo === 'spacingBox' ?
+                    null :
+                    'scrollablePlotBox'
+            );
+
+        let translationX = 0;
 
         // A main group for the breadcrumbs.
-        if (!this.breadcrumbsGroup && breadcrumbsOptions) {
-            this.breadcrumbsGroup = chart.renderer
+        if (!breadcrumbs.breadcrumbsGroup && breadcrumbsOptions) {
+            breadcrumbs.breadcrumbsGroup = chart.renderer
                 .g('breadcrumbs-group')
+                .addClass('highcharts-breadcrumbs')
                 .attr({
                     zIndex: breadcrumbsOptions.zIndex
                 })
-                .addClass('highcharts-breadcrumbs')
                 .add();
         }
 
         // Draw breadcrumbs.
-        if (breadcrumbsList && breadcrumbsOptions && buttonSpacing) {
+        if (breadcrumbsList) {
             // Inital position for calculating the breadcrumbsGroup.
             let posX: number = lastBreadcrumbs ? lastBreadcrumbs.x +
                     lastBreadcrumbs.element.getBBox().width + buttonSpacing : 0;
@@ -710,7 +682,22 @@ class Breadcrumbs {
             }
         }
 
-        breadcrumbs.alignGroup();
+        // Update group position based on align and it's width.
+        const width = breadcrumbs.breadcrumbsGroup.getBBox().width;
+        if (positionOptions.align === 'right') {
+            translationX = -width;
+        } else if (positionOptions.align === 'center') {
+            translationX = -width / 2;
+        }
+
+        breadcrumbs.breadcrumbsGroup.align(
+            merge(
+                positionOptions,
+                { x: positionOptions.x + translationX }
+            ),
+            true,
+            alignTo as string
+        );
     }
 
     /**
@@ -736,8 +723,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsList = breadcrumbs.breadcrumbsList,
-            breadcrumbsOptions = breadcrumbs.options,
-            lang = chart.options.lang;
+            breadcrumbsOptions = breadcrumbs.options;
 
         if (breadcrumbsOptions && breadcrumb && breadcrumb[1]) {
             const button: SVGElement = chart.renderer.button(
@@ -978,7 +964,8 @@ if (!H.Breadcrumbs) {
     addEvent(Chart, 'applyDrilldown', function (): void {
         const chart = this,
             breadcrumbs = chart.breadcrumbs,
-            breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
+            drilldownOptions = chart.options.drilldown,
+            breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
 
         if (!breadcrumbs) {
             chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions, false);
@@ -1003,7 +990,7 @@ if (!H.Breadcrumbs) {
             addEvent(H.seriesTypes.treemap, 'setRootNode',
                 function (this: TreemapSeries, e: TreemapSeries.SetRootNodeObject): void {
                     const chart = this.chart,
-                        breadcrumbsOptions = this.options.breadcrumbs;
+                        breadcrumbsOptions = merge(this.options.drillUpButton, this.options.breadcrumbs);
 
                     if (!chart.breadcrumbs) {
                         chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions, true);
@@ -1056,20 +1043,20 @@ namespace Breadcrumbs {
         buttonTheme: SVGAttributes;
         buttonSpacing: number;
         events?: BreadcrumbsButtonsEventsOptions;
-        floating?: boolean;
+        floating: boolean;
         format?: string;
         formatter?: BreadcrumbsButtonsFormatter;
-        position?: BreadcrumbsAlignOptions;
-        separator?: SeparatorOptions;
-        showFullPath?: boolean;
-        style?: CSSObject;
-        useHTML?: boolean;
-        zIndex?: number;
+        relativeTo?: ButtonRelativeToValue;
+        position: BreadcrumbsAlignOptions;
+        separator: SeparatorOptions;
+        showFullPath: boolean;
+        style: CSSObject;
+        useHTML: boolean;
+        zIndex: number;
     }
     export interface BreadcrumbsAlignOptions {
-        align?: AlignValue;
-        verticalAlign?: VerticalAlignValue;
-        alignByTranslate?: boolean;
+        align: AlignValue;
+        verticalAlign: VerticalAlignValue;
         x: number;
         y: number;
     }

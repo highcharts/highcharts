@@ -206,6 +206,7 @@ declare global {
             );
             allowPointDrilldown?: boolean;
             animation?: (boolean|Partial<AnimationOptions>);
+            /** @deprecated */
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
@@ -517,6 +518,9 @@ defaultOptions.drilldown = {
     },
 
     /**
+     * @deprecated
+     * This option is deprecated since 9.3.2, use drilldown.breadcrumbs instead.
+     *
      * Options for the drill up button that appears when drilling down on a
      * series. The text for the button is defined in
      * [lang.drillUpText](#lang.drillUpText).
