@@ -26,8 +26,6 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
 *
 * */
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 export interface IKHDrawSenkouSpanObject {
     indicator: IKHIndicator;
     points: Array<IKHPoint>;
@@ -69,4 +67,3 @@ export interface IKHOptions extends SMAOptions {
     senkouSpanB?: Record<string, CSSObject>;
     tenkanLine?: Record<string, CSSObject>;
 }
-/* eslint-enable @typescript-eslint/interface-name-prefix */

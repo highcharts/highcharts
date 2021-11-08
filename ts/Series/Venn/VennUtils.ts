@@ -444,11 +444,10 @@ function layoutGreedyVenn(
      * Takes a set and updates the position, and add the set to the list of
      * positioned sets.
      * @private
-     * @param {object} set
+     * @param {Object} set
      * The set to add to its final position.
-     * @param {object} coordinates
+     * @param {Object} coordinates
      * The coordinates to position the set at.
-     * @return {void}
      */
     const positionSet = function positionSet(
         set: Highcharts.VennRelationObject,
@@ -846,10 +845,12 @@ function processVennData(
 /**
  * Takes two sets and finds the one with the largest total overlap.
  * @private
- * @param {object} a The first set to compare.
- * @param {object} b The second set to compare.
- * @return {number} Returns 0 if a and b are equal, <0 if a is greater, >0 if b
- * is greater.
+ * @param {Object} a
+ * The first set to compare.
+ * @param {Object} b
+ * The second set to compare.
+ * @return {number}
+ * Returns 0 if a and b are equal, <0 if a is greater, >0 if b is greater.
  */
 function sortByTotalOverlap(
     a: Highcharts.VennRelationObject,

@@ -18,11 +18,15 @@
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
 
-import BubbleLegendComposition from '../Bubble/BubbleSeries.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        mappoint: MapPointSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -205,6 +209,11 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points: Array<MapBubblePoint> = void 0 as any;
 
+    translate(): void {
+        MapPointSeries.prototype.translate.call(this);
+        this.getRadii();
+        this.translateBubble();
+    }
 }
 
 /* *
@@ -215,7 +224,7 @@ class MapBubbleSeries extends BubbleSeries {
 
 interface MapBubbleSeries {
     type: string;
-    getBox: typeof MapSeries.prototype['getBox'];
+    getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
@@ -225,7 +234,11 @@ interface MapBubbleSeries {
 extend(MapBubbleSeries.prototype, {
     type: 'mapbubble',
 
-    getBox: MapSeries.prototype.getBox,
+    axisTypes: ['colorAxis'],
+
+    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
+
+    isCartesian: false,
 
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],
@@ -235,6 +248,8 @@ extend(MapBubbleSeries.prototype, {
     setData: MapSeries.prototype.setData,
 
     setOptions: MapSeries.prototype.setOptions,
+
+    useMapGeometry: true,
 
     xyFromShape: true
 });

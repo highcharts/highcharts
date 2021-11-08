@@ -42,7 +42,9 @@ const ganttChart = function () {
         btnRemoveTask = document.getElementById('btnRemoveSelected'),
         btnAddTask = document.getElementById('btnAddTask'),
         btnCancelAddTask = document.getElementById('btnCancelAddTask'),
+        btnCloseAddTask = document.querySelector('.btn-close'),
         addTaskDialog = document.getElementById('addTaskDialog'),
+        addTaskDialogOverlay = document.getElementById('modal-backdrop'),
         inputName = document.getElementById('inputName'),
         selectDepartment = document.getElementById('selectDepartment'),
         selectDependency = document.getElementById('selectDependency'),
@@ -313,6 +315,56 @@ const ganttChart = function () {
             },
             {
                 condition: {
+                    maxWidth: 300,
+                    minWidth: 251
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: false,
+                                y: 15
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 400,
+                    minWidth: 301
+                },
+                chartOptions: {
+                    chart: {
+                        height: 400
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                y: 20
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
                     minWidth: 499
                 },
                 chartOptions: {
@@ -350,6 +402,7 @@ const ganttChart = function () {
 
     btnShowDialog.onclick = function () {
         // Update dependency list
+
         var depInnerHTML = '<option value=""></option>';
         each(chart.series[0].points, function (point) {
             depInnerHTML += '<option value="' + point.id + '">' + point.name +
@@ -357,13 +410,17 @@ const ganttChart = function () {
         });
         selectDependency.innerHTML = depInnerHTML;
 
+        document.getElementsByTagName('body')[0].classList.add('modal-open');
+        addTaskDialogOverlay.classList.add('show');
+        addTaskDialog.classList.add('show');
+
         // Show dialog by removing "hidden" class
         //addTaskDialog.className = 'overlay';
         isAddingTask = true;
 
         // Focus name field
         inputName.value = '';
-        inputName.focus();
+        //inputName.focus();
     };
 
     btnAddTask.onclick = function () {
@@ -398,15 +455,23 @@ const ganttChart = function () {
             dependency: dependency ? dependency.id : undef,
             milestone: milestone
         });
-        window.addModal.hide();
+
         // Hide dialog
-        //addTaskDialog.className += ' hidden';
+        addTaskDialog.classList.remove('show');
+        addTaskDialogOverlay.classList.remove('show');
         isAddingTask = false;
     };
 
     btnCancelAddTask.onclick = function () {
         // Hide dialog
-        addTaskDialog.className += ' hidden';
+        addTaskDialog.classList.remove('show');
+        addTaskDialogOverlay.classList.remove('show');
+        isAddingTask = false;
+    };
+    btnCloseAddTask.onclick = function () {
+        // Hide dialog
+        addTaskDialog.classList.remove('show');
+        addTaskDialogOverlay.classList.remove('show');
         isAddingTask = false;
     };
 

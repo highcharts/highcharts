@@ -292,7 +292,6 @@ class Fullscreen {
      * @since 8.0.1
      *
      * @requires modules/full-screen
-     * @return {void}
      */
     private setButtonText(): void {
         const chart = this.chart,

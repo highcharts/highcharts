@@ -146,11 +146,11 @@ class VBPIndicator extends SMAIndicator {
              * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
              */
             styles: {
-                /** @ignore-options */
+                /** @ignore-option */
                 color: '#0A9AC9',
-                /** @ignore-options */
+                /** @ignore-option */
                 dashStyle: 'LongDash',
-                /** @ignore-options */
+                /** @ignore-option */
                 lineWidth: 1
             }
         },
@@ -197,7 +197,7 @@ class VBPIndicator extends SMAIndicator {
             },
             verticalAlign: 'top'
         }
-    } as VBPOptions)
+    } as VBPOptions);
 
     public data: Array<VBPPoint> = void 0 as any;
     public negWidths: Array<number> = void 0 as any;
@@ -819,7 +819,6 @@ namespace VBPIndicator {
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
-    calculateOn: string;
     pointClass: typeof VBPPoint;
 
     crispCol: ColumnSeries['crispCol'];
@@ -829,11 +828,10 @@ interface VBPIndicator {
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
     nameComponents: ['ranges'],
-    bindTo: {
-        series: false,
-        eventName: 'afterSetExtremes'
+    calculateOn: {
+        chart: 'render',
+        xAxis: 'afterSetExtremes'
     },
-    calculateOn: 'render',
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,

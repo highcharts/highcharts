@@ -1,0 +1,729 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+*,
+::after,
+::before {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+#fjords .thick {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+#fjords .thin {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+#fjords .transparent {
+    opacity: 100%;
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+#fjords .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+#fjords .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+#fjords .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+#temp-data span {
+    display: none;
+}
+
+#fjords .fjord-y-axis .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+#fjords .fjord-y-axis span {
+    margin-top: 20px;
+}
+
+#fjords .btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.275rem 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+}
+
+#fjords .btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+#fjords .line {
+    color: #fff;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+#fjords .highcharts-color-9,
+#fjords .highcharts-color-0 {
+    fill: #201836;
+}
+
+#fjords .sun .highcharts-color-0,
+#container2 .highcharts-series-2 {
+    fill: #8087e8;
+    transition: fill 1s;
+}
+
+#fjords .sun.blue .highcharts-color-0 {
+    fill: #201836;
+}
+
+#fjords .highcharts-area-series,
+#fjords .highcharts-area,
+#fjords .highcharts-arearange-series,
+#fjords .highcharts-arearange {
+    opacity: 100%;
+    fill-opacity: 1;
+    stroke: transparent;
+}
+
+#fjords .highcharts-point.highcharts-color-2 {
+    opacity: 0%;
+}
+
+#fjords .highcharts-series-6 {
+    fill: #6699a1;
+}
+
+#fjords .highcharts-series-8 {
+    fill: #46465c;
+}
+
+#fjords .highcharts-series-7,
+#container2 .highcharts-series-0 {
+    fill: #a3edba;
+}
+
+#fjords.highcharts-series-8 {
+    fill: #46465c;
+}
+
+#fjords {
+    width: 250px;
+    height: 250px;
+    overflow: visible;
+    margin-top: 84px;
+    transition: all 1s;
+}
+
+#fjords .highcharts-series-15.highcharts-arearange-series.cover {
+    fill: #30426b;
+    transition: all 0s;
+    stroke: transparent;
+}
+
+#fjords .highcharts-series-12.highcharts-area-series.cover-bottom-right {
+    /* fill:#ffcc00 !important; */
+    fill: #30426b;
+    stroke: transparent;
+}
+
+#fjords .highcharts-series-11.highcharts-area-series.cover-back {
+    /* fill:#cc0000 */
+    fill: #30426b;
+    stroke: transparent;
+}
+
+#fjords .highcharts-series-13.highcharts-arearange-series.cover-middle {
+    /* fill:#00ffff */
+    fill: #30426b;
+    stroke: transparent;
+}
+
+#fjords .highcharts-series-14.highcharts-area-series.cover-middle-right {
+    /* fill:#ffccff */
+    fill: #30426b;
+    stroke: transparent;
+}
+
+#fjords .highcharts-series-15.highcharts-area-series.cover.green {
+    fill: #a3edba;
+    stroke: transparent;
+}
+
+#fjords .depth {
+    fill: #30426b;
+    stroke: transparent;
+    transform-origin: center;
+    transform: scaleX(1.1) translateY(50px);
+    opacity: 0%;
+    transition: all 3s;
+}
+
+#fjords .fjord-left,
+#fjords .fjord-right {
+    transition: all 1s;
+}
+
+#fjords .fjord-left.move {
+    transform: translate(-500px, 0);
+    opacity: 100%;
+}
+
+#fjords .fjord-right.move {
+    transform: translate(1000px, 0);
+    opacity: 100%;
+}
+
+#fjords .highcharts-zone-graph-0 {
+    fill: rgb(43 144 143);
+}
+
+#fjords .sun {
+    transition: all 1s;
+}
+
+#fjords .sun.move {
+    transform: translate(170px, -30px) scale(0.4);
+}
+
+#fjords .temps {
+    fill: #30426b;
+    transition: all 1s;
+    opacity: 0%;
+    transform: scaleX(1.22) translateX(-26px);
+}
+
+#fjords .temps.jan,
+#fjords .temps.apr {
+    fill: #b1cef5;
+}
+
+#fjords .sun.jan .highcharts-color-0 {
+    fill: #f5efc1;
+}
+
+#fjords .sun.jan {
+    transform: translate(200px, -10px) scale(0.2) !important;
+}
+
+#fjords .temps.jan .temp-data {
+    color: #000;
+}
+
+#fjords .temps.feb,
+#fjords .temps.mar {
+    fill: #e0ebfb;
+}
+
+#fjords .sun.feb .highcharts-color-0 {
+    fill: #eee598;
+}
+
+#fjords .sun.feb {
+    transform: translate(180px, -20px) scale(0.3) !important;
+}
+
+#fjords .temps.feb .temp-data {
+    color: #000;
+}
+
+#fjords .temps.mar .temp-data {
+    color: #000;
+}
+
+#fjords .sun.apr .highcharts-color-0 {
+    fill: #eee598;
+    stroke: rgb(247 229 81 / 50%);
+    stroke-width: 25px;
+    transition: all 1s;
+}
+
+#fjords .temps.may {
+    fill: #83afea;
+}
+
+#fjords .sun.may .highcharts-color-0 {
+    fill: #eee598;
+    stroke: rgb(253 153 106 / 30%);
+    stroke-width: 25px;
+    transition: all 1s;
+}
+
+#fjords .temps.jun {
+    fill: #5a94e3;
+}
+
+#fjords .sun.jun .highcharts-color-0 {
+    fill: #f1bf51;
+    stroke: rgb(253 153 106 / 20%);
+    stroke-width: 30px;
+    transition: all 1s;
+}
+
+#fjords .temps.jul {
+    fill: #317adb;
+}
+
+#fjords .sun.jul .highcharts-color-0 {
+    fill: #f99547;
+}
+
+#fjords .temps.aug {
+    fill: #1c447c;
+}
+
+#fjords .sun.aug .highcharts-color-0 {
+    fill: #f99547;
+    stroke: rgb(198 60 37 / 20%);
+    stroke-width: 30px;
+    transition: all 1s;
+}
+
+#fjords .temps.sep {
+    fill: #2964b5;
+}
+
+#fjords .sun.sep .highcharts-color-0 {
+    fill: rgb(253 153 106 / 100%);
+    stroke: rgb(241 191 81 / 20%);
+    stroke-width: 30px;
+    transition: all 1s;
+}
+
+#fjords .temps.oct {
+    fill: #72a2e3;
+}
+
+#fjords .sun.oct .highcharts-color-0 {
+    fill: #eee598;
+    stroke: rgb(241 191 81 / 20%);
+    stroke-width: 30px;
+}
+
+#fjords .temps.nov {
+    fill: #83afea;
+}
+
+#fjords .sun.nov .highcharts-color-0 {
+    fill: #eee598;
+}
+
+#fjords .sun.nov {
+    transform: translate(190px, -25px) scale(0.3) !important;
+}
+
+#fjords .temps.dec {
+    fill: #adcaf1;
+}
+
+#fjords .sun.dec .highcharts-color-0 {
+    fill: #f5efc1;
+}
+
+#fjords .sun.dec {
+    transform: translate(190px, -20px) scale(0.28) !important;
+}
+
+#temp-data {
+    color: #000;
+    font-size: 40px;
+    font-weight: 200;
+    border: 0 solid #000;
+    position: absolute;
+    left: 90px;
+    top: -90px;
+}
+
+#temp-data.jan span:nth-of-type(1) {
+    display: block;
+}
+
+#temp-data.feb span:nth-of-type(2) {
+    display: block;
+}
+
+#temp-data.mar span:nth-of-type(3) {
+    display: block;
+}
+
+#temp-data.apr span:nth-of-type(4) {
+    display: block;
+}
+
+#temp-data.may span:nth-of-type(5) {
+    display: block;
+}
+
+#temp-data.jun span:nth-of-type(6) {
+    display: block;
+    margin-left: -10px;
+}
+
+#temp-data.jul span:nth-of-type(7) {
+    display: block;
+    margin-left: -10px;
+}
+
+#temp-data.aug span:nth-of-type(8) {
+    display: block;
+    margin-left: -10px;
+}
+
+#temp-data.sep span:nth-of-type(9) {
+    display: block;
+    margin-left: -10px;
+}
+
+#temp-data.oct span:nth-of-type(10) {
+    display: block;
+    margin-left: -10px;
+}
+
+#temp-data.nov span:nth-of-type(11) {
+    display: block;
+}
+
+#temp-data.dec span:nth-of-type(12) {
+    display: block;
+}
+
+#temp-data.hide {
+    opacity: 0%;
+}
+
+#temp-data.show {
+    opacity: 100%;
+}
+
+#fjords .temps .highcharts-label.highcharts-data-label-color-9:nth-of-type(1) {
+    display: none;
+}
+
+#fjords .highcharts-pie-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: transparent;
+}
+
+.highcharts-plot-band,
+.highcharts-pane,
+#container2 .highcharts-series-3 {
+    fill: #30426b;
+    fill-opacity: 1;
+    z-index: 30;
+}
+
+#fjords .highcharts-series-16 image {
+    width: 22px;
+    height: 18px;
+    transform: translate(0, -5px);
+}
+
+#fjords .highcharts-series-17 image {
+    width: 35px;
+    height: 50px;
+    transform: translate(0, -5px);
+}
+
+#fjords #title {
+    transition: opacity 1s;
+    opacity: 0%;
+    margin-top: -90px;
+    margin-bottom: 0;
+}
+
+#fjords #title.show {
+    opacity: 100%;
+}
+
+#fjords #title .subtitle {
+    font-size: 14px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+#fjords #title .title {
+    font-size: 24px;
+    font-weight: 200;
+    text-align: center;
+    margin: 0;
+}
+
+#fjords #title .small-in {
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+    display: none;
+}
+
+#fjords .month {
+    padding: 4px 8px;
+    margin: 0 2px 0 0;
+    width: 50px;
+    height: 25px;
+    font-size: 16px;
+    border: 1px solid #434994;
+    text-align: center;
+    color: #211a38;
+    font-weight: 300;
+}
+
+#fjords .month.active,
+#fjords .month:not(.active):hover {
+    background-color: #211a38;
+    color: #fff;
+}
+
+#fjords .month-container {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+    width: 166px;
+    padding: 4px;
+    display: flex;
+    flex-flow: wrap;
+    flex-direction: row;
+}
+
+#fjords .month-container.d-none {
+    display: none;
+}
+
+#fjords .dropdown {
+    position: absolute;
+    z-index: 1000;
+    left: 0;
+    top: -20px;
+}
+
+#fjords .dropdown-toggle {
+    width: 166px;
+}
+
+#fjords .dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+}
+
+#fjords .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+#fjords .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+#fjords .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+#fjords .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+    opacity: 100%;
+}
+
+#fjords .highcharts-series-inactive {
+    opacity: 100%;
+    transition: opacity 50ms;
+}
+
+#fjords .highcharts-tooltip-0 {
+    filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
+    box-shadow: 5px 7px 13px 1px rgb(0 0 0 / 14%);
+}
+
+#fjords .highcharts-tooltip-box {
+    stroke-width: 0;
+    border: none;
+    stroke: #ebebeb;
+    fill: #fff;
+    fill-opacity: 1;
+}
+
+#fjords .highcharts-tooltip text {
+    fill: #333;
+}
+
+#fjords .highcharts-tooltip {
+    z-index: 1000;
+}
+
+#fjords .highcharts-graph {
+    fill: unset;
+    stroke-width: unset;
+    stroke: unset;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+}
+
+@media screen  and (min-width: 300px) {
+    #fjords {
+        width: 300px;
+        height: 300px;
+    }
+
+    #fjords .temps {
+        transform: scaleX(1.14) translateX(-23px);
+    }
+
+    #fjords .sun.move {
+        transform: translate(200px, -40px) scale(0.4);
+    }
+
+    #temp-data {
+        left: 110px;
+        top: -90px;
+    }
+
+    #fjords #title .small-in {
+        display: block;
+    }
+
+    #fjords #title {
+        margin-top: -90px;
+        margin-bottom: 0;
+    }
+
+    #fjords .sun.jan {
+        transform: translate(220px, -10px) scale(0.2) !important;
+    }
+
+    #fjords .sun.feb,
+    #fjords .sun.dec {
+        transform: translate(210px, -30px) scale(0.3) !important;
+    }
+
+    #fjords .sun.nov {
+        transform: translate(210px, -25px) scale(0.3) !important;
+    }
+}
+
+@media screen  and (min-width: 400px) {
+    #fjords {
+        width: 400px;
+        height: 400px;
+    }
+
+    #fjords #title {
+        margin-top: -130px;
+    }
+
+    #fjords #title .title {
+        font-size: 32px;
+    }
+
+    #fjords .dropdown {
+        left: 15px;
+        top: -25px;
+    }
+
+    #fjords .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    #fjords .temps {
+        transform: scaleX(1.06) translateX(-14px);
+    }
+
+    #fjords .sun.move {
+        transform: translate(250px, -40px) scale(0.4);
+    }
+
+    #fjords .sun.jan {
+        transform: translate(290px, -10px) scale(0.2) !important;
+    }
+
+    #fjords .sun.nov {
+        transform: translate(250px, -40px) scale(0.4) !important;
+    }
+
+    #fjords .sun.feb,
+    #fjords .sun.dec {
+        transform: translate(270px, -30px) scale(0.3) !important;
+    }
+
+    #temp-data {
+        left: 160px;
+        top: -120px;
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    #fjords {
+        width: 500px;
+        height: 500px;
+    }
+
+    #temp-data {
+        left: 215px !important;
+        top: -150px !important;
+    }
+
+    #fjords .temps {
+        transform: scaleX(1) translateX(-0);
+    }
+
+    #fjords .sun.move {
+        transform: translate(300px, -55px) scale(0.4);
+    }
+
+    #fjords .sun.jan {
+        transform: translate(350px, -10px) scale(0.2) !important;
+    }
+
+    #fjords .sun.feb,
+    #fjords .sun.dec {
+        transform: translate(350px, -10px) scale(0.2) !important;
+    }
+
+    #fjords .sun.nov {
+        transform: translate(300px, -55px) scale(0.4) !important;
+    }
+}
+
+@media screen  and (prefers-reduced-motion) {
+    #fjords .fjord-left.move {
+        transform: none;
+        opacity: 0%;
+    }
+
+    #fjords .fjord-right.move {
+        transform: none;
+        opacity: 0%;
+    }
+}

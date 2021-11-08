@@ -1,4 +1,5 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
+
 #container {
     max-width: 800px;
     height: 400px;
@@ -6,21 +7,21 @@
 }
 
 .shape {
-  fill: none;
-  stroke-width: 1;
-  stroke: red;
+    fill: none;
+    stroke-width: 1;
+    stroke: red;
 }
 
 #shape-custom-shape path {
-  fill: red;
+    fill: red;
 }
 
 #shape-circle circle:first-child {
-  fill: rgba(224, 101, 0, 0.6);
+    fill: rgb(224 101 0 / 60%);
 }
 
 #shape-circle circle:nth-child(2) {
-  fill: none;
-  stroke-width: 2;
-  stroke: black;
+    fill: none;
+    stroke-width: 2;
+    stroke: black;
 }

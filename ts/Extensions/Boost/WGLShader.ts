@@ -61,9 +61,7 @@ declare global {
  * @function GLShader
  *
  * @param {WebGLContext} gl
- *        the context in which the shader is active
- *
- * @return {*}
+ * the context in which the shader is active
  */
 function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     let vertShade = [
@@ -304,9 +302,10 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     /**
      * String to shader program
      * @private
-     * @param {string} str - the program source
-     * @param {string} type - the program type: either `vertex` or `fragment`
-     * @returns {bool|shader}
+     * @param {string} str
+     * the program source
+     * @param {string} type
+     * the program type: either `vertex` or `fragment`
      */
     function stringToProgram(
         str: string,
@@ -432,7 +431,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     /**
      * Set the active texture
      * @private
-     * @param texture - the texture
+     * @param texture
+     * the texture
      */
     function setTexture(texture: number): void {
         if (gl && shaderProgram) {
@@ -443,7 +443,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     /**
      * Set if inversion state
      * @private
-     * @flag is the state
+     * @param {number} flag
+     * is the state
      */
     function setInverted(flag: number): void {
         if (gl && shaderProgram) {
@@ -486,7 +487,10 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             zMin = Number.MAX_VALUE,
             zMax = -Number.MAX_VALUE;
 
-        if (gl && shaderProgram && series.type === 'bubble') {
+        if (gl && shaderProgram && series.is('bubble')) {
+
+            const pxSizes = series.getPxExtremes();
+
             zMin = pick(seriesOptions.zMin, clamp(
                 zCalcMin,
                 seriesOptions.displayNegative === false ?
@@ -511,8 +515,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             setUniform('bubbleZMin', zMin);
             setUniform('bubbleZMax', zMax);
             setUniform('bubbleZThreshold', series.options.zThreshold as any);
-            setUniform('bubbleMinSize', series.minPxSize as any);
-            setUniform('bubbleMaxSize', series.maxPxSize as any);
+            setUniform('bubbleMinSize', pxSizes.minPxSize);
+            setUniform('bubbleMaxSize', pxSizes.maxPxSize);
         }
     }
 

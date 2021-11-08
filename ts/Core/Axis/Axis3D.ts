@@ -489,7 +489,7 @@ class Axis3D {
              */
             skew3d: null
         }
-    }
+    };
 
     /* *
      *

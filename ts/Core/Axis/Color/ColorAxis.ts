@@ -685,8 +685,8 @@ class ColorAxis extends Axis implements AxisLike {
      * @param {Highcharts.Point} [point]
      *        The Point object if the crosshair snaps to points.
      *
-     * @fires Highcharts.ColorAxis#event:afterDrawCrosshair
-     * @fires Highcharts.ColorAxis#event:drawCrosshair
+     * @emits Highcharts.ColorAxis#event:afterDrawCrosshair
+     * @emits Highcharts.ColorAxis#event:drawCrosshair
      */
     public drawCrosshair(
         e?: PointerEvent,

@@ -19,8 +19,7 @@
  * */
 import type InstrumentType from './Instrument';
 
-import H from '../../Core/Globals.js';
-import Sonification from './Sonification.js';
+import Instrument from './Instrument.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -120,7 +119,7 @@ class Earcon {
             opts: Earcon.Instrument
         ): void {
             const instrument = typeof opts.instrument === 'string' ?
-                    Sonification.instruments[opts.instrument] : opts.instrument,
+                    Instrument.definitions[opts.instrument] : opts.instrument,
                 instrumentOpts = merge(opts.playOptions);
             let instrOnEnd: (Function|undefined),
                 instrumentCopy,

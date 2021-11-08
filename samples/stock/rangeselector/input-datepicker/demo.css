@@ -1,3 +1,4 @@
-</style>
-<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
-<style type="text/css">
+#container {
+    height: 400px;
+    min-width: 600px;
+}

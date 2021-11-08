@@ -22,7 +22,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     data.splice(dataIndex, 1);
     mapData.splice(mapDataIndex, 1);
 
-    // Initiate the chart
+    // Initialize the chart
     var chart = Highcharts.mapChart('container', {
 
         title: {

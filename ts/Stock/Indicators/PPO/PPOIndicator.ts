@@ -172,7 +172,7 @@ class PPOIndicator extends EMAIndicator {
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 

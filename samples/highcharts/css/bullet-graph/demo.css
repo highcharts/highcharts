@@ -1,33 +1,42 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
+
 #container1 {
     max-width: 800px;
     height: 115px;
     margin: 1em auto;
 }
-#container2, #container3 {
+
+#container2,
+#container3 {
     max-width: 800px;
     height: 85px;
     margin: 1em auto;
 }
+
 .hc-cat-title {
-	font-size: 13px;
-	font-weight: bold;
+    font-size: 13px;
+    font-weight: bold;
 }
+
 .plot-band-low {
-	fill: #666;
-	fill-opacity: 1;
+    fill: #666;
+    fill-opacity: 1;
 }
+
 .plot-band-medium {
-	fill: #999;
-	fill-opacity: 1;
+    fill: #999;
+    fill-opacity: 1;
 }
+
 .plot-band-high {
-	fill: #bbb;
-	fill-opacity: 1;
+    fill: #bbb;
+    fill-opacity: 1;
 }
+
 .highcharts-bullet-target {
-	fill: black;
+    fill: black;
 }
+
 .highcharts-bullet-series .highcharts-point {
-	fill: black;
+    fill: black;
 }

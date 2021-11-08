@@ -19,9 +19,11 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
+import type RangeSelector from '../Extensions/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -68,7 +70,7 @@ declare module '../Core/Chart/ChartLike' {
         a11yDirty?: boolean;
         accessibility?: Accessibility;
         types?: Array<string>;
-        /** @require modules/accessibility */
+        /** @requires modules/accessibility */
         updateA11yEnabled(): void;
     }
 }
@@ -323,17 +325,16 @@ namespace Accessibility {
 
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
-        container: Highcharts.ContainerComponent;
-        infoRegions: Highcharts.InfoRegionsComponent;
+        container: ContainerComponent;
+        infoRegions: InfoRegionsComponent;
         legend: Highcharts.LegendComponent;
-        chartMenu: Highcharts.MenuComponent;
-        rangeSelector: Highcharts.RangeSelectorComponent;
+        chartMenu: MenuComponent;
+        rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
-        zoom: Highcharts.ZoomComponent;
+        zoom: ZoomComponent;
     }
 
     export declare class ChartComposition extends Chart {
-        highlightedPoint?: PointComposition;
         options: Required<Options>;
         series: Array<SeriesComposition>;
     }
@@ -469,16 +470,26 @@ namespace Accessibility {
      * @private
      */
     export function compose(
+        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         PointClass: typeof Point,
         SeriesClass: typeof Series,
-        SVGElementClass: typeof SVGElement
+        SVGElementClass: typeof SVGElement,
+        RangeSelectorClass?: typeof RangeSelector
     ): void {
+        // ordered:
+        KeyboardNavigation.compose(ChartClass);
+        // LegendComponent
+        MenuComponent.compose(ChartClass);
+        SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
+        ZoomComponent.compose(AxisClass);
+        // RangeSelector
         A11yI18n.compose(ChartClass);
         FocusBorder.compose(ChartClass, SVGElementClass);
-        KeyboardNavigation.compose(ChartClass);
-        NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
-        SeriesComponent.compose(SeriesClass);
+
+        if (RangeSelectorClass) {
+            RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
+        }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);

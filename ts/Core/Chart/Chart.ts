@@ -383,8 +383,8 @@ class Chart {
      * @param {...Array<*>} arguments
      * All arguments for the constructor.
      *
-     * @fires Highcharts.Chart#event:init
-     * @fires Highcharts.Chart#event:afterInit
+     * @emits Highcharts.Chart#event:init
+     * @emits Highcharts.Chart#event:afterInit
      */
     public getArgs(
         a: (string|globalThis.HTMLElement|Partial<Options>),
@@ -414,10 +414,9 @@ class Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.Chart#event:init
-     * @fires Highcharts.Chart#event:afterInit
+     * @emits Highcharts.Chart#event:init
+     * @emits Highcharts.Chart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -639,7 +638,6 @@ class Chart {
      *
      * @private
      * @function Highcharts.Series#getSeriesOrderByLinks
-     * @return {Array<Highcharts.Series>}
      */
     public getSeriesOrderByLinks(): Array<Series> {
         return this.series.concat().sort(function (a, b): number {
@@ -788,12 +786,12 @@ class Chart {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      * If or how to apply animation to the redraw.
      *
-     * @fires Highcharts.Chart#event:afterSetExtremes
-     * @fires Highcharts.Chart#event:beforeRedraw
-     * @fires Highcharts.Chart#event:predraw
-     * @fires Highcharts.Chart#event:redraw
-     * @fires Highcharts.Chart#event:render
-     * @fires Highcharts.Chart#event:updatedData
+     * @emits Highcharts.Chart#event:afterSetExtremes
+     * @emits Highcharts.Chart#event:beforeRedraw
+     * @emits Highcharts.Chart#event:predraw
+     * @emits Highcharts.Chart#event:redraw
+     * @emits Highcharts.Chart#event:render
+     * @emits Highcharts.Chart#event:updatedData
      */
     public redraw(animation?: (boolean|Partial<AnimationOptions>)): void {
 
@@ -994,8 +992,6 @@ class Chart {
 
         /**
          * @private
-         * @param {Highcharts.Axis|Highcharts.Series} item
-         * @return {boolean}
          */
         function itemById(item: (Axis|Series)): boolean {
             return (
@@ -1024,8 +1020,8 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#getAxes
-     * @fires Highcharts.Chart#event:afterGetAxes
-     * @fires Highcharts.Chart#event:getAxes
+     * @emits Highcharts.Chart#event:afterGetAxes
+     * @emits Highcharts.Chart#event:getAxes
      */
     public getAxes(): void {
         const chart = this,
@@ -1248,7 +1244,7 @@ class Chart {
      * @function Highcharts.Chart#layOutTitles
      *
      * @param {boolean} [redraw=true]
-     * @fires Highcharts.Chart#event:afterLayOutTitles
+     * @emits Highcharts.Chart#event:afterLayOutTitles
      */
     public layOutTitles(redraw?: boolean): void {
         const titleOffset = [0, 0, 0],
@@ -1486,7 +1482,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#afterGetContainer
-     * @fires Highcharts.Chart#event:afterGetContainer
+     * @emits Highcharts.Chart#event:afterGetContainer
      */
     public getContainer(): void {
         const chart = this,
@@ -1639,7 +1635,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#getMargins
-     * @fires Highcharts.Chart#event:getMargins
+     * @emits Highcharts.Chart#event:getMargins
      */
     public getMargins(skipAxes?: boolean): void {
         const { spacing, margin, titleOffset } = this;
@@ -1841,10 +1837,9 @@ class Chart {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation.
      *
-     * @return {void}
      *
-     * @fires Highcharts.Chart#event:endResize
-     * @fires Highcharts.Chart#event:resize
+     * @emits Highcharts.Chart#event:endResize
+     * @emits Highcharts.Chart#event:resize
      */
     public setSize(
         width?: (number|null),
@@ -1881,11 +1876,7 @@ class Chart {
         }
 
         chart.setChartSize(true);
-        renderer.setSize(
-            (chart.chartWidth as any),
-            (chart.chartHeight as any),
-            globalAnimation
-        );
+        renderer.setSize(chart.chartWidth, chart.chartHeight, globalAnimation);
 
         // handle axes
         chart.axes.forEach(function (axis): void {
@@ -1922,7 +1913,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#setChartSize
-     * @fires Highcharts.Chart#event:afterSetChartSize
+     * @emits Highcharts.Chart#event:afterSetChartSize
      */
     public setChartSize(skipAxes?: boolean): void {
         const chart = this,
@@ -2081,7 +2072,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#drawChartBox
-     * @fires Highcharts.Chart#event:afterDrawChartBox
+     * @emits Highcharts.Chart#event:afterDrawChartBox
      */
     public drawChartBox(): void {
         const chart = this,
@@ -2236,7 +2227,6 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#propFromSeries
-     * @return {void}
      */
     public propFromSeries(): void {
         const chart = this,
@@ -2288,7 +2278,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#linkSeries
-     * @fires Highcharts.Chart#event:afterLinkSeries
+     * @emits Highcharts.Chart#event:afterLinkSeries
      */
     public linkSeries(): void {
         const chart = this,
@@ -2575,7 +2565,7 @@ class Chart {
      *
      * @function Highcharts.Chart#destroy
      *
-     * @fires Highcharts.Chart#event:destroy
+     * @emits Highcharts.Chart#event:destroy
      */
     public destroy(): void {
         const chart = this,
@@ -2656,7 +2646,7 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#firstRender
-     * @fires Highcharts.Chart#event:beforeRender
+     * @emits Highcharts.Chart#event:beforeRender
      */
     public firstRender(): void {
         const chart = this,
@@ -2734,8 +2724,8 @@ class Chart {
      *
      * @private
      * @function Highcharts.Chart#onload
-     * @fires Highcharts.Chart#event:load
-     * @fires Highcharts.Chart#event:render
+     * @emits Highcharts.Chart#event:load
+     * @emits Highcharts.Chart#event:render
      */
     public onload(): void {
 
@@ -2790,8 +2780,8 @@ class Chart {
      * @return {Highcharts.Series}
      *         The newly created series object.
      *
-     * @fires Highcharts.Chart#event:addSeries
-     * @fires Highcharts.Chart#event:afterAddSeries
+     * @emits Highcharts.Chart#event:addSeries
+     * @emits Highcharts.Chart#event:afterAddSeries
      */
     public addSeries(
         options: SeriesTypeOptions,
@@ -3111,8 +3101,8 @@ class Chart {
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
-     * @fires Highcharts.Chart#event:update
-     * @fires Highcharts.Chart#event:afterUpdate
+     * @emits Highcharts.Chart#event:update
+     * @emits Highcharts.Chart#event:afterUpdate
      */
     public update(
         options: Partial<Options>,
@@ -3449,8 +3439,8 @@ class Chart {
      *
      * @function Highcharts.Chart#showResetZoom
      *
-     * @fires Highcharts.Chart#event:afterShowResetZoom
-     * @fires Highcharts.Chart#event:beforeShowResetZoom
+     * @emits Highcharts.Chart#event:afterShowResetZoom
+     * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
         const chart = this,
@@ -3500,7 +3490,7 @@ class Chart {
      *
      * @function Highcharts.Chart#zoomOut
      *
-     * @fires Highcharts.Chart#event:selection
+     * @emits Highcharts.Chart#event:selection
      */
     public zoomOut(): void {
         fireEvent(this, 'selection', { resetSelection: true }, this.zoom);

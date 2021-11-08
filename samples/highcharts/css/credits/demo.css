@@ -1,17 +1,19 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-credits {
-	font-style: italic;
+    font-style: italic;
     font-size: 2em;
     fill: #90ed7d;
     transition: fill 250ms;
 }
+
 .highcharts-credits:hover {
-	fill: black;
-	font-size: 2em;
-};
+    fill: black;
+    font-size: 2em;
+}

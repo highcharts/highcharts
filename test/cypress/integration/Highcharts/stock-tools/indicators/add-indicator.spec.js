@@ -26,9 +26,7 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
             bindingsUtils.indicatorsWithAxes.push('customIndicatorBasedOnRSI');
         });
 
-        cy.get('.highcharts-indicators')
-            .click();
-
+        cy.openIndicators()
         cy.get('.highcharts-indicator-list')
             .contains('CUSTOMINDICATORBASEDONRSI')
             .click();
