@@ -51,6 +51,8 @@ const {
 
 declare module '../Core/Chart/ChartLike' {
     interface ChartLike {
+        breadcrumbsBottomMargin?: boolean;
+        breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
     }
 }
@@ -497,6 +499,7 @@ class Breadcrumbs {
         } else {
             chart.drillUp();
         }
+        chart.getMargins();
     }
 
     /**
@@ -902,33 +905,6 @@ class Breadcrumbs {
         }
     }
 
-    /**
-    * Set margins if the floating: false.
-    * @function Highcharts.Breadcrumbs#update
-    *
-    * @requires  modules/breadcrumbs
-    *
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
-    public setMargins(this: Breadcrumbs): void {
-        const chart = this.chart,
-            breadcrumbsOptions = this.options,
-            defaultBreadcrumheight = 35, // TO DO: calculate that height
-            extraMargin = chart.rangeSelector ? chart.rangeSelector.getHeight() : defaultBreadcrumheight;
-
-        if (
-            breadcrumbsOptions &&
-            !breadcrumbsOptions.floating &&
-            chart.breadcrumbs &&
-            chart.breadcrumbs.breadcrumbsList &&
-            chart.breadcrumbs.breadcrumbsList.length
-        ) {
-            chart.yAxis[0].options.offsets = [extraMargin, 0, 0, 0];
-        } else {
-            chart.yAxis[0].options.offsets = [0, 0, 0, 0];
-        }
-    }
 }
 
 /* eslint-disable no-invalid-this */
@@ -936,17 +912,111 @@ class Breadcrumbs {
 if (!H.Breadcrumbs) {
     H.Breadcrumbs = Breadcrumbs as typeof Breadcrumbs;
 
-    addEvent(Chart, 'setOffsets', function (): void {
-        this.breadcrumbs && this.breadcrumbs.setMargins();
+    addEvent(Chart, 'beforeRender', function (): void {
+
+        let chart = this,
+            breadcrumbs = chart.breadcrumbs,
+            verticalAlign;
+
+        if (breadcrumbs) {
+
+            verticalAlign = breadcrumbs.options.position.verticalAlign;
+
+            if (!breadcrumbs.options.floating) {
+                if (verticalAlign === 'bottom') {
+                    this.breadcrumbsBottomMargin = true;
+                } else if (verticalAlign !== 'middle') {
+                    this.breadcrumbsTopMargin = true;
+                }
+            }
+        }
+
+    });
+
+    addEvent(Chart, 'render', function (): void {
+
+        let chart = this,
+            breadcrumbs = chart.breadcrumbs,
+            verticalAlign,
+            breadcrumbsBottomMarginWas = this.breadcrumbsBottomMargin,
+            breadcrumbsTopMarginWas = this.breadcrumbsTopMargin;
+
+        if (breadcrumbs && breadcrumbs.breadcrumbsList.length) {
+
+            this.breadcrumbsBottomMargin = false;
+            this.breadcrumbsTopMargin = false;
+
+            verticalAlign = breadcrumbs.options.position.verticalAlign;
+
+            if (!breadcrumbs.options.floating) {
+                if (verticalAlign === 'bottom') {
+                    this.breadcrumbsBottomMargin = true;
+                } else if (verticalAlign !== 'middle') {
+                    this.breadcrumbsTopMargin = true;
+                }
+            }
+
+            if (
+                this.breadcrumbsBottomMargin !== breadcrumbsBottomMarginWas ||
+                this.breadcrumbsTopMargin !== breadcrumbsTopMarginWas
+            ) {
+                this.isDirtyBox = true;
+            }
+        }
+
+    });
+
+
+    addEvent(Chart, 'getMargins', function (): void {
+        let breadcrumbs = this.breadcrumbs,
+            breadcrumbsHeight;
+
+        if (breadcrumbs && breadcrumbs.breadcrumbsList.length) {
+            breadcrumbsHeight = 30;
+            if (this.breadcrumbsTopMargin) {
+                this.plotTop += breadcrumbsHeight;
+            }
+
+            if (this.breadcrumbsBottomMargin) {
+                this.marginBottom = (this.marginBottom || 0) + breadcrumbsHeight;
+            }
+        }
     });
 
     addEvent(Chart, 'update', function (e: any): void {
-        const breadcrumbs = this.breadcrumbs;
+        const breadcrumbs = this.breadcrumbs,
+            breadcrumbOptions = e.options.drilldown && e.options.drilldown.breadcrumbs;
 
-        if (breadcrumbs && e.options.drilldown && e.options.drilldown.breadcrumbs) {
+        if (breadcrumbs && breadcrumbOptions) {
+            let breadcrumbsBottomMarginWas = this.breadcrumbsBottomMargin,
+                breadcrumbsTopMarginWas = this.breadcrumbsTopMargin;
+
             breadcrumbs.isDirty = true;
             breadcrumbs.update(e.options.drilldown.breadcrumbs, false);
             breadcrumbs.redraw();
+
+
+            this.breadcrumbsBottomMargin = false;
+            this.breadcrumbsTopMargin = false;
+
+            const verticalAlign =
+                breadcrumbOptions.position.verticalAlign ||
+                breadcrumbs.options.position.verticalAlign;
+
+            if (!breadcrumbs.options.floating) {
+                if (verticalAlign === 'bottom') {
+                    this.breadcrumbsBottomMargin = true;
+                } else if (verticalAlign !== 'middle') {
+                    this.breadcrumbsTopMargin = true;
+                }
+            }
+
+            if (
+                this.breadcrumbsBottomMargin !== breadcrumbsBottomMarginWas ||
+                this.breadcrumbsTopMargin !== breadcrumbsTopMarginWas
+            ) {
+                this.isDirtyBox = true;
+            }
         }
     });
 
