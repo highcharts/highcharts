@@ -407,9 +407,8 @@ class TextBuilder {
     ): void {
 
         const modifyChild = (node: AST.Node, i: number): void => {
-            const tagName = node.tagName;
-            const styledMode = this.renderer.styledMode;
-            const attributes = node.attributes || {};
+            const { attributes = {}, children, tagName } = node,
+                styledMode = this.renderer.styledMode;
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
@@ -434,7 +433,7 @@ class TextBuilder {
                 );
             }
 
-
+            // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
                 node.textContent = '\u200B'; // zero-width space
@@ -445,6 +444,17 @@ class TextBuilder {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
                 }
+
+            // If an anchor has direct text node children, the text is unable to
+            // wrap because there is no `getSubStringLength` function on the
+            // element. Therefore we need to wrap the child text node or nodes
+            // in a tspan. #16173.
+            } else if (
+                tagName === 'a' &&
+                children &&
+                children.some(child => child.tagName === '#text')
+            ) {
+                node.children = [{ children, tagName: 'tspan' }];
             }
 
             if (tagName !== '#text' && tagName !== 'a') {
@@ -453,8 +463,8 @@ class TextBuilder {
             node.attributes = attributes;
 
             // Recurse
-            if (node.children) {
-                node.children
+            if (children) {
+                children
                     .filter((c): boolean => c.tagName !== '#text')
                     .forEach(modifyChild);
             }
