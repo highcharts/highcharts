@@ -24,6 +24,10 @@ import F from '../Core/FormatUtilities.js';
 const { format } = F;
 import H from '../Core/Globals.js';
 const { win } = H;
+import MU from '../Maps/MapUtilities.js';
+const {
+    pointInPolygon
+} = MU;
 import U from '../Core/Utilities.js';
 const {
     error,
@@ -251,40 +255,6 @@ declare global {
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * Test for point in polygon. Polygon defined as array of [x,y] points.
- * @private
- */
-function pointInPolygon(
-    point: Highcharts.MapCoordinateObject,
-    polygon: Array<Array<number>>
-): boolean {
-    let i,
-        j,
-        rel1,
-        rel2,
-        c = false,
-        x = point.x,
-        y = point.y || 0;
-
-    for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        rel1 = polygon[i][1] > y;
-        rel2 = polygon[j][1] > y;
-        if (
-            rel1 !== rel2 &&
-            (
-                x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) /
-                    (polygon[j][1] - polygon[i][1]) +
-                    polygon[i][0]
-            )
-        ) {
-            c = !c;
-        }
-    }
-
-    return c;
-}
 
 /**
  * Highmaps only. Get point from latitude and longitude using specified

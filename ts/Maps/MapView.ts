@@ -21,6 +21,7 @@ import type {
 
 import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewOptionsDefault.js';
+import MapViewInset from './MapViewInset.js';
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
@@ -56,6 +57,16 @@ const tileSize = 256;
  *        MapView options
  */
 class MapView {
+
+    public center: LonLatArray;
+    public insets: MapViewInset[] = [];
+    public minZoom?: number;
+    public options: MapViewOptions;
+    public projection: Projection;
+    public userOptions: DeepPartial<MapViewOptions>;
+    public zoom: number;
+
+    private chart: Chart;
 
     /* *
      * Return the composite bounding box of a collection of bounding boxes
@@ -105,6 +116,15 @@ class MapView {
          */
         this.zoom = o.zoom || 0;
 
+        // Create the insets
+        const insets = o.insets;
+        if (insets) {
+            Object.keys(insets).forEach((key): void => {
+                const inset = new MapViewInset(this, insets[key]);
+                inset.key = key;
+                this.insets.push(inset);
+            });
+        }
 
         // Initialize and respond to chart size changes
         addEvent(chart, 'afterSetChartSize', (): void => {
@@ -258,15 +278,6 @@ class MapView {
         });
 
     }
-
-    public center: LonLatArray;
-    public minZoom?: number;
-    public options: MapViewOptions;
-    public projection: Projection;
-    public userOptions: DeepPartial<MapViewOptions>;
-    public zoom: number;
-
-    private chart: Chart;
 
     /**
      * Fit the view to given bounds

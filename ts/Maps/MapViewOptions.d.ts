@@ -13,7 +13,10 @@
  *  Imports
  *
  * */
+import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type { GeoJSONGeometryMultiPoint } from './GeoJSON';
 
 /* *
  *
@@ -43,8 +46,25 @@ export interface MapBounds {
     y2: number;
 }
 
+export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
+    borderPath?: SVGPath;
+    geoBounds?: GeoJSONGeometryMultiPoint;
+    id?: string;
+    extentPolygon?: [number, number][];
+    projection?: ProjectionOptions;
+}
+
+export interface MapViewInsetOptionsOptions {
+    borderColor: ColorType;
+    borderWidth: number;
+    padding: (number|string);
+    units: ('percent'|'pixels');
+}
+
 export interface MapViewOptions {
     center: LonLatArray;
+    insetOptions?: MapViewInsetOptionsOptions;
+    insets?: Record<string, MapViewInsetsOptions>;
     maxZoom?: number;
     padding: (number|string);
     projection?: ProjectionOptions;

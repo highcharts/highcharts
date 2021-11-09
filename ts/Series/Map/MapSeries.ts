@@ -47,6 +47,10 @@ const {
 import MapPoint from './MapPoint.js';
 import MapView from '../../Maps/MapView.js';
 import { Palette } from '../../Core/Color/Palettes.js';
+import MU from '../../Maps/MapUtilities.js';
+const {
+    pointInPolygon
+} = MU;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -751,11 +755,10 @@ class MapSeries extends ScatterSeries {
      *
      */
     public getProjectedBounds(): MapBounds|undefined {
-        if (!this.bounds) {
+        if (!this.bounds && this.chart.mapView) {
 
             const MAX_VALUE = Number.MAX_VALUE,
-                projection = this.chart.mapView &&
-                    this.chart.mapView.projection,
+                { insets, projection } = this.chart.mapView,
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
@@ -837,6 +840,29 @@ class MapSeries extends ScatterSeries {
                                 // Bigger shape, higher rank
                                 (x2 - x1) * (y2 - y1)
                             );
+
+                            if (insets) {
+                                insets.forEach((inset): void => {
+                                    // @todo Instead of running the expensive
+                                    // pointInPolygon, find the rectangle bounds
+                                    // of the inset (in the inset constructor)
+                                    // and do a pre-filter on that. Most (almost
+                                    // all) of the times that will suffice.
+                                    if (inset.path && pointInPolygon(
+                                        { x: midX, y: midY },
+                                        // @todo: Transform the hit zone only
+                                        // once (in the MapViewInset
+                                        // constructor)
+                                        inset.path.map(
+                                            (segment): [number, number] =>
+                                                [segment[1] || 0, segment[2] || 0]
+                                        )
+                                    )) {
+                                        console.log('hit', point.name, inset.key); // eslint-disable-line
+                                        delete point.bounds;
+                                    }
+                                });
+                            }
                         }
                     }
 
