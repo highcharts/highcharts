@@ -452,7 +452,7 @@ class TextBuilder {
             } else if (
                 tagName === 'a' &&
                 children &&
-                children.some(child => child.tagName === '#text')
+                children.some((child): boolean => child.tagName === '#text')
             ) {
                 node.children = [{ children, tagName: 'tspan' }];
             }
