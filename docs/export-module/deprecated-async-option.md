@@ -7,13 +7,13 @@ Here's how to migrate from the `async` option.
 
 ### Browser
 
-In the browser, the config can be posted and the returns be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/highcharts/mt2s95Ln/) for how to set this up with an async-await based syntax.
+In the browser, the config can be posted and the returned data be rendered using the FormData, fetch and FileReader API's. See the [example on jsFiddle](https://jsfiddle.net/highcharts/mt2s95Ln/) for how to set this up with an async-await based syntax.
 
-If legacy browsers are are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/highcharts/edyucqkw/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
+If legacy browsers are a requirement, see also the [old jQuery based demo](https://jsfiddle.net/highcharts/edyucqkw/). Note that this approach uses the export server's `b64` option to do the base64 encoding on the server side.
 
-### Node
+### Node.js
 
-If you're running a node environment, the recommended approach would be to use the export server as a node module instead of posting content to Highsoft's online server. For details, see the chapter [Using as a Node.js Module](https://github.com/highcharts/node-export-server/blob/master/README.md#using-as-a-nodejs-module) in the project repo.
+If you're running a Node.js environment, the recommended approach would be to use the export server as a Node.js module instead of posting content to Highsoft's online server. For details, see the chapter [Using as a Node.js Module](https://github.com/highcharts/node-export-server/blob/master/README.md#using-as-a-nodejs-module) in the project repo.
 
 ### PHP
 
