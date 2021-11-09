@@ -1192,7 +1192,6 @@ extend(NetworkgraphPoint.prototype, {
      * Return degree of a node. If node has no connections, it still has
      * deg=1.
      * @private
-     * @return {number}
      */
     getDegree: function (this: Highcharts.NetworkgraphPoint): number {
         const deg = this.isNode ?
@@ -1205,7 +1204,6 @@ extend(NetworkgraphPoint.prototype, {
     /**
      * Get presentational attributes of link connecting two nodes.
      * @private
-     * @return {Highcharts.SVGAttributes}
      */
     getLinkAttributes: function (
         this: Highcharts.NetworkgraphPoint
@@ -1375,7 +1373,6 @@ extend(NetworkgraphPoint.prototype, {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
      *        Whether to apply animation, and optionally animation
      *        configuration.
-     * @return {void}
      */
     remove: function (
         this: Highcharts.NetworkgraphPoint,
@@ -1472,7 +1469,6 @@ extend(NetworkgraphPoint.prototype, {
      * Destroy point. If it's a node, remove all links coming out of this
      * node. Then remove point from the layout.
      * @private
-     * @return {void}
      */
     destroy: function (this: Highcharts.NetworkgraphPoint): void {
         if (this.isNode) {
@@ -1559,7 +1555,7 @@ export default NetworkgraphSeries;
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array|Number>}
+ * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,draDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/

@@ -55,8 +55,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @requires     stock/indicators/slowstochastic
      * @optionparent plotOptions.slowstochastic
      */
-    public static defaultOptions: SlowStochasticOptions =
-    merge(StochasticIndicator.defaultOptions, {
+    public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
         params: {
             /**
              * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
@@ -66,7 +65,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
              */
             periods: [14, 3, 3]
         }
-    } as SlowStochasticOptions)
+    } as SlowStochasticOptions);
 
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;

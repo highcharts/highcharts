@@ -1,5 +1,3 @@
-var day = 1000 * 60 * 60 * 24;
-
 // Create the chart
 Highcharts.stockChart('container', {
 
@@ -15,7 +13,7 @@ Highcharts.stockChart('container', {
         series: {
             cumulative: true,
             pointStart: Date.UTC(2021, 0, 1),
-            pointInterval: day
+            pointIntervalUnit: 'day'
         }
     },
 
@@ -30,7 +28,7 @@ Highcharts.stockChart('container', {
     },
 
     xAxis: {
-        minRange: day * 3,
+        minRange: 3 * 24 * 36e5,
         max: Date.UTC(2021, 0, 6)
     },
 

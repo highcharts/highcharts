@@ -12,19 +12,17 @@
     border-radius: 2px;
     color: #80989f;
     font-size: 12px;
-    background-image: -webkit-linear-gradient(top, #fcfdff, #f2f7f7);
-    background-image: -moz-linear-gradient(top, #fcfdff, #f2f7f7);
-    background-image: -o-linear-gradient(top, #fcfdff, #f2f7f7);
     background-image: linear-gradient(to bottom, #fcfdff, #f2f7f7);
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    -webkit-box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
     padding: 5px;
     margin: 5px;
     position: relative;
 }
 
-#outer-container label:before, #outer-container label:after {
-    content: '';
+#outer-container label::before,
+#outer-container label::after {
+    content: "";
     position: absolute;
     right: 11px;
     width: 0;
@@ -33,12 +31,12 @@
     border-right: 3px outset transparent;
 }
 
-#outer-container label:before {
+#outer-container label::before {
     top: 8px;
     border-bottom: 3px solid #7f9298;
 }
 
-#outer-container label:after {
+#outer-container label::after {
     top: 14px;
     border-top: 3px solid #7f9298;
 }
@@ -49,7 +47,7 @@
     padding: 5px 9px;
     padding-right: 0;
     background: transparent;
-    background: rgba(0, 0, 0, 0);
+    background: rgb(0 0 0 / 0%);
     border: 0;
     color: #80989f;
     -webkit-appearance: none;
@@ -65,17 +63,17 @@
     height: 500px;
 }
 
-@media (max-width:600px) {
+@media (max-width: 600px) {
     #outer-container label {
         display: block;
         width: 190px;
     }
-    #outer-container label:before {
+
+    #outer-container label::before {
         top: 16px;
     }
 
-    #outer-container label:after {
+    #outer-container label::after {
         top: 22px;
     }
-
 }

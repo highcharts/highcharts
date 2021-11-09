@@ -7,20 +7,24 @@
 #buttons {
     font-size: 0;
 }
+
 #buttons button {
     font-size: 1rem;
     background: #efefef;
     border: 1px solid silver;
     margin-right: -1px;
 }
+
 #buttons button:first-child {
     border-top-left-radius: 0.3em;
     border-bottom-left-radius: 0.3em;
 }
+
 #buttons button:last-child {
     border-top-right-radius: 0.3em;
     border-bottom-right-radius: 0.3em;
 }
+
 #buttons button:focus {
     outline: none;
     background: #dfdfdf;

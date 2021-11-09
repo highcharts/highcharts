@@ -349,7 +349,7 @@ class Measure extends Annotation {
 
             return bins;
         }
-    }
+    };
 
     /* *
      *
@@ -403,7 +403,6 @@ class Measure extends Annotation {
     /**
      * Get measure points configuration objects.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
@@ -412,7 +411,6 @@ class Measure extends Annotation {
     /**
      * Get points configuration objects for shapes.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -682,10 +680,14 @@ class Measure extends Annotation {
      * Translate start or end ("left" or "right") side of the measure.
      * Update start points (startXMin, startXMax, startYMin, startYMax)
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {number} cpIndex - index of control point
-     * @param {Highcharts.AnnotationDraggableValue} selectType - x / y / xy
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {number} cpIndex
+     * index of control point
+     * @param {Highcharts.AnnotationDraggableValue} selectType
+     * x / y / xy
      */
     public resize(
         dx: number,
@@ -735,8 +737,10 @@ class Measure extends Annotation {
      * Redraw event which render elements and update start points if needed.
      * @private
      * @param {boolean} animation
-     * @param {boolean} [resize] - flag if resized
-     * @param {boolean} [setStartPoints] - update position of start points
+     * @param {boolean} [resize]
+     * flag if resized
+     * @param {boolean} [setStartPoints]
+     * update position of start points
      */
     public redraw(
         animation: boolean,
@@ -979,7 +983,7 @@ Measure.prototype.defaultOptions = merge(
                  *
                  * </table>
                  *
-                 * @type      {function}
+                 * @type {Function}
                  *
                  */
                 formatter: void 0

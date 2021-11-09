@@ -1,23 +1,26 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-title {
     fill: #434348;
     font-weight: bold;
     letter-spacing: 0.3em;
     font-size: 3em;
 }
+
 .highcharts-subtitle {
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     font-style: italic;
     fill: #7cb5ec;
 }
+
 .highcharts-caption {
-    font-family: 'Courier New', monospace;
+    font-family: "Courier New", monospace;
     font-style: italic;
     fill: green;
 }

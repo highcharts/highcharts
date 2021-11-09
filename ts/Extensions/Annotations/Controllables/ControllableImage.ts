@@ -49,7 +49,7 @@ class ControllableImage implements ControllableMixin.Type {
         width: 'width',
         height: 'height',
         zIndex: 'zIndex'
-    }
+    };
 
     /* *
      *

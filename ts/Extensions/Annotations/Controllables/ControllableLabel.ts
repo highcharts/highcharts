@@ -416,10 +416,6 @@ class ControllableLabel implements ControllableMixin.Type {
 
     /**
      * Returns the label position relative to its anchor.
-     *
-     * @param {Highcharts.AnnotationAnchorObject} anchor
-     *
-     * @return {Highcharts.PositionObject|null}
      */
     public position(
         anchor: Highcharts.AnnotationAnchorObject

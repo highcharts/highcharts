@@ -65,14 +65,14 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      * @private
      * @function getColorByCategory
      *
-     * @param {object} series
-     *        The series which the point belongs to.
+     * @param {Object} series
+     * The series which the point belongs to.
      *
-     * @param {object} point
-     *        The point to calculate its color for.
+     * @param {Object} point
+     * The point to calculate its color for.
      *
-     * @return {object}
-     *         Returns an object containing the properties color and colorIndex.
+     * @return {Object}
+     * Returns an object containing the properties color and colorIndex.
      */
     public static getColorByCategory(
         series: Series,
@@ -150,8 +150,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      *
      * @private
      * @function Highcharts.Point#init
-     *
-     * @return {Highcharts.Point}
      */
     public init(): XRangePoint {
         Point.prototype.init.apply(this, arguments as any);
@@ -176,8 +174,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      * @function Highcharts.Point#getLabelConfig
-     *
-     * @return {Highcharts.PointLabelObject}
      */
     // Add x2 and yCategory to the available properties for tooltip formats
     public getLabelConfig(): XRangePoint.XRangePointLabelObject {
@@ -194,8 +190,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     /**
      * @private
      * @function Highcharts.Point#isValid
-     *
-     * @return {boolean}
      */
     public isValid(): boolean {
         return typeof this.x === 'number' &&
@@ -206,19 +200,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
 
 /* *
  *
- * Class namespace
- *
- * */
-declare namespace XRangePoint {
-    interface XRangePointLabelObject extends Point.PointLabelObject {
-        x2?: XRangePoint['x2'];
-        yCategory?: XRangePoint['yCategory'];
-    }
-}
-
-/* *
- *
- * Prototype Properties
+ * Class Prototype
  *
  * */
 
@@ -238,6 +220,18 @@ extend(XRangePoint.prototype, {
     tooltipDateKeys: ['x', 'x2']
 });
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+declare namespace XRangePoint {
+    interface XRangePointLabelObject extends Point.PointLabelObject {
+        x2?: XRangePoint['x2'];
+        yCategory?: XRangePoint['yCategory'];
+    }
+}
 
 /* *
  *

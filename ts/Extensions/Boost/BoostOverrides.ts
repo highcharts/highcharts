@@ -137,10 +137,6 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect
- *
- * @param {Highcharts.Chart} target
- *
- * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
     const clipBox = {
@@ -524,10 +520,6 @@ Series.prototype.exitBoost = function (): void {
 /**
  * @private
  * @function Highcharts.Series#hasExtremes
- *
- * @param {boolean} checkX
- *
- * @return {boolean}
  */
 Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
     const options = this.options,

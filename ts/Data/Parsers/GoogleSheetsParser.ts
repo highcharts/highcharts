@@ -61,7 +61,7 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
     protected static readonly defaultOptions: GoogleSheetsParser.ClassJSONOptions = {
         ...DataParser.defaultOptions,
         json: {}
-    }
+    };
 
     /* *
      *

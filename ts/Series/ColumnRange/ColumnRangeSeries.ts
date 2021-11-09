@@ -111,7 +111,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
         columnRangeOptions as ColumnRangeSeriesOptions
-    )
+    );
 
     /* *
      *

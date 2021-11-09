@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Cumulative Sum Demo
+ name: Cumulative Sum
  authors:
    - Rafal Sebestjanski
  js_wrap: b
@@ -7,6 +7,6 @@
  tags:
    - Highcharts Stock demo
  categories:
-   - Chart types:
-      priority: 16
+   - General:
+      priority: 1
 ...

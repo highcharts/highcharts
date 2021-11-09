@@ -651,9 +651,6 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     /**
      * Check if two bubbles overlaps.
      * @private
-     * @param {Array} first bubble
-     * @param {Array} second bubble
-     * @return {Boolean} overlap or not
      */
     public checkOverlap(
         bubble1: Array<number>,

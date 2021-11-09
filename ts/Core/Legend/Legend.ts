@@ -133,7 +133,7 @@ class Legend {
 
     public clipHeight?: number;
 
-    public clipRect?: SVGElement
+    public clipRect?: SVGElement;
 
     public contentGroup: SVGElement = void 0 as any;
 
@@ -326,7 +326,7 @@ class Legend {
      * operations on the chart, it is a good idea to set redraw to false and
      * call {@link Chart#redraw} after. Whether to redraw the chart.
      *
-     * @fires Highcharts.Legends#event:afterUpdate
+     * @emits Highcharts.Legends#event:afterUpdate
      */
     public update(options: LegendOptions, redraw?: boolean): void {
         const chart = this.chart;
@@ -508,8 +508,7 @@ class Legend {
         /**
          * @private
          * @param {string} key
-         * @return {void}
-         */
+             */
         function destroyItems(this: Legend, key: string): void {
             if ((this as any)[key]) {
                 (this as any)[key] = (this as any)[key].destroy();
@@ -793,6 +792,7 @@ class Legend {
 
         // calculate the positions for the next line
         const bBox = li.getBBox();
+        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
@@ -802,8 +802,11 @@ class Legend {
             legend.maxItemWidth, (item.itemWidth as any)
         );
         legend.totalItemWidth += item.itemWidth as any;
+
         legend.itemHeight = item.itemHeight = Math.round(
-            item.legendItemHeight || bBox.height || legend.symbolHeight
+            item.legendItemHeight ||
+            // use bBox for multiline (#16398)
+            (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );
     }
 
@@ -892,7 +895,7 @@ class Legend {
      * @function Highcharts.Legend#getAllItems
      * @return {Array<(Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series)>}
      * The current items in the legend.
-     * @fires Highcharts.Legend#event:afterGetAllItems
+     * @emits Highcharts.Legend#event:afterGetAllItems
      */
     public getAllItems(): Array<Legend.Item> {
         let allItems: Array<Legend.Item> = [];
@@ -1226,7 +1229,6 @@ class Legend {
      * @private
      * @function Highcharts.align
      * @param {Highcharts.BBoxObject} alignTo
-     * @return {void}
      */
     public align(alignTo: BBoxObject = this.chart.spacingBox): void {
         const chart = this.chart,
@@ -1265,8 +1267,6 @@ class Legend {
      *
      * @private
      * @function Highcharts.Legend#handleOverflow
-     * @param {number} legendHeight
-     * @return {number}
      */
     public handleOverflow(legendHeight: number): number {
         const legend = this,
@@ -1467,7 +1467,6 @@ class Legend {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation.
      *
-     * @return {void}
      */
     public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptions>)): void {
         const chart = this.chart,
@@ -1569,8 +1568,8 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
-     * @fires Highcharts.Point#event:legendItemClick
-     * @fires Highcharts.Series#event:legendItemClick
+     * @emits Highcharts.Point#event:legendItemClick
+     * @emits Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
         item: Legend.Item,
@@ -1686,7 +1685,7 @@ class Legend {
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
-     * @fires Highcharts.Series#event:checkboxClick
+     * @emits Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
         item: Legend.Item

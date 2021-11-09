@@ -483,7 +483,7 @@ class CSVParser extends DataParser<DataParser.Event> {
     /**
      * Handles converting the parsed data to a table.
      *
-     * @returns {DataTable}
+     * @return {DataTable}
      * Table from the parsed CSV.
      */
     public getTable(): DataTable {

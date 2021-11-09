@@ -161,7 +161,7 @@ declare global {
             public init(): void;
             public redraw(): void;
             public scrollButtons(): void;
-            public selectButton(button: HTMLDOMElement): void;
+            public toggleButtonAciveClass(button: HTMLDOMElement): void;
             public showHideNavigatorion(): void;
             public showHideToolbar(): void;
             public switchSymbol(button: HTMLDOMElement, redraw?: boolean): void;
@@ -358,7 +358,7 @@ setOptions({
                  * Configure the aliases for indicator names.
                  *
                  * @product highstock
-                 * @since   next
+                 * @since 9.3.0
                  */
                 indicatorAliases: {
                     // Overlays
@@ -855,7 +855,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'label',
                      *   'circle',
@@ -912,7 +912,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'flagCirclepin',
                      *   'flagDiamondpin',
@@ -967,7 +967,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'segment',
                      *   'arrowSegment',
@@ -1059,7 +1059,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'elliott3',
                      *   'elliott5',
@@ -1112,7 +1112,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'verticalCounter',
                      *   'verticalLabel',
@@ -1154,7 +1154,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'fibonacci',
                      *   'fibonacciTimeZones',
@@ -1216,7 +1216,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'measureXY',
                      *   'measureX',
@@ -1282,7 +1282,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'zoomX',
                      *   'zoomY',
@@ -1324,7 +1324,7 @@ setOptions({
                      * A collection of strings pointing to config options for
                      * the items.
                      *
-                     * @type {array}
+                     * @type {Array}
                      * @default [
                      *   'typeOHLC',
                      *   'typeLine',
@@ -1489,9 +1489,11 @@ addEvent(Chart, 'redraw', function (): void {
 /**
  * Toolbar Class
  * @private
- * @constructor
- * @param {Object} - options of toolbar
- * @param {Chart} - Reference to chart
+ * @class
+ * @param {Object}
+ * Options of toolbar
+ * @param {Highcharts.Chart}
+ * Reference to chart
  */
 
 class Toolbar {
@@ -1586,11 +1588,14 @@ class Toolbar {
     /**
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
+     *
      * @private
-     * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>}
-     * button which has submenu
-     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions}
-     * list of all buttons
+     *
+     * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>} parentBtn
+     * Button which has submenu
+     *
+     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions} button
+     * List of all buttons
      */
     public addSubmenu(
         parentBtn: Record<string, HTMLDOMElement>,
@@ -1666,12 +1671,14 @@ class Toolbar {
     }
     /**
      * Create buttons in submenu
-     * @private
-     * @param {Highcharts.HTMLDOMElement}
-     * button where submenu is placed
-     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions}
-     * list of all buttons options
      *
+     * @private
+     *
+     * @param {Highcharts.HTMLDOMElement} buttonWrapper
+     * Button where submenu is placed
+     *
+     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions} button
+     * List of all buttons options
      */
     public addSubmenuItems(
         buttonWrapper: HTMLDOMElement,
@@ -2039,7 +2046,7 @@ class Toolbar {
 
         // set active class
         if (redraw) {
-            this.selectButton(mainNavButton);
+            this.toggleButtonAciveClass(mainNavButton);
         }
     }
     /*
@@ -2048,7 +2055,7 @@ class Toolbar {
      * @param {HTMLDOMElement} - button
      *
      */
-    public selectButton(button: HTMLDOMElement): void {
+    public toggleButtonAciveClass(button: HTMLDOMElement): void {
         if (button.className.indexOf(activeClass) >= 0) {
             button.classList.remove(activeClass);
         } else {
@@ -2226,7 +2233,7 @@ addEvent(NavigationBindings, 'selectButton', function (
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        gui.selectButton(button);
+        gui.toggleButtonAciveClass(button);
     }
 });
 
@@ -2242,7 +2249,7 @@ addEvent(NavigationBindings, 'deselectButton', function (
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        gui.selectButton(button);
+        gui.toggleButtonAciveClass(button);
     }
 });
 

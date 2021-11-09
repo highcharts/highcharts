@@ -407,7 +407,7 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -528,7 +528,6 @@ class LegendComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {boolean|undefined}
      */
     public shouldHaveLegendNavigation(): (boolean) {
         const chart = this.chart,
@@ -703,7 +702,7 @@ namespace LegendComponent {
             visible: (boolean|undefined);
         }
     ): void {
-        const chart = this.chart,
+        const chart: Accessibility.ChartComposition = this.chart as any,
             a11yOptions = chart.options.accessibility,
             legendItem = e.item;
 

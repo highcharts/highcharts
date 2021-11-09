@@ -456,11 +456,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 }]
             },
             title: {
-                text: 'Candlestick and Volume',
+                text: '',
                 y: 30
             },
             subtitle: {
-                text: 'The demo is divided into two panes, with a resizer handle between the panes',
+                text: '',
                 y: 50
             },
             xAxis: [
@@ -963,7 +963,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             responsive: {
                 rules: [{
                     condition: {
-                        maxWidth: 300
+                        maxWidth: 250
                     },
                     chartOptions: {
                         rangeSelector: {
@@ -972,6 +972,56 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                             inputEnabled: false,
                             buttonPosition: {
                                 x: 90,
+                                y: -70
+                            }
+                        },
+                        plotOptions: {
+                            arearange: {
+                                marker: {
+                                    symbol: 'square',
+                                    radius: 40
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 251,
+                        maxWidth: 300
+                    },
+                    chartOptions: {
+                        rangeSelector: {
+                            enabled: true,
+                            dropdown: 'always',
+                            inputEnabled: false,
+                            buttonPosition: {
+                                x: 120,
+                                y: -70
+                            }
+                        },
+                        plotOptions: {
+                            arearange: {
+                                marker: {
+                                    symbol: 'square',
+                                    radius: 40
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 301,
+                        maxWidth: 400
+                    },
+                    chartOptions: {
+                        rangeSelector: {
+                            enabled: true,
+                            dropdown: 'always',
+                            inputEnabled: true,
+                            buttonPosition: {
+                                x: 0,
                                 y: -70
                             }
                         },

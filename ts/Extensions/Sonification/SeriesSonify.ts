@@ -361,8 +361,10 @@ namespace SeriesSonify {
      * Utility function to translate between options set in chart configuration
      * and a SonifySeriesOptionsObject.
      * @private
-     * @param {Highcharts.Series} series The series to get options for.
-     * @returns {Highcharts.SonifySeriesOptionsObject} Options for chart/series.sonify()
+     * @param {Highcharts.Series} series
+     * The series to get options for.
+     * @return {Highcharts.SonifySeriesOptionsObject}
+     * Options for chart/series.sonify()
      */
     function chartOptionsToSonifySeriesOptions(
         series: Composition
@@ -483,10 +485,12 @@ namespace SeriesSonify {
 
     /**
      * @private
-     * @param {Highcharts.Series} series The series to get options for.
+     * @param {Highcharts.Series} series
+     * The series to get options for.
      * @param {Highcharts.SonifySeriesOptionsObject} options
-     *  Options to merge with user options on series/chart and default options.
-     * @returns {Array<Highcharts.PointInstrumentObject>} The merged options.
+     * Options to merge with user options on series/chart and default options.
+     * @return {Array<Highcharts.PointInstrumentObject>}
+     * The merged options.
      */
     function getSeriesInstrumentOptions(
         series: Composition,
@@ -537,10 +541,12 @@ namespace SeriesSonify {
 
     /**
      * @private
-     * @param {Highcharts.Series} series The series to get options for.
+     * @param {Highcharts.Series} series
+     * The series to get options for.
      * @param {Highcharts.SonifySeriesOptionsObject} options
-     *  Options to merge with user options on series/chart and default options.
-     * @returns {Highcharts.SonifySeriesOptionsObject} The merged options.
+     * Options to merge with user options on series/chart and default options.
+     * @return {Highcharts.SonifySeriesOptionsObject}
+     * The merged options.
      */
     function getSeriesSonifyOptions(
         series: Composition,

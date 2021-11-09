@@ -188,7 +188,8 @@ extend(MapPointSeries.prototype, {
     forceDL: true,
     isCartesian: false,
     pointClass: MapPointPoint,
-    searchPoint: noop as any
+    searchPoint: noop as any,
+    useMapGeometry: true // #16534
 });
 
 /* *
@@ -242,16 +243,17 @@ export default MapPointSeries;
  *    data: [0, 5, 3, 5]
  *    ```
  *
- * 2. An array of arrays with 2 values. In this case, the values correspond to
- *    `x,y`. If the first value is a string, it is applied as the name of the
- *    point, and the `x` value is inferred.
- *    ```js
- *        data: [
- *            [0, 1],
- *            [1, 8],
- *            [2, 7]
- *        ]
- *    ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond
+ * to `[hc-key, value]`. Example:
+ *
+ *  ```js
+ *     data: [
+ *         ['us-ny', 0],
+ *         ['us-mi', 5],
+ *         ['us-tx', 3],
+ *         ['us-ak', 5]
+ *     ]
+ *  ```
  *
  * 3. An array of objects with named values. The following snippet shows only a
  *    few settings, see the complete options set below. If the total number of
@@ -294,7 +296,7 @@ export default MapPointSeries;
  *         geometry defined in data
  *
  * @type      {Object}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.mappoint.data.geometry
  */
@@ -303,7 +305,7 @@ export default MapPointSeries;
  * The geometry type, which in case of the `mappoint` series is always `Point`.
  *
  * @type      {string}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @validvalue ["Point"]
  * @apioption series.mappoint.data.geometry.type
@@ -313,7 +315,7 @@ export default MapPointSeries;
  * The geometry coordinates in terms of `[longitude, latitude]`.
  *
  * @type      {Highcharts.LonLatArray}
- * @since next
+ * @since 9.3.0
  * @product   highmaps
  * @apioption series.mappoint.data.geometry.coordinates
  */

@@ -88,17 +88,18 @@ declare class Composition { // = interface SonifyableChart extends Chart {
  * Utility function to normalize the ordering of timeline paths when sonifying
  * a chart.
  * @private
- * @param {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>} orderOptions -
+ * @param {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>} orderOptions
  * Order options for the sonification.
- * @param {Highcharts.Chart} chart - The chart we are sonifying.
+ * @param {Highcharts.Chart} chart
+ * The chart we are sonifying.
  * @param {Function} seriesOptionsCallback
  * A function that takes a series as argument, and returns the series options
  * for that series to be used with buildTimelinePathFromSeries.
- * @return {Array<object|Array<object|Highcharts.TimelinePath>>} If order is
- * sequential, we return an array of objects to create series paths from. If
- * order is simultaneous we return an array of an array with the same. If there
- * is a custom order, we return an array of arrays of either objects (for
- * series) or TimelinePaths (for earcons and delays).
+ * @return {Array<object|Array<object|Highcharts.TimelinePath>>}
+ * If order is sequential, we return an array of objects to create series paths
+ * from. If order is simultaneous we return an array of an array with the same.
+ * If there is a custom order, we return an array of arrays of either objects
+ * (for series) or TimelinePaths (for earcons and delays).
  */
 function buildPathOrder(
     orderOptions: (
@@ -281,9 +282,10 @@ function addAfterSeriesWaits(
 /**
  * Utility function to find the total amout of wait time in the TimelinePaths.
  * @private
- * @param {Array<object|Array<object|TimelinePath>>} order - The order of
- * TimelinePaths/items.
- * @return {number} The total time in ms spent on wait paths between playing.
+ * @param {Array<object|Array<object|TimelinePath>>} order
+ * The order of TimelinePaths/items.
+ * @return {number}
+ * The total time in ms spent on wait paths between playing.
  */
 function getWaitTime(
     order: Array<(SonifySeriesOrderObject|Array<(
@@ -312,7 +314,8 @@ function getWaitTime(
  * Utility function to ensure simultaneous paths have start/end events at the
  * same time, to sync them.
  * @private
- * @param {Array<Highcharts.TimelinePath>} paths - The paths to sync.
+ * @param {Array<Highcharts.TimelinePath>} paths
+ * The paths to sync.
  */
 function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
     // Find the extremes for these paths
@@ -360,9 +363,10 @@ function syncSimultaneousPaths(paths: Array<TimelinePath>): void {
  * Utility function to find the total duration span for all simul path sets
  * that include series.
  * @private
- * @param {Array<object|Array<object|Highcharts.TimelinePath>>} order - The
- * order of TimelinePaths/items.
- * @return {number} The total time value span difference for all series.
+ * @param {Array<object|Array<object|Highcharts.TimelinePath>>} order
+ * The order of TimelinePaths/items.
+ * @return {number}
+ * The total time value span difference for all series.
  */
 function getSimulPathDurationTotal(
     order: Array<(SonifySeriesOrderObject|Array<(
@@ -401,13 +405,14 @@ function getSimulPathDurationTotal(
 /**
  * Function to calculate the duration in ms for a series.
  * @private
- * @param {number} seriesValueDuration - The duration of the series in value
- * difference.
- * @param {number} totalValueDuration - The total duration of all (non
- * simultaneous) series in value difference.
- * @param {number} totalDurationMs - The desired total duration for all series
- * in milliseconds.
- * @return {number} The duration for the series in milliseconds.
+ * @param {number} seriesValueDuration
+ * The duration of the series in value difference.
+ * @param {number} totalValueDuration
+ * The total duration of all (non simultaneous) series in value difference.
+ * @param {number} totalDurationMs
+ * The desired total duration for all series in milliseconds.
+ * @return {number}
+ * The duration for the series in milliseconds.
  */
 function getSeriesDurationMs(
     seriesValueDuration: number,
@@ -426,11 +431,12 @@ function getSeriesDurationMs(
  * Convert series building objects into paths and return a new list of
  * TimelinePaths.
  * @private
- * @param {Array<object|Array<object|Highcharts.TimelinePath>>} order - The
- * order list.
- * @param {number} duration - Total duration to aim for in milliseconds.
- * @return {Array<Array<Highcharts.TimelinePath>>} Array of TimelinePath objects
- * to play.
+ * @param {Array<object|Array<object|Highcharts.TimelinePath>>} order
+ * The order list.
+ * @param {number} duration
+ * Total duration to aim for in milliseconds.
+ * @return {Array<Array<Highcharts.TimelinePath>>}
+ * Array of TimelinePath objects to play.
  */
 function buildPathsFromOrder(
     order: Array<(SonifySeriesOrderObject|Array<(
@@ -612,7 +618,7 @@ function getCurrentPoints(
             path: string
         ): any {
             // Get the event objects under cursor for each path
-            return cursorObj[path].eventObject;
+            return cursorObj[path].options.eventObject;
         }).filter(function (eventObj: any): boolean {
             // Return the events that are points
             return eventObj instanceof Point;

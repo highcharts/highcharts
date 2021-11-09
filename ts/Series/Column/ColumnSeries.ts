@@ -613,7 +613,6 @@ class ColumnSeries extends Series {
      *
      * @private
      * @function Highcharts.seriesTypes.column#getColumnMetrics
-     * @return {Highcharts.ColumnMetricsObject}
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this,

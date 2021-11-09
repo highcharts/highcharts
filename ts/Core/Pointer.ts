@@ -708,6 +708,7 @@ class Pointer {
      * Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
+     * Axis coordinates.
      */
     public getCoordinates(e: PointerEvent): Pointer.AxesCoordinatesObject {
 
@@ -750,7 +751,7 @@ class Pointer {
      * @param {Highcharts.PointerEventObject} [e]
      * The triggering event, containing chart coordinates of the pointer.
      *
-     * @return {object}
+     * @return {Object}
      * Object containing resulting hover data: hoverPoint, hoverSeries, and
      * hoverPoints.
      */
@@ -1382,31 +1383,33 @@ class Pointer {
         } else if (pinchDown.length) { // can be 0 when releasing, if touchend
             // fires first
 
+            fireEvent(chart, 'touchpan', { originalEvent: e }, (): void => {
 
-            // Set the marker
-            if (!selectionMarker) {
-                // @todo It's a mock object, so maybe we need a separate
-                // interface
-                self.selectionMarker = selectionMarker = extend({
-                    destroy: noop,
-                    touch: true
-                }, chart.plotBox as any) as any;
-            }
+                // Set the marker
+                if (!selectionMarker) {
+                    // @todo It's a mock object, so maybe we need a separate
+                    // interface
+                    self.selectionMarker = selectionMarker = extend({
+                        destroy: noop,
+                        touch: true
+                    }, chart.plotBox as any) as any;
+                }
 
-            self.pinchTranslate(
-                pinchDown,
-                touches as any,
-                transform,
-                selectionMarker,
-                clip,
-                lastValidTouch
-            );
+                self.pinchTranslate(
+                    pinchDown,
+                    touches as any,
+                    transform,
+                    selectionMarker,
+                    clip,
+                    lastValidTouch
+                );
 
-            self.hasPinched = hasZoom;
+                self.hasPinched = hasZoom;
 
-            // Scale and translate the groups to provide visual feedback during
-            // pinching
-            self.scaleGroups(transform, clip as any);
+                // Scale and translate the groups to provide visual feedback
+                // during pinching
+                self.scaleGroups(transform, clip as any);
+            });
 
             if (self.res) {
                 self.res = false;
@@ -1663,8 +1666,8 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @fires Highcharts.Point#event:mouseOut
-     * @fires Highcharts.Point#event:mouseOver
+     * @emits Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e: PointerEvent, p?: Point): void {
         const pointer = this,
