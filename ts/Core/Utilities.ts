@@ -356,8 +356,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -1004,10 +1004,11 @@ function normalizeTickInterval(
  *
  * @param {Function} sortFunction
  *        The function to sort it with, like with regular Array.prototype.sort.
- *
- * @return {void}
  */
-function stableSort(arr: Array<any>, sortFunction: Function): void {
+function stableSort<T>(
+    arr: Array<T>,
+    sortFunction: (a: T, b: T) => number
+): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -1018,7 +1019,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        arr[i].safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1028,7 +1029,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete arr[i].safeI; // stable sort index
+        delete (arr[i] as any).safeI; // stable sort index
     }
 }
 
@@ -1148,7 +1149,9 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-    return parseFloat(
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
         num.toPrecision(prec || 14)
     );
 }
@@ -1390,7 +1393,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -1704,9 +1707,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
      */
     function removeOneEvent(
         type: string,
@@ -1723,8 +1723,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,

@@ -1090,3 +1090,19 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Checking if ticks are displayed when the numbers are very high. (#16275).',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                data: [238863224762451, 238863224762452, 238863224762453]
+            }]
+        });
+
+        assert.ok(
+            chart.yAxis[0].tickPositions.length > 1,
+            'Number of ticks on the axis must be greater than one.'
+        );
+    }
+);

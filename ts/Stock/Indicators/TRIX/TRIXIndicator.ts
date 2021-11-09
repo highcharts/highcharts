@@ -55,7 +55,7 @@ class TRIXIndicator extends TEMAIndicator {
      * @requires     stock/indicators/trix
      * @optionparent plotOptions.trix
      */
-    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions)
+    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
 
     public data: Array<TRIXPoint> = void 0 as any;
     public options: TRIXOptions = void 0 as any;

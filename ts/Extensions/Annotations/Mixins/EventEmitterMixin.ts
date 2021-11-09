@@ -78,7 +78,6 @@ const {
  *
  * @private
  * @mixin
- * @memberOf Annotation
  */
 const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
@@ -130,7 +129,6 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         if (emitter.options.draggable) {
 
             addEvent(emitter, 'drag', emitter.onDrag);
-
 
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {

@@ -60,7 +60,24 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      * @optionparent plotOptions.keltnerchannels
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Option for fill color between lines in Keltner Channels Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type {Highcharts.Color}
+         * @since     next
+         * @apioption plotOptions.keltnerchannels.fillColor
+         *
+         */
         params: {
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             */
+            index: 0,
             period: 20,
             /**
              * The ATR period.
@@ -113,7 +130,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
             approximation: 'averages'
         },
         lineWidth: 1
-    } as KeltnerChannelsOptions)
+    } as KeltnerChannelsOptions);
 
     public data: Array<KeltnerChannelsPoint> = void 0 as any;
     public options: KeltnerChannelsOptions = void 0 as any;
@@ -215,6 +232,7 @@ interface KeltnerChannelsIndicator extends MultipleLinesComposition.Composition 
 }
 extend(KeltnerChannelsIndicator.prototype, {
     nameBase: 'Keltner Channels',
+    areaLinesNames: ['top', 'bottom'],
     nameComponents: ['period', 'periodATR', 'multiplierATR'],
     linesApiNames: ['topLine', 'bottomLine'],
     pointArrayMap: ['top', 'middle', 'bottom'],

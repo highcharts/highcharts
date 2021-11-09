@@ -46,6 +46,7 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    defined,
     error,
     extend,
     isArray,
@@ -145,11 +146,11 @@ class VBPIndicator extends SMAIndicator {
              * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
              */
             styles: {
-                /** @ignore-options */
+                /** @ignore-option */
                 color: '#0A9AC9',
-                /** @ignore-options */
+                /** @ignore-option */
                 dashStyle: 'LongDash',
-                /** @ignore-options */
+                /** @ignore-option */
                 lineWidth: 1
             }
         },
@@ -196,7 +197,7 @@ class VBPIndicator extends SMAIndicator {
             },
             verticalAlign: 'top'
         }
-    } as VBPOptions)
+    } as VBPOptions);
 
     public data: Array<VBPPoint> = void 0 as any;
     public negWidths: Array<number> = void 0 as any;
@@ -590,7 +591,18 @@ class VBPIndicator extends SMAIndicator {
             rangeStep: number,
             zoneStartsLength: number;
 
-        if (!lowRange || !highRange) {
+        // If the compare mode is set on the main series, change the VBP
+        // zones to fit new extremes, #16277.
+        const mainSeries = indicator.linkedParent;
+        if (
+            !indicator.options.compareToMain &&
+            mainSeries.dataModify
+        ) {
+            lowRange = mainSeries.dataModify.modifyValue(lowRange);
+            highRange = mainSeries.dataModify.modifyValue(highRange);
+        }
+
+        if (!defined(lowRange) || !defined(highRange)) {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
@@ -690,6 +702,18 @@ class VBPIndicator extends SMAIndicator {
                                 (yValues[i - 1] as any)
                         ) :
                         value;
+
+                    // If the compare mode is set on the main series,
+                    // change the VBP zones to fit new extremes, #16277.
+                    const mainSeries = indicator.linkedParent;
+                    if (
+                        !indicator.options.compareToMain &&
+                        mainSeries.dataModify
+                    ) {
+                        value = mainSeries.dataModify.modifyValue(value);
+                        previousValue = mainSeries.dataModify
+                            .modifyValue(previousValue);
+                    }
 
                     // Checks if this is the point with the
                     // lowest close value and if so, adds it calculations
@@ -795,7 +819,6 @@ namespace VBPIndicator {
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
-    calculateOn: string;
     pointClass: typeof VBPPoint;
 
     crispCol: ColumnSeries['crispCol'];
@@ -805,11 +828,10 @@ interface VBPIndicator {
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
     nameComponents: ['ranges'],
-    bindTo: {
-        series: false,
-        eventName: 'afterSetExtremes'
+    calculateOn: {
+        chart: 'render',
+        xAxis: 'afterSetExtremes'
     },
-    calculateOn: 'render',
     pointClass: VBPPoint,
     markerAttribs: noop as any,
     drawGraph: noop,
@@ -839,7 +861,7 @@ export default VBPIndicator;
  * @extends   series,plotOptions.vbp
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, compare, compareBase, compareStart
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/volume-by-price
  * @apioption series.vbp

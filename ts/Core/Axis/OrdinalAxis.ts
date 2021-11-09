@@ -404,11 +404,8 @@ namespace OrdinalAxis {
      *
      * @private
      * @function Highcharts.Axis#index2val
-     *
      * @param {number} index
-     *        The index value of searched point
-     *
-     * @return {number}
+     * The index value of searched point
      */
     function index2val(this: OrdinalAxis.Composition, index: number): number {
         const axis = this,
@@ -448,11 +445,8 @@ namespace OrdinalAxis {
      *
      * @private
      * @function Highcharts.Axis#lin2val
-     *
      * @param {number} val
-     *        The linear abstracted value.
-     *
-     * @return {number}
+     * The linear abstracted value.
      */
     function lin2val(this: OrdinalAxis.Composition, val: number): number {
         const axis = this,
@@ -490,7 +484,7 @@ namespace OrdinalAxis {
 
             // Check if the index is inside position array.
             // If true, read/approximate value for that exact index.
-            if (index >= 0 && index < positions.length) {
+            if (index >= 0 && index < positions.length - 1) {
                 const leftNeighbour = positions[Math.floor(index)],
                     rightNeighbour = positions[Math.ceil(index)],
                     distance = rightNeighbour - leftNeighbour;
@@ -603,9 +597,8 @@ namespace OrdinalAxis {
     }
 
     /**
-     * @private
-     *
      * Extending the Chart.pan method for ordinal axes
+     * @private
      */
     function onChartPan(this: Chart, e: Event): void {
         const chart = this,
@@ -750,14 +743,10 @@ namespace OrdinalAxis {
      *
      * @private
      * @function Highcharts.Axis#val2lin
-     *
      * @param {number} val
      * The axis value.
-     *
      * @param {boolean} [toIndex]
      * Whether to return the index in the ordinalPositions or the new value.
-     *
-     * @return {number}
      */
     function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
         const axis = this,
@@ -916,7 +905,6 @@ namespace OrdinalAxis {
                 maxIndex,
                 slope,
                 i,
-                hasBoostedSeries,
                 ordinalPositions = [] as Array<number>,
                 overscrollPointsRange = Number.MAX_VALUE,
                 useOrdinal = false;
@@ -984,16 +972,7 @@ namespace OrdinalAxis {
                             ordinalPositions = uniqueOrdinalPositions;
                         }
                     }
-
-                    if (series.isSeriesBoosting) {
-                        hasBoostedSeries = true;
-                    }
-
                 });
-
-                if (hasBoostedSeries) {
-                    ordinalPositions.length = 0;
-                }
 
                 // cache the length
                 len = ordinalPositions.length;
@@ -1237,9 +1216,6 @@ namespace OrdinalAxis {
                     series.processData.apply(fakeSeries);
                 });
 
-                // Apply grouping if needed.
-                axis.applyGrouping.call(fakeAxis);
-
                 // Force to use the ordinal when points are evenly spaced
                 // (e.g. weeks), #3825.
                 if (
@@ -1330,15 +1306,12 @@ namespace OrdinalAxis {
          *
          * @private
          * @param {number} val
-         *        The pixel value of a point.
+         * The pixel value of a point.
          *
          * @param {Array<number>} [ordinallArray]
-         *        An array of all points available on the axis
-         *        for the given data set.
-         *        Either ordinalPositions if the value is inside the plotArea
-         *        or extendedOrdinalPositions if not.
-         *
-         * @return {number}
+         * An array of all points available on the axis for the given data set.
+         * Either ordinalPositions if the value is inside the plotArea or
+         * extendedOrdinalPositions if not.
          */
         public getIndexOfPoint(
             val: number,

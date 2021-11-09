@@ -183,7 +183,6 @@ class TextBuilder {
      *
      * @private
      *
-     * @return {void}
      */
     private modifyDOM(): void {
 
@@ -402,7 +401,6 @@ class TextBuilder {
      *
      * @param {ASTNode[]} nodes The AST nodes
      *
-     * @return {void}
      */
     private modifyTree(
         nodes: AST.Node[]

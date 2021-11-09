@@ -487,8 +487,7 @@ class ItemSeries extends PieSeries {
          * @private
          * @param {Highcharts.ItemRowContainerObject} item
          * Wrapped object with angle and row
-         * @return {void}
-         */
+             */
         function cutOffRow(item: ItemSeries.RowContainerObject): void {
             if (overshoot > 0) {
                 item.row.colCount--;
@@ -683,7 +682,7 @@ export default ItemSeries;
  *
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
- * @excludes  sliced
+ * @exclude   sliced
  * @product   highcharts
  * @apioption series.item.data
  */

@@ -109,7 +109,6 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.heikinashi#getHeikinashiData
      *
-     * @return {void}
      *
      */
     public getHeikinashiData(): void {
@@ -139,7 +138,6 @@ class HeikinAshiSeries extends CandlestickSeries {
     /**
      * @private
      * @function Highcarts.seriesTypes.heikinashi#init
-     * @return {void}
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -156,7 +154,6 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @param {Array<(number)>} dataPoint
      *        Current data point.
      *
-     * @return {void}
      *
      */
     public modifyFirstPointValue(dataPoint: Array<(number)>): void {
@@ -178,7 +175,6 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @param {Array<(number)>} previousDataPoint
      *        Previous data point.
      *
-     * @return {void}
      *
      */
     public modifyDataPoint(
@@ -201,8 +197,8 @@ class HeikinAshiSeries extends CandlestickSeries {
 addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
     const series = this,
         points = series.points,
-        heikiashiData = series.heikiashiData;
-    let cropStart = series.cropStart || 0;
+        heikiashiData = series.heikiashiData,
+        cropStart = series.cropStart || 0;
 
     // Reset the proccesed data.
     series.processedYData.length = 0;

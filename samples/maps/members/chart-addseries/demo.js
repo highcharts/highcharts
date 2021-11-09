@@ -1,6 +1,6 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
+    // Initialize the chart
     const chart = Highcharts.mapChart('container', {
 
         title: {

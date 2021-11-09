@@ -129,6 +129,12 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
                         className: 'dummy-button',
                         init: function () {
                             wasInitCalled = true;
+
+                            Highcharts.fireEvent(
+                                this,
+                                'deselectButton',
+                                { button }
+                            );
                         }
                     }
                 },

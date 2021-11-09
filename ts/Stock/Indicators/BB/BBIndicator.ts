@@ -108,6 +108,19 @@ class BBIndicator extends SMAIndicator {
      * @optionparent plotOptions.bb
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
+
+        /**
+         * Option for fill color between lines in Bollinger Bands Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type      {Highcharts.Color}
+         * @since     next
+         * @apioption plotOptions.bb.fillColor
+         *
+         */
+
         params: {
             period: 20,
             /**
@@ -160,7 +173,7 @@ class BBIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as BBOptions)
+    } as BBOptions);
 
     /* *
      *
@@ -284,6 +297,7 @@ interface BBIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(BBIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],

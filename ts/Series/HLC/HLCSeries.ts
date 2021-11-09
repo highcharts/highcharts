@@ -224,12 +224,8 @@ class HLCSeries extends ColumnSeries {
     /**
      * Function to create SVGPath of the point based on the
      * plot positions of this point.
-     *
-     * @param {SVGPath} point
-     * @param {SVGElement} graphic
-     * @returns {SVGPath}
+     * @private
      */
-
     protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
         // crisp vector coordinates
         const strokeWidth = graphic.strokeWidth(),
@@ -263,10 +259,9 @@ class HLCSeries extends ColumnSeries {
 
 
     /**
+     * Draw single point
      * @private
-     * draw single point
      */
-
     public drawSinglePoint(point: HLCPoint): void {
 
         const series = point.series,
@@ -312,7 +307,6 @@ class HLCSeries extends ColumnSeries {
     /**
      * @private
      * @function Highcharts.seriesTypes.hlc#init
-     * @return {void}
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -349,7 +343,6 @@ class HLCSeries extends ColumnSeries {
      *
      * @private
      * @function Highcharts.seriesTypes.hlc#translate
-     * @return {void}
      */
 
     public translate(): void {

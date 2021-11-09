@@ -35,6 +35,7 @@ import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js'
 import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import FibonacciTimeZones from '../Extensions/Annotations/Types/FibonacciTimeZones';
 const {
     correctFloat,
     defined,
@@ -251,35 +252,38 @@ bindingsUtils.addFlagFromForm = function (
 };
 
 bindingsUtils.indicatorsWithAxes = [
-
+    'apo',
     'ad',
-    'atr',
-    'cci',
-    'cmf',
-    'disparityindex',
-    'cmo',
-    'dmi',
-    'macd',
-    'mfi',
-    'roc',
-    'rsi',
-    'ao',
     'aroon',
     'aroonoscillator',
-    'trix',
-    'apo',
+    'atr',
+    'ao',
+    'cci',
+    'chaikin',
+    'cmf',
+
+    'cmo',
+    'disparityindex',
+    'dmi',
     'dpo',
-    'ppo',
+    'linearRegressionAngle',
+    'linearRegressionIntercept',
+    'linearRegressionSlope',
+    'klinger',
+    'macd',
+    'mfi',
+    'momentum',
+
     'natr',
     'obv',
-    'williamsr',
-    'stochastic',
+    'ppo',
+    'roc',
+    'rsi',
     'slowstochastic',
-    'linearRegression',
-    'linearRegressionSlope',
-    'linearRegressionIntercept',
-    'linearRegressionAngle',
-    'klinger'
+    'stochastic',
+    'trix',
+    'williamsr'
+
 ];
 
 bindingsUtils.manageIndicators = function (
@@ -506,7 +510,7 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  * @private
  * @function bindingsUtils.isLastPriceEnabled
  *
- * @param {array} series
+ * @param {Array} series
  *        Array of series.
  *
  * @return {boolean}
@@ -1963,6 +1967,51 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
+    timeCycles: {
+        className: 'highcharts-time-cycles',
+        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
+            let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
+                navigation = this.chart.options.navigation,
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'timeCycles',
+                    type: 'timeCycles',
+                    typeOptions: {
+                        xAxis: closestPoint.xAxis,
+                        yAxis: closestPoint.yAxis,
+                        points: [{
+                            x: closestPoint.x
+                        }, {
+                            x: closestPoint.x
+                        }],
+                        line: {
+                            stroke: 'rgba(0, 0, 0, 0.75)',
+                            fill: 'transparent',
+                            strokeWidth: 2
+                        }
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).timeCycles.annotationsOptions
+            );
+            annotation = this.chart.addAnnotation(options);
+            (annotation.options.events.click as any).call(annotation, {});
+
+            return annotation;
+        },
+
+        steps: [
+            bindingsUtils.updateNthPoint(1)
+        ]
+    },
     verticalLabel: {
         /** @ignore-option */
         className: 'highcharts-vertical-label',
@@ -2081,6 +2130,79 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
 
             (annotation.options.events.click as any).call(annotation, {});
         }
+    },
+    /**
+     * The Fibonacci Time Zones annotation bindings. Includes `start` and one
+     * event in `steps` array.
+     *
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
+     * @product highstock
+     * @default {"className": "highcharts-fibonacci-time-zones", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
+     */
+    fibonacciTimeZones: {
+        /** @ignore-option */
+        className: 'highcharts-fibonacci-time-zones',
+        // eslint-disable-next-line valid-jsdoc
+        /** @ignore-option */
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        type: 'fibonacciTimeZones',
+                        langKey: 'fibonacciTimeZones',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value
+                            }]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).fibonacciTimeZones.annotationsOptions
+                );
+
+            return this.chart.addAnnotation(options);
+        },
+        /** @ignore-option */
+        // eslint-disable-next-line valid-jsdoc
+        steps: [
+            function (
+                this: NavigationBindings,
+                e: PointerEvent,
+                annotation: FibonacciTimeZones
+            ): void {
+                const mockPointOpts = annotation.options.typeOptions.points,
+                    x = mockPointOpts && mockPointOpts[0].x,
+                    coords = this.chart.pointer.getCoordinates(e),
+                    coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                    coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+                annotation.update({
+                    typeOptions: {
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: x
+                        }, {
+                            x: coordsX.value
+                        }]
+                    }
+                });
+            }
+        ]
     },
     // Flag types:
     /**

@@ -38,8 +38,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -173,10 +172,11 @@ class TreemapSeries extends ScatterSeries {
          * additional properties `newRootId`, `previousRootId`, `redraw` and
          * `trigger`.
          *
-         * @type {function}
-         * @default undefined
          * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
          *         Alert update information on setRootNode event.
+         *
+         * @type {Function}
+         * @default undefined
          * @since 7.0.3
          * @product highcharts
          * @apioption plotOptions.treemap.events.setRootNode
@@ -918,11 +918,11 @@ class TreemapSeries extends ScatterSeries {
      * @private
      * @function Highcharts.Series#calculateChildrenAreas
      *
-     * @param {object} node
-     *        The node which is parent to the children.
+     * @param {Object} node
+     * The node which is parent to the children.
      *
-     * @param {object} area
-     *        The rectangular area of the parent.
+     * @param {Object} area
+     * The rectangular area of the parent.
      */
     public calculateChildrenAreas(
         parent: TreemapSeries.NodeObject,
@@ -1224,7 +1224,7 @@ class TreemapSeries extends ScatterSeries {
      * @param {Array<string>} [existingIds]
      *        List of all point ids.
      *
-     * @return {object}
+     * @return {Object}
      *         Map from parent id to children index in data.
      */
     public getListOfParents(
@@ -1299,9 +1299,7 @@ class TreemapSeries extends ScatterSeries {
             setOptionsEvent;
 
         // If color series logic is loaded, add some properties
-        if (colorMapSeriesMixin) {
-            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
-        }
+        this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
@@ -1589,7 +1587,7 @@ class TreemapSeries extends ScatterSeries {
      * @param {boolean} [redraw=true]
      * Wether to redraw the chart or not.
      *
-     * @param {object} [eventArguments]
+     * @param {Object} [eventArguments]
      * Arguments to be accessed in event handler.
      *
      * @param {string} [eventArguments.newRootId]
@@ -1601,14 +1599,14 @@ class TreemapSeries extends ScatterSeries {
      * @param {boolean} [eventArguments.redraw]
      * Wether to redraw the chart after.
      *
-     * @param {object} [eventArguments.series]
+     * @param {Object} [eventArguments.series]
      * The series to update the root of.
      *
      * @param {string} [eventArguments.trigger]
      * The action which triggered the event. Undefined if the setRootNode is
      * called directly.
      *
-     * @fires Highcharts.Series#event:setRootNode
+     * @emits Highcharts.Series#event:setRootNode
      */
     public setRootNode(
         id: string,
@@ -1628,16 +1626,15 @@ class TreemapSeries extends ScatterSeries {
          * The default functionality of the setRootNode event.
          *
          * @private
-         * @param {object} args The event arguments.
+         * @param {Object} args The event arguments.
          * @param {string} args.newRootId Id of the new root.
          * @param {string} args.previousRootId Id of the previous root.
          * @param {boolean} args.redraw Wether to redraw the chart after.
-         * @param {object} args.series The series to update the root of.
+         * @param {Object} args.series The series to update the root of.
          * @param {string} [args.trigger=undefined] The action which
          * triggered the event. Undefined if the setRootNode is called
          * directly.
-         * @return {void}
-         */
+             */
         const defaultFn = function (
             args: {
                 newRootId: string;
@@ -1880,7 +1877,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends TU.Series {
-    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
+    colorAttribs?: ColorMapMixin.ColorMapSeries['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
@@ -1949,8 +1946,6 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
-
-ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *

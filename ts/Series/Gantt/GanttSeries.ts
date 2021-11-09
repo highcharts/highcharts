@@ -137,11 +137,11 @@ class GanttSeries extends XRangeSeries {
                 symbol: 'arrow-filled',
                 radius: 4,
                 fill: '#fa0',
-                align: 'left' as 'left'
+                align: 'left' as const
             },
             endMarker: {
                 enabled: false, // Only show arrow on the dependent task
-                align: 'right' as 'right'
+                align: 'right' as const
             }
         }
     } as GanttSeriesOptions);
@@ -268,9 +268,6 @@ interface GanttSeries{
     pointClass: typeof GanttPoint;
 }
 extend(GanttSeries.prototype, { // props - series member overrides
-
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
 
     pointArrayMap: ['start', 'end', 'y'],
 

@@ -18,6 +18,7 @@
  *
  * */
 
+import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type OptionsType from '../../Core/Options';
@@ -173,7 +174,7 @@ declare global {
             enabled?: boolean;
         }
         interface ScreenReaderClickCallbackFunction {
-            (evt: MouseEvent, chart?: AccessibilityChart): void;
+            (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
         }
         interface ScreenReaderFormatterCallbackFunction<T> {
             (context: T): string;
@@ -925,7 +926,7 @@ const Options: DeepPartial<OptionsType> = {
      * Point accessibility options for a series.
      *
      * @extends    accessibility.point
-     * @since      next
+     * @since 9.3.0
      * @requires   modules/accessibility
      * @apioption  plotOptions.series.accessibility.point
      */
@@ -944,7 +945,7 @@ const Options: DeepPartial<OptionsType> = {
      * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
      *
      * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-     * @since     next
+     * @since 9.3.0
      * @apioption plotOptions.series.accessibility.point.descriptionFormatter
      */
 
