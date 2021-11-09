@@ -117,13 +117,9 @@ namespace A11yI18nComposition {
      *
      * @private
      * @function formatExtendedStatement
-     *
      * @param {string} statement
-     *
      * @param {Highcharts.Dictionary<*>} ctx
      * Context to apply to the format string.
-     *
-     * @return {string}
      */
     function formatExtendedStatement(
         statement: string,

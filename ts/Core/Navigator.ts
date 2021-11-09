@@ -848,7 +848,7 @@ class Navigator {
     public hasNavigatorData?: boolean;
     public height: number = void 0 as any;
     public left: number = void 0 as any;
-    public mouseMoveHandler?: Function ;
+    public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
     public navigatorEnabled: boolean = void 0 as any;
     public navigatorGroup: SVGElement = void 0 as any;
@@ -1206,7 +1206,6 @@ class Navigator {
      *        Pixel value minimum
      * @param {number} [pxMax]
      *        Pixel value maximum
-     * @return {void}
      */
     public render(
         min: number,
@@ -1585,7 +1584,6 @@ class Navigator {
      *        Mouse event
      * @param {number} index
      *        Index of a handle in Navigator.handles array
-     * @return {void}
      */
     public handlesMousedown(
         e: PointerEvent,
@@ -1711,7 +1709,6 @@ class Navigator {
      * @function Highcharts.Navigator#onMouseUp
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event
-     * @return {void}
      */
     public onMouseUp(e: PointerEvent): void {
         let navigator = this,
@@ -1824,7 +1821,6 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#removeEvents
-     * @return {void}
      */
     public removeEvents(): void {
         if (this.eventsToUnbind) {
@@ -1841,7 +1837,6 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#removeBaseSeriesEvents
-     * @return {void}
      */
     public removeBaseSeriesEvents(): void {
         const baseSeries = this.baseSeries || [];
@@ -2079,9 +2074,6 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#getUnionExtremes
-     * @param {boolean} [returnFalseOnNoBaseSeries]
-     *        as the param says.
-     * @return {Highcharts.Dictionary<(number|undefined)>|undefined}
      */
     public getUnionExtremes(
         returnFalseOnNoBaseSeries?: boolean
@@ -2130,7 +2122,6 @@ class Navigator {
      *        Additional series options for a navigator
      * @param {boolean} [redraw]
      *        Whether to redraw after update.
-     * @return {void}
      */
     public setBaseSeries(
         baseSeriesOptions?: SeriesTypeOptions,
@@ -2184,7 +2175,6 @@ class Navigator {
      * @function Highcharts.Navigator.updateNavigatorSeries
      * @param {boolean} addEvents
      * @param {boolean} [redraw]
-     * @return {void}
      */
     public updateNavigatorSeries(
         addEvents: boolean,
@@ -2371,7 +2361,6 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#addBaseSeriesEvent
-     * @return {void}
      */
     public addBaseSeriesEvents(): void {
         const navigator = this,
@@ -2611,7 +2600,6 @@ class Navigator {
      *
      * @private
      * @function Highcharts.Navigator#addChartEvents
-     * @return {void}
      */
     public addChartEvents(): void {
         if (!this.eventsToUnbind) {

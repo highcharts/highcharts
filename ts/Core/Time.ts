@@ -280,7 +280,6 @@ class Time {
      *
      * @param {Highcharts.TimeOptions} options
      *
-     * @return {void}
      */
     public update(options: Time.TimeOptions): void {
         const useUTC = pick(options && options.useUTC, true) as boolean,
@@ -593,8 +592,10 @@ class Time {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
-     * @return {Highcharts.Dictionary<T>} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f
+     * General format description
+     * @return {Highcharts.Dictionary<T>}
+     * The object definition
      */
     public resolveDTLFormat<T>(
         f: (string|Array<T>|Record<string, T>)
@@ -629,6 +630,7 @@ class Time {
      * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Time positions
      */
     public getTimeTicks(
         normalizedInterval: Time.TimeNormalizedObject,
@@ -1047,8 +1049,8 @@ export default Time;
  * In case of loading the library from a `script` tag,
  * this option is not needed, it will be loaded from there by default.
  *
- * @type {function}
- * @since 8.2.0
+ * @type      {Function}
+ * @since     8.2.0
  * @apioption time.moment
  */
 

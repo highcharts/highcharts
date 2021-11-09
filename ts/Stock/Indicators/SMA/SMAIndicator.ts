@@ -370,7 +370,6 @@ class SMAIndicator extends LineSeries {
 
     /**
      * @private
-     * @return {void}
      */
     public recalculateValues(): void {
         let indicator = this,

@@ -78,7 +78,6 @@ const {
  *
  * @private
  * @mixin
- * @memberOf Annotation
  */
 const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**

@@ -212,7 +212,6 @@ class Instrument {
      * @private
      * @param {Highcharts.OscillatorOptionsObject} oscillatorOptions
      * The oscillator options passed to Highcharts.Instrument#init.
-     * @return {void}
      */
     public initOscillator(
         this: Instrument,
@@ -231,7 +230,6 @@ class Instrument {
      * @private
      * @param {number} panValue
      * The pan position to set for the instrument.
-     * @return {void}
      */
     public setPan(
         this: Instrument,
@@ -251,7 +249,6 @@ class Instrument {
      * The gain level to set for the instrument.
      * @param {number} [rampTime=0]
      * Gradually change the gain level, time given in milliseconds.
-     * @return {void}
      */
     public setGain(
         this: Instrument,
@@ -287,7 +284,6 @@ class Instrument {
     /**
      * Cancel ongoing gain ramps.
      * @private
-     * @return {void}
      */
     public cancelGainRamp(
         this: Instrument
@@ -301,7 +297,6 @@ class Instrument {
      * Set the master volume multiplier of the instrument after creation.
      * @param {number} volumeMultiplier
      * The gain level to set for the instrument.
-     * @return {void}
      */
     public setMasterVolume(
         this: Instrument,
@@ -313,10 +308,14 @@ class Instrument {
     /**
      * Get the closest valid frequency for this instrument.
      * @private
-     * @param {number} frequency - The target frequency.
-     * @param {number} [min] - Minimum frequency to return.
-     * @param {number} [max] - Maximum frequency to return.
-     * @return {number} The closest valid frequency to the input frequency.
+     * @param {number} frequency
+     * The target frequency.
+     * @param {number} [min]
+     * Minimum frequency to return.
+     * @param {number} [max]
+     * Maximum frequency to return.
+     * @return {number}
+     * The closest valid frequency to the input frequency.
      */
     public getValidFrequency(
         this: Instrument,
@@ -344,7 +343,6 @@ class Instrument {
     /**
      * Clear existing play callback timers.
      * @private
-     * @return {void}
      */
     public clearPlayCallbackTimers(
         this: Instrument
@@ -363,7 +361,6 @@ class Instrument {
      * The frequency to set.
      * @param {Highcharts.Dictionary<number>} [frequencyLimits]
      * Object with maxFrequency and minFrequency
-     * @return {void}
      */
     public setFrequency(
         this: Instrument,
@@ -383,7 +380,8 @@ class Instrument {
     /**
      * Play oscillator instrument.
      * @private
-     * @param {number} frequency - The frequency to play.
+     * @param {number} frequency
+     * The frequency to play.
      */
     public oscillatorPlay(
         this: Instrument,
@@ -432,7 +430,6 @@ class Instrument {
      * @param {Highcharts.InstrumentPlayOptionsObject} options
      *        Options for the playback of the instrument.
      *
-     * @return {void}
      */
     public play(
         this: Instrument,
@@ -580,7 +577,6 @@ class Instrument {
      * @param {*} [callbackData]
      *        Data to send to the onEnd callback functions.
      *
-     * @return {void}
      */
     public stop(
         immediately: boolean,

@@ -139,8 +139,6 @@ function makeDummyElement(
 
 /**
  * @private
- * @param {Highcharts.Point} point
- * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  */
 function addDummyPointElement(
     point: Accessibility.PointComposition
@@ -179,8 +177,6 @@ function addDummyPointElement(
 
 /**
  * @private
- * @param {Highcharts.Series} series
- * @return {boolean}
  */
 function hasMorePointsThanDescriptionThreshold(
     series: Accessibility.SeriesComposition
@@ -200,8 +196,6 @@ function hasMorePointsThanDescriptionThreshold(
 
 /**
  * @private
- * @param {Highcharts.Series} series
- * @return {boolean}
  */
 function shouldSetScreenReaderPropsOnPoints(
     series: Accessibility.SeriesComposition
@@ -215,8 +209,6 @@ function shouldSetScreenReaderPropsOnPoints(
 
 /**
  * @private
- * @param {Highcharts.Series} series
- * @return {boolean}
  */
 function shouldSetKeyboardNavPropsOnPoints(
     series: Accessibility.SeriesComposition
@@ -236,8 +228,6 @@ function shouldSetKeyboardNavPropsOnPoints(
 
 /**
  * @private
- * @param {Highcharts.Series} series
- * @return {boolean}
  */
 function shouldDescribeSeriesElement(
     series: Accessibility.SeriesComposition
@@ -261,9 +251,6 @@ function shouldDescribeSeriesElement(
 
 /**
  * @private
- * @param {Highcharts.Point} point
- * @param {number} value
- * @return {string}
  */
 function pointNumberToString(
     point: Accessibility.PointComposition,
@@ -294,8 +281,6 @@ function pointNumberToString(
 
 /**
  * @private
- * @param {Highcharts.Series} series
- * @return {string}
  */
 function getSeriesDescriptionText(
     series: Accessibility.SeriesComposition
@@ -314,9 +299,6 @@ function getSeriesDescriptionText(
 
 /**
  * @private
- * @param {Highcharts.series} series
- * @param {string} axisCollection
- * @return {string}
  */
 function getSeriesAxisDescriptionText(
     series: Series,
@@ -338,10 +320,6 @@ function getSeriesAxisDescriptionText(
  * Get accessible time description for a point on a datetime axis.
  *
  * @private
- * @function Highcharts.Point#getTimeDescription
- * @param {Highcharts.Point} point
- * @return {string|undefined}
- * The description as string.
  */
 function getPointA11yTimeDescription(
     point: Accessibility.PointComposition
@@ -370,8 +348,6 @@ function getPointA11yTimeDescription(
 
 /**
  * @private
- * @param {Highcharts.Point} point
- * @return {string}
  */
 function getPointXDescription(
     point: Accessibility.PointComposition
@@ -390,10 +366,6 @@ function getPointXDescription(
 
 /**
  * @private
- * @param {Highcharts.Point} point
- * @param {string} prefix
- * @param {string} suffix
- * @return {string}
  */
 function getPointArrayMapValueDescription(
     point: Accessibility.PointComposition,
@@ -419,8 +391,6 @@ function getPointArrayMapValueDescription(
 
 /**
  * @private
- * @param {Highcharts.Point} point
- * @return {string}
  */
 function getPointValue(
     point: Accessibility.PointComposition
@@ -465,8 +435,10 @@ function getPointValue(
  * empty string if none.
  *
  * @private
- * @param {Highcharts.Point} point The data point to get the annotation info from.
- * @return {string} Annotation description
+ * @param {Highcharts.Point} point
+ * The data point to get the annotation info from.
+ * @return {string}
+ * Annotation description
  */
 function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
@@ -481,7 +453,6 @@ function getPointAnnotationDescription(point: Point): string {
 /**
  * Return string with information about point.
  * @private
- * @return {string}
  */
 function getPointValueDescription(
     point: Accessibility.PointComposition
@@ -515,7 +486,6 @@ function getPointValueDescription(
 /**
  * Return string with information about point.
  * @private
- * @return {string}
  */
 function defaultPointDescriptionFormatter(
     point: Accessibility.PointComposition
@@ -608,7 +578,6 @@ function describePointsInSeries(
 /**
  * Return string with information about series.
  * @private
- * @return {string}
  */
 function defaultSeriesDescriptionFormatter(
     series: Accessibility.SeriesComposition

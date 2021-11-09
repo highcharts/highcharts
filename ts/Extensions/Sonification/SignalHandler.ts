@@ -77,10 +77,8 @@ class SignalHandler {
      * @param {Highcharts.Dictionary<(Function|undefined)>} signals
      * An object that contains a mapping from the signal name to the callbacks.
      * Only supported events are considered.
-     * @return {void}
      */
     public registerSignalCallbacks(
-        this: SignalHandler,
         signals: Record<string, (Function|undefined)>
     ): void {
         const signalHandler = this;
@@ -101,12 +99,11 @@ class SignalHandler {
     /**
      * Clear signal callbacks, optionally by name.
      * @private
-     * @param {Array<string>} [signalNames] - A list of signal names to clear. If
-     * not supplied, all signal callbacks are removed.
-     * @return {void}
+     * @param {Array<string>} [signalNames]
+     * A list of signal names to clear. If not supplied, all signal callbacks
+     * are removed.
      */
     public clearSignalCallbacks(
-        this: SignalHandler,
         signalNames?: Array<string>
     ): void {
         const signalHandler = this;
@@ -126,14 +123,12 @@ class SignalHandler {
      * Emit a signal. Does nothing if the signal does not exist, or has no
      * registered callbacks.
      * @private
-     * @param {string} signalNames
+     * @param {string} signalName
      * Name of signal to emit.
      * @param {*} [data]
      * Data to pass to the callback.
-     * @return {*}
      */
     public emitSignal(
-        this: SignalHandler,
         signalName: string,
         data?: unknown
     ): (unknown|undefined) {

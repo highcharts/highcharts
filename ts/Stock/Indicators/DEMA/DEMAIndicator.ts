@@ -58,7 +58,7 @@ class DEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
      */
-    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions)
+    public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
     public EMApercent: number = void 0 as any;
     public data: Array<DEMAPoint> = void 0 as any;

@@ -62,8 +62,7 @@ class PivotPointsIndicator extends SMAIndicator {
      * @requires     stock/indicators/pivotpoints
      * @optionparent plotOptions.pivotpoints
      */
-    public static defaultOptions: PivotPointsOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: PivotPointsOptions = merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
          */

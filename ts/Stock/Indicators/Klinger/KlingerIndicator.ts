@@ -373,6 +373,7 @@ interface KlingerIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(KlingerIndicator.prototype, {
+    areaLinesNames: [],
     linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],

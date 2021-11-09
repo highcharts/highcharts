@@ -1,7 +1,9 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
 body {
-    margin: 0;
+    margin: 0 !important;
+    background-color: transparent !important;
+  
 }
 
 .hero-container {
@@ -66,13 +68,11 @@ body {
     fill-opacity: 1;
 }
 
+
 #hero .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
-}
-
-#hero .highcharts-xaxis-grid .highcharts-grid-line {
     stroke-width: 1px;
 }
 
@@ -142,6 +142,7 @@ body {
     font-weight: 300;
 }
 
+
 #hero .highcharts-candlestick-series .highcharts-point {
     stroke: #8187e2;
     fill: #8187e2;
@@ -210,6 +211,7 @@ body {
     transition: transform 1s;
 }
 
+
 #hero .highcharts-bubble-series.bubble2-gray .highcharts-point.transparent,
 #hero .highcharts-bubble-series.bubble2-dgray .highcharts-point.transparent {
     fill: transparent;
@@ -258,14 +260,19 @@ body {
     stroke: #fff;
 }
 
+
 #hero .highcharts-bubble-series .highcharts-point.bubble2-brown {
     fill: #cd8519;
     fill-opacity: 0.3;
     stroke: #fff;
 }
 
+
 #hero .highcharts-bubble-series .highcharts-point.bubble2-orange {
     fill: #cd8519;
+=======
+#hero .highcharts-bubble-series .highcharts-point.bubble2-white {
+    fill: #fff;
     fill-opacity: 0.8;
     stroke: #fff;
 }

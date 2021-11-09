@@ -221,7 +221,6 @@ class CandlestickSeries extends OHLCSeries {
      *
      * @private
      * @function Highcharts.seriesTypes.candlestick#drawPoints
-     * @return {void}
      */
     public drawPoints(): void {
         const series = this,

@@ -124,7 +124,7 @@ class StochasticIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as StochasticOptions)
+    } as StochasticOptions);
 
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
@@ -238,6 +238,7 @@ interface StochasticIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(StochasticIndicator.prototype, {
+    areaLinesNames: [],
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],

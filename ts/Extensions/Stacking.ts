@@ -497,22 +497,6 @@ class StackItem {
     /**
      * @private
      * @function Highcharts.StackItem#getStackBox
-     *
-     * @param {Highcharts.Chart} chart
-     *
-     * @param {Highcharts.StackItem} stackItem
-     *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {number} xWidth
-     *
-     * @param {number} h
-     *
-     * @param {Highcharts.Axis} axis
-     *
-     * @return {Highcharts.BBoxObject}
      */
     public getStackBox(
         chart: Chart,
@@ -868,11 +852,6 @@ Series.prototype.percentStacker = function (
  *
  * @private
  * @function Highcharts.Series#getStackIndicator
- * @param {Highcharts.StackItemIndicatorObject|undefined} stackIndicator
- * @param {number} x
- * @param {number} index
- * @param {string} [key]
- * @return {Highcharts.StackItemIndicatorObject}
  */
 Series.prototype.getStackIndicator = function (
     stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
