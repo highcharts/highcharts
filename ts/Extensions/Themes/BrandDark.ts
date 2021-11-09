@@ -21,7 +21,7 @@
  * */
 
 import type Options from '../../Core/Options';
-
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import D from '../../Core/DefaultOptions.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
@@ -44,6 +44,7 @@ namespace BrandDarkTheme {
 
     export const options: DeepPartial<Options> = {
         colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1', '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'],
+
         chart: {
             backgroundColor: {
                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -56,6 +57,7 @@ namespace BrandDarkTheme {
                 fontFamily: 'IBM Plex Sans, sans-serif'
             }
         },
+
         title: {
             style: {
                 fontSize: '22px',
@@ -63,6 +65,7 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
+
         subtitle: {
             style: {
                 fontSize: '16px',
@@ -70,11 +73,25 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
+
+        credits: {
+            style: {
+                color: '#f0f0f0'
+            }
+        },
+
+        caption: {
+            style: {
+                color: '#f0f0f0'
+            }
+        },
+
         tooltip: {
             borderWidth: 0,
             backgroundColor: '#f0f0f0',
             shadow: true
         },
+
         legend: {
             backgroundColor: 'transparent',
             itemStyle: {
@@ -87,32 +104,46 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-        navigation: {
-            buttonOptions: {
-                symbolStroke: '#fff',
-                theme: {
-                    fill: 'transparent',
-                    states: {
-                        hover: {
-                            fill: '#78758C'
-                        },
-                        select: {
-                            fill: '#78758C'
-                        }
-                    }
-                }
-            }
-        },
+
         labels: {
             style: {
                 color: '#707073'
             }
         },
-        credits: {
-            style: {
-                color: '#666'
+
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    color: '#46465C',
+                    style: {
+                        fontSize: '13px'
+                    }
+                },
+                marker: {
+                    lineColor: '#333'
+                }
+            },
+            boxplot: {
+                fillColor: '#505053'
+            },
+            candlestick: {
+                lineColor: null as any,
+                upColor: '#DA6D85',
+                upLineColor: '#DA6D85'
+            },
+            errorbar: {
+                color: 'white'
+            },
+            dumbbell: {
+                lowColor: '#f0f0f0'
+            },
+            map: {
+                borderColor: 'rgba(200, 200, 200, 1)',
+                nullColor: '#78758C'
+
             }
-        },
+        } as SeriesTypePlotOptions,
+
         drilldown: {
             activeAxisLabelStyle: {
                 color: '#F0F0F3'
@@ -126,13 +157,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        colorAxis: {
-            labels: {
-                style: {
-                    color: '#F0F0F3'
-                }
-            }
-        },
+
         xAxis: {
             gridLineColor: '#707073',
             labels: {
@@ -150,6 +175,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
+
         yAxis: {
             gridLineColor: '#707073',
             labels: {
@@ -169,6 +195,7 @@ namespace BrandDarkTheme {
                 }
             }
         },
+
         // scroll charts
         rangeSelector: {
             buttonTheme: {
@@ -181,16 +208,18 @@ namespace BrandDarkTheme {
                     hover: {
                         fill: '#707073',
                         style: {
-                            color: '#fff',
-                            stroke: '#fff'
-                        }
+                            color: '#fff'
+                        },
+                        'stroke-width': 1,
+                        stroke: 'white'
                     },
                     select: {
                         fill: '#000003',
                         style: {
-                            color: '#fff',
-                            stroke: '#fff'
-                        }
+                            color: '#fff'
+                        },
+                        'stroke-width': 1,
+                        stroke: 'white'
                     }
                 }
             },
@@ -203,6 +232,7 @@ namespace BrandDarkTheme {
                 color: 'silver'
             }
         },
+
         navigator: {
             handles: {
                 backgroundColor: '#666',
@@ -218,6 +248,7 @@ namespace BrandDarkTheme {
                 gridLineColor: '#505053'
             }
         },
+
         scrollbar: {
             barBackgroundColor: '#808083',
             barBorderColor: '#808083',
@@ -227,31 +258,6 @@ namespace BrandDarkTheme {
             rifleColor: '#FFF',
             trackBackgroundColor: '#404043',
             trackBorderColor: '#404043'
-        },
-        plotOptions: {
-            series: {
-                borderWidth: 0,
-                dataLabels: {
-                    color: '#F0F0F3',
-                    style: {
-                        fontSize: '13px'
-                    }
-                },
-                marker: {
-                    lineColor: '#333'
-                }
-            },
-            boxplot: {
-                fillColor: '#505053'
-            },
-            candlestick: {
-                lineColor: null as any,
-                upColor: '#DA6D85',
-                upLineColor: '#DA6D85'
-            },
-            errorbar: {
-                color: 'white'
-            }
         }
     };
 

@@ -73,7 +73,10 @@ namespace BrandLightTheme {
             shadow: true
         },
         legend: {
-            backgroundColor: 'transparent',
+            backgroundColor: '#f0f0f0',
+            borderColor: '#BBBAC5',
+            borderWidth: 1,
+            borderRadius: 2,
             itemStyle: {
                 fontWeight: '400',
                 fontSize: '12px',
@@ -91,10 +94,12 @@ namespace BrandLightTheme {
                     fill: '#fff',
                     states: {
                         hover: {
-                            fill: '#46465C'
+                            stroke: '#46465C',
+                            fill: '#fff'
                         },
                         select: {
-                            fill: '#46465C'
+                            stroke: '#46465C',
+                            fill: '#fff'
                         }
                     }
                 }
@@ -123,13 +128,6 @@ namespace BrandLightTheme {
                     style: {
                         color: '#fff'
                     }
-                }
-            }
-        },
-        colorAxis: {
-            labels: {
-                style: {
-                    color: '#2F2B38'
                 }
             }
         },
@@ -172,73 +170,61 @@ namespace BrandLightTheme {
         // scroll charts
         rangeSelector: {
             buttonTheme: {
-                fill: '#2F2B38',
+                fill: '#fff',
                 style: {
-                    color: '#f0f0f0',
+                    color: '#46465C',
                     stroke: 'transparent'
                 },
                 states: {
                     hover: {
-                        fill: '#46465C',
+                        fill: '#fff',
                         style: {
-                            color: '#fff',
-                            stroke: '#fff'
-                        }
+                            color: '#46465C'
+                        },
+                        'stroke-width': 1,
+                        stroke: '#46465C'
                     },
                     select: {
-                        fill: '#46465C',
+                        fill: '#fff',
                         style: {
-                            color: '#fff',
-                            stroke: '#fff'
-                        }
+                            color: '#46465C'
+                        },
+                        'stroke-width': 1,
+                        stroke: '#46465C'
                     }
                 }
             },
-            inputBoxBorderColor: '#f0f0f0',
+            inputBoxBorderColor: '#BBBAC5',
             inputStyle: {
-                backgroundColor: '#f0f0f0',
-                color: 'silver'
+                backgroundColor: '#fff',
+                color: '#46465C'
             },
             labelStyle: {
-                color: 'silver'
-            }
-        },
-        navigator: {
-            handles: {
-                backgroundColor: '#666',
-                borderColor: '#AAA'
-            },
-            outlineColor: '#CCC',
-            maskFill: 'rgba(255,255,255,0.1)',
-            series: {
-                color: '#A3EDBA',
-                lineColor: '#A3EDBA'
-            },
-            xAxis: {
-                gridLineColor: '#505053'
+                color: '#46465C'
             }
         },
         scrollbar: {
-            barBackgroundColor: '#808083',
+            barBackgroundColor: '#BBBAC5',
             barBorderColor: '#808083',
-            buttonArrowColor: '#CCC',
-            buttonBackgroundColor: '#606063',
-            buttonBorderColor: '#606063',
+            buttonArrowColor: '#fff',
+            buttonBackgroundColor: '#BBBAC5',
+            buttonBorderColor: '#46465C',
             rifleColor: '#FFF',
-            trackBackgroundColor: '#404043',
-            trackBorderColor: '#404043'
+            trackBackgroundColor: '#dedede',
+            trackBorderColor: '#BBBAC5'
         },
         plotOptions: {
             series: {
-                borderWidth: 0,
+                borderWidth: 1,
+                borderColor: '#BBBAC5',
                 dataLabels: {
-                    color: '#F0F0F3',
+                    color: '#46465C',
                     style: {
                         fontSize: '13px'
                     }
                 },
                 marker: {
-                    lineColor: '#333'
+                    lineColor: '#46465C'
                 }
             },
             boxplot: {
@@ -251,6 +237,11 @@ namespace BrandLightTheme {
             },
             errorbar: {
                 color: 'white'
+            },
+            map: {
+                borderColor: 'rgba(200, 200, 200, 0.3)',
+                nullColor: 'rgba(200, 200, 200, 0.3)'
+
             }
         }
     };
