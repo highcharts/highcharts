@@ -114,6 +114,22 @@ const ganttChart = function () {
             },
             styledMode: (true)
         },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            },
+            point: {
+                descriptionFormatter: function (point) {
+                    const startDate = new Date(point.start);
+                    const endDate = new Date(point.end);
+                    if (!point.end) {
+                        return ` ${point.name} - ${startDate}`;
+                    }
+                    return ` ${point.name} - start: ${startDate} to ${endDate}`;
+                }
+            }
+        },
+
         title: {
             text: 'Interactive Gantt Chart',
             floating: true

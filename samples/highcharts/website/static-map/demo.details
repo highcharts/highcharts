@@ -1,0 +1,7 @@
+---
+ name: Highcharts Static Map for Maps Product Page
+ authors:
+   - Nancy Dillon
+ js_wrap: b
+ skipTest: true
+...

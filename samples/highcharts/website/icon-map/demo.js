@@ -601,24 +601,27 @@ const finalMap = function () {
                             const subtitle = document.querySelector('.highcharts-subtitle');
                             mapSeries.style.opacity = 0;
                             setTimeout(function () {
-                                chart.mapZoom(0.01, 4540, -8600);
                                 mapSeries.style.opacity = 0;
 
                                 if (reduced) {
-                                    chart.mapZoom(10);
+                                    chart.series[0].points[143].zoomTo();
                                 }
                                 title.classList.add('fade-in');
                                 subtitle.classList.add('fade-in');
                             }, 200);
 
                             setTimeout(function () {
-
                                 if (!reduced) {
-                                    chart.mapZoom(10);
+                                    chart.update({
+                                        mapView: {
+                                            center: [4100, 8280], // In terms of pre-projected units
+                                            zoom: 0.1
+                                        }
+                                    });
                                 }
-                                chart.tooltip.refresh(
-                                    [chart.series[0].points[143]]
-                                );
+                                // chart.tooltip.refresh(
+                                //     [chart.series[0].points[143]]
+                                // );
 
                                 mapSeries.classList.add('fade-in');
                             }, 500);

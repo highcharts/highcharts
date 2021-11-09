@@ -235,10 +235,6 @@ body {
     opacity: 100%;
 }
 
-#stock .column .highcharts-pointshow {
-    opacity: 100%;
-}
-
 #stock .green-line .highcharts-point:nth-of-type(3) {
     clip-path: polygon(12.14% 16.43%, 82.86% 17.14%, 82.86% 89.29%);
     fill: #8bf2b6;
