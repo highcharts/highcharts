@@ -1,5 +1,5 @@
 ---
- name: Highcharts Static Chart for Highcharts Editor Page
+ name: Highcharts Icon for Highcharts Editor
  authors:
    - Nancy Dillon
  js_wrap: b
