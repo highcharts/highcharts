@@ -433,7 +433,6 @@ class Breadcrumbs {
             chart.drillUpButton.destroy();
             chart.drillUpButton = void 0;
         }
-        chart.getMargins();
     }
 
     /**
@@ -495,32 +494,28 @@ class Breadcrumbs {
      * @function Highcharts.Breadcrumbs#jumpBy
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
-     * @param {Highcharts.Breadcrumbs} jumpsAmount
-     *        A number of drillups that needs to be performed.
+     * @param {Highcharts.Breadcrumbs} level
+     *        The level to which we want to jump to
      */
-    public jumpBy(this: Breadcrumbs, jumpsAmount: number): void {
-        const list = this.list;
+    public jumpTo(this: Breadcrumbs, level: number): void {
 
         // If defined, new level is a current level - jumps amount
         // If not defined, new level is usually 0 - the first level in list.
-        if (list.length) {
-            const jumpsNumber = defined(jumpsAmount) ?
-                list[list.length - 1][0] - jumpsAmount :
-                list[list.length - 1][0];
+        const jumpsNumber = defined(level) ?
+            this.level - level :
+            this.level;
 
-            if (this.options.showFullPath) {
-                for (let i = 0; i < jumpsNumber; i++) {
-                    this.jumpUp();
-                }
-            } else {
+        if (this.options.showFullPath) {
+            for (let i = 0; i < jumpsNumber; i++) {
                 this.jumpUp();
             }
-            this.chart.getMargins();
+        } else {
+            this.jumpUp();
+        }
 
-            if (!this.level) {
-                this.destroyGroup();
-                this.chart.redraw();
-            }
+        if (!this.level) {
+            this.destroyGroup();
+            this.chart.redraw();
         }
     }
 
@@ -538,7 +533,7 @@ class Breadcrumbs {
             this.render();
         }
 
-        if (this.group && this.list.length) {
+        if (this.group && this.level) {
             this.group.align();
         }
 
@@ -558,16 +553,18 @@ class Breadcrumbs {
         const list = this.list;
         if (this.options.showFullPath) {
             // last breadcrumb
-            const lastB = list[list.length - 1],
+            const lastB = list[this.level],
                 button = lastB && lastB[2],
                 conector = lastB && lastB[3],
 
-                prevConector = list[list.length - 2] &&
-                    list[list.length - 2][3];
+                prevConector = list[this.level - 1] &&
+                    list[this.level - 1][3];
 
             // Remove connector from the previous button.
-            prevConector && prevConector.destroy();
-            list[list.length - 2].length = 3;
+            if (prevConector) {
+                prevConector.destroy();
+                list[this.level - 1].length = 3;
+            }
 
             // Remove SVG elements fromt the DOM.
             button && button.destroy();
@@ -578,7 +575,7 @@ class Breadcrumbs {
         }
         list.pop();
         // if after removing the item list is empty, destroy the group
-        if (!this.level || !list.length) {
+        if (!this.level) {
             this.destroyGroup();
         }
     }
@@ -636,8 +633,8 @@ class Breadcrumbs {
             list = breadcrumbs.list,
             breadcrumbsOptions = breadcrumbs.options,
             // last breadcrumb that was rendered.
-            lastBreadcrumbs = list[list.length - 2] &&
-            list[list.length - 2][2],
+            lastBreadcrumbs = list[this.level - 1] &&
+            list[this.level - 1][2],
             buttonSpacing = breadcrumbsOptions.buttonSpacing;
 
         // Draw breadcrumbs.
@@ -732,6 +729,7 @@ class Breadcrumbs {
     public alignBreadcrumbsGroup(this: Breadcrumbs): void {
         const breadcrumbs = this,
             breadcrumbsOptions = breadcrumbs.options,
+            buttonTheme = breadcrumbsOptions.buttonTheme,
             positionOptions = breadcrumbsOptions.position,
             alignTo = (
                 breadcrumbsOptions.relativeTo === 'chart' ||
@@ -741,7 +739,10 @@ class Breadcrumbs {
             ),
             bBox = breadcrumbs.group.getBBox(),
             width = bBox.width,
-            height = bBox.height;
+            height = (buttonTheme.height || 0) +
+                2 * (buttonTheme.padding || 0) +
+                breadcrumbsOptions.buttonSpacing ||
+                bBox.height;
 
 
         let translationX = 0 - bBox.x;
@@ -822,11 +823,11 @@ class Breadcrumbs {
                         list[list.length - 1][1].name !== button.textStr &&
                         breadcrumbsOptions.showFullPath
                     ) {
-                        breadcrumbs.jumpBy(breadcrumb[0] as number);
+                        breadcrumbs.jumpTo(breadcrumb[0] as number);
                     }
 
                     if (callDefaultEvent !== false && !breadcrumbsOptions.showFullPath) {
-                        breadcrumbs.jumpBy(1);
+                        breadcrumbs.jumpTo(1);
                     }
                 })
                 .attr(
@@ -876,7 +877,7 @@ class Breadcrumbs {
                 void 0 as any,
                 true
             ).addClass('highcharts-breadcrumbs-separator')
-            .add(breadcrumbs.group);
+                .add(breadcrumbs.group);
 
             if (!chart.styledMode) {
                 separator.css({
@@ -966,17 +967,19 @@ if (!H.Breadcrumbs) {
     H.Breadcrumbs = Breadcrumbs as typeof Breadcrumbs;
 
     addEvent(Chart, 'getMargins', function (): void {
-        let breadcrumbs = this.breadcrumbs,
-            breadcrumbsHeight;
+        let breadcrumbs = this.breadcrumbs;
+
         if (
             breadcrumbs &&
             !breadcrumbs.options.floating &&
-            breadcrumbs.list.length
+            breadcrumbs.level
         ) {
-            breadcrumbsHeight = breadcrumbs.group ?
-                breadcrumbs.group.getBBox().height :
-                30;
-            const verticalAlign = breadcrumbs.options.position.verticalAlign;
+            const breadcrumbsOptions = breadcrumbs.options,
+                buttonTheme = breadcrumbsOptions.buttonTheme,
+                breadcrumbsHeight = (buttonTheme.height || 0) +
+                    (buttonTheme.padding || 0) + breadcrumbsOptions.buttonSpacing,
+                verticalAlign = breadcrumbsOptions.position.verticalAlign;
+
             if (verticalAlign === 'bottom') {
                 this.marginBottom = (this.marginBottom || 0) + breadcrumbsHeight;
             } else if (verticalAlign !== 'middle') {

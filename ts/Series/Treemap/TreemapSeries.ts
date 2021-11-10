@@ -1056,7 +1056,7 @@ class TreemapSeries extends ScatterSeries {
         const breadcrumbs = this.chart.breadcrumbs;
         if (breadcrumbs) {
             const list = breadcrumbs.list;
-            
+
             if (breadcrumbs.options.showFullPath) {
                 // last breadcrumb
                 const lastB = list[list.length - 1],
