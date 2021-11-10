@@ -658,6 +658,8 @@ class TreemapSeries extends ScatterSeries {
 
     public tree: TreemapSeries.NodeObject = void 0 as any;
 
+    public level?: number = void 0 as any;
+
     /* *
      *
      *  Function
@@ -996,8 +998,8 @@ class TreemapSeries extends ScatterSeries {
         const breadcrumbs = this.chart.breadcrumbs,
             chart = this.chart;
         // Calculate on which level we are now.
-        if (breadcrumbs) {
-            breadcrumbs.level = (this as any).level;
+        if (breadcrumbs && isNumber(this.level)) {
+            breadcrumbs.level = this.level;
         }
     }
 
@@ -1039,6 +1041,50 @@ class TreemapSeries extends ScatterSeries {
 
 
         return breadcrumbsList;
+    }
+
+    /**
+    * Update list after the drillUp.
+    *
+    * @requires  modules/breadcrums
+    *
+    * @function Highcharts.Breadcrumbs#updateBreadcrumbsList
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    public updateBreadcrumbsList(this: TreemapSeries): void {
+        const breadcrumbs = this.chart.breadcrumbs;
+        if (breadcrumbs) {
+            const breadcrumbsList = breadcrumbs.breadcrumbsList;
+            if (this.level === 0) {
+                breadcrumbs.destroyGroup();
+            } else {
+                if (breadcrumbs.options.showFullPath) {
+                    // last breadcrumb
+                    const lastB = breadcrumbsList[breadcrumbsList.length - 1],
+                        button = lastB && lastB[2],
+                        conector = lastB && lastB[3],
+
+                        prevConector = breadcrumbsList[breadcrumbsList.length - 2] &&
+                            breadcrumbsList[breadcrumbsList.length - 2][3];
+
+                    // Remove connector from the previous button.
+                    prevConector && prevConector.destroy();
+                    breadcrumbsList[breadcrumbsList.length - 2].length = 3;
+
+                    // Remove SVG elements fromt the DOM.
+                    button && button.destroy();
+                    conector && conector.destroy();
+                } else {
+                    breadcrumbs.updateSingleButton();
+                }
+                breadcrumbsList.pop();
+                // if after removing the item list is empty, destroy the group
+                if (!breadcrumbsList.length) {
+                    breadcrumbs.destroyGroup();
+                }
+            }
+        }
     }
 
     /**
