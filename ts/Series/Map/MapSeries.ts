@@ -24,7 +24,6 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
-import type MapViewInset from '../../Maps/MapViewInset';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
@@ -93,7 +92,6 @@ declare module '../../Core/Series/SeriesLike' {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
-        svgTransform?: SVGTransformType;
         useMapGeometry?: boolean;
     }
 }
@@ -606,7 +604,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        const { chart, group, svgTransform } = this;
+        const { chart, group } = this;
         const { mapView, renderer } = chart;
 
 
@@ -676,7 +674,8 @@ class MapSeries extends ScatterSeries {
 
 
         // Apply the SVG transform
-        if (mapView && svgTransform) {
+        const svgTransform = mapView && mapView.svgTransform;
+        if (svgTransform) {
 
             const strokeWidth = pick(
                 (this.options as any)[(
@@ -739,7 +738,7 @@ class MapSeries extends ScatterSeries {
                 // children inherit it. We need to use setAttribute directly,
                 // because the stroke-widthSetter method expects a stroke color
                 // also to be set.
-                group.element.setAttribute(
+                transformGroup.element.setAttribute(
                     'stroke-width',
                     strokeWidth / scale
                 );
@@ -768,7 +767,7 @@ class MapSeries extends ScatterSeries {
 
                 if (point.path || point.geometry) {
 
-                    let inset: MapViewInset|undefined;
+                    let hasInset = false;
 
                     // @todo Try to puth these two conversions in
                     // MapPoint.applyOptions
@@ -797,7 +796,7 @@ class MapSeries extends ScatterSeries {
 
                             const { midX, midY } = bounds;
                             if (insets && isNumber(midX) && isNumber(midY)) {
-                                inset = find(insets, (inset): boolean|undefined => {
+                                const inset = find(insets, (inset): boolean|undefined => {
                                     // @todo Instead of running the expensive
                                     // pointInPolygon, find the rectangle bounds
                                     // of the inset (in the inset constructor)
@@ -821,13 +820,14 @@ class MapSeries extends ScatterSeries {
                                     // projection
                                     delete point.projectedPath;
                                     bounds = point.getProjectedBounds(inset.projection);
+                                    hasInset = true;
                                 }
                             }
                             point.bounds = bounds;
                         }
 
                     }
-                    if (point.bounds /*&& !inset*/) {
+                    if (point.bounds && !hasInset) {
                         allBounds.push(point.bounds);
                     }
 
@@ -1115,26 +1115,7 @@ class MapSeries extends ScatterSeries {
             this.getProjectedBounds();
         }
 
-        // Calculate the SVG transform
-        let svgTransform: SVGTransformType|undefined;
-        if (mapView) {
-            const scale = mapView.getScale();
-            const [x, y] = mapView.projection.forward(mapView.center);
-
-            // When dealing with unprojected coordinates, y axis is flipped.
-            const flipFactor = mapView.projection.hasCoordinates ? -1 : 1;
-
-            const translateX = this.chart.plotWidth / 2 - x * scale;
-            const translateY = this.chart.plotHeight / 2 - y * scale * flipFactor;
-            svgTransform = {
-                scaleX: scale,
-                scaleY: scale * flipFactor,
-                translateX,
-                translateY
-            };
-            this.svgTransform = svgTransform;
-        }
-
+        const svgTransform = mapView && mapView.svgTransform;
         series.points.forEach(function (
             point: (MapPoint&MapPoint.CacheObject)
         ): void {

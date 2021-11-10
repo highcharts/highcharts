@@ -6,7 +6,7 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
- * */
+ * * /
 
 'use strict';
 
@@ -45,3 +45,4 @@ class MapViewInset {
 
 }
 export default MapViewInset;
+*/

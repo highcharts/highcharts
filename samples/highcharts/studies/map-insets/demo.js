@@ -65,8 +65,8 @@ Highcharts.getJSON(
                                 [
                                     [-179.5, 50],
                                     [-129, 50],
-                                    [-179, 72],
-                                    [-129, 72]
+                                    [-129, 72],
+                                    [-179.5, 72]
                                 ]
                             ]
                         },
@@ -77,8 +77,8 @@ Highcharts.getJSON(
                         // Padding inside the frame, like mapView.padding
                         padding: 0,
 
-                        // Placement of the inset in the map, a polygon subject to
-                        // units
+                        // Placement of the inset in the map, a polygon subject
+                        // to units
                         extentPolygon: [
                             [0, 80],
                             [20, 80],
