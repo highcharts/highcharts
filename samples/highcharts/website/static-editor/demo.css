@@ -232,11 +232,6 @@ body {
     transform: translate(170px, -30px) scale(0.4);
 }
 
-.chart-container .sun.finalmove .highcharts-color-0 {
-    fill: #f5efc1;
-    transition: fill 1s;
-}
-
 .chart-container .temps {
     fill: #30426b;
     transition: all 1s;
@@ -256,6 +251,7 @@ body {
 
 .chart-container .sun.jan {
     transform: translate(200px, -10px) scale(0.2) !important;
+    transition: all 1s;
 }
 
 .chart-container .temps.jan .temp-data {
@@ -675,6 +671,7 @@ body {
 
     .chart-container .sun.finalmove {
         transform: translate(200px, -40px) scale(0.4);
+        transition: none;
     }
 }
 
