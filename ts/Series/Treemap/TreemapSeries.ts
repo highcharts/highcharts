@@ -1010,20 +1010,20 @@ class TreemapSeries extends ScatterSeries {
      */
     public createLeveList(e: any): any {
         const breadcrumbs = this.chart.breadcrumbs,
-            breadcrumbsList: Array<any> = breadcrumbs && breadcrumbs.breadcrumbsList || [],
+            list: Array<any> = breadcrumbs && breadcrumbs.list || [],
             chart = this.chart;
 
         // If the list doesn't exist treat the initial series
         // as the current level- first iteration.
-        let currentLevelNumber: number = breadcrumbsList.length ?
-            (breadcrumbsList[breadcrumbsList.length - 1][0] as number) : 0;
+        let currentLevelNumber: number = list.length ?
+            (list[list.length - 1][0] as number) : 0;
 
-        if (!breadcrumbsList[0]) {
-            breadcrumbsList.push([0, chart.series[0]]);
+        if (!list[0]) {
+            list.push([0, chart.series[0]]);
         }
 
         if (e.trigger === 'click' && e.newRootId) {
-            breadcrumbsList.push([breadcrumbsList[breadcrumbsList.length - 1][0] + 1, (chart.get(e.newRootId))]);
+            list.push([list[list.length - 1][0] + 1, (chart.get(e.newRootId))]);
         } else {
             let node = e.target.nodeMap[e.newRootId];
             const extraNodes = [];
@@ -1035,12 +1035,12 @@ class TreemapSeries extends ScatterSeries {
                 node = e.target.nodeMap[node.parent];
             }
             extraNodes.reverse().forEach(function (node): void {
-                breadcrumbsList.push([++currentLevelNumber, node]);
+                list.push([++currentLevelNumber, node]);
             });
         }
 
 
-        return breadcrumbsList;
+        return list;
     }
 
     /**
@@ -1055,34 +1055,31 @@ class TreemapSeries extends ScatterSeries {
     public updateBreadcrumbsList(this: TreemapSeries): void {
         const breadcrumbs = this.chart.breadcrumbs;
         if (breadcrumbs) {
-            const breadcrumbsList = breadcrumbs.breadcrumbsList;
-            if (this.level === 0) {
-                breadcrumbs.destroyGroup();
+            const list = breadcrumbs.list;
+            
+            if (breadcrumbs.options.showFullPath) {
+                // last breadcrumb
+                const lastB = list[list.length - 1],
+                    button = lastB && lastB[2],
+                    conector = lastB && lastB[3],
+
+                    prevConector = list[list.length - 2] &&
+                    list[list.length - 2][3];
+
+                // Remove connector from the previous button.
+                prevConector && prevConector.destroy();
+                list[list.length - 2].length = 3;
+
+                // Remove SVG elements fromt the DOM.
+                button && button.destroy();
+                conector && conector.destroy();
             } else {
-                if (breadcrumbs.options.showFullPath) {
-                    // last breadcrumb
-                    const lastB = breadcrumbsList[breadcrumbsList.length - 1],
-                        button = lastB && lastB[2],
-                        conector = lastB && lastB[3],
-
-                        prevConector = breadcrumbsList[breadcrumbsList.length - 2] &&
-                            breadcrumbsList[breadcrumbsList.length - 2][3];
-
-                    // Remove connector from the previous button.
-                    prevConector && prevConector.destroy();
-                    breadcrumbsList[breadcrumbsList.length - 2].length = 3;
-
-                    // Remove SVG elements fromt the DOM.
-                    button && button.destroy();
-                    conector && conector.destroy();
-                } else {
-                    breadcrumbs.updateSingleButton();
-                }
-                breadcrumbsList.pop();
-                // if after removing the item list is empty, destroy the group
-                if (!breadcrumbsList.length) {
-                    breadcrumbs.destroyGroup();
-                }
+                breadcrumbs.updateSingleButton();
+            }
+            list.pop();
+            // if after removing the item list is empty, destroy the group
+            if (!this.level || !list.length) {
+                breadcrumbs.destroyGroup();
             }
         }
     }
