@@ -24,6 +24,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
+import type MapViewInset from '../../Maps/MapViewInset';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
@@ -64,6 +65,7 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    find,
     fireEvent,
     getNestedProperty,
     isArray,
@@ -766,6 +768,8 @@ class MapSeries extends ScatterSeries {
 
                 if (point.path || point.geometry) {
 
+                    let inset: MapViewInset|undefined;
+
                     // @todo Try to puth these two conversions in
                     // MapPoint.applyOptions
                     if (typeof point.path === 'string') {
@@ -783,66 +787,17 @@ class MapSeries extends ScatterSeries {
 
                     // The first time a map point is used, analyze its box
                     if (!point.bounds) {
-                        const path = MapPoint.getProjectedPath(
-                                point, projection
-                            ),
-                            properties = point.properties;
-
-                        let x2 = -MAX_VALUE,
-                            x1 = MAX_VALUE,
-                            y2 = -MAX_VALUE,
-                            y1 = MAX_VALUE,
-                            validBounds;
-
-                        path.forEach((seg): void => {
-                            const x = seg[seg.length - 2];
-                            const y = seg[seg.length - 1];
-                            if (
-                                typeof x === 'number' &&
-                                typeof y === 'number'
-                            ) {
-                                x1 = Math.min(x1, x);
-                                x2 = Math.max(x2, x);
-                                y1 = Math.min(y1, y);
-                                y2 = Math.max(y2, y);
-                                validBounds = true;
-                            }
-                        });
-
-                        if (validBounds) {
-
-                            // Cache point bounding box for use to position data
-                            // labels, bubbles etc
-                            const propMiddleX = properties && properties['hc-middle-x'],
-                                midX = (
-                                    x1 + (x2 - x1) * pick(
-                                        point.middleX,
-                                        isNumber(propMiddleX) ? propMiddleX : 0.5
-                                    )
-                                ),
-                                propMiddleY = properties && properties['hc-middle-y'];
-
-                            let middleYFraction = pick(
-                                point.middleY,
-                                isNumber(propMiddleY) ? propMiddleY : 0.5
-                            );
-                            // No geographic geometry, only path given => flip
-                            if (!point.geometry) {
-                                middleYFraction = 1 - middleYFraction;
-                            }
-
-                            const midY = y2 - (y2 - y1) * middleYFraction;
-
-                            point.bounds = { midX, midY, x1, y1, x2, y2 };
-
+                        let bounds = point.getProjectedBounds(projection);
+                        if (bounds) {
                             point.labelrank = pick(
                                 point.labelrank,
                                 // Bigger shape, higher rank
-                                (x2 - x1) * (y2 - y1)
+                                (bounds.x2 - bounds.x1) * (bounds.y2 - bounds.y1)
                             );
 
-                            if (insets) {
-                                insets.forEach((inset): void => {
+                            const { midX, midY } = bounds;
+                            if (insets && isNumber(midX) && isNumber(midY)) {
+                                inset = find(insets, (inset): boolean|undefined => {
                                     // @todo Instead of running the expensive
                                     // pointInPolygon, find the rectangle bounds
                                     // of the inset (in the inset constructor)
@@ -858,15 +813,21 @@ class MapSeries extends ScatterSeries {
                                                 [segment[1] || 0, segment[2] || 0]
                                         )
                                     )) {
-                                        console.log('hit', point.name, inset.key); // eslint-disable-line
-                                        delete point.bounds;
+                                        return true;
                                     }
                                 });
+                                if (inset) {
+                                    // Project again, but with the inset
+                                    // projection
+                                    delete point.projectedPath;
+                                    bounds = point.getProjectedBounds(inset.projection);
+                                }
                             }
+                            point.bounds = bounds;
                         }
-                    }
 
-                    if (point.bounds) {
+                    }
+                    if (point.bounds /*&& !inset*/) {
                         allBounds.push(point.bounds);
                     }
 

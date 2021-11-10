@@ -11,9 +11,9 @@ const maxLatitude = 85.0511287798, // The latitude that defines a square
     r = 63.78137,
     deg2rad = Math.PI / 180;
 
-const WebMercator: ProjectionDefinition = {
+export default class WebMercator implements ProjectionDefinition {
 
-    forward: (lonLat): [number, number] => {
+    forward(lonLat: LonLatArray): [number, number] {
 
         if (Math.abs(lonLat[1]) > maxLatitude) {
             return [NaN, NaN];
@@ -25,14 +25,14 @@ const WebMercator: ProjectionDefinition = {
             r * lonLat[0] * deg2rad,
             r * Math.log((1 + sinLat) / (1 - sinLat)) / 2
         ];
-    },
+    }
 
-    inverse: (xy): LonLatArray => [
-        xy[0] / (r * deg2rad),
-        (2 * Math.atan(Math.exp(xy[1] / r)) - (Math.PI / 2)) / deg2rad
-    ],
+    inverse(xy: [number, number]): LonLatArray {
+        return [
+            xy[0] / (r * deg2rad),
+            (2 * Math.atan(Math.exp(xy[1] / r)) - (Math.PI / 2)) / deg2rad
+        ];
+    }
 
-    maxLatitude
-};
-
-export default WebMercator;
+    maxLatitude = maxLatitude;
+}

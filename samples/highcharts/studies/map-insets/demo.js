@@ -9,7 +9,8 @@ Highcharts.getJSON(
         // Initialize the chart
         Highcharts.mapChart('container', {
             chart: {
-                map: topology
+                map: topology,
+                plotBorderWidth: 1
             },
 
             title: {
@@ -87,7 +88,11 @@ Highcharts.getJSON(
 
                         // Projection to use within the inset, defaults to best
                         // guess based on geo bounds
-                        projection: {},
+                        projection: {
+                            name: 'LambertConformalConic',
+                            parallels: [55, 65],
+                            rotation: [140]
+                        },
 
                         units: 'percent', // 'pixels' | 'percent'
 
@@ -105,6 +110,11 @@ Highcharts.getJSON(
                                     [-162, 18]
                                 ]
                             ]
+                        },
+                        projection: {
+                            name: 'LambertConformalConic',
+                            parallels: [20],
+                            rotation: [157]
                         }
                     }
                 }
@@ -126,7 +136,7 @@ Highcharts.getJSON(
                     }
                 },
                 dataLabels: {
-                    enabled: true,
+                    enabled: false,
                     format: '{point.name}'
                 }
             }, {

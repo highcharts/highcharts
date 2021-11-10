@@ -36,7 +36,9 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    extend
+    extend,
+    isNumber,
+    pick
 } = U;
 
 /* *
@@ -126,6 +128,64 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
 
         return point;
+    }
+
+    /*
+     * Get the bounds in terms of projected units
+     * @param projection
+     * @return MapBounds|undefined The computed bounds
+     */
+    public getProjectedBounds(projection: Projection): MapBounds|undefined {
+        const path = MapPoint.getProjectedPath(this, projection),
+            properties = this.properties;
+
+        let x2 = -Number.MAX_VALUE,
+            x1 = Number.MAX_VALUE,
+            y2 = -Number.MAX_VALUE,
+            y1 = Number.MAX_VALUE,
+            validBounds;
+
+        path.forEach((seg): void => {
+            const x = seg[seg.length - 2];
+            const y = seg[seg.length - 1];
+            if (
+                typeof x === 'number' &&
+                typeof y === 'number'
+            ) {
+                x1 = Math.min(x1, x);
+                x2 = Math.max(x2, x);
+                y1 = Math.min(y1, y);
+                y2 = Math.max(y2, y);
+                validBounds = true;
+            }
+        });
+
+        if (validBounds) {
+
+            // Cache point bounding box for use to position data labels, bubbles
+            // etc
+            const propMiddleX = properties && properties['hc-middle-x'],
+                midX = (
+                    x1 + (x2 - x1) * pick(
+                        this.middleX,
+                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                    )
+                ),
+                propMiddleY = properties && properties['hc-middle-y'];
+
+            let middleYFraction = pick(
+                this.middleY,
+                isNumber(propMiddleY) ? propMiddleY : 0.5
+            );
+            // No geographic geometry, only path given => flip
+            if (!this.geometry) {
+                middleYFraction = 1 - middleYFraction;
+            }
+
+            const midY = y2 - (y2 - y1) * middleYFraction;
+
+            return { midX, midY, x1, y1, x2, y2 };
+        }
     }
 
     /**

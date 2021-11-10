@@ -3,6 +3,7 @@
  * */
 
 'use strict';
+import type { LonLatArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 import type ProjectionOptions from '../ProjectionOptions';
 
@@ -14,12 +15,13 @@ const sign = (Math as any).sign ||
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
 
-let n = 0,
-    c = 0;
 
-const LambertConformalConic: ProjectionDefinition = {
+export default class LambertConformalConic implements ProjectionDefinition {
 
-    init: (options: ProjectionOptions): void => {
+    private n: number;
+    private c: number;
+
+    constructor(options: ProjectionOptions) {
         const parallels = (options.parallels || [])
                 .map((n): number => n * deg2rad),
             lat1 = parallels[0] || 0,
@@ -27,7 +29,7 @@ const LambertConformalConic: ProjectionDefinition = {
             cosLat1 = Math.cos(lat1);
 
         // Apply the global variables
-        n = lat1 === lat2 ?
+        let n = lat1 === lat2 ?
             Math.sin(lat1) :
             Math.log(
                 cosLat1 / Math.cos(lat2)) / Math.log(tany(lat2) / tany(lat1)
@@ -35,11 +37,15 @@ const LambertConformalConic: ProjectionDefinition = {
         if (Math.abs(n) < 1e-10) {
             n = (sign(n) || 1) * 1e-10;
         }
-        c = cosLat1 * Math.pow(tany(lat1), n) / n;
-    },
 
-    forward: (lonLat): [number, number] => {
-        const lon = lonLat[0] * deg2rad;
+        this.n = n;
+        this.c = cosLat1 * Math.pow(tany(lat1), n) / n;
+
+    }
+
+    forward(lonLat: LonLatArray): [number, number] {
+        const lon = lonLat[0] * deg2rad,
+            { c, n } = this;
         let lat = lonLat[1] * deg2rad;
         if (c > 0) {
             if (lat < -halfPI + eps10) {
@@ -56,11 +62,12 @@ const LambertConformalConic: ProjectionDefinition = {
             r * Math.sin(n * lon) * scale,
             (c - r * Math.cos(n * lon)) * scale
         ];
-    },
+    }
 
-    inverse: (xy): [number, number] => {
+    inverse(xy: [number, number]): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
+            { c, n } = this,
             cy = c - y,
             rho = sign(n) * Math.sqrt(x * x + cy * cy);
 
@@ -72,8 +79,5 @@ const LambertConformalConic: ProjectionDefinition = {
             (l / n) / deg2rad,
             (2 * Math.atan(Math.pow(c / rho, 1 / n)) - halfPI) / deg2rad
         ];
-
     }
-};
-
-export default LambertConformalConic;
+}
