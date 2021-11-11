@@ -200,7 +200,7 @@ QUnit.test('Null points', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].transformGroup.element.getAttribute('stroke-width'),
+        chart.series[0].transformGroups[0].element.getAttribute('stroke-width'),
         '0',
         'The stroke width should be 0'
     );

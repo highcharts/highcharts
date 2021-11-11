@@ -53,8 +53,9 @@ Highcharts.getJSON(
 
                         borderWidth: 1,
 
-                        // What coordinates to render in the center of the bounding
-                        // box. Defaults to the center of the planar projection.
+                        // What coordinates to render in the center of the
+                        // bounding box. Defaults to the center of the planar
+                        // projection.
                         center: void 0,
 
                         // Geometries within this geometry are removed from the
@@ -139,12 +140,12 @@ Highcharts.getJSON(
                     enabled: false,
                     format: '{point.name}'
                 }
-            }, {
+            }/*, {
                 mapData: Object.values(topology.objects
                     .default['hc-recommended-transform']),
                 type: 'mapline',
                 nullColor: 'blue'
-            }]
+            }*/]
         });
     }
 );

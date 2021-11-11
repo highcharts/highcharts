@@ -448,7 +448,7 @@ class MapSeries extends ScatterSeries {
 
     public points: Array<MapPoint> = void 0 as any;
 
-    public transformGroup: SVGElement = void 0 as any;
+    public transformGroups: Array<SVGElement>|undefined;
 
     public valueData?: Array<number>;
 
@@ -604,38 +604,47 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public drawPoints(): void {
-        const { chart, group } = this;
+        const { chart, group, transformGroups = [] } = this;
         const { mapView, renderer } = chart;
 
+        if (!mapView) {
+            return;
+        }
 
-        // Set a group that handles transform during zooming and panning in
-        // order to preserve clipping on series.group
-        if (!this.transformGroup) {
-            this.transformGroup = renderer.g().add(group);
-            this.transformGroup.survive = true;
+        // Set groups that handle transform during zooming and panning in order
+        // to preserve clipping on series.group
+        this.transformGroups = transformGroups;
+        if (!transformGroups.length) {
+            [mapView].concat(mapView.insets).forEach((view): void => {
+                const transformGroup = renderer.g().add(group);
+                transformGroups.push(transformGroup);
+            });
         }
 
         // Draw the shapes again
         if (this.doFullTranslate()) {
 
             // Individual point actions.
-            if (chart.hasRendered && !chart.styledMode) {
-                this.points.forEach((point): void => {
+            this.points.forEach((point): void => {
 
-                    // Restore state color on update/redraw (#3529)
-                    if (point.shapeArgs) {
-                        point.shapeArgs.fill = this.pointAttribs(
-                            point,
-                            point.state
-                        ).fill;
-                    }
-                });
-            }
+                // Points should be added in the corresponding transform group
+                point.group = transformGroups[
+                    typeof point.insetIndex === 'number' ?
+                        point.insetIndex + 1 :
+                        0
+                ];
 
-            // Draw them in transformGroup
-            this.group = this.transformGroup;
+                // Restore state color on update/redraw (#3529)
+                if (point.shapeArgs && chart.hasRendered && !chart.styledMode) {
+                    point.shapeArgs.fill = this.pointAttribs(
+                        point,
+                        point.state
+                    ).fill;
+                }
+            });
+
+            // Draw the points
             ColumnSeries.prototype.drawPoints.apply(this);
-            this.group = group; // Reset
 
             // Add class names
             this.points.forEach((point): void => {
@@ -646,14 +655,10 @@ class MapSeries extends ScatterSeries {
                             'highcharts-name-' +
                             point.name.replace(/ /g, '-').toLowerCase();
                     }
-                    if (point.properties &&
-                        (point.properties as any)['hc-key']
-                    ) {
+                    if (point.properties && point.properties['hc-key']) {
                         className +=
                             ' highcharts-key-' +
-                            (point.properties as any)[
-                                'hc-key'
-                            ].toLowerCase();
+                            point.properties['hc-key'].toString().toLowerCase();
                     }
                     if (className) {
                         point.graphic.addClass(className);
@@ -674,78 +679,80 @@ class MapSeries extends ScatterSeries {
 
 
         // Apply the SVG transform
-        const svgTransform = mapView && mapView.svgTransform;
-        if (svgTransform) {
+        transformGroups.forEach((transformGroup, i): void => {
+            const view = i === 0 ? mapView : mapView.insets[i - 1],
+                svgTransform = view.svgTransform;
+            if (svgTransform) {
 
-            const strokeWidth = pick(
-                (this.options as any)[(
-                    this.pointAttrToOptions &&
-                    (this.pointAttrToOptions as any)['stroke-width']
-                ) || 'borderWidth'],
-                1 // Styled mode
-            );
-
-            /* Animate or move to the new zoom level. In order to prevent
-                flickering as the different transform components are set out
-                of sync (#5991), we run a fake animator attribute and set
-                scale and translation synchronously in the same step.
-
-                A possible improvement to the API would be to handle this in
-                the renderer or animation engine itself, to ensure that when
-                we are animating multiple properties, we make sure that each
-                step for each property is performed in the same step. Also,
-                for symbols and for transform properties, it should induce a
-                single updateTransform and symbolAttr call. */
-            const scale = svgTransform.scaleX;
-            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
-            const transformGroup = this.transformGroup;
-            if (renderer.globalAnimation && chart.hasRendered) {
-                const startTranslateX = Number(transformGroup.attr('translateX'));
-                const startTranslateY = Number(transformGroup.attr('translateY'));
-                const startScale = Number(transformGroup.attr('scaleX'));
-
-                const step: AnimationStepCallbackFunction = (now, fx): void => {
-                    const scaleStep = startScale +
-                        (scale - startScale) * fx.pos;
-                    transformGroup.attr({
-                        translateX: (
-                            startTranslateX +
-                            (svgTransform.translateX - startTranslateX) * fx.pos
-                        ),
-                        translateY: (
-                            startTranslateY +
-                            (svgTransform.translateY - startTranslateY) * fx.pos
-                        ),
-                        scaleX: scaleStep,
-                        scaleY: scaleStep * flipFactor
-                    });
-
-                    group.element.setAttribute(
-                        'stroke-width',
-                        strokeWidth / scaleStep
-                    );
-                };
-
-                transformGroup
-                    .attr({ animator: 0 })
-                    .animate({ animator: 1 }, { step });
-
-            // When dragging or first rendering, animation is off
-            } else {
-                transformGroup.attr(svgTransform);
-
-                // Set the stroke-width directly on the group element so the
-                // children inherit it. We need to use setAttribute directly,
-                // because the stroke-widthSetter method expects a stroke color
-                // also to be set.
-                transformGroup.element.setAttribute(
-                    'stroke-width',
-                    strokeWidth / scale
+                const strokeWidth = pick(
+                    (this.options as any)[(
+                        this.pointAttrToOptions &&
+                        (this.pointAttrToOptions as any)['stroke-width']
+                    ) || 'borderWidth'],
+                    1 // Styled mode
                 );
+
+                /* Animate or move to the new zoom level. In order to prevent
+                    flickering as the different transform components are set out
+                    of sync (#5991), we run a fake animator attribute and set
+                    scale and translation synchronously in the same step.
+
+                    A possible improvement to the API would be to handle this in
+                    the renderer or animation engine itself, to ensure that when
+                    we are animating multiple properties, we make sure that each
+                    step for each property is performed in the same step. Also,
+                    for symbols and for transform properties, it should induce a
+                    single updateTransform and symbolAttr call. */
+                const scale = svgTransform.scaleX;
+                const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+                if (renderer.globalAnimation && chart.hasRendered) {
+                    const startTranslateX = Number(transformGroup.attr('translateX'));
+                    const startTranslateY = Number(transformGroup.attr('translateY'));
+                    const startScale = Number(transformGroup.attr('scaleX'));
+
+                    const step: AnimationStepCallbackFunction = (now, fx): void => {
+                        const scaleStep = startScale +
+                            (scale - startScale) * fx.pos;
+                        transformGroup.attr({
+                            translateX: (
+                                startTranslateX +
+                                (svgTransform.translateX - startTranslateX) * fx.pos
+                            ),
+                            translateY: (
+                                startTranslateY +
+                                (svgTransform.translateY - startTranslateY) * fx.pos
+                            ),
+                            scaleX: scaleStep,
+                            scaleY: scaleStep * flipFactor
+                        });
+
+                        group.element.setAttribute(
+                            'stroke-width',
+                            strokeWidth / scaleStep
+                        );
+                    };
+
+                    transformGroup
+                        .attr({ animator: 0 })
+                        .animate({ animator: 1 }, { step });
+
+                // When dragging or first rendering, animation is off
+                } else {
+                    transformGroup.attr(svgTransform);
+
+                    // Set the stroke-width directly on the group element so the
+                    // children inherit it. We need to use setAttribute
+                    // directly, because the stroke-widthSetter method expects a
+                    // stroke color also to be set.
+                    transformGroup.element.setAttribute(
+                        'stroke-width',
+                        strokeWidth / scale
+                    );
+                }
+
+
             }
-
-
-        }
+        });
 
         this.drawMapDataLabels();
 
@@ -766,8 +773,6 @@ class MapSeries extends ScatterSeries {
             (this.points || []).forEach(function (point): void {
 
                 if (point.path || point.geometry) {
-
-                    let hasInset = false;
 
                     // @todo Try to puth these two conversions in
                     // MapPoint.applyOptions
@@ -797,6 +802,9 @@ class MapSeries extends ScatterSeries {
                             const { midX, midY } = bounds;
                             if (insets && isNumber(midX) && isNumber(midY)) {
                                 const inset = find(insets, (inset): boolean|undefined => {
+                                    // @todo Move this over to the inset, in a
+                                    // new isInside function.
+                                    //
                                     // @todo Instead of running the expensive
                                     // pointInPolygon, find the rectangle bounds
                                     // of the inset (in the inset constructor)
@@ -820,14 +828,17 @@ class MapSeries extends ScatterSeries {
                                     // projection
                                     delete point.projectedPath;
                                     bounds = point.getProjectedBounds(inset.projection);
-                                    hasInset = true;
+                                    if (bounds) {
+                                        inset.allBounds.push(bounds);
+                                    }
+                                    point.insetIndex = insets.indexOf(inset);
                                 }
                             }
                             point.bounds = bounds;
                         }
 
                     }
-                    if (point.bounds && !hasInset) {
+                    if (point.bounds && point.insetIndex === void 0) {
                         allBounds.push(point.bounds);
                     }
 

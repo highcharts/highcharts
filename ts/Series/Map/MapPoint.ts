@@ -24,6 +24,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
@@ -58,6 +59,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     public colorInterval?: unknown;
 
     public geometry?: GeoJSONGeometryMultiPoint;
+
+    public group?: SVGElement;
+
+    public insetIndex?: number;
 
     public labelrank?: number;
 

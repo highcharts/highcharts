@@ -15,7 +15,7 @@ QUnit.test(
         });
 
         assert.close(
-            chart.series[0].transformGroup.element.getAttribute(
+            chart.series[0].transformGroups[0].element.getAttribute(
                 'stroke-width'
             ) * chart.mapView.svgTransform.scaleX,
             30,

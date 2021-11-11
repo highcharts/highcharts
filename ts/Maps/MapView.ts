@@ -11,6 +11,7 @@
 'use strict';
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     LonLatArray,
@@ -135,6 +136,24 @@ class MapView {
             });
         }
 
+        // Initialize and respond to chart size changes
+        addEvent(chart, 'afterSetChartSize', (): void => {
+            if (
+                this.minZoom === void 0 || // When initializing the chart
+                this.minZoom === this.zoom // When resizing the chart
+            ) {
+
+                this.fitToBounds(void 0, void 0, false);
+
+                if (isNumber(this.userOptions.zoom)) {
+                    this.zoom = this.userOptions.zoom;
+                }
+                if (this.userOptions.center) {
+                    merge(true, this.center, this.userOptions.center);
+                }
+            }
+        });
+
         this.setUpEvents();
 
     }
@@ -165,14 +184,14 @@ class MapView {
         const b = bounds || this.getProjectedBounds();
 
         if (b) {
-            const { plotWidth, plotHeight } = this.chart,
+            const { width, height } = this.getField(),
                 pad = pick(padding, bounds ? 0 : this.options.padding),
-                paddingX = relativeLength(pad, plotWidth),
-                paddingY = relativeLength(pad, plotHeight);
+                paddingX = relativeLength(pad, width),
+                paddingY = relativeLength(pad, height);
 
             const scaleToPlotArea = Math.max(
-                (b.x2 - b.x1) / ((plotWidth - paddingX) / tileSize),
-                (b.y2 - b.y1) / ((plotHeight - paddingY) / tileSize)
+                (b.x2 - b.x1) / ((width - paddingX) / tileSize),
+                (b.y2 - b.y1) / ((height - paddingY) / tileSize)
             );
             const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
 
@@ -188,6 +207,15 @@ class MapView {
 
             this.setView(center, zoom, redraw, animation);
         }
+    }
+
+    public getField(): BBoxObject {
+        return {
+            x: 0,
+            y: 0,
+            width: this.chart.plotWidth,
+            height: this.chart.plotHeight
+        };
     }
 
     public getProjectedBounds(): MapBounds|undefined {
@@ -260,12 +288,16 @@ class MapView {
         const bounds = this.getProjectedBounds();
         if (
             bounds &&
-            // When zooming in, we don't need to adjust to the bounds, as that
-            // could shift the location under the mouse
-            !zoomingIn
+            (
+                this instanceof MapViewInset ||
+
+                // When zooming in, we don't need to adjust to the bounds, as
+                // that could shift the location under the mouse
+                !zoomingIn
+            )
         ) {
             const projectedCenter = this.projection.forward(this.center);
-            const { plotWidth, plotHeight } = this.chart;
+            const { width, height } = this.getField();
             const scale = this.getScale();
             const bottomLeft = this.projectedUnitsToPixels({
                 x: bounds.x1,
@@ -287,33 +319,33 @@ class MapView {
             const y2 = bottomLeft.y;
 
             // Map smaller than plot area, center it
-            if (x2 - x1 < plotWidth) {
+            if (x2 - x1 < width) {
                 projectedCenter[0] = boundsCenterProjected[0];
 
             // Off west
-            } else if (x1 < 0 && x2 < plotWidth) {
+            } else if (x1 < 0 && x2 < width) {
                 // Adjust eastwards
-                projectedCenter[0] += Math.max(x1, x2 - plotWidth) / scale;
+                projectedCenter[0] += Math.max(x1, x2 - width) / scale;
 
             // Off east
-            } else if (x2 > plotWidth && x1 > 0) {
+            } else if (x2 > width && x1 > 0) {
                 // Adjust westwards
-                projectedCenter[0] += Math.min(x2 - plotWidth, x1) / scale;
+                projectedCenter[0] += Math.min(x2 - width, x1) / scale;
             }
 
             // Map smaller than plot area, center it
-            if (y2 - y1 < plotHeight) {
+            if (y2 - y1 < height) {
                 projectedCenter[1] = boundsCenterProjected[1];
 
             // Off north
-            } else if (y1 < 0 && y2 < plotHeight) {
+            } else if (y1 < 0 && y2 < height) {
                 // Adjust southwards
-                projectedCenter[1] -= Math.max(y1, y2 - plotHeight) / scale;
+                projectedCenter[1] -= Math.max(y1, y2 - height) / scale;
 
             // Off south
-            } else if (y2 > plotHeight && y1 > 0) {
+            } else if (y2 > height && y1 > 0) {
                 // Adjust northwards
-                projectedCenter[1] -= Math.min(y2 - plotHeight, y1) / scale;
+                projectedCenter[1] -= Math.min(y2 - height, y1) / scale;
             }
 
             this.center = this.projection.inverse(projectedCenter);
@@ -323,8 +355,8 @@ class MapView {
 
             // When dealing with unprojected coordinates, y axis is flipped.
             const flipFactor = this.projection.hasCoordinates ? -1 : 1,
-                translateX = plotWidth / 2 - projectedCenter[0] * scale,
-                translateY = plotHeight / 2 - projectedCenter[1] * scale *
+                translateX = width / 2 - projectedCenter[0] * scale,
+                translateY = height / 2 - projectedCenter[1] * scale *
                     flipFactor;
             this.svgTransform = {
                 scaleX: scale,
@@ -350,10 +382,11 @@ class MapView {
      * @return {Highcharts.PositionObject} The position in pixels
      */
     public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
-        const scale = this.getScale();
-        const projectedCenter = this.projection.forward(this.center);
-        const centerPxX = this.chart.plotWidth / 2;
-        const centerPxY = this.chart.plotHeight / 2;
+        const scale = this.getScale(),
+            projectedCenter = this.projection.forward(this.center),
+            field = this.getField(),
+            centerPxX = field.width / 2,
+            centerPxY = field.height / 2;
 
         const x = centerPxX - scale * (projectedCenter[0] - pos.x);
         const y = centerPxY + scale * (projectedCenter[1] - pos.y);
@@ -370,11 +403,12 @@ class MapView {
      * @return {Highcharts.PositionObject} The position in projected units
      */
     public pixelsToProjectedUnits(pos: PositionObject): ProjectedXY {
-        const { x, y } = pos;
-        const scale = this.getScale();
-        const projectedCenter = this.projection.forward(this.center);
-        const centerPxX = this.chart.plotWidth / 2;
-        const centerPxY = this.chart.plotHeight / 2;
+        const { x, y } = pos,
+            scale = this.getScale(),
+            projectedCenter = this.projection.forward(this.center),
+            field = this.getField(),
+            centerPxX = field.width / 2,
+            centerPxY = field.height / 2;
 
         const projectedX = projectedCenter[0] + (x - centerPxX) / scale;
         const projectedY = projectedCenter[1] - (y - centerPxY) / scale;
@@ -385,25 +419,6 @@ class MapView {
     public setUpEvents(): void {
 
         const chart = this.chart;
-
-        // Initialize and respond to chart size changes
-        addEvent(chart, 'afterSetChartSize', (): void => {
-            if (
-                this.minZoom === void 0 || // When initializing the chart
-                this.minZoom === this.zoom // When resizing the chart
-            ) {
-
-                this.fitToBounds(void 0, void 0, false);
-
-                if (isNumber(this.userOptions.zoom)) {
-                    this.zoom = this.userOptions.zoom;
-                }
-                if (this.userOptions.center) {
-                    merge(true, this.center, this.userOptions.center);
-                }
-            }
-        });
-
 
         // Set up panning for maps. In orthographic projections the globe will
         // rotate, otherwise adjust the map center.
@@ -664,12 +679,13 @@ class MapView {
     }
 }
 
+// Putting this in the same file due to circular dependency with MapView
 class MapViewInset extends MapView {
 
+    public allBounds: MapBounds[];
     public key?: string;
     public options: MapViewInsetsOptions;
     public path?: SVGPath;
-    public projection: Projection;
 
     public constructor(
         mapView: MapView,
@@ -678,7 +694,7 @@ class MapViewInset extends MapView {
         super(mapView.chart, options);
         this.options = merge(defaultInsetsOptions, options);
 
-        this.projection = new Projection(this.options.projection);
+        this.allBounds = [];
 
         if (this.options.geoBounds) {
             // The path in projected units in the map view's main projection.
@@ -687,7 +703,21 @@ class MapViewInset extends MapView {
         }
     }
 
-    // Not for insets
+    getField(): BBoxObject {
+        // @todo Make it work with the extentPolygon
+        return {
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100
+        };
+    }
+
+    getProjectedBounds(): MapBounds|undefined {
+        return MapView.compositeBounds(this.allBounds);
+    }
+
+    // No chart-level events for insets
     setUpEvents(): void {}
 
 }
