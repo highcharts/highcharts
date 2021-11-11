@@ -195,18 +195,54 @@ namespace BrandDarkTheme {
                 }
             }
         },
+        
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                theme: {
+                    fill: '#46465C',
+                    'stroke-width': 1,
+                    stroke: '#BBBAC5',
+                    r: 2,
+                    style: {
+                        color: '#fff'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#000',
+                            'stroke-width': 1,
+                            stroke: '#f0f0f0',
+                            style: {
+                                color: '#fff'
+                            }
+                        },
+
+                        select: {
+                            fill: '#000',
+                            'stroke-width': 1,
+                            stroke: '#f0f0f0',
+                            style: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                },
+                verticalAlign: 'bottom'
+            }
+        },
 
         // scroll charts
         rangeSelector: {
             buttonTheme: {
-                fill: '#505053',
+                fill: '#46465C',
+                stroke: '#BBBAC5',
+                'stroke-width': 1,
                 style: {
-                    color: '#f0f0f0',
-                    stroke: 'transparent'
+                    color: '#fff'
                 },
                 states: {
                     hover: {
-                        fill: '#707073',
+                        fill: '#1f1836',
                         style: {
                             color: '#fff'
                         },
@@ -214,7 +250,7 @@ namespace BrandDarkTheme {
                         stroke: 'white'
                     },
                     select: {
-                        fill: '#000003',
+                        fill: '#1f1836',
                         style: {
                             color: '#fff'
                         },
@@ -223,20 +259,20 @@ namespace BrandDarkTheme {
                     }
                 }
             },
-            inputBoxBorderColor: '#505053',
+            inputBoxBorderColor: '#BBBAC5',
             inputStyle: {
-                backgroundColor: '#000003',
-                color: 'silver'
+                backgroundColor: '#2F2B38',
+                color: '#fff'
             },
             labelStyle: {
-                color: 'silver'
+                color: '#fff'
             }
         },
 
         navigator: {
             handles: {
-                backgroundColor: '#666',
-                borderColor: '#AAA'
+                backgroundColor: '#BBBAC5',
+                borderColor: '#2F2B38'
             },
             outlineColor: '#CCC',
             maskFill: 'rgba(255,255,255,0.1)',
@@ -250,14 +286,14 @@ namespace BrandDarkTheme {
         },
 
         scrollbar: {
-            barBackgroundColor: '#808083',
+            barBackgroundColor: '#BBBAC5',
             barBorderColor: '#808083',
-            buttonArrowColor: '#CCC',
-            buttonBackgroundColor: '#606063',
-            buttonBorderColor: '#606063',
-            rifleColor: '#FFF',
-            trackBackgroundColor: '#404043',
-            trackBorderColor: '#404043'
+            buttonArrowColor: '#2F2B38',
+            buttonBackgroundColor: '#BBBAC5',
+            buttonBorderColor: '#2F2B38',
+            rifleColor: '#2F2B38',
+            trackBackgroundColor: '#78758C',
+            trackBorderColor: '#2F2B38'
         }
     };
 
