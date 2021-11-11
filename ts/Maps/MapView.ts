@@ -289,6 +289,7 @@ class MapView {
         if (
             bounds &&
             (
+                // Why? Should be enough to look at zoomingIn
                 this instanceof MapViewInset ||
 
                 // When zooming in, we don't need to adjust to the bounds, as
@@ -296,41 +297,41 @@ class MapView {
                 !zoomingIn
             )
         ) {
-            const projectedCenter = this.projection.forward(this.center);
-            const { width, height } = this.getField();
-            const scale = this.getScale();
-            const bottomLeft = this.projectedUnitsToPixels({
-                x: bounds.x1,
-                y: bounds.y1
-            });
-            const topRight = this.projectedUnitsToPixels({
-                x: bounds.x2,
-                y: bounds.y2
-            });
-            const boundsCenterProjected = [
-                (bounds.x1 + bounds.x2) / 2,
-                (bounds.y1 + bounds.y2) / 2
-            ];
+            const projectedCenter = this.projection.forward(this.center),
+                { x, y, width, height } = this.getField(),
+                scale = this.getScale(),
+                bottomLeft = this.projectedUnitsToPixels({
+                    x: bounds.x1,
+                    y: bounds.y1
+                }),
+                topRight = this.projectedUnitsToPixels({
+                    x: bounds.x2,
+                    y: bounds.y2
+                }),
+                boundsCenterProjected = [
+                    (bounds.x1 + bounds.x2) / 2,
+                    (bounds.y1 + bounds.y2) / 2
+                ];
 
             // Pixel coordinate system is reversed vs projected
-            const x1 = bottomLeft.x;
-            const y1 = topRight.y;
-            const x2 = topRight.x;
-            const y2 = bottomLeft.y;
+            const x1 = bottomLeft.x,
+                y1 = topRight.y,
+                x2 = topRight.x,
+                y2 = bottomLeft.y;
 
             // Map smaller than plot area, center it
             if (x2 - x1 < width) {
                 projectedCenter[0] = boundsCenterProjected[0];
 
             // Off west
-            } else if (x1 < 0 && x2 < width) {
+            } else if (x1 < x && x2 < x + width) {
                 // Adjust eastwards
-                projectedCenter[0] += Math.max(x1, x2 - width) / scale;
+                projectedCenter[0] += Math.max(x1 - x, x2 - width - x) / scale;
 
             // Off east
-            } else if (x2 > width && x1 > 0) {
+            } else if (x2 > x + width && x1 > x) {
                 // Adjust westwards
-                projectedCenter[0] += Math.min(x2 - width, x1) / scale;
+                projectedCenter[0] += Math.min(x2 - width - x, x1 - x) / scale;
             }
 
             // Map smaller than plot area, center it
@@ -338,25 +339,23 @@ class MapView {
                 projectedCenter[1] = boundsCenterProjected[1];
 
             // Off north
-            } else if (y1 < 0 && y2 < height) {
+            } else if (y1 < y && y2 < y + height) {
                 // Adjust southwards
-                projectedCenter[1] -= Math.max(y1, y2 - height) / scale;
+                projectedCenter[1] -= Math.max(y1 - y, y2 - height - y) / scale;
 
             // Off south
-            } else if (y2 > height && y1 > 0) {
+            } else if (y2 > y + height && y1 > y) {
                 // Adjust northwards
-                projectedCenter[1] -= Math.min(y2 - height, y1) / scale;
+                projectedCenter[1] -= Math.min(y2 - height - y, y1 - y) / scale;
             }
 
             this.center = this.projection.inverse(projectedCenter);
 
 
-            // Calculate the SVG transform to be applied to series groups.
-
-            // When dealing with unprojected coordinates, y axis is flipped.
+            // Calculate the SVG transform to be applied to series groups
             const flipFactor = this.projection.hasCoordinates ? -1 : 1,
-                translateX = width / 2 - projectedCenter[0] * scale,
-                translateY = height / 2 - projectedCenter[1] * scale *
+                translateX = x + width / 2 - projectedCenter[0] * scale,
+                translateY = y + height / 2 - projectedCenter[1] * scale *
                     flipFactor;
             this.svgTransform = {
                 scaleX: scale,
@@ -385,8 +384,8 @@ class MapView {
         const scale = this.getScale(),
             projectedCenter = this.projection.forward(this.center),
             field = this.getField(),
-            centerPxX = field.width / 2,
-            centerPxY = field.height / 2;
+            centerPxX = field.x + field.width / 2,
+            centerPxY = field.y + field.height / 2;
 
         const x = centerPxX - scale * (projectedCenter[0] - pos.x);
         const y = centerPxY + scale * (projectedCenter[1] - pos.y);
@@ -407,8 +406,8 @@ class MapView {
             scale = this.getScale(),
             projectedCenter = this.projection.forward(this.center),
             field = this.getField(),
-            centerPxX = field.width / 2,
-            centerPxY = field.height / 2;
+            centerPxX = field.x + field.width / 2,
+            centerPxY = field.y + field.height / 2;
 
         const projectedX = projectedCenter[0] + (x - centerPxX) / scale;
         const projectedY = projectedCenter[1] - (y - centerPxY) / scale;
@@ -704,13 +703,33 @@ class MapViewInset extends MapView {
     }
 
     getField(): BBoxObject {
-        // @todo Make it work with the extentPolygon
-        return {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100
-        };
+        let field = this.options.field;
+        if (field) {
+            // @todo: Cache. Called 4 times on first render.
+            if (this.options.units === 'percent') {
+                field = field.map((xy): [number, number] => [
+                    relativeLength(`${xy[0]}%`, this.chart.plotWidth),
+                    relativeLength(`${xy[1]}%`, this.chart.plotHeight)
+                ]);
+            }
+            const xs = field.map((xy): number => xy[0]),
+                ys = field.map((xy): number => xy[1]),
+                x = Math.min.apply(0, xs),
+                x2 = Math.max.apply(0, xs),
+                y = Math.min.apply(0, ys),
+                y2 = Math.max.apply(0, ys);
+
+            return {
+                x,
+                y,
+                width: x2 - x,
+                height: y2 - y
+            };
+        }
+
+        // Fall back to plot area
+        return super.getField.call(this);
+
     }
 
     getProjectedBounds(): MapBounds|undefined {

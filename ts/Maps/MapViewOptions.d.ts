@@ -49,9 +49,9 @@ export interface MapBounds {
 export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
     borderPath?: SVGPath;
     center: LonLatArray;
+    field?: [number, number][];
     geoBounds?: GeoJSONGeometryMultiPoint;
     id?: string;
-    extentPolygon?: [number, number][];
     projection?: ProjectionOptions;
 }
 

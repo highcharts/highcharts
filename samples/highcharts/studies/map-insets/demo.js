@@ -1,5 +1,5 @@
 Highcharts.getJSON(
-    'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json',
+    'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json',
     // 'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json',
     topology => {
 
@@ -80,7 +80,7 @@ Highcharts.getJSON(
 
                         // Placement of the inset in the map, a polygon subject
                         // to units
-                        extentPolygon: [
+                        field: [
                             [0, 80],
                             [20, 80],
                             [20, 100],
@@ -101,6 +101,12 @@ Highcharts.getJSON(
                         zoom: void 0
                     },
                     hawaii: {
+                        field: [
+                            [20, 85],
+                            [35, 85],
+                            [35, 100],
+                            [20, 100]
+                        ],
                         geoBounds: {
                             type: 'Polygon',
                             coordinates: [
