@@ -32,6 +32,7 @@ const {
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     extend,
     merge,
     objectEach,
@@ -245,6 +246,20 @@ MapNavigation.prototype.update = function (
                 const unbind = addEvent(chart, 'load', (): void => {
                     // #15406: Make sure button hasnt been destroyed
                     if (button.element) {
+                        const expOptions = chart.options.exporting,
+                            expBtn = (expOptions && expOptions.buttons && expOptions.buttons.contextButton);
+
+                        // If the nav buttons are on the same side
+                        if (expBtn && defined(buttonOptions.y) && chart.exportingGroup) {
+                            if (chart.options && chart.title && chart.title.textStr === '' &&
+                                (
+                                    (buttonOptions.align === 'right' && !expBtn.align) ||
+                                    (expBtn.align === buttonOptions.align)
+                                )) {
+                                // (#15782) Make way for hamburger icon.
+                                buttonOptions.y += chart.exportingGroup.getBBox().height * 1.2;
+                            }
+                        }
                         button.align(buttonOptions, false, buttonOptions.alignTo);
                     }
                     unbind();
