@@ -31,6 +31,11 @@ import type TreemapSeries from '../Series/Treemap/TreemapSeries';
 import SeriesType from '../Core/Series/SeriesType';
 import F from '../Core/FormatUtilities.js';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import SeriesOptions from '../Core/Series/SeriesOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 const {
     format
 } = F;
@@ -327,7 +332,7 @@ class Breadcrumbs {
      * */
 
     public group: SVGElement = void 0 as any;
-    public list: Array<Array<any>> = [];
+    public list: Array<Breadcrumbs.breadcrumb> = [];
     public chart: Chart;
     public isDirty: boolean = true;
     public level: number = -1;
@@ -379,7 +384,7 @@ class Breadcrumbs {
      *        Formatted text.
      */
     public createList(this: Breadcrumbs): any {
-        const list: Array<Array<number|null|Point|SeriesType|SVGAElement>> = this.list || [],
+        const list: Array<Breadcrumbs.breadcrumb> = this.list || [],
             chart = this.chart,
             drilldownLevels = chart.drilldownLevels;
 
@@ -387,7 +392,10 @@ class Breadcrumbs {
         if (drilldownLevels && drilldownLevels.length) {
             // Add the initial series as the first element.
             if (!list[0]) {
-                list.push([0, (drilldownLevels[0].seriesOptions as Point)]);
+                list.push({
+                    level: 0,
+                    levelOptions: drilldownLevels[0].seriesOptions
+                });
             }
 
             const lastBreadcrumb = list[list.length - 1];
@@ -397,8 +405,11 @@ class Breadcrumbs {
                 // don't add it again- drilling categories
                 // + 1 because of the wrong levels numeration
                 // in drilldownLevels array.
-                if (level.levelNumber + 1 > (lastBreadcrumb as any)[0]) {
-                    list.push([level.levelNumber + 1, (level.pointOptions as Point)]);
+                if (level.levelNumber + 1 > lastBreadcrumb.level) {
+                    list.push({
+                        level: level.levelNumber + 1,
+                        levelOptions: level.pointOptions
+                    });
                 }
             });
         }
@@ -433,6 +444,7 @@ class Breadcrumbs {
             chart.drillUpButton.destroy();
             chart.drillUpButton = void 0;
         }
+        chart.redraw();
     }
 
     /**
@@ -448,7 +460,7 @@ class Breadcrumbs {
      * @return {string}
      *         Formatted text.
      */
-    public getButtonText(this: Breadcrumbs, breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>): string {
+    public getButtonText(this: Breadcrumbs, breadcrumb: Breadcrumbs.breadcrumb): string {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
@@ -456,8 +468,9 @@ class Breadcrumbs {
             textFormat = pick(breadcrumbsOptions.format,
                 breadcrumbsOptions.showFullPath ? '{level.name}' : '← {level.name}'
             );
-        let returnText = breadcrumbsOptions.formatter && breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) ||
-                format(textFormat, { level: (breadcrumb[1] as Point) }, chart) || '';
+        let returnText = breadcrumbsOptions.formatter &&
+            breadcrumbsOptions.formatter.apply(breadcrumb, [breadcrumbs]) ||
+                format(textFormat, { level: breadcrumb.levelOptions }, chart) || '';
 
         if (returnText === '← ' && lang && lang.mainBreadcrumb) {
             returnText = !breadcrumbsOptions.showFullPath ? '← ' + lang.mainBreadcrumb : lang.mainBreadcrumb;
@@ -515,19 +528,18 @@ class Breadcrumbs {
 
         if (!this.level) {
             this.destroyGroup();
-            this.chart.redraw();
         }
     }
 
     /**
-    * Redraw.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#redraw
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
+     * Redraw.
+     *
+     * @requires  modules/breadcrums
+     *
+     * @function Highcharts.Breadcrumbs#redraw
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
     public redraw(this: Breadcrumbs): void {
         if (this.isDirty) {
             this.render();
@@ -541,34 +553,40 @@ class Breadcrumbs {
     }
 
     /**
-    * Update list after the drillUp.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#updateBreadcrumbsList
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
+     * Update list after the drillUp.
+     *
+     * @requires  modules/breadcrums
+     *
+     * @function Highcharts.Breadcrumbs#updateBreadcrumbsList
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
     public updateBreadcrumbsList(this: Breadcrumbs): void {
         const list = this.list;
         if (this.options.showFullPath) {
             // last breadcrumb
-            const lastB = list[this.level],
-                button = lastB && lastB[2],
-                conector = lastB && lastB[3],
+            const lastB = list[this.level];
+            if (lastB) {
+                const button = lastB.button,
+                    separator = lastB.separator,
+                    prevSeparator = list[this.level - 1] &&
+                    list[this.level - 1].separator;
 
-                prevConector = list[this.level - 1] &&
-                    list[this.level - 1][3];
+                // Remove separator from the previous button.
+                if (prevSeparator) {
+                    prevSeparator.destroy();
+                    delete list[this.level - 1].separator;
+                }
 
-            // Remove connector from the previous button.
-            if (prevConector) {
-                prevConector.destroy();
-                list[this.level - 1].length = 3;
+                // Remove SVG elements fromt the DOM.
+                button && button.destroy();
+                delete lastB.button;
+
+                separator && separator.destroy();
+                delete lastB.separator;
+
             }
 
-            // Remove SVG elements fromt the DOM.
-            button && button.destroy();
-            conector && conector.destroy();
         } else {
             this.level -= 1;
             this.updateSingleButton();
@@ -633,8 +651,8 @@ class Breadcrumbs {
             list = breadcrumbs.list,
             breadcrumbsOptions = breadcrumbs.options,
             // last breadcrumb that was rendered.
-            lastBreadcrumbs = list[this.level - 1] &&
-            list[this.level - 1][2],
+            lastBreadcrumb = list[this.level - 1] &&
+            list[this.level - 1].button,
             buttonSpacing = breadcrumbsOptions.buttonSpacing;
 
         // Draw breadcrumbs.
@@ -647,17 +665,18 @@ class Breadcrumbs {
             }
 
             // Inital position for calculating the breadcrumbs group.
-            let posX: number = lastBreadcrumbs ? lastBreadcrumbs.x +
-                    lastBreadcrumbs.element.getBBox().width + buttonSpacing : 0;
+            let posX: number = lastBreadcrumb ? (lastBreadcrumb.x || 0) +
+                    lastBreadcrumb.getBBox().width + buttonSpacing : 0;
+
             const posY: number = buttonSpacing;
             list.forEach(function (breadcrumb, index): void {
-                const breadcrumbButton: SVGElement = breadcrumb[2],
-                    separatorElement: SVGElement = breadcrumb[3];
+                const breadcrumbButton = breadcrumb.button,
+                    separatorElement = breadcrumb.separator;
 
                 // Render a button.
                 if (!breadcrumbButton) {
                     const button = breadcrumbs.renderButton(breadcrumb, posX, posY);
-                    breadcrumb.push(button);
+                    breadcrumb.button = button;
                     posX += button ? button.getBBox().width + buttonSpacing : 0;
                     breadcrumbs.group.lastXPos = posX;
                 }
@@ -666,7 +685,7 @@ class Breadcrumbs {
                 if (!separatorElement && index !== list.length - 1) {
                     const separator = breadcrumbs.renderSeparator(posX, posY);
 
-                    breadcrumb.push(separator);
+                    breadcrumb.separator = separator;
                     posX += separator ? separator.getBBox().width + buttonSpacing : 0;
                 }
             });
@@ -688,16 +707,16 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             list = breadcrumbs.list,
             breadcrumbsOptions = breadcrumbs.options,
-            lastBreadcrumbs = list[list.length - 2] &&
-            list[list.length - 2][2],
+            lastBreadcrumb = list[list.length - 2] &&
+            list[list.length - 2].button,
             buttonSpacing = breadcrumbsOptions.buttonSpacing;
 
         // Draw breadcrumbs.
         if (list) {
             // Inital position for calculating the breadcrumbs group.
-            let posX: number = lastBreadcrumbs ? lastBreadcrumbs.x +
-                    lastBreadcrumbs.element.getBBox().width + buttonSpacing : 0;
-            const posY: number = buttonSpacing;
+            const posX: number = lastBreadcrumb ? (lastBreadcrumb.x || 0) +
+                lastBreadcrumb.getBBox().width + buttonSpacing : 0,
+                posY: number = buttonSpacing;
 
 
             const previousBreadcrumb = list[list.length - 2],
@@ -779,31 +798,31 @@ class Breadcrumbs {
     }
 
     /**
-    * Render a button.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#renderButton
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    * @param {Highcharts.Breadcrumbs} breadcrumb
-    *        Current breadcrumb
-    * @param {Highcharts.Breadcrumbs} posX
-    *        Initial horizontal position
-    * @param {Highcharts.Breadcrumbs} posY
-    *        Initial vertical position
-    * @return {SVGElement|void}
-    *        Returns the SVG button
-    */
+     * Render a button.
+     *
+     * @requires  modules/breadcrums
+     *
+     * @function Highcharts.Breadcrumbs#renderButton
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.Breadcrumbs} breadcrumb
+     *        Current breadcrumb
+     * @param {Highcharts.Breadcrumbs} posX
+     *        Initial horizontal position
+     * @param {Highcharts.Breadcrumbs} posY
+     *        Initial vertical position
+     * @return {SVGElement|void}
+     *        Returns the SVG button
+     */
     public renderButton(this: Breadcrumbs,
-        breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>,
+        breadcrumb: Breadcrumbs.breadcrumb,
         posX: number, posY: number): SVGElement|undefined {
         const breadcrumbs = this,
             chart = this.chart,
             list = breadcrumbs.list,
             breadcrumbsOptions = breadcrumbs.options;
 
-        if (breadcrumbsOptions && breadcrumb && breadcrumb[1]) {
+        if (breadcrumbsOptions && breadcrumb && breadcrumb.levelOptions) {
             const button: SVGElement = chart.renderer.button(
                 breadcrumbs.getButtonText(breadcrumb),
                 posX,
@@ -819,11 +838,13 @@ class Breadcrumbs {
 
                     // Prevent from click on the current level
                     if (callDefaultEvent !== false &&
-                        list[list.length - 1][1] &&
-                        list[list.length - 1][1].name !== button.textStr &&
+                        (
+                            (list[list.length - 1].levelOptions as PointOptions).name &&
+                            (list[list.length - 1].levelOptions as PointOptions).name !== button.textStr
+                        ) &&
                         breadcrumbsOptions.showFullPath
                     ) {
-                        breadcrumbs.jumpTo(breadcrumb[0] as number);
+                        breadcrumbs.jumpTo(breadcrumb.level);
                     }
 
                     if (callDefaultEvent !== false && !breadcrumbsOptions.showFullPath) {
@@ -844,20 +865,20 @@ class Breadcrumbs {
     }
 
     /**
-    * Render a separator.
-    *
-    * @requires  modules/breadcrums
-    *
-    * @function Highcharts.Breadcrumbs#renderSeparator
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    * @param {Highcharts.Breadcrumbs} posX
-    *        Initial horizontal position
-    * @param {Highcharts.Breadcrumbs} posY
-    *        Initial vertical position
-    * @return {Highcharts.SVGElement}
-    *        Returns the SVG button
-    */
+     * Render a separator.
+     *
+     * @requires  modules/breadcrums
+     *
+     * @function Highcharts.Breadcrumbs#renderSeparator
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.Breadcrumbs} posX
+     *        Initial horizontal position
+     * @param {Highcharts.Breadcrumbs} posY
+     *        Initial vertical position
+     * @return {Highcharts.SVGElement}
+     *        Returns the SVG button
+     */
     public renderSeparator(this: Breadcrumbs, posX: number, posY: number): SVGElement|undefined {
         const breadcrumbs = this,
             chart = this.chart,
@@ -893,37 +914,37 @@ class Breadcrumbs {
     }
 
     /**
-    * Set breadcrumbs list.
-    * @function Highcharts.Breadcrumbs#setList
-    *
-    * @requires  modules/breadcrumbs
-    *
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    * @param {Highcharts.BreadcrumbsOptions} list
-    *        Breadcrumbs class.
-    */
+     * Set breadcrumbs list.
+     * @function Highcharts.Breadcrumbs#setList
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.BreadcrumbsOptions} list
+     *        Breadcrumbs class.
+     */
     public setList(
         this: Breadcrumbs,
-        list: Array<any>
+        list: Array<Breadcrumbs.breadcrumb>
     ): void {
 
         this.list = list;
     }
 
     /**
-    * Update.
-    * @function Highcharts.Breadcrumbs#update
-    *
-    * @requires  modules/breadcrumbs
-    *
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    * @param {Highcharts.BreadcrumbsOptions} options
-    *        Breadcrumbs class.
-    * @param {boolean} redraw
-    *        Redraw flag
-    */
+     * Update.
+     * @function Highcharts.Breadcrumbs#update
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     * @param {Highcharts.BreadcrumbsOptions} options
+     *        Breadcrumbs class.
+     * @param {boolean} redraw
+     *        Redraw flag
+     */
     public update(
         this: Breadcrumbs,
         options: DeepPartial<Breadcrumbs.BreadcrumbsOptions>,
@@ -933,19 +954,18 @@ class Breadcrumbs {
 
         if (redraw) {
             this.destroyGroup();
-            this.redraw();
         }
     }
 
     /**
-    * Update button text when the showFullPath set to false.
-    * @function Highcharts.Breadcrumbs#updateSingleButton
-    *
-    * @requires  modules/breadcrumbs
-    *
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
-    */
+     * Update button text when the showFullPath set to false.
+     * @function Highcharts.Breadcrumbs#updateSingleButton
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
     public updateSingleButton(this: Breadcrumbs): void {
         const chart = this.chart,
             breadcrumbsOptions = this.options,
@@ -967,7 +987,7 @@ if (!H.Breadcrumbs) {
     H.Breadcrumbs = Breadcrumbs as typeof Breadcrumbs;
 
     addEvent(Chart, 'getMargins', function (): void {
-        let breadcrumbs = this.breadcrumbs;
+        const breadcrumbs = this.breadcrumbs;
 
         if (
             breadcrumbs &&
@@ -977,7 +997,7 @@ if (!H.Breadcrumbs) {
             const breadcrumbsOptions = breadcrumbs.options,
                 buttonTheme = breadcrumbsOptions.buttonTheme,
                 breadcrumbsHeight = (buttonTheme.height || 0) +
-                    (buttonTheme.padding || 0) + breadcrumbsOptions.buttonSpacing,
+                    2 * (buttonTheme.padding || 0) + breadcrumbsOptions.buttonSpacing,
                 verticalAlign = breadcrumbsOptions.position.verticalAlign;
 
             if (verticalAlign === 'bottom') {
@@ -1050,7 +1070,7 @@ if (!H.Breadcrumbs) {
                     // Create a list using the event after drilldown.
                     if ((e as any).trigger === 'click' || !(e as any).trigger) {
                         this.level = (this.level || 0) + 1;
-                        chart.breadcrumbs.setList(this.createLeveList(e));
+                        chart.breadcrumbs.setList(this.createLevelList(e));
                         this.calculateLevel();
                     }
 
@@ -1059,6 +1079,7 @@ if (!H.Breadcrumbs) {
                         this.calculateLevel();
                         chart.breadcrumbs.redraw();
                         this.updateBreadcrumbsList();
+                        chart.breadcrumbs.isDirty = true;
                     }
                 });
             addEvent(H.seriesTypes.treemap, 'update', function (e: any): void {
@@ -1105,6 +1126,13 @@ namespace Breadcrumbs {
         useHTML: boolean;
         zIndex: number;
     }
+
+    export type breadcrumb = {
+        level: number,
+        levelOptions: SeriesOptions|PointOptions|PointShortOptions,
+        button?: SVGElement,
+        separator?: SVGElement
+    };
     export interface BreadcrumbsAlignOptions {
         align: AlignValue;
         verticalAlign: VerticalAlignValue;
@@ -1119,7 +1147,6 @@ namespace Breadcrumbs {
     }
     export interface BreadcrumbsButtonsFormatter {
         (
-            breadcrumb: Array<number|null|Point|SeriesType|SVGAElement>,
             breadcrumbs: Breadcrumbs
         ): (string);
     }

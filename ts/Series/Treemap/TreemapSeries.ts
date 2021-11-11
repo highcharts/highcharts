@@ -30,7 +30,7 @@ import type {
     TreemapSeriesOptions,
     TreemapSeriesUpButtonOptions
 } from './TreemapSeriesOptions';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesOptions, SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -56,6 +56,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs';
 const {
     getColor,
     getLevelOptions,
@@ -1004,26 +1005,32 @@ class TreemapSeries extends ScatterSeries {
     }
 
     /**
-     * createLeveList
+     * createLevelList
      *
      * @private
      */
-    public createLeveList(e: any): any {
+    public createLevelList(e: any): any {
         const breadcrumbs = this.chart.breadcrumbs,
-            list: Array<any> = breadcrumbs && breadcrumbs.list || [],
+            list: Array<Breadcrumbs.breadcrumb> = breadcrumbs && breadcrumbs.list || [],
             chart = this.chart;
 
         // If the list doesn't exist treat the initial series
         // as the current level- first iteration.
         let currentLevelNumber: number = list.length ?
-            (list[list.length - 1][0] as number) : 0;
+            list[list.length - 1].level : 0;
 
         if (!list[0]) {
-            list.push([0, chart.series[0]]);
+            list.push({
+                level: 0,
+                levelOptions: chart.series[0]
+            });
         }
 
         if (e.trigger === 'click' && e.newRootId) {
-            list.push([list[list.length - 1][0] + 1, (chart.get(e.newRootId))]);
+            list.push({
+                level: list[list.length - 1].level + 1,
+                levelOptions: chart.get(e.newRootId) as SeriesOptions
+            });
         } else {
             let node = e.target.nodeMap[e.newRootId];
             const extraNodes = [];
@@ -1035,10 +1042,12 @@ class TreemapSeries extends ScatterSeries {
                 node = e.target.nodeMap[node.parent];
             }
             extraNodes.reverse().forEach(function (node): void {
-                list.push([++currentLevelNumber, node]);
+                list.push({
+                    level: ++currentLevelNumber,
+                    levelOptions: node
+                });
             });
         }
-
 
         return list;
     }
@@ -1060,19 +1069,23 @@ class TreemapSeries extends ScatterSeries {
             if (breadcrumbs.options.showFullPath) {
                 // last breadcrumb
                 const lastB = list[list.length - 1],
-                    button = lastB && lastB[2],
-                    conector = lastB && lastB[3],
-
-                    prevConector = list[list.length - 2] &&
-                    list[list.length - 2][3];
+                    button = lastB && lastB.button,
+                    separator = lastB && lastB.separator,
+                    prevSeparator = list[list.length - 2] &&
+                    list[list.length - 2].separator;
 
                 // Remove connector from the previous button.
-                prevConector && prevConector.destroy();
-                list[list.length - 2].length = 3;
+                if (prevSeparator) {
+                    prevSeparator.destroy();
+                    delete list[list.length - 2].separator;
+                }
 
                 // Remove SVG elements fromt the DOM.
                 button && button.destroy();
-                conector && conector.destroy();
+                delete lastB.button;
+
+                separator && separator.destroy();
+                delete lastB.separator;
             } else {
                 breadcrumbs.updateSingleButton();
             }
