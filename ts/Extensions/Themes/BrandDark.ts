@@ -57,7 +57,6 @@ namespace BrandDarkTheme {
                 fontFamily: 'IBM Plex Sans, sans-serif'
             }
         },
-
         title: {
             style: {
                 fontSize: '22px',
@@ -65,7 +64,6 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-
         subtitle: {
             style: {
                 fontSize: '16px',
@@ -73,25 +71,21 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-
         credits: {
             style: {
                 color: '#f0f0f0'
             }
         },
-
         caption: {
             style: {
                 color: '#f0f0f0'
             }
         },
-
         tooltip: {
             borderWidth: 0,
             backgroundColor: '#f0f0f0',
             shadow: true
         },
-
         legend: {
             backgroundColor: 'transparent',
             itemStyle: {
@@ -104,13 +98,11 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-
         labels: {
             style: {
                 color: '#707073'
             }
         },
-
         plotOptions: {
             series: {
                 dataLabels: {
@@ -143,7 +135,6 @@ namespace BrandDarkTheme {
 
             }
         } as SeriesTypePlotOptions,
-
         drilldown: {
             activeAxisLabelStyle: {
                 color: '#F0F0F3'
@@ -157,7 +148,6 @@ namespace BrandDarkTheme {
                 }
             }
         },
-
         xAxis: {
             gridLineColor: '#707073',
             labels: {
@@ -175,7 +165,6 @@ namespace BrandDarkTheme {
                 }
             }
         },
-
         yAxis: {
             gridLineColor: '#707073',
             labels: {
@@ -195,7 +184,6 @@ namespace BrandDarkTheme {
                 }
             }
         },
-        
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -230,7 +218,6 @@ namespace BrandDarkTheme {
                 verticalAlign: 'bottom'
             }
         },
-
         // scroll charts
         rangeSelector: {
             buttonTheme: {
@@ -268,7 +255,6 @@ namespace BrandDarkTheme {
                 color: '#fff'
             }
         },
-
         navigator: {
             handles: {
                 backgroundColor: '#BBBAC5',
@@ -284,7 +270,6 @@ namespace BrandDarkTheme {
                 gridLineColor: '#505053'
             }
         },
-
         scrollbar: {
             barBackgroundColor: '#BBBAC5',
             barBorderColor: '#808083',
