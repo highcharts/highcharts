@@ -120,22 +120,33 @@ const iceberg = {
     credits: {
         enabled: false
     },
+    lang: {
+        accessibility: {
+            chartContainerLabel: '',
+            screenReaderSection: {
+                beforeRegionLabel: '',
+                endOfChartMarker: ''
+            }
+        }
+    },
     accessibility: {
-        keyboardNavigation:
-            {
-                enabled: true
-            },
-        point: {
-            descriptionFormat: ''
+        screenReaderSection: {
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive chart displaying 5 different styles of icebergs, their approximate size, and how frequently they occur in Iceberg Alley.</p><p>The visualization has shapes of icebergs laid out next to each other on the X-axis, with the Y-axis showing size in meters, both above and below water.</p>'
         },
+        landmarkVerbosity: 'disabled',
         series: {
             descriptionFormatter: function (series) {
-                return series.name;
+                return series.options.accessibility.description;
+            }
+        },
+        keyboardNavigation: {
+            focusBorder: {
+                enabled: false
             }
         }
     },
     title: {
-        text: 'Distribution of Icebergs in Iceberg Alley<p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
+        text: 'Distribution of Icebergs in Iceberg Alley <p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
         floating: true
 
@@ -267,13 +278,16 @@ const iceberg = {
                 inactive: {
                     enabled: false
                 }
+            },
+            accessibility: {
+                exposeAsGroupOnly: true,
+                enabled: false
             }
         },
         pie: {
             animation: false
         },
         line: {
-
             animation: false,
             marker: {
                 enabled: false,
@@ -291,22 +305,14 @@ const iceberg = {
                 pointFormatter: function () {
                     return '';
                 }
-            },
-            accessibility: {
-                enabled: false
             }
         },
         scatter: {
             marker: {
                 enabled: false
             },
-            animation: false,
-            accessibility: {
-                enabled: false
-            }
-
+            animation: false
         }
-
     },
     series: [
 
@@ -335,9 +341,6 @@ const iceberg = {
             type: 'scatter',
             className: 'iceberg-typesX',
             xAxis: 2,
-            accessibility: {
-                enabled: false
-            },
             marker: {
                 enabled: false,
                 radius: 1
@@ -378,7 +381,7 @@ const iceberg = {
             className: 'berg-depth',
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
+                    return `<p class="berg-tip" aria-hidden="true">
                     <span>
                     Pinnacle icebergs</span> - a 
                     large central spire or pyramid.</p>`;
@@ -392,11 +395,7 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Pinnacle icebergs have a large central spire or pyramid and comprise 33% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Pinnacle icebergs have a large central spire or pyramid and comprise 33% of icebergs found in Iceberg Alley. They are the tallest style of iceberg, reaching over 120m above and below water.'
             },
             data: [
                 {
@@ -406,17 +405,12 @@ const iceberg = {
                 {
                     x: 2.44,
                     y: 0.64,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 2.45,
                     y: 8,
-                    accessibility: {
-                        enabled: false
-                    }
-
+                    accessibility: { enabled: false }
                 }
             ]
         },
@@ -430,9 +424,6 @@ const iceberg = {
             zIndex: 50,
             visible: true,
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [
@@ -470,14 +461,7 @@ const iceberg = {
             type: 'line',
             accessibility: {
                 enabled: true,
-                descriptionFormatter: function () {
-                    return 'Tabular icebergs';
-                },
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Tabular icebergs are horizontal and flat-topped and comprise 23% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Tabular icebergs are horizontal and flat-topped and comprise 23% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
             },
             name: 'Tabular Icebergs',
             className: 'berg-depth',
@@ -489,7 +473,7 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
+                    return `<p class="berg-tip" aria-hidden="true">
                             <span>Tabular icebergs</span> - 
                             horizontal and flat-topped.</p>`;
 
@@ -503,23 +487,17 @@ const iceberg = {
                 {
                     x: 4.3,
                     y: 4.32,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 6,
                     y: 5.3,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 6.72,
                     y: 8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 }
             ]
         },
@@ -533,9 +511,6 @@ const iceberg = {
             yAxis: 1,
             visible: true,
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [
@@ -585,18 +560,14 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
+                    return `<p class="berg-tip" aria-hidden="true">
                     <span>Dry Dock icebergs</span> - eroded into a 
                     U shape.</p>`;
                 }
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Dry Dock icebergs have eroded into a U shape and comprise 19% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Dry Dock icebergs have eroded into a U shape and comprise 19% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
             },
             data: [
                 {
@@ -606,30 +577,22 @@ const iceberg = {
                 {
                     x: 8.4,
                     y: 4.4,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 9.3,
                     y: 7,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 10.5,
                     y: 5.8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 11.24,
                     y: 8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 }
             ]
         },
@@ -643,9 +606,6 @@ const iceberg = {
             yAxis: 1,
             visible: true,
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [
@@ -699,18 +659,14 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
+                    return `<p class="berg-tip" aria-hidden="true">
                                 <span>Dome icebergs</span> - large, 
                                 smooth, rounded tops.</p>`;
                 }
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Dome icebergs have smooth, rounded tops and comprise 15% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Dome icebergs have smooth, rounded tops and comprise 15% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above water, and 40m below.'
             },
             data: [{
                 x: 12.5,
@@ -719,30 +675,22 @@ const iceberg = {
             {
                 x: 13.8,
                 y: 5.3,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14,
                 y: 5.2,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14.2,
                 y: 5.3,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14.8,
                 y: 8,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             }
             ]
         },
@@ -756,9 +704,6 @@ const iceberg = {
             yAxis: 1,
             visible: true,
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [{
@@ -810,7 +755,7 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
+                    return `<p class="berg-tip" aria-hidden="true">
                             <span>Wedge icebergs</span> - tabular 
                             icebergs that have
                             tilted.</p>`;
@@ -819,11 +764,7 @@ const iceberg = {
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Wedge icebergs are tabular icebergs that have tilted and comprise 10% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Wedge icebergs are tabular icebergs that have tilted and comprise 10% of icebergs found in Iceberg Alley. They are smaller sized than the others, reaching just a few metres below water, and around 40m above.'
             },
             data: [{
                 x: 16.12,
@@ -832,16 +773,12 @@ const iceberg = {
             {
                 x: 16.32,
                 y: 7.5,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 17.27,
                 y: 8,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             }]
         },
         { //11 berg 5 top
@@ -853,9 +790,6 @@ const iceberg = {
             yAxis: 1,
             visible: true,
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [{
