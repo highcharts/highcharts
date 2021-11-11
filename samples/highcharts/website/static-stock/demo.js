@@ -219,6 +219,20 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         legend: {
             enabled: false
         },
+        lang: {
+            accessibility: {
+                chartContainerLabel: '',
+                screenReaderSection: {
+                    beforeRegionLabel: '',
+                    endOfChartMarker: ''
+                }
+            }
+        },
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive candlestick chart showing Apple (AAPL) stock prices and trading volume over time for the past 2 years.</p><p>The X-axis is showing time, and there are two Y-axes. One Y-axis is showing stock price, and the other is showing trading volume.</p>'
+            }
+        },
         tooltip: {
             split: true
         },
