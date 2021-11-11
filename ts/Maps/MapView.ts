@@ -20,6 +20,7 @@ import type {
     MapViewOptions,
     ProjectedXY
 } from './MapViewOptions';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import Chart from '../Core/Chart/Chart.js';
@@ -68,6 +69,7 @@ const tileSize = 256;
 class MapView {
 
     public center: LonLatArray;
+    public group?: SVGElement;
     public insets: MapViewInset[] = [];
     public minZoom?: number;
     public options: MapViewOptions;
@@ -151,6 +153,7 @@ class MapView {
                 if (this.userOptions.center) {
                     merge(true, this.center, this.userOptions.center);
                 }
+                this.render();
             }
         });
 
@@ -553,6 +556,16 @@ class MapView {
 
     }
 
+    public render(): void {
+
+        // We need a group for the insets
+        if (!this.group) {
+            this.group = this.chart.renderer.g('map-view')
+                .attr({ zIndex: 4 })
+                .add();
+        }
+    }
+
     /**
      * Update the view with given options
      *
@@ -682,15 +695,18 @@ class MapView {
 class MapViewInset extends MapView {
 
     public allBounds: MapBounds[];
+    public border?: SVGElement;
     public key?: string;
     public options: MapViewInsetsOptions;
     public path?: SVGPath;
+    public mapView: MapView;
 
     public constructor(
         mapView: MapView,
         options?: DeepPartial<MapViewInsetsOptions>
     ) {
         super(mapView.chart, options);
+        this.mapView = mapView;
         this.options = merge(defaultInsetsOptions, options);
 
         this.allBounds = [];
@@ -734,6 +750,52 @@ class MapViewInset extends MapView {
 
     getProjectedBounds(): MapBounds|undefined {
         return MapView.compositeBounds(this.allBounds);
+    }
+
+    render(): void {
+        const chart = this.chart;
+
+        let borderPath = this.options.borderPath;
+
+        if (borderPath && this.options.units === 'percent') {
+            borderPath = borderPath.map((segment): SVGPath.Segment => {
+                let [cmd, x, y] = segment;
+                if (typeof x === 'number') {
+                    x = chart.plotLeft + relativeLength(
+                        `${x}%`,
+                        chart.plotWidth
+                    );
+                    if (typeof y === 'number') {
+                        y = chart.plotTop + relativeLength(
+                            `${y}%`,
+                            chart.plotHeight
+                        );
+                        if (cmd === 'M') {
+                            return [cmd, x, y];
+                        }
+                        if (cmd === 'L') {
+                            return [cmd, x, y];
+                        }
+                    }
+                }
+                return segment;
+            });
+        }
+
+        if (borderPath) {
+            if (this.border) {
+                this.border.animate({ d: borderPath });
+
+            } else if (this.mapView.group) {
+                this.border = chart.renderer
+                    .path(borderPath)
+                    .attr({
+                        stroke: this.options.borderColor,
+                        'stroke-width': this.options.borderWidth
+                    })
+                    .add(this.mapView.group);
+            }
+        }
     }
 
     // No chart-level events for insets

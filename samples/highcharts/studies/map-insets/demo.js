@@ -1,5 +1,5 @@
 Highcharts.getJSON(
-    'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json',
+    'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json',
     // 'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json',
     topology => {
 
@@ -9,8 +9,7 @@ Highcharts.getJSON(
         // Initialize the chart
         Highcharts.mapChart('container', {
             chart: {
-                map: topology,
-                plotBorderWidth: 1
+                map: topology
             },
 
             title: {
@@ -41,22 +40,31 @@ Highcharts.getJSON(
                 insets: {
                     alaska: {
 
-                        borderColor: '',
+                        // borderColor: '',
 
                         // Path for the rendered border, subject to units. Defaults
                         // to the outline of the `extentPolygon`.
                         borderPath: [
-                            ['M', 0, 80],
-                            ['L', 20, 80],
+                            ['M', 0, 66],
+                            ['L', 20, 78],
                             ['L', 20, 100]
                         ],
 
-                        borderWidth: 1,
+                        // borderWidth: 1,
 
                         // What coordinates to render in the center of the
                         // bounding box. Defaults to the center of the planar
                         // projection.
                         center: void 0,
+
+                        // Placement of the inset in the map, a polygon subject
+                        // to units
+                        field: [
+                            [0, 72],
+                            [20, 80],
+                            [20, 100],
+                            [0, 100]
+                        ],
 
                         // Geometries within this geometry are removed from the
                         // default map view and rendered in the inset.
@@ -76,23 +84,14 @@ Highcharts.getJSON(
                         id: 'us-all-alaska',
 
                         // Padding inside the frame, like mapView.padding
-                        padding: 0,
-
-                        // Placement of the inset in the map, a polygon subject
-                        // to units
-                        field: [
-                            [0, 80],
-                            [20, 80],
-                            [20, 100],
-                            [0, 100]
-                        ],
+                        padding: 10,
 
                         // Projection to use within the inset, defaults to best
                         // guess based on geo bounds
                         projection: {
                             name: 'LambertConformalConic',
                             parallels: [55, 65],
-                            rotation: [140]
+                            rotation: [154]
                         },
 
                         units: 'percent', // 'pixels' | 'percent'
@@ -101,9 +100,13 @@ Highcharts.getJSON(
                         zoom: void 0
                     },
                     hawaii: {
+                        borderPath: [
+                            ['M', 20, 78],
+                            ['L', 35, 87]
+                        ],
                         field: [
-                            [20, 85],
-                            [35, 85],
+                            [20, 82.5],
+                            [35, 87.5],
                             [35, 100],
                             [20, 100]
                         ],
@@ -120,7 +123,7 @@ Highcharts.getJSON(
                         },
                         projection: {
                             name: 'LambertConformalConic',
-                            parallels: [20],
+                            parallels: [8, 18],
                             rotation: [157]
                         }
                     }
