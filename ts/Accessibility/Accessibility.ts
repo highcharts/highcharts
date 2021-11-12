@@ -453,7 +453,7 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
-                if (a11y) {
+                if (a11y && !a11y.zombie) {
                     a11y.update();
                 }
             }
