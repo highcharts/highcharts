@@ -272,7 +272,6 @@ class MapView {
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
     ): void {
-        let zoomingIn = false;
         if (center) {
             this.center = center;
         }
@@ -283,23 +282,11 @@ class MapView {
             if (typeof this.options.maxZoom === 'number') {
                 zoom = Math.min(zoom, this.options.maxZoom);
             }
-            zoomingIn = zoom > this.zoom;
             this.zoom = zoom;
         }
 
-        // Stay within the data bounds
         const bounds = this.getProjectedBounds();
-        if (
-            bounds &&
-            (
-                // Why? Should be enough to look at zoomingIn
-                this instanceof MapViewInset ||
-
-                // When zooming in, we don't need to adjust to the bounds, as
-                // that could shift the location under the mouse
-                !zoomingIn
-            )
-        ) {
+        if (bounds) {
             const projectedCenter = this.projection.forward(this.center),
                 { x, y, width, height } = this.getField(),
                 scale = this.getScale(),
@@ -315,6 +302,9 @@ class MapView {
                     (bounds.x1 + bounds.x2) / 2,
                     (bounds.y1 + bounds.y2) / 2
                 ];
+
+
+            // Constrain to data bounds
 
             // Pixel coordinate system is reversed vs projected
             const x1 = bottomLeft.x,

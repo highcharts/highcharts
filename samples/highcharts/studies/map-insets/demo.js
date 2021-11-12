@@ -16,6 +16,10 @@ Highcharts.getJSON(
                 text: 'TopoJSON in Highcharts Maps'
             },
 
+            mapNavigation: {
+                enabled: true
+            },
+
             mapView: {
                 projection: {
                     name: 'LambertConformalConic',
