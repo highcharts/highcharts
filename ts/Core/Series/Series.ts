@@ -4131,7 +4131,6 @@ class Series {
     ): void {
 
         options = cleanRecursively(options, this.userOptions);
-
         fireEvent(this, 'update', { options: options });
 
         const series = this,
@@ -4202,6 +4201,9 @@ class Series {
                 // Networkgraph (#14397)
                 'nodes',
                 'layout',
+
+                // Treemap
+                'level',
 
                 // Map specific, consider moving it to series-specific preserve-
                 // properties (#10617)

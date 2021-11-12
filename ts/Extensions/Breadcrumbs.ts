@@ -26,9 +26,7 @@ import H from '../Core/Globals.js';
 import D from '../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import U from '../Core/Utilities.js';
-import Point from '../Core/Series/Point';
 import type TreemapSeries from '../Series/Treemap/TreemapSeries';
-import SeriesType from '../Core/Series/SeriesType';
 import F from '../Core/FormatUtilities.js';
 import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import SeriesOptions from '../Core/Series/SeriesOptions';
@@ -622,6 +620,7 @@ class Breadcrumbs {
         if (!breadcrumbs.group && breadcrumbsOptions) {
             breadcrumbs.group = chart.renderer
                 .g('breadcrumbs-group')
+                .addClass('highcharts-no-tooltip')
                 .addClass('highcharts-breadcrumbs')
                 .attr({
                     zIndex: breadcrumbsOptions.zIndex
