@@ -160,7 +160,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-        this.update();
     }
 
 
@@ -454,6 +453,9 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
+                if (a11y) {
+                    a11y.update();
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
