@@ -719,28 +719,31 @@ class MapViewInset extends MapView {
     }
 
     getField(): BBoxObject {
-        let field = this.options.field;
-        if (field) {
+        const { coordinates } = this.options.field || {};
+        if (coordinates) {
             // @todo: Cache. Called 4 times on first render.
+            let polygon = coordinates[0];
             if (this.options.units === 'percent') {
-                field = field.map((xy): [number, number] => [
+                polygon = polygon.map((xy): [number, number] => [
                     relativeLength(`${xy[0]}%`, this.chart.plotWidth),
                     relativeLength(`${xy[1]}%`, this.chart.plotHeight)
                 ]);
             }
-            const xs = field.map((xy): number => xy[0]),
-                ys = field.map((xy): number => xy[1]),
+            const xs = polygon.map((xy): number => xy[0]),
+                ys = polygon.map((xy): number => xy[1]),
                 x = Math.min.apply(0, xs),
                 x2 = Math.max.apply(0, xs),
                 y = Math.min.apply(0, ys),
                 y2 = Math.max.apply(0, ys);
 
-            return {
-                x,
-                y,
-                width: x2 - x,
-                height: y2 - y
-            };
+            if (isNumber(x) && isNumber(y)) {
+                return {
+                    x,
+                    y,
+                    width: x2 - x,
+                    height: y2 - y
+                };
+            }
         }
 
         // Fall back to plot area
@@ -752,49 +755,55 @@ class MapViewInset extends MapView {
         return MapView.compositeBounds(this.allBounds);
     }
 
+    // Render the map view inset with the border path
     render(): void {
-        const chart = this.chart;
+        const { chart, options } = this,
+            borderPath = options.borderPath || options.field;
 
-        let borderPath = this.options.borderPath;
-
-        if (borderPath && this.options.units === 'percent') {
-            borderPath = borderPath.map((segment): SVGPath.Segment => {
-                let [cmd, x, y] = segment;
-                if (typeof x === 'number') {
-                    x = chart.plotLeft + relativeLength(
-                        `${x}%`,
-                        chart.plotWidth
-                    );
-                    if (typeof y === 'number') {
-                        y = chart.plotTop + relativeLength(
-                            `${y}%`,
-                            chart.plotHeight
-                        );
-                        if (cmd === 'M') {
-                            return [cmd, x, y];
-                        }
-                        if (cmd === 'L') {
-                            return [cmd, x, y];
-                        }
-                    }
-                }
-                return segment;
-            });
-        }
-
-        if (borderPath) {
-            if (this.border) {
-                this.border.animate({ d: borderPath });
-
-            } else if (this.mapView.group) {
+        if (borderPath && this.mapView.group) {
+            let animate = true;
+            if (!this.border) {
                 this.border = chart.renderer
-                    .path(borderPath)
-                    .attr({
-                        stroke: this.options.borderColor,
-                        'stroke-width': this.options.borderWidth
-                    })
+                    .path()
+                    .addClass('highcharts-mapview-inset-border')
                     .add(this.mapView.group);
+                animate = false;
             }
+
+            if (!chart.styledMode) {
+                this.border.attr({
+                    stroke: this.options.borderColor,
+                    'stroke-width': this.options.borderWidth
+                });
+            }
+            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2;
+
+            const d = (borderPath.coordinates || [])
+                .reduce(
+                    (d, lineString): SVGPath =>
+                        lineString.reduce((d, point, i): SVGPath => {
+                            let [x, y] = point;
+                            if (options.units === 'percent') {
+                                x = chart.plotLeft + relativeLength(
+                                    `${x}%`,
+                                    chart.plotWidth
+                                );
+                                y = chart.plotTop + relativeLength(
+                                    `${y}%`,
+                                    chart.plotHeight
+                                );
+                            }
+                            x = Math.floor(x) + crisp;
+                            y = Math.floor(y) + crisp;
+                            d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
+                            return d;
+                        }, d)
+                    ,
+                    [] as SVGPath
+                );
+
+            // Apply the border path
+            this.border[animate ? 'animate' : 'attr']({ d });
         }
     }
 

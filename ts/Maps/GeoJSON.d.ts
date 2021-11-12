@@ -20,22 +20,22 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
     coordinates: LonLatArray;
 }
 
-interface LineString extends BaseGeometry{
+export interface LineString extends BaseGeometry{
     type: 'LineString';
     coordinates: LonLatArray[];
 }
 
-interface Polygon extends BaseGeometry {
+export interface Polygon extends BaseGeometry {
     type: 'Polygon';
     coordinates: LonLatArray[][];
 }
 
-interface MultiLineString extends BaseGeometry {
+export interface MultiLineString extends BaseGeometry {
     type: 'MultiLineString';
     coordinates: LonLatArray[][];
 }
 
-interface MultiPolygon extends BaseGeometry {
+export interface MultiPolygon extends BaseGeometry {
     type: 'MultiPolygon';
     coordinates: LonLatArray[][][];
 }

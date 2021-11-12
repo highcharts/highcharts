@@ -42,13 +42,18 @@ Highcharts.getJSON(
 
                         // borderColor: '',
 
-                        // Path for the rendered border, subject to units. Defaults
-                        // to the outline of the `extentPolygon`.
-                        borderPath: [
-                            ['M', 0, 66],
-                            ['L', 20, 78],
-                            ['L', 20, 100]
-                        ],
+                        // Path for the rendered border, subject to units.
+                        // Defaults to the outline of the `field`.
+                        borderPath: {
+                            type: 'MultiLineString',
+                            coordinates: [
+                                [
+                                    [0, 66],
+                                    [20, 78],
+                                    [20, 100]
+                                ]
+                            ]
+                        },
 
                         // borderWidth: 1,
 
@@ -59,12 +64,17 @@ Highcharts.getJSON(
 
                         // Placement of the inset in the map, a polygon subject
                         // to units
-                        field: [
-                            [0, 72],
-                            [20, 80],
-                            [20, 100],
-                            [0, 100]
-                        ],
+                        field: {
+                            type: 'Polygon',
+                            coordinates: [
+                                [
+                                    [0, 72],
+                                    [20, 80],
+                                    [20, 100],
+                                    [0, 100]
+                                ]
+                            ]
+                        },
 
                         // Geometries within this geometry are removed from the
                         // default map view and rendered in the inset.
@@ -100,16 +110,26 @@ Highcharts.getJSON(
                         zoom: void 0
                     },
                     hawaii: {
-                        borderPath: [
-                            ['M', 20, 78],
-                            ['L', 35, 87]
-                        ],
-                        field: [
-                            [20, 82.5],
-                            [35, 87.5],
-                            [35, 100],
-                            [20, 100]
-                        ],
+                        borderPath: {
+                            type: 'LineString',
+                            coordinates: [
+                                [
+                                    [20, 78],
+                                    [35, 87]
+                                ]
+                            ]
+                        },
+                        field: {
+                            type: 'Polygon',
+                            coordinates: [
+                                [
+                                    [20, 82.5],
+                                    [35, 87.5],
+                                    [35, 100],
+                                    [20, 100]
+                                ]
+                            ]
+                        },
                         geoBounds: {
                             type: 'Polygon',
                             coordinates: [

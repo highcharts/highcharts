@@ -16,7 +16,7 @@
 import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type { GeoJSONGeometryMultiPoint } from './GeoJSON';
+import type { MultiLineString, Polygon } from './GeoJSON';
 
 /* *
  *
@@ -47,10 +47,10 @@ export interface MapBounds {
 }
 
 export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
-    borderPath?: SVGPath;
+    borderPath?: MultiLineString;
     center: LonLatArray;
-    field?: [number, number][];
-    geoBounds?: GeoJSONGeometryMultiPoint;
+    field?: Polygon;
+    geoBounds?: Polygon;
     id?: string;
     projection?: ProjectionOptions;
 }
