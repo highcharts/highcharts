@@ -656,7 +656,10 @@ addEvent(Chart, 'redraw', function (): void {
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
                 if (id) {
-                    const sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                    const sanitizedId = id
+                        .replace(renderer.url, '')
+                        .replace('url(#', '')
+                        .replace(')', '');
                     usedIds[sanitizedId] = true;
                 }
             }

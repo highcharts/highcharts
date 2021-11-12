@@ -365,7 +365,9 @@ class ZoomComponent extends AccessibilityComponent {
     public onMapKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
-        const el: SVGDOMElement = (this.chart as any).mapNavButtons[this.focusedMapNavButtonIx].element;
+        const el: SVGDOMElement = (this.chart as any).mapNavButtons[
+            this.focusedMapNavButtonIx
+        ].element;
         this.fakeClickEvent(el);
         return keyboardNavigationHandler.response.success;
     }

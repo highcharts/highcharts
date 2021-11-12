@@ -256,7 +256,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @param {Array<(number)>} previousDataPoint
      * Previous point.
      */
-    public isBullish(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): HollowcandleInfo {
+    public isBullish(
+        dataPoint: Array<(number)>,
+        previousDataPoint: Array<(number)>
+    ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
             isBullish: dataPoint[0] <= dataPoint[3],

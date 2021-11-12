@@ -3699,7 +3699,8 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }

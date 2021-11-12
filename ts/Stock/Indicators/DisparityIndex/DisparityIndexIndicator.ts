@@ -126,7 +126,8 @@ class DisparityIndexIndicator extends SMAIndicator {
             params = args[1].params, // options.params
             averageType = params && params.average ? params.average : void 0;
 
-        ctx.averageIndicator = SeriesRegistry.seriesTypes[averageType] as typeof SMAIndicator || SMAIndicator;
+        ctx.averageIndicator = SeriesRegistry
+            .seriesTypes[averageType] as typeof SMAIndicator || SMAIndicator;
         ctx.averageIndicator.prototype.init.apply(ctx, args);
     }
 

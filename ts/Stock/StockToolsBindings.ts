@@ -111,7 +111,9 @@ declare global {
             isPriceIndicatorEnabled(series: Series[]): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
-            updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
+            updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject[
+                'updateHeight'
+            ];
         }
 
         interface StockToolsFieldsObject {
@@ -120,7 +122,8 @@ declare global {
     }
 }
 
-const bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = NavigationBindings.prototype.utils as any,
+const bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject =
+        NavigationBindings.prototype.utils as any,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -643,7 +646,10 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
             } else {
                 if (top <= allAxesHeight) {
-                    allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                    allAxesHeight = correctFloat(Math.max(
+                        allAxesHeight,
+                        (top || 0) + (height || 0))
+                    );
                 } else {
                     top = correctFloat(top - removedHeight);
                     allAxesHeight = correctFloat(allAxesHeight + height);
@@ -2564,7 +2570,10 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                 series.forEach(function (series): void {
                     series.update({
                         lastPrice: { enabled: !priceIndicatorEnabled },
-                        lastVisiblePrice: { enabled: !priceIndicatorEnabled, label: { enabled: true } }
+                        lastVisiblePrice: {
+                            enabled: !priceIndicatorEnabled,
+                            label: { enabled: true }
+                        }
                     }, false);
                 });
                 chart.redraw();

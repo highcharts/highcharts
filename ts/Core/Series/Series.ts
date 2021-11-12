@@ -4404,8 +4404,12 @@ class Series {
 
         return option !==
             pick(
-                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
-                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                plotOptions &&
+                    plotOptions[this.type] &&
+                    (plotOptions[this.type] as any)[optionName],
+                plotOptions &&
+                    plotOptions.series &&
+                    (plotOptions as any).series[optionName],
                 option
             );
     }

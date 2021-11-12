@@ -969,7 +969,8 @@ class Navigator {
             ];
             if (maskInside) {
                 path.push(
-                    ['M', left + outlineHeight, verticalMin - halfOutline], // upper left of zoomed range
+                    // upper left of zoomed range
+                    ['M', left + outlineHeight, verticalMin - halfOutline],
                     ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
                 );
             }
@@ -2029,7 +2030,9 @@ class Navigator {
 
             navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
             navigator.xAxis.navigatorAxis.toFixedRange = (
-                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
+                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(
+                    navigator.xAxis.navigatorAxis
+                )
             );
         }
 
@@ -2395,7 +2398,9 @@ class Navigator {
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
-                    base.eventsToUnbind.push(addEvent(base, 'updatedData', this.updatedDataHandler));
+                    base.eventsToUnbind.push(
+                        addEvent(base, 'updatedData', this.updatedDataHandler)
+                    );
                 }
             }
 

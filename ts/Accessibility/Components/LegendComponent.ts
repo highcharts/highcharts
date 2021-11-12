@@ -168,15 +168,19 @@ class LegendComponent extends AccessibilityComponent {
         // tied to the component's chart's current legend.
         // @todo 1. attach component to created legends
         // @todo 2. move listeners to composition and access `this.component`
-        this.addEvent(Legend as typeof LegendComponent.LegendComposition, 'afterScroll', function (): void {
-            if (this.chart === component.chart) {
-                component.proxyProvider.updateGroupProxyElementPositions('legend');
-                component.updateLegendItemProxyVisibility();
-                if (component.highlightedLegendItemIx > -1) {
-                    this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+        this.addEvent(
+            Legend as typeof LegendComponent.LegendComposition,
+            'afterScroll',
+            function (): void {
+                if (this.chart === component.chart) {
+                    component.proxyProvider.updateGroupProxyElementPositions('legend');
+                    component.updateLegendItemProxyVisibility();
+                    if (component.highlightedLegendItemIx > -1) {
+                        this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+                    }
                 }
             }
-        });
+        );
         this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
@@ -347,7 +351,9 @@ class LegendComponent extends AccessibilityComponent {
         const groupRole = a11yOptions.landmarkVerbosity === 'all' ? 'region' : null;
 
         this.proxyProvider.addGroup('legend', 'ul', {
-            'aria-label': '_placeholder_', // Filled by updateLegendTitle, to keep up to date without recreating group
+            // Filled by updateLegendTitle, to keep up to date without
+            // recreating group
+            'aria-label': '_placeholder_',
             role: groupRole as string
         });
     }
@@ -649,7 +655,8 @@ namespace LegendComponent {
             scrollLegendToItem(this.legend, ix);
 
             const legendItemProp = itemToHighlight.legendItem;
-            const proxyBtn = itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement;
+            const proxyBtn = itemToHighlight.a11yProxyElement &&
+                itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }
