@@ -808,7 +808,8 @@ namespace OrdinalAxis {
                     ]
             ) {
                 // Return Value
-                ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) - originalPositionsReference;
+                ordinalIndex = getIndexInArray(extendedOrdinalPositions, val) -
+                    originalPositionsReference;
             } else {
                 // Since ordinal.slope is the average distance between 2
                 // points on visible plotArea, this can be used to calculete
@@ -1342,8 +1343,11 @@ namespace OrdinalAxis {
 
             // Distance in pixels between two points
             // on the ordinal axis in the current zoom.
-            const ordinalPointPixelInterval = axis.translationSlope *
-                (ordinal.slope || axis.closestPointRange || ordinal.overscrollPointsRange as number),
+            const ordinalPointPixelInterval = axis.translationSlope * (
+                    ordinal.slope ||
+                    axis.closestPointRange ||
+                    ordinal.overscrollPointsRange as number
+                ),
                 // toValue for the first point.
                 shiftIndex = (val - firstPointX) / ordinalPointPixelInterval;
 

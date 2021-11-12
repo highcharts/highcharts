@@ -110,7 +110,12 @@ declare global {
                 storage: Array<unknown>,
                 isRoot?: boolean
             ): void;
-            addToolbar(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addToolbar(
+                this: Popup,
+                chart: AnnotationChart,
+                options: AnnotationsOptions,
+                callback: Function
+            ): void;
         }
         interface PopupConfigObject {
             annotation: Annotation;
@@ -132,7 +137,12 @@ declare global {
             type?: string;
         }
         interface PopupIndicatorsObject {
-            addForm(this: Popup, chart: AnnotationChart, options: AnnotationsOptions, callback: Function): void;
+            addForm(
+                this: Popup,
+                chart: AnnotationChart,
+                options: AnnotationsOptions,
+                callback: Function
+            ): void;
             addSelection(
                 this: Highcharts.Popup,
                 type: string,
@@ -172,7 +182,10 @@ declare global {
                 type: string,
                 parentDiv: HTMLDOMElement
             ): void;
-            filterSeries(series: SeriesTypePlotOptions, filter?: string): Array<Highcharts.FilteredSeries>;
+            filterSeries(
+                series: SeriesTypePlotOptions,
+                filter?: string
+            ): Array<Highcharts.FilteredSeries>;
             filterSeriesArray(series: Array<Series>): Array<Highcharts.FilteredSeries>;
             getAmount(this: Chart): number;
             getNameType(series: Series, type: string): IndicatorNameCouple;
@@ -241,14 +254,23 @@ const dropdownParameters: Highcharts.DropdownParameters = {
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
 
-wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
-    // elements is not in popup
-    if (!this.inClass(e.target, PREFIX + 'popup')) {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+wrap(
+    Pointer.prototype,
+    'onContainerMouseDown',
+    function (this: Pointer, proceed: Function, e): void {
+        // elements is not in popup
+        if (!this.inClass(e.target, PREFIX + 'popup')) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
     }
-});
+);
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
+H.Popup = function (
+    this: Highcharts.Popup,
+    parentDiv: HTMLDOMElement,
+    iconsURL: string,
+    chart?: Chart
+): void {
     this.init(parentDiv, iconsURL, chart);
 } as any;
 
@@ -1580,7 +1602,12 @@ H.Popup.prototype = {
             }
 
             // Add selection boxes.
-            const selectBox = indicators.addSelection.call(popup, indicatorType, optionName, parentDiv);
+            const selectBox = indicators.addSelection.call(
+                popup,
+                indicatorType,
+                optionName,
+                parentDiv
+            );
 
             // Add possible dropdown options.
             indicators.addSelectionOptions.call(
@@ -1728,7 +1755,9 @@ H.Popup.prototype = {
                     parentFullName
                 ) {
                     if (isObject(value)) {
-                        addInput.call( // (15733) 'Periods' has an arrayed value. Label must be created here.
+                        // (15733) 'Periods' has an arrayed value. Label must be
+                        // created here.
+                        addInput.call(
                             popup,
                             parentFullName,
                             type,

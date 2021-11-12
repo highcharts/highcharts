@@ -820,7 +820,8 @@ if (!svg) {
          *
          * @function Highcharts.VMLElement#updateTransform
          */
-        updateTransform: SVGElement.prototype.htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
+        updateTransform: SVGElement.prototype
+            .htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
 
         /**
          * Set the rotation of a span with oldIE's filter

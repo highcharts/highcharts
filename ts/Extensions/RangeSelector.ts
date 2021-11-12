@@ -823,7 +823,8 @@ class RangeSelector {
      * */
     public buttons: Array<SVGElement> = void 0 as any;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = RangeSelector.prototype.defaultButtons;
+    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> =
+        RangeSelector.prototype.defaultButtons;
     public chart: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
@@ -2771,9 +2772,8 @@ function preferredInputType(format: string): string {
         return 'text';
     }
 
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some((char: string): boolean =>
-        format.indexOf('%' + char) !== -1
-    );
+    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
     const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
         format.indexOf('%' + char) !== -1
     );
@@ -2900,7 +2900,10 @@ if (!H.RangeSelector) {
         }
 
         if (rangeSelector) {
-            const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === chart);
+            const events = find(
+                chartDestroyEvents,
+                (e: [Chart, Function[]]): boolean => e[0] === chart
+            );
 
             if (!events) {
                 chartDestroyEvents.push([chart, [

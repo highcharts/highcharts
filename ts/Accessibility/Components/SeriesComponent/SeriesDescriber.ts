@@ -259,7 +259,8 @@ function pointNumberToString(
     const series = point.series,
         chart = series.chart,
         a11yPointOptions = chart.options.accessibility.point || {},
-        seriesA11yPointOptions = series.options.accessibility && series.options.accessibility.point || {},
+        seriesA11yPointOptions = series.options.accessibility &&
+            series.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
         lang = chart.options.lang;
 
@@ -326,7 +327,8 @@ function getPointA11yTimeDescription(
 ): (string|undefined) {
     const series = point.series,
         chart = series.chart,
-        seriesA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
+        seriesA11yOptions = series.options.accessibility &&
+            series.options.accessibility.point || {},
         a11yOptions = chart.options.accessibility.point || {},
         dateXAxis = series.xAxis && series.xAxis.dateTime;
 
@@ -335,7 +337,8 @@ function getPointA11yTimeDescription(
                 point.x || 0,
                 chart.options.tooltip.dateTimeLabelFormats
             ),
-            dateFormat = seriesA11yOptions.dateFormatter && seriesA11yOptions.dateFormatter(point) ||
+            dateFormat = seriesA11yOptions.dateFormatter &&
+                seriesA11yOptions.dateFormatter(point) ||
                 a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
                 seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
@@ -397,7 +400,8 @@ function getPointValue(
 ): string {
     const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
-        seriesA11yPointOpts = series.chart.options.accessibility && series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = series.chart.options.accessibility &&
+            series.chart.options.accessibility.point || {},
         tooltipOptions = series.tooltipOptions || {},
         valuePrefix = seriesA11yPointOpts.valuePrefix ||
             a11yPointOpts.valuePrefix ||
@@ -520,7 +524,8 @@ function setPointScreenReaderAttribs(
 ): void {
     const series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
-        seriesPointA11yOptions = series.options.accessibility && series.options.accessibility.point || {},
+        seriesPointA11yOptions = series.options.accessibility &&
+            series.options.accessibility.point || {},
         label = stripHTMLTags(
             seriesPointA11yOptions.descriptionFormatter &&
             seriesPointA11yOptions.descriptionFormatter(point) ||
@@ -639,7 +644,8 @@ function describeSeriesElement(
 
     seriesElement.setAttribute('tabindex', '-1');
     if (!series.chart.styledMode) {
-        seriesElement.style.outline = 'none'; // Don't show browser outline on click, despite tabindex
+        // Don't show browser outline on click, despite tabindex
+        seriesElement.style.outline = 'none';
     }
     seriesElement.setAttribute(
         'aria-label',

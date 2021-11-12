@@ -211,7 +211,10 @@ namespace PointSonify {
                 if (typeof value === 'string') {
                     const hasInvertedPolarity = value.charAt(0) === '-';
                     const dataProp = hasInvertedPolarity ? value.slice(1) : value;
-                    const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
+                    const pointValue = pick(
+                        (point as any)[dataProp],
+                        (point.options as any)[dataProp]
+                    );
 
                     // Find data extremes if we don't have them
                     dataExtremes[dataProp] = dataExtremes[dataProp] ||

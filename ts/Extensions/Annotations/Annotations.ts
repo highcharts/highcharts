@@ -502,14 +502,22 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     ): Highcharts.AnnotationsOptions {
         const mergedOptions = {} as Highcharts.AnnotationsOptions;
 
-        (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
+        (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (
+            name: ('labels'|'shapes')
+        ): void {
             if (baseOptions[name]) {
                 if (newOptions[name]) {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
-                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            basicOptions: (
+                                Highcharts.AnnotationsLabelsOptions|
+                                Highcharts.AnnotationsShapesOptions
+                            ),
                             i: number
-                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                        ): (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                            ) {
                             return merge(baseOptions[name][i], basicOptions);
                         }
                     ) as any;
@@ -568,7 +576,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                 .reduce(
                     function (
                         axes: Array<AxisType>,
-                        labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
+                        labelOrShape: (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                        )
                     ): Array<AxisType> {
                         const point = labelOrShape &&
                             (
