@@ -36,6 +36,9 @@ QUnit.test('Drill up button with responsive rules', function (assert) {
             ]
         },
         drilldown: {
+            drillUpButton: {
+                relativeTo: 'chart'
+            },
             series: [
                 {
                     id: '1',
@@ -48,7 +51,7 @@ QUnit.test('Drill up button with responsive rules', function (assert) {
     chart.series[0].points[0].doDrilldown();
 
     assert.strictEqual(
-        chart.breadcrumbs.breadcrumbsGroup.alignOptions.y,
+        chart.breadcrumbs.group.alignOptions.y,
         100,
         'The button respects responsive rules on chart init.'
     );

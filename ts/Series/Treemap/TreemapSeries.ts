@@ -1025,7 +1025,6 @@ class TreemapSeries extends ScatterSeries {
                 levelOptions: chart.series[0]
             });
         }
-
         if (e.trigger === 'click' && e.newRootId) {
             list.push({
                 level: list[list.length - 1].level + 1,
@@ -1047,6 +1046,7 @@ class TreemapSeries extends ScatterSeries {
                     levelOptions: node
                 });
             });
+            this.level = extraNodes.length;
         }
 
         return list;

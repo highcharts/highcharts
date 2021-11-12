@@ -434,6 +434,11 @@ class Breadcrumbs {
         // The full path of buttons is visible.
         if (breadcrumbsOptions.showFullPath && breadcrumbs.group) {
             // Clear the breadcrums list array.
+            list.forEach(function (el): void {
+                // Remove SVG elements from the DOM.
+                el.button && el.button.destroy();
+                el.separator && el.separator.destroy();
+            });
             list.length = 0;
             this.group.destroy();
             this.group = void 0 as any;
@@ -469,7 +474,7 @@ class Breadcrumbs {
                 breadcrumbsOptions.showFullPath ? '{level.name}' : '← {level.name}'
             );
         let returnText = breadcrumbsOptions.formatter &&
-            breadcrumbsOptions.formatter.apply(breadcrumb, [breadcrumbs]) ||
+            breadcrumbsOptions.formatter(breadcrumb) ||
                 format(textFormat, { level: breadcrumb.levelOptions }, chart) || '';
 
         if (returnText === '← ' && lang && lang.mainBreadcrumb) {
@@ -1147,7 +1152,7 @@ namespace Breadcrumbs {
     }
     export interface BreadcrumbsButtonsFormatter {
         (
-            breadcrumbs: Breadcrumbs
+            breadcrumb: breadcrumb
         ): (string);
     }
     export interface SeparatorOptions {

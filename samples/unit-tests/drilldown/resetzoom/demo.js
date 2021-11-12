@@ -47,9 +47,11 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         ],
         drilldown: {
             breadcrumbs: {
+                relativeTo: 'chart',
                 position: {
                     x: 100
                 },
+                floating: true,
                 showFullPath: false
             },
             series: [
@@ -125,15 +127,12 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
             ]
         }
     });
-
     var controller = new TestController(chart);
-
     assert.strictEqual(chart.resetZoomButton, undefined, 'No zoom button');
 
     assert.strictEqual(chart.drillUpButton, undefined, 'No drillUp button');
-
     // Zoom
-    controller.pan([300, 200], [200, 200]);
+    controller.pan([300, 200], [200, 200], undefined, true);
     assert.strictEqual(
         typeof chart.resetZoomButton,
         'object',
@@ -154,7 +153,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Zoom again on second level
-    controller.pan([300, 200], [200, 200]);
+    controller.pan([300, 200], [200, 200], undefined, true);
     assert.strictEqual(
         typeof chart.drillUpButton,
         'object',

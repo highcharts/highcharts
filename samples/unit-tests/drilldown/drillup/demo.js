@@ -198,15 +198,15 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
     controller.moveTo(columnCenterX, columnCenterY);
 
     var drillUpButton = chart.drillUpButton,
-        drillUpButtonX = drillUpButton.bBox.x +
+        drillUpButtonX = chart.plotLeft + drillUpButton.bBox.x +
             (drillUpButton.getBBox().width / 2),
-        drillUpButtonY = chart.plotTop + drillUpButton.bBox.y +
+        drillUpButtonY = drillUpButton.bBox.y +
             (drillUpButton.getBBox().height / 2);
 
-    assert.notEqual(drillUpButton, undefined, 'Drill up button is undefined');
+    assert.notEqual(drillUpButton, undefined, 'Drill up button is not undefined');
 
     controller.moveTo(drillUpButtonX, drillUpButtonY);
-    controller.click();
+    controller.click(drillUpButtonX, drillUpButtonY, undefined, true);
     controller.moveTo(columnCenterX, columnCenterY);
 
     assert.deepEqual(

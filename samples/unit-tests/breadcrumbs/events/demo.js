@@ -45,9 +45,9 @@ QUnit.test('Breadcrumbs format', function (assert) {
         test = new TestController(chart);
 
     chart.series[0].points[0].doDrilldown();
-    test.triggerEvent('click', 20, 60, {}, true);
+    test.triggerEvent('click', chart.plotLeft + 10, 60, {}, true);
 
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.group.element.childNodes;
 
     assert.strictEqual(
         buttons.length,
@@ -66,7 +66,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
             }
         }
     });
-    test.triggerEvent('click', 20, 60, {}, true);
+    test.triggerEvent('click', chart.plotLeft + 10, 60, {}, true);
     assert.strictEqual(
         buttons.length,
         0,

@@ -75,6 +75,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
         chart.drillUpButton.element,
         'Initially, the breadcrumbs should be disabled and the single drillUp button should exist.'
     );
+
     chart.series[0].update({
         breadcrumbs: {
             showFullPath: true
@@ -82,23 +83,22 @@ QUnit.test('Breadcrumbs button', function (assert) {
     });
 
     assert.ok(
-        chart.breadcrumbs.breadcrumbsGroup,
+        chart.breadcrumbs.group,
         'Breadcrumbs group should be created.'
     );
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.group.element.childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.breadcrumbs.jumpBy(0);
-
+    chart.breadcrumbs.jumpTo(1);
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.breadcrumbs.jumpBy(null);
+    chart.breadcrumbs.jumpTo(0);
 
     assert.notOk(
         buttons.length,

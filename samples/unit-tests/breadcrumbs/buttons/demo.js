@@ -89,7 +89,7 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
     );
     // @todo
     //chart.drillUp();
-    chart.breadcrumbs.jumpBy(null);
+    chart.breadcrumbs.jumpTo(0);
 
     chart.update({
         drilldown: {
@@ -105,32 +105,32 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         'Clasic button should not exist.'
     );
     assert.ok(
-        chart.breadcrumbs.breadcrumbsGroup,
+        chart.breadcrumbs.group,
         'Breadcrumbs group should be created.'
     );
     chart.series[0].points[0].doDrilldown();
     chart.series[0].points[0].doDrilldown();
 
-    let buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    let buttons = chart.breadcrumbs.group.element.childNodes;
 
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.breadcrumbs.jumpBy(0);
+    chart.breadcrumbs.jumpTo(1);
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.breadcrumbs.jumpBy(null);
+    chart.breadcrumbs.jumpTo(0);
     assert.notOk(
         buttons.length,
         'The breadcrumbsButtonGroup should be empty.'
     );
     chart.series[0].points[1].doDrilldown();
-    buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    buttons = chart.breadcrumbs.group.element.childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Vegetables',
@@ -179,11 +179,10 @@ QUnit.test('Breadcrumbs button format.', function (assert) {
     });
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
-
+    const buttons = chart.breadcrumbs.group.element.childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
-        'Go to Fruits',
+        'Go to Supply',
         'The last button should have text Go to Fruits.'
     );
 });
@@ -216,13 +215,8 @@ QUnit.test('Breadcrumbs button formatter.', function (assert) {
                     enabled: true,
                     showFullPath: true,
                     formatter: function (breadcrumb) {
-                        let index;
+                        const index = breadcrumb.level;
 
-                        if (breadcrumb[0] === null) {
-                            index = 0;
-                        } else {
-                            index = breadcrumb[0] + 1;
-                        }
                         return labels[index];
                     }
                 },
@@ -240,7 +234,7 @@ QUnit.test('Breadcrumbs button formatter.', function (assert) {
         });
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.group.element.childNodes;
 
     assert.strictEqual(
         buttons[1].textContent,
@@ -299,7 +293,7 @@ QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
     });
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.group.element.childNodes;
 
     assert.strictEqual(
         buttons[0].textContent,
@@ -389,21 +383,21 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     });
 
     chart.series[0].points[0].doDrilldown();
-    let breadcrumbsWidth = chart.breadcrumbs.breadcrumbsGroup.getBBox().width,
-        breadcrumbsXPosition = chart.breadcrumbs.breadcrumbsGroup.translateX;
+    let breadcrumbsWidth = chart.breadcrumbs.group.getBBox().width,
+        breadcrumbsXPosition = chart.breadcrumbs.group.translateX;
 
     assert.strictEqual(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
-        chart.chartWidth / 2,
+        chart.plotWidth / 2 + chart.plotLeft,
         'When buttons are aligned to the centre, their centre point should be in the middle of the chart width.'
     );
 
     chart.series[0].points[0].doDrilldown();
-    breadcrumbsWidth = chart.breadcrumbs.breadcrumbsGroup.getBBox().width;
-    breadcrumbsXPosition = chart.breadcrumbs.breadcrumbsGroup.translateX;
+    breadcrumbsWidth = chart.breadcrumbs.group.getBBox().width;
+    breadcrumbsXPosition = chart.breadcrumbs.group.translateX;
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
-        chart.chartWidth / 2,
+        chart.plotWidth / 2 + chart.plotLeft,
         1,
         'After each iteration, the breadcrumbs group should stay in the middle.'
     );
@@ -411,7 +405,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     chart.drillUp();
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
-        chart.chartWidth / 2,
+        chart.plotWidth / 2 + chart.plotLeft,
         1,
         'After each iteration, the breadcrumbs group should stay in the middle.'
     );
