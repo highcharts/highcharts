@@ -389,7 +389,7 @@ body {
 }
 
 #charts .berg-depth {
-    stroke: #fff;
+    stroke: #201735;
     fill: #201735;
     opacity: 100%;
     stroke-dasharray: 2px;
@@ -418,8 +418,18 @@ body {
 #charts .berg-depth-18 {
     opacity: 100%;
     stroke-dasharray: 0;
-    stroke-width: 2px;
+    stroke-width: 1px;
     cursor: pointer;
+}
+
+#charts .berg-depth-0,
+#charts .berg-depth-4,
+#charts .berg-depth-8,
+#charts .berg-depth-12,
+#charts .berg-depth-16 {
+    stroke-dasharray: 2;
+    stroke-width: 1px;
+    stroke: #fff;
 }
 
 #charts .berg-depth-0.highcharts-series-hover,
