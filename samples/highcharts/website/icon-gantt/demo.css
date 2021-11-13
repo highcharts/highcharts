@@ -109,6 +109,11 @@ textarea {
 .main-container .modal-title {
     margin-bottom: 0;
     line-height: 1.5;
+    font-size: 1.2em;
+}
+
+.modal-footer .btn:first-child {
+    margin-right: 10px;
 }
 
 .main-container .btn-close {
@@ -217,37 +222,36 @@ textarea {
     opacity: 100%;
 }
 
-.main-container .btn-primary {
+.main-container .btn {
     background-color: #2f2b38;
     border-color: #2f2b38;
 }
 
-.main-container .btn-primary:hover {
+.main-container .btn:hover {
     background-color: #2f2b38;
     border-color: #2f2b38;
     opacity: 80%;
 }
 
-.main-container .btn-primary.disabled,
-.main-container .btn-primary:disabled {
+.main-container .btn.disabled,
+.main-container .btn:disabled {
     color: #fff;
-    background-color: #2f2b38;
-    border-color: #2f2b38;
+    opacity: 40%;
 }
 
-.main-container .btn-primary:focus,
-.main-container .btn-check:focus + .btn-primary {
+.main-container .btn:focus,
+.main-container .btn-check:focus + .btn {
     color: #fff;
     background-color: #2f2b38;
     border-color: #2f2b38;
     box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
 }
 
-.main-container .btn-secondary {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-    margin-left: 4px;
+.highcharts-tooltip.highcharts-color-0,
+.highcharts-tooltip.highcharts-color-1,
+.highcharts-tooltip.highcharts-color-2 {
+    fill: #fff;
+    stroke: #46465c;
 }
 
 /* CHART */
@@ -311,7 +315,7 @@ textarea {
 
 .chart-container .highcharts-minor-grid-line {
     stroke: #f2f2f2;
-    opacity: 50%;
+    opacity: 20%;
     stroke-dasharray: 2px;
 }
 
@@ -334,6 +338,13 @@ textarea {
 .chart-container text.highcharts-data-label {
     fill: #fff;
     font-weight: 400;
+}
+
+.chart-container .highcharts-point-select .highcharts-color-0,
+.chart-container .highcharts-color-0.highcharts-point-select,
+.chart-container .highcharts-point-select .highcharts-color-1,
+.chart-container .highcharts-point-select .highcharts-color-2 {
+    fill: #f0f0f0 !important;
 }
 
 .chart-container .highcharts-color-0 {
@@ -417,12 +428,17 @@ textarea {
 
 .chart-container .highcharts-tooltip-box,
 .highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
-    stroke-width: 0;
+    stroke-width: 1;
     border: none;
     stroke: #fff;
     fill: #fff;
     fill-opacity: 1;
     filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
+}
+
+.chart-container .highcharts-data-label-box {
+    fill: #2f2b38;
+    stroke-width: 0;
 }
 
 .chart-container .highcharts-tooltip text {
