@@ -243,14 +243,8 @@ const iceberg = {
     },
     tooltip: {
         enabled: false,
-        hideDelay: 0,
-        shared: true,
         useHTML: true,
-        headerFormat: '',
-        positioner: function () {
-            //return { x: 130, y: 365 };
-            return { x: 53, y: 1170 };
-        }
+        headerFormat: ''
     },
     plotOptions: {
         series: {
@@ -982,6 +976,9 @@ const charts = {
         styledMode: (true),
         margin: 0,
         spacing: 0,
+        accessibility: {
+            enabled: false
+        },
         plotBackgroundImage: 'highcharts.png',
         events: {
             load: function () {
@@ -1255,6 +1252,7 @@ const charts = {
                 enabled: false,
                 allowOverlap: true
             },
+            enableMouseTracking: false,
             marker: {
                 enabled: false
             },
@@ -1644,4 +1642,4 @@ const charts = {
 };
 
 
-Highcharts.chart('charts', iceberg);
+Highcharts.chart('charts', charts);
