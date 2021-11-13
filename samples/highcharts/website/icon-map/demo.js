@@ -31,6 +31,9 @@ const maps = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
+        accessibility: {
+            enabled: false
+        },
         styledMode:
         true,
         margin: 0,
@@ -224,6 +227,7 @@ const maps = {
         series: {
             allowOverlap: true,
             opacity: 1,
+            enableMouseTracking: false,
             dataLabels: {
                 enabled: false
             },
@@ -594,35 +598,17 @@ const finalMap = function () {
                     },
                     events: {
                         load: function () {
-                            const chart = this;
-
-                            const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
-                            const title = document.getElementsByClassName('highcharts-title')[0];
+                            const mapSeries = document.querySelector('.highcharts-map-series');
+                            const title = document.querySelector('.highcharts-title');
                             const subtitle = document.querySelector('.highcharts-subtitle');
                             mapSeries.style.opacity = 0;
                             setTimeout(function () {
                                 mapSeries.style.opacity = 0;
-
-                                if (reduced) {
-                                    chart.series[0].points[143].zoomTo();
-                                }
                                 title.classList.add('fade-in');
                                 subtitle.classList.add('fade-in');
                             }, 200);
 
                             setTimeout(function () {
-                                if (!reduced) {
-                                    chart.update({
-                                        mapView: {
-                                            center: [4100, 8280], // In terms of pre-projected units
-                                            zoom: 0.1
-                                        }
-                                    });
-                                }
-                                // chart.tooltip.refresh(
-                                //     [chart.series[0].points[143]]
-                                // );
-
                                 mapSeries.classList.add('fade-in');
                             }, 500);
 
@@ -632,12 +618,10 @@ const finalMap = function () {
                             }, 2000);
                         },
                         redraw: function () {
-                            const mapSeries = document.getElementsByClassName('highcharts-map-series')[0];
+                            const mapSeries = document.querySelector('.highcharts-map-series');
                             if (mapLoaded) {
                                 mapSeries.classList.add('show');
                             }
-
-
                         }
                     }
                 },
@@ -645,7 +629,7 @@ const finalMap = function () {
                     enabled: false
                 },
                 title: {
-                    text: 'Zoom to point',
+                    text: 'World Population Density',
                     style: {
                         fontFamily: 'IBM Plex Sans',
                         color: '#fff'
@@ -662,7 +646,6 @@ const finalMap = function () {
                         color: '#fff'
 
                     },
-
                     floating: true,
                     y: 20
                 },
@@ -679,6 +662,10 @@ const finalMap = function () {
                         x: 5
                     }
                 },
+                // mapView: {
+                //     center: [4100, 8280], // In terms of pre-projected units
+                //     zoom: 0.1
+                // },
                 tooltip: {
                     useHTML: true,
                     distance: -15,
@@ -729,7 +716,7 @@ const finalMap = function () {
                         },
                         chartOptions: {
                             subtitle: {
-                                text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
+                                text: 'Click a country to zoom to it.'
                             },
                             chart: {
                                 margin: [60, 1, 65, 0]
