@@ -64,7 +64,12 @@ const ganttChart = function () {
         // Run in a timeout to allow the select to update
         setTimeout(function () {
             btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
-    isAddingTask;
+            isAddingTask;
+            if (!btnRemoveTask.disabled) {
+                btnRemoveTask.classList.remove('disabled');
+            }
+
+
         }, 10);
     }
 
@@ -270,7 +275,8 @@ const ganttChart = function () {
             xDateFormat: '%a %b %d, %H:%M',
             outside: true,
             className: 'tip',
-            shadow: false
+            shadow: false,
+            stickOnContact: true
         },
 
         series: [{
