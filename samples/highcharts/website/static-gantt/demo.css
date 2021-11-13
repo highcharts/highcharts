@@ -247,6 +247,13 @@ textarea {
     box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
 }
 
+.highcharts-tooltip.highcharts-color-0,
+.highcharts-tooltip.highcharts-color-1,
+.highcharts-tooltip.highcharts-color-2 {
+    fill: #fff;
+    stroke: #46465c;
+}
+
 /* CHART */
 
 .chart-container .thick {
@@ -308,7 +315,7 @@ textarea {
 
 .chart-container .highcharts-minor-grid-line {
     stroke: #f2f2f2;
-    opacity: 50%;
+    opacity: 20%;
     stroke-dasharray: 2px;
 }
 
@@ -331,6 +338,13 @@ textarea {
 .chart-container text.highcharts-data-label {
     fill: #fff;
     font-weight: 400;
+}
+
+.chart-container .highcharts-point-select .highcharts-color-0,
+.chart-container .highcharts-color-0.highcharts-point-select,
+.chart-container .highcharts-point-select .highcharts-color-1,
+.chart-container .highcharts-point-select .highcharts-color-2 {
+    fill: #f0f0f0 !important;
 }
 
 .chart-container .highcharts-color-0 {
@@ -414,12 +428,17 @@ textarea {
 
 .chart-container .highcharts-tooltip-box,
 .highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
-    stroke-width: 0;
+    stroke-width: 1;
     border: none;
     stroke: #fff;
     fill: #fff;
     fill-opacity: 1;
     filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
+}
+
+.chart-container .highcharts-data-label-box {
+    fill: #2f2b38;
+    stroke-width: 0;
 }
 
 .chart-container .highcharts-tooltip text {
