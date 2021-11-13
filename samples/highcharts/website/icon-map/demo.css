@@ -149,12 +149,12 @@ body {
 
 #maps .fade-in {
     opacity: 100% !important;
-    transition: all 1s;
+    transition: opacity 1s;
 }
 
 #maps .fade {
     opacity: 0% !important;
-    transition: all 1s;
+    transition: opacity 1s;
 }
 
 #maps .hide {
@@ -209,7 +209,7 @@ body {
 }
 
 #maps .highcharts-map-series .highcharts-point {
-    stroke: transparent;
+    stroke: #f0f0f0;
 }
 
 #maps .highcharts-map-series .highcharts-point-hover {
@@ -249,6 +249,10 @@ body {
     margin-right: 5px;
     background-color: #1f1836;
     display: inline-block;
+}
+
+#maps .highcharts-legend-item:hover text {
+    fill: #fff;
 }
 
 #maps .highcharts-axis-labels {
