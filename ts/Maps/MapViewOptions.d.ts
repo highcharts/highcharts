@@ -53,6 +53,7 @@ export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
     geoBounds?: Polygon;
     id?: string;
     projection?: ProjectionOptions;
+    relativeTo: ('mapBoundingBox'|'plotBox');
 }
 
 export interface MapViewInsetOptionsOptions {

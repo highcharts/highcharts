@@ -132,7 +132,10 @@ class MapView {
         const insets = o.insets;
         if (insets) {
             Object.keys(insets).forEach((key): void => {
-                const inset = new MapViewInset(this, insets[key]);
+                const inset = new MapViewInset(
+                    this,
+                    merge(o.insetOptions, insets[key])
+                );
                 inset.key = key;
                 this.insets.push(inset);
             });
@@ -153,7 +156,6 @@ class MapView {
                 if (this.userOptions.center) {
                     merge(true, this.center, this.userOptions.center);
                 }
-                this.render();
             }
         });
 
@@ -219,6 +221,23 @@ class MapView {
             width: this.chart.plotWidth,
             height: this.chart.plotHeight
         };
+    }
+
+    public getMapBBox(): BBoxObject|undefined {
+        const bounds = this.getProjectedBounds(),
+            scale = this.getScale();
+
+        if (bounds) {
+            const width = (bounds.x2 - bounds.x1) * scale,
+                height = (bounds.y2 - bounds.y1) * scale;
+            return {
+                width,
+                height,
+                x: (this.chart.plotWidth - width) / 2,
+                y: (this.chart.plotHeight - height) / 2
+            };
+        }
+
     }
 
     public getProjectedBounds(): MapBounds|undefined {
@@ -356,6 +375,8 @@ class MapView {
                 translateX,
                 translateY
             };
+
+            this.render();
         }
 
         fireEvent(this, 'afterSetView');
@@ -708,15 +729,21 @@ class MapViewInset extends MapView {
         }
     }
 
+    // Get the playing field in pixels
     getField(): BBoxObject {
-        const { coordinates } = this.options.field || {};
+        const { chart, mapView, options } = this,
+            { coordinates } = options.field || {};
         if (coordinates) {
             // @todo: Cache. Called 4 times on first render.
             let polygon = coordinates[0];
-            if (this.options.units === 'percent') {
+            if (options.units === 'percent') {
+                const relativeTo = options.relativeTo === 'mapBoundingBox' &&
+                    mapView.getMapBBox() ||
+                    merge(chart.plotBox, { x: 0, y: 0 });
+
                 polygon = polygon.map((xy): [number, number] => [
-                    relativeLength(`${xy[0]}%`, this.chart.plotWidth),
-                    relativeLength(`${xy[1]}%`, this.chart.plotHeight)
+                    relativeLength(`${xy[0]}%`, relativeTo.width, relativeTo.x),
+                    relativeLength(`${xy[1]}%`, relativeTo.height, relativeTo.y)
                 ]);
             }
             const xs = polygon.map((xy): number => xy[0]),
@@ -747,50 +774,56 @@ class MapViewInset extends MapView {
 
     // Render the map view inset with the border path
     render(): void {
-        const { chart, options } = this,
+        const { chart, mapView, options } = this,
             borderPath = options.borderPath || options.field;
 
-        if (borderPath && this.mapView.group) {
+        if (borderPath && mapView.group) {
             let animate = true;
             if (!this.border) {
                 this.border = chart.renderer
                     .path()
                     .addClass('highcharts-mapview-inset-border')
-                    .add(this.mapView.group);
+                    .add(mapView.group);
                 animate = false;
             }
 
             if (!chart.styledMode) {
                 this.border.attr({
-                    stroke: this.options.borderColor,
-                    'stroke-width': this.options.borderWidth
+                    stroke: options.borderColor,
+                    'stroke-width': options.borderWidth
                 });
             }
-            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2;
 
-            const d = (borderPath.coordinates || [])
-                .reduce(
-                    (d, lineString): SVGPath =>
-                        lineString.reduce((d, point, i): SVGPath => {
-                            let [x, y] = point;
-                            if (options.units === 'percent') {
-                                x = chart.plotLeft + relativeLength(
-                                    `${x}%`,
-                                    chart.plotWidth
-                                );
-                                y = chart.plotTop + relativeLength(
-                                    `${y}%`,
-                                    chart.plotHeight
-                                );
-                            }
-                            x = Math.floor(x) + crisp;
-                            y = Math.floor(y) + crisp;
-                            d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
-                            return d;
-                        }, d)
-                    ,
-                    [] as SVGPath
-                );
+            const crisp = Math.round(this.border.strokeWidth()) % 2 / 2,
+                field = (
+                    options.relativeTo === 'mapBoundingBox' &&
+                    mapView.getMapBBox()
+                ) || mapView.getField();
+
+            const d = (borderPath.coordinates || []).reduce(
+                (d, lineString): SVGPath =>
+                    lineString.reduce((d, point, i): SVGPath => {
+                        let [x, y] = point;
+                        if (options.units === 'percent') {
+                            x = chart.plotLeft + relativeLength(
+                                `${x}%`,
+                                field.width,
+                                field.x
+                            );
+                            y = chart.plotTop + relativeLength(
+                                `${y}%`,
+                                field.height,
+                                field.y
+                            );
+                        }
+                        x = Math.floor(x) + crisp;
+                        y = Math.floor(y) + crisp;
+                        d.push(i === 0 ? ['M', x, y] : ['L', x, y]);
+                        return d;
+                    }, d)
+                ,
+                [] as SVGPath
+            );
 
             // Apply the border path
             this.border[animate ? 'animate' : 'attr']({ d });

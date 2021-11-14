@@ -9,7 +9,8 @@ Highcharts.getJSON(
         // Initialize the chart
         Highcharts.mapChart('container', {
             chart: {
-                map: topology
+                map: topology,
+                plotBorderWidth: 1
             },
 
             title: {
@@ -32,9 +33,11 @@ Highcharts.getJSON(
                 // Generic options for insets (like annotations.labelOptions and
                 // shapeOptions)
                 insetOptions: {
-                    borderColor: '',
+                    // borderColor: '',
                     borderWidth: 1,
+                    // Maybe we need padding: [top, right, bottom, left]
                     padding: '5%',
+                    relativeTo: 'mapBoundingBox',
                     units: 'percent' // 'pixels' | 'percent'
                 },
 
@@ -108,7 +111,7 @@ Highcharts.getJSON(
                             rotation: [154]
                         },
 
-                        units: 'percent', // 'pixels' | 'percent'
+                        // units: 'percent', // 'pixels' | 'percent'
 
                         // Auto fitted to the bounding box
                         zoom: void 0

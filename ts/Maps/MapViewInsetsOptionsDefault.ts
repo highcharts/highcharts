@@ -25,6 +25,7 @@ const defaultOptions: MapViewInsetsOptions = {
     borderWidth: 1,
     center: [0, 0],
     padding: 5,
+    relativeTo: 'plotBox',
     units: 'percent'
 };
 
