@@ -78,26 +78,38 @@ body {
     transition: opacity 50ms;
 }
 
-.chart-container .highcharts-tooltip-0 {
+.highcharts-tooltip-0 {
     filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
     box-shadow: 5px 7px 13px 1px rgb(177 149 149 / 14%);
 }
 
-.chart-container .highcharts-tooltip-box {
-    stroke-width: 0;
+.highcharts-tooltip-box {
     border: none;
-    stroke: transparent;
-    fill: transparent;
+    stroke: #fff;
+    stroke-width: 1px;
+    fill: #46465c;
     fill-opacity: 1;
 }
 
-.chart-container .highcharts-tooltip text {
+.highcharts-tooltip text {
     fill: #fff;
     color: #fff;
 }
 
-.chart-container .highcharts-tooltip {
+.highcharts-tooltip {
     z-index: 100;
+}
+
+.highcharts-tooltip.hide {
+    opacity: 0%;
+}
+
+.highcharts-tooltip.show {
+    opacity: 100%;
+}
+
+.highcharts-tooltip.highcharts-color-0 {
+    opacity: 0%;
 }
 
 .chart-container .highcharts-graph {
@@ -124,15 +136,16 @@ body {
     stroke: transparent;
 }
 
-#charts .berg-tip {
-    width: 150px;
+.berg-tip {
+    width: 150px !important;
     color: #fff;
     white-space: normal;
     font-size: 0.9em;
     font-weight: 500;
+    z-index: 1000;
 }
 
-#charts .berg-tip span {
+.berg-tip span {
     font-weight: 700;
 }
 
