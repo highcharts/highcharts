@@ -15,7 +15,7 @@ For an overview of the `map` series options see the [API reference](https://api
        ...
     });
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/category-map/" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://www.highcharts.com/samples/embed/maps/demo/category-map" allow="fullscreen"></iframe>
 
 Load the map
 ------------
