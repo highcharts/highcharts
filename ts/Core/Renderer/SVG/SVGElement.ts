@@ -1583,8 +1583,7 @@ class SVGElement implements SVGElementLike {
                             '11px,17': 14,
                             '13px,20': 16
                         } as Record<string, number>)[
-                            (styles as any) &&
-                            (styles as any).fontSize + ',' + Math.round(height)
+                            `${fontSize || ''},${Math.round(height)}`
                         ] ||
                         height
                     );

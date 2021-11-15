@@ -97,7 +97,10 @@ class CSVStore extends DataStore<CSVStore.Event> {
         const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
 
         this.parserOptions = parserOptions;
-        this.options = merge(CSVStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
+        this.options = merge(
+            CSVStore.defaultOptions,
+            { csv, csvURL, enablePolling, dataRefreshRate }
+        );
         this.parser = parser || new CSVParser(parserOptions);
     }
 
@@ -299,7 +302,9 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.map((columnName): string => `"${columnName}"`).join(itemDelimiter));
+            csvRows.push(columnNames.map(
+                (columnName): string => `"${columnName}"`
+            ).join(itemDelimiter));
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

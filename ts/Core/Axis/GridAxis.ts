@@ -628,7 +628,10 @@ namespace GridAxis {
 
                 const mark = axis.ticks[lastTick].mark;
                 if (mark) {
-                    if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
+                    if (
+                        lastTick - max < tickmarkOffset &&
+                        lastTick - max > 0 && axis.ticks[lastTick].isLast
+                    ) {
                         mark.hide();
                     } else if (axis.ticks[lastTick - 1]) {
                         mark.show();

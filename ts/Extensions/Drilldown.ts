@@ -1079,6 +1079,29 @@ addEvent(Chart, 'afterInit', function (): void {
     };
 });
 
+// Shift the drillUpButton to make the space for resetZoomButton, #8095.
+addEvent(Chart, 'afterShowResetZoom', function (): void {
+    const chart = this,
+        bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
+        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+    if (
+        this.drillUpButton &&
+        bbox &&
+        buttonOptions &&
+        buttonOptions.position &&
+        buttonOptions.position.x &&
+        chart.breadcrumbs &&
+        chart.breadcrumbs.options.relativeTo === 'plotBox'
+    ) {
+        this.drillUpButton.align({
+            x: -bbox.width
+        },
+        true,
+        chart.breadcrumbs.options.relativeTo || 'plotBox'
+        );
+    }
+});
+
 addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
         axis.ddPoints = {};

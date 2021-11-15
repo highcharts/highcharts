@@ -38,14 +38,22 @@ declare global {
         interface AnnotationEventEmitterMixin {
             addEvents(this: AnnotationEventEmitter): void;
             destroy(this: AnnotationEventEmitter): void;
-            mouseMoveToRadians(this: AnnotationEventEmitter, e: AnnotationEventObject, cx: number, cy: number): number;
+            mouseMoveToRadians(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject,
+                cx: number,
+                cy: number
+            ): number;
             mouseMoveToScale(
                 this: AnnotationEventEmitter,
                 e: AnnotationEventObject,
                 cx: number,
                 cy: number
             ): PositionObject;
-            mouseMoveToTranslation(this: AnnotationEventEmitter, e: AnnotationEventObject): PositionObject;
+            mouseMoveToTranslation(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): PositionObject;
             onDrag(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             onMouseDown(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
             onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
@@ -172,7 +180,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse down handler.
      */
-    onMouseDown: function (this: Highcharts.AnnotationEventEmitter, e: Highcharts.AnnotationEventObject): void {
+    onMouseDown: function (
+        this: Highcharts.AnnotationEventEmitter,
+        e: Highcharts.AnnotationEventObject
+    ): void {
         let emitter = this,
             pointer = emitter.chart.pointer,
             prevChartX: number,
@@ -242,7 +253,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse up handler.
      */
-    onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
+    onMouseUp: function (
+        this: Highcharts.AnnotationEventEmitter,
+        _e: Highcharts.AnnotationEventObject
+    ): void {
         const chart = this.chart,
             annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,

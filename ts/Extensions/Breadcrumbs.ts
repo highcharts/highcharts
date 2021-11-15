@@ -474,7 +474,9 @@ class Breadcrumbs {
                 format(textFormat, { level: breadcrumb.levelOptions }, chart) || '';
 
         if (returnText === '← ' && lang && lang.mainBreadcrumb) {
-            returnText = !breadcrumbsOptions.showFullPath ? '← ' + lang.mainBreadcrumb : lang.mainBreadcrumb;
+            returnText = !breadcrumbsOptions.showFullPath ?
+                '← ' + lang.mainBreadcrumb :
+                lang.mainBreadcrumb;
         }
         return returnText;
     }
@@ -565,7 +567,7 @@ class Breadcrumbs {
     public updateBreadcrumbsList(this: Breadcrumbs): void {
         const list = this.list;
         if (this.options.showFullPath) {
-            // last breadcrumb
+            // Last breadcrumb
             const lastB = list[this.level];
             if (lastB) {
                 const button = lastB.button,
@@ -593,7 +595,7 @@ class Breadcrumbs {
             this.updateSingleButton();
         }
         list.pop();
-        // if after removing the item list is empty, destroy the group
+        // If after removing the item list is empty, destroy the group
         if (!this.level) {
             this.destroyGroup(true);
         }
@@ -651,7 +653,7 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             list = breadcrumbs.list,
             breadcrumbsOptions = breadcrumbs.options,
-            // last breadcrumb that was rendered.
+            // Last breadcrumb that was rendered.
             lastBreadcrumb = list[this.level - 1] &&
             list[this.level - 1].button,
             buttonSpacing = breadcrumbsOptions.buttonSpacing;
@@ -762,14 +764,12 @@ class Breadcrumbs {
             width = bBox.width + additionalSpace,
             height = bBox.height + additionalSpace;
 
+        // Store positionOptions
+        positionOptions.width = width;
+        positionOptions.height = height;
+
         breadcrumbs.group.align(
-            merge(
-                positionOptions,
-                {
-                    width: width,
-                    height: height
-                }
-            ),
+            positionOptions,
             true,
             alignTo as string
         );
@@ -807,18 +807,24 @@ class Breadcrumbs {
                 posY,
                 function (e: (Event|any)): void {
                     // Extract events from button object and call
-                    const buttonEvents = breadcrumbsOptions.events && breadcrumbsOptions.events.click;
+                    const buttonEvents = breadcrumbsOptions.events &&
+                        breadcrumbsOptions.events.click;
                     let callDefaultEvent;
 
                     if (buttonEvents) {
-                        callDefaultEvent = buttonEvents.call(breadcrumbsOptions, e as any, breadcrumbs);
+                        callDefaultEvent = buttonEvents.call(
+                            breadcrumbsOptions,
+                            e as any,
+                            breadcrumbs
+                        );
                     }
 
                     // Prevent from click on the current level
                     if (callDefaultEvent !== false &&
                         (
                             (list[list.length - 1].levelOptions as PointOptions).name &&
-                            (list[list.length - 1].levelOptions as PointOptions).name !== button.textStr
+                            (list[list.length - 1].levelOptions as PointOptions).name !==
+                                button.textStr
                         ) &&
                         breadcrumbsOptions.showFullPath
                     ) {
@@ -1037,7 +1043,10 @@ if (!H.Breadcrumbs) {
             addEvent(H.seriesTypes.treemap, 'setRootNode',
                 function (this: TreemapSeries, e: TreemapSeries.SetRootNodeObject): void {
                     const chart = this.chart,
-                        breadcrumbsOptions = merge(this.options.drillUpButton, this.options.breadcrumbs);
+                        breadcrumbsOptions = merge(
+                            this.options.drillUpButton,
+                            this.options.breadcrumbs
+                        );
 
                     if (!chart.breadcrumbs) {
                         chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions);
@@ -1116,6 +1125,8 @@ namespace Breadcrumbs {
         verticalAlign: VerticalAlignValue;
         x: number;
         y: number;
+        width?: number;
+        height?: number;
     }
     export interface BreadcrumbsClickCallbackFunction {
         (e: Event, breadcrumbs: Breadcrumbs): (boolean|undefined);
@@ -1173,4 +1184,4 @@ export default Breadcrumbs;
  * Formatted text or false
  */
 
-(''); // keeps doclets above in JS file
+(''); // Keeps doclets above in JS file

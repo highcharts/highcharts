@@ -254,7 +254,10 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     32,
                     false,
                     chart,
-                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
+                    {
+                        [`series.${oldOption}`]:
+                            `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}`
+                    }
                 );
             }
         });

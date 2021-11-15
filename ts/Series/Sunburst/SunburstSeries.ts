@@ -924,25 +924,27 @@ class SunburstSeries extends TreemapSeries {
                 options.slicedOffset :
                 0;
 
-        return (children || []).reduce(function (arr, child): Array<SunburstSeries.NodeValuesObject> {
-            const percentage = (1 / total) * child.val,
-                radians = percentage * range,
-                radiansCenter = startAngle + (radians / 2),
-                offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
-                values: SunburstSeries.NodeValuesObject = {
-                    x: child.sliced ? offsetPosition.x : x,
-                    y: child.sliced ? offsetPosition.y : y,
-                    innerR: innerRadius,
-                    r: outerRadius,
-                    radius: radius,
-                    start: startAngle,
-                    end: startAngle + radians
-                } as any;
+        return (children || []).reduce(
+            function (arr, child): Array<SunburstSeries.NodeValuesObject> {
+                const percentage = (1 / total) * child.val,
+                    radians = percentage * range,
+                    radiansCenter = startAngle + (radians / 2),
+                    offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+                    values: SunburstSeries.NodeValuesObject = {
+                        x: child.sliced ? offsetPosition.x : x,
+                        y: child.sliced ? offsetPosition.y : y,
+                        innerR: innerRadius,
+                        r: outerRadius,
+                        radius: radius,
+                        start: startAngle,
+                        end: startAngle + radians
+                    } as any;
 
-            arr.push(values);
-            startAngle = values.end;
-            return arr;
-        }, [] as Array<SunburstSeries.NodeValuesObject>);
+                arr.push(values);
+                startAngle = values.end;
+                return arr;
+            }, [] as Array<SunburstSeries.NodeValuesObject>
+        );
     }
 
     /**
