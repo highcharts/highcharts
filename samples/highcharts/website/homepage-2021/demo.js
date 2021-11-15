@@ -408,6 +408,9 @@ const bubble2 = {
             }
         }
     },
+    accessibility: {
+        enabled: false
+    },
     exporting: {
         enabled: false
     },
@@ -923,6 +926,9 @@ const sankey = {
             }
         }
     },
+    accessibility: {
+        enabled: false
+    },
     exporting: {
         enabled: false
     },
@@ -1139,6 +1145,9 @@ const bubble = {
                 }
             }
         }
+    },
+    accessibility: {
+        enabled: false
     },
     credits: {
         enabled: false
