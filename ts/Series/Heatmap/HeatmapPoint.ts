@@ -164,6 +164,7 @@ class HeatmapPoint extends ScatterPoint {
 
 
             if (
+                markerOptions &&
                 (markerOptions as any)[prop] &&
                 (markerOptions as any)[prop] < side
             ) {
