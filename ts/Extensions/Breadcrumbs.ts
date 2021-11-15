@@ -330,10 +330,10 @@ class Breadcrumbs {
      * */
 
     public group: SVGElement = void 0 as any;
-    public list: Array<Breadcrumbs.breadcrumb> = [];
+    public list: Array<Breadcrumbs.BreadcrumbOptions> = [];
     public chart: Chart;
     public isDirty: boolean = true;
-    public level: number = -1;
+    public level: number = 0;
     public options: Breadcrumbs.BreadcrumbsOptions = void 0 as any;
     public series?: TreemapSeries = void 0 as any;
 
@@ -382,7 +382,7 @@ class Breadcrumbs {
      *        Formatted text.
      */
     public createList(this: Breadcrumbs): any {
-        const list: Array<Breadcrumbs.breadcrumb> = this.list || [],
+        const list: Array<Breadcrumbs.BreadcrumbOptions> = this.list || [],
             chart = this.chart,
             drilldownLevels = chart.drilldownLevels;
 
@@ -423,7 +423,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public destroyGroup(this: Breadcrumbs): void {
+    public destroyGroup(this: Breadcrumbs, redraw?: boolean): void {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             list = breadcrumbs.list,
@@ -432,22 +432,20 @@ class Breadcrumbs {
         // The full path of buttons is visible.
         if (breadcrumbsOptions.showFullPath && breadcrumbs.group) {
             // Clear the breadcrums list array.
-            list.forEach(function (el): void {
-                // Remove SVG elements from the DOM.
-                el.button && el.button.destroy();
-                el.separator && el.separator.destroy();
-            });
-            list.length = 0;
             this.group.destroy();
             this.group = void 0 as any;
         } else if (
             chart.drillUpButton
         ) {
-            list.length = 0;
             chart.drillUpButton.destroy();
             chart.drillUpButton = void 0;
         }
-        chart.redraw();
+
+        list.length = 0;
+
+        if (redraw) {
+            chart.redraw();
+        }
     }
 
     /**
@@ -463,7 +461,7 @@ class Breadcrumbs {
      * @return {string}
      *         Formatted text.
      */
-    public getButtonText(this: Breadcrumbs, breadcrumb: Breadcrumbs.breadcrumb): string {
+    public getButtonText(this: Breadcrumbs, breadcrumb: Breadcrumbs.BreadcrumbOptions): string {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
@@ -530,7 +528,7 @@ class Breadcrumbs {
         }
 
         if (!this.level) {
-            this.destroyGroup();
+            this.destroyGroup(true);
         }
     }
 
@@ -597,7 +595,7 @@ class Breadcrumbs {
         list.pop();
         // if after removing the item list is empty, destroy the group
         if (!this.level) {
-            this.destroyGroup();
+            this.destroyGroup(true);
         }
     }
 
@@ -620,8 +618,7 @@ class Breadcrumbs {
         if (!breadcrumbs.group && breadcrumbsOptions) {
             breadcrumbs.group = chart.renderer
                 .g('breadcrumbs-group')
-                .addClass('highcharts-no-tooltip')
-                .addClass('highcharts-breadcrumbs')
+                .addClass('highcharts-no-tooltip highcharts-breadcrumbs')
                 .attr({
                     zIndex: breadcrumbsOptions.zIndex
                 })
@@ -682,7 +679,6 @@ class Breadcrumbs {
                     const button = breadcrumbs.renderButton(breadcrumb, posX, posY);
                     breadcrumb.button = button;
                     posX += button ? button.getBBox().width + buttonSpacing : 0;
-                    breadcrumbs.group.lastXPos = posX;
                 }
 
                 // Render a separator.
@@ -761,39 +757,17 @@ class Breadcrumbs {
                     'scrollablePlotBox'
             ),
             bBox = breadcrumbs.group.getBBox(),
-            width = bBox.width,
-            height = (buttonTheme.height || 0) +
-                2 * (buttonTheme.padding || 0) +
-                breadcrumbsOptions.buttonSpacing ||
-                bBox.height;
-
-
-        let translationX = 0 - bBox.x;
-        let translationY = 0;
-
-        // Default setting
-        if (breadcrumbsOptions.relativeTo === 'plotBox') {
-            if (positionOptions.verticalAlign === 'bottom') {
-                translationY += height + bBox.y;
-            } else if (positionOptions.verticalAlign !== 'middle') {
-                translationY -= height + bBox.y;
-            }
-        } else if (positionOptions.verticalAlign === 'bottom') {
-            translationY -= height + bBox.y;
-        }
-
-        if (positionOptions.align === 'right') {
-            translationX = -width;
-        } else if (positionOptions.align === 'center') {
-            translationX = -width / 2;
-        }
+            additionalSpace = 2 * (buttonTheme.padding || 0) +
+            breadcrumbsOptions.buttonSpacing,
+            width = bBox.width + additionalSpace,
+            height = bBox.height + additionalSpace;
 
         breadcrumbs.group.align(
             merge(
                 positionOptions,
                 {
-                    x: positionOptions.x + translationX,
-                    y: positionOptions.y + translationY
+                    width: width,
+                    height: height
                 }
             ),
             true,
@@ -819,7 +793,7 @@ class Breadcrumbs {
      *        Returns the SVG button
      */
     public renderButton(this: Breadcrumbs,
-        breadcrumb: Breadcrumbs.breadcrumb,
+        breadcrumb: Breadcrumbs.BreadcrumbOptions,
         posX: number, posY: number): SVGElement|undefined {
         const breadcrumbs = this,
             chart = this.chart,
@@ -930,7 +904,7 @@ class Breadcrumbs {
      */
     public setList(
         this: Breadcrumbs,
-        list: Array<Breadcrumbs.breadcrumb>
+        list: Array<Breadcrumbs.BreadcrumbOptions>
     ): void {
 
         this.list = list;
@@ -957,7 +931,7 @@ class Breadcrumbs {
         merge(true, this.options, options);
 
         if (redraw) {
-            this.destroyGroup();
+            this.destroyGroup(true);
         }
     }
 
@@ -1102,7 +1076,7 @@ if (!H.Breadcrumbs) {
     // Remove resize/afterSetExtremes at chart destroy
     addEvent(Chart, 'destroy', function destroyEvents(): void {
         if (this.breadcrumbs) {
-            this.breadcrumbs.destroyGroup();
+            this.breadcrumbs.destroyGroup(true);
             this.breadcrumbs = void 0 as Breadcrumbs|undefined;
         }
     });
@@ -1131,7 +1105,7 @@ namespace Breadcrumbs {
         zIndex: number;
     }
 
-    export type breadcrumb = {
+    export type BreadcrumbOptions = {
         level: number,
         levelOptions: SeriesOptions|PointOptions|PointShortOptions,
         button?: SVGElement,
@@ -1151,7 +1125,7 @@ namespace Breadcrumbs {
     }
     export interface BreadcrumbsButtonsFormatter {
         (
-            breadcrumb: breadcrumb
+            breadcrumb: BreadcrumbOptions
         ): (string);
     }
     export interface SeparatorOptions {

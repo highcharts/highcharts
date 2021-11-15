@@ -1011,7 +1011,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public createLevelList(e: any): any {
         const breadcrumbs = this.chart.breadcrumbs,
-            list: Array<Breadcrumbs.breadcrumb> = breadcrumbs && breadcrumbs.list || [],
+            list: Array<Breadcrumbs.BreadcrumbOptions> = breadcrumbs && breadcrumbs.list || [],
             chart = this.chart;
 
         // If the list doesn't exist treat the initial series

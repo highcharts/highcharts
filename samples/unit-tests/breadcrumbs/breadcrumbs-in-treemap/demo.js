@@ -101,7 +101,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
     chart.breadcrumbs.jumpTo(0);
 
     assert.notOk(
-        buttons.length,
-        'The breadcrumbsButtonGroup should be empty.'
+        chart.breadcrumbs.group,
+        'The breadcrumbsButtonGroup should be destroyed.'
     );
 });

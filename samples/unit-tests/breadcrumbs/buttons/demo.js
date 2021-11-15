@@ -126,8 +126,8 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
     );
     chart.breadcrumbs.jumpTo(0);
     assert.notOk(
-        buttons.length,
-        'The breadcrumbsButtonGroup should be empty.'
+        chart.breadcrumbs.group,
+        'The breadcrumbsButtonGroup should be destroyed.'
     );
     chart.series[0].points[1].doDrilldown();
     buttons = chart.breadcrumbs.group.element.childNodes;
@@ -336,7 +336,12 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
             animation: false,
             breadcrumbs: {
                 showFullPath: true,
+                buttonSpacing: 0,
+                buttonTheme: {
+                    padding: 0
+                },
                 position: {
+                    alignTo: 'plotBox',
                     align: 'center'
                 }
             },
@@ -386,9 +391,10 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     let breadcrumbsWidth = chart.breadcrumbs.group.getBBox().width,
         breadcrumbsXPosition = chart.breadcrumbs.group.translateX;
 
-    assert.strictEqual(
+    assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,
+        1,
         'When buttons are aligned to the centre, their centre point should be in the middle of the chart width.'
     );
 

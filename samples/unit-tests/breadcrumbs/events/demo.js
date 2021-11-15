@@ -45,7 +45,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
         test = new TestController(chart);
 
     chart.series[0].points[0].doDrilldown();
-    test.triggerEvent('click', chart.plotLeft + 10, 60, {}, true);
+    test.triggerEvent('click', chart.plotLeft + 10, 80, {}, true);
 
     const buttons = chart.breadcrumbs.group.element.childNodes;
 
@@ -66,10 +66,9 @@ QUnit.test('Breadcrumbs format', function (assert) {
             }
         }
     });
-    test.triggerEvent('click', chart.plotLeft + 10, 60, {}, true);
-    assert.strictEqual(
-        buttons.length,
-        0,
+    test.triggerEvent('click', chart.plotLeft + 10, 80, {}, true);
+    assert.notOk(
+        chart.breadcrumbs.group,
         'When click event returns true, drillup should be performed and buttons removed.'
     );
 });
