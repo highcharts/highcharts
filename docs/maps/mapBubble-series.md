@@ -3,7 +3,7 @@ Map Bubble
 
 MapBuble series is a combination of the standard bubble chart series with the possibility of applying to specific parts of the map.
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/map-bubble" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/maps/demo/map-bubble" allow="fullscreen"></iframe>
 
 Setting the Map Bubble Series
 -----------------------------
