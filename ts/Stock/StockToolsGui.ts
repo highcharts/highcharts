@@ -2263,7 +2263,10 @@ addEvent(Chart, 'render', function (): void {
 
     // Change the initial button background.
     if (stockTools && chart.navigationBindings && chart.options.series && button) {
-        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+        if (
+            chart.navigationBindings.constructor.prototype.utils
+                .isPriceIndicatorEnabled(chart.series)
+        ) {
             button.firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
         } else {

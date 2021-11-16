@@ -19,7 +19,6 @@ Math.easeOutBounce = pos => {
     return (7.5625 * (pos -= (2.625 / 2.75)) * pos + 0.984375);
 };
 
-
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const big = window.matchMedia("(min-width: 500px)").matches;
 
@@ -35,7 +34,7 @@ const updateStyle = function (selector, property, value, duration) {
 };
 
 
-const candlestick = function (type) {
+const candlestick = function () {
     Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', function (data) {
     // create the chart
         Highcharts.stockChart('hero', {
@@ -51,23 +50,20 @@ const candlestick = function (type) {
                 events: {
                     load: function () {
                         const chart = this;
-
                         updateStyle('highcharts-title', 'opacity', 0, '0s');
                         updateStyle('candlestick', 'opacity', 0, '0s');
                         updateStyle('highcharts-yaxis-labels', 'opacity', 0, '0s');
 
-                        if (type === 'static') {
-                            chart.update({
-                                navigator: {
-                                    enabled: true
-                                }
-                            });
-                            updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
-                            if (big) {
-                                chart.rangeSelector.clickButton(3);
-                            } else {
-                                chart.rangeSelector.clickButton(1);
+                        chart.update({
+                            navigator: {
+                                enabled: true
                             }
+                        });
+                        updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
+                        if (big) {
+                            chart.rangeSelector.clickButton(3);
+                        } else {
+                            chart.rangeSelector.clickButton(1);
                         }
 
                         const p1 = function () {
@@ -85,26 +81,6 @@ const candlestick = function (type) {
                         };
                         setTimeout(p1, 700);
 
-                        if (type === 'animated') {
-                            const p2 = function () {
-                                if (big) {
-                                    chart.rangeSelector.clickButton(3);
-                                } else {
-                                    chart.rangeSelector.clickButton(1);
-                                }
-
-                            };
-                            setTimeout(p2, 3000);
-
-                            const p21 = function () {
-                                updateStyle('highcharts-range-selector-buttons', 'opacity', 0, '1s');
-                                updateStyle('highcharts-axis-labels', 'opacity', 0, '800ms');
-                                updateStyle('highcharts-xaxis', 'opacity', 0, '800ms');
-                                updateStyle('candlestick', 'stroke', 'transparent', '800ms');
-                                updateStyle('candlestick', 'opacity', 0, '1s');
-                            };
-                            setTimeout(p21, 5500);
-                        }
                     }
                 }
             },
@@ -208,4 +184,6 @@ const candlestick = function (type) {
     });
 };
 
+
+///initial run
 candlestick('static');

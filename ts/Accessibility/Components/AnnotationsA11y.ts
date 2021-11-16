@@ -134,8 +134,11 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
         .map(getValueDesc)
         .filter((desc: string): boolean => !!desc); // Filter out points we can't describe
     const numPoints = pointValueDescriptions.length;
-    const pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
-    const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
+    const pointsSelector = numPoints > 1 ?
+        'MultiplePoints' : numPoints ?
+            'SinglePoint' : 'NoPoints';
+    const langFormatStr = 'accessibility.screenReaderSection.annotations.description' +
+        pointsSelector;
     const context = {
         annotationText: labelText,
         annotation: label,

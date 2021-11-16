@@ -1,8 +1,12 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
+body {
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+
 .hero-container {
-    background: rgb(79 70 90);
-    background: linear-gradient(0deg, rgb(79 70 90 / 100%) 0%, rgb(43 27 54 / 100%) 100%);
+    background: transparent;
     width: 100%;
     height: 450px;
 }
@@ -11,8 +15,6 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 430px;
-    max-height: 430px;
     opacity: 100%;
     text-align: left;
     line-height: normal;
@@ -55,7 +57,7 @@
 }
 
 #hero .highcharts-area-series.cover {
-    fill: url(#bg-gradient);
+    fill: url("#bg-gradient");
     fill-opacity: 1;
     opacity: 0%;
     stroke: transparent;
@@ -65,14 +67,11 @@
     fill-opacity: 1;
 }
 
-#hero .highcharts-xaxis-grid .highcharts-grid-line {
-    stroke-width: 1px;
-}
-
 #hero .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
+    stroke-width: 1px;
 }
 
 #hero .highcharts-tooltip {
@@ -122,8 +121,8 @@
 }
 
 #hero .highcharts-point {
-    fill: #e4d354;
-    stroke-width: 1;
+    fill: url(#sankey-gradient);
+    stroke-width: 0;
 }
 
 #hero .highcharts-plot-line {
@@ -131,6 +130,9 @@
     stroke: #3f3e57;
     stroke-width: 1px;
     opacity: 0%;
+    transform-origin: top;
+    transition: transform 1s;
+    transform: rotate(0deg);
 }
 
 #hero .highcharts-data-label text {
@@ -138,85 +140,70 @@
     font-weight: 300;
 }
 
+#hero .highcharts-candlestick-series .highcharts-point {
+    stroke: #8187e2;
+    fill: #8187e2;
+    fill-opacity: 0;
+}
+
+#hero .highcharts-candlestick-series .highcharts-point-up {
+    stroke: #da6d85;
+    fill: #da6d85;
+    fill-opacity: 0;
+}
+
 #hero .highcharts-bubble-series .highcharts-point.bubble-green {
     fill: #a3edba;
     fill-opacity: 0.5;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-purple {
     fill: #8087e8;
     fill-opacity: 0.8;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-dpurple {
     fill: #8087e8;
     fill-opacity: 0.3;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-black {
     fill: #fff;
     fill-opacity: 0.1;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-gray {
     fill: #ceced4;
     fill-opacity: 0.6;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-brown {
     fill: #cd8519;
     fill-opacity: 0.3;
     stroke: transparent;
+    transform-origin: center;
+    transition: transform 1s;
 }
 
 #hero .highcharts-bubble-series .highcharts-point.bubble-orange {
     fill: #cd8519;
     fill-opacity: 1;
     stroke: transparent;
-}
-
-#hero .highcharts-plot-line {
-    transform-origin: top;
-    transition: transform 1s;
-    transform: rotate(0deg);
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-black {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-brown {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-purple {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-dpurple {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-green {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-gray {
-    transform-origin: center;
-    transition: transform 1s;
-}
-
-#hero .highcharts-bubble-series .highcharts-point.bubble-orange {
     transform-origin: center;
     transition: transform 1s;
 }
@@ -277,6 +264,10 @@
 
 #hero .highcharts-bubble-series .highcharts-point.bubble2-orange {
     fill: #cd8519;
+}
+
+#hero .highcharts-bubble-series .highcharts-point.bubble2-white {
+    fill: #fff;
     fill-opacity: 0.8;
     stroke: #fff;
 }
@@ -303,7 +294,7 @@
 #hero .highcharts-link.highcharts-color-7,
 #hero .highcharts-link.highcharts-color-8,
 #hero .highcharts-link.highcharts-color-9 {
-    fill: url(#sankey-gradient);
+    fill: linear-gradient(90.54deg, #54a0ff 0.24%, #10ac84 99.56%);
     stroke: transparent;
     transition: opacity 2s;
     opacity: 100%;
@@ -379,18 +370,6 @@
     text-shadow: none;
     font-size: 1.4em;
     transform: translateX(-30px);
-}
-
-#hero .highcharts-candlestick-series .highcharts-point {
-    stroke: #8187e2;
-    fill: #8187e2;
-    fill-opacity: 0;
-}
-
-#hero .highcharts-candlestick-series .highcharts-point-up {
-    stroke: #da6d85;
-    fill: #da6d85;
-    fill-opacity: 0;
 }
 
 #hero .highcharts-navigator-series {

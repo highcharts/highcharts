@@ -932,7 +932,10 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<TreemapSeriesLayoutAlgorithmValue|undefined, TreemapSeriesLayoutAlgorithmValue>(
+            algorithm = pick<
+            TreemapSeriesLayoutAlgorithmValue|undefined,
+            TreemapSeriesLayoutAlgorithmValue
+            >(
                 (
                     (series as any)[
                         (level && level.layoutAlgorithm) as any

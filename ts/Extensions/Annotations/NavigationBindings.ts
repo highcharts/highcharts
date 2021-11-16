@@ -359,7 +359,9 @@ class NavigationBindings {
         this.options = options;
         this.eventsToUnbind = [];
         this.container = (
-            doc.getElementsByClassName(this.options.bindingsClassName || '') as HTMLCollectionOf<HTMLElement>
+            doc.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>
         );
     }
 
@@ -370,7 +372,8 @@ class NavigationBindings {
      * */
 
     public activeAnnotation?: (false|Annotation);
-    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
+    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> =
+        void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
@@ -429,12 +432,16 @@ class NavigationBindings {
         // Shorthand object for getting events for buttons:
         navigation.boundClassNames = {};
 
-        objectEach((options.bindings || {}), function (value: Highcharts.NavigationBindingsOptionsObject): void {
+        objectEach((options.bindings || {}), function (
+            value: Highcharts.NavigationBindingsOptionsObject
+        ): void {
             navigation.boundClassNames[value.className] = value;
         });
 
         // Handle multiple containers with the same class names:
-        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (subContainer: HTMLElement): void {
+        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (
+            subContainer: HTMLElement
+        ): void {
             navigation.eventsToUnbind.push(
                 addEvent(subContainer, 'click', function (event: PointerEvent): void {
                     const bindings = navigation.getButtonEvents(
@@ -442,7 +449,11 @@ class NavigationBindings {
                         event
                     );
 
-                    if (bindings && bindings.button.className.indexOf('highcharts-disabled-btn') === -1) {
+                    if (
+                        bindings &&
+                        bindings.button.className
+                            .indexOf('highcharts-disabled-btn') === -1
+                    ) {
                         navigation.bindingsButtonClick(
                             bindings.button,
                             bindings.events,
@@ -1152,7 +1163,10 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             navigation.activeAnnotation = false;
                             navigation.chart.removeAnnotation(annotation);
                         } else {
-                            navigation.fieldsToOptions(data.fields as Record<string, string>, config);
+                            navigation.fieldsToOptions(
+                                data.fields as Record<string, string>,
+                                config
+                            );
                             navigation.deselectAnnotation();
 
                             typeOptions = config.typeOptions;
@@ -1721,7 +1735,8 @@ addEvent(Chart, 'render', function (): void {
 
                     // Get the HTML element coresponding to the
                     // className taken from StockToolsBindings.
-                    const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
+                    const buttonNode = chart.navigationBindings.container[0]
+                        .querySelectorAll('.' + key);
 
                     if (buttonNode) {
                         for (let i = 0; i < buttonNode.length; i++) {
