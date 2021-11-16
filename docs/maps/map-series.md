@@ -1,7 +1,9 @@
 Map series
 ==========
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/all-maps" allow="fullscreen"></iframe>
+The `map` series is the basic series in Highcharts Maps offering the ability to create map shapes and operate on their values.
+
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/all-maps" allow="fullscreen"></iframe>
 
 Initialize the constructor
 ------------
