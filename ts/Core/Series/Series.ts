@@ -4129,8 +4129,6 @@ class Series {
         options: DeepPartial<SeriesTypeOptions>,
         redraw?: boolean
     ): void {
-        // Save full mapData before options cleaning below
-        const mapData = options && options.mapData;
 
         options = cleanRecursively(options, this.userOptions);
 
@@ -4221,19 +4219,7 @@ class Series {
                 preserve.push(key + 'Data');
             });
 
-            let hasMapDataChanged;
-
-            // When updating the series.mapData, current value is required
-            // to be set before series.setData(), #11636
-            if (mapData) {
-                hasMapDataChanged = series.options.mapData !== mapData;
-
-                if (hasMapDataChanged) {
-                    series.options.mapData = mapData;
-                }
-            }
-
-            if (options.data || hasMapDataChanged) {
+            if (options.data) {
                 // setData uses dataSorting options so we need to update them
                 // earlier
                 if (options.dataSorting) {
