@@ -58,6 +58,7 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     fireEvent,
     getNestedProperty,
@@ -1019,6 +1020,8 @@ class MapSeries extends ScatterSeries {
             if (mapData.type === 'FeatureCollection') {
                 this.mapTitle = mapData.title;
                 mapData = H.geojson(mapData, this.type, this);
+            } else {
+                mapData = isArray(mapData) ? mapData : mapData.features;
             }
 
             this.mapData = mapData;
@@ -1294,6 +1297,30 @@ SeriesRegistry.registerSeriesType('map', MapSeries);
  * */
 
 export default MapSeries;
+
+// To update some map series options (e.g. mapData), we need to have them
+// stored on series (for data recalculation in series.setData) before the new
+// options are merged (before series.init).
+addEvent(MapSeries, 'update', function (
+    eventOptions: { options: MapSeriesOptions }
+): void {
+    const series = this,
+        options = eventOptions.options;
+
+    if (options.mapData) {
+        // Save the current (new) option that will be used in series.setData
+        series.options.mapData = options.mapData;
+
+        // When updating mapData with data, the series.setData(data) will be
+        // fired because the new data exists.
+        // However, when updating mapData without changing the data...
+        if (typeof options.data === 'undefined') {
+            // ... set data to empty array to get series.setData() fired anyway
+            // to recalculate mapData.
+            options.data = [];
+        }
+    }
+});
 
 /* *
  *
