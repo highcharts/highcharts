@@ -101,12 +101,6 @@ extend(
          * @since    next
          * @product  highcharts
          */
-        breadcrumbsToLabel: '&#8594',
-
-        /**
-         * @since    next
-         * @product  highcharts
-         */
         mainBreadcrumb: 'Main'
     }
 );
@@ -270,28 +264,26 @@ class Breadcrumbs {
          */
         separator: {
             /**
-             * A predefined shape or symbol for the separator. Other possible
-             *  values are `'circle'`, `'square'`,`'diamond'`.
-             * Custom callbacks for symbol path generation can also be added to
-             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
-             * used by its method name.
-             *
-             * Additionally, the URL to a graphic can be given on this form:
-             * `'url(graphic.png)'`. Note that for the image to be applied to
-             * exported charts, its URL needs to be accessible by the export
-             * server. Recommended size of image is 10x10px.
-             *
              * @type      {string}
-             * @since     next
+             * @since    next
+             * @product  highcharts
              */
-            symbol: 'triangle-right',
+            text: '&#8594',
             /**
-             * The size of the separator
+             * CSS styles for separator.
              *
-             * @type      {number}
-             * @since     next
+             * In styled mode, the breadcrumbs separators are styled by the
+             * `.highcharts-separator` rule with its
+             * different states.
+             *  @type {Highcharts.CSSObject}
+             *  @since     next
              */
-            size: 10
+            style: {
+                align: 'middle',
+                fill: Palette.backgroundColor,
+                lineWidth: 1,
+                stroke: Palette.neutralColor100
+            }
         },
 
         /**
@@ -878,14 +870,12 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            lang = chart.options.lang,
             separatorOptions = breadcrumbsOptions.separator;
 
         let separator;
-
-        if (separatorOptions && lang && lang.breadcrumbsToLabel) {
+        if (separatorOptions) {
             separator = chart.renderer.label(
-                lang.breadcrumbsToLabel,
+                separatorOptions.text,
                 posX,
                 posY,
                 void 0 as any,
@@ -896,12 +886,7 @@ class Breadcrumbs {
                 .add(breadcrumbs.group);
 
             if (!chart.styledMode) {
-                separator.css({
-                    align: 'middle',
-                    fill: Palette.backgroundColor,
-                    lineWidth: 1,
-                    stroke: Palette.neutralColor100
-                });
+                separator.css(separatorOptions.style);
             }
         }
 
@@ -1151,8 +1136,8 @@ namespace Breadcrumbs {
         ): (string);
     }
     export interface SeparatorOptions {
-        symbol?: string;
-        size?: number;
+        text: string;
+        style: CSSObject
     }
 }
 
