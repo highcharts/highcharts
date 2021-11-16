@@ -115,8 +115,28 @@ const finalMap = function () {
                     },
                     valueSuffix: '/km²'
                 },
+                lang: {
+                    accessibility: {
+                        chartContainerLabel: '',
+                        screenReaderSection: {
+                            beforeRegionLabel: '',
+                            endOfChartMarker: ''
+                        }
+                    }
+                },
+                accessibility: {
+                    screenReaderSection: {
+                        beforeChartFormat: "<h1>Population density</h1><p>Interactive map showing population density of the world's countries.</p>"
+                    }
+                },
                 series: [{
                     data: data,
+                    accessibility: {
+                        keyboardNavigation: {
+                            enabled: false
+                        },
+                        exposeAsGroupOnly: true
+                    },
                     mapData: Highcharts.maps['custom/world-highres'],
                     joinBy: ['iso-a2', 'code'],
                     name: 'Population density',
