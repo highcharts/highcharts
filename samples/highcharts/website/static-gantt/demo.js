@@ -93,6 +93,8 @@ const ganttChart = function () {
                         scrollMask.style.fill = '#2F2B38';
                     }
 
+                    chart.series[0].points[6].onMouseOver();
+
                     if (!big) {
                         chart.update({
                             chart: {

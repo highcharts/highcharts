@@ -250,8 +250,8 @@ textarea {
 .highcharts-tooltip.highcharts-color-0,
 .highcharts-tooltip.highcharts-color-1,
 .highcharts-tooltip.highcharts-color-2 {
-    fill: #fff;
-    stroke: #46465c;
+    fill: #f0f0f0;
+    stroke: #f0f0f0;
 }
 
 /* CHART */

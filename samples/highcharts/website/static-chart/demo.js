@@ -41,6 +41,7 @@ const iceberg = {
                 const plotBackground = document.getElementsByClassName('highcharts-plot-background')[0];
                 const title = document.getElementsByClassName('highcharts-title')[0];
 
+
                 cover.style.fill =  '#30426B';
                 background.style.fill = '#f0f0f0';
                 plotBackground.style.transition = 'none';
@@ -119,22 +120,33 @@ const iceberg = {
     credits: {
         enabled: false
     },
+    lang: {
+        accessibility: {
+            chartContainerLabel: '',
+            screenReaderSection: {
+                beforeRegionLabel: '',
+                endOfChartMarker: ''
+            }
+        }
+    },
     accessibility: {
-        keyboardNavigation:
-                {
-                    enabled: true
-                },
-        point: {
-            descriptionFormat: ''
+        screenReaderSection: {
+            beforeChartFormat: '<h1>{chartTitle}</h1><p>Interactive chart displaying 5 different styles of icebergs, their approximate size, and how frequently they occur in Iceberg Alley.</p><p>The visualization has shapes of icebergs laid out next to each other on the X-axis, with the Y-axis showing size in meters, both above and below water.</p>'
         },
+        landmarkVerbosity: 'disabled',
         series: {
             descriptionFormatter: function (series) {
-                return series.name;
+                return series.options.accessibility.description;
+            }
+        },
+        keyboardNavigation: {
+            focusBorder: {
+                enabled: false
             }
         }
     },
     title: {
-        text: 'Distribution of Icebergs in Iceberg Alley<p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
+        text: 'Distribution of Icebergs in Iceberg Alley <p style="text-align:center;margin:0px;font-weight:300;font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
         floating: true
 
@@ -217,8 +229,8 @@ const iceberg = {
                         color = '#000';
                     }
                     return `
-                    <p style="color:${color}">${label}</p>
-                  `;
+                <p style="color:${color}">${label}</p>
+              `;
                 }
             },
             visible: true
@@ -238,17 +250,20 @@ const iceberg = {
         enabled: false
     },
     tooltip: {
-        enabled: true,
+        enabled: false,
+        hideDelay: 0,
+        shared: true,
         useHTML: true,
         headerFormat: '',
-        outside: true,
-        distance: 70
+        positioner: function () {
+            //return { x: 130, y: 365 };
+            return { x: 53, y: 1170 };
+        }
     },
     plotOptions: {
         series: {
             borderWidth: 0,
             opacity: 1,
-            trackByArea: true,
             dataLabels: {
                 enabled: false,
                 allowOverlap: true
@@ -263,36 +278,41 @@ const iceberg = {
                 inactive: {
                     enabled: false
                 }
+            },
+            accessibility: {
+                exposeAsGroupOnly: true,
+                enabled: false
             }
         },
         pie: {
             animation: false
         },
         line: {
-
             animation: false,
             marker: {
                 enabled: false,
                 symbol: 'circle'
 
+            },
+            tooltip: {
+                pointFormatter: function () {
+                    return '';
+                }
             }
         },
         arearange: {
-            accessibility: {
-                enabled: false
+            tooltip: {
+                pointFormatter: function () {
+                    return '';
+                }
             }
         },
         scatter: {
             marker: {
                 enabled: false
             },
-            animation: false,
-            accessibility: {
-                enabled: false
-            }
-
+            animation: false
         }
-
     },
     series: [
 
@@ -300,28 +320,27 @@ const iceberg = {
         {
             type: 'arearange',
             name: 'bottom',
+            tooltip: {
+                pointFormatter: function () {
+                    return '';
+                }
+            },
             animation: false,
             className: 'cover',
-            enableMouseTracking: false,
             data: [
                 { x: 0, low: -2, high: 8 },
                 { x: 4, low: -2, high: 8 },
                 { x: 20, low: -2, high: 8 }
             ],
-            zIndex: 2,
-            visible: true,
-            accessibility: {
-                enabled: false
-            }
+            zIndex: 22,
+            visible: true
+
         },
         //1 iceberg types
         {
             type: 'scatter',
             className: 'iceberg-typesX',
             xAxis: 2,
-            accessibility: {
-                enabled: false
-            },
             marker: {
                 enabled: false,
                 radius: 1
@@ -357,55 +376,41 @@ const iceberg = {
         },
         ///2 berg 1 bottom
         {
-            type: 'arearange',
+            type: 'line',
             name: 'Pinnacle Icebergs',
             className: 'berg-depth',
             tooltip: {
-                distance: 70,
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
-                        <span>
-                        Pinnacle icebergs</span> - a 
-                        large central spire or pyramid.</p>`;
+                    return `<p class="berg-tip" aria-hidden="true">
+                    <span>
+                    Pinnacle icebergs</span> - a 
+                    large central spire or pyramid.</p>`;
                 }
             },
             xAxis: 2,
             zIndex: 50,
-            trackByArea: false,
             visible: true,
             marker: {
                 enabled: false
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Pinnacle icebergs have a large central spire or pyramid and comprise 33% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Pinnacle icebergs have a large central spire or pyramid and comprise 33% of icebergs found in Iceberg Alley. They are the tallest style of iceberg, reaching over 120m above and below water.'
             },
             data: [
                 {
-                    x: 0.2,
-                    high: 8,
-                    low: 8
+                    x: 0.24,
+                    y: 8
                 },
                 {
                     x: 2.44,
-                    low: 0,
-                    high: 8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    y: 0.64,
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 2.45,
-                    high: 8,
-                    low: 8,
-                    accessibility: {
-                        enabled: false
-                    }
-
+                    y: 8,
+                    accessibility: { enabled: false }
                 }
             ]
         },
@@ -420,30 +425,6 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
-            },
-            accessibility: {
-                enabled: false
-            },
-            tooltip: {
-                distance: 70,
-                pointFormatter: function () {
-                    return `<p class="berg-tip">
-                        <span>
-                        Pinnacle icebergs</span> - a 
-                        large central spire or pyramid.</p>`;
-                }
-            },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        chart.series[2].setState('hover');
-                        setTimeout(function () {
-                            document.querySelector('.highcharts-tooltip').style.opacity = 1;
-                            document.querySelector('.highcharts-tooltip').style.fill = '#46465C;';
-                        }, 10);
-                    }
-                }
             },
             data: [
                 {
@@ -460,11 +441,11 @@ const iceberg = {
                         y: 50,
                         formatter: function () {
                             const htmlString =
-                                    `<div class="berg-label">
-                                        <p class="label-title" 
-                                        style="font-weight:700;">Pinnacle</p>
-                                        <p  class="label-percent">33%</p>
-                                    </div>`;
+                                `<div class="berg-label">
+                                    <p class="label-title" 
+                                    style="font-weight:700;">Pinnacle</p>
+                                    <p  class="label-percent">33%</p>
+                                </div>`;
                             return htmlString;
                         }
                     }
@@ -480,18 +461,10 @@ const iceberg = {
             type: 'line',
             accessibility: {
                 enabled: true,
-                descriptionFormatter: function () {
-                    return 'Tabular icebergs';
-                },
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Tabular icebergs are horizontal and flat-topped and comprise 23% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Tabular icebergs are horizontal and flat-topped and comprise 23% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
             },
             name: 'Tabular Icebergs',
             className: 'berg-depth',
-            trackByArea: false,
             zIndex: 50,
             xAxis: 2,
             visible: false,
@@ -499,11 +472,10 @@ const iceberg = {
                 enabled: false
             },
             tooltip: {
-                distance: 70,
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
-                                <span>Tabular icebergs</span> - 
-                                horizontal and flat-topped.</p>`;
+                    return `<p class="berg-tip" aria-hidden="true">
+                            <span>Tabular icebergs</span> - 
+                            horizontal and flat-topped.</p>`;
 
                 }
             },
@@ -515,34 +487,19 @@ const iceberg = {
                 {
                     x: 4.3,
                     y: 4.32,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 6,
                     y: 5.3,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 6.72,
                     y: 8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 }
             ]
-            // point: {
-            //     events: {
-            //         mouseOver: function () {
-            //             setTimeout(function () {
-            //                 document.querySelector('.highcharts-tooltip').style.opacity = 1;
-            //             }, 100);
-            //         }
-            //     }
-            // }
         },
         ///5 berg-2 top
         {
@@ -555,27 +512,6 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
-            },
-            accessibility: {
-                enabled: false
-            },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        chart.series[4].setState('hover');
-                        document.querySelector('.highcharts-tooltip').style.opacity = 1;
-                        document.querySelector('.highcharts-tooltip').style.fill = '#46465C;';
-                    }
-                }
-            },
-            tooltip: {
-                pointFormatter: function () {
-                    return `<p class="berg-tip">
-                                <span>Tabular icebergs</span> - 
-                                horizontal and flat-topped.</p>`;
-
-                }
             },
             data: [
                 {
@@ -592,11 +528,11 @@ const iceberg = {
                         y: 10,
                         formatter: function () {
                             const htmlString =
-                                    `<div class="berg-label">
-                                        <p class="label-title" 
-                                        style="font-weight:700;">Tabular</p>
-                                        <p  class="label-percent">23%</p>
-                                    </div>`;
+                                `<div class="berg-label">
+                                    <p class="label-title" 
+                                    style="font-weight:700;">Tabular</p>
+                                    <p  class="label-percent">23%</p>
+                                </div>`;
                             return htmlString;
                         }
                     }
@@ -624,18 +560,14 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
-                        <span>Dry Dock icebergs</span> - eroded into a 
-                        U shape.</p>`;
+                    return `<p class="berg-tip" aria-hidden="true">
+                    <span>Dry Dock icebergs</span> - eroded into a 
+                    U shape.</p>`;
                 }
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Dry Dock icebergs have eroded into a U shape and comprise 19% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Dry Dock icebergs have eroded into a U shape and comprise 19% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above and below water.'
             },
             data: [
                 {
@@ -645,30 +577,22 @@ const iceberg = {
                 {
                     x: 8.4,
                     y: 4.4,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 9.3,
                     y: 7,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 10.5,
                     y: 5.8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 },
                 {
                     x: 11.24,
                     y: 8,
-                    accessibility: {
-                        enabled: false
-                    }
+                    accessibility: { enabled: false }
                 }
             ]
         },
@@ -684,26 +608,6 @@ const iceberg = {
             marker: {
                 enabled: false
             },
-            accessibility: {
-                enabled: false
-            },
-            tooltip: {
-                pointFormatter: function () {
-                    return `<p class="berg-tip">
-                        <span>Dry Dock icebergs</span> - eroded into a 
-                        U shape.</p>`;
-                }
-            },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        chart.series[6].setState('hover');
-                        document.querySelector('.highcharts-tooltip').style.opacity = 1;
-                        document.querySelector('.highcharts-tooltip').style.fill = '#46465C;';
-                    }
-                }
-            },
             data: [
                 {
                     x: 8.3,
@@ -716,14 +620,14 @@ const iceberg = {
                         enabled: true,
                         useHTML: true,
                         x: 35,
-                        y: 15,
+                        y: 5,
                         formatter: function () {
                             const htmlString =
-                                    `<div class="berg-label">
-                                        <p class="label-title" 
-                                        style="font-weight:700;">Dry Dock</p>
-                                        <p  class="label-percent">19%</p>
-                                    </div>`;
+                                `<div class="berg-label">
+                                    <p class="label-title" 
+                                    style="font-weight:700;">Dry Dock</p>
+                                    <p  class="label-percent">19%</p>
+                                </div>`;
                             return htmlString;
                         }
                     }
@@ -755,18 +659,14 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p style="width:200px"  class="berg-tip">
-                                    <span>Dome icebergs</span> - large, 
-                                    smooth, rounded tops.</p>`;
+                    return `<p class="berg-tip" aria-hidden="true">
+                                <span>Dome icebergs</span> - large, 
+                                smooth, rounded tops.</p>`;
                 }
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Dome icebergs have smooth, rounded tops and comprise 15% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Dome icebergs have smooth, rounded tops and comprise 15% of icebergs found in Iceberg Alley. They are medium sized, and often reach 60m above water, and 40m below.'
             },
             data: [{
                 x: 12.5,
@@ -775,30 +675,22 @@ const iceberg = {
             {
                 x: 13.8,
                 y: 5.3,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14,
                 y: 5.2,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14.2,
                 y: 5.3,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 14.8,
                 y: 8,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             }
             ]
         },
@@ -814,26 +706,6 @@ const iceberg = {
             marker: {
                 enabled: false
             },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        chart.series[8].setState('hover');
-                        document.querySelector('.highcharts-tooltip').style.opacity = 1;
-                        document.querySelector('.highcharts-tooltip').style.fill = '#46465C;';
-                    }
-                }
-            },
-            accessibility: {
-                enabled: false
-            },
-            tooltip: {
-                pointFormatter: function () {
-                    return `<p class="berg-tip">
-                        <span>Dome icebergs</span> - large, 
-                        smooth, rounded tops.</p>`;
-                }
-            },
             data: [{
                 x: 12.5,
                 y: 8
@@ -845,14 +717,14 @@ const iceberg = {
                     enabled: true,
                     useHTML: true,
                     x: 5,
-                    y: 0,
+                    y: -5,
                     formatter: function () {
                         const htmlString =
-                                `<div class="berg-label">
-                                    <p class="label-title" 
-                                    style="font-weight:700;">Dome</p>
-                                    <p  class="label-percent">15%</p>
-                                </div>`;
+                            `<div class="berg-label">
+                                <p class="label-title" 
+                                style="font-weight:700;">Dome</p>
+                                <p  class="label-percent">15%</p>
+                            </div>`;
                         return htmlString;
                     }
                 }
@@ -883,20 +755,16 @@ const iceberg = {
             },
             tooltip: {
                 pointFormatter: function () {
-                    return `<p class="berg-tip">
-                                <span>Wedge icebergs</span> - tabular 
-                                icebergs that have
-                                tilted.</p>`;
+                    return `<p class="berg-tip" aria-hidden="true">
+                            <span>Wedge icebergs</span> - tabular 
+                            icebergs that have
+                            tilted.</p>`;
 
                 }
             },
             accessibility: {
                 enabled: true,
-                point: {
-                    descriptionFormatter: function () {
-                        return 'Wedge icebergs are tabular icebergs that have tilted and comprise 10% of icebergs found in Iceberg Alley.';
-                    }
-                }
+                description: 'Wedge icebergs are tabular icebergs that have tilted and comprise 10% of icebergs found in Iceberg Alley. They are smaller sized than the others, reaching just a few metres below water, and around 40m above.'
             },
             data: [{
                 x: 16.12,
@@ -905,16 +773,12 @@ const iceberg = {
             {
                 x: 16.32,
                 y: 7.5,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             },
             {
                 x: 17.27,
                 y: 8,
-                accessibility: {
-                    enabled: false
-                }
+                accessibility: { enabled: false }
             }]
         },
         { //11 berg 5 top
@@ -925,29 +789,7 @@ const iceberg = {
             xAxis: 2,
             yAxis: 1,
             visible: true,
-            tooltip: {
-                pointFormatter: function () {
-                    return `<p class="berg-tip">
-                                <span>Wedge icebergs</span> - tabular 
-                                icebergs that have
-                                tilted.</p>`;
-
-                }
-            },
-            point: {
-                events: {
-                    mouseOver: function () {
-                        const chart = this.series.chart;
-                        chart.series[10].setState('hover');
-                        document.querySelector('.highcharts-tooltip').style.opacity = 1;
-                        document.querySelector('.highcharts-tooltip').style.fill = '#46465C;';
-                    }
-                }
-            },
             marker: {
-                enabled: false
-            },
-            accessibility: {
                 enabled: false
             },
             data: [{
@@ -964,11 +806,11 @@ const iceberg = {
                     y: -5,
                     formatter: function () {
                         const htmlString =
-                                `<div class="berg-label">
-                                    <p class="label-title" 
-                                    style="font-weight:700;">Wedge</p>
-                                    <p  class="label-percent">10%</p>
-                                </div>`;
+                            `<div class="berg-label">
+                                <p class="label-title" 
+                                style="font-weight:700;">Wedge</p>
+                                <p  class="label-percent">10%</p>
+                            </div>`;
                         return htmlString;
                     }
                 }
@@ -985,6 +827,12 @@ const iceberg = {
                 maxWidth: 250
             },
             chartOptions: {
+                tooltip: {
+                    positioner: function () {
+                        //return { x: 130, y: 365 };
+                        return { x: 50, y: 165 };
+                    }
+                },
                 subtitle: {
                     y: 200,
                     x: 0
@@ -997,6 +845,11 @@ const iceberg = {
                 maxWidth: 300 ///up to 300
             },
             chartOptions: {
+                tooltip: {
+                    positioner: function () {
+                        return { x: 50, y: 200 };
+                    }
+                },
                 subtitle: {
                     y: 240,
                     x: 0
@@ -1009,6 +862,12 @@ const iceberg = {
                 maxWidth: 499
             },
             chartOptions: {
+                tooltip: {
+                    positioner: function () {
+                        //return { x: 130, y: 365 };
+                        return { x: 70, y: 265 };
+                    }
+                },
                 subtitle: {
                     y: 280,
                     x: 20
@@ -1020,6 +879,11 @@ const iceberg = {
                 minWidth: 500
             },
             chartOptions: {
+                tooltip: {
+                    positioner: function () {
+                        return { x: 105, y: 360 };
+                    }
+                },
                 subtitle: {
                     y: 360,
                     x: 10
