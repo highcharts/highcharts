@@ -228,13 +228,17 @@ class MapView {
             scale = this.getScale();
 
         if (bounds) {
-            const width = (bounds.x2 - bounds.x1) * scale,
+            const p1 = this.projectedUnitsToPixels({
+                    x: bounds.x1,
+                    y: bounds.y2
+                }),
+                width = (bounds.x2 - bounds.x1) * scale,
                 height = (bounds.y2 - bounds.y1) * scale;
             return {
                 width,
                 height,
-                x: (this.chart.plotWidth - width) / 2,
-                y: (this.chart.plotHeight - height) / 2
+                x: p1.x,
+                y: p1.y
             };
         }
 

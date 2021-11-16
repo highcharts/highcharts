@@ -1,5 +1,5 @@
 Highcharts.getJSON(
-    'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json',
+    'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json',
     // 'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json',
     topology => {
 
