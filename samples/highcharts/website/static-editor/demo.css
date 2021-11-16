@@ -580,6 +580,10 @@ body {
     border-left: 0.3em solid transparent;
 }
 
+.dropdown-toggle:focus {
+    outline: 3px solid #7E96B9;
+}
+
 .chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
 .chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
 .chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
