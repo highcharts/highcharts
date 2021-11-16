@@ -337,7 +337,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
             breadcrumbs: {
                 showFullPath: true,
                 buttonSpacing: 0,
-                buttonTheme: {
+                theme: {
                     padding: 0
                 },
                 position: {

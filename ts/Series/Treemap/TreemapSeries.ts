@@ -994,9 +994,9 @@ class TreemapSeries extends ScatterSeries {
      *
      * @requires  modules/breadcrumbs
      *
-     * @function Highcharts.Breadcrumbs#calculateLevel
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
+     * @function TreemapSeries#calculateLevel
+     * @param {TreemapSeries} this
+     *        Treemap Series class.
      */
     public calculateLevel(this: TreemapSeries): void {
         const breadcrumbs = this.chart.breadcrumbs,
@@ -1008,10 +1008,14 @@ class TreemapSeries extends ScatterSeries {
     }
 
     /**
-     * createLevelList
-     *
-     * @private
-     */
+    * Create level list.
+    *
+    * @requires  modules/breadcrumbs
+    *
+    * @function TreemapSeries#createLevelList
+    * @param {TreemapSeries} this
+    *        Treemap Series class.
+    */
     public createLevelList(e: any): any {
         const breadcrumbs = this.chart.breadcrumbs,
             list: Array<Breadcrumbs.BreadcrumbOptions> = breadcrumbs && breadcrumbs.list || [],
@@ -1058,11 +1062,11 @@ class TreemapSeries extends ScatterSeries {
     /**
     * Update list after the drillUp.
     *
-    * @requires  modules/breadcrums
+    * @requires  modules/breadcrumbs
     *
-    * @function Highcharts.Breadcrumbs#updateBreadcrumbsList
-    * @param {Highcharts.Breadcrumbs} this
-    *        Breadcrumbs class.
+    * @function TreemapSeries#updateBreadcrumbsList
+    * @param {TreemapSeries} this
+    *        Treemap Series class.
     */
     public updateBreadcrumbsList(this: TreemapSeries): void {
         const breadcrumbs = this.chart.breadcrumbs;

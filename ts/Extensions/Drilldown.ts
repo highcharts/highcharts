@@ -206,7 +206,6 @@ declare global {
             );
             allowPointDrilldown?: boolean;
             animation?: (boolean|Partial<AnimationOptions>);
-            /** @deprecated */
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
@@ -518,12 +517,12 @@ defaultOptions.drilldown = {
     },
 
     /**
-     * @deprecated
-     * This option is deprecated since 9.3.2, use drilldown.breadcrumbs instead.
      *
      * Options for the drill up button that appears when drilling down on a
      * series. The text for the button is defined in
      * [lang.drillUpText](#lang.drillUpText).
+     *
+     * This option is deprecated since 9.3.2, use drilldown.breadcrumbs instead.
      *
      * @sample {highcharts} highcharts/drilldown/drillupbutton/
      *         Drill up button
@@ -532,6 +531,8 @@ defaultOptions.drilldown = {
      *
      * @since   3.0.8
      * @product highcharts highmaps
+     *
+     * @deprecated
      */
     drillUpButton: {
         /**
@@ -1083,21 +1084,24 @@ addEvent(Chart, 'afterInit', function (): void {
 addEvent(Chart, 'afterShowResetZoom', function (): void {
     const chart = this,
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton,
+        breadcrumbsOptions = chart.breadcrumbs && chart.breadcrumbs.options;
     if (
         this.drillUpButton &&
         bbox &&
         buttonOptions &&
         buttonOptions.position &&
         buttonOptions.position.x &&
-        chart.breadcrumbs &&
-        chart.breadcrumbs.options.relativeTo === 'plotBox'
+        breadcrumbsOptions &&
+        breadcrumbsOptions.position.align === 'right' &&
+        breadcrumbsOptions.relativeTo === 'plotBox'
     ) {
         this.drillUpButton.align({
-            x: -bbox.width
+            x: -bbox.width,
+            y: -bbox.height
         },
-        true,
-        chart.breadcrumbs.options.relativeTo || 'plotBox'
+        false,
+        breadcrumbsOptions.relativeTo || 'plotBox'
         );
     }
 });

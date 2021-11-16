@@ -233,9 +233,6 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
         ],
         drilldown: {
             breadcrumbs: {
-                position: {
-                    y: 30
-                },
                 floating: true,
                 showFullPath: false
             },
@@ -328,7 +325,6 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
 
     // Click reset zoom.
     Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
-
 
     // Zoom again on second level
     controller.pan(
