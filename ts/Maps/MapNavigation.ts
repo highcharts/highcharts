@@ -241,25 +241,31 @@ MapNavigation.prototype.update = function (
                 height: 2 * button.height
             });
 
+            if (button.element) {
+                const expOptions = chart.options.exporting,
+                    expBtn = (expOptions && expOptions.buttons && expOptions.buttons.contextButton);
+
+                // If the nav buttons are on the same side
+                if (expBtn && defined(buttonOptions.y) && chart.exportingGroup) {
+                    if (chart.options && chart.title &&
+                        chart.title.textStr === '' &&
+                        chart.subtitle && chart.subtitle.textStr === '' &&
+                        (
+                            (buttonOptions.align === 'right' && !expBtn.align) ||
+                            (expBtn.align === buttonOptions.align)
+                        )) {
+                        // (#15782) Make way for hamburger icon.
+                        buttonOptions.y += chart.exportingGroup.getBBox().height * 1.2;
+                    }
+                }
+                button.align(buttonOptions, false, buttonOptions.alignTo);
+            }
+
             if (!chart.hasLoaded) {
                 // Align it after the plotBox is known (#12776)
                 const unbind = addEvent(chart, 'load', (): void => {
                     // #15406: Make sure button hasnt been destroyed
                     if (button.element) {
-                        const expOptions = chart.options.exporting,
-                            expBtn = (expOptions && expOptions.buttons && expOptions.buttons.contextButton);
-
-                        // If the nav buttons are on the same side
-                        if (expBtn && defined(buttonOptions.y) && chart.exportingGroup) {
-                            if (chart.options && chart.title && chart.title.textStr === '' &&
-                                (
-                                    (buttonOptions.align === 'right' && !expBtn.align) ||
-                                    (expBtn.align === buttonOptions.align)
-                                )) {
-                                // (#15782) Make way for hamburger icon.
-                                buttonOptions.y += chart.exportingGroup.getBBox().height * 1.2;
-                            }
-                        }
                         button.align(buttonOptions, false, buttonOptions.alignTo);
                     }
                     unbind();
