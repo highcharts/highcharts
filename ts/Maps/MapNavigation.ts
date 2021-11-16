@@ -258,7 +258,6 @@ MapNavigation.prototype.update = function (
                         buttonOptions.y += chart.exportingGroup.getBBox().height * 1.2;
                     }
                 }
-                button.align(buttonOptions, false, buttonOptions.alignTo);
             }
 
             if (!chart.hasLoaded) {
