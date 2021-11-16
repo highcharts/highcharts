@@ -804,7 +804,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     ];
 
     // Initialize the chart
-    $('#container').highcharts('Map', {
+    const chart = Highcharts.mapChart('container', {
         title: {
             text: 'Highmaps basic demo'
         },
@@ -866,5 +866,30 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         after,
         before,
         'The view should not change after updating data values'
+    );
+
+    chart.update({
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                align: 'right',
+                verticalAlign: ''
+            }
+        }
+    });
+
+    const mapNavY = chart.mapNavButtons[0].alignAttr.y,
+        exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
+
+    assert.notEqual(
+        mapNavY,
+        exportIconY,
+        '#15782, mapNav should not overlap with export icon.'
     );
 });
