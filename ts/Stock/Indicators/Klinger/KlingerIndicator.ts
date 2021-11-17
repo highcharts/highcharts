@@ -114,7 +114,8 @@ class KlingerIndicator extends SMAIndicator {
         tooltip: {
             pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
                 '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.signalLine.styles.lineColor}">Signal</span>' +
+                '<span style="color: {point.series.options.signalLine.styles.lineColor}">' +
+                    'Signal</span>' +
                     ': {point.signal}<br/>'
         }
     } as KlingerOptions);
@@ -373,6 +374,7 @@ interface KlingerIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(KlingerIndicator.prototype, {
+    areaLinesNames: [],
     linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],

@@ -221,7 +221,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);
-    public screenReaderSections: Record<string, InfoRegionsComponent.ScreenReaderSectionObject> = {};
+    public screenReaderSections: Record<string, InfoRegionsComponent.ScreenReaderSectionObject> =
+        {};
     public sonifyButton?: (DOMElementType|null);
     public sonifyButtonId?: string;
     public viewDataTableButton?: (''|DOMElementType|null);
@@ -443,7 +444,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
+            labelText = chart.langFormat(
+                labelLangKey,
+                { chart: chart, chartTitle: getChartTitle(chart) }
+            ),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 

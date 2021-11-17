@@ -1,31 +1,34 @@
-.btn1, .btn2{
-	display: inline-flex;
+.btn1,
+.btn2 {
+    display: inline-flex;
 }
 
-.highcharts-description, legend, label {
-	font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+.highcharts-description,
+legend,
+label {
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
 }
 
 .highcharts-description {
-	text-align: center;
+    text-align: center;
 }
 
 fieldset {
-	border: none;
+    border: none;
 }
+
 .container {
-	width: 100%;
-	height: 100%;
-	margin-bottom: 15px;
-	float: left;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 15px;
+    float: left;
 }
 
-@media (min-width: 768px){
-	.container {
-		width: 50%;
-		height: 400px;
-		margin-bottom: 15px;
-		float: left;
-	}
+@media (min-width: 768px) {
+    .container {
+        width: 50%;
+        height: 400px;
+        margin-bottom: 15px;
+        float: left;
+    }
 }
-

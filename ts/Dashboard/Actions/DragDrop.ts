@@ -20,23 +20,25 @@ const {
  * Class providing a drag and drop functionality.
  */
 class DragDrop {
+
     /* *
-    *
-    *  Static Properties
-    *
-    * */
+     *
+     *  Static Properties
+     *
+     * */
+
     protected static readonly defaultOptions: DragDrop.Options = {
         enabled: true,
         rowDropOffset: 30,
         cellDropOffset: 30,
         dropPointerSize: 16
-    }
+    };
 
     /* *
-    *
-    *  Constructors
-    *
-    * */
+     *
+     *  Constructors
+     *
+     * */
 
     /**
      * Constructor for the DragDrop class.
@@ -77,10 +79,10 @@ class DragDrop {
     }
 
     /* *
-    *
-    *  Properties
-    *
-    * */
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * The editMode reference.
@@ -305,10 +307,15 @@ class DragDrop {
 
                 // Show toolbars and snaps.
                 if (dragDrop.editMode.editCellContext) {
-                    dragDrop.editMode.showToolbars(['row', 'cell'], dragDrop.editMode.editCellContext);
+                    dragDrop.editMode.showToolbars(
+                        ['row', 'cell'],
+                        dragDrop.editMode.editCellContext
+                    );
 
                     if (dragDrop.editMode.resizer) {
-                        dragDrop.editMode.resizer.setSnapPositions(dragDrop.editMode.editCellContext);
+                        dragDrop.editMode.resizer.setSnapPositions(
+                            dragDrop.editMode.editCellContext
+                        );
                     }
                 }
             } else if (dragDrop.dragEndCallback) {
@@ -341,7 +348,10 @@ class DragDrop {
         let updateDropPointer = false;
 
         if (mouseCellContext) {
-            const context = contextDetails || ContextDetection.getContext(mouseCellContext, e, offset);
+            const context = (
+                contextDetails ||
+                ContextDetection.getContext(mouseCellContext, e, offset)
+            );
             const align = context.side;
 
             if (
@@ -362,8 +372,11 @@ class DragDrop {
                 if (!dragDrop.dropPointer.isVisible || updateDropPointer) {
                     dragDrop.showDropPointer(
                         dropContextRowOffsets.left,
-                        dropContextRowOffsets.top + (dragDrop.dropPointer.align === 'bottom' ? height : 0) -
-                            dropPointerSize / 2,
+                        dropContextRowOffsets.top + (
+                            dragDrop.dropPointer.align === 'bottom' ?
+                                height :
+                                0
+                        ) - dropPointerSize / 2,
                         width,
                         dropPointerSize
                     );
@@ -568,8 +581,11 @@ class DragDrop {
                             const pointerWidth = rowOffsets.right - cellOffsets.right;
 
                             dragDrop.showDropPointer(
-                                cellOffsets.left + ((i === 0 && cellOffsets.left > e.clientX) ? 0 : width) -
-                                    dropPointerSize / 2 - dashOffsets.left,
+                                cellOffsets.left + (
+                                    (i === 0 && cellOffsets.left > e.clientX) ?
+                                        0 :
+                                        width
+                                ) - dropPointerSize / 2 - dashOffsets.left,
                                 cellOffsets.top - dashOffsets.top,
                                 pointerWidth > dropPointerSize ? pointerWidth : dropPointerSize,
                                 levelHeight || height
@@ -650,7 +666,9 @@ class DragDrop {
                     // @ToDo temp dimensions - improve when responsive grid.
                     if (draggedCell.container) {
                         draggedCell.container.style.width = '100%';
-                        draggedCell.container.style.height = dragDrop.dropPointer.element.offsetHeight + 'px';
+                        draggedCell.container.style.height = (
+                            dragDrop.dropPointer.element.offsetHeight + 'px'
+                        );
                     }
 
                     // @ToDo temp dimensions - improve when responsive grid.
@@ -697,7 +715,20 @@ class DragDrop {
     }
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace DragDrop {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface Options {
         enabled: boolean;
         rowDropOffset: number;
@@ -711,6 +742,13 @@ namespace DragDrop {
         align: string;
         nested?: boolean;
     }
+
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DragDrop;

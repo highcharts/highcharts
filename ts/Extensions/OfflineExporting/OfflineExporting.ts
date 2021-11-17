@@ -412,6 +412,7 @@ namespace OfflineExporting {
      *
      *
      * @requires modules/exporting
+     * @requires modules/offline-exporting
      */
     function exportChartLocal(
         this: Chart,
@@ -848,7 +849,8 @@ namespace OfflineExporting {
         const width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
-                height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
+                // setting orientation to portrait if height exceeds width
+                height > width ? 'p' : 'l',
                 'pt',
                 [width, height]
             );

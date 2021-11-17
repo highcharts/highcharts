@@ -26,8 +26,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import Color from '../../Core/Color/Color.js';
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -735,14 +734,16 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
-    axisTypes: typeof colorMapSeriesMixin.axisTypes;
+interface HeatmapSeries {
+    axisTypes: ColorMapMixin.ColorMapSeries['axisTypes'];
+    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
+    colorKey: ColorMapMixin.ColorMapSeries['colorKey'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
-    parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
+    parallelArrays: ColorMapMixin.ColorMapSeries['parallelArrays'];
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
-    trackerGroups: typeof colorMapSeriesMixin.trackerGroups;
+    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
 }
 extend(HeatmapSeries.prototype, {
 
@@ -751,9 +752,11 @@ extend(HeatmapSeries.prototype, {
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    axisTypes: colorMapSeriesMixin.axisTypes,
+    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
 
-    colorKey: 'value',
+    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+
+    colorKey: ColorMapMixin.SeriesMixin.colorKey,
 
     directTouch: true,
 
@@ -766,17 +769,15 @@ extend(HeatmapSeries.prototype, {
 
     getSymbol: Series.prototype.getSymbol,
 
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
 
     pointArrayMap: ['y', 'value'],
 
     pointClass: HeatmapPoint,
 
-    trackerGroups: colorMapSeriesMixin.trackerGroups
+    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups
 
 });
-
-ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

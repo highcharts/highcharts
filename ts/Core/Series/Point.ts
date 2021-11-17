@@ -332,7 +332,10 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
+            point.y = Point.prototype.getNestedProperty.call(
+                point,
+                pointValKey
+            ) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),

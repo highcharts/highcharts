@@ -197,7 +197,8 @@ function highlightFirstValidPointInChart(
     delete chart.highlightedPoint;
 
     res = chart.series.reduce(
-        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) => acc || cur.highlightFirstValidPoint(),
+        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) =>
+            acc || cur.highlightFirstValidPoint(),
         false as (boolean|SeriesKeyboardNavigation.PointComposition)
     );
 
@@ -643,7 +644,9 @@ namespace SeriesKeyboardNavigation {
             curPointIndex = curPoint && getPointIndex(curPoint) || 0,
             curPoints = curPoint && curPoint.series.points || [],
             lastSeries = chart.series && chart.series[chart.series.length - 1],
-            lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
+            lastPoint = lastSeries &&
+                lastSeries.points &&
+                lastSeries.points[lastSeries.points.length - 1];
 
         let newSeries: SeriesComposition,
             newPoint: PointComposition;

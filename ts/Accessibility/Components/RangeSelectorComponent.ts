@@ -328,7 +328,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
     ): void {
         const chart = this.chart;
         const rangeSel = chart.rangeSelector;
-        const newIx = chart.highlightedInputRangeIx = (chart.highlightedInputRangeIx || 0) + direction;
+        const newIx = chart.highlightedInputRangeIx = (
+            chart.highlightedInputRangeIx || 0
+        ) + direction;
         const newIxOutOfRange = newIx > 1 || newIx < 0;
 
         if (newIxOutOfRange) {

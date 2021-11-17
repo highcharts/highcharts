@@ -143,7 +143,7 @@ function drawSenkouSpan(
     indicator.options = merge(
         (opt.options.senkouSpan as any).styles,
         opt.gap
-    ) as any;
+    );
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
@@ -775,7 +775,8 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                    .call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -784,7 +785,8 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                .apply(indicator, arguments);
         }
 
         return path;

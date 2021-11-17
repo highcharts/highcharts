@@ -11,12 +11,22 @@ class ContextDetection {
         mouseContext: Cell,
         side: string // right, left, top, bottom
     ): boolean {
-        const visibleElements = (side === 'top' || side === 'bottom') ? mouseContext.row.layout.getVisibleRows() :
-            (side === 'left' || side === 'right') ? mouseContext.row.getVisibleCells() : [];
+        const visibleElements = (side === 'top' || side === 'bottom') ?
+            mouseContext.row.layout.getVisibleRows() :
+            (side === 'left' || side === 'right') ?
+                mouseContext.row.getVisibleCells() :
+                [];
+        const lastElementIndex = (visibleElements.length - 1);
 
         return (
-            (visibleElements[visibleElements.length - 1] === mouseContext && side === 'right') ||
-            (visibleElements[visibleElements.length - 1] === mouseContext.row && side === 'bottom') ||
+            (
+                visibleElements[lastElementIndex] === mouseContext &&
+                side === 'right'
+            ) ||
+            (
+                visibleElements[lastElementIndex] === mouseContext.row &&
+                side === 'bottom'
+            ) ||
             (visibleElements[0] === mouseContext && side === 'left') ||
             (visibleElements[0] === mouseContext.row && side === 'top')
         );
@@ -103,7 +113,12 @@ class ContextDetection {
             ContextDetection.isGUIElementOnParentEdge(mouseCellContext, side) &&
             defined(sideOffset)
         ) {
-            const level = ContextDetection.getContextLevel(mouseCellContext, offset, sideOffset, side);
+            const level = ContextDetection.getContextLevel(
+                mouseCellContext,
+                offset,
+                sideOffset,
+                side
+            );
             const cell = mouseCellContext.getParentCell(level);
 
             if (cell) {

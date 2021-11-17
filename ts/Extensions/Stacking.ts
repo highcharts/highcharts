@@ -341,7 +341,8 @@ class StackItem {
                 r: options.borderRadius || 0,
                 text: str,
                 rotation: (options as any).rotation,
-                padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
+                // set default padding to 5 as it is in datalabels #12308
+                padding: pick((options as any).padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
 

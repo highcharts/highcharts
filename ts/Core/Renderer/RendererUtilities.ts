@@ -76,7 +76,8 @@ namespace RendererUtilities {
         len: number,
         maxDistance?: number
     ): DistributedBoxArray<T> {
-        const origBoxes = boxes as DistributedBoxArray<T>, // Original array will be altered with added .pos
+        // Original array will be altered with added .pos
+        const origBoxes = boxes as DistributedBoxArray<T>,
             reducedLen = origBoxes.reducedLen || len,
             sortByRank = (
                 a: BoxObject,

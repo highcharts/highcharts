@@ -238,6 +238,7 @@ interface StochasticIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(StochasticIndicator.prototype, {
+    areaLinesNames: [],
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],

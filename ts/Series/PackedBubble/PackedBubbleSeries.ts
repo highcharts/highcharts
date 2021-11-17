@@ -686,7 +686,10 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             };
 
         if (layoutOptions.parentNodeOptions) {
-            parentMarkerOptions = merge(layoutOptions.parentNodeOptions.marker || {}, parentMarkerOptions);
+            parentMarkerOptions = merge(
+                layoutOptions.parentNodeOptions.marker || {},
+                parentMarkerOptions
+            );
         }
         series.parentNodeMass = 0;
 
@@ -1040,7 +1043,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      * @param {Array<Highcharts.PackedBubbleData>} allDataPoints All points from all series
      * @return {Array<Highcharts.PackedBubbleData>} Positions of all bubbles
      */
-    public placeBubbles(allDataPoints: Array<PackedBubbleSeries.Data>): Array<PackedBubbleSeries.Data> {
+    public placeBubbles(
+        allDataPoints: Array<PackedBubbleSeries.Data>
+    ): Array<PackedBubbleSeries.Data> {
 
         let series = this,
             checkOverlap = series.checkOverlap,

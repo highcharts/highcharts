@@ -454,7 +454,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: HTMLTableStore.ExportOptions,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options

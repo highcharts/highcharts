@@ -184,7 +184,9 @@ SVGRenderer.prototype.addMarker = function (
 /**
  * @private
  */
-function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
+function createMarkerSetter(
+    markerType: string
+): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
     return function (this: SVGElement, value: string): void {
         this.attr(markerType, 'url(#' + value + ')');
     };

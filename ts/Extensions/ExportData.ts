@@ -619,7 +619,8 @@ Chart.prototype.getDataRows = function (
                 !series.keyToAxis
             ) {
                 if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    const pointArrayMapCheck = series.pointArrayMap
+                        .filter((p): boolean => p === 'x');
                     if (pointArrayMapCheck.length) {
                         series.pointArrayMap.unshift('x');
                         return series.pointArrayMap;

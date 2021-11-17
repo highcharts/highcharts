@@ -313,7 +313,8 @@ class Fx {
             this.pos = (options.easing as Function)(
                 (t - (this.startTime as any)) / duration
             );
-            this.now = (this.start as any) + (((this.end as any) - (this.start as any)) * (this.pos as any));
+            this.now = (this.start as any) + (((this.end as any) -
+                (this.start as any)) * (this.pos as any));
             this.update();
             ret = true;
         }

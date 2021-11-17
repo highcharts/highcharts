@@ -234,8 +234,10 @@ CrookedLine.prototype.defaultOptions = merge(
                         );
 
                         // Update options:
-                        (target.options as any).typeOptions.points[this.index].x = target.points[this.index].x;
-                        (target.options as any).typeOptions.points[this.index].y = target.points[this.index].y;
+                        (target.options as any).typeOptions
+                            .points[this.index].x = target.points[this.index].x;
+                        (target.options as any).typeOptions
+                            .points[this.index].y = target.points[this.index].y;
 
                         target.redraw(false);
                     }

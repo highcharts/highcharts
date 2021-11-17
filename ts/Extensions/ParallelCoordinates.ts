@@ -622,7 +622,9 @@ namespace ParallelAxis {
             chart = axis.chart,
             parallelCoordinates = axis.parallelCoordinates;
 
-        let axisPosition: Array<('left'|'width'|'height'|'top')> = ['left', 'width', 'height', 'top'];
+        let axisPosition: Array<('left'|'width'|'height'|'top')> = [
+            'left', 'width', 'height', 'top'
+        ];
 
         if (chart.hasParallelCoordinates) {
             if (chart.inverted) {
