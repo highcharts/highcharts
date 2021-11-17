@@ -1,5 +1,5 @@
 QUnit.test('Set basemap on chart object', function (assert) {
-    var chart = new Highcharts.MapChart('container', {
+    let chart = new Highcharts.MapChart('container', {
         chart: {
             map: 'countries/ad/ad-all'
         },
@@ -8,7 +8,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
 
     assert.strictEqual(
         chart.series[0].mapData.length,
-        7,
+        Highcharts.maps['countries/ad/ad-all'].features.length,
         'Set map on chart object by string'
     );
 
@@ -19,35 +19,71 @@ QUnit.test('Set basemap on chart object', function (assert) {
         series: [{}]
     });
 
+    const series = chart.series[0],
+        nullColor = Highcharts.seriesTypes.map.defaultOptions.nullColor;
+
     assert.strictEqual(
-        chart.series[0].mapData.length,
-        51,
+        series.mapData.length,
+        // -1 because us map has 1 feature more (type: 'MultiLineString')
+        Highcharts.maps['countries/us/us-all'].features.length - 1,
         'Set map on chart object by GeoJSON object'
     );
 
-    chart.update({
-        chart: {
-            map: 'invalid-map'
-        }
-    }, false);
-
-    chart.series[0].update({
-        mapData: Highcharts.maps['countries/bn-all.js']
+    series.update({
+        mapData: Highcharts.maps['countries/bn/bn-all']
     });
 
     assert.strictEqual(
-        chart.series[0].mapData.length,
-        51,
+        series.mapData.length,
+        Highcharts.maps['countries/bn/bn-all'].features.length,
         'Map on the series object should overrule chart-wide setting.'
     );
 
-    chart.series[0].update({
+    series.update({
+        data: [{ 'hc-key': 'bn-tu' }]
+    });
+
+    assert.notEqual(
+        series.points[0].graphic.attr('fill'),
+        nullColor,
+        `Data should be updated correctly without updating mapData, #11636.`
+    );
+
+    series.update({
+        data: [{ 'hc-key': 'ad-6407' }, { 'hc-key': 'ad-6406' }],
         mapData: Highcharts.maps['countries/ad/ad-all']
     });
 
     assert.strictEqual(
-        chart.series[0].mapData.length,
-        7,
-        'Update new map on series should overrule old series map, #11636.'
+        series.mapData.length,
+        Highcharts.maps['countries/ad/ad-all'].features.length,
+        `New mapData should be updated correctly
+        (when updating with data), #11636.`
+    );
+
+    assert.notEqual(
+        series.points[0].graphic.attr('fill'),
+        nullColor,
+        `New data should be updated correctly
+        (when updating with mapData), #11636.`
+    );
+
+    series.update({
+        data: [],
+        mapData: Highcharts.maps['countries/bn/bn-all']
+    });
+
+    assert.strictEqual(
+        series.mapData.length,
+        Highcharts.maps['countries/bn/bn-all'].features.length,
+        `New mapData should be updated correctly
+        (when updating with empty data), #11636.`
+    );
+
+    assert.strictEqual(
+        series.points[0].graphic.attr('fill'),
+        nullColor,
+        `When updating mapData with empty data, the first point should have
+        a null color, #11636.`
     );
 });
