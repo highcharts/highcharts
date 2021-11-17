@@ -875,9 +875,9 @@ const sankey = {
                     data: []
                 });
                 const p1 = function () {
-                    let count = 0;
+                    //let count = 0;
                     //adds nodes to the sankey
-                    const sankey = setInterval(function () {
+                    /*const sankey = setInterval(function () {
                         if (count < sankeyData.length) {
                             chart.series[0].addPoint({
                                 from: sankeyData[count][0],
@@ -888,7 +888,15 @@ const sankey = {
                         } else {
                             clearInterval(sankey);
                         }
-                    }, 10);
+                    }, 10);*/
+                    
+                    for (let ii = 0; ii < sankeyData.length; ++ii) {
+                        chart.series[0].addPoint({
+                            from: sankeyData[ii][0],
+                            to: sankeyData[ii][1],
+                            weight: sankeyData[ii][2]
+                        });
+                    }
                 };
                 setTimeout(p1, 200);
 
