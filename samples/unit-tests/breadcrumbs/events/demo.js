@@ -42,10 +42,15 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 }]
             }
         }),
-        test = new TestController(chart);
+        test = new TestController(chart),
+        breadrumbs = chart.breadcrumbs;
 
     chart.series[0].points[0].doDrilldown();
-    test.triggerEvent('click', chart.plotLeft + 10, 80, {}, true);
+    test.triggerEvent(
+        'click',
+        chart.plotLeft + 10,
+        chart.breadcrumbs.group.translateY + 10
+    );
 
     const buttons = chart.breadcrumbs.group.element.childNodes;
 
@@ -66,9 +71,14 @@ QUnit.test('Breadcrumbs format', function (assert) {
             }
         }
     });
-    test.triggerEvent('click', chart.plotLeft + 10, 80, {}, true);
-    assert.notOk(
-        chart.breadcrumbs.group,
+    test.triggerEvent(
+        'click',
+        chart.plotLeft + 10,
+        chart.breadcrumbs.group.translateY + 10
+    );
+    assert.strictEqual(
+        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+        0,
         'When click event returns true, drillup should be performed and buttons removed.'
     );
 });

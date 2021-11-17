@@ -104,14 +104,18 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         chart.drillUpButton,
         'Clasic button should not exist.'
     );
-    assert.ok(
-        chart.breadcrumbs.group,
-        'Breadcrumbs group should be created.'
+    assert.strictEqual(
+        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+        2, // one for separators in HTML, one for button in SVG
+        'Breadcrumbs groups should be created.'
     );
     chart.series[0].points[0].doDrilldown();
     chart.series[0].points[0].doDrilldown();
 
-    let buttons = chart.breadcrumbs.group.element.childNodes;
+    let buttons = chart
+        .container
+        .getElementsByClassName('highcharts-breadcrumbs-group')[0]
+        .childNodes;
 
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
@@ -125,12 +129,17 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         'The last button should have text Fruits.'
     );
     chart.breadcrumbs.jumpTo(0);
-    assert.notOk(
-        chart.breadcrumbs.group,
+    assert.strictEqual(
+        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+        0,
         'The breadcrumbsButtonGroup should be destroyed.'
     );
     chart.series[0].points[1].doDrilldown();
-    buttons = chart.breadcrumbs.group.element.childNodes;
+    buttons = chart
+        .container
+        .getElementsByClassName('highcharts-breadcrumbs-group')[0]
+        .childNodes;
+
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Vegetables',

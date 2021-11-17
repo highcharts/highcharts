@@ -82,11 +82,16 @@ QUnit.test('Breadcrumbs button', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.breadcrumbs.group,
-        'Breadcrumbs group should be created.'
+    const domGroup = chart
+        .container
+        .getElementsByClassName('highcharts-breadcrumbs-group');
+
+    assert.strictEqual(
+        domGroup.length,
+        2, // one for separators in HTML, one for button in SVG
+        'Breadcrumbs groups should be created.'
     );
-    const buttons = chart.breadcrumbs.group.element.childNodes;
+    const buttons = domGroup[0].childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Lemon',
@@ -100,8 +105,9 @@ QUnit.test('Breadcrumbs button', function (assert) {
     );
     chart.breadcrumbs.jumpTo(0);
 
-    assert.notOk(
-        chart.breadcrumbs.group,
+    assert.strictEqual(
+        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+        0,
         'The breadcrumbsButtonGroup should be destroyed.'
     );
 });
