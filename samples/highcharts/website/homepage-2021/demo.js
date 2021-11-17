@@ -889,7 +889,7 @@ const sankey = {
                             clearInterval(sankey);
                         }
                     }, 10);*/
-                    
+
                     for (let ii = 0; ii < sankeyData.length; ++ii) {
                         chart.series[0].addPoint({
                             from: sankeyData[ii][0],
