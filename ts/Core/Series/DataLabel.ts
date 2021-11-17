@@ -621,9 +621,15 @@ namespace DataLabel {
 
                     // If the point is outside the plot area, destroy it. #678,
                     // #820
-                    if (dataLabel && (!labelEnabled || !defined(labelText))) {
-                        point.dataLabel =
-                            point.dataLabel && point.dataLabel.destroy();
+                    if (
+                        dataLabel && (
+                            !labelEnabled ||
+                            !defined(labelText) ||
+                            !!dataLabel.div !== !!labelOptions.useHTML
+                        )
+                    ) {
+                        point.dataLabel = dataLabel =
+                            point.dataLabel && point.dataLabel.destroy() as any;
                         if (point.dataLabels) {
                             // Remove point.dataLabels if this was the last one
                             if (point.dataLabels.length === 1) {
@@ -647,11 +653,12 @@ namespace DataLabel {
                                 }
                             }
                         }
+                    }
 
                     // Individual labels are disabled if the are explicitly
                     // disabled in the point options, or if they fall outside
                     // the plot area.
-                    } else if (labelEnabled && defined(labelText)) {
+                    if (labelEnabled && defined(labelText)) {
 
                         if (!dataLabel) {
                             // Create new label element
