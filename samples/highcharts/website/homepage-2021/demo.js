@@ -895,7 +895,8 @@ const sankey = {
                             from: sankeyData[ii][0],
                             to: sankeyData[ii][1],
                             weight: sankeyData[ii][2]
-                        });
+                        }, false);
+                        chart.redraw();
                     }
                 };
                 setTimeout(p1, 200);
