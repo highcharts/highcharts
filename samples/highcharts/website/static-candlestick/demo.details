@@ -1,7 +1,4 @@
----
- name: Highcharts Webiste Homepage Static Chart
+ name: Highcharts Website Homepage Static Chart
  authors:
    - Nancy Dillon
  js_wrap: b
- skipTest: true
-...
