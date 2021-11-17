@@ -1,0 +1,26 @@
+{
+    "cities": {
+        "New York": {
+            "latitude": 40.42,
+            "longitude": -74.00,
+            "googleSpreadsheetKey": ""
+        }
+    },
+    "years": {
+        "1951": {
+            "googleSpreadsheetKey": "1dFZI9gSJzInxlRN6JREUWAQDm4XzZ3A30I341PczKww"
+        },
+        "1952": {
+            "googleSpreadsheetKey": "1FGRIBVFN72ziy6tCHdpQTOuAVgbMzc174IgSKysPgJI"
+        },
+        "1953": {
+            "googleSpreadsheetKey": "1smTj9jEfBMn-KCnlger-HmJ3ASEp0VAuUv-g-P8H3RU"
+        },
+        "1954": {
+            "googleSpreadsheetKey": "16G92L17ZvPYL4Y9Cbiid12Bf0N-zhhn4XMNwI7n9JOM"
+        },
+        "1955": {
+            "googleSpreadsheetKey": "1JYpEWT4J_FiAjdq80PR8YiwMJDXCkaEurVbs9dhSICc"
+        }
+    }
+}

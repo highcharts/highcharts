@@ -1,5 +1,15 @@
+var climateSheets; // Sheet IDs of climate data
+var climateYearsCache = []; // index: year, value: DataTable
+var googleAPIKey = 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk'; // does only support this demo
+
 function createDashboard(worldMapJSON) {
-    const dashboard = new Dashboard.Dashboard('container', {
+    var years = [];
+
+    for (let i = 1951, iEnd = 2011; i < iEnd; ++i) {
+        years.push(i);
+    }
+
+    return new Dashboard.Dashboard('container', {
         components: [{
             cell: 'time-range-selector',
             type: 'Highcharts',
@@ -9,13 +19,7 @@ function createDashboard(worldMapJSON) {
                     type: 'timeline'
                 },
                 series: [{
-                    data: (() => {
-                        const years = [];
-                        for (let i = 1951, iEnd = 2011; i < iEnd; ++i) {
-                            years.push(i);
-                        }
-                        return years;
-                    })()
+                    data: years
                 }],
                 title: {
                     text: void 0
@@ -163,10 +167,88 @@ function createDashboard(worldMapJSON) {
             }]
         }
     });
-    console.log(dashboard);
 }
+
+function getClimatYear(year, table, sheetKey) {console.log(arguments);
+    if (climateYearsCache[year]) {
+        return new Dashboard.DataPromise(function (resolve) {
+            console.log('prom1', year);
+            table.setRow([
+                year,
+                climateYearsCache[year].clone()
+            ]);
+            resolve(year);
+        });
+    }
+
+    var store = new Dashboard.GoogleSheetsStore(
+        new Dashboard.DataTable(),
+        {
+            googleAPIKey: googleAPIKey,
+            googleSpreadsheetKey: sheetKey
+        }
+    );
+
+    return new Dashboard.DataPromise(function (resolve) {
+        console.log('prom2', year);
+        var removeAfterLoad = store.on('afterLoad', function (e) {
+            climateYearsCache[year] = e.table;
+            table.setRow([
+                year,
+                climateYearsCache[year].clone()
+            ]);
+            removeAfterLoad();
+            resolve(year);
+        });
+        store.load();
+    });
+}
+
+function getClimateYears(firstYear, lastYear) {
+    var promiseChain = new Dashboard.DataPromise(function (resolve, reject) {
+        console.log('prom', 0);
+        if (climateSheets) {
+            resolve(climateSheets.year);
+        } else {
+            Highcharts.ajax({
+                error: reject,
+                success: function (json) {
+                    climateSheets = json;
+                    resolve(climateSheets.years);
+                },
+                url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v9.3.0/samples/data/climate-gsheets.json'
+            });
+        }
+    });
+    var promisedTable = new Dashboard.DataTable({ year: [], climate: [] });
+
+    firstYear = Math.min(firstYear || 0, lastYear || firstYear || 0);
+    lastYear = Math.max(firstYear || 0, lastYear || 0);
+    console.log(firstYear, lastYear);
+    for (var year = firstYear; year <= lastYear; ++year) {
+        console.log('loopiloop', year);
+        var currentYear = year;
+        promiseChain = promiseChain.then(function (yearSheets) {
+            console.log('prom', currentYear, yearSheets[currentYear]);
+            getClimatYear(
+                currentYear,
+                promisedTable,
+                yearSheets[currentYear].googleSpreadsheetKey
+            );
+        });
+    }
+
+    return promiseChain.then(function () {
+        return promisedTable;
+    });
+}
+
 Highcharts.ajax({
     error: () => createDashboard({}),
-    success: createDashboard,
+    success: json => {
+        const dashboard = createDashboard(json);
+        console.log(dashboard);
+        // getClimateYears(1951, 1955).then(console.log);
+    },
     url: 'https://code.highcharts.com/mapdata/custom/world-continents.geo.json'
 });
