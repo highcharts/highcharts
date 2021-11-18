@@ -1020,8 +1020,6 @@ class MapSeries extends ScatterSeries {
             if (mapData.type === 'FeatureCollection') {
                 this.mapTitle = mapData.title;
                 mapData = H.geojson(mapData, this.type, this);
-            } else {
-                mapData = isArray(mapData) ? mapData : mapData.features;
             }
 
             this.mapData = mapData;
@@ -1309,7 +1307,8 @@ addEvent(MapSeries, 'update', function (
 
     if (options.mapData) {
         // Save the current (new) option that will be used in series.setData
-        series.options.mapData = options.mapData;
+        series.options.mapData =
+            merge(series.userOptions.mapData, options.mapData);
 
         // When updating mapData with data, the series.setData(data) will be
         // fired because the new data exists.
