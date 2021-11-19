@@ -814,7 +814,9 @@ class SunburstSeries extends TreemapSeries {
         points.forEach(function (point): void {
             let node = point.node,
                 level = mapOptionsToLevel[node.level],
-                shapeExisting: SunburstSeries.NodeValuesObject = point.shapeExisting || ({} as any),
+                shapeExisting: SunburstSeries.NodeValuesObject = (
+                    point.shapeExisting || ({} as any)
+                ),
                 shape: SunburstSeries.NodeValuesObject =
                     node.shapeArgs || ({} as any),
                 animationInfo,

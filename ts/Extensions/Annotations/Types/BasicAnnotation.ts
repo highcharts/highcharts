@@ -288,7 +288,10 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationsOptions) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Highcharts.AnnotationsOptions
+    ) {
         super(chart, options);
     }
 

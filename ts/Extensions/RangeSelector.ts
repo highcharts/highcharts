@@ -1393,7 +1393,9 @@ class RangeSelector {
             const { inputBoxWidth } = this.options;
 
             css(input, {
-                width: isTextInput ? ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') : 'auto',
+                width: isTextInput ?
+                    ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
+                    'auto',
                 height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
                 border: '2px solid silver'
             });

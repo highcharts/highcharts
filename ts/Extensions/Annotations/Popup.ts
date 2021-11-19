@@ -434,7 +434,10 @@ H.Popup.prototype = {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
-            inputName = PREFIX + indicatorType + '-' + pick(inputAttributes.htmlFor, optionName);
+            inputName = PREFIX + indicatorType + '-' + pick(
+                inputAttributes.htmlFor,
+                optionName
+            );
         let input;
 
         if (!inputName.match(indexFilter)) {
@@ -568,7 +571,8 @@ H.Popup.prototype = {
         });
 
         if (volumeTo) {
-            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo.getAttribute('value') || '';
+            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo
+                .getAttribute('value') || '';
         }
 
         return fieldsOutput;
@@ -1286,7 +1290,8 @@ H.Popup.prototype = {
                 (indicatorList.childNodes[0] as HTMLDOMElement).click();
             } else if (!isEdit) {
                 rhsColWrapper.parentNode.children[0].innerHTML = lang.noFilterMatch || '';
-                (rhsColWrapper.parentNode.children[1] as HTMLDOMElement).style.display = 'none';
+                (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
+                    .style.display = 'none';
             }
         },
 

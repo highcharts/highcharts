@@ -27,7 +27,9 @@ declare global {
             public index: number;
             public mouseMoveToRadians: AnnotationEventEmitterMixin['mouseMoveToRadians'];
             public mouseMoveToScale: AnnotationEventEmitterMixin['mouseMoveToScale'];
-            public mouseMoveToTranslation: AnnotationEventEmitterMixin['mouseMoveToTranslation'];
+            public mouseMoveToTranslation: AnnotationEventEmitterMixin[
+                'mouseMoveToTranslation'
+            ];
             public nonDOMEvents: Array<string>;
             public onDrag: AnnotationEventEmitterMixin['onDrag'];
             public onMouseDown: AnnotationEventEmitterMixin['onMouseDown'];

@@ -1431,7 +1431,8 @@ class TreemapSeries extends ScatterSeries {
             nodeMap = series.nodeMap,
             node = nodeMap[rootId],
             name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options.traverseUpButton as any,
+            buttonOptions: TreemapSeriesUpButtonOptions = series.options
+                .traverseUpButton as any,
             backText = pick(buttonOptions.text, name, '◁ Back'),
             attr,
             states;

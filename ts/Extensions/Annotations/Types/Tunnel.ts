@@ -166,7 +166,8 @@ class Tunnel extends CrookedLine {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
 
-        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+        this.options.typeOptions.height = (this.points[3].y as any) -
+            (this.points[0].y as any);
     }
 
 }

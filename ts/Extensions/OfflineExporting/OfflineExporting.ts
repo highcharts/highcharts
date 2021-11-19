@@ -589,7 +589,10 @@ namespace OfflineExporting {
         const chart = this as Exporting.ChartComposition,
             // After grabbing the SVG of the chart's copy container we need
             // to do sanitation on the SVG
-            sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
+            sanitize = (svg: string): string => chart.sanitizeSVG(
+                svg,
+                chartCopyOptions as any
+            ),
             // When done with last image we have our SVG
             checkDone = (): void => {
                 if (images && imagesEmbedded === imagesLength) {
@@ -633,7 +636,8 @@ namespace OfflineExporting {
         ): void => {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
-            images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
             imagesLength = images.length;
         });
 

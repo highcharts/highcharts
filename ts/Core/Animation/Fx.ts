@@ -431,7 +431,9 @@ class Fx {
 
                 } else {
 
-                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
+                    const lowerSegmentToAdd = arr[
+                        Math.floor(arr.length / positionFactor)
+                    ].slice();
                     arr.splice(
                         arr.length / 2,
                         0,

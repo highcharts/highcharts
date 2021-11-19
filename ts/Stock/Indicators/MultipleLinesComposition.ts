@@ -288,7 +288,11 @@ namespace MultipleLinesComposition {
                 firstLinePoints =
                     areaLinesNames.length === 1 ?
                         mainLinePoints :
-                        secondaryLines[secondaryLinesNames.indexOf(getLineName(areaLinesNames[1]))],
+                        secondaryLines[
+                            secondaryLinesNames.indexOf(
+                                getLineName(areaLinesNames[1])
+                            )
+                        ],
                 originalColor = indicator.color;
             indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;

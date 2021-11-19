@@ -960,7 +960,11 @@ class Navigator {
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
             path = [
-                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
+                [
+                    'M',
+                    left + outlineHeight,
+                    navigatorTop - scrollbarHeight - outlineCorrection
+                ],
                 ['L', left + outlineHeight, verticalMin], // top right of zoomed range
                 ['L', left, verticalMin], // top left of z.r.
                 ['L', left, zoomedMax], // bottom left of z.r.

@@ -241,7 +241,9 @@ class NewDataAnnouncer {
             this.queueAnnouncement(
                 Object
                     .keys(this.dirty.allSeries)
-                    .map((ix): Accessibility.SeriesComposition => announcer.dirty.allSeries[ix]),
+                    .map((ix): Accessibility.SeriesComposition =>
+                        announcer.dirty.allSeries[ix]
+                    ),
                 this.dirty.newSeries,
                 newPoint
             );

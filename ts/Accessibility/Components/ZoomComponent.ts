@@ -333,7 +333,9 @@ class ZoomComponent extends AccessibilityComponent {
         keyboardNavigationHandler: KeyboardNavigationHandler,
         event: KeyboardEvent
     ): number {
-        const chart: Highcharts.MapNavigationChart = this.chart as Highcharts.MapNavigationChart;
+        const chart: Highcharts.MapNavigationChart = (
+            this.chart as Highcharts.MapNavigationChart
+        );
         const response = keyboardNavigationHandler.response;
         const isBackwards = event.shiftKey;
         const isMoveOutOfRange = isBackwards && !this.focusedMapNavButtonIx ||

@@ -417,7 +417,9 @@ class AreaSeries extends LineSeries {
 
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking ? pick(points[i].yBottom, translatedThreshold) : translatedThreshold;
+            yBottom = stacking ?
+                pick(points[i].yBottom, translatedThreshold) :
+                translatedThreshold;
 
             if (!isNull || connectNulls) {
 

@@ -223,7 +223,10 @@ class ScrollbarAxis {
                     if (!scrollbar.options.opposite) {
                         xPosition = axis.opposite ? 0 : axisMargin;
                     } else {
-                        xPosition = axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
+                        xPosition = axis.left +
+                            axis.width +
+                            2 +
+                            (scrollbarsOffsets as any)[0] -
                             (axis.opposite ? 0 : axisMargin);
                     }
 

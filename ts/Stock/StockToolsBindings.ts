@@ -110,7 +110,11 @@ declare global {
             isNotNavigatorYAxis(axis: AxisType): boolean;
             isPriceIndicatorEnabled(series: Series[]): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
-            updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
+            updateHeight(
+                this: NavigationBindings,
+                e: PointerEvent,
+                annotation: Annotation
+            ): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject[
                 'updateHeight'
             ];
@@ -633,7 +637,8 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 if (!isNumber(height)) {
                     // Check if the previous axis is the
                     // indicator axis (every indicator inherits from sma)
-                    height = yAxes[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
+                    height = yAxes[index - 1].series
+                        .every((s: Series): boolean => s.is('sma')) ?
                         previousAxisHeight : defaultHeight / 100;
                 }
 
@@ -643,7 +648,10 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
 
                 previousAxisHeight = height;
 
-                allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                allAxesHeight = correctFloat(Math.max(
+                    allAxesHeight,
+                    (top || 0) + (height || 0)
+                ));
             } else {
                 if (top <= allAxesHeight) {
                     allAxesHeight = correctFloat(Math.max(

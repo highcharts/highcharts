@@ -193,7 +193,9 @@ class ProxyElement {
      * Update the CSS class name to match target
      */
     private updateCSSClassName(): void {
-        const stringHasNoTooltip = (s: string): boolean => s.indexOf('highcharts-no-tooltip') > -1;
+        const stringHasNoTooltip = (s: string): boolean => (
+            s.indexOf('highcharts-no-tooltip') > -1
+        );
         const legend = this.chart.legend;
         const groupDiv = legend.group && legend.group.div;
         const noTooltipOnGroup = stringHasNoTooltip(groupDiv && groupDiv.className || '');
@@ -219,22 +221,31 @@ class ProxyElement {
         ].forEach((evtType: string): void => {
             const isTouchEvent = evtType.indexOf('touch') === 0;
 
-            this.eventProvider.addEvent(button, evtType, (e: MouseEvent | TouchEvent): void => {
-                const clonedEvent = isTouchEvent ?
-                    cloneTouchEvent(e as TouchEvent) :
-                    cloneMouseEvent(e as MouseEvent);
+            this.eventProvider.addEvent(
+                button,
+                evtType,
+                (e: MouseEvent | TouchEvent): void => {
+                    const clonedEvent = isTouchEvent ?
+                        cloneTouchEvent(e as TouchEvent) :
+                        cloneMouseEvent(e as MouseEvent);
 
-                if (target) {
-                    fireEventOnWrappedOrUnwrappedElement(target, clonedEvent);
-                }
+                    if (target) {
+                        fireEventOnWrappedOrUnwrappedElement(
+                            target,
+                            clonedEvent
+                        );
+                    }
 
-                e.stopPropagation();
+                    e.stopPropagation();
 
-                // #9682, #15318: Touch scrolling didnt work when touching proxy
-                if (!isTouchEvent) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
+                    // #9682, #15318: Touch scrolling didnt work when touching
+                    // proxy
+                    if (!isTouchEvent) {
+                        e.preventDefault();
+                    }
+                },
+                { passive: false }
+            );
         });
     }
 
@@ -292,7 +303,10 @@ class ProxyElement {
     /**
      * Get an attribute value of a target
      */
-    private getTargetAttr(target: SVGElement|HTMLElement|DOMElementType, key: string): unknown {
+    private getTargetAttr(
+        target: SVGElement|HTMLElement|DOMElementType,
+        key: string
+    ): unknown {
         if ((target as SVGElement).element) {
             return (target as SVGElement).element.getAttribute(key);
         }

@@ -668,7 +668,8 @@ namespace GridAxis {
                     options.labels &&
                     !defined(userLabels.align) &&
                     (
-                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any)
+                            .range === false ||
                         tickInfo.count > 1 // years
                     )
                 ) {
