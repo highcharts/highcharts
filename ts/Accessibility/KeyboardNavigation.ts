@@ -380,7 +380,9 @@ class KeyboardNavigation {
     public updateContainerTabindex(): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
-            shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false),
+            shouldHaveTabindex = !(
+                keyboardOptions && keyboardOptions.enabled === false
+            ),
             chart = this.chart,
             container = chart.container;
 

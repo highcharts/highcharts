@@ -119,7 +119,11 @@ namespace CircleUtilities {
      * @return {number}
      * Returns the area of overlap between the two circles.
      */
-    export function getOverlapBetweenCircles(r1: number, r2: number, d: number): number {
+    export function getOverlapBetweenCircles(
+        r1: number,
+        r2: number,
+        d: number
+    ): number {
         let overlap = 0;
 
         // If the distance is larger than the sum of the radiuses then the
@@ -247,7 +251,10 @@ namespace CircleUtilities {
         circle1: CircleObject,
         circle2: CircleObject
     ): boolean {
-        return getDistanceBetweenPoints(circle1, circle2) + circle2.r < circle1.r + 1e-10;
+        return getDistanceBetweenPoints(
+            circle1,
+            circle2
+        ) + circle2.r < circle1.r + 1e-10;
     }
 
     /**

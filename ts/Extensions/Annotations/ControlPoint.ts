@@ -25,7 +25,9 @@ declare global {
             public chart: AnnotationChart;
             public graphic: SVGElement;
             public index: number;
-            public mouseMoveToRadians: AnnotationEventEmitterMixin['mouseMoveToRadians'];
+            public mouseMoveToRadians: AnnotationEventEmitterMixin[
+                'mouseMoveToRadians'
+            ];
             public mouseMoveToScale: AnnotationEventEmitterMixin['mouseMoveToScale'];
             public mouseMoveToTranslation: AnnotationEventEmitterMixin[
                 'mouseMoveToTranslation'

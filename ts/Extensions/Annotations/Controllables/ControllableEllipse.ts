@@ -196,7 +196,10 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param position absolute position of the first point in points array
      * @param position2 absolute position of the second point in points array
      */
-    public getAttrs(position: BBoxObject, position2: BBoxObject): EllipseShapeSVGOptions {
+    public getAttrs(
+        position: BBoxObject,
+        position2: BBoxObject
+    ): EllipseShapeSVGOptions {
         const x1 = position.x,
             y1 = position.y,
             x2 = position2.x,

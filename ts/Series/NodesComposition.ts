@@ -358,7 +358,10 @@ namespace NodesComposition {
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    export function setNodeState(this: PointComposition, state?: StatesOptionsKey): void {
+    export function setNodeState(
+        this: PointComposition,
+        state?: StatesOptionsKey
+    ): void {
         const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];

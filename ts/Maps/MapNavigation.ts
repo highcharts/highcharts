@@ -301,9 +301,12 @@ MapNavigation.prototype.updateEvents = function (
                 doc.onmousewheel !== void 0 ? 'mousewheel' :
                     'DOMMouseScroll',
             function (e: PointerEvent): boolean {
-                // Prevent scrolling when the pointer is over the element
-                // with that class, for example anotation popup #12100.
-                if (!chart.pointer.inClass(e.target as any, 'highcharts-no-mousewheel')) {
+                // Prevent scrolling when the pointer is over the element with
+                // that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(
+                    e.target as any,
+                    'highcharts-no-mousewheel'
+                )) {
                     chart.pointer.onContainerMouseWheel(e);
                     // Issue #5011, returning false from non-jQuery event does
                     // not prevent default

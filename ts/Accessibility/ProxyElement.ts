@@ -198,7 +198,9 @@ class ProxyElement {
         );
         const legend = this.chart.legend;
         const groupDiv = legend.group && legend.group.div;
-        const noTooltipOnGroup = stringHasNoTooltip(groupDiv && groupDiv.className || '');
+        const noTooltipOnGroup = stringHasNoTooltip(
+            groupDiv && groupDiv.className || ''
+        );
         const targetClassName = this.getTargetAttr(
             this.target.click,
             'class'

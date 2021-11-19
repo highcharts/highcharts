@@ -176,7 +176,9 @@ class LegendComponent extends AccessibilityComponent {
                     component.proxyProvider.updateGroupProxyElementPositions('legend');
                     component.updateLegendItemProxyVisibility();
                     if (component.highlightedLegendItemIx > -1) {
-                        this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+                        this.chart.highlightLegendItem(
+                            component.highlightedLegendItemIx
+                        );
                     }
                 }
             }

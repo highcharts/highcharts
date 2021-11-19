@@ -162,7 +162,10 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: InfinityLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: InfinityLine.Options
+    ) {
         super(chart, options);
     }
 

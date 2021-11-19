@@ -2594,7 +2594,10 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#shouldStickToMin
      */
-    public shouldStickToMin(baseSeries: Series, navigator: Navigator): boolean|undefined {
+    public shouldStickToMin(
+        baseSeries: Series,
+        navigator: Navigator
+    ): boolean|undefined {
         const xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,

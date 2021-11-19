@@ -176,7 +176,10 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
 

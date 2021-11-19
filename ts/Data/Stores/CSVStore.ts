@@ -94,7 +94,13 @@ class CSVStore extends DataStore<CSVStore.Event> {
     ) {
         super(table);
 
-        const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
+        const {
+            csv,
+            csvURL,
+            enablePolling,
+            dataRefreshRate,
+            ...parserOptions
+        } = options;
 
         this.parserOptions = parserOptions;
         this.options = merge(

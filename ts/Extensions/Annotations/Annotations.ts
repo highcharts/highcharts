@@ -105,7 +105,10 @@ declare global {
             controlPointsGroup: SVGElement;
             options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
-            addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
+            addAnnotation(
+                userOptions: AnnotationsOptions,
+                redraw?: boolean
+            ): Annotation;
             drawAnnotations(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;

@@ -216,39 +216,41 @@ class VennSeries extends ScatterSeries {
         external: Array<CircleObject>
     ): PositionObject {
         // Get the best label position within the internal circles.
-        let best = internal.reduce((best, circle): Highcharts.VennLabelPositionObject => {
-            const d = circle.r / 2;
+        let best = internal.reduce(
+            (best, circle): Highcharts.VennLabelPositionObject => {
+                const d = circle.r / 2;
 
-            // Give a set of points with the circle to evaluate as the best
-            // label position.
-            return [
-                { x: circle.x, y: circle.y },
-                { x: circle.x + d, y: circle.y },
-                { x: circle.x - d, y: circle.y },
-                { x: circle.x, y: circle.y + d },
-                { x: circle.x, y: circle.y - d }
-            ]
-                // Iterate the given points and return the one with the largest
-                // margin.
-                .reduce((best, point): Highcharts.VennLabelPositionObject => {
-                    const margin = VennUtils.getMarginFromCircles(
-                        point,
-                        internal,
-                        external
-                    );
+                // Give a set of points with the circle to evaluate as the best
+                // label position.
+                return [
+                    { x: circle.x, y: circle.y },
+                    { x: circle.x + d, y: circle.y },
+                    { x: circle.x - d, y: circle.y },
+                    { x: circle.x, y: circle.y + d },
+                    { x: circle.x, y: circle.y - d }
+                ]
+                    // Iterate the given points and return the one with the
+                    // largest margin.
+                    .reduce((best, point): Highcharts.VennLabelPositionObject => {
+                        const margin = VennUtils.getMarginFromCircles(
+                            point,
+                            internal,
+                            external
+                        );
 
-                    // If the margin better than the current best, then update
-                    // sbest.
-                    if (best.margin < margin) {
-                        best.point = point;
-                        best.margin = margin;
-                    }
-                    return best;
-                }, best);
-        }, {
-            point: void 0 as any,
-            margin: -Number.MAX_VALUE
-        }).point;
+                        // If the margin better than the current best, then
+                        // update sbest.
+                        if (best.margin < margin) {
+                            best.point = point;
+                            best.margin = margin;
+                        }
+                        return best;
+                    }, best);
+            }, {
+                point: void 0 as any,
+                margin: -Number.MAX_VALUE
+            }
+        ).point;
 
         // Use nelder mead to optimize the initial label position.
         const optimal = VennUtils.nelderMead(

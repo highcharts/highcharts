@@ -1769,20 +1769,21 @@ addEvent(Chart, 'render', function (): void {
 
                     if (buttonNode) {
                         for (let i = 0; i < buttonNode.length; i++) {
-                            const button = buttonNode[i];
+                            const button = buttonNode[i],
+                                cls = button.className;
                             if (value.noDataState === 'normal') {
                                 // If button has noDataState: 'normal', and has
                                 // disabledClassName, remove this className.
-                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                if (cls.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
                             } else if (!buttonsEnabled) {
-                                if (button.className.indexOf(disabledClassName) === -1) {
+                                if (cls.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
                             } else {
                                 // Enable all buttons by deleting the className.
-                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                if (cls.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
                             }

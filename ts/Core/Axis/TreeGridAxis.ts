@@ -308,7 +308,9 @@ namespace TreeGridAxis {
             },
             // Before the children has been created.
             before: function (node: Highcharts.TreeNode): void {
-                const data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
+                const data = isObject(node.data, true) ?
+                        (node as TreeGridNode).data :
+                        {},
                     name = isString(data.name) ? data.name : '',
                     parentNode = mapOfIdToNode[node.parent],
                     parentGridNode = (
@@ -1018,8 +1020,12 @@ namespace TreeGridAxis {
          */
         public getTickPositions(): Array<number> {
             const axis = this.axis,
-                roundedMin = Math.floor(axis.min / axis.tickInterval) * axis.tickInterval,
-                roundedMax = Math.ceil(axis.max / axis.tickInterval) * axis.tickInterval;
+                roundedMin = Math.floor(
+                    axis.min / axis.tickInterval
+                ) * axis.tickInterval,
+                roundedMax = Math.ceil(
+                    axis.max / axis.tickInterval
+                ) * axis.tickInterval;
 
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(
                 function (arr: Array<number>, key: string): Array<number> {

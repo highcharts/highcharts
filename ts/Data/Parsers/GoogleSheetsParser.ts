@@ -163,7 +163,8 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
                 if (cellInner.numericValue) {
                     if (cellInner.$t.indexOf('/') >= 0 || (
-                        cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1
+                        cellInner.$t.indexOf('-') >= 0 &&
+                        cellInner.$t.indexOf('.') === -1
                     )) {
                         // This is a date - for future reference.
                         val = cellInner.$t;

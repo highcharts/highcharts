@@ -531,7 +531,9 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  */
 bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
 
-    return series.some((s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice);
+    return series.some(
+        (s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice
+    );
 };
 
 /**

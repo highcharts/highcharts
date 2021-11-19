@@ -1036,7 +1036,9 @@ class SVGRenderer3D extends SVGRenderer {
             ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
         ];
 
-        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start2, end2, 0, 0)
+        );
 
         // When shape is wide, it can cross both, (c) and (d) edges, when using
         // startAngle
@@ -1046,24 +1048,32 @@ class SVGRenderer3D extends SVGRenderer {
                 'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
             ]);
             // Curve to the right edge of the slice (d)
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy)
+            );
             // Go to the inner side
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Curve to the true end of the slice
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end, 0, 0)
+            );
             // Go to the outer side
             out.push([
                 'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
             ]);
             // Go back to middle (d)
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, midEnd, dx, dy)
+            );
             out.push([
                 'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
             ]);
             // Go back to the left edge
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0)
+            );
 
         // But shape can cross also only (c) edge:
         } else if (end > PI - a && start < PI - a) {
@@ -1074,19 +1084,25 @@ class SVGRenderer3D extends SVGRenderer {
                 cy + (ry * Math.sin(end2)) + dy
             ]);
             // Curve to the true end of the slice
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, end, dx, dy)
+            );
             // Go to the inner side
             out.push([
                 'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
             ]);
             // Go back to the artifical end2
-            out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+            out = out.concat(
+                SVGRenderer3D.curveTo(cx, cy, rx, ry, end, end2, 0, 0)
+            );
         }
 
         out.push([
             'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
         ]);
-        out = out.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
+        out = out.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy)
+        );
         out.push(['Z']);
 
         // INSIDE
@@ -1094,11 +1110,15 @@ class SVGRenderer3D extends SVGRenderer {
             ['M', cx + (irx * cs), cy + (iry * ss)]
         ];
 
-        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0)
+        );
         inn.push([
             'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
         ]);
-        inn = inn.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy));
+        inn = inn.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy)
+        );
         inn.push(['Z']);
 
         // SIDES

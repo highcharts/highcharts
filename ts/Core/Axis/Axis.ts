@@ -346,7 +346,8 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
+        // Needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite);
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -1531,7 +1532,9 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = axis.ordinal && axis.ordinal.slope && closestPointRange ?
+            ordinalCorrection = (
+                axis.ordinal && axis.ordinal.slope && closestPointRange
+            ) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =

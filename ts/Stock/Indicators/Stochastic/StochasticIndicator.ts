@@ -200,12 +200,13 @@ class StochasticIndicator extends SMAIndicator {
 
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                    xData: xData.slice(-periodD),
-                    yData: yData.slice(-periodD)
-                } as any), {
-                    period: periodD
-                });
+                points = SeriesRegistry.seriesTypes.sma.prototype.getValues
+                    .call(this, ({
+                        xData: xData.slice(-periodD),
+                        yData: yData.slice(-periodD)
+                    } as any), {
+                        period: periodD
+                    });
                 D = (points as any).yData[0];
             }
 

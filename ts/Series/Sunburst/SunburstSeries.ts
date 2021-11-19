@@ -119,7 +119,9 @@ const getEndPoint = function getEndPoint(
 };
 
 // eslint-disable-next-line require-jsdoc
-function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabelOptions {
+function getDlOptions(
+    params: SunburstSeries.DlOptionsParams
+): SunburstDataLabelOptions {
     // Set options to new object to avoid problems with scope
     let point = params.point,
         shape: Partial<SunburstSeries.NodeValuesObject> =
