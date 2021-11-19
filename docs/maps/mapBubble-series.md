@@ -1,9 +1,9 @@
 Map Bubble
 ==========
 
-MapBuble series is a combination of the standard bubble chart series with the possibility of applying to specific parts of the map.
+The MapBubble series is a combination of the standard bubble chart and map, where each bubble point is displayed over a specific map point shape.
 
-<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/maps/demo/map-bubble" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/map-bubble" allow="fullscreen"></iframe>
 
 Setting the Map Bubble Series
 -----------------------------
