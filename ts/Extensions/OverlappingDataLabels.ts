@@ -211,7 +211,10 @@ Chart.prototype.hideOverlappingLabels = function (
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
-                } else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
+                } else if (
+                    isNumber(label.x) &&
+                    Math.round(label.x) !== label.translateX
+                ) {
                     xOffset = label.x - label.translateX;
                 }
 
@@ -312,7 +315,9 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
             // Make sure the label is completely hidden to avoid catching
             // clicks (#4362)
             if (label.alignAttr && label.placed) { // data labels
-                label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                label[
+                    newOpacity ? 'removeClass' : 'addClass'
+                ]('highcharts-data-label-hidden');
                 complete = function (): void {
                     if (!chart.styledMode) {
                         label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });

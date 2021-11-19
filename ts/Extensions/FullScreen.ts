@@ -313,7 +313,9 @@ class Fullscreen {
             menuItems &&
             exportDivElements
         ) {
-            const exportDivElement = exportDivElements[menuItems.indexOf('viewFullscreen')];
+            const exportDivElement = exportDivElements[
+                menuItems.indexOf('viewFullscreen')
+            ];
             if (exportDivElement) {
                 AST.setElementHTML(
                     exportDivElement,

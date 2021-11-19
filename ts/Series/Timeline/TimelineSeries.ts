@@ -302,7 +302,9 @@ class TimelineSeries extends LineSeries {
             isFirstOrLast = (
                 !pointIndex || pointIndex === visiblePointsCount - 1
             ),
-            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
+            dataLabelsOptions: TimelineDataLabelOptions = (
+                series.options.dataLabels as any
+            ),
             userDLOptions = point.userDLOptions || {},
             // Define multiplier which is used to calculate data label
             // width. If data labels are alternate, they have two times more
@@ -467,44 +469,48 @@ class TimelineSeries extends LineSeries {
             series.distributeDL(); // @todo use this scope for series
         }));
 
-        series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
-            let dataLabel; // @todo use this scope for series
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'afterDrawDataLabels',
+            function (): void {
+                let dataLabel; // @todo use this scope for series
 
-            // Draw or align connector for each point.
-            series.points.forEach(function (point): void {
-                dataLabel = point.dataLabel;
+                // Draw or align connector for each point.
+                series.points.forEach(function (point): void {
+                    dataLabel = point.dataLabel;
 
-                if (dataLabel) {
-                    // Within this wrap method is necessary to save the
-                    // current animation params, because the data label
-                    // target position (after animation) is needed to align
-                    // connectors.
-                    dataLabel.animate = function (
-                        this: SVGLabel,
-                        params: SVGAttributes
-                    ): SVGLabel {
-                        if (this.targetPosition) {
-                            this.targetPosition = params;
+                    if (dataLabel) {
+                        // Within this wrap method is necessary to save the
+                        // current animation params, because the data label
+                        // target position (after animation) is needed to align
+                        // connectors.
+                        dataLabel.animate = function (
+                            this: SVGLabel,
+                            params: SVGAttributes
+                        ): SVGLabel {
+                            if (this.targetPosition) {
+                                this.targetPosition = params;
+                            }
+                            return SVGElement.prototype.animate.apply(
+                                this,
+                                arguments
+                            ) as SVGLabel;
+                        };
+
+                        // Initialize the targetPosition field within data label
+                        // object. It's necessary because there is need to know
+                        // expected position of specific data label, when
+                        // aligning connectors. This field is overrided inside
+                        // of SVGElement.animate() wrapped  method.
+                        if (!dataLabel.targetPosition) {
+                            dataLabel.targetPosition = {};
                         }
-                        return SVGElement.prototype.animate.apply(
-                            this,
-                            arguments
-                        ) as SVGLabel;
-                    };
 
-                    // Initialize the targetPosition field within data label
-                    // object. It's necessary because there is need to know
-                    // expected position of specific data label, when
-                    // aligning connectors. This field is overrided inside
-                    // of SVGElement.animate() wrapped  method.
-                    if (!dataLabel.targetPosition) {
-                        dataLabel.targetPosition = {};
+                        return point.drawConnector();
                     }
-
-                    return point.drawConnector();
-                }
-            });
-        }));
+                });
+            }
+        ));
 
         series.eventsToUnbind.push(addEvent(
             series.chart,

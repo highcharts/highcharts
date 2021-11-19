@@ -1706,7 +1706,9 @@ class Series {
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
         series.processedYData = processedData.yData;
-        series.closestPointRange = series.basePointRange = processedData.closestPointRange;
+        series.closestPointRange = (
+            series.basePointRange = processedData.closestPointRange
+        );
 
         fireEvent(series, 'afterProcessData');
     }

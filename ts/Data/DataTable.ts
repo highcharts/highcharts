@@ -727,7 +727,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
 
             if (useNaN) {
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i, true));
+                    columnAsNumber.push(
+                        table.getCellAsNumber(columnNameOrAlias, i, true)
+                    );
                 }
             } else {
                 for (

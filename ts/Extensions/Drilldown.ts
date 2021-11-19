@@ -1714,7 +1714,9 @@ addEvent(Point, 'afterSetState', function (): void {
 // After zooming out, shift the drillUpButton to the previous position, #8095.
 addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
-        const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        const buttonOptions = (
+            this.options.drilldown && this.options.drilldown.drillUpButton
+        );
 
         if (buttonOptions && buttonOptions.position) {
             this.drillUpButton.align({

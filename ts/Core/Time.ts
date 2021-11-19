@@ -238,7 +238,10 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (
+                    unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0
+                ) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }

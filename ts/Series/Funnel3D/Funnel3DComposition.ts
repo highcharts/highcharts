@@ -467,15 +467,21 @@ namespace Funnel3DComposition {
                     chart: Chart = charts[renderer.chartIndex] as any,
                     // adjust angles for visible edges
                     // based on alpha, selected through visual tests
-                    alphaCorrection = shapeArgs.alphaCorrection = 90 -
-                        Math.abs(((chart.options.chart.options3d as any).alpha % 180) - 90),
+                    alphaCorrection = shapeArgs.alphaCorrection = 90 - Math.abs(
+                        ((chart.options.chart.options3d as any).alpha % 180) -
+                        90
+                    ),
 
                     // set zIndexes of parts based on cubiod logic, for
                     // consistency
-                    cuboidData = rendererProto.cuboidPath.call(renderer, merge(shapeArgs, {
-                        depth: shapeArgs.width,
-                        width: (shapeArgs.width + shapeArgs.bottom.width) / 2
-                    })),
+                    cuboidData = rendererProto.cuboidPath.call(renderer, merge(
+                        shapeArgs, {
+                            depth: shapeArgs.width,
+                            width: (
+                                shapeArgs.width + shapeArgs.bottom.width
+                            ) / 2
+                        }
+                    )),
                     isTopFirst = cuboidData.isTop,
                     isFrontFirst = !cuboidData.isFront,
                     hasMiddle = !!shapeArgs.middle,

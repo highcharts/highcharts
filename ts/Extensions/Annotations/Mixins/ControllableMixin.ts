@@ -458,7 +458,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      *
      * @param {boolean} [animation]
      */
-    redraw: function (this: Highcharts.AnnotationControllable, animation?: boolean): void {
+    redraw: function (
+        this: Highcharts.AnnotationControllable,
+        animation?: boolean
+    ): void {
         this.controlPoints.forEach(function (
             controlPoint: Highcharts.AnnotationControlPoint
         ): void {
@@ -490,7 +493,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
             cy = temp;
         }
 
-        this.points.forEach(function (point: Highcharts.AnnotationPointType, i: number): void {
+        this.points.forEach(function (
+            point: Highcharts.AnnotationPointType,
+            i: number
+        ): void {
             this.transformPoint(transformation, cx, cy, p1, p2, i);
         }, this);
     },

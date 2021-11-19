@@ -148,7 +148,14 @@ class Axis {
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
-    public static keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
+    public static keepProps = [
+        'extKey',
+        'hcEvents',
+        'names',
+        'series',
+        'userMax',
+        'userMin'
+    ];
 
     /* *
      *
@@ -1494,7 +1501,9 @@ class Axis {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        const isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
+                        const isPointPlacementAxis = series.is('xrange') ?
+                            !isXAxis :
+                            isXAxis;
 
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a

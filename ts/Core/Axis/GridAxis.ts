@@ -523,7 +523,10 @@ namespace GridAxis {
                                 axis.left,
                                 startPoint[2] || 0
                             ],
-                            upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
+                            upperBorderPath = [
+                                upperBorderStartPoint,
+                                upperBorderEndPoint
+                            ],
                             lowerBorderEndPoint: SVGPath.Segment = [
                                 'L',
                                 axis.chart.chartWidth - axis.chart.marginRight,
@@ -534,10 +537,15 @@ namespace GridAxis {
                                 endPoint[1] || 0,
                                 axis.toPixels(max + axis.tickmarkOffset)
                             ],
-                            lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                            lowerBorderPath = [
+                                lowerBorderStartPoint,
+                                lowerBorderEndPoint
+                            ];
 
                         if (!axis.grid.upperBorder && min % 1 !== 0) {
-                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath);
+                            axis.grid.upperBorder = axis.grid.renderBorder(
+                                upperBorderPath
+                            );
                         }
                         if (axis.grid.upperBorder) {
                             axis.grid.upperBorder.attr({
@@ -550,7 +558,9 @@ namespace GridAxis {
                         }
 
                         if (!axis.grid.lowerBorder && max % 1 !== 0) {
-                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath);
+                            axis.grid.lowerBorder = axis.grid.renderBorder(
+                                lowerBorderPath
+                            );
                         }
                         if (axis.grid.lowerBorder) {
                             axis.grid.lowerBorder.attr({

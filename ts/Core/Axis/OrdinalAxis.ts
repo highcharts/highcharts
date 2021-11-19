@@ -503,7 +503,9 @@ namespace OrdinalAxis {
             const positionsLength = positions.length,
                 firstPositionsValue = positions[0],
                 lastPositionsValue = positions[positionsLength - 1],
-                slope = (lastPositionsValue - firstPositionsValue) / (positionsLength - 1);
+                slope = (
+                    lastPositionsValue - firstPositionsValue
+                ) / (positionsLength - 1);
 
             if (index < 0) {
                 return firstPositionsValue + slope * index;
@@ -756,7 +758,11 @@ namespace OrdinalAxis {
      * @param {boolean} [toIndex]
      * Whether to return the index in the ordinalPositions or the new value.
      */
-    function val2lin(this: OrdinalAxis.Composition, val: number, toIndex?: boolean): number {
+    function val2lin(
+        this: OrdinalAxis.Composition,
+        val: number,
+        toIndex?: boolean
+    ): number {
         const axis = this,
             ordinal = axis.ordinal,
             ordinalPositions = ordinal.positions;
@@ -926,7 +932,11 @@ namespace OrdinalAxis {
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
-                        ((series as ScatterSeries).takeOrdinalPosition !== false || hasBreaks)
+                        (
+                            (series as ScatterSeries)
+                                .takeOrdinalPosition !== false ||
+                            hasBreaks
+                        )
                     ) {
 
                         // concatenate the processed X data into the existing

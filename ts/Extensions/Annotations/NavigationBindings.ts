@@ -120,7 +120,9 @@ declare global {
             steps?: Array<Function>;
         }
         interface NavigationBindingsUtilsObject {
-            getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
+            getFieldType(
+                value: ('boolean'|'number'|'string')
+            ): ('checkbox'|'number'|'text');
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
         }
         interface NavigationEventsOptions {
@@ -385,7 +387,9 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Highcharts.Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (Highcharts.NavigationBindingsOptionsObject|null) = void 0 as any;
+    public selectedButton: (
+        Highcharts.NavigationBindingsOptionsObject|null
+    ) = void 0 as any;
     public stepIndex?: number;
     public steps?: boolean;
 
@@ -499,11 +503,14 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
-                e: PointerEvent
-            ): void {
-                navigation.bindingsContainerMouseMove(this, e);
-            }, H.isTouchDevice ? { passive: false } : void 0)
+            addEvent(
+                chart.container,
+                H.isTouchDevice ? 'touchmove' : 'mousemove',
+                function (e: PointerEvent): void {
+                    navigation.bindingsContainerMouseMove(this, e);
+                },
+                H.isTouchDevice ? { passive: false } : void 0
+            )
         );
     }
 
@@ -917,14 +924,19 @@ class NavigationBindings {
                     } else {
                         parent[key] = nextParent;
                     }
-                    objectEach(option, function (nestedOption: any, nestedKey: string): void {
-                        traverse(
-                            nestedOption,
-                            nestedKey,
-                            key === 0 ? parentEditables : (nestedEditables as any)[key],
-                            nextParent
-                        );
-                    });
+                    objectEach(
+                        option,
+                        function (nestedOption: any, nestedKey: string): void {
+                            traverse(
+                                nestedOption,
+                                nestedKey,
+                                key === 0 ?
+                                    parentEditables :
+                                    (nestedEditables as any)[key],
+                                nextParent
+                            );
+                        }
+                    );
                 } else {
                     // Leaf:
                     if (key === 'format') {
@@ -947,15 +959,18 @@ class NavigationBindings {
         objectEach(options, function (option: any, key: string): void {
             if (key === 'typeOptions') {
                 visualOptions[key] = {};
-                objectEach(options[key], function (typeOption: any, typeKey: string): void {
-                    (traverse as any)(
-                        typeOption,
-                        typeKey,
-                        nestedEditables,
-                        visualOptions[key],
-                        true
-                    );
-                });
+                objectEach(
+                    options[key],
+                    function (typeOption: any, typeKey: string): void {
+                        (traverse as any)(
+                            typeOption,
+                            typeKey,
+                            nestedEditables,
+                            visualOptions[key],
+                            true
+                        );
+                    }
+                );
             } else {
                 traverse(option, key, (editables as any)[type], visualOptions);
             }
@@ -1089,7 +1104,9 @@ interface NavigationBindings {
 NavigationBindings.prototype.utils = bindingsUtils;
 
 
-Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
+Chart.prototype.initNavigationBindings = function (
+    this: Highcharts.AnnotationChart
+): void {
     const chart = this,
         options = chart.options;
 
@@ -1359,7 +1376,8 @@ setOptions({
                                 }]
                             },
                             navigation.annotationsOptions,
-                            (navigation.bindings as any).circleAnnotation.annotationsOptions
+                            (navigation.bindings as any).circleAnnotation
+                                .annotationsOptions
                         )
                     );
                 },
@@ -1444,7 +1462,8 @@ setOptions({
                                 ]
                             },
                             navigation.annotationsOptions,
-                            (navigation.bindings as any).ellipseAnnotation.annotationOptions
+                            (navigation.bindings as any).ellipseAnnotation
+                                .annotationOptions
                         )
                     );
                 },
@@ -1732,7 +1751,10 @@ addEvent(Chart, 'render', function (): void {
 
         objectEach(
             navigationBindings.boundClassNames,
-            function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
+            function (
+                value: Highcharts.NavigationBindingsOptionsObject,
+                key: string
+            ): void {
 
                 if (
                     chart.navigationBindings &&
@@ -1740,8 +1762,8 @@ addEvent(Chart, 'render', function (): void {
                     chart.navigationBindings.container[0]
                 ) {
 
-                    // Get the HTML element coresponding to the
-                    // className taken from StockToolsBindings.
+                    // Get the HTML element coresponding to the className taken
+                    // from StockToolsBindings.
                     const buttonNode = chart.navigationBindings.container[0]
                         .querySelectorAll('.' + key);
 
@@ -1749,9 +1771,8 @@ addEvent(Chart, 'render', function (): void {
                         for (let i = 0; i < buttonNode.length; i++) {
                             const button = buttonNode[i];
                             if (value.noDataState === 'normal') {
-                                // If button has noDataState: 'normal',
-                                // and has disabledClassName,
-                                // remove this className.
+                                // If button has noDataState: 'normal', and has
+                                // disabledClassName, remove this className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }

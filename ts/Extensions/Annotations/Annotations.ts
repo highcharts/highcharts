@@ -1263,7 +1263,9 @@ merge<Annotation>(
                      * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
                      * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
                      */
-                    formatter: function (this: Highcharts.AnnotationPoint): (number|string) {
+                    formatter: function (
+                        this: Highcharts.AnnotationPoint
+                    ): (number|string) {
                         return defined(this.y) ? this.y : 'Annotation label';
                     },
 
@@ -1737,7 +1739,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
     ): Annotation {
-        const Constructor = (Annotation as any).types[(userOptions as any).type] || Annotation,
+        const Constructor = (Annotation as any)
+                .types[(userOptions as any).type] || Annotation,
             annotation = new Constructor(this, userOptions);
 
         this.annotations.push(annotation);
@@ -1948,7 +1951,7 @@ chartProto.callbacks.push(function (
                             // Annotation placed on a exported data point
                             // - add new column
                             if (!wasAdded) {
-                                event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                event.dataRows.forEach((row: any): void => {
                                     if (
                                         !wasAdded &&
                                         row.xValues &&

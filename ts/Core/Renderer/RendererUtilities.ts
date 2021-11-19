@@ -190,7 +190,9 @@ namespace RendererUtilities {
                 // maxDistance, we're good.
                 if (
                     typeof maxDistance !== 'undefined' &&
-                    Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
+                    Math.abs(
+                        (origBoxes[i].pos as any) - origBoxes[i].target
+                    ) > maxDistance
                 ) {
                     // Reset the positions that are already set
                     origBoxes

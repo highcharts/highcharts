@@ -610,7 +610,11 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#getPosition
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
+    public getPosition(
+        boxWidth: number,
+        boxHeight: number,
+        point: Point
+    ): PositionObject {
 
         const chart = this.chart,
             distance = this.distance,
@@ -1040,7 +1044,9 @@ class Tooltip {
         );
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
+        tooltip.followPointer = (
+            !tooltip.split && point.series.tooltipOptions.followPointer
+        );
         const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
             x = anchor[0],
             y = anchor[1];
@@ -1641,7 +1647,10 @@ class Tooltip {
         );
         box.height = (
             anchorPos[1] < 0 ?
-                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                Math.max(
+                    Math.abs(anchorPos[1]),
+                    (labelBBox.height - Math.abs(anchorPos[1]))
+                ) :
                 Math.max(Math.abs(anchorPos[1]), labelBBox.height)
         );
 

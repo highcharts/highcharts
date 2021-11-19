@@ -156,7 +156,13 @@ class ColorAxis extends Axis implements AxisLike {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-        ColorAxisComposition.compose(ColorAxis, ChartClass, FxClass, LegendClass, SeriesClass);
+        ColorAxisComposition.compose(
+            ColorAxis,
+            ChartClass,
+            FxClass,
+            LegendClass,
+            SeriesClass
+        );
     }
 
     /* *
@@ -701,7 +707,9 @@ class ColorAxis extends Axis implements AxisLike {
         let crossPos;
 
         if (point) {
-            crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey) as number);
+            crossPos = axis.toPixels(point.getNestedProperty(
+                point.series.colorKey
+            ) as number);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {

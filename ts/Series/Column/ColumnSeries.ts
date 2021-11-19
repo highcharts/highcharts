@@ -538,7 +538,9 @@ class ColumnSeries extends Series {
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY';
+            translateProp: 'translateX'|'translateY' = inverted ?
+                'translateX' :
+                'translateY';
         let translateStart: number,
             translatedThreshold;
 

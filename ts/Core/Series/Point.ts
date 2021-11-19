@@ -987,7 +987,9 @@ class Point {
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             const hasDummyGraphic = graphic && point.hasDummyGraphic;
-            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            const shouldDestroyGraphic = point.y === null ?
+                !hasDummyGraphic :
+                hasDummyGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
@@ -1355,8 +1357,11 @@ class Point {
                 );
 
                 // Some inactive points (e.g. slices in pie) should apply
-                // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
+                // opacity also for their labels
+                if (
+                    series.options.inactiveOtherPoints &&
+                    isNumber(pointAttribs.opacity)
+                ) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {

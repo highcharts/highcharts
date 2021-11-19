@@ -418,7 +418,9 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
+                const segmentToAdd = arr[
+                    Math.floor(arr.length / positionFactor) - 1
+                ].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {

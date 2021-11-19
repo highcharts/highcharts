@@ -108,7 +108,10 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
 
     if (series.areaPath) {
         // Remove previously used bottomPath and add the new one.
-        areaPath = series.areaPath.splice(0, series.areaPath.length / 2).concat(bottomPath);
+        areaPath = series.areaPath.splice(
+            0,
+            series.areaPath.length / 2
+        ).concat(bottomPath);
         areaPath.xMap = series.areaPath.xMap; // Use old xMap in the new areaPath
         series.areaPath = areaPath;
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);

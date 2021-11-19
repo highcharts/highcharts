@@ -236,7 +236,10 @@ class Instrument {
         panValue: number
     ): void {
         if (this.panNode) {
-            this.panNode.pan.setValueAtTime(panValue, Instrument.audioContext.currentTime);
+            this.panNode.pan.setValueAtTime(
+                panValue,
+                Instrument.audioContext.currentTime
+            );
         }
     }
 

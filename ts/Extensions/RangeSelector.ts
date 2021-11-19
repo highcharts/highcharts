@@ -1294,7 +1294,8 @@ class RangeSelector {
      */
     public getInputValue(name: string): number {
         const input = name === 'min' ? this.minInput : this.maxInput;
-        const options = this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions;
+        const options = this.chart.options
+            .rangeSelector as Highcharts.RangeSelectorOptions;
         const time = this.chart.time;
 
         if (input) {
@@ -1447,7 +1448,11 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Time): number {
+    public defaultInputDateParser(
+        inputDate: string,
+        useUTC: boolean,
+        time?: Time
+    ): number {
         const hasTimezone = (str: string): boolean =>
             str.length > 6 &&
             (str.lastIndexOf('-') === str.length - 6 ||
@@ -1604,7 +1609,10 @@ class RangeSelector {
 
         // #14788: Setting input.type to an unsupported type throws in IE, so
         // we need to use setAttribute instead
-        input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
+        input.setAttribute(
+            'type',
+            preferredInputType(options.inputDateFormat || '%b %e, %Y')
+        );
 
         if (!chart.styledMode) {
             // Styles

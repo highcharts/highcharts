@@ -202,7 +202,9 @@ class ColumnPyramidSeries extends ColumnSeries {
             // Can not be a NaN #12514
             topXwidth = stackHeight ? (barW * (barY - topPointY)) / stackHeight : 0;
             // like topXwidth, but with height of point
-            bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
+            bottomXwidth = stackHeight ?
+                (barW * (barY + barH - topPointY)) / stackHeight :
+                0;
 
             /*
                     /\

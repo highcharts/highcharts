@@ -695,7 +695,12 @@ function nelderMead(
         return simplex.map((
             point: NelderMeadPointArray
         ): NelderMeadPointArray => {
-            const p = weightedSum(1 - pShrink, best, pShrink, point) as NelderMeadPointArray;
+            const p = weightedSum(
+                1 - pShrink,
+                best,
+                pShrink,
+                point
+            ) as NelderMeadPointArray;
 
             p.fx = fn(p);
             return p;

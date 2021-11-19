@@ -1221,8 +1221,9 @@ class SVGElement implements SVGElementLike {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el: SVGDOMElement): void {
-                    if ((el.getAttribute('clip-path') as any).indexOf(clipPath.element.id) > -1
-                    ) {
+                    if ((el.getAttribute('clip-path') as any).indexOf(
+                        clipPath.element.id
+                    ) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
