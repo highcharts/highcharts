@@ -209,7 +209,9 @@ const bindingsUtils = {
      * @return {'checkbox'|'number'|'text'}
      * Field type (one of: text, number, checkbox)
      */
-    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
+    getFieldType: function (
+        value: ('boolean'|'number'|'string')
+    ): ('checkbox'|'number'|'text') {
         return ({
             'string': 'text',
             'number': 'number',
@@ -856,7 +858,12 @@ class NavigationBindings {
          * @param {Object} parent
          *        Where new options will be assigned
          */
-        function traverse(option: any, key: (0|string), parentEditables: any, parent: any): void {
+        function traverse(
+            option: any,
+            key: (0|string),
+            parentEditables: any,
+            parent: any
+        ): void {
             let nextParent: any;
 
             if (

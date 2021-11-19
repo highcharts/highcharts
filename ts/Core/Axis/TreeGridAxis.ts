@@ -551,7 +551,11 @@ namespace TreeGridAxis {
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
-                            if (isArray(d) && series.options.keys && series.options.keys.length) {
+                            if (
+                                isArray(d) &&
+                                series.options.keys &&
+                                series.options.keys.length
+                            ) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
                                 data.forEach(function (point: GanttPointOptions): void {

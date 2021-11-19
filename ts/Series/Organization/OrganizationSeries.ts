@@ -456,7 +456,8 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNodeColumn(): OrganizationSeries.ColumnArray {
-        const column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
+        const column: OrganizationSeries.ColumnArray = super.createNodeColumn
+            .call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent

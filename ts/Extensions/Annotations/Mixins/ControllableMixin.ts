@@ -73,7 +73,12 @@ declare global {
             ): (AnnotationPointType|null);
             redraw(this: AnnotationControllable, animation?: boolean): void;
             render(this: AnnotationControllable, parentGroup?: SVGElement): void;
-            rotate(this: AnnotationControllable, cx: number, cy: number, radians: number): void;
+            rotate(
+                this: AnnotationControllable,
+                cx: number,
+                cy: number,
+                radians: number
+            ): void;
             scale(
                 this: AnnotationControllable,
                 cx: number,
@@ -439,7 +444,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Render a controllable.
      */
-    render: function (this: Highcharts.AnnotationControllable, _parentGroup?: SVGElement): void {
+    render: function (
+        this: Highcharts.AnnotationControllable,
+        _parentGroup?: SVGElement
+    ): void {
         this.controlPoints.forEach(function (controlPoint): void {
             controlPoint.render();
         });
@@ -523,7 +531,11 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
      * @param {number} dx translation for x coordinate
      * @param {number} dy translation for y coordinate
      **/
-    translate: function (this: Highcharts.AnnotationControllable, dx: number, dy: number): void {
+    translate: function (
+        this: Highcharts.AnnotationControllable,
+        dx: number,
+        dy: number
+    ): void {
         this.transform('translate', null, null, dx, dy);
     },
 

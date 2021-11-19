@@ -169,7 +169,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData, // procesed and grouped data
+            // procesed and grouped data
+            processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
         if (!hollowCandlestickData.length && processedYData && processedYData.length) {

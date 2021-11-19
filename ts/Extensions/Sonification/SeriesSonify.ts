@@ -194,11 +194,12 @@ namespace SeriesSonify {
                 Partial<SonifySeriesOptions>|
                 Array<Partial<SonifySeriesOptions>>
             ) = chartSonifyOptions.seriesOptions || {},
+            sonification = series.chart.options.sonification,
             pointPlayTime = (
-                series.chart.options.sonification &&
-                series.chart.options.sonification.defaultInstrumentOptions &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
+                sonification &&
+                sonification.defaultInstrumentOptions &&
+                sonification.defaultInstrumentOptions.mapping &&
+                sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
                 'x'
             ),
             configOptions = chartOptionsToSonifySeriesOptions(series);
@@ -252,14 +253,21 @@ namespace SeriesSonify {
     ): TimelinePath {
         // options.timeExtremes is internal and used so that the calculations
         // from chart.sonify can be reused.
-        const timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
+        const timeExtremes = options.timeExtremes || getTimeExtremes(
+                series,
+                options.pointPlayTime
+            ),
             // Compute any data extremes that aren't defined yet
             dataExtremes = getExtremesForInstrumentProps(
                 series.chart, options.instruments, options.dataExtremes as any
             ),
             minimumSeriesDurationMs = 10,
             // Get the duration of the final note
-            finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
+            finalNoteDuration = getFinalNoteDuration(
+                series,
+                options.instruments,
+                dataExtremes
+            ),
             // Get time offset for a point, relative to duration
             pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(

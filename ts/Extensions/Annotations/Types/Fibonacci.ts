@@ -20,7 +20,10 @@ const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-const createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+const createPathDGenerator = function (
+    retracementIndex: number,
+    isBackground?: boolean
+): Function {
     return function (this: Highcharts.AnnotationControllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
         if (!annotation.startRetracements || !annotation.endRetracements) {

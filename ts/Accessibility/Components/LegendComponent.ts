@@ -193,7 +193,8 @@ class LegendComponent extends AccessibilityComponent {
                 component.recreateProxies()
             ) {
                 syncTimeout(
-                    (): void => component.proxyProvider.updateGroupProxyElementPositions('legend'),
+                    (): void => component.proxyProvider
+                        .updateGroupProxyElementPositions('legend'),
                     animObject(
                         pick(this.chart.renderer.globalAnimation, true)
                     ).duration
@@ -223,8 +224,11 @@ class LegendComponent extends AccessibilityComponent {
                 if (hasPages) {
                     const itemPage = item.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
-                    const h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0;
-                    hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                    const h = item.legendItem ?
+                        Math.round(item.legendItem.getBBox().height) :
+                        0;
+                    hide = y + h - legend.pages[itemPage] > clipHeight ||
+                        itemPage !== curPage - 1;
                 }
 
                 if (hide) {
@@ -402,7 +406,9 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ? item.legendItem : item.legendGroup;
+        const proxyPositioningElement = item.legendGroup.div ?
+            item.legendItem :
+            item.legendGroup;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
             click: item.legendItem as SVGElement,

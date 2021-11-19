@@ -170,8 +170,10 @@ function deprecateFromOptionsMap(
                 false,
                 chart,
                 {
-                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
-                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                    [rootOldAsArray.join('.') + '.' + oldOptionKey]: (
+                        rootNewAsArray.join('.') + '.' +
+                        mapToNewOptions[oldOptionKey].join('.')
+                    )
                 }
             );
         }
@@ -203,7 +205,9 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
+            error(32, false, chart, {
+                'axis.description': 'use axis.accessibility.description'
+            });
         }
     });
 }

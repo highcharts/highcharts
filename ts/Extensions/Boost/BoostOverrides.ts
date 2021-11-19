@@ -570,7 +570,9 @@ Series.prototype.destroyGraphics = function (): void {
     });
 
     if ((this as any).getZonesGraphs) {
-        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        const props: string[][] = (this as any).getZonesGraphs(
+            [['graph', 'highcharts-graph']]
+        );
         props.forEach((prop): void => {
             const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {

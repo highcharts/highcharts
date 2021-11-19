@@ -167,7 +167,11 @@ namespace OrdinalAxis {
             axisProto.ordinal2lin = axisProto.val2lin;
 
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-            addEvent(AxisClass as (T&typeof Composition), 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass as (T&typeof Composition),
+                'foundExtremes',
+                onAxisFoundExtremes
+            );
             addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
             addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
         }
@@ -632,7 +636,11 @@ namespace OrdinalAxis {
                 // how many ordinal units did we move?
                 movedUnits = ((mouseDownX as any) - chartX) / pointPixelWidth,
                 // get index of all the chart's points
-                extendedAxis = { ordinal: { positions: xAxis.ordinal.getExtendedPositions() } },
+                extendedAxis = {
+                    ordinal: {
+                        positions: xAxis.ordinal.getExtendedPositions()
+                    }
+                },
                 index2val = xAxis.index2val,
                 val2lin = xAxis.val2lin;
             let trimmedRange,

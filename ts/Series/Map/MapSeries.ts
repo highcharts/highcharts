@@ -116,7 +116,10 @@ declare global {
             public properties?: object;
             public series: MapSeries;
             public value: ColorMapMixin.ColorMapPoint['value'];
-            public applyOptions(options: (MapPointOptions|PointShortOptions), x?: number): MapPoint;
+            public applyOptions(
+                options: (MapPointOptions|PointShortOptions),
+                x?: number
+            ): MapPoint;
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
         }
@@ -1043,7 +1046,10 @@ class MapSeries extends ScatterSeries {
                 if (joinBy[1]) {
                     const joinKey = joinBy[1];
                     data.forEach(function (pointOptions: MapPointOptions): void {
-                        dataUsed.push(getNestedProperty(joinKey, pointOptions) as MapPointOptions);
+                        dataUsed.push(getNestedProperty(
+                            joinKey,
+                            pointOptions
+                        ) as MapPointOptions);
                     } as any);
                 }
 

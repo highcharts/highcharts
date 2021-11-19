@@ -494,7 +494,9 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
                 dataGroupingOptions.anchor = 'middle';
                 dataGroupingOptions.lastAnchor = 'lastPoint';
 
-                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
+                error(32, false, chart, {
+                    'dataGrouping.smoothed': 'use dataGrouping.anchor'
+                });
             }
 
             anchorPoints(series, groupedXData, xMax);
@@ -1081,7 +1083,10 @@ seriesProto.generatePoints = function (): void {
  *
  * @function Highcharts.Axis#applyGrouping
  */
-Axis.prototype.applyGrouping = function (this: Axis, e: Highcharts.PostProcessDataEvent): void {
+Axis.prototype.applyGrouping = function (
+    this: Axis,
+    e: Highcharts.PostProcessDataEvent
+): void {
     const axis = this,
         series = axis.series;
 

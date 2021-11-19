@@ -562,7 +562,8 @@ namespace Exporting {
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        const handleMaxWidth: (boolean|number) = printMaxWidth && chart.chartWidth > printMaxWidth;
+        const handleMaxWidth: (boolean|number) = printMaxWidth &&
+            chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
                 chart.options.chart.width,

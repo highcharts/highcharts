@@ -592,7 +592,9 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartX: Math.round(
+                Math.max((e as any).x, (e as any).clientX - chartPosition.left)
+            ),
             chartY: Math.round((e as any).y)
         }) as T;
     };
