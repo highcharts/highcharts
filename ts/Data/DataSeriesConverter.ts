@@ -133,7 +133,10 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(cellName, i);
+                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(
+                            cellName,
+                            i
+                        );
                     }
                 }
 
@@ -245,7 +248,9 @@ class DataSeriesConverter {
 
                         if (needsArrayMap) {
                             for (let k = 0; k < pointArrayMapLength; k++) {
-                                yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
+                                yValueIndex = keys && keys.indexOf(
+                                    pointArrayMap[k]
+                                ) > -1 ?
                                     keys.indexOf(pointArrayMap[k]) : k + elem.length -
                                         pointArrayMapLength;
 
@@ -256,7 +261,9 @@ class DataSeriesConverter {
                             columns[y] = elem[yIndex];
                         }
 
-                        columns.x = elem.length - pointArrayMapLength > 0 ? elem[xIndex] : j;
+                        columns.x = elem.length - pointArrayMapLength > 0 ?
+                            elem[xIndex] :
+                            j;
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {

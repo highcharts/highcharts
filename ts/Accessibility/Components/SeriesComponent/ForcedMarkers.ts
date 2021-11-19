@@ -212,7 +212,9 @@ namespace ForcedMarkersComposition {
                             point.hasForcedA11yMarker ? 'addClass' : 'removeClass'
                         ]('highcharts-a11y-marker-hidden');
                         point.graphic[
-                            point.hasForcedA11yMarker === false ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker === false ?
+                                'addClass' :
+                                'removeClass'
                         ]('highcharts-a11y-marker-visible');
                     }
                 });
@@ -273,7 +275,11 @@ namespace ForcedMarkersComposition {
             seriesA11yEnabled = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false;
 
-        return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
+        return (
+            chartA11yEnabled &&
+            seriesA11yEnabled &&
+            isWithinDescriptionThreshold(series)
+        );
     }
 
 

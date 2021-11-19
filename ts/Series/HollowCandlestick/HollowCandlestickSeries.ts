@@ -185,7 +185,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 const dataPoint: any = processedYData[i],
                     previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(dataPoint, previousDataPoint));
+                hollowCandlestickData.push(series.isBullish(
+                    dataPoint,
+                    previousDataPoint
+                ));
             }
         }
     }
@@ -293,7 +296,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             hollowcandleInfo = this.hollowCandlestickData[index];
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
-        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) || attribs.stroke;
+        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
+            attribs.stroke;
 
         // Select or hover states
         if (state) {

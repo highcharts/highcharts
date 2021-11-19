@@ -742,7 +742,10 @@ namespace BrokenAxis {
                         while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
                             newMin = axisBreak.to as any;
                         }
-                        while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks as any))) {
+                        while ((axisBreak = brokenAxis.findBreakAt(
+                            newMax,
+                            breaks as any
+                        ))) {
                             newMax = axisBreak.from as any;
                         }
 

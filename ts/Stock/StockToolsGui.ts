@@ -2259,7 +2259,9 @@ addEvent(Chart, 'render', function (): void {
         stockTools = chart.stockTools,
         button = stockTools &&
             stockTools.toolbar &&
-            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+            stockTools.toolbar.querySelector(
+                '.highcharts-current-price-indicator'
+            ) as any;
 
     // Change the initial button background.
     if (stockTools && chart.navigationBindings && chart.options.series && button) {

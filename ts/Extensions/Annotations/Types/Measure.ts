@@ -755,7 +755,11 @@ class Measure extends Annotation {
         }
 
         if (setStartPoints) {
-            (Measure.calculations.updateStartPoints.call as any)(this, true, false as any);
+            (Measure.calculations.updateStartPoints.call as any)(
+                this,
+                true,
+                false as any
+            );
         }
 
         // #11174 - clipBox was not recalculate during resize / redraw

@@ -84,7 +84,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
+    public constructor(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ) {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
@@ -122,7 +126,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+    public init(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;

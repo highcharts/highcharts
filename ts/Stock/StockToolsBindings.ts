@@ -106,10 +106,16 @@ declare global {
             indicatorsWithAxes: Array<string>;
 
             addFlagFromForm(this: NavigationBindings, type: string): Function;
-            attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject|void;
+            attractToPoint(
+                e: Event,
+                chart: Chart
+            ): NavigationBindingsAttractionObject|void;
             isNotNavigatorYAxis(axis: AxisType): boolean;
             isPriceIndicatorEnabled(series: Series[]): boolean;
-            manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
+            manageIndicators(
+                this: NavigationBindings,
+                data: StockToolsFieldsObject
+            ): void;
             updateHeight(
                 this: NavigationBindings,
                 e: PointerEvent,
@@ -2572,7 +2578,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             const chart = this.chart,
                 series = chart.series,
                 gui = chart.stockTools,
-                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
+                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(
+                    chart.series
+                );
 
             if (gui && gui.guiEnabled) {
                 series.forEach(function (series): void {
@@ -2753,4 +2761,7 @@ setOptions({
     }
 });
 
-NavigationBindings.prototype.utils = merge(bindingsUtils, NavigationBindings.prototype.utils);
+NavigationBindings.prototype.utils = merge(
+    bindingsUtils,
+    NavigationBindings.prototype.utils
+);

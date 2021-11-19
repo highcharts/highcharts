@@ -2246,7 +2246,9 @@ class Chart {
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
 
             // The default series type's class
-            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType) as any];
+            klass = seriesTypes[
+                (optionsChart.type || optionsChart.defaultSeriesType) as any
+            ];
 
             // Get the value from available chart-wide properties
             value =
@@ -3276,7 +3278,10 @@ class Chart {
                 // chart.series array, but those series should not be handled
                 // here (#8196) and neither should the navigator axis (#9671).
                 indexMap = [];
-                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
+                (chart as any)[coll].forEach(function (
+                    s: (Series|Axis),
+                    i: number
+                ): void {
                     if (!s.options.isInternal) {
                         indexMap.push(pick(s.options.index, i));
                     }

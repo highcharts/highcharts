@@ -93,7 +93,11 @@ function getCirclePath(
 
 class TimeCycles extends CrookedLine {
 
-    public init(annotation: Annotation, options: TimeCyclesOptions, index?: number): void {
+    public init(
+        annotation: Annotation,
+        options: TimeCyclesOptions,
+        index?: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -186,9 +190,11 @@ class TimeCycles extends CrookedLine {
             pixelInterval = Math.round(Math.max(Math.abs(x2 - x), 2)),
             // There can be 2 not full circles on the chart, so add 2.
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
-            // Calculate where the annotation should start drawing
-            // relative to first point.
-            pixelShift = (Math.floor((x - xAxis.left) / pixelInterval) + 1) * pixelInterval;
+            // Calculate where the annotation should start drawing relative to
+            // first point.
+            pixelShift = (
+                Math.floor((x - xAxis.left) / pixelInterval) + 1
+            ) * pixelInterval;
 
         this.startX = x - pixelShift;
         this.y = y;

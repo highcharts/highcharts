@@ -72,7 +72,15 @@ function selectiveRoundedRect(
         // bottom side
         ['L', x + rBottomLeft, y + h],
         // bottom left corner
-        ['C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft],
+        [
+            'C',
+            x + rBottomLeft / 2,
+            y + h,
+            x,
+            y + h - rBottomLeft / 2,
+            x,
+            y + h - rBottomLeft
+        ],
         // left side
         ['L', x, y + rTopLeft],
         // top left corner

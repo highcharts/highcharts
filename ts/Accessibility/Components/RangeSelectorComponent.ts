@@ -436,13 +436,14 @@ class RangeSelectorComponent extends AccessibilityComponent {
             // automatically, so we manually catch and handle it when relevant.
             this.removeDropdownKeydownHandler = addEvent(dropdown, 'keydown',
                 (e: KeyboardEvent): void => {
-                    const isTab = (e.which || e.keyCode) === this.keyCodes.tab;
+                    const isTab = (e.which || e.keyCode) === this.keyCodes.tab,
+                        a11y = chart.accessibility;
                     if (isTab) {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (chart.accessibility) {
-                            chart.accessibility.keyboardNavigation.tabindexContainer.focus();
-                            chart.accessibility.keyboardNavigation[
+                        if (a11y) {
+                            a11y.keyboardNavigation.tabindexContainer.focus();
+                            a11y.keyboardNavigation[
                                 e.shiftKey ? 'prev' : 'next'
                             ]();
                         }

@@ -231,7 +231,11 @@ class VennSeries extends ScatterSeries {
                 // Iterate the given points and return the one with the largest
                 // margin.
                 .reduce((best, point): Highcharts.VennLabelPositionObject => {
-                    const margin = VennUtils.getMarginFromCircles(point, internal, external);
+                    const margin = VennUtils.getMarginFromCircles(
+                        point,
+                        internal,
+                        external
+                    );
 
                     // If the margin better than the current best, then update
                     // sbest.
@@ -250,7 +254,11 @@ class VennSeries extends ScatterSeries {
         const optimal = VennUtils.nelderMead(
             function (p: Array<number>): number {
                 return -(
-                    VennUtils.getMarginFromCircles({ x: p[0], y: p[1] }, internal, external)
+                    VennUtils.getMarginFromCircles(
+                        { x: p[0], y: p[1] },
+                        internal,
+                        external
+                    )
                 );
             },
             [best.x, best.y] as any

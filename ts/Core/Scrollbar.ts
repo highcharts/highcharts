@@ -930,7 +930,11 @@ namespace Scrollbar {
  *
  * */
 
-defaultOptions.scrollbar = merge(true, Scrollbar.defaultOptions, defaultOptions.scrollbar);
+defaultOptions.scrollbar = merge(
+    true,
+    Scrollbar.defaultOptions,
+    defaultOptions.scrollbar
+);
 
 /* *
  *

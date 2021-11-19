@@ -185,7 +185,9 @@ declare global {
             'windbarb'|'ichimoku-averages'|'hlc'
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
-        type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
+        type DataGroupingAnchorExtremes = (
+            'start'|'middle'|'end'|'firstPoint'|'lastPoint'
+        );
         type AnchorChoiceType = Record<string, number>;
     }
 }
@@ -487,9 +489,13 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
                 groupedYData = groupedData.groupedYData,
                 gapSize = 0;
 
-            // The smoothed option is deprecated, instead,
-            // there is a fallback to the new anchoring mechanism. #12455.
-            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
+            // The smoothed option is deprecated, instead, there is a fallback
+            // to the new anchoring mechanism. #12455.
+            if (
+                dataGroupingOptions &&
+                dataGroupingOptions.smoothed &&
+                groupedXData.length
+            ) {
                 dataGroupingOptions.firstAnchor = 'firstPoint';
                 dataGroupingOptions.anchor = 'middle';
                 dataGroupingOptions.lastAnchor = 'lastPoint';

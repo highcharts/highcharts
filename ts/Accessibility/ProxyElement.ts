@@ -199,7 +199,10 @@ class ProxyElement {
         const legend = this.chart.legend;
         const groupDiv = legend.group && legend.group.div;
         const noTooltipOnGroup = stringHasNoTooltip(groupDiv && groupDiv.className || '');
-        const targetClassName = this.getTargetAttr(this.target.click, 'class') as string || '';
+        const targetClassName = this.getTargetAttr(
+            this.target.click,
+            'class'
+        ) as string || '';
         const noTooltipOnTarget = stringHasNoTooltip(targetClassName);
 
         this.buttonElement.className = noTooltipOnGroup || noTooltipOnTarget ?

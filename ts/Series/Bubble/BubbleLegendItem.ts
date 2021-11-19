@@ -670,7 +670,9 @@ class BubbleLegendItem {
             lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
             plotSizeX = chart.plotSizeX,
             plotSizeY = chart.plotSizeY,
-            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
+            bubbleSeries: BubbleSeries = chart.series[
+                this.options.seriesIndex as any
+            ] as any,
             pxSizes = bubbleSeries.getPxExtremes(),
             minSize = Math.ceil(pxSizes.minPxSize),
             maxPxSize = Math.ceil(pxSizes.maxPxSize),
@@ -729,7 +731,9 @@ class BubbleLegendItem {
     public correctSizes(): void {
         const legend = this.legend,
             chart = this.chart,
-            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
+            bubbleSeries: BubbleSeries = chart.series[
+                this.options.seriesIndex as any
+            ] as any,
             pxSizes = bubbleSeries.getPxExtremes(),
             bubbleSeriesSize = pxSizes.maxPxSize,
             bubbleLegendSize = this.options.maxSize;

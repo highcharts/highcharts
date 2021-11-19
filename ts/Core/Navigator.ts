@@ -969,13 +969,22 @@ class Navigator {
                 ['L', left, verticalMin], // top left of z.r.
                 ['L', left, zoomedMax], // bottom left of z.r.
                 ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.
-                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+                [
+                    'L',
+                    left + outlineHeight,
+                    navigatorTop + navigatorSize + scrollbarHeight
+                ]
             ];
             if (maskInside) {
                 path.push(
                     // upper left of zoomed range
                     ['M', left + outlineHeight, verticalMin - halfOutline],
-                    ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                    // upper right of z.r.
+                    [
+                        'L',
+                        left + outlineHeight,
+                        zoomedMax + halfOutline
+                    ]
                 );
             }
         } else {
@@ -993,8 +1002,10 @@ class Navigator {
             ];
             if (maskInside) {
                 path.push(
-                    ['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
-                    ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                    // upper left of zoomed range
+                    ['M', zoomedMin - halfOutline, navigatorTop],
+                    // upper right of z.r.
+                    ['L', zoomedMax + halfOutline, navigatorTop]
                 );
             }
         }
@@ -1948,9 +1959,14 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
-                    reversed: pick((navigatorOptions.yAxis && navigatorOptions.yAxis.reversed),
+                    reversed: pick(
+                        (
+                            navigatorOptions.yAxis &&
+                            navigatorOptions.yAxis.reversed
+                        ),
                         (chart.yAxis[0] && chart.yAxis[0].reversed),
-                        false), // #14060
+                        false
+                    ), // #14060
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height

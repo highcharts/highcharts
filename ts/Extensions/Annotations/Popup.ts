@@ -46,7 +46,11 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart);
+            public constructor(
+                parentDiv: HTMLDOMElement,
+                iconsURL: string,
+                chart?: Chart
+            );
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
             public formType?: string;
@@ -173,7 +177,11 @@ declare global {
                 listType: string,
                 filter?: string
             ): void;
-            addSearchBox(this: Popup, chart: AnnotationChart, parentDiv: HTMLDOMElement): void;
+            addSearchBox(
+                this: Popup,
+                chart: AnnotationChart,
+                parentDiv: HTMLDOMElement
+            ): void;
             addParamInputs(
                 this: Popup,
                 chart: AnnotationChart,
@@ -201,7 +209,11 @@ declare global {
         }
         interface PopupTabsObject {
             addContentItem(): HTMLDOMElement;
-            addMenuItem(this: Popup, tabName: string, disableTab?: number): HTMLDOMElement;
+            addMenuItem(
+                this: Popup,
+                tabName: string,
+                disableTab?: number
+            ): HTMLDOMElement;
             deselectAll(this: Popup): void;
             init(this: Popup, chart: AnnotationChart): void;
             selectTab(this: Popup, tab: Element, index: number): void;
@@ -1229,8 +1241,9 @@ H.Popup.prototype = {
                 lhsCol
             );
 
-            rhsColWrapper = rhsCol
-                .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0] as HTMLElement;
+            rhsColWrapper = rhsCol.querySelectorAll(
+                '.' + PREFIX + 'popup-rhs-col-wrapper'
+            )[0] as HTMLElement;
 
             filteredSeriesArray.forEach(function (
                 seriesSet: Highcharts.FilteredSeries
@@ -1251,7 +1264,8 @@ H.Popup.prototype = {
 
                 ['click', 'touchstart'].forEach(function (eventName: string): void {
                     addEvent(item, eventName, function (): void {
-                        const button = rhsColWrapper.parentNode.children[1] as HTMLDOMElement;
+                        const button = rhsColWrapper.parentNode
+                            .children[1] as HTMLDOMElement;
 
                         addFormFields.call(
                             popup,
@@ -1482,12 +1496,16 @@ H.Popup.prototype = {
                 chart.series.forEach(function (series): void {
                     const seriesOptions = series.options,
                         seriesName = seriesOptions.name ||
-                        (seriesOptions as any).params ? series.name : seriesOptions.id || '';
+                        (seriesOptions as any).params ?
+                            series.name :
+                            seriesOptions.id || '';
 
                     if (
                         seriesOptions.id !== PREFIX + 'navigator-series' &&
                         seriesOptions.id !== (
-                            currentSeries && currentSeries.options && currentSeries.options.id
+                            currentSeries &&
+                            currentSeries.options &&
+                            currentSeries.options.id
                         )
                     ) {
                         if (
@@ -1923,7 +1941,9 @@ H.Popup.prototype = {
             return createElement(
                 DIV,
                 {
-                    className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel'// #12100
+                    // #12100
+                    className: PREFIX + 'tab-item-content ' +
+                        PREFIX + 'no-mousewheel'
                 },
                 void 0,
                 popupDiv

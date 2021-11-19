@@ -1370,7 +1370,10 @@ namespace Exporting {
              * @param {string} prop
              *        Style property name
                      */
-            function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
+            function filterStyles(
+                val: (string|number|boolean|undefined),
+                prop: string
+            ): void {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
@@ -1764,7 +1767,10 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
  * @requires     modules/exporting
  * @optionparent navigation
  */
-defaultOptions.navigation = merge(ExportingDefaults.navigation, defaultOptions.navigation);
+defaultOptions.navigation = merge(
+    ExportingDefaults.navigation,
+    defaultOptions.navigation
+);
 
 /* *
  *

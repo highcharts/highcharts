@@ -220,7 +220,10 @@ namespace SeriesSonify {
                 onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
                 onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
                 earcons: chartSonifyOptions.earcons || configOptions.earcons,
-                masterVolume: pick(chartSonifyOptions.masterVolume, configOptions.masterVolume)
+                masterVolume: pick(
+                    chartSonifyOptions.masterVolume,
+                    configOptions.masterVolume
+                )
             },
             // Merge in the specific series options by ID if any are passed in
             isArray(additionalSeriesOptions) ? (
@@ -386,7 +389,8 @@ namespace SeriesSonify {
         const seriesOpts = series.options.sonification || {} as SonifySeriesOptions,
             chartOpts = series.chart.options.sonification ||
                 {} as ChartSonify.ChartSonificationOptions,
-            chartEvents = chartOpts.events || {} as ChartSonify.ChartSonificationEventsOptions,
+            chartEvents = chartOpts.events ||
+                {} as ChartSonify.ChartSonificationEventsOptions,
             seriesEvents = seriesOpts.events || {} as SeriesSonificationEventsOptions;
 
         return { // Chart options
@@ -400,7 +404,8 @@ namespace SeriesSonify {
                 chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
             ),
             masterVolume: chartOpts.masterVolume,
-            instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
+            // Deals with chart-level defaults
+            instruments: getSeriesInstrumentOptions(series),
             earcons: seriesOpts.earcons || chartOpts.earcons
         };
     }

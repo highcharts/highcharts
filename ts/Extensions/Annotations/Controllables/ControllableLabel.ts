@@ -400,7 +400,9 @@ class ControllableLabel implements ControllableMixin.Type {
      * For a controllable label, we need to subtract translation from
      * options.
      */
-    public anchor(_point: Highcharts.AnnotationPointType): Highcharts.AnnotationAnchorObject {
+    public anchor(
+        _point: Highcharts.AnnotationPointType
+    ): Highcharts.AnnotationAnchorObject {
         const anchor = ControllableMixin.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;

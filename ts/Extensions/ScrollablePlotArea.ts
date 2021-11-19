@@ -106,7 +106,9 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -127,7 +129,9 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;

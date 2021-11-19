@@ -58,7 +58,10 @@ function fireEventOnWrappedOrUnwrappedElement(
     const type = eventObject.type;
     const hcEvents = (el as SVGElement).hcEvents;
 
-    if (doc.createEvent && ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)) {
+    if (
+        doc.createEvent &&
+        ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)
+    ) {
         if (el.dispatchEvent) {
             el.dispatchEvent(eventObject);
         } else {
@@ -238,7 +241,10 @@ function getSeriesFirstPointElement(
     series: Series
 ): (DOMElementType|undefined) {
     if (series.points && series.points.length) {
-        const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
+        const firstPointWithGraphic = find(
+            series.points,
+            (p: Point): boolean => !!p.graphic
+        );
         return (
             firstPointWithGraphic &&
             firstPointWithGraphic.graphic &&

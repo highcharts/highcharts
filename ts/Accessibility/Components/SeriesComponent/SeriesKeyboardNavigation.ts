@@ -299,7 +299,9 @@ class SeriesKeyboardNavigation {
             // If then navigating with virtual cursor, it is possible to leave
             // keyboard nav module state on the data points and still activate
             // proxy buttons.
-            const focusedElClassName = focusedElement && focusedElement.getAttribute('class');
+            const focusedElClassName = (
+                focusedElement && focusedElement.getAttribute('class')
+            );
             const isProxyFocused = focusedElClassName &&
                 focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
 
@@ -830,7 +832,9 @@ namespace SeriesKeyboardNavigation {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
-            chartProto.highlightAdjacentPointVertical = chartHighlightAdjacentPointVertical;
+            chartProto.highlightAdjacentPointVertical = (
+                chartHighlightAdjacentPointVertical
+            );
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
         }
 
