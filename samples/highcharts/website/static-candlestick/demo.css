@@ -1,7 +1,8 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
 body {
-    margin: 0;
+    margin: 0 !important;
+    background-color: transparent !important;
 }
 
 .hero-container {
