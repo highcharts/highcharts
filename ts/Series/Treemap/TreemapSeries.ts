@@ -56,7 +56,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
-import Breadcrumbs from '../../Extensions/Breadcrumbs';
+import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
 const {
     getColor,
     getLevelOptions,
@@ -989,23 +989,6 @@ class TreemapSeries extends ScatterSeries {
             }
         });
     }
-    /**
-     * Calcule level on which chart currently is.
-     *
-     * @requires  modules/breadcrumbs
-     *
-     * @function TreemapSeries#calculateLevel
-     * @param {TreemapSeries} this
-     *        Treemap Series class.
-     */
-    public calculateLevel(this: TreemapSeries): void {
-        const breadcrumbs = this.chart.breadcrumbs,
-            chart = this.chart;
-        // Calculate on which level we are now.
-        if (breadcrumbs && isNumber(this.level)) {
-            breadcrumbs.level = this.level;
-        }
-    }
 
     /**
     * Create level list.
@@ -1017,27 +1000,19 @@ class TreemapSeries extends ScatterSeries {
     *        Treemap Series class.
     */
     public createLevelList(e: any): any {
-        const breadcrumbs = this.chart.breadcrumbs,
-            list: Array<Breadcrumbs.BreadcrumbOptions> = breadcrumbs && breadcrumbs.list || [],
-            chart = this.chart;
+        const chart = this.chart,
+            breadcrumbs = chart.breadcrumbs,
+            list: Array<Breadcrumbs.BreadcrumbOptions> = [];
 
-        // If the list doesn't exist treat the initial series
-        // as the current level- first iteration.
-        let currentLevelNumber: number = list.length ?
-            list[list.length - 1].level : 0;
+        if (breadcrumbs) {
 
-        if (!list[0]) {
+            let currentLevelNumber = 0;
+
             list.push({
-                level: 0,
+                level: currentLevelNumber,
                 levelOptions: chart.series[0]
             });
-        }
-        if (e.trigger === 'click' && e.newRootId) {
-            list.push({
-                level: list[list.length - 1].level + 1,
-                levelOptions: chart.get(e.newRootId) as SeriesOptions
-            });
-        } else {
+
             let node = e.target.nodeMap[e.newRootId];
             const extraNodes = [];
 
@@ -1053,55 +1028,13 @@ class TreemapSeries extends ScatterSeries {
                     levelOptions: node
                 });
             });
-            this.level = extraNodes.length;
+            // If the list has only first element, we should clear it
+            if (list.length <= 1) {
+                list.length = 0;
+            }
         }
 
         return list;
-    }
-
-    /**
-    * Update list after the drillUp.
-    *
-    * @requires  modules/breadcrumbs
-    *
-    * @function TreemapSeries#updateBreadcrumbsList
-    * @param {TreemapSeries} this
-    *        Treemap Series class.
-    */
-    public updateBreadcrumbsList(this: TreemapSeries): void {
-        const breadcrumbs = this.chart.breadcrumbs;
-        if (breadcrumbs) {
-            const list = breadcrumbs.list;
-
-            if (breadcrumbs.options.showFullPath) {
-                // last breadcrumb
-                const lastB = list[list.length - 1],
-                    button = lastB && lastB.button,
-                    separator = lastB && lastB.separator,
-                    prevSeparator = list[list.length - 2] &&
-                    list[list.length - 2].separator;
-
-                // Remove connector from the previous button.
-                if (prevSeparator) {
-                    prevSeparator.destroy();
-                    delete list[list.length - 2].separator;
-                }
-
-                // Remove SVG elements fromt the DOM.
-                button && button.destroy();
-                delete lastB.button;
-
-                separator && separator.destroy();
-                delete lastB.separator;
-            } else {
-                breadcrumbs.updateSingleButton();
-            }
-            list.pop();
-            // if after removing the item list is empty, destroy the group
-            if (!this.level || !list.length) {
-                breadcrumbs.destroyGroup();
-            }
-        }
     }
 
     /**
@@ -1416,8 +1349,15 @@ class TreemapSeries extends ScatterSeries {
         chart: Chart,
         options: DeepPartial<TreemapSeriesOptions>
     ): void {
-        let series = this,
-            setOptionsEvent;
+
+        const series = this,
+            breadcrumbsOptions = merge(
+                options.breadcrumbs,
+                options.drillUpButton,
+                {}
+            );
+
+        let setOptionsEvent;
 
         // If color series logic is loaded, add some properties
         this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
@@ -1456,7 +1396,60 @@ class TreemapSeries extends ScatterSeries {
             series.eventsToUnbind.push(
                 addEvent(series, 'click', series.onClickDrillToNode as any)
             );
+
+            series.eventsToUnbind.push(
+                addEvent(H.seriesTypes.treemap, 'setRootNode', function (e: any): void {
+                    const chart = this.chart;
+                    if (chart.breadcrumbs) {
+                        // Create a list using the event after drilldown.
+                        chart.breadcrumbs.updateProperties(this.createLevelList(e));
+                    }
+                })
+            );
+
+            series.eventsToUnbind.push(
+                addEvent(
+                    H.seriesTypes.treemap,
+                    'update',
+                    function (e: any, redraw?: boolean): void {
+                        const breadcrumbs = this.chart.breadcrumbs;
+
+                        if (breadcrumbs && e.options.breadcrumbs) {
+                            breadcrumbs.update(e.options.breadcrumbs, redraw);
+                        }
+                    })
+            );
+
+            series.eventsToUnbind.push(
+                addEvent(H.seriesTypes.treemap, 'destroy', function destroyEvents(): void {
+                    const chart = this.chart;
+                    if (chart.breadcrumbs) {
+                        chart.breadcrumbs.destroyGroup(true);
+                        chart.breadcrumbs = void 0 as Breadcrumbs|undefined;
+                    }
+                })
+            );
         }
+
+        if (
+            !chart.breadcrumbs &&
+            breadcrumbsOptions
+        ) {
+            chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions as any);
+        }
+
+        series.eventsToUnbind.push(
+            addEvent(H.Breadcrumbs, 'up', function (
+                e: any
+            ): void {
+
+                const drillUpsNumber = this.level - e.newLevel;
+
+                for (let i = 0; i < drillUpsNumber; i++) {
+                    series.drillUp();
+                }
+            })
+        );
     }
 
     /**

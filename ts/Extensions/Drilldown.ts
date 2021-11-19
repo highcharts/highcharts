@@ -54,6 +54,8 @@ const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
+import Breadcrumbs from './Breadcrumbs.js';
+
 const {
     addEvent,
     removeEvent,
@@ -98,6 +100,8 @@ declare module '../Core/Chart/ChartLike' {
         drillUp(): void;
         getDrilldownBackText(): (string|undefined);
         showDrillUpButton(): void;
+        createList(): Array<Breadcrumbs.BreadcrumbOptions>;
+
     }
 }
 
@@ -844,8 +848,6 @@ Chart.prototype.applyDrilldown = function (): void {
     let drilldownLevels = this.drilldownLevels,
         levelToRemove: (number|undefined);
 
-    fireEvent(this, 'applyDrilldown');
-
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
         (this.drilldownLevels as any).forEach(function (
@@ -874,8 +876,10 @@ Chart.prototype.applyDrilldown = function (): void {
     }
 
     this.pointer.reset();
-    this.redraw();
+
     fireEvent(this, 'afterDrilldown');
+
+    this.redraw();
 };
 
 Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
@@ -931,6 +935,52 @@ Chart.prototype.showDrillUpButton = function (): void {
         })
             .align();
     }
+};
+
+/**
+ * This method creates an array of arrays containing a level number
+ * with the corresponding series/point.
+ *
+ * @requires  modules/breadcrumbs
+ *
+ * @function Highcharts.Chart#createList
+ * @param {Highcharts.Chart} this
+ *        Breadcrumbs class.
+ * @return {Array<Breadcrumbs.BreadcrumbOptions>}
+ *        List for Highcharts Breadcrumbs.
+ */
+Chart.prototype.createList = function (): Array<Breadcrumbs.BreadcrumbOptions> {
+    const chart = this,
+        breadcrumbs = chart.breadcrumbs,
+        list: Array<Breadcrumbs.BreadcrumbOptions> = [],
+        drilldownLevels = chart.drilldownLevels;
+
+    // The list is based on drilldown levels from the chart object
+    if (drilldownLevels && drilldownLevels.length) {
+        // Add the initial series as the first element.
+        if (!list[0]) {
+            list.push({
+                level: 0,
+                levelOptions: drilldownLevels[0].seriesOptions
+            });
+        }
+
+        const lastBreadcrumb = list[list.length - 1];
+
+        drilldownLevels.forEach(function (level): void {
+            // If level is already added to breadcrumbs list,
+            // don't add it again- drilling categories
+            // + 1 because of the wrong levels numeration
+            // in drilldownLevels array.
+            if (level.levelNumber + 1 > lastBreadcrumb.level) {
+                list.push({
+                    level: level.levelNumber + 1,
+                    levelOptions: level.pointOptions
+                });
+            }
+        });
+    }
+    return list;
 };
 
 /**
@@ -1052,6 +1102,8 @@ Chart.prototype.drillUp = function (): void {
         }
     }
 
+    fireEvent(chart, 'afterDrillUp');
+
     this.redraw();
 
     (this.ddDupes as any).length = []; // #3315
@@ -1149,6 +1201,41 @@ addEvent(Chart, 'render', function (): void {
     });
 });
 
+addEvent(H.Breadcrumbs, 'up', function (
+    e: any
+): void {
+    const chart = this.chart,
+        drillUpsNumber = this.level - e.newLevel;
+    for (let i = 0; i < drillUpsNumber; i++) {
+        chart.drillUp();
+    }
+});
+
+addEvent(Chart, 'afterDrilldown', function (): void {
+    const chart = this,
+        drilldownOptions = chart.options.drilldown,
+        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
+    if (!chart.breadcrumbs) {
+        chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
+    }
+    chart.breadcrumbs.updateProperties(chart.createList());
+});
+
+addEvent(Chart, 'afterDrillUp', function (): void {
+    const chart = this;
+    chart.breadcrumbs && chart.breadcrumbs.updateProperties(chart.createList());
+});
+
+addEvent(Chart, 'update', function (e: any, redraw?: boolean): void {
+    const breadcrumbs = this.breadcrumbs,
+        breadcrumbOptions = e.options.drilldown && e.options.drilldown.breadcrumbs;
+
+    if (breadcrumbs && breadcrumbOptions) {
+
+        breadcrumbs.isDirty = true;
+        breadcrumbs.update(e.options.drilldown.breadcrumbs, redraw);
+    }
+});
 
 /**
  * When drilling up, keep the upper series invisible until the lower series has
