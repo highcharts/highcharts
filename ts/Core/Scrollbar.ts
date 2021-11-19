@@ -245,8 +245,16 @@ class Scrollbar {
             string,
             (e: PointerEvent) => void
         ]> = [
-            [buttons[buttonsOrder[0]].element, 'click', this.buttonToMinClick.bind(this)],
-            [buttons[buttonsOrder[1]].element, 'click', this.buttonToMaxClick.bind(this)],
+            [
+                buttons[buttonsOrder[0]].element,
+                'click',
+                this.buttonToMinClick.bind(this)
+            ],
+            [
+                buttons[buttonsOrder[1]].element,
+                'click',
+                this.buttonToMaxClick.bind(this)
+            ],
             [track, 'click', this.trackClick.bind(this)],
             [bar, 'mousedown', mouseDownHandler],
             [bar.ownerDocument, 'mousemove', mouseMoveHandler],

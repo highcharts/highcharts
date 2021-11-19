@@ -1832,11 +1832,17 @@ class RangeSelector {
                 this.setInputExtremes(
                     'min',
                     unionExtremes.dataMin,
-                    Math.min(unionExtremes.dataMax, this.getInputValue('max')) - minRange
+                    Math.min(
+                        unionExtremes.dataMax,
+                        this.getInputValue('max')
+                    ) - minRange
                 );
                 this.setInputExtremes(
                     'max',
-                    Math.max(unionExtremes.dataMin, this.getInputValue('min')) + minRange,
+                    Math.max(
+                        unionExtremes.dataMin,
+                        this.getInputValue('min')
+                    ) + minRange,
                     unionExtremes.dataMax
                 );
             }

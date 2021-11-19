@@ -870,7 +870,8 @@ namespace RadialAxis {
             // fall out of the visible range near the center of a pane
             pick(this.isCircular ?
                 length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2) - this.offset
+                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            ) - this.offset
         );
     }
 

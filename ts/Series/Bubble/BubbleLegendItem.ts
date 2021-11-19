@@ -398,7 +398,9 @@ class BubbleLegendItem {
             options = this.options,
             labelsOptions = options.labels as any,
             chart = this.chart,
-            bubbleSeries: BubbleSeries = chart.series[options.seriesIndex as any] as any,
+            bubbleSeries: BubbleSeries = chart.series[
+                options.seriesIndex as any
+            ] as any,
             renderer = chart.renderer,
             symbols = this.symbols,
             labels = symbols.labels,

@@ -35,7 +35,7 @@
         "max-len": [
             "error",
             {
-                "code": 90,
+                "code": 88,
                 "comments": 80,
                 "ignoreUrls": true,
                 "ignorePattern": "eslint-disable-line|headerFormat|pointFormat|public static defaultOptions| (extends|implements) |@\\w|\\w<|\\.\\/| highcharts\\/|\\]\\(#"

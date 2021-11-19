@@ -246,7 +246,9 @@ TimeCycles.prototype.defaultOptions = merge(
                         e: Highcharts.AnnotationEventObject,
                         target: TimeCycles
                     ): void {
-                        const position = target.anchor(target.points[0]).absolutePosition;
+                        const position = target.anchor(
+                            target.points[0]
+                        ).absolutePosition;
                         target.translatePoint(e.chartX - position.x, 0, 0);
                         target.redraw(false);
                     }
@@ -270,7 +272,9 @@ TimeCycles.prototype.defaultOptions = merge(
                         e: Highcharts.AnnotationEventObject,
                         target: TimeCycles
                     ): void {
-                        const position = target.anchor(target.points[1]).absolutePosition;
+                        const position = target.anchor(
+                            target.points[1]
+                        ).absolutePosition;
                         target.translatePoint(e.chartX - position.x, 0, 1);
                         target.redraw(false);
                     }

@@ -216,7 +216,9 @@ namespace SeriesSonify {
                 // calculating twice.
                 timeExtremes: getTimeExtremes(series, pointPlayTime),
                 // Some options we just pass on
-                instruments: chartSonifyOptions.instruments || configOptions.instruments,
+                instruments: (
+                    chartSonifyOptions.instruments || configOptions.instruments
+                ),
                 onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
                 onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
                 earcons: chartSonifyOptions.earcons || configOptions.earcons,
@@ -289,7 +291,10 @@ namespace SeriesSonify {
             // Make copies of the instruments used for this series, to allow
             // multiple series with the same instrument to play together
             instrumentCopies = makeInstrumentCopies(options.instruments),
-            instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
+            instruments = applyMasterVolumeToInstruments(
+                instrumentCopies,
+                masterVolume
+            ),
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
                 events: Array<TimelineEvent>,
@@ -342,9 +347,11 @@ namespace SeriesSonify {
                     // Check for hidden series
                     if (
                         !eventObject.series.visible &&
-                        !eventObject.series.chart.series.some(function (series): boolean {
-                            return series.visible;
-                        })
+                        !eventObject.series.chart.series.some(
+                            function (series): boolean {
+                                return series.visible;
+                            }
+                        )
                     ) {
                         // We have no visible series, stop the path.
                         (event.timelinePath as any).timeline.pause();

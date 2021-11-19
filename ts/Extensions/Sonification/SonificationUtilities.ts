@@ -178,7 +178,10 @@ function getExtremesForInstrumentProps(
             chart.options.sonification.defaultInstrumentOptions
         ),
         optionDefToInstrDef = (
-            optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
+            optionDef: (
+                SonificationInstrumentOptions|
+                DefaultSonificationInstrumentOptions
+            )
         ): PointSonify.PointInstrument => ({
             instrumentMapping: optionDef.mapping
         } as PointSonify.PointInstrument);

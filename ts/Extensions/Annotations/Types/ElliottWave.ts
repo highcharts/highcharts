@@ -24,7 +24,10 @@ declare module '../MockPointOptions' {
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 class ElliottWave extends CrookedLine {
-    public constructor(chart: Highcharts.AnnotationChart, options: ElliottWave.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: ElliottWave.Options
+    ) {
         super(chart, options);
     }
 

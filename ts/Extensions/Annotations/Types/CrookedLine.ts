@@ -29,7 +29,10 @@ class CrookedLine extends Annotation {
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: CrookedLine.Options
+    ) {
         super(chart, options);
     }
 

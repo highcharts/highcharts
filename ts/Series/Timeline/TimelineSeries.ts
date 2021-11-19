@@ -436,38 +436,46 @@ class TimelineSeries extends LineSeries {
 
         super.init.apply(series, arguments);
 
-        series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
-            let lastPlotX: (number|undefined),
-                closestPointRangePx = Number.MAX_VALUE;
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'afterTranslate',
+            function (): void {
+                let lastPlotX: (number|undefined),
+                    closestPointRangePx = Number.MAX_VALUE;
 
-            series.points.forEach(function (point): void {
-                // Set the isInside parameter basing also on the real point
-                // visibility, in order to avoid showing hidden points
-                // in drawPoints method.
-                point.isInside = point.isInside && point.visible;
+                series.points.forEach(function (point): void {
+                    // Set the isInside parameter basing also on the real point
+                    // visibility, in order to avoid showing hidden points
+                    // in drawPoints method.
+                    point.isInside = point.isInside && point.visible;
 
-                // New way of calculating closestPointRangePx value, which
-                // respects the real point visibility is needed.
-                if (point.visible && !point.isNull) {
-                    if (defined(lastPlotX)) {
-                        closestPointRangePx = Math.min(
-                            closestPointRangePx,
-                            Math.abs((point.plotX as any) - lastPlotX)
-                        );
+                    // New way of calculating closestPointRangePx value, which
+                    // respects the real point visibility is needed.
+                    if (point.visible && !point.isNull) {
+                        if (defined(lastPlotX)) {
+                            closestPointRangePx = Math.min(
+                                closestPointRangePx,
+                                Math.abs((point.plotX as any) - lastPlotX)
+                            );
+                        }
+                        lastPlotX = point.plotX;
                     }
-                    lastPlotX = point.plotX;
-                }
-            });
-            series.closestPointRangePx = closestPointRangePx;
-        }));
+                });
+                series.closestPointRangePx = closestPointRangePx;
+            }
+        ));
 
         // Distribute data labels before rendering them. Distribution is
         // based on the 'dataLabels.distance' and 'dataLabels.alternate'
         // property.
-        series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function (): void {
-            // Distribute data labels basing on defined algorithm.
-            series.distributeDL(); // @todo use this scope for series
-        }));
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'drawDataLabels',
+            function (): void {
+                // Distribute data labels basing on defined algorithm.
+                series.distributeDL(); // @todo use this scope for series
+            }
+        ));
 
         series.eventsToUnbind.push(addEvent(
             series,

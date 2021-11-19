@@ -1086,7 +1086,10 @@ addEvent(Chart, 'afterInit', function (): void {
 addEvent(Chart, 'afterShowResetZoom', function (): void {
     const chart = this,
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+        buttonOptions = (
+            chart.options.drilldown &&
+            chart.options.drilldown.drillUpButton
+        );
 
     if (
         this.drillUpButton &&

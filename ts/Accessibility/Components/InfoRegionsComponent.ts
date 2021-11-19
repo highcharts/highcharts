@@ -473,8 +473,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public defaultBeforeChartFormatter(): string {
-        const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+        const chart = this.chart,
+            format = chart.options.accessibility.screenReaderSection
+                .beforeChartFormat;
 
         if (!format) {
             return '';
@@ -490,7 +491,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
-            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
+            annotationsList = getAnnotationsInfoHTML(
+                chart as Highcharts.AnnotationChart
+            ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }

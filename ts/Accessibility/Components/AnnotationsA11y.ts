@@ -132,7 +132,8 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const pointValueDescriptions = points
         .filter((p): boolean => !!p.graphic) // Filter out mock points
         .map(getValueDesc)
-        .filter((desc: string): boolean => !!desc); // Filter out points we can't describe
+        // Filter out points we can't describe
+        .filter((desc: string): boolean => !!desc);
     const numPoints = pointValueDescriptions.length;
     const pointsSelector = numPoints > 1 ?
         'MultiplePoints' : numPoints ?

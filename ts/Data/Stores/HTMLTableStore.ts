@@ -208,7 +208,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportOptions: HTMLTableStore.ExportOptions = {}
     ): string {
         const options = exportOptions,
-            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            decimalPoint = options.useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders,
             useRowspanHeaders = options.useRowspanHeaders;

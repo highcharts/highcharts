@@ -190,7 +190,10 @@ class RangeSelectorComponent extends AccessibilityComponent {
             if (dropdown) {
                 hideFromAT(dropdown);
             }
-            buttons.forEach((btn): void => unhideChartElementFromAT(chart, btn.element));
+            buttons.forEach((btn): void => unhideChartElementFromAT(
+                chart,
+                btn.element
+            ));
         }
     }
 

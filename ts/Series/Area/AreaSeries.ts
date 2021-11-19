@@ -547,26 +547,24 @@ class AreaSeries extends LineSeries {
                                 const si = yAxisSeries[i].index;
                                 stackPoint = otherStack.points[si];
                                 if (!stackPoint) {
-                                    // If the next point in this series
-                                    // is missing, mark the point
-                                    // with point.leftNull or
-                                    // point.rightNull = true.
+                                    // If the next point in this series is
+                                    // missing, mark the point with
+                                    // point.leftNull or point.rightNull = true.
                                     if (si === series.index) {
                                         (pointMap[x] as any)[nullName] = true;
 
-                                        // If there are missing points in
-                                        // the next stack in any of the
-                                        // series below this one, we need
-                                        // to substract the missing values
-                                        // and add a hiatus to the left or
-                                        // right.
-                                    } else if (
-                                        visibleSeries[i]
-                                    ) {
-                                        stackedValues =
-                                            stack[x].points[si];
+                                    // If there are missing points in the next
+                                    // stack in any of the series below this
+                                    // one, we need to substract the missing
+                                    // values and add a hiatus to the left or
+                                    // right.
+                                    } else if (visibleSeries[i]) {
+                                        stackedValues = stack[x].points[si];
                                         if (stackedValues) {
-                                            cliff -= stackedValues[1] - stackedValues[0];
+                                            cliff -= (
+                                                stackedValues[1] -
+                                                stackedValues[0]
+                                            );
                                         }
                                     }
                                 }

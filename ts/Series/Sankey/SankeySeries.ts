@@ -760,7 +760,9 @@ class SankeySeries extends ColumnSeries {
 
         // Get the translation factor needed for each column to fill up the
         // plot height
-        const getColumnTranslationFactor = (column: SankeySeries.ColumnArray): number => {
+        const getColumnTranslationFactor = (
+            column: SankeySeries.ColumnArray
+        ): number => {
             const nodes = column.slice();
             const minLinkWidth = this.options.minLinkWidth || 0;
             let exceedsMinLinkWidth: boolean;

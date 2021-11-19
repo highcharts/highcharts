@@ -68,7 +68,9 @@ declare global {
                 callback?: Function
             ): HTMLDOMElement;
             public addCloseBtn(): void;
-            public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
+            public addColsContainer(
+                container: HTMLDOMElement
+            ): Record<string, HTMLDOMElement>;
             public addInput(
                 option: string,
                 type: string,
@@ -77,9 +79,16 @@ declare global {
             ): HTMLDOMElement;
             public closePopup(): void;
             public deselectAll(): void;
-            public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
+            public getFields(
+                parentDiv: HTMLDOMElement,
+                type: string
+            ): PopupFieldsObject;
             public getLangpack(): Record<string, string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void;
+            public init(
+                parentDiv: HTMLDOMElement,
+                iconsURL: string,
+                chart?: Chart
+            ): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -1079,7 +1088,10 @@ H.Popup.prototype = {
 
                     if (filter) {
                         // Replace invalid characters.
-                        const validFilter = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const validFilter = filter.replace(
+                            /[.*+?^${}()|[\]\\]/g,
+                            '\\$&'
+                        );
 
                         const regex = new RegExp(validFilter, 'i'),
                             alias = indicatorAliases &&
@@ -1205,7 +1217,11 @@ H.Popup.prototype = {
             // Filter and sort the series.
             if (!isEdit && !isArray(series)) {
                 // Apply filters only for the 'add' indicator list.
-                filteredSeriesArray = indicators.filterSeries.call(this, series, filter);
+                filteredSeriesArray = indicators.filterSeries.call(
+                    this,
+                    series,
+                    filter
+                );
             } else if (isArray(series)) {
                 filteredSeriesArray = indicators.filterSeriesArray.call(this, series);
             }
@@ -1303,7 +1319,9 @@ H.Popup.prototype = {
             if (indicatorList.childNodes.length > 0) {
                 (indicatorList.childNodes[0] as HTMLDOMElement).click();
             } else if (!isEdit) {
-                rhsColWrapper.parentNode.children[0].innerHTML = lang.noFilterMatch || '';
+                rhsColWrapper.parentNode.children[0].innerHTML = (
+                    lang.noFilterMatch || ''
+                );
                 (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
                     .style.display = 'none';
             }
@@ -1867,7 +1885,10 @@ H.Popup.prototype = {
          * @param {Highcharts.Chart} chart
          * Reference to current chart
          */
-        init: function (this: Highcharts.Popup, chart: Highcharts.AnnotationChart): void {
+        init: function (
+            this: Highcharts.Popup,
+            chart: Highcharts.AnnotationChart
+        ): void {
             let tabs = this.tabs,
                 indicatorsCount = this.indicators.getAmount.call(chart),
                 firstTab; // run by default
@@ -1985,7 +2006,11 @@ H.Popup.prototype = {
          * @param {globals.Element} - current tab
          * @param {number} - Index of tab in menu
          */
-        selectTab: function (this: Highcharts.Popup, tab: Element, index: number): void {
+        selectTab: function (
+            this: Highcharts.Popup,
+            tab: Element,
+            index: number
+        ): void {
             const allTabs = this.popup.container
                 .querySelectorAll('.' + PREFIX + 'tab-item-content');
 

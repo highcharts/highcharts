@@ -455,7 +455,10 @@ class ControllableLabel implements ControllableMixin.Type {
                         plotY: anchorRelativePosition.y,
                         negative: point.negative,
                         ttBelow: point.ttBelow,
-                        h: (anchorRelativePosition.height || anchorRelativePosition.width)
+                        h: (
+                            anchorRelativePosition.height ||
+                            anchorRelativePosition.width
+                        )
                     } as any
                 );
             } else if ((itemOptions as any).positioner) {
