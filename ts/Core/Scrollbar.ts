@@ -279,7 +279,10 @@ class Scrollbar {
 
     private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
-        const range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
+        const range = (
+            (scroller.to - scroller.from) *
+            pick(scroller.options.step, 0.2)
+        );
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
         fireEvent(scroller, 'changed', {
@@ -464,7 +467,11 @@ class Scrollbar {
         scroller.renderer = renderer;
 
         scroller.userOptions = options;
-        scroller.options = merge(ScrollbarDefaults, defaultOptions.scrollbar, options);
+        scroller.options = merge(
+            ScrollbarDefaults,
+            defaultOptions.scrollbar,
+            options
+        );
 
         scroller.chart = chart;
 

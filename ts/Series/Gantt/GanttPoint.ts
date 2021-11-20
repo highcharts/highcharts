@@ -52,7 +52,9 @@ class GanttPoint extends XRangePoint {
     /**
      * @private
      */
-    public static setGanttPointAliases(options: (GanttPoint|GanttPointOptions)): void {
+    public static setGanttPointAliases(
+        options: (GanttPoint|GanttPointOptions)
+    ): void {
         /**
          * Add a value to options if the value exists.
          * @private

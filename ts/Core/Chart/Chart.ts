@@ -1254,7 +1254,9 @@ class Chart {
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
             const title = (this as any)[key],
-                titleOptions: Chart.DescriptionOptionsType = (this as any).options[key],
+                titleOptions: Chart.DescriptionOptionsType = (
+                    (this as any).options[key]
+                ),
                 verticalAlign = titleOptions.verticalAlign || 'top',
                 offset = key === 'title' ?
                     verticalAlign === 'top' ? -3 : 0 :
@@ -3941,7 +3943,9 @@ namespace Chart {
         text?: string;
     }
 
-    export type DescriptionOptionsType = (TitleOptions|SubtitleOptions|CaptionOptions);
+    export type DescriptionOptionsType = (
+        TitleOptions|SubtitleOptions|CaptionOptions
+    );
 
     export interface IsInsideOptionsObject {
         ignoreX?: boolean;

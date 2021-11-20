@@ -552,7 +552,11 @@ namespace RadialAxis {
         } else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                [
+                    'M',
+                    this.center[0] + chart.plotLeft,
+                    this.center[1] + chart.plotTop
+                ],
                 ['L', end.x, end.y]
             ];
         }
@@ -589,7 +593,9 @@ namespace RadialAxis {
     ): Path {
 
         const chart = this.chart,
-            radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+            radiusToPixels = (
+                radius: number|string|undefined
+            ): (number|undefined) => {
                 if (typeof radius === 'string') {
                     let r = parseInt(radius, 10);
                     if (percentRegex.test(radius)) {

@@ -182,7 +182,12 @@ class HeikinAshiSeries extends CandlestickSeries {
         previousDataPoint: Array<(number)>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
-            newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            newClose = (
+                dataPoint[0] +
+                dataPoint[1] +
+                dataPoint[2] +
+                dataPoint[3]
+            ) / 4,
             newHigh = Math.max(dataPoint[1], newClose, newOpen),
             newLow = Math.min(dataPoint[2], newClose, newOpen);
 

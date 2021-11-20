@@ -118,7 +118,9 @@ class TimeCycles extends CrookedLine {
 
     public getPath(): SVGPath {
 
-        return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(getCirclePath(
+        return (
+            [getStartingPath(this.startX, this.y)] as SVGPath
+        ).concat(getCirclePath(
             this.pixelInterval,
             this.numberOfCircles,
             this.startX,
@@ -150,7 +152,10 @@ class TimeCycles extends CrookedLine {
 
         typeOptions.controlPointOptions.forEach(
             (option: Highcharts.AnnotationControlPointOptionsObject): void => {
-                const controlPointsOptions = merge(options.controlPointOptions, option);
+                const controlPointsOptions = merge(
+                    options.controlPointOptions,
+                    option
+                );
                 const controlPoint = new ControlPoint(
                     this.chart,
                     this,
@@ -183,7 +188,9 @@ class TimeCycles extends CrookedLine {
             return;
         }
 
-        const y = isNumber(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
+        const y = isNumber(yValue) ?
+                yAxis.toPixels(yValue) :
+                yAxis.top + yAxis.height,
             x = isNumber(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
             x2 = isNumber(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
             xAxisLength = xAxis.len,

@@ -56,7 +56,12 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public static readonly emptyBBox: BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+    public static readonly emptyBBox: BBoxObject = {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0
+    };
 
     /**
      * For labels, these CSS properties are applied to the `text` node directly.
@@ -220,7 +225,10 @@ class SVGLabel extends SVGElement {
             this.text.css(textStyles);
 
             const isWidth = 'width' in textStyles,
-                isFontStyle = ('fontSize' in textStyles || 'fontWeight' in textStyles);
+                isFontStyle = (
+                    'fontSize' in textStyles ||
+                    'fontWeight' in textStyles
+                );
 
             // Update existing text, box (#9400, #12163)
             if (isFontStyle) {
@@ -507,7 +515,11 @@ class SVGLabel extends SVGElement {
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         const paddingRight = pick(this.paddingRight, padding);
-        return (this.widthSetting || this.bBox.width || 0) + paddingLeft + paddingRight;
+        return (
+            (this.widthSetting || this.bBox.width || 0) +
+            paddingLeft +
+            paddingRight
+        );
     }
 
     public xSetter(value: number): void {

@@ -173,7 +173,9 @@ class LegendComponent extends AccessibilityComponent {
             'afterScroll',
             function (): void {
                 if (this.chart === component.chart) {
-                    component.proxyProvider.updateGroupProxyElementPositions('legend');
+                    component.proxyProvider.updateGroupProxyElementPositions(
+                        'legend'
+                    );
                     component.updateLegendItemProxyVisibility();
                     if (component.highlightedLegendItemIx > -1) {
                         this.chart.highlightLegendItem(

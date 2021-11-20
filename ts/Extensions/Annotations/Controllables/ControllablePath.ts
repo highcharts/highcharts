@@ -178,7 +178,10 @@ class ControllablePath implements ControllableMixin.Type {
     }
 
     public shouldBeDrawn(): boolean {
-        return (ControllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
+        return (
+            ControllableMixin.shouldBeDrawn.call(this) ||
+            Boolean(this.options.d)
+        );
     }
 
     public render(parent: SVGElement): void {

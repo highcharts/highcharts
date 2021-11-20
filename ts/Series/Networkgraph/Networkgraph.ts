@@ -779,7 +779,9 @@ extend(NetworkgraphSeries.prototype, {
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
-                function (nodeOptions: NodesComposition.PointCompositionOptions): void {
+                function (
+                    nodeOptions: NodesComposition.PointCompositionOptions
+                ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
                         this.nodeLookup[nodeOptions.id as any] =
                             this.createNode(nodeOptions.id as any);

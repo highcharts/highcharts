@@ -1187,7 +1187,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 

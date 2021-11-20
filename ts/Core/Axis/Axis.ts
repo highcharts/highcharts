@@ -705,7 +705,9 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (number: number): boolean => number > 0;
+                            const isPositive = (
+                                number: number
+                            ): boolean => number > 0;
 
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
@@ -1041,8 +1043,12 @@ class Axis {
         min: number,
         max: number
     ): Array<number> {
-        const roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
+        const roundedMin = correctFloat(
+                Math.floor(min / tickInterval) * tickInterval
+            ),
+            roundedMax = correctFloat(
+                Math.ceil(max / tickInterval) * tickInterval
+            ),
             tickPositions = [];
 
         let pos,

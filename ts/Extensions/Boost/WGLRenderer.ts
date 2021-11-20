@@ -838,7 +838,10 @@ function GLRenderer(
 
                     if (zoneAxis === 'x') {
                         if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                            if (
+                                zoneColors[i] &&
+                                (!last || x >= (last.value as any))
+                            ) {
                                 zoneColor = zoneColors[i];
                             }
                             return true;

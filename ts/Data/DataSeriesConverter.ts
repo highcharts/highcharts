@@ -243,8 +243,10 @@ class DataSeriesConverter {
                         columns[y] = elem;
                         columns.x = j;
                     } else if (elem instanceof Array) {
-                        xIndex = keys && keys.indexOf('x') > -1 ? keys.indexOf('x') : 0;
-                        yIndex = keys && keys.indexOf('y') > -1 ? keys.indexOf('y') : 1;
+                        xIndex = keys && keys.indexOf('x') > -1 ?
+                            keys.indexOf('x') : 0;
+                        yIndex = keys && keys.indexOf('y') > -1 ?
+                            keys.indexOf('y') : 1;
 
                         if (needsArrayMap) {
                             for (let k = 0; k < pointArrayMapLength; k++) {

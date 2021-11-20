@@ -2827,7 +2827,8 @@ Axis.prototype.minFromRange = function (): (number|undefined) {
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Time.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const timeName: Time.TimeUnitValue = type === 'year' ?
+                'FullYear' : 'Month';
             const date = new time.Date(base);
             const basePeriod = time.get(timeName, date);
 

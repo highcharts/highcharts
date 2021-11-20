@@ -4282,8 +4282,10 @@ class Series {
                 // Legacy (IE < 11)
                 } else {
 
-                    const ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
-                        series.hcEvents;
+                    const ownEvents = Object.hasOwnProperty.call(
+                        series,
+                        'hcEvents'
+                    ) && series.hcEvents;
                     for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
                         (series as any)[n] = void 0;
                     }

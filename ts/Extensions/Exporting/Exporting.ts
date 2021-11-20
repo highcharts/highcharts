@@ -1754,7 +1754,10 @@ namespace Exporting {
  *
  * */
 
-defaultOptions.exporting = merge(ExportingDefaults.exporting, defaultOptions.exporting);
+defaultOptions.exporting = merge(
+    ExportingDefaults.exporting,
+    defaultOptions.exporting
+);
 defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 
 // Buttons and menus are collected in a separate config option set called

@@ -395,6 +395,7 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
+            getTimezoneOffset = options.getTimezoneOffset,
             moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
@@ -420,9 +421,9 @@ class Time {
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && options.getTimezoneOffset) {
+        if (this.useUTC && getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+                return getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
 

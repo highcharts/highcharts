@@ -532,7 +532,9 @@ Chart.prototype.getDataRows = function (
         x,
         xTitle: string,
         langOptions = this.options.lang,
-        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        exportDataOptions: Highcharts.ExportDataOptions = (
+            langOptions.exportData as any
+        ),
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options

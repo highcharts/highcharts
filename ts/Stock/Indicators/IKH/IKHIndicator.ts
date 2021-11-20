@@ -606,7 +606,9 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                        indicator
+                    );
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -681,8 +683,9 @@ class IKHIndicator extends SMAIndicator {
                         ].concat(sectionNextPoints);
                     } else {
                         // Compare middle point of the section
-                        concatArrIndex =
-                            sectionPoints[x].plotY > sectionNextPoints[x].plotY ? 0 : 1;
+                        concatArrIndex = (
+                            sectionPoints[x].plotY > sectionNextPoints[x].plotY
+                        ) ? 0 : 1;
 
                         points[concatArrIndex] = points[concatArrIndex].concat(
                             sectionPoints

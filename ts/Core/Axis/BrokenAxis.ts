@@ -319,10 +319,15 @@ namespace BrokenAxis {
                             ) {
                                 eventName = 'pointBreak';
 
-                            } else if (
-                                (threshold < brk.from && y > brk.from && y < brk.to) ||
-                                (threshold > brk.from && y > brk.to && y < brk.from)
-                            ) {
+                            } else if ((
+                                threshold < brk.from &&
+                                y > brk.from &&
+                                y < brk.to
+                            ) || (
+                                threshold > brk.from &&
+                                y > brk.to &&
+                                y < brk.from
+                            )) {
                                 eventName = 'pointInBreak';
                             }
                             if (eventName) {
