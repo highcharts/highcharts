@@ -812,14 +812,18 @@ class MapSeries extends ScatterSeries {
 
                             // Cache point bounding box for use to position data
                             // labels, bubbles etc
-                            const propMiddleX = properties && properties['hc-middle-x'],
+                            const propMiddleX = (
+                                    properties && properties['hc-middle-x']
+                                ),
                                 midX = (
                                     x1 + (x2 - x1) * pick(
                                         point.middleX,
                                         isNumber(propMiddleX) ? propMiddleX : 0.5
                                     )
                                 ),
-                                propMiddleY = properties && properties['hc-middle-y'];
+                                propMiddleY = (
+                                    properties && properties['hc-middle-y']
+                                );
 
                             let middleYFraction = pick(
                                 point.middleY,

@@ -109,7 +109,10 @@ class GanttSeries extends XRangeSeries {
                     );
                 }
 
-                start = series.chart.time.dateFormat(format as any, point.start as any);
+                start = series.chart.time.dateFormat(
+                    format as any,
+                    point.start as any
+                );
                 end = series.chart.time.dateFormat(format as any, point.end as any);
 
                 retVal += '<br/>';

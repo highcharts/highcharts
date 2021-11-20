@@ -1385,7 +1385,11 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                     tableColumn.length = rowIndex;
                     tableColumn.push(...column);
                 } else {
-                    tableColumn.splice(rowIndex, (column.length - rowIndex), ...column);
+                    tableColumn.splice(
+                        rowIndex,
+                        (column.length - rowIndex),
+                        ...column
+                    );
                 }
 
                 table.rowCount = Math.max(table.rowCount, tableColumn.length);

@@ -527,7 +527,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
      */
     public defaultAfterChartFormatter(): string {
         const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+        const format = chart.options.accessibility.screenReaderSection
+            .afterChartFormat;
 
         if (!format) {
             return '';

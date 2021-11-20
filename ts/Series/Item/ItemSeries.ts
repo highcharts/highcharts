@@ -418,10 +418,11 @@ class ItemSeries extends PieSeries {
             rowsOption = this.options.rows,
             // How many rows (arcs) should be used
             rowFraction = (diameter - innerSize) / diameter,
-            isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
+            isCircle: boolean = fullAngle % (2 * Math.PI) === 0,
+            total = this.total || 0;
 
         // Increase the itemSize until we find the best fit
-        while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
+        while (itemCount > total + (rows && isCircle ? rows.length : 0)) {
 
             finalItemCount = itemCount;
 

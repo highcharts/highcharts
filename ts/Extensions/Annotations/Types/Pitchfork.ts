@@ -88,7 +88,10 @@ class Pitchfork extends InfinityLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Pitchfork.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Pitchfork.Options
+    ) {
         super(chart, options);
     }
 

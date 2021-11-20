@@ -173,7 +173,11 @@ class HollowCandlestickSeries extends CandlestickSeries {
             processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (!hollowCandlestickData.length && processedYData && processedYData.length) {
+        if (
+            !hollowCandlestickData.length &&
+            processedYData &&
+            processedYData.length
+        ) {
 
             // First point is allways bullish (transparent).
             hollowCandlestickData.push({

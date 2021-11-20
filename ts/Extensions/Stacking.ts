@@ -435,7 +435,8 @@ class StackItem {
                     boxOffsetX = bBox.width / 2;
                 } else {
                     boxOffsetX = chart.inverted ?
-                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                        (isNegative ? bBox.width + padding : -padding) :
+                        bBox.width / 2;
                 }
             }
 

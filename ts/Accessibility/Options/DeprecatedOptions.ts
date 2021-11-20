@@ -191,7 +191,12 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
+            error(
+                32,
+                false,
+                chart,
+                { [`chart.${prop}`]: `use accessibility.${prop}` }
+            );
         }
     });
 }

@@ -313,7 +313,9 @@ class Point {
         // copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ? extend(point.options, options as any) : options;
+        point.options = point.options ?
+            extend(point.options, options as any) :
+            options;
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)

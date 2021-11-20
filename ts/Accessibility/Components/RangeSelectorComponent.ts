@@ -177,7 +177,10 @@ class RangeSelectorComponent extends AccessibilityComponent {
             rangeSelector.buttons ||
             []
         );
-        const hideFromAT = (el: Element): void => el.setAttribute('aria-hidden', true);
+        const hideFromAT = (el: Element): void => el.setAttribute(
+            'aria-hidden',
+            true
+        );
 
         if (
             rangeSelector &&
@@ -209,7 +212,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
             chart.rangeSelector.dropdown
         );
         if (dropdown) {
-            const label = chart.langFormat('accessibility.rangeSelector.dropdownLabel',
+            const label = chart.langFormat(
+                'accessibility.rangeSelector.dropdownLabel',
                 { rangeTitle: chart.options.lang.rangeSelectorZoom }
             );
             dropdown.setAttribute('aria-label', label);
@@ -694,12 +698,18 @@ namespace RangeSelectorComponent {
 
             const chartProto = ChartClass.prototype as ChartComposition;
 
-            chartProto.highlightRangeSelectorButton = chartHighlightRangeSelectorButton;
+            chartProto.highlightRangeSelectorButton = (
+                chartHighlightRangeSelectorButton
+            );
         }
         if (composedClasses.indexOf(RangeSelectorClass) === -1) {
             composedClasses.push(RangeSelectorClass);
 
-            addEvent(RangeSelector, 'afterBtnClick', rangeSelectorAfterBtnClick);
+            addEvent(
+                RangeSelector,
+                'afterBtnClick',
+                rangeSelectorAfterBtnClick
+            );
         }
     }
 
@@ -712,11 +722,9 @@ namespace RangeSelectorComponent {
     function rangeSelectorAfterBtnClick(
         this: RangeSelector
     ): void {
-        if (
-            this.chart.accessibility &&
-            this.chart.accessibility.components.rangeSelector
-        ) {
-            return this.chart.accessibility.components.rangeSelector.onAfterBtnClick();
+        const a11y = this.chart.accessibility;
+        if (a11y && a11y.components.rangeSelector) {
+            return a11y.components.rangeSelector.onAfterBtnClick();
         }
     }
 

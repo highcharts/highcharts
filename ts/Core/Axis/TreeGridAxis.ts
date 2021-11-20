@@ -282,7 +282,8 @@ namespace TreeGridAxis {
         const categories: Array<string> = [],
             collapsedNodes: Array<GridNode> = [],
             mapOfIdToNode: Record<string, TreeGridNode> = {},
-            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ? uniqueNames : false;
+            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ?
+                uniqueNames : false;
 
         let mapOfPosToGridNode: Record<string, GridNode> = {},
             posIterator = -1;
@@ -508,7 +509,9 @@ namespace TreeGridAxis {
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
-                                    (data as PointOptions).seriesIndex = numberOfSeries;
+                                    (data as PointOptions).seriesIndex = (
+                                        numberOfSeries
+                                    );
                                     arr.push(data as PointOptions);
                                 }
                             });
@@ -560,7 +563,9 @@ namespace TreeGridAxis {
                             ) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
-                                data.forEach(function (point: GanttPointOptions): void {
+                                data.forEach(function (
+                                    point: GanttPointOptions
+                                ): void {
                                     if (
                                         (d as any).indexOf(point.x) >= 0 &&
                                         (d as any).indexOf(point.x2) >= 0
@@ -682,7 +687,9 @@ namespace TreeGridAxis {
             addEvent(chart, 'beforeRedraw', onBeforeRender);
 
             // Add new collapsed nodes on addseries
-            addEvent(chart, 'addSeries', function (e: ChartAddSeriesEventObject): void {
+            addEvent(chart, 'addSeries', function (
+                e: ChartAddSeriesEventObject
+            ): void {
                 if (e.options.data) {
                     const treeGrid = getTreeGridFromData(
                         (e.options.data as any),

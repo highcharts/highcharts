@@ -421,7 +421,9 @@ class TextBuilder {
                 if (styledMode) {
                     attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 } else {
-                    attributes.style = 'font-style:italic;' + (attributes.style || '');
+                    attributes.style = (
+                        'font-style:italic;' + (attributes.style || '')
+                    );
                 }
             }
 

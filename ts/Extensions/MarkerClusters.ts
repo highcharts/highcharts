@@ -995,7 +995,10 @@ Scatter.prototype.animateClusterPoint = function (
                 newPointBBox = newPointObj.point.graphic.getBBox();
 
                 // Marker image does not have the offset (#14342).
-                offset = newPointObj.point.graphic && newPointObj.point.graphic.isImg ?
+                offset = (
+                    newPointObj.point.graphic &&
+                    newPointObj.point.graphic.isImg
+                ) ?
                     0 : newPointBBox.width / 2;
 
                 newPointObj.point.graphic.attr({

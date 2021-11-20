@@ -173,7 +173,11 @@ namespace OrdinalAxis {
                 onAxisFoundExtremes
             );
             addEvent(AxisClass, 'afterSetScale', onAxisAfterSetScale);
-            addEvent(AxisClass, 'initialAxisTranslation', onAxisInitialAxisTranslation);
+            addEvent(
+                AxisClass,
+                'initialAxisTranslation',
+                onAxisInitialAxisTranslation
+            );
         }
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
@@ -598,7 +602,9 @@ namespace OrdinalAxis {
 
         if (axis.ordinal) {
             axis.ordinal.beforeSetTickPositions();
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
+            axis.tickInterval = axis.ordinal.postProcessTickInterval(
+                axis.tickInterval
+            );
         }
     }
 

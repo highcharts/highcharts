@@ -245,7 +245,10 @@ class Fx {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete (options.curAnim as any)[this.prop];
-            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
+            if (
+                options.complete &&
+                Object.keys(options.curAnim as any).length === 0
+            ) {
                 options.complete.call(this.elem);
             }
         } else { // #7166

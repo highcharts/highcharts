@@ -952,7 +952,12 @@ class ColumnSeries extends Series {
 
             // Adjust for null or missing points
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
+                barX = series.adjustForMissingColumns(
+                    barX,
+                    pointWidth,
+                    point,
+                    metrics
+                );
             }
 
             // Cache for access in polar

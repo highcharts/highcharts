@@ -704,7 +704,9 @@ namespace ParallelAxis {
         const axis = this;
 
         if (!axis.parallelCoordinates) {
-            axis.parallelCoordinates = new ParallelAxisAdditions(axis as ParallelAxis);
+            axis.parallelCoordinates = new ParallelAxisAdditions(
+                axis as ParallelAxis
+            );
         }
     }
 }

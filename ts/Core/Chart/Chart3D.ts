@@ -1904,7 +1904,8 @@ namespace Chart3D {
             if (options3d) {
                 options3d.alpha = options3d.alpha % 360 +
                     (options3d.alpha >= 0 ? 0 : 360);
-                options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
+                options3d.beta = options3d.beta % 360 +
+                    (options3d.beta >= 0 ? 0 : 360);
             }
 
             const inverted = chart.inverted,

@@ -77,7 +77,10 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Fibonacci.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Fibonacci.Options
+    ) {
         super(chart, options);
     }
 

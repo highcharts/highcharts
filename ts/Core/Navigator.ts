@@ -993,12 +993,18 @@ class Navigator {
             navigatorTop += halfOutline;
 
             path = [
-                ['M', left, navigatorTop], // left
-                ['L', zoomedMin, navigatorTop], // upper left of zoomed range
-                ['L', zoomedMin, navigatorTop + outlineHeight], // lower left of z.r.
-                ['L', zoomedMax, navigatorTop + outlineHeight], // lower right of z.r.
-                ['L', zoomedMax, navigatorTop], // upper right of z.r.
-                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+                // left
+                ['M', left, navigatorTop],
+                // upper left of zoomed range
+                ['L', zoomedMin, navigatorTop],
+                // lower left of z.r.
+                ['L', zoomedMin, navigatorTop + outlineHeight],
+                // lower right of z.r.
+                ['L', zoomedMax, navigatorTop + outlineHeight],
+                // upper right of z.r.
+                ['L', zoomedMax, navigatorTop],
+                // right
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop]
             ];
             if (maskInside) {
                 path.push(

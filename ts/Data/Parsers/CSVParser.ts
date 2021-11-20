@@ -231,7 +231,10 @@ class CSVParser extends DataParser<DataParser.Event> {
             columns = parser.columns || [],
             dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
-            itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+            itemDelimiter = (
+                parser.options.itemDelimiter ||
+                parser.guessedItemDelimiter
+            );
 
         let { decimalPoint } = parser.options;
         if (!decimalPoint || decimalPoint === itemDelimiter) {

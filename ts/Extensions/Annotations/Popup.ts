@@ -304,7 +304,11 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart?: Chart): void {
+    init: function (
+        parentDiv: HTMLDOMElement,
+        iconsURL: string,
+        chart?: Chart
+    ): void {
         this.chart = chart;
 
         // create popup div
@@ -551,8 +555,12 @@ H.Popup.prototype = {
         parentDiv: HTMLDOMElement,
         type: string
     ): Highcharts.PopupFieldsObject {
-        const inputList = Array.prototype.slice.call(parentDiv.querySelectorAll(INPUT)),
-            selectList = Array.prototype.slice.call(parentDiv.querySelectorAll(SELECT)),
+        const inputList = Array.prototype.slice.call(
+                parentDiv.querySelectorAll(INPUT)
+            ),
+            selectList = Array.prototype.slice.call(
+                parentDiv.querySelectorAll(SELECT)
+            ),
             optionSeries = '#' + PREFIX + 'select-series > option:checked',
             optionVolume = '#' + PREFIX + 'select-volume > option:checked',
             linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
@@ -1589,7 +1597,9 @@ H.Popup.prototype = {
                 seriesTypes = H.seriesTypes;
             // add mode
             let seriesName = (seriesTypes[indicatorType] &&
-                    (seriesTypes[indicatorType].prototype as SMAIndicator).nameBase) ||
+                    (
+                        seriesTypes[indicatorType].prototype as SMAIndicator
+                    ).nameBase) ||
                     indicatorType.toUpperCase(),
                 seriesType = indicatorType;
 

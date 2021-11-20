@@ -285,7 +285,9 @@ namespace FocusBorderComposition {
         /**
          * @private
          */
-        function getTextAnchorCorrection(text: SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(
+            text: SVGElement
+        ): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 

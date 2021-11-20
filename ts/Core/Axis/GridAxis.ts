@@ -1360,7 +1360,11 @@ namespace GridAxis {
 
             return (
                 lastIndex === thisIndex &&
-                (isNumber(columnIndex) ? (columns as any).length === columnIndex : true)
+                (
+                    isNumber(columnIndex) ?
+                        (columns as any).length === columnIndex :
+                        true
+                )
             );
         }
 

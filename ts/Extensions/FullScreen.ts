@@ -321,7 +321,8 @@ class Fullscreen {
                     exportDivElement,
                     !this.isOpen ?
                         (
-                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                            exportingOptions.menuItemDefinitions.viewFullscreen
+                                .text ||
                             lang.viewFullscreen
                         ) : lang.exitFullscreen
                 );

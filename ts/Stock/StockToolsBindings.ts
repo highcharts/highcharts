@@ -121,9 +121,9 @@ declare global {
                 e: PointerEvent,
                 annotation: Annotation
             ): void;
-            updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject[
-                'updateHeight'
-            ];
+            updateNthPoint(
+                startIndex: number
+            ): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
 
         interface StockToolsFieldsObject {

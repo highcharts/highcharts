@@ -814,7 +814,8 @@ class SVGElement implements SVGElementLike {
                     if (
                         !this.styledMode &&
                         this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)
+                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
+                            .test(key)
                     ) {
                         this.updateShadows(key, val, setter);
                     }

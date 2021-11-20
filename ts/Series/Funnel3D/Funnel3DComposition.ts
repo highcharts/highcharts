@@ -252,7 +252,9 @@ namespace Funnel3DComposition {
                 // gradient support
                 if ((fillColor as any).linearGradient) {
                     // color in steps, as each gradient will generate a key
-                    funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
+                    funnel3d.sideGroups.forEach(function (
+                        sideGroupName: string
+                    ): void {
                         const box = funnel3d[sideGroupName].gradientBox,
                             gradient: NonNullable<GradientColor['linearGradient']> =
                                 (fillColor as any).linearGradient,

@@ -189,7 +189,8 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    public beforePadding = false as any; // Prevents unnecessary padding with `hc-more`
+    // Prevents unnecessary padding with `hc-more`
+    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
@@ -573,7 +574,11 @@ class ColorAxis extends Axis implements AxisLike {
         }).add(item.legendGroup);
 
         // Set how much space this legend item takes up
-        axis.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
+        axis.legendItemWidth = (
+            width +
+            padding +
+            (horiz ? itemDistance : labelPadding)
+        );
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
@@ -908,7 +913,9 @@ class ColorAxis extends Axis implements AxisLike {
                         visible: true,
                         setState: noop,
                         isDataClass: true,
-                        setVisible: function (this: ColorAxis.LegendItemObject): void {
+                        setVisible: function (
+                            this: ColorAxis.LegendItemObject
+                        ): void {
                             vis = axis.visible = !vis;
                             axis.series.forEach(function (series): void {
                                 series.points.forEach(function (

@@ -904,7 +904,10 @@ class NavigationBindings {
                             parent[key][i] = {};
                             objectEach(
                                 arrayOption,
-                                function (nestedOption: any, nestedKey: string): void {
+                                function (
+                                    nestedOption: any,
+                                    nestedKey: string
+                                ): void {
                                     traverse(
                                         nestedOption,
                                         nestedKey,
