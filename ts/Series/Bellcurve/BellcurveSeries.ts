@@ -161,7 +161,8 @@ class BellcurveSeries extends AreaSplineSeries {
         let len = data.length,
             sum;
 
-        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+        average = isNumber(average) ?
+            average : (BellcurveSeries.mean(data) as any);
 
         sum = data.reduce(function (sum: number, value: number): number {
             const diff = value - (average as any);

@@ -546,13 +546,17 @@ namespace TreeGridAxis {
 
                     // Assign values to the axis.
                     axis.categories = treeGrid.categories;
-                    axis.treeGrid.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+                    axis.treeGrid.mapOfPosToGridNode = (
+                        treeGrid.mapOfPosToGridNode
+                    );
                     axis.hasNames = true;
                     axis.treeGrid.tree = treeGrid.tree;
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series): void {
-                        const axisData = (series.options.data || []).map(function (
+                        const axisData = (
+                            series.options.data || []
+                        ).map(function (
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
@@ -938,7 +942,9 @@ namespace TreeGridAxis {
                 const data = series.options.data;
                 if (node.id && data) {
                     const point = chart.get(node.id),
-                        dataPoint = data[series.data.indexOf(point as GanttPoint)];
+                        dataPoint = data[series.data.indexOf(
+                            point as GanttPoint
+                        )];
 
                     if (point && dataPoint) {
                         (point as GanttPoint).collapsed = node.collapsed;

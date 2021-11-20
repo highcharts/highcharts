@@ -148,7 +148,9 @@ class CSVStore extends DataStore<CSVStore.Event> {
      */
     private poll(): void {
         const { dataRefreshRate, enablePolling, csvURL } = this.options;
-        const updateIntervalMs = (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
+        const updateIntervalMs = (
+            dataRefreshRate > 1 ? dataRefreshRate : 1
+        ) * 1000;
         if (enablePolling && csvURL === this.liveDataURL) {
             // We need to stop doing this if the URL has changed
             this.liveDataTimeout = setTimeout((): void => {

@@ -260,7 +260,9 @@ namespace PointSonify {
         options.instruments.forEach(function (
             instrumentDefinition: PointInstrument
         ): void {
-            const instrument = typeof instrumentDefinition.instrument === 'string' ?
+            const instrument = (
+                    typeof instrumentDefinition.instrument === 'string'
+                ) ?
                     Instrument.definitions[instrumentDefinition.instrument] :
                     instrumentDefinition.instrument,
                 mapping = instrumentDefinition.instrumentMapping || {},
@@ -285,7 +287,8 @@ namespace PointSonify {
 
                     // Remove reference from instruments playing
                     if (
-                        point.sonification && point.sonification.instrumentsPlaying
+                        point.sonification &&
+                        point.sonification.instrumentsPlaying
                     ) {
                         delete point.sonification.instrumentsPlaying[id];
 

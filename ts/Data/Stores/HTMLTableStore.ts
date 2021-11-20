@@ -108,7 +108,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
+    public readonly options: (
+        HTMLTableStore.Options & HTMLTableParser.OptionsType
+    );
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -116,8 +118,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     public readonly parser: HTMLTableParser;
 
     /**
-     * The table element to create the store from.
-     * Is either supplied directly or is fetched by an ID.
+     * The table element to create the store from. Is either supplied directly
+     * or is fetched by an ID.
      */
     public tableElement: (HTMLElement | null);
 
@@ -474,7 +476,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return this.getHTMLTableForExport(
+            merge(exportOptions, htmlExportOptions)
+        );
     }
 
 }

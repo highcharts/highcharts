@@ -215,7 +215,10 @@ namespace MultipleLinesComposition {
             if (areaPath && areaPath.length) {
                 areaPath[0][0] = 'L';
 
-                path = SMAIndicator.prototype.getGraphPath.call(indicator, points);
+                path = SMAIndicator.prototype.getGraphPath.call(
+                    indicator,
+                    points
+                );
 
                 higherAreaPath = areaPath.slice(0, path.length);
 
@@ -225,7 +228,10 @@ namespace MultipleLinesComposition {
                 }
             }
         } else {
-            path = SMAIndicator.prototype.getGraphPath.apply(indicator, arguments);
+            path = SMAIndicator.prototype.getGraphPath.apply(
+                indicator,
+                arguments
+            );
         }
         return path;
     }

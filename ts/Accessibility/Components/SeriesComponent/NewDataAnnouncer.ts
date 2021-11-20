@@ -63,7 +63,9 @@ function findPointInDataArray<T extends Accessibility.PointComposition>(
     point: T
 ): T {
     const candidates = (point.series.data as Array<T>).filter(
-        (candidate): boolean => (point.x === candidate.x && point.y === candidate.y)
+        (candidate): boolean => (
+            point.x === candidate.x && point.y === candidate.y
+        )
     );
 
     return candidates.length === 1 ? candidates[0] : point;
@@ -153,7 +155,8 @@ class NewDataAnnouncer {
         const announceOptions = (
             (chart.options.accessibility as any).announceNewData
         );
-        const announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
+        const announceType = announceOptions.interruptUser ?
+            'assertive' : 'polite';
 
         this.lastAnnouncementTime = 0;
         this.dirty = {

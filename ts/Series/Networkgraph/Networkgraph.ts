@@ -139,7 +139,9 @@ declare global {
             public className: NodesComposition.PointComposition['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
-            public formatPrefix: NodesComposition.PointComposition['formatPrefix'];
+            public formatPrefix: NodesComposition.PointComposition[
+                'formatPrefix'
+            ];
             public from: NodesComposition.PointComposition['from'];
             public fromNode: NetworkgraphPoint;
             public getSum: NodesComposition.PointComposition['getSum'];

@@ -219,7 +219,9 @@ namespace SeriesSonify {
                 instruments: (
                     chartSonifyOptions.instruments || configOptions.instruments
                 ),
-                onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
+                onStart: (
+                    chartSonifyOptions.onSeriesStart || configOptions.onStart
+                ),
                 onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
                 earcons: chartSonifyOptions.earcons || configOptions.earcons,
                 masterVolume: pick(
@@ -229,7 +231,9 @@ namespace SeriesSonify {
             },
             // Merge in the specific series options by ID if any are passed in
             isArray(additionalSeriesOptions) ? (
-                find(additionalSeriesOptions, function (optEntry: any): boolean {
+                find(additionalSeriesOptions, function (
+                    optEntry: any
+                ): boolean {
                     return optEntry.id === pick(series.id, series.options.id);
                 }) || {}
             ) : additionalSeriesOptions,

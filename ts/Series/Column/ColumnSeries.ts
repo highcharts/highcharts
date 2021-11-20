@@ -796,11 +796,11 @@ class ColumnSeries extends Series {
             let indexInCategory = 0;
             let totalInCategory = 0;
 
-            // Loop over all the stacks on the Y axis. When stacking is
-            // enabled, these are real point stacks. When stacking is not
-            // enabled, but `centerInCategory` is true, there is one stack
-            // handling the grouping of points in each category. This is
-            // done in the `setGroupedPoints` function.
+            // Loop over all the stacks on the Y axis. When stacking is enabled,
+            // these are real point stacks. When stacking is not enabled, but
+            // `centerInCategory` is true, there is one stack handling the
+            // grouping of points in each category. This is done in the
+            // `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
                 (stack: Record<string, Highcharts.StackItem>): void => {
@@ -808,13 +808,15 @@ class ColumnSeries extends Series {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {
-                            const pointValues = stackItem.points[this.index as any],
+                            const pointValues = stackItem.points[
+                                    this.index as any
+                                ],
                                 total = stackItem.total;
 
-                            // If true `stacking` is enabled, count the
-                            // total number of non-null stacks in the
-                            // category, and note which index this point is
-                            // within those stacks.
+                            // If true `stacking` is enabled, count the total
+                            // number of non-null stacks in the category, and
+                            // note which index this point is within those
+                            // stacks.
                             if (stacking) {
                                 if (pointValues) {
                                     indexInCategory = totalInCategory;
@@ -823,8 +825,8 @@ class ColumnSeries extends Series {
                                     totalInCategory++;
                                 }
 
-                            // If `stacking` is not enabled, look for the
-                            // index and total of the `group` stack.
+                            // If `stacking` is not enabled, look for the index
+                            // and total of the `group` stack.
                             } else if (isArray(pointValues)) {
                                 indexInCategory = pointValues[1];
                                 totalInCategory = total || 0;

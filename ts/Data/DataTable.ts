@@ -454,7 +454,12 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         }
 
         if (modifier) {
-            modifier.modifyRows(table, modifiedRows, (rowIndex || 0), eventDetail);
+            modifier.modifyRows(
+                table,
+                modifiedRows,
+                (rowIndex || 0),
+                eventDetail
+            );
         }
 
         table.emit({
@@ -667,7 +672,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
         columnNameOrAlias: string,
         asReference?: boolean
     ): (DataTable.Column|undefined) {
-        return this.getColumns([columnNameOrAlias], asReference)[columnNameOrAlias];
+        return this.getColumns(
+            [columnNameOrAlias],
+            asReference
+        )[columnNameOrAlias];
     }
 
     /**
@@ -813,7 +821,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
             tableColumns = table.columns,
             columns: DataTable.ColumnCollection = {};
 
-        columnNamesOrAliases = (columnNamesOrAliases || Object.keys(tableColumns));
+        columnNamesOrAliases = (
+            columnNamesOrAliases || Object.keys(tableColumns)
+        );
 
         for (
             let i = 0,
@@ -994,7 +1004,9 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                 ++j
             ) {
                 columnName = columnNamesOrAliases[j];
-                row[columnName] = columns[(aliasMap[columnName] || columnName)][i];
+                row[columnName] = columns[
+                    (aliasMap[columnName] || columnName)
+                ][i];
             }
         }
 

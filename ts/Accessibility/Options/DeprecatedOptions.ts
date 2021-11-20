@@ -245,8 +245,11 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
 
             // Special case
             if (oldOption === 'accessibility.pointDescriptionFormatter') {
-                optionVal = series.options.accessibility &&
-                    (series.options.accessibility as any).pointDescriptionFormatter;
+                optionVal = (
+                    series.options.accessibility &&
+                    (series.options.accessibility as any)
+                        .pointDescriptionFormatter
+                );
             }
 
             if (typeof optionVal !== 'undefined') {

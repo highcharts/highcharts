@@ -409,7 +409,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
 
         (controlPointsOptions || []).forEach(
             function (
-                controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
+                controlPointOptions: (
+                    Highcharts.AnnotationControlPointOptionsObject
+                ),
                 i: number
             ): void {
                 const options = merge(

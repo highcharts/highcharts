@@ -264,7 +264,8 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
+            // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear')
         ) {
             return (date as any)['setUTC' + unit](value);
         }

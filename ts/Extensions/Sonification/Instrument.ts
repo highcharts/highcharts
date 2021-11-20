@@ -456,14 +456,18 @@ class Instrument {
                     const timer = setInterval(function (): void {
                         currentDurationIx++;
                         const curTime = (
-                            currentDurationIx * (callbackInterval as any) / target
+                            currentDurationIx *
+                            (callbackInterval as any) / target
                         );
 
                         if (curTime >= 1) {
                             (instrument as any)[setter](value(1), setterData);
                             clearInterval(timer);
                         } else {
-                            (instrument as any)[setter](value(curTime), setterData);
+                            (instrument as any)[setter](
+                                value(curTime),
+                                setterData
+                            );
                         }
                     }, callbackInterval);
 

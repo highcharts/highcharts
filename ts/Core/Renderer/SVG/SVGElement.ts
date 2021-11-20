@@ -623,7 +623,10 @@ class SVGElement implements SVGElementLike {
             // Remove shadows from previous runs.
             this.removeTextOutline();
 
-            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            const outline = doc.createElementNS(
+                SVG_NS,
+                'tspan'
+            ) as DOMElementType;
             attr(outline, {
                 'class': 'highcharts-text-outline',
                 fill: color,

@@ -460,24 +460,26 @@ namespace OfflineExporting {
                 }
             },
 
-            // Return true if the SVG contains images with external data.
-            // With the boost module there are `image` elements with encoded
-            // PNGs, these are supported by svg2pdf and should
-            // pass (#10243).
+            // Return true if the SVG contains images with external data. With
+            // the boost module there are `image` elements with encoded PNGs,
+            // these are supported by svg2pdf and should pass (#10243).
             hasExternalImages = function (): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
                     function (image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
-                        return href !== '' && (href as any).indexOf('data:') !== 0;
+                        return (
+                            href !== '' &&
+                            typeof href === 'string' &&
+                            href.indexOf('data:') !== 0
+                        );
                     }
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the
-        // renderer for inline styles that we want to pass through. There
-        // are so many styles by default in IE that we don't want to
-        // blacklist them all.
+        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // for inline styles that we want to pass through. There are so many
+        // styles by default in IE that we don't want to blacklist them all.
         if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,

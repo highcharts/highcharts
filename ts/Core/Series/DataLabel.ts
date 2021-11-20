@@ -511,8 +511,11 @@ namespace DataLabel {
                 pointOptions = splat(
                     mergeArrays(
                         seriesDlOptions as any,
-                        (point.dlOptions as any) || // dlOptions is used in treemaps
+                        // dlOptions is used in treemaps
+                        (
+                            (point.dlOptions as any) ||
                             (point.options && point.options.dataLabels)
+                        )
                     )
                 );
 
@@ -692,7 +695,8 @@ namespace DataLabel {
                             }
 
                             dataLabel.addClass(
-                                ' highcharts-data-label-color-' + point.colorIndex +
+                                ' highcharts-data-label-color-' +
+                                point.colorIndex +
                                 ' ' + (labelOptions.className || '') +
                                 ( // #3398
                                     labelOptions.useHTML ?
@@ -713,7 +717,9 @@ namespace DataLabel {
                         if (!chart.styledMode) {
                             // Styles must be applied before add in order to
                             // read text bounding box
-                            dataLabel.css(style as any).shadow(labelOptions.shadow);
+                            dataLabel.css(style as any).shadow(
+                                labelOptions.shadow
+                            );
                         }
 
                         if (!dataLabel.added) {
@@ -734,7 +740,9 @@ namespace DataLabel {
                                 !labelOptions.textPath.enabled
                             ) {
                                 // clean the DOM
-                                point.dataLabelPath = point.dataLabelPath.destroy();
+                                point.dataLabelPath = (
+                                    point.dataLabelPath.destroy()
+                                );
                             }
                         }
 

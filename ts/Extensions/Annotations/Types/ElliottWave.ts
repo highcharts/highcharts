@@ -42,7 +42,9 @@ class ElliottWave extends CrookedLine {
             point: MockPointOptions,
             i: number
         ): void {
-            const typeOptions = this.options.typeOptions as ElliottWave.TypeOptions,
+            const typeOptions = (
+                    this.options.typeOptions as ElliottWave.TypeOptions
+                ),
                 label = this.initLabel(merge(
                     point.label, {
                         text: typeOptions.labels[i],

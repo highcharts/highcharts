@@ -306,7 +306,8 @@ class Legend {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
-        this.baseline = void 0; // #12705: baseline has to be reset on every update
+        // #12705: baseline has to be reset on every update
+        this.baseline = void 0;
     }
 
     /**
@@ -1651,7 +1652,9 @@ class Legend {
                                     (item as any).setVisible();
                                 }
                                 // Reset inactive state
-                                setOtherItemsState(item.visible ? 'inactive' : '');
+                                setOtherItemsState(
+                                    item.visible ? 'inactive' : ''
+                                );
                             };
 
                         // A CSS class to dim or hide other than the hovered

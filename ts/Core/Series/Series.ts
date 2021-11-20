@@ -1505,8 +1505,14 @@ class Series {
 
         // Sorting
         const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
+            const aValue = getNestedProperty(
+                sortKey,
+                a
+            ) as (boolean|number|string);
+            const bValue = getNestedProperty(
+                sortKey,
+                b
+            ) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         }) as Array<Point>;
         // Set x value depending on the position in the array
@@ -1849,7 +1855,9 @@ class Series {
                  * @sample stock/members/point-datagroup
                  *         Click to inspect raw data points
                  */
-                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
+                point.dataGroup = (series.groupMap as any)[
+                    groupCropStartIndex + i
+                ];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -2160,8 +2168,10 @@ class Series {
             ) + series.stackKey];
 
             if (
-                yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
+                yAxis.positiveValuesOnly &&
+                !yAxis.validatePositiveValue(yValue) ||
+                xAxis.positiveValuesOnly &&
+                !xAxis.validatePositiveValue(xValue)
             ) {
                 point.isNull = true;
             }
@@ -2481,8 +2491,12 @@ class Series {
                     width: 99,
                     height: inverted ? chart.chartWidth : chart.chartHeight
                 };
-                markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
-                chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+                markerAnimationClipRect = chart.renderer.clipRect(
+                    markerClipBox
+                );
+                chart.sharedClips[
+                    animationClipKey + 'm'
+                ] = markerAnimationClipRect;
             } else {
                 // When height changes during animation, typically due to
                 // responsive settings
@@ -4241,7 +4255,11 @@ class Series {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
-                plotOptions && plotOptions.series && plotOptions.series.pointStart,
+                (
+                    plotOptions &&
+                    plotOptions.series &&
+                    plotOptions.series.pointStart
+                ),
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]

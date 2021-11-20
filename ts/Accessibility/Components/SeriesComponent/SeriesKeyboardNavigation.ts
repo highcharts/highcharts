@@ -495,7 +495,9 @@ class SeriesKeyboardNavigation {
             chart.tooltip.hide(0);
         }
 
-        const hoverSeries = chart.highlightedPoint && chart.highlightedPoint.series;
+        const hoverSeries = (
+            chart.highlightedPoint && chart.highlightedPoint.series
+        );
         if (hoverSeries && hoverSeries.onMouseOut) {
             hoverSeries.onMouseOut();
         }
@@ -669,7 +671,9 @@ namespace SeriesKeyboardNavigation {
             newPoint = curPoints[curPointIndex + (next ? 1 : -1)];
             if (!newPoint && newSeries) {
                 // Done with this series, try next one
-                newPoint = newSeries.points[next ? 0 : newSeries.points.length - 1];
+                newPoint = newSeries.points[
+                    next ? 0 : newSeries.points.length - 1
+                ];
             }
 
             // If there is no adjacent point, we return false
@@ -738,7 +742,7 @@ namespace SeriesKeyboardNavigation {
                 }
 
                 if (
-                    yDistance <= 0 && down || yDistance >= 0 && !down || // Chk dir
+                    yDistance <= 0 && down || yDistance >= 0 && !down ||
                     distance < 5 || // Points in same spot => infinite loop
                     isSkipPoint(point)
                 ) {
@@ -778,11 +782,14 @@ namespace SeriesKeyboardNavigation {
         if (!chart.highlightedPoint) {
             newSeries = down ? (chart.series && chart.series[0]) : lastSeries;
             newPoint = down ?
-                (newSeries && newSeries.points && newSeries.points[0]) : lastPoint;
+                (newSeries && newSeries.points && newSeries.points[0]) :
+                lastPoint;
             return newPoint ? newPoint.highlight() : false;
         }
 
-        newSeries = chart.series[(curPoint.series.index as any) + (down ? -1 : 1)];
+        newSeries = (
+            chart.series[(curPoint.series.index as any) + (down ? -1 : 1)]
+        );
 
         if (!newSeries) {
             return false;

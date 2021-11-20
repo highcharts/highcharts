@@ -119,7 +119,9 @@ class DataSeriesConverter {
             pointArrayMap;
 
         if (seriesId) {
-            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
+            pointArrayMap = converter.seriesIdMap[
+                seriesId
+            ].pointArrayMap || ['y'];
 
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;

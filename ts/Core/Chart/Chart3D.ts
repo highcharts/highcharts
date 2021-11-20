@@ -540,11 +540,17 @@ namespace Chart3D {
             } else {
                 ret.axes = {
                     y: {
-                        'left': { x: xm, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any,
-                        'right': { x: xp, z: zm, xDir: { x: 0, y: 0, z: 1 } } as any
+                        'left': {
+                            x: xm, z: zm, xDir: { x: 1, y: 0, z: 0 }
+                        } as any,
+                        'right': {
+                            x: xp, z: zm, xDir: { x: 0, y: 0, z: 1 }
+                        } as any
                     },
                     x: {
-                        'top': { y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any,
+                        'top': {
+                            y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 }
+                        } as any,
                         'bottom': {
                             y: yp,
                             z: zm,
@@ -656,7 +662,9 @@ namespace Chart3D {
             if (plotLeft > bbox3d.minX) {
                 scale = Math.min(
                     scale,
-                    1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1
+                    1 - Math.abs(
+                        (plotLeft + originX) / (bbox3d.minX + originX)
+                    ) % 1
                 );
             }
 

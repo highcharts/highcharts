@@ -289,7 +289,9 @@ class Axis3DAdditions {
                 if (reverseFlap) {
                     scale = -scale;
                 }
-                vecY = { x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z };
+                vecY = {
+                    x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z
+                };
             }
         } else { // positionMode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets

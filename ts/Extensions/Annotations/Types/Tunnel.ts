@@ -36,7 +36,10 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Tunnel.Options
+    ) {
         super(chart, options);
     }
 

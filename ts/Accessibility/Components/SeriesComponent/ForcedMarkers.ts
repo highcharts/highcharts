@@ -168,7 +168,11 @@ namespace ForcedMarkersComposition {
      * @private
      */
     function hasIndividualPointMarkerOptions(series: Series): boolean {
-        return !!(series._hasPointMarkers && series.points && series.points.length);
+        return !!(
+            series._hasPointMarkers &&
+            series.points &&
+            series.points.length
+        );
     }
 
 
@@ -182,7 +186,8 @@ namespace ForcedMarkersComposition {
 
         return series.points.length <
             (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
-            (a11yOptions.series as any).pointDescriptionEnabledThreshold === false;
+            (a11yOptions.series as any)
+                .pointDescriptionEnabledThreshold === false;
     }
 
 

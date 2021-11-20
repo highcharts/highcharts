@@ -75,7 +75,9 @@ declare module '../Core/Axis/AxisType' {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
+        hasParallelCoordinates?: Highcharts.ParallelChart[
+            'hasParallelCoordinates'
+        ];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
         setParallelInfo(options: Partial<Options>): void;

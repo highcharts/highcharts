@@ -695,7 +695,9 @@ wrap(seriesProto, 'animate', polarAnimate);
 
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
-    columnProto = seriesTypes.column.prototype as unknown as Highcharts.PolarSeries;
+    columnProto = (
+        seriesTypes.column.prototype as unknown as Highcharts.PolarSeries
+    );
 
     columnProto.polarArc = function (
         this: (ColumnSeries&Highcharts.PolarSeries),

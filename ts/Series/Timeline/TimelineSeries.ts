@@ -294,7 +294,9 @@ class TimelineSeries extends LineSeries {
     ): void {
         let series = this,
             isInverted = series.chart.inverted,
-            visiblePoints = series.visibilityMap.filter(function (point): boolean {
+            visiblePoints = series.visibilityMap.filter(function (
+                point
+            ): boolean {
                 return point as any;
             }),
             visiblePointsCount: number = series.visiblePointsCount as any,
@@ -542,7 +544,9 @@ class TimelineSeries extends LineSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         let series = this,
-            seriesMarkerOptions: PointMarkerOptions = series.options.marker as any,
+            seriesMarkerOptions: PointMarkerOptions = (
+                series.options.marker as any
+            ),
             seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
             pointMarkerOptions = point.marker || {},
             symbol = (

@@ -342,7 +342,12 @@ namespace TreeGridTick {
             renderLabelIcon(
                 tick,
                 {
-                    color: !styledMode && label.styles && label.styles.color || '',
+                    color: (
+                        !styledMode &&
+                        label.styles &&
+                        label.styles.color ||
+                        ''
+                    ),
                     collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,
