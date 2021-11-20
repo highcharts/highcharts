@@ -724,7 +724,9 @@ class Chart {
             };
 
         if (!options.ignoreX) {
-            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+            const xAxis = (
+                series && (inverted ? series.yAxis : series.xAxis)
+            ) || {
                 pos: plotLeft,
                 len: Infinity
             };
@@ -746,7 +748,9 @@ class Chart {
         }
 
         if (!options.ignoreY && e.isInsidePlot) {
-            const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+            const yAxis = (
+                series && (inverted ? series.xAxis : series.yAxis)
+            ) || {
                 pos: plotTop,
                 len: Infinity
             };
@@ -3384,7 +3388,10 @@ class Chart {
         const newWidth = optionsChart && optionsChart.width;
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
-                relativeLength(optionsChart.height, newWidth || chart.chartWidth) :
+                relativeLength(
+                    optionsChart.height,
+                    newWidth || chart.chartWidth
+                ) :
                 optionsChart.height
         );
 

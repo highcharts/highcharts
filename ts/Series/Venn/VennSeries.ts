@@ -338,7 +338,10 @@ class VennSeries extends ScatterSeries {
         );
 
         // Calulate the label position.
-        const position = VennSeries.getLabelPosition(data.internal, data.external);
+        const position = VennSeries.getLabelPosition(
+            data.internal,
+            data.external
+        );
         // Calculate the label width
         const width = VennUtils.getLabelWidth(
             position,
@@ -378,27 +381,27 @@ class VennSeries extends ScatterSeries {
             const mapOfIdToCircles = VennUtils.layoutGreedyVenn(relations);
             const setRelations = relations.filter(VennUtils.isSet);
 
-            relations
-                .forEach(function (relation: Highcharts.VennRelationObject): void {
-                    const sets = relation.sets;
-                    const id = sets.join();
+            relations.forEach(function (
+                relation: Highcharts.VennRelationObject
+            ): void {
+                const sets = relation.sets;
+                const id = sets.join();
 
-                    // Get shape from map of circles, or calculate intersection.
-                    const shape = VennUtils.isSet(relation) ?
-                        mapOfIdToCircles[id] :
-                        getAreaOfIntersectionBetweenCircles(
-                            sets.map((set): CircleObject =>
-                                mapOfIdToCircles[set])
-                        );
+                // Get shape from map of circles, or calculate intersection.
+                const shape = VennUtils.isSet(relation) ?
+                    mapOfIdToCircles[id] :
+                    getAreaOfIntersectionBetweenCircles(
+                        sets.map((set): CircleObject => mapOfIdToCircles[set])
+                    );
 
-                    // Calculate label values if the set has a shape
-                    if (shape) {
-                        mapOfIdToShape[id] = shape;
-                        mapOfIdToLabelValues[id] = VennSeries.getLabelValues(
-                            relation, setRelations
-                        );
-                    }
-                });
+                // Calculate label values if the set has a shape
+                if (shape) {
+                    mapOfIdToShape[id] = shape;
+                    mapOfIdToLabelValues[id] = VennSeries.getLabelValues(
+                        relation, setRelations
+                    );
+                }
+            });
         }
         return { mapOfIdToShape, mapOfIdToLabelValues };
     }
@@ -655,7 +658,11 @@ class VennSeries extends ScatterSeries {
                         mapOfIdToShape[key] as any
                     );
                 }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scaling = VennSeries.getScale(chart.plotWidth, chart.plotHeight, field),
+            scaling = VennSeries.getScale(
+                chart.plotWidth,
+                chart.plotHeight,
+                field
+            ),
             scale = scaling.scale,
             centerX = scaling.centerX,
             centerY = scaling.centerY;

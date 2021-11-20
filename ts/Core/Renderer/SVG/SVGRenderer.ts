@@ -447,7 +447,9 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = (
+                    hitElement && hitElement.id
+                ) === 'hitme';
                 doc.body.removeChild(svg);
             }
 

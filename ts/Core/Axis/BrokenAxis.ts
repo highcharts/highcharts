@@ -801,10 +801,16 @@ namespace BrokenAxis {
                                 repeat = brk.repeat || Infinity;
                                 if (isNumber(min) && isNumber(max)) {
                                     if (Additions.isInBreak(brk, min)) {
-                                        min += (brk.to % repeat) - (min % repeat);
+                                        min += (
+                                            (brk.to % repeat) -
+                                            (min % repeat)
+                                        );
                                     }
                                     if (Additions.isInBreak(brk, max)) {
-                                        max -= (max % repeat) - (brk.from % repeat);
+                                        max -= (
+                                            (max % repeat) -
+                                            (brk.from % repeat)
+                                        );
                                     }
                                 }
                             }
@@ -880,7 +886,11 @@ namespace BrokenAxis {
 
                         // Used with staticScale, and below the actual axis
                         // length, when breaks are substracted.
-                        if (isNumber(min) && isNumber(max) && isNumber(axis.min)) {
+                        if (
+                            isNumber(min) &&
+                            isNumber(max) &&
+                            isNumber(axis.min)
+                        ) {
                             brokenAxis.unitLength = max - min - length +
                                 pointRangePadding;
 

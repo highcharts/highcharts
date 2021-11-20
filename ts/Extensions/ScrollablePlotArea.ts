@@ -331,7 +331,9 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
+                zIndex: (
+                    chartOptions.style && chartOptions.style.zIndex || 0
+                ) + 2,
                 top: 0
             },
             null as any,

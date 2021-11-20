@@ -393,8 +393,12 @@ class Tooltip {
                         plotX += xAxis.pos - plotLeft;
                         plotY += yAxis.pos - plotTop;
                     } else { // #14771
-                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
-                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                        plotX += (
+                            plotTop + chart.plotHeight - xAxis.len - xAxis.pos
+                        );
+                        plotY += (
+                            plotLeft + chart.plotWidth - yAxis.len - yAxis.pos
+                        );
                     }
                 }
             });
@@ -1072,7 +1076,10 @@ class Tooltip {
             textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
-        const text: (boolean|string) = (formatter as any).call(textConfig, tooltip);
+        const text: (boolean|string) = (formatter as any).call(
+            textConfig,
+            tooltip
+        );
 
         // register the current series
         const currentSeries = point.series;
@@ -1244,7 +1251,11 @@ class Tooltip {
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
+                anchorX = xAxis.pos + clamp(
+                    plotX,
+                    -distance,
+                    xAxis.len + distance
+                );
 
                 // Set anchorY, limit to the scrollable plot area
                 if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
@@ -1469,14 +1480,17 @@ class Tooltip {
             return boxes;
         }, []);
 
-        // Realign the tooltips towards the right if there is not enough
-        // space to the left and there is space to to the right
+        // Realign the tooltips towards the right if there is not enough space
+        // to the left and there is space to to the right
         if (!positioner && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
             const { outside } = tooltip;
             const boxStart = (outside ? chartLeft : 0) + box.anchorX;
 
-            if (boxStart < bounds.left && boxStart + box.boxWidth < bounds.right) {
+            if (
+                boxStart < bounds.left &&
+                boxStart + box.boxWidth < bounds.right
+            ) {
                 return true;
             }
 
@@ -1642,7 +1656,9 @@ class Tooltip {
         box.y = Math.min(0, anchorPos[1]);
         box.width = (
             anchorPos[0] < 0 ?
-                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                Math.max(
+                    Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])
+                ) :
                 Math.max(Math.abs(anchorPos[0]), labelBBox.width)
         );
         box.height = (

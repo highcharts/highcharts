@@ -181,7 +181,9 @@ namespace Funnel3DComposition {
                             }]
                         }]
                     });
-                    funnel3d.sideGroups.forEach(function (groupName: string): void {
+                    funnel3d.sideGroups.forEach(function (
+                        groupName: string
+                    ): void {
                         funnel3d[groupName].attr({
                             filter: 'url(#' + filterId + ')'
                         });
@@ -294,7 +296,10 @@ namespace Funnel3DComposition {
                             const gradBox = funnel3d[sideGroupName].gradientBox,
                                 centerX = gradBox.x + gradBox.width / 2,
                                 centerY = gradBox.y + gradBox.height / 2,
-                                diameter = Math.min(gradBox.width, gradBox.height);
+                                diameter = Math.min(
+                                    gradBox.width,
+                                    gradBox.height
+                                );
 
                             funnel3d.sideParts[sideGroupName].forEach(
                                 function (partName: string): void {
@@ -342,7 +347,9 @@ namespace Funnel3DComposition {
                 let funnel3d = this,
                     bbox: BBoxObject;
 
-                funnel3d.sideGroups.forEach(function (sideGroupName: string): void {
+                funnel3d.sideGroups.forEach(function (
+                    sideGroupName: string
+                ): void {
                     // use common extremes for groups for matching gradients
                     let topLeftEdge = {
                             x: Number.MAX_VALUE,
@@ -589,8 +596,14 @@ namespace Funnel3DComposition {
                         Math.max(middleWidth, bottomWidth)) !== 1;
 
                     merge(true, ret, {
-                        frontLower: renderer.getCylinderFront(middleBottom, bottom),
-                        backLower: renderer.getCylinderBack(middleBottom, bottom),
+                        frontLower: renderer.getCylinderFront(
+                            middleBottom,
+                            bottom
+                        ),
+                        backLower: renderer.getCylinderBack(
+                            middleBottom,
+                            bottom
+                        ),
                         rightLower: renderer.getCylinderFront(
                             renderer.getCylinderEnd(
                                 chart,

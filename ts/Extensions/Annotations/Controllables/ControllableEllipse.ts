@@ -246,7 +246,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Get the absolute coordinates of the MockPoint
      * @param point MockPoint that is added through options
      */
-    public getAbsolutePosition(point: Highcharts.AnnotationPointType): BBoxObject {
+    public getAbsolutePosition(
+        point: Highcharts.AnnotationPointType
+    ): BBoxObject {
         return this.anchor(point).absolutePosition;
     }
 

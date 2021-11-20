@@ -1051,9 +1051,12 @@ class RangeSelector {
         chart: Chart
     ): void {
         const rangeSelector = this,
-            options =
-                chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
-            buttonOptions = options.buttons || rangeSelector.defaultButtons.slice(),
+            options = (
+                chart.options.rangeSelector as Highcharts.RangeSelectorOptions
+            ),
+            buttonOptions = (
+                options.buttons || rangeSelector.defaultButtons.slice()
+            ),
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -1830,7 +1833,10 @@ class RangeSelector {
                 chart.scroller && chart.scroller.getUnionExtremes()
             ) || chart.xAxis[0] || {};
 
-            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+            if (
+                defined(unionExtremes.dataMin) &&
+                defined(unionExtremes.dataMax)
+            ) {
                 const minRange = chart.xAxis[0].minRange || 0;
 
                 this.setInputExtremes(
@@ -2228,7 +2234,10 @@ class RangeSelector {
      * @param {number} xOffsetForExportButton
      * @param {number} [width]
      */
-    public alignButtonGroup(xOffsetForExportButton: number, width?: number): void {
+    public alignButtonGroup(
+        xOffsetForExportButton: number,
+        width?: number
+    ): void {
         const { chart, options, buttonGroup, buttons } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
@@ -2694,7 +2703,9 @@ class RangeSelector {
             maxInput = rSelector.maxInput;
 
         if (rSelector.eventsToUnbind) {
-            rSelector.eventsToUnbind.forEach((unbind: Function): void => unbind());
+            rSelector.eventsToUnbind.forEach((
+                unbind: Function
+            ): void => unbind());
             rSelector.eventsToUnbind = void 0;
         }
 

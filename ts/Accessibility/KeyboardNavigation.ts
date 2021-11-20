@@ -412,7 +412,9 @@ class KeyboardNavigation {
     public makeElementAnExitAnchor(
         el: DOMElementType
     ): void {
-        const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
+        const chartTabindex = this.tabindexContainer.getAttribute(
+            'tabindex'
+        ) || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
         el.setAttribute('tabindex', chartTabindex);
         el.setAttribute('aria-hidden', false);

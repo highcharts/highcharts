@@ -314,7 +314,9 @@ class MACDIndicator extends SMAIndicator {
                 indicator.zones =
                 (indicator as any)[indicator.currentLineZone].zones;
 
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                    indicator
+                );
                 (indicator as any)['graph' + lineName] = indicator.graph;
             }
         );

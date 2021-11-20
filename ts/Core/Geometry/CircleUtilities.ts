@@ -96,7 +96,10 @@ namespace CircleUtilities {
      * Returns the area of the circular segment.
      */
     export function getCircularSegmentArea(r: number, h: number): number {
-        return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
+        return (
+            r * r * Math.acos(1 - h / r) -
+            (r - h) * Math.sqrt(h * (2 * r - h))
+        );
     }
 
     /**
@@ -395,14 +398,19 @@ namespace CircleUtilities {
                         // Filter out circles that are not included in both
                         // intersection points.
                         .filter(function (index: number): boolean {
-                            return (startPoint.indexes as any).indexOf(index) > -1;
+                            return (startPoint.indexes as any).indexOf(
+                                index
+                            ) > -1;
                         })
                         // Iterate the circles of the intersection points and
                         // calculate arcs.
                         .reduce(function (arc: any, index: number): any {
                             const circle = circles[index],
                                 angle1 = getAngleBetweenPoints(circle, p1),
-                                angle2 = getAngleBetweenPoints(circle, startPoint),
+                                angle2 = getAngleBetweenPoints(
+                                    circle,
+                                    startPoint
+                                ),
                                 angleDiff = angle2 - angle1 +
                                     (angle2 < angle1 ? 2 * Math.PI : 0),
                                 angle = angle2 - angleDiff / 2;

@@ -300,7 +300,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                         component.initSonifyButton(component.sonifyButtonId);
                     }
                     if (typeof component.dataTableButtonId !== 'undefined') {
-                        component.initDataTableButton(component.dataTableButtonId);
+                        component.initDataTableButton(
+                            component.dataTableButtonId
+                        );
                     }
                 }
             },

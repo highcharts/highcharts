@@ -378,7 +378,9 @@ class TextBuilder {
         let fontSizeStyle;
 
         // If the node is a text node, use its parent
-        const element: DOMElementType|null = node.nodeType === win.Node.TEXT_NODE ?
+        const element: DOMElementType|null = (
+            node.nodeType === win.Node.TEXT_NODE
+        ) ?
             node.parentElement :
             node as DOMElementType;
 

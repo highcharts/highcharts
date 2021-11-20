@@ -68,7 +68,9 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/pattern-fill */
-        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+        calculatePatternDimensions(
+            pattern: PatternFill.PatternOptionsObject
+        ): void;
     }
 }
 
@@ -308,7 +310,12 @@ SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
+        id = (
+            'highcharts-pattern-' +
+            this.idCounter +
+            '-' +
+            (this.chartIndex || 0)
+        );
         ++this.idCounter;
     }
 

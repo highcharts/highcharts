@@ -840,7 +840,10 @@ function GLRenderer(
                     const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
-                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
+                        if (
+                            typeof zone.value !== 'undefined' &&
+                            x <= zone.value
+                        ) {
                             if (
                                 zoneColors[i] &&
                                 (!last || x >= (last.value as any))
@@ -853,7 +856,10 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                        if (
+                            zoneColors[i] &&
+                            (!last || y >= (last.value as any))
+                        ) {
                             zoneColor = zoneColors[i];
                         }
                         return true;

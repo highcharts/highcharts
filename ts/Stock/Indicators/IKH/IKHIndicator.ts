@@ -697,8 +697,9 @@ class IKHIndicator extends SMAIndicator {
                     }
                 } else {
                     // Compare first point of the section
-                    concatArrIndex =
-                        sectionPoints[0].plotY > sectionNextPoints[0].plotY ? 0 : 1;
+                    concatArrIndex = (
+                        sectionPoints[0].plotY > sectionNextPoints[0].plotY
+                    ) ? 0 : 1;
 
                     points[concatArrIndex] = points[concatArrIndex].concat(
                         sectionPoints

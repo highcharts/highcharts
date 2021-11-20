@@ -581,10 +581,12 @@ namespace GridAxis {
                         }
                     }
 
-                    // Render an extra line parallel to the existing axes,
-                    // to close the grid.
+                    // Render an extra line parallel to the existing axes, to
+                    // close the grid.
                     if (!axis.grid.axisLineExtra) {
-                        axis.grid.axisLineExtra = axis.grid.renderBorder(linePath);
+                        axis.grid.axisLineExtra = axis.grid.renderBorder(
+                            linePath
+                        );
                     } else {
                         axis.grid.axisLineExtra.attr({
                             stroke: options.lineColor,
@@ -595,8 +597,7 @@ namespace GridAxis {
                         });
                     }
 
-                    // show or hide the line depending on
-                    // options.showEmpty
+                    // show or hide the line depending on options.showEmpty
                     axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
                 }
             }
@@ -971,7 +972,10 @@ namespace GridAxis {
             const labelPadding =
                 (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
             const distance = horiz ?
-                gridOptions.cellHeight || labelPadding + maxLabelDimensions.height :
+                (
+                    gridOptions.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
                 labelPadding + maxLabelDimensions.width;
             if (isArray(e.tickSize)) {
                 e.tickSize[0] = distance;
@@ -986,7 +990,9 @@ namespace GridAxis {
      */
     function onChartAfterSetChartSize(this: Chart): void {
         this.axes.forEach(function (axis): void {
-            (axis.grid && axis.grid.columns || []).forEach(function (column): void {
+            (axis.grid && axis.grid.columns || []).forEach(function (
+                column
+            ): void {
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
@@ -1023,7 +1029,9 @@ namespace GridAxis {
         const gridOptions = userOptions.grid || {};
 
         if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+            userOptions.tickColor = userOptions.lineColor = (
+                gridOptions.borderColor
+            );
         }
 
         if (!axis.grid) {
@@ -1357,7 +1365,10 @@ namespace GridAxis {
                 otherAxis: Axis,
                 index: number
             ): void {
-                if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
+                if (
+                    otherAxis.side === axis.side &&
+                    !otherAxis.options.isInternal
+                ) {
                     lastIndex = index;
                     if (otherAxis === parentAxis) {
                         // Get the index of the axis in question

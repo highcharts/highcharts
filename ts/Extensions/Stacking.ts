@@ -115,7 +115,9 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
+        type OptionsStackingValue = (
+            'normal'|'overlap'|'percent'|'stream'|'group'
+        );
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
@@ -486,7 +488,10 @@ class StackItem {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
-                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                    chart.isInsidePlot(
+                        label.x - padding + label.width,
+                        label.y
+                    ) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {

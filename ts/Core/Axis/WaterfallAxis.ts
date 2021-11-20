@@ -134,7 +134,9 @@ namespace WaterfallAxis {
         public renderStackTotals(): void {
             const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
+                stackTotalGroup = (
+                    yAxis.stacking && yAxis.stacking.stackTotalGroup
+                ),
                 dummyStackItem = new StackItem(
                     yAxis as any,
                     yAxis.options.stackLabels as any,

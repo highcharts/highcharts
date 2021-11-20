@@ -356,7 +356,8 @@ class LegendComponent extends AccessibilityComponent {
      */
     public addLegendProxyGroup(): void {
         const a11yOptions = this.chart.options.accessibility;
-        const groupRole = a11yOptions.landmarkVerbosity === 'all' ? 'region' : null;
+        const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+            'region' : null;
 
         this.proxyProvider.addGroup('legend', 'ul', {
             // Filled by updateLegendTitle, to keep up to date without

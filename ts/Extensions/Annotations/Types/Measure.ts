@@ -379,7 +379,12 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
+        Annotation.prototype.init.call(
+            this,
+            annotationOrChart,
+            userOptions,
+            index
+        );
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -781,7 +786,9 @@ class Measure extends Annotation {
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
+        this.shapes.forEach(function (
+            item: Highcharts.AnnotationShapeType
+        ): void {
             item.translate(dx, dy);
         });
 

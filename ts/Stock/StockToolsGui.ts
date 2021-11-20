@@ -2264,7 +2264,12 @@ addEvent(Chart, 'render', function (): void {
             ) as any;
 
     // Change the initial button background.
-    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+    if (
+        stockTools &&
+        chart.navigationBindings &&
+        chart.options.series &&
+        button
+    ) {
         if (
             chart.navigationBindings.constructor.prototype.utils
                 .isPriceIndicatorEnabled(chart.series)

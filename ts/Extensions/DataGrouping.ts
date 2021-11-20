@@ -603,7 +603,10 @@ const groupData = function (
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
-        groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll,
+        groupAll = (
+            this.options.dataGrouping &&
+            this.options.dataGrouping.groupAll
+        ),
         pos = 0,
         start = 0,
         valuesLen,
@@ -877,7 +880,10 @@ const adjustExtremes = function (
                 xAxis.max >= xAxis.dataMax
             ) || xAxis.max === xAxis.dataMax
         ) {
-            xAxis.max = Math.max(groupedXData[groupedXData.length - 1], xAxis.max);
+            xAxis.max = Math.max(
+                groupedXData[groupedXData.length - 1],
+                xAxis.max
+            );
         }
         xAxis.dataMax = Math.max(
             groupedXData[groupedXData.length - 1],

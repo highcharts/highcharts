@@ -1836,7 +1836,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).parallelChannel.annotationsOptions
+                    (navigation.bindings as any).parallelChannel
+                        .annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);

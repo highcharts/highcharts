@@ -35,10 +35,10 @@ const {
  *
  * */
 namespace PriceEnvelopesIndicator {
-    export interface PriceEnvelopesIndicatorGappedExtensionObject {
-        options?: PriceEnvelopesIndicatorGappedExtensionOptions;
+    export interface GappedExtensionObject {
+        options?: GappedExtensionOptions;
     }
-    export interface PriceEnvelopesIndicatorGappedExtensionOptions {
+    export interface GappedExtensionOptions {
         gapSize?: number;
     }
 }
@@ -185,7 +185,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
                 SVGElement|undefined
             ) = indicator.graph,
             gappedExtend:
-            PriceEnvelopesIndicator.PriceEnvelopesIndicatorGappedExtensionObject = {
+            PriceEnvelopesIndicator.GappedExtensionObject = {
                 options: {
                     gapSize: middleLineOptions.gapSize
                 }
@@ -219,7 +219,9 @@ class PriceEnvelopesIndicator extends SMAIndicator {
                     gappedExtend
                 );
                 indicator.graph = (indicator as any)['graph' + lineName];
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                    indicator
+                );
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;

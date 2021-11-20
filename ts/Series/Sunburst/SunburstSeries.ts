@@ -933,7 +933,12 @@ class SunburstSeries extends TreemapSeries {
                 const percentage = (1 / total) * child.val,
                     radians = percentage * range,
                     radiansCenter = startAngle + (radians / 2),
-                    offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+                    offsetPosition = getEndPoint(
+                        x,
+                        y,
+                        radiansCenter,
+                        slicedOffset
+                    ),
                     values: SunburstSeries.NodeValuesObject = {
                         x: child.sliced ? offsetPosition.x : x,
                         y: child.sliced ? offsetPosition.y : y,

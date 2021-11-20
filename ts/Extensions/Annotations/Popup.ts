@@ -825,7 +825,9 @@ H.Popup.prototype = {
             lhsCol = createElement(
                 DIV,
                 {
-                    className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
+                    className: (
+                        PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
+                    )
                 },
                 void 0,
                 popupDiv
@@ -1109,7 +1111,10 @@ H.Popup.prototype = {
                                 indicatorAliases[indicatorType] &&
                                 indicatorAliases[indicatorType].join(' ') || '';
 
-                        if (indicatorFullName.match(regex) || alias.match(regex)) {
+                        if (
+                            indicatorFullName.match(regex) ||
+                            alias.match(regex)
+                        ) {
                             filteredSeries = {
                                 indicatorFullName,
                                 indicatorType,
@@ -1292,7 +1297,9 @@ H.Popup.prototype = {
                     indicatorFullName
                 ));
 
-                ['click', 'touchstart'].forEach(function (eventName: string): void {
+                ['click', 'touchstart'].forEach(function (
+                    eventName: string
+                ): void {
                     addEvent(item, eventName, function (): void {
                         const button = rhsColWrapper.parentNode
                             .children[1] as HTMLDOMElement;
@@ -2008,7 +2015,9 @@ H.Popup.prototype = {
                     return;
                 }
 
-                ['click', 'touchstart'].forEach(function (eventName: string): void {
+                ['click', 'touchstart'].forEach(function (
+                    eventName: string
+                ): void {
                     addEvent(tab, eventName, function (): void {
 
                         // reset class on other elements

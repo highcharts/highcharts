@@ -312,15 +312,17 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 
         if (label.oldOpacity !== newOpacity) {
 
-            // Make sure the label is completely hidden to avoid catching
-            // clicks (#4362)
+            // Make sure the label is completely hidden to avoid catching clicks
+            // (#4362)
             if (label.alignAttr && label.placed) { // data labels
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
                 complete = function (): void {
                     if (!chart.styledMode) {
-                        label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        label.css({
+                            pointerEvents: newOpacity ? 'auto' : 'none'
+                        });
                     }
                 };
 

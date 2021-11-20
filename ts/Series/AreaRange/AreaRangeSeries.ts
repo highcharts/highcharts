@@ -484,7 +484,8 @@ class AreaRangeSeries extends AreaSeries {
                         point.below = up;
                         if (inverted) {
                             if (!upperDataLabelOptions.align) {
-                                upperDataLabelOptions.align = up ? 'right' : 'left';
+                                upperDataLabelOptions.align = up ?
+                                    'right' : 'left';
                             }
                         } else {
                             if (!upperDataLabelOptions.verticalAlign) {
@@ -533,7 +534,8 @@ class AreaRangeSeries extends AreaSeries {
                         point.below = !up;
                         if (inverted) {
                             if (!lowerDataLabelOptions.align) {
-                                lowerDataLabelOptions.align = up ? 'left' : 'right';
+                                lowerDataLabelOptions.align = up ?
+                                    'left' : 'right';
                             }
                         } else {
                             if (!lowerDataLabelOptions.verticalAlign) {

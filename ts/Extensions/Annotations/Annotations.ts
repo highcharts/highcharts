@@ -565,7 +565,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             this.clipYAxis &&
             this.options.crop // #15399
         ) {
-            this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
+            this.clipRect = this.chart.renderer.clipRect(
+                this.getClipBox() as any
+            );
         }
     }
 
@@ -978,7 +980,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         let hasVisiblePoints = false,
             label = item.graphic;
 
-        item.points.forEach(function (point: Highcharts.AnnotationPointType): void {
+        item.points.forEach(function (
+            point: Highcharts.AnnotationPointType
+        ): void {
             if (
                 point.series.visible !== false &&
                 point.visible !== false

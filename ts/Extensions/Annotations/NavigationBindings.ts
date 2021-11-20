@@ -697,8 +697,9 @@ class NavigationBindings {
 
                 if ((selectedButton.steps as any)[navigation.stepIndex as any]) {
                     // If we have more steps, bind them one by one:
-                    navigation.mouseMoveEvent = navigation.nextEvent =
-                        (selectedButton.steps as any)[navigation.stepIndex as any];
+                    navigation.mouseMoveEvent = navigation.nextEvent = (
+                        selectedButton.steps as any
+                    )[navigation.stepIndex as any];
                 } else {
                     fireEvent(
                         navigation,
@@ -1183,7 +1184,9 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                     annotation: annotation,
                     formType: 'annotation-toolbar',
                     options: navigation.annotationToFields(annotation),
-                    onSubmit: function (data: Highcharts.PopupFieldsObject): void {
+                    onSubmit: function (
+                        data: Highcharts.PopupFieldsObject
+                    ): void {
 
                         let config: Highcharts.PopupFieldsDictionary<string> = {},
                             typeOptions;
@@ -1485,7 +1488,9 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        const target = annotation.shapes[0] as ControllableEllipse,
+                        const target = (
+                                annotation.shapes[0] as ControllableEllipse
+                            ),
                             position = target.getAbsolutePosition(
                                 target.points[1]
                             );

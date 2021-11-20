@@ -1168,7 +1168,9 @@ class Axis {
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(
+                            minorTickInterval
+                        ),
                         min,
                         max,
                         options.startOfWeek
@@ -1250,7 +1252,10 @@ class Axis {
                     if (xData.length > 1) {
                         for (i = loopLength; i > 0; i--) {
                             distance = xData[i] - xData[i - 1];
-                            if (!closestDataRange || distance < closestDataRange) {
+                            if (
+                                !closestDataRange ||
+                                distance < closestDataRange
+                            ) {
                                 closestDataRange = distance;
                             }
                         }
@@ -2244,7 +2249,11 @@ class Axis {
         let len,
             i;
 
-        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
+        if (
+            axis.hasData() &&
+            isNumber(axis.min) &&
+            isNumber(axis.max)
+        ) { // #14769
             if (currentTickAmount < tickAmount) {
                 while (tickPositions.length < tickAmount) {
 

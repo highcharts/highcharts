@@ -285,7 +285,8 @@ class SVGRenderer3D extends SVGRenderer {
                     area = shapeArea(vertexes2d);
 
                 hash.d = path;
-                hash.visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+                hash.visibility = (this.enabled && area > 0) ?
+                    'visible' : 'hidden';
             }
             return SVGElement.prototype.attr.apply(this, arguments as any);
         } as any;
@@ -320,7 +321,8 @@ class SVGRenderer3D extends SVGRenderer {
                     ),
                     path = renderer.toLinePath(vertexes2d, true),
                     area = shapeArea(vertexes2d),
-                    visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+                    visibility = (this.enabled && area > 0) ?
+                        'visible' : 'hidden';
 
                 params.d = path;
                 this.attr('visibility', visibility);
@@ -995,11 +997,15 @@ class SVGRenderer3D extends SVGRenderer {
             ['M', cx + (rx * cs), cy + (ry * ss)]
         ];
 
-        top = top.concat(SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0));
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, rx, ry, start, end, 0, 0)
+        );
         top.push([
             'L', cx + (irx * ce), cy + (iry * se)
         ]);
-        top = top.concat(SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0));
+        top = top.concat(
+            SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, 0, 0)
+        );
         top.push(['Z']);
 
         // OUTSIDE
@@ -1176,7 +1182,8 @@ class SVGRenderer3D extends SVGRenderer {
             inn: inn,
             zInn: Math.max(a1, a2, a3),
             side1: side1,
-            zSide1: a3 * 0.99, // to keep below zOut and zInn in case of same values
+            // to keep below zOut and zInn in case of same values
+            zSide1: a3 * 0.99,
             side2: side2,
             zSide2: a2 * 0.99
         };

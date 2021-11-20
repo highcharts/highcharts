@@ -294,7 +294,9 @@ class SVGLabel extends SVGElement {
     private getCrispAdjust(): number {
         return this.renderer.styledMode && this.box ?
             this.box.strokeWidth() % 2 / 2 :
-            (this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0) % 2 / 2;
+            (
+                this['stroke-width'] ? parseInt(this['stroke-width'], 10) : 0
+            ) % 2 / 2;
     }
 
     public heightSetter(value: number): void {
@@ -444,8 +446,14 @@ class SVGLabel extends SVGElement {
                     this.renderer.rect();
 
                 box.addClass( // Don't use label className for buttons
-                    (this.className === 'button' ? '' : 'highcharts-label-box') +
-                    (this.className ? ' highcharts-' + this.className + '-box' : '')
+                    (
+                        this.className === 'button' ?
+                            '' : 'highcharts-label-box'
+                    ) +
+                    (
+                        this.className ?
+                            ' highcharts-' + this.className + '-box' : ''
+                    )
                 );
 
                 box.add(this);

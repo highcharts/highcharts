@@ -162,7 +162,10 @@ class ScrollbarAxis {
                             from,
                             to,
                             true,
-                            e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove',
+                            (
+                                e.DOMType !== 'mousemove' &&
+                                e.DOMType !== 'touchmove'
+                            ),
                             e
                         );
                     } else {
@@ -200,8 +203,13 @@ class ScrollbarAxis {
 
                     scrollbar.position(
                         axis.left,
-                        axis.top + axis.height + 2 + (scrollbarsOffsets as any)[1] -
-                            (axis.opposite ? axisMargin : 0),
+                        (
+                            axis.top +
+                            axis.height +
+                            2 +
+                            (scrollbarsOffsets as any)[1] -
+                            (axis.opposite ? axisMargin : 0)
+                        ),
                         axis.width,
                         axis.height
                     );

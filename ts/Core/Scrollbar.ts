@@ -476,7 +476,10 @@ class Scrollbar {
         scroller.chart = chart;
 
         // backward compatibility
-        scroller.size = pick(scroller.options.size, scroller.options.height as any);
+        scroller.size = pick(
+            scroller.options.size,
+            scroller.options.height as any
+        );
 
         // Init
         if (options.enabled) {
@@ -507,7 +510,8 @@ class Scrollbar {
         const scroller = this,
             normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
-            direction: ('chartY'|'chartX') = options.vertical ? 'chartY' : 'chartX',
+            direction: ('chartY'|'chartX') = options.vertical ?
+                'chartY' : 'chartX',
             initPositions = scroller.initPositions || [];
 
         let scrollPosition,

@@ -107,7 +107,9 @@ declare global {
     namespace Highcharts {
         class MapPoint extends ScatterPoint {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
+            public dataLabelOnNull: ColorMapMixin.ColorMapPoint[
+                'dataLabelOnNull'
+            ];
             public isValid: ColorMapMixin.ColorMapPoint['isValid'];
             public middleX: number;
             public middleY: number;
