@@ -1794,9 +1794,12 @@ if (!svg) {
                     ret = stopColor as any;
                 }
 
-            // If the color is an rgba color, split it and add a fill node
-            // to hold the opacity component
-            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
+            // If the color is an rgba color, split it and add a fill node to
+            // hold the opacity component
+            } else if (
+                regexRgba.test(colorOption as any) &&
+                elem.tagName !== 'IMG'
+            ) {
 
                 colorObject = color(colorOption);
 

@@ -200,7 +200,11 @@ namespace Responsive {
 
                         // Iterate over collections like series, xAxis or yAxis
                         // and map the items by index.
-                        for (i = 0; i < Math.max(val.length, curr[key].length); i++) {
+                        for (
+                            i = 0;
+                            i < Math.max(val.length, curr[key].length);
+                            i++
+                        ) {
 
                             // Item exists in current data (#6347)
                             if (curr[key][i]) {

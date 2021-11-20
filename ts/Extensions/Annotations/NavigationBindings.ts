@@ -449,7 +449,9 @@ class NavigationBindings {
             subContainer: HTMLElement
         ): void {
             navigation.eventsToUnbind.push(
-                addEvent(subContainer, 'click', function (event: PointerEvent): void {
+                addEvent(subContainer, 'click', function (
+                    event: PointerEvent
+                ): void {
                     const bindings = navigation.getButtonEvents(
                         subContainer,
                         event
@@ -1201,10 +1203,14 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             if (annotation.options.type === 'measure') {
                                 // Manually disable crooshars according to
                                 // stroke width of the shape:
-                                (typeOptions as any).crosshairY.enabled =
-                                    (typeOptions as any).crosshairY.strokeWidth !== 0;
-                                (typeOptions as any).crosshairX.enabled =
-                                    (typeOptions as any).crosshairX.strokeWidth !== 0;
+                                (typeOptions as any).crosshairY.enabled = (
+                                    (typeOptions as any).crosshairY
+                                        .strokeWidth !== 0
+                                );
+                                (typeOptions as any).crosshairX.enabled = (
+                                    (typeOptions as any).crosshairX
+                                        .strokeWidth !== 0
+                                );
                             }
 
                             annotation.update(config);
@@ -1234,9 +1240,12 @@ if ((H as any).Annotation) {
     selectableAnnotation(Annotation);
 
     // Advanced annotations:
-    objectEach(Annotation.types, function (annotationType: typeof Annotation): void {
-        selectableAnnotation(annotationType);
-    });
+    objectEach(
+        Annotation.types,
+        function (annotationType: typeof Annotation): void {
+            selectableAnnotation(annotationType);
+        }
+    );
 }
 
 setOptions({
@@ -1798,8 +1807,12 @@ addEvent(Chart, 'render', function (): void {
     }
 });
 
-addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
-    this.deselectAnnotation();
-});
+addEvent(
+    NavigationBindings,
+    'closePopup',
+    function (this: NavigationBindings): void {
+        this.deselectAnnotation();
+    }
+);
 
 export default NavigationBindings;

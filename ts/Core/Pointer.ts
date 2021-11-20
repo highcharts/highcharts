@@ -1320,7 +1320,12 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
+        if (
+            hasZoom &&
+            self.initiated &&
+            !fireClickEvent &&
+            e.cancelable !== false
+        ) {
             e.preventDefault();
         }
 
@@ -1957,7 +1962,9 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+            hoverChart.pointer.onContainerMouseLeave(
+                { relatedTarget: true } as any
+            );
         }
 
         if (

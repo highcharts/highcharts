@@ -1994,8 +1994,12 @@ class Chart {
         };
 
         const plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2),
-            clipX = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2),
-            clipY = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2);
+            clipX = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2
+            ),
+            clipY = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2
+            );
 
         chart.clipBox = {
             x: clipX,
@@ -3289,7 +3293,10 @@ class Chart {
                     }
                 });
 
-                splat((options as any)[coll]).forEach(function (newOptions, i): void {
+                splat((options as any)[coll]).forEach(function (
+                    newOptions,
+                    i
+                ): void {
                     const hasId = defined(newOptions.id);
                     let item: (Axis|Series|Point|undefined);
 
@@ -3513,7 +3520,8 @@ class Chart {
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer,
-            mouseDownPos = (chart.inverted ? pointer.mouseDownX : pointer.mouseDownY);
+            mouseDownPos = chart.inverted ?
+                pointer.mouseDownX : pointer.mouseDownY;
 
         let displayButton = false,
             hasZoomed;

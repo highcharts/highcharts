@@ -513,8 +513,11 @@ class Fx {
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
-            null as any,
+            color(this.start as any).tweenTo(
+                color(this.end as any),
+                this.pos as any
+            ),
+            void 0,
             true
         );
     }

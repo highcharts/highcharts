@@ -1919,8 +1919,12 @@ class Axis {
             minorTickIntervalOption = this.getMinorTickInterval(),
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
-            startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
-            endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
+            startOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.startOnTick
+            ),
+            endOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.endOnTick
+            );
 
         let tickPositions,
             tickPositioner = options.tickPositioner;
@@ -3695,7 +3699,9 @@ class Axis {
                         if (!alternateBands[pos]) {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
-                            alternateBands[pos] = new (H as any).PlotLineOrBand(axis);
+                            alternateBands[pos] = new (H as any).PlotLineOrBand(
+                                axis
+                            );
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {

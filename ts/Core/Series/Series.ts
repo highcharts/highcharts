@@ -2614,7 +2614,9 @@ class Series {
                 if (shouldDrawMarker) {
                     // Shortcuts
                     const symbol = pick(
-                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
+                        pointMarkerOptions.symbol,
+                        series.symbol,
+                        'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(

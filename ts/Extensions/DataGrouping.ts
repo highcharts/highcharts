@@ -414,7 +414,10 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
 
     // Skip if skipDataGrouping method returns false or if grouping is disabled
     // (in that order).
-    skip = skipDataGrouping(series, hasExtemesChanged) === false || !groupingEnabled;
+    skip = skipDataGrouping(
+        series,
+        hasExtemesChanged
+    ) === false || !groupingEnabled;
 
     // Revert original requireSorting value if changed
     if (revertRequireSorting) {
@@ -762,7 +765,9 @@ const anchorPoints = function (
 ): any {
     const options = series.options,
         dataGroupingOptions = options.dataGrouping,
-        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize;
+        totalRange = (
+            series.currentDataGrouping && series.currentDataGrouping.gapSize
+        );
     let i;
 
     // DataGrouping x-coordinates.
@@ -814,7 +819,9 @@ const anchorPoints = function (
             totalRange &&
             groupedXData[groupedDataLength] >= xMax - totalRange
         ) {
-            const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
+            const lastGroupStart = series.groupMap[
+                series.groupMap.length - 1
+            ].start;
 
             groupedXData[groupedDataLength] = ({
                 middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
@@ -1100,7 +1107,10 @@ Axis.prototype.applyGrouping = function (
         // Reset the groupPixelWidth, then calculate if needed.
         series.groupPixelWidth = void 0; // #2110
 
-        series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
+        series.groupPixelWidth = (
+            axis.getGroupPixelWidth &&
+            axis.getGroupPixelWidth()
+        );
 
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
@@ -1337,14 +1347,16 @@ addEvent(Series, 'afterSetOptions', function (
 
     let options = e.options,
         type = this.type,
-        plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
+        plotOptions = this.chart.options.plotOptions,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
             (D.defaultOptions.plotOptions as any)[type].dataGrouping,
-        // External series, for example technical indicators should also
-        // inherit commonOptions which are not available outside this module
-        baseOptions = (this as IndicatorLike).useCommonDataGrouping && commonOptions;
+        // External series, for example technical indicators should also inherit
+        // commonOptions which are not available outside this module
+        baseOptions = (
+            (this as IndicatorLike).useCommonDataGrouping && commonOptions
+        );
 
-    if (specificOptions[type] || baseOptions) { // #1284
+    if (plotOptions && (specificOptions[type] || baseOptions)) { // #1284
         if (!defaultOptions) {
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }

@@ -517,7 +517,8 @@ class StackItem {
                 (!stackItem.isNegative && reversed); // #4056
 
         return { // this is the box for the complete stack
-            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
+            x: inverted ?
+                (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
                 x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
                 axis.height - x - xWidth :

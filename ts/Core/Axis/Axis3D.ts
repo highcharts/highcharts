@@ -750,14 +750,19 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            const firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            const firstGridLine = (
+                    (gridGroup.element.childNodes[0] as any).getBBox()
+                ),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
                 options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
                     z: options3d.depth / 2,
-                    vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+                    vd: (
+                        pick(options3d.depth, 1) *
+                        pick(options3d.viewDistance, 0)
+                    )
                 },
                 tickId = tick.pos,
                 prevTick = ticks[tickId - 1],

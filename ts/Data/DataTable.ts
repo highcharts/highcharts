@@ -257,7 +257,11 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
 
             if (aliases.length) {
                 const cloneAliasMap = tableClone.aliasMap;
-                for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+                for (
+                    let i = 0, iEnd = aliases.length, alias: string;
+                    i < iEnd;
+                    ++i
+                ) {
                     alias = aliases[i];
                     cloneAliasMap[alias] = aliasMap[alias];
                 }
@@ -751,7 +755,10 @@ class DataTable implements DataEventEmitter<DataTable.Event> {
                     }
                 }
                 for (let i = 0; i < columnLength; ++i) {
-                    columnAsNumber.push(table.getCellAsNumber(columnNameOrAlias, i));
+                    columnAsNumber.push(table.getCellAsNumber(
+                        columnNameOrAlias,
+                        i
+                    ));
                 }
             }
         }

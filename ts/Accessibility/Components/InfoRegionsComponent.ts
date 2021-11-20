@@ -310,7 +310,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility.screenReaderSection
+                    const formatter = chart.options.accessibility
+                        .screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -723,7 +724,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
                     chart.options.accessibility &&
-                    chart.options.accessibility.screenReaderSection.onPlayAsSoundClick
+                    chart.options.accessibility.screenReaderSection
+                        .onPlayAsSoundClick
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(

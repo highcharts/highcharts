@@ -70,7 +70,10 @@ function fireEventOnWrappedOrUnwrappedElement(
     } else if (hcEvents && hcEvents[type]) {
         fireEvent(el, type, eventObject);
     } else if ((el as SVGElement).element) {
-        fireEventOnWrappedOrUnwrappedElement((el as SVGElement).element, eventObject);
+        fireEventOnWrappedOrUnwrappedElement(
+            (el as SVGElement).element,
+            eventObject
+        );
     }
 }
 

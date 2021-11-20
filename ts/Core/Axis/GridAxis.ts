@@ -225,10 +225,18 @@ namespace GridAxis {
             // Add event handlers
             addEvent(AxisClass, 'init', onInit);
             addEvent(AxisClass, 'afterGetOffset', onAfterGetOffset);
-            addEvent(AxisClass, 'afterGetTitlePosition', onAfterGetTitlePosition);
+            addEvent(
+                AxisClass,
+                'afterGetTitlePosition',
+                onAfterGetTitlePosition
+            );
             addEvent(AxisClass, 'afterInit', onAfterInit);
             addEvent(AxisClass, 'afterRender', onAfterRender);
-            addEvent(AxisClass, 'afterSetAxisTranslation', onAfterSetAxisTranslation);
+            addEvent(
+                AxisClass,
+                'afterSetAxisTranslation',
+                onAfterSetAxisTranslation
+            );
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions2);
             addEvent(AxisClass, 'afterSetScale', onAfterSetScale);

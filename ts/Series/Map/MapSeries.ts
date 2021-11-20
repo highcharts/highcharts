@@ -1035,7 +1035,10 @@ class MapSeries extends ScatterSeries {
             if (data && joinBy[1]) {
                 const joinKey = joinBy[1];
                 data.forEach(function (pointOptions: MapPointOptions): void {
-                    const mapKey = getNestedProperty(joinKey, pointOptions) as string;
+                    const mapKey = getNestedProperty(
+                        joinKey,
+                        pointOptions
+                    ) as string;
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
                     }

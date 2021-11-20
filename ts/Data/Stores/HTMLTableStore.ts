@@ -92,7 +92,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
+        this.parser = parser || new HTMLTableParser(
+            this.options,
+            this.tableElement
+        );
     }
 
     /* *

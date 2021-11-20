@@ -1075,7 +1075,11 @@ class RangeSelector {
         rangeSelector.buttonOptions = buttonOptions;
 
         this.eventsToUnbind = [];
-        this.eventsToUnbind.push(addEvent(chart.container, 'mousedown', blurInputs));
+        this.eventsToUnbind.push(addEvent(
+            chart.container,
+            'mousedown',
+            blurInputs
+        ));
         this.eventsToUnbind.push(addEvent(chart, 'resize', blurInputs));
 
         // Extend the buttonOptions with actual range

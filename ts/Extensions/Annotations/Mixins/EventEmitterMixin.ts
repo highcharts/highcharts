@@ -54,9 +54,18 @@ declare global {
                 this: AnnotationEventEmitter,
                 e: AnnotationEventObject
             ): PositionObject;
-            onDrag(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseDown(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
+            onDrag(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseDown(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseUp(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
             removeDocEvents(this: AnnotationEventEmitter): void;
         }
         interface AnnotationEventObject extends PointerEvent {

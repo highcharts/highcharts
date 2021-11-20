@@ -171,7 +171,10 @@ class StockChart extends Chart {
                 scrollbar: {
                     // #4988 - check if setOptions was called
                     enabled: pick(
-                        defaultOptions.scrollbar && defaultOptions.scrollbar.enabled,
+                        (
+                            defaultOptions.scrollbar &&
+                            defaultOptions.scrollbar.enabled
+                        ),
                         true
                     )
                 },

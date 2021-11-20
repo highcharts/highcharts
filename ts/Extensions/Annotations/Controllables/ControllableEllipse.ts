@@ -108,7 +108,9 @@ class ControllableEllipse implements ControllableMixin.Type {
     public linkPoints = ControllableMixin.linkPoints;
     public point = ControllableMixin.point;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;

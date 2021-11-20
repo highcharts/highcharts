@@ -227,7 +227,9 @@ class BellcurveSeries extends AreaSplineSeries {
             i: number;
 
         for (i = 0; i < stop; i++) {
-            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            data.push(
+                [x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]
+            );
             x += increment;
         }
 

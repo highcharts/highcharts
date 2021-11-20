@@ -177,7 +177,8 @@ class KeyboardNavigation {
                 modules: Array<KeyboardNavigationHandler>,
                 componentName: keyof Accessibility.ComponentsObject
             ): Array<KeyboardNavigationHandler> {
-                const navModules = components[componentName].getKeyboardNavigation();
+                const navModules = components[componentName]
+                    .getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
 

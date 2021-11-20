@@ -213,11 +213,10 @@ function getExtremesForInstrumentProps(
                 ];
 
                 if (typeof value === 'string' && !newExtremes[value]) {
-                    // This instrument parameter is mapped to a data prop.
-                    // If we don't have predefined data extremes, find them.
-                    newExtremes[value] = SonificationUtilities.calculateDataExtremes(
-                        chart, value
-                    );
+                    // This instrument parameter is mapped to a data prop. If we
+                    // don't have predefined data extremes, find them.
+                    newExtremes[value] = SonificationUtilities
+                        .calculateDataExtremes(chart, value);
                 }
             }
         );

@@ -487,7 +487,11 @@ class OrganizationSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+            attribs = SankeySeries.prototype.pointAttribs.call(
+                series,
+                point,
+                state
+            ),
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},

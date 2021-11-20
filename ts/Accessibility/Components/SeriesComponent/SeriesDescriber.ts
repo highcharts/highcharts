@@ -447,7 +447,9 @@ function getPointValue(
 function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
-    const annotations = getPointAnnotationTexts(point as Highcharts.AnnotationPoint);
+    const annotations = getPointAnnotationTexts(
+        point as Highcharts.AnnotationPoint
+    );
     const context = { point, annotations };
 
     return annotations.length ? chart.langFormat(langKey, context) : '';

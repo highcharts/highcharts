@@ -671,9 +671,11 @@ namespace OrdinalAxis {
 
                 if (movedUnits < 0) {
                     searchAxisLeft = extendedAxis;
-                    searchAxisRight = xAxis.ordinal.positions ? xAxis : extendedAxis;
+                    searchAxisRight = xAxis.ordinal.positions ?
+                        xAxis : extendedAxis;
                 } else {
-                    searchAxisLeft = xAxis.ordinal.positions ? xAxis : extendedAxis;
+                    searchAxisLeft = xAxis.ordinal.positions ?
+                        xAxis : extendedAxis;
                     searchAxisRight = extendedAxis;
                 }
 
@@ -1045,7 +1047,9 @@ namespace OrdinalAxis {
                     } else {
                         // In case of zooming in on overscrolled range, stick to
                         // the old range:
-                        overscrollPointsRange = ordinal.overscrollPointsRange as any;
+                        overscrollPointsRange = (
+                            ordinal.overscrollPointsRange as any
+                        );
                     }
                 }
 

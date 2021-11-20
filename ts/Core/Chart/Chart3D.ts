@@ -545,7 +545,11 @@ namespace Chart3D {
                     },
                     x: {
                         'top': { y: ym, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any,
-                        'bottom': { y: yp, z: zm, xDir: { x: 1, y: 0, z: 0 } } as any
+                        'bottom': {
+                            y: yp,
+                            z: zm,
+                            xDir: { x: 1, y: 0, z: 0 }
+                        } as any
                     },
                     z: {
                         'top': {
@@ -932,12 +936,17 @@ namespace Chart3D {
                 this.pos < 1 &&
                 (isArray(this.start) || isArray(this.end))
             ) {
-                const start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0],
+                const start: Array<number> = (
+                        (this.start as any) ||
+                        [1, 0, 0, 1, 0, 0]
+                    ),
                     end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
 
                 interpolated = [];
                 for (let i = 0; i < 6; i++) {
-                    interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
+                    interpolated.push(
+                        this.pos * end[i] + (1 - this.pos) * start[i]
+                    );
                 }
             } else {
                 interpolated = this.end;

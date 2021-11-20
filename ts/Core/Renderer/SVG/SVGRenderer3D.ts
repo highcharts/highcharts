@@ -705,7 +705,9 @@ class SVGRenderer3D extends SVGRenderer {
          * object with only custom attr.
          * @private
          */
-        function suckOutCustom(params: SVGAttributes3D): (SVGAttributes3D|undefined) {
+        function suckOutCustom(
+            params: SVGAttributes3D
+        ): (SVGAttributes3D|undefined) {
             let hasCA = false,
                 ca = {} as SVGAttributes,
                 key: string;

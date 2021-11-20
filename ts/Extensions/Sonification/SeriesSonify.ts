@@ -393,12 +393,14 @@ namespace SeriesSonify {
     function chartOptionsToSonifySeriesOptions(
         series: Composition
     ): Partial<SonifySeriesOptions> {
-        const seriesOpts = series.options.sonification || {} as SonifySeriesOptions,
+        const seriesOpts = series.options.sonification ||
+                {} as SonifySeriesOptions,
             chartOpts = series.chart.options.sonification ||
                 {} as ChartSonify.ChartSonificationOptions,
             chartEvents = chartOpts.events ||
                 {} as ChartSonify.ChartSonificationEventsOptions,
-            seriesEvents = seriesOpts.events || {} as SeriesSonificationEventsOptions;
+            seriesEvents = seriesOpts.events ||
+                {} as SeriesSonificationEventsOptions;
 
         return { // Chart options
             onEnd: seriesEvents.onSeriesEnd || chartEvents.onSeriesEnd,
@@ -561,7 +563,10 @@ namespace SeriesSonify {
                     mapping: void 0,
                     instrument: void 0
                 }) as Partial<PointSonify.PointInstrumentOptions>,
-                instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+                instrumentMapping: merge(
+                    defaultInstrOpts.mapping,
+                    optionSet.mapping
+                )
             };
         });
     }
