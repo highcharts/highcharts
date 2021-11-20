@@ -270,10 +270,14 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
 
-            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                xData: slicedX,
-                yData: slicedY
-            } as any), params) as any);
+            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
+                this,
+                {
+                    xData: slicedX,
+                    yData: slicedY
+                } as any,
+                params
+            ) as any);
 
             date = (point as any).xData[0];
             ML = (point as any).yData[0];

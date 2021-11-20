@@ -801,7 +801,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public destroy(): void {
         const chart = this.chart,
             destroyItem = function (
-                item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+                item: (
+                    Highcharts.AnnotationLabelType|
+                    Highcharts.AnnotationShapeType
+                )
             ): void {
                 item.destroy();
             };
@@ -1791,7 +1794,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         idOrAnnotation: (number|string|Annotation)
     ): void {
         const annotations = this.annotations,
-            annotation: Annotation = (idOrAnnotation as any).coll === 'annotations' ?
+            annotation: Annotation = (
+                (idOrAnnotation as any).coll === 'annotations'
+            ) ?
                 idOrAnnotation :
                 find(
                     annotations,

@@ -538,8 +538,8 @@ namespace DataLabel {
                         style,
                         rotation,
                         attr: any,
-                        dataLabel: SVGLabel = point.dataLabels ? point.dataLabels[i] :
-                            point.dataLabel as any;
+                        dataLabel: SVGLabel = point.dataLabels ?
+                            point.dataLabels[i] : point.dataLabel as any;
 
                     const labelDistance = pick(
                             (labelOptions as any).distance,

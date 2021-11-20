@@ -253,11 +253,13 @@ class DataSeriesConverter {
                                 yValueIndex = keys && keys.indexOf(
                                     pointArrayMap[k]
                                 ) > -1 ?
-                                    keys.indexOf(pointArrayMap[k]) : k + elem.length -
-                                        pointArrayMapLength;
+                                    keys.indexOf(pointArrayMap[k]) :
+                                    k + elem.length - pointArrayMapLength;
 
                                 yValueName = pointArrayMap[k];
-                                columns[yValueName + yValueId] = elem[yValueIndex];
+                                columns[yValueName + yValueId] = elem[
+                                    yValueIndex
+                                ];
                             }
                         } else {
                             columns[y] = elem[yIndex];
@@ -273,7 +275,9 @@ class DataSeriesConverter {
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];
-                                columns[yValueName + yValueId] = elemSet[yValueName];
+                                columns[yValueName + yValueId] = elemSet[
+                                    yValueName
+                                ];
                             }
                         } else {
                             columns[y] = elem.y;

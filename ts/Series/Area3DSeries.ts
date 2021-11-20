@@ -68,7 +68,8 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         for (let i = 0; i < series.points.length; i++) {
             bottomPoints.push({
                 x: series.rawPointsX[i],
-                y: options.stacking ? series.points[i].yBottom : translatedThreshold,
+                y: options.stacking ?
+                    series.points[i].yBottom : translatedThreshold,
                 z: series.zPadding
             } as any);
         }

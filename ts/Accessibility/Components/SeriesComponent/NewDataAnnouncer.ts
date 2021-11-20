@@ -150,7 +150,9 @@ class NewDataAnnouncer {
      */
     public init(): void {
         const chart = this.chart;
-        const announceOptions = (chart.options.accessibility as any).announceNewData;
+        const announceOptions = (
+            (chart.options.accessibility as any).announceNewData
+        );
         const announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
 
         this.lastAnnouncementTime = 0;

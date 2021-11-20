@@ -828,9 +828,12 @@ namespace Exporting {
                         );
 
                     } else {
-                        // When chart initialized with the table,
-                        // wrong button text displayed, #14352.
-                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                        // When chart initialized with the table, wrong button
+                        // text displayed, #14352.
+                        if (
+                            item.textKey === 'viewData' &&
+                            chart.isDataTableVisible
+                        ) {
                             item.textKey = 'hideData';
                         }
 

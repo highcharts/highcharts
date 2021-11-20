@@ -80,9 +80,14 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = super.applyOptions.call(this, options, x) as any;
+        const point: HeatmapPoint = super.applyOptions.call(
+            this,
+            options,
+            x
+        ) as any;
 
-        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
+        point.formatPrefix = point.isNull || point.value === null ?
+            'null' : 'point';
 
         return point;
     }

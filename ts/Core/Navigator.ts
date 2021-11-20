@@ -799,7 +799,9 @@ extend(defaultOptions, {
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
  */
-RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
+RendererRegistry.getRendererType().prototype.symbols[
+    'navigator-handle'
+] = function (
     _x, _y, _w, _h, options
 ): SVGPath {
     const halfWidth = (options && options.width || 0) / 2,
@@ -965,7 +967,8 @@ class Navigator {
                     left + outlineHeight,
                     navigatorTop - scrollbarHeight - outlineCorrection
                 ],
-                ['L', left + outlineHeight, verticalMin], // top right of zoomed range
+                // top right of zoomed range
+                ['L', left + outlineHeight, verticalMin],
                 ['L', left, verticalMin], // top left of z.r.
                 ['L', left, zoomedMax], // bottom left of z.r.
                 ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.

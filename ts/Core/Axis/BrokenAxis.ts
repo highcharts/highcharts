@@ -148,7 +148,11 @@ namespace BrokenAxis {
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-            addEvent(AxisClass, 'afterSetTickPositions', onAxisAfterSetTickPositions);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
@@ -160,7 +164,11 @@ namespace BrokenAxis {
             seriesProto.drawBreaks = seriesDrawBreaks;
             seriesProto.gappedPath = seriesGappedPath;
 
-            addEvent(SeriesClass, 'afterGeneratePoints', onSeriesAfterGeneratePoints);
+            addEvent(
+                SeriesClass,
+                'afterGeneratePoints',
+                onSeriesAfterGeneratePoints
+            );
             addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         }
 
@@ -461,20 +469,17 @@ namespace BrokenAxis {
                         } as any
                     );
 
-                    // For stacked chart generate empty stack items,
-                    // #6546
+                    // For stacked chart generate empty stack items, #6546
                     if (yAxis.stacking && this.options.stacking) {
-                        stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
-                            new StackItem(
-                                yAxis as any,
-                                (
-                                    (yAxis.options as YAxisOptions)
-                                        .stackLabels as any
-                                ),
-                                false,
-                                xRange,
-                                this.stack
-                            );
+                        stack = yAxis.stacking.stacks[this.stackKey as any][
+                            xRange
+                        ] = new StackItem(
+                            yAxis as any,
+                            (yAxis.options as YAxisOptions).stackLabels as any,
+                            false,
+                            xRange,
+                            this.stack
+                        );
                         stack.total = 0;
                     }
                 }
@@ -744,7 +749,9 @@ namespace BrokenAxis {
 
                         let axisBreak;
 
-                        while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
+                        while (
+                            (axisBreak = brokenAxis.findBreakAt(newMin, breaks))
+                        ) {
                             newMin = axisBreak.to as any;
                         }
                         while ((axisBreak = brokenAxis.findBreakAt(

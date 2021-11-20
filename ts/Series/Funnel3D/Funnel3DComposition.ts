@@ -314,18 +314,25 @@ namespace Funnel3DComposition {
 
                 // change gradientUnits to userSpaceOnUse for linearGradient
                 if ((fillColor as any).linearGradient) {
-                    [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (
-                        part: Record<string, SVGElement>
-                    ): void {
-                        const elem: SVGElement = part.element,
-                            grad = elem && funnel3d.renderer.gradients[elem.gradient];
+                    [funnel3d.frontLower, funnel3d.frontUpper]
+                        .forEach(function (
+                            part: Record<string, SVGElement>
+                        ): void {
+                            const elem: SVGElement = part.element,
+                                grad = (
+                                    elem &&
+                                    funnel3d.renderer.gradients[elem.gradient]
+                                );
 
-                        if (grad && grad.attr('gradientUnits') !== 'userSpaceOnUse') {
-                            grad.attr({
-                                gradientUnits: 'userSpaceOnUse'
-                            });
-                        }
-                    });
+                            if (
+                                grad &&
+                                grad.attr('gradientUnits') !== 'userSpaceOnUse'
+                            ) {
+                                grad.attr({
+                                    gradientUnits: 'userSpaceOnUse'
+                                });
+                            }
+                        });
                 }
 
                 return funnel3d;
@@ -517,12 +524,19 @@ namespace Funnel3DComposition {
                 if (hasMiddle) {
                     middleWidth = shapeArgs.middle.width;
                     middleTopArgs = merge<SVGAttributes>(shapeArgs, {
-                        y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
+                        y: (
+                            shapeArgs.y +
+                            shapeArgs.middle.fraction * shapeArgs.height
+                        ),
                         width: middleWidth,
                         x: shapeArgs.x - middleWidth / 2,
                         z: shapeArgs.z - middleWidth / 2
                     });
-                    middleTop = renderer.getCylinderEnd(chart, middleTopArgs, false);
+                    middleTop = renderer.getCylinderEnd(
+                        chart,
+                        middleTopArgs,
+                        false
+                    );
 
                     middleBottom = renderer.getCylinderEnd(
                         chart,
@@ -555,14 +569,16 @@ namespace Funnel3DComposition {
                         merge(shapeArgs, {
                             x: shapeArgs.x - shapeArgs.width / 2,
                             z: shapeArgs.z - shapeArgs.width / 2,
-                            alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
+                            alphaCorrection: useAlphaCorrection ?
+                                -alphaCorrection : 0
                         }),
                         false
                     ),
                     renderer.getCylinderEnd(
                         chart,
                         merge(middleTopArgs, {
-                            alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
+                            alphaCorrection: useAlphaCorrection ?
+                                -alphaCorrection : 0
                         }),
                         !hasMiddle
                     )

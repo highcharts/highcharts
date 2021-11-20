@@ -135,7 +135,9 @@ namespace FocusBorderComposition {
         if (composedClasses.indexOf(SVGElementClass) === -1) {
             composedClasses.push(SVGElementClass);
 
-            const svgElementProto = SVGElementClass.prototype as SVGElementCompositon;
+            const svgElementProto = (
+                SVGElementClass.prototype as SVGElementCompositon
+            );
 
             svgElementProto.addFocusBorder = svgElementAddFocusBorder;
             svgElementProto.removeFocusBorder = svgElementRemoveFocusBorder;

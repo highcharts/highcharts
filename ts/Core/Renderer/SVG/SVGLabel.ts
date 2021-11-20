@@ -484,8 +484,9 @@ class SVGLabel extends SVGElement {
             this.bBox &&
             (this.textAlign === 'center' || this.textAlign === 'right')
         ) {
-            textX += { center: 0.5, right: 1 }[this.textAlign as ('center'|'right')] *
-                (this.widthSetting - this.bBox.width);
+            textX += { center: 0.5, right: 1 }[
+                this.textAlign as ('center'|'right')
+            ] * (this.widthSetting - this.bBox.width);
         }
 
         // update if anything changed

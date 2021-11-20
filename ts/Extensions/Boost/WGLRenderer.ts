@@ -505,8 +505,11 @@ function GLRenderer(
             // When adding a segment, if one exists from before, it should
             // set the previous segment's end
 
-            if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
+            if (
+                inst.segments.length &&
+                inst.segments[inst.segments.length - 1].from === (
+                    data.length || vlen
+                )
             ) {
                 return;
             }

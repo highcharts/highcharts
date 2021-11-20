@@ -201,7 +201,9 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        let cellValue = converter.asGuessedType(column[j] as string);
+                        let cellValue = converter.asGuessedType(
+                            column[j] as string
+                        );
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }

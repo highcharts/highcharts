@@ -649,7 +649,10 @@ class ColumnSeries extends Series {
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
                 ) { // #642, #2086
-                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
+                    if (
+                        otherOptions.stacking &&
+                        otherOptions.stacking !== 'group'
+                    ) {
                         stackKey = otherSeries.stackKey;
                         if (
                             typeof stackGroups[stackKey as any] ===

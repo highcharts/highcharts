@@ -326,7 +326,9 @@ class BubbleLegendItem {
     public getRangeRadius(value: number): (number|null) {
         const options = this.options,
             seriesIndex = this.options.seriesIndex,
-            bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
+            bubbleSeries: BubbleSeries = this.chart.series[
+                seriesIndex as any
+            ] as any,
             zMax = (options.ranges as any)[0].value,
             zMin = (options.ranges as any)[
                 (options.ranges as any).length - 1

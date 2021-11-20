@@ -179,7 +179,10 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
+    export function compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
 
         addEvent(AxisClass, 'init', onInit);
         addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);

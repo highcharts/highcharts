@@ -592,7 +592,10 @@ H.Popup.prototype = {
             const id = select.id;
 
             // Get inputs only for the parameters, not for series and volume.
-            if (id !== PREFIX + 'select-series' && id !== PREFIX + 'select-volume') {
+            if (
+                id !== PREFIX + 'select-series' &&
+                id !== PREFIX + 'select-volume'
+            ) {
                 const parameter = id.split('highcharts-select-')[1];
 
                 fieldsOutput.fields[parameter] = select.value;
@@ -1231,7 +1234,10 @@ H.Popup.prototype = {
                     filter
                 );
             } else if (isArray(series)) {
-                filteredSeriesArray = indicators.filterSeriesArray.call(this, series);
+                filteredSeriesArray = indicators.filterSeriesArray.call(
+                    this,
+                    series
+                );
             }
 
             // Sort indicators alphabeticaly.
@@ -1715,7 +1721,9 @@ H.Popup.prototype = {
                 void 0,
                 rhsColWrapper
             ).appendChild(
-                doc.createTextNode(getNameType(series, seriesType).indicatorFullName)
+                doc.createTextNode(
+                    getNameType(series, seriesType).indicatorFullName
+                )
             );
 
             // input type
@@ -2073,10 +2081,14 @@ addEvent(NavigationBindings, 'showPopup', function (
     );
 });
 
-addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
-    if (this.popup) {
-        this.popup.closePopup();
+addEvent(
+    NavigationBindings,
+    'closePopup',
+    function (this: NavigationBindings): void {
+        if (this.popup) {
+            this.popup.closePopup();
+        }
     }
-});
+);
 
 export default H.Popup;

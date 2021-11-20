@@ -283,7 +283,9 @@ namespace MultipleLinesComposition {
 
         // Modify options and generate area fill:
         if (this.userOptions.fillColor && areaLinesNames.length) {
-            const index = secondaryLinesNames.indexOf(getLineName(areaLinesNames[0])),
+            const index = secondaryLinesNames.indexOf(
+                    getLineName(areaLinesNames[0])
+                ),
                 secondLinePoints = secondaryLines[index],
                 firstLinePoints =
                     areaLinesNames.length === 1 ?
@@ -382,7 +384,11 @@ namespace MultipleLinesComposition {
      * @param propertyName name of the line
      */
     function getLineName(propertyName: string): string {
-        return 'plot' + propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+        return (
+            'plot' +
+            propertyName.charAt(0).toUpperCase() +
+            propertyName.slice(1)
+        );
     }
 
     /**

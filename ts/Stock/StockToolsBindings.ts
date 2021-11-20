@@ -159,7 +159,10 @@ bindingsUtils.addFlagFromForm = function (
     this: Highcharts.StockToolsNavigationBindings,
     type: FlagsShapeValue
 ): Function {
-    return function (this: Highcharts.StockToolsNavigationBindings, e: Event): void {
+    return function (
+        this: Highcharts.StockToolsNavigationBindings,
+        e: Event
+    ): void {
         let navigation = this,
             chart = navigation.chart,
             toolbar = chart.stockTools,
@@ -1991,7 +1994,10 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      */
     timeCycles: {
         className: 'highcharts-time-cycles',
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
@@ -2193,7 +2199,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).fibonacciTimeZones.annotationsOptions
+                    (navigation.bindings as any).fibonacciTimeZones
+                        .annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);

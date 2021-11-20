@@ -108,7 +108,9 @@ class ControllablePath implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public setMarkers = MarkerMixin.setItemMarkers;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;

@@ -28,7 +28,9 @@ declare global {
             public mouseMoveToRadians: AnnotationEventEmitterMixin[
                 'mouseMoveToRadians'
             ];
-            public mouseMoveToScale: AnnotationEventEmitterMixin['mouseMoveToScale'];
+            public mouseMoveToScale: AnnotationEventEmitterMixin[
+                'mouseMoveToScale'
+            ];
             public mouseMoveToTranslation: AnnotationEventEmitterMixin[
                 'mouseMoveToTranslation'
             ];
@@ -37,13 +39,17 @@ declare global {
             public onMouseDown: AnnotationEventEmitterMixin['onMouseDown'];
             public onMouseUp: AnnotationEventEmitterMixin['onMouseUp'];
             public options: AnnotationControlPointOptionsObject;
-            public removeDocEvents: AnnotationEventEmitterMixin['removeDocEvents'];
+            public removeDocEvents: AnnotationEventEmitterMixin[
+                'removeDocEvents'
+            ];
             public target: AnnotationControllable;
             public destroy(): void;
             public redraw(animation?: boolean): void;
             public render(): void;
             public setVisibility(visible: boolean): void;
-            public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
+            public update(
+                userOptions: Partial<AnnotationControlPointOptionsObject>
+            ): void;
         }
         interface AnnotationControlPointDragEventFunction {
             (

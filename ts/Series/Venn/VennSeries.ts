@@ -340,7 +340,11 @@ class VennSeries extends ScatterSeries {
         // Calulate the label position.
         const position = VennSeries.getLabelPosition(data.internal, data.external);
         // Calculate the label width
-        const width = VennUtils.getLabelWidth(position, data.internal, data.external);
+        const width = VennUtils.getLabelWidth(
+            position,
+            data.internal,
+            data.external
+        );
 
         return {
             position,
@@ -630,7 +634,10 @@ class VennSeries extends ScatterSeries {
         const relations = VennUtils.processVennData(this.options.data as any);
 
         // Calculate the positions of each circle.
-        const { mapOfIdToShape, mapOfIdToLabelValues } = VennSeries.layout(relations);
+        const {
+            mapOfIdToShape,
+            mapOfIdToLabelValues
+        } = VennSeries.layout(relations);
 
         // Calculate the scale, and center of the plot area.
         const field = Object.keys(mapOfIdToShape)

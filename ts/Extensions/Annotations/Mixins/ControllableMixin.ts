@@ -593,8 +593,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         // Options stored in:
         // - chart (for exporting)
         // - current config (for redraws)
-        (chartOptions as any)[this.collection][this.index].point = this.options.point;
-        (shapeOptions as any)[this.collection][this.index].point = this.options.point;
+        (chartOptions as any)[this.collection][this.index]
+            .point = this.options.point;
+        (shapeOptions as any)[this.collection][this.index]
+            .point = this.options.point;
     },
 
     /**

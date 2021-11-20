@@ -396,9 +396,13 @@ class AreaRangeSeries extends AreaSeries {
         linePath = ([] as SVGPath)
             .concat(lowerPath, higherPath);
 
-        // For the area path, we need to change the 'move' statement
-        // into 'lineTo'
-        if (!this.chart.polar && higherAreaPath[0] && higherAreaPath[0][0] === 'M') {
+        // For the area path, we need to change the 'move' statement into
+        // 'lineTo'
+        if (
+            !this.chart.polar &&
+            higherAreaPath[0] &&
+            higherAreaPath[0][0] === 'M'
+        ) {
             // This probably doesn't work for spline
             higherAreaPath[0] = ['L', higherAreaPath[0][1], higherAreaPath[0][2]];
         }
