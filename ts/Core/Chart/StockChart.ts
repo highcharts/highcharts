@@ -216,7 +216,8 @@ class StockChart extends Chart {
             return merge(
                 getDefaultAxisOptions('xAxis', xAxisOptions),
                 defaultOptions.xAxis, // #3802
-                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                // #7690
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
                 xAxisOptions, // user options
                 getForcedAxisOptions('xAxis', userOptions)
             );
@@ -230,7 +231,8 @@ class StockChart extends Chart {
             return merge(
                 getDefaultAxisOptions('yAxis', yAxisOptions),
                 defaultOptions.yAxis, // #3802
-                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                // #7690
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
                 yAxisOptions // user options
             );
         });

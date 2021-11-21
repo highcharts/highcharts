@@ -186,7 +186,9 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
@@ -234,7 +236,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {

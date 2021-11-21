@@ -29,7 +29,9 @@ declare global {
             point: MockPoint;
         }
         class AnnotationMockPoint {
-            public static fromPoint(point: AnnotationPoint): AnnotationMockPoint;
+            public static fromPoint(
+                point: AnnotationPoint
+            ): AnnotationMockPoint;
             public static pointToOptions(
                 point: AnnotationPointType
             ): MockPointOptions;

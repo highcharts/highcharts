@@ -231,7 +231,10 @@ class VennSeries extends ScatterSeries {
                 ]
                     // Iterate the given points and return the one with the
                     // largest margin.
-                    .reduce((best, point): Highcharts.VennLabelPositionObject => {
+                    .reduce((
+                        best,
+                        point
+                    ): Highcharts.VennLabelPositionObject => {
                         const margin = VennUtils.getMarginFromCircles(
                             point,
                             internal,

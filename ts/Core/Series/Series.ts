@@ -1874,7 +1874,8 @@ class Series {
                  * @readonly
                  */
                 // For faster access in Point.update
-                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
+                point.index = hasGroupedData ?
+                    (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
@@ -2858,7 +2859,9 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]

@@ -14,7 +14,9 @@
  *
  * */
 
-export type DOMElementType = DOMElementTypeRegistry[keyof DOMElementTypeRegistry];
+export type DOMElementType = DOMElementTypeRegistry[
+    keyof DOMElementTypeRegistry
+];
 
 export type HTMLDOMElement = globalThis.HTMLElement;
 

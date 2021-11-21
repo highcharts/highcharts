@@ -435,7 +435,8 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            alignTo === 'scrollablePlotBox' ?
+                (renderer as any).plotBox : void 0,
             renderer as any
         );
 

@@ -635,7 +635,9 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(
+                        value / multi, -1
+                    ) + numericSymbols[i];
                 }
             }
         }
@@ -1846,13 +1848,16 @@ class Axis {
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = series.forceCropping && series.forceCropping();
+                series.forceCrop = (
+                    series.forceCropping &&
+                    series.forceCropping()
+                );
                 series.processData(hasExtemesChanged);
             });
 
-            // Then apply grouping if needed.
-            // The hasExtemesChanged helps to decide if the data grouping should
-            // be skipped in the further calculations #16319.
+            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // decide if the data grouping should be skipped in the further
+            // calculations #16319.
             fireEvent(this, 'postProcessData', { hasExtemesChanged });
         }
 

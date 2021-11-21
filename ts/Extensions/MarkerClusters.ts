@@ -123,7 +123,9 @@ declare module '../Core/Series/SeriesLike' {
         /** @requires modules/marker-clusters */
         getPointsState(
             clusteredData: Highcharts.MarkerClusterInfoObject,
-            oldMarkerClusterInfo: (Highcharts.MarkerClusterInfoObject|undefined),
+            oldMarkerClusterInfo: (
+                Highcharts.MarkerClusterInfoObject|undefined
+            ),
             dataLength: number
         ): Record<string, Highcharts.MarkerClusterPointsState>;
         /** @requires modules/marker-clusters */

@@ -204,7 +204,11 @@ class GanttSeries extends XRangeSeries {
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (
+                isNumber(plotY) &&
+                point.y !== null &&
+                point.visible !== false
+            ) {
                 diamondShape = renderer.symbols.diamond(
                     shapeArgs.x || 0,
                     shapeArgs.y || 0,

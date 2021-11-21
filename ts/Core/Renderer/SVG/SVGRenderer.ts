@@ -1656,10 +1656,14 @@ class SVGRenderer implements SVGRendererLike {
                 const tspans = element.getElementsByTagName('tspan'),
                     parentVal = element.getAttribute(key);
 
-                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
+                for (
+                    let i = 0, tspan: SVGTSpanElement;
+                    i < tspans.length;
+                    i++
+                ) {
                     tspan = tspans[i];
-                    // If the x values are equal, the tspan represents a
-                    // linebreak
+                    // If the x values are equal, the tspan represents a line
+                    // break
                     if (tspan.getAttribute(key) === parentVal) {
                         tspan.setAttribute(key, value);
                     }

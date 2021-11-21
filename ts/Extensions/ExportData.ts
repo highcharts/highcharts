@@ -544,7 +544,11 @@ Chart.prototype.getDataRows = function (
             keyLength?: number
         ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
-                const s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+                const s = csvOptions.columnHeaderFormatter(
+                    item,
+                    key,
+                    keyLength
+                );
 
                 if (s !== false) {
                     return s;
@@ -1402,7 +1406,9 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         menuItems &&
         exportDivElements
     ) {
-        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        const exportDivElement = exportDivElements[
+            menuItems.indexOf('viewData')
+        ];
         if (exportDivElement) {
             AST.setElementHTML(
                 exportDivElement,

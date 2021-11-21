@@ -205,7 +205,11 @@ declare global {
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
-            public setInputExtremes(name: string, min: number, max: number): void;
+            public setInputExtremes(
+                name: string,
+                min: number,
+                max: number
+            ): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -978,7 +982,8 @@ class RangeSelector {
             // If the navigator exist and the axis range is declared reset that
             // range and from now on only use the range set by a user, #14742.
             if (chart.navigator && chart.navigator.baseSeries[0]) {
-                chart.navigator.baseSeries[0].xAxis.options.range = void 0 as any;
+                chart.navigator.baseSeries[0].xAxis.options
+                    .range = void 0 as any;
             }
 
             newMin = dataMin;
@@ -1100,18 +1105,22 @@ class RangeSelector {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
-                addEvent(chart.xAxis[0], 'setExtremes', function (e: any): void {
-                    if (
-                        (this.max as any) - (this.min as any) !==
-                            chart.fixedRange &&
-                        e.trigger !== 'rangeSelectorButton' &&
-                        e.trigger !== 'updatedData' &&
-                        rangeSelector.forcedDataGrouping &&
-                        !rangeSelector.frozenStates
-                    ) {
-                        this.setDataGrouping(false, false);
+                addEvent(
+                    chart.xAxis[0],
+                    'setExtremes',
+                    function (e: any): void {
+                        if (
+                            (this.max as any) - (this.min as any) !==
+                                chart.fixedRange &&
+                            e.trigger !== 'rangeSelectorButton' &&
+                            e.trigger !== 'updatedData' &&
+                            rangeSelector.forcedDataGrouping &&
+                            !rangeSelector.frozenStates
+                        ) {
+                            this.setDataGrouping(false, false);
+                        }
                     }
-                });
+                );
             }
         }));
     }
@@ -1343,7 +1352,10 @@ class RangeSelector {
             }
 
             input.value = time.dateFormat(
-                this.inputTypeFormats[input.type] || options.inputEditDateFormat,
+                (
+                    this.inputTypeFormats[input.type] ||
+                    options.inputEditDateFormat
+                ),
                 updatedTime
             );
             if (dateBox) {
@@ -1502,7 +1514,9 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#drawInput
      */
-    public drawInput(name: ('min'|'max')): Highcharts.RangeSelectorInputElements {
+    public drawInput(
+        name: ('min'|'max')
+    ): Highcharts.RangeSelectorInputElements {
         const {
             chart,
             div,

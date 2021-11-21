@@ -674,7 +674,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public createParentNodes(): void {
         let series = this,
             chart = series.chart,
-            parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
+            parentNodeLayout: PackedBubbleLayout = (
+                series.parentNodeLayout as any
+            ),
             nodeAdded,
             parentNode = series.parentNode,
             PackedBubblePoint = series.pointClass,

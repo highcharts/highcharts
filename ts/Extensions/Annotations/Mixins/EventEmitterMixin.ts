@@ -306,10 +306,14 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((this.points as any).length) {
                 (this as any).translate(translation.x, translation.y);
             } else {
-                (this.shapes as any).forEach(function (shape: SVGElement): void {
+                (this.shapes as any).forEach(function (
+                    shape: SVGElement
+                ): void {
                     shape.translate(translation.x, translation.y);
                 });
-                (this.labels as any).forEach(function (label: SVGElement): void {
+                (this.labels as any).forEach(function (
+                    label: SVGElement
+                ): void {
                     label.translate(translation.x, translation.y);
                 });
             }

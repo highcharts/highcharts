@@ -713,7 +713,12 @@ function nelderMead(
         a: number,
         b: number
     ): NelderMeadPointArray => {
-        const point = weightedSum(a, centroid, b, worst) as NelderMeadPointArray;
+        const point = weightedSum(
+            a,
+            centroid,
+            b,
+            worst
+        ) as NelderMeadPointArray;
 
         point.fx = fn(point);
         return point;

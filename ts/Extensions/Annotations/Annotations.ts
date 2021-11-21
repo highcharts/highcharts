@@ -779,7 +779,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public setControlPointsVisibility(visible: boolean): void {
         const setItemControlPointsVisibility = function (
-            item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+            item: (
+                Highcharts.AnnotationLabelType|
+                Highcharts.AnnotationShapeType
+            )
         ): void {
             item.setControlPointsVisibility(visible);
         };
@@ -1974,8 +1977,10 @@ chartProto.callbacks.push(function (
                                             joinAnnotations &&
                                             row.length > startRowLength
                                         ) {
-                                            row[row.length - 1] +=
-                                            annotationSeparator + annotationText;
+                                            row[row.length - 1] += (
+                                                annotationSeparator +
+                                                annotationText
+                                            );
                                         } else {
                                             row.push(annotationText);
                                         }

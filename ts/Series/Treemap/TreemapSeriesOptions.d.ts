@@ -47,7 +47,9 @@ export type TreemapSeriesLayoutAlgorithmValue = (
     'sliceAndDice'|'stripes'|'squarified'|'strip'
 );
 
-export type TreemapSeriesLayoutStartingDirectionValue = ('vertical'|'horizontal');
+export type TreemapSeriesLayoutStartingDirectionValue = (
+    'vertical'|'horizontal'
+);
 
 export interface TreemapSeriesLevelsColorVariationOptions {
     key?: string;

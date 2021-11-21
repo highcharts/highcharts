@@ -236,7 +236,10 @@ const bindingsUtils = {
      * @param {Highcharts.Annotation} annotation
      * Annotation to be updated
      */
-    updateRectSize: function (event: PointerEvent, annotation: Annotation): void {
+    updateRectSize: function (
+        event: PointerEvent,
+        annotation: Annotation
+    ): void {
         const chart = annotation.chart,
             options = annotation.options.typeOptions,
             xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
@@ -558,7 +561,9 @@ class NavigationBindings {
         let shouldEventBeFired = true;
 
         if (navigation.selectedButtonElement) {
-            if (navigation.selectedButtonElement.classList === button.classList) {
+            if (
+                navigation.selectedButtonElement.classList === button.classList
+            ) {
                 shouldEventBeFired = false;
             }
 
@@ -635,7 +640,9 @@ class NavigationBindings {
                 // Element could be removed in the child action, e.g. button
                 (clickEvent.target as any).parentNode &&
                 // TO DO: Polyfill for IE11?
-                !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
+                !closestPolyfill(
+                    clickEvent.target as any, '.' + PREFIX + 'popup'
+                )
             ) {
                 fireEvent(navigation, 'closePopup');
             } else if (activeAnnotation.cancelClick) {
@@ -695,7 +702,9 @@ class NavigationBindings {
 
                 (navigation.stepIndex as any)++;
 
-                if ((selectedButton.steps as any)[navigation.stepIndex as any]) {
+                if (
+                    (selectedButton.steps as any)[navigation.stepIndex as any]
+                ) {
                     // If we have more steps, bind them one by one:
                     navigation.mouseMoveEvent = navigation.nextEvent = (
                         selectedButton.steps as any
@@ -893,7 +902,10 @@ class NavigationBindings {
                 if (isArray(option)) {
                     parent[key] = [];
 
-                    option.forEach(function (arrayOption: any, i: number): void {
+                    option.forEach(function (
+                        arrayOption: any,
+                        i: number
+                    ): void {
                         if (!isObject(arrayOption)) {
                             // Simple arrays, e.g. [String, Number, Boolean]
                             traverse(
@@ -1054,10 +1066,14 @@ class NavigationBindings {
     ): Highcharts.NavigationBindingsButtonEventsObject {
         let navigation = this,
             classNames = this.getClickedClassNames(container, event),
-            bindings: (Highcharts.NavigationBindingsButtonEventsObject|undefined);
+            bindings: (
+                Highcharts.NavigationBindingsButtonEventsObject|undefined
+            );
 
 
-        classNames.forEach(function (className: [string, HTMLDOMElement]): void {
+        classNames.forEach(function (
+            className: [string, HTMLDOMElement]
+        ): void {
             if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {
                     events: navigation.boundClassNames[className[0]],

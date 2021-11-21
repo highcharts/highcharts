@@ -420,8 +420,11 @@ class ZoomComponent extends AccessibilityComponent {
                         keyCode: number,
                         e: KeyboardEvent
                     ): number {
-                        const isBackwards = keyCode === keys.tab && e.shiftKey ||
-                            keyCode === keys.left || keyCode === keys.up;
+                        const isBackwards = (
+                            keyCode === keys.tab && e.shiftKey ||
+                            keyCode === keys.left ||
+                            keyCode === keys.up
+                        );
 
                         // Arrow/tab => just move
                         return this.response[isBackwards ? 'prev' : 'next'];

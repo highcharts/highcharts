@@ -47,8 +47,12 @@ class CrookedLine extends Annotation {
      * @private
      */
     public setClipAxes(): void {
-        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis as any];
-        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
+        this.clipXAxis = this.chart.xAxis[
+            this.options.typeOptions.xAxis as any
+        ];
+        this.clipYAxis = this.chart.yAxis[
+            this.options.typeOptions.yAxis as any
+        ];
     }
 
     public getPointsOptions(): Array<MockPointOptions> {

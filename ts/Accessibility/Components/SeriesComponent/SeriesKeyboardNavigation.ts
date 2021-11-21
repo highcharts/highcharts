@@ -407,7 +407,9 @@ class SeriesKeyboardNavigation {
                         this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
-                        chart.highlightAdjacentSeries(keyCode === keys.pageDown);
+                        chart.highlightAdjacentSeries(
+                            keyCode === keys.pageDown
+                        );
                         return this.response.success;
                     }]
             ],
@@ -586,7 +588,9 @@ namespace SeriesKeyboardNavigation {
         highlightedPoint?: PointComposition;
         series: Array<SeriesComposition>;
         highlightAdjacentPoint(next: boolean): (boolean|PointComposition);
-        highlightAdjacentPointVertical(down: boolean): (boolean|PointComposition);
+        highlightAdjacentPointVertical(
+            down: boolean
+        ): (boolean|PointComposition);
         highlightAdjacentSeries(down: boolean): (boolean|PointComposition);
     }
 
@@ -665,9 +669,10 @@ namespace SeriesKeyboardNavigation {
             // move direction
             newPoint = next ? series[0].points[0] : lastPoint;
         } else {
-            // We have a highlighted point.
-            // Grab next/prev point & series
-            newSeries = series[(curPoint.series.index as any) + (next ? 1 : -1)];
+            // We have a highlighted point. Grab next/prev point & series.
+            newSeries = series[
+                (curPoint.series.index as any) + (next ? 1 : -1)
+            ];
             newPoint = curPoints[curPointIndex + (next ? 1 : -1)];
             if (!newPoint && newSeries) {
                 // Done with this series, try next one
@@ -807,7 +812,8 @@ namespace SeriesKeyboardNavigation {
         if (isSkipSeries(newSeries)) {
             // Skip the series
             newPoint.highlight();
-            adjacentNewPoint = chart.highlightAdjacentSeries(down); // Try recurse
+            // Try recurse
+            adjacentNewPoint = chart.highlightAdjacentSeries(down);
             if (!adjacentNewPoint) {
                 // Recurse failed
                 curPoint.highlight();
@@ -879,7 +885,9 @@ namespace SeriesKeyboardNavigation {
                 }
             });
 
-            seriesProto.highlightFirstValidPoint = seriesHighlightFirstValidPoint;
+            seriesProto.highlightFirstValidPoint = (
+                seriesHighlightFirstValidPoint
+            );
 
         }
     }

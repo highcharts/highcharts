@@ -2001,7 +2001,10 @@ H.Popup.prototype = {
          * @param {number} disableTab
          * Disable tab when 0
          */
-        switchTabs: function (this: Highcharts.Popup, disableTab: number): void {
+        switchTabs: function (
+            this: Highcharts.Popup,
+            disableTab: number
+        ): void {
             let _self = this,
                 popupDiv = this.popup.container,
                 tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),

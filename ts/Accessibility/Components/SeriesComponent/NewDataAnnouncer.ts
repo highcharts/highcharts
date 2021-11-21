@@ -359,7 +359,8 @@ class NewDataAnnouncer {
         }
 
         // Default formatter - use lang options
-        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+        const multiple = H.charts && H.charts.length > 1 ?
+                'Multiple' : 'Single',
             langKey = newSeries ? 'newSeriesAnnounce' + multiple :
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);

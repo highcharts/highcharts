@@ -259,7 +259,8 @@ class MenuComponent extends AccessibilityComponent {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });

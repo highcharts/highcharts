@@ -247,7 +247,11 @@ namespace GridAxis {
 
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
 
-        addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
+        addEvent(
+            TickClass,
+            'afterGetLabelPosition',
+            onTickAfterGetLabelPosition
+        );
         addEvent(TickClass, 'labelFormat', onTickLabelFormat);
 
         return AxisClass as (T&typeof GridAxis);
@@ -319,7 +323,10 @@ namespace GridAxis {
             this.treeGrid.mapOfPosToGridNode
         ) {
             const treeDepth = this.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            dimensions.width += this.options.labels.indentation * (treeDepth - 1);
+            dimensions.width += (
+                this.options.labels.indentation *
+                (treeDepth - 1)
+            );
         }
 
         return dimensions;
@@ -616,7 +623,9 @@ namespace GridAxis {
                 )
             ) {
                 const tickmarkOffset = axis.tickmarkOffset,
-                    lastTick = axis.tickPositions[axis.tickPositions.length - 1],
+                    lastTick = axis.tickPositions[
+                        axis.tickPositions.length - 1
+                    ],
                     firstTick = axis.tickPositions[0];
 
                 let label: SVGElement|undefined;

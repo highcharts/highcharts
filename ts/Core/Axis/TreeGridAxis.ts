@@ -476,11 +476,13 @@ namespace TreeGridAxis {
                     max = options.max,
                     // Check whether any of series is rendering for the first
                     // time, visibility has changed, or its data is dirty, and
-                    // only then update. #10570, #10580
-                    // Also check if mapOfPosToGridNode exists. #10887
+                    // only then update. #10570, #10580. Also check if
+                    // mapOfPosToGridNode exists. #10887
                     isDirty = (
                         !axis.treeGrid.mapOfPosToGridNode ||
-                        axis.series.some(function (series): (boolean|undefined) {
+                        axis.series.some(function (
+                            series
+                        ): (boolean|undefined) {
                             return !series.hasRendered ||
                                 series.isDirtyData ||
                                 series.isDirty;
@@ -496,7 +498,9 @@ namespace TreeGridAxis {
                     data = axis.series.reduce(function (arr, s): Array<PointOptions> {
                         if (s.visible) {
                             // Push all data to array
-                            (s.options.data || []).forEach(function (data): void {
+                            (s.options.data || []).forEach(function (
+                                data
+                            ): void {
                                 // For using keys - rebuild the data structure
                                 if (s.options.keys && s.options.keys.length) {
 
@@ -723,10 +727,13 @@ namespace TreeGridAxis {
                             if (axis.treeGrid.collapsedNodes) {
                                 axis.treeGrid.collapsedNodes = axis.treeGrid
                                     .collapsedNodes
-                                    .filter((n): boolean =>
-                                        node.collapseStart !== n.collapseStart ||
+                                    .filter((n): boolean => (
+                                        (
+                                            node.collapseStart !==
+                                            n.collapseStart
+                                        ) ||
                                         node.collapseEnd !== n.collapseEnd
-                                    );
+                                    ));
                             }
                         }
                     });

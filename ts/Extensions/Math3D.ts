@@ -146,7 +146,10 @@ function perspective3D(
     origin: Position3DObject,
     distance: number
 ): PositionObject {
-    const projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
+    const projection = (
+        (distance > 0) &&
+        (distance < Number.POSITIVE_INFINITY)
+    ) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
 

@@ -304,7 +304,9 @@ namespace MultipleLinesComposition {
                 originalColor = indicator.color;
             indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;
-            indicator.color = this.userOptions.fillColor as SVGAttributes['fill'];
+            indicator.color = (
+                this.userOptions.fillColor as SVGAttributes['fill']
+            );
             indicator.options = merge(
                 mainLinePoints,
                 gappedExtend

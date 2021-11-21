@@ -334,7 +334,10 @@ class Instrument {
             // No valid frequencies for this instrument, return the target
             frequency :
             // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc: number, cur: number): number {
+            validFrequencies.reduce(function (
+                acc: number,
+                cur: number
+            ): number {
                 // Find the closest allowed value
                 return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
                     cur < maximum && cur > minimum ?
@@ -551,7 +554,11 @@ class Instrument {
             });
 
             // Set the volume and panning
-            setOrStartTimer(pick(options.volume, 1), 'setGain', 4); // Slight ramp
+            setOrStartTimer(
+                pick(options.volume, 1),
+                'setGain',
+                4
+            ); // Slight ramp
             setOrStartTimer(pick(options.pan, 0), 'setPan');
         } else {
             // No note duration, so just stop immediately

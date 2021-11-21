@@ -401,7 +401,9 @@ class Time {
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+                return new Date(
+                    timestamp.toString()
+                ).getTimezoneOffset() * 60000;
             };
         }
 

@@ -253,9 +253,8 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(
-                        indicator, arguments
-                    );
+                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
+                        .apply(indicator, arguments);
                 }
             );
         }

@@ -56,7 +56,10 @@ class Pitchfork extends InfinityLine {
         secondAnglePoint?: Highcharts.AnnotationPointType
     ): PositionObject {
         const angle = Math.atan2(
-                (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
+                (
+                    (secondAnglePoint as any).plotY -
+                    (firstAnglePoint.plotY as any)
+                ),
                 (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
             ),
             distance = 1e7;

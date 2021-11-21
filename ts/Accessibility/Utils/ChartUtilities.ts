@@ -208,10 +208,11 @@ function getAxisTimeLengthDesc(axis: Axis): string {
  */
 function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart,
+        options = chart.options,
         dateRangeFormat = (
-            chart.options &&
-            chart.options.accessibility &&
-            chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
+            options &&
+            options.accessibility &&
+            options.accessibility.screenReaderSection.axisRangeDateFormat ||
             ''
         ),
         format = function (axisKey: string): string {
