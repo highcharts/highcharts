@@ -877,7 +877,11 @@ namespace BrokenAxis {
                                         to: brk.value,
                                         len: brk.value - start - (brk.size || 0)
                                     });
-                                    length += brk.value - start - (brk.size || 0);
+                                    length += (
+                                        brk.value -
+                                        start -
+                                        (brk.size || 0)
+                                    );
                                 }
                             }
                         );

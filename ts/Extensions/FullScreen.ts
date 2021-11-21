@@ -203,7 +203,8 @@ class Fullscreen {
 
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
-            fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
+            fullscreen.unbindFullscreenEvent = fullscreen
+                .unbindFullscreenEvent();
         }
 
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);

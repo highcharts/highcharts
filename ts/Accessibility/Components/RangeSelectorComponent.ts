@@ -342,7 +342,8 @@ class RangeSelectorComponent extends AccessibilityComponent {
 
         if (newIxOutOfRange) {
             if (chart.accessibility) {
-                chart.accessibility.keyboardNavigation.tabindexContainer.focus();
+                chart.accessibility.keyboardNavigation.tabindexContainer
+                    .focus();
                 chart.accessibility.keyboardNavigation[
                     direction < 0 ? 'prev' : 'next'
                 ]();

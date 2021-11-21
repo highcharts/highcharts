@@ -465,7 +465,9 @@ namespace DataLabel {
                 chart.options.plotOptions.series.dataLabels as any,
                 chart.options.plotOptions &&
                 chart.options.plotOptions[series.type] &&
-                (chart.options.plotOptions[series.type] as any).dataLabels as any
+                (
+                    chart.options.plotOptions[series.type] as any
+                ).dataLabels as any
             ),
             seriesDlOptions as any
         );
@@ -556,7 +558,9 @@ namespace DataLabel {
                         labelConfig = point.getLabelConfig();
 
                         formatString = pick(
-                            (labelOptions as any)[point.formatPrefix + 'Format'],
+                            (labelOptions as any)[
+                                point.formatPrefix + 'Format'
+                            ],
                             labelOptions.format
                         );
 
@@ -615,7 +619,10 @@ namespace DataLabel {
                         }
 
                         // Remove unused attributes (#947)
-                        objectEach(attr, function (val: any, name: string): void {
+                        objectEach(attr, function (
+                            val: any,
+                            name: string
+                        ): void {
                             if (typeof val === 'undefined') {
                                 delete attr[name];
                             }
@@ -645,7 +652,9 @@ namespace DataLabel {
                             delete point.dataLabel;
                         }
                         if (connector) {
-                            point.connector = (point.connector as any).destroy();
+                            point.connector = (
+                                point.connector as any
+                            ).destroy();
                             if (point.connectors) {
                                 // Remove point.connectors if this was the last
                                 // one

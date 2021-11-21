@@ -176,7 +176,9 @@ class InfinityLine extends CrookedLine {
      * */
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions as InfinityLine.TypeOptions,
+        const typeOptions = (
+                this.options.typeOptions as InfinityLine.TypeOptions
+            ),
             points = [
                 this.points[0],
                 InfinityLine.endEdgePoint

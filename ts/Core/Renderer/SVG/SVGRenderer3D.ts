@@ -160,7 +160,9 @@ class SVGRenderer3D extends SVGRenderer {
 
         if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
             result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
+                this.curveTo(
+                    cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy
+                )
             );
             result = result.concat(
                 this.curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy)
@@ -169,7 +171,9 @@ class SVGRenderer3D extends SVGRenderer {
         }
         if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {
             result = result.concat(
-                this.curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy)
+                this.curveTo(
+                    cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy
+                )
             );
             result = result.concat(
                 this.curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy)
@@ -409,7 +413,11 @@ class SVGRenderer3D extends SVGRenderer {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (let i = 0; i < params.faces.length; i++) {
-                    result.faces[i].animate(params.faces[i], duration, complete);
+                    result.faces[i].animate(
+                        params.faces[i],
+                        duration,
+                        complete
+                    );
                 }
                 delete params.faces;
             }
@@ -873,7 +881,9 @@ class SVGRenderer3D extends SVGRenderer {
                 from = this.attribs,
                 to: SVGAttributes,
                 anim,
-                randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
+                randomProp = (
+                    'data-' + Math.random().toString(26).substring(2, 9)
+                );
 
             // Attribute-line properties connected to 3D. These shouldn't have
             // been in the attribs collection in the first place.
@@ -1106,7 +1116,9 @@ class SVGRenderer3D extends SVGRenderer {
         }
 
         out.push([
-            'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
+            'L',
+            cx + (rx * Math.cos(end2)) + dx,
+            cy + (ry * Math.sin(end2)) + dy
         ]);
         out = out.concat(
             SVGRenderer3D.curveTo(cx, cy, rx, ry, end2, start2, dx, dy)
@@ -1122,7 +1134,9 @@ class SVGRenderer3D extends SVGRenderer {
             SVGRenderer3D.curveTo(cx, cy, irx, iry, start, end, 0, 0)
         );
         inn.push([
-            'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
+            'L',
+            cx + (irx * Math.cos(end)) + dx,
+            cy + (iry * Math.sin(end)) + dy
         ]);
         inn = inn.concat(
             SVGRenderer3D.curveTo(cx, cy, irx, iry, end, start, dx, dy)

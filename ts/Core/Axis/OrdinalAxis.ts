@@ -477,26 +477,27 @@ namespace OrdinalAxis {
                 axis.minPixelPadding,
             isInside = pixelVal > 0 && pixelVal < axis.left + axis.len;
 
-        // If the value is not inside the plot area,
-        // use the extended positions.
+        // If the value is not inside the plot area, use the extended positions.
         // (array contains also points that are outside of the plotArea).
         if (!isInside) {
             // When iterating for the first time,
             // get the extended ordinal positional and assign them.
             if (!ordinal.extendedOrdinalPositions) {
-                ordinal.extendedOrdinalPositions = ordinal.getExtendedPositions();
+                ordinal.extendedOrdinalPositions = (
+                    ordinal.getExtendedPositions()
+                );
             }
             positions = ordinal.extendedOrdinalPositions;
         }
 
-        // In some cases (especially in early stages of the chart creation)
-        // the getExtendedPositions might return undefined.
+        // In some cases (especially in early stages of the chart creation) the
+        // getExtendedPositions might return undefined.
         if (positions && positions.length) {
             const index = ordinal.getIndexOfPoint(pixelVal, positions),
                 mantissa = correctFloat(index % 1);
 
-            // Check if the index is inside position array.
-            // If true, read/approximate value for that exact index.
+            // Check if the index is inside position array. If true,
+            // read/approximate value for that exact index.
             if (index >= 0 && index < positions.length - 1) {
                 const leftNeighbour = positions[Math.floor(index)],
                     rightNeighbour = positions[Math.ceil(index)],
@@ -505,10 +506,10 @@ namespace OrdinalAxis {
                 return positions[Math.floor(index)] + mantissa * distance;
             }
 
-            // For cases when the index is not in the extended ordinal
-            // position array, like when the value we are looking
-            // for exceed the available data,
-            // approximate that value based on the calculated slope.
+            // For cases when the index is not in the extended ordinal position
+            // array, like when the value we are looking for exceed the
+            // available data, approximate that value based on the calculated
+            // slope.
             const positionsLength = positions.length,
                 firstPositionsValue = positions[0],
                 lastPositionsValue = positions[positionsLength - 1],
@@ -526,8 +527,8 @@ namespace OrdinalAxis {
     }
 
     /**
-     * Internal function to calculate the precise index
-     * in ordinalPositions array.
+     * Internal function to calculate the precise index in ordinalPositions
+     * array.
      * @private
      */
     function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
@@ -809,7 +810,9 @@ namespace OrdinalAxis {
                     ordinal.getExtendedPositions();
                 ordinal.extendedOrdinalPositions = extendedOrdinalPositions;
             }
-            if (!(extendedOrdinalPositions && extendedOrdinalPositions.length)) {
+            if (!(
+                extendedOrdinalPositions && extendedOrdinalPositions.length
+            )) {
 
                 return val;
             }
@@ -1000,7 +1003,8 @@ namespace OrdinalAxis {
 
                             // Check first item:
                             if (
-                                uniqueOrdinalPositions[0] !== ordinalPositions[0]
+                                uniqueOrdinalPositions[0] !==
+                                ordinalPositions[0]
                             ) {
                                 uniqueOrdinalPositions.unshift(
                                     ordinalPositions[0]
@@ -1023,7 +1027,8 @@ namespace OrdinalAxis {
                     i = len - 1;
                     while (i-- && !useOrdinal) {
                         if (
-                            ordinalPositions[i + 1] - ordinalPositions[i] !== dist
+                            ordinalPositions[i + 1] - ordinalPositions[i] !==
+                            dist
                         ) {
                             useOrdinal = true;
                         }
@@ -1036,8 +1041,10 @@ namespace OrdinalAxis {
                         !axis.options.keepOrdinalPadding &&
                         (
                             ordinalPositions[0] - min > dist ||
-                            max - ordinalPositions[ordinalPositions.length - 1] >
-                                dist
+                            (
+                                max -
+                                ordinalPositions[ordinalPositions.length - 1]
+                            ) > dist
                         )
                     ) {
                         useOrdinal = true;
@@ -1256,10 +1263,13 @@ namespace OrdinalAxis {
                     series.processData.apply(fakeSeries);
                 });
 
-                // Force to use the ordinal when points are evenly spaced
-                // (e.g. weeks), #3825.
+                // Force to use the ordinal when points are evenly spaced (e.g.
+                // weeks), #3825.
                 if (
-                    fakeSeries.closestPointRange !== fakeSeries.basePointRange &&
+                    (
+                        fakeSeries.closestPointRange !==
+                        fakeSeries.basePointRange
+                    ) &&
                     fakeSeries.currentDataGrouping
                 ) {
                     fakeAxis.forceOrdinal = true;
@@ -1435,12 +1445,12 @@ namespace OrdinalAxis {
          * @private
          */
         public postProcessTickInterval(tickInterval: number): number {
-            // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
-            // This is a case where this algorithm doesn't work optimally. In
-            // this case, the tick labels are spread out per week, but all the
-            // gaps reside within weeks. So we have a situation where the labels
-            // are courser than the ordinal gaps, and thus the tick interval
-            // should not be altered.
+            // Problem: https://jsfiddle.net/highcharts/FQm4E/1/. This is a case
+            // where this algorithm doesn't work optimally. In this case, the
+            // tick labels are spread out per week, but all the gaps reside
+            // within weeks. So we have a situation where the labels are courser
+            // than the ordinal gaps, and thus the tick interval should not be
+            // altered.
             const ordinal = this,
                 axis = ordinal.axis,
                 ordinalSlope = ordinal.slope;
@@ -1449,7 +1459,10 @@ namespace OrdinalAxis {
 
             if (ordinalSlope) {
                 if (!axis.options.breaks) {
-                    ret = tickInterval / (ordinalSlope / axis.closestPointRange);
+                    ret = (
+                        tickInterval /
+                        (ordinalSlope / axis.closestPointRange)
+                    );
                 } else {
                     ret = axis.closestPointRange || tickInterval; // #7275
                 }

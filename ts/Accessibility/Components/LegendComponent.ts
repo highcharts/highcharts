@@ -185,7 +185,9 @@ class LegendComponent extends AccessibilityComponent {
                 }
             }
         );
-        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
+        this.addEvent(Legend, 'afterPositionItem', function (
+            e: AnyRecord
+        ): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -338,7 +340,8 @@ class LegendComponent extends AccessibilityComponent {
             ).replace(/<br ?\/?>/g, ' ')
         );
         const legendLabel = chart.langFormat(
-            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'),
+            {
                 chart,
                 legendTitle,
                 chartTitle: getChartTitle(chart)
@@ -660,7 +663,10 @@ namespace LegendComponent {
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
-                fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
+                fireEvent(
+                    (items[oldIx].legendGroup as any).element,
+                    'mouseout'
+                );
             }
 
             scrollLegendToItem(this.legend, ix);

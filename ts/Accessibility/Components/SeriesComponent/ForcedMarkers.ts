@@ -129,7 +129,9 @@ namespace ForcedMarkersComposition {
     /**
      * @private
      */
-    function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
+    function getPointMarkerOpacity(
+        pointOptions: PointOptions
+    ): number|undefined {
         return (pointOptions.marker as any).states &&
             (pointOptions.marker as any).states.normal &&
             (pointOptions.marker as any).states.normal.opacity;
@@ -214,7 +216,8 @@ namespace ForcedMarkersComposition {
                 series.points.forEach((point): void => {
                     if (point.graphic) {
                         point.graphic[
-                            point.hasForcedA11yMarker ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker ?
+                                'addClass' : 'removeClass'
                         ]('highcharts-a11y-marker-hidden');
                         point.graphic[
                             point.hasForcedA11yMarker === false ?

@@ -56,7 +56,10 @@ declare global {
         interface AnnotationMarkerMixin {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;
-            setItemMarkers(this: ControllablePath, item: ControllablePath): void;
+            setItemMarkers(
+                this: ControllablePath,
+                item: ControllablePath
+            ): void;
         }
     }
 }

@@ -326,7 +326,9 @@ namespace Responsive {
 
             // Stringified key for the rules that currently apply.
             ruleIds = ((ruleIds.toString() as any) || void 0);
-            const currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+            const currentRuleIds = (
+                currentResponsive && currentResponsive.ruleIds
+            );
 
             // Changes in what rules apply
             if ((ruleIds as any) !== currentRuleIds) {

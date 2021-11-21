@@ -395,7 +395,9 @@ bindingsUtils.manageIndicators = function (
             seriesConfig.yAxis = yAxis.options.id;
             navigation.resizeYAxes();
         } else {
-            seriesConfig.yAxis = (chart.get(data.linkedTo) as any).options.yAxis;
+            seriesConfig.yAxis = (
+                chart.get(data.linkedTo) as any
+            ).options.yAxis;
         }
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
@@ -575,8 +577,12 @@ bindingsUtils.updateNthPoint = function (
                 index: number
             ): void {
                 if (index >= startIndex) {
-                    point.x = xAxis.toValue(e[xAxis.horiz ? 'chartX' : 'chartY']);
-                    point.y = yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']);
+                    point.x = xAxis.toValue(
+                        e[xAxis.horiz ? 'chartX' : 'chartY']
+                    );
+                    point.y = yAxis.toValue(
+                        e[yAxis.horiz ? 'chartX' : 'chartY']
+                    );
                 }
             });
             annotation.update({
@@ -631,7 +637,9 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         }
 
         if (removedYAxisHeight) {
-            removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
+            removedHeight = correctFloat(
+                (parseFloat(removedYAxisHeight) / 100)
+            );
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
@@ -777,13 +785,19 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
         } else {
-            positions.forEach(function (position: Record<string, number>): void {
-                position.height = (position.height / (allAxesHeight * 100)) * 100;
+            positions.forEach(function (
+                position: Record<string, number>
+            ): void {
+                position.height = (
+                    position.height / (allAxesHeight * 100)
+                ) * 100;
                 position.top = (position.top / (allAxesHeight * 100)) * 100;
             });
         }
 
-        positions.forEach(function (position: Record<string, number>, index: number): void {
+        positions.forEach(function (
+            position: Record<string, number>, index: number
+        ): void {
             yAxes[index].update({
                 height: position.height + '%',
                 top: position.top + '%',
@@ -1177,7 +1191,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     }
                 },
                 navigation.annotationsOptions,
-                (navigation.bindings as any).arrowInfinityLine.annotationsOptions
+                (navigation.bindings as any).arrowInfinityLine
+                    .annotationsOptions
             );
 
             return this.chart.addAnnotation(options);

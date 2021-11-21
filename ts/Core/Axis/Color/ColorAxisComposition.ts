@@ -134,7 +134,9 @@ namespace ColorAxisComposition {
             const chartProto = ChartClass.prototype;
 
             chartProto.collectionsWithUpdate.push('colorAxis');
-            chartProto.collectionsWithInit.colorAxis = [chartProto.addColorAxis];
+            chartProto.collectionsWithInit.colorAxis = [
+                chartProto.addColorAxis
+            ];
 
             addEvent(ChartClass, 'afterGetAxes', onChartAfterGetAxes);
 
@@ -152,7 +154,11 @@ namespace ColorAxisComposition {
             composedClasses.push(LegendClass);
 
             addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-            addEvent(LegendClass, 'afterColorizeItem', onLegendAfterColorizeItem);
+            addEvent(
+                LegendClass,
+                'afterColorizeItem',
+                onLegendAfterColorizeItem
+            );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
         }
         if (composedClasses.indexOf(SeriesClass) === -1) {
@@ -331,7 +337,10 @@ namespace ColorAxisComposition {
      * @function Highcharts.colorPointMixin.setVisible
      * @param {boolean} visible
      */
-    export function pointSetVisible(this: PointComposition, vis?: boolean): void {
+    export function pointSetVisible(
+        this: PointComposition,
+        vis?: boolean
+    ): void {
         const point = this,
             method = vis ? 'show' : 'hide';
 

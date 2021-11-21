@@ -404,7 +404,11 @@ class AreaRangeSeries extends AreaSeries {
             higherAreaPath[0][0] === 'M'
         ) {
             // This probably doesn't work for spline
-            higherAreaPath[0] = ['L', higherAreaPath[0][1], higherAreaPath[0][2]];
+            higherAreaPath[0] = [
+                'L',
+                higherAreaPath[0][1],
+                higherAreaPath[0][2]
+            ];
         }
 
         this.graphPath = linePath;
@@ -442,13 +446,17 @@ class AreaRangeSeries extends AreaSeries {
             //
             // TODO: We want to change this and allow multiple labels for both
             // upper and lower values in the future - introducing some options
-            // for which point value to use as Y for the dataLabel, so that
-            // this could be handled in Series.drawDataLabels. This would also
-            // improve performance since we now have to loop over all the
-            // points multiple times to work around the data label logic.
+            // for which point value to use as Y for the dataLabel, so that this
+            // could be handled in Series.drawDataLabels. This would also
+            // improve performance since we now have to loop over all the points
+            // multiple times to work around the data label logic.
             if (isArray(dataLabelOptions)) {
-                upperDataLabelOptions = dataLabelOptions[0] || { enabled: false };
-                lowerDataLabelOptions = dataLabelOptions[1] || { enabled: false };
+                upperDataLabelOptions = dataLabelOptions[0] || {
+                    enabled: false
+                };
+                lowerDataLabelOptions = dataLabelOptions[1] || {
+                    enabled: false
+                };
             } else {
                 // Make copies
                 upperDataLabelOptions = extend({}, dataLabelOptions);

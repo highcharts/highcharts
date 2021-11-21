@@ -508,8 +508,10 @@ class Measure extends Annotation {
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
-                        Measure.calculations.defaultFormatter.call(this);
+            (this.labels[0] as any).text = (
+                (formatter && formatter.call(this)) ||
+                Measure.calculations.defaultFormatter.call(this)
+            );
 
         } else {
             this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({

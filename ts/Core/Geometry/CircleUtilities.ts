@@ -223,7 +223,10 @@ namespace CircleUtilities {
                 .slice(i + 1)
                 .reduce((points, c2, j, arr): Array<GeometryObject> => {
                     const indexes: [number, number] = [i, j + i + 1];
-                    return points.concat(getCircleCircleIntersection(c1, c2).map((
+                    return points.concat(getCircleCircleIntersection(
+                        c1,
+                        c2
+                    ).map((
                         p: GeometryObject
                     ): GeometryObject => {
                         p.indexes = indexes;
@@ -383,7 +386,9 @@ namespace CircleUtilities {
                     return (b.angle as any) - (a.angle as any);
                 });
 
-            const startPoint = intersectionPoints[intersectionPoints.length - 1];
+            const startPoint = intersectionPoints[
+                intersectionPoints.length - 1
+            ];
             const arcs: SVGPath = intersectionPoints
                 .reduce(function (
                     data,

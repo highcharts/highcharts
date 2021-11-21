@@ -72,7 +72,10 @@ declare global {
                 point: AnnotationPointType
             ): (AnnotationPointType|null);
             redraw(this: AnnotationControllable, animation?: boolean): void;
-            render(this: AnnotationControllable, parentGroup?: SVGElement): void;
+            render(
+                this: AnnotationControllable,
+                parentGroup?: SVGElement
+            ): void;
             rotate(
                 this: AnnotationControllable,
                 cx: number,
@@ -123,7 +126,11 @@ declare global {
                 p2: (number|undefined),
                 i: number
             ): void;
-            translate(this: AnnotationControllable, dx: number, dy: number): void;
+            translate(
+                this: AnnotationControllable,
+                dx: number,
+                dy: number
+            ): void;
             translatePoint(
                 this: Highcharts.AnnotationControllable,
                 dx: number,
@@ -244,7 +251,10 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
     ): Array<MockPointOptions> {
         const options = this.options;
 
-        return (options.points || (options.point && splat(options.point))) as any;
+        return (
+            options.points ||
+            (options.point && splat(options.point))
+        ) as any;
     },
 
     /**
@@ -314,7 +324,9 @@ const controllableMixin: Highcharts.AnnotationControllableMixin = {
         return {
             relativePosition: anchor,
             absolutePosition: merge(anchor, {
-                x: anchor.x + (point.mock ? plotBox.translateX : chart.plotLeft),
+                x: anchor.x + (
+                    point.mock ? plotBox.translateX : chart.plotLeft
+                ),
                 y: anchor.y + (point.mock ? plotBox.translateY : chart.plotTop)
             })
         };

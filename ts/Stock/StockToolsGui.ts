@@ -2085,7 +2085,10 @@ class Toolbar {
      *
      * @param {Object} - general options for Stock Tools
      */
-    public update(options: Highcharts.StockToolsOptions, redraw?: boolean): void {
+    public update(
+        options: Highcharts.StockToolsOptions,
+        redraw?: boolean
+    ): void {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);

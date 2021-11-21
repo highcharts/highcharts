@@ -497,7 +497,8 @@ class OrganizationSeries extends SankeySeries {
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
             stateOptions: OrganizationSeriesOptions = (
-                levelOptions.states && (levelOptions.states as any)[state as any]
+                levelOptions.states &&
+                (levelOptions.states as any)[state as any]
             ) || {},
             values: (
                 OrganizationPointOptions &

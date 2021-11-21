@@ -468,10 +468,10 @@ addEvent(Series, 'render', function (): void {
                         point.shapeArgs.height
                     )
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._height = 'defer';
                 } else {
                     point.calculatePatternDimensions(
                         (colorOptions as PatternFill.PatternObject).pattern
@@ -624,10 +624,10 @@ addEvent(Chart, 'endResize', function (): void {
                     colorOptions &&
                     (colorOptions as PatternFill.PatternObject).pattern
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._height = 'defer';
                 }
             });
         });

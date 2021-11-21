@@ -136,15 +136,19 @@ class ProxyElement {
         pos.x += pos.width / 2;
         pos.y += pos.height / 2;
         const fakeEventObject = getFakeMouseEvent('click', pos);
-        fireEventOnWrappedOrUnwrappedElement(this.target.click, fakeEventObject);
+        fireEventOnWrappedOrUnwrappedElement(
+            this.target.click,
+            fakeEventObject
+        );
     }
 
 
     /**
-     * Update the target to be proxied.
-     * The position and events are updated to match the new target.
+     * Update the target to be proxied. The position and events are updated to
+     * match the new target.
      * @param target The new target definition
-     * @param attributes New HTML attributes to apply to the button. Set an attribute to null to remove.
+     * @param attributes New HTML attributes to apply to the button. Set an
+     * attribute to null to remove.
      */
     public updateTarget(
         target: ProxyElement.Target,

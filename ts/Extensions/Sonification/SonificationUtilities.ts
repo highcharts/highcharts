@@ -188,7 +188,9 @@ function getExtremesForInstrumentProps(
     let allInstrumentDefinitions = (instruments || []).slice(0);
 
     if (defaultInstrumentDef) {
-        allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
+        allInstrumentDefinitions.push(
+            optionDefToInstrDef(defaultInstrumentDef)
+        );
     }
 
     chart.series.forEach((series): void => {
@@ -197,8 +199,9 @@ function getExtremesForInstrumentProps(
             series.options.sonification.instruments
         );
         if (instrOptions) {
-            allInstrumentDefinitions = allInstrumentDefinitions
-                .concat(instrOptions.map(optionDefToInstrDef));
+            allInstrumentDefinitions = allInstrumentDefinitions.concat(
+                instrOptions.map(optionDefToInstrDef)
+            );
         }
     });
 

@@ -206,11 +206,12 @@ namespace PointSonify {
                         } :
                         value(point, dataExtremes);
                 }
-                // String, this is a data prop. Potentially with
-                // negative polarity.
+                // String, this is a data prop. Potentially with negative
+                // polarity.
                 if (typeof value === 'string') {
                     const hasInvertedPolarity = value.charAt(0) === '-';
-                    const dataProp = hasInvertedPolarity ? value.slice(1) : value;
+                    const dataProp = hasInvertedPolarity ?
+                        value.slice(1) : value;
                     const pointValue = pick(
                         (point as any)[dataProp],
                         (point.options as any)[dataProp]
@@ -315,7 +316,10 @@ namespace PointSonify {
                     frequency: getMappingValue(
                         mapping.frequency,
                         true,
-                        { min: extremes.minFrequency, max: extremes.maxFrequency }
+                        {
+                            min: extremes.minFrequency,
+                            max: extremes.maxFrequency
+                        }
                     ),
                     duration: getMappingValue(
                         mapping.duration,
@@ -358,7 +362,9 @@ namespace PointSonify {
         this: Composition,
         fadeOut?: boolean
     ): void {
-        const playing = this.sonification && this.sonification.instrumentsPlaying,
+        const playing = (
+                this.sonification && this.sonification.instrumentsPlaying
+            ),
             instrIds = playing && Object.keys(playing);
 
         if (instrIds && instrIds.length) {

@@ -185,7 +185,9 @@ class ScrollbarAxis {
                     scrollMax
                 } = getExtremes(axis),
                 scrollbar = axis.scrollbar,
-                offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),
+                offset = (
+                    (axis.axisTitleMargin as any) + (axis.titleOffset || 0)
+                ),
                 scrollbarsOffsets = axis.chart.scrollbarsOffsets,
                 axisMargin = axis.options.margin || 0,
                 offsetsIndex,
@@ -268,10 +270,14 @@ class ScrollbarAxis {
                     // full size
                     scrollbar.setRange(0, 1);
                 } else {
-                    from =
-                        ((axis.min as any) - scrollMin) / (scrollMax - scrollMin);
-                    to =
-                        ((axis.max as any) - scrollMin) / (scrollMax - scrollMin);
+                    from = (
+                        ((axis.min as any) - scrollMin) /
+                        (scrollMax - scrollMin)
+                    );
+                    to = (
+                        ((axis.max as any) - scrollMin) /
+                        (scrollMax - scrollMin)
+                    );
 
                     if (
                         (axis.horiz && !axis.reversed) ||
@@ -294,7 +300,8 @@ class ScrollbarAxis {
                 scrollbar = axis.scrollbar;
 
             if (scrollbar) {
-                axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
+                // reset scrollbars offsets
+                axis.chart.scrollbarsOffsets = [0, 0];
                 axis.chart.axisOffset[index] +=
                     scrollbar.size + (scrollbar.options.margin as any);
             }

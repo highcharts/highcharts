@@ -369,8 +369,11 @@ namespace SeriesSonify {
                 }
             },
             onEventEnd: function (eventData: Timeline.SignalData): void {
-                const eventObject = eventData.event && eventData.event.options &&
-                        eventData.event.options.eventObject;
+                const eventObject = (
+                    eventData.event &&
+                    eventData.event.options &&
+                    eventData.event.options.eventObject
+                );
 
                 if (eventObject instanceof Point && options.onPointEnd) {
                     options.onPointEnd(eventData.event, eventObject);
@@ -553,7 +556,9 @@ namespace SeriesSonify {
 
         // Convert series options to PointInstrumentObjects and merge with
         // default options
-        return (seriesInstrOpts).map((optionSet): PointSonify.PointInstrument => {
+        return (seriesInstrOpts).map((
+            optionSet
+        ): PointSonify.PointInstrument => {
             // Allow setting option to null to use default
             removeNullsFromObject(optionSet.mapping || {});
             removeNullsFromObject(optionSet);

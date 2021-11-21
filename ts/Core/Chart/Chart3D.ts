@@ -911,7 +911,10 @@ namespace Chart3D {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart, FxClass: typeof Fx): void {
+    export function compose(
+        ChartClass: typeof Chart,
+        FxClass: typeof Fx
+    ): void {
 
         const chartProto = ChartClass.prototype;
         const fxProto = FxClass.prototype;
@@ -1935,8 +1938,12 @@ namespace Chart3D {
 
             clipBox[x] = -(margin[3] || 0);
             clipBox[y] = -(margin[0] || 0);
-            clipBox[w] = chart.chartWidth + (margin[3] || 0) + (margin[1] || 0);
-            clipBox[h] = chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+            clipBox[w] = (
+                chart.chartWidth + (margin[3] || 0) + (margin[1] || 0)
+            );
+            clipBox[h] = (
+                chart.chartHeight + (margin[0] || 0) + (margin[2] || 0)
+            );
 
             // Set scale, used later in perspective method():
             // getScale uses perspective, so scale3d has to be reset.

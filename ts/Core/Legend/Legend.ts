@@ -1676,7 +1676,10 @@ class Legend {
                             );
                         } else {
                             fireEvent(
-                                item, strLegendItemClick, event, fnLegendItemClick
+                                item,
+                                strLegendItemClick,
+                                event,
+                                fnLegendItemClick
                             );
                         }
                     });

@@ -491,7 +491,9 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length || vlen;
+                inst.segments[
+                    inst.segments.length - 1
+                ].to = data.length || vlen;
             }
         }
 
@@ -600,7 +602,9 @@ function GLRenderer(
 
                     pointAttr = chart.styledMode ?
                         (point.series as ColorMapMixin.ColorMapSeries)
-                            .colorAttribs(point as ColorMapMixin.ColorMapPoint) :
+                            .colorAttribs(
+                                point as ColorMapMixin.ColorMapPoint
+                            ) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;

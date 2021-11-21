@@ -390,7 +390,10 @@ H.approximations = {
     }
 };
 
-const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void {
+const applyGrouping = function (
+    this: Series,
+    hasExtemesChanged: boolean
+): void {
     let series = this,
         chart = series.chart,
         options = series.options,
@@ -782,8 +785,10 @@ const anchorPoints = function (
 
         // Anchor points that are not extremes.
         if (anchor && anchor !== 'start') {
-            const shiftInterval: number = totalRange *
-                ({ middle: 0.5, end: 1 } as Highcharts.AnchorChoiceType)[anchor];
+            const shiftInterval: number = (
+                totalRange *
+                ({ middle: 0.5, end: 1 } as Highcharts.AnchorChoiceType)[anchor]
+            );
 
             i = groupedXData.length - 1;
             while (i-- && i > 0) {
@@ -1167,7 +1172,10 @@ Axis.prototype.getGroupPixelWidth = function (): number {
             // limit defined in groupPixelWidth
             if (
                 series[i].groupPixelWidth ||
-                dataLength > ((this.chart.plotSizeX as any) / groupPixelWidth) ||
+                (
+                    dataLength >
+                    ((this.chart.plotSizeX as any) / groupPixelWidth)
+                ) ||
                 (dataLength && dgOptions.forced)
             ) {
                 doGrouping = true;

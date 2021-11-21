@@ -461,7 +461,9 @@ class SVGLabel extends SVGElement {
 
             crispAdjust = this.getCrispAdjust();
             attribs.x = crispAdjust;
-            attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
+            attribs.y = (
+                (this.baseline ? -this.baselineOffset : 0) + crispAdjust
+            );
 
             // Apply the box attributes
             attribs.width = Math.round(this.width);

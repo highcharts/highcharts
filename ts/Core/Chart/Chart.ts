@@ -731,7 +731,8 @@ class Chart {
                 len: Infinity
             };
 
-            const chartX = options.paneCoordinates ? xAxis.pos + x : plotLeft + x;
+            const chartX = options.paneCoordinates ?
+                xAxis.pos + x : plotLeft + x;
 
             if (!(
                 chartX >= Math.max(
@@ -755,7 +756,8 @@ class Chart {
                 len: Infinity
             };
 
-            const chartY = options.paneCoordinates ? yAxis.pos + y : plotTop + y;
+            const chartY = options.paneCoordinates ?
+                yAxis.pos + y : plotTop + y;
 
             if (!(
                 chartY >= Math.max(
@@ -1273,7 +1275,10 @@ class Chart {
             if (title) {
 
                 if (!this.styledMode) {
-                    titleSize = titleOptions.style && titleOptions.style.fontSize;
+                    titleSize = (
+                        titleOptions.style &&
+                        titleOptions.style.fontSize
+                    );
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
@@ -3729,7 +3734,10 @@ class Chart {
                 }
 
                 const paddedMin = Math.min(
-                    pick(panningState && panningState.startMin, extremes.dataMin),
+                    pick(
+                        panningState && panningState.startMin,
+                        extremes.dataMin
+                    ),
                     halfPointRange ?
                         extremes.min :
                         axis.toValue(
@@ -3738,7 +3746,10 @@ class Chart {
                         )
                 );
                 const paddedMax = Math.max(
-                    pick(panningState && panningState.startMax, extremes.dataMax),
+                    pick(
+                        panningState && panningState.startMax,
+                        extremes.dataMax
+                    ),
                     halfPointRange ?
                         extremes.max :
                         axis.toValue(

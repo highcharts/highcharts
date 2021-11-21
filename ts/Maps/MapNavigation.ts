@@ -33,6 +33,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
+    isNumber,
     merge,
     objectEach,
     pick
@@ -245,7 +246,11 @@ MapNavigation.prototype.update = function (
                 const unbind = addEvent(chart, 'load', (): void => {
                     // #15406: Make sure button hasnt been destroyed
                     if (button.element) {
-                        button.align(buttonOptions, false, buttonOptions.alignTo);
+                        button.align(
+                            buttonOptions,
+                            false,
+                            buttonOptions.alignTo
+                        );
                     }
                     unbind();
                 });
@@ -417,17 +422,17 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
     ): void {
         if (this.mapView) {
 
-            if (typeof howMuch === 'number') {
+            if (isNumber(howMuch)) {
                 // Compliance, mapView.zoomBy uses different values
                 howMuch = Math.log(howMuch) / Math.log(0.5);
             }
 
             this.mapView.zoomBy(
                 howMuch,
-                typeof xProjected === 'number' && typeof yProjected === 'number' ?
+                isNumber(xProjected) && isNumber(yProjected) ?
                     this.mapView.projection.inverse([xProjected, yProjected]) :
                     void 0,
-                typeof chartX === 'number' && typeof chartY === 'number' ?
+                isNumber(chartX) && isNumber(chartY) ?
                     [chartX, chartY] :
                     void 0
             );

@@ -1283,7 +1283,9 @@ class Point {
                 {}
             ),
             markerOptions = (
-                (defaultOptions.plotOptions as any)[series.type as any].marker &&
+                (defaultOptions.plotOptions as any)[
+                    series.type as any
+                ].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),

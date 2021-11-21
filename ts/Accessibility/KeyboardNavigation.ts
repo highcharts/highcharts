@@ -360,7 +360,9 @@ class KeyboardNavigation {
      * @private
      */
     public updateExitAnchor(): void {
-        const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+        const endMarkerId = (
+                'highcharts-end-of-chart-marker-' + this.chart.index
+            ),
             endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();

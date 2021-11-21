@@ -669,7 +669,11 @@ namespace Exporting {
             chartProto.renderExporting = renderExporting;
 
             chartProto.callbacks.push(chartCallback);
-            addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'init',
+                onChartInit
+            );
 
             if (G.isSafari) {
                 G.win.matchMedia('print').addListener(

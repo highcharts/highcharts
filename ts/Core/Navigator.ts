@@ -2434,15 +2434,19 @@ class Navigator {
             }
 
             // Handle series removal
-            base.eventsToUnbind.push(addEvent(base, 'remove', function (): void {
-                if (this.navigatorSeries) {
-                    erase(navigator.series as any, this.navigatorSeries);
-                    if (defined(this.navigatorSeries.options)) {
-                        this.navigatorSeries.remove(false);
+            base.eventsToUnbind.push(addEvent(
+                base,
+                'remove',
+                function (): void {
+                    if (this.navigatorSeries) {
+                        erase(navigator.series as any, this.navigatorSeries);
+                        if (defined(this.navigatorSeries.options)) {
+                            this.navigatorSeries.remove(false);
+                        }
+                        delete this.navigatorSeries;
                     }
-                    delete this.navigatorSeries;
                 }
-            }));
+            ));
         }, this);
     }
 
@@ -2583,7 +2587,10 @@ class Navigator {
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
-        navigator.stickToMin = navigator.shouldStickToMin(baseSeries, navigator);
+        navigator.stickToMin = navigator.shouldStickToMin(
+            baseSeries,
+            navigator
+        );
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
@@ -2607,7 +2614,9 @@ class Navigator {
         baseSeries: Series,
         navigator: Navigator
     ): boolean|undefined {
-        const xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]),
+        const xDataMin = navigator.getBaseSeriesMin(
+                (baseSeries.xData as any)[0]
+            ),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,
             min = xAxis.min,
