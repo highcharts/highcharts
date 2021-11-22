@@ -995,11 +995,11 @@ class TreemapSeries extends ScatterSeries {
     *
     * @requires  modules/breadcrumbs
     *
-    * @function TreemapSeries#createLevelList
+    * @function TreemapSeries#createList
     * @param {TreemapSeries} this
     *        Treemap Series class.
     */
-    public createLevelList(e: any): any {
+    public createList(e: any): any {
         const chart = this.chart,
             breadcrumbs = chart.breadcrumbs,
             list: Array<Breadcrumbs.BreadcrumbOptions> = [];
@@ -1352,9 +1352,8 @@ class TreemapSeries extends ScatterSeries {
 
         const series = this,
             breadcrumbsOptions = merge(
-                options.breadcrumbs,
                 options.drillUpButton,
-                {}
+                options.breadcrumbs
             );
 
         let setOptionsEvent;
@@ -1398,33 +1397,34 @@ class TreemapSeries extends ScatterSeries {
             );
 
             series.eventsToUnbind.push(
-                addEvent(H.seriesTypes.treemap, 'setRootNode', function (e: any): void {
-                    const chart = this.chart;
+                addEvent(series, 'setRootNode', function (e: any): void {
+                    const chart = series.chart;
                     if (chart.breadcrumbs) {
                         // Create a list using the event after drilldown.
-                        chart.breadcrumbs.updateProperties(this.createLevelList(e));
+                        chart.breadcrumbs.updateProperties(series.createList(e));
                     }
                 })
             );
 
             series.eventsToUnbind.push(
                 addEvent(
-                    H.seriesTypes.treemap,
+                    series,
                     'update',
                     function (e: any, redraw?: boolean): void {
                         const breadcrumbs = this.chart.breadcrumbs;
 
                         if (breadcrumbs && e.options.breadcrumbs) {
-                            breadcrumbs.update(e.options.breadcrumbs, redraw);
+                            breadcrumbs.update(e.options.breadcrumbs);
                         }
                     })
             );
 
             series.eventsToUnbind.push(
-                addEvent(H.seriesTypes.treemap, 'destroy', function destroyEvents(): void {
+                addEvent(series, 'destroy', function destroyEvents(): void {
                     const chart = this.chart;
                     if (chart.breadcrumbs) {
-                        chart.breadcrumbs.destroyGroup(true);
+                        chart.breadcrumbs.destroyGroup();
+                        chart.breadcrumbs.list.length = 0;
                         chart.breadcrumbs = void 0 as Breadcrumbs|undefined;
                     }
                 })
@@ -1432,17 +1432,15 @@ class TreemapSeries extends ScatterSeries {
         }
 
         if (
-            !chart.breadcrumbs &&
-            breadcrumbsOptions
+            !chart.breadcrumbs
         ) {
             chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions as any);
         }
 
         series.eventsToUnbind.push(
-            addEvent(H.Breadcrumbs, 'up', function (
+            addEvent(chart.breadcrumbs, 'up', function (
                 e: any
             ): void {
-
                 const drillUpsNumber = this.level - e.newLevel;
 
                 for (let i = 0; i < drillUpsNumber; i++) {

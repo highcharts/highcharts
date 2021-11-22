@@ -951,7 +951,6 @@ Chart.prototype.showDrillUpButton = function (): void {
  */
 Chart.prototype.createList = function (): Array<Breadcrumbs.BreadcrumbOptions> {
     const chart = this,
-        breadcrumbs = chart.breadcrumbs,
         list: Array<Breadcrumbs.BreadcrumbOptions> = [],
         drilldownLevels = chart.drilldownLevels;
 
@@ -1205,20 +1204,29 @@ addEvent(H.Breadcrumbs, 'up', function (
     e: any
 ): void {
     const chart = this.chart,
-        drillUpsNumber = this.level - e.newLevel;
+        drillUpsNumber = this.getLevel() - e.newLevel;
     for (let i = 0; i < drillUpsNumber; i++) {
         chart.drillUp();
     }
 });
 
 addEvent(Chart, 'afterDrilldown', function (): void {
+
     const chart = this,
-        drilldownOptions = chart.options.drilldown,
-        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
-    if (!chart.breadcrumbs) {
-        chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
+        drilldownOptions = chart.options.drilldown;
+
+    if (drilldownOptions) {
+        const breadcrumbsOptions = merge(
+            drilldownOptions.drillUpButton,
+            drilldownOptions.breadcrumbs
+        );
+
+        if (!chart.breadcrumbs) {
+            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
+        }
+        chart.breadcrumbs.updateProperties(chart.createList());
     }
-    chart.breadcrumbs.updateProperties(chart.createList());
+
 });
 
 addEvent(Chart, 'afterDrillUp', function (): void {
@@ -1233,7 +1241,7 @@ addEvent(Chart, 'update', function (e: any, redraw?: boolean): void {
     if (breadcrumbs && breadcrumbOptions) {
 
         breadcrumbs.isDirty = true;
-        breadcrumbs.update(e.options.drilldown.breadcrumbs, redraw);
+        breadcrumbs.update(e.options.drilldown.breadcrumbs);
     }
 });
 
