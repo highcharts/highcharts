@@ -487,6 +487,7 @@ body {
     display: flex;
     justify-content: center;
     width: 250px;
+    font-family: "IBM Plex Sans", sans-serif;
 }
 
 #title {
