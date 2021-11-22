@@ -99,7 +99,10 @@ namespace CenteredUtilities {
             pick(centerOption[1] as any, '50%' as any),
             // Prevent from negative values
             pick(size && size < 0 ? void 0 : options.size, '100%'),
-            pick(innerSize && innerSize < 0 ? void 0 : options.innerSize || 0, '0%')
+            pick(
+                innerSize && innerSize < 0 ? void 0 : options.innerSize || 0,
+                '0%'
+            )
         ];
 
         // No need for inner size in angular (gauges) series but still required

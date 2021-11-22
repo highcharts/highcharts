@@ -265,9 +265,13 @@ const langOptions: DeepPartial<LangOptions> = {
              */
             annotations: {
                 heading: 'Chart annotations summary',
-                descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
-                descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
-                    '{ Also related to, #each(additionalAnnotationPoints)}',
+                descriptionSinglePoint: (
+                    '{annotationText}. Related to {annotationPoint}'
+                ),
+                descriptionMultiplePoints: (
+                    '{annotationText}. Related to {annotationPoint}' +
+                    '{ Also related to, #each(additionalAnnotationPoints)}'
+                ),
                 descriptionNoPoints: '{annotationText}'
             },
 

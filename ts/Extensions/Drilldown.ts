@@ -1086,9 +1086,18 @@ addEvent(Chart, 'afterInit', function (): void {
 addEvent(Chart, 'afterShowResetZoom', function (): void {
     const chart = this,
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+        buttonOptions = (
+            chart.options.drilldown &&
+            chart.options.drilldown.drillUpButton
+        );
 
-    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+    if (
+        this.drillUpButton &&
+        bbox &&
+        buttonOptions &&
+        buttonOptions.position &&
+        buttonOptions.position.x
+    ) {
         this.drillUpButton.align({
             x: buttonOptions.position.x - bbox.width - 10,
             y: buttonOptions.position.y,
@@ -1708,7 +1717,9 @@ addEvent(Point, 'afterSetState', function (): void {
 // After zooming out, shift the drillUpButton to the previous position, #8095.
 addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
-        const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        const buttonOptions = (
+            this.options.drilldown && this.options.drilldown.drillUpButton
+        );
 
         if (buttonOptions && buttonOptions.position) {
             this.drillUpButton.align({

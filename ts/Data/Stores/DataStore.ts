@@ -63,7 +63,9 @@ abstract class DataStore<TEventObject extends DataStore.Event> implements DataEv
      * Regular expression to extract the store name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataStore)?\s*\(/;
+    private static readonly nameRegExp = (
+        /^function\s+(\w*?)(?:DataStore)?\s*\(/
+    );
 
     /* *
      *

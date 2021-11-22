@@ -129,7 +129,9 @@ namespace ForcedMarkersComposition {
     /**
      * @private
      */
-    function getPointMarkerOpacity(pointOptions: PointOptions): number|undefined {
+    function getPointMarkerOpacity(
+        pointOptions: PointOptions
+    ): number|undefined {
         return (pointOptions.marker as any).states &&
             (pointOptions.marker as any).states.normal &&
             (pointOptions.marker as any).states.normal.opacity;
@@ -149,7 +151,8 @@ namespace ForcedMarkersComposition {
             delete point.hasForcedA11yMarker;
 
             if (pointOptions.marker) {
-                const isStillForcedMarker = hadForcedMarker && getPointMarkerOpacity(pointOptions) === 0;
+                const isStillForcedMarker = hadForcedMarker &&
+                    getPointMarkerOpacity(pointOptions) === 0;
 
                 if (pointOptions.marker.enabled && !isStillForcedMarker) {
                     unforcePointMarkerOptions(pointOptions);
@@ -167,7 +170,11 @@ namespace ForcedMarkersComposition {
      * @private
      */
     function hasIndividualPointMarkerOptions(series: Series): boolean {
-        return !!(series._hasPointMarkers && series.points && series.points.length);
+        return !!(
+            series._hasPointMarkers &&
+            series.points &&
+            series.points.length
+        );
     }
 
 
@@ -181,7 +188,8 @@ namespace ForcedMarkersComposition {
 
         return series.points.length <
             (a11yOptions.series as any).pointDescriptionEnabledThreshold ||
-            (a11yOptions.series as any).pointDescriptionEnabledThreshold === false;
+            (a11yOptions.series as any)
+                .pointDescriptionEnabledThreshold === false;
     }
 
 
@@ -208,10 +216,13 @@ namespace ForcedMarkersComposition {
                 series.points.forEach((point): void => {
                     if (point.graphic) {
                         point.graphic[
-                            point.hasForcedA11yMarker ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker ?
+                                'addClass' : 'removeClass'
                         ]('highcharts-a11y-marker-hidden');
                         point.graphic[
-                            point.hasForcedA11yMarker === false ? 'addClass' : 'removeClass'
+                            point.hasForcedA11yMarker === false ?
+                                'addClass' :
+                                'removeClass'
                         ]('highcharts-a11y-marker-visible');
                     }
                 });
@@ -272,7 +283,11 @@ namespace ForcedMarkersComposition {
             seriesA11yEnabled = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false;
 
-        return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
+        return (
+            chartA11yEnabled &&
+            seriesA11yEnabled &&
+            isWithinDescriptionThreshold(series)
+        );
     }
 
 

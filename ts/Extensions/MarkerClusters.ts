@@ -123,7 +123,9 @@ declare module '../Core/Series/SeriesLike' {
         /** @requires modules/marker-clusters */
         getPointsState(
             clusteredData: Highcharts.MarkerClusterInfoObject,
-            oldMarkerClusterInfo: (Highcharts.MarkerClusterInfoObject|undefined),
+            oldMarkerClusterInfo: (
+                Highcharts.MarkerClusterInfoObject|undefined
+            ),
             dataLength: number
         ): Record<string, Highcharts.MarkerClusterPointsState>;
         /** @requires modules/marker-clusters */
@@ -995,7 +997,10 @@ Scatter.prototype.animateClusterPoint = function (
                 newPointBBox = newPointObj.point.graphic.getBBox();
 
                 // Marker image does not have the offset (#14342).
-                offset = newPointObj.point.graphic && newPointObj.point.graphic.isImg ?
+                offset = (
+                    newPointObj.point.graphic &&
+                    newPointObj.point.graphic.isImg
+                ) ?
                     0 : newPointBBox.width / 2;
 
                 newPointObj.point.graphic.attr({

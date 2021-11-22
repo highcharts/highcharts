@@ -3,7 +3,7 @@
 * @version: 4.1.7
 */
 .highslide-container div {
-    font-family: Verdana, Helvetica;
+    font-family: Verdana, Helvetica, sans-serif;
     font-size: 10pt;
 }
 
@@ -51,6 +51,7 @@
 }
 
 .highslide-image-blur {
+    z-index: auto;
 }
 
 .highslide-number {
@@ -411,6 +412,7 @@ html > /**/body .highslide-gallery ul img {
 }
 
 .highslide-body {
+    z-index: auto;
 }
 
 .highslide-resize {

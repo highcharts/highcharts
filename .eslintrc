@@ -31,6 +31,7 @@
         "strict": 0,
         "jsdoc/check-alignment": 1,
         "jsdoc/check-param-names": 1,
+        "jsdoc/check-tag-names": 1,
         "jsdoc/newline-after-description": 0,
         "jsdoc/require-jsdoc": 0,
         "jsdoc/require-param": 1,

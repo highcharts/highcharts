@@ -68,7 +68,9 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
 declare module '../Core/Series/PointLike' {
     interface PointLike {
         /** @requires modules/pattern-fill */
-        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+        calculatePatternDimensions(
+            pattern: PatternFill.PatternOptionsObject
+        ): void;
     }
 }
 
@@ -308,7 +310,12 @@ SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
+        id = (
+            'highcharts-pattern-' +
+            this.idCounter +
+            '-' +
+            (this.chartIndex || 0)
+        );
         ++this.idCounter;
     }
 
@@ -461,10 +468,10 @@ addEvent(Series, 'render', function (): void {
                         point.shapeArgs.height
                     )
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject)
+                        .pattern._height = 'defer';
                 } else {
                     point.calculatePatternDimensions(
                         (colorOptions as PatternFill.PatternObject).pattern
@@ -617,10 +624,10 @@ addEvent(Chart, 'endResize', function (): void {
                     colorOptions &&
                     (colorOptions as PatternFill.PatternObject).pattern
                 ) {
-                    (colorOptions as PatternFill.PatternObject).pattern._width =
-                        'defer';
-                    (colorOptions as PatternFill.PatternObject).pattern._height =
-                        'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._width = 'defer';
+                    (colorOptions as PatternFill.PatternObject).pattern
+                        ._height = 'defer';
                 }
             });
         });
@@ -656,7 +663,10 @@ addEvent(Chart, 'redraw', function (): void {
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
                 if (id) {
-                    const sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                    const sanitizedId = id
+                        .replace(renderer.url, '')
+                        .replace('url(#', '')
+                        .replace(')', '');
                     usedIds[sanitizedId] = true;
                 }
             }

@@ -282,7 +282,8 @@ namespace TreeGridAxis {
         const categories: Array<string> = [],
             collapsedNodes: Array<GridNode> = [],
             mapOfIdToNode: Record<string, TreeGridNode> = {},
-            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ? uniqueNames : false;
+            uniqueNamesEnabled = typeof uniqueNames === 'boolean' ?
+                uniqueNames : false;
 
         let mapOfPosToGridNode: Record<string, GridNode> = {},
             posIterator = -1;
@@ -308,7 +309,9 @@ namespace TreeGridAxis {
             },
             // Before the children has been created.
             before: function (node: Highcharts.TreeNode): void {
-                const data = isObject(node.data, true) ? (node as TreeGridNode).data : {},
+                const data = isObject(node.data, true) ?
+                        (node as TreeGridNode).data :
+                        {},
                     name = isString(data.name) ? data.name : '',
                     parentNode = mapOfIdToNode[node.parent],
                     parentGridNode = (
@@ -473,11 +476,13 @@ namespace TreeGridAxis {
                     max = options.max,
                     // Check whether any of series is rendering for the first
                     // time, visibility has changed, or its data is dirty, and
-                    // only then update. #10570, #10580
-                    // Also check if mapOfPosToGridNode exists. #10887
+                    // only then update. #10570, #10580. Also check if
+                    // mapOfPosToGridNode exists. #10887
                     isDirty = (
                         !axis.treeGrid.mapOfPosToGridNode ||
-                        axis.series.some(function (series): (boolean|undefined) {
+                        axis.series.some(function (
+                            series
+                        ): (boolean|undefined) {
                             return !series.hasRendered ||
                                 series.isDirtyData ||
                                 series.isDirty;
@@ -493,18 +498,24 @@ namespace TreeGridAxis {
                     data = axis.series.reduce(function (arr, s): Array<PointOptions> {
                         if (s.visible) {
                             // Push all data to array
-                            (s.options.data || []).forEach(function (data): void {
+                            (s.options.data || []).forEach(function (
+                                data
+                            ): void {
                                 // For using keys - rebuild the data structure
                                 if (s.options.keys && s.options.keys.length) {
 
-                                    data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
+                                    data = s.pointClass.prototype
+                                        .optionsToObject
+                                        .call({ series: s }, data);
                                     s.pointClass.setGanttPointAliases(data);
 
                                 }
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
-                                    (data as PointOptions).seriesIndex = numberOfSeries;
+                                    (data as PointOptions).seriesIndex = (
+                                        numberOfSeries
+                                    );
                                     arr.push(data as PointOptions);
                                 }
                             });
@@ -539,21 +550,34 @@ namespace TreeGridAxis {
 
                     // Assign values to the axis.
                     axis.categories = treeGrid.categories;
-                    axis.treeGrid.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+                    axis.treeGrid.mapOfPosToGridNode = (
+                        treeGrid.mapOfPosToGridNode
+                    );
                     axis.hasNames = true;
                     axis.treeGrid.tree = treeGrid.tree;
 
                     // Update yData now that we have calculated the y values
                     axis.series.forEach(function (series): void {
-                        const axisData = (series.options.data || []).map(function (
+                        const axisData = (
+                            series.options.data || []
+                        ).map(function (
                             d: (PointOptions|PointShortOptions)
                         ): (PointOptions|PointShortOptions) {
 
-                            if (isArray(d) && series.options.keys && series.options.keys.length) {
+                            if (
+                                isArray(d) &&
+                                series.options.keys &&
+                                series.options.keys.length
+                            ) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
-                                data.forEach(function (point: GanttPointOptions): void {
-                                    if ((d as any).indexOf(point.x) >= 0 && (d as any).indexOf(point.x2) >= 0) {
+                                data.forEach(function (
+                                    point: GanttPointOptions
+                                ): void {
+                                    if (
+                                        (d as any).indexOf(point.x) >= 0 &&
+                                        (d as any).indexOf(point.x2) >= 0
+                                    ) {
                                         d = point;
                                     }
                                 });
@@ -671,11 +695,19 @@ namespace TreeGridAxis {
             addEvent(chart, 'beforeRedraw', onBeforeRender);
 
             // Add new collapsed nodes on addseries
-            addEvent(chart, 'addSeries', function (e: ChartAddSeriesEventObject): void {
+            addEvent(chart, 'addSeries', function (
+                e: ChartAddSeriesEventObject
+            ): void {
                 if (e.options.data) {
-                    const treeGrid = getTreeGridFromData((e.options.data as any), userOptions.uniqueNames || false, 1);
+                    const treeGrid = getTreeGridFromData(
+                        (e.options.data as any),
+                        userOptions.uniqueNames || false,
+                        1
+                    );
 
-                    axis.treeGrid.collapsedNodes = (axis.treeGrid.collapsedNodes || []).concat(treeGrid.collapsedNodes);
+                    axis.treeGrid.collapsedNodes = (
+                        axis.treeGrid.collapsedNodes || []
+                    ).concat(treeGrid.collapsedNodes);
                 }
             });
 
@@ -693,9 +725,15 @@ namespace TreeGridAxis {
 
                             // remove the node from the axis collapsedNodes
                             if (axis.treeGrid.collapsedNodes) {
-                                axis.treeGrid.collapsedNodes = axis.treeGrid.collapsedNodes.filter((n): boolean =>
-                                    node.collapseStart !== n.collapseStart ||
-                                    node.collapseEnd !== n.collapseEnd);
+                                axis.treeGrid.collapsedNodes = axis.treeGrid
+                                    .collapsedNodes
+                                    .filter((n): boolean => (
+                                        (
+                                            node.collapseStart !==
+                                            n.collapseStart
+                                        ) ||
+                                        node.collapseEnd !== n.collapseEnd
+                                    ));
                             }
                         }
                     });
@@ -911,7 +949,9 @@ namespace TreeGridAxis {
                 const data = series.options.data;
                 if (node.id && data) {
                     const point = chart.get(node.id),
-                        dataPoint = data[series.data.indexOf(point as GanttPoint)];
+                        dataPoint = data[series.data.indexOf(
+                            point as GanttPoint
+                        )];
 
                     if (point && dataPoint) {
                         (point as GanttPoint).collapsed = node.collapsed;
@@ -1000,8 +1040,12 @@ namespace TreeGridAxis {
          */
         public getTickPositions(): Array<number> {
             const axis = this.axis,
-                roundedMin = Math.floor(axis.min / axis.tickInterval) * axis.tickInterval,
-                roundedMax = Math.ceil(axis.max / axis.tickInterval) * axis.tickInterval;
+                roundedMin = Math.floor(
+                    axis.min / axis.tickInterval
+                ) * axis.tickInterval,
+                roundedMax = Math.ceil(
+                    axis.max / axis.tickInterval
+                ) * axis.tickInterval;
 
             return Object.keys(axis.treeGrid.mapOfPosToGridNode || {}).reduce(
                 function (arr: Array<number>, key: string): Array<number> {

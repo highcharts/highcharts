@@ -818,7 +818,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        const colorClass = 'highcharts-color-' + pick(series.colorIndex, 'none'),
+        const colorClass = (
+                'highcharts-color-' + pick(series.colorIndex, 'none')
+            ),
             isNew = !series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
@@ -866,7 +868,10 @@ Chart.prototype.drawSeriesLabels = function (): void {
             y: number,
             bBox: BBoxObject
         ): boolean {
-            const leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
+            const leftBound = Math.max(
+                    paneLeft as any,
+                    pick(areaMin, -Infinity)
+                ),
                 rightBound = Math.min(
                     (paneLeft as any) + paneWidth,
                     pick(areaMax, Infinity)

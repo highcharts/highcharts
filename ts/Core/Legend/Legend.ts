@@ -306,7 +306,8 @@ class Legend {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
-        this.baseline = void 0; // #12705: baseline has to be reset on every update
+        // #12705: baseline has to be reset on every update
+        this.baseline = void 0;
     }
 
     /**
@@ -792,6 +793,7 @@ class Legend {
 
         // calculate the positions for the next line
         const bBox = li.getBBox();
+        const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
             options.itemWidth ||
@@ -801,8 +803,11 @@ class Legend {
             legend.maxItemWidth, (item.itemWidth as any)
         );
         legend.totalItemWidth += item.itemWidth as any;
+
         legend.itemHeight = item.itemHeight = Math.round(
-            item.legendItemHeight || bBox.height || legend.symbolHeight
+            item.legendItemHeight ||
+            // use bBox for multiline (#16398)
+            (bBox.height > fontMetricsH * 1.5 ? bBox.height : fontMetricsH)
         );
     }
 
@@ -1647,7 +1652,9 @@ class Legend {
                                     (item as any).setVisible();
                                 }
                                 // Reset inactive state
-                                setOtherItemsState(item.visible ? 'inactive' : '');
+                                setOtherItemsState(
+                                    item.visible ? 'inactive' : ''
+                                );
                             };
 
                         // A CSS class to dim or hide other than the hovered
@@ -1669,7 +1676,10 @@ class Legend {
                             );
                         } else {
                             fireEvent(
-                                item, strLegendItemClick, event, fnLegendItemClick
+                                item,
+                                strLegendItemClick,
+                                event,
+                                fnLegendItemClick
                             );
                         }
                     });

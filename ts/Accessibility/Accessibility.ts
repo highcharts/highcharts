@@ -21,6 +21,7 @@
 import type AccessibilityComponent from './AccessibilityComponent';
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
+import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
 import type RangeSelector from '../Extensions/RangeSelector';
@@ -159,7 +160,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-        this.update();
     }
 
 
@@ -186,7 +186,9 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
@@ -234,7 +236,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -327,7 +331,7 @@ namespace Accessibility {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
         infoRegions: InfoRegionsComponent;
-        legend: Highcharts.LegendComponent;
+        legend: LegendComponent;
         chartMenu: MenuComponent;
         rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
@@ -453,6 +457,9 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
+                if (a11y && !a11y.zombie) {
+                    a11y.update();
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -472,6 +479,7 @@ namespace Accessibility {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
         PointClass: typeof Point,
         SeriesClass: typeof Series,
         SVGElementClass: typeof SVGElement,
@@ -479,7 +487,8 @@ namespace Accessibility {
     ): void {
         // ordered:
         KeyboardNavigation.compose(ChartClass);
-        // LegendComponent
+        NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
+        LegendComponent.compose(ChartClass, LegendClass);
         MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
         ZoomComponent.compose(AxisClass);

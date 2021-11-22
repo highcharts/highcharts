@@ -784,7 +784,7 @@ function extendClass <T, TReturn = T>(
 }
 
 /**
- * Left-pad a string to a given length by adding a character repetetively.
+ * Left-pad a string to a given length by adding a character repetitively.
  *
  * @function Highcharts.pad
  *

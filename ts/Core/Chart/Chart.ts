@@ -724,12 +724,15 @@ class Chart {
             };
 
         if (!options.ignoreX) {
-            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+            const xAxis = (
+                series && (inverted ? series.yAxis : series.xAxis)
+            ) || {
                 pos: plotLeft,
                 len: Infinity
             };
 
-            const chartX = options.paneCoordinates ? xAxis.pos + x : plotLeft + x;
+            const chartX = options.paneCoordinates ?
+                xAxis.pos + x : plotLeft + x;
 
             if (!(
                 chartX >= Math.max(
@@ -746,12 +749,15 @@ class Chart {
         }
 
         if (!options.ignoreY && e.isInsidePlot) {
-            const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+            const yAxis = (
+                series && (inverted ? series.xAxis : series.yAxis)
+            ) || {
                 pos: plotTop,
                 len: Infinity
             };
 
-            const chartY = options.paneCoordinates ? yAxis.pos + y : plotTop + y;
+            const chartY = options.paneCoordinates ?
+                yAxis.pos + y : plotTop + y;
 
             if (!(
                 chartY >= Math.max(
@@ -1254,7 +1260,9 @@ class Chart {
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle', 'caption'].forEach(function (key: string): void {
             const title = (this as any)[key],
-                titleOptions: Chart.DescriptionOptionsType = (this as any).options[key],
+                titleOptions: Chart.DescriptionOptionsType = (
+                    (this as any).options[key]
+                ),
                 verticalAlign = titleOptions.verticalAlign || 'top',
                 offset = key === 'title' ?
                     verticalAlign === 'top' ? -3 : 0 :
@@ -1267,7 +1275,10 @@ class Chart {
             if (title) {
 
                 if (!this.styledMode) {
-                    titleSize = titleOptions.style && titleOptions.style.fontSize;
+                    titleSize = (
+                        titleOptions.style &&
+                        titleOptions.style.fontSize
+                    );
                 }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
@@ -1992,8 +2003,12 @@ class Chart {
         };
 
         const plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2),
-            clipX = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2),
-            clipY = Math.ceil(Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2);
+            clipX = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[3]) / 2
+            ),
+            clipY = Math.ceil(
+                Math.max(plotBorderWidth, (clipOffset as any)[0]) / 2
+            );
 
         chart.clipBox = {
             x: clipX,
@@ -2246,7 +2261,9 @@ class Chart {
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
 
             // The default series type's class
-            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType) as any];
+            klass = seriesTypes[
+                (optionsChart.type || optionsChart.defaultSeriesType) as any
+            ];
 
             // Get the value from available chart-wide properties
             value =
@@ -3276,13 +3293,19 @@ class Chart {
                 // chart.series array, but those series should not be handled
                 // here (#8196) and neither should the navigator axis (#9671).
                 indexMap = [];
-                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
+                (chart as any)[coll].forEach(function (
+                    s: (Series|Axis),
+                    i: number
+                ): void {
                     if (!s.options.isInternal) {
                         indexMap.push(pick(s.options.index, i));
                     }
                 });
 
-                splat((options as any)[coll]).forEach(function (newOptions, i): void {
+                splat((options as any)[coll]).forEach(function (
+                    newOptions,
+                    i
+                ): void {
                     const hasId = defined(newOptions.id);
                     let item: (Axis|Series|Point|undefined);
 
@@ -3370,7 +3393,10 @@ class Chart {
         const newWidth = optionsChart && optionsChart.width;
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
-                relativeLength(optionsChart.height, newWidth || chart.chartWidth) :
+                relativeLength(
+                    optionsChart.height,
+                    newWidth || chart.chartWidth
+                ) :
                 optionsChart.height
         );
 
@@ -3506,7 +3532,8 @@ class Chart {
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
             pointer = chart.pointer,
-            mouseDownPos = (chart.inverted ? pointer.mouseDownX : pointer.mouseDownY);
+            mouseDownPos = chart.inverted ?
+                pointer.mouseDownX : pointer.mouseDownY;
 
         let displayButton = false,
             hasZoomed;
@@ -3707,7 +3734,10 @@ class Chart {
                 }
 
                 const paddedMin = Math.min(
-                    pick(panningState && panningState.startMin, extremes.dataMin),
+                    pick(
+                        panningState && panningState.startMin,
+                        extremes.dataMin
+                    ),
                     halfPointRange ?
                         extremes.min :
                         axis.toValue(
@@ -3716,7 +3746,10 @@ class Chart {
                         )
                 );
                 const paddedMax = Math.max(
-                    pick(panningState && panningState.startMax, extremes.dataMax),
+                    pick(
+                        panningState && panningState.startMax,
+                        extremes.dataMax
+                    ),
                     halfPointRange ?
                         extremes.max :
                         axis.toValue(
@@ -3936,7 +3969,9 @@ namespace Chart {
         text?: string;
     }
 
-    export type DescriptionOptionsType = (TitleOptions|SubtitleOptions|CaptionOptions);
+    export type DescriptionOptionsType = (
+        TitleOptions|SubtitleOptions|CaptionOptions
+    );
 
     export interface IsInsideOptionsObject {
         ignoreX?: boolean;

@@ -84,7 +84,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public constructor(annotation: Annotation, options: EllipseShapeOptions, index: number) {
+    public constructor(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ) {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
@@ -104,7 +108,9 @@ class ControllableEllipse implements ControllableMixin.Type {
     public linkPoints = ControllableMixin.linkPoints;
     public point = ControllableMixin.point;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public translatePoint = ControllableMixin.translatePoint;
@@ -122,7 +128,11 @@ class ControllableEllipse implements ControllableMixin.Type {
      *
      * */
 
-    public init(annotation: Annotation, options: EllipseShapeOptions, index: number): void {
+    public init(
+        annotation: Annotation,
+        options: EllipseShapeOptions,
+        index: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -188,7 +198,10 @@ class ControllableEllipse implements ControllableMixin.Type {
      * @param position absolute position of the first point in points array
      * @param position2 absolute position of the second point in points array
      */
-    public getAttrs(position: BBoxObject, position2: BBoxObject): EllipseShapeSVGOptions {
+    public getAttrs(
+        position: BBoxObject,
+        position2: BBoxObject
+    ): EllipseShapeSVGOptions {
         const x1 = position.x,
             y1 = position.y,
             x2 = position2.x,
@@ -233,7 +246,9 @@ class ControllableEllipse implements ControllableMixin.Type {
      * Get the absolute coordinates of the MockPoint
      * @param point MockPoint that is added through options
      */
-    public getAbsolutePosition(point: Highcharts.AnnotationPointType): BBoxObject {
+    public getAbsolutePosition(
+        point: Highcharts.AnnotationPointType
+    ): BBoxObject {
         return this.anchor(point).absolutePosition;
     }
 

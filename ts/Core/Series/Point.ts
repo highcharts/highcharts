@@ -313,7 +313,9 @@ class Point {
         // copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ? extend(point.options, options as any) : options;
+        point.options = point.options ?
+            extend(point.options, options as any) :
+            options;
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
@@ -332,7 +334,10 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
+            point.y = Point.prototype.getNestedProperty.call(
+                point,
+                pointValKey
+            ) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -984,7 +989,9 @@ class Point {
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             const hasDummyGraphic = graphic && point.hasDummyGraphic;
-            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            const shouldDestroyGraphic = point.y === null ?
+                !hasDummyGraphic :
+                hasDummyGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
@@ -1276,7 +1283,9 @@ class Point {
                 {}
             ),
             markerOptions = (
-                (defaultOptions.plotOptions as any)[series.type as any].marker &&
+                (defaultOptions.plotOptions as any)[
+                    series.type as any
+                ].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
@@ -1352,8 +1361,11 @@ class Point {
                 );
 
                 // Some inactive points (e.g. slices in pie) should apply
-                // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
+                // opacity also for their labels
+                if (
+                    series.options.inactiveOtherPoints &&
+                    isNumber(pointAttribs.opacity)
+                ) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {

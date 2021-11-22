@@ -289,7 +289,9 @@ class Axis3DAdditions {
                 if (reverseFlap) {
                     scale = -scale;
                 }
-                vecY = { x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z };
+                vecY = {
+                    x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z
+                };
             }
         } else { // positionMode  == 'offset'
             // Labels will be skewd to maintain vertical / horizontal offsets
@@ -750,14 +752,19 @@ class Axis3D {
             tick &&
             tick.label
         ) {
-            const firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
+            const firstGridLine = (
+                    (gridGroup.element.childNodes[0] as any).getBBox()
+                ),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
                 options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,
                     z: options3d.depth / 2,
-                    vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+                    vd: (
+                        pick(options3d.depth, 1) *
+                        pick(options3d.viewDistance, 0)
+                    )
                 },
                 tickId = tick.pos,
                 prevTick = ticks[tickId - 1],
@@ -769,7 +776,12 @@ class Axis3D {
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
-            if (tickId !== 0 && prevTick && prevTick.label && prevTick.label.xy) {
+            if (
+                tickId !== 0 &&
+                prevTick &&
+                prevTick.label &&
+                prevTick.label.xy
+            ) {
                 prevLabelPos = perspective3D({ // #8621
                     x: prevTick.label.xy.x,
                     y: prevTick.label.xy.y,

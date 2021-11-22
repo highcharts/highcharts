@@ -314,7 +314,9 @@ class MACDIndicator extends SMAIndicator {
                 indicator.zones =
                 (indicator as any)[indicator.currentLineZone].zones;
 
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                    indicator
+                );
                 (indicator as any)['graph' + lineName] = indicator.graph;
             }
         );
@@ -372,7 +374,9 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+        let indexToShift: number = (
+                (params.longPeriod as any) - (params.shortPeriod as any)
+            ), // #14197
             j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
