@@ -13,8 +13,14 @@ function getTurnover() {
                     accumulate: 1,
                     image: tr.children[3].textContent || null
                 });
+            } else {
+                turnover.push({
+                    x: Date.UTC(2021, 1, 28),
+                    name: null,
+                    accumulate: null,
+                    image: null
+                });
             }
-
             const dateLeft = Date.parse(tr.children[2].textContent);
             if (!isNaN(dateLeft)) {
                 turnover.push({
@@ -53,70 +59,82 @@ const options = {
     exporting: {
         enabled: false
     },
-    xAxis: {
-        type: 'datetime',
-        minTickInterval: 365 * 24 * 36e5,
-        max: Date.UTC(2020, 11, 31),
-        labels: {
-            align: 'left',
-            style: {
-                fontSize: '16px'
-            }
+    xAxis: [
+        {
+            type: 'datetime',
+            minTickInterval: 365 * 24 * 36e5,
+            max: Date.UTC(2021, 1, 28),
+            labels: {
+                align: 'left',
+                style: {
+                    fontSize: '16px'
+                }
+            },
+            plotBands: [{
+                from: Date.UTC(2009, 10, 27),
+                to: Date.UTC(2010, 11, 1),
+                className: 'time-1',
+                label: {
+                    text: 'Torstein\'s<br>basement',
+                    useHTML: true,
+                    style: {
+                        color: '#000'
+                    },
+                    y: 20
+                }
+            }, {
+                from: Date.UTC(2010, 11, 1),
+                to: Date.UTC(2013, 9, 1),
+                className: 'time-2',
+                label: {
+                    text: 'Tomtebu<br>Norway',
+                    style: {
+                        color: '#000'
+                    },
+                    y: 20
+                }
+            }, {
+                from: Date.UTC(2013, 9, 1),
+                to: Date.UTC(2016, 2, 10),
+                className: 'time-3',
+                label: {
+                    text: 'VikØrsta<br>Norway',
+                    style: {
+                        color: '#000'
+                    },
+                    y: 20
+                }
+            }, {
+                from: Date.UTC(2016, 2, 10),
+                to: Date.now(),
+                className: 'time-4',
+                label: {
+                    text: 'Blix Hotel<br>Norway',
+                    style: {
+                        color: '#000'
+                    },
+                    y: 20
+                }
+            }]
         },
-        plotBands: [{
-            from: Date.UTC(2009, 10, 27),
-            to: Date.UTC(2010, 11, 1),
-            className: 'time-1',
-            label: {
-                text: 'Torstein\'s<br>basement',
-                useHTML: true,
+        {
+            type: 'datetime',
+            minTickInterval: 365 * 24 * 36e5,
+            max: Date.UTC(2019, 11, 31),
+            labels: {
+                align: 'left',
                 style: {
-                    color: '#000'
-                },
-                y: 20
+                    fontSize: '16px'
+                }
             }
-        }, {
-            from: Date.UTC(2010, 11, 1),
-            to: Date.UTC(2013, 9, 1),
-            className: 'time-2',
-            label: {
-                text: 'Tomtebu<br>Norway',
-                style: {
-                    color: '#000'
-                },
-                y: 20
-            }
-        }, {
-            from: Date.UTC(2013, 9, 1),
-            to: Date.UTC(2016, 2, 10),
-            className: 'time-3',
-            label: {
-                text: 'VikØrsta<br>Norway',
-                style: {
-                    color: '#000'
-                },
-                y: 20
-            }
-        }, {
-            from: Date.UTC(2016, 2, 10),
-            to: Date.now(),
-            className: 'time-4',
-            label: {
-                text: 'Blix Hotel<br>Norway',
-                style: {
-                    color: '#000'
-                },
-                y: 20
-            }
-        }]
-    },
+        }
+    ],
     title: {
         text: ''
     },
     tooltip: {
-        style: {
-            width: '250px'
-        }
+        outside: true,
+        className: 'tip'
     },
     yAxis: [{
         max: 100,
@@ -153,7 +171,7 @@ const options = {
                 symbol: 'circle',
                 radius: 2
             },
-            fillOpacity: 0.5,
+            fillOpacity: 0.1,
             events: {
                 legendItemClick: function () {
                     return false;
@@ -307,21 +325,24 @@ const options = {
             [1601424000000, 85],
             [1604102400000, 65],
             [1606694400000, 84],
-            [1609372800000, 90]
+            [1609372800000, 90],
+            [Date.UTC(2021, 2, 28), 90]
         ],
+        // xAxis: 1,
         tooltip: {
             xDateFormat: '%B %Y',
             valueSuffix: ' % of best month'
         }
     }, {
         yAxis: 1,
+        // xAxis: 1,
         name: 'Highsoft employees',
         id: 'employees',
         className: 'employees',
         type: 'area',
         step: 'left',
         tooltip: {
-            headerFormat: '<span style="font-size: 11px;color:#666">{point.x:%B %e, %Y}</span><br>',
+            headerFormat: '<span style="font-size: 11px;color:#f0f0f0">{point.x:%B %e, %Y}</span><br>',
             pointFormat: '{point.name}<br><b>{point.y}</b>',
             valueSuffix: ' employees'
         },
@@ -339,7 +360,7 @@ const options = {
                     margin: [0, 0, 30, 0]
                 },
                 legend: {
-                    enabled: true
+                    enabled: false
                 }
             }
         },
@@ -361,6 +382,7 @@ const options = {
 
 if (Highcharts.seriesTypes.flags) {
     options.series.push(
+        //0
         {
             type: 'flags',
             name: 'Highmaps',
@@ -377,33 +399,7 @@ if (Highcharts.seriesTypes.flags) {
             }],
             showInLegend: false
         },
-        {
-            type: 'flags',
-            name: 'Cloud',
-            className: 'cloud',
-            color: '#333333',
-            tooltip: {
-                distance: 40
-            },
-            shape: 'url(' + imgPath + 'cloud.png)',
-            data: [{
-                x: Date.UTC(2014, 4, 1),
-                text: 'Highcharts Cloud Beta',
-                title: 'Cloud'
-            },
-            {
-                x: Date.UTC(2017, 10, 24),
-                text: 'Highcharts Cloud v2',
-                title: 'Cloud v2'
-            },
-            {
-                x: Date.UTC(2018, 11, 6),
-                text: 'Highcharts Cloud v2',
-                title: 'Cloud v3'
-            }
-            ],
-            showInLegend: false
-        },
+        //1
         {
             type: 'flags',
             name: 'Highcharts',
@@ -480,10 +476,21 @@ if (Highcharts.seriesTypes.flags) {
                 x: Date.UTC(2018, 11, 11),
                 text: 'Sonification, TypeScript (beta), new series types',
                 title: '7.0'
+            },
+            {
+                x: Date.UTC(2019, 11, 10),
+                text: 'Accessibility, data sorting, marker clusters',
+                title: '8.0'
+            },
+            {
+                x: Date.UTC(2021, 1, 2),
+                text: 'Improved security, accessibility options, zoom by single touch',
+                title: '9.0'
             }
             ],
             showInLegend: false
         },
+        //2
         {
             type: 'flags',
             name: 'logo',
@@ -497,6 +504,7 @@ if (Highcharts.seriesTypes.flags) {
             showInLegend: false
 
         },
+        //3
         {
             type: 'flags',
             useHTML: true,
@@ -510,8 +518,13 @@ if (Highcharts.seriesTypes.flags) {
             },
             {
                 x: Date.UTC(2012, 11, 25),
-                text: 'Packt Publishing published <em>Learning Highcharts by Example</em>. Since then, many other books are written about Highcharts.',
-                title: 'First book'
+                text:
+                `<p style="margin-top:20px">Packt Publishing published
+                <em>Learning Highcharts by Example</em>.<br>Since 
+                then, many other books have 
+                been written about Highcharts.</p>`,
+                title: 'First book',
+                className: 'book'
             },
             {
                 x: Date.UTC(2013, 4, 25),
@@ -539,7 +552,24 @@ if (Highcharts.seriesTypes.flags) {
             },
             textAlign: 'center',
             onSeries: 'revenue',
-            allowOverlapX: true,
+            allowOverlapX: false,
+            showInLegend: false
+        },
+
+        {
+            type: 'flags',
+            name: 'Gantt',
+            className: 'product',
+            color: '#333333',
+            shape: 'url(' + imgPath + 'product.png)',
+            tooltip: {
+                distance: 60
+            },
+            data: [{
+                x: Date.UTC(2018, 9, 17),
+                text: 'Gantt version 1.0 released',
+                title: 'Gantt'
+            }],
             showInLegend: false
         }
 
