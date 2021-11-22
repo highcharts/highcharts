@@ -582,7 +582,7 @@ body {
 }
 
 .dropdown-toggle:focus {
-    outline: 3px solid #7E96B9;
+    outline: 3px solid #7e96b9;
 }
 
 .chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
