@@ -799,7 +799,9 @@ extend(defaultOptions, {
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
  */
-RendererRegistry.getRendererType().prototype.symbols['navigator-handle'] = function (
+RendererRegistry.getRendererType().prototype.symbols[
+    'navigator-handle'
+] = function (
     _x, _y, _w, _h, options
 ): SVGPath {
     const halfWidth = (options && options.width || 0) / 2,
@@ -960,18 +962,32 @@ class Navigator {
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
             path = [
-                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
-                ['L', left + outlineHeight, verticalMin], // top right of zoomed range
+                [
+                    'M',
+                    left + outlineHeight,
+                    navigatorTop - scrollbarHeight - outlineCorrection
+                ],
+                // top right of zoomed range
+                ['L', left + outlineHeight, verticalMin],
                 ['L', left, verticalMin], // top left of z.r.
                 ['L', left, zoomedMax], // bottom left of z.r.
                 ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.
-                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+                [
+                    'L',
+                    left + outlineHeight,
+                    navigatorTop + navigatorSize + scrollbarHeight
+                ]
             ];
             if (maskInside) {
                 path.push(
                     // upper left of zoomed range
                     ['M', left + outlineHeight, verticalMin - halfOutline],
-                    ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                    // upper right of z.r.
+                    [
+                        'L',
+                        left + outlineHeight,
+                        zoomedMax + halfOutline
+                    ]
                 );
             }
         } else {
@@ -980,17 +996,25 @@ class Navigator {
             navigatorTop += halfOutline;
 
             path = [
-                ['M', left, navigatorTop], // left
-                ['L', zoomedMin, navigatorTop], // upper left of zoomed range
-                ['L', zoomedMin, navigatorTop + outlineHeight], // lower left of z.r.
-                ['L', zoomedMax, navigatorTop + outlineHeight], // lower right of z.r.
-                ['L', zoomedMax, navigatorTop], // upper right of z.r.
-                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+                // left
+                ['M', left, navigatorTop],
+                // upper left of zoomed range
+                ['L', zoomedMin, navigatorTop],
+                // lower left of z.r.
+                ['L', zoomedMin, navigatorTop + outlineHeight],
+                // lower right of z.r.
+                ['L', zoomedMax, navigatorTop + outlineHeight],
+                // upper right of z.r.
+                ['L', zoomedMax, navigatorTop],
+                // right
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop]
             ];
             if (maskInside) {
                 path.push(
-                    ['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
-                    ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                    // upper left of zoomed range
+                    ['M', zoomedMin - halfOutline, navigatorTop],
+                    // upper right of z.r.
+                    ['L', zoomedMax + halfOutline, navigatorTop]
                 );
             }
         }
@@ -1944,9 +1968,14 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
-                    reversed: pick((navigatorOptions.yAxis && navigatorOptions.yAxis.reversed),
+                    reversed: pick(
+                        (
+                            navigatorOptions.yAxis &&
+                            navigatorOptions.yAxis.reversed
+                        ),
                         (chart.yAxis[0] && chart.yAxis[0].reversed),
-                        false), // #14060
+                        false
+                    ), // #14060
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height
@@ -2405,15 +2434,19 @@ class Navigator {
             }
 
             // Handle series removal
-            base.eventsToUnbind.push(addEvent(base, 'remove', function (): void {
-                if (this.navigatorSeries) {
-                    erase(navigator.series as any, this.navigatorSeries);
-                    if (defined(this.navigatorSeries.options)) {
-                        this.navigatorSeries.remove(false);
+            base.eventsToUnbind.push(addEvent(
+                base,
+                'remove',
+                function (): void {
+                    if (this.navigatorSeries) {
+                        erase(navigator.series as any, this.navigatorSeries);
+                        if (defined(this.navigatorSeries.options)) {
+                            this.navigatorSeries.remove(false);
+                        }
+                        delete this.navigatorSeries;
                     }
-                    delete this.navigatorSeries;
                 }
-            }));
+            ));
         }, this);
     }
 
@@ -2554,7 +2587,10 @@ class Navigator {
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
-        navigator.stickToMin = navigator.shouldStickToMin(baseSeries, navigator);
+        navigator.stickToMin = navigator.shouldStickToMin(
+            baseSeries,
+            navigator
+        );
 
         // Set the navigator series data to the new data of the base series
         if (navigatorSeries && !navigator.hasNavigatorData) {
@@ -2574,8 +2610,13 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#shouldStickToMin
      */
-    public shouldStickToMin(baseSeries: Series, navigator: Navigator): boolean|undefined {
-        const xDataMin = navigator.getBaseSeriesMin((baseSeries.xData as any)[0]),
+    public shouldStickToMin(
+        baseSeries: Series,
+        navigator: Navigator
+    ): boolean|undefined {
+        const xDataMin = navigator.getBaseSeriesMin(
+                (baseSeries.xData as any)[0]
+            ),
             xAxis = baseSeries.xAxis,
             max = xAxis.max,
             min = xAxis.min,

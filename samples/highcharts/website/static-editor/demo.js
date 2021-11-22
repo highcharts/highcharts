@@ -122,14 +122,24 @@ const fjordsFinal =  function () {
                 <span style="color:#000;">7°C</span>
                 </div>`
             },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: '',
+                    screenReaderSection: {
+                        beforeRegionLabel: '',
+                        endOfChartMarker: ''
+                    }
+                }
+            },
             accessibility: {
-                description: 'Average Sea water temperature in Sognefjorden, January to December',
+                landmarkVerbosity: 'disabled',
                 screenReaderSection: {
                     beforeChartFormatter: function () {
                         return `
+                            <h1>Sea water temperature chart</h1>
                             <p>Average Sea water temperature in 
                             Sognefjorden, January to December</p>
-                            <div>Infographic of two mountains with a fjord
+                            <p>Infographic of two mountains with a fjord
                             between them. Use the drop down menu to select a 
                             month to view the average fjord temperature for
                             that month. Temperatures are in Celcius.</p>
@@ -185,6 +195,10 @@ const fjordsFinal =  function () {
             },
             plotOptions: {
                 series: {
+                    accessibility: {
+                        enabled: false
+                    },
+                    enableMouseTracking: false,
                     borderWidth: 0,
                     opacity: 1,
                     dataLabels: {
@@ -208,8 +222,7 @@ const fjordsFinal =  function () {
                 },
                 line: {
                     animation: false,
-                    opacity: 1,
-                    enableMouseTracking: false
+                    opacity: 1
                 },
                 area: {
                     animation: false,
@@ -373,7 +386,7 @@ const fjordsFinal =  function () {
 
 
     document.getElementById('dropdownMenuButton').addEventListener('click', function () {
-        console.log('click');
+        this.setAttribute('aria-expanded', 'true');
         monthContainer.classList.remove('d-none');
         monthContainer.focus();
     });
@@ -394,6 +407,8 @@ const fjordsFinal =  function () {
                         b.classList.remove(months[index]);
                     }
                 );
+
+                document.getElementById('dropdownMenuButton').setAttribute('aria-expanded', 'false');
 
                 index = months.findIndex(element => element === id);
 

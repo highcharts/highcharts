@@ -202,6 +202,11 @@ const candlestick = function (type) {
                                     enabled: true
                                 }
                             });
+                            chart.update({
+                                tooltip: {
+                                    enabled: true
+                                }
+                            });
                             updateStyle('candlestick', 'transform', 'rotate(0deg)', '0s');
                             if (big) {
                                 chart.rangeSelector.clickButton(3);
@@ -226,6 +231,15 @@ const candlestick = function (type) {
                         setTimeout(p1, 700);
 
                         if (type === 'animated') {
+
+                            chart.update({
+                                tooltip: {
+                                    enabled: true
+                                }
+                            });
+                            chart.series[0].update({
+                                enableMouseTracking: true
+                            });
                             const p2 = function () {
                                 if (big) {
                                     chart.rangeSelector.clickButton(3);
@@ -235,16 +249,6 @@ const candlestick = function (type) {
 
                             };
                             setTimeout(p2, 3000);
-
-                            // const p21 = function () {
-                            //     updateStyle('highcharts-range-selector-buttons', 'opacity', 0, '1s');
-                            //     updateStyle('highcharts-axis-labels', 'opacity', 0, '800ms');
-                            //     updateStyle('highcharts-xaxis', 'opacity', 0, '800ms');
-                            //     updateStyle('candlestick', 'stroke', 'transparent', '800ms');
-                            //     updateStyle('candlestick', 'opacity', 0, '1s');
-                            // };
-                            // setTimeout(p21, 5500);
-
                         }
                     }
                 }
@@ -259,6 +263,10 @@ const candlestick = function (type) {
             },
             credits: {
                 enabled: false
+            },
+            tooltip: {
+                enabled: false,
+                valueDecimals: 2
             },
             navigator: {
                 enabled: false
@@ -321,6 +329,11 @@ const candlestick = function (type) {
             yAxis: [{
                 visible: false
             }],
+            plotOptions: {
+                series: {
+                    enableMouseTracking: false
+                }
+            },
             series: [{
                 name: 'AAPL',
                 animation: {
@@ -340,10 +353,7 @@ const candlestick = function (type) {
                         ]
                     ]
                 },
-                data: data,
-                tooltip: {
-                    valueDecimals: 2
-                }
+                data: data
             }]
         });
     });
@@ -397,6 +407,9 @@ const bubble2 = {
                 }
             }
         }
+    },
+    accessibility: {
+        enabled: false
     },
     exporting: {
         enabled: false
@@ -453,7 +466,8 @@ const bubble2 = {
     }],
     plotOptions: {
         series: {
-            name: 'Highcharts Bubble Chart'
+            name: 'Highcharts Bubble Chart',
+            enableMouseTracking: false
         }
     },
     legend: {
@@ -861,9 +875,9 @@ const sankey = {
                     data: []
                 });
                 const p1 = function () {
-                    let count = 0;
+                    //let count = 0;
                     //adds nodes to the sankey
-                    const sankey = setInterval(function () {
+                    /*const sankey = setInterval(function () {
                         if (count < sankeyData.length) {
                             chart.series[0].addPoint({
                                 from: sankeyData[count][0],
@@ -874,9 +888,18 @@ const sankey = {
                         } else {
                             clearInterval(sankey);
                         }
-                    }, 10);
+                    }, 10);*/
+
+                    for (let ii = 0; ii < sankeyData.length; ++ii) {
+                        chart.series[0].addPoint({
+                            from: sankeyData[ii][0],
+                            to: sankeyData[ii][1],
+                            weight: sankeyData[ii][2]
+                        }, false);
+                    }
+                    chart.redraw();
                 };
-                setTimeout(p1, 0);
+                setTimeout(p1, 200);
 
                 const p2 = function () {
                     //makes the node connections very thin
@@ -912,6 +935,9 @@ const sankey = {
             }
         }
     },
+    accessibility: {
+        enabled: false
+    },
     exporting: {
         enabled: false
     },
@@ -938,6 +964,9 @@ const sankey = {
         }
     ],
     plotOptions: {
+        series: {
+            enableMouseTracking: false
+        },
         area: {
             marker: {
                 enabled: false
@@ -1126,6 +1155,9 @@ const bubble = {
             }
         }
     },
+    accessibility: {
+        enabled: false
+    },
     credits: {
         enabled: false
     },
@@ -1216,6 +1248,7 @@ const bubble = {
     plotOptions: {
         series: {
             animation: false,
+            enableMouseTracking: false,
             maxSize: 160,
             name: 'Highcharts Bubble Chart',
             minSize: 20,

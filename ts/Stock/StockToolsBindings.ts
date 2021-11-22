@@ -106,14 +106,24 @@ declare global {
             indicatorsWithAxes: Array<string>;
 
             addFlagFromForm(this: NavigationBindings, type: string): Function;
-            attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject|void;
+            attractToPoint(
+                e: Event,
+                chart: Chart
+            ): NavigationBindingsAttractionObject|void;
             isNotNavigatorYAxis(axis: AxisType): boolean;
             isPriceIndicatorEnabled(series: Series[]): boolean;
-            manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
-            updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
-            updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject[
-                'updateHeight'
-            ];
+            manageIndicators(
+                this: NavigationBindings,
+                data: StockToolsFieldsObject
+            ): void;
+            updateHeight(
+                this: NavigationBindings,
+                e: PointerEvent,
+                annotation: Annotation
+            ): void;
+            updateNthPoint(
+                startIndex: number
+            ): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
 
         interface StockToolsFieldsObject {
@@ -149,7 +159,10 @@ bindingsUtils.addFlagFromForm = function (
     this: Highcharts.StockToolsNavigationBindings,
     type: FlagsShapeValue
 ): Function {
-    return function (this: Highcharts.StockToolsNavigationBindings, e: Event): void {
+    return function (
+        this: Highcharts.StockToolsNavigationBindings,
+        e: Event
+    ): void {
         let navigation = this,
             chart = navigation.chart,
             toolbar = chart.stockTools,
@@ -382,7 +395,9 @@ bindingsUtils.manageIndicators = function (
             seriesConfig.yAxis = yAxis.options.id;
             navigation.resizeYAxes();
         } else {
-            seriesConfig.yAxis = (chart.get(data.linkedTo) as any).options.yAxis;
+            seriesConfig.yAxis = (
+                chart.get(data.linkedTo) as any
+            ).options.yAxis;
         }
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
@@ -521,7 +536,9 @@ bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
  */
 bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
 
-    return series.some((s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice);
+    return series.some(
+        (s): (SVGElement|undefined) => s.lastVisiblePrice || s.lastPrice
+    );
 };
 
 /**
@@ -560,8 +577,12 @@ bindingsUtils.updateNthPoint = function (
                 index: number
             ): void {
                 if (index >= startIndex) {
-                    point.x = xAxis.toValue(e[xAxis.horiz ? 'chartX' : 'chartY']);
-                    point.y = yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']);
+                    point.x = xAxis.toValue(
+                        e[xAxis.horiz ? 'chartX' : 'chartY']
+                    );
+                    point.y = yAxis.toValue(
+                        e[yAxis.horiz ? 'chartX' : 'chartY']
+                    );
                 }
             });
             annotation.update({
@@ -616,7 +637,9 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         }
 
         if (removedYAxisHeight) {
-            removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
+            removedHeight = correctFloat(
+                (parseFloat(removedYAxisHeight) / 100)
+            );
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
@@ -633,7 +656,8 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 if (!isNumber(height)) {
                     // Check if the previous axis is the
                     // indicator axis (every indicator inherits from sma)
-                    height = yAxes[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
+                    height = yAxes[index - 1].series
+                        .every((s: Series): boolean => s.is('sma')) ?
                         previousAxisHeight : defaultHeight / 100;
                 }
 
@@ -643,7 +667,10 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
 
                 previousAxisHeight = height;
 
-                allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                allAxesHeight = correctFloat(Math.max(
+                    allAxesHeight,
+                    (top || 0) + (height || 0)
+                ));
             } else {
                 if (top <= allAxesHeight) {
                     allAxesHeight = correctFloat(Math.max(
@@ -758,13 +785,19 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
         } else {
-            positions.forEach(function (position: Record<string, number>): void {
-                position.height = (position.height / (allAxesHeight * 100)) * 100;
+            positions.forEach(function (
+                position: Record<string, number>
+            ): void {
+                position.height = (
+                    position.height / (allAxesHeight * 100)
+                ) * 100;
                 position.top = (position.top / (allAxesHeight * 100)) * 100;
             });
         }
 
-        positions.forEach(function (position: Record<string, number>, index: number): void {
+        positions.forEach(function (
+            position: Record<string, number>, index: number
+        ): void {
             yAxes[index].update({
                 height: position.height + '%',
                 top: position.top + '%',
@@ -1158,7 +1191,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                     }
                 },
                 navigation.annotationsOptions,
-                (navigation.bindings as any).arrowInfinityLine.annotationsOptions
+                (navigation.bindings as any).arrowInfinityLine
+                    .annotationsOptions
             );
 
             return this.chart.addAnnotation(options);
@@ -1817,7 +1851,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).parallelChannel.annotationsOptions
+                    (navigation.bindings as any).parallelChannel
+                        .annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -1975,7 +2010,10 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
      */
     timeCycles: {
         className: 'highcharts-time-cycles',
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation|void {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             let closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options,
@@ -2177,7 +2215,8 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
                         }
                     },
                     navigation.annotationsOptions,
-                    (navigation.bindings as any).fibonacciTimeZones.annotationsOptions
+                    (navigation.bindings as any).fibonacciTimeZones
+                        .annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
@@ -2564,7 +2603,9 @@ const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObj
             const chart = this.chart,
                 series = chart.series,
                 gui = chart.stockTools,
-                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
+                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(
+                    chart.series
+                );
 
             if (gui && gui.guiEnabled) {
                 series.forEach(function (series): void {
@@ -2745,4 +2786,7 @@ setOptions({
     }
 });
 
-NavigationBindings.prototype.utils = merge(bindingsUtils, NavigationBindings.prototype.utils);
+NavigationBindings.prototype.utils = merge(
+    bindingsUtils,
+    NavigationBindings.prototype.utils
+);

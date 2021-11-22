@@ -96,7 +96,36 @@ const candlestick = function () {
                 enabled: false
             },
             navigator: {
-                enabled: false
+                enabled: false,
+                series: {
+                    accessibility: {
+                        enabled: false
+                    }
+                }
+            },
+            lang: {
+                accessibility: {
+                    chartContainerLabel: '',
+                    screenReaderSection: {
+                        beforeRegionLabel: '',
+                        endOfChartMarker: ''
+                    }
+                }
+            },
+            accessibility: {
+                landmarkVerbosity: 'disabled',
+                screenReaderSection: {
+                    beforeChartFormat: '<h2>Stock chart demo</h2><p>Interactive candlestick chart displaying stock prices for Apple (AAPL) over time.</p>'
+                },
+                series: {
+                    descriptionFormatter: function (series) {
+                        return series.name + ', ' + series.points.length + ' data points.';
+                    }
+                },
+                point: {
+                    dateFormat: '%A, %B %e %Y',
+                    valueDescriptionFormat: '{xDescription}{separator}{value}.'
+                }
             },
             scrollbar: {
                 enabled: false

@@ -1238,7 +1238,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 
@@ -1401,7 +1406,9 @@ class TreemapSeries extends ScatterSeries {
                     const chart = series.chart;
                     if (chart.breadcrumbs) {
                         // Create a list using the event after drilldown.
-                        chart.breadcrumbs.updateProperties(series.createList(e));
+                        chart.breadcrumbs.updateProperties(
+                            series.createList(e)
+                        );
                     }
                 })
             );
@@ -1434,7 +1441,10 @@ class TreemapSeries extends ScatterSeries {
         if (
             !chart.breadcrumbs
         ) {
-            chart.breadcrumbs = new Breadcrumbs(chart as Chart, breadcrumbsOptions as any);
+            chart.breadcrumbs = new Breadcrumbs(
+                chart as Chart,
+                breadcrumbsOptions as any
+            );
         }
 
         series.eventsToUnbind.push(
@@ -1535,6 +1545,61 @@ class TreemapSeries extends ScatterSeries {
         return attr;
     }
 
+    public renderTraverseUpButton(rootId: string): void {
+        let series = this,
+            nodeMap = series.nodeMap,
+            node = nodeMap[rootId],
+            name = node.name,
+            buttonOptions: TreemapSeriesUpButtonOptions = series.options
+                .traverseUpButton as any,
+            backText = pick(buttonOptions.text, name, '◁ Back'),
+            attr,
+            states;
+
+        if (rootId === '' || (
+            series.is('sunburst') &&
+            series.tree.children.length === 1 &&
+            rootId === series.tree.children[0].id
+        )) {
+            if (series.drillUpButton) {
+                series.drillUpButton = series.drillUpButton.destroy();
+            }
+        } else if (!this.drillUpButton) {
+            attr = buttonOptions.theme;
+            states = attr && attr.states;
+
+            this.drillUpButton = this.chart.renderer
+                .button(
+                    backText,
+                    0,
+                    0,
+                    function (): void {
+                        series.drillUp();
+                    },
+                    attr,
+                    states && states.hover,
+                    states && states.select
+                )
+                .addClass('highcharts-drillup-button')
+                .attr({
+                    align: (buttonOptions.position as any).align,
+                    zIndex: 7
+                })
+                .add()
+                .align(
+                    buttonOptions.position,
+                    false,
+                    buttonOptions.relativeTo || 'plotBox'
+                );
+        } else {
+            this.drillUpButton.placed = false;
+            this.drillUpButton.attr({
+                text: backText
+            })
+                .align();
+        }
+    }
+
     /**
      * Set the node's color recursively, from the parent down.
      * @private
@@ -1610,9 +1675,13 @@ class TreemapSeries extends ScatterSeries {
                 const { height, width, x, y } = values;
                 const crispCorr = getCrispCorrection(point);
                 const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                const x2 = Math.round(
+                    xAxis.toPixels(x + width, true)
+                ) - crispCorr;
                 const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                const y2 = Math.round(
+                    yAxis.toPixels(y + height, true)
+                ) - crispCorr;
 
                 // Set point values
                 const shapeArgs = {
@@ -1731,7 +1800,9 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
+    public setTreeValues(
+        tree: TreemapSeries.NodeObject
+    ): TreemapSeries.NodeObject {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,

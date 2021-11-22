@@ -96,7 +96,9 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * @param {Object} label The annotation label object to describe
  * @return {string} The description for the label.
  */
-function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {
+function getAnnotationLabelDescription(
+    label: Highcharts.AnnotationLabelType
+): string {
     const a11yDesc = (
         label.options &&
         label.options.accessibility &&
@@ -132,13 +134,16 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const pointValueDescriptions = points
         .filter((p): boolean => !!p.graphic) // Filter out mock points
         .map(getValueDesc)
-        .filter((desc: string): boolean => !!desc); // Filter out points we can't describe
+        // Filter out points we can't describe
+        .filter((desc: string): boolean => !!desc);
     const numPoints = pointValueDescriptions.length;
     const pointsSelector = numPoints > 1 ?
         'MultiplePoints' : numPoints ?
             'SinglePoint' : 'NoPoints';
-    const langFormatStr = 'accessibility.screenReaderSection.annotations.description' +
-        pointsSelector;
+    const langFormatStr = (
+        'accessibility.screenReaderSection.annotations.description' +
+        pointsSelector
+    );
     const context = {
         annotationText: labelText,
         annotation: label,

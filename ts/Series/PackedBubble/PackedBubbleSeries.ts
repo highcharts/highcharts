@@ -674,7 +674,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public createParentNodes(): void {
         let series = this,
             chart = series.chart,
-            parentNodeLayout: PackedBubbleLayout = series.parentNodeLayout as any,
+            parentNodeLayout: PackedBubbleLayout = (
+                series.parentNodeLayout as any
+            ),
             nodeAdded,
             parentNode = series.parentNode,
             PackedBubblePoint = series.pointClass,
@@ -831,10 +833,16 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             nodeMarker: BubblePointMarkerOptions =
                 (this.layout.options.parentNodeOptions as any).marker,
             parentOptions: SVGAttributes = {
-                fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
+                fill: (
+                    nodeMarker.fillColor ||
+                    color(series.color).brighten(0.4).get()
+                ),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
-                'stroke-width': pick(nodeMarker.lineWidth, series.options.lineWidth)
+                'stroke-width': pick(
+                    nodeMarker.lineWidth,
+                    series.options.lineWidth
+                )
             };
 
         // create the group for parent Nodes if doesn't exist

@@ -245,7 +245,10 @@ class Fx {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete (options.curAnim as any)[this.prop];
-            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
+            if (
+                options.complete &&
+                Object.keys(options.curAnim as any).length === 0
+            ) {
                 options.complete.call(this.elem);
             }
         } else { // #7166
@@ -418,7 +421,9 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
+                const segmentToAdd = arr[
+                    Math.floor(arr.length / positionFactor) - 1
+                ].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
@@ -431,7 +436,9 @@ class Fx {
 
                 } else {
 
-                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
+                    const lowerSegmentToAdd = arr[
+                        Math.floor(arr.length / positionFactor)
+                    ].slice();
                     arr.splice(
                         arr.length / 2,
                         0,
@@ -506,8 +513,11 @@ class Fx {
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
-            null as any,
+            color(this.start as any).tweenTo(
+                color(this.end as any),
+                this.pos as any
+            ),
+            void 0,
             true
         );
     }

@@ -207,7 +207,11 @@ function isPolygonsColliding(
         axes = axes1.concat(axes2),
         overlappingOnAllAxes = !find(
             axes,
-            (axis): boolean => isPolygonsOverlappingOnAxis(axis, polygon1, polygon2)
+            (axis): boolean => isPolygonsOverlappingOnAxis(
+                axis,
+                polygon1,
+                polygon2
+            )
         );
 
     return overlappingOnAllAxes;

@@ -283,8 +283,12 @@ namespace StackingAxis {
                 chart = axis.chart,
                 renderer = chart.renderer,
                 stacks = stacking.stacks,
-                stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation,
-                animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false),
+                stackLabelsAnim = axis.options.stackLabels &&
+                    axis.options.stackLabels.animation,
+                animationConfig = getDeferredAnimation(
+                    chart,
+                    stackLabelsAnim || false
+                ),
                 stackTotalGroup = stacking.stackTotalGroup = (
                     stacking.stackTotalGroup ||
                     renderer

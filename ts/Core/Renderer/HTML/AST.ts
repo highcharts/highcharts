@@ -427,7 +427,10 @@ class AST {
                         node = element;
 
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            'Highcharts warning: Invalid tagName ' +
+                            tagName + ' in config'
+                        );
                     }
                 }
 

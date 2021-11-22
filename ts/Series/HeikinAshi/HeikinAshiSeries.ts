@@ -157,7 +157,12 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      */
     public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+        const open = (
+                dataPoint[0] +
+                dataPoint[1] +
+                dataPoint[2] +
+                dataPoint[3]
+            ) / 4,
             close = (dataPoint[0] + dataPoint[3]) / 2;
 
         this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
@@ -182,7 +187,12 @@ class HeikinAshiSeries extends CandlestickSeries {
         previousDataPoint: Array<(number)>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
-            newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            newClose = (
+                dataPoint[0] +
+                dataPoint[1] +
+                dataPoint[2] +
+                dataPoint[3]
+            ) / 4,
             newHigh = Math.max(dataPoint[1], newClose, newOpen),
             newLow = Math.min(dataPoint[2], newClose, newOpen);
 
@@ -213,7 +223,9 @@ addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
 
-        series.processedYData.push([point.open, point.high, point.low, point.close]);
+        series.processedYData.push(
+            [point.open, point.high, point.low, point.close]
+        );
     }
 });
 

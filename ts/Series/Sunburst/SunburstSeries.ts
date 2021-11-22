@@ -119,7 +119,9 @@ const getEndPoint = function getEndPoint(
 };
 
 // eslint-disable-next-line require-jsdoc
-function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabelOptions {
+function getDlOptions(
+    params: SunburstSeries.DlOptionsParams
+): SunburstDataLabelOptions {
     // Set options to new object to avoid problems with scope
     let point = params.point,
         shape: Partial<SunburstSeries.NodeValuesObject> =
@@ -814,7 +816,9 @@ class SunburstSeries extends TreemapSeries {
         points.forEach(function (point): void {
             let node = point.node,
                 level = mapOptionsToLevel[node.level],
-                shapeExisting: SunburstSeries.NodeValuesObject = point.shapeExisting || ({} as any),
+                shapeExisting: SunburstSeries.NodeValuesObject = (
+                    point.shapeExisting || ({} as any)
+                ),
                 shape: SunburstSeries.NodeValuesObject =
                     node.shapeArgs || ({} as any),
                 animationInfo,
@@ -929,7 +933,12 @@ class SunburstSeries extends TreemapSeries {
                 const percentage = (1 / total) * child.val,
                     radians = percentage * range,
                     radiansCenter = startAngle + (radians / 2),
-                    offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+                    offsetPosition = getEndPoint(
+                        x,
+                        y,
+                        radiansCenter,
+                        slicedOffset
+                    ),
                     values: SunburstSeries.NodeValuesObject = {
                         x: child.sliced ? offsetPosition.x : x,
                         y: child.sliced ? offsetPosition.y : y,
@@ -1061,11 +1070,14 @@ class SunburstSeries extends TreemapSeries {
         }) as any;
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(mapOptionsToLevel as any, {
-            diffRadius,
-            from,
-            to
-        }) as any;
+        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(
+            mapOptionsToLevel as any,
+            {
+                diffRadius,
+                from,
+                to
+            }
+        ) as any;
         // TODO Try to combine setTreeValues & setColorRecursive to avoid
         //  unnecessary looping.
         setTreeValues(tree, {

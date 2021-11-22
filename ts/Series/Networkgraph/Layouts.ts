@@ -368,7 +368,9 @@ extend(
             this.setDiffTemperature();
         },
 
-        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
+        restartSimulation: function (
+            this: Highcharts.NetworkgraphLayout
+        ): void {
 
             if (!this.simulation) {
                 // When dragging nodes, we don't need to calculate

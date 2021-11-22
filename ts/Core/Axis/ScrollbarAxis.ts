@@ -162,7 +162,10 @@ class ScrollbarAxis {
                             from,
                             to,
                             true,
-                            e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove',
+                            (
+                                e.DOMType !== 'mousemove' &&
+                                e.DOMType !== 'touchmove'
+                            ),
                             e
                         );
                     } else {
@@ -182,7 +185,9 @@ class ScrollbarAxis {
                     scrollMax
                 } = getExtremes(axis),
                 scrollbar = axis.scrollbar,
-                offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),
+                offset = (
+                    (axis.axisTitleMargin as any) + (axis.titleOffset || 0)
+                ),
                 scrollbarsOffsets = axis.chart.scrollbarsOffsets,
                 axisMargin = axis.options.margin || 0,
                 offsetsIndex,
@@ -200,8 +205,13 @@ class ScrollbarAxis {
 
                     scrollbar.position(
                         axis.left,
-                        axis.top + axis.height + 2 + (scrollbarsOffsets as any)[1] -
-                            (axis.opposite ? axisMargin : 0),
+                        (
+                            axis.top +
+                            axis.height +
+                            2 +
+                            (scrollbarsOffsets as any)[1] -
+                            (axis.opposite ? axisMargin : 0)
+                        ),
                         axis.width,
                         axis.height
                     );
@@ -223,7 +233,10 @@ class ScrollbarAxis {
                     if (!scrollbar.options.opposite) {
                         xPosition = axis.opposite ? 0 : axisMargin;
                     } else {
-                        xPosition = axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
+                        xPosition = axis.left +
+                            axis.width +
+                            2 +
+                            (scrollbarsOffsets as any)[0] -
                             (axis.opposite ? 0 : axisMargin);
                     }
 
@@ -257,10 +270,14 @@ class ScrollbarAxis {
                     // full size
                     scrollbar.setRange(0, 1);
                 } else {
-                    from =
-                        ((axis.min as any) - scrollMin) / (scrollMax - scrollMin);
-                    to =
-                        ((axis.max as any) - scrollMin) / (scrollMax - scrollMin);
+                    from = (
+                        ((axis.min as any) - scrollMin) /
+                        (scrollMax - scrollMin)
+                    );
+                    to = (
+                        ((axis.max as any) - scrollMin) /
+                        (scrollMax - scrollMin)
+                    );
 
                     if (
                         (axis.horiz && !axis.reversed) ||
@@ -283,7 +300,8 @@ class ScrollbarAxis {
                 scrollbar = axis.scrollbar;
 
             if (scrollbar) {
-                axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
+                // reset scrollbars offsets
+                axis.chart.scrollbarsOffsets = [0, 0];
                 axis.chart.axisOffset[index] +=
                     scrollbar.size + (scrollbar.options.margin as any);
             }
