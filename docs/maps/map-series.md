@@ -1,7 +1,7 @@
 Map series
 ==========
 
-The `map` series is the basic series in Highcharts Maps offering the ability to create map shapes and operate on their values.
+The `map` series is the basic series type in Highcharts Maps. It creates a [choropleth map](https://en.wikipedia.org/wiki/Choropleth_map) offering the ability to create map shapes and visualize their values through color coding or patterns.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/all-maps" allow="fullscreen"></iframe>
 
