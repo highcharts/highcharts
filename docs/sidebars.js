@@ -60,7 +60,7 @@ module.exports = {
             'maps/latlon',
             'maps/map-series',
             'maps/tilemap-series',
-            'maps/mapLine-series'
+            'maps/mapline-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
