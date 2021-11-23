@@ -28,7 +28,6 @@ import U from '../../Utilities.js';
 const {
     attr,
     createElement,
-    discardElement,
     error,
     isFunction,
     isString,
@@ -44,6 +43,8 @@ const {
  *  Constants
  *
  * */
+
+// Create the trusted type policy. This should be encapsuled in the module.
 const trustedTypesPolicy = (
     trustedTypes &&
     isFunction(trustedTypes.createPolicy) &&
@@ -54,18 +55,22 @@ const trustedTypesPolicy = (
     )
 );
 
+// Create a TrustedHTML object from an untrusted string. This should also not be
+// exposed, and only used in our controlled cases (empty string and prior to
+// running the DOMparser).
 const trustedHTML = function (html: string): string {
     if (trustedTypesPolicy) {
         return trustedTypesPolicy.createHTML(html) as unknown as string;
     }
     return html;
 };
+const emptyTrustedHTML = trustedHTML('');
 
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
         return Boolean(new DOMParser().parseFromString(
-            trustedHTML(''),
+            emptyTrustedHTML,
             'text/html'
         ));
     } catch (e) {
@@ -280,6 +285,8 @@ class AST {
         '#text'
     ];
 
+    public static emptyTrustedHTML = emptyTrustedHTML;
+
     /* *
      *
      *  Static Functions
@@ -338,14 +345,12 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = trustedHTML(''); // Clear previous
+        el.innerHTML = AST.emptyTrustedHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
         }
     }
-
-    public static trustedHTML = trustedHTML;
 
     /* *
      *
