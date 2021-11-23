@@ -114,7 +114,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(point, joinKey) as string;
+            const mapKey = super.getNestedProperty.call(
+                point,
+                joinKey
+            ) as string;
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {

@@ -2156,7 +2156,11 @@ class Data {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -2214,7 +2218,10 @@ class Data {
             if (!match) {
                 if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
                     val = val
-                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(
+                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            '$1$2:$3'
+                        )
                         .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }

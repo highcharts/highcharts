@@ -256,7 +256,9 @@ class ControllableLabel implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public shouldBeDrawn = ControllableMixin.shouldBeDrawn;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -400,7 +402,9 @@ class ControllableLabel implements ControllableMixin.Type {
      * For a controllable label, we need to subtract translation from
      * options.
      */
-    public anchor(_point: Highcharts.AnnotationPointType): Highcharts.AnnotationAnchorObject {
+    public anchor(
+        _point: Highcharts.AnnotationPointType
+    ): Highcharts.AnnotationAnchorObject {
         const anchor = ControllableMixin.anchor.apply(this, arguments),
             x = this.options.x || 0,
             y = this.options.y || 0;
@@ -453,7 +457,10 @@ class ControllableLabel implements ControllableMixin.Type {
                         plotY: anchorRelativePosition.y,
                         negative: point.negative,
                         ttBelow: point.ttBelow,
-                        h: (anchorRelativePosition.height || anchorRelativePosition.width)
+                        h: (
+                            anchorRelativePosition.height ||
+                            anchorRelativePosition.width
+                        )
                     } as any
                 );
             } else if ((itemOptions as any).positioner) {

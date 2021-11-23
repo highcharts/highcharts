@@ -148,7 +148,14 @@ class Axis {
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
-    public static keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
+    public static keepProps = [
+        'extKey',
+        'hcEvents',
+        'names',
+        'series',
+        'userMax',
+        'userMin'
+    ];
 
     /* *
      *
@@ -339,7 +346,8 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
+        // Needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite);
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -627,7 +635,9 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(
+                        value / multi, -1
+                    ) + numericSymbols[i];
                 }
             }
         }
@@ -697,7 +707,9 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (number: number): boolean => number > 0;
+                            const isPositive = (
+                                number: number
+                            ): boolean => number > 0;
 
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
@@ -1033,8 +1045,12 @@ class Axis {
         min: number,
         max: number
     ): Array<number> {
-        const roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
+        const roundedMin = correctFloat(
+                Math.floor(min / tickInterval) * tickInterval
+            ),
+            roundedMax = correctFloat(
+                Math.ceil(max / tickInterval) * tickInterval
+            ),
             tickPositions = [];
 
         let pos,
@@ -1154,7 +1170,9 @@ class Axis {
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(
+                            minorTickInterval
+                        ),
                         min,
                         max,
                         options.startOfWeek
@@ -1236,7 +1254,10 @@ class Axis {
                     if (xData.length > 1) {
                         for (i = loopLength; i > 0; i--) {
                             distance = xData[i] - xData[i - 1];
-                            if (!closestDataRange || distance < closestDataRange) {
+                            if (
+                                !closestDataRange ||
+                                distance < closestDataRange
+                            ) {
                                 closestDataRange = distance;
                             }
                         }
@@ -1494,7 +1515,9 @@ class Axis {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        const isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
+                        const isPointPlacementAxis = series.is('xrange') ?
+                            !isXAxis :
+                            isXAxis;
 
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
@@ -1522,7 +1545,9 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = axis.ordinal && axis.ordinal.slope && closestPointRange ?
+            ordinalCorrection = (
+                axis.ordinal && axis.ordinal.slope && closestPointRange
+            ) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -1823,13 +1848,16 @@ class Axis {
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = series.forceCropping && series.forceCropping();
+                series.forceCrop = (
+                    series.forceCropping &&
+                    series.forceCropping()
+                );
                 series.processData(hasExtemesChanged);
             });
 
-            // Then apply grouping if needed.
-            // The hasExtemesChanged helps to decide if the data grouping should
-            // be skipped in the further calculations #16319.
+            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // decide if the data grouping should be skipped in the further
+            // calculations #16319.
             fireEvent(this, 'postProcessData', { hasExtemesChanged });
         }
 
@@ -1901,8 +1929,12 @@ class Axis {
             minorTickIntervalOption = this.getMinorTickInterval(),
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
-            startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
-            endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
+            startOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.startOnTick
+            ),
+            endOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.endOnTick
+            );
 
         let tickPositions,
             tickPositioner = options.tickPositioner;
@@ -2222,7 +2254,11 @@ class Axis {
         let len,
             i;
 
-        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
+        if (
+            axis.hasData() &&
+            isNumber(axis.min) &&
+            isNumber(axis.max)
+        ) { // #14769
             if (currentTickAmount < tickAmount) {
                 while (tickPositions.length < tickAmount) {
 
@@ -3677,7 +3713,9 @@ class Axis {
                         if (!alternateBands[pos]) {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
-                            alternateBands[pos] = new (H as any).PlotLineOrBand(axis);
+                            alternateBands[pos] = new (H as any).PlotLineOrBand(
+                                axis
+                            );
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
@@ -3699,7 +3737,8 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }

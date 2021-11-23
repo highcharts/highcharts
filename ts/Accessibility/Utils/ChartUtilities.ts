@@ -58,7 +58,10 @@ function fireEventOnWrappedOrUnwrappedElement(
     const type = eventObject.type;
     const hcEvents = (el as SVGElement).hcEvents;
 
-    if (doc.createEvent && ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)) {
+    if (
+        doc.createEvent &&
+        ((el as Element).dispatchEvent || (el as SVGElement).fireEvent)
+    ) {
         if (el.dispatchEvent) {
             el.dispatchEvent(eventObject);
         } else {
@@ -67,7 +70,10 @@ function fireEventOnWrappedOrUnwrappedElement(
     } else if (hcEvents && hcEvents[type]) {
         fireEvent(el, type, eventObject);
     } else if ((el as SVGElement).element) {
-        fireEventOnWrappedOrUnwrappedElement((el as SVGElement).element, eventObject);
+        fireEventOnWrappedOrUnwrappedElement(
+            (el as SVGElement).element,
+            eventObject
+        );
     }
 }
 
@@ -202,10 +208,11 @@ function getAxisTimeLengthDesc(axis: Axis): string {
  */
 function getAxisFromToDescription(axis: Axis): string {
     const chart = axis.chart,
+        options = chart.options,
         dateRangeFormat = (
-            chart.options &&
-            chart.options.accessibility &&
-            chart.options.accessibility.screenReaderSection.axisRangeDateFormat ||
+            options &&
+            options.accessibility &&
+            options.accessibility.screenReaderSection.axisRangeDateFormat ||
             ''
         ),
         format = function (axisKey: string): string {
@@ -238,7 +245,10 @@ function getSeriesFirstPointElement(
     series: Series
 ): (DOMElementType|undefined) {
     if (series.points && series.points.length) {
-        const firstPointWithGraphic = find(series.points, (p: Point): boolean => !!p.graphic);
+        const firstPointWithGraphic = find(
+            series.points,
+            (p: Point): boolean => !!p.graphic
+        );
         return (
             firstPointWithGraphic &&
             firstPointWithGraphic.graphic &&

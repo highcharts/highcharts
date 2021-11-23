@@ -215,7 +215,10 @@ namespace MultipleLinesComposition {
             if (areaPath && areaPath.length) {
                 areaPath[0][0] = 'L';
 
-                path = SMAIndicator.prototype.getGraphPath.call(indicator, points);
+                path = SMAIndicator.prototype.getGraphPath.call(
+                    indicator,
+                    points
+                );
 
                 higherAreaPath = areaPath.slice(0, path.length);
 
@@ -225,7 +228,10 @@ namespace MultipleLinesComposition {
                 }
             }
         } else {
-            path = SMAIndicator.prototype.getGraphPath.apply(indicator, arguments);
+            path = SMAIndicator.prototype.getGraphPath.apply(
+                indicator,
+                arguments
+            );
         }
         return path;
     }
@@ -283,16 +289,24 @@ namespace MultipleLinesComposition {
 
         // Modify options and generate area fill:
         if (this.userOptions.fillColor && areaLinesNames.length) {
-            const index = secondaryLinesNames.indexOf(getLineName(areaLinesNames[0])),
+            const index = secondaryLinesNames.indexOf(
+                    getLineName(areaLinesNames[0])
+                ),
                 secondLinePoints = secondaryLines[index],
                 firstLinePoints =
                     areaLinesNames.length === 1 ?
                         mainLinePoints :
-                        secondaryLines[secondaryLinesNames.indexOf(getLineName(areaLinesNames[1]))],
+                        secondaryLines[
+                            secondaryLinesNames.indexOf(
+                                getLineName(areaLinesNames[1])
+                            )
+                        ],
                 originalColor = indicator.color;
             indicator.points = firstLinePoints;
             indicator.nextPoints = secondLinePoints;
-            indicator.color = this.userOptions.fillColor as SVGAttributes['fill'];
+            indicator.color = (
+                this.userOptions.fillColor as SVGAttributes['fill']
+            );
             indicator.options = merge(
                 mainLinePoints,
                 gappedExtend
@@ -378,7 +392,11 @@ namespace MultipleLinesComposition {
      * @param propertyName name of the line
      */
     function getLineName(propertyName: string): string {
-        return 'plot' + propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+        return (
+            'plot' +
+            propertyName.charAt(0).toUpperCase() +
+            propertyName.slice(1)
+        );
     }
 
     /**

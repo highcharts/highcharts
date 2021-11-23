@@ -13,8 +13,8 @@ Annotations can be built from simple blocks such as labels and shapes, and the c
 
     
       {
-        labels: [ /* options for labels /* ],
-        shapes: [ /* options for lines /*, /* options for backgrounds */ ]
+        labels: [ /* options for labels */ ],
+        shapes: [ /* options for lines */, /* options for backgrounds */ ]
       }
     
 
@@ -28,20 +28,21 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
 **Step 1. Calculate the retracements:**
 
     
-       levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-       diff = y2 - y1;
-       retracementlevel = y2 - diff * level;
+       const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1],
+           diff = y2 - y1;
+
+       const retracementlevel = y2 - diff * level;
     
 
 **Step 2. Build the horizontal lines:**
 
     
-        var lines = [];
+        const lines = [];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff * level;
-            var p1 = point(x1, retracement);
-            var p2 = point(x2, retracement);
+            const retracement = y2 - diff * level,
+                p1 = point(x1, retracement),
+                p2 = point(x2, retracement);
     
             lines.push({
                 type: 'path',
@@ -51,17 +52,17 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         });
     
 
-![2CUyu8fxq2xYSgOQgfa31ACo8lnjAp4NmQYXAyZMBwWPXK8C9mYvR2jpqmXCvhgpxr_UL9TUMaU8SodaE0CjYcZjFsC8HhmHdj5xniO3cpafFn9XMmqE9X0qxRGgIFeZQS4R_du_](https://lh4.googleusercontent.com/2CUyu8fxq2xYSgOQgfa31ACo8lnjAp4NmQYXAyZMBwWPXK8C9mYvR2jpqmXCvhgpxr_UL9TUMaU8SodaE0CjYcZjFsC8HhmHdj5xniO3cpafFn9XMmqE9X0qxRGgIFeZQS4R_du_) 
+![fibonacci-step-2.png](fibonacci-step-2.png) 
 
 **Step 3. Build the labels:**
 
     
-        var labels = [];
+        const labels = [];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff * level;
-            var p1 = point(x1, retracement);
-            var p2 = point(x2, retracement);
+            const retracement = y2 - diff * level,
+                p1 = point(x1, retracement),
+                p2 = point(x2, retracement);
     
             labels.push({
                 point: p1,
@@ -80,13 +81,13 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         });
     
 
-![QA9txXC1vsQEv85yAi-vmQAtcsH7Qu09bWAgsNUWdYa-MKb4BxLneSnJYdJZSBXDaJBTDuEckLhk-xOs8ORFf9ueVUvRbOdUcaFTu6jKvOKgEBbYF8nX5cF6Btmv8ayU1gyDgRLA](https://lh6.googleusercontent.com/QA9txXC1vsQEv85yAi-vmQAtcsH7Qu09bWAgsNUWdYa-MKb4BxLneSnJYdJZSBXDaJBTDuEckLhk-xOs8ORFf9ueVUvRbOdUcaFTu6jKvOKgEBbYF8nX5cF6Btmv8ayU1gyDgRLA) 
+![fibonacci-step-3.png](fibonacci-step-3.png) 
 
 **Step 4. Set up the backgrounds:**
 
     
-        var backgrounds = [];
-        var colors = [
+        const backgrounds = [];
+        const colors = [
             'rgba(130, 170, 255, 0.4)',
             'rgba(139, 191, 216, 0.4)',
             'rgba(150, 216, 192, 0.4)',
@@ -96,9 +97,9 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         ];
     
         Highcharts.each(levels, function (level, i) {
-            var retracement = y2 - diff * level;
-            var p1 = point(x1, retracement);
-            var p2 = point(x2, retracement);
+            const retracement = y2 - diff * level,
+                p1 = point(x1, retracement),
+                p2 = point(x2, retracement);
     
             if (i > 0) {
                 backgrounds.push({
@@ -111,7 +112,7 @@ Let’s create the Fibonacci retracements chart with seven labels, seven horizon
         });
     
 
-![fnPKQOA8x_FrJN8y0sPXHJoKL3fUw7_T3awUStqhvYRMAxC6o0rFMhKO195U1LyJKh_ULvVAGBQdV5PEj5W8KA-3nPPXZ3-1NLIFf-WsS8lh5Aa91IcNDuL1mMTiDRAh0Vyfqzcg](https://lh5.googleusercontent.com/fnPKQOA8x_FrJN8y0sPXHJoKL3fUw7_T3awUStqhvYRMAxC6o0rFMhKO195U1LyJKh_ULvVAGBQdV5PEj5W8KA-3nPPXZ3-1NLIFf-WsS8lh5Aa91IcNDuL1mMTiDRAh0Vyfqzcg) 
+![fibonacci-step-4.png](fibonacci-step-4.png) 
 
 **Step 5. Gather the pieces together:**
 

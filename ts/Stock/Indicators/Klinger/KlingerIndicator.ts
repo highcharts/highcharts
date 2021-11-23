@@ -112,9 +112,13 @@ class KlingerIndicator extends SMAIndicator {
             approximation: 'averages'
         },
         tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
-                '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.signalLine.styles.lineColor}">Signal</span>' +
+            pointFormat: '<span style="color: {point.color}">\u25CF</span>' +
+                '<b> {series.name}</b><br/>' +
+                '<span style="color: {point.color}">Klinger</span>: ' +
+                '{point.y}<br/>' +
+                '<span style="color: ' +
+                '{point.series.options.signalLine.styles.lineColor}">' +
+                    'Signal</span>' +
                     ': {point.signal}<br/>'
         }
     } as KlingerOptions);

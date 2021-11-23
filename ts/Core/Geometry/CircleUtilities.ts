@@ -96,7 +96,10 @@ namespace CircleUtilities {
      * Returns the area of the circular segment.
      */
     export function getCircularSegmentArea(r: number, h: number): number {
-        return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
+        return (
+            r * r * Math.acos(1 - h / r) -
+            (r - h) * Math.sqrt(h * (2 * r - h))
+        );
     }
 
     /**
@@ -119,7 +122,11 @@ namespace CircleUtilities {
      * @return {number}
      * Returns the area of overlap between the two circles.
      */
-    export function getOverlapBetweenCircles(r1: number, r2: number, d: number): number {
+    export function getOverlapBetweenCircles(
+        r1: number,
+        r2: number,
+        d: number
+    ): number {
         let overlap = 0;
 
         // If the distance is larger than the sum of the radiuses then the
@@ -216,7 +223,10 @@ namespace CircleUtilities {
                 .slice(i + 1)
                 .reduce((points, c2, j, arr): Array<GeometryObject> => {
                     const indexes: [number, number] = [i, j + i + 1];
-                    return points.concat(getCircleCircleIntersection(c1, c2).map((
+                    return points.concat(getCircleCircleIntersection(
+                        c1,
+                        c2
+                    ).map((
                         p: GeometryObject
                     ): GeometryObject => {
                         p.indexes = indexes;
@@ -247,7 +257,10 @@ namespace CircleUtilities {
         circle1: CircleObject,
         circle2: CircleObject
     ): boolean {
-        return getDistanceBetweenPoints(circle1, circle2) + circle2.r < circle1.r + 1e-10;
+        return getDistanceBetweenPoints(
+            circle1,
+            circle2
+        ) + circle2.r < circle1.r + 1e-10;
     }
 
     /**
@@ -373,7 +386,9 @@ namespace CircleUtilities {
                     return (b.angle as any) - (a.angle as any);
                 });
 
-            const startPoint = intersectionPoints[intersectionPoints.length - 1];
+            const startPoint = intersectionPoints[
+                intersectionPoints.length - 1
+            ];
             const arcs: SVGPath = intersectionPoints
                 .reduce(function (
                     data,
@@ -388,14 +403,19 @@ namespace CircleUtilities {
                         // Filter out circles that are not included in both
                         // intersection points.
                         .filter(function (index: number): boolean {
-                            return (startPoint.indexes as any).indexOf(index) > -1;
+                            return (startPoint.indexes as any).indexOf(
+                                index
+                            ) > -1;
                         })
                         // Iterate the circles of the intersection points and
                         // calculate arcs.
                         .reduce(function (arc: any, index: number): any {
                             const circle = circles[index],
                                 angle1 = getAngleBetweenPoints(circle, p1),
-                                angle2 = getAngleBetweenPoints(circle, startPoint),
+                                angle2 = getAngleBetweenPoints(
+                                    circle,
+                                    startPoint
+                                ),
                                 angleDiff = angle2 - angle1 +
                                     (angle2 < angle1 ? 2 * Math.PI : 0),
                                 angle = angle2 - angleDiff / 2;

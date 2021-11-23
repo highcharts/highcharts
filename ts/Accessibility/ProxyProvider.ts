@@ -96,8 +96,12 @@ class ProxyProvider {
         this.groups = {};
         this.groupOrder = [];
 
-        this.beforeChartProxyPosContainer = this.createProxyPosContainer('before');
-        this.afterChartProxyPosContainer = this.createProxyPosContainer('after');
+        this.beforeChartProxyPosContainer = this.createProxyPosContainer(
+            'before'
+        );
+        this.afterChartProxyPosContainer = this.createProxyPosContainer(
+            'after'
+        );
 
         this.update();
     }

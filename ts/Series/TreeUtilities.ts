@@ -167,7 +167,10 @@ function getLevelOptions<T extends TreeUtilities.Series>(
 
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
-                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
+                    levelIsConstant = pick(
+                        options.levelIsConstant,
+                        defaults.levelIsConstant
+                    );
                     // Delete redundant properties.
                     delete options.levelIsConstant;
                     delete options.level;

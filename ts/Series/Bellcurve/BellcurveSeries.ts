@@ -161,7 +161,8 @@ class BellcurveSeries extends AreaSplineSeries {
         let len = data.length,
             sum;
 
-        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+        average = isNumber(average) ?
+            average : (BellcurveSeries.mean(data) as any);
 
         sum = data.reduce(function (sum: number, value: number): number {
             const diff = value - (average as any);
@@ -227,7 +228,9 @@ class BellcurveSeries extends AreaSplineSeries {
             i: number;
 
         for (i = 0; i < stop; i++) {
-            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            data.push(
+                [x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]
+            );
             x += increment;
         }
 

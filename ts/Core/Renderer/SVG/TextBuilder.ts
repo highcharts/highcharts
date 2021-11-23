@@ -62,7 +62,9 @@ class TextBuilder {
 
         this.textLineHeight = textStyles && textStyles.lineHeight;
         this.textOutline = textStyles && textStyles.textOutline;
-        this.ellipsis = Boolean(textStyles && textStyles.textOverflow === 'ellipsis');
+        this.ellipsis = Boolean(
+            textStyles && textStyles.textOverflow === 'ellipsis'
+        );
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
@@ -331,7 +333,10 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const br = doc.createElementNS(SVG_NS, 'tspan') as SVGDOMElement;
+                    const br = doc.createElementNS(
+                        SVG_NS,
+                        'tspan'
+                    ) as SVGDOMElement;
                     br.textContent = '\u200B'; // zero-width space
                     attr(br, { dy, x } as unknown as SVGAttributes);
                     parentElement.insertBefore(br, textNode);
@@ -373,7 +378,9 @@ class TextBuilder {
         let fontSizeStyle;
 
         // If the node is a text node, use its parent
-        const element: DOMElementType|null = node.nodeType === win.Node.TEXT_NODE ?
+        const element: DOMElementType|null = (
+            node.nodeType === win.Node.TEXT_NODE
+        ) ?
             node.parentElement :
             node as DOMElementType;
 
@@ -415,13 +422,17 @@ class TextBuilder {
                 if (styledMode) {
                     attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
                 } else {
-                    attributes.style = 'font-weight:bold;' + (attributes.style || '');
+                    attributes.style = (
+                        'font-weight:bold;' + (attributes.style || '')
+                    );
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
                     attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
                 } else {
-                    attributes.style = 'font-style:italic;' + (attributes.style || '');
+                    attributes.style = (
+                        'font-style:italic;' + (attributes.style || '')
+                    );
                 }
             }
 
@@ -578,7 +589,10 @@ class TextBuilder {
             // If the new text length is one less than the original, we don't
             // need the ellipsis
             } else if (!(text && maxIndex === text.length - 1)) {
-                textNode.textContent = str || getString(text || words, currentIndex);
+                textNode.textContent = str || getString(
+                    text || words,
+                    currentIndex
+                );
             }
         }
 

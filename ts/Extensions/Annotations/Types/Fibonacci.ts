@@ -20,7 +20,10 @@ const { merge } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-const createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+const createPathDGenerator = function (
+    retracementIndex: number,
+    isBackground?: boolean
+): Function {
     return function (this: Highcharts.AnnotationControllable): SVGPath {
         const annotation = this.annotation as Fibonacci;
         if (!annotation.startRetracements || !annotation.endRetracements) {
@@ -74,7 +77,10 @@ class Fibonacci extends Tunnel {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Fibonacci.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Fibonacci.Options
+    ) {
         super(chart, options);
     }
 
@@ -160,48 +166,54 @@ class Fibonacci extends Tunnel {
     }
 
     public addShapes(): void {
-        Fibonacci.levels.forEach(function (this: Fibonacci, _level: number, i: number): void {
-            const {
-                backgroundColors,
-                lineColor,
-                lineColors
-            } = this.options.typeOptions;
+        Fibonacci.levels.forEach(
+            function (this: Fibonacci, _level: number, i: number): void {
+                const {
+                    backgroundColors,
+                    lineColor,
+                    lineColors
+                } = this.options.typeOptions;
 
-            this.initShape({
-                type: 'path',
-                d: createPathDGenerator(i),
-                stroke: lineColors[i] || lineColor
-            }, i);
-
-            if (i > 0) {
-                (this.initShape as any)({
+                this.initShape({
                     type: 'path',
-                    fill: backgroundColors[i - 1],
-                    strokeWidth: 0,
-                    d: createPathDGenerator(i, true)
-                });
-            }
-        }, this);
+                    d: createPathDGenerator(i),
+                    stroke: lineColors[i] || lineColor
+                }, i);
+
+                if (i > 0) {
+                    (this.initShape as any)({
+                        type: 'path',
+                        fill: backgroundColors[i - 1],
+                        strokeWidth: 0,
+                        d: createPathDGenerator(i, true)
+                    });
+                }
+            },
+            this
+        );
     }
 
     public addLabels(): void {
-        Fibonacci.levels.forEach(function (this: Fibonacci, level: number, i: number): void {
-            const options = this.options.typeOptions,
-                label = (this.initLabel as any)(
-                    merge(options.labels[i], {
-                        point: function (target: any): MockPointOptions {
-                            const point = MockPoint.pointToOptions(
-                                target.annotation.startRetracements[i]
-                            );
+        Fibonacci.levels.forEach(
+            function (this: Fibonacci, level: number, i: number): void {
+                const options = this.options.typeOptions,
+                    label = (this.initLabel as any)(
+                        merge(options.labels[i], {
+                            point: function (target: any): MockPointOptions {
+                                const point = MockPoint.pointToOptions(
+                                    target.annotation.startRetracements[i]
+                                );
 
-                            return point;
-                        },
-                        text: level.toString()
-                    })
-                );
+                                return point;
+                            },
+                            text: level.toString()
+                        })
+                    );
 
-            options.labels[i] = label.options;
-        }, this);
+                options.labels[i] = label.options;
+            },
+            this
+        );
     }
 }
 

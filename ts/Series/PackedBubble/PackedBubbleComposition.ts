@@ -144,7 +144,8 @@ H.layouts.packedbubble = extendClass(
                 });
             }
         },
-        isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
+        // #14439, new stable check.
+        isStable: function (this: PackedBubbleLayout): boolean {
             const tempDiff = Math.abs(
                 (this.prevSystemTemperature as any) -
                 (this.systemTemperature as any)

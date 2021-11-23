@@ -56,7 +56,10 @@ declare global {
         interface AnnotationMarkerMixin {
             markerEndSetter(this: SVGElement, value: string): void;
             markerStartSetter(this: SVGElement, value: string): void;
-            setItemMarkers(this: ControllablePath, item: ControllablePath): void;
+            setItemMarkers(
+                this: ControllablePath,
+                item: ControllablePath
+            ): void;
         }
     }
 }
@@ -184,7 +187,9 @@ SVGRenderer.prototype.addMarker = function (
 /**
  * @private
  */
-function createMarkerSetter(markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
+function createMarkerSetter(
+    markerType: string
+): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
     return function (this: SVGElement, value: string): void {
         this.attr(markerType, 'url(#' + value + ')');
     };
@@ -211,47 +216,51 @@ const markerMixin: Highcharts.AnnotationMarkerMixin = {
             fill = itemOptions.fill,
             color = defined(fill) && fill !== 'none' ?
                 fill :
-                itemOptions.stroke,
+                itemOptions.stroke;
 
-            setMarker = function (markerType: ('markerEnd'|'markerStart')): void {
-                let markerId = itemOptions[markerType],
-                    def,
-                    predefinedMarker,
-                    key,
-                    marker;
+        const setMarker = function (
+            markerType: ('markerEnd'|'markerStart')
+        ): void {
+            let markerId = itemOptions[markerType],
+                def,
+                predefinedMarker,
+                key,
+                marker;
 
-                if (markerId) {
-                    for (key in defs) { // eslint-disable-line guard-for-in
-                        def = defs[key];
+            if (markerId) {
+                for (key in defs) { // eslint-disable-line guard-for-in
+                    def = defs[key];
 
-                        if (
-                            (
-                                markerId === (def.attributes && def.attributes.id) ||
-                                // Legacy, for
-                                // unit-tests/annotations/annotations-shapes
-                                markerId === (def as any).id
-                            ) &&
-                            def.tagName === 'marker'
-                        ) {
-                            predefinedMarker = def;
-                            break;
-                        }
-                    }
-
-                    if (predefinedMarker) {
-                        marker = item[markerType] = chart.renderer
-                            .addMarker(
-                                (itemOptions.id || uniqueKey()) + '-' +
-                                markerId,
-                                merge(predefinedMarker, { color: color })
-                            );
-
-                        item.attr(markerType, marker.getAttribute('id'));
+                    if (
+                        (
+                            markerId === (
+                                def.attributes && def.attributes.id
+                            ) ||
+                            // Legacy, for
+                            // unit-tests/annotations/annotations-shapes
+                            markerId === (def as any).id
+                        ) &&
+                        def.tagName === 'marker'
+                    ) {
+                        predefinedMarker = def;
+                        break;
                     }
                 }
-            };
 
-        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>).forEach(setMarker);
+                if (predefinedMarker) {
+                    marker = item[markerType] = chart.renderer
+                        .addMarker(
+                            (itemOptions.id || uniqueKey()) + '-' + markerId,
+                            merge(predefinedMarker, { color: color })
+                        );
+
+                    item.attr(markerType, marker.getAttribute('id'));
+                }
+            }
+        };
+
+        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>)
+            .forEach(setMarker);
     }
 };
 

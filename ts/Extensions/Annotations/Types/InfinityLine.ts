@@ -162,7 +162,10 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: InfinityLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: InfinityLine.Options
+    ) {
         super(chart, options);
     }
 
@@ -173,7 +176,9 @@ class InfinityLine extends CrookedLine {
      * */
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions as InfinityLine.TypeOptions,
+        const typeOptions = (
+                this.options.typeOptions as InfinityLine.TypeOptions
+            ),
             points = [
                 this.points[0],
                 InfinityLine.endEdgePoint
