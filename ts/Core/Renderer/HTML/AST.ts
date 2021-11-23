@@ -30,6 +30,7 @@ const {
     createElement,
     discardElement,
     error,
+    isFunction,
     isString,
     objectEach,
     splat
@@ -45,6 +46,7 @@ const {
  * */
 const trustedTypesPolicy = (
     trustedTypes &&
+    isFunction(trustedTypes.createPolicy) &&
     trustedTypes.createPolicy(
         'highcharts', {
             createHTML: (s: string): string => s
