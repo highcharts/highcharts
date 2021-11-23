@@ -20,7 +20,10 @@ import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
-const { SVG_NS } = H;
+const {
+    SVG_NS,
+    win
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
@@ -37,11 +40,29 @@ const {
  *  Constants
  *
  * */
+const trustedTypePolicy = (
+    (win as any).trustedTypes &&
+    (win as any).trustedTypes.createPolicy(
+        'highcharts', {
+            createHTML: (s: string): string => s
+        }
+    )
+);
+
+const trustedHTML = (html: string): string => {
+    if (trustedTypePolicy) {
+        return trustedTypePolicy.createHTML(html);
+    }
+    return html;
+};
 
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
-        return Boolean(new DOMParser().parseFromString('', 'text/html'));
+        return Boolean(new DOMParser().parseFromString(
+            trustedHTML(''),
+            'text/html'
+        ));
     } catch (e) {
         return false;
     }
@@ -312,12 +333,14 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = ''; // Clear previous
+        el.innerHTML = trustedHTML(''); // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
         }
     }
+
+    public static trustedHTML = trustedHTML;
 
     /* *
      *
@@ -474,7 +497,10 @@ class AST {
         let doc;
         let body;
         if (hasValidDOMParser) {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
+            doc = new DOMParser().parseFromString(
+                trustedHTML(markup),
+                'text/html'
+            );
         } else {
             body = createElement('div');
             body.innerHTML = markup;

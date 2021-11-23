@@ -1538,7 +1538,7 @@ class Chart {
         attr(renderTo, indexAttrName, chart.index);
 
         // remove previous chart
-        renderTo.innerHTML = '';
+        renderTo.innerHTML = AST.trustedHTML('');
 
         // If the container doesn't have an offsetWidth, it has or is a child of
         // a node that has display:none. We need to temporarily move it out to a
@@ -2643,7 +2643,7 @@ class Chart {
         // Remove container and all SVG, check container as it can break in IE
         // when destroyed before finished loading
         if (container) {
-            container.innerHTML = '';
+            container.innerHTML = AST.trustedHTML('');
             removeEvent(container);
             if (parentNode) {
                 discardElement(container);
