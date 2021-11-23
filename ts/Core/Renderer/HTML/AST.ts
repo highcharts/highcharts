@@ -500,14 +500,13 @@ class AST {
         markup = markup.trim();
 
         let doc;
-        let body;
         if (hasValidDOMParser) {
             doc = new DOMParser().parseFromString(
                 trustedHTML(markup),
                 'text/html'
             );
         } else {
-            body = createElement('div');
+            const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
         }
@@ -557,10 +556,6 @@ class AST {
             doc.body.childNodes,
             (childNode): void => appendChildNodes(childNode, nodes)
         );
-
-        if (body) {
-            discardElement(body);
-        }
 
         return nodes;
     }
