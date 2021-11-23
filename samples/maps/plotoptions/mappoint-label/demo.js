@@ -29,6 +29,9 @@ Highcharts.mapChart('container', {
                 fillColor: '#ffffff',
                 lineColor: '#000000',
                 lineWidth: 1
+            },
+            tooltip: {
+                pointFormat: '{point.name} [{point.lon:.2f}, {point.lat:.2f}]'
             }
         }
     },
@@ -38,7 +41,7 @@ Highcharts.mapChart('container', {
         nullColor: 'rgba(0 96 0 / 0.2)'
     }, {
         type: 'mappoint',
-        name: 'POI\'s',
+        name: 'POI',
         color: Highcharts.getOptions().colors[1],
         data: [{
             name: 'Vik i Sogn',
