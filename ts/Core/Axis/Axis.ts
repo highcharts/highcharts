@@ -1625,10 +1625,10 @@ class Axis {
                 linkedParentExtremes.max,
                 linkedParentExtremes.dataMax
             );
-            if (options.type !== (axis.linkedParent as any).options.type) {
-                // Can't link axes of different type
-                error(11, 1 as any, chart);
-            }
+            // if (options.type !== (axis.linkedParent as any).options.type) {
+            //     // Can't link axes of different type
+            //     error(11, 1 as any, chart);
+            // }
 
         // Initial min and max from the extreme data values
         } else {

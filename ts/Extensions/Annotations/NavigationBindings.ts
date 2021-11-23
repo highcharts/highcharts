@@ -449,6 +449,7 @@ class NavigationBindings {
                         event
                     );
 
+                    console.log(bindings);
                     if (
                         bindings &&
                         bindings.button.className
@@ -1029,6 +1030,7 @@ class NavigationBindings {
             bindings: (Highcharts.NavigationBindingsButtonEventsObject|undefined);
 
 
+            debugger;
         classNames.forEach(function (className: [string, HTMLDOMElement]): void {
             if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {

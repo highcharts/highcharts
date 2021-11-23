@@ -810,9 +810,9 @@ namespace TreeGridAxis {
                 // Forced options
                 reversed: true,
                 // grid.columns is not supported in treegrid
-                grid: {
-                    columns: void 0
-                }
+                // grid: {
+                //     columns: void 0
+                // }
             });
         }
 
