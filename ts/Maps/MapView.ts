@@ -35,10 +35,10 @@ const {
 
 
 /**
- * The world size equals meters in the Web Mercator projection, to match a
- * 256 square tile to zoom level 0
+ * The world size in terms of 10k meters in the Web Mercator projection, to
+ * match a 256 square tile to zoom level 0
  */
-const worldSize = 40097932.2;
+const worldSize = 400.979322;
 const tileSize = 256;
 
 /**
@@ -169,13 +169,13 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < 25.2
+                    (this.minZoom || Infinity) < 3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
                     // speed as moving the pointer across the center of the
                     // projection
-                    const ratio = 28000 / (this.getScale() * Math.min(
+                    const ratio = 440 / (this.getScale() * Math.min(
                         chart.plotWidth,
                         chart.plotHeight
                     ));

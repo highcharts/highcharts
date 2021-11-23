@@ -52,9 +52,11 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions
-    }
+    protected static readonly defaultOptions: (
+        HTMLTableParser.ClassJSONOptions
+    ) = {
+            ...DataParser.defaultOptions
+        };
 
     /* *
      *
@@ -104,7 +106,7 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
-    public tableElement?: HTMLElement
+    public tableElement?: HTMLElement;
     public tableElementID?: string;
 
     /* *
@@ -279,7 +281,7 @@ namespace HTMLTableParser {
     /**
      * The available options for the parser
      */
-    export type OptionsType = Partial<ParserOptions & DataParser.Options>
+    export type OptionsType = Partial<ParserOptions & DataParser.Options>;
 
     /**
      * Options for the parser compatible with ClassJSON

@@ -118,7 +118,10 @@ class InvertModifier extends DataModifier {
         eventDetail?: DataEventEmitter.EventDetail
     ): T {
         const modified = table.modified,
-            modifiedRowIndex = modified.getRowIndexBy('columnNames', columnName);
+            modifiedRowIndex = modified.getRowIndexBy(
+                'columnNames',
+                columnName
+            );
 
         if (typeof modifiedRowIndex === 'undefined') {
             modified.setColumns(

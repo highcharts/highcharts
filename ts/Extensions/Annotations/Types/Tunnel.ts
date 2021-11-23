@@ -36,7 +36,10 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Tunnel.Options
+    ) {
         super(chart, options);
     }
 
@@ -141,9 +144,12 @@ class Tunnel extends CrookedLine {
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {boolean} [end] - whether to translate start or end side
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {boolean} [end]
+     * whether to translate start or end side
      */
     public translateSide(dx: number, dy: number, end?: boolean): void {
         const topIndex = Number(end),
@@ -156,13 +162,15 @@ class Tunnel extends CrookedLine {
     /**
      * Translate height of the tunnel.
      * @private
-     * @param {number} dh - the amount of height translation
+     * @param {number} dh
+     * the amount of height translation
      */
     public translateHeight(dh: number): void {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
 
-        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+        this.options.typeOptions.height = (this.points[3].y as any) -
+            (this.points[0].y as any);
     }
 
 }

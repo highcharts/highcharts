@@ -36,7 +36,9 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/maps */
         mapTransforms?: any;
         /** @requires modules/maps */
-        fromLatLonToPoint(latLon: Highcharts.MapLatLonObject): Highcharts.MapCoordinateObject;
+        fromLatLonToPoint(
+            latLon: Highcharts.MapLatLonObject
+        ): Highcharts.MapCoordinateObject;
         /** @requires modules/maps */
         fromPointToLatLon(
             point: Highcharts.MapCoordinateObject
@@ -333,9 +335,9 @@ Chart.prototype.transformFromLatLon = function (
      * In case of loading the library from a `script` tag,
      * this option is not needed, it will be loaded from there by default.
      *
-     * @type       {function}
-     * @product    highmaps
-     * @apioption  chart.proj4
+     * @type      {Function}
+     * @product   highmaps
+     * @apioption chart.proj4
      */
 
     const proj4 = this.options.chart.proj4 || win.proj4;

@@ -299,7 +299,7 @@ class AxisResizer {
              */
             y: 0
         }
-    }
+    };
 
     public constructor(axis: Axis) {
         this.init(axis);

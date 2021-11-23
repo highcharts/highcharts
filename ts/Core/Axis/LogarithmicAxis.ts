@@ -117,7 +117,9 @@ namespace LogarithmicAxis {
             axis.logarithmic = void 0;
         } else {
             if (!logarithmic) {
-                logarithmic = axis.logarithmic = new Additions(axis as Composition);
+                logarithmic = axis.logarithmic = new Additions(
+                    axis as Composition
+                );
             }
         }
     }

@@ -8,10 +8,13 @@
  *
  * */
 
-export type ProjectionRotationOption = [number, number]|[number, number, number];
+export type ProjectionRotationOption = (
+    [number, number]|[number, number, number]
+);
 
 export interface ProjectionOptions {
     name?: string;
+    parallels?: number[];
     rotation?: ProjectionRotationOption;
 }
 

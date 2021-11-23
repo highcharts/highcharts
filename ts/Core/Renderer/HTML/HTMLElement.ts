@@ -128,10 +128,12 @@ class HTMLElement extends SVGElement {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 
-            svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+            svgElementProto.getSpanCorrection = htmlElementProto
+                .getSpanCorrection;
             svgElementProto.htmlCss = htmlElementProto.htmlCss;
             svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+            svgElementProto.htmlUpdateTransform = htmlElementProto
+                .htmlUpdateTransform;
             svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
         }
 

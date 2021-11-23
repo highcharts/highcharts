@@ -120,7 +120,9 @@ declare global {
             steps?: Array<Function>;
         }
         interface NavigationBindingsUtilsObject {
-            getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
+            getFieldType(
+                value: ('boolean'|'number'|'string')
+            ): ('checkbox'|'number'|'text');
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
         }
         interface NavigationEventsOptions {
@@ -209,7 +211,9 @@ const bindingsUtils = {
      * @return {'checkbox'|'number'|'text'}
      * Field type (one of: text, number, checkbox)
      */
-    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
+    getFieldType: function (
+        value: ('boolean'|'number'|'string')
+    ): ('checkbox'|'number'|'text') {
         return ({
             'string': 'text',
             'number': 'number',
@@ -232,7 +236,10 @@ const bindingsUtils = {
      * @param {Highcharts.Annotation} annotation
      * Annotation to be updated
      */
-    updateRectSize: function (event: PointerEvent, annotation: Annotation): void {
+    updateRectSize: function (
+        event: PointerEvent,
+        annotation: Annotation
+    ): void {
         const chart = annotation.chart,
             options = annotation.options.typeOptions,
             xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
@@ -359,7 +366,9 @@ class NavigationBindings {
         this.options = options;
         this.eventsToUnbind = [];
         this.container = (
-            doc.getElementsByClassName(this.options.bindingsClassName || '') as HTMLCollectionOf<HTMLElement>
+            doc.getElementsByClassName(
+                this.options.bindingsClassName || ''
+            ) as HTMLCollectionOf<HTMLElement>
         );
     }
 
@@ -370,7 +379,8 @@ class NavigationBindings {
      * */
 
     public activeAnnotation?: (false|Annotation);
-    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
+    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> =
+        void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
@@ -380,7 +390,9 @@ class NavigationBindings {
     public options: NavigationOptions;
     public popup?: Highcharts.Popup;
     public selectedButtonElement?: (HTMLDOMElement|null);
-    public selectedButton: (Highcharts.NavigationBindingsOptionsObject|null) = void 0 as any;
+    public selectedButton: (
+        Highcharts.NavigationBindingsOptionsObject|null
+    ) = void 0 as any;
     public stepIndex?: number;
     public steps?: boolean;
 
@@ -429,20 +441,30 @@ class NavigationBindings {
         // Shorthand object for getting events for buttons:
         navigation.boundClassNames = {};
 
-        objectEach((options.bindings || {}), function (value: Highcharts.NavigationBindingsOptionsObject): void {
+        objectEach((options.bindings || {}), function (
+            value: Highcharts.NavigationBindingsOptionsObject
+        ): void {
             navigation.boundClassNames[value.className] = value;
         });
 
         // Handle multiple containers with the same class names:
-        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (subContainer: HTMLElement): void {
+        ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (
+            subContainer: HTMLElement
+        ): void {
             navigation.eventsToUnbind.push(
-                addEvent(subContainer, 'click', function (event: PointerEvent): void {
+                addEvent(subContainer, 'click', function (
+                    event: PointerEvent
+                ): void {
                     const bindings = navigation.getButtonEvents(
                         subContainer,
                         event
                     );
 
-                    if (bindings && bindings.button.className.indexOf('highcharts-disabled-btn') === -1) {
+                    if (
+                        bindings &&
+                        bindings.button.className
+                            .indexOf('highcharts-disabled-btn') === -1
+                    ) {
                         navigation.bindingsButtonClick(
                             bindings.button,
                             bindings.events,
@@ -486,11 +508,14 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
-                e: PointerEvent
-            ): void {
-                navigation.bindingsContainerMouseMove(this, e);
-            }, H.isTouchDevice ? { passive: false } : void 0)
+            addEvent(
+                chart.container,
+                H.isTouchDevice ? 'touchmove' : 'mousemove',
+                function (e: PointerEvent): void {
+                    navigation.bindingsContainerMouseMove(this, e);
+                },
+                H.isTouchDevice ? { passive: false } : void 0
+            )
         );
     }
 
@@ -519,7 +544,7 @@ class NavigationBindings {
      * @param {Highcharts.HTMLDOMElement} [button]
      *        Clicked button
      *
-     * @param {object} events
+     * @param {Object} events
      *        Events passed down from bindings (`init`, `start`, `step`, `end`)
      *
      * @param {Highcharts.PointerEventObject} clickEvent
@@ -531,9 +556,17 @@ class NavigationBindings {
         clickEvent: PointerEvent
     ): void {
         const navigation = this,
-            chart = navigation.chart;
+            chart = navigation.chart,
+            svgContainer = chart.renderer.boxWrapper;
+        let shouldEventBeFired = true;
 
         if (navigation.selectedButtonElement) {
+            if (
+                navigation.selectedButtonElement.classList === button.classList
+            ) {
+                shouldEventBeFired = false;
+            }
+
             fireEvent(
                 navigation,
                 'deselectButton',
@@ -552,17 +585,25 @@ class NavigationBindings {
             }
         }
 
-        navigation.selectedButton = events;
-        navigation.selectedButtonElement = button;
+        if (shouldEventBeFired) {
+            navigation.selectedButton = events;
+            navigation.selectedButtonElement = button;
 
-        fireEvent(navigation, 'selectButton', { button: button });
-        // Call "init" event, for example to open modal window
-        if (events.init) {
-            events.init.call(navigation, button, clickEvent);
-        }
+            fireEvent(navigation, 'selectButton', { button: button });
+            // Call "init" event, for example to open modal window
+            if (events.init) {
+                events.init.call(navigation, button, clickEvent);
+            }
 
-        if (events.start || events.steps) {
-            chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+            if (events.start || events.steps) {
+                chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+            }
+        } else {
+            chart.stockTools && chart.stockTools.toggleButtonAciveClass(button);
+            svgContainer.removeClass(PREFIX + 'draw-mode');
+            navigation.nextEvent = false;
+            navigation.mouseMoveEvent = false;
+            navigation.selectedButton = null;
         }
     }
     /**
@@ -599,7 +640,9 @@ class NavigationBindings {
                 // Element could be removed in the child action, e.g. button
                 (clickEvent.target as any).parentNode &&
                 // TO DO: Polyfill for IE11?
-                !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
+                !closestPolyfill(
+                    clickEvent.target as any, '.' + PREFIX + 'popup'
+                )
             ) {
                 fireEvent(navigation, 'closePopup');
             } else if (activeAnnotation.cancelClick) {
@@ -659,10 +702,13 @@ class NavigationBindings {
 
                 (navigation.stepIndex as any)++;
 
-                if ((selectedButton.steps as any)[navigation.stepIndex as any]) {
+                if (
+                    (selectedButton.steps as any)[navigation.stepIndex as any]
+                ) {
                     // If we have more steps, bind them one by one:
-                    navigation.mouseMoveEvent = navigation.nextEvent =
-                        (selectedButton.steps as any)[navigation.stepIndex as any];
+                    navigation.mouseMoveEvent = navigation.nextEvent = (
+                        selectedButton.steps as any
+                    )[navigation.stepIndex as any];
                 } else {
                     fireEvent(
                         navigation,
@@ -825,13 +871,18 @@ class NavigationBindings {
          * @param {string} key
          *        Option name, for example "visible" or "x", "y"
          *
-         * @param {object} parentEditables
+         * @param {Object} parentEditables
          *        Editables from NavigationBindings.annotationsEditable
          *
-         * @param {object} parent
+         * @param {Object} parent
          *        Where new options will be assigned
          */
-        function traverse(option: any, key: (0|string), parentEditables: any, parent: any): void {
+        function traverse(
+            option: any,
+            key: (0|string),
+            parentEditables: any,
+            parent: any
+        ): void {
             let nextParent: any;
 
             if (
@@ -851,7 +902,10 @@ class NavigationBindings {
                 if (isArray(option)) {
                     parent[key] = [];
 
-                    option.forEach(function (arrayOption: any, i: number): void {
+                    option.forEach(function (
+                        arrayOption: any,
+                        i: number
+                    ): void {
                         if (!isObject(arrayOption)) {
                             // Simple arrays, e.g. [String, Number, Boolean]
                             traverse(
@@ -865,7 +919,10 @@ class NavigationBindings {
                             parent[key][i] = {};
                             objectEach(
                                 arrayOption,
-                                function (nestedOption: any, nestedKey: string): void {
+                                function (
+                                    nestedOption: any,
+                                    nestedKey: string
+                                ): void {
                                     traverse(
                                         nestedOption,
                                         nestedKey,
@@ -885,14 +942,19 @@ class NavigationBindings {
                     } else {
                         parent[key] = nextParent;
                     }
-                    objectEach(option, function (nestedOption: any, nestedKey: string): void {
-                        traverse(
-                            nestedOption,
-                            nestedKey,
-                            key === 0 ? parentEditables : (nestedEditables as any)[key],
-                            nextParent
-                        );
-                    });
+                    objectEach(
+                        option,
+                        function (nestedOption: any, nestedKey: string): void {
+                            traverse(
+                                nestedOption,
+                                nestedKey,
+                                key === 0 ?
+                                    parentEditables :
+                                    (nestedEditables as any)[key],
+                                nextParent
+                            );
+                        }
+                    );
                 } else {
                     // Leaf:
                     if (key === 'format') {
@@ -915,15 +977,18 @@ class NavigationBindings {
         objectEach(options, function (option: any, key: string): void {
             if (key === 'typeOptions') {
                 visualOptions[key] = {};
-                objectEach(options[key], function (typeOption: any, typeKey: string): void {
-                    (traverse as any)(
-                        typeOption,
-                        typeKey,
-                        nestedEditables,
-                        visualOptions[key],
-                        true
-                    );
-                });
+                objectEach(
+                    options[key],
+                    function (typeOption: any, typeKey: string): void {
+                        (traverse as any)(
+                            typeOption,
+                            typeKey,
+                            nestedEditables,
+                            visualOptions[key],
+                            true
+                        );
+                    }
+                );
             } else {
                 traverse(option, key, (editables as any)[type], visualOptions);
             }
@@ -938,14 +1003,14 @@ class NavigationBindings {
      *
      * @function Highcharts.NavigationBindings#getClickedClassNames
      *
-     * @param {Highcharts.HTMLDOMElement}
-     *        Container that event is bound to.
+     * @param {Highcharts.HTMLDOMElement} container
+     * Container that event is bound to.
      *
      * @param {global.Event} event
-     *        Browser's event.
+     * Browser's event.
      *
      * @return {Array<Array<string, Highcharts.HTMLDOMElement>>}
-     *         Array of class names with corresponding elements
+     * Array of class names with corresponding elements
      */
     public getClickedClassNames(
         container: HTMLDOMElement,
@@ -992,7 +1057,7 @@ class NavigationBindings {
      * @param {global.Event} event
      *        Browser's event.
      *
-     * @return {object}
+     * @return {Object}
      *         Object with events (init, start, steps, and end)
      */
     public getButtonEvents(
@@ -1001,10 +1066,14 @@ class NavigationBindings {
     ): Highcharts.NavigationBindingsButtonEventsObject {
         let navigation = this,
             classNames = this.getClickedClassNames(container, event),
-            bindings: (Highcharts.NavigationBindingsButtonEventsObject|undefined);
+            bindings: (
+                Highcharts.NavigationBindingsButtonEventsObject|undefined
+            );
 
 
-        classNames.forEach(function (className: [string, HTMLDOMElement]): void {
+        classNames.forEach(function (
+            className: [string, HTMLDOMElement]
+        ): void {
             if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {
                     events: navigation.boundClassNames[className[0]],
@@ -1057,7 +1126,9 @@ interface NavigationBindings {
 NavigationBindings.prototype.utils = bindingsUtils;
 
 
-Chart.prototype.initNavigationBindings = function (this: Highcharts.AnnotationChart): void {
+Chart.prototype.initNavigationBindings = function (
+    this: Highcharts.AnnotationChart
+): void {
     const chart = this,
         options = chart.options;
 
@@ -1129,7 +1200,9 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                     annotation: annotation,
                     formType: 'annotation-toolbar',
                     options: navigation.annotationToFields(annotation),
-                    onSubmit: function (data: Highcharts.PopupFieldsObject): void {
+                    onSubmit: function (
+                        data: Highcharts.PopupFieldsObject
+                    ): void {
 
                         let config: Highcharts.PopupFieldsDictionary<string> = {},
                             typeOptions;
@@ -1138,7 +1211,10 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             navigation.activeAnnotation = false;
                             navigation.chart.removeAnnotation(annotation);
                         } else {
-                            navigation.fieldsToOptions(data.fields as Record<string, string>, config);
+                            navigation.fieldsToOptions(
+                                data.fields as Record<string, string>,
+                                config
+                            );
                             navigation.deselectAnnotation();
 
                             typeOptions = config.typeOptions;
@@ -1146,10 +1222,14 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             if (annotation.options.type === 'measure') {
                                 // Manually disable crooshars according to
                                 // stroke width of the shape:
-                                (typeOptions as any).crosshairY.enabled =
-                                    (typeOptions as any).crosshairY.strokeWidth !== 0;
-                                (typeOptions as any).crosshairX.enabled =
-                                    (typeOptions as any).crosshairX.strokeWidth !== 0;
+                                (typeOptions as any).crosshairY.enabled = (
+                                    (typeOptions as any).crosshairY
+                                        .strokeWidth !== 0
+                                );
+                                (typeOptions as any).crosshairX.enabled = (
+                                    (typeOptions as any).crosshairX
+                                        .strokeWidth !== 0
+                                );
                             }
 
                             annotation.update(config);
@@ -1179,9 +1259,12 @@ if ((H as any).Annotation) {
     selectableAnnotation(Annotation);
 
     // Advanced annotations:
-    objectEach(Annotation.types, function (annotationType: typeof Annotation): void {
-        selectableAnnotation(annotationType);
-    });
+    objectEach(
+        Annotation.types,
+        function (annotationType: typeof Annotation): void {
+            selectableAnnotation(annotationType);
+        }
+    );
 }
 
 setOptions({
@@ -1324,7 +1407,8 @@ setOptions({
                                 }]
                             },
                             navigation.annotationsOptions,
-                            (navigation.bindings as any).circleAnnotation.annotationsOptions
+                            (navigation.bindings as any).circleAnnotation
+                                .annotationsOptions
                         )
                     );
                 },
@@ -1409,7 +1493,8 @@ setOptions({
                                 ]
                             },
                             navigation.annotationsOptions,
-                            (navigation.bindings as any).ellipseAnnotation.annotationOptions
+                            (navigation.bindings as any).ellipseAnnotation
+                                .annotationOptions
                         )
                     );
                 },
@@ -1419,7 +1504,9 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        const target = annotation.shapes[0] as ControllableEllipse,
+                        const target = (
+                                annotation.shapes[0] as ControllableEllipse
+                            ),
                             position = target.getAbsolutePosition(
                                 target.points[1]
                             );
@@ -1697,7 +1784,10 @@ addEvent(Chart, 'render', function (): void {
 
         objectEach(
             navigationBindings.boundClassNames,
-            function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
+            function (
+                value: Highcharts.NavigationBindingsOptionsObject,
+                key: string
+            ): void {
 
                 if (
                     chart.navigationBindings &&
@@ -1705,27 +1795,28 @@ addEvent(Chart, 'render', function (): void {
                     chart.navigationBindings.container[0]
                 ) {
 
-                    // Get the HTML element coresponding to the
-                    // className taken from StockToolsBindings.
-                    const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
+                    // Get the HTML element coresponding to the className taken
+                    // from StockToolsBindings.
+                    const buttonNode = chart.navigationBindings.container[0]
+                        .querySelectorAll('.' + key);
 
                     if (buttonNode) {
                         for (let i = 0; i < buttonNode.length; i++) {
-                            const button = buttonNode[i];
+                            const button = buttonNode[i],
+                                cls = button.className;
                             if (value.noDataState === 'normal') {
-                                // If button has noDataState: 'normal',
-                                // and has disabledClassName,
-                                // remove this className.
-                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                // If button has noDataState: 'normal', and has
+                                // disabledClassName, remove this className.
+                                if (cls.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
                             } else if (!buttonsEnabled) {
-                                if (button.className.indexOf(disabledClassName) === -1) {
+                                if (cls.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
                             } else {
                                 // Enable all buttons by deleting the className.
-                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                if (cls.indexOf(disabledClassName) !== -1) {
                                     button.classList.remove(disabledClassName);
                                 }
                             }
@@ -1737,8 +1828,12 @@ addEvent(Chart, 'render', function (): void {
     }
 });
 
-addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
-    this.deselectAnnotation();
-});
+addEvent(
+    NavigationBindings,
+    'closePopup',
+    function (this: NavigationBindings): void {
+        this.deselectAnnotation();
+    }
+);
 
 export default NavigationBindings;

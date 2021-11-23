@@ -86,14 +86,6 @@ class SplineSeries extends LineSeries {
      *
      * @private
      * @function Highcharts.seriesTypes.spline#getPointSpline
-     *
-     * @param {Array<Highcharts.Point>}
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {number} i
-     *
-     * @return {Highcharts.SVGPathArray}
      */
     public getPointSpline(
         points: Array<SplinePoint>,

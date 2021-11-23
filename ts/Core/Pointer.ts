@@ -248,7 +248,9 @@ class Pointer {
                 Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
             }
             if (Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = Pointer.unbindDocumentTouchEnd();
+                Pointer.unbindDocumentTouchEnd = (
+                    Pointer.unbindDocumentTouchEnd()
+                );
             }
         }
 
@@ -708,6 +710,7 @@ class Pointer {
      * Pointer event, extended with `chartX` and `chartY` properties.
      *
      * @return {Highcharts.PointerAxisCoordinatesObject}
+     * Axis coordinates.
      */
     public getCoordinates(e: PointerEvent): Pointer.AxesCoordinatesObject {
 
@@ -750,7 +753,7 @@ class Pointer {
      * @param {Highcharts.PointerEventObject} [e]
      * The triggering event, containing chart coordinates of the pointer.
      *
-     * @return {object}
+     * @return {Object}
      * Object containing resulting hover data: hoverPoint, hoverSeries, and
      * hoverPoints.
      */
@@ -1138,10 +1141,8 @@ class Pointer {
             chart.pointer.chartPosition = void 0;
         }
 
-        if ( // #11635, Firefox wheel scroll does not fire out events consistently
-            tooltip &&
-            !tooltip.isHidden
-        ) {
+        // #11635, Firefox wheel scroll does not fire out events consistently
+        if (tooltip && !tooltip.isHidden) {
             this.reset();
         }
     }
@@ -1319,7 +1320,12 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
+        if (
+            hasZoom &&
+            self.initiated &&
+            !fireClickEvent &&
+            e.cancelable !== false
+        ) {
             e.preventDefault();
         }
 
@@ -1547,7 +1553,8 @@ class Pointer {
             clip[xy] = clipXY - plotLeftTop;
             clip[wh] = selectionWH;
         }
-        const scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+        const scaleKey = inverted ?
+            (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
         const transformScale = inverted ? 1 / scale : scale;
 
         selectionMarker[wh] = selectionWH;
@@ -1665,8 +1672,8 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#runPointActions
      *
-     * @fires Highcharts.Point#event:mouseOut
-     * @fires Highcharts.Point#event:mouseOver
+     * @emits Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e: PointerEvent, p?: Point): void {
         const pointer = this,
@@ -1956,7 +1963,9 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+            hoverChart.pointer.onContainerMouseLeave(
+                { relatedTarget: true } as any
+            );
         }
 
         if (

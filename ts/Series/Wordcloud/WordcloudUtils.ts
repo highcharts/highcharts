@@ -140,10 +140,9 @@ function getAxesFromPolygon(
  * @private
  * @function project
  * @param {Highcharts.PolygonObject} polygon
- *        Array of points in a polygon.
+ * Array of points in a polygon.
  * @param {Highcharts.PolygonPointObject} target
- *        The coordinate of pr
- * @return {Highcharts.RangeObject}
+ * The coordinate of pr
  */
 function project(
     this: unknown,
@@ -208,7 +207,11 @@ function isPolygonsColliding(
         axes = axes1.concat(axes2),
         overlappingOnAllAxes = !find(
             axes,
-            (axis): boolean => isPolygonsOverlappingOnAxis(axis, polygon1, polygon2)
+            (axis): boolean => isPolygonsOverlappingOnAxis(
+                axis,
+                polygon1,
+                polygon2
+            )
         );
 
     return overlappingOnAllAxes;
@@ -438,7 +441,7 @@ function getRandomPosition(size: number): number {
  * @param {number} targetHeight
  * Height of target area.
  *
- * @param {object} field
+ * @param {Object} field
  * The playing field.
  *
  * @param {Highcharts.Series} series
@@ -478,10 +481,10 @@ function getScale(
  * @param {Array<Highcharts.Point>} data
  * Array of points.
  *
- * @param {object} data.dimensions
+ * @param {Object} data.dimensions
  * The height and width of the word.
  *
- * @return {object}
+ * @return {Object}
  * The width and height of the playing field.
  */
 function getPlayingField(
@@ -591,7 +594,7 @@ function getRotation(
  * @param {Function} fn
  * The spiral function.
  *
- * @param {object} params
+ * @param {Object} params
  * Additional parameters for the spiral.
  *
  * @return {Function}
@@ -836,9 +839,6 @@ function updateFieldBoundaries(
  *
  * @private
  * @function correctFloat
- * @param {number} number
- * @param {number} [precision]
- * @return {number}
  */
 function correctFloat(number: number, precision?: number): number {
     const p = isNumber(precision) ? precision : 14,

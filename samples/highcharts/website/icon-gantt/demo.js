@@ -65,7 +65,12 @@ const ganttChart = function () {
         // Run in a timeout to allow the select to update
         setTimeout(function () {
             btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
-    isAddingTask;
+            isAddingTask;
+            if (!btnRemoveTask.disabled) {
+                btnRemoveTask.classList.remove('disabled');
+            }
+
+
         }, 10);
     }
 
@@ -114,6 +119,38 @@ const ganttChart = function () {
             },
             styledMode: (true)
         },
+        lang: {
+            accessibility: {
+                chartContainerLabel: '',
+                screenReaderSection: {
+                    beforeRegionLabel: '',
+                    endOfChartMarker: ''
+                }
+            }
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            },
+            screenReaderSection: {
+                beforeChartFormat: "<h1>{chartTitle}</h1><p>{typeDescription}</p><p>{chartSubtitle}</p><p>Interactive Gantt diagram showing tasks and milestones across three departments, Tech, Marketing, and Sales.</p>"
+            },
+            point: {
+                descriptionFormatter: function (point) {
+                    const formatTime = t => point.series.chart.time.dateFormat(
+                        '%a %B %e, %l:%M %p', new Date(t).getTime()
+                    );
+                    const startDate = formatTime(point.start);
+                    const endDate = formatTime(point.end);
+                    const category = point.yCategory;
+
+                    return point.end ?
+                        ` ${point.name}, from: ${startDate} to ${endDate}. ${category} department.` // eslint-disable-line
+                        : ` Milestone, ${point.name}, ${startDate}. ${category} department.`; // eslint-disable-line
+                }
+            }
+        },
+
         title: {
             text: 'Interactive Gantt Chart',
             floating: true
@@ -239,7 +276,8 @@ const ganttChart = function () {
             xDateFormat: '%a %b %d, %H:%M',
             outside: true,
             className: 'tip',
-            shadow: false
+            shadow: false,
+            stickOnContact: true
         },
 
         series: [{
@@ -315,6 +353,56 @@ const ganttChart = function () {
             },
             {
                 condition: {
+                    maxWidth: 300,
+                    minWidth: 251
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: false,
+                                y: 15
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 400,
+                    minWidth: 301
+                },
+                chartOptions: {
+                    chart: {
+                        height: 400
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                y: 20
+                            }
+                        }
+                    },
+                    title: {
+                        y: 0
+                    },
+                    subtitle: {
+                        y: 50
+                    }
+                }
+            },
+            {
+                condition: {
                     minWidth: 499
                 },
                 chartOptions: {
@@ -343,12 +431,25 @@ const ganttChart = function () {
 
     /* Add button handlers for add/remove tasks */
 
+    function hideDialog() {
+        addTaskDialog.classList.remove('show');
+        addTaskDialogOverlay.classList.remove('show');
+        isAddingTask = false;
+        btnShowDialog.focus();
+    }
+
     btnRemoveTask.onclick = function () {
         var points = chart.getSelectedPoints();
         each(points, function (point) {
             point.remove();
         });
     };
+
+    addTaskDialog.addEventListener('keydown', function (e) {
+        if (e.keyCode === 27) {
+            hideDialog();
+        }
+    });
 
     btnShowDialog.onclick = function () {
         // Update dependency list
@@ -368,9 +469,7 @@ const ganttChart = function () {
         //addTaskDialog.className = 'overlay';
         isAddingTask = true;
 
-        // Focus name field
-        inputName.value = '';
-        //inputName.focus();
+        addTaskDialog.focus();
     };
 
     btnAddTask.onclick = function () {
@@ -397,33 +496,22 @@ const ganttChart = function () {
         }
 
         // Add the point
-        series.addPoint({
-            start: maxEnd + (milestone ? day : 0),
-            end: milestone ? undef : maxEnd + day,
-            y: y,
-            name: name,
-            dependency: dependency ? dependency.id : undef,
-            milestone: milestone
-        });
+        if (name) {
+            series.addPoint({
+                start: maxEnd + (milestone ? day : 0),
+                end: milestone ? undef : maxEnd + day,
+                y: y,
+                name: name,
+                dependency: dependency ? dependency.id : undef,
+                milestone: milestone
+            });
+        }
 
-        // Hide dialog
-        addTaskDialog.classList.remove('show');
-        addTaskDialogOverlay.classList.remove('show');
-        isAddingTask = false;
+        hideDialog();
     };
 
-    btnCancelAddTask.onclick = function () {
-        // Hide dialog
-        addTaskDialog.classList.remove('show');
-        addTaskDialogOverlay.classList.remove('show');
-        isAddingTask = false;
-    };
-    btnCloseAddTask.onclick = function () {
-        // Hide dialog
-        addTaskDialog.classList.remove('show');
-        addTaskDialogOverlay.classList.remove('show');
-        isAddingTask = false;
-    };
+    btnCancelAddTask.onclick = hideDialog;
+    btnCloseAddTask.onclick = hideDialog;
 
 };
 const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@feb8baf043cffb5e141ab065f95b8ca397569297/samples/graphics/homepage/';

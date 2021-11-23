@@ -45,13 +45,6 @@ const {
 /**
  * Utility func to get padding definition from tile size division
  * @private
- * @param {Highcharts.TilemapSeries} series
- * series
- * @param {Highcharts.number} xDiv
- * xDiv
- * @param {Highcharts.number} yDiv
- * yDiv
- * @return {Highcharts.TilemapPaddingObject}
  */
 function tilePaddingFromTileSize(
     series: TilemapSeries,

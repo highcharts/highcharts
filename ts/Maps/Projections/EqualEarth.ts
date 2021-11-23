@@ -16,7 +16,8 @@ const A1 = 1.340264,
     A2 = -0.081106,
     A3 = 0.000893,
     A4 = 0.003796,
-    M = Math.sqrt(3) / 2.0;
+    M = Math.sqrt(3) / 2.0,
+    scale = 74.03120656864502;
 
 const EqualEarth: ProjectionDefinition = {
 
@@ -26,7 +27,7 @@ const EqualEarth: ProjectionDefinition = {
             paramLatSq = paramLat * paramLat,
             paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
 
-        const x = lonLat[0] * d * Math.cos(paramLat) / (
+        const x = lonLat[0] * d * Math.cos(paramLat) * scale / (
             M *
             (
                 A1 +
@@ -34,7 +35,7 @@ const EqualEarth: ProjectionDefinition = {
                 paramLatPow6 * (7 * A3 + 9 * A4 * paramLatSq)
             )
         );
-        const y = paramLat * (
+        const y = paramLat * scale * (
             A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq)
         );
 
@@ -42,11 +43,13 @@ const EqualEarth: ProjectionDefinition = {
     },
 
     inverse: (xy): [number, number] => {
-        const d = 180 / Math.PI,
+        const x = xy[0] / scale,
+            y = xy[1] / scale,
+            d = 180 / Math.PI,
             epsilon = 1e-9,
             iterations = 12;
 
-        let paramLat = xy[1],
+        let paramLat = y,
             paramLatSq, paramLatPow6, fy, fpy, dlat, i;
 
         for (i = 0; i < iterations; ++i) {
@@ -54,7 +57,7 @@ const EqualEarth: ProjectionDefinition = {
             paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
             fy = paramLat * (
                 A1 + A2 * paramLatSq + paramLatPow6 * (A3 + A4 * paramLatSq)
-            ) - xy[1];
+            ) - y;
             fpy = A1 + 3 * A2 * paramLatSq + paramLatPow6 * (
                 7 * A3 + 9 * A4 * paramLatSq
             );
@@ -66,7 +69,7 @@ const EqualEarth: ProjectionDefinition = {
         paramLatSq = paramLat * paramLat;
         paramLatPow6 = paramLatSq * paramLatSq * paramLatSq;
 
-        const lon = d * M * xy[0] * (
+        const lon = d * M * x * (
             A1 + 3 * A2 * paramLatSq + paramLatPow6 * (
                 7 * A3 + 9 * A4 * paramLatSq
             )

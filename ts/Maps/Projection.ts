@@ -17,7 +17,10 @@ import type {
     LonLatArray
 } from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
-import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
+import type {
+    ProjectionOptions,
+    ProjectionRotationOption
+} from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
@@ -167,6 +170,9 @@ export default class Projection {
         const { def, rotator } = this;
 
         if (def) {
+            if (def.init) {
+                def.init(options);
+            }
             this.maxLatitude = def.maxLatitude || 90;
             this.hasGeoProjection = true;
         }

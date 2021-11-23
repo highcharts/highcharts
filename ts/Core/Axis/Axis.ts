@@ -148,7 +148,14 @@ class Axis {
 
     // Properties to survive after destroy, needed for Axis.update (#4317,
     // #5773, #5881).
-    public static keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
+    public static keepProps = [
+        'extKey',
+        'hcEvents',
+        'names',
+        'series',
+        'userMax',
+        'userMin'
+    ];
 
     /* *
      *
@@ -295,8 +302,8 @@ class Axis {
      * @param {AxisOptions} userOptions
      * Axis options.
      *
-     * @fires Highcharts.Axis#event:afterInit
-     * @fires Highcharts.Axis#event:init
+     * @emits Highcharts.Axis#event:afterInit
+     * @emits Highcharts.Axis#event:init
      */
     public init(chart: Chart, userOptions: DeepPartial<AxisOptions>): void {
 
@@ -339,7 +346,8 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
+        // Needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite);
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -540,7 +548,7 @@ class Axis {
      * @param {Highcharts.AxisOptions} userOptions
      * Axis options.
      *
-     * @fires Highcharts.Axis#event:afterSetOptions
+     * @emits Highcharts.Axis#event:afterSetOptions
      */
     public setOptions(userOptions: DeepPartial<AxisOptions>): void {
         this.options = merge(
@@ -627,7 +635,9 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
+                    ret = numberFormatter(
+                        value / multi, -1
+                    ) + numericSymbols[i];
                 }
             }
         }
@@ -650,8 +660,8 @@ class Axis {
      * @private
      * @function Highcharts.Axis#getSeriesExtremes
      *
-     * @fires Highcharts.Axis#event:afterGetSeriesExtremes
-     * @fires Highcharts.Axis#event:getSeriesExtremes
+     * @emits Highcharts.Axis#event:afterGetSeriesExtremes
+     * @emits Highcharts.Axis#event:getSeriesExtremes
      */
     public getSeriesExtremes(): void {
         const axis = this,
@@ -697,7 +707,9 @@ class Axis {
                     if (axis.isXAxis) {
                         xData = series.xData as any;
                         if (xData.length) {
-                            const isPositive = (number: number): boolean => number > 0;
+                            const isPositive = (
+                                number: number
+                            ): boolean => number > 0;
 
                             xData = axis.logarithmic ?
                                 xData.filter(axis.validatePositiveValue) :
@@ -788,26 +800,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#translate
-     *
-     * @param {number} val
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [backwards]
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [cvsCoord]
-     * TO-DO: parameter description
-     *
-     * @param {boolean|null} [old]
-     * TO-DO: parameter description
-     *
-     * @param {boolean} [handleLog]
-     * TO-DO: parameter description
-     *
-     * @param {number} [pointPlacement]
-     * TO-DO: parameter description
-     *
-     * @return {number|undefined}
      */
     public translate(
         val: number,
@@ -1053,8 +1045,12 @@ class Axis {
         min: number,
         max: number
     ): Array<number> {
-        const roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-            roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
+        const roundedMin = correctFloat(
+                Math.floor(min / tickInterval) * tickInterval
+            ),
+            roundedMax = correctFloat(
+                Math.ceil(max / tickInterval) * tickInterval
+            ),
             tickPositions = [];
 
         let pos,
@@ -1106,6 +1102,7 @@ class Axis {
      * @function Highcharts.Axis#getMinorTickInterval
      *
      * @return {number|"auto"|null}
+     * Legacy option
      */
     public getMinorTickInterval(): ('auto'|null|number) {
         const options = this.options;
@@ -1173,7 +1170,9 @@ class Axis {
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(
+                            minorTickInterval
+                        ),
                         min,
                         max,
                         options.startOfWeek
@@ -1255,7 +1254,10 @@ class Axis {
                     if (xData.length > 1) {
                         for (i = loopLength; i > 0; i--) {
                             distance = xData[i] - xData[i - 1];
-                            if (!closestDataRange || distance < closestDataRange) {
+                            if (
+                                !closestDataRange ||
+                                distance < closestDataRange
+                            ) {
                                 closestDataRange = distance;
                             }
                         }
@@ -1321,8 +1323,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#getClosest
-     *
-     * @return {number}
      */
     public getClosest(): number {
         let ret: any;
@@ -1469,7 +1469,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setAxisTranslation
      *
-     * @fires Highcharts.Axis#event:afterSetAxisTranslation
+     * @emits Highcharts.Axis#event:afterSetAxisTranslation
      */
     public setAxisTranslation(): void {
         const axis = this,
@@ -1515,7 +1515,9 @@ class Axis {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        const isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
+                        const isPointPlacementAxis = series.is('xrange') ?
+                            !isXAxis :
+                            isXAxis;
 
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
@@ -1543,7 +1545,9 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = axis.ordinal && axis.ordinal.slope && closestPointRange ?
+            ordinalCorrection = (
+                axis.ordinal && axis.ordinal.slope && closestPointRange
+            ) ?
                 axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
@@ -1581,8 +1585,6 @@ class Axis {
     /**
      * @private
      * @function Highcharts.Axis#minFromRange
-     *
-     * @return {number|undefined}
      */
     public minFromRange(): (number|undefined) {
         const axis = this;
@@ -1599,7 +1601,7 @@ class Axis {
      * @param {boolean} secondPass
      * TO-DO: parameter description
      *
-     * @fires Highcharts.Axis#event:foundExtremes
+     * @emits Highcharts.Axis#event:foundExtremes
      */
     public setTickInterval(secondPass?: boolean): void {
         const axis = this,
@@ -1846,13 +1848,16 @@ class Axis {
             // First process all series assigned to that axis.
             axis.series.forEach(function (series): void {
                 // Allows filtering out points outside the plot area.
-                series.forceCrop = series.forceCropping && series.forceCropping();
+                series.forceCrop = (
+                    series.forceCropping &&
+                    series.forceCropping()
+                );
                 series.processData(hasExtemesChanged);
             });
 
-            // Then apply grouping if needed.
-            // The hasExtemesChanged helps to decide if the data grouping should
-            // be skipped in the further calculations #16319.
+            // Then apply grouping if needed. The hasExtemesChanged helps to
+            // decide if the data grouping should be skipped in the further
+            // calculations #16319.
             fireEvent(this, 'postProcessData', { hasExtemesChanged });
         }
 
@@ -1915,7 +1920,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setTickPositions
      *
-     * @fires Highcharts.Axis#event:afterSetTickPositions
+     * @emits Highcharts.Axis#event:afterSetTickPositions
      */
     public setTickPositions(): void {
         const axis = this,
@@ -1924,8 +1929,12 @@ class Axis {
             minorTickIntervalOption = this.getMinorTickInterval(),
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
-            startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
-            endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
+            startOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.startOnTick
+            ),
+            endOnTick = (
+                (isColorAxis || !hasVerticalPanning) && options.endOnTick
+            );
 
         let tickPositions,
             tickPositioner = options.tickPositioner;
@@ -2245,7 +2254,11 @@ class Axis {
         let len,
             i;
 
-        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
+        if (
+            axis.hasData() &&
+            isNumber(axis.min) &&
+            isNumber(axis.max)
+        ) { // #14769
             if (currentTickAmount < tickAmount) {
                 while (tickPositions.length < tickAmount) {
 
@@ -2310,7 +2323,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#setScale
      *
-     * @fires Highcharts.Axis#event:afterSetScale
+     * @emits Highcharts.Axis#event:afterSetScale
      */
     public setScale(): void {
         const axis = this;
@@ -2414,7 +2427,7 @@ class Axis {
      * @param {*} [eventArguments]
      * Arguments to be accessed in event handler.
      *
-     * @fires Highcharts.Axis#event:setExtremes
+     * @emits Highcharts.Axis#event:setExtremes
      */
     public setExtremes(
         newMin?: number,
@@ -2457,14 +2470,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#zoom
-     *
-     * @param {number} newMin
-     * TO-DO: parameter description
-     *
-     * @param {number} newMax
-     * TO-DO: parameter description
-     *
-     * @return {boolean}
      */
     public zoom(newMin: number, newMax: number): void {
         const axis = this,
@@ -2720,8 +2725,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#labelMetrics
-     *
-     * @return {Highcharts.FontMetricsObject}
      */
     public labelMetrics(): FontMetricsObject {
         const index = this.tickPositions && this.tickPositions[0] || 0;
@@ -2739,8 +2742,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#unsquish
-     *
-     * @return {number}
      */
     public unsquish(): number {
         const labelOptions = this.options.labels,
@@ -3200,7 +3201,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#getOffset
      *
-     * @fires Highcharts.Axis#event:afterGetOffset
+     * @emits Highcharts.Axis#event:afterGetOffset
      */
     public getOffset(): void {
         const axis = this,
@@ -3623,7 +3624,7 @@ class Axis {
      * @private
      * @function Highcharts.Axis#render
      *
-     * @fires Highcharts.Axis#event:afterRender
+     * @emits Highcharts.Axis#event:afterRender
      */
     public render(): void {
         const axis = this,
@@ -3712,7 +3713,9 @@ class Axis {
                         if (!alternateBands[pos]) {
                             // Should be imported from PlotLineOrBand.js, but
                             // the dependency cycle with axis is a problem
-                            alternateBands[pos] = new (H as any).PlotLineOrBand(axis);
+                            alternateBands[pos] = new (H as any).PlotLineOrBand(
+                                axis
+                            );
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
@@ -3734,7 +3737,8 @@ class Axis {
                     .concat((options.plotBands as any) || [])
                     .forEach(
                         function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis).addPlotBandOrLine(plotLineOptions);
+                            (axis as unknown as PlotLineOrBand.Axis)
+                                .addPlotBandOrLine(plotLineOptions);
                         }
                     );
             }
@@ -3859,8 +3863,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#getKeepProps
-     *
-     * @return {Array<string>}
      */
     public getKeepProps(): Array<string> {
         return (this.keepProps || Axis.keepProps);
@@ -3943,8 +3945,8 @@ class Axis {
      * @param {Highcharts.Point} [point]
      * The Point object if the crosshair snaps to points.
      *
-     * @fires Highcharts.Axis#event:afterDrawCrosshair
-     * @fires Highcharts.Axis#event:drawCrosshair
+     * @emits Highcharts.Axis#event:afterDrawCrosshair
+     * @emits Highcharts.Axis#event:drawCrosshair
      */
     public drawCrosshair(e?: PointerEvent, point?: Point): void {
 
@@ -4096,8 +4098,6 @@ class Axis {
      *
      * @private
      * @function Highcharts.Axis#hasVerticalPanning
-     *
-     * @return {boolean}
      */
     public hasVerticalPanning(): boolean {
         const panningOptions = this.chart.options.chart.panning;
@@ -4116,8 +4116,6 @@ class Axis {
     *
     * @param {unknown} value
     * The axis value
-    *
-    * @return {boolean}
     */
     public validatePositiveValue(value: unknown): boolean {
         return isNumber(value) && value > 0;

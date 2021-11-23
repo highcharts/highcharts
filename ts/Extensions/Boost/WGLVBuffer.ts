@@ -39,14 +39,10 @@ declare global {
  *
  * @private
  * @function GLVertexBuffer
- *
  * @param {WebGLContext} gl
- *        the context in which to create the buffer
- *
+ * the context in which to create the buffer
  * @param {GLShader} shader
- *        the shader to use
- *
- * @return {*}
+ * the shader to use
  */
 function GLVertexBuffer(
     gl: WebGLRenderingContext,
@@ -155,7 +151,8 @@ function GLVertexBuffer(
      * @param drawMode {String} - the draw mode
      */
     function render(from: number, to: number, drawMode: string): boolean {
-        const length = preAllocated ? preAllocated.length : (data as any).length;
+        const length = preAllocated ?
+            preAllocated.length : (data as any).length;
 
         if (!buffer) {
             return false;

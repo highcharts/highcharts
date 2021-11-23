@@ -456,7 +456,8 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public createNodeColumn(): OrganizationSeries.ColumnArray {
-        const column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
+        const column: OrganizationSeries.ColumnArray = super.createNodeColumn
+            .call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
@@ -486,13 +487,18 @@ class OrganizationSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+            attribs = SankeySeries.prototype.pointAttribs.call(
+                series,
+                point,
+                state
+            ),
             level = point.isNode ? point.level : point.fromNode.level,
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
             stateOptions: OrganizationSeriesOptions = (
-                levelOptions.states && (levelOptions.states as any)[state as any]
+                levelOptions.states &&
+                (levelOptions.states as any)[state as any]
             ) || {},
             values: (
                 OrganizationPointOptions &

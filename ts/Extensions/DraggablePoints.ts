@@ -514,7 +514,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -546,7 +548,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -1079,7 +1083,6 @@ if (seriesTypes.xrange) {
      * @private
      * @param {string} type
      *        Unsupported series type
-     * @return {void}
      */
     function (type: string): void {
         if (seriesTypes[type]) {
@@ -1683,7 +1686,7 @@ function hasDraggedPastSensitivity(
  * @param {Highcharts.SVGElement} [guideBox]
  *        The guide box to take snapshot of.
  *
- * @return {object}
+ * @return {Object}
  *         Snapshot object. Point properties are placed in a hashmap with IDs as
  *         keys.
  */
@@ -1880,7 +1883,7 @@ function initDragDrop(
  * @private
  * @function getNewPoints
  *
- * @param {object} dragDropData
+ * @param {Object} dragDropData
  *        A chart's dragDropData with drag/drop origin information, and info on
  *        which points are being dragged.
  *
@@ -2150,7 +2153,7 @@ Chart.prototype.setGuideBoxState = function (
  * @private
  * @function Highcharts.Point#getDropValues
  *
- * @param {object} origin
+ * @param {Object} origin
  *        Mouse position (chartX/Y) and point props at current data values.
  *        Point props should be organized per point.id in a hashmap.
  *
@@ -2286,7 +2289,9 @@ Series.prototype.getGuideBox = function (
 
     // Find bounding box of all points
     points.forEach(function (point: Point): void {
-        const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
+        const bBox = (
+            point.graphic && point.graphic.getBBox() || point.shapeArgs
+        );
 
         if (bBox) {
             let plotX2;
@@ -2582,7 +2587,7 @@ Chart.prototype.hideDragHandles = function (): void {
  * @private
  * @function countProps
  *
- * @param {object} obj
+ * @param {Object} obj
  *        The object to count.
  *
  * @return {number}

@@ -38,17 +38,34 @@ declare global {
         interface AnnotationEventEmitterMixin {
             addEvents(this: AnnotationEventEmitter): void;
             destroy(this: AnnotationEventEmitter): void;
-            mouseMoveToRadians(this: AnnotationEventEmitter, e: AnnotationEventObject, cx: number, cy: number): number;
+            mouseMoveToRadians(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject,
+                cx: number,
+                cy: number
+            ): number;
             mouseMoveToScale(
                 this: AnnotationEventEmitter,
                 e: AnnotationEventObject,
                 cx: number,
                 cy: number
             ): PositionObject;
-            mouseMoveToTranslation(this: AnnotationEventEmitter, e: AnnotationEventObject): PositionObject;
-            onDrag(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseDown(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
-            onMouseUp(this: AnnotationEventEmitter, e: AnnotationEventObject): void;
+            mouseMoveToTranslation(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): PositionObject;
+            onDrag(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseDown(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
+            onMouseUp(
+                this: AnnotationEventEmitter,
+                e: AnnotationEventObject
+            ): void;
             removeDocEvents(this: AnnotationEventEmitter): void;
         }
         interface AnnotationEventObject extends PointerEvent {
@@ -78,7 +95,6 @@ const {
  *
  * @private
  * @mixin
- * @memberOf Annotation
  */
 const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
@@ -173,7 +189,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse down handler.
      */
-    onMouseDown: function (this: Highcharts.AnnotationEventEmitter, e: Highcharts.AnnotationEventObject): void {
+    onMouseDown: function (
+        this: Highcharts.AnnotationEventEmitter,
+        e: Highcharts.AnnotationEventObject
+    ): void {
         let emitter = this,
             pointer = emitter.chart.pointer,
             prevChartX: number,
@@ -243,7 +262,10 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Mouse up handler.
      */
-    onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
+    onMouseUp: function (
+        this: Highcharts.AnnotationEventEmitter,
+        _e: Highcharts.AnnotationEventObject
+    ): void {
         const chart = this.chart,
             annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
@@ -284,10 +306,14 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((this.points as any).length) {
                 (this as any).translate(translation.x, translation.y);
             } else {
-                (this.shapes as any).forEach(function (shape: SVGElement): void {
+                (this.shapes as any).forEach(function (
+                    shape: SVGElement
+                ): void {
                     shape.translate(translation.x, translation.y);
                 });
-                (this.labels as any).forEach(function (label: SVGElement): void {
+                (this.labels as any).forEach(function (
+                    label: SVGElement
+                ): void {
                     label.translate(translation.x, translation.y);
                 });
             }

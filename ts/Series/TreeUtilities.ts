@@ -130,7 +130,7 @@ function getColor(
  *
  * @private
  *
- * @param {object} params
+ * @param {Object} params
  * Object containing parameters.
  * - `defaults` Object containing default options. The default options are
  *   merged with the userOptions to get the final options for a specific
@@ -167,7 +167,10 @@ function getLevelOptions<T extends TreeUtilities.Series>(
 
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
-                    levelIsConstant = pick(options.levelIsConstant, defaults.levelIsConstant);
+                    levelIsConstant = pick(
+                        options.levelIsConstant,
+                        defaults.levelIsConstant
+                    );
                     // Delete redundant properties.
                     delete options.levelIsConstant;
                     delete options.level;
@@ -259,7 +262,7 @@ function setTreeValues<T extends TreeUtilities.Series>(
  *
  * @private
  *
- * @param {object} series
+ * @param {Object} series
  * The series to operate on.
  *
  * @return {string}

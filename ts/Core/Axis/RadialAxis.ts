@@ -402,8 +402,6 @@ namespace RadialAxis {
      * anti-collision.
      *
      * @private
-     *
-     * @return {Highcharts.ChartLabelCollectorFunction}
      */
     function createLabelCollector(
         this: AxisComposition
@@ -501,17 +499,12 @@ namespace RadialAxis {
      * getPlotLinePath method.
      *
      * @private
-     *
      * @param {number} _lineWidth
      * Line width is not used.
-     *
      * @param {number} [radius]
      * Radius of radial path.
-     *
      * @param {number} [innerRadius]
      * Inner radius of radial path.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getLinePath(
         this: AxisComposition,
@@ -559,7 +552,11 @@ namespace RadialAxis {
         } else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                [
+                    'M',
+                    this.center[0] + chart.plotLeft,
+                    this.center[1] + chart.plotTop
+                ],
                 ['L', end.x, end.y]
             ];
         }
@@ -587,17 +584,6 @@ namespace RadialAxis {
      * Find the path for plot bands along the radial axis.
      *
      * @private
-     *
-     * @param {number} from
-     * From value.
-     *
-     * @param {number} to
-     * To value.
-     *
-     * @param {Highcharts.AxisPlotBandsOptions} options
-     * Band options.
-     *
-     * @return {Highcharts.RadialAxisPath}
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -607,7 +593,9 @@ namespace RadialAxis {
     ): Path {
 
         const chart = this.chart,
-            radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+            radiusToPixels = (
+                radius: number|string|undefined
+            ): (number|undefined) => {
                 if (typeof radius === 'string') {
                     let r = parseInt(radius, 10);
                     if (percentRegex.test(radius)) {
@@ -869,14 +857,10 @@ namespace RadialAxis {
      * distance from center.
      *
      * @private
-     *
      * @param {number} value
      * Point value.
-     *
      * @param {number} [length]
      * Distance from center.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function getPosition(
         this: AxisComposition,
@@ -892,7 +876,8 @@ namespace RadialAxis {
             // fall out of the visible range near the center of a pane
             pick(this.isCircular ?
                 length :
-                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2) - this.offset
+                (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            ) - this.offset
         );
     }
 
@@ -1092,7 +1077,8 @@ namespace RadialAxis {
 
             // Apply the stack labels for yAxis in case of inverted chart
             if (inverted && coll === 'yAxis') {
-                this.defaultPolarOptions.stackLabels = AxisDefaults.defaultYAxisOptions.stackLabels;
+                this.defaultPolarOptions.stackLabels = AxisDefaults
+                    .defaultYAxisOptions.stackLabels;
                 this.defaultPolarOptions.reversedStacks = true;
             }
         }
@@ -1322,14 +1308,10 @@ namespace RadialAxis {
      * to final chart coordinates.
      *
      * @private
-     *
      * @param {number} angle
      * Translation angle.
-     *
      * @param {number} radius
      * Translation radius.
-     *
-     * @return {Highcharts.PositionObject}
      */
     function postTranslate(
         this: AxisComposition,

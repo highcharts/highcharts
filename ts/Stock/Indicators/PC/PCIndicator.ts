@@ -74,6 +74,16 @@ class PCIndicator extends SMAIndicator {
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
+         * Option for fill color between lines in Price channel Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      background fill between lines
+         *
+         * @type {Highcharts.Color}
+         * @apioption plotOptions.pc.fillColor
+         *
+         */
+        /**
          * @excluding index
          */
         params: {
@@ -194,6 +204,7 @@ interface PCIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(PCIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     nameBase: 'Price Channel',
     nameComponents: ['period'],
     linesApiNames: ['topLine', 'bottomLine'],

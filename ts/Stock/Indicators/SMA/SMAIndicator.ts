@@ -49,10 +49,9 @@ import './SMAComposition.js';
  *  Declarations
  *
  * */
-
-interface BindToObject {
-    eventName: string;
-    series: boolean;
+interface CalculateOnObject {
+    chart: string;
+    xAxis?: string;
 }
 
 declare module '../../../Core/Series/SeriesOptions' {
@@ -299,53 +298,72 @@ class SMAIndicator extends LineSeries {
         );
 
         // Only after series are linked indicator can be processed.
-        const linkedSeriesUnbiner = addEvent(Chart, 'afterLinkSeries', function (): void {
-            const hasEvents = !!indicator.dataEventsToUnbind.length;
+        const linkedSeriesUnbiner = addEvent(
+            Chart,
+            'afterLinkSeries',
+            function (): void {
+                const hasEvents = !!indicator.dataEventsToUnbind.length;
 
-            if (indicator.linkedParent) {
-                if (!hasEvents) {
-                    indicator.dataEventsToUnbind.push(
-                        addEvent<AxisType|SeriesType>(
-                            indicator.bindTo.series ?
-                                indicator.linkedParent :
-                                indicator.linkedParent.xAxis,
-                            indicator.bindTo.eventName,
-                            function (): void {
-                                indicator.recalculateValues();
-                            }
-                        )
-                    );
-                }
-
-                if (indicator.calculateOn === 'init') {
-                    if (!indicator.processedYData) {
-                        indicator.recalculateValues();
-                    }
-                } else {
+                if (indicator.linkedParent) {
                     if (!hasEvents) {
+                        // No matter which indicator, always recalculate after
+                        // updating the data.
+                        indicator.dataEventsToUnbind.push(
+                            addEvent(
+                                indicator.linkedParent,
+                                'updatedData',
+                                function (): void {
+                                    indicator.recalculateValues();
+                                }
+                            )
+                        );
+
+                        // Some indicators (like VBP) requires an additional
+                        // event (afterSetExtremes) to properly show the data.
+                        if (indicator.calculateOn.xAxis) {
+                            indicator.dataEventsToUnbind.push(
+                                addEvent(
+                                    indicator.linkedParent.xAxis,
+                                    indicator.calculateOn.xAxis,
+                                    function (): void {
+                                        indicator.recalculateValues();
+                                    }
+                                )
+                            );
+                        }
+                    }
+
+                    // Most indicators are being calculated on chart's init.
+                    if (indicator.calculateOn.chart === 'init') {
+                        if (!indicator.processedYData) {
+                            indicator.recalculateValues();
+                        }
+                    } else if (!hasEvents) {
+                        // Some indicators (like VBP) has to recalculate their
+                        // values after other chart's events (render).
                         const unbinder = addEvent(
                             indicator.chart,
-                            indicator.calculateOn,
+                            indicator.calculateOn.chart,
                             function (): void {
                                 indicator.recalculateValues();
-                                // Call this just once, on init
+                                // Call this just once.
                                 unbinder();
                             }
                         );
                     }
+                } else {
+                    return error(
+                        'Series ' +
+                        indicator.options.linkedTo +
+                        ' not found! Check `linkedTo`.',
+                        false,
+                        chart
+                    ) as any;
                 }
-            } else {
-                return error(
-                    'Series ' +
-                    indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.',
-                    false,
-                    chart
-                ) as any;
+            }, {
+                order: 0
             }
-        }, {
-            order: 0
-        });
+        );
 
         // Make sure we find series which is a base for an indicator
         // chart.linkSeries();
@@ -356,7 +374,6 @@ class SMAIndicator extends LineSeries {
 
     /**
      * @private
-     * @return {void}
      */
     public recalculateValues(): void {
         let indicator = this,
@@ -451,7 +468,7 @@ class SMAIndicator extends LineSeries {
 
         // Removal of processedXData property is required because on
         // first translate processedXData array is empty
-        if (indicator.bindTo.series === false) {
+        if (indicator.calculateOn.xAxis && indicator.processedXData) {
             delete indicator.processedXData;
 
             indicator.isDirty = true;
@@ -495,8 +512,7 @@ class SMAIndicator extends LineSeries {
  * */
 
 interface SMAIndicator extends IndicatorLike {
-    bindTo: BindToObject;
-    calculateOn: string;
+    calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -504,11 +520,9 @@ interface SMAIndicator extends IndicatorLike {
     useCommonDataGrouping: boolean;
 }
 extend(SMAIndicator.prototype, {
-    bindTo: {
-        series: true,
-        eventName: 'updatedData'
+    calculateOn: {
+        chart: 'init'
     },
-    calculateOn: 'init',
     hasDerivedData: true,
     nameComponents: ['period'],
     nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name

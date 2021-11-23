@@ -20,7 +20,9 @@ import type Annotation from '../Annotations';
  *  Declarations
  *
  * */
-export type AnnotationType = AnnotationTypeRegistry[keyof AnnotationTypeRegistry]['prototype'];
+export type AnnotationType = AnnotationTypeRegistry[
+    keyof AnnotationTypeRegistry
+]['prototype'];
 
 /* *
  *

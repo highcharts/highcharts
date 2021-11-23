@@ -203,7 +203,8 @@ class Fullscreen {
 
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
-            fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
+            fullscreen.unbindFullscreenEvent = fullscreen
+                .unbindFullscreenEvent();
         }
 
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
@@ -292,7 +293,6 @@ class Fullscreen {
      * @since 8.0.1
      *
      * @requires modules/full-screen
-     * @return {void}
      */
     private setButtonText(): void {
         const chart = this.chart,
@@ -314,13 +314,16 @@ class Fullscreen {
             menuItems &&
             exportDivElements
         ) {
-            const exportDivElement = exportDivElements[menuItems.indexOf('viewFullscreen')];
+            const exportDivElement = exportDivElements[
+                menuItems.indexOf('viewFullscreen')
+            ];
             if (exportDivElement) {
                 AST.setElementHTML(
                     exportDivElement,
                     !this.isOpen ?
                         (
-                            exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                            exportingOptions.menuItemDefinitions.viewFullscreen
+                                .text ||
                             lang.viewFullscreen
                         ) : lang.exitFullscreen
                 );

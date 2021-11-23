@@ -509,7 +509,7 @@ Chart.prototype.setUpKeyToAxis = function (): void {
  * @return {Array<Array<(number|string)>>}
  *         The current chart data
  *
- * @fires Highcharts.Chart#event:exportData
+ * @emits Highcharts.Chart#event:exportData
  */
 Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
@@ -532,7 +532,9 @@ Chart.prototype.getDataRows = function (
         x,
         xTitle: string,
         langOptions = this.options.lang,
-        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        exportDataOptions: Highcharts.ExportDataOptions = (
+            langOptions.exportData as any
+        ),
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
@@ -542,7 +544,11 @@ Chart.prototype.getDataRows = function (
             keyLength?: number
         ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
-                const s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+                const s = csvOptions.columnHeaderFormatter(
+                    item,
+                    key,
+                    keyLength
+                );
 
                 if (s !== false) {
                     return s;
@@ -619,7 +625,8 @@ Chart.prototype.getDataRows = function (
                 !series.keyToAxis
             ) {
                 if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    const pointArrayMapCheck = series.pointArrayMap
+                        .filter((p): boolean => p === 'x');
                     if (pointArrayMapCheck.length) {
                         series.pointArrayMap.unshift('x');
                         return series.pointArrayMap;
@@ -930,7 +937,7 @@ Chart.prototype.getCSV = function (
  * @return {string}
  *         HTML representation of the data.
  *
- * @fires Highcharts.Chart#event:afterGetTable
+ * @emits Highcharts.Chart#event:afterGetTable
  */
 Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
@@ -1334,7 +1341,7 @@ Chart.prototype.downloadXLS = function (
  *
  * @function Highcharts.Chart#viewData
  *
- * @fires Highcharts.Chart#event:afterViewData
+ * @emits Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
     this.toggleDataTable(true);
@@ -1399,7 +1406,9 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         menuItems &&
         exportDivElements
     ) {
-        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        const exportDivElement = exportDivElements[
+            menuItems.indexOf('viewData')
+        ];
         if (exportDivElement) {
             AST.setElementHTML(
                 exportDivElement,

@@ -157,19 +157,12 @@ namespace DateTimeAxis{
      *
      * @private
      * @function Highcharts.Axis#getTimeTicks
-     *
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
      * The interval in axis values (ms) and thecount.
-     *
      * @param {number} min
      * The minimum in axis values.
-     *
      * @param {number} max
      * The maximum in axis values.
-     *
-     * @param {number} startOfWeek
-     *
-     * @return {Highcharts.AxisTickPositionsArray}
      */
     function getTimeTicks(
         this: Axis
@@ -247,8 +240,10 @@ namespace DateTimeAxis{
         ): DateTimeAxis.NormalizedObject {
             const units = (
                 unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                    // unit name
+                    'millisecond',
+                    // allowed multiples
+                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
                     [1, 2, 5, 10, 15, 30]
@@ -328,12 +323,6 @@ namespace DateTimeAxis{
          * point range on the axis.
          *
          * @private
-         *
-         * @param {number} x
-         *
-         * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
-         *
-         * @return {string}
          */
         public getXDateFormat(
             x: number,

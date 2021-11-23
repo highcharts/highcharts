@@ -366,9 +366,12 @@ class AST {
 
         /**
          * @private
-         * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
-         * @param {Element} [subParent] - parent node
-         * @return {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} The inserted node.
+         * @param {Highcharts.ASTNode} subtree
+         * HTML/SVG definition
+         * @param {Element} [subParent]
+         * parent node
+         * @return {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
+         * The inserted node.
          */
         function recurse(
             subtree: (AST.Node|Array<AST.Node>),
@@ -424,7 +427,10 @@ class AST {
                         node = element;
 
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            'Highcharts warning: Invalid tagName ' +
+                            tagName + ' in config'
+                        );
                     }
                 }
 

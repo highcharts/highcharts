@@ -25,27 +25,44 @@ declare global {
             public chart: AnnotationChart;
             public graphic: SVGElement;
             public index: number;
-            public mouseMoveToRadians: AnnotationEventEmitterMixin['mouseMoveToRadians'];
-            public mouseMoveToScale: AnnotationEventEmitterMixin['mouseMoveToScale'];
-            public mouseMoveToTranslation: AnnotationEventEmitterMixin['mouseMoveToTranslation'];
+            public mouseMoveToRadians: AnnotationEventEmitterMixin[
+                'mouseMoveToRadians'
+            ];
+            public mouseMoveToScale: AnnotationEventEmitterMixin[
+                'mouseMoveToScale'
+            ];
+            public mouseMoveToTranslation: AnnotationEventEmitterMixin[
+                'mouseMoveToTranslation'
+            ];
             public nonDOMEvents: Array<string>;
             public onDrag: AnnotationEventEmitterMixin['onDrag'];
             public onMouseDown: AnnotationEventEmitterMixin['onMouseDown'];
             public onMouseUp: AnnotationEventEmitterMixin['onMouseUp'];
             public options: AnnotationControlPointOptionsObject;
-            public removeDocEvents: AnnotationEventEmitterMixin['removeDocEvents'];
+            public removeDocEvents: AnnotationEventEmitterMixin[
+                'removeDocEvents'
+            ];
             public target: AnnotationControllable;
             public destroy(): void;
             public redraw(animation?: boolean): void;
             public render(): void;
             public setVisibility(visible: boolean): void;
-            public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
+            public update(
+                userOptions: Partial<AnnotationControlPointOptionsObject>
+            ): void;
         }
         interface AnnotationControlPointDragEventFunction {
-            (this: Annotation, e: AnnotationEventObject, target: AnnotationControllable): void;
+            (
+                this: Annotation,
+                e: AnnotationEventObject,
+                target: AnnotationControllable
+            ): void;
         }
         interface AnnotationControlPointPositionerFunction {
-            (this: AnnotationControlPoint, target: AnnotationControllable): PositionObject;
+            (
+                this: AnnotationControlPoint,
+                target: AnnotationControllable
+            ): PositionObject;
         }
     }
 }
@@ -138,7 +155,7 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
      * @type {Array<string>}
      */
-    public nonDOMEvents = ['drag']
+    public nonDOMEvents = ['drag'];
 
     /**
      * Set the visibility of the control point.
@@ -148,7 +165,6 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @param {boolean} visible
      * Visibility of the control point.
      *
-     * @return {void}
      */
     public setVisibility(visible: boolean): void {
         this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
@@ -216,7 +232,6 @@ class ControlPoint implements eventEmitterMixin.Type {
      * @param {Partial<Highcharts.AnnotationControlPointOptionsObject>} userOptions
      * New options for the control point.
      *
-     * @return {void}
      */
     public update(
         userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>

@@ -636,7 +636,7 @@ class PieSeries extends Series {
         borderWidth: 1,
 
         /**
-         * @ignore-options
+         * @ignore-option
          * @private
          */
         lineWidth: void 0, // #12222

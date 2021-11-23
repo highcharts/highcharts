@@ -662,7 +662,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#hasData
-     * @return {boolean}
      */
     public hasData(): boolean {
         return ((
@@ -683,7 +682,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#autoIncrement
-     * @return {number}
      */
     public autoIncrement(x?: number): number {
 
@@ -772,13 +770,9 @@ class Series {
      * not redraw the series. For API usage, use {@link Series#update}.
      * @private
      * @function Highcharts.Series#setOptions
-     *
      * @param {Highcharts.SeriesOptionsType} itemOptions
      * The series options.
-     *
-     * @return {Highcharts.SeriesOptionsType}
-     *
-     * @fires Highcharts.Series#event:afterSetOptions
+     * @emits Highcharts.Series#event:afterSetOptions
      */
     public setOptions(itemOptions: DeepPartial<SeriesTypeOptions>): this['options'] {
         const chart = this.chart,
@@ -986,7 +980,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getPointsCollection
-     * @return {Array<Highcharts.Point>}
      */
     public getPointsCollection(): Array<Point> {
         return (this.hasGroupedData ? this.points : this.data) || [];
@@ -998,7 +991,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getSymbol
-     * @return {void}
      */
     public getSymbol(): void {
         const seriesMarkerOption = this.options.marker;
@@ -1016,14 +1008,13 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#findPointIndex
-     * @param    {Highcharts.PointOptionsObject} optionsObject
-     *           The options of the point.
-     * @param    {number} fromIndex
-     *           The index to start searching from, used for optimizing
-     *           series with required sorting.
-     * @returns  {number|undefined}
-     *           Returns the index of a matching point, or undefined if no
-     *           match is found.
+     * @param {Highcharts.PointOptionsObject} optionsObject
+     * The options of the point.
+     * @param {number} fromIndex
+     * The index to start searching from, used for optimizing series with
+     * required sorting.
+     * @return {number|undefined}
+     * Returns the index of a matching point, or undefined if no match is found.
      */
     public findPointIndex(
         optionsObject: PointOptions,
@@ -1487,11 +1478,8 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#sortData
-     *
      * @param {Array<Highcharts.PointOptionsType>} data
      * Force data grouping.
-     *
-     * @return {Array<Highcharts.PointOptionsObject>}
      */
     public sortData(
         data: Array<(PointOptions|PointShortOptions)>
@@ -1517,8 +1505,14 @@ class Series {
 
         // Sorting
         const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
+            const aValue = getNestedProperty(
+                sortKey,
+                a
+            ) as (boolean|number|string);
+            const bValue = getNestedProperty(
+                sortKey,
+                b
+            ) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         }) as Array<Point>;
         // Set x value depending on the position in the array
@@ -1566,8 +1560,7 @@ class Series {
      * @private
      * @function Highcharts.Series#getProcessedData
      * @param {boolean} [forceExtremesFromAll]
-     *        Force getting extremes of a total series data range.
-     * @return {Highcharts.SeriesProcessedDataObject}
+     * Force getting extremes of a total series data range.
      */
     public getProcessedData(
         forceExtremesFromAll?: boolean
@@ -1694,8 +1687,7 @@ class Series {
      * @private
      * @function Highcharts.Series#processData
      * @param {boolean} [force]
-     *        Force data grouping.
-     * @return {boolean|undefined}
+     * Force data grouping.
      */
     public processData(force?: boolean): (boolean|undefined) {
         const series = this,
@@ -1720,7 +1712,9 @@ class Series {
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
         series.processedYData = processedData.yData;
-        series.closestPointRange = series.basePointRange = processedData.closestPointRange;
+        series.closestPointRange = (
+            series.basePointRange = processedData.closestPointRange
+        );
 
         fireEvent(series, 'afterProcessData');
     }
@@ -1732,12 +1726,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#cropData
-     * @param {Array<number>} xData
-     * @param {Array<number>} yData
-     * @param {number} min
-     * @param {number} max
-     * @param {number} [cropShoulder]
-     * @return {Highcharts.SeriesCropDataObject}
      */
     public cropData(
         xData: Array<number>,
@@ -1867,7 +1855,9 @@ class Series {
                  * @sample stock/members/point-datagroup
                  *         Click to inspect raw data points
                  */
-                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
+                point.dataGroup = (series.groupMap as any)[
+                    groupCropStartIndex + i
+                ];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -1884,7 +1874,8 @@ class Series {
                  * @readonly
                  */
                 // For faster access in Point.update
-                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
+                point.index = hasGroupedData ?
+                    (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
@@ -1954,12 +1945,9 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getXExtremes
-     *
      * @param {Array<number>} xData
      * The data to inspect. Defaults to the current data within the visible
      * range.
-     *
-     * @return {Highcharts.RangeObject}
      */
     public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         return {
@@ -1974,14 +1962,11 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getExtremes
-     *
      * @param {Array<number>} [yData]
      * The data to inspect. Defaults to the current data within the visible
      * range.
      * @param {boolean} [forceExtremesFromAll]
      * Force getting extremes of a total series data range.
-     *
-     * @return {Highcharts.DataExtremesObject}
      */
     public getExtremes(
         yData?: (Array<(number|null)>|Array<Array<(number|null)>>),
@@ -2104,11 +2089,8 @@ class Series {
      *
      * @private
      * @function Highcharts.Series.getFirstValidPoint
-     *
      * @param {Array<Highcharts.PointOptionsType>} data
      * Array of options for points
-     *
-     * @return {Highcharts.PointOptionsType}
      */
     public getFirstValidPoint(
         data: Array<(PointOptions|PointShortOptions)>
@@ -2133,7 +2115,7 @@ class Series {
      *
      * @function Highcharts.Series#translate
      *
-     * @fires Highcharts.Series#events:translate
+     * @emits Highcharts.Series#events:translate
      */
     public translate(): void {
         if (!this.processedXData) { // hidden series
@@ -2187,8 +2169,10 @@ class Series {
             ) + series.stackKey];
 
             if (
-                yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
+                yAxis.positiveValuesOnly &&
+                !yAxis.validatePositiveValue(yValue) ||
+                xAxis.positiveValuesOnly &&
+                !xAxis.validatePositiveValue(xValue)
             ) {
                 point.isNull = true;
             }
@@ -2391,8 +2375,6 @@ class Series {
      *
      * @private
      * @function Highcharts.Series#getClip
-     *
-     * @return {Highcharts.Dictionary<number>}
      */
     public getClipBox(): BBoxObject {
         const { chart, xAxis, yAxis } = this;
@@ -2510,8 +2492,12 @@ class Series {
                     width: 99,
                     height: inverted ? chart.chartWidth : chart.chartHeight
                 };
-                markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
-                chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+                markerAnimationClipRect = chart.renderer.clipRect(
+                    markerClipBox
+                );
+                chart.sharedClips[
+                    animationClipKey + 'm'
+                ] = markerAnimationClipRect;
             } else {
                 // When height changes during animation, typically due to
                 // responsive settings
@@ -2565,7 +2551,7 @@ class Series {
      * @private
      * @function Highcharts.Series#afterAnimate
      *
-     * @fires Highcharts.Series#event:afterAnimate
+     * @emits Highcharts.Series#event:afterAnimate
      */
     public afterAnimate(): void {
         this.setClip();
@@ -2643,7 +2629,9 @@ class Series {
                 if (shouldDrawMarker) {
                     // Shortcuts
                     const symbol = pick(
-                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
+                        pointMarkerOptions.symbol,
+                        series.symbol,
+                        'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(
@@ -2871,7 +2859,9 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
@@ -2917,7 +2907,7 @@ class Series {
      * @private
      * @function Highcharts.Series#destroy
      *
-     * @fires Highcharts.Series#event:destroy
+     * @emits Highcharts.Series#event:destroy
      */
     public destroy(keepEventsForUpdate?: boolean): void {
 
@@ -3293,8 +3283,6 @@ class Series {
      * Get the translation and scale for the plot area of this series.
      *
      * @function Highcharts.Series#getPlotBox
-     *
-     * @return {Highcharts.SeriesPlotBoxObject}
      */
     public getPlotBox(): Series.PlotBoxObject {
         const chart = this.chart;
@@ -3346,7 +3334,7 @@ class Series {
      *
      * @function Highcharts.Series#render
      *
-     * @fires Highcharts.Series#event:afterRender
+     * @emits Highcharts.Series#event:afterRender
      */
     public render(): void {
         const series = this,
@@ -3916,7 +3904,7 @@ class Series {
      * @param {boolean} [withEvent=true]
      *        Used internally, whether to fire the series `addPoint` event.
      *
-     * @fires Highcharts.Series#event:addPoint
+     * @emits Highcharts.Series#event:addPoint
      */
     public addPoint(
         options: (PointOptions|PointShortOptions),
@@ -4026,7 +4014,7 @@ class Series {
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and optionally how the series should be animated.
      *
-     * @fires Highcharts.Point#event:remove
+     * @emits Highcharts.Point#event:remove
      */
     public removePoint(
         i: number,
@@ -4095,7 +4083,7 @@ class Series {
      * @param {boolean} [withEvent=true]
      *        Used internally, whether to fire the series `remove` event.
      *
-     * @fires Highcharts.Series#event:remove
+     * @emits Highcharts.Series#event:remove
      */
     public remove(
         redraw?: boolean,
@@ -4155,8 +4143,8 @@ class Series {
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw} after.
      *
-     * @fires Highcharts.Series#event:update
-     * @fires Highcharts.Series#event:afterUpdate
+     * @emits Highcharts.Series#event:update
+     * @emits Highcharts.Series#event:afterUpdate
      */
     public update(
         options: DeepPartial<SeriesTypeOptions>,
@@ -4270,7 +4258,11 @@ class Series {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
-                plotOptions && plotOptions.series && plotOptions.series.pointStart,
+                (
+                    plotOptions &&
+                    plotOptions.series &&
+                    plotOptions.series.pointStart
+                ),
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -4313,8 +4305,10 @@ class Series {
                 // Legacy (IE < 11)
                 } else {
 
-                    const ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
-                        series.hcEvents;
+                    const ownEvents = Object.hasOwnProperty.call(
+                        series,
+                        'hcEvents'
+                    ) && series.hcEvents;
                     for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
                         (series as any)[n] = void 0;
                     }
@@ -4437,8 +4431,12 @@ class Series {
 
         return option !==
             pick(
-                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
-                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                plotOptions &&
+                    plotOptions[this.type] &&
+                    (plotOptions[this.type] as any)[optionName],
+                plotOptions &&
+                    plotOptions.series &&
+                    (plotOptions as any).series[optionName],
                 option
             );
     }
@@ -4447,7 +4445,7 @@ class Series {
      * Runs on mouse over the series graphical items.
      *
      * @function Highcharts.Series#onMouseOver
-     * @fires Highcharts.Series#event:mouseOver
+     * @emits Highcharts.Series#event:mouseOver
      */
     public onMouseOver(): void {
         const series = this,
@@ -4485,7 +4483,7 @@ class Series {
      *
      * @function Highcharts.Series#onMouseOut
      *
-     * @fires Highcharts.Series#event:mouseOut
+     * @emits Highcharts.Series#event:mouseOut
      */
     public onMouseOut(): void {
         // trigger the event only if listeners exist
@@ -4692,8 +4690,8 @@ class Series {
      * operations on the chart, it is a good idea to set redraw to false and
      * call {@link Chart#redraw|chart.redraw()} after.
      *
-     * @fires Highcharts.Series#event:hide
-     * @fires Highcharts.Series#event:show
+     * @emits Highcharts.Series#event:hide
+     * @emits Highcharts.Series#event:show
      */
     public setVisible(
         vis?: boolean,
@@ -4775,7 +4773,7 @@ class Series {
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#show
-     * @fires Highcharts.Series#event:show
+     * @emits Highcharts.Series#event:show
      */
     public show(): void {
         this.setVisible(true);
@@ -4790,7 +4788,7 @@ class Series {
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#hide
-     * @fires Highcharts.Series#event:hide
+     * @emits Highcharts.Series#event:hide
      */
     public hide(): void {
         this.setVisible(false);
@@ -4813,8 +4811,8 @@ class Series {
      * True to select the series, false to unselect. If undefined, the selection
      * state is toggled.
      *
-     * @fires Highcharts.Series#event:select
-     * @fires Highcharts.Series#event:unselect
+     * @emits Highcharts.Series#event:select
+     * @emits Highcharts.Series#event:unselect
      */
     public select(selected?: boolean): void {
         const series = this;
@@ -4838,10 +4836,6 @@ class Series {
      * Checks if a tooltip should be shown for a given point.
      *
      * @private
-     * @param {number} plotX
-     * @param {number} plotY
-     * @param {Highcharts.ChartIsInsideOptionsObject} [options]
-     * @return {boolean}
      */
     public shouldShowTooltip(
         plotX: number,

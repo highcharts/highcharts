@@ -171,7 +171,11 @@ class DataConverter {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -186,8 +190,6 @@ class DataConverter {
 
     /**
      * Getter for a date format.
-     *
-     * @return {string|undefined}
      */
     public getDateFormat(): (string|undefined) {
         return this.options.dateFormat;
@@ -399,8 +401,6 @@ class DataConverter {
      * @param {string} dateFormatProp
      * Which of the predefined date formats
      * to use to parse date values.
-     *
-     * @return {number}
      */
     public parseDate(value: string, dateFormatProp?: string): number {
         const converter = this;
@@ -461,7 +461,9 @@ class DataConverter {
 
                     // Timestamp
                 } else if (isNumber(match)) {
-                    result = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    result = match - (
+                        new Date(match)
+                    ).getTimezoneOffset() * 60000;
                     if (// reset dates without year in Chrome
                         value.indexOf('2001') === -1 &&
                         (new Date(result)).getFullYear() === 2001
@@ -492,8 +494,6 @@ class DataConverter {
      *
      * @param {boolean} save
      * Whether to save the date format in the converter options.
-     *
-     * @return {string}
      */
     public deduceDateFormat(
         data: Array<string>,

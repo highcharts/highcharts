@@ -19,9 +19,12 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
+import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
+import type RangeSelector from '../Extensions/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -68,7 +71,7 @@ declare module '../Core/Chart/ChartLike' {
         a11yDirty?: boolean;
         accessibility?: Accessibility;
         types?: Array<string>;
-        /** @require modules/accessibility */
+        /** @requires modules/accessibility */
         updateA11yEnabled(): void;
     }
 }
@@ -157,7 +160,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-        this.update();
     }
 
 
@@ -184,7 +186,9 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
@@ -232,7 +236,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -325,11 +331,11 @@ namespace Accessibility {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
         infoRegions: InfoRegionsComponent;
-        legend: Highcharts.LegendComponent;
-        chartMenu: Highcharts.MenuComponent;
-        rangeSelector: Highcharts.RangeSelectorComponent;
+        legend: LegendComponent;
+        chartMenu: MenuComponent;
+        rangeSelector: RangeSelectorComponent;
         series: SeriesComponent;
-        zoom: Highcharts.ZoomComponent;
+        zoom: ZoomComponent;
     }
 
     export declare class ChartComposition extends Chart {
@@ -451,6 +457,9 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
+                if (a11y && !a11y.zombie) {
+                    a11y.update();
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -468,16 +477,28 @@ namespace Accessibility {
      * @private
      */
     export function compose(
+        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
+        LegendClass: typeof Legend,
         PointClass: typeof Point,
         SeriesClass: typeof Series,
-        SVGElementClass: typeof SVGElement
+        SVGElementClass: typeof SVGElement,
+        RangeSelectorClass?: typeof RangeSelector
     ): void {
-        A11yI18n.compose(ChartClass);
-        FocusBorder.compose(ChartClass, SVGElementClass);
+        // ordered:
         KeyboardNavigation.compose(ChartClass);
         NewDataAnnouncer.compose(SeriesClass as typeof SeriesComposition);
+        LegendComponent.compose(ChartClass, LegendClass);
+        MenuComponent.compose(ChartClass);
         SeriesComponent.compose(ChartClass, PointClass, SeriesClass);
+        ZoomComponent.compose(AxisClass);
+        // RangeSelector
+        A11yI18n.compose(ChartClass);
+        FocusBorder.compose(ChartClass, SVGElementClass);
+
+        if (RangeSelectorClass) {
+            RangeSelectorComponent.compose(ChartClass, RangeSelectorClass);
+        }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);

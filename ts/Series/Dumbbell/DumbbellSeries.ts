@@ -293,7 +293,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Point} point The point to inspect.
      *
-     * @return {void}
      */
     public drawConnector(point: DumbbellPoint): void {
         const series = this,
@@ -343,7 +342,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public translate(): void {
         // Calculate shapeargs
@@ -374,7 +372,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public drawPoints(): void {
         let series = this,

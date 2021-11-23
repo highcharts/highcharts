@@ -31,6 +31,7 @@ const {
     doc,
     win
 } = H;
+import MenuComponent from './Components/MenuComponent.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -57,7 +58,7 @@ const { getElement } = HTMLUtilities;
  * @class
  * @param {Highcharts.Chart} chart
  *        Chart object
- * @param {object} components
+ * @param {Object} components
  *        Map of component names to AccessibilityComponent objects.
  * @name Highcharts.KeyboardNavigation
  */
@@ -109,7 +110,7 @@ class KeyboardNavigation {
      * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
-     * @param {object} components
+     * @param {Object} components
      *        Map of component names to AccessibilityComponent objects.
      */
     public init(
@@ -176,7 +177,8 @@ class KeyboardNavigation {
                 modules: Array<KeyboardNavigationHandler>,
                 componentName: keyof Accessibility.ComponentsObject
             ): Array<KeyboardNavigationHandler> {
-                const navModules = components[componentName].getKeyboardNavigation();
+                const navModules = components[componentName]
+                    .getKeyboardNavigation();
                 return modules.concat(navModules);
             }, []);
 
@@ -358,7 +360,9 @@ class KeyboardNavigation {
      * @private
      */
     public updateExitAnchor(): void {
-        const endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index,
+        const endMarkerId = (
+                'highcharts-end-of-chart-marker-' + this.chart.index
+            ),
             endMarker = getElement(endMarkerId);
 
         this.removeExitAnchor();
@@ -379,7 +383,9 @@ class KeyboardNavigation {
     public updateContainerTabindex(): void {
         const a11yOptions = this.chart.options.accessibility,
             keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation,
-            shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false),
+            shouldHaveTabindex = !(
+                keyboardOptions && keyboardOptions.enabled === false
+            ),
             chart = this.chart,
             container = chart.container;
 
@@ -408,7 +414,9 @@ class KeyboardNavigation {
     public makeElementAnExitAnchor(
         el: DOMElementType
     ): void {
-        const chartTabindex = this.tabindexContainer.getAttribute('tabindex') || 0;
+        const chartTabindex = this.tabindexContainer.getAttribute(
+            'tabindex'
+        ) || 0;
         el.setAttribute('class', 'highcharts-exit-anchor');
         el.setAttribute('tabindex', chartTabindex);
         el.setAttribute('aria-hidden', false);
@@ -532,7 +540,7 @@ namespace KeyboardNavigation {
      *
      * */
 
-    export declare class ChartComposition extends Chart {
+    export declare class ChartComposition extends MenuComponent.ChartComposition {
         dismissPopupContent(): void;
     }
 
@@ -558,6 +566,7 @@ namespace KeyboardNavigation {
     export function compose<T extends typeof Chart>(
         ChartClass: T
     ): (T&typeof ChartComposition) {
+        MenuComponent.compose(ChartClass);
 
         if (composedItems.indexOf(ChartClass) === -1) {
             composedItems.push(ChartClass);
