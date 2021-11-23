@@ -34,24 +34,27 @@ const {
     objectEach,
     splat
 } = U;
+const {
+    trustedTypes
+} = win;
 
 /* *
  *
  *  Constants
  *
  * */
-const trustedTypePolicy = (
-    (win as any).trustedTypes &&
-    (win as any).trustedTypes.createPolicy(
+const trustedTypesPolicy = (
+    trustedTypes &&
+    trustedTypes.createPolicy(
         'highcharts', {
             createHTML: (s: string): string => s
         }
     )
 );
 
-const trustedHTML = (html: string): string => {
-    if (trustedTypePolicy) {
-        return trustedTypePolicy.createHTML(html);
+const trustedHTML = function (html: string): string {
+    if (trustedTypesPolicy) {
+        return trustedTypesPolicy.createHTML(html) as unknown as string;
     }
     return html;
 };

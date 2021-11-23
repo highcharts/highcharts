@@ -1378,7 +1378,7 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
         // Generate the data table
         if (show) {
-            this.dataTableDiv.innerHTML = '';
+            this.dataTableDiv.innerHTML = AST.trustedHTML('');
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
             fireEvent(this, 'afterViewData', this.dataTableDiv);

@@ -50,6 +50,7 @@
     "@types/jquery": "^3.5.6",
     "@types/qunit": "^2.11.2",
     "@types/sass": "^1.43.0",
+    "@types/trusted-types": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "aws-sdk": "^2.981.0",

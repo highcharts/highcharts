@@ -16,6 +16,8 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Series from '../../Core/Series/Series';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
+
+import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -623,7 +625,7 @@ H.Popup.prototype = {
         this.formType = void 0;
 
         // reset content
-        popupDiv.innerHTML = '';
+        popupDiv.innerHTML = AST.trustedHTML('');
 
         // reset toolbar styles if exists
         if (popupDiv.className.indexOf(toolbarClass) >= 0) {
@@ -1717,7 +1719,7 @@ H.Popup.prototype = {
                 getNameType = this.indicators.getNameType;
 
             // reset current content
-            rhsColWrapper.innerHTML = '';
+            rhsColWrapper.innerHTML = AST.trustedHTML('');
 
             // create title (indicator name in the right column)
             createElement(
