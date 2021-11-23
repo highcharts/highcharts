@@ -17,7 +17,7 @@ function generateHTML() {
             semver = require('semver');
 
         var products = [{
-            header: 'Highcharts Basic',
+            header: 'Highcharts JS',
             name: 'highcharts',
             changelogId: 'hc-changelog',
             offset: ''
@@ -115,7 +115,7 @@ function generateHTML() {
             return (
                 `<div id="${product.changelogId}">
                 <div class="changelog-header">
-                <h4 id="${product.name}">${product.header}</h4>
+                <h2 id="${product.name}">${product.header}</h2>
                 </div>
                 <div class="changelog-container">`);
         }
@@ -140,25 +140,28 @@ function generateHTML() {
                 const downloadLink = 'https://code.highcharts.com/zips/' + makeDownloadLinks(version, name) + '-' + version + '.zip';
 
                 return (
-                    `<p class="release-header">
+                    `<h3 class="release-header">
                         <a id="${id}"></a>
                         <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
                         <span class="download-link" ><a href="${downloadLink}" title="Download the zip archive for ${changelog.header.productName} v${version}"><i class="fas fa-download"></i></a></span>
-                    </p>
+                    </h3>
                     ${marked.parser(changelog.features)}`
                 );
             }
             return '';
         }
         function upgradeNotesHTMLStructure() {
+            const productName = changelog.header.name;
+            const id = productName.charAt(0).toUpperCase() + productName.slice(1);
+            const version = changelog.header.version.split('-').join('.');
             if (changelog.upgradeNotes.length > 0) {
                 return (
                     `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
                     <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-upgrade-notes"><span> Upgrade notes </span></button>
+                    <button aria-label="Upgrade Notes ${id} v${version}" aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#upgrade-notes-${changelog.header.offset}${changelog.header.version}"><span> Upgrade notes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="upgrade-notes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.upgradeNotes)}
                     </div>
@@ -167,20 +170,20 @@ function generateHTML() {
             return '';
         }
         function bugFixesHTMLStructure() {
+            const productName = changelog.header.name;
+            const id = productName.charAt(0).toUpperCase() + productName.slice(1);
+            const version = changelog.header.version.split('-').join('.');
             if (changelog.bugFixes.length > 0) {
                 return (
-                    `<div
-                        id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
-                        class="card-header">
-                    <h4 class="card-title">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#${changelog.header.offset}${changelog.header.version}-bug-fixes"><span> Bug fixes </span></button>
+                    `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"class="card-header">
+                    <h4 class="card-title" aria-label="Bug Fixes ${id} v${version}">
+                    <button aria-label="Bug Fixes ${id} v${version}"aria-expanded="false" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#bug-fixes-${changelog.header.offset}${changelog.header.version}"><span> Bug fixes </span></button>
                     </h4>
                     </div>
-                    <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
+                    <div id="bug-fixes-${changelog.header.offset}${changelog.header.version}" class="collapse" aria-labelledby="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" data-parent=".accordion">
                     <div class="card-body">
                     ${marked.parser(changelog.bugFixes)}
                     </div>
-
                     </div>`);
             }
             return '';
@@ -199,11 +202,10 @@ function generateHTML() {
             return '';
         }
         function bottomHTMLContent() {
-            return (`
-                </div>
-                </div>
-                </div>
-                </div>`);
+            return (`</div>
+                    </div>
+                    </div>
+                    </div>`);
         }
         function endProductHTMLStructure() {
             return ('</div> </div>');
