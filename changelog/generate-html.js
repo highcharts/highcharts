@@ -17,7 +17,7 @@ function generateHTML() {
             semver = require('semver');
 
         var products = [{
-            header: 'Highcharts JS',
+            header: 'Highcharts',
             name: 'highcharts',
             changelogId: 'hc-changelog',
             offset: ''
