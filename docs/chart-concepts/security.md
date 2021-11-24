@@ -13,6 +13,8 @@ Highcharts.AST.allowedAttributes.push('data-value');
 Highcharts.AST.allowedReferences.push('tel:');
 ```
 
+Since v9.4 Highcharts also supports [Trusted Types](https://web.dev/trusted-types/), and our Cypress tests are set up with Trusted Types enabled which enforces an added layer of security.
+
 ### Scope
 Chart _configuration options_ that are valid JSON are filtered for known XSS vectors. JSON support types of object, strings, numbers, arrays, boolean or null. This implies that function callbacks and event handlers in the chart options structure is not covered by our scope. Functions are inherently unsafe because they by nature allow scripting towards the web page.
 
