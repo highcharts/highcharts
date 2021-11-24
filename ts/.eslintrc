@@ -35,10 +35,10 @@
         "max-len": [
             "error",
             {
-                "code": 120,
+                "code": 80,
                 "comments": 80,
                 "ignoreUrls": true,
-                "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(#|@apioption|@borrows|@declare|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
+                "ignorePattern": "`|eslint-disable-line|headerFormat|pointFormat|static defaultOptions| (extends|implements) |@\\w|\\w<|\\.\\/| highcharts\\/|\\]\\(#"
             }
         ],
         "no-dupe-class-members": 0,

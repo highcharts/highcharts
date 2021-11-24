@@ -143,7 +143,7 @@ function drawSenkouSpan(
     indicator.options = merge(
         (opt.options.senkouSpan as any).styles,
         opt.gap
-    ) as any;
+    );
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
@@ -606,7 +606,9 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                        indicator
+                    );
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -681,8 +683,9 @@ class IKHIndicator extends SMAIndicator {
                         ].concat(sectionNextPoints);
                     } else {
                         // Compare middle point of the section
-                        concatArrIndex =
-                            sectionPoints[x].plotY > sectionNextPoints[x].plotY ? 0 : 1;
+                        concatArrIndex = (
+                            sectionPoints[x].plotY > sectionNextPoints[x].plotY
+                        ) ? 0 : 1;
 
                         points[concatArrIndex] = points[concatArrIndex].concat(
                             sectionPoints
@@ -694,8 +697,9 @@ class IKHIndicator extends SMAIndicator {
                     }
                 } else {
                     // Compare first point of the section
-                    concatArrIndex =
-                        sectionPoints[0].plotY > sectionNextPoints[0].plotY ? 0 : 1;
+                    concatArrIndex = (
+                        sectionPoints[0].plotY > sectionNextPoints[0].plotY
+                    ) ? 0 : 1;
 
                     points[concatArrIndex] = points[concatArrIndex].concat(
                         sectionPoints
@@ -775,7 +779,8 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                    .call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -784,7 +789,8 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath
+                .apply(indicator, arguments);
         }
 
         return path;

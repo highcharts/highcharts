@@ -68,7 +68,8 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
         for (let i = 0; i < series.points.length; i++) {
             bottomPoints.push({
                 x: series.rawPointsX[i],
-                y: options.stacking ? series.points[i].yBottom : translatedThreshold,
+                y: options.stacking ?
+                    series.points[i].yBottom : translatedThreshold,
                 z: series.zPadding
             } as any);
         }
@@ -108,8 +109,12 @@ wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
 
     if (series.areaPath) {
         // Remove previously used bottomPath and add the new one.
-        areaPath = series.areaPath.splice(0, series.areaPath.length / 2).concat(bottomPath);
-        areaPath.xMap = series.areaPath.xMap; // Use old xMap in the new areaPath
+        areaPath = series.areaPath.splice(
+            0,
+            series.areaPath.length / 2
+        ).concat(bottomPath);
+        // Use old xMap in the new areaPath
+        areaPath.xMap = series.areaPath.xMap;
         series.areaPath = areaPath;
         graphPath = getGraphPath.call(series, graphPoints, false, connectNulls);
     }

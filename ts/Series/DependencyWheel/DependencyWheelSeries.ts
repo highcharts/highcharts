@@ -306,7 +306,7 @@ class DependencyWheelSeries extends SankeySeries {
                             let angle = factor * top,
                                 x = Math.cos(startAngle + angle) * (innerR + 1),
                                 y = Math.sin(startAngle + angle) * (innerR + 1),
-                                curveFactor: number = options.curveFactor as any;
+                                curveFactor: number = options.curveFactor || 0;
 
                             // The distance between the from and to node
                             // along the perimeter. This affect how curved

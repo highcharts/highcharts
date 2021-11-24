@@ -176,7 +176,10 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
 
@@ -256,7 +259,8 @@ class MenuComponent extends AccessibilityComponent {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });
@@ -408,7 +412,9 @@ class MenuComponent extends AccessibilityComponent {
         const curHighlightedItem = (chart.exportDivElements as any)[
             chart.highlightedExportItemIx as any
         ];
-        const exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
+        const exportButtonElement: SVGDOMElement = (
+            getExportMenuButtonElement(chart) as any
+        ).element;
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);

@@ -16,17 +16,16 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMapComposition';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
-
-import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type Projection from '../../Maps/Projection';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
+import ColorMapMixin from '../ColorMapMixin.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -115,7 +114,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(point, joinKey) as string;
+            const mapKey = super.getNestedProperty.call(
+                point,
+                joinKey
+            ) as string;
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {
@@ -174,18 +176,21 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface MapPointProperties {
-    [key: string]: number|string;
-}
-
-interface MapPoint extends ColorMapComposition.PointComposition {
+interface MapPoint {
     bounds?: MapBounds;
-    dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
-    isValid: ColorMapComposition.PointComposition['isValid'];
+    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
+    isValid: ColorMapMixin.ColorMapPoint['isValid'];
     middleX?: number;
     middleY?: number;
-    properties?: MapPointProperties;
+    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
+    properties?: Record<string, (number|string)>;
+    value: ColorMapMixin.ColorMapPoint['value'];
 }
+extend(MapPoint.prototype, {
+    dataLabelOnNull: ColorMapMixin.PointMixin.dataLabelOnNull,
+    isValid: ColorMapMixin.PointMixin.isValid,
+    moveToTopOnHover: ColorMapMixin.PointMixin.moveToTopOnHover
+});
 
 /* *
  *

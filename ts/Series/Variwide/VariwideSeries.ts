@@ -110,7 +110,10 @@ class VariwideSeries extends ColumnSeries {
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
-        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(
+            this,
+            force
+        );
 
         (this.xAxis.reversed ?
             (this.zData as any).slice().reverse() :
@@ -165,8 +168,12 @@ class VariwideSeries extends ColumnSeries {
             relZ = this.relZ,
             i = axis.reversed ? relZ.length - index : index,
             goRight = axis.reversed ? -1 : 1,
-            minPx = axis.toPixels(axis.reversed ? (axis.dataMax || 0) + axis.pointRange : (axis.dataMin || 0)),
-            maxPx = axis.toPixels(axis.reversed ? (axis.dataMin || 0) : (axis.dataMax || 0) + axis.pointRange),
+            minPx = axis.toPixels(axis.reversed ?
+                (axis.dataMax || 0) + axis.pointRange :
+                (axis.dataMin || 0)),
+            maxPx = axis.toPixels(axis.reversed ?
+                (axis.dataMin || 0) :
+                (axis.dataMax || 0) + axis.pointRange),
             len = Math.abs(maxPx - minPx),
             totalZ = this.totalZ,
             left = this.chart.inverted ?

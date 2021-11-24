@@ -148,7 +148,9 @@ namespace Globals {
         svg = (
             doc &&
             doc.createElementNS &&
-            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
+            !!(
+                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
+            ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,

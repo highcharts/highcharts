@@ -174,7 +174,8 @@ class GanttChart extends Chart {
 
                     // Set default type treegrid, but only if 'categories' is
                     // undefined
-                    type: yAxisOptions.categories ? yAxisOptions.type : 'treegrid'
+                    type: yAxisOptions.categories ?
+                        yAxisOptions.type : 'treegrid'
                 } as YAxisOptions,
                 yAxisOptions // user options
             );

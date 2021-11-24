@@ -38,8 +38,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
@@ -933,7 +932,10 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<TreemapSeriesLayoutAlgorithmValue|undefined, TreemapSeriesLayoutAlgorithmValue>(
+            algorithm = pick<
+            TreemapSeriesLayoutAlgorithmValue|undefined,
+            TreemapSeriesLayoutAlgorithmValue
+            >(
                 (
                     (series as any)[
                         (level && level.layoutAlgorithm) as any
@@ -1185,7 +1187,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 
@@ -1300,9 +1307,7 @@ class TreemapSeries extends ScatterSeries {
             setOptionsEvent;
 
         // If color series logic is loaded, add some properties
-        if (colorMapSeriesMixin) {
-            this.colorAttribs = ColorMapComposition.seriesColorAttribs;
-        }
+        this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
@@ -1431,7 +1436,8 @@ class TreemapSeries extends ScatterSeries {
             nodeMap = series.nodeMap,
             node = nodeMap[rootId],
             name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options.traverseUpButton as any,
+            buttonOptions: TreemapSeriesUpButtonOptions = series.options
+                .traverseUpButton as any,
             backText = pick(buttonOptions.text, name, '◁ Back'),
             attr,
             states;
@@ -1555,9 +1561,13 @@ class TreemapSeries extends ScatterSeries {
                 const { height, width, x, y } = values;
                 const crispCorr = getCrispCorrection(point);
                 const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                const x2 = Math.round(
+                    xAxis.toPixels(x + width, true)
+                ) - crispCorr;
                 const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                const y2 = Math.round(
+                    yAxis.toPixels(y + height, true)
+                ) - crispCorr;
 
                 // Set point values
                 const shapeArgs = {
@@ -1676,7 +1686,9 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
+    public setTreeValues(
+        tree: TreemapSeries.NodeObject
+    ): TreemapSeries.NodeObject {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,
@@ -1880,7 +1892,7 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends TU.Series {
-    colorAttribs?: ColorMapComposition.SeriesComposition['colorAttribs'];
+    colorAttribs?: ColorMapMixin.ColorMapSeries['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
@@ -1949,8 +1961,6 @@ namespace TreemapSeries {
         trigger?: string;
     }
 }
-
-ColorMapComposition.compose(TreemapSeries);
 
 /* *
  *

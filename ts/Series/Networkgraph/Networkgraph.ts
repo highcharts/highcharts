@@ -139,7 +139,9 @@ declare global {
             public className: NodesComposition.PointComposition['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
-            public formatPrefix: NodesComposition.PointComposition['formatPrefix'];
+            public formatPrefix: NodesComposition.PointComposition[
+                'formatPrefix'
+            ];
             public from: NodesComposition.PointComposition['from'];
             public fromNode: NetworkgraphPoint;
             public getSum: NodesComposition.PointComposition['getSum'];
@@ -779,7 +781,9 @@ extend(NetworkgraphSeries.prototype, {
         // them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
-                function (nodeOptions: NodesComposition.PointCompositionOptions): void {
+                function (
+                    nodeOptions: NodesComposition.PointCompositionOptions
+                ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
                         this.nodeLookup[nodeOptions.id as any] =
                             this.createNode(nodeOptions.id as any);

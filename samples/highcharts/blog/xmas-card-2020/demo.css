@@ -1,127 +1,134 @@
-body{
-    background-color: #D9DCD6;
+body {
+    background-color: #d9dcd6;
 }
 
-.highcharts-item-series{
-    transform:rotate(-90deg) translate(-300px, 200px);
+.highcharts-item-series {
+    transform: rotate(-90deg) translate(-300px, 200px);
 }
 
-.highcharts-container{
-    height:600px;
+.highcharts-container {
+    height: 600px;
 }
+
 .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #D9DCD6;
+    background-color: #d9dcd6;
     height: 100vh;
-    margin-top:50px;
+    margin-top: 50px;
 }
 
 .book {
     height: 600px;
-    width:800px;
+    width: 800px;
     font-size: 1.4rem;
     text-align: center;
     color: #484e4a;
-    transition: all .1s 0.3s;
-    transform: scale(1,1)
+    transition: all 0.1s 0.3s;
+    transform: scale(1, 1);
 }
 
-.message{
-    transform:scale(1,1);
-    text-align:center;
-    height:30px;
-    width:30px;
-    padding:2px;
-    font-size:24px;
-    transition:all .4s ease-in;
-}
-#container.over .message{
-     box-shadow: 4px 2px .5rem rgba(0, 0, 0, 0.4);
-}
-.cardTitle{
-    display:none;
-    text-align:center;
-    font-family:'Roboto,Calibri,Arial';
-    font-size:36px;
-    position:absolute;
-    font-weight:bold;
-    background-color:transparent;
-    padding:10px;
-    color:#fff;
-    margin:10px 0px 0px 0px;
-    padding:0px;
-}
-.cardTitle img{
-    width:260px;
-    margin:0px;
-    padding:0px;
-    margin-top:-20px;
+.message {
+    transform: scale(1, 1);
+    text-align: center;
+    height: 30px;
+    width: 30px;
+    padding: 2px;
+    font-size: 24px;
+    transition: all 0.4s ease-in;
 }
 
+#container.over .message {
+    box-shadow: 4px 2px 0.5rem rgb(0 0 0 / 40%);
+}
 
-#container{
-    background-color:transparent;
-    transition:background-color 2s ease-in-out;
-    border:3px solid #D9DCD6;
-    position:absolute;
+.cardTitle {
+    display: none;
+    text-align: center;
+    font-family: Roboto, Calibri, Arial, sans-serif;
+    font-size: 36px;
+    position: absolute;
+    font-weight: bold;
+    background-color: transparent;
+    color: #fff;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.cardTitle img {
+    width: 260px;
+    margin: 0;
+    padding: 0;
+    margin-top: -20px;
+}
+
+#container {
+    background-color: transparent;
+    transition: background-color 2s ease-in-out;
+    border: 3px solid #d9dcd6;
+    position: absolute;
     z-index: 1;
-    top:0px;
-    left:50px;
-    width:800px;
-    height:500px;
-    transform: scale(1,1);
+    top: 0;
+    left: 50px;
+    width: 800px;
+    height: 500px;
+    transform: scale(1, 1);
 }
-#soundContainer{
-    opacity:0;
+
+#soundContainer {
+    opacity: 0%;
 }
-#sound{
-    background-image:url('https://cdn.rawgit.com/highcharts/highcharts/4b2b993a59d2358c85dbef61bfcd9e02547ce83a/samples/graphics/xmas-card-2020/snow.svg');
+
+#sound {
+    background-image: url("https://cdn.rawgit.com/highcharts/highcharts/4b2b993a59d2358c85dbef61bfcd9e02547ce83a/samples/graphics/xmas-card-2020/snow.svg");
     background-size: contain;
-    position:absolute;
+    position: absolute;
     z-index: 2;
-    top:0px;
-    left:50px;
-    width:740px;
-    height:500px;
-    transform: scale(1,1);
+    top: 0;
+    left: 50px;
+    width: 740px;
+    height: 500px;
+    transform: scale(1, 1);
 }
-#controls{
-    display:flex;
-    position:absolute;
+
+#controls {
+    display: flex;
+    position: absolute;
     justify-content: center;
     align-items: center;
-    top:350px;
-    width:100%;
+    top: 350px;
+    width: 100%;
     z-index: 20;
-    transition: all 0.3s ;
+    transition: all 0.3s;
     flex-wrap: wrap;
 }
-#controls .btn{
-    margin-right:6px;
-}
-#controls label{
-    font-size: 14px
-}
-#controls.over{
-    top:500px;
 
+#controls .btn {
+    margin-right: 6px;
 }
+
+#controls label {
+    font-size: 14px;
+}
+
+#controls.over {
+    top: 500px;
+}
+
 #controls button,
 #controls input,
-#controls label{
+#controls label {
     display: none;
 }
 
 #controls.over button,
 #controls.over input,
-#controls.over label{
+#controls.over label {
     display: block;
 }
 
-
-#controls #play{
+#controls #play {
     display: inline;
 }
 
@@ -129,7 +136,7 @@ body{
     margin-top: 0.5em;
 }
 
-.highcharts-line-series{
+.highcharts-line-series {
     display: none;
 }
 
@@ -138,14 +145,17 @@ body{
         margin-top: 0;
         display: block;
     }
+
     .book {
         width: 100%;
         height: 100vh;
     }
+
     #container {
         left: 10px;
         transform-origin: left;
     }
+
     #sound {
         width: 100%;
         left: 0;

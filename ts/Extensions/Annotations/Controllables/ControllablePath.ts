@@ -108,7 +108,9 @@ class ControllablePath implements ControllableMixin.Type {
     public point = ControllableMixin.point;
     public rotate = ControllableMixin.rotate;
     public scale = ControllableMixin.scale;
-    public setControlPointsVisibility = ControllableMixin.setControlPointsVisibility;
+    public setControlPointsVisibility = (
+        ControllableMixin.setControlPointsVisibility
+    );
     public setMarkers = MarkerMixin.setItemMarkers;
     public transform = ControllableMixin.transform;
     public transformPoint = ControllableMixin.transformPoint;
@@ -178,7 +180,10 @@ class ControllablePath implements ControllableMixin.Type {
     }
 
     public shouldBeDrawn(): boolean {
-        return (ControllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
+        return (
+            ControllableMixin.shouldBeDrawn.call(this) ||
+            Boolean(this.options.d)
+        );
     }
 
     public render(parent: SVGElement): void {
