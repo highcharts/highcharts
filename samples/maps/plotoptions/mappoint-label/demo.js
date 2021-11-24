@@ -19,14 +19,14 @@ Highcharts.mapChart('container', {
                 y: -5,
                 enabled: true,
                 shape: 'callout',
-                backgroundColor: 'rgb(0 0 0 / 0.7)',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 borderRadius: 5,
                 style: {
-                    color: 'white'
+                    color: '#FFFFFF'
                 }
             },
             marker: {
-                fillColor: '#ffffff',
+                fillColor: '#FFFFFF',
                 lineColor: '#000000',
                 lineWidth: 1
             },
