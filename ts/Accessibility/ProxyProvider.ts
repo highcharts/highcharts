@@ -174,9 +174,6 @@ class ProxyProvider {
         attr(groupElement, attributes || {});
 
         if (groupType === 'ul') {
-            if (!this.chart.styledMode) {
-                proxyContainer.style.listStyle = 'none';
-            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 
