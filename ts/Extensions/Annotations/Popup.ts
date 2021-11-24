@@ -1342,7 +1342,8 @@ H.Popup.prototype = {
             if (indicatorList.childNodes.length > 0) {
                 (indicatorList.childNodes[0] as HTMLDOMElement).click();
             } else if (!isEdit) {
-                rhsColWrapper.parentNode.children[0].innerHTML = (
+                AST.setElementHTML(
+                    rhsColWrapper.parentNode.children[0],
                     lang.noFilterMatch || ''
                 );
                 (rhsColWrapper.parentNode.children[1] as HTMLDOMElement)
