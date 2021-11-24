@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 .visually-hidden {
     width: 1px;
     height: 1px;
@@ -13,28 +17,26 @@
 .btn {
     font-family: "IBM Plex Sans", sans-serif;
     white-space: normal;
-    background-color: #2f2b38;
-    border: 1px solid #2f2b38;
+    background-color: #5749ad;
+    border: 1px solid #5749ad;
     cursor: pointer;
     color: #fff;
-    min-height: 40px;
+    min-height: 90px;
+    max-width: 200px;
     width: 100%;
     border-radius: 4px;
     font-size: 1.1rem;
     font-weight: 700;
     text-align: center;
     padding: 0.375rem 0.75rem;
-    margin-bottom: 0.25rem;
-    margin-top: 0.25rem;
-    margin-left: 35%;
-    margin-right: 35%;
+    margin: 0.25rem 35% 0.25rem 35;
     box-shadow: 0 0 5px rgb(0 0 0 / 40%);
     transition: font-size 0.15s;
 }
 
 .btn:hover,
 .btn:focus {
-    background-color: #324683;
+    filter: brightness(80%);
     font-size: 1.12rem;
 }
 
@@ -57,7 +59,6 @@
     right: 0;
     left: 0;
     z-index: 999;
-    background-color: rgb(255 255 255 / 75%);
 }
 
 .highcharts-figure {
@@ -86,13 +87,18 @@
 #dyncaption {
     display: none;
     position: relative;
-    font-family: "Roboto", sans-serif;
+    font-family: Roboto, sans-serif;
     margin: 0;
     border: 2px solid #eee;
     border-left: none;
     border-right: none;
     border-radius: 3px;
     padding: 5px 10px;
+}
+
+.data-label h4.closed,
+#innovation h4.closed {
+    display: none;
 }
 
 #dyncaption h4.closed,
@@ -138,7 +144,7 @@
     border-bottom-color: #7cb5ec;
 }
 
-.dataLabel {
+.data-label {
     font-family: "IBM Plex Sans", sans-serif;
     position: absolute;
     display: grid;
@@ -151,12 +157,12 @@
     left: 0;
 }
 
-.dataLabel a {
+.data-label a {
     color: #5a62d3;
     font-size: 16px;
 }
 
-.dataLabel.over {
+.data-label.over {
     display: grid;
     grid-template-columns: 70px 1fr;
     justify-items: left;
@@ -164,7 +170,7 @@
     z-index: 1000;
 }
 
-.dataLabel h4 {
+.data-label h4 {
     font-weight: normal;
     display: none;
     text-shadow: 0 0 3px rgb(255 255 255 / 50%);
@@ -172,12 +178,13 @@
     margin: 0 0 5px;
 }
 
-.dataLabel.over h4 {
+.data-label.over h4 {
     display: unset;
     font-weight: bold;
+    color: #000;
 }
 
-.dataLabel p {
+.data-label p {
     display: none;
     margin: 0;
     padding: 0;
@@ -185,7 +192,7 @@
     text-shadow: 0 0 3px rgb(255 255 255 / 50%);
 }
 
-.dataLabel .info {
+.data-label .info {
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: normal;
     font-size: 16px;
@@ -196,54 +203,140 @@
     grid-column: 1 /span 2;
 }
 
-.dataLabel.over .info {
+.data-label.over .info {
     opacity: 100%;
 }
 
-.fas,
-.far {
-    color: #fff;
-    font-size: 40px;
-    opacity: 100%;
+.data-label.over p,
+.data-label.over ul {
+    color: #000;
+    display: block;
 }
 
-.over .fas {
-    opacity: 100%;
-    font-size: 40px;
+#innovation p {
+    grid-row: 2 / span 1;
+    grid-column: 1 / span 1;
+    opacity: 0%;
+    margin-bottom: 45px;
+    height: fit-content;
 }
 
-#brand {
-    top: -140px;
-    left: -180px;
-    grid-template-columns: 100px 100px;
-    align-items: center;
+#brand p {
+    margin-top: -240px;
+    margin-left: -10px;
+    color: #252525;
+    width: 95%;
 }
 
-#brand.over {
-    top: -190px;
-    left: -50px;
-    grid-template-columns: 70px 1fr;
+#brand.over a {
+    color: #252525;
+    text-decoration: underline;
 }
 
-#brand.over i {
-    grid-row: 1 / span 2;
-    grid-column: 1 /span 1;
+#innovation.over a {
+    color: #252525;
+    text-decoration: underline;
+}
+
+#reach.over a {
+    color: #252525;
+    text-decoration: underline;
+}
+
+#innovation i {
+    grid-row: 3 / span 1;
+    transition: none;
+    top: 184px;
+}
+
+#brand i {
+    left: 35px;
+    top: 15px;
+}
+
+#reach i {
+    grid-row: 3 / span1;
+    margin-top: 44px;
+    margin-bottom: 20px;
+    margin-left: -10px;
 }
 
 #brand h4 {
+    margin-top: -45px;
+    margin-left: 60px;
+    margin-bottom: 0;
+    color: #252525;
     width: 100px;
     white-space: normal;
     text-align: right;
 }
 
-#brand.over h4 {
-    width: 200px;
+#legal h4 {
+    width: 100px;
+    white-space: normal;
     text-align: left;
+    margin-left: 20px;
 }
 
-#brand.over p {
-    grid-row: 2 / span 1;
+#legal i {
+    margin-left: -60px;
+    margin-top: 15px;
+    justify-self: left;
+}
+
+#legal.over i {
+    margin-top: -110px;
+    margin-right: 13px;
     grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+    justify-self: right;
+}
+
+#legal.over {
+    background-color: #e4f3ff;
+    clip-path: ellipse(150px 117px at 50% 35%);
+    height: 340px;
+    top: -125px;
+    top: -80px;
+    left: -205px;
+    grid-template-columns: 225px 65px;
+    justify-items: left;
+    align-items: center;
+    padding-left: 10px;
+}
+
+#legal.over p {
+    margin-top: -250px;
+    margin-left: 45px;
+    color: #252525;
+    grid-column: 1 / span 1;
+    grid-row: 2/ span 1;
+}
+
+#legal.over h4 {
+    margin-top: -35px;
+    color: #252525;
+    width: 200px;
+    white-space: normal;
+    text-align: left;
+    grid-column: 1 / span 1;
+    margin-left: 45px;
+}
+
+#legal.over a {
+    color: #252525;
+    text-decoration: underline;
+}
+
+#legal.over a:hover {
+    color: #000;
+}
+
+#legal {
+    top: -40px;
+    left: 55px;
+    grid-template-columns: 40px 1fr;
+    justify-items: left;
 }
 
 #innovation {
@@ -271,29 +364,75 @@
 
 #innovation.over h4.open {
     opacity: 100%;
+    margin-top: 70px;
+    color: #252525;
 }
 
 #innovation.over h4.closed {
     opacity: 0%;
 }
 
-#innovation p {
-    grid-row: 2 / span 1;
-    grid-column: 1 / span 1;
-    opacity: 0%;
-    margin-bottom: 45px;
+#reach.over a:hover {
+    color: #000;
+}
+
+#innovation.over {
+    background-color: #d9dbfb;
+    clip-path: ellipse(150px 116px at 50% 34%);
+    height: 340px;
 }
 
 #innovation.over p {
     margin-bottom: 30px;
     opacity: 100%;
     display: block;
+    margin-top: -120px;
+    color: #252525;
 }
 
-#innovation i {
-    grid-row: 3 / span 1;
-    transition: none;
-    top: 184px;
+#innovation.over i {
+    top: -154px;
+}
+
+#innovation.over a:hover {
+    color: #000;
+}
+
+#brand {
+    grid-template-columns: 100px 100px;
+    align-items: center;
+    top: -140px;
+    left: -20px;
+}
+
+#brand.over {
+    grid-template-columns: 70px 1fr;
+    background-color: #d9fae6;
+    clip-path: ellipse(150px 117px at 50% 35%);
+    height: 340px;
+    left: -5px;
+    top: -230px;
+}
+
+#brand.over a:hover {
+    color: #000;
+}
+
+#brand.over i {
+    grid-row: 1 / span 2;
+    grid-column: 1 /span 1;
+    left: 18px;
+    top: 105px;
+}
+
+#brand.over h4 {
+    width: 200px;
+    text-align: left;
+}
+
+#brand.over p {
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
 }
 
 #reach {
@@ -305,20 +444,18 @@
 }
 
 #reach.over {
+    background-color: #ddebed;
+    clip-path: ellipse(150px 120px at 50% 36%);
+    height: 355px;
     top: -10px;
-    left: -140px;
-}
-
-#reach i {
-    grid-row: 3 / span1;
-    margin-top: 44px;
-    margin-bottom: 20px;
-    margin-left: -10px;
+    left: -150px;
 }
 
 #reach.over h4 {
     grid-row: 2 / span1;
     margin-bottom: 5px;
+    margin-top: -210px;
+    color: #252525;
 }
 
 #reach.over i {
@@ -327,53 +464,10 @@
     margin-top: 22px;
 }
 
-#legal {
-    top: -40px;
-    left: 55px;
-    grid-template-columns: 40px 1fr;
-    justify-items: left;
-}
-
-#legal.over {
-    top: -80px;
-    left: -205px;
-    grid-template-columns: 225px 65px;
-    justify-items: left;
-    align-items: center;
-    padding-left: 10px;
-}
-
-#legal.over p {
-    grid-column: 1 / span 1;
-    grid-row: 2/ span 1;
-}
-
-#legal i {
-    justify-self: left;
-}
-
-#legal h4 {
-    width: 100px;
-    white-space: normal;
-    text-align: left;
-    margin-left: 20px;
-}
-
-#legal.over h4 {
-    width: 200px;
-    white-space: normal;
-    text-align: left;
-}
-
-#legal.over i {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 2;
-    justify-self: right;
-}
-
-#legal.over h4 {
-    grid-column: 1 / span 1;
-    margin-left: 0;
+#reach.over p {
+    margin-top: 90px;
+    width: 70%;
+    color: #252525;
 }
 
 #aicon {
@@ -388,176 +482,13 @@
     color: transparent;
 }
 
-.dataLabel.over p,
-.dataLabel.over h4,
-.dataLabel.over ul {
-    color: #000;
-    display: block;
-}
-
 #container svg {
     transform: scale(1, 0.8);
-}
-
-.dataLabel h4,
-.dataLabel h4.closed,
-#innovation h4.closed {
-    display: none;
-}
-
-#innovation p {
-    height: fit-content;
-}
-
-#innovation.over p {
-    margin-top: -120px;
-    color: #252525;
-}
-
-#innovation h4.open {
-    margin-top: 70px;
-    color: #252525;
-}
-
-#innovation.over i {
-    top: -154px;
-}
-
-#innovation.over {
-    background-color: #d9dbfb;
-    clip-path: ellipse(150px 116px at 50% 34%);
-    height: 340px;
-}
-
-#innovation.over a {
-    color: #252525;
-    text-decoration: underline;
-}
-
-#innovation.over a:hover {
-    color: #000;
-}
-
-#legal i {
-    margin-left: -60px;
-    margin-top: 15px;
-}
-
-#legal.over i {
-    margin-top: -110px;
-    margin-right: 13px;
-}
-
-#legal.over {
-    background-color: #e4f3ff;
-    clip-path: ellipse(150px 117px at 50% 35%);
-    height: 340px;
-    left: -260px;
-    top: -125px;
-}
-
-#legal.over p {
-    margin-top: -250px;
-    margin-left: 45px;
-    color: #252525;
-}
-
-#legal.over h4 {
-    margin-top: -35px;
-    margin-left: 45px;
-    color: #252525;
-}
-
-#legal.over a {
-    color: #252525;
-    text-decoration: underline;
-}
-
-#legal.over a:hover {
-    color: #000;
-}
-
-#reach.over {
-    background-color: #ddebed;
-    clip-path: ellipse(150px 120px at 50% 36%);
-    height: 355px;
-    left: -150px;
-}
-
-#reach i {
-    grid-row: 3 / span1;
-}
-
-#reach.over p {
-    margin-top: 90px;
-    width: 70%;
-    color: #252525;
-}
-
-#reach.over h4 {
-    margin-top: -210px;
-    color: #252525;
-}
-
-#reach.over a {
-    color: #252525;
-    text-decoration: underline;
-}
-
-#reach.over a:hover {
-    color: #000;
-}
-
-#brand {
-    top: -140px;
-    left: -20px;
-}
-
-#brand i {
-    left: 35px;
-    top: 15px;
-}
-
-#brand.over {
-    background-color: #d9fae6;
-    clip-path: ellipse(150px 117px at 50% 35%);
-    height: 340px;
-    left: -5px;
-    top: -230px;
-}
-
-#brand p {
-    margin-top: -240px;
-    margin-left: -10px;
-    color: #252525;
-    width: 95%;
-}
-
-#brand h4 {
-    margin-top: -45px;
-    margin-left: 60px;
-    margin-bottom: 0;
-    color: #252525;
-}
-
-#brand.over i {
-    left: 18px;
-    top: 105px;
-}
-
-#brand.over a {
-    color: #252525;
-    text-decoration: underline;
-}
-
-#brand.over a:hover {
-    color: #000;
+    opacity: 60%;
 }
 
 .fas,
-.far,
-.over .fas,
-.over .far {
+.far {
     font-size: 30px;
     cursor: pointer;
     position: absolute;
@@ -566,6 +497,10 @@
 
 .over .fas,
 .over .far {
+    font-size: 30px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 100;
     color: #252525;
 }
 

@@ -294,7 +294,9 @@ class TimelineSeries extends LineSeries {
     ): void {
         let series = this,
             isInverted = series.chart.inverted,
-            visiblePoints = series.visibilityMap.filter(function (point): boolean {
+            visiblePoints = series.visibilityMap.filter(function (
+                point
+            ): boolean {
                 return point as any;
             }),
             visiblePointsCount: number = series.visiblePointsCount as any,
@@ -302,7 +304,9 @@ class TimelineSeries extends LineSeries {
             isFirstOrLast = (
                 !pointIndex || pointIndex === visiblePointsCount - 1
             ),
-            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
+            dataLabelsOptions: TimelineDataLabelOptions = (
+                series.options.dataLabels as any
+            ),
             userDLOptions = point.userDLOptions || {},
             // Define multiplier which is used to calculate data label
             // width. If data labels are alternate, they have two times more
@@ -434,77 +438,89 @@ class TimelineSeries extends LineSeries {
 
         super.init.apply(series, arguments);
 
-        series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
-            let lastPlotX: (number|undefined),
-                closestPointRangePx = Number.MAX_VALUE;
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'afterTranslate',
+            function (): void {
+                let lastPlotX: (number|undefined),
+                    closestPointRangePx = Number.MAX_VALUE;
 
-            series.points.forEach(function (point): void {
-                // Set the isInside parameter basing also on the real point
-                // visibility, in order to avoid showing hidden points
-                // in drawPoints method.
-                point.isInside = point.isInside && point.visible;
+                series.points.forEach(function (point): void {
+                    // Set the isInside parameter basing also on the real point
+                    // visibility, in order to avoid showing hidden points
+                    // in drawPoints method.
+                    point.isInside = point.isInside && point.visible;
 
-                // New way of calculating closestPointRangePx value, which
-                // respects the real point visibility is needed.
-                if (point.visible && !point.isNull) {
-                    if (defined(lastPlotX)) {
-                        closestPointRangePx = Math.min(
-                            closestPointRangePx,
-                            Math.abs((point.plotX as any) - lastPlotX)
-                        );
+                    // New way of calculating closestPointRangePx value, which
+                    // respects the real point visibility is needed.
+                    if (point.visible && !point.isNull) {
+                        if (defined(lastPlotX)) {
+                            closestPointRangePx = Math.min(
+                                closestPointRangePx,
+                                Math.abs((point.plotX as any) - lastPlotX)
+                            );
+                        }
+                        lastPlotX = point.plotX;
                     }
-                    lastPlotX = point.plotX;
-                }
-            });
-            series.closestPointRangePx = closestPointRangePx;
-        }));
+                });
+                series.closestPointRangePx = closestPointRangePx;
+            }
+        ));
 
         // Distribute data labels before rendering them. Distribution is
         // based on the 'dataLabels.distance' and 'dataLabels.alternate'
         // property.
-        series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function (): void {
-            // Distribute data labels basing on defined algorithm.
-            series.distributeDL(); // @todo use this scope for series
-        }));
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'drawDataLabels',
+            function (): void {
+                // Distribute data labels basing on defined algorithm.
+                series.distributeDL(); // @todo use this scope for series
+            }
+        ));
 
-        series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
-            let dataLabel; // @todo use this scope for series
+        series.eventsToUnbind.push(addEvent(
+            series,
+            'afterDrawDataLabels',
+            function (): void {
+                let dataLabel; // @todo use this scope for series
 
-            // Draw or align connector for each point.
-            series.points.forEach(function (point): void {
-                dataLabel = point.dataLabel;
+                // Draw or align connector for each point.
+                series.points.forEach(function (point): void {
+                    dataLabel = point.dataLabel;
 
-                if (dataLabel) {
-                    // Within this wrap method is necessary to save the
-                    // current animation params, because the data label
-                    // target position (after animation) is needed to align
-                    // connectors.
-                    dataLabel.animate = function (
-                        this: SVGLabel,
-                        params: SVGAttributes
-                    ): SVGLabel {
-                        if (this.targetPosition) {
-                            this.targetPosition = params;
+                    if (dataLabel) {
+                        // Within this wrap method is necessary to save the
+                        // current animation params, because the data label
+                        // target position (after animation) is needed to align
+                        // connectors.
+                        dataLabel.animate = function (
+                            this: SVGLabel,
+                            params: SVGAttributes
+                        ): SVGLabel {
+                            if (this.targetPosition) {
+                                this.targetPosition = params;
+                            }
+                            return SVGElement.prototype.animate.apply(
+                                this,
+                                arguments
+                            ) as SVGLabel;
+                        };
+
+                        // Initialize the targetPosition field within data label
+                        // object. It's necessary because there is need to know
+                        // expected position of specific data label, when
+                        // aligning connectors. This field is overrided inside
+                        // of SVGElement.animate() wrapped  method.
+                        if (!dataLabel.targetPosition) {
+                            dataLabel.targetPosition = {};
                         }
-                        return SVGElement.prototype.animate.apply(
-                            this,
-                            arguments
-                        ) as SVGLabel;
-                    };
 
-                    // Initialize the targetPosition field within data label
-                    // object. It's necessary because there is need to know
-                    // expected position of specific data label, when
-                    // aligning connectors. This field is overrided inside
-                    // of SVGElement.animate() wrapped  method.
-                    if (!dataLabel.targetPosition) {
-                        dataLabel.targetPosition = {};
+                        return point.drawConnector();
                     }
-
-                    return point.drawConnector();
-                }
-            });
-        }));
+                });
+            }
+        ));
 
         series.eventsToUnbind.push(addEvent(
             series.chart,
@@ -528,7 +544,9 @@ class TimelineSeries extends LineSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         let series = this,
-            seriesMarkerOptions: PointMarkerOptions = series.options.marker as any,
+            seriesMarkerOptions: PointMarkerOptions = (
+                series.options.marker as any
+            ),
             seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
             pointMarkerOptions = point.marker || {},
             symbol = (

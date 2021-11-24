@@ -218,7 +218,9 @@ class HTMLRenderer extends SVGRenderer {
 
         // This is specific for HTML within SVG
         if (isSVG) {
-            wrapper.add = function (svgGroupWrapper?: HTMLElement): HTMLElement {
+            wrapper.add = function (
+                svgGroupWrapper?: HTMLElement
+            ): HTMLElement {
                 const container = renderer.box.parentNode,
                     parents = [] as Array<HTMLElement>;
 
@@ -287,8 +289,10 @@ class HTMLRenderer extends SVGRenderer {
                                     display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     cursor: parentGroupStyles.cursor, // #6794
-                                    pointerEvents:
-                                        parentGroupStyles.pointerEvents, // #5595
+                                    pointerEvents: (
+                                        // #5595
+                                        parentGroupStyles.pointerEvents
+                                    ),
                                     visibility: parentGroup.visibility
 
                                 // the top group is appended to container

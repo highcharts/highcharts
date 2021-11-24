@@ -197,7 +197,9 @@ const getTree = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {
-    const ids = data.map(function (d: Highcharts.TreePointOptionsObject): string {
+    const ids = data.map(function (
+            d: Highcharts.TreePointOptionsObject
+        ): string {
             return d.id as any;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);

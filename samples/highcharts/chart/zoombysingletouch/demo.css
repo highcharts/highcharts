@@ -2,17 +2,21 @@
     max-width: 800px;
     margin: 0 auto;
 }
+
 .highcharts-figure {
     margin: 0;
 }
+
 #container {
     height: 300px;
 }
+
 button {
     border: 1px solid silver;
     border-radius: 0.3em;
     padding: 0.5em 1em;
 }
+
 button.active {
-    background-color: rgb(124, 181, 236);
+    background-color: rgb(124 181 236);
 }

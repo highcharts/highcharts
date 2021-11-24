@@ -93,12 +93,15 @@ class DMIIndicator extends SMAIndicator {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+            pointFormat: '<span style="color: {point.color}">' +
+                '\u25CF</span><b> {series.name}</b><br/>' +
                 '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
-                '<span style="color: {point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
-                    ': {point.plusDI}<br/>' +
-                '<span style="color: {point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
-                    ': {point.minusDI}<br/>'
+                '<span style="color: ' +
+                '{point.series.options.plusDILine.styles.lineColor}">' +
+                    '+DI</span>: {point.plusDI}<br/>' +
+                '<span style="color: ' +
+                '{point.series.options.minusDILine.styles.lineColor}">' +
+                    '-DI</span>: {point.minusDI}<br/>'
         },
         /**
          * +DI line options.
@@ -355,6 +358,7 @@ interface DMIIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(DMIIndicator.prototype, {
+    areaLinesNames: [],
     nameBase: 'DMI',
     linesApiNames: ['plusDILine', 'minusDILine'],
     pointArrayMap: ['y', 'plusDI', 'minusDI'],

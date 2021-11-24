@@ -1,6 +1,7 @@
 .container-fluid {
     margin-top: 10px;
 }
+
 #info .f32 .flag {
     position: absolute;
     top: 8px;
@@ -9,12 +10,14 @@
 .clearfix {
     clear: both;
 }
+
 .card-header.subheader {
     font-size: 0.9rem;
-    color: rgba(0, 0, 0, 0.75);
+    color: rgb(0 0 0 / 75%);
     background-color: transparent;
     border-bottom: none;
 }
+
 .card {
     height: 80vh;
     min-height: 400px;
@@ -25,6 +28,7 @@
     .card {
         max-height: 400px;
     }
+
     .col-12 {
         padding-left: 2px !important;
         padding-right: 2px !important;

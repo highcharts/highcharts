@@ -85,7 +85,7 @@ $("#mapDropdown").change(function () {
         // Show arrows the first time a real map is shown
         if (mapDesc !== searchText) {
             $('.selector .prev-next').show();
-            $('#sideBox').show();
+            $('#side-box').show();
         }
 
         // Is there a layer above this?
@@ -131,7 +131,11 @@ $("#mapDropdown").change(function () {
                 stops: [
                     [0, '#EFEFFF'],
                     [0.5, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                    [
+                        1,
+                        Highcharts.color(Highcharts.getOptions().colors[0])
+                            .brighten(-0.5).get()
+                    ]
                 ]
             },
 

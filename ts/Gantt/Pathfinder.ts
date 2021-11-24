@@ -693,7 +693,8 @@ class Pathfinder {
                     // For Gantt series the connect could be
                     // defined as a dependency
                     if (ganttPointOptions && ganttPointOptions.dependency) {
-                        ganttPointOptions.connect = ganttPointOptions.dependency;
+                        ganttPointOptions.connect = ganttPointOptions
+                            .dependency;
                     }
                     let to: (
                             Axis|

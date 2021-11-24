@@ -1,40 +1,49 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-legend text {
-	text-shadow: 0 0 2px black, 0 0 2px black;
+    text-shadow: 0 0 2px black, 0 0 2px black;
 }
+
 .highcharts-legend-box {
-	fill: black;
-	fill-opacity: 0.7;
-	stroke: black;
-	stroke-width: 1px;
+    fill: black;
+    fill-opacity: 0.7;
+    stroke: black;
+    stroke-width: 1px;
 }
+
 .highcharts-legend-item text {
-	fill: #e0e0e0;
-	transition: fill 250ms;
+    fill: #e0e0e0;
+    transition: fill 250ms;
 }
+
 .highcharts-legend-item:hover text {
-	fill: white;
+    fill: white;
 }
+
 .highcharts-legend-item-hidden * {
     fill: gray !important;
     stroke: gray !important;
 }
+
 .highcharts-legend-title {
-	fill: white;
-	font-style: italic;
+    fill: white;
+    font-style: italic;
 }
+
 .highcharts-legend-navigation {
-	fill: white;
+    fill: white;
 }
+
 .highcharts-legend-nav-active {
-	fill: white;
+    fill: white;
 }
+
 .highcharts-legend-nav-inactive {
-	fill: gray;
+    fill: gray;
 }

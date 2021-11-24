@@ -94,10 +94,19 @@ class CSVStore extends DataStore<CSVStore.Event> {
     ) {
         super(table);
 
-        const { csv, csvURL, enablePolling, dataRefreshRate, ...parserOptions } = options;
+        const {
+            csv,
+            csvURL,
+            enablePolling,
+            dataRefreshRate,
+            ...parserOptions
+        } = options;
 
         this.parserOptions = parserOptions;
-        this.options = merge(CSVStore.defaultOptions, { csv, csvURL, enablePolling, dataRefreshRate });
+        this.options = merge(
+            CSVStore.defaultOptions,
+            { csv, csvURL, enablePolling, dataRefreshRate }
+        );
         this.parser = parser || new CSVParser(parserOptions);
     }
 
@@ -138,9 +147,11 @@ class CSVStore extends DataStore<CSVStore.Event> {
      * Handles polling of live data
      */
     private poll(): void {
-        const { dataRefreshRate, enablePolling: pollingEnabled, csvURL } = this.options;
-        const updateIntervalMs = (dataRefreshRate > 1 ? dataRefreshRate : 1) * 1000;
-        if (pollingEnabled && csvURL === this.liveDataURL) {
+        const { dataRefreshRate, enablePolling, csvURL } = this.options;
+        const updateIntervalMs = (
+            dataRefreshRate > 1 ? dataRefreshRate : 1
+        ) * 1000;
+        if (enablePolling && csvURL === this.liveDataURL) {
             // We need to stop doing this if the URL has changed
             this.liveDataTimeout = setTimeout((): void => {
                 this.fetchCSV();
@@ -299,7 +310,9 @@ class CSVStore extends DataStore<CSVStore.Event> {
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
-            csvRows.push(columnNames.map((columnName): string => `"${columnName}"`).join(itemDelimiter));
+            csvRows.push(columnNames.map(
+                (columnName): string => `"${columnName}"`
+            ).join(itemDelimiter));
         }
 
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

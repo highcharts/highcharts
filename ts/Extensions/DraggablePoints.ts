@@ -514,7 +514,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -546,7 +548,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -2285,7 +2289,9 @@ Series.prototype.getGuideBox = function (
 
     // Find bounding box of all points
     points.forEach(function (point: Point): void {
-        const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
+        const bBox = (
+            point.graphic && point.graphic.getBBox() || point.shapeArgs
+        );
 
         if (bBox) {
             let plotX2;

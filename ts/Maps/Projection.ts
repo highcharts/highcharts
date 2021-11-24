@@ -17,7 +17,10 @@ import type {
     LonLatArray
 } from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
-import type { ProjectionOptions, ProjectionRotationOption } from 'ProjectionOptions';
+import type {
+    ProjectionOptions,
+    ProjectionRotationOption
+} from 'ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
