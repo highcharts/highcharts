@@ -296,7 +296,7 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.data.columns[2][0],
+            chart.data.columns[2][1],
             null,
             'Empty point should be parsed to null instead of undefined.'
         );
@@ -304,3 +304,26 @@ QUnit.test(
         document.body.removeChild(table);
     }
 );
+
+
+QUnit.test('Updating with firstRowAsNames', function (assert) {
+    const chart = Highcharts.chart('container', {
+            data: {
+                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
+                firstRowAsNames: true
+            }
+        }),
+        numPoints = chart.series[0].points.length;
+
+    chart.update({
+        data: {
+            googleSpreadsheetKey: 'placeholder'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        numPoints,
+        'Updating data options should not remove data rows.'
+    );
+});

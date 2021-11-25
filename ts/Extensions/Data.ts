@@ -2376,9 +2376,22 @@ class Data {
 
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
+                // We can't modify the original array as further updates
+                // would keep removing first row.
+                const columnsCopy = [];
                 for (i = 0; i < (columns as any).length; i++) {
-                    (columns as any)[i].name = (columns as any)[i].shift();
+                    const curColumn = (columns as any)[i];
+                    const shifted = curColumn.slice(1);
+                    shifted.name = curColumn[0];
+                    extend(shifted, {
+                        isDatetime: curColumn.isDatetime,
+                        isNumeric: curColumn.isNumeric,
+                        mixed: curColumn.mixed,
+                        unsorted: curColumn.unsorted
+                    });
+                    columnsCopy.push(shifted);
                 }
+                columns = columnsCopy;
             }
 
             // Use the next columns for series
