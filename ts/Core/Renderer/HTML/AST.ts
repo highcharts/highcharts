@@ -44,7 +44,7 @@ const {
  *
  * */
 
-// Create the trusted type policy. This should be encapsuled in the module.
+// Create the trusted type policy. This should not be exposed.
 const trustedTypesPolicy = (
     trustedTypes &&
     isFunction(trustedTypes.createPolicy) &&
@@ -55,22 +55,16 @@ const trustedTypesPolicy = (
     )
 );
 
-// Create a TrustedHTML object from an untrusted string. This should also not be
-// exposed, and only used in our controlled cases (empty string and prior to
-// running the DOMparser).
-const trustedHTML = function (html: string): string {
-    if (trustedTypesPolicy) {
-        return trustedTypesPolicy.createHTML(html) as unknown as string;
-    }
-    return html;
-};
-const emptyTrustedHTML = trustedHTML('');
+const emptyHTML = trustedTypesPolicy ?
+    trustedTypesPolicy.createHTML('') as unknown as string :
+    '';
+
 
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
         return Boolean(new DOMParser().parseFromString(
-            emptyTrustedHTML,
+            emptyHTML,
             'text/html'
         ));
     } catch (e) {
@@ -285,7 +279,7 @@ class AST {
         '#text'
     ];
 
-    public static emptyTrustedHTML = emptyTrustedHTML;
+    public static emptyHTML = emptyHTML;
 
     /* *
      *
@@ -345,7 +339,7 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = AST.emptyTrustedHTML; // Clear previous
+        el.innerHTML = AST.emptyHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
@@ -507,7 +501,9 @@ class AST {
         let doc;
         if (hasValidDOMParser) {
             doc = new DOMParser().parseFromString(
-                trustedHTML(markup),
+                trustedTypesPolicy ?
+                    trustedTypesPolicy.createHTML(markup) as unknown as string :
+                    markup,
                 'text/html'
             );
         } else {

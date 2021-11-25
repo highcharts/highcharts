@@ -625,7 +625,7 @@ H.Popup.prototype = {
         this.formType = void 0;
 
         // reset content
-        popupDiv.innerHTML = AST.emptyTrustedHTML;
+        popupDiv.innerHTML = AST.emptyHTML;
 
         // reset toolbar styles if exists
         if (popupDiv.className.indexOf(toolbarClass) >= 0) {
@@ -1720,7 +1720,7 @@ H.Popup.prototype = {
                 getNameType = this.indicators.getNameType;
 
             // reset current content
-            rhsColWrapper.innerHTML = AST.emptyTrustedHTML;
+            rhsColWrapper.innerHTML = AST.emptyHTML;
 
             // create title (indicator name in the right column)
             createElement(
