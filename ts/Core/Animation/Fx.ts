@@ -120,7 +120,6 @@ class Fx {
      *
      * @function Highcharts.Fx#dSetter
      *
-     * @return {void}
      */
     public dSetter(): void {
         const paths = this.paths,
@@ -178,7 +177,6 @@ class Fx {
      *
      * @function Highcharts.Fx#update
      *
-     * @return {void}
      */
     public update(): void {
         const elem = this.elem,
@@ -221,7 +219,6 @@ class Fx {
      * @param {string} unit
      *        The property unit, for example `px`.
      *
-     * @return {void}
      */
     public run(from: number, to: number, unit: string): void {
         const self = this,
@@ -248,7 +245,10 @@ class Fx {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete (options.curAnim as any)[this.prop];
-            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
+            if (
+                options.complete &&
+                Object.keys(options.curAnim as any).length === 0
+            ) {
                 options.complete.call(this.elem);
             }
         } else { // #7166
@@ -316,7 +316,8 @@ class Fx {
             this.pos = (options.easing as Function)(
                 (t - (this.startTime as any)) / duration
             );
-            this.now = (this.start as any) + (((this.end as any) - (this.start as any)) * (this.pos as any));
+            this.now = (this.start as any) + (((this.end as any) -
+                (this.start as any)) * (this.pos as any));
             this.update();
             ret = true;
         }
@@ -365,9 +366,6 @@ class Fx {
         /**
          * If shifting points, prepend a dummy point to the end path.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function prepend(
             arr: SVGPath,
@@ -410,9 +408,6 @@ class Fx {
         /**
          * Copy and append last point until the length matches the end length.
          * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @param {Highcharts.SVGPathArray} other - array
-         * @return {void}
          */
         function append(
             arr: SVGPath,
@@ -426,7 +421,9 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
+                const segmentToAdd = arr[
+                    Math.floor(arr.length / positionFactor) - 1
+                ].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
@@ -439,7 +436,9 @@ class Fx {
 
                 } else {
 
-                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
+                    const lowerSegmentToAdd = arr[
+                        Math.floor(arr.length / positionFactor)
+                    ].slice();
                     arr.splice(
                         arr.length / 2,
                         0,
@@ -500,7 +499,6 @@ class Fx {
      *
      * @function Highcharts.Fx#fillSetter
      *
-     * @return {void}
      */
     public fillSetter(): void {
         Fx.prototype.strokeSetter.apply(this, arguments as any);
@@ -511,13 +509,15 @@ class Fx {
      *
      * @function Highcharts.Fx#strokeSetter
      *
-     * @return {void}
      */
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
-            null as any,
+            color(this.start as any).tweenTo(
+                color(this.end as any),
+                this.pos as any
+            ),
+            void 0,
             true
         );
     }

@@ -69,7 +69,7 @@ class WilliamsRIndicator extends SMAIndicator {
              */
             period: 14
         }
-    } as WilliamsROptions)
+    } as WilliamsROptions);
 
     public data: Array<WilliamsRPoint> = void 0 as any;
     public options: WilliamsROptions = void 0 as any;

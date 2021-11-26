@@ -12,52 +12,35 @@
 
 'use strict';
 
-import type Series from '../../../Core/Series/Series';
-import H from '../../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-const extend = U.extend;
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from '../../Accessibility';
+import type Chart from '../../../Core/Chart/Chart';
+import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
+import type Point from '../../../Core/Series/Point';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
-import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
-import NewDataAnnouncer from './NewDataAnnouncer.js';
-import addForceMarkersEvents from './ForcedMarkers.js';
-
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-const hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
-
+const { hideSeriesFromAT } = ChartUtilities;
+import ForcedMarkers from './ForcedMarkers.js';
+import NewDataAnnouncer from './NewDataAnnouncer.js';
+import Series from '../../../Core/Series/Series.js';
 import SeriesDescriber from './SeriesDescriber.js';
-const describeSeries = SeriesDescriber.describeSeries;
-
+const { describeSeries } = SeriesDescriber;
+import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 import Tooltip from '../../../Core/Tooltip.js';
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class SeriesComponent extends AccessibilityComponent {
-            public constructor ();
-            public keyboardNavigation?: SeriesKeyboardNavigation;
-            public newDataAnnouncer?: NewDataAnnouncer;
-            public hideSeriesLabelsFromATWhenShown(): void;
-            public hideTooltipFromATWhenShown(): void;
-            public getKeyboardNavigation(): KeyboardNavigationHandler;
-            public init(): void;
-            public onChartRender(): void;
-        }
-        let SeriesAccessibilityDescriber: typeof SeriesDescriber;
-    }
-}
 
-// Expose functionality to users
-H.SeriesAccessibilityDescriber = SeriesDescriber;
-
-// Handle forcing markers
-addForceMarkersEvents();
-
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The SeriesComponent class
@@ -66,34 +49,69 @@ addForceMarkersEvents();
  * @class
  * @name Highcharts.SeriesComponent
  */
-const SeriesComponent: typeof Highcharts.SeriesComponent =
-    function (): void {} as any;
-SeriesComponent.prototype = new (AccessibilityComponent as any)();
-extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
+class SeriesComponent extends AccessibilityComponent {
+
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     */
+    public static compose(
+        ChartClass: typeof Chart,
+        PointClass: typeof Point,
+        SeriesClass: typeof Series
+    ): void {
+        // Handle forcing markers
+        NewDataAnnouncer.compose(SeriesClass);
+        ForcedMarkers.compose(SeriesClass);
+        SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
+    }
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public keyboardNavigation?: SeriesKeyboardNavigation;
+    public newDataAnnouncer?: NewDataAnnouncer;
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Init the component.
      */
-    init: function (this: Highcharts.SeriesComponent): void {
+    public init(): void {
         this.newDataAnnouncer = new NewDataAnnouncer(this.chart);
         (this.newDataAnnouncer as any).init();
 
-        this.keyboardNavigation = new (SeriesKeyboardNavigation as any)(
+        this.keyboardNavigation = new SeriesKeyboardNavigation(
             this.chart, this.keyCodes
         );
         (this.keyboardNavigation as any).init();
 
         this.hideTooltipFromATWhenShown();
         this.hideSeriesLabelsFromATWhenShown();
-    },
+    }
 
 
     /**
      * @private
      */
-    hideTooltipFromATWhenShown: function (
-        this: Highcharts.SeriesComponent
-    ): void {
+    public hideTooltipFromATWhenShown(): void {
         const component = this;
 
         this.addEvent(Tooltip, 'refresh', function (): void {
@@ -105,15 +123,13 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 this.label.element.setAttribute('aria-hidden', true);
             }
         });
-    },
+    }
 
 
     /**
      * @private
      */
-    hideSeriesLabelsFromATWhenShown: function (
-        this: Highcharts.SeriesComponent
-    ): void {
+    public hideSeriesLabelsFromATWhenShown(): void {
         this.addEvent(
             this.chart as any,
             'afterDrawSeriesLabels',
@@ -125,18 +141,18 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 });
             }
         );
-    },
+    }
 
 
     /**
      * Called on chart render. It is necessary to do this for render in case
      * markers change on zoom/pixel density.
      */
-    onChartRender: function (this: Highcharts.SeriesComponent): void {
+    public onChartRender(): void {
         const chart = this.chart;
 
         chart.series.forEach(function (
-            series: Highcharts.AccessibilitySeries
+            series: Accessibility.SeriesComposition
         ): void {
             const shouldDescribeSeries = (series.options.accessibility &&
                 series.options.accessibility.enabled) !== false &&
@@ -148,27 +164,45 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
                 hideSeriesFromAT(series);
             }
         });
-    },
+    }
 
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
-    getKeyboardNavigation: function (
-        this: Highcharts.SeriesComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    public getKeyboardNavigation(): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
-    },
+    }
 
 
     /**
      * Remove traces
+     * @private
      */
-    destroy: function (this: Highcharts.SeriesComponent): void {
+    public destroy(): void {
         (this as any).newDataAnnouncer.destroy();
         (this as any).keyboardNavigation.destroy();
     }
-});
+
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+interface SeriesComponent {
+    chart: SeriesKeyboardNavigation.ChartComposition;
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SeriesComponent;

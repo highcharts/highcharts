@@ -24,11 +24,15 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sankey: SankeySeries
+        sankey: {
+            prototype: {
+                pointClass: SankeyPoint
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -40,7 +44,7 @@ const { extend } = U;
  *
  * */
 
-class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
+class DependencyWheelPoint extends SankeyPoint {
 
     /* *
      *
@@ -89,7 +93,9 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
             this.dataLabelPath = renderer
                 .arc({
                     open: true,
-                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                    longArc: Math.abs(
+                        Math.abs(start) - Math.abs(end)
+                    ) < Math.PI ? 0 : 1
                 })
                 // Add it inside the data label group so it gets destroyed
                 // with the label
@@ -119,19 +125,6 @@ class DependencyWheelPoint extends SankeySeries.prototype.pointClass {
     /* eslint-enable valid-jsdoc */
 
 }
-
-/* *
- *
- *  Class Prototype
- *
- * */
-
-interface DependencyWheelPoint {
-    setState: typeof NodesMixin['setNodeState'];
-}
-extend(DependencyWheelPoint.prototype, {
-    setState: NodesMixin.setNodeState
-});
 
 /* *
  *

@@ -80,9 +80,10 @@ function ajax(
 
     /**
      * @private
-     * @param {XMLHttpRequest} xhr - Internal request object.
-     * @param {string|Error} err - Occured error.
-     * @return {void}
+     * @param {XMLHttpRequest} xhr
+     * Internal request object.
+     * @param {string|Error} err
+     * Occured error.
      */
     function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
         if (options.error) {
@@ -152,7 +153,7 @@ function getJSON(
     url: string,
     success: Highcharts.AjaxSuccessCallbackFunction
 ): void {
-    exports.ajax({
+    HttpUtilities.ajax({
         url: url,
         success: success,
         dataType: 'json',
@@ -173,7 +174,7 @@ function getJSON(
  * @param {string} url
  * Post URL
  *
- * @param {object} data
+ * @param {Object} data
  * Post data
  *
  * @param {Highcharts.Dictionary<string>} [formAttributes]
@@ -215,13 +216,13 @@ function post(
  *
  * */
 
-const exports = {
+const HttpUtilities = {
     ajax,
     getJSON,
     post
 };
 
-export default exports;
+export default HttpUtilities;
 
 /**
  * @interface Highcharts.AjaxSettingsObject

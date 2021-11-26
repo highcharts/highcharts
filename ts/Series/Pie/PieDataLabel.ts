@@ -371,29 +371,31 @@ namespace ColumnDataLabel {
                     );
                 } else {
                     switch ((options as any).alignTo) {
-                    case 'connectors':
-                        x = (dataLabelPositioners as any).alignToConnectors(
-                            points,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    case 'plotEdges':
-                        x = (dataLabelPositioners as any).alignToPlotEdges(
-                            dataLabel as any,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    default:
-                        x = (dataLabelPositioners as any).radialDistributionX(
-                            series,
-                            point,
-                            y,
-                            naturalY
-                        );
+                        case 'connectors':
+                            x = (dataLabelPositioners as any).alignToConnectors(
+                                points,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        case 'plotEdges':
+                            x = (dataLabelPositioners as any).alignToPlotEdges(
+                                dataLabel as any,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        default:
+                            x = (
+                                dataLabelPositioners as any
+                            ).radialDistributionX(
+                                series,
+                                point,
+                                y,
+                                naturalY
+                            );
                     }
                 }
 

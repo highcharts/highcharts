@@ -12,9 +12,16 @@
 
 'use strict';
 
-import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+
+import type Accessibility from '../Accessibility';
+import type Chart from '../../Core/Chart/Chart.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
@@ -22,13 +29,11 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const {
     animObject
 } = A;
-import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend,
     fireEvent,
     isNumber,
     pick,
@@ -38,26 +43,24 @@ const {
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
+import CU from '../Utils/ChartUtilities.js';
+const {
+    getChartTitle
+} = CU;
+import HU from '../Utils/HTMLUtilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,
     removeClass
-} = HTMLUtilities;
-import ChartUtils from '../Utils/ChartUtilities.js';
-const {
-    getChartTitle
-} = ChartUtils;
+} = HU;
 
-type LegendItem = (BubbleLegendItem|Series|Point);
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
-        highlightedLegendItemIx?: number;
-        /** @requires modules/accessibility */
-        highlightLegendItem(ix: number): boolean;
-    }
-}
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 
 declare module '../../Core/Legend/LegendItemObject' {
     interface LegendItemObject {
@@ -77,42 +80,15 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class LegendComponent extends AccessibilityComponent {
-            public constructor();
-            public highlightedLegendItemIx: number;
-            public addLegendProxyGroup(): void;
-            public getKeyboardNavigation(): KeyboardNavigationHandler;
-            public init(): void;
-            public onChartRender(): void;
-            public onKbdArrowKey(
-                keyboardNavigationHandler: KeyboardNavigationHandler,
-                keyCode: number
-            ): number;
-            public onKbdClick(
-                keyboardNavigationHandler: KeyboardNavigationHandler
-            ): number;
-            public onKbdNavigationInit(direction: number): void;
-            public highlightAdjacentLegendPage(direction: number): void;
-            public proxyLegendItem(item: LegendItem): void;
-            public proxyLegendItems(): void;
-            public recreateProxies(): boolean;
-            public removeProxies(): void;
-            public shouldHaveLegendNavigation(): (boolean);
-            public updateLegendItemProxyVisibility(): void;
-            public updateLegendTitle(): void;
-            public updateProxyPositionForItem(item: LegendItem): void;
-        }
-    }
-}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * @private
@@ -144,60 +120,11 @@ function shouldDoLegendA11y(chart: Chart): boolean {
 }
 
 
-/**
- * Highlight legend item by index.
+/* *
  *
- * @private
- * @function Highcharts.Chart#highlightLegendItem
+ *  Class
  *
- * @param {number} ix
- *
- * @return {boolean}
- */
-Chart.prototype.highlightLegendItem = function (ix: number): boolean {
-    const items = this.legend.allItems;
-    const oldIx = this.accessibility &&
-            this.accessibility.components.legend.highlightedLegendItemIx;
-    const itemToHighlight = items[ix];
-
-    if (itemToHighlight) {
-        if (isNumber(oldIx) && items[oldIx]) {
-            fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
-        }
-
-        scrollLegendToItem(this.legend, ix);
-
-        const legendItemProp = itemToHighlight.legendItem;
-        const proxyBtn = itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement;
-        if (legendItemProp && legendItemProp.element && proxyBtn) {
-            this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
-        }
-
-        if (itemToHighlight.legendGroup) {
-            fireEvent(itemToHighlight.legendGroup.element, 'mouseover');
-        }
-        return true;
-    }
-    return false;
-};
-
-// Keep track of pressed state for legend items
-addEvent(Legend, 'afterColorizeItem', function (
-    e: {
-        item: LegendItem;
-        visible: (boolean|undefined);
-    }
-): void {
-    const chart: Highcharts.AccessibilityChart = this.chart as any,
-        a11yOptions = chart.options.accessibility,
-        legendItem = e.item;
-
-    if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
-        legendItem.a11yProxyElement.buttonElement.setAttribute(
-            'aria-pressed', e.visible ? 'true' : 'false'
-        );
-    }
-});
+ * */
 
 
 /**
@@ -207,31 +134,60 @@ addEvent(Legend, 'afterColorizeItem', function (
  * @class
  * @name Highcharts.LegendComponent
  */
-const LegendComponent: typeof Highcharts.LegendComponent =
-    function (): void {} as any;
-LegendComponent.prototype = new (AccessibilityComponent as any)();
-extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
+class LegendComponent extends AccessibilityComponent {
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+
+    public highlightedLegendItemIx: number = NaN;
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
 
     /**
      * Init the component
      * @private
      */
-    init: function (this: Highcharts.LegendComponent): void {
+    public init(): void {
         const component = this;
         this.recreateProxies();
 
         // Note: Chart could create legend dynamically, so events can not be
         // tied to the component's chart's current legend.
-        this.addEvent(Legend, 'afterScroll', function (): void {
-            if (this.chart === component.chart) {
-                component.proxyProvider.updateGroupProxyElementPositions('legend');
-                component.updateLegendItemProxyVisibility();
-                if (component.highlightedLegendItemIx > -1) {
-                    this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+        // @todo 1. attach component to created legends
+        // @todo 2. move listeners to composition and access `this.component`
+        this.addEvent(
+            Legend as typeof LegendComponent.LegendComposition,
+            'afterScroll',
+            function (): void {
+                if (this.chart === component.chart) {
+                    component.proxyProvider.updateGroupProxyElementPositions(
+                        'legend'
+                    );
+                    component.updateLegendItemProxyVisibility();
+                    if (component.highlightedLegendItemIx > -1) {
+                        this.chart.highlightLegendItem(
+                            component.highlightedLegendItemIx
+                        );
+                    }
                 }
             }
-        });
-        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
+        );
+        this.addEvent(Legend, 'afterPositionItem', function (
+            e: AnyRecord
+        ): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -243,30 +199,29 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 component.recreateProxies()
             ) {
                 syncTimeout(
-                    (): void => component.proxyProvider.updateGroupProxyElementPositions('legend'),
+                    (): void => component.proxyProvider
+                        .updateGroupProxyElementPositions('legend'),
                     animObject(
                         pick(this.chart.renderer.globalAnimation, true)
                     ).duration
                 );
             }
         });
-    },
+    }
 
 
     /**
      * Update visibility of legend items when using paged legend
      * @private
      */
-    updateLegendItemProxyVisibility: function (
-        this: Highcharts.LegendComponent
-    ): void {
+    public updateLegendItemProxyVisibility(): void {
         const chart = this.chart;
         const legend = chart.legend;
         const items = legend.allItems || [];
         const curPage = legend.currentPage || 1;
         const clipHeight = legend.clipHeight || 0;
 
-        items.forEach(function (item: LegendItem): void {
+        items.forEach(function (item: Legend.Item): void {
             if (item.a11yProxyElement) {
                 const hasPages = legend.pages && legend.pages.length;
                 const proxyEl = item.a11yProxyElement.element;
@@ -275,8 +230,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 if (hasPages) {
                     const itemPage = item.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
-                    const h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0;
-                    hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                    const h = item.legendItem ?
+                        Math.round(item.legendItem.getBBox().height) :
+                        0;
+                    hide = y + h - legend.pages[itemPage] > clipHeight ||
+                        itemPage !== curPage - 1;
                 }
 
                 if (hide) {
@@ -291,23 +249,23 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 }
             }
         });
-    },
+    }
 
 
     /**
      * @private
      */
-    onChartRender: function (this: Highcharts.LegendComponent): void {
+    public onChartRender(): void {
         if (!shouldDoLegendA11y(this.chart)) {
             this.removeProxies();
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    highlightAdjacentLegendPage: function (this: Highcharts.LegendComponent, direction: number): void {
+    public highlightAdjacentLegendPage(direction: number): void {
         const chart = this.chart;
         const legend = chart.legend;
         const curPageIx = legend.currentPage || 1;
@@ -326,28 +284,27 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 }
             }
         }
-    },
+    }
 
 
     /**
      * @private
      */
-    updateProxyPositionForItem: function (
-        this: Highcharts.LegendComponent,
-        item: LegendItem
+    public updateProxyPositionForItem(
+        item: Legend.Item
     ): void {
         if (item.a11yProxyElement) {
             item.a11yProxyElement.refreshPosition();
         }
-    },
+    }
 
 
     /**
-     * @private
      * Returns false if legend a11y is disabled and proxies were not created,
      * true otherwise.
+     * @private
      */
-    recreateProxies: function (this: Highcharts.LegendComponent): boolean {
+    public recreateProxies(): boolean {
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -358,21 +315,21 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             return true;
         }
         return false;
-    },
+    }
 
 
     /**
      * @private
      */
-    removeProxies: function (this: Highcharts.LegendComponent): void {
+    public removeProxies(): void {
         this.proxyProvider.removeGroup('legend');
-    },
+    }
 
 
     /**
      * @private
      */
-    updateLegendTitle: function (this: Highcharts.LegendComponent): void {
+    public updateLegendTitle(): void {
         const chart = this.chart;
         const legendTitle = stripHTMLTags(
             (
@@ -383,7 +340,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             ).replace(/<br ?\/?>/g, ' ')
         );
         const legendLabel = chart.langFormat(
-            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'),
+            {
                 chart,
                 legendTitle,
                 chartTitle: getChartTitle(chart)
@@ -393,48 +351,50 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this.proxyProvider.updateGroupAttrs('legend', {
             'aria-label': legendLabel
         });
-    },
+    }
 
 
     /**
      * @private
      */
-    addLegendProxyGroup: function (this: Highcharts.LegendComponent): void {
+    public addLegendProxyGroup(): void {
         const a11yOptions = this.chart.options.accessibility;
-        const groupRole = a11yOptions.landmarkVerbosity === 'all' ? 'region' : null;
+        const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+            'region' : null;
 
         this.proxyProvider.addGroup('legend', 'ul', {
-            'aria-label': '_placeholder_', // Filled by updateLegendTitle, to keep up to date without recreating group
+            // Filled by updateLegendTitle, to keep up to date without
+            // recreating group
+            'aria-label': '_placeholder_',
             role: groupRole as string
         });
-    },
+    }
 
 
     /**
      * @private
      */
-    proxyLegendItems: function (this: Highcharts.LegendComponent): void {
+    public proxyLegendItems(): void {
         const component = this,
             items = (
                 this.chart.legend &&
                 this.chart.legend.allItems || []
             );
 
-        items.forEach(function (item: LegendItem): void {
+        items.forEach(function (item: Legend.Item): void {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
             }
         });
-    },
+    }
 
 
     /**
      * @private
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      */
-    proxyLegendItem: function (
-        this: Highcharts.LegendComponent,
-        item: LegendItem
+    public proxyLegendItem(
+        item: Legend.Item
     ): void {
         if (!item.legendItem || !item.legendGroup) {
             return;
@@ -454,22 +414,22 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ? item.legendItem : item.legendGroup;
+        const proxyPositioningElement = item.legendGroup.div ?
+            item.legendItem :
+            item.legendGroup;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
             click: item.legendItem as SVGElement,
             visual: proxyPositioningElement.element
         }, attribs);
-    },
+    }
 
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
-    getKeyboardNavigation: function (
-        this: Highcharts.LegendComponent
-    ): Highcharts.KeyboardNavigationHandler {
+    public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
             component = this,
             chart = this.chart;
@@ -479,7 +439,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.left, keys.right, keys.up, keys.down],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         return component.onKbdArrowKey(this, keyCode);
@@ -488,7 +448,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         if (H.isFirefox && keyCode === keys.space) { // #15520
@@ -500,7 +460,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 [
                     [keys.pageDown, keys.pageUp],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler,
+                        this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
                         const direction = keyCode === keys.pageDown ? 1 : -1;
@@ -524,7 +484,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                     (item): unknown => item.setState('', true));
             }
         });
-    },
+    }
 
 
     /**
@@ -534,9 +494,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @return {number}
      * Response code
      */
-    onKbdArrowKey: function (
-        this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
+    public onKbdArrowKey(
+        keyboardNavigationHandler: KeyboardNavigationHandler,
         keyCode: number
     ): number {
         const keys = this.keyCodes,
@@ -564,7 +523,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
         // No wrap, move
         return response[direction > 0 ? 'next' : 'prev'];
-    },
+    }
 
 
     /**
@@ -572,11 +531,10 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
      * @return {number} Response code
      */
-    onKbdClick: function (
-        this: Highcharts.LegendComponent,
-        keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
+    public onKbdClick(
+        keyboardNavigationHandler: KeyboardNavigationHandler
     ): number {
-        const legendItem: LegendItem = this.chart.legend.allItems[
+        const legendItem: Legend.Item = this.chart.legend.allItems[
             this.highlightedLegendItemIx
         ];
 
@@ -585,16 +543,13 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         }
 
         return keyboardNavigationHandler.response.success;
-    },
+    }
 
 
     /**
      * @private
-     * @return {boolean|undefined}
      */
-    shouldHaveLegendNavigation: function (
-        this: Highcharts.LegendComponent
-    ): (boolean) {
+    public shouldHaveLegendNavigation(): (boolean) {
         const chart = this.chart,
             legendOptions = chart.options.legend || {},
             hasLegend = chart.legend && chart.legend.allItems,
@@ -613,15 +568,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             legendA11yOptions.keyboardNavigation &&
             legendA11yOptions.keyboardNavigation.enabled
         );
-    },
+    }
 
 
     /**
      * @private
      * @param {number} direction
      */
-    onKbdNavigationInit: function (
-        this: Highcharts.LegendComponent,
+    public onKbdNavigationInit(
         direction: number
     ): void {
         const chart = this.chart,
@@ -632,6 +586,165 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this.highlightedLegendItemIx = ixToHighlight;
     }
 
-});
+}
+
+
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
+
+
+interface LegendComponent {
+    chart: LegendComponent.ChartComposition;
+}
+
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+
+namespace LegendComponent {
+
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+
+    export declare class ChartComposition extends Accessibility.ChartComposition {
+        highlightedLegendItemIx?: number;
+        /** @requires modules/accessibility */
+        highlightLegendItem(ix: number): boolean;
+    }
+
+    export declare class LegendComposition extends Legend {
+        chart: ChartComposition;
+    }
+
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+
+    const composedClasses: Array<Function> = [];
+
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+
+    /**
+     * Highlight legend item by index.
+     * @private
+     */
+    function chartHighlightLegendItem(
+        this: ChartComposition,
+        ix: number
+    ): boolean {
+        const items = this.legend.allItems;
+        const oldIx = this.accessibility &&
+                this.accessibility.components.legend.highlightedLegendItemIx;
+        const itemToHighlight = items[ix];
+
+        if (itemToHighlight) {
+            if (isNumber(oldIx) && items[oldIx]) {
+                fireEvent(
+                    (items[oldIx].legendGroup as any).element,
+                    'mouseout'
+                );
+            }
+
+            scrollLegendToItem(this.legend, ix);
+
+            const legendItemProp = itemToHighlight.legendItem;
+            const proxyBtn = itemToHighlight.a11yProxyElement &&
+                itemToHighlight.a11yProxyElement.buttonElement;
+            if (legendItemProp && legendItemProp.element && proxyBtn) {
+                this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
+            }
+
+            if (itemToHighlight.legendGroup) {
+                fireEvent(itemToHighlight.legendGroup.element, 'mouseover');
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * @private
+     */
+    export function compose(
+        ChartClass: typeof Chart,
+        LegendClass: typeof Legend
+    ): void {
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            const chartProto = ChartClass.prototype as ChartComposition;
+
+            chartProto.highlightLegendItem = chartHighlightLegendItem;
+        }
+
+        if (composedClasses.indexOf(LegendClass) === -1) {
+            composedClasses.push(LegendClass);
+
+            addEvent(
+                LegendClass as typeof LegendComposition,
+                'afterColorizeItem',
+                legendOnAfterColorizeItem
+            );
+        }
+    }
+
+
+    /**
+     * Keep track of pressed state for legend items.
+     * @private
+     */
+    function legendOnAfterColorizeItem(
+        this: LegendComposition,
+        e: {
+            item: Legend.Item;
+            visible: (boolean|undefined);
+        }
+    ): void {
+        const chart: Accessibility.ChartComposition = this.chart as any,
+            a11yOptions = chart.options.accessibility,
+            legendItem = e.item;
+
+        if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
+            legendItem.a11yProxyElement.buttonElement.setAttribute(
+                'aria-pressed', e.visible ? 'true' : 'false'
+            );
+        }
+    }
+
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
 
 export default LegendComponent;

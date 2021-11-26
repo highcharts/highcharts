@@ -943,19 +943,19 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             y;
 
         switch (markerOptions.align) { // eslint-disable-line default-case
-        case 'right':
-            x = 'xMax';
-            break;
-        case 'left':
-            x = 'xMin';
+            case 'right':
+                x = 'xMax';
+                break;
+            case 'left':
+                x = 'xMin';
         }
 
         switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-        case 'top':
-            y = 'yMin';
-            break;
-        case 'bottom':
-            y = 'yMax';
+            case 'top':
+                y = 'yMin';
+                break;
+            case 'bottom':
+                y = 'yMax';
         }
 
         return {
@@ -1013,11 +1013,11 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *        The radius of the marker, to calculate the additional distance to
      *        the center of the marker.
      *
-     * @param {object} anchor
+     * @param {Object} anchor
      *        The anchor point of the path and marker as an object with x/y
      *        properties.
      *
-     * @return {object}
+     * @return {Object}
      *         The marker vector as an object with x/y properties.
      */
     getMarkerVector: function (

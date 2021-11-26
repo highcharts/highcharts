@@ -124,7 +124,7 @@ class StochasticIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as StochasticOptions)
+    } as StochasticOptions);
 
     public data: Array<StochasticPoint> = void 0 as any;
     public options: StochasticOptions = void 0 as any;
@@ -200,12 +200,13 @@ class StochasticIndicator extends SMAIndicator {
 
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                    xData: xData.slice(-periodD),
-                    yData: yData.slice(-periodD)
-                } as any), {
-                    period: periodD
-                });
+                points = SeriesRegistry.seriesTypes.sma.prototype.getValues
+                    .call(this, ({
+                        xData: xData.slice(-periodD),
+                        yData: yData.slice(-periodD)
+                    } as any), {
+                        period: periodD
+                    });
                 D = (points as any).yData[0];
             }
 
@@ -238,6 +239,7 @@ interface StochasticIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(StochasticIndicator.prototype, {
+    areaLinesNames: [],
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],

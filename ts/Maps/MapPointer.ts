@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../Core/Chart/Chart';
 import type PointerEvent from '../Core/PointerEvent';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
@@ -40,7 +41,7 @@ declare global {
             onContainerDblClick(e: PointerEvent): void;
             onContainerMouseWheel(e: PointerEvent): void;
         }
-        interface MapPointerChart extends MapChart {
+        interface MapPointerChart extends Chart {
             hoverPoint: MapPoint;
             mapZoom: MapNavigationChart['mapZoom'];
         }
@@ -79,8 +80,8 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
         ) {
             chart.mapZoom(
                 0.5,
-                chart.xAxis[0].toValue(e.chartX),
-                chart.yAxis[0].toValue(e.chartY),
+                void 0,
+                void 0,
                 e.chartX,
                 e.chartY
             );
@@ -120,16 +121,14 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
         if (totalWheelDelta < 10 && chart.isInsidePlot(
             e.chartX - chart.plotLeft,
             e.chartY - chart.plotTop
-        )) {
-            chart.mapZoom(
-                Math.pow(
-                    (chart.options.mapNavigation as any).mouseWheelSensitivity,
-                    delta
-                ),
-                chart.xAxis[0].toValue(e.chartX),
-                chart.yAxis[0].toValue(e.chartY),
-                e.chartX,
-                e.chartY,
+        ) && chart.mapView) {
+            chart.mapView.zoomBy(
+                (
+                    (chart.options.mapNavigation as any).mouseWheelSensitivity -
+                    1
+                ) * -delta,
+                void 0,
+                [e.chartX, e.chartY],
                 // Delta less than 1 indicates stepless/trackpad zooming, avoid
                 // animation delaying the zoom
                 Math.abs(delta) < 1 ? false : void 0

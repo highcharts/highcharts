@@ -16,41 +16,54 @@
 
 'use strict';
 
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Accessibility from './Accessibility';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import DOMElementProvider from './Utils/DOMElementProvider.js';
-import ProxyElement from './ProxyElement.js';
-import type { ProxyTarget, ProxyGroupTypes } from './ProxyElement';
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-const {
-    removeElement,
-    removeChildNodes
-} = HTMLUtilities;
-import ChartUtilities from './Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT
-} = ChartUtilities;
+
 import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     attr,
     css
 } = U;
 
+import CU from './Utils/ChartUtilities.js';
+const { unhideChartElementFromAT } = CU;
+import DOMElementProvider from './Utils/DOMElementProvider.js';
+import HU from './Utils/HTMLUtilities.js';
+const {
+    removeElement,
+    removeChildNodes
+} = HU;
+import ProxyElement from './ProxyElement.js';
 
-/* eslint-disable valid-jsdoc */
+
+/**
+ *
+ *  Declarations
+ *
+ * */
 
 interface ProxyGroup {
     proxyContainerElement: HTMLDOMElement;
     groupElement: HTMLDOMElement;
-    type: ProxyGroupTypes;
+    type: ProxyElement.GroupType;
     proxyElements: ProxyElement[];
 }
+
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * Keeps track of all proxy elements and proxy groups.
@@ -59,30 +72,54 @@ interface ProxyGroup {
  * @class
  */
 class ProxyProvider {
-    private beforeChartProxyPosContainer: HTMLDOMElement;
-    private afterChartProxyPosContainer: HTMLDOMElement;
-    private domElementProvider: Highcharts.DOMElementProvider;
-    private groups: Record<string, ProxyGroup|undefined>;
-    private groupOrder: string[];
 
-    constructor(private chart: Highcharts.AccessibilityChart) {
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    private afterChartProxyPosContainer: HTMLDOMElement;
+    private beforeChartProxyPosContainer: HTMLDOMElement;
+    private domElementProvider: DOMElementProvider;
+    private groupOrder: string[];
+    private groups: Record<string, ProxyGroup|undefined>;
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    constructor(private chart: Accessibility.ChartComposition) {
         this.domElementProvider = new DOMElementProvider();
         this.groups = {};
         this.groupOrder = [];
 
-        this.beforeChartProxyPosContainer = this.createProxyPosContainer('before');
-        this.afterChartProxyPosContainer = this.createProxyPosContainer('after');
+        this.beforeChartProxyPosContainer = this.createProxyPosContainer(
+            'before'
+        );
+        this.afterChartProxyPosContainer = this.createProxyPosContainer(
+            'after'
+        );
 
         this.update();
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable */
 
     /**
      * Add a new proxy element to a group, proxying a target control.
      */
     public addProxyElement(
         groupKey: string,
-        target: ProxyTarget,
+        target: ProxyElement.Target,
         attributes?: HTMLAttributes
     ): ProxyElement {
         const group = this.groups[groupKey];
@@ -103,7 +140,11 @@ class ProxyProvider {
      * Create a group that will contain proxy elements. The group order is
      * automatically updated according to the last group order keys.
      */
-    public addGroup(groupKey: string, groupType: ProxyGroupTypes, attributes?: HTMLAttributes): void {
+    public addGroup(
+        groupKey: string,
+        groupType: ProxyElement.GroupType,
+        attributes?: HTMLAttributes
+    ): void {
         if (this.groups[groupKey]) {
             return;
         }
@@ -133,9 +174,6 @@ class ProxyProvider {
         attr(groupElement, attributes || {});
 
         if (groupType === 'ul') {
-            if (!this.chart.styledMode) {
-                proxyContainer.style.listStyle = 'none';
-            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 
@@ -150,7 +188,10 @@ class ProxyProvider {
     /**
      * Update HTML attributes of a group.
      */
-    public updateGroupAttrs(groupKey: string, attributes: HTMLAttributes): void {
+    public updateGroupAttrs(
+        groupKey: string,
+        attributes: HTMLAttributes
+    ): void {
         const group = this.groups[groupKey];
         if (!group) {
             throw new Error('ProxyProvider.updateGroupAttrs: Invalid group key ' + groupKey);
@@ -376,5 +417,11 @@ class ProxyProvider {
         unhideChartElementFromAT(this.chart, this.beforeChartProxyPosContainer);
     }
 }
+
+/* *
+ *
+ *  Export Default
+ *
+ * */
 
 export default ProxyProvider;

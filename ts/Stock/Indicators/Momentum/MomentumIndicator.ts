@@ -65,8 +65,7 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
      */
-    public static defaultOptions: MomentumOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             index: 3
         }
@@ -76,7 +75,7 @@ class MomentumIndicator extends SMAIndicator {
     public options: MomentumOptions = void 0 as any;
     public points: Array<MomentumPoint> = void 0 as any;
 
-    getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

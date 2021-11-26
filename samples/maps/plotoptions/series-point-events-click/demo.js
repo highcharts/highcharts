@@ -1,6 +1,6 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
 
         title: {
@@ -22,7 +22,8 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                                     '<br>Point: ' + this.name + ' (' + this.value + '/km²)',
                                 chart = this.series.chart;
                             if (!chart.clickLabel) {
-                                chart.clickLabel = chart.renderer.label(text, 0, 250)
+                                chart.clickLabel = chart.renderer
+                                    .label(text, 0, 250)
                                     .css({
                                         width: '180px'
                                     })

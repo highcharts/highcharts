@@ -165,15 +165,19 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPriceMovement
      *
-     * @return {void}
      *
      */
     public getPriceMovement(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData, // procesed and grouped data
+            // procesed and grouped data
+            processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (!hollowCandlestickData.length && processedYData && processedYData.length) {
+        if (
+            !hollowCandlestickData.length &&
+            processedYData &&
+            processedYData.length
+        ) {
 
             // First point is allways bullish (transparent).
             hollowCandlestickData.push({
@@ -185,7 +189,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 const dataPoint: any = processedYData[i],
                     previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(dataPoint, previousDataPoint));
+                hollowCandlestickData.push(series.isBullish(
+                    dataPoint,
+                    previousDataPoint
+                ));
             }
         }
     }
@@ -197,10 +204,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#getLineColor
      *
      * @param {string} trendDirection
-     *        Type of candle direction (bearish/bullish)(down/up).
+     * Type of candle direction (bearish/bullish)(down/up).
      *
      * @return {ColorType}
-     *
+     * Line color
      */
     public getLineColor(trendDirection: 'up'|'down'): ColorType {
         const series = this;
@@ -221,7 +228,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *        Information about the current candle.
      *
      * @return {ColorType}
-     *
+     * Point fill color
      */
     public getPointFill(hollowcandleInfo: HollowcandleInfo): ColorType {
         const series = this;
@@ -238,7 +245,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * @private
      * @function Highcarts.seriesTypes.hollowcandlestick#init
-     * @return {void}
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -253,15 +259,15 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
      *
      * @param {Array<(number)>} dataPoint
-     *        Current point which we calculate.
-
-      * @param {Array<(number)>} previousDataPoint
-     *        Previous point.
+     * Current point which we calculate.
      *
-     * @return {HollowcandleInfo}
-     *
+     * @param {Array<(number)>} previousDataPoint
+     * Previous point.
      */
-    public isBullish(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): HollowcandleInfo {
+    public isBullish(
+        dataPoint: Array<(number)>,
+        previousDataPoint: Array<(number)>
+    ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
             isBullish: dataPoint[0] <= dataPoint[3],
@@ -273,15 +279,15 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add color and fill attribute for each point.
      *
+     * @private
+     *
      * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
      *
      * @param {HollowCandlestickPoint} point
-     *        Point to which we are adding attributes.
+     * Point to which we are adding attributes.
+     *
      * @param {StatesOptionsKey} state
-     *        Current point state.
-     *
-     * @return {SVGAttributes}
-     *
+     * Current point state.
      */
     public pointAttribs(
         point: HollowCandlestickPoint,
@@ -294,7 +300,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             hollowcandleInfo = this.hollowCandlestickData[index];
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
-        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) || attribs.stroke;
+        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
+            attribs.stroke;
 
         // Select or hover states
         if (state) {

@@ -30,11 +30,11 @@ declare global {
 
     type DeepPartial<T> = {
         [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
-    }
+    };
 
     type DeepRecord<K extends keyof any, T> = {
         [P in K]: (T|DeepRecord<K, T>);
-    }
+    };
 
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
 
@@ -125,7 +125,9 @@ namespace Globals {
         svg = (
             doc &&
             doc.createElementNS &&
-            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
+            !!(
+                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
+            ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,

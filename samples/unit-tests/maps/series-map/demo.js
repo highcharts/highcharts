@@ -32,7 +32,7 @@ QUnit.test('Mapping of joinBy with custom sub options', function (assert) {
 QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     var chart;
 
-    // Initiate the chart
+    // Initialize the chart
     $('#container').highcharts('Map', {
         series: [
             {

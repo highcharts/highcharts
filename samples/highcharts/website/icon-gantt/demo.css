@@ -1,0 +1,731 @@
+@import "https://code.highcharts.com/css/highcharts.css";
+
+body {
+    margin: 0 !important;
+}
+
+/* BUTTONS OUTSIDE CHART */
+
+.main-container button,
+input,
+optgroup,
+select,
+textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.main-container .btn {
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+}
+
+.main-container .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1055;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+
+.main-container .modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 0.5rem;
+    pointer-events: none;
+}
+
+.main-container .fade {
+    transition: opacity 0.15s linear;
+    display: block;
+    visibility: visible;
+}
+
+.main-container .fade:not(.show) {
+    opacity: 0%;
+    visibility: hidden;
+}
+
+.main-container .modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+    transform: translate(0, -50px);
+}
+
+.main-container .modal.show .modal-dialog {
+    transform: none;
+}
+
+.main-container .modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+.main-container .modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgb(0 0 0 / 20%);
+    border-radius: 0.3rem;
+    outline: 0;
+}
+
+.main-container .modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(0.3rem - 1px);
+    border-top-right-radius: calc(0.3rem - 1px);
+}
+
+.main-container .modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.2em;
+}
+
+.modal-footer .btn:first-child {
+    margin-right: 10px;
+}
+
+.main-container .btn-close {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: #000;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    border: 0;
+    border-radius: 0.25rem;
+    opacity: 50%;
+}
+
+.main-container .modal-header .btn-close {
+    padding: 0.5rem;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+    cursor: pointer;
+}
+
+.main-container .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+}
+
+#modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    visibility: hidden;
+}
+
+#modal-backdrop.show {
+    opacity: 50%;
+    visibility: visible;
+}
+
+.main-container .mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.main-container .form-label {
+    margin-bottom: 0.5rem;
+}
+
+.main-container .form-control {
+    display: block;
+    width: 90%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.main-container .form-select {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    -moz-padding-start: calc(0.75rem - 3px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.main-container #button-group {
+    width: 250px;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0%;
+    transition: opacity 1s;
+}
+
+.main-container #button-group.on {
+    opacity: 100%;
+}
+
+.main-container .btn {
+    background-color: #2f2b38;
+    border-color: #2f2b38;
+}
+
+.main-container .btn:hover {
+    background-color: #2f2b38;
+    border-color: #2f2b38;
+    opacity: 80%;
+}
+
+.main-container .btn.disabled,
+.main-container .btn:disabled {
+    color: #fff;
+    opacity: 40%;
+}
+
+.main-container .btn:focus,
+.main-container .btn-check:focus + .btn {
+    color: #fff;
+    background-color: #2f2b38;
+    border-color: #2f2b38;
+    box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
+}
+
+.highcharts-tooltip.highcharts-color-0,
+.highcharts-tooltip.highcharts-color-1,
+.highcharts-tooltip.highcharts-color-2 {
+    fill: #f0f0f0;
+    stroke: #f0f0f0;
+}
+
+/* CHART */
+
+.chart-container .thick {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .thin {
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .transparent {
+    opacity: 100%;
+    stroke-width: 1;
+    stroke: white;
+    color: white;
+    transition: all 2s;
+}
+
+.chart-container .highcharts-area,
+.chart-container .highcharts-arearange {
+    fill-opacity: 1;
+    stroke: transparent;
+}
+
+.chart-container .highcharts-title,
+.chart-container .highcharts-subtitle {
+    fill: #fff;
+    stroke: #fff;
+    opacity: 100%;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.chart-container .highcharts-subtitle {
+    opacity: 0%;
+}
+
+.chart-container .highcharts-title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.chart-container .line {
+    color: #fff;
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
+.chart-container .highcharts-tick,
+.chart-container .highcharts-axis-line {
+    stroke: #ebebeb;
+}
+
+.chart-container .highcharts-minor-grid-line {
+    stroke: #f2f2f2;
+    opacity: 20%;
+    stroke-dasharray: 2px;
+}
+
+.chart-container .highcharts-axis-labels.highcharts-yaxis-labels {
+    font-size: 1em;
+    font-weight: 300;
+}
+
+.chart-container .highcharts-point-connecting-path-start-marker {
+    fill: #fff;
+}
+
+.chart-container .highcharts-axis-labels {
+    fill: #fff;
+    cursor: default;
+    font-size: 0.7rem;
+}
+
+.chart-container .highcharts-data-label text,
+.chart-container text.highcharts-data-label {
+    fill: #fff;
+    font-weight: 400;
+}
+
+.chart-container .highcharts-point-select .highcharts-color-0,
+.chart-container .highcharts-color-0.highcharts-point-select,
+.chart-container .highcharts-point-select .highcharts-color-1,
+.chart-container .highcharts-point-select .highcharts-color-2 {
+    fill: #f0f0f0 !important;
+}
+
+.chart-container .highcharts-color-0 {
+    fill: #8087e8;
+    stroke: #fff;
+}
+
+.chart-container .highcharts-point-connecting-path.highcharts-color-0,
+.chart-container .highcharts-point-connecting-path.highcharts-color-1,
+.chart-container .highcharts-point-connecting-path.highcharts-color-2 {
+    fill: transparent;
+}
+
+.chart-container .highcharts-color-1 {
+    fill: #e2a13f;
+    stroke: #fff;
+}
+
+.chart-container .highcharts-color-2 {
+    fill: #82d2a6;
+    stroke: #fff;
+}
+
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    line-height: normal;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+.chart-container .highcharts-background {
+    fill: url("#bg-gradient");
+    fill: #2f2b38;
+    transition: all 1s;
+}
+
+.chart-container .highcharts-background.on {
+    fill: #2f2b38;
+}
+
+.chart-container .highcharts-grid-line {
+    fill: none;
+    stroke: transparent;
+    z-index: 40;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
+}
+
+.chart-container .highcharts-plot-band,
+.highcharts-pane {
+    fill: #30426b;
+    fill-opacity: 1;
+    z-index: 30;
+}
+
+.chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+    opacity: 100%;
+}
+
+.chart-container .highcharts-series-inactive {
+    opacity: 100%;
+    transition: opacity 50ms;
+}
+
+.chart-container .highcharts-tooltip-0 {
+    filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
+    box-shadow: 5px 7px 13px 1px rgb(0 0 0 / 14%);
+}
+
+.chart-container .highcharts-tooltip-box,
+.highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
+    stroke-width: 1;
+    border: none;
+    stroke: #fff;
+    fill: #fff;
+    fill-opacity: 1;
+    filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
+}
+
+.chart-container .highcharts-data-label-box {
+    fill: #2f2b38;
+    stroke-width: 0;
+}
+
+.chart-container .highcharts-tooltip text {
+    fill: #333;
+}
+
+.chart-container .highcharts-tooltip {
+    z-index: 100;
+}
+
+.chart-container .highcharts-graph {
+    fill: unset;
+    stroke-width: unset;
+    stroke: unset;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+}
+
+#gantt {
+    width: 250px;
+    height: 250px;
+}
+
+#gantt .hide {
+    opacity: 0%;
+}
+
+#gantt .show {
+    opacity: 100%;
+}
+
+#gantt .highcharts-plot-background {
+    fill: #45445d;
+    stroke: transparent;
+}
+
+#gantt .cover {
+    fill: #46445d;
+    stroke: transparent;
+}
+
+#gantt .foreground {
+    fill: #201836;
+    stroke: transparent;
+}
+
+#gantt .step-w,
+#gantt .pole {
+    fill: #fff;
+    stroke: transparent;
+}
+
+#gantt .step-p {
+    fill: #8087e8;
+    stroke: transparent;
+}
+
+#gantt .flag {
+    fill: transparent;
+    stroke: transparent;
+}
+
+#gantt .flag.show {
+    fill: #8bf2b6;
+    stroke: transparent;
+    transition: fill 1s 50ms;
+}
+
+#gantt .transparent {
+    fill: transparent;
+    stroke: transparent;
+}
+
+#gantt .green {
+    fill: #8bf2b6;
+    stroke: #8bf2b6;
+}
+
+#gantt .particle-2 {
+    transform-origin: center;
+    opacity: 0%;
+    transform: translate(-10px, -30px) scale(0.2);
+    transition: all 1s;
+}
+
+#gantt .particle-2.grow {
+    transform: translate(-10px, -10px) scale(0.5);
+    opacity: 100%;
+    transform-origin: center;
+}
+
+#gantt .particle-3 {
+    transform-origin: center;
+    opacity: 0%;
+    transform: translate(0, -70px) scale(0.2);
+    transition: all 1s;
+}
+
+#gantt .particle-3.grow {
+    transform: translate(0, -40px) scale(0.6);
+    opacity: 100%;
+    transform-origin: center;
+}
+
+#gantt .particle-5 {
+    transform-origin: center;
+    opacity: 0%;
+    transform: translate(-20px, -68px) scale(0.2);
+    transition: all 1s;
+}
+
+#gantt .particle-5.grow {
+    transform: translate(-20px, -38px) scale(0.6);
+    opacity: 100%;
+    transform-origin: center;
+}
+
+#gantt .particle-6 {
+    transform-origin: center;
+    opacity: 0%;
+    transform: translate(-20px, -45px) scale(0.2);
+    transition: all 1s;
+}
+
+#gantt .particle-6.grow {
+    transform: translate(-20px, -15px) scale(0.6);
+    opacity: 100%;
+    transform-origin: center;
+}
+
+#gantt #clip {
+    transform: scale(0.6);
+}
+
+#gantt .gantt-label {
+    width: 100px;
+    padding: 2px;
+    font-weight: bold;
+    position: absolute;
+    left: 15px;
+    top: -25px;
+    color: #fff;
+}
+
+#gantt .day-label {
+    position: absolute;
+    top: -8px;
+    text-align: center;
+    background-color: transparent;
+    color: #fff;
+    font-size: 0.7rem;
+}
+
+@media screen  and (min-width: 300px) {
+    #gantt {
+        width: 300px;
+        height: 300px;
+    }
+
+    #gantt .particle-3.grow {
+        transform: translate(0, -50px) scale(0.6);
+    }
+}
+
+@media screen  and (min-width: 400px) {
+    #gantt {
+        width: 400px;
+        height: 400px;
+    }
+
+    #gantt .particle-2 {
+        transform: translate(-10px, -60px) scale(0.2);
+    }
+
+    #gantt .particle-2.grow {
+        transform: translate(-10px, -30px) scale(0.5);
+    }
+
+    #gantt .particle-3 {
+        transform: translate(0, -80px) scale(0.2);
+    }
+
+    #gantt .particle-3.grow {
+        transform: translate(0, -60px) scale(0.6);
+    }
+
+    #gantt .particle-5 {
+        transform: translate(-20px, -88px) scale(0.2);
+    }
+
+    #gantt .particle-5.grow {
+        transform: translate(-20px, -58px) scale(0.6);
+    }
+
+    #gantt .particle-6 {
+        transform: translate(-20px, -55px) scale(0.2);
+    }
+
+    #gantt .particle-6.grow {
+        transform: translate(-20px, -35px) scale(0.6);
+    }
+}
+
+@media screen  and (min-width: 500px) {
+    #gantt {
+        width: 500px;
+        height: 500px;
+    }
+
+    .main-container .form-control {
+        width: 95%;
+    }
+
+    .main-container .modal-dialog {
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+
+    #gantt .highcharts-title {
+        font-size: 1.4em;
+    }
+
+    #gantt .highcharts-subtitle {
+        font-size: 1em;
+        opacity: 100%;
+    }
+
+    .main-container #button-group {
+        width: 500px;
+    }
+
+    #gantt .particle-2 {
+        transform-origin: center;
+        opacity: 0%;
+        transform: translate(-20px, -60px) scale(0.2);
+        transition: all 1s;
+    }
+
+    #gantt .particle-2.grow {
+        transform: none;
+        opacity: 100%;
+    }
+
+    #gantt .particle-3 {
+        transform-origin: center;
+        opacity: 0%;
+        transform: translate(10px, -150px) scale(0.2);
+        transition: all 1s;
+    }
+
+    #gantt .particle-3.grow {
+        transform: none;
+        opacity: 100%;
+    }
+
+    #gantt .particle-5 {
+        transform-origin: center;
+        opacity: 0%;
+        transform: translate(-40px, -150px) scale(0.2);
+        transition: all 1s;
+    }
+
+    #gantt .particle-5.grow {
+        transform: none;
+        opacity: 100%;
+    }
+
+    #gantt .particle-6 {
+        transform-origin: center;
+        opacity: 0%;
+        transform: translate(-40px, -100px) scale(0.2);
+        transition: all 1s;
+    }
+
+    #gantt .particle-6.grow {
+        transform: none;
+        opacity: 100%;
+    }
+
+    #gantt .gantt-label {
+        width: 100px;
+        padding: 2px;
+        font-weight: bold;
+        font-size: 1.2em;
+        position: absolute;
+        left: 20px;
+        top: -50px;
+        color: #fff;
+    }
+}

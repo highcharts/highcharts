@@ -2258,11 +2258,13 @@ const defaultOptions: Options = {
          */
 
         /**
-         * How many decimals to show for the `point.change` value when the
-         * `series.compare` option is set. This is overridable in each series'
-         * tooltip options object. The default is to preserve all decimals.
+         * How many decimals to show for the `point.change`
+         * or the `point.cumulativeSum` value when the `series.compare`
+         * or the `series.cumulative` option is set.
+         * This is overridable in each series' tooltip options object.
          *
          * @type      {number}
+         * @default   2
          * @since     1.0.1
          * @product   highstock
          * @apioption tooltip.changeDecimals
@@ -2755,6 +2757,7 @@ const defaultTime = new Time(merge(
  * @function Highcharts.getOptions
  *
  * @return {Highcharts.Options}
+ * Default options.
  */
 function getOptions(): Options {
     return defaultOptions;
@@ -2770,10 +2773,10 @@ function getOptions(): Options {
  * @function Highcharts.setOptions
  *
  * @param {Highcharts.Options} options
- *        The new custom chart options.
+ * The new custom chart options.
  *
  * @return {Highcharts.Options}
- *         Updated options.
+ * Updated options.
  */
 function setOptions(
     options: DeepPartial<Options>

@@ -26,8 +26,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import Color from '../../Core/Color/Color.js';
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -434,11 +433,26 @@ class HeatmapSeries extends ScatterSeries {
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
 
+                    // @todo
+                    // Applying the border radius here is not optimal. It should
+                    // be set in the shapeArgs or returned from `markerAttribs`.
+                    // However, Series.drawPoints does not pick up markerAttribs
+                    // to be passed over to `renderer.symbol`. Also, image
+                    // symbols are not positioned by their top left corner like
+                    // other symbols are. This should be refactored, then we
+                    // could save ourselves some tests for .hasImage etc. And
+                    // the evaluation of borderRadius would be moved to
+                    // `markerAttribs`.
                     if (this.options.borderRadius) {
                         point.graphic.attr({
                             r: this.options.borderRadius
                         });
                     }
+
+                    // Saving option for reapplying later
+                    // when changing point's states (#16165)
+                    (point.shapeArgs || {}).r = this.options.borderRadius;
+                    (point.shapeArgs || {}).d = point.graphic.pathArray;
 
                     if (point.value === null) { // #15708
                         point.graphic.addClass('highcharts-null-point');
@@ -534,10 +548,12 @@ class HeatmapSeries extends ScatterSeries {
             };
         }
 
-        // Setting width and height attributes on image does not affect
-        // on its dimensions.
+        // Setting width and height attributes on image does not affect on its
+        // dimensions.
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state] || {};
 
@@ -720,14 +736,16 @@ class HeatmapSeries extends ScatterSeries {
  *
  * */
 
-interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
-    axisTypes: typeof colorMapSeriesMixin.axisTypes;
+interface HeatmapSeries {
+    axisTypes: ColorMapMixin.ColorMapSeries['axisTypes'];
+    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
+    colorKey: ColorMapMixin.ColorMapSeries['colorKey'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getSymbol: typeof Series.prototype.getSymbol;
-    parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
+    parallelArrays: ColorMapMixin.ColorMapSeries['parallelArrays'];
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
-    trackerGroups: typeof colorMapSeriesMixin.trackerGroups;
+    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
 }
 extend(HeatmapSeries.prototype, {
 
@@ -736,9 +754,11 @@ extend(HeatmapSeries.prototype, {
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    axisTypes: colorMapSeriesMixin.axisTypes,
+    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
 
-    colorKey: 'value',
+    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+
+    colorKey: ColorMapMixin.SeriesMixin.colorKey,
 
     directTouch: true,
 
@@ -751,17 +771,15 @@ extend(HeatmapSeries.prototype, {
 
     getSymbol: Series.prototype.getSymbol,
 
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
 
     pointArrayMap: ['y', 'value'],
 
     pointClass: HeatmapPoint,
 
-    trackerGroups: colorMapSeriesMixin.trackerGroups
+    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups
 
 });
-
-ColorMapComposition.compose(HeatmapSeries);
 
 /* *
  *

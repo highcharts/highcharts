@@ -238,7 +238,10 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (
+                    unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0
+                ) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -261,7 +264,8 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
+            // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear')
         ) {
             return (date as any)['setUTC' + unit](value);
         }
@@ -280,7 +284,6 @@ class Time {
      *
      * @param {Highcharts.TimeOptions} options
      *
-     * @return {void}
      */
     public update(options: Time.TimeOptions): void {
         const useUTC = pick(options && options.useUTC, true) as boolean,
@@ -393,11 +396,14 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
+            getTimezoneOffset = options.getTimezoneOffset,
             moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+                return new Date(
+                    timestamp.toString()
+                ).getTimezoneOffset() * 60000;
             };
         }
 
@@ -418,9 +424,9 @@ class Time {
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && options.getTimezoneOffset) {
+        if (this.useUTC && getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+                return getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
 
@@ -593,8 +599,10 @@ class Time {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
-     * @return {Highcharts.Dictionary<T>} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f
+     * General format description
+     * @return {Highcharts.Dictionary<T>}
+     * The object definition
      */
     public resolveDTLFormat<T>(
         f: (string|Array<T>|Record<string, T>)
@@ -629,6 +637,7 @@ class Time {
      * @param {number} [startOfWeek=1]
      *
      * @return {Highcharts.AxisTickPositionsArray}
+     * Time positions
      */
     public getTimeTicks(
         normalizedInterval: Time.TimeNormalizedObject,
@@ -1047,8 +1056,8 @@ export default Time;
  * In case of loading the library from a `script` tag,
  * this option is not needed, it will be loaded from there by default.
  *
- * @type {function}
- * @since 8.2.0
+ * @type      {Function}
+ * @since     8.2.0
  * @apioption time.moment
  */
 

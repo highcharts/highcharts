@@ -109,7 +109,6 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.heikinashi#getHeikinashiData
      *
-     * @return {void}
      *
      */
     public getHeikinashiData(): void {
@@ -139,7 +138,6 @@ class HeikinAshiSeries extends CandlestickSeries {
     /**
      * @private
      * @function Highcarts.seriesTypes.heikinashi#init
-     * @return {void}
      */
     public init(): void {
         super.init.apply(this, arguments as any);
@@ -156,11 +154,15 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @param {Array<(number)>} dataPoint
      *        Current data point.
      *
-     * @return {void}
      *
      */
     public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+        const open = (
+                dataPoint[0] +
+                dataPoint[1] +
+                dataPoint[2] +
+                dataPoint[3]
+            ) / 4,
             close = (dataPoint[0] + dataPoint[3]) / 2;
 
         this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
@@ -178,7 +180,6 @@ class HeikinAshiSeries extends CandlestickSeries {
      * @param {Array<(number)>} previousDataPoint
      *        Previous data point.
      *
-     * @return {void}
      *
      */
     public modifyDataPoint(
@@ -186,7 +187,12 @@ class HeikinAshiSeries extends CandlestickSeries {
         previousDataPoint: Array<(number)>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
-            newClose = (dataPoint[0] + dataPoint[1] + dataPoint[2] + dataPoint[3]) / 4,
+            newClose = (
+                dataPoint[0] +
+                dataPoint[1] +
+                dataPoint[2] +
+                dataPoint[3]
+            ) / 4,
             newHigh = Math.max(dataPoint[1], newClose, newOpen),
             newLow = Math.min(dataPoint[2], newClose, newOpen);
 
@@ -201,8 +207,8 @@ class HeikinAshiSeries extends CandlestickSeries {
 addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
     const series = this,
         points = series.points,
-        heikiashiData = series.heikiashiData;
-    let cropStart = series.cropStart || 0;
+        heikiashiData = series.heikiashiData,
+        cropStart = series.cropStart || 0;
 
     // Reset the proccesed data.
     series.processedYData.length = 0;
@@ -217,7 +223,9 @@ addEvent(HeikinAshiSeries, 'afterTranslate', function (): void {
         point.low = heikiashiDataPoint[2];
         point.close = heikiashiDataPoint[3];
 
-        series.processedYData.push([point.open, point.high, point.low, point.close]);
+        series.processedYData.push(
+            [point.open, point.high, point.low, point.close]
+        );
     }
 });
 

@@ -10,22 +10,26 @@ function getScript(url, cb) {
 function showMap(mapKey) {
     const supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
-    // Initiate the chart
+    // Initialize the chart
     chart = Highcharts.mapChart('container', {
         chart: {
             events: {
                 click: function (e) {
-                    var series = this.get(document.querySelector('input[name=series]:checked').value),
-                        x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value);
+                    const series = this.get(
+                            document
+                                .querySelector('input[name=series]:checked')
+                                .value
+                        ),
+                        pos = this.mapView.pixelsToProjectedUnits({
+                            x: Math.round(e.chartX - this.plotLeft),
+                            y: Math.round(e.chartY - this.plotTop)
+                        });
 
-                    series.addPoint(supportsLatLon ? this.fromPointToLatLon({
-                        x: x,
-                        y: y
-                    }) : {
-                        x: x,
-                        y: y
-                    });
+                    series.addPoint(
+                        supportsLatLon ?
+                            this.fromPointToLatLon(pos) :
+                            pos
+                    );
                 }
             },
             animation: false
@@ -54,9 +58,9 @@ function showMap(mapKey) {
         },
 
         tooltip: {
-            pointFormatter: function () {
-                return supportsLatLon ? 'Lat: ' + this.lat.toFixed(3) + ', Lon: ' + this.lon.toFixed(3) : 'x: ' + this.x + ', y: ' + this.y;
-            }
+            pointFormat: supportsLatLon ?
+                'Lat: {point.lat:.2f}, Lon: {point.lon:.2f}' :
+                'x: {point.x:.0f}, y: {point.y:.0f}'
         },
 
         plotOptions: {
@@ -68,7 +72,8 @@ function showMap(mapKey) {
                         drop: function () {
                             var newLatLon;
                             if (supportsLatLon) {
-                                newLatLon = this.series.chart.fromPointToLatLon(this);
+                                newLatLon = this.series.chart
+                                    .fromPointToLatLon(this);
                                 this.lat = newLatLon.lat;
                                 this.lon = newLatLon.lon;
                             }
@@ -166,14 +171,21 @@ function showMap(mapKey) {
     const select = document.getElementById('maps');
 
     for (const group in Highcharts.mapDataIndex) {
-        if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)) {
+        if (
+            Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex, group)
+        ) {
             if (group !== 'version') {
                 for (const name in Highcharts.mapDataIndex[group]) {
-                    if (Object.prototype.hasOwnProperty.call(Highcharts.mapDataIndex[group], name)) {
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            Highcharts.mapDataIndex[group], name
+                        )
+                    ) {
                         const option = document.createElement('option');
                         option.value = Highcharts.mapDataIndex[group][name];
                         option.innerText = name;
-                        option.selected = name === 'World';
+                        option.selected = name ===
+                            'World, Miller projection, medium resolution';
 
                         select.append(option);
                     }
@@ -184,8 +196,9 @@ function showMap(mapKey) {
 
     select.addEventListener('change', () => {
         const mapKey = select.value.replace(/\.js$/, '');
-        getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', () => {
-            showMap(mapKey);
-        });
+        getScript(
+            `https://code.highcharts.com/mapdata/${mapKey}.js`,
+            () => showMap(mapKey)
+        );
     });
 }());

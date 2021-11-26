@@ -4,6 +4,7 @@ module.exports = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
+            'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
             'getting-started/install-from-bower',
             'getting-started/your-first-chart',
@@ -56,7 +57,9 @@ module.exports = {
             'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
-            'maps/latlon'
+            'maps/latlon',
+            'maps/map-series',
+            'maps/tilemap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -103,7 +106,6 @@ module.exports = {
             'chart-and-series-types/spline-chart',
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
-            'chart-and-series-types/tilemap-series',
             'chart-and-series-types/timeline-series',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
