@@ -12,6 +12,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type { Polygon } from './GeoJSON';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     LonLatArray,
@@ -380,6 +381,13 @@ class MapView {
                 translateY
             };
 
+
+            this.insets.forEach((inset): void => {
+                if (inset.options.field) {
+                    inset.hitZone = inset.getHitZone();
+                }
+            });
+
             this.render();
         }
 
@@ -711,6 +719,7 @@ class MapViewInset extends MapView {
 
     public allBounds: MapBounds[];
     public border?: SVGElement;
+    public hitZone?: Polygon;
     public key?: string;
     public options: MapViewInsetsOptions;
     public path?: SVGPath;
@@ -735,21 +744,10 @@ class MapViewInset extends MapView {
 
     // Get the playing field in pixels
     getField(): BBoxObject {
-        const { chart, mapView, options } = this,
-            { coordinates } = options.field || {};
-        if (coordinates) {
+        const hitZone = this.hitZone;
+        if (hitZone) {
             // @todo: Cache. Called 4 times on first render.
-            let polygon = coordinates[0];
-            if (options.units === 'percent') {
-                const relativeTo = options.relativeTo === 'mapBoundingBox' &&
-                    mapView.getMapBBox() ||
-                    merge(chart.plotBox, { x: 0, y: 0 });
-
-                polygon = polygon.map((xy): [number, number] => [
-                    relativeLength(`${xy[0]}%`, relativeTo.width, relativeTo.x),
-                    relativeLength(`${xy[1]}%`, relativeTo.height, relativeTo.y)
-                ]);
-            }
+            const polygon = hitZone.coordinates[0];
             const xs = polygon.map((xy): number => xy[0]),
                 ys = polygon.map((xy): number => xy[1]),
                 x = Math.min.apply(0, xs),
@@ -770,6 +768,29 @@ class MapViewInset extends MapView {
         // Fall back to plot area
         return super.getField.call(this);
 
+    }
+
+    // Get the hit zone in pixels
+    getHitZone(): Polygon|undefined {
+        const { chart, mapView, options } = this,
+            { coordinates } = options.field || {};
+        if (coordinates) {
+            let polygon = coordinates[0];
+            if (options.units === 'percent') {
+                const relativeTo = options.relativeTo === 'mapBoundingBox' &&
+                    mapView.getMapBBox() ||
+                    merge(chart.plotBox, { x: 0, y: 0 });
+
+                polygon = polygon.map((xy): [number, number] => [
+                    relativeLength(`${xy[0]}%`, relativeTo.width, relativeTo.x),
+                    relativeLength(`${xy[1]}%`, relativeTo.height, relativeTo.y)
+                ]);
+            }
+            return {
+                type: 'Polygon',
+                coordinates: [polygon]
+            };
+        }
     }
 
     getProjectedBounds(): MapBounds|undefined {

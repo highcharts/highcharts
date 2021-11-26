@@ -1,16 +1,37 @@
 Highcharts.getJSON(
-    'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json',
+    'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json',
     // 'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json',
     topology => {
 
         // Create a dummy data value for each geometry
         const data = topology.objects.default.geometries.map((f, i) => i % 5);
 
+        const click = function (e) {
+            // `this` is either Series or Chart
+            const chart = this.chart || this;
+
+            // Get position in pre-projected units
+            const pos = chart.mapView.pixelsToProjectedUnits({
+                x: Math.round(e.chartX - chart.plotLeft),
+                y: Math.round(e.chartY - chart.plotTop)
+            });
+
+            // Convert to latLon
+            const p = chart.fromPointToLatLon(pos);
+            p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
+
+            // Add point
+            chart.get('clicks').addPoint(p);
+        };
+
         // Initialize the chart
         Highcharts.mapChart('container', {
             chart: {
                 map: topology,
-                plotBorderWidth: 1
+                plotBorderWidth: 1,
+                events: {
+                    click
+                }
             },
 
             title: {
@@ -175,6 +196,18 @@ Highcharts.getJSON(
                 dataLabels: {
                     enabled: false,
                     format: '{point.name}'
+                },
+                events: {
+                    click
+                }
+            }, {
+                colorAxis: false,
+                type: 'mappoint',
+                id: 'clicks',
+                name: 'Clicks',
+                data: [],
+                tooltip: {
+                    pointFormat: '{point.name}'
                 }
             }/*, {
                 mapData: Object.values(topology.objects

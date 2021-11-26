@@ -16,7 +16,7 @@
  * @private
  */
 const pointInPolygon = function (
-    point: Highcharts.MapCoordinateObject,
+    point: { x: number, y: number },
     polygon: Array<Array<number>>
 ): boolean {
     let i,
@@ -25,7 +25,7 @@ const pointInPolygon = function (
         rel2,
         c = false,
         x = point.x,
-        y = point.y || 0;
+        y = point.y;
 
     for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
         rel1 = polygon[i][1] > y;
