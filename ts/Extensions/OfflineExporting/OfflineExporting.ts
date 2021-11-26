@@ -29,6 +29,7 @@ import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -49,6 +50,27 @@ const {
     fireEvent,
     merge
 } = U;
+
+AST.allowedAttributes.push(
+    'data-z-index',
+    'fill-opacity',
+    'rx',
+    'ry',
+    'stroke-dasharray',
+    'stroke-linejoin',
+    'text-anchor',
+    'transform',
+    'version',
+    'viewBox',
+    'visibility',
+    'xmlns',
+    'xmlns:xlink'
+);
+AST.allowedTags.push(
+    'desc',
+    'clippath',
+    'g'
+);
 
 /* *
  *
@@ -213,11 +235,11 @@ namespace OfflineExporting {
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
-        /**
+        /*
          * @private
-             */
+         */
         const downloadPDF = (): void => {
-            dummySVGContainer.innerHTML = svg;
+            AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
                 // there. Searches up hierarchy until it finds prop, or hits the
@@ -446,10 +468,9 @@ namespace OfflineExporting {
                         H.isMS || options.type === 'application/pdf'
                     )
                 ) {
-                    fallbackToExportServer(
-                        'Image type not supported' +
-                        'for charts with embedded HTML' as any
-                    );
+                    fallbackToExportServer(new Error(
+                        'Image type not supported for charts with embedded HTML'
+                    ));
                 } else {
                     OfflineExporting.downloadSVGLocal(
                         svg,
@@ -532,9 +553,9 @@ namespace OfflineExporting {
                 hasExternalImages()
             )
         ) {
-            fallbackToExportServer(
-                'Image type not supported for this chart/browser.' as any
-            );
+            fallbackToExportServer(new Error(
+                'Image type not supported for this chart/browser.'
+            ));
             return;
         }
 
