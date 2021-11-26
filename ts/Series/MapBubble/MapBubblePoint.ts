@@ -85,6 +85,8 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
         return typeof this.z === 'number';
     }
 
+    public getProjectedBounds = MapPoint.prototype.getProjectedBounds;
+
     /* eslint-enable valid-jsdoc */
 
 }
