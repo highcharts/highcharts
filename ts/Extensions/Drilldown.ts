@@ -880,6 +880,7 @@ Chart.prototype.applyDrilldown = function (): void {
     fireEvent(this, 'afterDrilldown');
 
     this.redraw();
+    fireEvent(this, 'afterApplyDrilldown');
 };
 
 Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
@@ -1146,6 +1147,7 @@ addEvent(Chart, 'afterShowResetZoom', function (): void {
 
     if (
         this.drillUpButton &&
+        this.breadcrumbs &&
         bbox &&
         buttonOptions &&
         buttonOptions.position &&
@@ -1154,12 +1156,16 @@ addEvent(Chart, 'afterShowResetZoom', function (): void {
         breadcrumbsOptions.position.align === 'right' &&
         breadcrumbsOptions.relativeTo === 'plotBox'
     ) {
-        this.drillUpButton.align({
-            x: -bbox.width,
-            y: -bbox.height
-        },
-        false,
-        breadcrumbsOptions.relativeTo || 'plotBox'
+        const groupBox = this.breadcrumbs.group.getBBox();
+        this.breadcrumbs.group.align(
+            {
+                x: buttonOptions.position.x - bbox.width - 10,
+                y: buttonOptions.position.y,
+                width: groupBox.width,
+                align: buttonOptions.position.align
+            },
+            true,
+            breadcrumbsOptions.relativeTo
         );
     }
 });
@@ -1222,17 +1228,13 @@ addEvent(Chart, 'afterDrilldown', function (): void {
     const chart = this,
         drilldownOptions = chart.options.drilldown;
 
-    if (drilldownOptions) {
-        const breadcrumbsOptions = merge(
-            drilldownOptions.drillUpButton,
-            drilldownOptions.breadcrumbs
-        );
+    const breadcrumbsOptions = drilldownOptions &&
+        drilldownOptions.breadcrumbs;
 
-        if (!chart.breadcrumbs) {
-            chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
-        }
-        chart.breadcrumbs.updateProperties(chart.createList());
+    if (!chart.breadcrumbs) {
+        chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
     }
+    chart.breadcrumbs.updateProperties(chart.createList());
 
 });
 
@@ -1816,19 +1818,30 @@ addEvent(Point, 'afterSetState', function (): void {
 
 // After zooming out, shift the drillUpButton to the previous position, #8095.
 addEvent(Chart, 'selection', function (event: any): void {
-    if (event.resetSelection === true && this.drillUpButton) {
+    if (
+        event.resetSelection === true &&
+        this.drillUpButton &&
+        this.breadcrumbs
+    ) {
         const buttonOptions = (
             this.options.drilldown && this.options.drilldown.drillUpButton
         );
 
-        if (buttonOptions && buttonOptions.position) {
-            this.drillUpButton.align({
-                x: buttonOptions.position.x,
-                y: buttonOptions.position.y,
-                align: buttonOptions.position.align
-            },
-            false,
-            buttonOptions.relativeTo || 'plotBox'
+        if (
+            buttonOptions &&
+            buttonOptions.position &&
+            buttonOptions.relativeTo === 'plotBox'
+        ) {
+            const groupBox = this.breadcrumbs.group.getBBox();
+            this.breadcrumbs.group.align(
+                {
+                    x: buttonOptions.position.x,
+                    y: buttonOptions.position.y,
+                    width: groupBox.width,
+                    align: buttonOptions.position.align
+                },
+                true,
+                buttonOptions.relativeTo
             );
         }
     }

@@ -2921,7 +2921,7 @@ class Series {
             axis;
 
         // add event hook
-        fireEvent(series, 'destroy');
+        fireEvent(series, 'destroy', { keepEventsForUpdate });
 
         // remove events
         this.removeEvents(keepEventsForUpdate);

@@ -130,7 +130,7 @@ class ZoomComponent extends AccessibilityComponent {
         this.proxyProvider.addGroup('zoom', 'div');
 
         [
-            'afterShowResetZoom', 'afterDrilldown', 'drillupall'
+            'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
         ].forEach(function (eventType: string): void {
             component.addEvent(chart, eventType, function (): void {
                 component.updateProxyOverlays();

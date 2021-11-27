@@ -49,7 +49,8 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
             breadcrumbs: {
                 relativeTo: 'chart',
                 position: {
-                    x: 100
+                    x: -30,
+                    y: 5
                 },
                 floating: true,
                 showFullPath: false
@@ -360,7 +361,7 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
 
     // Drill up
     // chart.drillUp();
-    chart.breadcrumbs.jumpTo(null);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
     assert.strictEqual(
         typeof chart.drillUpButton,
         'undefined',
@@ -433,7 +434,7 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
     );
 
     //chart.drillUp();
-    chart.breadcrumbs.jumpTo(null);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
     chart.series[0].points[0].doDrilldown();
 
     assert.ok(

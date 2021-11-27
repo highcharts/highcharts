@@ -89,7 +89,7 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
     );
     // @todo
     //chart.drillUp();
-    chart.breadcrumbs.jumpTo(0);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
 
     chart.update({
         drilldown: {
@@ -122,17 +122,17 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.breadcrumbs.jumpTo(1);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.breadcrumbs.jumpTo(0);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
     assert.strictEqual(
         chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        0,
-        'The breadcrumbsButtonGroup should be destroyed.'
+        1,
+        'The breadcrumbs separators group should be destroyed.'
     );
     chart.series[0].points[1].doDrilldown();
     buttons = chart
@@ -315,7 +315,8 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            width: 600
+            width: 600,
+            plotBorderWidth: 1
         },
         xAxis: {
             type: 'category'
@@ -399,7 +400,6 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     chart.series[0].points[0].doDrilldown();
     let breadcrumbsWidth = chart.breadcrumbs.group.getBBox().width,
         breadcrumbsXPosition = chart.breadcrumbs.group.translateX;
-
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,

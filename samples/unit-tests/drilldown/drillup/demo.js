@@ -101,7 +101,6 @@ QUnit.test(
             },
             series: series
         };
-
         var clock = TestUtilities.lolexInstall();
 
         try {
@@ -127,7 +126,6 @@ QUnit.test(
         }
     }
 );
-
 // Highcharts 4.0.4, Issue #3544
 // Drillup does not work when data are set dynamically
 QUnit.test('Drill up failed on top level (#3544)', function (assert) {
@@ -187,7 +185,6 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
         controller.getPosition().relatedTarget,
         'Drilldown column is not visible'
     );
-
     controller.click();
 
     assert.deepEqual(
@@ -197,16 +194,19 @@ QUnit.test('Drill up failed on top level (#3544)', function (assert) {
     );
     controller.moveTo(columnCenterX, columnCenterY);
 
-    var drillUpButton = chart.drillUpButton,
-        drillUpButtonX = chart.plotLeft + drillUpButton.bBox.x +
-            (drillUpButton.getBBox().width / 2),
-        drillUpButtonY = drillUpButton.bBox.y +
-            (drillUpButton.getBBox().height / 2) + chart.plotTop;
+    var breadcrumbsGroup = chart.breadcrumbs.group;
 
-    assert.notEqual(drillUpButton, undefined, 'Drill up button is not undefined');
+    assert.notEqual(chart.drillUpButton, undefined, 'Drill up button is not undefined');
 
-    controller.moveTo(drillUpButtonX, drillUpButtonY);
-    controller.click(drillUpButtonX, drillUpButtonY, undefined, true);
+    controller.moveTo(
+        breadcrumbsGroup.translateX + 10,
+        breadcrumbsGroup.translateY + 10
+    );
+
+    controller.click(
+        breadcrumbsGroup.translateX + 10,
+        breadcrumbsGroup.translateY + 10
+    );
     controller.moveTo(columnCenterX, columnCenterY);
 
     assert.deepEqual(

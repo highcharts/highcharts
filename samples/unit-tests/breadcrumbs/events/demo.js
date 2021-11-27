@@ -48,7 +48,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
     chart.series[0].points[0].doDrilldown();
     test.triggerEvent(
         'click',
-        chart.plotLeft + 10,
+        chart.breadcrumbs.group.translateX + 10,
         chart.breadcrumbs.group.translateY + 10
     );
 
@@ -73,12 +73,12 @@ QUnit.test('Breadcrumbs format', function (assert) {
     });
     test.triggerEvent(
         'click',
-        chart.plotLeft + 10,
+        chart.breadcrumbs.group.translateX + 10,
         chart.breadcrumbs.group.translateY + 10
     );
     assert.strictEqual(
         chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        0,
-        'When click event returns true, drillup should be performed and buttons removed.'
+        1,
+        'The breadcrumbs separators group should be destroyed.'
     );
 });

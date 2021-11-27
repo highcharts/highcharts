@@ -1427,14 +1427,17 @@ class TreemapSeries extends ScatterSeries {
             );
 
             series.eventsToUnbind.push(
-                addEvent(series, 'destroy', function destroyEvents(): void {
-                    const chart = this.chart;
-                    if (chart.breadcrumbs) {
-                        chart.breadcrumbs.destroyGroup();
-                        chart.breadcrumbs.list.length = 0;
-                        chart.breadcrumbs = void 0 as Breadcrumbs|undefined;
+                addEvent(series, 'destroy',
+                    function destroyEvents(e: any): void {
+                        const chart = this.chart;
+                        if (chart.breadcrumbs) {
+                            chart.breadcrumbs.destroy();
+                            if (!e.keepEventsForUpdate) {
+                                chart.breadcrumbs = void 0;
+                            }
+                        }
                     }
-                })
+                )
             );
         }
 

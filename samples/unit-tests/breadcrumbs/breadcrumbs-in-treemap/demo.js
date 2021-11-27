@@ -97,17 +97,19 @@ QUnit.test('Breadcrumbs button', function (assert) {
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.breadcrumbs.jumpTo(1);
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
+
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.breadcrumbs.jumpTo(0);
 
-    assert.strictEqual(
-        chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        0,
-        'The breadcrumbsButtonGroup should be destroyed.'
-    );
+    // Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
+
+    // assert.strictEqual(
+    //     chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
+    //     0,
+    //     'The breadcrumbsButtonGroup should be destroyed.'
+    // );
 });
