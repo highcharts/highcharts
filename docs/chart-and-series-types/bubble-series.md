@@ -8,7 +8,7 @@ A bubble series renders bubbles, which radius are proportional to a `z` value, o
 Bubble series features
 ----------------------
 
-Like the scatter series, the bubble series also accepts data points with `x` and `y` values. But in addition, it accepts the third dimension, `z`, that dictates the size of the bubble. There are two modes for how the size is calculated. When [sizeBy](https://api.highcharts.com/highcharts/series.bubble.sizeBy) is `area`, the `z` value is proportional to the area, and when set to `width`, the it is proportional to the diameter.
+Like the scatter series, the bubble series also accepts data points with `x` and `y` values. But in addition, it accepts the third dimension, `z`, that dictates the size of the bubble. There are two modes for how the size is calculated. When [sizeBy](https://api.highcharts.com/highcharts/series.bubble.sizeBy) is `area`, the `z` value is proportional to the area, and when set to `width`, it is proportional to the diameter.
 
 <iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/bubble-sizeby" allow="fullscreen"></iframe>
 
@@ -16,7 +16,7 @@ Like the scatter series, the bubble series also accepts data points with `x` and
 Bubble sizes
 ------------
 
-The actual size of the bubbles are also controlled by other options:
+The actual size of the bubbles is also controlled by other options:
 * The [minSize](https://api.highcharts.com/highcharts/series.bubble.minSize) and [maxSize](https://api.highcharts.com/highcharts/series.bubble.minSize) options determine the size span of the rendered bubbles. They can be set as percentages (of the chart area) or as absolute pixel values.
 * The [zMin](https://api.highcharts.com/highcharts/series.bubble.zMin) and [zMax](https://api.highcharts.com/highcharts/series.bubble.zMax) options determine how the sizes should be computed relative to the actual z value.
 * The [sizeByAbsoluteValue](https://api.highcharts.com/highcharts/series.bubble.sizeByAbsoluteValue) determine how the size should handle crossing of the [zThreshold](https://api.highcharts.com/highcharts/series.bubble.zThreshold), usually the zero plane.
