@@ -44,6 +44,7 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
+    addEvent,
     extend,
     isNumber,
     merge,
@@ -572,13 +573,29 @@ class ColorAxis extends Axis implements AxisLike {
         ).attr({
             zIndex: 1
         }).add(item.legendGroup);
-
+        const options = legend.options;
+        const symbolPadding = options.symbolPadding || 0;
+        const isSeries = !(item as any).series;
+        const series = !isSeries && (item as any).series.drawLegendSymbol ?
+                (item as any).series :
+                item,
+            seriesOptions = series.options,
+            showCheckbox = legend.createCheckboxForItem &&
+                seriesOptions &&
+                seriesOptions.showCheckbox;
+        const itemExtraWidth = legend.symbolWidth + symbolPadding +
+                        itemDistance + (showCheckbox ? 20 : 0);
         // Set how much space this legend item takes up
         axis.legendItemWidth = (
             width +
             padding +
-            (horiz ? itemDistance : labelPadding)
-        );
+            (horiz ? itemDistance : labelPadding) + (
+                (options.layout === 'vertical') &&
+                (item as ColorAxis).maxLabelLength &&
+                ((item as ColorAxis).maxLabelLength > itemExtraWidth) &&
+                ((item as ColorAxis).maxLabelLength - itemExtraWidth) ||
+                0
+            ));
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
@@ -1000,6 +1017,25 @@ namespace ColorAxis {
 
 // Properties to preserve after destroy, for Axis.update (#5881, #6025).
 Array.prototype.push.apply(Axis.keepProps, ColorAxis.keepProps);
+
+addEvent(ColorAxis, 'afterGetOffset', function (): void {
+    if (this.coll === 'colorAxis') {
+        const legend = this.chart.legend;
+
+        legend.allItems.forEach(function (item): void {
+            const isSeries = !(item as any).series,
+                series = !isSeries && (item as any).series.drawLegendSymbol ?
+                    (item as any).series :
+                    item;
+
+            // Gives access to `maxLabelLength`
+            series.drawLegendSymbol(legend, item);
+        });
+
+        legend.render();
+        this.chart.getMargins(true);
+    }
+});
 
 /* *
  *

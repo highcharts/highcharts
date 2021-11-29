@@ -658,7 +658,7 @@ class Legend {
      * The item to render.
      */
     public renderItem(
-        item: Legend.Item | ColorAxis
+        item: Legend.Item
     ): void {
         const legend = this,
             chart = legend.chart,
@@ -796,15 +796,9 @@ class Legend {
         const fontMetricsH = (legend.fontMetrics && legend.fontMetrics.h) || 0;
 
         item.itemWidth = item.checkboxOffset =
-            (options.itemWidth ||
+            options.itemWidth ||
             item.legendItemWidth ||
-            bBox.width + itemExtraWidth) + (
-                (options.layout === 'vertical') &&
-                (item as ColorAxis).maxLabelLength &&
-                ((item as ColorAxis).maxLabelLength > itemExtraWidth) &&
-                ((item as ColorAxis).maxLabelLength - itemExtraWidth) ||
-                0
-            );
+            bBox.width + itemExtraWidth;
         legend.maxItemWidth = Math.max(
             legend.maxItemWidth, (item.itemWidth as any)
         );
