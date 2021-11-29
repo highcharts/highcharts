@@ -51,12 +51,13 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         chart.yAxis[0].top > 10,
         'Space should be reserved after the drilldown.'
     );
-    // @todo
-    //chart.drillUp();
 
-    // assert.strictEqual(
-    //     chart.yAxis[0].top,
-    //     10,
-    //     'Spacing should reset after drillUp.'
-    // );
+
+    Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
+
+    assert.strictEqual(
+        chart.yAxis[0].top,
+        10,
+        'Spacing should reset after drillUp.'
+    );
 });

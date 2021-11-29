@@ -87,8 +87,7 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
         chart.drillUpButton.element,
         'Initially, the breadcrumbs should be disabled and the drillUp button should exist.'
     );
-    // @todo
-    //chart.drillUp();
+
     Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 0 });
 
     chart.update({

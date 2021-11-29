@@ -361,7 +361,6 @@ class Breadcrumbs {
     public plotX: number = 0;
     public plotY: number = 0;
 
-    // TO DO move merge with drillupbutton upper in chain
     public constructor(chart: Chart, userOptions?: Partial<Breadcrumbs.BreadcrumbsOptions>) {
         const chartOptions = merge(
             chart.options.drilldown &&
@@ -802,7 +801,7 @@ class Breadcrumbs {
         // g().destroy() does not remove added HTML
         this.destroyListElements(true);
 
-        // Clear the breadcrums list array.
+        // Then, destroy the group itself.
         if (this.group) {
             this.group.destroy();
         }
@@ -879,7 +878,7 @@ class Breadcrumbs {
     }
 
     /**
-     * Reset state for all buttons in elementList.
+     * Update rendered elements inside the elementList.
      *
      * @requires  modules/breadcrumbs
      *
