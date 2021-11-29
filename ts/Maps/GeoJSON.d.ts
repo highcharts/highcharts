@@ -42,6 +42,8 @@ export interface GeoJSONGeometryMultiPointRegistry {
     MultiPolygon: MultiPolygon;
 }
 
-export type GeoJSONGeometryMultiPoint = GeoJSONGeometryMultiPointRegistry[keyof GeoJSONGeometryMultiPointRegistry];
+export type GeoJSONGeometryMultiPoint = GeoJSONGeometryMultiPointRegistry[
+    keyof GeoJSONGeometryMultiPointRegistry
+];
 
 export default GeoJSONGeometryMultiPoint;

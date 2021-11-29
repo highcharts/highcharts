@@ -141,6 +141,15 @@ QUnit.test('Text word wrap with markup', function (assert) {
             'The text node width should be less than 100'
         );
     }
+
+    text.attr({
+        text: '<a href="https://www.highcharts.com">The quick brown fox jumps over the lazy dog</a>'
+    });
+
+    assert.ok(
+        text.getBBox().width <= 100,
+        'Text directly inside anchor should be wrapped (#16173)'
+    );
 });
 
 QUnit.module('whiteSpace: "nowrap"', hooks => {

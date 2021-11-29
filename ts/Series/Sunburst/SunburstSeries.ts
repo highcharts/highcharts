@@ -119,7 +119,9 @@ const getEndPoint = function getEndPoint(
 };
 
 // eslint-disable-next-line require-jsdoc
-function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabelOptions {
+function getDlOptions(
+    params: SunburstSeries.DlOptionsParams
+): SunburstDataLabelOptions {
     // Set options to new object to avoid problems with scope
     let point = params.point,
         shape: Partial<SunburstSeries.NodeValuesObject> =
@@ -519,7 +521,7 @@ class SunburstSeries extends TreemapSeries {
         /**
          * Can set a `levelSize` on all points which lies on the same level.
          *
-         * @type      {object}
+         * @type      {Object}
          * @apioption plotOptions.sunburst.levels.levelSize
          */
 
@@ -814,7 +816,9 @@ class SunburstSeries extends TreemapSeries {
         points.forEach(function (point): void {
             let node = point.node,
                 level = mapOptionsToLevel[node.level],
-                shapeExisting: SunburstSeries.NodeValuesObject = point.shapeExisting || ({} as any),
+                shapeExisting: SunburstSeries.NodeValuesObject = (
+                    point.shapeExisting || ({} as any)
+                ),
                 shape: SunburstSeries.NodeValuesObject =
                     node.shapeArgs || ({} as any),
                 animationInfo,
@@ -924,25 +928,32 @@ class SunburstSeries extends TreemapSeries {
                 options.slicedOffset :
                 0;
 
-        return (children || []).reduce(function (arr, child): Array<SunburstSeries.NodeValuesObject> {
-            const percentage = (1 / total) * child.val,
-                radians = percentage * range,
-                radiansCenter = startAngle + (radians / 2),
-                offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
-                values: SunburstSeries.NodeValuesObject = {
-                    x: child.sliced ? offsetPosition.x : x,
-                    y: child.sliced ? offsetPosition.y : y,
-                    innerR: innerRadius,
-                    r: outerRadius,
-                    radius: radius,
-                    start: startAngle,
-                    end: startAngle + radians
-                } as any;
+        return (children || []).reduce(
+            function (arr, child): Array<SunburstSeries.NodeValuesObject> {
+                const percentage = (1 / total) * child.val,
+                    radians = percentage * range,
+                    radiansCenter = startAngle + (radians / 2),
+                    offsetPosition = getEndPoint(
+                        x,
+                        y,
+                        radiansCenter,
+                        slicedOffset
+                    ),
+                    values: SunburstSeries.NodeValuesObject = {
+                        x: child.sliced ? offsetPosition.x : x,
+                        y: child.sliced ? offsetPosition.y : y,
+                        innerR: innerRadius,
+                        r: outerRadius,
+                        radius: radius,
+                        start: startAngle,
+                        end: startAngle + radians
+                    } as any;
 
-            arr.push(values);
-            startAngle = values.end;
-            return arr;
-        }, [] as Array<SunburstSeries.NodeValuesObject>);
+                arr.push(values);
+                startAngle = values.end;
+                return arr;
+            }, [] as Array<SunburstSeries.NodeValuesObject>
+        );
     }
 
     /**
@@ -1060,11 +1071,14 @@ class SunburstSeries extends TreemapSeries {
         }) as any;
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(mapOptionsToLevel as any, {
-            diffRadius,
-            from,
-            to
-        }) as any;
+        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(
+            mapOptionsToLevel as any,
+            {
+                diffRadius,
+                from,
+                to
+            }
+        ) as any;
         // TODO Try to combine setTreeValues & setColorRecursive to avoid
         //  unnecessary looping.
         setTreeValues(tree, {

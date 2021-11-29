@@ -349,7 +349,7 @@ class Measure extends Annotation {
 
             return bins;
         }
-    }
+    };
 
     /* *
      *
@@ -379,7 +379,12 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
+        Annotation.prototype.init.call(
+            this,
+            annotationOrChart,
+            userOptions,
+            index
+        );
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -403,7 +408,6 @@ class Measure extends Annotation {
     /**
      * Get measure points configuration objects.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public pointsOptions(): Array<MockPointOptions> {
         return this.options.points as any;
@@ -412,7 +416,6 @@ class Measure extends Annotation {
     /**
      * Get points configuration objects for shapes.
      * @private
-     * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -505,8 +508,10 @@ class Measure extends Annotation {
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
-                        Measure.calculations.defaultFormatter.call(this);
+            (this.labels[0] as any).text = (
+                (formatter && formatter.call(this)) ||
+                Measure.calculations.defaultFormatter.call(this)
+            );
 
         } else {
             this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
@@ -682,10 +687,14 @@ class Measure extends Annotation {
      * Translate start or end ("left" or "right") side of the measure.
      * Update start points (startXMin, startXMax, startYMin, startYMax)
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {number} cpIndex - index of control point
-     * @param {Highcharts.AnnotationDraggableValue} selectType - x / y / xy
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {number} cpIndex
+     * index of control point
+     * @param {Highcharts.AnnotationDraggableValue} selectType
+     * x / y / xy
      */
     public resize(
         dx: number,
@@ -735,8 +744,10 @@ class Measure extends Annotation {
      * Redraw event which render elements and update start points if needed.
      * @private
      * @param {boolean} animation
-     * @param {boolean} [resize] - flag if resized
-     * @param {boolean} [setStartPoints] - update position of start points
+     * @param {boolean} [resize]
+     * flag if resized
+     * @param {boolean} [setStartPoints]
+     * update position of start points
      */
     public redraw(
         animation: boolean,
@@ -751,7 +762,11 @@ class Measure extends Annotation {
         }
 
         if (setStartPoints) {
-            (Measure.calculations.updateStartPoints.call as any)(this, true, false as any);
+            (Measure.calculations.updateStartPoints.call as any)(
+                this,
+                true,
+                false as any
+            );
         }
 
         // #11174 - clipBox was not recalculate during resize / redraw
@@ -765,13 +780,17 @@ class Measure extends Annotation {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.redraw();
         });
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
+        this.shapes.forEach(function (
+            item: Highcharts.AnnotationShapeType
+        ): void {
             item.translate(dx, dy);
         });
 
@@ -979,7 +998,7 @@ Measure.prototype.defaultOptions = merge(
                  *
                  * </table>
                  *
-                 * @type      {function}
+                 * @type {Function}
                  *
                  */
                 formatter: void 0

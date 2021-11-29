@@ -591,33 +591,37 @@ class FlagsSeries extends ColumnSeries {
                 if (point.unbindMouseOver) {
                     point.unbindMouseOver();
                 }
-                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function (): void {
+                point.unbindMouseOver = addEvent(
+                    graphic.element,
+                    'mouseover',
+                    function (): void {
 
-                    // Raise this point
-                    if ((point.stackIndex as any) > 0 &&
-                        !point.raised
-                    ) {
-                        point._y = (graphic as any).y;
-                        (graphic as any).attr({
-                            y: (point._y as any) - 8
-                        });
-                        point.raised = true;
-                    }
-
-                    // Revert other raised points
-                    points.forEach(function (otherPoint): void {
-                        if (
-                            otherPoint !== point &&
-                        otherPoint.raised &&
-                        otherPoint.graphic
+                        // Raise this point
+                        if ((point.stackIndex as any) > 0 &&
+                            !point.raised
                         ) {
-                            otherPoint.graphic.attr({
-                                y: otherPoint._y
+                            point._y = (graphic as any).y;
+                            (graphic as any).attr({
+                                y: (point._y as any) - 8
                             });
-                            otherPoint.raised = false;
+                            point.raised = true;
                         }
-                    });
-                });
+
+                        // Revert other raised points
+                        points.forEach(function (otherPoint): void {
+                            if (
+                                otherPoint !== point &&
+                            otherPoint.raised &&
+                            otherPoint.graphic
+                            ) {
+                                otherPoint.graphic.attr({
+                                    y: otherPoint._y
+                                });
+                                otherPoint.raised = false;
+                            }
+                        });
+                    }
+                );
             }
         });
     }

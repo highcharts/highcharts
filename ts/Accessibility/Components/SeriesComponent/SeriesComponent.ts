@@ -69,6 +69,7 @@ class SeriesComponent extends AccessibilityComponent {
         SeriesClass: typeof Series
     ): void {
         // Handle forcing markers
+        NewDataAnnouncer.compose(SeriesClass);
         ForcedMarkers.compose(SeriesClass);
         SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
@@ -168,7 +169,7 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
@@ -177,6 +178,7 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Remove traces
+     * @private
      */
     public destroy(): void {
         (this as any).newDataAnnouncer.destroy();

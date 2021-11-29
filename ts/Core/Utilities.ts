@@ -356,8 +356,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -784,7 +784,7 @@ function extendClass <T, TReturn = T>(
 }
 
 /**
- * Left-pad a string to a given length by adding a character repetetively.
+ * Left-pad a string to a given length by adding a character repetitively.
  *
  * @function Highcharts.pad
  *
@@ -1111,7 +1111,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
 
 
 /**
- * Discard a HTML element by moving it to the bin and delete.
+ * Discard a HTML element
  *
  * @function Highcharts.discardElement
  *
@@ -1119,20 +1119,11 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-
-    // create a garbage bin element, not part of the DOM
-    if (!garbageBin) {
-        garbageBin = createElement('div');
+    if (element && element.parentElement) {
+        element.parentElement.removeChild(element);
     }
-
-    // move the node and empty bin
-    if (element) {
-        garbageBin.appendChild(element);
-    }
-    garbageBin.innerHTML = '';
 }
 
-let garbageBin: (globalThis.HTMLElement|undefined);
 
 /**
  * Fix JS round off float errors.
@@ -1393,7 +1384,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -1707,9 +1698,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
      */
     function removeOneEvent(
         type: string,
@@ -1726,8 +1714,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,

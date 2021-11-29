@@ -96,8 +96,12 @@ class ProxyProvider {
         this.groups = {};
         this.groupOrder = [];
 
-        this.beforeChartProxyPosContainer = this.createProxyPosContainer('before');
-        this.afterChartProxyPosContainer = this.createProxyPosContainer('after');
+        this.beforeChartProxyPosContainer = this.createProxyPosContainer(
+            'before'
+        );
+        this.afterChartProxyPosContainer = this.createProxyPosContainer(
+            'after'
+        );
 
         this.update();
     }
@@ -170,9 +174,6 @@ class ProxyProvider {
         attr(groupElement, attributes || {});
 
         if (groupType === 'ul') {
-            if (!this.chart.styledMode) {
-                proxyContainer.style.listStyle = 'none';
-            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 

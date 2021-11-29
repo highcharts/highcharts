@@ -46,7 +46,7 @@ const getFile = url => new Promise((resolve, reject) => {
         path = require('path'),
         tree = require('../tree.json');
 
-    /*
+    /**
      * Return a list of options so that we can auto-link option references in
      * the changelog.
      */

@@ -54,10 +54,7 @@ const {
 
 /**
  * Get the wrapped export button element of a chart.
- *
  * @private
- * @param {Highcharts.Chart} chart
- * @returns {Highcharts.SVGElement}
  */
 function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
@@ -66,7 +63,6 @@ function getExportMenuButtonElement(chart: Chart): (SVGElement|undefined) {
 
 /**
  * @private
- * @param {Highcharts.Chart} chart
  */
 function exportingShouldHaveA11y(chart: Chart): boolean {
     const exportingOpts = chart.options.exporting,
@@ -180,7 +176,10 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
 
@@ -260,7 +259,8 @@ class MenuComponent extends AccessibilityComponent {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });
@@ -271,7 +271,7 @@ class MenuComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -412,7 +412,9 @@ class MenuComponent extends AccessibilityComponent {
         const curHighlightedItem = (chart.exportDivElements as any)[
             chart.highlightedExportItemIx as any
         ];
-        const exportButtonElement: SVGDOMElement = (getExportMenuButtonElement(chart) as any).element;
+        const exportButtonElement: SVGDOMElement = (
+            getExportMenuButtonElement(chart) as any
+        ).element;
 
         if (this.isExportMenuShown) {
             this.fakeClickEvent(curHighlightedItem);
@@ -561,10 +563,6 @@ namespace MenuComponent {
      *
      * @private
      * @function Highcharts.Chart#highlightExportItem
-     *
-     * @param {number} ix
-     *
-     * @return {boolean}
      */
     function chartHighlightExportItem(
         this: ChartComposition,
@@ -609,7 +607,6 @@ namespace MenuComponent {
      *
      * @private
      * @function Highcharts.Chart#highlightLastExportItem
-     * @return {boolean}
      */
     function chartHighlightLastExportItem(
         this: ChartComposition

@@ -75,12 +75,10 @@ declare module '../../../Core/Series/SeriesLike' {
  *
  * @private
  * @function getPointIndex
- *
  * @param {Highcharts.AccessibilityPoint} point
- *        The point to find index of.
- *
+ * The point to find index of.
  * @return {number|undefined}
- *         The index in the series.points array of the point.
+ * The index in the series.points array of the point.
  */
 function getPointIndex(point: Point): (number|undefined) {
     const index = point.index,
@@ -101,13 +99,7 @@ function getPointIndex(point: Point): (number|undefined) {
 
 /**
  * Determine if series navigation should be skipped
- *
  * @private
- * @function isSkipSeries
- *
- * @param {Highcharts.Series} series
- *
- * @return {boolean|number|undefined}
  */
 function isSkipSeries(
     series: Accessibility.SeriesComposition
@@ -133,13 +125,7 @@ function isSkipSeries(
 
 /**
  * Determine if navigation for a point should be skipped
- *
  * @private
- * @function isSkipPoint
- *
- * @param {Highcharts.Point} point
- *
- * @return {boolean|number|undefined}
  */
 function isSkipPoint(
     point: Accessibility.PointComposition
@@ -211,7 +197,8 @@ function highlightFirstValidPointInChart(
     delete chart.highlightedPoint;
 
     res = chart.series.reduce(
-        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) => acc || cur.highlightFirstValidPoint(),
+        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) =>
+            acc || cur.highlightFirstValidPoint(),
         false as (boolean|SeriesKeyboardNavigation.PointComposition)
     );
 
@@ -312,7 +299,9 @@ class SeriesKeyboardNavigation {
             // If then navigating with virtual cursor, it is possible to leave
             // keyboard nav module state on the data points and still activate
             // proxy buttons.
-            const focusedElClassName = focusedElement && focusedElement.getAttribute('class');
+            const focusedElClassName = (
+                focusedElement && focusedElement.getAttribute('class')
+            );
             const isProxyFocused = focusedElClassName &&
                 focusedElClassName.indexOf('highcharts-a11y-proxy-button') > -1;
 
@@ -360,7 +349,7 @@ class SeriesKeyboardNavigation {
 
 
     /**
-     * @return {Highcharts.KeyboardNavigationHandler}
+     * @private
      */
     public getKeyboardNavigationHandler(): KeyboardNavigationHandler {
         const keyboardNavigation = this,
@@ -418,7 +407,9 @@ class SeriesKeyboardNavigation {
                         this: KeyboardNavigationHandler,
                         keyCode: number
                     ): number {
-                        chart.highlightAdjacentSeries(keyCode === keys.pageDown);
+                        chart.highlightAdjacentSeries(
+                            keyCode === keys.pageDown
+                        );
                         return this.response.success;
                     }]
             ],
@@ -506,7 +497,9 @@ class SeriesKeyboardNavigation {
             chart.tooltip.hide(0);
         }
 
-        const hoverSeries = chart.highlightedPoint && chart.highlightedPoint.series;
+        const hoverSeries = (
+            chart.highlightedPoint && chart.highlightedPoint.series
+        );
         if (hoverSeries && hoverSeries.onMouseOut) {
             hoverSeries.onMouseOut();
         }
@@ -595,7 +588,9 @@ namespace SeriesKeyboardNavigation {
         highlightedPoint?: PointComposition;
         series: Array<SeriesComposition>;
         highlightAdjacentPoint(next: boolean): (boolean|PointComposition);
-        highlightAdjacentPointVertical(down: boolean): (boolean|PointComposition);
+        highlightAdjacentPointVertical(
+            down: boolean
+        ): (boolean|PointComposition);
         highlightAdjacentSeries(down: boolean): (boolean|PointComposition);
     }
 
@@ -657,7 +652,9 @@ namespace SeriesKeyboardNavigation {
             curPointIndex = curPoint && getPointIndex(curPoint) || 0,
             curPoints = curPoint && curPoint.series.points || [],
             lastSeries = chart.series && chart.series[chart.series.length - 1],
-            lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
+            lastPoint = lastSeries &&
+                lastSeries.points &&
+                lastSeries.points[lastSeries.points.length - 1];
 
         let newSeries: SeriesComposition,
             newPoint: PointComposition;
@@ -672,13 +669,16 @@ namespace SeriesKeyboardNavigation {
             // move direction
             newPoint = next ? series[0].points[0] : lastPoint;
         } else {
-            // We have a highlighted point.
-            // Grab next/prev point & series
-            newSeries = series[(curPoint.series.index as any) + (next ? 1 : -1)];
+            // We have a highlighted point. Grab next/prev point & series.
+            newSeries = series[
+                (curPoint.series.index as any) + (next ? 1 : -1)
+            ];
             newPoint = curPoints[curPointIndex + (next ? 1 : -1)];
             if (!newPoint && newSeries) {
                 // Done with this series, try next one
-                newPoint = newSeries.points[next ? 0 : newSeries.points.length - 1];
+                newPoint = newSeries.points[
+                    next ? 0 : newSeries.points.length - 1
+                ];
             }
 
             // If there is no adjacent point, we return false
@@ -747,7 +747,7 @@ namespace SeriesKeyboardNavigation {
                 }
 
                 if (
-                    yDistance <= 0 && down || yDistance >= 0 && !down || // Chk dir
+                    yDistance <= 0 && down || yDistance >= 0 && !down ||
                     distance < 5 || // Points in same spot => infinite loop
                     isSkipPoint(point)
                 ) {
@@ -787,11 +787,14 @@ namespace SeriesKeyboardNavigation {
         if (!chart.highlightedPoint) {
             newSeries = down ? (chart.series && chart.series[0]) : lastSeries;
             newPoint = down ?
-                (newSeries && newSeries.points && newSeries.points[0]) : lastPoint;
+                (newSeries && newSeries.points && newSeries.points[0]) :
+                lastPoint;
             return newPoint ? newPoint.highlight() : false;
         }
 
-        newSeries = chart.series[(curPoint.series.index as any) + (down ? -1 : 1)];
+        newSeries = (
+            chart.series[(curPoint.series.index as any) + (down ? -1 : 1)]
+        );
 
         if (!newSeries) {
             return false;
@@ -809,7 +812,8 @@ namespace SeriesKeyboardNavigation {
         if (isSkipSeries(newSeries)) {
             // Skip the series
             newPoint.highlight();
-            adjacentNewPoint = chart.highlightAdjacentSeries(down); // Try recurse
+            // Try recurse
+            adjacentNewPoint = chart.highlightAdjacentSeries(down);
             if (!adjacentNewPoint) {
                 // Recurse failed
                 curPoint.highlight();
@@ -841,7 +845,9 @@ namespace SeriesKeyboardNavigation {
             const chartProto = ChartClass.prototype as ChartComposition;
 
             chartProto.highlightAdjacentPoint = chartHighlightAdjacentPoint;
-            chartProto.highlightAdjacentPointVertical = chartHighlightAdjacentPointVertical;
+            chartProto.highlightAdjacentPointVertical = (
+                chartHighlightAdjacentPointVertical
+            );
             chartProto.highlightAdjacentSeries = chartHighlightAdjacentSeries;
         }
 
@@ -879,7 +885,9 @@ namespace SeriesKeyboardNavigation {
                 }
             });
 
-            seriesProto.highlightFirstValidPoint = seriesHighlightFirstValidPoint;
+            seriesProto.highlightFirstValidPoint = (
+                seriesHighlightFirstValidPoint
+            );
 
         }
     }
@@ -977,8 +985,6 @@ namespace SeriesKeyboardNavigation {
      *
      * @private
      * @function Highcharts.Series#highlightFirstValidPoint
-     *
-     * @return {boolean|Highcharts.Point}
      */
     function seriesHighlightFirstValidPoint(
         this: SeriesComposition

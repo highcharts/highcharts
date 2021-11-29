@@ -75,7 +75,7 @@ class OHLCSeries extends HLCSeries {
      * @sample stock/demo/ohlc/
      *         OHLC chart
      *
-     * @extends      plotOptions.ohlc
+     * @extends      plotOptions.hlc
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */

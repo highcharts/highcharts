@@ -462,7 +462,6 @@ class Pane {
      * @private
      * @function Highcharts.Pane#updateCenter
      * @param {Highcharts.Axis} [axis]
-     * @return {void}
      */
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
         this.center = (
@@ -497,7 +496,6 @@ class Pane {
      * @param {Highcharts.PaneOptions} options
      *        New pane options
      * @param {boolean} [redraw]
-     * @return {void}
      */
     public update(
         options: Highcharts.PaneOptions,
@@ -519,10 +517,12 @@ class Pane {
 /**
  * Check whether element is inside or outside pane.
  * @private
- * @param  {number} x Element's x coordinate
- * @param  {number} y Element's y coordinate
- * @param  {Array<number>} center Pane's center (x, y) and diameter
- * @return {boolean}
+ * @param  {number} x
+ * Element's x coordinate
+ * @param  {number} y
+ * Element's y coordinate
+ * @param  {Array<number>} center
+ * Pane's center (x, y) and diameter
  */
 function isInsidePane(
     x: number,

@@ -146,7 +146,7 @@ test('CSVStore from URL', function (assert) {
     const registeredEvents = [];
 
     const datastore = new CSVStore(undefined, {
-        csvURL: 'https://demo-live-data.highcharts.com/sine-data.csv',
+        csvURL: '/data/sine-data.csv',
         enablePolling: true
     });
 

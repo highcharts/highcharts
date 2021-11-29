@@ -21,7 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  * */
 
 declare class AroonPoint extends SMAPoint {
-    public series: AroonIndicator
+    public series: AroonIndicator;
 }
 
 /* *

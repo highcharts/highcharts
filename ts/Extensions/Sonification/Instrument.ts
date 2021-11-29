@@ -212,7 +212,6 @@ class Instrument {
      * @private
      * @param {Highcharts.OscillatorOptionsObject} oscillatorOptions
      * The oscillator options passed to Highcharts.Instrument#init.
-     * @return {void}
      */
     public initOscillator(
         this: Instrument,
@@ -231,14 +230,16 @@ class Instrument {
      * @private
      * @param {number} panValue
      * The pan position to set for the instrument.
-     * @return {void}
      */
     public setPan(
         this: Instrument,
         panValue: number
     ): void {
         if (this.panNode) {
-            this.panNode.pan.setValueAtTime(panValue, Instrument.audioContext.currentTime);
+            this.panNode.pan.setValueAtTime(
+                panValue,
+                Instrument.audioContext.currentTime
+            );
         }
     }
 
@@ -251,7 +252,6 @@ class Instrument {
      * The gain level to set for the instrument.
      * @param {number} [rampTime=0]
      * Gradually change the gain level, time given in milliseconds.
-     * @return {void}
      */
     public setGain(
         this: Instrument,
@@ -287,7 +287,6 @@ class Instrument {
     /**
      * Cancel ongoing gain ramps.
      * @private
-     * @return {void}
      */
     public cancelGainRamp(
         this: Instrument
@@ -301,7 +300,6 @@ class Instrument {
      * Set the master volume multiplier of the instrument after creation.
      * @param {number} volumeMultiplier
      * The gain level to set for the instrument.
-     * @return {void}
      */
     public setMasterVolume(
         this: Instrument,
@@ -313,10 +311,14 @@ class Instrument {
     /**
      * Get the closest valid frequency for this instrument.
      * @private
-     * @param {number} frequency - The target frequency.
-     * @param {number} [min] - Minimum frequency to return.
-     * @param {number} [max] - Maximum frequency to return.
-     * @return {number} The closest valid frequency to the input frequency.
+     * @param {number} frequency
+     * The target frequency.
+     * @param {number} [min]
+     * Minimum frequency to return.
+     * @param {number} [max]
+     * Maximum frequency to return.
+     * @return {number}
+     * The closest valid frequency to the input frequency.
      */
     public getValidFrequency(
         this: Instrument,
@@ -332,7 +334,10 @@ class Instrument {
             // No valid frequencies for this instrument, return the target
             frequency :
             // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc: number, cur: number): number {
+            validFrequencies.reduce(function (
+                acc: number,
+                cur: number
+            ): number {
                 // Find the closest allowed value
                 return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
                     cur < maximum && cur > minimum ?
@@ -344,7 +349,6 @@ class Instrument {
     /**
      * Clear existing play callback timers.
      * @private
-     * @return {void}
      */
     public clearPlayCallbackTimers(
         this: Instrument
@@ -363,7 +367,6 @@ class Instrument {
      * The frequency to set.
      * @param {Highcharts.Dictionary<number>} [frequencyLimits]
      * Object with maxFrequency and minFrequency
-     * @return {void}
      */
     public setFrequency(
         this: Instrument,
@@ -383,7 +386,8 @@ class Instrument {
     /**
      * Play oscillator instrument.
      * @private
-     * @param {number} frequency - The frequency to play.
+     * @param {number} frequency
+     * The frequency to play.
      */
     public oscillatorPlay(
         this: Instrument,
@@ -432,7 +436,6 @@ class Instrument {
      * @param {Highcharts.InstrumentPlayOptionsObject} options
      *        Options for the playback of the instrument.
      *
-     * @return {void}
      */
     public play(
         this: Instrument,
@@ -456,14 +459,18 @@ class Instrument {
                     const timer = setInterval(function (): void {
                         currentDurationIx++;
                         const curTime = (
-                            currentDurationIx * (callbackInterval as any) / target
+                            currentDurationIx *
+                            (callbackInterval as any) / target
                         );
 
                         if (curTime >= 1) {
                             (instrument as any)[setter](value(1), setterData);
                             clearInterval(timer);
                         } else {
-                            (instrument as any)[setter](value(curTime), setterData);
+                            (instrument as any)[setter](
+                                value(curTime),
+                                setterData
+                            );
                         }
                     }, callbackInterval);
 
@@ -547,7 +554,11 @@ class Instrument {
             });
 
             // Set the volume and panning
-            setOrStartTimer(pick(options.volume, 1), 'setGain', 4); // Slight ramp
+            setOrStartTimer(
+                pick(options.volume, 1),
+                'setGain',
+                4
+            ); // Slight ramp
             setOrStartTimer(pick(options.pan, 0), 'setPan');
         } else {
             // No note duration, so just stop immediately
@@ -580,7 +591,6 @@ class Instrument {
      * @param {*} [callbackData]
      *        Data to send to the onEnd callback functions.
      *
-     * @return {void}
      */
     public stop(
         immediately: boolean,

@@ -35,10 +35,10 @@ const {
  *
  * */
 namespace PriceEnvelopesIndicator {
-    export interface PriceEnvelopesIndicatorGappedExtensionObject {
-        options?: PriceEnvelopesIndicatorGappedExtensionOptions;
+    export interface GappedExtensionObject {
+        options?: GappedExtensionOptions;
     }
-    export interface PriceEnvelopesIndicatorGappedExtensionOptions {
+    export interface GappedExtensionOptions {
         gapSize?: number;
     }
 }
@@ -120,7 +120,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as PriceEnvelopesOptions)
+    } as PriceEnvelopesOptions);
 
     public data: Array<PriceEnvelopesPoint> = void 0 as any;
     public options: PriceEnvelopesOptions = void 0 as any;
@@ -185,7 +185,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
                 SVGElement|undefined
             ) = indicator.graph,
             gappedExtend:
-            PriceEnvelopesIndicator.PriceEnvelopesIndicatorGappedExtensionObject = {
+            PriceEnvelopesIndicator.GappedExtensionObject = {
                 options: {
                     gapSize: middleLineOptions.gapSize
                 }
@@ -219,7 +219,9 @@ class PriceEnvelopesIndicator extends SMAIndicator {
                     gappedExtend
                 );
                 indicator.graph = (indicator as any)['graph' + lineName];
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                    indicator
+                );
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
@@ -270,10 +272,14 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
 
-            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
-                xData: slicedX,
-                yData: slicedY
-            } as any), params) as any);
+            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
+                this,
+                {
+                    xData: slicedX,
+                    yData: slicedY
+                } as any,
+                params
+            ) as any);
 
             date = (point as any).xData[0];
             ML = (point as any).yData[0];

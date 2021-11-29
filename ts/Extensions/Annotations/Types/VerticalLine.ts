@@ -170,7 +170,9 @@ VerticalLine.prototype.defaultOptions = merge(
              */
             label: {
                 offset: -40,
-                point: function (target: Highcharts.AnnotationControllable): Highcharts.AnnotationPointType {
+                point: function (
+                    target: Highcharts.AnnotationControllable
+                ): Highcharts.AnnotationPointType {
                     return target.annotation.points[0];
                 } as any,
                 allowOverlap: true,

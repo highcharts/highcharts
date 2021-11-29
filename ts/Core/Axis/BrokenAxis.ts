@@ -148,7 +148,11 @@ namespace BrokenAxis {
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
-            addEvent(AxisClass, 'afterSetTickPositions', onAxisAfterSetTickPositions);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
         }
 
@@ -160,7 +164,11 @@ namespace BrokenAxis {
             seriesProto.drawBreaks = seriesDrawBreaks;
             seriesProto.gappedPath = seriesGappedPath;
 
-            addEvent(SeriesClass, 'afterGeneratePoints', onSeriesAfterGeneratePoints);
+            addEvent(
+                SeriesClass,
+                'afterGeneratePoints',
+                onSeriesAfterGeneratePoints
+            );
             addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
         }
 
@@ -319,10 +327,15 @@ namespace BrokenAxis {
                             ) {
                                 eventName = 'pointBreak';
 
-                            } else if (
-                                (threshold < brk.from && y > brk.from && y < brk.to) ||
-                                (threshold > brk.from && y > brk.to && y < brk.from)
-                            ) {
+                            } else if ((
+                                threshold < brk.from &&
+                                y > brk.from &&
+                                y < brk.to
+                            ) || (
+                                threshold > brk.from &&
+                                y > brk.to &&
+                                y < brk.from
+                            )) {
                                 eventName = 'pointInBreak';
                             }
                             if (eventName) {
@@ -456,20 +469,17 @@ namespace BrokenAxis {
                         } as any
                     );
 
-                    // For stacked chart generate empty stack items,
-                    // #6546
+                    // For stacked chart generate empty stack items, #6546
                     if (yAxis.stacking && this.options.stacking) {
-                        stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
-                            new StackItem(
-                                yAxis as any,
-                                (
-                                    (yAxis.options as YAxisOptions)
-                                        .stackLabels as any
-                                ),
-                                false,
-                                xRange,
-                                this.stack
-                            );
+                        stack = yAxis.stacking.stacks[this.stackKey as any][
+                            xRange
+                        ] = new StackItem(
+                            yAxis as any,
+                            (yAxis.options as YAxisOptions).stackLabels as any,
+                            false,
+                            xRange,
+                            this.stack
+                        );
                         stack.total = 0;
                     }
                 }
@@ -739,10 +749,15 @@ namespace BrokenAxis {
 
                         let axisBreak;
 
-                        while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
+                        while (
+                            (axisBreak = brokenAxis.findBreakAt(newMin, breaks))
+                        ) {
                             newMin = axisBreak.to as any;
                         }
-                        while ((axisBreak = brokenAxis.findBreakAt(newMax, breaks as any))) {
+                        while ((axisBreak = brokenAxis.findBreakAt(
+                            newMax,
+                            breaks as any
+                        ))) {
                             newMax = axisBreak.from as any;
                         }
 
@@ -786,10 +801,16 @@ namespace BrokenAxis {
                                 repeat = brk.repeat || Infinity;
                                 if (isNumber(min) && isNumber(max)) {
                                     if (Additions.isInBreak(brk, min)) {
-                                        min += (brk.to % repeat) - (min % repeat);
+                                        min += (
+                                            (brk.to % repeat) -
+                                            (min % repeat)
+                                        );
                                     }
                                     if (Additions.isInBreak(brk, max)) {
-                                        max -= (max % repeat) - (brk.from % repeat);
+                                        max -= (
+                                            (max % repeat) -
+                                            (brk.from % repeat)
+                                        );
                                     }
                                 }
                             }
@@ -856,7 +877,11 @@ namespace BrokenAxis {
                                         to: brk.value,
                                         len: brk.value - start - (brk.size || 0)
                                     });
-                                    length += brk.value - start - (brk.size || 0);
+                                    length += (
+                                        brk.value -
+                                        start -
+                                        (brk.size || 0)
+                                    );
                                 }
                             }
                         );
@@ -865,7 +890,11 @@ namespace BrokenAxis {
 
                         // Used with staticScale, and below the actual axis
                         // length, when breaks are substracted.
-                        if (isNumber(min) && isNumber(max) && isNumber(axis.min)) {
+                        if (
+                            isNumber(min) &&
+                            isNumber(max) &&
+                            isNumber(axis.min)
+                        ) {
                             brokenAxis.unitLength = max - min - length +
                                 pointRangePadding;
 

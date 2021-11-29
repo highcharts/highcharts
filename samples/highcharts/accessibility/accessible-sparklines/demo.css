@@ -12,8 +12,8 @@
 }
 
 .sparkline-container {
-    height: 80px; 
-    width: 170px;    
+    height: 80px;
+    width: 170px;
     margin: 0 auto;
 }
 
@@ -26,25 +26,32 @@
     max-width: 650px;
     color: #333;
 }
+
 #table caption {
     padding: 1.2em 1em;
     font-size: 1.3em;
     color: #555;
 }
+
 #table th {
-	font-weight: 400;
+    font-weight: 400;
     font-size: 1.1em;
     padding: 0.8em;
 }
+
 #table th[scope="row"] {
     text-align: left;
 }
+
 #table td {
     padding: 0.3em 0.8em;
 }
-#table th, #table td {
+
+#table th,
+#table td {
     border-right: 1px solid #f1f7ff;
 }
+
 #table tr:hover {
     background: #f1f7ff;
 }

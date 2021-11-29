@@ -65,8 +65,7 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
      */
-    public static defaultOptions: AOOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             // Index and period are unchangeable, do not inherit (#15362)
             index: void 0,

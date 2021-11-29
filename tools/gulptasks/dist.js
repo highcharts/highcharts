@@ -36,7 +36,6 @@ Gulp.task(
         'dist-copy',
         'dist-examples',
         'dist-productsjs',
-        'dist-api',
         'jsdoc-dts',
         'lint-dts',
         'dist-compress'

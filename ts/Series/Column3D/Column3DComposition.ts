@@ -103,7 +103,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * Chart with stacks
  * @param {string} stacking
  * Stacking option
- * @return {Highcharts.Stack3DDictionary}
  */
 function retrieveStacks(
     chart: Chart,
@@ -165,7 +164,7 @@ columnProto.translate3dShapes = function (): void {
             series.index, // #4743
         z = (stack as any) * (depth + (seriesOptions.groupZPadding || 1)),
         borderCrisp = series.borderWidth % 2 ? 0.5 : 0,
-        point2dPos; // Position of point in 2D, used for 3D position calculation.
+        point2dPos; // Position of point in 2D, used for 3D position calculation
 
     if (chart.inverted && !series.yAxis.reversed) {
         borderCrisp *= -1;
