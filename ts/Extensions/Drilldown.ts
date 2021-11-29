@@ -944,6 +944,7 @@ Chart.prototype.showDrillUpButton = function (): void {
  *
  * @requires  modules/breadcrumbs
  *
+ * @private
  * @function Highcharts.Chart#createList
  * @param {Highcharts.Chart} this
  *        Breadcrumbs class.
