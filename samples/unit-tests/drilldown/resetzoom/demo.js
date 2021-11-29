@@ -342,8 +342,8 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
     );
 
     controller.moveTo(
-        chart.drillUpButton.parentGroup.translateX + 5,
-        chart.drillUpButton.parentGroup.translateY + 5
+        chart.drillUpButton.parentGroup.translateX + 10,
+        chart.drillUpButton.parentGroup.translateY + 10
     );
     assert.ok(
         chart.tooltip.isHidden,
