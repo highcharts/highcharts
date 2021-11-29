@@ -1,5 +1,5 @@
-QUnit.test('Mapping of joinBy with custom sub options', function (assert) {
-    var chart = Highcharts.mapChart('container', {
+QUnit.test('Mapping of joinBy with data', assert => {
+    const chart = Highcharts.mapChart('container', {
         colorAxis: {
             min: 0,
             minColor: '#EFEFFF',
@@ -8,24 +8,61 @@ QUnit.test('Mapping of joinBy with custom sub options', function (assert) {
         series: [
             {},
             {
-                data: [
-                    {
-                        custom: {
-                            code: 'au-nt'
-                        },
-                        value: 0
-                    }
-                ],
-                mapData: Highcharts.maps['countries/au/au-all'],
-                joinBy: ['hc-key', 'custom.code']
+                data: [{
+                    custom: {
+                        code: 'PL' // iso-a2 (by code, inside custom)
+                    },
+                    value: 0
+                }, {
+                    value: 0,
+                    code: 'no' // hc-key (by code)
+                }, {
+                    value: 0,
+                    'hc-key': 'dk' // hc-key (directly by string)
+                }, {
+                    value: 0,
+                    'iso-a2': 'SE' // iso-a2 (directly by string)
+                }],
+                mapData: Highcharts.maps['custom/europe'],
+                joinBy: ['iso-a2', 'custom.code']
             }
         ]
+    }),
+    series = chart.series[1];
+
+    assert.strictEqual(
+        series.points[0].graphic.attr('fill'),
+        'rgb(128,142,166)',
+        'joinBy with custom sub options - territory should be colored.'
+    );
+
+    [
+        ['hc-key', 'code'],
+        'hc-key',
+        'iso-a2',
+        ['iso-a2', 'custom.code']
+    ].forEach((joinBy, i) => {
+        assert.strictEqual(
+            series.points[i].graphic.attr('fill'),
+            'rgb(128,142,166)',
+            'Different joinBy updates - territory should be colored.'
+        );
+
+        series.update({ // #15374
+            joinBy: joinBy
+        });
+
+        assert.strictEqual(
+            series.points[i].color,
+            Highcharts.seriesTypes.map.defaultOptions.nullColor,
+            'The joinBy changed - previous territory should not be colored.'
+        );
     });
 
     assert.strictEqual(
-        chart.series[1].points[0].color,
+        series.points[0].color,
         'rgb(128,142,166)',
-        'Territory should be colored'
+        'Update joinBy with custom sub options - territory should be colored.'
     );
 });
 
