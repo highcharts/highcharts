@@ -1111,7 +1111,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
 
 
 /**
- * Discard a HTML element by moving it to the bin and delete.
+ * Discard a HTML element
  *
  * @function Highcharts.discardElement
  *
@@ -1119,20 +1119,11 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-
-    // create a garbage bin element, not part of the DOM
-    if (!garbageBin) {
-        garbageBin = createElement('div');
+    if (element && element.parentElement) {
+        element.parentElement.removeChild(element);
     }
-
-    // move the node and empty bin
-    if (element) {
-        garbageBin.appendChild(element);
-    }
-    garbageBin.innerHTML = '';
 }
 
-let garbageBin: (globalThis.HTMLElement|undefined);
 
 /**
  * Fix JS round off float errors.

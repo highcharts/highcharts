@@ -100,9 +100,10 @@ class ProxyElement {
         public groupType: ProxyElement.GroupType,
         attributes?: HTMLAttributes
     ) {
+        const isListItem = groupType === 'ul';
         this.eventProvider = new EventProvider();
 
-        const wrapperEl = groupType === 'ul' ? doc.createElement('li') : null;
+        const wrapperEl = isListItem ? doc.createElement('li') : null;
         const btnEl = this.buttonElement = doc.createElement('button');
 
         if (!chart.styledMode) {
@@ -110,6 +111,10 @@ class ProxyElement {
         }
 
         if (wrapperEl) {
+            if (isListItem && !chart.styledMode) {
+                wrapperEl.style.listStyle = 'none';
+            }
+
             wrapperEl.appendChild(btnEl);
             this.element = wrapperEl;
         } else {
