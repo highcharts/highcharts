@@ -58,6 +58,7 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     extend,
     fireEvent,
     getNestedProperty,
@@ -1298,6 +1299,46 @@ SeriesRegistry.registerSeriesType('map', MapSeries);
  * */
 
 export default MapSeries;
+
+// To update series.joinBy, we need to have the new series.joinBy (for data
+// recalculation in series.setData) value before merging new options to the
+// series (before series.init).
+// We need to also provide the original data again.
+addEvent(MapSeries, 'update', function (
+    eventOptions: { options: MapSeriesOptions }
+): void {
+    const series = this,
+        data = eventOptions.options.data;
+    let joinBy = eventOptions.options.joinBy;
+
+    if (typeof data === 'undefined' && joinBy && series.userOptions.data) {
+        // Cut the userOptions.data to get original data so the mapData is
+        // re-calculated properly when updating joinBy, #15374
+        let cutFrom;
+        series.userOptions.data.some((point: any, i): boolean => {
+            if (point._i !== void 0) {
+                cutFrom = i;
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+	    if (cutFrom) {
+            series.userOptions.data.length = cutFrom;
+            (eventOptions.options as any).data = series.userOptions.data;
+        }        
+
+        // Handle joinBy that might be a string
+        joinBy = splat(joinBy);
+        if (!joinBy[1]) {
+            joinBy[1] = joinBy[0];
+        }
+
+        // Save the current (new) option that will be used in series.setData
+        series.joinBy = joinBy;
+    }
+});
 
 /* *
  *
