@@ -994,6 +994,72 @@ if (!H.Breadcrumbs) {
             this.breadcrumbs = void 0 as Breadcrumbs|undefined;
         }
     });
+
+    // Shift the drillUpButton to make the space for resetZoomButton, #8095.
+    addEvent(Chart, 'afterShowResetZoom', function (): void {
+        const chart = this;
+        if (chart.breadcrumbs) {
+            const bbox = chart.resetZoomButton &&
+                chart.resetZoomButton.getBBox(),
+                buttonOptions = (
+                    chart.options.drilldown &&
+                    chart.options.drilldown.drillUpButton
+                ),
+                breadcrumbsOptions = chart.breadcrumbs.options;
+
+            if (
+                chart.drillUpButton &&
+                bbox &&
+                buttonOptions &&
+                breadcrumbsOptions.position.align === 'right' &&
+                breadcrumbsOptions.relativeTo === 'plotBox'
+            ) {
+                const groupBox = chart.breadcrumbs.group.getBBox();
+                chart.breadcrumbs.group.align(
+                    {
+                        x: (buttonOptions.position.x || 0) - bbox.width - 10,
+                        y: buttonOptions.position.y,
+                        width: groupBox.width,
+                        align: buttonOptions.position.align
+                    },
+                    true,
+                    breadcrumbsOptions.relativeTo
+                );
+            }
+        }
+    });
+
+    // After zooming out, shift the drillUpButton
+    // to the previous position, #8095.
+    addEvent(Chart, 'selection', function (event: any): void {
+        if (
+            event.resetSelection === true &&
+            this.drillUpButton &&
+            this.breadcrumbs
+        ) {
+            const buttonOptions = (
+                this.options.drilldown && this.options.drilldown.drillUpButton
+            );
+
+            if (
+                buttonOptions &&
+                buttonOptions.relativeTo === 'plotBox'
+            ) {
+                const groupBox = this.breadcrumbs.group.getBBox();
+                this.breadcrumbs.group.align(
+                    {
+                        x: buttonOptions.position.x,
+                        y: buttonOptions.position.y,
+                        width: groupBox.width,
+                        align: buttonOptions.position.align
+                    },
+                    true,
+                    buttonOptions.relativeTo
+                );
+            }
+        }
+    });
+
 }
 
 /* *
