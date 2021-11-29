@@ -194,8 +194,8 @@ Highcharts.getJSON(
                     }
                 },
                 dataLabels: {
-                    enabled: false,
-                    format: '{point.name}'
+                    enabled: true,
+                    format: '{point.properties.postal-code}'
                 },
                 events: {
                     click
