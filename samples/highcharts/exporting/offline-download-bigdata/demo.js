@@ -25,7 +25,7 @@ function fallbackHandler(options) {
 
 var arr = [];
 for (var i = 0; i < 15000; i++) {
-    arr.push(i);
+    arr.push(Math.sin(i / 15000) * i * Math.random());
 }
 
 Highcharts.chart('container', {
