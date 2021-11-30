@@ -189,6 +189,32 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     controller.mouseUp();
 
     assert.ok(true, '#15537: Destroying point while dragging should not throw');
+
+    // Clear chart.dragHandles for the next test
+    chart.hideDragHandles();
+
+    chart.series[0].update({
+        type: 'column',
+        data: [1, 2, 3, 5],
+        pointPadding: 0,
+        groupPadding: 0
+    }, false);
+
+    chart.xAxis[0].update({
+        type: 'category'
+    });
+
+    chart.series[0].points[0].showDragHandles();
+
+    assert.ok(
+        // dragHandles.undefined element is created in the showDragHandles
+        // method after the changes made in #16596 after the function's return.
+        // The return should be skipped and the dragHandles.undefined element
+        // should be created.
+        chart.dragHandles && chart.dragHandles.undefined,
+        `DragHandles should be visible - dragging should work on the first
+        column in a categorized xAxis, (#16596)`
+    );
 });
 
 QUnit.test('Dragdrop and logarithmic axes', function (assert) {
