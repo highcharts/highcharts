@@ -435,7 +435,8 @@ class SVGElement implements SVGElementLike {
         box = pick(
             box,
             (renderer as any)[alignTo as any],
-            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            alignTo === 'scrollablePlotBox' ?
+                (renderer as any).plotBox : void 0,
             renderer as any
         );
 
@@ -550,7 +551,11 @@ class SVGElement implements SVGElementLike {
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
+                    animOptions.step.call(
+                        this,
+                        val,
+                        { prop: prop, pos: 1, elem: this }
+                    );
                 }
             }, this);
         }
@@ -619,7 +624,10 @@ class SVGElement implements SVGElementLike {
             // Remove shadows from previous runs.
             this.removeTextOutline();
 
-            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            const outline = doc.createElementNS(
+                SVG_NS,
+                'tspan'
+            ) as DOMElementType;
             attr(outline, {
                 'class': 'highcharts-text-outline',
                 fill: color,
@@ -810,7 +818,8 @@ class SVGElement implements SVGElementLike {
                     if (
                         !this.styledMode &&
                         this.shadows &&
-                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)
+                        /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/
+                            .test(key)
                     ) {
                         this.updateShadows(key, val, setter);
                     }
@@ -1221,8 +1230,9 @@ class SVGElement implements SVGElementLike {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el: SVGDOMElement): void {
-                    if ((el.getAttribute('clip-path') as any).indexOf(clipPath.element.id) > -1
-                    ) {
+                    if ((el.getAttribute('clip-path') as any).indexOf(
+                        clipPath.element.id
+                    ) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }

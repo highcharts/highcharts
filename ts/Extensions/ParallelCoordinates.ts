@@ -75,7 +75,9 @@ declare module '../Core/Axis/AxisType' {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
+        hasParallelCoordinates?: Highcharts.ParallelChart[
+            'hasParallelCoordinates'
+        ];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
         setParallelInfo(options: Partial<Options>): void;
@@ -380,7 +382,9 @@ addEvent(Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = (chart.yAxis[i] as RadialAxis.AxisComposition).angleRad || 0;
+                    point.plotX = (
+                        chart.yAxis[i] as RadialAxis.AxisComposition
+                    ).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -
@@ -572,7 +576,8 @@ class ParallelAxisAdditions {
         const parallel = this,
             axis = parallel.axis,
             chart = axis.chart,
-            fraction = ((parallel.position || 0) + 0.5) / (chart.parallelInfo.counter + 1);
+            fraction = ((parallel.position || 0) + 0.5) /
+                (chart.parallelInfo.counter + 1);
 
         if (chart.polar) {
             options.angle = 360 * fraction;
@@ -622,7 +627,9 @@ namespace ParallelAxis {
             chart = axis.chart,
             parallelCoordinates = axis.parallelCoordinates;
 
-        let axisPosition: Array<('left'|'width'|'height'|'top')> = ['left', 'width', 'height', 'top'];
+        let axisPosition: Array<('left'|'width'|'height'|'top')> = [
+            'left', 'width', 'height', 'top'
+        ];
 
         if (chart.hasParallelCoordinates) {
             if (chart.inverted) {
@@ -699,7 +706,9 @@ namespace ParallelAxis {
         const axis = this;
 
         if (!axis.parallelCoordinates) {
-            axis.parallelCoordinates = new ParallelAxisAdditions(axis as ParallelAxis);
+            axis.parallelCoordinates = new ParallelAxisAdditions(
+                axis as ParallelAxis
+            );
         }
     }
 }

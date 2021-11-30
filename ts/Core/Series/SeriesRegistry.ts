@@ -175,7 +175,10 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto) as any;
+            seriesTypes[type].prototype.pointClass = extendClass(
+                Point,
+                pointProto
+            ) as any;
         }
 
         return seriesTypes[type] as unknown as T;

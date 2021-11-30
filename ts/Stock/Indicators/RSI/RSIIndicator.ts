@@ -120,7 +120,8 @@ class RSIIndicator extends SMAIndicator {
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
-            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
+            values = (yVal as Array<Array<number>>)
+                .map((value: Array<number>): number => value[index]);
         }
 
         // Calculate changes for first N points

@@ -59,7 +59,9 @@ implements DataEventEmitter<(TEvent|DataModifier.Event)> {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
+    private static readonly nameRegExp = (
+        /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/
+    );
 
     /**
      * Registry as a record object with modifier names and their class.

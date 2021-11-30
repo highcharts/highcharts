@@ -168,16 +168,26 @@ class LegendComponent extends AccessibilityComponent {
         // tied to the component's chart's current legend.
         // @todo 1. attach component to created legends
         // @todo 2. move listeners to composition and access `this.component`
-        this.addEvent(Legend as typeof LegendComponent.LegendComposition, 'afterScroll', function (): void {
-            if (this.chart === component.chart) {
-                component.proxyProvider.updateGroupProxyElementPositions('legend');
-                component.updateLegendItemProxyVisibility();
-                if (component.highlightedLegendItemIx > -1) {
-                    this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+        this.addEvent(
+            Legend as typeof LegendComponent.LegendComposition,
+            'afterScroll',
+            function (): void {
+                if (this.chart === component.chart) {
+                    component.proxyProvider.updateGroupProxyElementPositions(
+                        'legend'
+                    );
+                    component.updateLegendItemProxyVisibility();
+                    if (component.highlightedLegendItemIx > -1) {
+                        this.chart.highlightLegendItem(
+                            component.highlightedLegendItemIx
+                        );
+                    }
                 }
             }
-        });
-        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
+        );
+        this.addEvent(Legend, 'afterPositionItem', function (
+            e: AnyRecord
+        ): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -189,7 +199,8 @@ class LegendComponent extends AccessibilityComponent {
                 component.recreateProxies()
             ) {
                 syncTimeout(
-                    (): void => component.proxyProvider.updateGroupProxyElementPositions('legend'),
+                    (): void => component.proxyProvider
+                        .updateGroupProxyElementPositions('legend'),
                     animObject(
                         pick(this.chart.renderer.globalAnimation, true)
                     ).duration
@@ -219,8 +230,11 @@ class LegendComponent extends AccessibilityComponent {
                 if (hasPages) {
                     const itemPage = item.pageIx || 0;
                     const y = item._legendItemPos ? item._legendItemPos[1] : 0;
-                    const h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0;
-                    hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
+                    const h = item.legendItem ?
+                        Math.round(item.legendItem.getBBox().height) :
+                        0;
+                    hide = y + h - legend.pages[itemPage] > clipHeight ||
+                        itemPage !== curPage - 1;
                 }
 
                 if (hide) {
@@ -326,7 +340,8 @@ class LegendComponent extends AccessibilityComponent {
             ).replace(/<br ?\/?>/g, ' ')
         );
         const legendLabel = chart.langFormat(
-            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'),
+            {
                 chart,
                 legendTitle,
                 chartTitle: getChartTitle(chart)
@@ -344,10 +359,13 @@ class LegendComponent extends AccessibilityComponent {
      */
     public addLegendProxyGroup(): void {
         const a11yOptions = this.chart.options.accessibility;
-        const groupRole = a11yOptions.landmarkVerbosity === 'all' ? 'region' : null;
+        const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+            'region' : null;
 
         this.proxyProvider.addGroup('legend', 'ul', {
-            'aria-label': '_placeholder_', // Filled by updateLegendTitle, to keep up to date without recreating group
+            // Filled by updateLegendTitle, to keep up to date without
+            // recreating group
+            'aria-label': '_placeholder_',
             role: groupRole as string
         });
     }
@@ -396,7 +414,9 @@ class LegendComponent extends AccessibilityComponent {
             'aria-label': itemLabel
         };
         // Considers useHTML
-        const proxyPositioningElement = item.legendGroup.div ? item.legendItem : item.legendGroup;
+        const proxyPositioningElement = item.legendGroup.div ?
+            item.legendItem :
+            item.legendGroup;
 
         item.a11yProxyElement = this.proxyProvider.addProxyElement('legend', {
             click: item.legendItem as SVGElement,
@@ -643,13 +663,17 @@ namespace LegendComponent {
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
-                fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
+                fireEvent(
+                    (items[oldIx].legendGroup as any).element,
+                    'mouseout'
+                );
             }
 
             scrollLegendToItem(this.legend, ix);
 
             const legendItemProp = itemToHighlight.legendItem;
-            const proxyBtn = itemToHighlight.a11yProxyElement && itemToHighlight.a11yProxyElement.buttonElement;
+            const proxyBtn = itemToHighlight.a11yProxyElement &&
+                itemToHighlight.a11yProxyElement.buttonElement;
             if (legendItemProp && legendItemProp.element && proxyBtn) {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }

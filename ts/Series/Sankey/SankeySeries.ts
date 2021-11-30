@@ -760,15 +760,20 @@ class SankeySeries extends ColumnSeries {
 
         // Get the translation factor needed for each column to fill up the
         // plot height
-        const getColumnTranslationFactor = (column: SankeySeries.ColumnArray): number => {
+        const getColumnTranslationFactor = (
+            column: SankeySeries.ColumnArray
+        ): number => {
             const nodes = column.slice();
             const minLinkWidth = this.options.minLinkWidth || 0;
             let exceedsMinLinkWidth: boolean;
             let factor = 0;
             let i: number;
 
-            let remainingHeight = (chart.plotSizeY as any) -
-                (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
+            let remainingHeight = (
+                (chart.plotSizeY as any) -
+                (options.borderWidth as any) -
+                (column.length - 1) * series.nodePadding
+            );
 
             // Because the minLinkWidth option doesn't obey the direct
             // translation, we need to run translation iteratively, check
@@ -903,7 +908,9 @@ class SankeySeries extends ColumnSeries {
             const y = Math.min(
                 node.nodeY + linkTop,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + (node.shapeArgs && node.shapeArgs.height || 0) - linkHeight
+                node.nodeY + (
+                    node.shapeArgs && node.shapeArgs.height || 0
+                ) - linkHeight
             );
             return y;
         };

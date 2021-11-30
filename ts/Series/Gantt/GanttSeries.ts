@@ -109,8 +109,14 @@ class GanttSeries extends XRangeSeries {
                     );
                 }
 
-                start = series.chart.time.dateFormat(format as any, point.start as any);
-                end = series.chart.time.dateFormat(format as any, point.end as any);
+                start = series.chart.time.dateFormat(
+                    format as any,
+                    point.start as any
+                );
+                end = series.chart.time.dateFormat(
+                    format as any,
+                    point.end as any
+                );
 
                 retVal += '<br/>';
 
@@ -198,7 +204,11 @@ class GanttSeries extends XRangeSeries {
             diamondShape: SVGPath;
 
         if (point.options.milestone) {
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (
+                isNumber(plotY) &&
+                point.y !== null &&
+                point.visible !== false
+            ) {
                 diamondShape = renderer.symbols.diamond(
                     shapeArgs.x || 0,
                     shapeArgs.y || 0,

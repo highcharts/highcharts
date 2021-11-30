@@ -548,10 +548,12 @@ class HeatmapSeries extends ScatterSeries {
             };
         }
 
-        // Setting width and height attributes on image does not affect
-        // on its dimensions.
+        // Setting width and height attributes on image does not affect on its
+        // dimensions.
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state] || {};
 

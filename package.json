@@ -50,6 +50,7 @@
     "@types/jquery": "^3.5.6",
     "@types/qunit": "^2.11.2",
     "@types/sass": "^1.43.0",
+    "@types/trusted-types": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
     "aws-sdk": "^2.981.0",
@@ -74,7 +75,7 @@
     "gzip-size": "^6.0.0",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.3.7",
     "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
-    "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.28",
+    "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.29",
     "highcharts-utils": "github:highcharts/highcharts-utils",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "4.3.6",
@@ -114,7 +115,7 @@
     "yargs": "^16.2.0"
   },
   "engines": {
-    "node": ">=10.6.0"
+    "node": ">=11.14.0"
   },
   "lint-staged": {
     "*.js": [

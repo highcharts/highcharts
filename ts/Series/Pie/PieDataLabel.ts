@@ -388,7 +388,9 @@ namespace ColumnDataLabel {
                             );
                             break;
                         default:
-                            x = (dataLabelPositioners as any).radialDistributionX(
+                            x = (
+                                dataLabelPositioners as any
+                            ).radialDistributionX(
                                 series,
                                 point,
                                 y,

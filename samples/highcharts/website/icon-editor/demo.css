@@ -7,24 +7,24 @@
 }
 
 body {
-    margin: 0;
+    margin: 0 !important;
 }
 
-#fjords .thick {
+.chart-container .thick {
     stroke-width: 1;
     stroke: white;
     color: white;
     transition: all 2s;
 }
 
-#fjords .thin {
+.chart-container .thin {
     stroke-width: 1;
     stroke: white;
     color: white;
     transition: all 2s;
 }
 
-#fjords .transparent {
+.chart-container .transparent {
     opacity: 100%;
     stroke-width: 1;
     stroke: white;
@@ -32,7 +32,7 @@ body {
     transition: all 2s;
 }
 
-#fjords .highcharts-container {
+.chart-container .highcharts-container {
     position: relative;
     overflow: hidden;
     text-align: left;
@@ -46,13 +46,17 @@ body {
     outline: none;
 }
 
-#fjords .highcharts-grid-line {
+.chart-container .highcharts-background {
+    background-color: #f0f0f0;
+}
+
+.chart-container .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
 }
 
-#fjords .highcharts-xaxis-grid .highcharts-grid-line {
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
     stroke-width: 1px;
 }
 
@@ -60,17 +64,17 @@ body {
     display: none;
 }
 
-#fjords .fjord-y-axis .highcharts-grid-line {
+.chart-container .fjord-y-axis .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
 }
 
-#fjords .fjord-y-axis span {
+.chart-container .fjord-y-axis span {
     margin-top: 20px;
 }
 
-#fjords .btn {
+.title-container .btn {
     display: inline-block;
     font-weight: 400;
     color: #212529;
@@ -88,107 +92,107 @@ body {
     border-radius: 0.25rem;
 }
 
-#fjords .btn-secondary {
+.title-container .btn-secondary {
     color: #fff;
     background-color: #6c757d;
     border-color: #6c757d;
 }
 
-#fjords .line {
+.chart-container .line {
     color: #fff;
     stroke: #fff;
     stroke-width: 1px;
 }
 
-#fjords .highcharts-color-9,
-#fjords .highcharts-color-0 {
+.chart-container .highcharts-color-9,
+.chart-container .highcharts-color-0 {
     fill: #201836;
 }
 
-#fjords .sun .highcharts-color-0,
+.chart-container .sun .highcharts-color-0,
 #container2 .highcharts-series-2 {
     fill: #8087e8;
     transition: fill 1s;
 }
 
-#fjords .sun.blue .highcharts-color-0 {
+.chart-container .sun.blue .highcharts-color-0 {
     fill: #201836;
 }
 
-#fjords .highcharts-area-series,
-#fjords .highcharts-area,
-#fjords .highcharts-arearange-series,
-#fjords .highcharts-arearange {
+.chart-container .highcharts-area-series,
+.chart-container .highcharts-area,
+.chart-container .highcharts-arearange-series,
+.chart-container .highcharts-arearange {
     opacity: 100%;
     fill-opacity: 1;
     stroke: transparent;
 }
 
-#fjords .highcharts-point.highcharts-color-2 {
+.chart-container .highcharts-point.highcharts-color-2 {
     opacity: 0%;
 }
 
-#fjords .highcharts-series-6 {
+.chart-container .highcharts-series-6 {
     fill: #6699a1;
 }
 
-#fjords .highcharts-series-8 {
+.chart-container .highcharts-series-8 {
     fill: #46465c;
 }
 
-#fjords .highcharts-series-7,
+.chart-container .highcharts-series-7,
 #container2 .highcharts-series-0 {
     fill: #a3edba;
 }
 
-#fjords.highcharts-series-8 {
+.chart-container.highcharts-series-8 {
     fill: #46465c;
 }
 
-#fjords {
+.chart-container {
     width: 250px;
     height: 250px;
     overflow: visible;
-    margin-top: 84px;
+    margin-top: 0;
     transition: all 1s;
 }
 
-#fjords .highcharts-series-15.highcharts-arearange-series.cover {
+.chart-container .highcharts-series-15.highcharts-arearange-series.cover {
     fill: #30426b;
     transition: all 0s;
     stroke: transparent;
 }
 
-#fjords .highcharts-series-12.highcharts-area-series.cover-bottom-right {
+.chart-container .highcharts-series-12.highcharts-area-series.cover-bottom-right {
     /* fill:#ffcc00 !important; */
     fill: #30426b;
     stroke: transparent;
 }
 
-#fjords .highcharts-series-11.highcharts-area-series.cover-back {
+.chart-container .highcharts-series-11.highcharts-area-series.cover-back {
     /* fill:#cc0000 */
     fill: #30426b;
     stroke: transparent;
 }
 
-#fjords .highcharts-series-13.highcharts-arearange-series.cover-middle {
+.chart-container .highcharts-series-13.highcharts-arearange-series.cover-middle {
     /* fill:#00ffff */
     fill: #30426b;
     stroke: transparent;
 }
 
-#fjords .highcharts-series-14.highcharts-area-series.cover-middle-right {
+.chart-container .highcharts-series-14.highcharts-area-series.cover-middle-right {
     /* fill:#ffccff */
     fill: #30426b;
     stroke: transparent;
 }
 
-#fjords .highcharts-series-15.highcharts-area-series.cover.green {
+.chart-container .highcharts-series-15.highcharts-area-series.cover.green {
     fill: #a3edba;
     stroke: transparent;
 }
 
-#fjords .depth {
+.chart-container .depth {
     fill: #30426b;
     stroke: transparent;
     transform-origin: center;
@@ -197,169 +201,189 @@ body {
     transition: all 3s;
 }
 
-#fjords .fjord-left,
-#fjords .fjord-right {
+.chart-container .fjord-left,
+.chart-container .fjord-right {
     transition: all 1s;
 }
 
-#fjords .fjord-left.move {
+.chart-container .fjord-left.move {
     transform: translate(-500px, 0);
     opacity: 100%;
 }
 
-#fjords .fjord-right.move {
+.chart-container .fjord-right.move {
     transform: translate(1000px, 0);
     opacity: 100%;
 }
 
-#fjords .highcharts-zone-graph-0 {
+.chart-container .highcharts-zone-graph-0 {
     fill: rgb(43 144 143);
 }
 
-#fjords .sun {
+.chart-container .sun {
     transition: all 1s;
 }
 
-#fjords .sun.move {
+.chart-container .sun.move {
     transform: translate(170px, -30px) scale(0.4);
 }
 
-#fjords .temps {
+.chart-container .sun.finalmove {
+    transform: translate(170px, -30px) scale(0.4);
+}
+
+.chart-container .sun.finalmove .highcharts-color-0 {
+    fill: #f5efc1;
+    transition: fill 1s;
+}
+
+.chart-container .temps {
     fill: #30426b;
     transition: all 1s;
     opacity: 0%;
     transform: scaleX(1.22) translateX(-26px);
 }
 
-#fjords .temps.jan,
-#fjords .temps.apr {
+.chart-container .temps.jan,
+.chart-container .temps.apr {
     fill: #b1cef5;
 }
 
-#fjords .sun.jan .highcharts-color-0 {
+.chart-container .sun.jan .highcharts-color-0 {
     fill: #f5efc1;
+    transition: all 1s;
 }
 
-#fjords .sun.jan {
+.chart-container .sun.jan {
     transform: translate(200px, -10px) scale(0.2) !important;
 }
 
-#fjords .temps.jan .temp-data {
+.chart-container .temps.jan .temp-data {
     color: #000;
 }
 
-#fjords .temps.feb,
-#fjords .temps.mar {
+.chart-container .temps.feb,
+.chart-container .temps.mar {
     fill: #e0ebfb;
 }
 
-#fjords .sun.feb .highcharts-color-0 {
+.chart-container .sun.feb .highcharts-color-0 {
     fill: #eee598;
+    transition: all 1s;
 }
 
-#fjords .sun.feb {
+.chart-container .sun.feb {
     transform: translate(180px, -20px) scale(0.3) !important;
 }
 
-#fjords .temps.feb .temp-data {
+.chart-container .temps.feb .temp-data {
     color: #000;
 }
 
-#fjords .temps.mar .temp-data {
+.chart-container .temps.mar .temp-data {
     color: #000;
 }
 
-#fjords .sun.apr .highcharts-color-0 {
+.chart-container .sun.mar .highcharts-color-0 {
+    fill: #eee598;
+    transition: all 1s;
+}
+
+.chart-container .sun.apr .highcharts-color-0 {
     fill: #eee598;
     stroke: rgb(247 229 81 / 50%);
     stroke-width: 25px;
     transition: all 1s;
 }
 
-#fjords .temps.may {
+.chart-container .temps.may {
     fill: #83afea;
 }
 
-#fjords .sun.may .highcharts-color-0 {
+.chart-container .sun.may .highcharts-color-0 {
     fill: #eee598;
     stroke: rgb(253 153 106 / 30%);
     stroke-width: 25px;
     transition: all 1s;
 }
 
-#fjords .temps.jun {
+.chart-container .temps.jun {
     fill: #5a94e3;
 }
 
-#fjords .sun.jun .highcharts-color-0 {
+.chart-container .sun.jun .highcharts-color-0 {
     fill: #f1bf51;
     stroke: rgb(253 153 106 / 20%);
     stroke-width: 30px;
     transition: all 1s;
 }
 
-#fjords .temps.jul {
+.chart-container .temps.jul {
     fill: #317adb;
 }
 
-#fjords .sun.jul .highcharts-color-0 {
+.chart-container .sun.jul .highcharts-color-0 {
     fill: #f99547;
 }
 
-#fjords .temps.aug {
+.chart-container .temps.aug {
     fill: #1c447c;
 }
 
-#fjords .sun.aug .highcharts-color-0 {
+.chart-container .sun.aug .highcharts-color-0 {
     fill: #f99547;
     stroke: rgb(198 60 37 / 20%);
     stroke-width: 30px;
     transition: all 1s;
 }
 
-#fjords .temps.sep {
+.chart-container .temps.sep {
     fill: #2964b5;
 }
 
-#fjords .sun.sep .highcharts-color-0 {
+.chart-container .sun.sep .highcharts-color-0 {
     fill: rgb(253 153 106 / 100%);
     stroke: rgb(241 191 81 / 20%);
     stroke-width: 30px;
     transition: all 1s;
 }
 
-#fjords .temps.oct {
+.chart-container .temps.oct {
     fill: #72a2e3;
 }
 
-#fjords .sun.oct .highcharts-color-0 {
+.chart-container .sun.oct .highcharts-color-0 {
     fill: #eee598;
     stroke: rgb(241 191 81 / 20%);
     stroke-width: 30px;
 }
 
-#fjords .temps.nov {
+.chart-container .temps.nov {
     fill: #83afea;
 }
 
-#fjords .sun.nov .highcharts-color-0 {
+.chart-container .sun.nov .highcharts-color-0 {
     fill: #eee598;
 }
 
-#fjords .sun.nov {
+.chart-container .sun.nov {
     transform: translate(190px, -25px) scale(0.3) !important;
 }
 
-#fjords .temps.dec {
+.chart-container .temps.dec {
     fill: #adcaf1;
 }
 
-#fjords .sun.dec .highcharts-color-0 {
+.chart-container .sun.dec .highcharts-color-0 {
     fill: #f5efc1;
 }
 
-#fjords .sun.dec {
+.chart-container .sun.dec {
     transform: translate(190px, -20px) scale(0.28) !important;
+}
+
+#tempInfo {
+    opacity: 0%;
 }
 
 #temp-data {
@@ -433,11 +457,11 @@ body {
     opacity: 100%;
 }
 
-#fjords .temps .highcharts-label.highcharts-data-label-color-9:nth-of-type(1) {
+.chart-container .temps .highcharts-label.highcharts-data-label-color-9:nth-of-type(1) {
     display: none;
 }
 
-#fjords .highcharts-pie-series .highcharts-point {
+.chart-container .highcharts-pie-series .highcharts-point {
     stroke-linejoin: round;
     stroke: transparent;
 }
@@ -450,50 +474,60 @@ body {
     z-index: 30;
 }
 
-#fjords .highcharts-series-16 image {
+.chart-container .highcharts-series-16 image {
     width: 22px;
     height: 18px;
     transform: translate(0, -5px);
 }
 
-#fjords .highcharts-series-17 image {
+.chart-container .highcharts-series-17 image {
     width: 35px;
     height: 50px;
     transform: translate(0, -5px);
 }
 
-#fjords #title {
-    transition: opacity 1s;
-    opacity: 0%;
-    margin-top: -90px;
-    margin-bottom: 0;
+.title-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 250px;
 }
 
-#fjords #title.show {
+#title {
+    transition: opacity 1s;
+    opacity: 0%;
+    margin-top: -240px;
+    margin-bottom: 0;
+    width: 250px;
+    text-align: center;
+    margin-left: 30px;
+}
+
+#title.show {
     opacity: 100%;
 }
 
-#fjords #title .subtitle {
+#title .subtitle {
     font-size: 14px;
     margin-bottom: 0;
     text-align: center;
 }
 
-#fjords #title .title {
+#title .title {
     font-size: 24px;
     font-weight: 200;
     text-align: center;
     margin: 0;
 }
 
-#fjords #title .small-in {
+#title .small-in {
     font-size: 12px;
     text-align: center;
     margin: 0;
     display: none;
 }
 
-#fjords .month {
+.month {
     padding: 4px 8px;
     margin: 0 2px 0 0;
     width: 50px;
@@ -505,13 +539,13 @@ body {
     font-weight: 300;
 }
 
-#fjords .month.active,
-#fjords .month:not(.active):hover {
+.month.active,
+.month:not(.active):hover {
     background-color: #211a38;
     color: #fff;
 }
 
-#fjords .month-container {
+.month-container {
     background-color: #fff;
     border: 1px solid #000;
     border-radius: 4px;
@@ -520,24 +554,26 @@ body {
     display: flex;
     flex-flow: wrap;
     flex-direction: row;
+    margin-left: 0;
 }
 
-#fjords .month-container.d-none {
+.month-container.d-none {
     display: none;
 }
 
-#fjords .dropdown {
+.dropdown {
     position: absolute;
     z-index: 1000;
     left: 0;
-    top: -20px;
+    left: 55px;
+    top: -170px;
 }
 
-#fjords .dropdown-toggle {
+.dropdown-toggle {
     width: 166px;
 }
 
-#fjords .dropdown-toggle::after {
+.dropdown-toggle::after {
     display: inline-block;
     margin-left: 0.255em;
     vertical-align: 0.255em;
@@ -548,24 +584,24 @@ body {
     border-left: 0.3em solid transparent;
 }
 
-#fjords .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
-#fjords .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
-#fjords .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
-#fjords .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
+.chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover),
+.chart-container .highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
+.chart-container .highcharts-legend-series-active .highcharts-data-labels:not(.highcharts-series-hover) {
     opacity: 100%;
 }
 
-#fjords .highcharts-series-inactive {
+.chart-container .highcharts-series-inactive {
     opacity: 100%;
     transition: opacity 50ms;
 }
 
-#fjords .highcharts-tooltip-0 {
+.chart-container .highcharts-tooltip-0 {
     filter: drop-shadow(5px 7px 13px rgb(0 0 0 / 14%)) !important;
     box-shadow: 5px 7px 13px 1px rgb(0 0 0 / 14%);
 }
 
-#fjords .highcharts-tooltip-box {
+.chart-container .highcharts-tooltip-box {
     stroke-width: 0;
     border: none;
     stroke: #ebebeb;
@@ -573,15 +609,15 @@ body {
     fill-opacity: 1;
 }
 
-#fjords .highcharts-tooltip text {
+.chart-container .highcharts-tooltip text {
     fill: #333;
 }
 
-#fjords .highcharts-tooltip {
+.chart-container .highcharts-tooltip {
     z-index: 1000;
 }
 
-#fjords .highcharts-graph {
+.chart-container .highcharts-graph {
     fill: unset;
     stroke-width: unset;
     stroke: unset;
@@ -590,17 +626,22 @@ body {
 }
 
 @media screen  and (min-width: 300px) {
-    #fjords {
+    .chart-container {
         width: 300px;
         height: 300px;
     }
 
-    #fjords .temps {
+    .chart-container .temps {
         transform: scaleX(1.14) translateX(-23px);
     }
 
-    #fjords .sun.move {
+    .chart-container .sun.move {
         transform: translate(200px, -40px) scale(0.4);
+    }
+
+    .dropdown {
+        left: 85px;
+        top: -200px;
     }
 
     #temp-data {
@@ -608,72 +649,85 @@ body {
         top: -90px;
     }
 
-    #fjords #title .small-in {
+    #title .small-in {
         display: block;
     }
 
-    #fjords #title {
-        margin-top: -90px;
+    #title {
+        margin-top: -280px;
+        width: 300px;
         margin-bottom: 0;
+        margin-left: 80px;
     }
 
-    #fjords .sun.jan {
+    .chart-container .sun.jan {
         transform: translate(220px, -10px) scale(0.2) !important;
     }
 
-    #fjords .sun.feb,
-    #fjords .sun.dec {
+    .chart-container .sun.feb,
+    .chart-container .sun.dec {
         transform: translate(210px, -30px) scale(0.3) !important;
     }
 
-    #fjords .sun.nov {
+    .chart-container .sun.nov {
         transform: translate(210px, -25px) scale(0.3) !important;
+    }
+
+    .chart-container .sun.finalmove {
+        transform: translate(200px, -40px) scale(0.4);
     }
 }
 
 @media screen  and (min-width: 400px) {
-    #fjords {
+    .chart-container {
         width: 400px;
         height: 400px;
     }
 
-    #fjords #title {
-        margin-top: -130px;
+    #title {
+        margin-top: -350px;
+        width: 400px;
+        margin-left: 190px;
     }
 
-    #fjords #title .title {
+    #title .title {
         font-size: 32px;
     }
 
-    #fjords .dropdown {
-        left: 15px;
-        top: -25px;
+    .dropdown {
+        left: 135px;
+        top: -250px;
     }
 
-    #fjords .btn {
+    .btn {
         padding: 0.375rem 0.75rem;
         font-size: 1rem;
         line-height: 1.5;
     }
 
-    #fjords .temps {
+    .chart-container .temps {
         transform: scaleX(1.06) translateX(-14px);
     }
 
-    #fjords .sun.move {
+    .chart-container .sun.move {
         transform: translate(250px, -40px) scale(0.4);
     }
 
-    #fjords .sun.jan {
+    .chart-container .sun.finalmove {
+        transform: translate(250px, -40px) scale(0.4);
+        transition: none;
+    }
+
+    .chart-container .sun.jan {
         transform: translate(290px, -10px) scale(0.2) !important;
     }
 
-    #fjords .sun.nov {
+    .chart-container .sun.nov {
         transform: translate(250px, -40px) scale(0.4) !important;
     }
 
-    #fjords .sun.feb,
-    #fjords .sun.dec {
+    .chart-container .sun.feb,
+    .chart-container .sun.dec {
         transform: translate(270px, -30px) scale(0.3) !important;
     }
 
@@ -684,9 +738,14 @@ body {
 }
 
 @media screen  and (min-width: 500px) {
-    #fjords {
+    .chart-container {
         width: 500px;
         height: 500px;
+    }
+
+    .dropdown {
+        left: 185px;
+        top: -300px;
     }
 
     #temp-data {
@@ -694,35 +753,50 @@ body {
         top: -150px !important;
     }
 
-    #fjords .temps {
+    .chart-container .temps {
         transform: scaleX(1) translateX(-0);
     }
 
-    #fjords .sun.move {
+    .chart-container .sun.move {
         transform: translate(300px, -55px) scale(0.4);
     }
 
-    #fjords .sun.jan {
+    .chart-container .sun.jan {
         transform: translate(350px, -10px) scale(0.2) !important;
     }
 
-    #fjords .sun.feb,
-    #fjords .sun.dec {
+    .chart-container .sun.feb,
+    .chart-container .sun.dec {
         transform: translate(350px, -10px) scale(0.2) !important;
     }
 
-    #fjords .sun.nov {
+    .chart-container .sun.nov {
         transform: translate(300px, -55px) scale(0.4) !important;
+    }
+
+    .chart-container .sun.finalmove {
+        transform: translate(300px, -52px) scale(0.4);
+        transition: none;
+    }
+
+    #title {
+        margin-top: -400px;
+        width: 500px;
+        margin-left: 40px;
+    }
+
+    .title-container {
+        width: 500px;
     }
 }
 
 @media screen  and (prefers-reduced-motion) {
-    #fjords .fjord-left.move {
+    .chart-container .fjord-left.move {
         transform: none;
         opacity: 0%;
     }
 
-    #fjords .fjord-right.move {
+    .chart-container .fjord-right.move {
         transform: none;
         opacity: 0%;
     }

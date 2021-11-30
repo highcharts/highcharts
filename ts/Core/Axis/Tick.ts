@@ -291,7 +291,9 @@ class Tick {
         // defaultFormatter and append the result to the context as `text`.
         // Handy for adding prefix or suffix while keeping default number
         // formatting.
-        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
+        const labelFormatter = (
+            ctx: AxisLabelFormatterContextObject
+        ): string => {
             if (labelOptions.formatter) {
                 return labelOptions.formatter.call(ctx, ctx);
             }

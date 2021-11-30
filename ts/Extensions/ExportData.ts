@@ -532,7 +532,9 @@ Chart.prototype.getDataRows = function (
         x,
         xTitle: string,
         langOptions = this.options.lang,
-        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        exportDataOptions: Highcharts.ExportDataOptions = (
+            langOptions.exportData as any
+        ),
         categoryHeader = exportDataOptions.categoryHeader as any,
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
@@ -542,7 +544,11 @@ Chart.prototype.getDataRows = function (
             keyLength?: number
         ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
-                const s = csvOptions.columnHeaderFormatter(item, key, keyLength);
+                const s = csvOptions.columnHeaderFormatter(
+                    item,
+                    key,
+                    keyLength
+                );
 
                 if (s !== false) {
                     return s;
@@ -619,7 +625,8 @@ Chart.prototype.getDataRows = function (
                 !series.keyToAxis
             ) {
                 if (series.pointArrayMap) {
-                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    const pointArrayMapCheck = series.pointArrayMap
+                        .filter((p): boolean => p === 'x');
                     if (pointArrayMapCheck.length) {
                         series.pointArrayMap.unshift('x');
                         return series.pointArrayMap;
@@ -1371,7 +1378,7 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
         // Generate the data table
         if (show) {
-            this.dataTableDiv.innerHTML = '';
+            this.dataTableDiv.innerHTML = AST.emptyHTML;
             const ast = new AST([this.getTableAST()]);
             ast.addToDOM(this.dataTableDiv);
             fireEvent(this, 'afterViewData', this.dataTableDiv);
@@ -1399,7 +1406,9 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
         menuItems &&
         exportDivElements
     ) {
-        const exportDivElement = exportDivElements[menuItems.indexOf('viewData')];
+        const exportDivElement = exportDivElements[
+            menuItems.indexOf('viewData')
+        ];
         if (exportDivElement) {
             AST.setElementHTML(
                 exportDivElement,

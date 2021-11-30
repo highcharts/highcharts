@@ -135,7 +135,9 @@ class SignalHandler {
         let retval: unknown;
 
         if (this.signals[signalName]) {
-            this.signals[signalName].forEach(function (handler: Function): void {
+            this.signals[signalName].forEach(function (
+                handler: Function
+            ): void {
                 const result = handler(data);
 
                 retval = typeof result !== 'undefined' ? result : retval;

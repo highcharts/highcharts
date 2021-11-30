@@ -76,7 +76,8 @@ namespace RendererUtilities {
         len: number,
         maxDistance?: number
     ): DistributedBoxArray<T> {
-        const origBoxes = boxes as DistributedBoxArray<T>, // Original array will be altered with added .pos
+        // Original array will be altered with added .pos
+        const origBoxes = boxes as DistributedBoxArray<T>,
             reducedLen = origBoxes.reducedLen || len,
             sortByRank = (
                 a: BoxObject,
@@ -189,7 +190,9 @@ namespace RendererUtilities {
                 // maxDistance, we're good.
                 if (
                     typeof maxDistance !== 'undefined' &&
-                    Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
+                    Math.abs(
+                        (origBoxes[i].pos as any) - origBoxes[i].target
+                    ) > maxDistance
                 ) {
                     // Reset the positions that are already set
                     origBoxes

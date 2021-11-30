@@ -115,7 +115,9 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
+        type OptionsStackingValue = (
+            'normal'|'overlap'|'percent'|'stream'|'group'
+        );
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
@@ -341,7 +343,8 @@ class StackItem {
                 r: options.borderRadius || 0,
                 text: str,
                 rotation: (options as any).rotation,
-                padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
+                // set default padding to 5 as it is in datalabels #12308
+                padding: pick((options as any).padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
 
@@ -434,7 +437,8 @@ class StackItem {
                     boxOffsetX = bBox.width / 2;
                 } else {
                     boxOffsetX = chart.inverted ?
-                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                        (isNegative ? bBox.width + padding : -padding) :
+                        bBox.width / 2;
                 }
             }
 
@@ -484,7 +488,10 @@ class StackItem {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
-                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                    chart.isInsidePlot(
+                        label.x - padding + label.width,
+                        label.y
+                    ) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {
@@ -515,7 +522,8 @@ class StackItem {
                 (!stackItem.isNegative && reversed); // #4056
 
         return { // this is the box for the complete stack
-            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
+            x: inverted ?
+                (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
                 x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
                 axis.height - x - xWidth :

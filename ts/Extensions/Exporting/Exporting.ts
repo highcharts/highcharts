@@ -562,7 +562,8 @@ namespace Exporting {
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        const handleMaxWidth: (boolean|number) = printMaxWidth && chart.chartWidth > printMaxWidth;
+        const handleMaxWidth: (boolean|number) = printMaxWidth &&
+            chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
                 chart.options.chart.width,
@@ -668,7 +669,11 @@ namespace Exporting {
             chartProto.renderExporting = renderExporting;
 
             chartProto.callbacks.push(chartCallback);
-            addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'init',
+                onChartInit
+            );
 
             if (G.isSafari) {
                 G.win.matchMedia('print').addListener(
@@ -827,9 +832,12 @@ namespace Exporting {
                         );
 
                     } else {
-                        // When chart initialized with the table,
-                        // wrong button text displayed, #14352.
-                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                        // When chart initialized with the table, wrong button
+                        // text displayed, #14352.
+                        if (
+                            item.textKey === 'viewData' &&
+                            chart.isDataTableVisible
+                        ) {
                             item.textKey = 'hideData';
                         }
 
@@ -1369,7 +1377,10 @@ namespace Exporting {
              * @param {string} prop
              *        Style property name
                      */
-            function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
+            function filterStyles(
+                val: (string|number|boolean|undefined),
+                prop: string
+            ): void {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
@@ -1750,7 +1761,10 @@ namespace Exporting {
  *
  * */
 
-defaultOptions.exporting = merge(ExportingDefaults.exporting, defaultOptions.exporting);
+defaultOptions.exporting = merge(
+    ExportingDefaults.exporting,
+    defaultOptions.exporting
+);
 defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 
 // Buttons and menus are collected in a separate config option set called
@@ -1763,7 +1777,10 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
  * @requires     modules/exporting
  * @optionparent navigation
  */
-defaultOptions.navigation = merge(ExportingDefaults.navigation, defaultOptions.navigation);
+defaultOptions.navigation = merge(
+    ExportingDefaults.navigation,
+    defaultOptions.navigation
+);
 
 /* *
  *

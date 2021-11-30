@@ -238,7 +238,10 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
+                (
+                    unit === 'Minutes' &&
+                    this.getTimezoneOffset(date) % 3600000 === 0
+                ) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -261,7 +264,8 @@ class Time {
         // UTC time with no timezone handling
         if (
             this.useUTC ||
-            (hasNewSafariBug && unit === 'FullYear') // leap calculation in UTC only
+            // leap calculation in UTC only
+            (hasNewSafariBug && unit === 'FullYear')
         ) {
             return (date as any)['setUTC' + unit](value);
         }
@@ -392,11 +396,14 @@ class Time {
     public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         const time = this,
             options = this.options,
+            getTimezoneOffset = options.getTimezoneOffset,
             moment = options.moment || (win as any).moment;
 
         if (!this.useUTC) {
             return function (timestamp: (number|Date)): number {
-                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
+                return new Date(
+                    timestamp.toString()
+                ).getTimezoneOffset() * 60000;
             };
         }
 
@@ -417,9 +424,9 @@ class Time {
         }
 
         // If not timezone is set, look for the getTimezoneOffset callback
-        if (this.useUTC && options.getTimezoneOffset) {
+        if (this.useUTC && getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
+                return getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
 
