@@ -2504,7 +2504,9 @@ Point.prototype.showDragHandles = function (): void {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            if (!path || pos.x < 0 || pos.y < 0) {
+            // Correct left edge value depending on the xAxis' type, #16596
+            const minEdge = point.series.xAxis.categories ? -0.5 : 0;
+            if (!path || pos.x < minEdge || pos.y < 0) {
                 return;
             }
 
