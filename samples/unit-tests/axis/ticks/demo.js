@@ -1106,3 +1106,29 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Axis options should be cleared with undefined, (#10525).',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                data: [1, 2, 3]
+            }],
+            yAxis: {
+                tickPositions: [0, 25, 50, 75, 100]
+            }
+        });
+
+        chart.update({
+            yAxis: {
+                tickPositions: undefined
+            }
+        });
+
+        assert.deepEqual(
+            chart.yAxis[0].tickPositions,
+            [0, 1, 2, 3, 4],
+            'After seting tickPostions to undefined they should be cleared.'
+        );
+    }
+);
