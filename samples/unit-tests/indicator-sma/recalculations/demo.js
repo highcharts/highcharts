@@ -175,7 +175,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         false
     );
 
-    assert.ok('#16670: Update without redraw should not throw errors.');
+    assert.ok(
+        true,
+        '#16670: Update without redraw should not throw errors.'
+    );
 
     chart.redraw();
 
