@@ -1249,14 +1249,53 @@ const bubble = {
         series: {
             animation: false,
             enableMouseTracking: false,
-            maxSize: 160,
             name: 'Highcharts Bubble Chart',
-            minSize: 20,
             allowOverlap: true,
             dataLabels: {
                 enabled: true
             }
         }
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 599
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        maxSize: 60,
+                        minSize: 5
+                    }
+                }
+            }
+        },
+        {
+            condition: {
+                minWidth: 600
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        maxSize: 100,
+                        minSize: 10
+                    }
+                }
+            }
+        },
+        {
+            condition: {
+                minWidth: 1200
+            },
+            chartOptions: {
+                plotOptions: {
+                    series: {
+                        maxSize: 160,
+                        minSize: 20
+                    }
+                }
+            }
+        }]
     }
 };
 
