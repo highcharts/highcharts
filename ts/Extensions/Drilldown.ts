@@ -1212,8 +1212,6 @@ addEvent(Chart, 'update', function (e: any): void {
             e.options.drilldown.breadcrumbs;
 
     if (breadcrumbs && breadcrumbOptions) {
-
-        breadcrumbs.isDirty = true;
         breadcrumbs.update(e.options.drilldown.breadcrumbs);
     }
 });

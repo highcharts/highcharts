@@ -350,14 +350,14 @@ class Breadcrumbs {
      *
      * */
 
-    public group: SVGElement = void 0 as any;
+    public group?: SVGElement = void 0;
     public list: Array<Breadcrumbs.BreadcrumbOptions> = [];
     public elementList: { [x: string]: Breadcrumbs.BreadcrumbElement } = {};
     public chart: Chart;
     public isDirty: boolean = true;
     public level: number = 0;
     public options: Breadcrumbs.BreadcrumbsOptions = void 0 as any;
-    public series?: TreemapSeries = void 0 as any;
+    public series?: TreemapSeries = void 0;
     public plotX: number = 0;
     public plotY: number = 0;
 
@@ -572,7 +572,9 @@ class Breadcrumbs {
 
         // Draw breadcrumbs.
         // Inital position for calculating the breadcrumbs group.
-        const posX: number = breadcrumbs.group.getBBox().width || 0,
+        const posX: number = breadcrumbs.group ?
+                breadcrumbs.group.getBBox().width :
+                0,
             posY: number = buttonSpacing;
 
         const previousBreadcrumb = list[list.length - 2];
@@ -602,30 +604,39 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public alignBreadcrumbsGroup(this: Breadcrumbs): void {
-        const breadcrumbs = this,
-            breadcrumbsOptions = breadcrumbs.options,
-            theme = breadcrumbsOptions.theme,
-            positionOptions = breadcrumbsOptions.position,
-            alignTo = (
-                breadcrumbsOptions.relativeTo === 'chart' ||
-                breadcrumbsOptions.relativeTo === 'spacingBox' ?
-                    void 0 :
-                    'scrollablePlotBox'
-            ),
-            bBox = breadcrumbs.group.getBBox(),
-            additionalSpace = 2 * (theme.padding || 0) +
-            breadcrumbsOptions.buttonSpacing;
+    public alignBreadcrumbsGroup(this: Breadcrumbs, xOffset?: number): void {
+        const breadcrumbs = this;
+        if (breadcrumbs.group) {
+            const breadcrumbsOptions = breadcrumbs.options,
+                theme = breadcrumbsOptions.theme,
+                positionOptions = breadcrumbsOptions.position,
+                alignTo = (
+                    breadcrumbsOptions.relativeTo === 'chart' ||
+                    breadcrumbsOptions.relativeTo === 'spacingBox' ?
+                        void 0 :
+                        'scrollablePlotBox'
+                ),
+                bBox = breadcrumbs.group.getBBox(),
+                additionalSpace = 2 * (theme.padding || 0) +
+                breadcrumbsOptions.buttonSpacing;
 
-        // Store positionOptions
-        positionOptions.width = bBox.width + additionalSpace;
-        positionOptions.height = bBox.height + additionalSpace;
+            // Store positionOptions
+            positionOptions.width = bBox.width + additionalSpace;
+            positionOptions.height = bBox.height + additionalSpace;
 
-        breadcrumbs.group.align(
-            positionOptions,
-            true,
-            alignTo
-        );
+            const newPositions = merge(positionOptions, {});
+
+            // Add x offset if specified.
+            if (xOffset) {
+                newPositions.x += xOffset;
+            }
+
+            breadcrumbs.group.align(
+                newPositions,
+                true,
+                alignTo
+            );
+        }
     }
 
     /**
@@ -727,9 +738,9 @@ class Breadcrumbs {
                 separatorOptions.text,
                 posX,
                 posY,
-                void 0 as any,
-                void 0 as any,
-                void 0 as any,
+                void 0,
+                void 0,
+                void 0,
                 true
             )
             .addClass('highcharts-breadcrumbs-separator')
@@ -805,7 +816,7 @@ class Breadcrumbs {
         if (this.group) {
             this.group.destroy();
         }
-        this.group = void 0 as any;
+        this.group = void 0;
 
     }
     /**
@@ -901,7 +912,9 @@ class Breadcrumbs {
             list = breadcrumbs.list;
 
         // Inital position for calculating the breadcrumbs group.
-        let posX: number = updateXPosition(breadcrumbs.group, 0),
+        let posX: number = breadcrumbs.group ?
+                updateXPosition(breadcrumbs.group, 0) :
+                0,
             posY: number = buttonSpacing,
             currentBreadcrumb;
 
@@ -1001,29 +1014,15 @@ if (!H.Breadcrumbs) {
         if (chart.breadcrumbs) {
             const bbox = chart.resetZoomButton &&
                 chart.resetZoomButton.getBBox(),
-                buttonOptions = (
-                    chart.options.drilldown &&
-                    chart.options.drilldown.drillUpButton
-                ),
                 breadcrumbsOptions = chart.breadcrumbs.options;
 
             if (
-                chart.drillUpButton &&
                 bbox &&
-                buttonOptions &&
                 breadcrumbsOptions.position.align === 'right' &&
                 breadcrumbsOptions.relativeTo === 'plotBox'
             ) {
-                const groupBox = chart.breadcrumbs.group.getBBox();
-                chart.breadcrumbs.group.align(
-                    {
-                        x: (buttonOptions.position.x || 0) - bbox.width - 10,
-                        y: buttonOptions.position.y,
-                        width: groupBox.width,
-                        align: buttonOptions.position.align
-                    },
-                    true,
-                    breadcrumbsOptions.relativeTo
+                chart.breadcrumbs.alignBreadcrumbsGroup(
+                    -bbox.width - breadcrumbsOptions.buttonSpacing
                 );
             }
         }
@@ -1034,29 +1033,9 @@ if (!H.Breadcrumbs) {
     addEvent(Chart, 'selection', function (event: any): void {
         if (
             event.resetSelection === true &&
-            this.drillUpButton &&
             this.breadcrumbs
         ) {
-            const buttonOptions = (
-                this.options.drilldown && this.options.drilldown.drillUpButton
-            );
-
-            if (
-                buttonOptions &&
-                buttonOptions.relativeTo === 'plotBox'
-            ) {
-                const groupBox = this.breadcrumbs.group.getBBox();
-                this.breadcrumbs.group.align(
-                    {
-                        x: buttonOptions.position.x,
-                        y: buttonOptions.position.y,
-                        width: groupBox.width,
-                        align: buttonOptions.position.align
-                    },
-                    true,
-                    buttonOptions.relativeTo
-                );
-            }
+            this.breadcrumbs.alignBreadcrumbsGroup();
         }
     });
 
