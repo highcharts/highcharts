@@ -806,18 +806,21 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // Initialize the chart
     const chart = Highcharts.mapChart('container', {
         title: {
-            text: 'Highmaps basic demo'
+            text: ''
         },
 
-        subtitle: {
-            text:
-                'Source map: <a href="https://code.highcharts.com/mapdata/custom/world.js">World</a>'
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'right'
+                }
+            }
         },
 
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                verticalAlign: 'bottom'
+                align: 'right'
             }
         },
 
@@ -867,22 +870,6 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         before,
         'The view should not change after updating data values'
     );
-
-    chart.update({
-        title: {
-            text: ''
-        },
-        subtitle: {
-            text: ''
-        },
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                align: 'right',
-                verticalAlign: ''
-            }
-        }
-    });
 
     const mapNavY = chart.mapNavButtons[0].alignAttr.y,
         exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
