@@ -30,12 +30,6 @@ QUnit.test('Mapping of joinBy with data', assert => {
     }),
     series = chart.series[1];
 
-    assert.strictEqual(
-        series.points[0].graphic.attr('fill'),
-        'rgb(128,142,166)',
-        'joinBy with custom sub options - territory should be colored.'
-    );
-
     [
         ['hc-key', 'code'],
         'hc-key',
@@ -45,7 +39,7 @@ QUnit.test('Mapping of joinBy with data', assert => {
         assert.strictEqual(
             series.points[i].graphic.attr('fill'),
             'rgb(128,142,166)',
-            'Different joinBy updates - territory should be colored.'
+            `The joinBy set: ${i + 1}. point should be colored.`
         );
 
         series.update({ // #15374
@@ -55,14 +49,14 @@ QUnit.test('Mapping of joinBy with data', assert => {
         assert.strictEqual(
             series.points[i].color,
             Highcharts.seriesTypes.map.defaultOptions.nullColor,
-            'The joinBy changed - previous territory should not be colored.'
+            `The joinBy changed - ${i + 1}. point should no longer be colored.`
         );
     });
 
     assert.strictEqual(
         series.points[0].color,
         'rgb(128,142,166)',
-        'Update joinBy with custom sub options - territory should be colored.'
+        `The joinBy set: 1. territory should be colored.`
     );
 });
 

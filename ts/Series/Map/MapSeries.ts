@@ -1305,11 +1305,11 @@ export default MapSeries;
 // series (before series.init).
 // We need to also provide the original data again.
 addEvent(MapSeries, 'update', function (
-    eventOptions: { options: MapSeriesOptions }
+    eventOptions: { options: DeepPartial<MapSeriesOptions> }
 ): void {
     const series = this,
-        data = eventOptions.options.data;
-    let joinBy = eventOptions.options.joinBy;
+        data = eventOptions.options.data,
+        joinBy = eventOptions.options.joinBy;
 
     if (typeof data === 'undefined' && joinBy && series.userOptions.data) {
         // Cut the userOptions.data to get original data so the mapData is
@@ -1319,24 +1319,24 @@ addEvent(MapSeries, 'update', function (
             if (point._i !== void 0) {
                 cutFrom = i;
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         });
 
-	    if (cutFrom) {
+        if (cutFrom) {
             series.userOptions.data.length = cutFrom;
-            (eventOptions.options as any).data = series.userOptions.data;
-        }        
+            eventOptions.options.data = series.userOptions.data;
+        }
 
         // Handle joinBy that might be a string
-        joinBy = splat(joinBy);
-        if (!joinBy[1]) {
-            joinBy[1] = joinBy[0];
+        const seriesJoinBy = splat(joinBy);
+        if (!seriesJoinBy[1]) {
+            seriesJoinBy[1] = seriesJoinBy[0];
         }
 
         // Save the current (new) option that will be used in series.setData
-        series.joinBy = joinBy;
+        series.joinBy = seriesJoinBy;
     }
 });
 
