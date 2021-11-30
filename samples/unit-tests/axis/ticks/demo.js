@@ -507,6 +507,17 @@ QUnit.test('The tickPositions option', function (assert) {
         'No extra ticks should be inserted when zooming between explicit ' +
             'ticks (#7463)'
     );
+
+    chart.xAxis[0].update({
+        tickPositions: undefined
+    });
+    
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions,
+        [8, 9, 10, 11, 12, 13, 14],
+        'After setting tickPostions to undefined they should be' + 
+            'cleared. (#10525)'
+    );
 });
 
 QUnit.test(
@@ -1103,32 +1114,6 @@ QUnit.test(
         assert.ok(
             chart.yAxis[0].tickPositions.length > 1,
             'Number of ticks on the axis must be greater than one.'
-        );
-    }
-);
-
-QUnit.test(
-    'Axis options should be cleared with undefined, (#10525).',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }],
-            yAxis: {
-                tickPositions: [0, 25, 50, 75, 100]
-            }
-        });
-
-        chart.update({
-            yAxis: {
-                tickPositions: undefined
-            }
-        });
-
-        assert.deepEqual(
-            chart.yAxis[0].tickPositions,
-            [0, 1, 2, 3, 4],
-            'After seting tickPostions to undefined they should be cleared.'
         );
     }
 );
