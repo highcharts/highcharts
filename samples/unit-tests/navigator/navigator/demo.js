@@ -1307,3 +1307,47 @@ QUnit.test('Initiation chart without data but with set range, #15864.', function
         the navigator shouldn't stick to min.`
     );
 });
+
+
+QUnit.test('Navigator, testing method: getBaseSeriesMin', function (assert) {
+    const method = Highcharts.Navigator.prototype.getBaseSeriesMin;
+
+    const mocks = [
+        // Regular case, simple series
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] }
+            ]
+        },
+        // Two series, one without xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { }
+            ]
+        },
+        // Two series, one without empty xData
+        {
+            baseSeries: [
+                { xData: [-5, 0, 5] },
+                { xData: [] }
+            ]
+        },
+        // One series, undefiend in xData
+        {
+            baseSeries: [
+                { xData: [-5, undefined, 5] }
+            ]
+        }
+    ];
+
+    mocks.forEach(mock => {
+        const result = method.call(mock, 0);
+
+        assert.strictEqual(
+            result,
+            -5,
+            `With config: ${JSON.stringify(mock)}, the min should not be a NaN`
+        );
+    });
+});
