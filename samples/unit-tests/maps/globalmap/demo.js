@@ -39,13 +39,6 @@ QUnit.test('Set basemap on chart object', function (assert) {
         'Map on the series object should overrule chart-wide setting.'
     );
 
-    assert.notEqual(
-        series.points.length,
-        Highcharts.maps['countries/bn/bn-all'].features.length +
-            Highcharts.maps['countries/us/us-all'].features.length - 1,
-        'The old map should be removed (no points duplicated).'
-    );
-
     series.update({
         data: [{ 'hc-key': 'bn-tu' }]
     });
