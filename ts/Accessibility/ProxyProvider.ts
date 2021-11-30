@@ -25,6 +25,7 @@
 import type Accessibility from './Accessibility';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type { NullableHTMLAttributes } from './ProxyElement';
 
 import H from '../Core/Globals.js';
 const { doc } = H;
@@ -120,7 +121,7 @@ class ProxyProvider {
     public addProxyElement(
         groupKey: string,
         target: ProxyElement.Target,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ): ProxyElement {
         const group = this.groups[groupKey];
         if (!group) {

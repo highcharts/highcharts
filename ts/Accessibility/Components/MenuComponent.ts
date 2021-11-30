@@ -214,7 +214,8 @@ class MenuComponent extends AccessibilityComponent {
                             chartTitle: getChartTitle(chart)
                         }
                     ),
-                    'aria-expanded': false
+                    'aria-expanded': false,
+                    title: chart.options.lang.contextButtonTitle || null
                 }
             );
         }
