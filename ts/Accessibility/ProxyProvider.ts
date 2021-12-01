@@ -140,14 +140,17 @@ class ProxyProvider {
     /**
      * Create a group that will contain proxy elements. The group order is
      * automatically updated according to the last group order keys.
+     * 
+     * Returns the added group.
      */
     public addGroup(
         groupKey: string,
         groupType: ProxyElement.GroupType,
         attributes?: HTMLAttributes
-    ): void {
-        if (this.groups[groupKey]) {
-            return;
+    ): HTMLElement {
+        const existingGroup = this.groups[groupKey];
+        if (existingGroup) {
+            return existingGroup.groupElement;
         }
 
         const proxyContainer = this.domElementProvider.createElement(groupType);
@@ -183,6 +186,8 @@ class ProxyProvider {
         this.afterChartProxyPosContainer.appendChild(groupElement);
 
         this.updateGroupOrder(this.groupOrder);
+
+        return groupElement;
     }
 
 
