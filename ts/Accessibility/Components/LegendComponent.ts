@@ -30,6 +30,7 @@ const {
     animObject
 } = A;
 import H from '../../Core/Globals.js';
+const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -161,8 +162,8 @@ class LegendComponent extends AccessibilityComponent {
      *
      * */
 
-
     public highlightedLegendItemIx: number = NaN;
+    private proxyGroup: HTMLElement|null = null;
 
 
     /* *
@@ -323,6 +324,11 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public recreateProxies(): boolean {
+        const focusedElement = doc.activeElement;
+        const proxyGroup = this.proxyGroup;
+        const shouldRestoreFocus = focusedElement && proxyGroup &&
+            proxyGroup.contains(focusedElement);
+
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -330,6 +336,10 @@ class LegendComponent extends AccessibilityComponent {
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
             this.updateLegendTitle();
+
+            if (shouldRestoreFocus) {
+                (focusedElement as HTMLElement).focus();
+            }
             return true;
         }
         return false;
@@ -380,7 +390,7 @@ class LegendComponent extends AccessibilityComponent {
         const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
 
-        this.proxyProvider.addGroup('legend', 'ul', {
+        this.proxyGroup = this.proxyProvider.addGroup('legend', 'ul', {
             // Filled by updateLegendTitle, to keep up to date without
             // recreating group
             'aria-label': '_placeholder_',
@@ -507,11 +517,8 @@ class LegendComponent extends AccessibilityComponent {
 
 
     /**
+     * Arrow key navigation
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {number} keyCode
-     * @return {number}
-     * Response code
      */
     public onKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -540,8 +547,7 @@ class LegendComponent extends AccessibilityComponent {
             return response.success;
         }
 
-        // No wrap, move
-        return response[direction > 0 ? 'next' : 'prev'];
+        return response.success;
     }
 
 
