@@ -344,9 +344,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
             if (chart.accessibility) {
                 chart.accessibility.keyboardNavigation.tabindexContainer
                     .focus();
-                chart.accessibility.keyboardNavigation[
-                    direction < 0 ? 'prev' : 'next'
-                ]();
+                chart.accessibility.keyboardNavigation.move(direction);
             }
         } else if (rangeSel) {
             const svgEl = rangeSel[newIx ? 'maxDateBox' : 'minDateBox'];
@@ -451,9 +449,9 @@ class RangeSelectorComponent extends AccessibilityComponent {
                         e.stopPropagation();
                         if (a11y) {
                             a11y.keyboardNavigation.tabindexContainer.focus();
-                            a11y.keyboardNavigation[
-                                e.shiftKey ? 'prev' : 'next'
-                            ]();
+                            a11y.keyboardNavigation.move(
+                                e.shiftKey ? -1 : 1
+                            );
                         }
                     }
                 });
@@ -471,7 +469,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
         const keys = this.keyCodes;
         const component = this;
 
-        return new (KeyboardNavigationHandler as any)(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 [
                     [keys.left, keys.right, keys.up, keys.down],
@@ -532,7 +530,7 @@ class RangeSelectorComponent extends AccessibilityComponent {
         const chart = this.chart;
         const component = this;
 
-        return new (KeyboardNavigationHandler as any)(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [],
 
             validate: function (): boolean {
