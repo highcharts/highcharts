@@ -85,6 +85,7 @@ export interface ChartLoadCallbackFunction {
     (this: Chart, event: Event): void;
 }
 export interface ChartOptions {
+    alignThresholds?: boolean;
     alignTicks?: boolean;
     animation?: (boolean|Partial<AnimationOptions>);
     backgroundColor?: ColorType;
