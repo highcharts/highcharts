@@ -1187,7 +1187,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 
@@ -1431,7 +1436,8 @@ class TreemapSeries extends ScatterSeries {
             nodeMap = series.nodeMap,
             node = nodeMap[rootId],
             name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options.traverseUpButton as any,
+            buttonOptions: TreemapSeriesUpButtonOptions = series.options
+                .traverseUpButton as any,
             backText = pick(buttonOptions.text, name, '◁ Back'),
             attr,
             states;
@@ -1555,9 +1561,13 @@ class TreemapSeries extends ScatterSeries {
                 const { height, width, x, y } = values;
                 const crispCorr = getCrispCorrection(point);
                 const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                const x2 = Math.round(
+                    xAxis.toPixels(x + width, true)
+                ) - crispCorr;
                 const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                const y2 = Math.round(
+                    yAxis.toPixels(y + height, true)
+                ) - crispCorr;
 
                 // Set point values
                 const shapeArgs = {
@@ -1676,7 +1686,9 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
+    public setTreeValues(
+        tree: TreemapSeries.NodeObject
+    ): TreemapSeries.NodeObject {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,

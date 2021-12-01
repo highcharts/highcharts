@@ -491,7 +491,9 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length || vlen;
+                inst.segments[
+                    inst.segments.length - 1
+                ].to = data.length || vlen;
             }
         }
 
@@ -505,8 +507,11 @@ function GLRenderer(
             // When adding a segment, if one exists from before, it should
             // set the previous segment's end
 
-            if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
+            if (
+                inst.segments.length &&
+                inst.segments[inst.segments.length - 1].from === (
+                    data.length || vlen
+                )
             ) {
                 return;
             }
@@ -597,7 +602,9 @@ function GLRenderer(
 
                     pointAttr = chart.styledMode ?
                         (point.series as ColorMapMixin.ColorMapSeries)
-                            .colorAttribs(point as ColorMapMixin.ColorMapPoint) :
+                            .colorAttribs(
+                                point as ColorMapMixin.ColorMapPoint
+                            ) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
@@ -837,8 +844,14 @@ function GLRenderer(
                     const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
-                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                        if (
+                            typeof zone.value !== 'undefined' &&
+                            x <= zone.value
+                        ) {
+                            if (
+                                zoneColors[i] &&
+                                (!last || x >= (last.value as any))
+                            ) {
                                 zoneColor = zoneColors[i];
                             }
                             return true;
@@ -847,7 +860,10 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                        if (
+                            zoneColors[i] &&
+                            (!last || y >= (last.value as any))
+                        ) {
                             zoneColor = zoneColors[i];
                         }
                         return true;

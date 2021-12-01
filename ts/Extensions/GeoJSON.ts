@@ -36,7 +36,9 @@ declare module '../Core/Chart/ChartLike'{
         /** @requires modules/maps */
         mapTransforms?: any;
         /** @requires modules/maps */
-        fromLatLonToPoint(latLon: Highcharts.MapLatLonObject): Highcharts.MapCoordinateObject;
+        fromLatLonToPoint(
+            latLon: Highcharts.MapLatLonObject
+        ): Highcharts.MapCoordinateObject;
         /** @requires modules/maps */
         fromPointToLatLon(
             point: Highcharts.MapCoordinateObject

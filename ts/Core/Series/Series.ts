@@ -1505,8 +1505,14 @@ class Series {
 
         // Sorting
         const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
+            const aValue = getNestedProperty(
+                sortKey,
+                a
+            ) as (boolean|number|string);
+            const bValue = getNestedProperty(
+                sortKey,
+                b
+            ) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         }) as Array<Point>;
         // Set x value depending on the position in the array
@@ -1706,7 +1712,9 @@ class Series {
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
         series.processedYData = processedData.yData;
-        series.closestPointRange = series.basePointRange = processedData.closestPointRange;
+        series.closestPointRange = (
+            series.basePointRange = processedData.closestPointRange
+        );
 
         fireEvent(series, 'afterProcessData');
     }
@@ -1847,7 +1855,9 @@ class Series {
                  * @sample stock/members/point-datagroup
                  *         Click to inspect raw data points
                  */
-                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
+                point.dataGroup = (series.groupMap as any)[
+                    groupCropStartIndex + i
+                ];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -1864,7 +1874,8 @@ class Series {
                  * @readonly
                  */
                 // For faster access in Point.update
-                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
+                point.index = hasGroupedData ?
+                    (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
@@ -2158,8 +2169,10 @@ class Series {
             ) + series.stackKey];
 
             if (
-                yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
+                yAxis.positiveValuesOnly &&
+                !yAxis.validatePositiveValue(yValue) ||
+                xAxis.positiveValuesOnly &&
+                !xAxis.validatePositiveValue(xValue)
             ) {
                 point.isNull = true;
             }
@@ -2479,8 +2492,12 @@ class Series {
                     width: 99,
                     height: inverted ? chart.chartWidth : chart.chartHeight
                 };
-                markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
-                chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+                markerAnimationClipRect = chart.renderer.clipRect(
+                    markerClipBox
+                );
+                chart.sharedClips[
+                    animationClipKey + 'm'
+                ] = markerAnimationClipRect;
             } else {
                 // When height changes during animation, typically due to
                 // responsive settings
@@ -2612,7 +2629,9 @@ class Series {
                 if (shouldDrawMarker) {
                     // Shortcuts
                     const symbol = pick(
-                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
+                        pointMarkerOptions.symbol,
+                        series.symbol,
+                        'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(
@@ -2840,7 +2859,9 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
@@ -4176,6 +4197,7 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            options.mapData || // #11636
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
@@ -4237,7 +4259,11 @@ class Series {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
-                plotOptions && plotOptions.series && plotOptions.series.pointStart,
+                (
+                    plotOptions &&
+                    plotOptions.series &&
+                    plotOptions.series.pointStart
+                ),
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -4280,8 +4306,10 @@ class Series {
                 // Legacy (IE < 11)
                 } else {
 
-                    const ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
-                        series.hcEvents;
+                    const ownEvents = Object.hasOwnProperty.call(
+                        series,
+                        'hcEvents'
+                    ) && series.hcEvents;
                     for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
                         (series as any)[n] = void 0;
                     }

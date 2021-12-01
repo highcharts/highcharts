@@ -110,7 +110,10 @@ class VariwideSeries extends ColumnSeries {
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
-        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(
+            this,
+            force
+        );
 
         (this.xAxis.reversed ?
             (this.zData as any).slice().reverse() :

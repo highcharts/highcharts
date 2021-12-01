@@ -507,6 +507,17 @@ QUnit.test('The tickPositions option', function (assert) {
         'No extra ticks should be inserted when zooming between explicit ' +
             'ticks (#7463)'
     );
+
+    chart.xAxis[0].update({
+        tickPositions: undefined
+    });
+    
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions,
+        [8, 9, 10, 11, 12, 13, 14],
+        'After setting tickPostions to undefined they should be' + 
+            'cleared. (#10525)'
+    );
 });
 
 QUnit.test(

@@ -30,7 +30,9 @@ export type NonPlotOptions = (
 /**
  * All possible series types.
  */
-export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype'];
+export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry][
+    'prototype'
+];
 
 /**
  * All possible series options.

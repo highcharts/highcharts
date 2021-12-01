@@ -100,13 +100,15 @@ class Announcer {
             clearTimeout(this.clearAnnouncementRegionTimer);
         }
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
-            this.announceRegion.innerHTML = '';
+            this.announceRegion.innerHTML = AST.emptyHTML;
             delete this.clearAnnouncementRegionTimer;
         }, 1000);
     }
 
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
-        const chartContainer = this.chart.announcerContainer || this.createAnnouncerContainer(),
+        const chartContainer = (
+                this.chart.announcerContainer || this.createAnnouncerContainer()
+            ),
             div = this.domElementProvider.createElement('div');
 
         attr(div, {

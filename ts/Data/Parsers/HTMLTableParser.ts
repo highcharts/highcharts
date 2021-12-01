@@ -52,9 +52,11 @@ class HTMLTableParser extends DataParser<DataParser.Event> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: HTMLTableParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions
-    };
+    protected static readonly defaultOptions: (
+        HTMLTableParser.ClassJSONOptions
+    ) = {
+            ...DataParser.defaultOptions
+        };
 
     /* *
      *

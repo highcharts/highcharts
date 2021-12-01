@@ -176,7 +176,10 @@ class MenuComponent extends AccessibilityComponent {
         stateStr: string
     ): void {
         if (this.exportButtonProxy) {
-            this.exportButtonProxy.buttonElement.setAttribute('aria-expanded', stateStr);
+            this.exportButtonProxy.buttonElement.setAttribute(
+                'aria-expanded',
+                stateStr
+            );
         }
     }
 
@@ -211,7 +214,8 @@ class MenuComponent extends AccessibilityComponent {
                             chartTitle: getChartTitle(chart)
                         }
                     ),
-                    'aria-expanded': false
+                    'aria-expanded': false,
+                    title: chart.options.lang.contextButtonTitle || null
                 }
             );
         }
@@ -256,7 +260,8 @@ class MenuComponent extends AccessibilityComponent {
                 attr(parentDiv, {
                     'aria-hidden': void 0,
                     'aria-label': chart.langFormat(
-                        'accessibility.exporting.chartMenuLabel', { chart: chart }
+                        'accessibility.exporting.chartMenuLabel',
+                        { chart }
                     ),
                     role: 'list' // Needed for webkit/VO
                 });

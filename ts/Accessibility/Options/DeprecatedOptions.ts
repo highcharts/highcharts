@@ -170,8 +170,10 @@ function deprecateFromOptionsMap(
                 false,
                 chart,
                 {
-                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
-                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                    [rootOldAsArray.join('.') + '.' + oldOptionKey]: (
+                        rootNewAsArray.join('.') + '.' +
+                        mapToNewOptions[oldOptionKey].join('.')
+                    )
                 }
             );
         }
@@ -189,7 +191,12 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            error(32, false, chart, { [`chart.${prop}`]: `use accessibility.${prop}` });
+            error(
+                32,
+                false,
+                chart,
+                { [`chart.${prop}`]: `use accessibility.${prop}` }
+            );
         }
     });
 }
@@ -203,7 +210,9 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            error(32, false, chart, { 'axis.description': 'use axis.accessibility.description' });
+            error(32, false, chart, {
+                'axis.description': 'use axis.accessibility.description'
+            });
         }
     });
 }
@@ -236,8 +245,11 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
 
             // Special case
             if (oldOption === 'accessibility.pointDescriptionFormatter') {
-                optionVal = series.options.accessibility &&
-                    (series.options.accessibility as any).pointDescriptionFormatter;
+                optionVal = (
+                    series.options.accessibility &&
+                    (series.options.accessibility as any)
+                        .pointDescriptionFormatter
+                );
             }
 
             if (typeof optionVal !== 'undefined') {
@@ -255,8 +267,10 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     false,
                     chart,
                     {
-                        [`series.${oldOption}`]:
-                            `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}`
+                        [`series.${oldOption}`]: (
+                            'series.' +
+                            (oldToNewSeriesOptions as any)[oldOption].join('.')
+                        )
                     }
                 );
             }

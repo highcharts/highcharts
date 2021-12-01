@@ -153,7 +153,7 @@ body {
     width: 250px;
     height: 250px;
     overflow: visible;
-    margin-top: 84px;
+    margin-top: 0;
     transition: all 1s;
 }
 
@@ -487,6 +487,7 @@ body {
     display: flex;
     justify-content: center;
     width: 250px;
+    font-family: "IBM Plex Sans", sans-serif;
 }
 
 #title {
@@ -578,6 +579,10 @@ body {
     border-right: 0.3em solid transparent;
     border-bottom: 0;
     border-left: 0.3em solid transparent;
+}
+
+.dropdown-toggle:focus {
+    outline: 3px solid #7e96b9;
 }
 
 .chart-container .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),

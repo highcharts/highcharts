@@ -20,17 +20,23 @@ import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
-const { SVG_NS } = H;
+const {
+    SVG_NS,
+    win
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
     createElement,
-    discardElement,
     error,
+    isFunction,
     isString,
     objectEach,
     splat
 } = U;
+const {
+    trustedTypes
+} = win;
 
 /* *
  *
@@ -38,10 +44,29 @@ const {
  *
  * */
 
+// Create the trusted type policy. This should not be exposed.
+const trustedTypesPolicy = (
+    trustedTypes &&
+    isFunction(trustedTypes.createPolicy) &&
+    trustedTypes.createPolicy(
+        'highcharts', {
+            createHTML: (s: string): string => s
+        }
+    )
+);
+
+const emptyHTML = trustedTypesPolicy ?
+    trustedTypesPolicy.createHTML('') as unknown as string :
+    '';
+
+
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
-        return Boolean(new DOMParser().parseFromString('', 'text/html'));
+        return Boolean(new DOMParser().parseFromString(
+            emptyHTML,
+            'text/html'
+        ));
     } catch (e) {
         return false;
     }
@@ -254,6 +279,8 @@ class AST {
         '#text'
     ];
 
+    public static emptyHTML = emptyHTML;
+
     /* *
      *
      *  Static Functions
@@ -312,7 +339,7 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = ''; // Clear previous
+        el.innerHTML = AST.emptyHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
@@ -427,7 +454,10 @@ class AST {
                         node = element;
 
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            'Highcharts warning: Invalid tagName ' +
+                            tagName + ' in config'
+                        );
                     }
                 }
 
@@ -469,11 +499,15 @@ class AST {
         markup = markup.trim();
 
         let doc;
-        let body;
         if (hasValidDOMParser) {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
+            doc = new DOMParser().parseFromString(
+                trustedTypesPolicy ?
+                    trustedTypesPolicy.createHTML(markup) as unknown as string :
+                    markup,
+                'text/html'
+            );
         } else {
-            body = createElement('div');
+            const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
         }
@@ -523,10 +557,6 @@ class AST {
             doc.body.childNodes,
             (childNode): void => appendChildNodes(childNode, nodes)
         );
-
-        if (body) {
-            discardElement(body);
-        }
 
         return nodes;
     }

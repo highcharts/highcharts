@@ -572,7 +572,11 @@ function chartSonify(
     let order = buildPathOrder(opts.order, this, function (
         series: SeriesSonify.Composition
     ): Partial<SeriesSonify.SonifySeriesOptions> {
-        return SeriesSonify.buildChartSonifySeriesOptions(series, dataExtremes, opts);
+        return SeriesSonify.buildChartSonifySeriesOptions(
+            series,
+            dataExtremes,
+            opts
+        );
     });
 
     // Add waits after simultaneous paths with series in them.

@@ -105,7 +105,10 @@ declare global {
             controlPointsGroup: SVGElement;
             options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
-            addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
+            addAnnotation(
+                userOptions: AnnotationsOptions,
+                redraw?: boolean
+            ): Annotation;
             drawAnnotations(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
@@ -562,7 +565,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
             this.clipYAxis &&
             this.options.crop // #15399
         ) {
-            this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
+            this.clipRect = this.chart.renderer.clipRect(
+                this.getClipBox() as any
+            );
         }
     }
 
@@ -774,7 +779,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public setControlPointsVisibility(visible: boolean): void {
         const setItemControlPointsVisibility = function (
-            item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+            item: (
+                Highcharts.AnnotationLabelType|
+                Highcharts.AnnotationShapeType
+            )
         ): void {
             item.setControlPointsVisibility(visible);
         };
@@ -798,7 +806,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public destroy(): void {
         const chart = this.chart,
             destroyItem = function (
-                item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+                item: (
+                    Highcharts.AnnotationLabelType|
+                    Highcharts.AnnotationShapeType
+                )
             ): void {
                 item.destroy();
             };
@@ -972,7 +983,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         let hasVisiblePoints = false,
             label = item.graphic;
 
-        item.points.forEach(function (point: Highcharts.AnnotationPointType): void {
+        item.points.forEach(function (
+            point: Highcharts.AnnotationPointType
+        ): void {
             if (
                 point.series.visible !== false &&
                 point.visible !== false
@@ -1263,7 +1276,9 @@ merge<Annotation>(
                      * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
                      * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
                      */
-                    formatter: function (this: Highcharts.AnnotationPoint): (number|string) {
+                    formatter: function (
+                        this: Highcharts.AnnotationPoint
+                    ): (number|string) {
                         return defined(this.y) ? this.y : 'Annotation label';
                     },
 
@@ -1737,7 +1752,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
     ): Annotation {
-        const Constructor = (Annotation as any).types[(userOptions as any).type] || Annotation,
+        const Constructor = (Annotation as any)
+                .types[(userOptions as any).type] || Annotation,
             annotation = new Constructor(this, userOptions);
 
         this.annotations.push(annotation);
@@ -1785,7 +1801,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         idOrAnnotation: (number|string|Annotation)
     ): void {
         const annotations = this.annotations,
-            annotation: Annotation = (idOrAnnotation as any).coll === 'annotations' ?
+            annotation: Annotation = (
+                (idOrAnnotation as any).coll === 'annotations'
+            ) ?
                 idOrAnnotation :
                 find(
                     annotations,
@@ -1948,7 +1966,7 @@ chartProto.callbacks.push(function (
                             // Annotation placed on a exported data point
                             // - add new column
                             if (!wasAdded) {
-                                event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                event.dataRows.forEach((row: any): void => {
                                     if (
                                         !wasAdded &&
                                         row.xValues &&
@@ -1959,8 +1977,10 @@ chartProto.callbacks.push(function (
                                             joinAnnotations &&
                                             row.length > startRowLength
                                         ) {
-                                            row[row.length - 1] +=
-                                            annotationSeparator + annotationText;
+                                            row[row.length - 1] += (
+                                                annotationSeparator +
+                                                annotationText
+                                            );
                                         } else {
                                             row.push(annotationText);
                                         }

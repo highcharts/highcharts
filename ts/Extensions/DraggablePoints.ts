@@ -514,7 +514,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -546,7 +548,9 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (
                 point: ColumnRangePoint
             ): PositionObject {
-                const bBox = point.shapeArgs || (point.graphic as any).getBBox();
+                const bBox = (
+                    point.shapeArgs || (point.graphic as any).getBBox()
+                );
 
                 return {
                     x: bBox.x || 0,
@@ -2285,7 +2289,9 @@ Series.prototype.getGuideBox = function (
 
     // Find bounding box of all points
     points.forEach(function (point: Point): void {
-        const bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
+        const bBox = (
+            point.graphic && point.graphic.getBBox() || point.shapeArgs
+        );
 
         if (bBox) {
             let plotX2;
@@ -2498,7 +2504,9 @@ Point.prototype.showDragHandles = function (): void {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            if (!path || pos.x < 0 || pos.y < 0) {
+            // Correct left edge value depending on the xAxis' type, #16596
+            const minEdge = point.series.xAxis.categories ? -0.5 : 0;
+            if (!path || pos.x < minEdge || pos.y < 0) {
                 return;
             }
 

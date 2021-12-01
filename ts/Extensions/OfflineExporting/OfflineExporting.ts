@@ -29,6 +29,7 @@ import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -49,6 +50,27 @@ const {
     fireEvent,
     merge
 } = U;
+
+AST.allowedAttributes.push(
+    'data-z-index',
+    'fill-opacity',
+    'rx',
+    'ry',
+    'stroke-dasharray',
+    'stroke-linejoin',
+    'text-anchor',
+    'transform',
+    'version',
+    'viewBox',
+    'visibility',
+    'xmlns',
+    'xmlns:xlink'
+);
+AST.allowedTags.push(
+    'desc',
+    'clippath',
+    'g'
+);
 
 /* *
  *
@@ -197,7 +219,10 @@ namespace OfflineExporting {
             filename = (
                 (options.filename || 'chart') +
                 '.' +
-                (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])
+                (
+                    imageType === 'image/svg+xml' ?
+                        'svg' : imageType.split('/')[1]
+                )
             ),
             scale = options.scale || 1;
         let svgurl: string,
@@ -210,11 +235,11 @@ namespace OfflineExporting {
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
-        /**
+        /*
          * @private
-             */
+         */
         const downloadPDF = (): void => {
-            dummySVGContainer.innerHTML = svg;
+            AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
                 // there. Searches up hierarchy until it finds prop, or hits the
@@ -443,10 +468,9 @@ namespace OfflineExporting {
                         H.isMS || options.type === 'application/pdf'
                     )
                 ) {
-                    fallbackToExportServer(
-                        'Image type not supported' +
-                        'for charts with embedded HTML' as any
-                    );
+                    fallbackToExportServer(new Error(
+                        'Image type not supported for charts with embedded HTML'
+                    ));
                 } else {
                     OfflineExporting.downloadSVGLocal(
                         svg,
@@ -460,24 +484,26 @@ namespace OfflineExporting {
                 }
             },
 
-            // Return true if the SVG contains images with external data.
-            // With the boost module there are `image` elements with encoded
-            // PNGs, these are supported by svg2pdf and should
-            // pass (#10243).
+            // Return true if the SVG contains images with external data. With
+            // the boost module there are `image` elements with encoded PNGs,
+            // these are supported by svg2pdf and should pass (#10243).
             hasExternalImages = function (): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
                     function (image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
-                        return href !== '' && (href as any).indexOf('data:') !== 0;
+                        return (
+                            href !== '' &&
+                            typeof href === 'string' &&
+                            href.indexOf('data:') !== 0
+                        );
                     }
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the
-        // renderer for inline styles that we want to pass through. There
-        // are so many styles by default in IE that we don't want to
-        // blacklist them all.
+        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // for inline styles that we want to pass through. There are so many
+        // styles by default in IE that we don't want to blacklist them all.
         if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,
@@ -527,9 +553,9 @@ namespace OfflineExporting {
                 hasExternalImages()
             )
         ) {
-            fallbackToExportServer(
-                'Image type not supported for this chart/browser.' as any
-            );
+            fallbackToExportServer(new Error(
+                'Image type not supported for this chart/browser.'
+            ));
             return;
         }
 
@@ -589,7 +615,10 @@ namespace OfflineExporting {
         const chart = this as Exporting.ChartComposition,
             // After grabbing the SVG of the chart's copy container we need
             // to do sanitation on the SVG
-            sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
+            sanitize = (svg: string): string => chart.sanitizeSVG(
+                svg,
+                chartCopyOptions as any
+            ),
             // When done with last image we have our SVG
             checkDone = (): void => {
                 if (images && imagesEmbedded === imagesLength) {
@@ -633,7 +662,8 @@ namespace OfflineExporting {
         ): void => {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
-            images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
             imagesLength = images.length;
         });
 
@@ -644,7 +674,9 @@ namespace OfflineExporting {
             // If there are no images to embed, the SVG is okay now.
             if (!images || !images.length) {
                 // Use SVG of chart copy
-                successCallback(sanitize((chartCopyContainer as any).innerHTML));
+                successCallback(
+                    sanitize((chartCopyContainer as any).innerHTML)
+                );
                 return;
             }
 
@@ -752,7 +784,9 @@ namespace OfflineExporting {
                         } else {
                             canvas.height = img.height * scale;
                             canvas.width = img.width * scale;
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(
+                                img, 0, 0, canvas.width, canvas.height
+                            );
 
                             // Now we try to get the contents of the canvas.
                             try {

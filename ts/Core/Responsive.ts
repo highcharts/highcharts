@@ -200,7 +200,11 @@ namespace Responsive {
 
                         // Iterate over collections like series, xAxis or yAxis
                         // and map the items by index.
-                        for (i = 0; i < Math.max(val.length, curr[key].length); i++) {
+                        for (
+                            i = 0;
+                            i < Math.max(val.length, curr[key].length);
+                            i++
+                        ) {
 
                             // Item exists in current data (#6347)
                             if (curr[key][i]) {
@@ -256,9 +260,14 @@ namespace Responsive {
             const condition = rule.condition,
                 fn = condition.callback || function (this: Chart): boolean {
                     return (
-                        this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
-                        this.chartHeight <=
-                            pick(condition.maxHeight, Number.MAX_VALUE) &&
+                        this.chartWidth <= pick(
+                            condition.maxWidth,
+                            Number.MAX_VALUE
+                        ) &&
+                        this.chartHeight <= pick(
+                            condition.maxHeight,
+                            Number.MAX_VALUE
+                        ) &&
                         this.chartWidth >= pick(condition.minWidth, 0) &&
                         this.chartHeight >= pick(condition.minHeight, 0)
                     );
@@ -317,7 +326,9 @@ namespace Responsive {
 
             // Stringified key for the rules that currently apply.
             ruleIds = ((ruleIds.toString() as any) || void 0);
-            const currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+            const currentRuleIds = (
+                currentResponsive && currentResponsive.ruleIds
+            );
 
             // Changes in what rules apply
             if ((ruleIds as any) !== currentRuleIds) {

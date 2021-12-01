@@ -3,7 +3,6 @@
 body {
     margin: 0 !important;
     background-color: transparent !important;
-  
 }
 
 .hero-container {
@@ -68,7 +67,6 @@ body {
     fill-opacity: 1;
 }
 
-
 #hero .highcharts-grid-line {
     fill: none;
     stroke: transparent;
@@ -123,8 +121,8 @@ body {
 }
 
 #hero .highcharts-point {
-    fill: #e4d354;
-    stroke-width: 1;
+    fill: url(#sankey-gradient);
+    stroke-width: 0;
 }
 
 #hero .highcharts-plot-line {
@@ -141,7 +139,6 @@ body {
     fill: #fff;
     font-weight: 300;
 }
-
 
 #hero .highcharts-candlestick-series .highcharts-point {
     stroke: #8187e2;
@@ -211,7 +208,6 @@ body {
     transition: transform 1s;
 }
 
-
 #hero .highcharts-bubble-series.bubble2-gray .highcharts-point.transparent,
 #hero .highcharts-bubble-series.bubble2-dgray .highcharts-point.transparent {
     fill: transparent;
@@ -260,17 +256,16 @@ body {
     stroke: #fff;
 }
 
-
 #hero .highcharts-bubble-series .highcharts-point.bubble2-brown {
     fill: #cd8519;
     fill-opacity: 0.3;
     stroke: #fff;
 }
 
-
 #hero .highcharts-bubble-series .highcharts-point.bubble2-orange {
     fill: #cd8519;
-=======
+}
+
 #hero .highcharts-bubble-series .highcharts-point.bubble2-white {
     fill: #fff;
     fill-opacity: 0.8;
@@ -299,7 +294,7 @@ body {
 #hero .highcharts-link.highcharts-color-7,
 #hero .highcharts-link.highcharts-color-8,
 #hero .highcharts-link.highcharts-color-9 {
-    fill: url("#sankey-gradient");
+    fill: linear-gradient(90.54deg, #54a0ff 0.24%, #10ac84 99.56%);
     stroke: transparent;
     transition: opacity 2s;
     opacity: 100%;
@@ -309,7 +304,7 @@ body {
     fill: #364b63;
     stroke: transparent;
 }
-
+#hero .highcharts-node:nth-of-type(1),
 #hero .highcharts-node:nth-of-type(4),
 #hero .highcharts-node:nth-of-type(6) {
     fill: #005195;
@@ -327,15 +322,15 @@ body {
     fill: #8dc6ff;
 }
 
-#hero .highcharts-node:nth-of-type(11) {
+#hero .highcharts-node:nth-of-type(9) {
     fill: #c7e3ff;
 }
 
-#hero .highcharts-node:nth-of-type(2) {
+#hero .highcharts-node:nth-of-type(10) {
     fill: #0d8a6a;
 }
 
-#hero .highcharts-node:nth-of-type(9) {
+#hero .highcharts-node:nth-of-type(11) {
     fill: #00b081;
 }
 

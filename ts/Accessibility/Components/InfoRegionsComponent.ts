@@ -300,7 +300,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                         component.initSonifyButton(component.sonifyButtonId);
                     }
                     if (typeof component.dataTableButtonId !== 'undefined') {
-                        component.initDataTableButton(component.dataTableButtonId);
+                        component.initDataTableButton(
+                            component.dataTableButtonId
+                        );
                     }
                 }
             },
@@ -310,7 +312,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility.screenReaderSection
+                    const formatter = chart.options.accessibility
+                        .screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -473,8 +476,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
      * @private
      */
     public defaultBeforeChartFormatter(): string {
-        const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+        const chart = this.chart,
+            format = chart.options.accessibility.screenReaderSection
+                .beforeChartFormat;
 
         if (!format) {
             return '';
@@ -490,7 +494,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
-            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
+            annotationsList = getAnnotationsInfoHTML(
+                chart as Highcharts.AnnotationChart
+            ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }
@@ -524,7 +530,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
      */
     public defaultAfterChartFormatter(): string {
         const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+        const format = chart.options.accessibility.screenReaderSection
+            .afterChartFormat;
 
         if (!format) {
             return '';
@@ -719,7 +726,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
                     chart.options.accessibility &&
-                    chart.options.accessibility.screenReaderSection.onPlayAsSoundClick
+                    chart.options.accessibility.screenReaderSection
+                        .onPlayAsSoundClick
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(

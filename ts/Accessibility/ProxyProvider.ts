@@ -25,6 +25,7 @@
 import type Accessibility from './Accessibility';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type { NullableHTMLAttributes } from './ProxyElement';
 
 import H from '../Core/Globals.js';
 const { doc } = H;
@@ -96,8 +97,12 @@ class ProxyProvider {
         this.groups = {};
         this.groupOrder = [];
 
-        this.beforeChartProxyPosContainer = this.createProxyPosContainer('before');
-        this.afterChartProxyPosContainer = this.createProxyPosContainer('after');
+        this.beforeChartProxyPosContainer = this.createProxyPosContainer(
+            'before'
+        );
+        this.afterChartProxyPosContainer = this.createProxyPosContainer(
+            'after'
+        );
 
         this.update();
     }
@@ -116,7 +121,7 @@ class ProxyProvider {
     public addProxyElement(
         groupKey: string,
         target: ProxyElement.Target,
-        attributes?: HTMLAttributes
+        attributes?: NullableHTMLAttributes
     ): ProxyElement {
         const group = this.groups[groupKey];
         if (!group) {
@@ -170,9 +175,6 @@ class ProxyProvider {
         attr(groupElement, attributes || {});
 
         if (groupType === 'ul') {
-            if (!this.chart.styledMode) {
-                proxyContainer.style.listStyle = 'none';
-            }
             proxyContainer.setAttribute('role', 'list'); // Needed for webkit
         }
 
