@@ -63,7 +63,7 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * When using multiple axis, the ticks of two or more opposite axes
+     * When using multiple axes, the ticks of two or more opposite axes
      * will automatically be aligned by adding ticks to the axis or axes
      * with the least ticks, as if `tickAmount` were specified.
      *
@@ -90,6 +90,24 @@ const ChartDefaults: ChartOptions = {
      * @product   highcharts highstock gantt
      * @apioption chart.alignTicks
      */
+
+    /**
+     * When using multiple axes, align the thresholds. When this is true, other
+     * ticks will also be aligned.
+     *
+     * If `startOnTick` or `endOnTick` in an Axis options are set to false,
+     * then the `alignThresholds ` will be disabled for the Axis.
+     *
+     * Disabled for logarithmic axes.
+     *
+     * @sample {highcharts} highcharts/chart/alignthresholds/
+     *         Set to true
+     *
+     * @since next
+     * @product   highcharts highstock gantt
+     * @apioption chart.alignThresholds
+     */
+    alignThresholds: false,
 
     /**
      * Set the overall animation for all chart updating. Animation can be
