@@ -86,7 +86,29 @@ class MapPointSeries extends ScatterSeries {
                 /** @internal */
                 color: Palette.neutralColor100
             }
-        }
+        },
+
+        /**
+         * Sticky tracking of mouse events. When true, the `mouseOut` event on a
+         * series isn't triggered until the mouse moves over another series, or
+         * out of the plot area. When false, the `mouseOut` event on a series is
+         * triggered when the mouse leaves the area around the series' graph or
+         * markers. This also implies the tooltip when not shared. When
+         * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+         * will be hidden when moving the mouse between series. Defaults to true
+         * for line and area type series, but to false for columns, pies etc.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-stickytracking-true/
+         *         True by default for line series
+         * @sample {highcharts} highcharts/plotoptions/series-stickytracking-false/
+         *         False
+         *
+         * @type      {boolean}
+         * @default   false
+         * @product   highcharts highstock highmaps
+         * @apioption plotOptions.mappoint.stickyTracking
+         */
+        stickyTracking: false
     } as MapPointSeriesOptions);
 
     /* *
