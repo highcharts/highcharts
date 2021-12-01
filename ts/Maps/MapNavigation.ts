@@ -242,37 +242,41 @@ MapNavigation.prototype.update = function (
                 height: 2 * button.height
             });
 
+            // (#15782) Make way for hamburger icon.
+            function adjustMapNavBtn(): void {
+                const expOptions = chart.options.exporting,
+                    expBtn = (
+                        expOptions &&
+                        expOptions.buttons &&
+                        expOptions.buttons.contextButton
+                    );
+
+                if ( // Has expBtn and empty title/subtitle
+                    expBtn && defined(buttonOptions.y) &&
+                    chart.exportingGroup && chart.options &&
+                    chart.title && chart.title.textStr === '' &&
+                    chart.subtitle && chart.subtitle.textStr === '' &&
+                    (
+                        ( // mapNav and expBtn on right side
+                            buttonOptions.align === 'right' &&
+                            !expBtn.align
+                        ) || // or left side
+                        (expBtn.align === buttonOptions.align)
+                    )
+                ) {
+                    // Move the mapNavButton if it overlaps with expBtn
+                    buttonOptions.y +=
+                        chart.exportingGroup.getBBox().height + 10;
+                }
+            }
+
             if (!chart.hasLoaded) {
                 // Align it after the plotBox is known (#12776)
                 const unbind = addEvent(chart, 'load', (): void => {
                     // #15406: Make sure button hasnt been destroyed
                     if (button.element) {
 
-                        const expOptions = chart.options.exporting,
-                            expBtn = (
-                                expOptions &&
-                                expOptions.buttons &&
-                                expOptions.buttons.contextButton
-                            );
-
-                        // If the nav buttons are on the same side
-                        if (
-                            expBtn && defined(buttonOptions.y) &&
-                            chart.exportingGroup && chart.options &&
-                            chart.title && chart.title.textStr === '' &&
-                            chart.subtitle && chart.subtitle.textStr === '' &&
-                            (
-                                (
-                                    buttonOptions.align === 'right' &&
-                                    !expBtn.align
-                                ) ||
-                                (expBtn.align === buttonOptions.align)
-                            )
-                        ) {
-                            // (#15782) Make way for hamburger icon.
-                            buttonOptions.y +=
-                                chart.exportingGroup.getBBox().height * 1.2;
-                        }
+                        adjustMapNavBtn(); // (#15782)
 
                         button.align(
                             buttonOptions,
@@ -284,6 +288,7 @@ MapNavigation.prototype.update = function (
                     unbind();
                 });
             } else {
+                adjustMapNavBtn(); // (#15782) Make way for hamburger icon.
                 button.align(buttonOptions, false, buttonOptions.alignTo);
             }
         });

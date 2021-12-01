@@ -871,12 +871,37 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'The view should not change after updating data values'
     );
 
-    const mapNavY = chart.mapNavButtons[0].alignAttr.y,
+    // #15782 Right side
+    let mapNavY = chart.mapNavButtons[0].alignAttr.y,
         exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
 
-    assert.notEqual(
-        mapNavY,
-        exportIconY,
-        '#15782, mapNav should not overlap with export icon.'
+    assert.ok(
+        mapNavY > (exportIconY + chart.exportingGroup.getBBox().height),
+        '#15782, mapNav should not overlap with export icon (right side).'
+    );
+
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'left'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                align: 'left'
+            }
+        }
+    });
+
+    // #15782 Left side
+    mapNavY = chart.mapNavButtons[0].alignAttr.y;
+    exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
+
+    assert.ok(
+        mapNavY > (exportIconY + chart.exportingGroup.getBBox().height),
+        '#15782, mapNav should not overlap with export icon (left side).'
     );
 });
