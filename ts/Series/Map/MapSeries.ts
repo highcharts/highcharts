@@ -529,7 +529,11 @@ class MapSeries extends ScatterSeries {
                     scaleX: 1,
                     scaleY: 1,
                     opacity: 1
-                });
+                }, (this.chart.options.drilldown as any).animation);
+
+                if (chart.drilldown) {
+                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                }
             }
         }
 
