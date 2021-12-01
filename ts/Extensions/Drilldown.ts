@@ -162,7 +162,9 @@ declare module '../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface ChartDrilldownObject {
+            chart: Chart,
             update(options: DrilldownOptions, redraw?: boolean): void;
+            fadeInGroup(group?: SVGElement): void;
         }
         interface ChartEventsOptions {
             drilldown?: DrilldownCallbackFunction;
@@ -1062,6 +1064,40 @@ Chart.prototype.drillUp = function (): void {
     fireEvent(chart, 'drillupall');
 };
 
+/**
+ * A function to fade in a group. First, the element is being hidden,
+ * then, using `opactiy`, is faded in. Used for example by `dataLabelsGroup`
+ * where simple SVGElement.fadeIn() is not enough, because of other features
+ * (e.g. InactiveState) using `opacity` to fadeIn/fadeOut.
+ *
+ * @requires module:modules/drilldown
+ *
+ * @param {undefined|SVGElement} [group]
+ * The SVG element to be faded in.
+ */
+function fadeInGroup(
+    this: Highcharts.ChartDrilldownObject,
+    group?: SVGElement
+): void {
+    const animationOptions = animObject(
+        (this.chart.options.drilldown as any).animation
+    );
+
+    if (group) {
+        group.hide();
+
+        syncTimeout(
+            function (): void {
+                // Make sure neither the group, or the chart, were destroyed
+                if (group && group.added) {
+                    group.fadeIn();
+                }
+            },
+            Math.max(animationOptions.duration - 50, 0)
+        );
+    }
+}
+
 /* eslint-disable no-invalid-this */
 
 // Add update function to be called internally from Chart.update
@@ -1070,6 +1106,8 @@ addEvent(Chart, 'afterInit', function (): void {
     const chart = this;
 
     chart.drilldown = {
+        chart,
+        fadeInGroup,
         update: function (
             options: Highcharts.DrilldownOptions,
             redraw?: boolean
@@ -1281,10 +1319,11 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                         animationOptions
                     );
             }
-            if (point.dataLabel) {
-                point.dataLabel.fadeIn(animationOptions);
-            }
         });
+
+        if (chart.drilldown) {
+            chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+        }
 
         // Reset to prototype
         delete this.animate;
@@ -1368,6 +1407,7 @@ if (PieSeries) {
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
                 ],
+                dataLabelsGroup = this.dataLabelsGroup,
                 animationOptions =
                     (this.chart.options.drilldown as any).animation;
 
@@ -1402,6 +1442,10 @@ if (PieSeries) {
                                 );
                         }
                     });
+
+                    if (this.chart.drilldown) {
+                        this.chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                    }
 
                     // Reset to prototype
                     delete this.animate;
