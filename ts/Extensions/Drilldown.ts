@@ -1407,7 +1407,6 @@ if (PieSeries) {
                 (this.chart.drilldownLevels as any)[
                     (this.chart.drilldownLevels as any).length - 1
                 ],
-                dataLabelsGroup = this.dataLabelsGroup,
                 animationOptions =
                     (this.chart.options.drilldown as any).animation;
 
