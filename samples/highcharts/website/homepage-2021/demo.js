@@ -403,7 +403,7 @@ const bubble2 = {
                         }
                         candlestick('animated');
                     };
-                    setTimeout(p3, 6500);
+                    setTimeout(p3, 5800);
                 }
             }
         }
@@ -930,7 +930,7 @@ const sankey = {
                     }
                     heroChart = Highcharts.chart('hero', bubble2);
                 };
-                setTimeout(p3, 6500);
+                setTimeout(p3, 6000);
 
             }
         }
