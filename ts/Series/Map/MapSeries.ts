@@ -25,7 +25,10 @@ import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -448,6 +451,10 @@ class MapSeries extends ScatterSeries {
     public pointAttrToOptions: unknown;
 
     public points: Array<MapPoint> = void 0 as any;
+
+    public processedData: Array<(
+        MapPointOptions|PointOptions|PointShortOptions
+    )> = [];
 
     public transformGroup: SVGElement = void 0 as any;
 
@@ -921,29 +928,44 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
-     * Extend setData to join in mapData. If the allAreas option is true, all
-     * areas from the mapData are used, and those that don't correspond to a
-     * data value are given null values.
+     * Extend setData to call processData and generatePoints immediately.
      * @private
      */
-    public setData(
-        data: Array<(MapPointOptions|PointShortOptions)>,
-        redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptions>),
-        updatePoints?: boolean
-    ): void {
-        let options = this.options,
+    public setData(): void {
+
+        super.setData.apply(this, arguments);
+
+        this.processData();
+        this.generatePoints();
+    }
+
+    /**
+     * Extend processData to join in mapData. If the allAreas option is true,
+     * all areas from the mapData are used, and those that don't correspond to a
+     * data value are given null values. The results are stored in
+     * `processedData` in order to avoid mutating `data`.
+     * @private
+     */
+    public processData(): (boolean|undefined) {
+
+        const options = this.options,
+            data = options.data,
             chartOptions = this.chart.options.chart,
             globalMapData = chartOptions && chartOptions.map,
-            mapData = options.mapData,
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
             dataUsed: Array<MapPointOptions> = [],
-            mapMap: AnyRecord = {},
-            mapPoint,
+            mapMap: AnyRecord = {};
+
+        let mapData = options.mapData,
             mapTransforms = this.chart.mapTransforms,
+            mapPoint,
             props,
             i;
+
+        // Reset processedData
+        this.processedData = [];
+        const processedData = this.processedData;
 
         // Collect mapData from chart options if not defined on series
         if (!mapData && globalMapData) {
@@ -952,18 +974,18 @@ class MapSeries extends ScatterSeries {
                 globalMapData;
         }
 
-        // Pick up numeric values, add index
-        // Convert Array point definitions to objects using pointArrayMap
+        // Pick up numeric values, add index. Convert Array point definitions to
+        // objects using pointArrayMap.
         if (data) {
             data.forEach(function (val, i): void {
                 let ix = 0;
 
                 if (isNumber(val)) {
-                    data[i] = {
+                    processedData[i] = {
                         value: val
                     };
                 } else if (isArray(val)) {
-                    data[i] = {};
+                    processedData[i] = {};
                     // Automatically copy first item to hc-key if there is
                     // an extra leading string
                     if (
@@ -971,7 +993,7 @@ class MapSeries extends ScatterSeries {
                         val.length > pointArrayMap.length &&
                         typeof val[0] === 'string'
                     ) {
-                        (data[i] as any)['hc-key'] = val[0];
+                        (processedData[i] as any)['hc-key'] = val[0];
                         ++ix;
                     }
                     // Run through pointArrayMap and what's left of the
@@ -983,22 +1005,22 @@ class MapSeries extends ScatterSeries {
                         ) {
                             if (pointArrayMap[j].indexOf('.') > 0) {
                                 MapPoint.prototype.setNestedProperty(
-                                    data[i], val[ix], pointArrayMap[j]
+                                    processedData[i], val[ix], pointArrayMap[j]
                                 );
                             } else {
-                                (data[i] as any)[pointArrayMap[j]] =
+                                (processedData[i] as any)[pointArrayMap[j]] =
                                     val[ix];
                             }
                         }
                     }
+                } else {
+                    processedData[i] = data[i];
                 }
                 if (joinBy && joinBy[0] === '_i') {
-                    (data[i] as any)._i = i;
+                    (processedData[i] as any)._i = i;
                 }
             });
         }
-
-        // this.getBox(data as any);
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
@@ -1039,9 +1061,11 @@ class MapSeries extends ScatterSeries {
             this.mapMap = mapMap;
 
             // Registered the point codes that actually hold data
-            if (data && joinBy[1]) {
+            if (joinBy[1]) {
                 const joinKey = joinBy[1];
-                data.forEach(function (pointOptions: MapPointOptions): void {
+                processedData.forEach(function (
+                    pointOptions: MapPointOptions
+                ): void {
                     const mapKey = getNestedProperty(
                         joinKey,
                         pointOptions
@@ -1053,13 +1077,10 @@ class MapSeries extends ScatterSeries {
             }
 
             if (options.allAreas) {
-                // this.getBox(mapData);
-                data = data || [];
-
-                // Registered the point codes that actually hold data
+                // Register the point codes that actually hold data
                 if (joinBy[1]) {
                     const joinKey = joinBy[1];
-                    data.forEach(function (
+                    processedData.forEach(function (
                         pointOptions: MapPointOptions
                     ): void {
                         dataUsed.push(getNestedProperty(
@@ -1070,40 +1091,35 @@ class MapSeries extends ScatterSeries {
                 }
 
                 // Add those map points that don't correspond to data, which
-                // will be drawn as null points
-                dataUsed = ('|' + dataUsed.map(function (point): void {
-                    return point && (point as any)[joinBy[0]];
-                }).join('|') + '|') as any; // Faster than array.indexOf
+                // will be drawn as null points. Searching a string is faster
+                // than Array.indexOf
+                const dataUsedString = (
+                    '|' +
+                    dataUsed
+                        .map(function (point): void {
+                            return point && (point as any)[joinBy[0]];
+                        })
+                        .join('|') +
+                    '|'
+                );
 
                 mapData.forEach(function (mapPoint: any): void {
                     if (
                         !joinBy[0] ||
-                        (dataUsed as any).indexOf(
+                        dataUsedString.indexOf(
                             '|' + mapPoint[joinBy[0]] + '|'
                         ) === -1
                     ) {
-                        data.push(merge(mapPoint, { value: null }));
-                        // #5050 - adding all areas causes the update
-                        // optimization of setData to kick in, even though
-                        // the point order has changed
-                        updatePoints = false;
+                        processedData.push(merge(mapPoint, { value: null }));
                     }
                 });
-            } /* else {
-                this.getBox(dataUsed); // Issue #4784
-            } */
+            }
         }
+        // The processedXData array is used by general chart logic for checking
+        // data length in various scanarios
+        this.processedXData = new Array(processedData.length);
 
-        Series.prototype.setData.call(
-            this,
-            data,
-            redraw,
-            animation,
-            updatePoints
-        );
-
-        this.processData();
-        this.generatePoints();
+        return void 0;
     }
 
     /**
@@ -1296,45 +1312,6 @@ SeriesRegistry.registerSeriesType('map', MapSeries);
 
 export default MapSeries;
 
-// To update series.joinBy, we need to have the new series.joinBy (for data
-// recalculation in series.setData) value before merging new options to the
-// series (before series.init).
-// We need to also provide the original data again.
-addEvent(MapSeries, 'update', function (
-    eventOptions: { options: DeepPartial<MapSeriesOptions> }
-): void {
-    const series = this,
-        data = eventOptions.options.data,
-        joinBy = eventOptions.options.joinBy;
-
-    if (typeof data === 'undefined' && joinBy && series.userOptions.data) {
-        // Cut the userOptions.data to get original data so the mapData is
-        // re-calculated properly when updating joinBy, #15374
-        let cutFrom;
-        series.userOptions.data.some((point: any, i): boolean => {
-            if (point._i !== void 0) {
-                cutFrom = i;
-                return true;
-            }
-
-            return false;
-        });
-
-        if (cutFrom) {
-            series.userOptions.data.length = cutFrom;
-            eventOptions.options.data = series.userOptions.data;
-        }
-
-        // Handle joinBy that might be a string
-        const seriesJoinBy = splat(joinBy);
-        if (!seriesJoinBy[1]) {
-            seriesJoinBy[1] = seriesJoinBy[0];
-        }
-
-        // Save the current (new) option that will be used in series.setData
-        series.joinBy = seriesJoinBy;
-    }
-});
 
 /* *
  *
