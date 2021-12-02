@@ -312,13 +312,15 @@ class ProxyElement {
 
         if (chartDiv && posElement && posElement.getBoundingClientRect) {
             const rectEl = posElement.getBoundingClientRect(),
-                rectDiv = chartDiv.getBoundingClientRect();
+                chartPos = this.chart.pointer.getChartPosition();
 
             return {
-                x: rectEl.left - rectDiv.left,
-                y: rectEl.top - rectDiv.top,
-                width: rectEl.right - rectEl.left,
-                height: rectEl.bottom - rectEl.top
+                x: (rectEl.left - chartPos.left) / chartPos.scaleX,
+                y: (rectEl.top - chartPos.top) / chartPos.scaleY,
+                width: rectEl.right / chartPos.scaleX -
+                    rectEl.left / chartPos.scaleX,
+                height: rectEl.bottom / chartPos.scaleY -
+                    rectEl.top / chartPos.scaleY
             };
         }
 
