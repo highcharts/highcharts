@@ -145,7 +145,10 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
         type: 'column',
         data: [7, 8, 9],
         dragDrop: {
-            draggableY: true
+            draggableY: true,
+            dragHandle: {
+                cursor: 'grab'
+            }
         }
     });
 
@@ -158,6 +161,12 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
 
     let point = chart.series[1].points[0];
     point.showDragHandles();
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-drag-handle').attributes.cursor.value,
+        'grab',
+        '#16470: DragHandle cursor should use general options.'
+    );
 
     assert.ok(
         Math.abs(chart.dragHandles.undefined.translateY - point.plotY) < 1,
