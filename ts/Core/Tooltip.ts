@@ -299,7 +299,7 @@ class Tooltip {
      *
      * @return {string|Array<string>}
      * Returns a string (single tooltip and shared)
-     * or an array of string (split tooltip)
+     * or an array of strings (split tooltip)
      */
     public defaultFormatter(
         this: Tooltip.FormatterContextObject,
