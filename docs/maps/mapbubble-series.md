@@ -28,8 +28,8 @@ series: [{
         { code3: 'ABW', z: 105, code: 'AW' },
         { code3: 'AFG', z: 34656, code: 'AF' },
         ...
-    ]
-...
+    ],
+    ...
 }]
 ```
 
