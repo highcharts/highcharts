@@ -8,4 +8,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Extensions/Themes/Sunset.js';
+import H from '../../Core/Globals.js';
+import SunsetTheme from '../../Extensions/Themes/Sunset.js';
+H.theme = SunsetTheme.options;
+SunsetTheme.apply();

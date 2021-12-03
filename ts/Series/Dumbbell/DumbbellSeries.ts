@@ -27,7 +27,7 @@ const { prototype: colProto } = ColumnSeries;
 import DumbbellPoint from './DumbbellPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -126,7 +126,7 @@ class DumbbellSeries extends AreaRangeSeries {
              * @since 8.0.0
              * @product   highcharts highstock
              */
-            lowColor: palette.neutralColor80,
+            lowColor: Palette.neutralColor80,
             /**
              * Color of the line that connects the dumbbell point's values.
              * By default it is the series' color.
@@ -293,7 +293,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Point} point The point to inspect.
      *
-     * @return {void}
      */
     public drawConnector(point: DumbbellPoint): void {
         const series = this,
@@ -343,7 +342,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public translate(): void {
         // Calculate shapeargs
@@ -374,7 +372,6 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * @param {Highcharts.Series} this The series of points.
      *
-     * @return {void}
      */
     public drawPoints(): void {
         let series = this,

@@ -76,7 +76,7 @@ class TreemapAlgorithmGroup {
 
     public elArr: Array<number>;
 
-    public height: number
+    public height: number;
 
     public lH: number;
 

@@ -4,6 +4,7 @@ module.exports = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
+            'getting-started/installation-with-esm',
             'getting-started/install-from-npm',
             'getting-started/install-from-bower',
             'getting-started/your-first-chart',
@@ -33,10 +34,15 @@ module.exports = {
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
+            'stock/compare',
+            'stock/cumulative-sum',
+            'stock/hollow-candlestick-chart',
+            'stock/heikinashi',
             'stock/data-grouping',
             'stock/depth-chart',
             'stock/flag-series',
             'stock/navigator',
+            'stock/hlc-chart',
             'stock/ohlc-chart',
             'stock/range-selector',
             'stock/axis-resizer',
@@ -51,7 +57,9 @@ module.exports = {
             'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
-            'maps/latlon'
+            'maps/latlon',
+            'maps/map-series',
+            'maps/tilemap-series'
         ],
         'Gantt': [
             'gantt/getting-started-gantt',
@@ -72,6 +80,7 @@ module.exports = {
             'chart-and-series-types/bar-chart',
             'chart-and-series-types/bell-curve-series',
             'chart-and-series-types/box-plot-series',
+            'chart-and-series-types/bubble-series',
             'chart-and-series-types/bullet-chart',
             'chart-and-series-types/column-chart',
             'chart-and-series-types/column-pyramid',
@@ -98,7 +107,6 @@ module.exports = {
             'chart-and-series-types/spline-chart',
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
-            'chart-and-series-types/tilemap-series',
             'chart-and-series-types/timeline-series',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
@@ -134,6 +142,7 @@ module.exports = {
         ],
         'Working with data': [
             'working-with-data/data-intro',
+            'working-with-data/data-compression',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',

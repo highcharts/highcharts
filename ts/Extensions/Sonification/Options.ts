@@ -14,20 +14,36 @@
 
 /* *
  *
+ * Imports
+ *
+ * */
+
+import type ChartSonify from './ChartSonify';
+import type SeriesSonify from './SeriesSonify';
+
+/* *
+ *
  * Declarations
  *
  * */
+
 declare module '../../Core/Options'{
     interface Options {
-        sonification?: Highcharts.ChartSonificationOptions;
+        sonification?: ChartSonify.ChartSonificationOptions;
     }
 }
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        sonification?: Highcharts.SeriesSonificationOptions;
+        sonification?: SeriesSonify.SeriesSonificationOptions;
     }
 }
+
+/* *
+ *
+ * Constants
+ *
+ * */
 
 
 // Experimental, disabled by default, not exposed in API
@@ -51,5 +67,11 @@ const options = {
         }
     }
 };
+
+/* *
+ *
+ * Default Export
+ *
+ * */
 
 export default options;

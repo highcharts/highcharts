@@ -16,7 +16,6 @@ import type {
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
 
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -56,8 +55,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @requires     stock/indicators/slowstochastic
      * @optionparent plotOptions.slowstochastic
      */
-    public static defaultOptions: SlowStochasticOptions =
-    merge(StochasticIndicator.defaultOptions, {
+    public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
         params: {
             /**
              * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
@@ -67,26 +65,11 @@ class SlowStochasticIndicator extends StochasticIndicator {
              */
             periods: [14, 3, 3]
         }
-    } as SlowStochasticOptions)
+    } as SlowStochasticOptions);
 
     public data: Array<SlowStochasticPoint> = void 0 as any;
     public options: SlowStochasticOptions = void 0 as any;
     public points: Array<SlowStochasticPoint> = void 0 as any;
-
-    public init(): void {
-        const args = arguments,
-            ctx = this;
-
-        RequiredIndicatorMixin.isParentLoaded(
-            (seriesTypes.stochastic as any),
-            'stochastic',
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
-    }
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,

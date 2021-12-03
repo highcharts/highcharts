@@ -304,3 +304,48 @@ QUnit.test(
         document.body.removeChild(table);
     }
 );
+
+
+QUnit.test('Updating with firstRowAsNames', function (assert) {
+    const chart = Highcharts.chart('container', {
+            data: {
+                columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
+                firstRowAsNames: true
+            }
+        }),
+        numPoints = chart.series[0].points.length;
+
+    chart.update({
+        data: {
+            googleSpreadsheetKey: 'placeholder'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        numPoints,
+        'Updating data options should not remove data rows.'
+    );
+});
+
+
+QUnit.test('Update column names', function (assert) {
+    const chart = Highcharts.chart('container', {
+        data: {
+            columns: [['A', 1, 2, 3, 4, 5, 6], ['B', 2, 4, 8, 3, 6, 6]],
+            firstRowAsNames: true
+        }
+    });
+
+    chart.update({
+        data: {
+            columns: [['C', 1, 2, 3, 4, 5, 6], ['D', 2, 4, 8, 3, 6, 6]]
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].name,
+        'D',
+        'Should be able to update series name.'
+    );
+});

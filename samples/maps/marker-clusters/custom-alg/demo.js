@@ -26,21 +26,22 @@ Highcharts.mapChart('container', {
                         dataIndexes,
                         options
                     ) {
-                        var series = this,
-                            xAxis = series.xAxis,
-                            yAxis = series.yAxis,
+                        const series = this,
                             grid = {},
                             gridOffset = series.getGridOffset(),
-                            scaledGridSize, x, y, gridX, gridY, key, i;
+                            scaledGridSize = series.getScaledGridSize(options);
 
-                        scaledGridSize = series.getScaledGridSize(options);
-
-                        for (i = 0; i < dataX.length; i++) {
-                            x = xAxis.toPixels(dataX[i]) - gridOffset.plotLeft;
-                            y = yAxis.toPixels(dataY[i]) - gridOffset.plotTop;
-                            gridX = Math.floor(x / scaledGridSize);
-                            gridY = Math.floor(y / scaledGridSize);
-                            key = gridY + '-' + gridX;
+                        for (let i = 0; i < dataX.length; i++) {
+                            const pos = series.chart.mapView
+                                    .projectedUnitsToPixels({
+                                        x: dataX[i],
+                                        y: dataY[i]
+                                    }),
+                                x = pos.x - gridOffset.plotLeft,
+                                y = pos.y - gridOffset.plotTop,
+                                gridX = Math.floor(x / scaledGridSize),
+                                gridY = Math.floor(y / scaledGridSize),
+                                key = gridY + '-' + gridX;
 
                             if (!grid[key]) {
                                 grid[key] = [];

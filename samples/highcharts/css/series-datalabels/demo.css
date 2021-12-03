@@ -1,25 +1,29 @@
-@import 'https://code.highcharts.com/css/highcharts.css';
+@import "https://code.highcharts.com/css/highcharts.css";
 
 #container {
-	height: 400px;
-	min-width: 300px;
-	max-width: 800px;
-	margin: 0 auto;
+    height: 400px;
+    min-width: 300px;
+    max-width: 800px;
+    margin: 0 auto;
 }
+
 .highcharts-data-label-box {
-	fill: #a4edba;
-	stroke: gray;
-	stroke-width: 1px;
+    fill: #a4edba;
+    stroke: gray;
+    stroke-width: 1px;
 }
+
 .highcharts-data-label {
-	font-weight: normal;
+    font-weight: normal;
 }
+
 .highlight .highcharts-data-label-box {
-	fill: red;
-	stroke-width: 2px;
-	stroke: black;
+    fill: red;
+    stroke-width: 2px;
+    stroke: black;
 }
+
 .highlight.highcharts-data-label text {
-	font-weight: bold;
-	fill: white;
+    font-weight: bold;
+    fill: white;
 }

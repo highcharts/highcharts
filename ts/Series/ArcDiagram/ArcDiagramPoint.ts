@@ -24,7 +24,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import NodesMixin from '../../Mixins/Nodes.js';
+import NodesComposition from '../NodesComposition.js';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -91,7 +92,8 @@ class ArcDiagramPoint extends SankeySeries.prototype.pointClass {
             this.dataLabelPath = renderer
                 .arc({
                     open: true,
-                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                    longArc: Math.abs(Math.abs(start) -
+                        Math.abs(end)) < Math.PI ? 0 : 1
                 })
                 // Add it inside the data label group so it gets destroyed
                 // with the label
@@ -129,10 +131,10 @@ class ArcDiagramPoint extends SankeySeries.prototype.pointClass {
  * */
 
 interface ArcDiagramPoint {
-    setState: typeof NodesMixin['setNodeState'];
+    setState: typeof NodesComposition['setNodeState'];
 }
 extend(ArcDiagramPoint.prototype, {
-    setState: NodesMixin.setNodeState
+    setState: NodesComposition.setNodeState
 });
 
 /* *

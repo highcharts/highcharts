@@ -14,12 +14,13 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorMapMixin from '../../Series/ColorMapMixin';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import GLShader from './WGLShader.js';
@@ -139,10 +140,6 @@ declare global {
  *
  * @private
  * @function GLRenderer
- *
- * @param {Function} postRenderCallback
- *
- * @return {*}
  */
 function GLRenderer(
     postRenderCallback: Function
@@ -283,8 +280,10 @@ function GLRenderer(
     /**
      * Returns an orthographic perspective matrix
      * @private
-     * @param {number} width - the width of the viewport in pixels
-     * @param {number} height - the height of the viewport in pixels
+     * @param {number} width
+     * the width of the viewport in pixels
+     * @param {number} height
+     * the height of the viewport in pixels
      */
     function orthoMatrix(width: number, height: number): Array<number> {
         const near = 0,
@@ -309,7 +308,8 @@ function GLRenderer(
     /**
      * Get the WebGL context
      * @private
-     * @returns {WebGLContext} - the context
+     * @return {WebGLContext}
+     * the context
      */
     function getGL(): WebGLRenderingContext {
         return gl;
@@ -491,7 +491,9 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length || vlen;
+                inst.segments[
+                    inst.segments.length - 1
+                ].to = data.length || vlen;
             }
         }
 
@@ -505,8 +507,11 @@ function GLRenderer(
             // When adding a segment, if one exists from before, it should
             // set the previous segment's end
 
-            if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
+            if (
+                inst.segments.length &&
+                inst.segments[inst.segments.length - 1].from === (
+                    data.length || vlen
+                )
             ) {
                 return;
             }
@@ -596,8 +601,10 @@ function GLRenderer(
                         point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
-                        (point.series as Highcharts.ColorMapSeries)
-                            .colorAttribs(point as Highcharts.ColorMapPoint) :
+                        (point.series as ColorMapMixin.ColorMapSeries)
+                            .colorAttribs(
+                                point as ColorMapMixin.ColorMapPoint
+                            ) :
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
@@ -837,8 +844,14 @@ function GLRenderer(
                     const last: SeriesZonesOptions = (zones as any)[i - 1];
 
                     if (zoneAxis === 'x') {
-                        if (typeof zone.value !== 'undefined' && x <= zone.value) {
-                            if (zoneColors[i] && (!last || x >= (last.value as any))) {
+                        if (
+                            typeof zone.value !== 'undefined' &&
+                            x <= zone.value
+                        ) {
+                            if (
+                                zoneColors[i] &&
+                                (!last || x >= (last.value as any))
+                            ) {
                                 zoneColor = zoneColors[i];
                             }
                             return true;
@@ -847,7 +860,10 @@ function GLRenderer(
                     }
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (zoneColors[i] && (!last || y >= (last.value as any))) {
+                        if (
+                            zoneColors[i] &&
+                            (!last || y >= (last.value as any))
+                        ) {
                             zoneColor = zoneColors[i];
                         }
                         return true;
@@ -1340,6 +1356,12 @@ function GLRenderer(
                 cbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
                 cbuffer.build(s.colorData, 'aColor', 4);
                 cbuffer.bind();
+            } else {
+                // #15869, a buffer with fewer points might already be bound by
+                // a different series/chart causing out of range errors
+                gl.disableVertexAttribArray(
+                    gl.getAttribLocation(shader.program() as any, 'aColor')
+                );
             }
 
             // Set series specific uniforms
@@ -1372,13 +1394,11 @@ function GLRenderer(
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'line_strip') {
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         s.drawMode
                     );
-                    // }
                 }
             }
 
@@ -1390,13 +1410,11 @@ function GLRenderer(
                 }
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
-                    // if (s.segments[sindex].from < s.segments[sindex].to) {
                     vbuffer.render(
                         s.segments[sindex].from,
                         s.segments[sindex].to,
                         'POINTS'
                     );
-                    // }
                 }
             }
         });
@@ -1650,7 +1668,8 @@ function GLRenderer(
     /**
      * Check if we have a valid OGL context
      * @private
-     * @returns {Boolean} - true if the context is valid
+     * @return {boolean}
+     * true if the context is valid
      */
     function valid(): boolean {
         return (gl as any) !== false;
@@ -1659,7 +1678,8 @@ function GLRenderer(
     /**
      * Check if the renderer has been initialized
      * @private
-     * @returns {Boolean} - true if it has, false if not
+     * @return {boolean}
+     * true if it has, false if not
      */
     function inited(): boolean {
         return isInited;

@@ -1,5 +1,5 @@
 var setDragStatus = function (status) {
-    document.getElementById('dragstatus').innerHTML = status;
+    document.getElementById('dragstatus').innerText = status;
 };
 
 Highcharts.chart('container', {

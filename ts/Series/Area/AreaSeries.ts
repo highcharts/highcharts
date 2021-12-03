@@ -22,9 +22,10 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -323,7 +324,7 @@ class AreaSeries extends LineSeries {
             graphPath: SVGPath,
             options = this.options,
             stacking = options.stacking,
-            yAxis = this.yAxis as StackingAxis,
+            yAxis = this.yAxis as StackingAxis.Composition,
             topPath: SVGPath,
             bottomPath,
             bottomPoints: Array<AreaPoint> = [],
@@ -416,7 +417,9 @@ class AreaSeries extends LineSeries {
 
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking ? pick(points[i].yBottom, translatedThreshold) : translatedThreshold;
+            yBottom = stacking ?
+                pick(points[i].yBottom, translatedThreshold) :
+                translatedThreshold;
 
             if (!isNull || connectNulls) {
 
@@ -475,7 +478,7 @@ class AreaSeries extends LineSeries {
             segment: Array<AreaPoint> = [],
             keys: Array<string> = [],
             xAxis = this.xAxis,
-            yAxis: StackingAxis = this.yAxis as any,
+            yAxis: StackingAxis.Composition = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
             pointMap: Record<string, AreaPoint> = {},
             yAxisSeries = yAxis.series,
@@ -544,26 +547,24 @@ class AreaSeries extends LineSeries {
                                 const si = yAxisSeries[i].index;
                                 stackPoint = otherStack.points[si];
                                 if (!stackPoint) {
-                                    // If the next point in this series
-                                    // is missing, mark the point
-                                    // with point.leftNull or
-                                    // point.rightNull = true.
+                                    // If the next point in this series is
+                                    // missing, mark the point with
+                                    // point.leftNull or point.rightNull = true.
                                     if (si === series.index) {
                                         (pointMap[x] as any)[nullName] = true;
 
-                                        // If there are missing points in
-                                        // the next stack in any of the
-                                        // series below this one, we need
-                                        // to substract the missing values
-                                        // and add a hiatus to the left or
-                                        // right.
-                                    } else if (
-                                        visibleSeries[i]
-                                    ) {
-                                        stackedValues =
-                                            stack[x].points[si];
+                                    // If there are missing points in the next
+                                    // stack in any of the series below this
+                                    // one, we need to substract the missing
+                                    // values and add a hiatus to the left or
+                                    // right.
+                                    } else if (visibleSeries[i]) {
+                                        stackedValues = stack[x].points[si];
                                         if (stackedValues) {
-                                            cliff -= stackedValues[1] - stackedValues[0];
+                                            cliff -= (
+                                                stackedValues[1] -
+                                                stackedValues[0]
+                                            );
                                         }
                                     }
                                 }
@@ -622,19 +623,17 @@ class AreaSeries extends LineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
 interface AreaSeries {
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-
     singleStacks: false,
-
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-
+    drawLegendSymbol: LegendSymbol.drawRectangle
 });
 
 /* *

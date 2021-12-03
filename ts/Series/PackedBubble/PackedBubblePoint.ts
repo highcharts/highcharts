@@ -21,6 +21,8 @@ import type PackedBubbleSeries from './PackedBubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+
 const {
     seriesTypes: {
         bubble: BubbleSeries
@@ -116,7 +118,9 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
         if (this.isParentNode && seriesOptions.parentNode) {
             const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            seriesOptions.allowPointSelect = (
+                seriesOptions.parentNode.allowPointSelect
+            );
             Point.prototype.firePointEvent.apply(this, arguments);
             seriesOptions.allowPointSelect = temp;
         } else {

@@ -19,7 +19,7 @@
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
 
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -189,33 +189,16 @@ class ParetoSeries extends LineSeries {
  *
  * */
 
-interface ParetoSeries {
-    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
-
-    addEvents: typeof DerivedSeriesMixin['addEvents'];
-
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-
-    init: typeof DerivedSeriesMixin['init'];
-
+interface ParetoSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof ParetoPoint;
-
-    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
-
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-
-    initialised: Highcharts.DerivedSeries['initialised'];
 }
 
 extend(ParetoSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
-}
-);
+    hasDerivedData: DerivedComposition.hasDerivedData
+});
+
+DerivedComposition.compose(ParetoSeries);
+
 
 /* *
  *

@@ -20,17 +20,23 @@ import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
-const { SVG_NS } = H;
+const {
+    SVG_NS,
+    win
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
     createElement,
-    discardElement,
     error,
+    isFunction,
     isString,
     objectEach,
     splat
 } = U;
+const {
+    trustedTypes
+} = win;
 
 /* *
  *
@@ -38,10 +44,29 @@ const {
  *
  * */
 
+// Create the trusted type policy. This should not be exposed.
+const trustedTypesPolicy = (
+    trustedTypes &&
+    isFunction(trustedTypes.createPolicy) &&
+    trustedTypes.createPolicy(
+        'highcharts', {
+            createHTML: (s: string): string => s
+        }
+    )
+);
+
+const emptyHTML = trustedTypesPolicy ?
+    trustedTypesPolicy.createHTML('') as unknown as string :
+    '';
+
+
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
-        return Boolean(new DOMParser().parseFromString('', 'text/html'));
+        return Boolean(new DOMParser().parseFromString(
+            emptyHTML,
+            'text/html'
+        ));
     } catch (e) {
         return false;
     }
@@ -65,80 +90,12 @@ const hasValidDOMParser = (function (): boolean {
  * Either an HTML string or an ASTNode list to populate the tree.
  */
 class AST {
-    /**
-     * The list of allowed SVG or HTML tags, used for sanitizing potentially
-     * harmful content from the chart configuration before adding to the DOM.
+
+    /* *
      *
-     * @example
-     * // Allow a custom, trusted tag
-     * Highcharts.AST.allowedTags.push('blink'); // ;)
+     *  Static Properties
      *
-     * @name Highcharts.AST.allowedTags
-     * @static
-     */
-    public static allowedTags = [
-        'a',
-        'b',
-        'br',
-        'button',
-        'caption',
-        'circle',
-        'clipPath',
-        'code',
-        'dd',
-        'defs',
-        'div',
-        'dl',
-        'dt',
-        'em',
-        'feComponentTransfer',
-        'feFuncA',
-        'feFuncB',
-        'feFuncG',
-        'feFuncR',
-        'feGaussianBlur',
-        'feOffset',
-        'feMerge',
-        'feMergeNode',
-        'filter',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'hr',
-        'i',
-        'img',
-        'li',
-        'linearGradient',
-        'marker',
-        'ol',
-        'p',
-        'path',
-        'pattern',
-        'pre',
-        'rect',
-        'small',
-        'span',
-        'stop',
-        'strong',
-        'style',
-        'sub',
-        'sup',
-        'svg',
-        'table',
-        'text',
-        'thead',
-        'tbody',
-        'tspan',
-        'td',
-        'th',
-        'tr',
-        'u',
-        'ul',
-        '#text'
-    ];
+     * */
 
     /**
      * The list of allowed SVG or HTML attributes, used for sanitizing
@@ -211,6 +168,7 @@ class AST {
         'text-align',
         'textAnchor',
         'textLength',
+        'title',
         'type',
         'valign',
         'width',
@@ -244,6 +202,90 @@ class AST {
         './',
         '#'
     ];
+
+    /**
+     * The list of allowed SVG or HTML tags, used for sanitizing potentially
+     * harmful content from the chart configuration before adding to the DOM.
+     *
+     * @example
+     * // Allow a custom, trusted tag
+     * Highcharts.AST.allowedTags.push('blink'); // ;)
+     *
+     * @name Highcharts.AST.allowedTags
+     * @static
+     */
+    public static allowedTags = [
+        'a',
+        'abbr',
+        'b',
+        'br',
+        'button',
+        'caption',
+        'circle',
+        'clipPath',
+        'code',
+        'dd',
+        'defs',
+        'div',
+        'dl',
+        'dt',
+        'em',
+        'feComponentTransfer',
+        'feFuncA',
+        'feFuncB',
+        'feFuncG',
+        'feFuncR',
+        'feGaussianBlur',
+        'feOffset',
+        'feMerge',
+        'feMergeNode',
+        'filter',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'hr',
+        'i',
+        'img',
+        'li',
+        'linearGradient',
+        'marker',
+        'ol',
+        'p',
+        'path',
+        'pattern',
+        'pre',
+        'rect',
+        'small',
+        'span',
+        'stop',
+        'strong',
+        'style',
+        'sub',
+        'sup',
+        'svg',
+        'table',
+        'text',
+        'thead',
+        'tbody',
+        'tspan',
+        'td',
+        'th',
+        'tr',
+        'u',
+        'ul',
+        '#text'
+    ];
+
+    public static emptyHTML = emptyHTML;
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
 
     /**
      * Filter an object of SVG or HTML attributes against the allow list.
@@ -288,19 +330,39 @@ class AST {
      * `innerHTML` in all cases where the content is not fully trusted.
      *
      * @static
-     *
      * @function Highcharts.AST#setElementHTML
      *
-     * @param {SVGDOMElement|HTMLDOMElement} el The node to set content of
-     * @param {string} html The markup string
+     * @param {SVGDOMElement|HTMLDOMElement} el
+     * Node to set content of.
+     *
+     * @param {string} html
+     * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = ''; // Clear previous
+        el.innerHTML = AST.emptyHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
         }
     }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    // Construct an AST from HTML markup, or wrap an array of existing AST nodes
+    constructor(source: (string|Array<AST.Node>)) {
+        this.nodes = typeof source === 'string' ?
+            this.parseMarkup(source) : source;
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     /**
      * List of the nodes of this tree, can be modified before adding the tree to
@@ -308,11 +370,11 @@ class AST {
      */
     public nodes: Array<AST.Node>;
 
-    // Construct an AST from HTML markup, or wrap an array of existing AST nodes
-    constructor(source: (string|Array<AST.Node>)) {
-        this.nodes = typeof source === 'string' ?
-            this.parseMarkup(source) : source;
-    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Add the tree defined as a hierarchical JS structure to the DOM
@@ -331,9 +393,12 @@ class AST {
 
         /**
          * @private
-         * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
-         * @param {Element} [subParent] - parent node
-         * @return {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} The inserted node.
+         * @param {Highcharts.ASTNode} subtree
+         * HTML/SVG definition
+         * @param {Element} [subParent]
+         * parent node
+         * @return {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
+         * The inserted node.
          */
         function recurse(
             subtree: (AST.Node|Array<AST.Node>),
@@ -389,7 +454,10 @@ class AST {
                         node = element;
 
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            'Highcharts warning: Invalid tagName ' +
+                            tagName + ' in config'
+                        );
                     }
                 }
 
@@ -428,12 +496,18 @@ class AST {
 
         const nodes: Array<AST.Node> = [];
 
+        markup = markup.trim();
+
         let doc;
-        let body;
         if (hasValidDOMParser) {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
+            doc = new DOMParser().parseFromString(
+                trustedTypesPolicy ?
+                    trustedTypesPolicy.createHTML(markup) as unknown as string :
+                    markup,
+                'text/html'
+            );
         } else {
-            body = createElement('div');
+            const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
         }
@@ -449,14 +523,7 @@ class AST {
                 tagName
             };
             if (tagName === '#text') {
-                const textContent = node.textContent || '';
-
-                // Whitespace text node, don't append it to the AST
-                if (/^[\s]*$/.test(textContent)) {
-                    return;
-                }
-
-                astNode.textContent = textContent;
+                astNode.textContent = node.textContent || '';
             }
             const parsedAttributes = (node as any).attributes;
 
@@ -491,10 +558,6 @@ class AST {
             (childNode): void => appendChildNodes(childNode, nodes)
         );
 
-        if (body) {
-            discardElement(body);
-        }
-
         return nodes;
     }
 }
@@ -506,12 +569,20 @@ class AST {
  * */
 
 namespace AST {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
     export interface Node {
         attributes?: (HTMLAttributes&SVGAttributes);
         children?: Array<Node>;
         tagName?: string;
         textContent?: string;
     }
+
 }
 
 /* *
@@ -546,4 +617,4 @@ export default AST;
  * @type {string|undefined}
  */
 
-''; // detach doclets above
+(''); // keeps doclets above in file

@@ -27,7 +27,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
 
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -102,13 +102,22 @@ namespace TreeGridTick {
             wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
 
             // backwards compatibility
-            (TickClass.prototype as any).collapse = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).collapse = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.collapse(redraw);
             };
-            (TickClass.prototype as any).expand = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).expand = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.expand(redraw);
             };
-            (TickClass.prototype as any).toggleCollapse = function (this: TreeGridTick, redraw?: boolean): void {
+            (TickClass.prototype as any).toggleCollapse = function (
+                this: TreeGridTick,
+                redraw?: boolean
+            ): void {
                 this.treeGrid.toggleCollapse(redraw);
             };
 
@@ -198,7 +207,7 @@ namespace TreeGridTick {
             icon
                 .attr({
                     cursor: 'pointer',
-                    'fill': pick(params.color, palette.neutralColor60),
+                    'fill': pick(params.color, Palette.neutralColor60),
                     'stroke-width': 1,
                     stroke: options.lineColor,
                     strokeWidth: options.lineWidth || 0
@@ -333,7 +342,12 @@ namespace TreeGridTick {
             renderLabelIcon(
                 tick,
                 {
-                    color: !styledMode && label.styles && label.styles.color || '',
+                    color: (
+                        !styledMode &&
+                        label.styles &&
+                        label.styles.color ||
+                        ''
+                    ),
                     collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,

@@ -146,8 +146,8 @@ declare global {
                     PolarSeries['searchPointByAngle'] :
                     Series['searchPoint']
             );
-            xAxis: RadialAxis;
-            yAxis: RadialAxis;
+            xAxis: RadialAxis.AxisComposition;
+            yAxis: RadialAxis.AxisComposition;
             getConnectors(
                 segment: Array<Point>,
                 index: number,
@@ -403,8 +403,10 @@ if (seriesTypes.spline) {
                         this.connectEnds
                     );
 
-                    const rightContX = connectors.prevPointCont && connectors.prevPointCont.rightContX;
-                    const rightContY = connectors.prevPointCont && connectors.prevPointCont.rightContY;
+                    const rightContX = connectors.prevPointCont &&
+                        connectors.prevPointCont.rightContX;
+                    const rightContY = connectors.prevPointCont &&
+                        connectors.prevPointCont.rightContY;
 
                     ret = [
                         'C',
@@ -430,7 +432,8 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
+        seriesTypes.areasplinerange.prototype
+            .getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 
@@ -598,7 +601,7 @@ const polarAnimate = function (
         animation = this.options.animation,
         group = this.group,
         markerGroup = this.markerGroup,
-        center = this.xAxis.center,
+        center = this.xAxis && this.xAxis.center,
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
         attribs: SVGAttributes,
@@ -692,7 +695,9 @@ wrap(seriesProto, 'animate', polarAnimate);
 
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
-    columnProto = seriesTypes.column.prototype as unknown as Highcharts.PolarSeries;
+    columnProto = (
+        seriesTypes.column.prototype as unknown as Highcharts.PolarSeries
+    );
 
     columnProto.polarArc = function (
         this: (ColumnSeries&Highcharts.PolarSeries),
@@ -1029,7 +1034,9 @@ if (seriesTypes.column) {
                     labelPos =
                         (this as Highcharts.PolarSeries).yAxis.postTranslate(
                         // angle
-                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
+                            (
+                                (shapeArgs.start || 0) + (shapeArgs.end || 0)
+                            ) / 2 -
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius
@@ -1153,7 +1160,8 @@ addEvent(Chart, 'getAxes', function (): void {
     if (!this.pane) {
         this.pane = [];
     }
-    splat(this.options.pane).forEach(function (
+    this.options.pane = splat(this.options.pane);
+    this.options.pane.forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
         new Pane( // eslint-disable-line no-new

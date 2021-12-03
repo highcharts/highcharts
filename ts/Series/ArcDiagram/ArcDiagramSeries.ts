@@ -29,8 +29,6 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ArcDiagramPoint from './ArcDiagramPoint';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
-const { getLevelOptions } = TreeSeriesMixin;
 const {
     extend,
     merge,
@@ -246,7 +244,8 @@ class ArcDiagramSeries extends SankeySeries {
             factor: number
         ): number {
             const equalNodes = (series.options as any).equalNodes;
-            const maxNodesLength = chart.inverted ? chart.plotHeight : chart.plotWidth,
+            const maxNodesLength = chart.inverted ?
+                    chart.plotHeight : chart.plotWidth,
                 nodePadding = series.nodePadding;
             const width = this.reduce(function (
                 width: number,
@@ -288,11 +287,15 @@ class ArcDiagramSeries extends SankeySeries {
             translationFactor = this.translationFactor,
             pointOptions = point.options,
             seriesOptions = this.options,
-            linkWeight = pick(pointOptions.linkWeight, seriesOptions.linkWeight, Math.max(
-                
-                (point.weight || 0) * translationFactor * (fromNode as any).scale,
-                (this.options.minLinkWidth || 0)
-            )),
+            linkWeight = pick(
+                pointOptions.linkWeight,
+                seriesOptions.linkWeight,
+                Math.max(
+                    (point.weight || 0) *
+                    translationFactor *
+                    (fromNode as any).scale,
+                    (this.options.minLinkWidth || 0)
+                )),
             centeredLinks = (point.series.options as any).centeredLinks,
             nodeTop = fromNode.nodeY;
 
@@ -307,7 +310,9 @@ class ArcDiagramSeries extends SankeySeries {
             const x = Math.min(
                 node.nodeX + linkLeft,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeX + (node.shapeArgs && node.shapeArgs.height || 0) - linkWeight
+                node.nodeX + (
+                    node.shapeArgs && node.shapeArgs.height || 0
+                ) - linkWeight
             );
             return x;
         };
@@ -413,7 +418,8 @@ class ArcDiagramSeries extends SankeySeries {
     ): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
-            maxNodesLength = chart.inverted ? chart.plotWidth : chart.plotHeight,
+            maxNodesLength = chart.inverted ?
+                chart.plotWidth : chart.plotHeight,
             options = this.options,
             maxRadius = Math.min(
                 chart.plotWidth,
@@ -444,13 +450,17 @@ class ArcDiagramSeries extends SankeySeries {
                         chart.inverted ?
                             chart.plotWidth : chart.plotHeight
                     ) -
-                    Math.min(maxRadius / 2, (column as any).scale * (column as any).maxRadius / 2)
+                    Math.min(
+                        maxRadius / 2,
+                        (column as any).scale * (column as any).maxRadius / 2
+                    )
                 ) / 100 :
                 (chart.inverted ?
                     chart.plotWidth : chart.plotHeight) - (Math.floor(
                     this.colDistance * (node.column as any) +
                     (options.borderWidth as any) / 2
-                ) + crisp + (column as any).scale * (column as any).maxRadius / 2
+                ) + crisp +
+                (column as any).scale * (column as any).maxRadius / 2
                 );
         node.sum = sum;
         // If node sum is 0, don’t render the rect #12453
@@ -551,7 +561,10 @@ extend(ArcDiagramSeries.prototype, {
 namespace ArcDiagramSeries {
     export interface ColumnArray<T = ArcDiagramPoint> extends SankeySeriesType.ColumnArray<T> {
         maxLength: number;
-        getTranslationFactor(this: ArcDiagramSeries.ColumnArray, series: ArcDiagramSeries): number;
+        getTranslationFactor(
+            this: ArcDiagramSeries.ColumnArray,
+            series: ArcDiagramSeries
+        ): number;
     }
 }
 

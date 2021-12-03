@@ -1,20 +1,40 @@
-QUnit.test('Column pyramid series', function (assert) {
-    var chart = Highcharts.chart('container', {
+QUnit.test('Column pyramid series', assert => {
+    const chart = Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
-            type: 'columnpyramid'
+            type: 'columnpyramid',
+            inverted: true
         },
-        series: [
-            {
-                data: [10, 20, 5]
-            }
-        ]
+        yAxis: {
+            width: '40%'
+        },
+        series: [{
+            data: [10, 20, 5]
+        }]
     });
 
     assert.ok(
         chart.series[0].points[1].graphic.d &&
             chart.series[0].points[1].graphic !== 'rect',
         'Shapes are paths - pyramids'
+    );
+
+    const [, x1, y1] = chart.series[0].points[0].shapeArgs.d[0],
+        [, x2, y2] = chart.series[0].points[0].shapeArgs.d[1];
+
+    assert.close(
+        x1,
+        x2,
+        0.5,
+        `The pyramid shape should be correct (the point has always 4
+        coordinates, 2 of them should be the same to get triangle), #16150.`
+    );
+
+    assert.close(
+        y1,
+        y2,
+        0.5,
+        `The pyramid shape should be correct (the point has always 4
+        coordinates, 2 of them should be the same to get triangle), #16150.`
     );
 });
 

@@ -32,4 +32,4 @@ export interface AxisBreakObject {
  *
  * */
 
-export default BreakObject;
+export default AxisBreakBorderObject;

@@ -1,5 +1,9 @@
 QUnit.test('getSVG', function (assert) {
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // Adds DOM elements to container
+        },
+
         credits: {
             enabled: false
         },
@@ -65,6 +69,14 @@ QUnit.test('getSVG', function (assert) {
             }
         ]
     });
+
+    const controller = new TestController(chart);
+    controller.pan([100, 100], [200, 100]);
+
+    assert.notOk(
+        chart.mouseIsDown,
+        '#15845: Selection should be droppable after exporting'
+    );
 
     assert.strictEqual(
         Highcharts.charts.length,

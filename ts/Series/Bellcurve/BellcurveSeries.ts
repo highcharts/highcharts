@@ -24,7 +24,8 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+
+import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -160,7 +161,8 @@ class BellcurveSeries extends AreaSplineSeries {
         let len = data.length,
             sum;
 
-        average = isNumber(average) ? average : (BellcurveSeries.mean(data) as any);
+        average = isNumber(average) ?
+            average : (BellcurveSeries.mean(data) as any);
 
         sum = data.reduce(function (sum: number, value: number): number {
             const diff = value - (average as any);
@@ -226,7 +228,9 @@ class BellcurveSeries extends AreaSplineSeries {
             i: number;
 
         for (i = 0; i < stop; i++) {
-            data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+            data.push(
+                [x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]
+            );
             x += increment;
         }
 
@@ -271,29 +275,16 @@ class BellcurveSeries extends AreaSplineSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface BellcurveSeries extends Highcharts.DerivedSeries {
-    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
-    addEvents: typeof DerivedSeriesMixin['addEvents'];
-    destroy: typeof DerivedSeriesMixin['destroy'];
+interface BellcurveSeries extends DerivedComposition.SeriesComposition {
     drawLegendSymbol: typeof AreaSplineSeries.prototype.drawLegendSymbol;
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-    initialised: Highcharts.DerivedSeries['initialised'];
-    init: typeof DerivedSeriesMixin['init'];
     pointClass: typeof BellcurvePoint;
-    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 }
-extend(BellcurveSeries.prototype, {
-    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
-    addEvents: DerivedSeriesMixin.addEvents,
-    destroy: DerivedSeriesMixin.destroy,
-    init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries
-});
+
+DerivedComposition.compose(BellcurveSeries);
 
 /* *
  *

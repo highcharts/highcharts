@@ -1,5 +1,5 @@
 QUnit.test('Stocktools GUI', function (assert) {
-    /*const chart = */Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         stockTools: {
             gui: {
                 enabled: true,
@@ -60,6 +60,45 @@ QUnit.test('Stocktools GUI', function (assert) {
         '#9744: Title should have the correct position after hiding toolbar'
     );
     */
+
+    // Shorthand for selecting a button
+    function selectButton(name, text = '') {
+
+        let button = document.getElementsByClassName('highcharts-' + name)[0];
+
+        if (button.tagName === 'UL' && text !== '') {
+
+            button = button.getElementsByTagName('li');
+            let found = false,
+                i = -1;
+
+            while (!found && ++i < button.length) { // Find the button with text
+                if (button[i].innerHTML.indexOf(text) !== -1) {
+                    found = true;
+                    button = button[i];
+                    button.click();
+                }
+            }
+        } else {
+            button.click();
+        }
+
+    }
+
+    selectButton('indicators'); // Click on indicators
+    selectButton('indicator-list', 'APO'); // Click on APO.
+
+    const textLabel = chart
+        .navigationBindings
+        .popup.container
+        .childNodes[3]
+        .childNodes[1]
+        .childNodes[0]
+        .childNodes[6]
+        .firstChild
+        .data; // Periods textLabel of APO
+
+    assert.strictEqual(textLabel, 'Periods', 'APO should have Periods text-label.');
 });
 
 QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192',
@@ -90,6 +129,12 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
                         className: 'dummy-button',
                         init: function () {
                             wasInitCalled = true;
+
+                            Highcharts.fireEvent(
+                                this,
+                                'deselectButton',
+                                { button }
+                            );
                         }
                     }
                 },

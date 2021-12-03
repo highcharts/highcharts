@@ -36,7 +36,10 @@ class Tunnel extends CrookedLine {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Tunnel.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Tunnel.Options
+    ) {
         super(chart, options);
     }
 
@@ -97,37 +100,43 @@ class Tunnel extends CrookedLine {
 
     public addLine(): void {
         const line = this.initShape(
-            merge(this.options.typeOptions.line, {
-                type: 'path',
-                points: [
-                    this.points[0],
-                    this.points[1],
-                    function (target: any): MockPointOptions {
-                        const pointOptions = MockPoint.pointToOptions(
-                            target.annotation.points[2]
-                        );
+            merge(
+                this.options.typeOptions.line,
+                {
+                    type: 'path',
+                    points: [
+                        this.points[0],
+                        this.points[1],
+                        function (target: any): MockPointOptions {
+                            const pointOptions = MockPoint.pointToOptions(
+                                target.annotation.points[2]
+                            );
 
-                        pointOptions.command = 'M';
+                            pointOptions.command = 'M';
 
-                        return pointOptions;
-                    },
-                    this.points[3]
-                ] as any
-            }),
-            false as any
+                            return pointOptions;
+                        },
+                        this.points[3]
+                    ]
+                }
+            ),
+            0
         );
 
         this.options.typeOptions.line = line.options;
     }
 
     public addBackground(): void {
-        const background = (this.initShape as any)(merge(
-            this.options.typeOptions.background,
-            {
-                type: 'path',
-                points: this.points.slice() as any
-            }
-        ));
+        const background = this.initShape(
+            merge(
+                this.options.typeOptions.background,
+                {
+                    type: 'path',
+                    points: this.points.slice()
+                }
+            ),
+            1
+        );
 
         this.options.typeOptions.background = background.options;
     }
@@ -135,9 +144,12 @@ class Tunnel extends CrookedLine {
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      * @private
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {boolean} [end] - whether to translate start or end side
+     * @param {number} dx
+     * the amount of x translation
+     * @param {number} dy
+     * the amount of y translation
+     * @param {boolean} [end]
+     * whether to translate start or end side
      */
     public translateSide(dx: number, dy: number, end?: boolean): void {
         const topIndex = Number(end),
@@ -150,13 +162,15 @@ class Tunnel extends CrookedLine {
     /**
      * Translate height of the tunnel.
      * @private
-     * @param {number} dh - the amount of height translation
+     * @param {number} dh
+     * the amount of height translation
      */
     public translateHeight(dh: number): void {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
 
-        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+        this.options.typeOptions.height = (this.points[3].y as any) -
+            (this.points[0].y as any);
     }
 
 }
@@ -181,8 +195,6 @@ Tunnel.prototype.defaultOptions = merge(
      */
     {
         typeOptions: {
-            xAxis: 0,
-            yAxis: 0,
             /**
              * Background options.
              *
@@ -276,7 +288,7 @@ Tunnel.prototype.defaultOptions = merge(
                         target.translateSide(
                             translation.x,
                             translation.y,
-                            this.index as any
+                            !!this.index
                         );
 
                         target.redraw(false);

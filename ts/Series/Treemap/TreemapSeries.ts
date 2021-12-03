@@ -18,9 +18,9 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
@@ -38,12 +38,11 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
+import ColorMapMixin from '../ColorMapMixin.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -56,12 +55,12 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
-import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
+import TU from '../TreeUtilities.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
-} = TreeSeriesMixin;
+} = TU;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -173,10 +172,11 @@ class TreemapSeries extends ScatterSeries {
          * additional properties `newRootId`, `previousRootId`, `redraw` and
          * `trigger`.
          *
-         * @type {function}
-         * @default undefined
          * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
          *         Alert update information on setRootNode event.
+         *
+         * @type {Function}
+         * @default undefined
          * @since 7.0.3
          * @product highcharts
          * @apioption plotOptions.treemap.events.setRootNode
@@ -560,7 +560,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @type {Highcharts.ColorString}
          */
-        borderColor: palette.neutralColor10,
+        borderColor: Palette.neutralColor10,
 
         /**
          * The width of the border surrounding each tree map item.
@@ -595,7 +595,7 @@ class TreemapSeries extends ScatterSeries {
                 /**
                  * The border color for the hovered state.
                  */
-                borderColor: palette.neutralColor40,
+                borderColor: Palette.neutralColor40,
 
                 /**
                  * Brightness for the hovered point. Defaults to 0 if the
@@ -637,7 +637,7 @@ class TreemapSeries extends ScatterSeries {
 
     public colorValueData?: Array<number>;
 
-    public colorAxis?: Highcharts.ColorSeries['colorAxis'];
+    public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data: Array<TreemapPoint> = void 0 as any;
 
@@ -918,11 +918,11 @@ class TreemapSeries extends ScatterSeries {
      * @private
      * @function Highcharts.Series#calculateChildrenAreas
      *
-     * @param {object} node
-     *        The node which is parent to the children.
+     * @param {Object} node
+     * The node which is parent to the children.
      *
-     * @param {object} area
-     *        The rectangular area of the parent.
+     * @param {Object} area
+     * The rectangular area of the parent.
      */
     public calculateChildrenAreas(
         parent: TreemapSeries.NodeObject,
@@ -932,7 +932,10 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<TreemapSeriesLayoutAlgorithmValue|undefined, TreemapSeriesLayoutAlgorithmValue>(
+            algorithm = pick<
+            TreemapSeriesLayoutAlgorithmValue|undefined,
+            TreemapSeriesLayoutAlgorithmValue
+            >(
                 (
                     (series as any)[
                         (level && level.layoutAlgorithm) as any
@@ -1184,7 +1187,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 
@@ -1224,7 +1232,7 @@ class TreemapSeries extends ScatterSeries {
      * @param {Array<string>} [existingIds]
      *        List of all point ids.
      *
-     * @return {object}
+     * @return {Object}
      *         Map from parent id to children index in data.
      */
     public getListOfParents(
@@ -1299,9 +1307,7 @@ class TreemapSeries extends ScatterSeries {
             setOptionsEvent;
 
         // If color series logic is loaded, add some properties
-        if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
-        }
+        this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
 
         setOptionsEvent = addEvent(series, 'setOptions', function (
             event: { userOptions: TreemapSeriesOptions }
@@ -1430,7 +1436,8 @@ class TreemapSeries extends ScatterSeries {
             nodeMap = series.nodeMap,
             node = nodeMap[rootId],
             name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options.traverseUpButton as any,
+            buttonOptions: TreemapSeriesUpButtonOptions = series.options
+                .traverseUpButton as any,
             backText = pick(buttonOptions.text, name, '◁ Back'),
             attr,
             states;
@@ -1488,12 +1495,12 @@ class TreemapSeries extends ScatterSeries {
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
-        siblings?: unknown
+        siblings?: number
     ): void {
         let series = this,
             chart = series && series.chart,
             colors = chart && chart.options && chart.options.colors,
-            colorInfo: Highcharts.TreeColorObject,
+            colorInfo: TU.ColorObject,
             point: (TreemapPoint|undefined);
 
         if (node) {
@@ -1554,9 +1561,13 @@ class TreemapSeries extends ScatterSeries {
                 const { height, width, x, y } = values;
                 const crispCorr = getCrispCorrection(point);
                 const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                const x2 = Math.round(
+                    xAxis.toPixels(x + width, true)
+                ) - crispCorr;
                 const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                const y2 = Math.round(
+                    yAxis.toPixels(y + height, true)
+                ) - crispCorr;
 
                 // Set point values
                 const shapeArgs = {
@@ -1589,7 +1600,7 @@ class TreemapSeries extends ScatterSeries {
      * @param {boolean} [redraw=true]
      * Wether to redraw the chart or not.
      *
-     * @param {object} [eventArguments]
+     * @param {Object} [eventArguments]
      * Arguments to be accessed in event handler.
      *
      * @param {string} [eventArguments.newRootId]
@@ -1601,14 +1612,14 @@ class TreemapSeries extends ScatterSeries {
      * @param {boolean} [eventArguments.redraw]
      * Wether to redraw the chart after.
      *
-     * @param {object} [eventArguments.series]
+     * @param {Object} [eventArguments.series]
      * The series to update the root of.
      *
      * @param {string} [eventArguments.trigger]
      * The action which triggered the event. Undefined if the setRootNode is
      * called directly.
      *
-     * @fires Highcharts.Series#event:setRootNode
+     * @emits Highcharts.Series#event:setRootNode
      */
     public setRootNode(
         id: string,
@@ -1628,16 +1639,15 @@ class TreemapSeries extends ScatterSeries {
          * The default functionality of the setRootNode event.
          *
          * @private
-         * @param {object} args The event arguments.
+         * @param {Object} args The event arguments.
          * @param {string} args.newRootId Id of the new root.
          * @param {string} args.previousRootId Id of the previous root.
          * @param {boolean} args.redraw Wether to redraw the chart after.
-         * @param {object} args.series The series to update the root of.
+         * @param {Object} args.series The series to update the root of.
          * @param {string} [args.trigger=undefined] The action which
          * triggered the event. Undefined if the setRootNode is called
          * directly.
-         * @return {void}
-         */
+             */
         const defaultFn = function (
             args: {
                 newRootId: string;
@@ -1676,7 +1686,9 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
+    public setTreeValues(
+        tree: TreemapSeries.NodeObject
+    ): TreemapSeries.NodeObject {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,
@@ -1875,14 +1887,15 @@ class TreemapSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface TreemapSeries extends Highcharts.TreeSeries {
-    colorAttribs: Highcharts.ColorMapSeriesMixin['colorAttribs'];
+interface TreemapSeries extends TU.Series {
+    colorAttribs?: ColorMapMixin.ColorMapSeries['colorAttribs'];
     colorKey: string;
     directTouch: boolean;
+    drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getExtremesFromAll: boolean;
     optionalAxis: string;
     parallelArrays: Array<string>;
@@ -1897,7 +1910,7 @@ extend(TreemapSeries.prototype, {
     buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbol.drawRectangle,
     getExtremesFromAll: true,
     getSymbol: noop,
     optionalAxis: 'colorAxis',
@@ -1921,7 +1934,7 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends Highcharts.TreeNodeObject {
+    export interface NodeObject extends TU.NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
         height: number;
@@ -2021,7 +2034,7 @@ export default TreemapSeries;
  *
  * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
- * @excluding x, y
+ * @excluding x, y, pointPadding
  * @product   highcharts
  * @apioption series.treemap.data
  */

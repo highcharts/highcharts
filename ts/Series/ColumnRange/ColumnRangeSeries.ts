@@ -111,7 +111,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
         columnRangeOptions as ColumnRangeSeriesOptions
-    )
+    );
 
     /* *
      *
@@ -130,7 +130,8 @@ class ColumnRangeSeries extends AreaRangeSeries {
      * */
 
     public setOptions(): ColumnRangeSeriesOptions {
-        merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
+        // #14359 Prevent side-effect from stacking.
+        merge(true, arguments[0], { stacking: void 0 });
         return arearangeProto.setOptions.apply(this, arguments);
     }
 
