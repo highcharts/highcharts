@@ -17,7 +17,6 @@
  * */
 
 import type {
-    AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
@@ -61,7 +60,6 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     extend,
     fireEvent,
     getNestedProperty,
