@@ -294,10 +294,12 @@ class Tooltip {
      * the context here is an object holding point, series, x, y etc.
      *
      * @function Highcharts.Tooltip#defaultFormatter
-     * 
+     *
      * @param {Highcharts.Tooltip} tooltip
      *
      * @return {string|Array<string>}
+     * Returns a string (single tooltip and shared)
+     * or an array of string (split tooltip)
      */
     public defaultFormatter(
         this: Tooltip.FormatterContextObject,
