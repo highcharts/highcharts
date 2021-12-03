@@ -3956,7 +3956,12 @@ class Series {
         }
         (dataOptions as any).splice(i, 0, options);
 
-        if (isInTheMiddle) {
+        if (
+            isInTheMiddle ||
+            // When processedData is present we need to splice an empty slot
+            // into series.data, otherwise generatePoints won't pick it up.
+            (series as unknown as MapSeries).processedData
+        ) {
             series.data.splice(i, 0, null as any);
             series.processData();
         }
@@ -4299,8 +4304,6 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
-                // @todo slow, consider alternatives mentioned:
-                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
