@@ -175,6 +175,7 @@ function GLRenderer(
             'columnrange': true,
             'bar': true,
             'area': true,
+            'areaspline': true,
             'arearange': true
         },
         asCircle: Record<string, boolean> = {
@@ -1096,7 +1097,7 @@ function GLRenderer(
                 {
                     'area': 'lines',
                     'arearange': 'lines',
-                    'areaspline': 'line_strip',
+                    'areaspline': 'lines',
                     'column': 'lines',
                     'columnrange': 'lines',
                     'bar': 'lines',
