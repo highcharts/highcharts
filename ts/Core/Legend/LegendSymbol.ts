@@ -24,6 +24,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import U from '../Utilities.js';
 const {
+    defined,
     merge,
     pick
 } = U;
@@ -175,7 +176,17 @@ namespace LegendSymbol {
         const options = legend.options,
             symbolHeight = legend.symbolHeight,
             square = options.squareSymbol,
-            symbolWidth = square ? symbolHeight : legend.symbolWidth;
+            symbolWidth = square ? symbolHeight : legend.symbolWidth,
+            attributes = this.chart.styledMode ? {
+                zIndex: 3
+            } : {
+                zIndex: 3,
+                'fill-opacity': pick(
+                    this.options.fillOpacity,
+                    this.options.opacity,
+                    1
+                )
+            };
 
         item.legendSymbol = this.chart.renderer.rect(
             square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
@@ -185,12 +196,8 @@ namespace LegendSymbol {
             pick(legend.options.symbolRadius, symbolHeight / 2)
         )
             .addClass('highcharts-point')
-            .attr({
-                zIndex: 3
-            }).add(item.legendGroup);
-
+            .attr(attributes).add(item.legendGroup);
     }
-
 }
 
 /* *

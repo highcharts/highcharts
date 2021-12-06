@@ -1985,7 +1985,9 @@ const seriesDefaults: SeriesOptions = {
     cropThreshold: 300,
 
     /**
-     * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
+     * Opacity of a series parts: line, fill (e.g. area) and dataLabels. Applied
+     * also to the legend symbol. If you want to apply the opacity only to
+     * legend symbol, use `fillOpacity` instead
      *
      * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
      *
