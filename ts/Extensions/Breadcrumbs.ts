@@ -177,6 +177,9 @@ class Breadcrumbs {
                 select: {
                     fill: 'none'
                 }
+            },
+            style: {
+                color: Palette.highlightColor80
             }
         },
 
@@ -308,7 +311,7 @@ class Breadcrumbs {
              * @since    next
              * @product  highcharts
              */
-            text: '→',
+            text: '/',
             /**
              * CSS styles for the breadcrumbs separator.
              *
