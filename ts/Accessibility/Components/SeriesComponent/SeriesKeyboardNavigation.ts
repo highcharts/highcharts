@@ -152,7 +152,7 @@ function isSkipPoint(
 function getFirstValidPointInSeries(
     series: SeriesKeyboardNavigation.SeriesComposition
 ): SeriesKeyboardNavigation.PointComposition|null {
-    const points = series.points,
+    const points = series.points || [],
         len = points.length;
     for (let i = 0; i < len; ++i) {
         if (!isSkipPoint(points[i])) {
@@ -170,7 +170,7 @@ function getFirstValidPointInSeries(
 function getFirstValidPointInChart(
     chart: SeriesKeyboardNavigation.ChartComposition
 ): SeriesKeyboardNavigation.PointComposition|null {
-    const series = chart.series,
+    const series = chart.series || [],
         len = series.length;
     for (let i = 0; i < len; ++i) {
         if (!isSkipSeries(series[i])) {
@@ -212,15 +212,16 @@ function highlightLastValidPointInChart(
 
 
 /**
+ * After drilling down/up, we need to set focus to the first point for
+ * screen readers and keyboard nav.
  * @private
  */
 function updateChartFocusAfterDrilling(
     chart: SeriesKeyboardNavigation.ChartComposition
 ): void {
-    highlightFirstValidPointInChart(chart);
-
-    if (chart.focusElement) {
-        chart.focusElement.removeFocusBorder();
+    const point = getFirstValidPointInChart(chart);
+    if (point) {
+        point.highlight(false); // Do not visually highlight
     }
 }
 
@@ -351,11 +352,11 @@ class SeriesKeyboardNavigation {
 
 
     /**
+     * After drillup we want to find the point that was drilled down to and
+     * highlight it.
      * @private
      */
     public onDrillupAll(): void {
-        // After drillup we want to find the point that was drilled down to and
-        // highlight it.
         const last = this.lastDrilledDownPoint,
             chart = this.chart,
             series = last && getSeriesFromName(chart, last.seriesName);
@@ -364,6 +365,7 @@ class SeriesKeyboardNavigation {
         if (last && series && defined(last.x) && defined(last.y)) {
             point = getPointFromXY(series, last.x, last.y);
         }
+        point = point || getFirstValidPointInChart(chart);
 
         // Container focus can be lost on drillup due to deleted elements.
         if (chart.container) {
@@ -371,11 +373,7 @@ class SeriesKeyboardNavigation {
         }
 
         if (point && point.highlight) {
-            point.highlight();
-        }
-
-        if (chart.focusElement) {
-            chart.focusElement.removeFocusBorder();
+            point.highlight(false); // Do not visually highlight
         }
     }
 
@@ -638,7 +636,7 @@ namespace SeriesKeyboardNavigation {
 
     export declare class PointComposition extends Accessibility.PointComposition {
         series: SeriesComposition;
-        highlight(): PointComposition;
+        highlight(highlightVisually?: boolean): PointComposition;
     }
 
     export declare class SeriesComposition extends Accessibility.SeriesComposition {
@@ -978,7 +976,7 @@ namespace SeriesKeyboardNavigation {
 
 
     /**
-     * Highlights a point (show tooltip and display hover state).
+     * Highlights a point (show tooltip, display hover state, focus element).
      *
      * @private
      * @function Highcharts.Point#highlight
@@ -987,11 +985,12 @@ namespace SeriesKeyboardNavigation {
      *         This highlighted point.
      */
     function pointHighlight(
-        this: PointComposition
+        this: PointComposition,
+        highlightVisually: boolean = true
     ): PointComposition {
         const chart = this.series.chart;
 
-        if (!this.isNull) {
+        if (!this.isNull && highlightVisually) {
             this.onMouseOver(); // Show the hover marker and tooltip
         } else {
             if (chart.tooltip) {
@@ -1007,6 +1006,9 @@ namespace SeriesKeyboardNavigation {
         // change z-index and mess up the element.
         if (this.graphic) {
             chart.setFocusToElement(this.graphic);
+            if (!highlightVisually && chart.focusElement) {
+                chart.focusElement.removeFocusBorder();
+            }
         }
 
         chart.highlightedPoint = this;
