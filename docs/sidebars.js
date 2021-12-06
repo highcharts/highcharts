@@ -59,7 +59,7 @@ module.exports = {
             'maps/adding-points-and-lines',
             'maps/latlon',
             'maps/map-series',
-            'maps/map-line',
+            'maps/mapline-series',
             'maps/tilemap-series'
         ],
         'Gantt': [
