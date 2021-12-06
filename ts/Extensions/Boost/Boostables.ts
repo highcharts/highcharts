@@ -14,6 +14,7 @@
 
 const boostables = [
     'area',
+    'areaspline',
     'arearange',
     'column',
     'columnrange',
