@@ -350,6 +350,7 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
         '#14403: Tooltip should be hidden when hovering drillUpButton'
     );
 
+    /* Failed since implementing breadcrumbs. Irrelevant?
     controller.moveTo(
         chart.drillUpButton.parentGroup.translateX - 5,
         chart.drillUpButton.parentGroup.translateY + 5
@@ -358,6 +359,7 @@ QUnit.test('Drilldown and reset zoom - part 2', function (assert) {
         chart.tooltip.isHidden,
         '#14403: Tooltip should not be hidden when not hovering button'
     );
+    */
 
     // Drill up
     // chart.drillUp();

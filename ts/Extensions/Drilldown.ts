@@ -528,12 +528,11 @@ defaultOptions.drilldown = {
      * series. The text for the button is defined in
      * [lang.drillUpText](#lang.drillUpText).
      *
-     * This option is deprecated since 9.3.2, use drilldown.breadcrumbs instead.
+     * This option is deprecated since 9.3.2, use `drilldown.breadcrumbs`
+     * instead.
      *
-     * @sample {highcharts} highcharts/drilldown/drillupbutton/
-     *         Drill up button
-     * @sample {highmaps} highcharts/drilldown/drillupbutton/
-     *         Drill up button
+     * @sample {highcharts} highcharts/drilldown/drillupbutton/ Drill up button
+     * @sample {highmaps} highcharts/drilldown/drillupbutton/ Drill up button
      *
      * @since   3.0.8
      * @product highcharts highmaps

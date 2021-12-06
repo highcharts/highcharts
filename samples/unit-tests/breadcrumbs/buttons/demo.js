@@ -105,7 +105,7 @@ QUnit.test('Breadcrumbs button- check if the created path is correct.', function
     );
     assert.strictEqual(
         chart.container.getElementsByClassName('highcharts-breadcrumbs-group').length,
-        2, // one for separators in HTML, one for button in SVG
+        1,
         'Breadcrumbs groups should be created.'
     );
     chart.series[0].points[0].doDrilldown();
@@ -190,7 +190,7 @@ QUnit.test('Breadcrumbs button format.', function (assert) {
     const buttons = chart.breadcrumbs.group.element.childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
-        'Go to Supply',
+        'Go to Fruits',
         'The last button should have text Go to Fruits.'
     );
 });
@@ -402,7 +402,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,
-        1,
+        3,
         'When buttons are aligned to the centre, their centre point should be in the middle of the chart width.'
     );
 
@@ -412,7 +412,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,
-        1,
+        3,
         'After each iteration, the breadcrumbs group should stay in the middle.'
     );
 
@@ -420,7 +420,7 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
     assert.close(
         breadcrumbsXPosition + breadcrumbsWidth / 2,
         chart.plotWidth / 2 + chart.plotLeft,
-        1,
+        3,
         'After each iteration, the breadcrumbs group should stay in the middle.'
     );
 });

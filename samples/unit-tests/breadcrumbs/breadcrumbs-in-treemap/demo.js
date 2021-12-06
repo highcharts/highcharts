@@ -88,7 +88,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
 
     assert.strictEqual(
         domGroup.length,
-        2, // one for separators in HTML, one for button in SVG
+        1,
         'Breadcrumbs groups should be created.'
     );
     const buttons = domGroup[0].childNodes;

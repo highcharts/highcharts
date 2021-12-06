@@ -22,9 +22,8 @@ Highcharts.chart('container', {
     drilldown: {
         breadcrumbs: {
             showFullPath: true,
-            format: 'Go to {point.name}'
+            format: 'Go to {level.name}'
         },
-        animation: false,
         series: [{
             name: 'Fruits',
             id: 'Fruits',

@@ -1,7 +1,0 @@
----
- name: Highcharts Demo
- authors:
-   - Karol Kolodziej
- js_wrap: b
- skipTest: true
-...
