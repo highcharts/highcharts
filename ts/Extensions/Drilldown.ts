@@ -531,6 +531,8 @@ defaultOptions.drilldown = {
      * This option is deprecated since 9.3.2, use `drilldown.breadcrumbs`
      * instead.
      *
+     * @sample highcharts/breadcrumbs/single-button
+     *         Breadcrumbs set up like a legacy button
      * @sample {highcharts} highcharts/drilldown/drillupbutton/ Drill up button
      * @sample {highmaps} highcharts/drilldown/drillupbutton/ Drill up button
      *

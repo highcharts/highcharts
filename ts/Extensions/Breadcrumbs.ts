@@ -212,6 +212,8 @@ class Breadcrumbs {
          * make space for it. By default, the chart will not make space for the
          * buttons. This property won't work when positioned in the middle.
          *
+         * @sample highcharts/breadcrumbs/single-button
+         *         Floating button
          * @type      {boolean}
          * @since     next
          */

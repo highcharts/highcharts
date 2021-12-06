@@ -789,13 +789,12 @@ input.highcharts-range-selector {
 
 /* Breadcrumbs */
 .highcharts-breadcrumbs-button {
-    fill: $background-color;
-    position: absolute;
+    fill: none;
+    stroke-width: 0;
+    cursor: pointer;
 }
 .highcharts-breadcrumbs-separator {
-    fill: $background-color;
-    stroke: $neutral-color-60;
-    stroke-width: 1;
+    fill: $neutral-color-60;
 }
 
 /* Drilldown module */
