@@ -33,7 +33,7 @@ series: [{
 }]
 ```
 
-All others information about bubble options can be found in the [standard bubble chart documentation](https://highcharts.com/docs/chart-and-series-types/bubble-series).
+All other information about bubble options can be found in the [standard bubble chart documentation](https://highcharts.com/docs/chart-and-series-types/bubble-series).
 
 API Reference
 -------------
