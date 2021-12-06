@@ -83,9 +83,12 @@ const SonificationUtilities = {
     /**
      * Calculate the extreme values in a chart for a data prop.
      * @private
-     * @param {Highcharts.Chart} chart - The chart
-     * @param {string} prop - The data prop to find extremes for
-     * @return {Highcharts.RangeObject} Object with min and max properties
+     * @param {Highcharts.Chart} chart
+     * The chart
+     * @param {string} prop
+     * The data prop to find extremes for
+     * @return {Highcharts.RangeObject}
+     * Object with min and max properties
      */
     calculateDataExtremes: function (
         chart: Chart,
@@ -119,7 +122,7 @@ const SonificationUtilities = {
      * The relative data value to translate.
      * @param {Highcharts.RangeObject} DataExtremesObject
      * The possible extremes for this value.
-     * @param {object} limits
+     * @param {Object} limits
      * Limits for the virtual axis.
      * @param {boolean} [invert]
      * Invert the virtual axis.
@@ -175,14 +178,19 @@ function getExtremesForInstrumentProps(
             chart.options.sonification.defaultInstrumentOptions
         ),
         optionDefToInstrDef = (
-            optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
+            optionDef: (
+                SonificationInstrumentOptions|
+                DefaultSonificationInstrumentOptions
+            )
         ): PointSonify.PointInstrument => ({
             instrumentMapping: optionDef.mapping
         } as PointSonify.PointInstrument);
     let allInstrumentDefinitions = (instruments || []).slice(0);
 
     if (defaultInstrumentDef) {
-        allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
+        allInstrumentDefinitions.push(
+            optionDefToInstrDef(defaultInstrumentDef)
+        );
     }
 
     chart.series.forEach((series): void => {
@@ -191,7 +199,9 @@ function getExtremesForInstrumentProps(
             series.options.sonification.instruments
         );
         if (instrOptions) {
-            allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
+            allInstrumentDefinitions = allInstrumentDefinitions.concat(
+                instrOptions.map(optionDefToInstrDef)
+            );
         }
     });
 
@@ -206,11 +216,10 @@ function getExtremesForInstrumentProps(
                 ];
 
                 if (typeof value === 'string' && !newExtremes[value]) {
-                    // This instrument parameter is mapped to a data prop.
-                    // If we don't have predefined data extremes, find them.
-                    newExtremes[value] = SonificationUtilities.calculateDataExtremes(
-                        chart, value
-                    );
+                    // This instrument parameter is mapped to a data prop. If we
+                    // don't have predefined data extremes, find them.
+                    newExtremes[value] = SonificationUtilities
+                        .calculateDataExtremes(chart, value);
                 }
             }
         );

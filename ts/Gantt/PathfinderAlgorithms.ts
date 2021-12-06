@@ -93,7 +93,7 @@ function findLastObstacleBefore(
  * @private
  * @function pointWithinObstacle
  *
- * @param {object} obstacle
+ * @param {Object} obstacle
  *        Obstacle to test.
  *
  * @param {Highcharts.Point} point
@@ -173,10 +173,10 @@ function pathFromSegments(segments: Array<any>): SVGPath {
  * @private
  * @function limitObstacleToBounds
  *
- * @param {object} obstacle
+ * @param {Object} obstacle
  *        Obstacle to limit.
  *
- * @param {object} bounds
+ * @param {Object} bounds
  *        Bounds to use as limit.
  *
  * @return {void}
@@ -200,7 +200,7 @@ function limitObstacleToBounds(obstacle: any, bounds: any): void {
  * @param {Highcharts.PositionObject} end
  *        Ending coordinate, object with x/y props.
  *
- * @return {object}
+ * @return {Object}
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
@@ -231,14 +231,14 @@ function straight(
  * @param {Highcharts.PositionObject} end
  *        Ending coordinate, object with x/y props.
  *
- * @param {object} options
+ * @param {Object} options
  *        Options for the algorithm:
  *        - chartObstacles: Array of chart obstacles to avoid
  *        - startDirectionX: Optional. True if starting in the X direction.
  *          If not provided, the algorithm starts in the direction that is
  *          the furthest between start/end.
  *
- * @return {object}
+ * @return {Object}
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
@@ -400,7 +400,7 @@ simpleConnect.requiresObstacles = true;
  * @param {Highcharts.PositionObject} end
  *        Ending coordinate, object with x/y props.
  *
- * @param {object} options
+ * @param {Object} options
  *        Options for the algorithm.
  *        - chartObstacles:  Array of chart obstacles to avoid
  *        - lineObstacles:   Array of line obstacles to jump over
@@ -412,7 +412,7 @@ simpleConnect.requiresObstacles = true;
  *                           direction that is the furthest between
  *                           start/end.
  *
- * @return {object}
+ * @return {Object}
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
@@ -559,19 +559,19 @@ const fastAvoid = function (
      * @private
      * @function
      *
-     * @param {object} obstacle
+     * @param {Object} obstacle
      *        Obstacle to dodge/escape.
      *
-     * @param {object} fromPoint
+     * @param {Object} fromPoint
      *        Point with x/y props that's dodging/escaping.
      *
-     * @param {object} toPoint
+     * @param {Object} toPoint
      *        Goal point.
      *
      * @param {boolean} dirIsX
      *        Dodge in X dimension.
      *
-     * @param {object} bounds
+     * @param {Object} bounds
      *        Hard and soft boundaries.
      *
      * @return {boolean}

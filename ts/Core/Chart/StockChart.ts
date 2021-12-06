@@ -134,10 +134,9 @@ class StockChart extends Chart {
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
-     * @return {void}
      *
-     * @fires Highcharts.StockChart#event:init
-     * @fires Highcharts.StockChart#event:afterInit
+     * @emits Highcharts.StockChart#event:init
+     * @emits Highcharts.StockChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
@@ -171,7 +170,13 @@ class StockChart extends Chart {
                 },
                 scrollbar: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(defaultOptions.scrollbar && defaultOptions.scrollbar.enabled, true)
+                    enabled: pick(
+                        (
+                            defaultOptions.scrollbar &&
+                            defaultOptions.scrollbar.enabled
+                        ),
+                        true
+                    )
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
@@ -211,7 +216,8 @@ class StockChart extends Chart {
             return merge(
                 getDefaultAxisOptions('xAxis', xAxisOptions),
                 defaultOptions.xAxis, // #3802
-                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                // #7690
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i],
                 xAxisOptions, // user options
                 getForcedAxisOptions('xAxis', userOptions)
             );
@@ -225,7 +231,8 @@ class StockChart extends Chart {
             return merge(
                 getDefaultAxisOptions('yAxis', yAxisOptions),
                 defaultOptions.yAxis, // #3802
-                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                // #7690
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i],
                 yAxisOptions // user options
             );
         });
@@ -239,14 +246,10 @@ class StockChart extends Chart {
      *
      * @private
      * @function Highcharts.StockChart#createAxis
-     *
      * @param {string} type
-     *        An axis type.
-     *
+     * An axis type.
      * @param {Chart.CreateAxisOptionsObject} options
-     *        The axis creation options.
-     *
-     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     * The axis creation options.
      */
     public createAxis(
         type: string,
@@ -314,9 +317,6 @@ namespace StockChart {
  *
  * @private
  * @function getDefaultAxisOptions
- * @param {string} type
- * @param {Highcharts.AxisOptions} options
- * @return {Highcharts.AxisOptions}
  */
 function getDefaultAxisOptions(
     type: string,
@@ -370,9 +370,6 @@ function getDefaultAxisOptions(
  *
  * @private
  * @function getForcedAxisOptions
- * @param {string} type
- * @param {Highcharts.Options} chartOptions
- * @return {Highcharts.AxisOptions}
  */
 function getForcedAxisOptions(
     type: string,
@@ -653,9 +650,6 @@ addEvent(Axis, 'getPlotLinePath', function (
  *
  * @private
  * @function Highcharts.SVGRenderer#crispPolyLine
- * @param {Highcharts.SVGPathArray} points
- * @param {number} width
- * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: SVGRenderer,

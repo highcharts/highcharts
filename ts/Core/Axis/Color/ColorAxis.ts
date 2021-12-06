@@ -156,7 +156,13 @@ class ColorAxis extends Axis implements AxisLike {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-        ColorAxisComposition.compose(ColorAxis, ChartClass, FxClass, LegendClass, SeriesClass);
+        ColorAxisComposition.compose(
+            ColorAxis,
+            ChartClass,
+            FxClass,
+            LegendClass,
+            SeriesClass
+        );
     }
 
     /* *
@@ -183,7 +189,8 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    public beforePadding = false as any; // Prevents unnecessary padding with `hc-more`
+    // Prevents unnecessary padding with `hc-more`
+    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
@@ -567,7 +574,11 @@ class ColorAxis extends Axis implements AxisLike {
         }).add(item.legendGroup);
 
         // Set how much space this legend item takes up
-        axis.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
+        axis.legendItemWidth = (
+            width +
+            padding +
+            (horiz ? itemDistance : labelPadding)
+        );
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
@@ -685,8 +696,8 @@ class ColorAxis extends Axis implements AxisLike {
      * @param {Highcharts.Point} [point]
      *        The Point object if the crosshair snaps to points.
      *
-     * @fires Highcharts.ColorAxis#event:afterDrawCrosshair
-     * @fires Highcharts.ColorAxis#event:drawCrosshair
+     * @emits Highcharts.ColorAxis#event:afterDrawCrosshair
+     * @emits Highcharts.ColorAxis#event:drawCrosshair
      */
     public drawCrosshair(
         e?: PointerEvent,
@@ -701,7 +712,9 @@ class ColorAxis extends Axis implements AxisLike {
         let crossPos;
 
         if (point) {
-            crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey) as number);
+            crossPos = axis.toPixels(point.getNestedProperty(
+                point.series.colorKey
+            ) as number);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {
@@ -900,7 +913,9 @@ class ColorAxis extends Axis implements AxisLike {
                         visible: true,
                         setState: noop,
                         isDataClass: true,
-                        setVisible: function (this: ColorAxis.LegendItemObject): void {
+                        setVisible: function (
+                            this: ColorAxis.LegendItemObject
+                        ): void {
                             vis = axis.visible = !vis;
                             axis.series.forEach(function (series): void {
                                 series.points.forEach(function (

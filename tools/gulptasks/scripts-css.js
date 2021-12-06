@@ -38,7 +38,7 @@ function task() {
     const log = require('./lib/log');
     const mkdir = require('mkdirp');
     const path = require('path');
-    const sass = require('node-sass');
+    const sass = require('sass');
 
     return new Promise(resolve => {
 

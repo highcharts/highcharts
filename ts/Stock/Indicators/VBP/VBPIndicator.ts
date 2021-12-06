@@ -146,11 +146,11 @@ class VBPIndicator extends SMAIndicator {
              * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
              */
             styles: {
-                /** @ignore-options */
+                /** @ignore-option */
                 color: '#0A9AC9',
-                /** @ignore-options */
+                /** @ignore-option */
                 dashStyle: 'LongDash',
-                /** @ignore-options */
+                /** @ignore-option */
                 lineWidth: 1
             }
         },
@@ -197,7 +197,7 @@ class VBPIndicator extends SMAIndicator {
             },
             verticalAlign: 'top'
         }
-    } as VBPOptions)
+    } as VBPOptions);
 
     public data: Array<VBPPoint> = void 0 as any;
     public negWidths: Array<number> = void 0 as any;
@@ -221,21 +221,26 @@ class VBPIndicator extends SMAIndicator {
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
 
         // Only after series are linked add some additional logic/properties.
-        const unbinder = addEvent(StockChart, 'afterLinkSeries', function (): void {
-            // Protection for a case where the indicator is being updated,
-            // for a brief moment the indicator is deleted.
-            if (indicator.options) {
-                params = (indicator.options.params as any);
-                baseSeries = indicator.linkedParent;
-                volumeSeries = (chart.get((params.volumeSeriesID as any)) as any);
+        const unbinder = addEvent(
+            StockChart,
+            'afterLinkSeries',
+            function (): void {
+                // Protection for a case where the indicator is being updated,
+                // for a brief moment the indicator is deleted.
+                if (indicator.options) {
+                    params = (indicator.options.params as any);
+                    baseSeries = indicator.linkedParent;
+                    volumeSeries = (
+                        chart.get((params.volumeSeriesID as any)) as any
+                    );
 
-                indicator.addCustomEvents(baseSeries, volumeSeries);
+                    indicator.addCustomEvents(baseSeries, volumeSeries);
 
-            }
-            unbinder();
-        }, {
-            order: 1
-        });
+                }
+                unbinder();
+            }, {
+                order: 1
+            });
 
         return indicator;
     }

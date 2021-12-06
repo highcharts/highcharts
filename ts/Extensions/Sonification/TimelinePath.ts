@@ -88,7 +88,6 @@ class TimelinePath {
      * */
 
     public init(
-        this: TimelinePath,
         options: TimelinePath.Options
     ): void {
         this.options = options;
@@ -115,9 +114,9 @@ class TimelinePath {
         this.updateEventIdMap();
 
         // Signal events to fire
-        this.signalHandler = new SU.SignalHandler(
-            ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
-        );
+        this.signalHandler = new SU.SignalHandler([
+            'playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd'
+        ]);
         this.signalHandler.registerSignalCallbacks(
             merge(options as any, { masterOnEnd: options.onEnd })
         );
@@ -159,11 +158,10 @@ class TimelinePath {
      * Add events to the path. Should not be done while the path is playing.
      * The new events are inserted according to their time property.
      * @private
-     * @param {Array<Highcharts.TimelineEvent>} newEvents - The new timeline events
-     * to add.
+     * @param {Array<Highcharts.TimelineEvent>} newEvents
+     * The new timeline events to add.
      */
     public addTimelineEvents(
-        this: TimelinePath,
         newEvents: Array<TimelineEvent>
     ): void {
         this.events = this.events.concat(newEvents);
@@ -191,7 +189,6 @@ class TimelinePath {
      * True if there is an event with this ID in the path. False otherwise.
      */
     public setCursor(
-        this: TimelinePath,
         eventId: string
     ): boolean {
         const ix = this.eventIdMap[eventId];
@@ -209,7 +206,6 @@ class TimelinePath {
      * @param {Function} onEnd
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
     public play(onEnd: Function): void {
         this.pause();
@@ -225,7 +221,6 @@ class TimelinePath {
      * @param {Function} onEnd
      * Callback to call when play finished. Does not override other onEnd
      * callbacks.
-     * @return {void}
      */
     public rewind(onEnd: Function): void {
         this.pause();
@@ -258,11 +253,11 @@ class TimelinePath {
     /**
      * Cancel current playing. Leaves the cursor intact.
      * @private
-     * @param {boolean} [fadeOut=false] - Whether or not to fade out as we stop. If
-     * false, the path is cancelled synchronously.
+     * @param {boolean} [fadeOut=false]
+     * Whether or not to fade out as we stop. If false, the path is cancelled
+     * synchronously.
      */
     public pause(
-        this: TimelinePath,
         fadeOut?: boolean
     ): void {
         const timelinePath = this;
@@ -287,10 +282,8 @@ class TimelinePath {
      * @private
      * @param {number} direction
      * The direction to play, 1 for forwards and -1 for backwards.
-     * @return {void}
      */
     public playEvents(
-        this: TimelinePath,
         direction: number
     ): void {
         const timelinePath = this,

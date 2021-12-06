@@ -86,7 +86,7 @@ declare module './AxisOptions' {
  * @param {boolean} [noLabel=false]
  * Whether to disable the label or not. Defaults to false.
  *
- * @param {object} [parameters]
+ * @param {Object} [parameters]
  * Optional parameters for the tick.
  */
 class Tick {
@@ -291,7 +291,9 @@ class Tick {
         // defaultFormatter and append the result to the context as `text`.
         // Handy for adding prefix or suffix while keeping default number
         // formatting.
-        const labelFormatter = (ctx: AxisLabelFormatterContextObject): string => {
+        const labelFormatter = (
+            ctx: AxisLabelFormatterContextObject
+        ): string => {
             if (labelOptions.formatter) {
                 return labelOptions.formatter.call(ctx, ctx);
             }
@@ -438,7 +440,7 @@ class Tick {
      * @return {Highcharts.PositionObject}
      * The tick position.
      *
-     * @fires Highcharts.Tick#event:afterGetPosition
+     * @emits Highcharts.Tick#event:afterGetPosition
      */
     public getPosition(
         horiz: boolean|undefined,
@@ -501,9 +503,7 @@ class Tick {
 
     /**
      * Get the x, y position of the tick label
-     *
      * @private
-     * @return {Highcharts.PositionObject}
      */
     public getLabelPosition(
         x: number,

@@ -164,8 +164,6 @@ function cloneTouchEvent(e: TouchEvent): TouchEvent {
 
 /**
  * @private
- * @param {string} str
- * @return {string}
  */
 function escapeStringForHTML(str: string): string {
     return str
@@ -180,9 +178,7 @@ function escapeStringForHTML(str: string): string {
 
 /**
  * Get an element by ID
- * @param {string} id
  * @private
- * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|null}
  */
 function getElement(
     id: string
@@ -193,9 +189,7 @@ function getElement(
 
 /**
  * Get a fake mouse event of a given type
- * @param {string} type
  * @private
- * @return {global.MouseEvent}
  */
 function getFakeMouseEvent(type: string, position?: BBoxObject): MouseEvent {
     const pos = position || {
@@ -333,8 +327,6 @@ function removeChildNodes(element: DOMElementType): void {
 /**
  * Utility function. Reverses child nodes of a DOM element.
  * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} node
- * @return {void}
  */
 function reverseChildNodes(node: DOMElementType): void {
     let i = node.childNodes.length;
@@ -348,8 +340,6 @@ function reverseChildNodes(node: DOMElementType): void {
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
  * @private
- * @param {string} str
- * @return {string}
  */
 function stripHTMLTagsFromString(str: string): string {
     return typeof str === 'string' ?
@@ -361,8 +351,6 @@ function stripHTMLTagsFromString(str: string): string {
  * Utility function for hiding an element visually, but still keeping it
  * available to screen reader users.
  * @private
- * @param {Highcharts.HTMLDOMElement} element
- * @return {void}
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
     css(element, {

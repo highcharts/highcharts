@@ -201,7 +201,9 @@ class CSVParser extends DataParser<DataParser.Event> {
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        let cellValue = converter.asGuessedType(column[j] as string);
+                        let cellValue = converter.asGuessedType(
+                            column[j] as string
+                        );
                         if (cellValue instanceof Date) {
                             cellValue = cellValue.getTime();
                         }
@@ -231,7 +233,10 @@ class CSVParser extends DataParser<DataParser.Event> {
             columns = parser.columns || [],
             dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
-            itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
+            itemDelimiter = (
+                parser.options.itemDelimiter ||
+                parser.guessedItemDelimiter
+            );
 
         let { decimalPoint } = parser.options;
         if (!decimalPoint || decimalPoint === itemDelimiter) {
@@ -483,7 +488,7 @@ class CSVParser extends DataParser<DataParser.Event> {
     /**
      * Handles converting the parsed data to a table.
      *
-     * @returns {DataTable}
+     * @return {DataTable}
      * Table from the parsed CSV.
      */
     public getTable(): DataTable {

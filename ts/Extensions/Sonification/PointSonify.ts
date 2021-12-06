@@ -206,12 +206,16 @@ namespace PointSonify {
                         } :
                         value(point, dataExtremes);
                 }
-                // String, this is a data prop. Potentially with
-                // negative polarity.
+                // String, this is a data prop. Potentially with negative
+                // polarity.
                 if (typeof value === 'string') {
                     const hasInvertedPolarity = value.charAt(0) === '-';
-                    const dataProp = hasInvertedPolarity ? value.slice(1) : value;
-                    const pointValue = pick((point as any)[dataProp], (point.options as any)[dataProp]);
+                    const dataProp = hasInvertedPolarity ?
+                        value.slice(1) : value;
+                    const pointValue = pick(
+                        (point as any)[dataProp],
+                        (point.options as any)[dataProp]
+                    );
 
                     // Find data extremes if we don't have them
                     dataExtremes[dataProp] = dataExtremes[dataProp] ||
@@ -257,7 +261,9 @@ namespace PointSonify {
         options.instruments.forEach(function (
             instrumentDefinition: PointInstrument
         ): void {
-            const instrument = typeof instrumentDefinition.instrument === 'string' ?
+            const instrument = (
+                    typeof instrumentDefinition.instrument === 'string'
+                ) ?
                     Instrument.definitions[instrumentDefinition.instrument] :
                     instrumentDefinition.instrument,
                 mapping = instrumentDefinition.instrumentMapping || {},
@@ -282,7 +288,8 @@ namespace PointSonify {
 
                     // Remove reference from instruments playing
                     if (
-                        point.sonification && point.sonification.instrumentsPlaying
+                        point.sonification &&
+                        point.sonification.instrumentsPlaying
                     ) {
                         delete point.sonification.instrumentsPlaying[id];
 
@@ -309,7 +316,10 @@ namespace PointSonify {
                     frequency: getMappingValue(
                         mapping.frequency,
                         true,
-                        { min: extremes.minFrequency, max: extremes.maxFrequency }
+                        {
+                            min: extremes.minFrequency,
+                            max: extremes.maxFrequency
+                        }
                     ),
                     duration: getMappingValue(
                         mapping.duration,
@@ -347,13 +357,14 @@ namespace PointSonify {
      *        Whether or not to fade out as we stop. If false, the points are
      *        cancelled synchronously.
      *
-     * @return {void}
      */
     function pointCancelSonify(
         this: Composition,
         fadeOut?: boolean
     ): void {
-        const playing = this.sonification && this.sonification.instrumentsPlaying,
+        const playing = (
+                this.sonification && this.sonification.instrumentsPlaying
+            ),
             instrIds = playing && Object.keys(playing);
 
         if (instrIds && instrIds.length) {

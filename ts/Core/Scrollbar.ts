@@ -245,8 +245,16 @@ class Scrollbar {
             string,
             (e: PointerEvent) => void
         ]> = [
-            [buttons[buttonsOrder[0]].element, 'click', this.buttonToMinClick.bind(this)],
-            [buttons[buttonsOrder[1]].element, 'click', this.buttonToMaxClick.bind(this)],
+            [
+                buttons[buttonsOrder[0]].element,
+                'click',
+                this.buttonToMinClick.bind(this)
+            ],
+            [
+                buttons[buttonsOrder[1]].element,
+                'click',
+                this.buttonToMaxClick.bind(this)
+            ],
             [track, 'click', this.trackClick.bind(this)],
             [bar, 'mousedown', mouseDownHandler],
             [bar.ownerDocument, 'mousemove', mouseMoveHandler],
@@ -271,7 +279,10 @@ class Scrollbar {
 
     private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
-        const range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
+        const range = (
+            (scroller.to - scroller.from) *
+            pick(scroller.options.step, 0.2)
+        );
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
         fireEvent(scroller, 'changed', {
@@ -336,7 +347,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#destroy
-     * @return {void}
      */
     public destroy(): void {
 
@@ -377,7 +387,6 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#drawScrollbarButton
      * @param {number} index
      *        0 is left, 1 is right
-     * @return {void}
      */
     public drawScrollbarButton(index: number): void {
         const scroller = this,
@@ -458,12 +467,19 @@ class Scrollbar {
         scroller.renderer = renderer;
 
         scroller.userOptions = options;
-        scroller.options = merge(ScrollbarDefaults, defaultOptions.scrollbar, options);
+        scroller.options = merge(
+            ScrollbarDefaults,
+            defaultOptions.scrollbar,
+            options
+        );
 
         scroller.chart = chart;
 
         // backward compatibility
-        scroller.size = pick(scroller.options.size, scroller.options.height as any);
+        scroller.size = pick(
+            scroller.options.size,
+            scroller.options.height as any
+        );
 
         // Init
         if (options.enabled) {
@@ -494,7 +510,8 @@ class Scrollbar {
         const scroller = this,
             normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
-            direction: ('chartY'|'chartX') = options.vertical ? 'chartY' : 'chartX',
+            direction: ('chartY'|'chartX') = options.vertical ?
+                'chartY' : 'chartX',
             initPositions = scroller.initPositions || [];
 
         let scrollPosition,
@@ -569,7 +586,6 @@ class Scrollbar {
      *        width of the scrollbar
      * @param {number} height
      *        height of the scorllbar
-     * @return {void}
      */
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,
@@ -624,7 +640,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#removeEvents
-     * @return {void}
      */
     public removeEvents(): void {
         this._events.forEach(function (args): void {
@@ -732,7 +747,6 @@ class Scrollbar {
      *        scale (0-1) where bar should start
      * @param {number} to
      *        scale (0-1) where bar should end
-     * @return {void}
      */
     public setRange(from: number, to: number): void {
         const scroller = this,
@@ -823,8 +837,6 @@ class Scrollbar {
      *
      * @private
      * @function Highcharts.Scrollbar#shouldUpdateExtremes
-     * @param {string} [eventType]
-     * @return {boolean}
      */
     public shouldUpdateExtremes(eventType?: string): boolean {
         return (
@@ -895,7 +907,6 @@ class Scrollbar {
      * @function Highcharts.Scrollbar#updatePosition
      * @param  {number} from
      * @param  {number} to
-     * @return {void}
      */
     public updatePosition(from: number, to: number): void {
         if (to > 1) {
@@ -938,7 +949,11 @@ namespace Scrollbar {
  *
  * */
 
-defaultOptions.scrollbar = merge(true, Scrollbar.defaultOptions, defaultOptions.scrollbar);
+defaultOptions.scrollbar = merge(
+    true,
+    Scrollbar.defaultOptions,
+    defaultOptions.scrollbar
+);
 
 /* *
  *

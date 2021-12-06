@@ -197,7 +197,8 @@ namespace NodesComposition {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.options.id || ''; // for use in formats
+            // for use in formats
+            node.name = node.name || node.options.id || '';
             // Mass is used in networkgraph:
             node.mass = pick(
                 // Node:
@@ -358,7 +359,10 @@ namespace NodesComposition {
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    export function setNodeState(this: PointComposition, state?: StatesOptionsKey): void {
+    export function setNodeState(
+        this: PointComposition,
+        state?: StatesOptionsKey
+    ): void {
         const args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];

@@ -88,11 +88,6 @@ class NavigatorAxisAdditions {
      *
      * @private
      * @function Highcharts.Axis#toFixedRange
-     * @param {number} [pxMin]
-     * @param {number} [pxMax]
-     * @param {number} [fixedMin]
-     * @param {number} [fixedMax]
-     * @return {*}
      */
     public toFixedRange(
         pxMin?: number,
@@ -180,7 +175,9 @@ class NavigatorAxis {
             const axis = this;
 
             if (!axis.navigatorAxis) {
-                axis.navigatorAxis = new NavigatorAxisAdditions(axis as NavigatorAxis);
+                axis.navigatorAxis = new NavigatorAxisAdditions(
+                    axis as NavigatorAxis
+                );
             }
         });
 

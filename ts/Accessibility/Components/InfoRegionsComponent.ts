@@ -221,7 +221,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
     public dataTableButtonId?: string;
     public dataTableDiv?: HTMLDOMElement;
     public linkedDescriptionElement: (HTMLDOMElement|undefined);
-    public screenReaderSections: Record<string, InfoRegionsComponent.ScreenReaderSectionObject> = {};
+    public screenReaderSections: Record<string, InfoRegionsComponent.ScreenReaderSectionObject> =
+        {};
     public sonifyButton?: (DOMElementType|null);
     public sonifyButtonId?: string;
     public viewDataTableButton?: (''|DOMElementType|null);
@@ -299,7 +300,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                         component.initSonifyButton(component.sonifyButtonId);
                     }
                     if (typeof component.dataTableButtonId !== 'undefined') {
-                        component.initDataTableButton(component.dataTableButtonId);
+                        component.initDataTableButton(
+                            component.dataTableButtonId
+                        );
                     }
                 }
             },
@@ -309,7 +312,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 buildContent: function (
                     chart: Accessibility.ChartComposition
                 ): string {
-                    const formatter = chart.options.accessibility.screenReaderSection
+                    const formatter = chart.options.accessibility
+                        .screenReaderSection
                         .afterChartFormatter;
                     return formatter ? formatter(chart) :
                         component.defaultAfterChartFormatter();
@@ -443,7 +447,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 'accessibility.screenReaderSection.' + regionKey + 'RegionLabel'
             ),
             chart = this.chart,
-            labelText = chart.langFormat(labelLangKey, { chart: chart, chartTitle: getChartTitle(chart) }),
+            labelText = chart.langFormat(
+                labelLangKey,
+                { chart: chart, chartTitle: getChartTitle(chart) }
+            ),
             sectionId = 'highcharts-screen-reader-region-' + regionKey + '-' +
                 chart.index;
 
@@ -467,11 +474,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public defaultBeforeChartFormatter(): string {
-        const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.beforeChartFormat;
+        const chart = this.chart,
+            format = chart.options.accessibility.screenReaderSection
+                .beforeChartFormat;
 
         if (!format) {
             return '';
@@ -487,7 +494,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
-            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
+            annotationsList = getAnnotationsInfoHTML(
+                chart as Highcharts.AnnotationChart
+            ),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }
@@ -518,11 +527,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public defaultAfterChartFormatter(): string {
         const chart = this.chart;
-        const format = chart.options.accessibility.screenReaderSection.afterChartFormat;
+        const format = chart.options.accessibility.screenReaderSection
+            .afterChartFormat;
 
         if (!format) {
             return '';
@@ -537,7 +546,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getLinkedDescription(): string {
         const el = this.linkedDescriptionElement,
@@ -549,7 +557,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getLongdescText(): string {
         const chartOptions = this.chart.options,
@@ -568,7 +575,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getTypeDescriptionText(): string {
         const chart = this.chart;
@@ -580,8 +586,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} buttonId
-     * @return {string}
      */
     public getDataTableButtonText(
         buttonId: string
@@ -598,8 +602,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} buttonId
-     * @return {string}
      */
     public getSonifyButtonText(
         buttonId: string
@@ -624,7 +626,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getSubtitleText(): string {
         const subtitle = (
@@ -636,7 +637,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @return {string}
      */
     public getEndOfChartMarkerText(): string {
         const chart = this.chart,
@@ -726,7 +726,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
             el.onclick = function (e): void {
                 const onPlayAsSoundClick = (
                     chart.options.accessibility &&
-                    chart.options.accessibility.screenReaderSection.onPlayAsSoundClick
+                    chart.options.accessibility.screenReaderSection
+                        .onPlayAsSoundClick
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(
@@ -767,7 +768,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
     /**
      * Return object with text description of each of the chart's axes.
      * @private
-     * @return {Highcharts.Dictionary<string>}
      */
     public getAxesDescription(): Record<string, string> {
         const chart = this.chart,
@@ -807,8 +807,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * @private
-     * @param {string} collectionKey
-     * @return {string}
      */
     public getAxisDescriptionText(
         collectionKey: ('xAxis'|'yAxis')

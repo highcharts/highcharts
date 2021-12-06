@@ -162,7 +162,9 @@ declare module '../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface ChartDrilldownObject {
+            chart: Chart,
             update(options: DrilldownOptions, redraw?: boolean): void;
+            fadeInGroup(group?: SVGElement): void;
         }
         interface ChartEventsOptions {
             drilldown?: DrilldownCallbackFunction;
@@ -556,7 +558,7 @@ defaultOptions.drilldown = {
          * @sample {highmaps} highcharts/drilldown/drillupbutton/
          *         Button theming
          *
-         * @type      {object}
+         * @type      {Object}
          * @since     3.0.8
          * @product   highcharts highmaps
          * @apioption drilldown.drillUpButton.theme
@@ -1062,6 +1064,40 @@ Chart.prototype.drillUp = function (): void {
     fireEvent(chart, 'drillupall');
 };
 
+/**
+ * A function to fade in a group. First, the element is being hidden,
+ * then, using `opactiy`, is faded in. Used for example by `dataLabelsGroup`
+ * where simple SVGElement.fadeIn() is not enough, because of other features
+ * (e.g. InactiveState) using `opacity` to fadeIn/fadeOut.
+ *
+ * @requires module:modules/drilldown
+ *
+ * @param {undefined|SVGElement} [group]
+ * The SVG element to be faded in.
+ */
+function fadeInGroup(
+    this: Highcharts.ChartDrilldownObject,
+    group?: SVGElement
+): void {
+    const animationOptions = animObject(
+        (this.chart.options.drilldown as any).animation
+    );
+
+    if (group) {
+        group.hide();
+
+        syncTimeout(
+            function (): void {
+                // Make sure neither the group, or the chart, were destroyed
+                if (group && group.added) {
+                    group.fadeIn();
+                }
+            },
+            Math.max(animationOptions.duration - 50, 0)
+        );
+    }
+}
+
 /* eslint-disable no-invalid-this */
 
 // Add update function to be called internally from Chart.update
@@ -1070,6 +1106,8 @@ addEvent(Chart, 'afterInit', function (): void {
     const chart = this;
 
     chart.drilldown = {
+        chart,
+        fadeInGroup,
         update: function (
             options: Highcharts.DrilldownOptions,
             redraw?: boolean
@@ -1086,9 +1124,18 @@ addEvent(Chart, 'afterInit', function (): void {
 addEvent(Chart, 'afterShowResetZoom', function (): void {
     const chart = this,
         bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+        buttonOptions = (
+            chart.options.drilldown &&
+            chart.options.drilldown.drillUpButton
+        );
 
-    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+    if (
+        this.drillUpButton &&
+        bbox &&
+        buttonOptions &&
+        buttonOptions.position &&
+        buttonOptions.position.x
+    ) {
         this.drillUpButton.align({
             x: buttonOptions.position.x - bbox.width - 10,
             y: buttonOptions.position.y,
@@ -1272,10 +1319,11 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                         animationOptions
                     );
             }
-            if (point.dataLabel) {
-                point.dataLabel.fadeIn(animationOptions);
-            }
         });
+
+        if (chart.drilldown) {
+            chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+        }
 
         // Reset to prototype
         delete this.animate;
@@ -1393,6 +1441,10 @@ if (PieSeries) {
                                 );
                         }
                     });
+
+                    if (this.chart.drilldown) {
+                        this.chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                    }
 
                     // Reset to prototype
                     delete this.animate;
@@ -1708,7 +1760,9 @@ addEvent(Point, 'afterSetState', function (): void {
 // After zooming out, shift the drillUpButton to the previous position, #8095.
 addEvent(Chart, 'selection', function (event: any): void {
     if (event.resetSelection === true && this.drillUpButton) {
-        const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        const buttonOptions = (
+            this.options.drilldown && this.options.drilldown.drillUpButton
+        );
 
         if (buttonOptions && buttonOptions.position) {
             this.drillUpButton.align({

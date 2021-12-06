@@ -176,7 +176,7 @@ class APOIndicator extends EMAIndicator {
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 

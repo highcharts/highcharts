@@ -33,8 +33,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import ColorMapComposition from '../ColorMapComposition.js';
-const { colorMapSeriesMixin } = ColorMapComposition;
+import ColorMapMixin from '../ColorMapMixin.js';
 import CU from '../CenteredUtilities.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -106,18 +105,23 @@ declare module '../../Core/Series/SeriesOptions' {
 
 declare global {
     namespace Highcharts {
-        class MapPoint extends ScatterPoint implements ColorMapComposition.PointComposition {
+        class MapPoint extends ScatterPoint {
             public colorInterval?: unknown;
-            public dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
-            public isValid: ColorMapComposition.PointComposition['isValid'];
+            public dataLabelOnNull: ColorMapMixin.ColorMapPoint[
+                'dataLabelOnNull'
+            ];
+            public isValid: ColorMapMixin.ColorMapPoint['isValid'];
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
             public path: SVGPath;
             public properties?: object;
             public series: MapSeries;
-            public value: (number|null);
-            public applyOptions(options: (MapPointOptions|PointShortOptions), x?: number): MapPoint;
+            public value: ColorMapMixin.ColorMapPoint['value'];
+            public applyOptions(
+                options: (MapPointOptions|PointShortOptions),
+                x?: number
+            ): MapPoint;
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
         }
@@ -525,7 +529,11 @@ class MapSeries extends ScatterSeries {
                     scaleX: 1,
                     scaleY: 1,
                     opacity: 1
-                });
+                }, (this.chart.options.drilldown as any).animation);
+
+                if (chart.drilldown) {
+                    chart.drilldown.fadeInGroup(this.dataLabelsGroup);
+                }
             }
         }
 
@@ -680,24 +688,27 @@ class MapSeries extends ScatterSeries {
                 1 // Styled mode
             );
 
-            /* Animate or move to the new zoom level. In order to prevent
-                flickering as the different transform components are set out
-                of sync (#5991), we run a fake animator attribute and set
-                scale and translation synchronously in the same step.
+            /*
+            Animate or move to the new zoom level. In order to prevent
+            flickering as the different transform components are set out of sync
+            (#5991), we run a fake animator attribute and set scale and
+            translation synchronously in the same step.
 
-                A possible improvement to the API would be to handle this in
-                the renderer or animation engine itself, to ensure that when
-                we are animating multiple properties, we make sure that each
-                step for each property is performed in the same step. Also,
-                for symbols and for transform properties, it should induce a
-                single updateTransform and symbolAttr call. */
+            A possible improvement to the API would be to handle this in the
+            renderer or animation engine itself, to ensure that when we are
+            animating multiple properties, we make sure that each step for each
+            property is performed in the same step. Also, for symbols and for
+            transform properties, it should induce a single updateTransform and
+            symbolAttr call.
+            */
             const scale = svgTransform.scaleX;
             const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
             const transformGroup = this.transformGroup;
             if (renderer.globalAnimation && chart.hasRendered) {
-                const startTranslateX = Number(transformGroup.attr('translateX'));
-                const startTranslateY = Number(transformGroup.attr('translateY'));
-                const startScale = Number(transformGroup.attr('scaleX'));
+                const
+                    startTranslateX = Number(transformGroup.attr('translateX')),
+                    startTranslateY = Number(transformGroup.attr('translateY')),
+                    startScale = Number(transformGroup.attr('scaleX'));
 
                 const step: AnimationStepCallbackFunction = (now, fx): void => {
                     const scaleStep = startScale +
@@ -810,14 +821,19 @@ class MapSeries extends ScatterSeries {
 
                             // Cache point bounding box for use to position data
                             // labels, bubbles etc
-                            const propMiddleX = properties && properties['hc-middle-x'],
+                            const propMiddleX = (
+                                    properties && properties['hc-middle-x']
+                                ),
                                 midX = (
                                     x1 + (x2 - x1) * pick(
                                         point.middleX,
-                                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                                        isNumber(propMiddleX) ?
+                                            propMiddleX : 0.5
                                     )
                                 ),
-                                propMiddleY = properties && properties['hc-middle-y'];
+                                propMiddleY = (
+                                    properties && properties['hc-middle-y']
+                                );
 
                             let middleYFraction = pick(
                                 point.middleY,
@@ -1029,7 +1045,10 @@ class MapSeries extends ScatterSeries {
             if (data && joinBy[1]) {
                 const joinKey = joinBy[1];
                 data.forEach(function (pointOptions: MapPointOptions): void {
-                    const mapKey = getNestedProperty(joinKey, pointOptions) as string;
+                    const mapKey = getNestedProperty(
+                        joinKey,
+                        pointOptions
+                    ) as string;
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
                     }
@@ -1043,8 +1062,13 @@ class MapSeries extends ScatterSeries {
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
                     const joinKey = joinBy[1];
-                    data.forEach(function (pointOptions: MapPointOptions): void {
-                        dataUsed.push(getNestedProperty(joinKey, pointOptions) as MapPointOptions);
+                    data.forEach(function (
+                        pointOptions: MapPointOptions
+                    ): void {
+                        dataUsed.push(getNestedProperty(
+                            joinKey,
+                            pointOptions
+                        ) as MapPointOptions);
                     } as any);
                 }
 
@@ -1134,8 +1158,8 @@ class MapSeries extends ScatterSeries {
             // When dealing with unprojected coordinates, y axis is flipped.
             const flipFactor = mapView.projection.hasCoordinates ? -1 : 1;
 
-            const translateX = this.chart.plotWidth / 2 - x * scale;
-            const translateY = this.chart.plotHeight / 2 - y * scale * flipFactor;
+            const translateX = this.chart.plotWidth / 2 - x * scale,
+                translateY = this.chart.plotHeight / 2 - y * scale * flipFactor;
             svgTransform = {
                 scaleX: scale,
                 scaleY: scale * flipFactor,
@@ -1183,13 +1207,14 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
-interface MapSeries extends ColorMapComposition.SeriesComposition {
+interface MapSeries {
+    colorAttribs: ColorMapMixin.ColorMapSeries['colorAttribs'];
     drawLegendSymbol: typeof LegendSymbol.drawRectangle;
     getCenter: typeof CU['getCenter'];
-    pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
+    pointArrayMap: ColorMapMixin.ColorMapSeries['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
-    trackerGroups: typeof colorMapSeriesMixin['trackerGroups'];
+    trackerGroups: ColorMapMixin.ColorMapSeries['trackerGroups'];
     animate(init?: boolean): void;
     animateDrilldown(init?: boolean): void;
     animateDrillupTo(init?: boolean): void;
@@ -1206,9 +1231,11 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: ['colorAxis'],
+    axisTypes: ColorMapMixin.SeriesMixin.axisTypes,
 
-    colorKey: 'value',
+    colorAttribs: ColorMapMixin.SeriesMixin.colorAttribs,
+
+    colorKey: ColorMapMixin.SeriesMixin.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
@@ -1229,13 +1256,13 @@ extend(MapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: noop,
+    getSymbol: ColorMapMixin.SeriesMixin.getSymbol,
 
     isCartesian: false,
 
-    parallelArrays: colorMapSeriesMixin.parallelArrays,
+    parallelArrays: ColorMapMixin.SeriesMixin.parallelArrays,
 
-    pointArrayMap: colorMapSeriesMixin.pointArrayMap,
+    pointArrayMap: ColorMapMixin.SeriesMixin.pointArrayMap,
 
     pointClass: MapPoint,
 
@@ -1244,14 +1271,12 @@ extend(MapSeries.prototype, {
 
     searchPoint: noop as any,
 
-    trackerGroups: colorMapSeriesMixin.trackerGroups,
+    trackerGroups: ColorMapMixin.SeriesMixin.trackerGroups,
 
     // Get axis extremes from paths, not values
     useMapGeometry: true
 
 });
-
-ColorMapComposition.compose(MapSeries, MapPoint);
 
 /* *
  *

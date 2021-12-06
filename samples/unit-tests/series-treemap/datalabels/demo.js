@@ -1128,6 +1128,12 @@ QUnit.test(
         isLabelsWidthCorrect = true;
         points = series.points; // update the reference
 
+        assert.strictEqual(
+            points[0].dataLabel.text.element.nodeName.toLowerCase(),
+            'span',
+            'Data labels should change to HTML'
+        );
+
         for (i = 0; i < points.length; i++) {
             dataLabel = points[i].dataLabel;
             width = dataLabel.options.style.width;
@@ -1142,5 +1148,18 @@ QUnit.test(
             true,
             "Data label(s) text shouldn't be wider than its box (useHTML: true)."
         );
+
+        series.update({
+            dataLabels: {
+                useHTML: false
+            }
+        });
+
+        assert.strictEqual(
+            points[0].dataLabel.text.element.nodeName.toLowerCase(),
+            'text',
+            'Data labels should change to SVG'
+        );
+
     }
 );

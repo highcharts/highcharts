@@ -60,7 +60,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportIDColumn: false,
         useRowspanHeaders: true,
         useMultiLevelHeaders: true
-    }
+    };
 
     /* *
      *
@@ -92,7 +92,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         this.options = merge(HTMLTableStore.defaultOptions, options);
         this.parserOptions = this.options;
-        this.parser = parser || new HTMLTableParser(this.options, this.tableElement);
+        this.parser = parser || new HTMLTableParser(
+            this.options,
+            this.tableElement
+        );
     }
 
     /* *
@@ -105,7 +108,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * Options for the HTMLTable datastore
      * @todo this should not include parsing options
      */
-    public readonly options: (HTMLTableStore.Options & HTMLTableParser.OptionsType);
+    public readonly options: (
+        HTMLTableStore.Options & HTMLTableParser.OptionsType
+    );
 
     /**
      * The attached parser, which can be replaced in the constructor
@@ -113,8 +118,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
     public readonly parser: HTMLTableParser;
 
     /**
-     * The table element to create the store from.
-     * Is either supplied directly or is fetched by an ID.
+     * The table element to create the store from. Is either supplied directly
+     * or is fetched by an ID.
      */
     public tableElement: (HTMLElement | null);
 
@@ -208,7 +213,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
         exportOptions: HTMLTableStore.ExportOptions = {}
     ): string {
         const options = exportOptions,
-            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            decimalPoint = options.useLocalDecimalPoint ?
+                (1.1).toLocaleString()[1] :
+                '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
             useMultiLevelHeaders = options.useMultiLevelHeaders,
             useRowspanHeaders = options.useRowspanHeaders;
@@ -454,7 +461,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
      * HTML from the current dataTable.
      *
      */
-    public save(htmlExportOptions: HTMLTableStore.ExportOptions, eventDetail?: DataEventEmitter.EventDetail): string {
+    public save(
+        htmlExportOptions: HTMLTableStore.ExportOptions,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): string {
         const exportOptions = HTMLTableStore.defaultExportOptions;
 
         // Merge in the provided parser options
@@ -466,7 +476,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.Event> {
 
         // Merge in provided options
 
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return this.getHTMLTableForExport(
+            merge(exportOptions, htmlExportOptions)
+        );
     }
 
 }
@@ -491,7 +503,7 @@ namespace HTMLTableStore {
     /**
      * Options used in the constructor of HTMLTableDataStore
      */
-    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>
+    export type OptionsType = Partial<(HTMLTableStore.Options & HTMLTableParser.OptionsType)>;
 
     /**
      * Options for exporting the store as an HTML table

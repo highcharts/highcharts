@@ -58,10 +58,12 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
     /**
      * Default options
      */
-    protected static readonly defaultOptions: GoogleSheetsParser.ClassJSONOptions = {
-        ...DataParser.defaultOptions,
-        json: {}
-    }
+    protected static readonly defaultOptions: (
+        GoogleSheetsParser.ClassJSONOptions
+    ) = {
+            ...DataParser.defaultOptions,
+            json: {}
+        };
 
     /* *
      *
@@ -163,7 +165,8 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
                 if (cellInner.numericValue) {
                     if (cellInner.$t.indexOf('/') >= 0 || (
-                        cellInner.$t.indexOf('-') >= 0 && cellInner.$t.indexOf('.') === -1
+                        cellInner.$t.indexOf('-') >= 0 &&
+                        cellInner.$t.indexOf('.') === -1
                     )) {
                         // This is a date - for future reference.
                         val = cellInner.$t;
@@ -240,11 +243,15 @@ class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
             column = parser.columns[i];
-            parser.headers[i] = parserOptions.firstRowAsNames ? column.splice(0, 1).toString() : uniqueKey();
+            parser.headers[i] = parserOptions.firstRowAsNames ?
+                column.splice(0, 1).toString() :
+                uniqueKey();
 
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
-                    let cellValue = converter.asGuessedType(column[j] as string);
+                    let cellValue = converter.asGuessedType(
+                        column[j] as string
+                    );
                     if (cellValue instanceof Date) {
                         cellValue = cellValue.getTime();
                     }

@@ -7,9 +7,10 @@
 import type { LonLatArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
-const maxLatitude = 85.0511287798; // The latitude that defines a square
-const r = 6378137;
-const deg2rad = Math.PI / 180;
+const maxLatitude = 85.0511287798, // The latitude that defines a square
+    r = 63.78137,
+    deg2rad = Math.PI / 180;
+
 const WebMercator: ProjectionDefinition = {
 
     forward: (lonLat): [number, number] => {

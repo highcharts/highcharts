@@ -8,7 +8,7 @@ import type ProjectionOptions from '../ProjectionOptions';
 
 const sign = (Math as any).sign ||
     ((n: number): number => (n === 0 ? 0 : n > 0 ? 1 : -1)),
-    scale = 6378137,
+    scale = 63.78137,
     deg2rad = Math.PI / 180,
     halfPI = Math.PI / 2,
     eps10 = 1e-6,
