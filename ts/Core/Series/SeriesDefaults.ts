@@ -2127,7 +2127,7 @@ const seriesDefaults: SeriesOptions = {
              * @deprecated
              *
              * @extends   plotOptions.series.marker
-             * @excluding states
+             * @excluding states, symbol
              * @product   highcharts highstock
              */
             marker: {
