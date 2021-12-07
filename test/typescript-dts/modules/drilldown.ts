@@ -63,7 +63,7 @@ function test_labelStyling() {
                     y: 0,
                     x: 0
                 },
-                theme: {
+                buttonTheme: {
                     fill: 'white',
                     'stroke-width': 1,
                     stroke: 'silver',

@@ -1236,7 +1236,7 @@ export default Breadcrumbs;
 /**
  * Button theme.
  * @name Highcharts.BreadcrumbsOptions#buttonTheme
- * @type {SVGAttributes}
+ * @type { SVGAttributes | BreadcrumbsButtonThemeOptions | undefined }
  */
 
 (''); // Keeps doclets above in JS file
