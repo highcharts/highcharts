@@ -98,7 +98,6 @@ declare module '../Core/Chart/ChartLike' {
         ): void;
         applyDrilldown(): void;
         drillUp(): void;
-        createList(): Array<Breadcrumbs.BreadcrumbOptions>;
 
     }
 }
@@ -432,6 +431,17 @@ defaultOptions.drilldown = {
      * @product   highcharts
      * @apioption drilldown.allowPointDrilldown
      */
+
+    /**
+     * Breadcrumbs options.
+     *
+     *
+     * @since     next
+     * @product   highcharts
+     * @extends breadcrumbs
+     * @optionparent drilldown.breadcrumbs
+     */
+
 
     /**
      * An array of series configurations for the drill down. Each series
@@ -893,15 +903,13 @@ Chart.prototype.applyDrilldown = function (): void {
  * @requires  modules/breadcrumbs
  *
  * @private
- * @function Highcharts.Chart#createList
- * @param {Highcharts.Chart} this
- *        Breadcrumbs class.
+ * @param {Highcharts.Chart} chart
+ *        Highcharts Chart object.
  * @return {Array<Breadcrumbs.BreadcrumbOptions>}
  *        List for Highcharts Breadcrumbs.
  */
-Chart.prototype.createList = function (): Array<Breadcrumbs.BreadcrumbOptions> {
-    const chart = this,
-        list: Array<Breadcrumbs.BreadcrumbOptions> = [],
+const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.BreadcrumbOptions> {
+    const list: Array<Breadcrumbs.BreadcrumbOptions> = [],
         drilldownLevels = chart.drilldownLevels;
 
     // The list is based on drilldown levels from the chart object
@@ -1181,13 +1189,14 @@ addEvent(Chart, 'afterDrilldown', function (): void {
     if (!chart.breadcrumbs) {
         chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
     }
-    chart.breadcrumbs.updateProperties(chart.createList());
+    chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
 
 });
 
 addEvent(Chart, 'afterDrillUp', function (): void {
     const chart = this;
-    chart.breadcrumbs && chart.breadcrumbs.updateProperties(chart.createList());
+    chart.breadcrumbs &&
+        chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
 });
 
 addEvent(Chart, 'update', function (e: any): void {

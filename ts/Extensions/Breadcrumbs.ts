@@ -143,6 +143,7 @@ class Breadcrumbs {
      *
      * @since   next
      * @product highcharts
+     * @optionparent breadcrumbs
      */
     public static defaultBreadcrumbsOptions = {
         /**
@@ -160,7 +161,6 @@ class Breadcrumbs {
          * @type       {Highcharts.SVGAttributes}
          * @since      next
          * @product    highcharts
-         * @apioption  drilldown.breadcrumbs.theme
          */
         buttonTheme: {
             /** @ignore */
@@ -253,7 +253,6 @@ class Breadcrumbs {
          * @default    plotBox
          * @since      next
          * @product    highcharts highmaps
-         * @apioption  drilldown.breadcrumbs.relativeTo
          */
         relativeTo: 'plotBox',
 
@@ -267,7 +266,6 @@ class Breadcrumbs {
          * @product    highcharts highmaps
          * @sample     {highcharts} highcharts/breadcrumbs/single-button
          *             Single, right aligned button
-         * @apioption  drilldown.breadcrumbs.position
          */
         position: {
             /**
@@ -304,13 +302,13 @@ class Breadcrumbs {
         /**
          * Options object for Breadcrumbs separator.
          *
-         * @since     next
+         * @since next
          */
         separator: {
             /**
-             * @type      {string}
-             * @since    next
-             * @product  highcharts
+             * @type {string}
+             * @since next
+             * @product highcharts
              */
             text: '/',
             /**

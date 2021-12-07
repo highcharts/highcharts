@@ -152,6 +152,15 @@ class TreemapSeries extends ScatterSeries {
         borderRadius: 0,
 
         /**
+         * Breadcrumbs options.
+         *
+         *
+         * @since     next
+         * @product   highcharts
+         * @extends breadcrumbs
+         * @optionparent plotOptions.treemap.breadcrumbs
+         */
+        /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
          * area at the current zoom. The advantage of drawing all points

@@ -439,6 +439,16 @@ class SunburstSeries extends TreemapSeries {
     public static defaultOptions: SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
 
         /**
+         * Breadcrumbs options.
+         *
+         *
+         * @since     next
+         * @product   highcharts
+         * @extends breadcrumbs
+         * @optionparent plotOptions.sunburst.breadcrumbs
+         */
+
+        /**
          * Set options on specific levels. Takes precedence over series options,
          * but not point options.
          *
