@@ -71,8 +71,8 @@ const ChartDefaults: ChartOptions = {
      * lines look messy, it's a good idea to hide them for the secondary
      * axis by setting `gridLineWidth` to 0.
      *
-     * If `startOnTick` or `endOnTick` in an Axis options are set to false,
-     * then the `alignTicks ` will be disabled for the Axis.
+     * If `startOnTick` or `endOnTick` in the axis options are set to false,
+     * then the `alignTicks ` will be disabled for the axis.
      *
      * Disabled for logarithmic axes.
      *
@@ -95,8 +95,8 @@ const ChartDefaults: ChartOptions = {
      * When using multiple axes, align the thresholds. When this is true, other
      * ticks will also be aligned.
      *
-     * If `startOnTick` or `endOnTick` in an Axis options are set to false,
-     * then the `alignThresholds ` will be disabled for the Axis.
+     * If `startOnTick` or `endOnTick` in the axis options are set to false,
+     * then the `alignThresholds ` will be disabled for the axis.
      *
      * Disabled for logarithmic axes.
      *

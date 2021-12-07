@@ -59,7 +59,6 @@ const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
-import PriceEnvelopesIndicator from '../../Stock/Indicators/PriceEnvelopes/PriceEnvelopesIndicator';
 const {
     arrayMax,
     arrayMin,
@@ -2211,35 +2210,9 @@ class Axis {
                     // threshold, from 0 which is on `axis.min`, to 1 which is
                     // on `axis.max`.
                     if (alignThresholds) {
-                        if (
-                            !isNumber(otherAxis.dataMin) ||
-                            (
-                                otherAxis !== axis &&
-                                series.some((s): boolean|undefined => (
-                                    s.isDirty || s.isDirtyData
-                                ))
-                            )
-                        ) {
-                            otherAxis.getSeriesExtremes();
-                        }
-                        let thresholdAlignment = clamp(
-                            (
-                                (
-                                    (otherAxis.threshold || 0) -
-                                    (otherAxis.dataMin || 0)
-                                ) /
-                                (
-                                    (otherAxis.dataMax || 0) -
-                                    (otherAxis.dataMin || 0)
-                                )
-                            ),
-                            0,
-                            1
+                        thresholdAlignments.push(
+                            otherAxis.getThresholdAlignment(axis)
                         );
-                        if (otherOptions.reversed) {
-                            thresholdAlignment = 1 - thresholdAlignment;
-                        }
-                        thresholdAlignments.push(thresholdAlignment);
                     }
                 }
             });
@@ -2255,12 +2228,46 @@ class Axis {
                 ) / thresholdAlignments.length :
                 void 0;
 
-            alignedAxes.forEach((axis): number|undefined => (
-                axis.thresholdAlignment = thresholdAlignment
-            ));
+            alignedAxes.forEach((axis): void => {
+                axis.thresholdAlignment = thresholdAlignment;
+            });
         }
 
         return hasOther;
+    }
+
+    // Where the wants its threshold, from 0 which is on `axis.min`, to 1 which
+    // is on `axis.max`.
+    public getThresholdAlignment(callerAxis: Axis): number {
+        if (
+            !isNumber(this.dataMin) ||
+            (
+                this !== callerAxis &&
+                this.series.some((s): boolean|undefined => (
+                    s.isDirty || s.isDirtyData
+                ))
+            )
+        ) {
+            this.getSeriesExtremes();
+        }
+        let thresholdAlignment = clamp(
+            (
+                (
+                    (this.threshold || 0) -
+                    (this.dataMin || 0)
+                ) /
+                (
+                    (this.dataMax || 0) -
+                    (this.dataMin || 0)
+                )
+            ),
+            0,
+            1
+        );
+        if (this.options.reversed) {
+            thresholdAlignment = 1 - thresholdAlignment;
+        }
+        return thresholdAlignment;
     }
 
     /**
