@@ -395,6 +395,8 @@ extend(
          * @product  highcharts highmaps
          * @requires modules/drilldown
          *
+         * @deprecated
+         *
          * @private
          */
         drillUpText: '◁ Back to {series.name}'

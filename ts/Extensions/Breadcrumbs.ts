@@ -399,7 +399,9 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public updateProperties(this: Breadcrumbs, list: Array<Breadcrumbs.BreadcrumbOptions>): void {
+    public updateProperties(
+        list: Array<Breadcrumbs.BreadcrumbOptions>
+    ): void {
         this.setList(list);
         this.setLevel();
         this.isDirty = true;
@@ -417,7 +419,6 @@ class Breadcrumbs {
      *        Breadcrumbs list.
      */
     public setList(
-        this: Breadcrumbs,
         list: Array<Breadcrumbs.BreadcrumbOptions>
     ): void {
         this.list = list;
@@ -432,7 +433,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public setLevel(this: Breadcrumbs): void {
+    public setLevel(): void {
         this.level = this.list.length && this.list.length - 1;
     }
 
@@ -445,7 +446,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public getLevel(this: Breadcrumbs): number {
+    public getLevel(): number {
         return this.level;
     }
 
@@ -463,7 +464,6 @@ class Breadcrumbs {
      *         Formatted text.
      */
     public getButtonText(
-        this: Breadcrumbs,
         breadcrumb: Breadcrumbs.BreadcrumbOptions
     ): string {
         const breadcrumbs = this,
@@ -499,7 +499,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public redraw(this: Breadcrumbs): void {
+    public redraw(): void {
         if (this.isDirty) {
             this.render();
         }
@@ -520,7 +520,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public render(this: Breadcrumbs): void {
+    public render(): void {
 
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
@@ -556,7 +556,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public renderFullPathButtons(this: Breadcrumbs): void {
+    public renderFullPathButtons(): void {
         // Make sure that only one type of button is visible.
         this.destroySingleButton();
 
@@ -576,7 +576,7 @@ class Breadcrumbs {
      * @function Highcharts.Breadcrumbs#renderSingleButton
      * @param {Highcharts.Breadcrumbs} this Breadcrumbs class.
      */
-    public renderSingleButton(this: Breadcrumbs): void {
+    public renderSingleButton(): void {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             list = breadcrumbs.list,
@@ -620,7 +620,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public alignBreadcrumbsGroup(this: Breadcrumbs, xOffset?: number): void {
+    public alignBreadcrumbsGroup(xOffset?: number): void {
         const breadcrumbs = this;
         if (breadcrumbs.group) {
             const breadcrumbsOptions = breadcrumbs.options,
@@ -675,7 +675,6 @@ class Breadcrumbs {
      *        Returns the SVG button
      */
     public renderButton(
-        this: Breadcrumbs,
         breadcrumb: Breadcrumbs.BreadcrumbOptions,
         posX: number,
         posY: number
@@ -749,7 +748,6 @@ class Breadcrumbs {
      *        Returns the SVG button
      */
     public renderSeparator(
-        this: Breadcrumbs,
         posX: number,
         posY: number
     ): SVGElement {
@@ -792,7 +790,6 @@ class Breadcrumbs {
      *        Redraw flag
      */
     public update(
-        this: Breadcrumbs,
         options: DeepPartial<Breadcrumbs.BreadcrumbsOptions>
     ): void {
         merge(true, this.options, options);
@@ -809,7 +806,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public updateSingleButton(this: Breadcrumbs): void {
+    public updateSingleButton(): void {
         const chart = this.chart,
             currentBreadcrumb = this.list[this.level - 1];
 
@@ -829,7 +826,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public destroy(this: Breadcrumbs): void {
+    public destroy(): void {
 
         this.destroySingleButton();
 
@@ -854,7 +851,6 @@ class Breadcrumbs {
      *        Breadcrumbs class.
      */
     public destroyListElements(
-        this: Breadcrumbs,
         force?: boolean
     ): void {
         const elementList = this.elementList;
@@ -902,9 +898,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public resetElementListState(
-        this: Breadcrumbs
-    ): void {
+    public resetElementListState(): void {
         objectEach(
             this.elementList,
             (element): void => {
@@ -922,9 +916,7 @@ class Breadcrumbs {
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      */
-    public updateListElements(
-        this: Breadcrumbs
-    ): void {
+    public updateListElements(): void {
         const updateXPosition = function (
                 element: SVGElement,
                 spacing: number

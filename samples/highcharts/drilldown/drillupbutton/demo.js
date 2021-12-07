@@ -13,7 +13,7 @@ Highcharts.chart('container', {
         text: 'Drilldown label styling'
     },
     subtitle: {
-        text: '<span style="color: red">Note: the <em>drillUpButton</em> option is deprecated. Use <em>drilldown.breadcrumbs</em> instead'
+        text: '<span style="color: red">Note: the <em>drillUpButton</em> option is deprecated. Use <em>drilldown.breadcrumbs</em> instead.'
     },
     xAxis: {
         type: 'category'
@@ -49,6 +49,9 @@ Highcharts.chart('container', {
         }]
     }],
     drilldown: {
+        breadcrumbs: {
+            showFullPath: false
+        },
         drillUpButton: {
             relativeTo: 'spacingBox',
             position: {
