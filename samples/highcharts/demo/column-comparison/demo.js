@@ -104,7 +104,7 @@ const data = {
     ]
 };
 
-var countries = [{
+const countries = [{
     name: 'South Korea',
     flag: 'kr',
     color: 'rgb(201, 36, 39)'
@@ -230,20 +230,20 @@ const chart = Highcharts.chart('container', {
 
 const years = [2016, 2012, 2008, 2004, 2000];
 
-years.forEach(function (year) {
+years.forEach(year => {
     const btn = document.getElementById(year);
 
     btn.addEventListener('click', () => {
 
         document.querySelectorAll('.buttons button.active')
-            .forEach(function (active) {
+            .forEach(active => {
                 active.className = '';
             });
         btn.className = 'active';
 
         chart.update({
             title: {
-                text: 'Summer Olympics ' + year + ' - Top 5 countries by Gold medals'
+                text: `Summer Olympics ${year} - Top 5 countries by Gold medals`
             },
             subtitle: {
                 text: 'Comparing to results from Summer Olympics ' +
