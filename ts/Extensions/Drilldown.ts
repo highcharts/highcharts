@@ -98,7 +98,6 @@ declare module '../Core/Chart/ChartLike' {
         ): void;
         applyDrilldown(): void;
         drillUp(): void;
-        getDrilldownBackText(): (string|undefined);
         createList(): Array<Breadcrumbs.BreadcrumbOptions>;
 
     }
@@ -393,12 +392,12 @@ extend(
          * @since    3.0.8
          * @product  highcharts highmaps
          * @requires modules/drilldown
+         * @apioption lang.drillUpText
          *
          * @deprecated
          *
          * @private
          */
-        drillUpText: '◁ Back to {series.name}'
     }
 );
 
@@ -885,17 +884,6 @@ Chart.prototype.applyDrilldown = function (): void {
 
     this.redraw();
     fireEvent(this, 'afterApplyDrilldown');
-};
-
-Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
-    let drilldownLevels = this.drilldownLevels,
-        lastLevel: Highcharts.DrilldownLevelObject;
-
-    if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
-        lastLevel = drilldownLevels[drilldownLevels.length - 1];
-        (lastLevel as any).series = lastLevel.seriesOptions;
-        return format(this.options.lang.drillUpText || '', lastLevel);
-    }
 };
 
 /**

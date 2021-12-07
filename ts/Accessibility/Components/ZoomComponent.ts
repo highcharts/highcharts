@@ -213,14 +213,23 @@ class ZoomComponent extends AccessibilityComponent {
             );
         }
 
-        if (chart.drillUpButton) {
+        if (
+            chart.drillUpButton &&
+            chart.breadcrumbs &&
+            chart.breadcrumbs.list
+        ) {
+            const lastBreadcrumb =
+                chart.breadcrumbs.list[chart.breadcrumbs.list.length - 1];
+
             this.createZoomProxyButton(
                 chart.drillUpButton, 'drillUpProxyButton',
                 chart.langFormat(
                     'accessibility.drillUpButton',
                     {
                         chart: chart,
-                        buttonText: chart.getDrilldownBackText()
+                        buttonText: chart.breadcrumbs.getButtonText(
+                            lastBreadcrumb
+                        )
                     }
                 )
             );

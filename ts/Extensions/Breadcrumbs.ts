@@ -44,7 +44,8 @@ const {
     extend,
     fireEvent,
     merge,
-    pick
+    pick,
+    defined
 } = U;
 
 /* *
@@ -473,6 +474,10 @@ class Breadcrumbs {
             textFormat = pick(breadcrumbsOptions.format,
                 breadcrumbsOptions.showFullPath ?
                     '{level.name}' : '← {level.name}'
+            ),
+            defaultText = lang && pick(
+                lang.drillUpText,
+                lang.mainBreadcrumb
             );
         let returnText = breadcrumbsOptions.formatter &&
             breadcrumbsOptions.formatter(breadcrumb) ||
@@ -482,10 +487,10 @@ class Breadcrumbs {
                     chart
                 ) || '';
 
-        if (returnText === '← ' && lang && lang.mainBreadcrumb) {
+        if (returnText === '← ' && defined(defaultText)) {
             returnText = !breadcrumbsOptions.showFullPath ?
-                '← ' + lang.mainBreadcrumb :
-                lang.mainBreadcrumb;
+                '← ' + defaultText :
+                defaultText;
         }
         return returnText;
     }
