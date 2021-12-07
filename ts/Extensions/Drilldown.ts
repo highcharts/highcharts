@@ -99,7 +99,6 @@ declare module '../Core/Chart/ChartLike' {
         applyDrilldown(): void;
         drillUp(): void;
         getDrilldownBackText(): (string|undefined);
-        showDrillUpButton(): void;
         createList(): Array<Breadcrumbs.BreadcrumbOptions>;
 
     }
@@ -896,50 +895,6 @@ Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         (lastLevel as any).series = lastLevel.seriesOptions;
         return format(this.options.lang.drillUpText || '', lastLevel);
-    }
-};
-
-Chart.prototype.showDrillUpButton = function (): void {
-    let chart = this,
-        backText = this.getDrilldownBackText(),
-        buttonOptions = (chart.options.drilldown as any).drillUpButton,
-        attr,
-        states,
-        alignTo = (
-            buttonOptions.relativeTo === 'chart' ||
-            buttonOptions.relativeTo === 'spacingBox' ?
-                null :
-                'scrollablePlotBox'
-        );
-
-    if (!this.drillUpButton) {
-        attr = buttonOptions.theme;
-        states = attr && attr.states;
-
-        this.drillUpButton = this.renderer
-            .button(
-                backText as any,
-                null as any,
-                null as any,
-                function (): void {
-                    chart.drillUp();
-                },
-                attr,
-                states && states.hover,
-                states && states.select
-            )
-            .addClass('highcharts-drillup-button')
-            .attr({
-                align: buttonOptions.position.align,
-                zIndex: 7
-            })
-            .add()
-            .align(buttonOptions.position, false, alignTo as any);
-    } else if (this.drillUpButton) {
-        this.drillUpButton.attr({
-            text: backText
-        })
-            .align();
     }
 };
 

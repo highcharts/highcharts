@@ -1502,61 +1502,6 @@ class TreemapSeries extends ScatterSeries {
         return attr;
     }
 
-    public renderTraverseUpButton(rootId: string): void {
-        let series = this,
-            nodeMap = series.nodeMap,
-            node = nodeMap[rootId],
-            name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options
-                .traverseUpButton as any,
-            backText = pick(buttonOptions.text, name, '◁ Back'),
-            attr,
-            states;
-
-        if (rootId === '' || (
-            series.is('sunburst') &&
-            series.tree.children.length === 1 &&
-            rootId === series.tree.children[0].id
-        )) {
-            if (series.drillUpButton) {
-                series.drillUpButton = series.drillUpButton.destroy();
-            }
-        } else if (!this.drillUpButton) {
-            attr = buttonOptions.theme;
-            states = attr && attr.states;
-
-            this.drillUpButton = this.chart.renderer
-                .button(
-                    backText,
-                    0,
-                    0,
-                    function (): void {
-                        series.drillUp();
-                    },
-                    attr,
-                    states && states.hover,
-                    states && states.select
-                )
-                .addClass('highcharts-drillup-button')
-                .attr({
-                    align: (buttonOptions.position as any).align,
-                    zIndex: 7
-                })
-                .add()
-                .align(
-                    buttonOptions.position,
-                    false,
-                    buttonOptions.relativeTo || 'plotBox'
-                );
-        } else {
-            this.drillUpButton.placed = false;
-            this.drillUpButton.attr({
-                text: backText
-            })
-                .align();
-        }
-    }
-
     /**
      * Set the node's color recursively, from the parent down.
      * @private
