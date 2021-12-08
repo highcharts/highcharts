@@ -95,13 +95,16 @@ const ChartDefaults: ChartOptions = {
      * When using multiple axes, align the thresholds. When this is true, other
      * ticks will also be aligned.
      *
-     * If `startOnTick` or `endOnTick` in the axis options are set to false,
-     * then the `alignThresholds ` will be disabled for the axis.
      *
-     * Disabled for logarithmic axes.
+     * Note that for line series and some other series types, the `threshold`
+     * option is set to `null` by default. This will in turn cause their y-axis
+     * to not have a threshold. In order to avoid that, set the series
+     * `threshold` to 0 or another number.
      *
-     * @sample {highcharts} highcharts/chart/alignthresholds/
-     *         Set to true
+     * If `startOnTick` or `endOnTick` in the axis options are set to false, or
+     * if the axis is logarithmic, the threshold will not be aligned.
+     *
+     * @sample {highcharts} highcharts/chart/alignthresholds/ Set to true
      *
      * @since next
      * @product   highcharts highstock gantt
