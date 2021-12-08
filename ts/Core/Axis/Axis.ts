@@ -791,7 +791,6 @@ class Axis {
                 }
             });
         });
-
         fireEvent(this, 'afterGetSeriesExtremes');
     }
 
@@ -2210,9 +2209,12 @@ class Axis {
                     // threshold, from 0 which is on `axis.min`, to 1 which is
                     // on `axis.max`.
                     if (alignThresholds) {
-                        thresholdAlignments.push(
+                        const thresholdAlignment = (
                             otherAxis.getThresholdAlignment(axis)
                         );
+                        if (isNumber(thresholdAlignment)) {
+                            thresholdAlignments.push(thresholdAlignment);
+                        }
                     }
                 }
             });
@@ -2236,9 +2238,14 @@ class Axis {
         return hasOther;
     }
 
-    // Where the wants its threshold, from 0 which is on `axis.min`, to 1 which
-    // is on `axis.max`.
-    public getThresholdAlignment(callerAxis: Axis): number {
+    /**
+     * Where the axis wants its threshold, from 0 which is on `axis.min`, to 1 which
+     * is on `axis.max`.
+     *
+     * @private
+     * @function Highcharts.Axis#getThresholdAlignment
+     */
+    public getThresholdAlignment(callerAxis: Axis): number|undefined {
         if (
             !isNumber(this.dataMin) ||
             (
@@ -2250,24 +2257,20 @@ class Axis {
         ) {
             this.getSeriesExtremes();
         }
-        let thresholdAlignment = clamp(
-            (
+        if (isNumber(this.threshold)) {
+            let thresholdAlignment = clamp(
                 (
-                    (this.threshold || 0) -
-                    (this.dataMin || 0)
-                ) /
-                (
-                    (this.dataMax || 0) -
-                    (this.dataMin || 0)
-                )
-            ),
-            0,
-            1
-        );
-        if (this.options.reversed) {
-            thresholdAlignment = 1 - thresholdAlignment;
+                    (this.threshold - (this.dataMin || 0)) /
+                    ((this.dataMax || 0) - (this.dataMin || 0))
+                ),
+                0,
+                1
+            );
+            if (this.options.reversed) {
+                thresholdAlignment = 1 - thresholdAlignment;
+            }
+            return thresholdAlignment;
         }
-        return thresholdAlignment;
     }
 
     /**
@@ -2385,8 +2388,10 @@ class Axis {
                     );
             };
 
-            // When the axis is subject to the alignThresholds option
-            if (isNumber(thresholdTickIndex) && isNumber(threshold)) {
+            // When the axis is subject to the alignThresholds option. Use
+            // axis.threshold because the local threshold includes the
+            // `softThreshold`.
+            if (isNumber(thresholdTickIndex) && isNumber(axis.threshold)) {
 
                 // Throw away the previously computed tickPositions and start
                 // from scratch with only the threshold itself, then add ticks
@@ -2400,7 +2405,7 @@ class Axis {
                     tickPositions[tickPositions.length - 1] < max
                 ) {
                     tickPositions.length = 0;
-                    tickPositions.push(threshold);
+                    tickPositions.push(axis.threshold);
 
                     while (tickPositions.length < tickAmount) {
 
@@ -2408,7 +2413,7 @@ class Axis {
                             // Start by prepending positions until the threshold
                             // is at the required index...
                             tickPositions[thresholdTickIndex] === void 0 ||
-                            tickPositions[thresholdTickIndex] > threshold
+                            tickPositions[thresholdTickIndex] > axis.threshold
                         ) {
                             prepend();
 
@@ -2419,6 +2424,12 @@ class Axis {
 
                         }
                     }
+
+                    // Safety vent
+                    if (tickInterval > axis.tickInterval * 8) {
+                        break;
+                    }
+
                     tickInterval *= 2;
                 }
 

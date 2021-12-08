@@ -7,12 +7,14 @@ QUnit.test('alignThresholds', function (assert) {
         },
         yAxis: [
             {
+                id: 'first',
                 title: {
                     text: 'Primary Axis'
                 },
                 gridLineWidth: 0
             },
             {
+                id: 'second',
                 title: {
                     text: 'Secondary Axis'
                 },
@@ -149,5 +151,24 @@ QUnit.test('alignThresholds', function (assert) {
         'Two reversed axes, thresholds should be aligned'
     );
 
+    // Reset reversed and add another axis
+    chart.update({
+        yAxis: [{
+            reversed: false
+        }, {
+            reversed: false
+        }]
+    });
+    chart.addAxis({ id: 'third' }, false);
+    chart.series[2].update({
+        type: 'line',
+        yAxis: 2
+    });
+
+    assert.notEqual(
+        chart.yAxis[1].tickPositions.indexOf(0),
+        chart.yAxis[2].tickPositions.indexOf(0),
+        'One axis without threshold, thresholds should not (necessarily) be aligned'
+    );
 
 });
