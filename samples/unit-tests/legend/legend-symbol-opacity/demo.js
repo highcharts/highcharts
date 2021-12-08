@@ -1,5 +1,5 @@
 QUnit.test('Legend symbol transparency', function (assert) {
-    Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'area'
         },
@@ -7,12 +7,15 @@ QUnit.test('Legend symbol transparency', function (assert) {
             {
                 data: [1, 3, 2, 4],
                 fillOpacity: 0.5
-            },
-            {
-                data: [4, 4, 7, 1],
-                opacity: 0.3
             }
         ]
     });
-    assert.equal(true, true, '');
+
+    assert.equal(
+        chart.legend.allItems[0].legendSymbol.element.getAttribute(
+            'fill-opacity'
+        ),
+        0.5,
+        'The legend symbol of the first element should be the same as the fillOpacity.'
+    );
 });
