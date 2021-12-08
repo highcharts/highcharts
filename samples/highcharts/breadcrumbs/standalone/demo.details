@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Karol Kolodziej
+   - Grzegorz Blachliński
+ js_wrap: b
+ skipTest: true
+...
