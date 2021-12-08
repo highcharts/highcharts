@@ -69,6 +69,7 @@ declare module './AxisLike' {
     interface AxisLike {
         axisBorder?: SVGElement;
         hiddenLabels: Array<SVGElement>;
+        hiddenMarks: Array<SVGElement>;
         rightWall?: SVGElement;
         getMaxLabelDimensions(
             ticks: Record<string, Tick>,
@@ -628,10 +629,18 @@ namespace GridAxis {
                     ],
                     firstTick = axis.tickPositions[0];
 
-                let label: SVGElement|undefined;
+                let label: SVGElement|undefined,
+                    tickMark: SVGElement|undefined;
+
 
                 while ((label = axis.hiddenLabels.pop()) && label.element) {
                     label.show(); // #15453
+                }
+                while (
+                    (tickMark = axis.hiddenMarks.pop()) &&
+                    tickMark.element
+                ) {
+                    tickMark.show(); // #16439
                 }
 
                 // Hide/show firts tick label.
@@ -655,15 +664,12 @@ namespace GridAxis {
                 }
 
                 const mark = axis.ticks[lastTick].mark;
-                if (mark) {
-                    if (
-                        lastTick - max < tickmarkOffset &&
-                        lastTick - max > 0 && axis.ticks[lastTick].isLast
-                    ) {
-                        mark.hide();
-                    } else if (axis.ticks[lastTick - 1]) {
-                        mark.show();
-                    }
+                if (
+                    mark &&
+                    lastTick - max < tickmarkOffset &&
+                    lastTick - max > 0 && axis.ticks[lastTick].isLast
+                ) {
+                    axis.hiddenMarks.push(mark.hide());
                 }
             }
         }
@@ -1048,6 +1054,7 @@ namespace GridAxis {
         }
 
         axis.hiddenLabels = [];
+        axis.hiddenMarks = [];
     }
 
     /**
