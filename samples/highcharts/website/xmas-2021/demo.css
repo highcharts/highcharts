@@ -2,10 +2,9 @@
 
 body {
     margin: 0;
-    background-color: #46465C;
+    background: linear-gradient(180deg, #201836 0%, #46465c 100%) no-repeat;
+    background-color: #46465c;
     font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif !important;
-    background: linear-gradient(180deg, #201836 0%, #46465C 100%) no-repeat;
-
 }
 
 #item .ring0 .highcharts-point {
@@ -60,7 +59,7 @@ body {
     width: 68px;
     height: 25px;
     background-size: contain;
-    background-image: url(deer.png);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/8cf76e1945c27e3c187f0273ca670949ce3d1e52/samples/graphics/xmas-card-2021/deer.png);
 }
 
 .button-container {
@@ -81,7 +80,7 @@ body {
     line-height: 18px;
     font-weight: 600;
     margin-top: 5px;
-    letter-spacing: 0px;
+    letter-spacing: 0;
 }
 
 #charts {
@@ -115,7 +114,6 @@ body {
 #presents-chart .highcharts-series-13 {
     transform: translateY(-20px);
 }
-
 
 .box {
     opacity: 100%;
@@ -178,7 +176,6 @@ body {
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
-   
 }
 
 .box-left .inner:last-child,
@@ -261,7 +258,6 @@ body {
 .box-right .inner span {
     left: -18px;
 }
-
 
 #box1 .inner span {
     margin-left: -7px;
@@ -408,7 +404,7 @@ body {
     }
 
     .box-right .inner span {
-        left: 0px;
+        left: 0;
     }
 
     #box1 .inner span {
@@ -419,8 +415,8 @@ body {
         top: 400px;
     }
 
-    #bell-chart .higcharts-bellchart-series{
-        transform: translateY(0px);
+    #bell-chart .higcharts-bellchart-series {
+        transform: translateY(0);
     }
 
     #presents-chart .highcharts-series-2,
@@ -435,7 +431,7 @@ body {
     #presents-chart .highcharts-series-11,
     #presents-chart .highcharts-series-12,
     #presents-chart .highcharts-series-13 {
-        transform: translateY(0px);
+        transform: translateY(0);
     }
 
     #center-message {
@@ -444,8 +440,7 @@ body {
         line-height: 24px;
         font-weight: 600;
         margin-top: 15px;
-        margin-left:5px;
-        letter-spacing: 0px;
+        margin-left: 5px;
+        letter-spacing: 0;
     }
-    
 }
