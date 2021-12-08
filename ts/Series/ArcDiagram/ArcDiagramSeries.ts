@@ -22,6 +22,7 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import DependencyWheelPoint from '../DependencyWheel/DependencyWheelPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -29,6 +30,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ArcDiagramPoint from './ArcDiagramPoint';
+import SankeyPoint from '../Sankey/SankeyPoint';
 const {
     extend,
     merge,
@@ -105,7 +107,7 @@ class ArcDiagramSeries extends SankeySeries {
 
     public options: ArcDiagramSeriesOptions = void 0 as any;
 
-    public nodeColumns: Array<ArcDiagramSeries.ColumnArray> = void 0 as any;
+    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = void 0 as any;
 
     public nodes: Array<ArcDiagramPoint> = void 0 as any;
 
@@ -118,17 +120,20 @@ class ArcDiagramSeries extends SankeySeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-    public createNodeColumns(): ArcDiagramSeries.ColumnArray[] {
+    public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
             // column needs casting, to much methods required at the same time
-            column: ArcDiagramSeries.ColumnArray = [] as any;
+            column = SankeyColumnComposition.compose([], this) as SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>;
 
-        column.maxLength = chart.inverted ? chart.plotHeight : chart.plotWidth;
+        column.sankeyColumn.maxLength = chart.inverted ?
+            chart.plotHeight : chart.plotWidth;
 
         // Get the translation factor needed for each column to fill up the
         // plot height
-        column.getTranslationFactor = (series: ArcDiagramSeries): number => {
+        column.sankeyColumn.getTranslationFactor = (
+            series: ArcDiagramSeries
+        ): number => {
             const nodes = column.slice(),
                 minLinkWidth = this.options.minLinkWidth || 0;
 
@@ -150,7 +155,7 @@ class ArcDiagramSeries extends SankeySeries {
             // node heights, remove those nodes affected by minLinkWidth,
             // check again, etc.
             while (column.length) {
-                factor = remainingWidth / column.sum();
+                factor = remainingWidth / column.sankeyColumn.sum();
                 skipPoint = false;
                 i = column.length;
                 while (i--) {
@@ -184,86 +189,6 @@ class ArcDiagramSeries extends SankeySeries {
             (column as any).scale = scale;
             (column as any).additionalSpace = additionalSpace;
             return factor;
-        };
-
-        column.sum = function (this: ArcDiagramSeries.ColumnArray): number {
-            return this.reduce(function (
-                sum: number,
-                node: ArcDiagramPoint
-            ): number {
-                return sum + node.getSum();
-            }, 0);
-        };
-
-        // Get the offset in pixels of a node inside the column.
-        column.offset = function (
-            this: ArcDiagramSeries.ColumnArray,
-            node: ArcDiagramPoint,
-            factor: number
-        ): (Record<string, number>|undefined) {
-            const equalNodes = node.series.options.equalNodes;
-            let offset = (column as any).additionalSpace,
-                totalNodeOffset,
-                nodePadding = series.nodePadding,
-                maxRadius = Math.min(
-                    chart.plotWidth,
-                    chart.plotHeight,
-                    column.maxLength / series.nodes.length - nodePadding
-                );
-
-            for (let i = 0; i < column.length; i++) {
-                const sum = column[i].getSum() * (column as any).scale;
-                const width = equalNodes ?
-                    maxRadius :
-                    Math.max(
-                        sum * factor,
-                        series.options.minLinkWidth as any
-                    );
-
-                if (sum) {
-                    totalNodeOffset = width + nodePadding;
-                } else {
-                    // If node sum equals 0 nodePadding is missed #12453
-                    totalNodeOffset = 0;
-                }
-                if (column[i] === node) {
-                    return {
-                        relativeLeft: offset + relativeLength(
-                            node.options.offset || 0,
-                            totalNodeOffset
-                        )
-                    };
-                }
-                offset += totalNodeOffset;
-            }
-        };
-
-        // Get the top position of the column in pixels.
-        (column as any).left = function (
-            this: ArcDiagramSeries.ColumnArray,
-            factor: number
-        ): number {
-            const equalNodes = (series.options as any).equalNodes;
-            const maxNodesLength = chart.inverted ?
-                    chart.plotHeight : chart.plotWidth,
-                nodePadding = series.nodePadding;
-            const width = this.reduce(function (
-                width: number,
-                node: ArcDiagramPoint
-            ): number {
-                if (width > 0) {
-                    width += nodePadding;
-                }
-                const nodeWidth = equalNodes ?
-                    maxNodesLength / node.series.nodes.length - nodePadding :
-                    Math.max(
-                        node.getSum() * factor,
-                        series.options.minLinkWidth as any
-                    );
-                width += nodeWidth;
-                return width;
-            }, 0);
-            return ((chart.plotSizeX as any) - Math.round(width)) / 2;
         };
 
         // Add nodes directly to the column right after it's creation
@@ -414,7 +339,7 @@ class ArcDiagramSeries extends SankeySeries {
      */
     public translateNode(
         node: ArcDiagramPoint,
-        column: ArcDiagramSeries.ColumnArray
+        column: SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>
     ): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
@@ -435,7 +360,7 @@ class ArcDiagramSeries extends SankeySeries {
                     this.options.minLinkWidth as any
                 ),
             crisp = Math.round(options.borderWidth || 0) % 2 / 2,
-            nodeOffset = column.offset(node, translationFactor),
+            nodeOffset = column.sankeyColumn.offset(node, translationFactor),
             fromNodeLeft = Math.floor(pick(
                 (nodeOffset as any).absoluteLeft,
                 (
@@ -551,22 +476,6 @@ interface ArcDiagramSeries {
 extend(ArcDiagramSeries.prototype, {
     orderNodes: false
 });
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace ArcDiagramSeries {
-    export interface ColumnArray<T = ArcDiagramPoint> extends SankeySeriesType.ColumnArray<T> {
-        maxLength: number;
-        getTranslationFactor(
-            this: ArcDiagramSeries.ColumnArray,
-            series: ArcDiagramSeries
-        ): number;
-    }
-}
 
 /* *
  *

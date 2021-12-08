@@ -39,6 +39,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -455,15 +456,15 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
-    public createNodeColumn(): OrganizationSeries.ColumnArray {
-        const column: OrganizationSeries.ColumnArray = super.createNodeColumn
-            .call(this) as any;
+    public createNodeColumn(): SankeyColumnComposition.ArrayComposition<OrganizationPoint> {
+        const column: SankeyColumnComposition.ArrayComposition<OrganizationPoint> =
+            SankeyColumnComposition.compose([], this) as SankeyColumnComposition.ArrayComposition<OrganizationPoint>;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
-        wrap(column, 'offset', function (
+        wrap(column.sankeyColumn, 'offset', function (
             this: OrganizationPoint,
-            proceed: SankeySeriesType.ColumnArray['offset'],
+            proceed: SankeyColumnComposition.SankeyColumnAdditions['offset'],
             node: OrganizationPoint,
             factor: number
         ): (Record<string, number>|undefined) {
@@ -617,7 +618,7 @@ class OrganizationSeries extends SankeySeries {
 
     public translateNode(
         node: OrganizationPoint,
-        column: OrganizationSeries.ColumnArray
+        column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
     ): void {
         SankeySeries.prototype.translateNode.call(this, node, column);
 
@@ -656,11 +657,11 @@ extend(OrganizationSeries.prototype, {
  *
  * */
 
-namespace OrganizationSeries {
-    export interface ColumnArray<T = OrganizationPoint> extends SankeySeriesType.ColumnArray<T> {
-        offset(node: T, factor: number): (Record<string, number>|undefined);
-    }
-}
+// namespace OrganizationSeries {
+//     export interface ColumnArray<T = OrganizationPoint> extends SankeySeriesType.ColumnArray<T> {
+//         offset(node: T, factor: number): (Record<string, number>|undefined);
+//     }
+// }
 
 /* *
  *

@@ -1,6 +1,14 @@
 import type SankeySeries from './SankeySeries';
 import SankeyPoint from './SankeyPoint';
+
 import U from '../../Core/Utilities.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
+import ArcDiagramSeries from '../ArcDiagram/ArcDiagramSeries';
 const {
     relativeLength
 } = U;
@@ -13,11 +21,7 @@ namespace SankeyColumnComposition {
      *
      * */
 
-    export declare class PointComposition extends SankeyPoint {
-        // add
-    }
-
-    export declare class ArrayComposition<T extends PointComposition = PointComposition> extends Array<T> {
+    export declare class ArrayComposition<T extends SankeyPoint = SankeyPoint> extends Array<T> {
         sankeyColumn: SankeyColumnAdditions;
     }
 
@@ -39,8 +43,8 @@ namespace SankeyColumnComposition {
      * @return {ArrayComposition} SankeyColumnArray
      */
     export function compose(
-        array: Array<PointComposition>,
-        series: SankeySeries
+        array: Array<SankeyPoint>,
+        series: SankeySeries|ArcDiagramSeries
     ): ArrayComposition {
         const sankeyColumnArray = array as ArrayComposition;
         sankeyColumnArray.sankeyColumn =
@@ -53,16 +57,21 @@ namespace SankeyColumnComposition {
      *  Classes
      *
      * */
-    class SankeyColumnAdditions {
+    export class SankeyColumnAdditions {
 
-        constructor(array: ArrayComposition, series: SankeySeries) {
+        constructor(
+            array: ArrayComposition,
+            series: SankeySeries|ArcDiagramSeries
+        ) {
             this.array = array;
             this.series = series;
         }
 
         public array: ArrayComposition;
 
-        public series: SankeySeries;
+        public maxLength?: number;
+
+        public series: SankeySeries|ArcDiagramSeries;
 
         /**
          * Calculate translation factor used in column and nodes distribution
@@ -74,7 +83,9 @@ namespace SankeyColumnComposition {
          * @return {number} TranslationFactor
          * Translation Factor
          */
-        public getTranslationFactor(series: SankeySeries): number {
+        public getTranslationFactor(
+            series: SankeySeries|ArcDiagramSeries
+        ): number {
             const column = this.array,
                 nodes = column.slice(),
                 chart = series.chart,
@@ -150,7 +161,7 @@ namespace SankeyColumnComposition {
             const nodePadding = series.nodePadding;
             const height = this.array.reduce(function (
                 height: number,
-                node: PointComposition
+                node: SankeyPoint
             ): number {
                 if (height > 0) {
                     height += nodePadding;
@@ -163,6 +174,43 @@ namespace SankeyColumnComposition {
                 return height;
             }, 0);
             return ((series.chart.plotSizeY || 0) - height) / 2;
+        }
+
+
+        /**
+         * Calculate translation factor used in column and nodes distribution
+         * @private
+         * @function Highcharts.SankeyColumn#top
+         *
+         * @param {number} factor
+         * The Translation Factor
+         * @return {number} TranslationFactor
+         * Translation Factor
+         */
+        public left(factor: number): number {
+            const series = this.series,
+                chart = series.chart,
+                equalNodes = (series.options as any).equalNodes;
+            const maxNodesLength = chart.inverted ?
+                    chart.plotHeight : chart.plotWidth,
+                nodePadding = series.nodePadding;
+            const width = this.array.reduce(function (
+                width: number,
+                node: SankeyPoint
+            ): number {
+                if (width > 0) {
+                    width += nodePadding;
+                }
+                const nodeWidth = equalNodes ?
+                    maxNodesLength / node.series.nodes.length - nodePadding :
+                    Math.max(
+                        node.getSum() * factor,
+                        series.options.minLinkWidth as any
+                    );
+                width += nodeWidth;
+                return width;
+            }, 0);
+            return ((chart.plotSizeX as any) - Math.round(width)) / 2;
         }
 
 
@@ -180,7 +228,7 @@ namespace SankeyColumnComposition {
         public sum(this: SankeyColumnAdditions): number {
             return this.array.reduce(function (
                 sum: number,
-                node: PointComposition
+                node: SankeyPoint
             ): number {
                 return sum + node.getSum();
             }, 0);
@@ -199,7 +247,7 @@ namespace SankeyColumnComposition {
          * Offset of a node inside column
          */
         public offset(
-            node: PointComposition,
+            node: SankeyPoint,
             factor: number
         ): (Record<string, number>|undefined) {
             const column = this.array,

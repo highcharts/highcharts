@@ -19,7 +19,6 @@
  * */
 
 import type DependencyWheelPointOptions from './../DependencyWheel/DependencyWheelPointOptions';
-import type DependencyWheelSeries from './../DependencyWheel/DependencyWheelSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
@@ -34,6 +33,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import ArcDiagramSeries from './ArcDiagramSeries';
+import SankeyPoint from '../Sankey/SankeyPoint';
 const { extend } = U;
 
 /* *
@@ -42,7 +42,7 @@ const { extend } = U;
  *
  * */
 
-class ArcDiagramPoint extends SankeySeries.prototype.pointClass {
+class ArcDiagramPoint extends SankeyPoint {
 
     /* *
      *
