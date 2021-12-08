@@ -171,4 +171,35 @@ QUnit.test('alignThresholds', function (assert) {
         'One axis without threshold, thresholds should not (necessarily) be aligned'
     );
 
+    chart.series[2].update({
+        threshold: 0
+    });
+    chart.redraw();
+    assert.equal(
+        chart.yAxis[1].tickPositions.indexOf(0),
+        chart.yAxis[2].tickPositions.indexOf(0),
+        'All axes have thresholds, thresholds should be aligned'
+    );
+
+    chart.update({
+        yAxis: [{
+            height: '50%'
+        }, {
+            top: '50%',
+            height: '50%'
+        }, {
+            height: '50%'
+        }]
+    });
+    assert.equal(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[2].tickPositions.indexOf(0),
+        'Panes, two axes in same pane, thresholds should be aligned'
+    );
+    assert.notEqual(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Panes, two axes of different pane, thresholds should not be aligned'
+    );
+
 });

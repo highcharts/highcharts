@@ -2149,8 +2149,6 @@ class Axis {
      */
     public alignToOthers(): (boolean|undefined) {
         const axis = this,
-            // Whether there is another axis to pair with this one
-            others = {} as Record<string, number>,
             alignedAxes: Axis[] = [this],
             options = axis.options,
             alignThresholds = (
@@ -2160,7 +2158,7 @@ class Axis {
             thresholdAlignments: number[] = [];
 
         let hasOther: (boolean|undefined);
-
+        axis.thresholdAlignment = void 0;
         if (
             (
                 // Only if alignTicks or alignThresholds is true
@@ -2180,47 +2178,48 @@ class Axis {
             // spaced (#6021)
             !axis.logarithmic
         ) {
+
+            // Get a key identifying which pane the axis belongs to
+            const getKey = (axis: Axis): string => {
+                const { horiz, options } = axis;
+                return [
+                    horiz ? options.left : options.top,
+                    options.width,
+                    options.height,
+                    options.pane
+                ].join(',');
+            };
+
+            const thisKey = getKey(this);
             this.chart[this.coll as 'xAxis'|'yAxis'].forEach(function (
                 otherAxis: Axis
             ): void {
-                const otherOptions = otherAxis.options,
-                    { horiz, series } = otherAxis,
-                    key = [
-                        horiz ? otherOptions.left : otherOptions.top,
-                        otherOptions.width,
-                        otherOptions.height,
-                        otherOptions.pane
-                    ].join(',');
-
+                const { series } = otherAxis;
                 if (
                     // #4442
                     series.length &&
-                    series.some((s): boolean => s.visible)
+                    series.some((s): boolean => s.visible) &&
+                    otherAxis !== axis &&
+                    getKey(otherAxis) === thisKey
                 ) {
-                    if (others[key]) {
-                        hasOther = true; // #4201
-                        alignedAxes.push(otherAxis);
-                    } else {
-                        others[key] = 1;
-                    }
-
-                    // Handle alignThresholds. The `thresholdAlignments` array
-                    // keeps records of where each axis in the group wants its
-                    // threshold, from 0 which is on `axis.min`, to 1 which is
-                    // on `axis.max`.
-                    if (alignThresholds) {
-                        const thresholdAlignment = (
-                            otherAxis.getThresholdAlignment(axis)
-                        );
-                        if (isNumber(thresholdAlignment)) {
-                            thresholdAlignments.push(thresholdAlignment);
-                        }
-                    }
+                    hasOther = true; // #4201
+                    alignedAxes.push(otherAxis);
                 }
             });
         }
 
-        if (hasOther) {
+        if (hasOther && alignThresholds) {
+
+            // Handle alignThresholds. The `thresholdAlignments` array keeps
+            // records of where each axis in the group wants its threshold, from
+            // 0 which is on `axis.min`, to 1 which is on `axis.max`.
+            alignedAxes.forEach((otherAxis): void => {
+                const threshAlign = otherAxis.getThresholdAlignment(axis);
+                if (isNumber(threshAlign)) {
+                    thresholdAlignments.push(threshAlign);
+                }
+            });
+
             // For each of the axes in the group, record the average
             // `thresholdAlignment`.
             const thresholdAlignment = thresholdAlignments.length > 1 ?
