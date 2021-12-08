@@ -307,7 +307,7 @@ const words = function () {
                 type: 'wordcloud',
                 visible: false,
                 data,
-                name: 'Some words from A Christmas Carol',
+                name: 'Some words from a poem',
                 zIndex: 10
             }],
         title: {
