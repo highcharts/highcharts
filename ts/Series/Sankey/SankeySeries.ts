@@ -693,6 +693,7 @@ class SankeySeries extends ColumnSeries {
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
+
         this.translationFactor = nodeColumns.reduce(
             (
                 translationFactor: number,
@@ -966,7 +967,6 @@ class SankeySeries extends ColumnSeries {
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
                 left;
-
         node.sum = sum;
         // If node sum is 0, don't render the rect #12453
         if (sum) {

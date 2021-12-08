@@ -71,6 +71,12 @@ namespace SankeyColumnComposition {
 
         public maxLength?: number;
 
+        public maxRadius?: number;
+
+        public scale?: number;
+
+        public additionalSpace?: number;
+
         public series: SankeySeries|ArcDiagramSeries;
 
         /**
@@ -86,6 +92,7 @@ namespace SankeyColumnComposition {
         public getTranslationFactor(
             series: SankeySeries|ArcDiagramSeries
         ): number {
+
             const column = this.array,
                 nodes = column.slice(),
                 chart = series.chart,
@@ -94,39 +101,25 @@ namespace SankeyColumnComposition {
             let skipPoint: boolean,
                 factor = 0,
                 i: number,
-                radius,
-                maxRadius: number = 0,
-                scale = 1,
-                additionalSpace = 0,
-                remainingWidth =
-                    (chart.plotSizeX as any) -
+                remainingHeight = (
+                    (chart.plotSizeY as any) -
                     (series.options.borderWidth as any) -
-                    (column.length - 1) *
-                    series.nodePadding;
-
+                    (column.length - 1) * series.nodePadding
+                );
             // Because the minLinkWidth option doesn't obey the direct
             // translation, we need to run translation iteratively, check
             // node heights, remove those nodes affected by minLinkWidth,
             // check again, etc.
             while (column.length) {
-                factor = remainingWidth / column.sankeyColumn.sum();
+                factor = remainingHeight / column.sankeyColumn.sum();
                 skipPoint = false;
                 i = column.length;
                 while (i--) {
-                    radius = (column[i].getSum()) * factor * scale;
-
-                    let plotArea = Math.min(chart.plotHeight, chart.plotWidth);
-
-                    if (radius > plotArea) {
-                        scale = Math.min(plotArea / radius, scale);
-                    } else if (radius < minLinkWidth) {
+                    if (column[i].getSum() * factor < minLinkWidth) {
                         column.splice(i, 1);
-                        remainingWidth -= minLinkWidth;
-                        radius = minLinkWidth;
+                        remainingHeight -= minLinkWidth;
                         skipPoint = true;
                     }
-                    additionalSpace += radius * (1 - scale) / 2;
-                    maxRadius = Math.max(maxRadius, radius);
                 }
                 if (!skipPoint) {
                     break;
@@ -136,12 +129,8 @@ namespace SankeyColumnComposition {
             // Re-insert original nodes
             column.length = 0;
             nodes.forEach((node): void => {
-                (node as any).scale = scale;
                 column.push(node);
             });
-            (column as any).maxRadius = maxRadius;
-            (column as any).scale = scale;
-            (column as any).additionalSpace = additionalSpace;
             return factor;
         }
 

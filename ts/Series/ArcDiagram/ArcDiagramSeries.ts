@@ -185,10 +185,53 @@ class ArcDiagramSeries extends SankeySeries {
                 (node as any).scale = scale;
                 column.push(node);
             });
-            (column as any).maxRadius = maxRadius;
-            (column as any).scale = scale;
-            (column as any).additionalSpace = additionalSpace;
+            column.sankeyColumn.maxRadius = maxRadius;
+            column.sankeyColumn.scale = scale;
+            column.sankeyColumn.additionalSpace = additionalSpace;
             return factor;
+        };
+
+        column.sankeyColumn.offset = function (
+            node: ArcDiagramPoint,
+            factor: number
+        ): (Record<string, number>|undefined) {
+            const equalNodes = node.series.options.equalNodes;
+            let offset = column.sankeyColumn.additionalSpace || 0,
+                totalNodeOffset,
+                nodePadding = series.nodePadding,
+                maxRadius = Math.min(
+                    chart.plotWidth,
+                    chart.plotHeight,
+                    (column.sankeyColumn.maxLength || 0) /
+                        series.nodes.length - nodePadding
+                );
+
+            for (let i = 0; i < column.length; i++) {
+                const sum = column[i].getSum() *
+                    (column.sankeyColumn.scale || 0);
+                const width = equalNodes ?
+                    maxRadius :
+                    Math.max(
+                        sum * factor,
+                        series.options.minLinkWidth as any
+                    );
+
+                if (sum) {
+                    totalNodeOffset = width + nodePadding;
+                } else {
+                    // If node sum equals 0 nodePadding is missed #12453
+                    totalNodeOffset = 0;
+                }
+                if (column[i] === node) {
+                    return {
+                        relativeLeft: offset + relativeLength(
+                            node.options.offset || 0,
+                            totalNodeOffset
+                        )
+                    };
+                }
+                offset += totalNodeOffset;
+            }
         };
 
         // Add nodes directly to the column right after it's creation
@@ -351,7 +394,7 @@ class ArcDiagramSeries extends SankeySeries {
                 chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
-            sum = node.getSum() * (column as any).scale,
+            sum = node.getSum() * (column.sankeyColumn.scale || 0),
             equalNodes = (node.series.options as any).equalNodes,
             nodeHeight = equalNodes ?
                 maxRadius :
@@ -364,7 +407,7 @@ class ArcDiagramSeries extends SankeySeries {
             fromNodeLeft = Math.floor(pick(
                 (nodeOffset as any).absoluteLeft,
                 (
-                    (column as any).left(translationFactor) +
+                    column.sankeyColumn.left(translationFactor) +
                     (nodeOffset as any).relativeLeft
                 )
             )) + crisp,
@@ -377,7 +420,8 @@ class ArcDiagramSeries extends SankeySeries {
                     ) -
                     Math.min(
                         maxRadius / 2,
-                        (column as any).scale * (column as any).maxRadius / 2
+                        (column.sankeyColumn.scale || 0) *
+                            (column.sankeyColumn.maxRadius || 0) / 2
                     )
                 ) / 100 :
                 (chart.inverted ?
@@ -385,7 +429,8 @@ class ArcDiagramSeries extends SankeySeries {
                     this.colDistance * (node.column as any) +
                     (options.borderWidth as any) / 2
                 ) + crisp +
-                (column as any).scale * (column as any).maxRadius / 2
+                (column.sankeyColumn.scale || 0) *
+                    (column.sankeyColumn.maxRadius || 0) / 2
                 );
         node.sum = sum;
         // If node sum is 0, don’t render the rect #12453
