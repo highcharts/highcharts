@@ -1177,34 +1177,41 @@ class MapSeries extends ScatterSeries {
             this.getProjectedBounds();
         }
 
-        const svgTransform = mapView && mapView.svgTransform;
+        if (mapView) {
+            const mainSvgTransform = mapView.svgTransform;
 
-        series.points.forEach(function (
-            point: (MapPoint&MapPoint.CacheObject)
-        ): void {
+            series.points.forEach(function (
+                point: (MapPoint&MapPoint.CacheObject)
+            ): void {
 
-            // Record the middle point (loosely based on centroid),
-            // determined by the middleX and middleY options.
-            if (
-                svgTransform &&
-                point.bounds &&
-                isNumber(point.bounds.midX) &&
-                isNumber(point.bounds.midY)
-            ) {
-                point.plotX = point.bounds.midX * svgTransform.scaleX +
-                    svgTransform.translateX;
-                point.plotY = point.bounds.midY * svgTransform.scaleY +
-                    svgTransform.translateY;
-            }
+                const svgTransform = (
+                    isNumber(point.insetIndex) &&
+                    mapView.insets[point.insetIndex].svgTransform
+                ) || mainSvgTransform;
 
-            if (doFullTranslate) {
+                // Record the middle point (loosely based on centroid),
+                // determined by the middleX and middleY options.
+                if (
+                    svgTransform &&
+                    point.bounds &&
+                    isNumber(point.bounds.midX) &&
+                    isNumber(point.bounds.midY)
+                ) {
+                    point.plotX = point.bounds.midX * svgTransform.scaleX +
+                        svgTransform.translateX;
+                    point.plotY = point.bounds.midY * svgTransform.scaleY +
+                        svgTransform.translateY;
+                }
 
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: MapPoint.getProjectedPath(point as any, projection)
-                };
-            }
-        });
+                if (doFullTranslate) {
+
+                    point.shapeType = 'path';
+                    point.shapeArgs = {
+                        d: MapPoint.getProjectedPath(point, projection)
+                    };
+                }
+            });
+        }
 
         fireEvent(series, 'afterTranslate');
     }

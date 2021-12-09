@@ -124,5 +124,18 @@ QUnit.test('MapView Inset', assert => {
         'fromPointToLatLon: outside inset'
     );
 
+    chart.series[0].points.forEach(p => {
+        assert.ok(
+            (
+                p.plotX > chart.plotLeft &&
+                p.plotX < chart.plotLeft + chart.plotWidth &&
+                p.plotY > chart.plotTop &&
+                p.plotY < chart.plotTop + chart.plotHeight
+            ),
+            `Plot coordinates of ${p.name} should be within pane (currently \
+ [${p.plotX}, ${p.plotY}])`
+        );
+    });
+
 
 });
