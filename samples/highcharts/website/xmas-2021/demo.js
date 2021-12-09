@@ -67,7 +67,7 @@ Highcharts.theme = {
 Highcharts.setOptions(Highcharts.theme);
 
 
-var data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
+const data = [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4,
     4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2,
     3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3,
     3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3,
@@ -647,12 +647,6 @@ const tree = function () {
                         color: '#E05283'
                     });
 
-                    chart.series[3].data.forEach(function (point) {
-                        point.update({
-                            low: -30,
-                            high: 60
-                        });
-                    });
                     topTree.style.opacity = 1;
 
                     setInterval(function () {
@@ -662,16 +656,18 @@ const tree = function () {
                                 point.update({
                                     low: treeData[point.index][0],
                                     high: treeData[point.index][1]
-                                });
+                                }, false);
                             });
+                            chart.redraw();
                             topTree.style.opacity = 0;
                         } else {
                             chart.series[3].data.forEach(function (point) {
                                 point.update({
                                     low: -30,
                                     high: 60
-                                });
+                                }, false);
                             });
+                            chart.redraw();
                             topTree.style.opacity = 1;
                         }
                         count = count + 1;
@@ -3455,35 +3451,6 @@ const ball = function () {
         return data;
     };
 
-    // Add flight route after initial animation
-    const afterAnimate = e => {
-        const chart = e.target.chart;
-
-        if (!chart.get('flight-route')) {
-            chart.addSeries({
-                type: 'mappoint',
-                animation: false,
-                data: [{
-                    name: 'LA',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [-118.24, 34.05]
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    states: {
-                        inactive: {
-                            enabled: false
-                        }
-                    }
-                }],
-                color: 'transparent'
-            }, false);
-            chart.redraw(false);
-        }
-    };
-
     const starData = [];
     const getStarData = function () {
         for (let ii = 0; ii <= 40; ++ii) {
@@ -3511,6 +3478,9 @@ const ball = function () {
             chart = Highcharts.mapChart('ball-chart', {
                 chart: {
                     map: geojson,
+                    animation: {
+                        enabled: false
+                    },
                     margin: 0,
                     backgroundColor: 'url(#bg-gradient)',
                     events: {
@@ -3518,44 +3488,29 @@ const ball = function () {
                             const chart = this;
                             let count = 0;
 
-                            chart.series[3].points[0].setState('hover');
-
                             if (!big) {
                                 chart.update({
                                     plotOptions: {
                                         pie: {
-                                            center: [70, 5]
+                                            center: [70, 155]
 
                                         }
                                     }
                                 });
                             }
 
-
                             //spin
                             setTimeout(function () {
                                 setInterval(function () {
-                                    if (count < 360) {
-                                        chart.update({
-                                            mapView: {
-                                                projection: {
-                                                    name: 'Orthographic',
-                                                    rotation: [count, -30]
-                                                }
+                                    chart.update({
+                                        mapView: {
+                                            projection: {
+                                                name: 'Orthographic',
+                                                rotation: [count % 360, -30]
                                             }
-                                        });
-                                        count = count + 1;
-                                    } else {
-                                        chart.update({
-                                            mapView: {
-                                                projection: {
-                                                    name: 'Orthographic',
-                                                    rotation: [count, -30]
-                                                }
-                                            }
-                                        });
-                                        count = 0;
-                                    }
+                                        }
+                                    }, true, false, false);
+                                    count = count + 1;
                                 }, 50);
                             }, 1500);
 
@@ -3634,7 +3589,7 @@ const ball = function () {
                 },
                 mapView: {
                     maxZoom: 30,
-                    zoom: 2,
+                    zoom: 1.9,
                     projection: {
                         name: 'Orthographic',
                         rotation: [0, -30]
@@ -3648,9 +3603,7 @@ const ball = function () {
 
                 plotOptions: {
                     series: {
-                        animation: {
-                            duration: 750
-                        },
+                        animation: false,
                         clip: false,
                         point: {
                             events: {
@@ -3665,7 +3618,7 @@ const ball = function () {
                         }
                     },
                     pie: {
-                        center: [130, 5],
+                        center: [130, 185],
                         size: '6%'
                     },
                     bubble: {
@@ -3705,9 +3658,6 @@ const ball = function () {
                         dataLabels: {
                             enabled: false,
                             format: '{point.name}'
-                        },
-                        events: {
-                            afterAnimate
                         }
                     },
                     //2 -- sled (scatter)
@@ -3746,7 +3696,7 @@ const ball = function () {
                         type: 'pie',
                         name: 'The Moon',
                         animation: false,
-                        visible: false,
+                        visible: true,
                         dataLabels: {
                             enabled: false
                         },
@@ -3814,29 +3764,7 @@ const ball = function () {
                             [57, 91, 82],
                             [45, 15, 98]
                         ]
-                    }],
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 179
-                        },
-                        chartOptions: {
-                            // mapView: {
-                            //     zoom: 2
-                            // }
-                        }
-                    },
-                    {
-                        condition: {
-                            minWidth: 180
-                        },
-                        chartOptions: {
-                            // mapView: {
-                            //     zoom: 2
-                            // }
-                        }
                     }]
-                }
             });
 
             ballChart = chart;
@@ -3907,7 +3835,11 @@ document.getElementById('open').addEventListener('click',
                 if (index !== 4) {
                     elem.style.visibility = 'hidden';
                 } else {
-                    elem.style.top = '260px';
+                    let boxTop = '260px';
+                    if (!big) {
+                        boxTop = '120px';
+                    }
+                    elem.style.top = boxTop;
                     elem.style.width = '180px';
                     elem.style.height = '100px';
 
@@ -3925,13 +3857,34 @@ document.getElementById('open').addEventListener('click',
         flip(presentsChart, 3, 'right', 300);
         flip(wreathChart, 9, 'right', 300);
 
+        let sledY = 15;
+        if (!big) {
+            sledY = 12;
+        }
+
         ballChart.series[2].points[0].update({
             x: 14,
-            y: 15
+            y: sledY
         });
 
-        ballChart.series[3].show();
+        let moonCenter = [130, 5];
 
+        if (!big) {
+            moonCenter = [70, 5];
+        }
+
+        ballChart.update({
+            plotOptions: {
+                pie: {
+                    center: moonCenter
+
+                }
+            }
+        }, true);
+
+        setTimeout(function () {
+            ballChart.series[3].points[0].setState('hover');
+        }, 500);
 
     }
 );
