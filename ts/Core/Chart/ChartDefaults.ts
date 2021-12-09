@@ -34,18 +34,19 @@ import { Palette } from '../Color/Palettes.js';
 const ChartDefaults: ChartOptions = {
 
     /**
-     * Default `mapData` for all series. If set to a string, it functions
-     * as an index into the `Highcharts.maps` array. Otherwise it is
-     * interpreted as map data.
+     * Default `mapData` for all series, in terms of a GeoJSON or TopoJSON
+     * object. If set to a string, it functions as an index into the
+     * `Highcharts.maps` array.
      *
-     * @see [mapData](#series.map.mapData)
+     * For picking out individual shapes and geometries to use for each series
+     * of the map, see [series.mapData](#series.map.mapData).
      *
      * @sample    maps/demo/geojson
-     *            Loading geoJSON data
+     *            Loading GeoJSON data
      * @sample    maps/chart/topojson
-     *            Loading topoJSON converted to geoJSON
+     *            Loading TopoJSON data
      *
-     * @type      {string|Array<*>|Highcharts.GeoJSON}
+     * @type      {string|Array<*>|Highcharts.GeoJSON|Highcharts.TopoJSON}
      * @since     5.0.0
      * @product   highmaps
      * @apioption chart.map

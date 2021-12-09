@@ -16,7 +16,7 @@
  *
  * */
 
-import type GeoJSONGeometry from '../../Maps/GeoJSON';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
@@ -54,7 +54,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
-    public geometry?: GeoJSONGeometry;
+    public geometry?: GeoJSONGeometryMultiPoint;
 
     public labelrank?: number;
 

@@ -1041,7 +1041,10 @@ class MapSeries extends ScatterSeries {
         }
 
         if (mapData) {
-            if (mapData.type === 'FeatureCollection') {
+            if (
+                mapData.type === 'FeatureCollection' ||
+                mapData.type === 'Topology'
+            ) {
                 this.mapTitle = mapData.title;
                 mapData = H.geojson(mapData, this.type, this);
             }
@@ -1322,13 +1325,17 @@ export default MapSeries;
  * */
 
 /**
- * A map data object containing a `geometry` or `path` definition and optionally
- * additional properties to join in the `data` as per the `joinBy` option.
+ * An array of objects containing a `geometry` or `path` definition and
+ * optionally additional properties to join in the `data` as per the `joinBy`
+ * option. GeoJSON and TopoJSON structures can also be passed directly into
+ * `mapData`.
  *
  * @sample maps/demo/category-map/
  *         Map data and joinBy
+ * @sample maps/series/mapdata-multiple/
+ *         Multiple map sources
  *
- * @type      {Array<Highcharts.SeriesMapDataOptions>|*}
+ * @type      {Array<Highcharts.SeriesMapDataOptions>|Highcharts.GeoJSON|Highcharts.TopoJSON}
  * @product   highmaps
  * @apioption series.mapData
  */

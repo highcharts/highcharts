@@ -1,27 +1,18 @@
-const getGeoJSON = async url => {
-    const result = await fetch(url);
-    const json = result.ok && await result.json();
-    return window.topojson.feature(
-        json,
-        // For this demo, get the first of the named objects
-        json.objects[Object.keys(json.objects)[0]]
-    );
-};
-
 (async () => {
 
-    const norway = await getGeoJSON(
-        'https://rawgit.com/deldersveld/topojson/master/countries/norway/norway-counties.json'
-    );
-    const sweden = await getGeoJSON(
-        'https://rawgit.com/deldersveld/topojson/master/countries/sweden/sweden-counties.json'
-    );
+    const norway = await fetch(
+        'https://code.highcharts.com/mapdata/countries/no/no-all.topo.json'
+    ).then(response => response.json());
+
+    const sweden = await fetch(
+        'https://code.highcharts.com/mapdata/countries/se/se-all.topo.json'
+    ).then(response => response.json());
 
 
     // Initialize the chart
     Highcharts.mapChart('container', {
         title: {
-            text: 'Highcharts, multiple GeoJSON'
+            text: 'Multiple map sources'
         },
 
         mapNavigation: {
