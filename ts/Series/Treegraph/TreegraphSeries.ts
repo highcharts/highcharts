@@ -17,7 +17,7 @@
  * */
 
 import type TreegraphPoint from './TreegraphPoint';
-import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
+import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeySeries from '../Sankey/SankeySeries.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -26,20 +26,12 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        column: {
-            prototype: colProto
-        },
-        organization: {
-            prototype: orgProto
-        }
+        column: { prototype: colProto },
+        organization: { prototype: orgProto }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+const { extend, merge, pick } = U;
 
 /* *
  *
@@ -57,7 +49,6 @@ const {
  * @augments Highcharts.Series
  */
 class TreegraphSeries extends OrganizationSeries {
-
     /* *
      *
      *  Static Properties
@@ -72,9 +63,15 @@ class TreegraphSeries extends OrganizationSeries {
      * @product      highcharts
      * @optionparent plotOptions.treegraph
      */
-    public static defaultOptions: TreegraphSeriesOptions = merge(OrganizationSeries.defaultOptions, {
-        // nothing here yet
-    });
+    public static defaultOptions: TreegraphSeriesOptions = merge(
+        OrganizationSeries.defaultOptions,
+        {
+            radius: 10,
+            alignNodes: 'right',
+            minLinkWidth: 1,
+            borderWidth: 1
+        }
+    );
 
     /* *
      *
@@ -89,11 +86,7 @@ class TreegraphSeries extends OrganizationSeries {
      * renderer or utilities if we need it elsewhere.
      * @private
      */
-    public static pointsToPath(
-        from: any,
-        to: any,
-        factor: number
-    ): SVGPath {
+    public static pointsToPath(from: any, to: any, factor: number): SVGPath {
         const middleX = (from.x + to.x) / 2,
             middleY = (from.y + to.y) / 2,
             arcPointX1 = (from.x + middleX) / (2 - factor),
@@ -123,8 +116,9 @@ class TreegraphSeries extends OrganizationSeries {
         const series = this,
             attribs = orgProto.pointAttribs.call(this, point, state);
 
-        if (point.isNode && series.options.nodeWidth) {
-            attribs.r = series.options.nodeWidth / 2 || attribs.r;
+        if (point.isNode) {
+            attribs.r =
+                point.options.radius || series.options.radius || attribs.r;
         }
 
         return attribs;
@@ -133,7 +127,7 @@ class TreegraphSeries extends OrganizationSeries {
     public translateLink(point: TreegraphPoint): void {
         const fromNode = point.fromNode,
             toNode = point.toNode,
-            crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
+            crisp = (Math.round(this.options.linkLineWidth as any) % 2) / 2,
             x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,
@@ -147,22 +141,23 @@ class TreegraphSeries extends OrganizationSeries {
             y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
             xMiddle;
 
-        xMiddle = Math.floor(
-            x2 +
-            (inverted ? 1 : -1) *
-            (this.colDistance - this.nodeWidth) / 2
-        ) + crisp;
+        xMiddle =
+            Math.floor(
+                x2 +
+                    ((inverted ? 1 : -1) *
+                        (this.colDistance - this.nodeWidth)) /
+                        2
+            ) + crisp;
 
         // Put the link on the side of the node when an offset is given. HR
         // node in the main demo.
-        if (
-            percentOffset &&
-            (percentOffset >= 50 || percentOffset <= -50)
-        ) {
-            xMiddle = x2 = Math.floor(
-                x2 + (inverted ? -0.5 : 0.5) *
-                (toNode.shapeArgs as any).width
-            ) + crisp;
+        if (percentOffset && (percentOffset >= 50 || percentOffset <= -50)) {
+            xMiddle = x2 =
+                Math.floor(
+                    x2 +
+                        (inverted ? -0.5 : 0.5) *
+                            (toNode.shapeArgs as any).width
+                ) + crisp;
             y2 = (toNode.shapeArgs as any).y;
             if (percentOffset > 0) {
                 y2 += (toNode.shapeArgs as any).height;
@@ -171,26 +166,26 @@ class TreegraphSeries extends OrganizationSeries {
 
         if (toNode.hangsFrom === fromNode) {
             if (this.chart.inverted) {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    (fromNode.shapeArgs as any).height -
-                    hangingIndent / 2
-                ) + crisp;
-                y2 = (
+                y1 =
+                    Math.floor(
+                        (fromNode.shapeArgs as any).y +
+                            (fromNode.shapeArgs as any).height -
+                            hangingIndent / 2
+                    ) + crisp;
+                y2 =
                     (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height
-                );
+                    (toNode.shapeArgs as any).height;
             } else {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    hangingIndent / 2
-                ) + crisp;
-
+                y1 =
+                    Math.floor(
+                        (fromNode.shapeArgs as any).y + hangingIndent / 2
+                    ) + crisp;
             }
-            xMiddle = x2 = Math.floor(
-                (toNode.shapeArgs as any).x +
-                (toNode.shapeArgs as any).width / 2
-            ) + crisp;
+            xMiddle = x2 =
+                Math.floor(
+                    (toNode.shapeArgs as any).x +
+                        (toNode.shapeArgs as any).width / 2
+                ) + crisp;
         }
 
         point.plotY = 1;
@@ -198,29 +193,39 @@ class TreegraphSeries extends OrganizationSeries {
 
         if (linkOptions && linkOptions.type === 'straight') {
             point.shapeArgs = {
-                d: OrganizationSeries.curvedPath([
-                    ['M', x1, y1],
-                    ['L', x2, y2]
-                ], linkOptions.width as any)
+                d: OrganizationSeries.curvedPath(
+                    [
+                        ['M', x1, y1],
+                        ['L', x2, y2]
+                    ],
+                    linkOptions.width as any
+                )
             };
         } else if (linkOptions && linkOptions.type === 'curved') {
             point.shapeArgs = {
-                d: TreegraphSeries.pointsToPath({
-                    x: x1,
-                    y: y1
-                }, {
-                    x: x2,
-                    y: y2
-                }, 0.1)
+                d: TreegraphSeries.pointsToPath(
+                    {
+                        x: x1,
+                        y: y1
+                    },
+                    {
+                        x: x2,
+                        y: y2
+                    },
+                    0.1
+                )
             };
         } else {
             point.shapeArgs = {
-                d: OrganizationSeries.curvedPath([
-                    ['M', x1, y1],
-                    ['L', xMiddle, y1],
-                    ['L', xMiddle, y2],
-                    ['L', x2, y2]
-                ], this.options.linkRadius as any)
+                d: OrganizationSeries.curvedPath(
+                    [
+                        ['M', x1, y1],
+                        ['L', xMiddle, y1],
+                        ['L', xMiddle, y2],
+                        ['L', x2, y2]
+                    ],
+                    this.options.linkRadius as any
+                )
             };
         }
     }
@@ -229,89 +234,108 @@ class TreegraphSeries extends OrganizationSeries {
      * Run translation operations for one node.
      * @private
      */
-    public translateNode(
-        node: any,
-        column: TreegraphSeries.ColumnArray
-    ): void {
+    public translateNode(node: any, column: TreegraphSeries.ColumnArray): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
             sum = node.getSum(),
             height = Math.max(
                 Math.round(sum * translationFactor),
-                this.options.minLinkWidth as any
+                this.options.minLinkWidth
             ),
-            crisp = Math.round(options.borderWidth as any) % 2 / 2,
-            nodeOffset = column.offset(node, translationFactor),
-            fromNodeTop = Math.floor(pick(
-                (nodeOffset as any).absoluteTop,
-                (
-                    column.top(translationFactor) +
-                    (nodeOffset as any).relativeTop
-                )
-            )) + crisp,
-            left = Math.floor(
-                this.colDistance * (node.column as any) +
-                (options.borderWidth as any) / 2
-            ) + crisp,
-            nodeLeft = chart.inverted ? (chart.plotSizeX as any) - left : left,
-            nodeRadius = Math.round(this.nodeWidth) / 2;
+            crisp = (Math.round(options.borderWidth) % 2) / 2,
+            nodeRadius = node.options.radius as any,
+            borderRadius = options.borderRadius as any,
+            nodeOffset = column.offset(node, translationFactor) as any,
+            plotSizeY = chart.plotSizeY as number,
+            plotSizeX = chart.plotSizeX as number,
+            fromNodeTop =
+                Math.floor(
+                    pick(
+                        nodeOffset.absoluteTop,
+                        column.top(translationFactor) + nodeOffset.relativeTop
+                    )
+                ) + crisp,
+            left =
+                Math.floor(
+                    this.colDistance * node.column + options.borderWidth / 2
+                ) + crisp,
+            nodeLeft = chart.inverted ? (plotSizeX as number) - left : left,
+            nodeWidth = Math.round(this.nodeWidth);
 
         node.sum = sum;
         // If node sum is 0, don't render the rect #12453
         if (sum) {
             // Draw the node
             node.shapeType = 'circle';
-
             node.nodeX = nodeLeft;
             node.nodeY = fromNodeTop;
             if (!chart.inverted) {
+                let xPosition;
+
+                if (options.alignNodes === 'right') {
+                    xPosition =
+                        nodeLeft +
+                        ((nodeRadius ? -nodeRadius + borderRadius * 2 : 0) ||
+                            borderRadius);
+                } else if (options.alignNodes === 'left') {
+                    xPosition = nodeLeft + (nodeRadius || borderRadius);
+                } else {
+                    xPosition = nodeLeft + borderRadius;
+                }
+
                 node.shapeArgs = {
-                    x: nodeLeft + nodeRadius,
-                    y: fromNodeTop + nodeRadius,
-                    r: nodeRadius
+                    x: xPosition,
+                    y: fromNodeTop + borderRadius + nodeWidth / 2,
+                    r: node.options.radius || options.borderRadius
                 };
             } else {
+                let positionY;
+
+                if (options.alignNodes === 'right') {
+                    positionY =
+                        nodeLeft +
+                        ((node.options.radius ? node.options.radius : 0) ||
+                            options.borderRadius) -
+                        (2 * node.options.radius || 0);
+                } else if (options.alignNodes === 'left') {
+                    positionY =
+                        nodeLeft -
+                        (node.options.radius || options.borderRadius);
+                } else {
+                    positionY = nodeLeft - borderRadius;
+                }
                 node.shapeArgs = {
-                    x: nodeLeft - nodeRadius * 2,
-                    y: (chart.plotSizeY as any) - fromNodeTop - height,
-                    width: node.options.height ||
-                        options.height ||
-                        nodeRadius * 2,
-                    height: node.options.width || options.width || height
+                    x: positionY,
+                    y: plotSizeY - fromNodeTop - nodeWidth
+                    // width: node.options.height || options.height || nodeWidth
+                    // height: node.options.width || options.width || height
                 };
             }
-
             node.shapeArgs.display = node.hasShape() ? '' : 'none';
-
             // Calculate data label options for the point
-            node.dlOptions = SankeySeries.getDLOptions({
+            node.dlOptions = OrganizationSeries.getDLOptions({
                 level: (this.mapOptionsToLevel as any)[node.level],
                 optionsPoint: node.options
             });
-
             // Pass test in drawPoints
             node.plotY = 1;
-
             // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) -
-                    node.shapeArgs.y -
-                    node.shapeArgs.height / 2,
-                (chart.plotSizeX as any) -
-                    node.shapeArgs.x -
-                    node.shapeArgs.width / 2
-            ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
-            ];
+            node.tooltipPos = chart.inverted ?
+                [
+                    plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                    plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+                ] :
+                [
+                    node.shapeArgs.x + node.shapeArgs.width / 2,
+                    node.shapeArgs.y + node.shapeArgs.height / 2
+                ];
         } else {
             node.dlOptions = {
                 enabled: false
             };
         }
     }
-
 }
 
 /* *

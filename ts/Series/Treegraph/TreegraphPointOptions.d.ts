@@ -23,7 +23,7 @@ import type OrganizationPointOptions from '../Organization/OrganizationPointOpti
  * */
 
 export interface TreegraphPointOptions extends OrganizationPointOptions {
-    // nothing here yet
+    radius: number;
 }
 
 export default TreegraphPointOptions;

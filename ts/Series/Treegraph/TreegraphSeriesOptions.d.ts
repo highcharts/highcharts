@@ -23,7 +23,11 @@ import type OrganizationSeriesOptions from '../Organization/OrganizationSeriesOp
  * */
 
 export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
-    // nothing here yet
+    radius: number;
+    minLinkWidth: number;
+    borderWidth: number;
+    alignNodes: string;
 }
+
 
 export default TreegraphSeriesOptions;
