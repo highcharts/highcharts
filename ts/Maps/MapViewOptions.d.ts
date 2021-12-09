@@ -66,7 +66,7 @@ export interface MapViewInsetOptionsOptions {
 export interface MapViewOptions {
     center: LonLatArray;
     insetOptions?: MapViewInsetOptionsOptions;
-    insets?: Record<string, MapViewInsetsOptions>;
+    insets?: MapViewInsetsOptions[];
     maxZoom?: number;
     padding: (number|string);
     projection?: ProjectionOptions;

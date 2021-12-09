@@ -132,12 +132,11 @@ class MapView {
         // Create the insets
         const insets = o.insets;
         if (insets) {
-            Object.keys(insets).forEach((key): void => {
+            insets.forEach((item): void => {
                 const inset = new MapViewInset(
                     this,
-                    merge(o.insetOptions, insets[key])
+                    merge(o.insetOptions, item)
                 );
-                inset.key = key;
                 this.insets.push(inset);
             });
         }
@@ -720,16 +719,18 @@ class MapViewInset extends MapView {
     public allBounds: MapBounds[];
     public border?: SVGElement;
     public hitZone?: Polygon;
-    public key?: string;
+    public id?: string;
     public options: MapViewInsetsOptions;
     public path?: SVGPath;
     public mapView: MapView;
 
     public constructor(
         mapView: MapView,
-        options?: DeepPartial<MapViewInsetsOptions>
+        options: DeepPartial<MapViewInsetsOptions>
     ) {
         super(mapView.chart, options);
+
+        this.id = options.id;
         this.mapView = mapView;
         this.options = merge(defaultInsetsOptions, options);
 

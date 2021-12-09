@@ -48,35 +48,32 @@ QUnit.test('MapView Inset', assert => {
             projection: {
                 name: 'EqualEarth'
             },
-            insets: {
-                island: {
-                    field: {
-                        type: 'Polygon',
-                        coordinates: [
-                            [
-                                [0, 80],
-                                [20, 80],
-                                [20, 100],
-                                [0, 100]
-                            ]
+            insets: [{
+                field: {
+                    type: 'Polygon',
+                    coordinates: [
+                        [
+                            [0, 80],
+                            [20, 80],
+                            [20, 100],
+                            [0, 100]
                         ]
-                    },
-                    geoBounds: {
-                        type: 'Polygon',
-                        coordinates: [
-                            [
-                                [80, 40],
-                                [80, 70],
-                                [110, 70],
-                                [110, 40],
-                                [80, 40]
-                            ]
+                    ]
+                },
+                geoBounds: {
+                    type: 'Polygon',
+                    coordinates: [
+                        [
+                            [80, 40],
+                            [80, 70],
+                            [110, 70],
+                            [110, 40],
+                            [80, 40]
                         ]
+                    ]
 
-                    }
                 }
-            }
-
+            }]
         },
         series: [{
             dataLabels: {

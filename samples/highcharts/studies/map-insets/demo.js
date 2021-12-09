@@ -65,8 +65,9 @@ Highcharts.getJSON(
                 // The collection of insets. Consider an object with named
                 // children in order to make merging easier. Each item inherits
                 // from `insetOptions`.
-                insets: {
-                    alaska: {
+                insets: [
+                    // Alaska
+                    {
 
                         // borderColor: '',
 
@@ -136,8 +137,9 @@ Highcharts.getJSON(
 
                         // Auto fitted to the bounding box
                         zoom: void 0
-                    },
-                    hawaii: {
+
+                    // Hawaii
+                    }, {
                         borderPath: {
                             type: 'LineString',
                             coordinates: [
@@ -175,7 +177,7 @@ Highcharts.getJSON(
                             rotation: [157]
                         }
                     }
-                }
+                ]
             },
 
             colorAxis: {
