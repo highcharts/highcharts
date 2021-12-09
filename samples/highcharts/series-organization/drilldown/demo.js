@@ -62,11 +62,12 @@ Highcharts.chart('container', {
         }]
     }],
     drilldown: {
-        drillUpButton: {
+        breadcrumbs: {
             relativeTo: 'spacingBox',
             position: {
-                y: 0
-            }
+                align: 'right'
+            },
+            showFullPath: false
         },
         activeDataLabelStyle: {
             color: 'contrast'

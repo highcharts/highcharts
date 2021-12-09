@@ -188,7 +188,7 @@ class NewDataAnnouncer {
             chart = this.chart,
             e = this.eventProvider;
 
-        e.addEvent(chart, 'afterDrilldown', function (): void {
+        e.addEvent(chart, 'afterApplyDrilldown', function (): void {
             announcer.lastAnnouncementTime = 0;
         });
 

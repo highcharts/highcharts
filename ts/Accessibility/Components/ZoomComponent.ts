@@ -130,7 +130,7 @@ class ZoomComponent extends AccessibilityComponent {
         this.proxyProvider.addGroup('zoom', 'div');
 
         [
-            'afterShowResetZoom', 'afterDrilldown', 'drillupall'
+            'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
         ].forEach(function (eventType: string): void {
             component.addEvent(chart, eventType, function (): void {
                 component.updateProxyOverlays();
@@ -213,14 +213,23 @@ class ZoomComponent extends AccessibilityComponent {
             );
         }
 
-        if (chart.drillUpButton) {
+        if (
+            chart.drillUpButton &&
+            chart.breadcrumbs &&
+            chart.breadcrumbs.list
+        ) {
+            const lastBreadcrumb =
+                chart.breadcrumbs.list[chart.breadcrumbs.list.length - 1];
+
             this.createZoomProxyButton(
                 chart.drillUpButton, 'drillUpProxyButton',
                 chart.langFormat(
                     'accessibility.drillUpButton',
                     {
                         chart: chart,
-                        buttonText: chart.getDrilldownBackText()
+                        buttonText: chart.breadcrumbs.getButtonText(
+                            lastBreadcrumb
+                        )
                     }
                 )
             );

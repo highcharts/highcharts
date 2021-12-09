@@ -1395,8 +1395,9 @@ Highcharts.chart('container', {
         text: 'Sunburst with sliced items on multiple levels'
     },
     series: [{
-        type: "sunburst",
+        type: 'sunburst',
         data: data,
+        name: 'Root',
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {

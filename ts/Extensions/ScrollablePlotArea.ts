@@ -365,7 +365,7 @@ Chart.prototype.applyFixed = function (): void {
             .add();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
-        addEvent(this, 'afterDrilldown', this.moveFixedElements);
+        addEvent(this, 'afterApplyDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {
