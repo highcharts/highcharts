@@ -90,6 +90,9 @@ Highcharts.setOptions({
     },
     tooltip: {
         animation: false
+    },
+    drilldown: {
+        animation: false
     }
 });
 // Save default functions from the default options, as they are not stringified

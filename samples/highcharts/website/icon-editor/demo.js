@@ -442,10 +442,8 @@ const fjordsAbout =  function () {
                     load: function () {
                         const chart = this;
                         let sunCount = 80;
-                        const fjordDepth = document.querySelector('.depth');
                         const sun = document.querySelector('.sun');
                         const cover = document.querySelector('.cover');
-                        const temps = document.querySelector('.temps');
 
                         let delay = 0;
                         if (!reduced) {
@@ -618,14 +616,9 @@ const fjordsAbout =  function () {
                             chart.series[4].hide();
                             ///expand the width of the water
                             chart.series[14].data[1].update({ x: 40 });
-                            ///fjord water
-                            fjordDepth.style.fill = '#2b908f';
                         }, 3000 + delay);
 
                         setTimeout(function () {
-
-                            ///puts the final fjord in front
-                            chart.series[18].update({ zIndex: 18 });
 
                             ///move the sun
                             sun.classList.add('move');
@@ -668,10 +661,6 @@ const fjordsAbout =  function () {
                                     b.style.opacity = 1;
                                 }
                             );
-                            ///hides a bunch series no longer needed
-                            ///make the sun and fjord water the right temperature
-                            // sun.classList.add('jan');
-                            temps.classList.add('jan');
 
                             //show the title
                             document.getElementById('title').classList.add('show');
@@ -1068,169 +1057,6 @@ const fjordsAbout =  function () {
                     enableMouseTracking: false
 
 
-                },
-                //16 spline - bird small - 18
-                {
-                    type: 'spline',
-                    color: 'red',
-                    lineColor: 'transparent',
-                    lineWidth: 3,
-                    name: 'bird-small',
-                    data: [
-                        { x: 0,   y: 13.9 }
-                    ],
-                    zIndex: 18,
-                    visible: false
-
-                },
-                //17 spline - bird larger - 18
-                {
-                    type: 'spline',
-                    color: 'blue',
-                    lineColor: 'transparent',
-                    lineWidth: 3,
-                    name: 'bird-large',
-                    data: [
-                        { x: 0, y: 13.9 }
-                    ],
-                    zIndex: 18,
-                    visible: false
-
-                },
-                //18 areaspline - 6
-                {
-                    type: 'area',
-                    name: 'Sognefjorden',
-                    animation: false,
-                    className: 'depth',
-                    lineWidth: 3,
-                    yAxis: 1,
-                    xAxis: 1,
-                    zoneAxis: 'y',
-                    zones: [{
-                        value: 0
-
-                    }],
-                    marker: {
-                        enabled: false
-                    },
-                    data: [
-                        { x: 20.5, y: -2 },
-                        {
-                            x: 20.6,
-                            y: 16,
-                            dataLabels: {
-                                enabled: false,
-                                useHTML: true,
-                                formatter: function () {
-                                    return `<p style="margin-left:-20px;
-                                    font-weight:400">Storehaugen</p>`;
-                                }
-                            }
-                        },
-                        { x: 23, y: 10.9 },
-                        {
-                            x: 23.92,
-                            y: 9.92,
-                            dataLabels: {
-                                enabled: false,
-                                useHTML: true,
-                                formatter: function () {
-                                    return `<p style="padding-left:100px;
-                                    font-weight:400">Sogndal Airport</p>`;
-                                }
-                            }
-                        },
-                        { x: 25.58, y: 7.31 },
-                        { x: 26.88, y: 3.6 },
-                        { x: 28.4, y: 0.6 },
-                        { x: 29.92, y: -1.64 },
-
-                        { x: 30.8, y: -1.6 },
-                        { x: 32.2, y: 1.16 },
-                        { x: 33.62, y: 2.84 },
-                        { x: 34, y: 5.1 },
-                        { x: 35, y: 7.5 },
-                        {
-                            x: 36,
-                            y: 9.8,
-                            dataLabels: {
-                                enabled: true,
-                                useHTML: true,
-                                formatter: function () {
-                                    // return `<p style="padding-bottom:20px">Åsen</p>`
-                                }
-                            }
-                        },
-                        { x: 37, y: 11 },
-                        {
-                            x: 39.7,
-                            y: 15,
-                            dataLabels: {
-                                enabled: true,
-                                useHTML: true,
-                                formatter: function () {
-                                    // return `<p style="">Middagsnosi</p>`
-                                }
-                            }
-                        },
-                        { x: 39.7, y: -2 }
-
-                    ],
-                    zIndex: 1,
-                    visible: true
-
-                },
-                ///19 arearange temperatures
-                {
-                    type: 'arearange',
-                    zIndex: 30,
-                    yAxis: 1,
-                    className: 'temps',
-                    dataLabels: {
-                        enabled: false,
-                        allowOverlap: true
-
-                    },
-                    enableMouseTracking: false,
-                    data: [
-                        { x: 4.4, low: 6.36, high: 6.47 },
-                        { x: 5.2, low: 4.18, high: 6.47 },
-                        { x: 6.2, low: 2.56,  high: 6.47 },
-                        {
-                            x: 8,
-                            low: -2,
-                            high: 6.47,
-                            dataLabels: {
-                                enabled: false,
-                                useHTML: true,
-                                formatter: function () {
-                                    return `
-                                    <div id="temp-data" class="hide">
-                                    <span style="color:#000;">6°C</span>
-                                    <span style="color:#000;">5°C</span>
-                                    <span style="color:#000;">5°C</span>
-                                    <span style="color:#000;">6°C</span>
-                                    <span style="color:#000;">9°C</span>
-                                    <span style="color:#fff;">12°C</span>
-                                    <span style="color:#fff;">14°C</span>
-                                    <span style="color:#fff;">15°C</span>
-                                    <span style="color:#fff;">13°C</span>
-                                    <span style="color:#fff;">11°C</span>
-                                    <span style="color:#000;">9°C</span>
-                                    <span style="color:#000;">7°C</span>
-                                    </div>
-                                    `;
-                                }
-                            }
-
-                        },
-                        { x: 13.2, low: -2, high: 6.47 },
-                        { x: 13.8, low: -0.2, high: 6.47 },
-                        { x: 15.2, low: 3.5, high: 6.47 },
-
-                        { x: 16, low: 6.42,  high: 6.47 }
-                    ]
                 }
             ]
         }

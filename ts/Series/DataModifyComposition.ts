@@ -738,6 +738,7 @@ export default DataModifyComposition;
  * @type      {string}
  * @since     1.0.1
  * @product   highstock
+ * @validvalue ["percent", "value"]
  * @apioption plotOptions.series.compare
  */
 

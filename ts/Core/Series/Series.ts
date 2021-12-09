@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
@@ -1777,7 +1778,9 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = options.data,
+            dataOptions = (
+                (series as unknown as MapSeries).processedData || options.data
+            ),
             processedXData = series.processedXData,
             processedYData = series.processedYData,
             PointClass = series.pointClass,
@@ -3953,7 +3956,12 @@ class Series {
         }
         (dataOptions as any).splice(i, 0, options);
 
-        if (isInTheMiddle) {
+        if (
+            isInTheMiddle ||
+            // When processedData is present we need to splice an empty slot
+            // into series.data, otherwise generatePoints won't pick it up.
+            (series as unknown as MapSeries).processedData
+        ) {
             series.data.splice(i, 0, null as any);
             series.processData();
         }
@@ -4197,6 +4205,8 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            options.joinBy ||
+            options.mapData || // #11636
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
@@ -4294,8 +4304,6 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
-                // @todo slow, consider alternatives mentioned:
-                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,

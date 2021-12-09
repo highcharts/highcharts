@@ -2463,7 +2463,11 @@ class Navigator {
         return this.baseSeries.reduce(
             function (min: number, series: Series): number {
                 // (#10193)
-                return Math.min(min, series.xData ? series.xData[0] : min);
+                return Math.min(
+                    min,
+                    series.xData && series.xData.length ?
+                        series.xData[0] : min
+                );
             },
             currentSeriesMin
         );
