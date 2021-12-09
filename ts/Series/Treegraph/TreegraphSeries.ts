@@ -101,6 +101,11 @@ class TreegraphSeries extends OrganizationSeries {
         ];
     }
 
+    public data: Array<TreegraphPoint> = void 0 as any;
+
+    public options: TreegraphSeriesOptions = void 0 as any;
+
+    public points: Array<TreegraphPoint> = void 0 as any;
     /* *
      *
      *  Functions

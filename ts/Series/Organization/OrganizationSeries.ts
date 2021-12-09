@@ -45,7 +45,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import TreegraphSeriesOptions from '../Treegraph/TreegraphSeriesOptions';
 const {
     css,
     extend,
@@ -375,7 +374,7 @@ class OrganizationSeries extends SankeySeries {
 
     public data: Array<OrganizationPoint> = void 0 as any;
 
-    public options: TreegraphSeriesOptions = void 0 as any;
+    public options: OrganizationSeriesOptions = void 0 as any;
 
     public points: Array<OrganizationPoint> = void 0 as any;
 
