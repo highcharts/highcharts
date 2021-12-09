@@ -145,8 +145,8 @@ class ArcDiagramSeries extends SankeySeries {
                 scale = 1,
                 additionalSpace = 0,
                 remainingWidth =
-                    (chart.plotSizeX as any) -
-                    (series.options.borderWidth as any) -
+                    (chart.plotSizeX || 0) -
+                    (series.options.borderWidth || 0) -
                     (column.length - 1) *
                     series.nodePadding;
 
@@ -213,7 +213,7 @@ class ArcDiagramSeries extends SankeySeries {
                     maxRadius :
                     Math.max(
                         sum * factor,
-                        series.options.minLinkWidth as any
+                        series.options.minLinkWidth || 0
                     );
 
                 if (sum) {
@@ -301,7 +301,7 @@ class ArcDiagramSeries extends SankeySeries {
 
         if ((chart as any).options.chart.reversed) {
             [fromX, toX] = [toX, fromX];
-            bottom = (chart.plotSizeY as any) - bottom;
+            bottom = (chart.plotSizeY || 0) - bottom;
             linkWidth = -linkWidth;
         }
 
@@ -400,7 +400,7 @@ class ArcDiagramSeries extends SankeySeries {
                 maxRadius :
                 Math.max(
                     sum * translationFactor,
-                    this.options.minLinkWidth as any
+                    this.options.minLinkWidth || 0
                 ),
             crisp = Math.round(options.borderWidth || 0) % 2 / 2,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
@@ -426,8 +426,8 @@ class ArcDiagramSeries extends SankeySeries {
                 ) / 100 :
                 (chart.inverted ?
                     chart.plotWidth : chart.plotHeight) - (Math.floor(
-                    this.colDistance * (node.column as any) +
-                    (options.borderWidth as any) / 2
+                    this.colDistance * (node.column || 0) +
+                    (options.borderWidth || 0) / 2
                 ) + crisp +
                 (column.sankeyColumn.scale || 0) *
                     (column.sankeyColumn.maxRadius || 0) / 2
@@ -446,9 +446,9 @@ class ArcDiagramSeries extends SankeySeries {
                 height = node.options.height || options.height || nodeHeight;
 
             if ((chart as any).options.chart.reversed) {
-                y = (chart.plotSizeY as any) - top;
+                y = (chart.plotSizeY || 0) - top;
                 if (chart.inverted) {
-                    y = (chart.plotSizeY as any) - top;
+                    y = (chart.plotSizeY || 0) - top;
                 }
             }
 
@@ -464,8 +464,8 @@ class ArcDiagramSeries extends SankeySeries {
 
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) - y - height / 2,
-                (chart.plotSizeX as any) - x - width / 2
+                (chart.plotSizeY || 0) - y - height / 2,
+                (chart.plotSizeX || 0) - x - width / 2
             ] : [
                 x + width / 2,
                 y + height / 2
