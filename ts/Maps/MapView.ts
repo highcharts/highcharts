@@ -117,10 +117,17 @@ class MapView {
         options?: DeepPartial<MapViewOptions>
     ) {
 
-        this.geoMap = this.getGeoMap(chart.options.chart.map);
+        if (!(this instanceof MapViewInset)) {
+            this.geoMap = this.getGeoMap(chart.options.chart.map);
+        }
 
         this.userOptions = options || {};
-        const o = merge(defaultOptions, options);
+
+        const o = merge(
+            defaultOptions,
+            this.geoMap && this.geoMap['hc-recommended-mapview'],
+            options
+        );
 
         this.chart = chart;
 

@@ -8,7 +8,7 @@
  *
  * */
 
-import type { LonLatArray } from './MapViewOptions';
+import type { LonLatArray, MapViewOptions } from './MapViewOptions';
 
 export interface BaseGeometry {
     arcs?: number[]|number[][]|number[][][];
@@ -64,6 +64,7 @@ export interface GeoJSON {
     crs?: AnyRecord;
     features: Array<GeoJSONFeature>;
     'hc-transform'?: Record<string, GeoJSONTransform>;
+    'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
     title?: string;
     type: 'FeatureCollection';
     version?: string;
@@ -103,6 +104,7 @@ interface TopoJSONObjects {
 interface TopoJSONObject {
     geometries: GeoJSONGeometry[];
     'hc-decoded-geojson'?: GeoJSON;
+    'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
 }
 interface TopoJSONTransform {
     scale: [number, number];
