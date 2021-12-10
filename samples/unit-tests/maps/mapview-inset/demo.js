@@ -48,6 +48,9 @@ QUnit.test('MapView Inset', assert => {
             projection: {
                 name: 'EqualEarth'
             },
+            insetOptions: {
+                relativeTo: 'plotBox'
+            },
             insets: [{
                 field: {
                     type: 'Polygon',

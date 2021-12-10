@@ -24,8 +24,8 @@ const defaultOptions: MapViewInsetsOptions = {
     borderColor: Palette.neutralColor10,
     borderWidth: 1,
     center: [0, 0],
-    padding: 5,
-    relativeTo: 'plotBox',
+    padding: '10%',
+    relativeTo: 'mapBoundingBox',
     units: 'percent'
 };
 
