@@ -58,6 +58,7 @@ interface GeoJSONGeometryRegistry extends GeoJSONGeometryMultiPointRegistry {
 type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
 
 export interface GeoJSON {
+    bbox: [number, number, number, number];
     copyright?: string;
     copyrightShort?: string;
     copyrightUrl?: string;
@@ -90,6 +91,7 @@ interface GeoJSONTransform {
 
 export interface TopoJSON {
     arcs: number[][][];
+    bbox: [number, number, number, number];
     copyright?: string;
     copyrightShort?: string;
     copyrightUrl?: string;

@@ -14,6 +14,7 @@ import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type ProjectionOptions from './ProjectionOptions';
 import type {
     LonLatArray,
     MapBounds,
@@ -117,15 +118,43 @@ class MapView {
         options?: DeepPartial<MapViewOptions>
     ) {
 
+        let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
+        let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
-            this.geoMap = this.getGeoMap(chart.options.chart.map);
+            // Handle the global map
+            const geoMap = this.getGeoMap(chart.options.chart.map);
+
+            // Handle the recommended map view if set
+            if (geoMap) {
+                recommendedMapView = geoMap['hc-recommended-mapview'];
+
+                // Provide a buest-guess recommended projection if not set in
+                // the map or in user options
+                if (geoMap.bbox) {
+                    const [x1, y1, x2, y2] = geoMap.bbox;
+                    if (x2 - x1 > 180 && y2 - y1 > 90) {
+                        recommendedProjection = {
+                            name: 'EqualEarth'
+                        };
+                    } else {
+                        recommendedProjection = {
+                            name: 'LambertConformalConic',
+                            parallels: [y1, y2],
+                            rotation: [-(x1 + x2) / 2]
+                        };
+                    }
+                }
+            }
+
+            this.geoMap = geoMap;
         }
 
         this.userOptions = options || {};
 
         const o = merge(
             defaultOptions,
-            this.geoMap && this.geoMap['hc-recommended-mapview'],
+            { projection: recommendedProjection },
+            recommendedMapView,
             options
         );
 

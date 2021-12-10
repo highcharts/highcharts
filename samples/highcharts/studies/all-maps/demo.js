@@ -142,18 +142,16 @@ $("#mapDropdown").on('change', async function () {
     // Instantiate chart
     Highcharts.mapChart('container', {
 
+        chart: {
+            map: mapData
+        },
+
         title: {
             text: null
         },
 
         mapNavigation: {
             enabled: true
-        },
-
-        mapView: {
-            projection: {
-                name: 'WebMercator'
-            }
         },
 
         colorAxis: {
@@ -177,7 +175,6 @@ $("#mapDropdown").on('change', async function () {
 
         series: [{
             data,
-            mapData,
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
             states: {
@@ -187,20 +184,18 @@ $("#mapDropdown").on('change', async function () {
             },
             dataLabels: {
                 enabled: showDataLabels,
-                formatter
+                formatter,
+                style: {
+                    fontWeight: 100,
+                    fontSize: '10px',
+                    textOutline: 'none'
+                }
             },
             point: {
                 events: {
                     click: onPointClick
                 }
             }
-        }, {
-            type: 'mapline',
-            name: "Separators",
-            data: Highcharts.geojson(mapData, 'mapline'),
-            nullColor: 'gray',
-            showInLegend: false,
-            enableMouseTracking: false
         }]
     });
 
