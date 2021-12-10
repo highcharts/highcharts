@@ -858,13 +858,13 @@ class Axis {
             }
             returnValue = isNumber(localMin) ?
                 (
-                    sign * (val - (localMin as any)) * localA +
+                    correctFloat(sign * (val - (localMin as any)) * localA +
                     cvsOffset +
                     (sign * minPixelPadding) +
                     (isNumber(pointPlacement) ?
                         localA * (pointPlacement as any) :
                         0
-                    )
+                    ))
                 ) :
                 void 0 as any;
         }

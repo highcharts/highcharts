@@ -37,9 +37,10 @@ QUnit.test('Positions of the points.', function (assert) {
         max: 5
     });
 
-    assert.strictEqual(
+    assert.close(
         yAxis.endAngleRad,
         series.points[7].shapeArgs.end,
+        0.00000001,
         "The last point's end is in a correct place."
     );
 
@@ -77,7 +78,10 @@ QUnit.test('Positions of the points.', function (assert) {
     });
 
     series.points.forEach(function (point) {
-        if (point.shapeArgs.end === yAxis.endAngleRad) {
+        if (
+            Highcharts.correctFloat(point.shapeArgs.end) ===
+            Highcharts.correctFloat(yAxis.endAngleRad)
+        ) {
             customSum++;
         }
     });
@@ -98,7 +102,10 @@ QUnit.test('Positions of the points.', function (assert) {
     });
 
     series.points.forEach(function (point) {
-        if (point.shapeArgs.start !== point.shapeArgs.end) {
+        if (
+            Highcharts.correctFloat(point.shapeArgs.end) !==
+            Highcharts.correctFloat(yAxis.endAngleRad)
+        ) {
             customSum++;
         }
     });
@@ -175,7 +182,7 @@ QUnit.test('Positions of the stacked points.', function (assert) {
     });
 
     assert.strictEqual(
-        yAxis.endAngleRad - yAxis.startAngleRad,
+        Highcharts.correctFloat(yAxis.endAngleRad - yAxis.startAngleRad),
         yAxis.translate(firstSeries.stackedYData[6]),
         'The point[0] of both series are correctly stacked.'
     );
