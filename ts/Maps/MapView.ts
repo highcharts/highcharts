@@ -12,7 +12,7 @@
 
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type { Polygon } from './GeoJSON';
+import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type {
     LonLatArray,
@@ -27,6 +27,14 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import defaultOptions from './MapViewOptionsDefault.js';
 import defaultInsetsOptions from './MapViewInsetsOptionsDefault.js';
+import GeoJSONModule from '../Extensions/GeoJSON.js';
+const {
+    topo2geo
+} = GeoJSONModule;
+import MapChart from '../Core/Chart/MapChart.js';
+const {
+    maps
+} = MapChart;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
@@ -34,6 +42,8 @@ const {
     clamp,
     fireEvent,
     isNumber,
+    isObject,
+    isString,
     merge,
     pick,
     relativeLength
@@ -70,6 +80,7 @@ const tileSize = 256;
 class MapView {
 
     public center: LonLatArray;
+    public geoMap?: GeoJSON;
     public group?: SVGElement;
     public insets: MapViewInset[] = [];
     public minZoom?: number;
@@ -105,8 +116,10 @@ class MapView {
         chart: Chart,
         options?: DeepPartial<MapViewOptions>
     ) {
-        this.userOptions = options || {};
 
+        this.geoMap = this.getGeoMap(chart.options.chart.map);
+
+        this.userOptions = options || {};
         const o = merge(defaultOptions, options);
 
         this.chart = chart;
@@ -221,6 +234,20 @@ class MapView {
             width: this.chart.plotWidth,
             height: this.chart.plotHeight
         };
+    }
+
+    public getGeoMap(map?: string|GeoJSON|TopoJSON): GeoJSON|undefined {
+        if (isString(map)) {
+            return maps[map];
+        }
+        if (isObject(map)) {
+            if (map.type === 'FeatureCollection') {
+                return map;
+            }
+            if (map.type === 'Topology') {
+                return topo2geo(map);
+            }
+        }
     }
 
     public getMapBBox(): BBoxObject|undefined {
@@ -860,5 +887,11 @@ class MapViewInset extends MapView {
     setUpEvents(): void {}
 
 }
+
+// Initialize the MapView after initialization, but before firstRender
+addEvent(MapChart, 'afterInit', function (): void {
+    this.mapView = new MapView(this, this.options.mapView);
+});
+
 
 export default MapView;

@@ -9,6 +9,9 @@ QUnit.module('MapView', () => {
         QUnit.test('options: ' + JSON.stringify(options), assert => {
 
             const mapView = new MapView({
+                options: {
+                    chart: {}
+                },
                 plotWidth: 1000,
                 plotHeight: 1000
             }, options);

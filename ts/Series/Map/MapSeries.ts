@@ -20,6 +20,7 @@ import type {
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type { GeoJSON, Polygon, TopoJSON } from '../../Maps/GeoJSON';
 import type { LonLatArray, MapBounds } from '../../Maps/MapViewOptions';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
@@ -70,6 +71,7 @@ const {
     getNestedProperty,
     isArray,
     isNumber,
+    isObject,
     merge,
     objectEach,
     pick,
@@ -100,7 +102,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
-        mapData?: (Array<MapPointOptions>|any);
+        mapData?: (Array<MapPointOptions>|GeoJSON|TopoJSON);
     }
     interface SeriesStateHoverOptions
     {
@@ -963,28 +965,51 @@ class MapSeries extends ScatterSeries {
         const options = this.options,
             data = options.data,
             chartOptions = this.chart.options.chart,
-            globalMapData = chartOptions && chartOptions.map,
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
             dataUsed: Array<MapPointOptions> = [],
             mapMap: AnyRecord = {};
 
-        let mapData = options.mapData,
+        let mapView = this.chart.mapView,
+            mapDataObject = mapView && (
+                // Get map either from series or global
+                isObject(options.mapData, true) ?
+                    mapView.getGeoMap(options.mapData) : mapView.geoMap
+            ),
             mapTransforms = this.chart.mapTransforms,
             mapPoint,
             props,
             i;
 
+        // Pick up transform definitions for chart
+        this.chart.mapTransforms = mapTransforms =
+            chartOptions.mapTransforms ||
+            mapDataObject && mapDataObject['hc-transform'] ||
+            mapTransforms;
+
+        // Cache cos/sin of transform rotation angle
+        if (mapTransforms) {
+            objectEach(mapTransforms, function (transform: any): void {
+                if (transform.rotation) {
+                    transform.cosAngle = Math.cos(transform.rotation);
+                    transform.sinAngle = Math.sin(transform.rotation);
+                }
+            });
+        }
+
+        let mapData: MapPointOptions[]|undefined;
+        if (isArray(options.mapData)) {
+            mapData = options.mapData;
+        } else if (
+            mapDataObject && mapDataObject.type === 'FeatureCollection'
+        ) {
+            this.mapTitle = mapDataObject.title;
+            mapData = H.geojson(mapDataObject, this.type, this);
+        }
+
         // Reset processedData
         this.processedData = [];
         const processedData = this.processedData;
-
-        // Collect mapData from chart options if not defined on series
-        if (!mapData && globalMapData) {
-            mapData = typeof globalMapData === 'string' ?
-                maps[globalMapData] :
-                globalMapData;
-        }
 
         // Pick up numeric values, add index. Convert Array point definitions to
         // objects using pointArrayMap.
@@ -1034,31 +1059,7 @@ class MapSeries extends ScatterSeries {
             });
         }
 
-        // Pick up transform definitions for chart
-        this.chart.mapTransforms = mapTransforms =
-            chartOptions.mapTransforms ||
-            mapData && mapData['hc-transform'] ||
-            mapTransforms;
-
-        // Cache cos/sin of transform rotation angle
-        if (mapTransforms) {
-            objectEach(mapTransforms, function (transform: any): void {
-                if (transform.rotation) {
-                    transform.cosAngle = Math.cos(transform.rotation);
-                    transform.sinAngle = Math.sin(transform.rotation);
-                }
-            });
-        }
-
         if (mapData) {
-            if (
-                mapData.type === 'FeatureCollection' ||
-                mapData.type === 'Topology'
-            ) {
-                this.mapTitle = mapData.title;
-                mapData = H.geojson(mapData, this.type, this);
-            }
-
             this.mapData = mapData;
             this.mapMap = {};
 
@@ -1066,12 +1067,12 @@ class MapSeries extends ScatterSeries {
                 mapPoint = mapData[i];
                 props = mapPoint.properties;
 
-                mapPoint._i = i;
+                (mapPoint as any)._i = i;
                 // Copy the property over to root for faster access
                 if (joinBy[0] && props && props[joinBy[0]]) {
-                    mapPoint[joinBy[0]] = props[joinBy[0]];
+                    (mapPoint as any)[joinBy[0]] = props[joinBy[0]];
                 }
-                mapMap[mapPoint[joinBy[0]]] = mapPoint;
+                mapMap[(mapPoint as any)[joinBy[0]]] = mapPoint;
             }
             this.mapMap = mapMap;
 

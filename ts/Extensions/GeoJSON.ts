@@ -533,7 +533,7 @@ Chart.prototype.fromLatLonToPoint = function (
  * handled.
  * Based on https://github.com/topojson/topojson-specification
 */
-const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
+function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
 
     // Decode first object/feature as default
     if (!objectName) {
@@ -602,7 +602,7 @@ const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
     object['hc-decoded-geojson'] = geojson;
 
     return geojson;
-};
+}
 
 /**
  * Highcharts Maps only. Restructure a GeoJSON or TopoJSON object in preparation
@@ -632,12 +632,12 @@ const topo2geo = (topology: TopoJSON, objectName?: string): GeoJSON => {
  *
  * @return {Array<*>} An object ready for the `mapData` option.
  */
-H.geojson = function (
+function geojson(
     json: GeoJSON|TopoJSON,
     hType: string = 'map',
     series?: Series
-): Array<any> {
-    const mapData = [] as Array<any>;
+): (MapPointOptions|MapPointPointOptions)[] {
+    const mapData: (MapPointOptions|MapPointPointOptions)[] = [];
 
     const geojson = json.type === 'Topology' ? topo2geo(json) : json;
 
@@ -707,7 +707,7 @@ H.geojson = function (
     }
 
     return mapData;
-};
+}
 
 // Override addCredits to include map source by default
 wrap(Chart.prototype, 'addCredits', function (
@@ -733,3 +733,11 @@ wrap(Chart.prototype, 'addCredits', function (
         });
     }
 });
+
+H.geojson = geojson;
+
+const GeoJSONModule = {
+    geojson,
+    topo2geo
+};
+export default GeoJSONModule;

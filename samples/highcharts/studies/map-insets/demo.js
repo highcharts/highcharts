@@ -42,7 +42,7 @@ Highcharts.getJSON(
                 enabled: true
             },
 
-            mapView: {
+            _mapView: {
                 projection: {
                     name: 'LambertConformalConic',
                     parallels: [33, 45],
@@ -171,6 +171,7 @@ Highcharts.getJSON(
                                 ]
                             ]
                         },
+                        padding: '20%',
                         projection: {
                             name: 'LambertConformalConic',
                             parallels: [8, 18],

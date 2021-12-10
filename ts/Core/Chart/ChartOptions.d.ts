@@ -21,7 +21,7 @@ import type Axis from '../Axis/Axis';
 import type Chart from './Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
-import type GeoJSON from '../../Maps/GeoJSON';
+import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
@@ -98,7 +98,7 @@ export interface ChartOptions {
     height?: (null|number|string);
     ignoreHiddenSeries?: boolean;
     inverted?: boolean;
-    map?: string|Array<any>|GeoJSON;
+    map?: string|GeoJSON|TopoJSON;
     mapTransforms?: any;
     margin?: (number|Array<number>);
     marginBottom?: number;
