@@ -37,7 +37,7 @@ QUnit.test('Reversed solid gauge(#4434)', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[0].shapeArgs.start,
-        -Math.PI * 0.75,
+        Highcharts.correctFloat(-Math.PI * 0.75),
         'Start at 50'
     );
     assert.strictEqual(chart.series[0].points[0].shapeArgs.end, 0, 'End at 0');
