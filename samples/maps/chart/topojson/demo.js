@@ -8,8 +8,7 @@ Highcharts.getJSON(
         // Initialize the chart
         Highcharts.mapChart('container', {
             chart: {
-                map: topology,
-                plotBorderWidth: 1
+                map: topology
             },
 
             title: {
