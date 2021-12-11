@@ -5,7 +5,6 @@
  * https://www.highcharts.com/maps/demo/geojson instead.
  *
  * @todo
- * - Automatic projection from bbox, no WebMercator
  * - Remove jQuery where not necessary (the combobox is probably still best
  *   implemented with jQuery UI)
  */
@@ -64,11 +63,20 @@ $("#mapDropdown").on('change', async function () {
     }
 
     // Load the map
+    let filesize = '';
     const mapData = await fetch(topojsonPath)
-        .then(response => response.json());
+        .then(response => {
+            const size = response.headers.get('content-length');
+            if (size) {
+                filesize = Math.round(size / 1024) + ' kB';
+            }
+
+            return response.json();
+        });
 
     // Update info box download links
     $("#download").html(
+        '<small>' + filesize + '</small> <br><br>' +
         '<a class="button" target="_blank" href="https://jsfiddle.net/gh/get/jquery/1.11.0/' +
             'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
             'View clean demo</a>' +

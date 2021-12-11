@@ -305,17 +305,25 @@ class MapView {
             scale = this.getScale();
 
         if (bounds) {
-            const p1 = this.projectedUnitsToPixels({
+            const padding = this.padding,
+                p1 = this.projectedUnitsToPixels({
                     x: bounds.x1,
                     y: bounds.y2
                 }),
-                width = (bounds.x2 - bounds.x1) * scale,
-                height = (bounds.y2 - bounds.y1) * scale;
+                width = (
+                    (bounds.x2 - bounds.x1) * scale +
+                    padding[1] + padding[3]
+                ),
+                height = (
+                    (bounds.y2 - bounds.y1) * scale +
+                    padding[0] + padding[2]
+                );
+
             return {
                 width,
                 height,
-                x: p1.x,
-                y: p1.y
+                x: p1.x + padding[3],
+                y: p1.y + padding[0]
             };
         }
 
