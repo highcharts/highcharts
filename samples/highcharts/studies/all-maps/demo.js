@@ -159,7 +159,11 @@ $("#mapDropdown").on('change', async function () {
         },
 
         mapNavigation: {
-            enabled: true
+            enabled: true,
+            buttonOptions: {
+                alignTo: 'spacingBox',
+                x: 10
+            }
         },
 
         colorAxis: {
@@ -204,6 +208,13 @@ $("#mapDropdown").on('change', async function () {
                     click: onPointClick
                 }
             }
+        }, {
+            type: 'mapline',
+            name: "Lines",
+            data: Highcharts.geojson(mapData, 'mapline'),
+            nullColor: '#333333',
+            showInLegend: false,
+            enableMouseTracking: false
         }]
     });
 
