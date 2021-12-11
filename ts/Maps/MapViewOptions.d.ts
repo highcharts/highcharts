@@ -32,6 +32,12 @@ declare module '../Core/Options' {
 
 export type LonLatArray = [number, number];
 
+export type MapViewPaddingType = (
+    number|
+    string|
+    [number|string, number|string, number|string, number|string]
+);
+
 export interface ProjectedXY {
     x: number;
     y: number;
@@ -68,7 +74,7 @@ export interface MapViewOptions {
     insetOptions?: MapViewInsetOptionsOptions;
     insets?: MapViewInsetsOptions[];
     maxZoom?: number;
-    padding: (number|string);
+    padding: MapViewPaddingType;
     projection?: ProjectionOptions;
     zoom?: number;
 }

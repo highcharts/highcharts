@@ -20,6 +20,7 @@ import type {
     MapBounds,
     MapViewInsetsOptions,
     MapViewOptions,
+    MapViewPaddingType,
     ProjectedXY
 } from './MapViewOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -38,10 +39,12 @@ const {
 } = MapChart;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
+import TilemapShapes from '../Series/Tilemap/TilemapShapes';
 const {
     addEvent,
     clamp,
     fireEvent,
+    isArray,
     isNumber,
     isObject,
     isString,
@@ -86,6 +89,7 @@ class MapView {
     public insets: MapViewInset[] = [];
     public minZoom?: number;
     public options: MapViewOptions;
+    public padding: [number, number, number, number] = [0, 0, 0, 0];
     public projection: Projection;
     public svgTransform?: SVGTransformType;
     public userOptions: DeepPartial<MapViewOptions>;
@@ -230,7 +234,7 @@ class MapView {
      */
     public fitToBounds(
         bounds?: MapBounds,
-        padding?: (number|string),
+        padding?: MapViewPaddingType,
         redraw = true,
         animation?: boolean|Partial<AnimationOptions>
     ): void {
@@ -238,14 +242,23 @@ class MapView {
         const b = bounds || this.getProjectedBounds();
 
         if (b) {
-            const { width, height } = this.getField(),
-                pad = pick(padding, bounds ? 0 : this.options.padding),
-                paddingX = relativeLength(pad, width),
-                paddingY = relativeLength(pad, height);
+
+            const pad = pick(padding, bounds ? 0 : this.options.padding),
+                fullField = this.getField(false),
+                padArr = isArray(pad) ? pad : [pad, pad, pad, pad];
+
+            this.padding = [
+                relativeLength(padArr[0], fullField.height),
+                relativeLength(padArr[1], fullField.width),
+                relativeLength(padArr[2], fullField.height),
+                relativeLength(padArr[3], fullField.width)
+            ];
+
+            const { width, height } = this.getField();
 
             const scaleToPlotArea = Math.max(
-                (b.x2 - b.x1) / ((width - paddingX) / tileSize),
-                (b.y2 - b.y1) / ((height - paddingY) / tileSize)
+                (b.x2 - b.x1) / (width / tileSize),
+                (b.y2 - b.y1) / (height / tileSize)
             );
             const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
 
@@ -263,12 +276,13 @@ class MapView {
         }
     }
 
-    public getField(): BBoxObject {
+    public getField(padded: boolean = true): BBoxObject {
+        const padding = padded ? this.padding : [0, 0, 0, 0];
         return {
-            x: 0,
-            y: 0,
-            width: this.chart.plotWidth,
-            height: this.chart.plotHeight
+            x: padding[3],
+            y: padding[0],
+            width: this.chart.plotWidth - padding[1] - padding[3],
+            height: this.chart.plotHeight - padding[0] - padding[2]
         };
     }
 
@@ -807,17 +821,18 @@ class MapViewInset extends MapView {
     }
 
     // Get the playing field in pixels
-    getField(): BBoxObject {
+    getField(padded: boolean = true): BBoxObject {
         const hitZone = this.hitZone;
         if (hitZone) {
             // @todo: Cache. Called 4 times on first render.
-            const polygon = hitZone.coordinates[0];
-            const xs = polygon.map((xy): number => xy[0]),
+            const padding = padded ? this.padding : [0, 0, 0, 0],
+                polygon = hitZone.coordinates[0],
+                xs = polygon.map((xy): number => xy[0]),
                 ys = polygon.map((xy): number => xy[1]),
-                x = Math.min.apply(0, xs),
-                x2 = Math.max.apply(0, xs),
-                y = Math.min.apply(0, ys),
-                y2 = Math.max.apply(0, ys);
+                x = Math.min.apply(0, xs) + padding[3],
+                x2 = Math.max.apply(0, xs) - padding[1],
+                y = Math.min.apply(0, ys) + padding[0],
+                y2 = Math.max.apply(0, ys) - padding[2];
 
             if (isNumber(x) && isNumber(y)) {
                 return {
@@ -830,7 +845,7 @@ class MapViewInset extends MapView {
         }
 
         // Fall back to plot area
-        return super.getField.call(this);
+        return super.getField.call(this, padded);
 
     }
 

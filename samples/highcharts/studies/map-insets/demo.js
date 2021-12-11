@@ -122,7 +122,8 @@ Highcharts.getJSON(
                         // Optionally ties in features/geometries
                         id: 'us-all-alaska',
 
-                        // Padding inside the frame, like mapView.padding
+                        // Padding inside the frame, like mapView.padding.
+                        // Number|percent or array of number|percent.
                         padding: 10,
 
                         // Projection to use within the inset, defaults to best
