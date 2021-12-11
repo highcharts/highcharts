@@ -569,11 +569,23 @@ function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
     ): number[] => {
         if (typeof arcs[0] === 'number') {
             return arcs.reduce(
-                (coordinates: number[], arc: number, i: number): number[] =>
-                    coordinates.concat(
-                        (arc < 0 ? arcsArray[~arc].reverse() : arcsArray[arc])
-                            .slice(i === 0 ? 0 : 1)
-                    ),
+                (coordinates: number[], arcNo: number, i: number): number[] => {
+                    let arc = arcNo < 0 ? arcsArray[~arcNo] : arcsArray[arcNo];
+
+                    // The first point of an arc is always identical to the last
+                    // point of the previes arc, so slice it off to save further
+                    // processing.
+                    if (arcNo < 0) {
+                        arc = arc.slice(
+                            0,
+                            i === 0 ? arc.length : arc.length - 1
+                        );
+                        arc.reverse();
+                    } else if (i) {
+                        arc = arc.slice(1);
+                    }
+                    return coordinates.concat(arc);
+                },
                 []
             );
         }
