@@ -129,7 +129,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
-    "jspdf-yworks": "^2.0.1",
-    "svg2pdf.js": "^1.3.3"
+    "jspdf": "^2.4.0",
+    "svg2pdf.js": "^2.2.0"
   }
 }
