@@ -299,7 +299,7 @@ class OrganizationSeries extends SankeySeries {
      */
     public static curvedPath(
         path: SVGPath,
-        r: number
+        r?: number
     ): SVGPath {
         const d: SVGPath = [];
 

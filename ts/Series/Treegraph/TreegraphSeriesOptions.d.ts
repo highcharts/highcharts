@@ -27,6 +27,7 @@ export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
     minLinkWidth: number;
     borderWidth: number;
     alignNodes: string;
+    link: any;
 }
 
 

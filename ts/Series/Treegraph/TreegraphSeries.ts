@@ -69,7 +69,10 @@ class TreegraphSeries extends OrganizationSeries {
             radius: 10,
             alignNodes: 'right',
             minLinkWidth: 1,
-            borderWidth: 1
+            borderWidth: 1,
+            link: {
+                type: 'straight'
+            }
         }
     );
 
@@ -133,27 +136,28 @@ class TreegraphSeries extends OrganizationSeries {
         const fromNode = point.fromNode,
             toNode = point.toNode,
             crisp = (Math.round(this.options.linkLineWidth as any) % 2) / 2,
-            x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,
             percentOffset =
                 /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-            linkOptions = (this.options as any).link,
             inverted = this.chart.inverted;
 
-        let y1 = Math.floor((fromNode.shapeArgs as any).y) + crisp,
-            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
-            xMiddle;
+        /* if (inverted) {
+              x1 -= fromNode.shapeArgs.width;
+              x2 += toNode.shapeArgs.width;
+            } */
 
-        xMiddle =
+        let x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
+            x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
+            y1 = Math.floor((fromNode.shapeArgs as any).y) + crisp,
+            y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
+            xMiddle =
             Math.floor(
                 x2 +
                     ((inverted ? 1 : -1) *
                         (this.colDistance - this.nodeWidth)) /
                         2
             ) + crisp;
-
         // Put the link on the side of the node when an offset is given. HR
         // node in the main demo.
         if (percentOffset && (percentOffset >= 50 || percentOffset <= -50)) {
@@ -165,10 +169,10 @@ class TreegraphSeries extends OrganizationSeries {
                 ) + crisp;
             y2 = (toNode.shapeArgs as any).y;
             if (percentOffset > 0) {
+                //
                 y2 += (toNode.shapeArgs as any).height;
             }
         }
-
         if (toNode.hangsFrom === fromNode) {
             if (this.chart.inverted) {
                 y1 =
@@ -177,36 +181,30 @@ class TreegraphSeries extends OrganizationSeries {
                             (fromNode.shapeArgs as any).height -
                             hangingIndent / 2
                     ) + crisp;
-                y2 =
-                    (toNode.shapeArgs as any).y +
+                y2 = (toNode.shapeArgs as any).y +
                     (toNode.shapeArgs as any).height;
             } else {
-                y1 =
-                    Math.floor(
-                        (fromNode.shapeArgs as any).y + hangingIndent / 2
-                    ) + crisp;
+                y1 = Math.floor(
+                    (fromNode.shapeArgs as any).y + hangingIndent / 2
+                ) + crisp;
             }
             xMiddle = x2 =
                 Math.floor(
                     (toNode.shapeArgs as any).x +
-                        (toNode.shapeArgs as any).width / 2
+                    (toNode.shapeArgs as any).width / 2
                 ) + crisp;
         }
-
         point.plotY = 1;
         point.shapeType = 'path';
 
-        if (linkOptions && linkOptions.type === 'straight') {
+        if (this.options.link && this.options.link.type === 'straight') {
             point.shapeArgs = {
-                d: OrganizationSeries.curvedPath(
-                    [
-                        ['M', x1, y1],
-                        ['L', x2, y2]
-                    ],
-                    linkOptions.width as any
-                )
+                d: TreegraphSeries.curvedPath([
+                    ['M', x1, y1],
+                    ['L', x2, y2]
+                ])
             };
-        } else if (linkOptions && linkOptions.type === 'curved') {
+        } else if (this.options.link.type === 'curved') {
             point.shapeArgs = {
                 d: TreegraphSeries.pointsToPath(
                     {
@@ -222,19 +220,18 @@ class TreegraphSeries extends OrganizationSeries {
             };
         } else {
             point.shapeArgs = {
-                d: OrganizationSeries.curvedPath(
+                d: TreegraphSeries.curvedPath(
                     [
                         ['M', x1, y1],
                         ['L', xMiddle, y1],
                         ['L', xMiddle, y2],
                         ['L', x2, y2]
                     ],
-                    this.options.linkRadius as any
+                    this.options.linkRadius as number
                 )
             };
         }
     }
-
     /**
      * Run translation operations for one node.
      * @private
@@ -319,22 +316,20 @@ class TreegraphSeries extends OrganizationSeries {
             }
             node.shapeArgs.display = node.hasShape() ? '' : 'none';
             // Calculate data label options for the point
-            node.dlOptions = OrganizationSeries.getDLOptions({
+            node.dlOptions = TreegraphSeries.getDLOptions({
                 level: (this.mapOptionsToLevel as any)[node.level],
                 optionsPoint: node.options
             });
             // Pass test in drawPoints
             node.plotY = 1;
             // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ?
-                [
-                    plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
-                    plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
-                ] :
-                [
-                    node.shapeArgs.x + node.shapeArgs.width / 2,
-                    node.shapeArgs.y + node.shapeArgs.height / 2
-                ];
+            node.tooltipPos = chart.inverted ? [
+                plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+            ] : [
+                node.shapeArgs.x + node.shapeArgs.width / 2,
+                node.shapeArgs.y + node.shapeArgs.height / 2
+            ];
         } else {
             node.dlOptions = {
                 enabled: false
