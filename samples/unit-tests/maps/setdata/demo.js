@@ -872,11 +872,13 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     );
 
     // #15782 Right side
-    let mapNavY = chart.mapNavButtons[0].alignAttr.y,
-        exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
+    let mapNavY = chart.navButtonsGroup.getBBox().y +
+            chart.navButtonsGroup.translateY,
+        expBtnBottomEdge = chart.exportingGroup.getBBox().y +
+            chart.exportingGroup.getBBox().height;
 
     assert.ok(
-        mapNavY > (exportIconY + chart.exportingGroup.getBBox().height),
+        mapNavY > expBtnBottomEdge,
         '#15782, mapNav should not overlap with export icon (right side).'
     );
 
@@ -897,11 +899,13 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     });
 
     // #15782 Left side
-    mapNavY = chart.mapNavButtons[0].alignAttr.y;
-    exportIconY = chart.exportSVGElements[0].alignAttr.translateY;
+    mapNavY =
+        chart.navButtonsGroup.getBBox().y + chart.navButtonsGroup.translateY;
+        expBtnBottomEdge = chart.exportingGroup.getBBox().y +
+        chart.exportingGroup.getBBox().height;
 
     assert.ok(
-        mapNavY > (exportIconY + chart.exportingGroup.getBBox().height),
+        mapNavY > expBtnBottomEdge,
         '#15782, mapNav should not overlap with export icon (left side).'
     );
 });

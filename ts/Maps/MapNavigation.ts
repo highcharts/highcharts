@@ -64,6 +64,7 @@ declare global {
 
         interface MapNavigationChart extends Chart {
             mapNavButtons: Array<SVGElement>;
+            navButtonsGroup: SVGElement;
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
@@ -186,7 +187,9 @@ MapNavigation.prototype.update = function (
     }
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-
+        chart.navButtonsGroup = chart.renderer.g().attr({
+            zIndex: 3 // #4955, // #8392
+        }).add();
         objectEach(o.buttons, function (
             buttonOptions: MapNavigationButtonOptions,
             n: string
@@ -229,7 +232,7 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add();
+                .add(chart.navButtonsGroup);
             button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
@@ -242,42 +245,11 @@ MapNavigation.prototype.update = function (
                 height: 2 * button.height
             });
 
-            // (#15782) Make way for hamburger icon.
-            function adjustMapNavBtn(): void {
-                const expOptions = chart.options.exporting,
-                    expBtn = (
-                        expOptions &&
-                        expOptions.buttons &&
-                        expOptions.buttons.contextButton
-                    );
-
-                if ( // Has expBtn and empty title/subtitle
-                    expBtn && defined(buttonOptions.y) &&
-                    chart.exportingGroup && chart.options &&
-                    chart.title && chart.title.textStr === '' &&
-                    chart.subtitle && chart.subtitle.textStr === '' &&
-                    (
-                        ( // mapNav and expBtn on right side
-                            buttonOptions.align === 'right' &&
-                            !expBtn.align
-                        ) || // or left side
-                        (expBtn.align === buttonOptions.align)
-                    )
-                ) {
-                    // Move the mapNavButton if it overlaps with expBtn
-                    buttonOptions.y +=
-                        chart.exportingGroup.getBBox().height + 10;
-                }
-            }
-
             if (!chart.hasLoaded) {
                 // Align it after the plotBox is known (#12776)
                 const unbind = addEvent(chart, 'load', (): void => {
                     // #15406: Make sure button hasnt been destroyed
                     if (button.element) {
-
-                        adjustMapNavBtn(); // (#15782)
-
                         button.align(
                             buttonOptions,
                             false,
@@ -288,10 +260,71 @@ MapNavigation.prototype.update = function (
                     unbind();
                 });
             } else {
-                adjustMapNavBtn(); // (#15782) Make way for hamburger icon.
                 button.align(buttonOptions, false, buttonOptions.alignTo);
             }
         });
+
+        const adjustMapNavBtn = function (skipXColision?: boolean): void {
+            const expBtnBBox =
+                    chart.exportingGroup && chart.exportingGroup.getBBox();
+
+            if (expBtnBBox) {
+                const expBtn =
+                        chart.options.exporting &&
+                        chart.options.exporting.buttons &&
+                        chart.options.exporting.buttons.contextButton,
+                    navBtnsBBox = chart.navButtonsGroup.getBBox(),
+                    isXColision =
+                        // TODO: When updating, the expBtn is moved when the
+                        // navBtn is not moved yet, so checking colision is not
+                        // working not. However, the y can still be
+                        // recalculated in some cases so move on.
+                        !skipXColision &&
+                        navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x ||
+                        navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width,
+                    expBtnVerticalAlign = expBtn && expBtn.verticalAlign,
+                    mapNavVerticalAlign =
+                        o.buttonOptions && o.buttonOptions.verticalAlign,
+                    mapNavAlignTo = o.buttonOptions && o.buttonOptions.alignTo,
+                    skip = expBtnVerticalAlign &&
+                        expBtnVerticalAlign !== mapNavVerticalAlign ||
+                        (
+                            expBtnVerticalAlign === 'bottom' &&
+                            mapNavAlignTo !== 'spacingBox'
+                        ),
+                    isYColision =
+                        navBtnsBBox.y < expBtnBBox.y + expBtnBBox.height;
+
+                if (
+                    !skip &&
+                    !isXColision &&
+                    isYColision
+                ) {
+                    const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
+                            expBtnBBox.y - 5,
+                        belowExpBtn = expBtnBBox.y + expBtnBBox.height -
+                            navBtnsBBox.y + 5;
+
+                    chart.navButtonsGroup.attr({
+                        translateY: mapNavVerticalAlign === 'bottom' ?
+                            aboveExpBtn :
+                            belowExpBtn
+                    });
+                }
+            }
+        };
+
+        // (#15782) Make way for hamburger icon.
+        if (!chart.hasLoaded) {
+            // Align it after the plotBox is known (#12776)
+            const unbind = addEvent(chart, 'load', (): void => {
+                adjustMapNavBtn();
+
+                unbind();
+            });
+        } else {
+            adjustMapNavBtn(true);
+        }
     }
 
     this.updateEvents(o);
