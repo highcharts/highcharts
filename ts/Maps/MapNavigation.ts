@@ -264,22 +264,16 @@ MapNavigation.prototype.update = function (
             }
         });
 
-        const adjustMapNavBtn = function (skipXColision?: boolean): void {
+        const adjustMapNavBtn = function (): void {
             const expBtnBBox =
                     chart.exportingGroup && chart.exportingGroup.getBBox();
 
             if (expBtnBBox) {
                 const navBtnsBBox = chart.navButtonsGroup.getBBox(),
-                    isXColision =
-                        // TODO: When updating, the expBtn is moved when the
-                        // navBtn is not moved yet, so checking colision is not
-                        // working not. However, the y can still be
-                        // recalculated in some cases so move on.
-                        skipXColision &&
-                        !(
-                            navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x ||
-                            navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width
-                        ),
+                    isXColision = !(
+                        navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width ||
+                        navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x
+                    ),
                     isYColision = !(
                         navBtnsBBox.y > expBtnBBox.y + expBtnBBox.height ||
                         navBtnsBBox.y + navBtnsBBox.height < expBtnBBox.y
@@ -306,12 +300,14 @@ MapNavigation.prototype.update = function (
         if (!chart.hasLoaded) {
             // Align it after the plotBox is known (#12776)
             const unbind = addEvent(chart, 'load', (): void => {
-                adjustMapNavBtn(true);
+                adjustMapNavBtn();
 
                 unbind();
             });
-        } else {
-            adjustMapNavBtn();
+
+            addEvent(chart, 'afterUpdate', (): void => {
+                adjustMapNavBtn();
+            });
         }
     }
 
