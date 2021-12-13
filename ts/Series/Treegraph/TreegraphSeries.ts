@@ -31,6 +31,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import ColumnSeries from '../Column/ColumnSeries';
+import { support } from 'jquery';
 const { extend, merge, pick } = U;
 
 /* *
@@ -152,12 +154,12 @@ class TreegraphSeries extends OrganizationSeries {
             y1 = Math.floor((fromNode.shapeArgs as any).y) + crisp,
             y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
             xMiddle =
-            Math.floor(
-                x2 +
-                    ((inverted ? 1 : -1) *
-                        (this.colDistance - this.nodeWidth)) /
-                        2
-            ) + crisp;
+                Math.floor(
+                    x2 +
+                        ((inverted ? 1 : -1) *
+                            (this.colDistance - this.nodeWidth)) /
+                            2
+                ) + crisp;
         // Put the link on the side of the node when an offset is given. HR
         // node in the main demo.
         if (percentOffset && (percentOffset >= 50 || percentOffset <= -50)) {
@@ -181,17 +183,19 @@ class TreegraphSeries extends OrganizationSeries {
                             (fromNode.shapeArgs as any).height -
                             hangingIndent / 2
                     ) + crisp;
-                y2 = (toNode.shapeArgs as any).y +
+                y2 =
+                    (toNode.shapeArgs as any).y +
                     (toNode.shapeArgs as any).height;
             } else {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y + hangingIndent / 2
-                ) + crisp;
+                y1 =
+                    Math.floor(
+                        (fromNode.shapeArgs as any).y + hangingIndent / 2
+                    ) + crisp;
             }
             xMiddle = x2 =
                 Math.floor(
                     (toNode.shapeArgs as any).x +
-                    (toNode.shapeArgs as any).width / 2
+                        (toNode.shapeArgs as any).width / 2
                 ) + crisp;
         }
         point.plotY = 1;
@@ -335,6 +339,9 @@ class TreegraphSeries extends OrganizationSeries {
                 enabled: false
             };
         }
+    }
+    public alignDataLabel(): void {
+        colProto.alignDataLabel.apply(this, arguments);
     }
 }
 
