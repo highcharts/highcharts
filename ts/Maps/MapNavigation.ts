@@ -269,41 +269,29 @@ MapNavigation.prototype.update = function (
                     chart.exportingGroup && chart.exportingGroup.getBBox();
 
             if (expBtnBBox) {
-                const expBtn =
-                        chart.options.exporting &&
-                        chart.options.exporting.buttons &&
-                        chart.options.exporting.buttons.contextButton,
-                    navBtnsBBox = chart.navButtonsGroup.getBBox(),
+                const navBtnsBBox = chart.navButtonsGroup.getBBox(),
                     isXColision =
                         // TODO: When updating, the expBtn is moved when the
                         // navBtn is not moved yet, so checking colision is not
                         // working not. However, the y can still be
                         // recalculated in some cases so move on.
-                        !skipXColision &&
-                        navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x ||
-                        navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width,
-                    expBtnVerticalAlign = expBtn && expBtn.verticalAlign,
-                    mapNavVerticalAlign =
-                        o.buttonOptions && o.buttonOptions.verticalAlign,
-                    mapNavAlignTo = o.buttonOptions && o.buttonOptions.alignTo,
-                    skip = expBtnVerticalAlign &&
-                        expBtnVerticalAlign !== mapNavVerticalAlign ||
-                        (
-                            expBtnVerticalAlign === 'bottom' &&
-                            mapNavAlignTo !== 'spacingBox'
+                        skipXColision &&
+                        !(
+                            navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x ||
+                            navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width
                         ),
-                    isYColision =
-                        navBtnsBBox.y < expBtnBBox.y + expBtnBBox.height;
+                    isYColision = !(
+                        navBtnsBBox.y > expBtnBBox.y + expBtnBBox.height ||
+                        navBtnsBBox.y + navBtnsBBox.height < expBtnBBox.y
+                    );
 
-                if (
-                    !skip &&
-                    !isXColision &&
-                    isYColision
-                ) {
+                if (isXColision && isYColision) {
                     const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
                             expBtnBBox.y - 5,
                         belowExpBtn = expBtnBBox.y + expBtnBBox.height -
-                            navBtnsBBox.y + 5;
+                            navBtnsBBox.y + 5,
+                        mapNavVerticalAlign =
+                            o.buttonOptions && o.buttonOptions.verticalAlign;
 
                     chart.navButtonsGroup.attr({
                         translateY: mapNavVerticalAlign === 'bottom' ?
@@ -318,12 +306,12 @@ MapNavigation.prototype.update = function (
         if (!chart.hasLoaded) {
             // Align it after the plotBox is known (#12776)
             const unbind = addEvent(chart, 'load', (): void => {
-                adjustMapNavBtn();
+                adjustMapNavBtn(true);
 
                 unbind();
             });
         } else {
-            adjustMapNavBtn(true);
+            adjustMapNavBtn();
         }
     }
 
