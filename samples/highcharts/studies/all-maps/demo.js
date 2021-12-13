@@ -212,6 +212,11 @@ $("#mapDropdown").on('change', async function () {
             type: 'mapline',
             name: "Lines",
             data: Highcharts.geojson(mapData, 'mapline'),
+            /*
+            data: [{
+                geometry: mapData.objects.default['hc-recommended-mapview'].insets[0].geoBounds
+            }],
+            // */
             nullColor: '#333333',
             showInLegend: false,
             enableMouseTracking: false

@@ -322,8 +322,8 @@ class MapView {
             return {
                 width,
                 height,
-                x: p1.x + padding[3],
-                y: p1.y + padding[0]
+                x: p1.x - padding[3],
+                y: p1.y - padding[0]
             };
         }
 
