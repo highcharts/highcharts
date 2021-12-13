@@ -225,6 +225,22 @@ const exporting: ExportingOptions = {
     url: 'https://export.highcharts.com/',
 
     /**
+     * Allows implementing custom font code file for the exported PDF.
+     * Useful when implementing font which isn't supported by the jspdf.
+     * For example UTF-8, Chinese, Rusian, Japanese etc.
+     *
+     * When this is set, the external script-loading block for PDF is modified
+     * to also load the user-defined PDF font that is created from
+     * jsPDF's online font converter tool.
+     * By default undefined to don't increase the bundle size.
+     *
+     * @type      {string}
+     * @since     next
+     * @apioption exporting.pdfFontURL
+     */
+    pdfFontURL: void 0,
+
+    /**
      * When printing the chart from the menu item in the burger menu, if
      * the on-screen chart exceeds this width, it is resized. After printing
      * or cancelled, it is restored. The default width makes the chart

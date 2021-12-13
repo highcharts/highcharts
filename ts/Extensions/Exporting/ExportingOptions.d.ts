@@ -42,6 +42,7 @@ export interface ExportingOptions {
     formAttributes?: HTMLAttributes;
     libURL?: string;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
+    pdfFontURL?: string;
     printMaxWidth?: number;
     scale?: number;
     sourceHeight?: number;
