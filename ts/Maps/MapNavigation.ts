@@ -264,22 +264,29 @@ MapNavigation.prototype.update = function (
             }
         });
 
+        // Check the mapNavigation buttons collision with exporting button
+        // and translate the mapNavigation button if they overlap.
         const adjustMapNavBtn = function (): void {
             const expBtnBBox =
                     chart.exportingGroup && chart.exportingGroup.getBBox();
 
             if (expBtnBBox) {
                 const navBtnsBBox = chart.navButtonsGroup.getBBox(),
+                    // Check whether buttons overlap by x
                     isXColision = !(
                         navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width ||
                         navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x
                     ),
+                    // Check whether buttons overlap by y
                     isYColision = !(
                         navBtnsBBox.y > expBtnBBox.y + expBtnBBox.height ||
                         navBtnsBBox.y + navBtnsBBox.height < expBtnBBox.y
                     );
 
+                // If buttons overlap
                 if (isXColision && isYColision) {
+                    // Adjust the mapVan buttons' position by translating them
+                    // above or below the exporting button
                     const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
                             expBtnBBox.y - 5,
                         belowExpBtn = expBtnBBox.y + expBtnBBox.height -
@@ -287,6 +294,9 @@ MapNavigation.prototype.update = function (
                         mapNavVerticalAlign =
                             o.buttonOptions && o.buttonOptions.verticalAlign;
 
+                    // If bottom aligned and adjusting the mapNav button would
+                    // translate it out of the plotBox, translate it up
+                    // instead of down
                     chart.navButtonsGroup.attr({
                         translateY: mapNavVerticalAlign === 'bottom' ?
                             aboveExpBtn :
@@ -296,16 +306,11 @@ MapNavigation.prototype.update = function (
             }
         };
 
-        // (#15782) Make way for hamburger icon.
         if (!chart.hasLoaded) {
             // Align it after the plotBox is known (#12776)
-            const unbind = addEvent(chart, 'load', (): void => {
-                adjustMapNavBtn();
-
-                unbind();
-            });
-
-            addEvent(chart, 'afterUpdate', (): void => {
+            // and after the hamburger button's position is known
+            // so they don't overlap (#15782)
+            addEvent(chart, 'render', (): void => {
                 adjustMapNavBtn();
             });
         }
