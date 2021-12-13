@@ -75,7 +75,7 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
 
     assert.strictEqual(
         series.graph.attr('d').lastIndexOf('L'),
-        72,
+        77,
         'Graph should be visible when dataGrouping is enabled'
     );
 
