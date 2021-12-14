@@ -1017,3 +1017,34 @@ QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
         );
     });
 });
+
+QUnit.test('The dataGrouping with selected range.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 0,
+            buttons: [{
+                type: "all",
+                text: "All",
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ["millisecond", [3]]
+                    ]
+                }
+            }]
+        },
+        
+        series: [{
+            data: [1,2,3,4,5,6,7,8,9],
+            dataGrouping: {
+                approximation: () => 3
+            }
+        }]
+    })
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        `When range is selected dataGrouping should work properly (#16759)`
+    );
+});
