@@ -20,7 +20,18 @@ import type { MapViewInsetsOptions } from './MapViewOptions';
 
 import { Palette } from '../Core/Color/Palettes.js';
 
+/**
+ * Generic options for the placement and appearance of map insets like
+ * non-contiguous territories.
+ *
+ * @since next
+ * @product      highmaps
+ * @optionparent mapView.insetOptions
+ */
 const defaultOptions: MapViewInsetsOptions = {
+    /**
+     *
+     */
     borderColor: Palette.neutralColor20,
     borderWidth: 1,
     center: [0, 0],

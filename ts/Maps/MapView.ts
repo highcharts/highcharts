@@ -39,7 +39,6 @@ const {
 } = MapChart;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-import TilemapShapes from '../Series/Tilemap/TilemapShapes';
 const {
     addEvent,
     clamp,

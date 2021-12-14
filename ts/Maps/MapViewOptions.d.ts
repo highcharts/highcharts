@@ -59,13 +59,13 @@ export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
     geoBounds?: Polygon;
     id?: string;
     projection?: ProjectionOptions;
-    relativeTo: ('mapBoundingBox'|'plotBox');
 }
 
 export interface MapViewInsetOptionsOptions {
     borderColor: ColorType;
     borderWidth: number;
     padding: (number|string);
+    relativeTo: ('mapBoundingBox'|'plotBox');
     units: ('percent'|'pixels');
 }
 
