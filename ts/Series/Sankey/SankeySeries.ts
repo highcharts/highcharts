@@ -537,6 +537,16 @@ class SankeySeries extends ColumnSeries {
     public createNodeColumns(): Array<SankeySeries.ColumnArray> {
         const columns: Array<SankeySeries.ColumnArray> = [];
 
+        function getOffset(node: SankeyPoint): number {
+            let offset = node.linksFrom.length;
+
+            node.linksFrom.forEach((link): void => {
+                offset += getOffset(link.toNode);
+            });
+
+            return offset;
+        }
+
         this.nodes.forEach(function (node: SankeyPoint): void {
             let fromColumn = -1,
                 fromNode;
@@ -566,6 +576,10 @@ class SankeySeries extends ColumnSeries {
                         fromNode &&
                         (fromNode.options as any).layout === 'hanging'
                     ) {
+                        // Force all children of the hanging node
+                        // to have hanging layout
+                        // TO DO: Add info in docs
+                        (node.options as any).layout = 'hanging';
                         node.hangsFrom = fromNode;
                         let i = -1;
                         find(
@@ -581,6 +595,20 @@ class SankeySeries extends ColumnSeries {
                                 return found;
                             }
                         );
+
+                        // For all sibling's children (recursively)
+                        // increase the column offset to prevent overlapping
+                        for (let j = 0; j < fromNode.linksFrom.length; j++) {
+                            let link = fromNode.linksFrom[j];
+
+                            if (link.toNode.id === node.id) {
+                                // Break
+                                j = fromNode.linksFrom.length;
+                            } else {
+                                i += getOffset(link.toNode);
+                            }
+
+                        }
                         node.column += i;
                     }
                 }

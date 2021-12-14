@@ -620,17 +620,44 @@ class OrganizationSeries extends SankeySeries {
         column: OrganizationSeries.ColumnArray
     ): void {
         SankeySeries.prototype.translateNode.call(this, node, column);
+        let parentNode = node.hangsFrom,
+            indent = this.options.hangingIndent || 0,
+            sign = this.chart.inverted ? -1 : 1,
+            // TO DO: +10 -> make this optional, e.g. a minPointLength option?
+            minWidth = indent + 10,
+            shapeArgs = (node.shapeArgs as any),
+            solution = (this.options as any).solution;
 
-        if (node.hangsFrom) {
-            (node.shapeArgs as any).height -=
-                this.options.hangingIndent as any;
-            if (!this.chart.inverted) {
-                (node.shapeArgs as any).y += this.options.hangingIndent;
+        if (parentNode) {
+
+            if (solution === 'a') {
+                // SOLUTION A:
+                // Move to the right:
+                shapeArgs.height -= indent;
+                shapeArgs.y -= sign * indent;
+                while (parentNode) {
+                    shapeArgs.y += sign * indent;
+                    parentNode = parentNode.hangsFrom;
+                }
+            } else if (solution === 'b') {
+                // SOLUTION B
+                // Resize the node:
+                while (parentNode && shapeArgs.height > minWidth) {
+                    shapeArgs.height -= indent;
+                    parentNode = parentNode.hangsFrom;
+                }
+            } else {
+                // SOLUTION any:
+                // Do nothing (current)
+                shapeArgs.height -= indent;
+                if (!this.chart.inverted) {
+                    shapeArgs.y += indent;
+                }
             }
         }
         node.nodeHeight = this.chart.inverted ?
-            (node.shapeArgs as any).width :
-            (node.shapeArgs as any).height;
+            shapeArgs.width :
+            shapeArgs.height;
     }
 
     /* eslint-enable valid-jsdoc */
