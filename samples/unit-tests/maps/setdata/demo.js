@@ -873,12 +873,12 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     // #15782 Right side
     let mapNavY = chart.navButtonsGroup.getBBox().y +
-            chart.navButtonsGroup.translateY,
-        expBtnBottomEdge = chart.exportingGroup.getBBox().y +
-            chart.exportingGroup.getBBox().height;
+        chart.navButtonsGroup.translateY;
+    let expBtnEdge = chart.exportingGroup.getBBox().y +
+        chart.exportingGroup.getBBox().height;
 
     assert.ok(
-        mapNavY > expBtnBottomEdge,
+        mapNavY > expBtnEdge,
         '#15782, mapNav should not overlap with export icon (right side).'
     );
 
@@ -899,13 +899,67 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     });
 
     // #15782 Left side
-    mapNavY =
-        chart.navButtonsGroup.getBBox().y + chart.navButtonsGroup.translateY;
-        expBtnBottomEdge = chart.exportingGroup.getBBox().y +
+    mapNavY = chart.navButtonsGroup.getBBox().y +
+        chart.navButtonsGroup.translateY;
+    expBtnEdge = chart.exportingGroup.getBBox().y +
         chart.exportingGroup.getBBox().height;
 
     assert.ok(
-        mapNavY > expBtnBottomEdge,
+        mapNavY > expBtnEdge,
         '#15782, mapNav should not overlap with export icon (left side).'
+    );
+
+    // #15782 Bottom left side
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    verticalAlign: 'bottom'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        }
+    });
+
+    mapNavY = chart.navButtonsGroup.getBBox().y +
+        chart.navButtonsGroup.getBBox().height;
+    expBtnEdge = chart.exportingGroup.getBBox().y;
+
+    assert.ok(
+        mapNavY < expBtnEdge,
+        '#15782, mapNav should not overlap with ' +
+            'export icon (Bottom left side).'
+    );
+
+    // #15782 Bottom right side
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'right'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                align: 'right'
+            }
+        }
+    });
+
+    mapNavY = chart.navButtonsGroup.getBBox().y +
+        chart.navButtonsGroup.getBBox().height;
+    expBtnEdge = chart.exportingGroup.getBBox().y;
+
+    assert.ok(
+        mapNavY < expBtnEdge,
+        '#15782, mapNav should not overlap with ' +
+            'export icon (Bottom right side).'
     );
 });
