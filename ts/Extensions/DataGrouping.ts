@@ -1229,12 +1229,17 @@ Axis.prototype.setDataGrouping = function (
         }
 
     // Axis not yet instanciated, alter series options
-    } else {
+    } else if (dataGrouping) {
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
         ): void {
-            seriesOptions.dataGrouping = dataGrouping;
-        }, false);
+            seriesOptions.dataGrouping = typeof dataGrouping === 'boolean' ?
+                dataGrouping :
+                merge(
+                    dataGrouping,
+                    seriesOptions.dataGrouping
+                );
+        });
     }
 
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
