@@ -32,11 +32,16 @@ const defaultOptions: MapViewInsetsOptions = {
     /**
      * The border color of the insets.
      *
+     * @sample maps/mapview/insetoptions-border
+     *         Inset border options
      * @type {Highcharts.ColorType}
      */
     borderColor: Palette.neutralColor20,
     /**
      * The pixel border width of the insets.
+     *
+     * @sample maps/mapview/insetoptions-border
+     *         Inset border options
      */
     borderWidth: 1,
     /**
@@ -73,7 +78,7 @@ const defaultOptions: MapViewInsetsOptions = {
 
 /**
  * The individual MapView insets, typically used for non-contiguous areas of a
- * country.
+ * country. Each item inherits from the generic `insetOptions`.
  *
  * @extends     mapView.insetOptions
  * @type        Array<Object>
@@ -105,8 +110,9 @@ const defaultOptions: MapViewInsetsOptions = {
 
 /**
  * A geometry object of type `Polygon` encircling the shapes that should be
- * rendered in the inset, in terms of geographic coordinates. Affects all areas
- * and points which center point falls within this geographic area.
+ * rendered in the inset, in terms of geographic coordinates. Geometries within
+ * this geometry are removed from the default map view and rendered in the
+ * inset.
  *
  * @product   highmaps
  * @type      {Object}
