@@ -263,6 +263,33 @@ class Pointer {
     }
 
     /**
+     * Create selection marker.
+     * @private
+     * @function Highcharts.Pointer#createSelectionMarker
+     * @emits afterSelectionMarker
+     */
+    public createSelectionMarker(): SVGElement {
+        const chart = this.chart;
+
+        let selectionMarker;
+
+        selectionMarker = chart.renderer
+            .rect(
+                chart.plotLeft,
+                chart.plotTop,
+                this.zoomHor ? 1 : chart.plotWidth,
+                this.zoomVert ? 1 : chart.plotHeight,
+                0
+            );
+
+        let selectionMarkerEvent = { selectionMarker };
+
+        fireEvent(this, 'afterCreateSelectionMarker', selectionMarkerEvent);
+
+        return selectionMarkerEvent.selectionMarker;
+    }
+
+    /**
      * Perform a drag operation in response to a mousemove event while the mouse
      * is down.
      * @private
@@ -337,26 +364,21 @@ class Pointer {
             ) {
                 if (!selectionMarker) {
                     this.selectionMarker = selectionMarker =
-                        chart.renderer.rect(
-                            plotLeft,
-                            plotTop,
-                            zoomHor ? 1 : plotWidth,
-                            zoomVert ? 1 : plotHeight,
-                            0
-                        )
-                            .attr({
-                                'class': 'highcharts-selection-marker',
-                                zIndex: 7
-                            })
-                            .add();
+                        this.createSelectionMarker();
+
+                    selectionMarker
+                        .attr({
+                            'class': 'highcharts-selection-marker',
+                            zIndex: 7
+                        })
+                        .add();
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
-                            fill: (
+                            fill:
                                 chartOptions.selectionMarkerFill ||
                                 color(Palette.highlightColor80)
                                     .setOpacity(0.25).get()
-                            )
                         });
                     }
                 }

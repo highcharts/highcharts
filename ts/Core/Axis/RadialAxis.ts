@@ -1086,7 +1086,6 @@ namespace RadialAxis {
         // Disable certain features on angular and polar axes
         if (angular || polar) {
             this.isRadial = true;
-            (chartOptions.chart as any).zoomType = null as any;
 
             if (!this.labelCollector) {
                 this.labelCollector = this.createLabelCollector();

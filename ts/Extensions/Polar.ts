@@ -1190,6 +1190,30 @@ addEvent(Series, 'afterInit', function (): void {
 });
 
 /**
+ * Replace selection marker with arc for polar charts
+ * @private
+ */
+addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
+    const chart = this.chart;
+    if (chart.pane && chart.pane[0]) {
+        const center = chart.pane[0].center;
+
+        let selectionMarker;
+
+        selectionMarker = chart.renderer.arc(
+            center[0] + chart.plotLeft,
+            center[1] + chart.plotTop,
+            center[2] / 2,
+            center[3] / 2,
+            0,
+            Math.PI * 2
+        );
+
+        (event as any).selectionMarker = selectionMarker;
+    }
+});
+
+/**
  * Extend chart.get to also search in panes. Used internally in
  * responsiveness and chart.update.
  * @private
