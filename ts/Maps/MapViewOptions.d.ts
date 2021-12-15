@@ -64,7 +64,7 @@ export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
 export interface MapViewInsetOptionsOptions {
     borderColor: ColorType;
     borderWidth: number;
-    padding: (number|string);
+    padding: MapViewPaddingType;
     relativeTo: ('mapBoundingBox'|'plotBox');
     units: ('percent'|'pixels');
 }

@@ -97,7 +97,7 @@ const defaultOptions: MapViewOptions = {
         name: void 0,
 
         /**
-         * The to standard parallels that define the map layout in conic
+         * The two standard parallels that define the map layout in conic
          * projections, like the LambertConformalConic projection. If only one
          * number is given, the second parallel will be the same as the first.
          *
@@ -112,7 +112,7 @@ const defaultOptions: MapViewOptions = {
          *
          * * `lambda` shifts the longitudes by the given value.
          * * `phi` shifts the latitudes by the given value. Can be omitted.
-         * * `gamma` applies a _roll_.
+         * * `gamma` applies a _roll_. Can be omitted.
          *
          * @sample maps/mapview/projection-america-centric
          *         America-centric world map
