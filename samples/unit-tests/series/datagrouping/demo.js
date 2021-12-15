@@ -1018,24 +1018,23 @@ QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
     });
 });
 
-QUnit.test('The dataGrouping with selected range.', function (assert) {
+QUnit.test('The dataGrouping with selected range.', (assert) => {
     const chart = Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 0,
             buttons: [{
-                type: "all",
-                text: "All",
+                type: 'all',
+                text: 'All',
                 dataGrouping: {
                     forced: true,
                     units: [
-                        ["millisecond", [3]]
+                        ['millisecond', [3]]
                     ]
                 }
             }]
         },
-        
         series: [{
-            data: [1,2,3,4,5,6,7,8,9],
+            data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
             dataGrouping: {
                 approximation: () => 3
             }
@@ -1045,6 +1044,7 @@ QUnit.test('The dataGrouping with selected range.', function (assert) {
     assert.strictEqual(
         chart.series[0].points[0].y,
         3,
-        `When range is selected dataGrouping should work properly (#16759)`
+        `When the scope is set in the dataGrouping options
+         it should workas well as without it (#16759)`
     );
 });

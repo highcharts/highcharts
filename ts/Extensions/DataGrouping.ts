@@ -1229,16 +1229,14 @@ Axis.prototype.setDataGrouping = function (
         }
 
     // Axis not yet instanciated, alter series options
-    } else if (dataGrouping) {
+    } else {
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
         ): void {
+            // Merging dataGrouping options with already defined options #16759
             seriesOptions.dataGrouping = typeof dataGrouping === 'boolean' ?
                 dataGrouping :
-                merge(
-                    dataGrouping,
-                    seriesOptions.dataGrouping
-                );
+                merge(dataGrouping, seriesOptions.dataGrouping);
         });
     }
 
