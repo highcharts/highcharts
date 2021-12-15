@@ -17,7 +17,6 @@
  * */
 
 import type MapViewOptions from './MapViewOptions';
-import D from '../Core/DefaultOptions.js';
 
 /**
  * The `mapView` options control the initial view of the chart, and how
@@ -69,17 +68,7 @@ const defaultOptions: MapViewOptions = {
 
     /**
      * The projection options allow applying client side projection to a map
-     * given in coordinates, typically from TopoJSON or GeoJSON.
-     *
-     * Sub-options are:
-     * * `name`, which as of v9.3 can be `EqualEarth`, `LambertConformalConic`,
-     *   `Miller`, `Orthographic` or `WebMercator`.
-     * * `parallels`, the standard parallels for the LambertConformalConic
-     *   projection.
-     * * `rotation`, a three-axis rotation of the globe prior to projection,
-     *   which in practice can be used for example to render a world map with
-     *   the Americas centered (`[90, 0]`), or to rotate an orthographic
-     *   projection.
+     * given in geographic coordinates, typically from TopoJSON or GeoJSON.
      *
      * @type   {Object}
      * @sample {highmaps} maps/demo/topojson-projection Orthographic projection
@@ -101,6 +90,8 @@ const defaultOptions: MapViewOptions = {
          * projections, like the LambertConformalConic projection. If only one
          * number is given, the second parallel will be the same as the first.
          *
+         * @sample maps/mapview/projection-parallels
+         *         LCC projection with parallels
          * @type {Array<number>}
          */
         parallels: void 0,
@@ -114,6 +105,8 @@ const defaultOptions: MapViewOptions = {
          * * `phi` shifts the latitudes by the given value. Can be omitted.
          * * `gamma` applies a _roll_. Can be omitted.
          *
+         * @sample maps/mapview/projection-explorer
+         *         Projection explorer
          * @sample maps/mapview/projection-america-centric
          *         America-centric world map
          */

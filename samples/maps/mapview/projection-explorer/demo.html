@@ -1,12 +1,5 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4-src.min.js"></script>
-
-<script src="https://d3js.org/d3-array.v2.js"></script>
-<script src="https://d3js.org/d3-geo.v2.js"></script>
-<script src="https://d3js.org/d3-geo-projection.v3.js"></script>
-
 
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
-<script src="https://code.highcharts.com/maps/modules/data.js"></script>
 <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
 
@@ -16,22 +9,13 @@
 
 <hr>
 
-<div id="library-buttons">
-    <h4>Library</h4>
-    <div class="btn-group">
-        <button id="btn-native" class="btn btn-outline-secondary active">None</button>
-        <button id="btn-proj4" class="btn btn-outline-secondary disabled">Proj4</button>
-        <button id="btn-d3" class="btn btn-outline-secondary disabled">d3-geo</button>
-    </div>
-</div>
-
 <div id="projection-buttons" class="buttons">
     <h4 class="mt-4">Flat projections</h4>
     <div class="btn-group">
         <button id="equalearth" class="btn btn-outline-secondary">Equal Earth</button>
-        <button id="lcc" class="btn btn-outline-secondary">Lambert Conformal Conic</button>
         <button id="miller" class="btn btn-outline-secondary">Miller</button>
         <button id="webmerc" class="btn btn-outline-secondary">Web Mercator</button>
+        <button id="lcc" class="btn btn-outline-secondary">Lambert Conformal Conic</button>
         <button id="eqc" class="btn btn-outline-secondary">None (Equirectangular)</button>
     </div>
 
