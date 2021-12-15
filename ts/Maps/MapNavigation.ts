@@ -264,6 +264,17 @@ MapNavigation.prototype.update = function (
             }
         });
 
+        // Borrowed from overlapping-datalabels. Consider a shared module.
+        const isIntersectRect = (
+            box1: BBoxObject,
+            box2: BBoxObject
+        ): boolean => !(
+            box2.x >= box1.x + box1.width ||
+            box2.x + box2.width <= box1.x ||
+            box2.y >= box1.y + box1.height ||
+            box2.y + box2.height <= box1.y
+        );
+
         // Check the mapNavigation buttons collision with exporting button
         // and translate the mapNavigation button if they overlap.
         const adjustMapNavBtn = function (): void {
@@ -271,20 +282,10 @@ MapNavigation.prototype.update = function (
                     chart.exportingGroup && chart.exportingGroup.getBBox();
 
             if (expBtnBBox) {
-                const navBtnsBBox = chart.navButtonsGroup.getBBox(),
-                    // Check whether buttons overlap by x
-                    isXColision = !(
-                        navBtnsBBox.x > expBtnBBox.x + expBtnBBox.width ||
-                        navBtnsBBox.x + navBtnsBBox.width < expBtnBBox.x
-                    ),
-                    // Check whether buttons overlap by y
-                    isYColision = !(
-                        navBtnsBBox.y > expBtnBBox.y + expBtnBBox.height ||
-                        navBtnsBBox.y + navBtnsBBox.height < expBtnBBox.y
-                    );
+                const navBtnsBBox = chart.navButtonsGroup.getBBox();
 
                 // If buttons overlap
-                if (isXColision && isYColision) {
+                if (isIntersectRect(expBtnBBox, navBtnsBBox)) {
                     // Adjust the mapVan buttons' position by translating them
                     // above or below the exporting button
                     const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
