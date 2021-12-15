@@ -41,5 +41,6 @@ declare global {
     class jsPDF {
         constructor (a: string, b: string, c: Array<number>);
         output: Function;
+        setFont(fontFamily: string): void
     }
 }

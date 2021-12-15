@@ -154,7 +154,7 @@ const exporting: ExportingOptions = {
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [jsPDF](https://github.com/yWorks/jsPDF) and
+     * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
      *
@@ -233,6 +233,12 @@ const exporting: ExportingOptions = {
      * to also load the user-defined PDF font that is created from
      * jsPDF's online font converter tool.
      * By default undefined to don't increase the bundle size.
+     *
+     * See more in
+     * [the docs](https://www.highcharts.com/docs/export-module/client-side-export).
+     *
+     * @sample {highcharts} highcharts/exporting/offline-downloading-pdf-utf-8/
+     *         Download pdf in a language containing non-Latin characters.
      *
      * @type      {string}
      * @since     next

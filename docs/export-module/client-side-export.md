@@ -39,3 +39,40 @@ Internet Explorer 9 and older will attempt to fall back to export server in all 
 Decision flowchart of the module (click for large version):
 
 [![Offline export decision flowchart](https://assets.highcharts.com/images/client-side-export-flow.svg)](https://assets.highcharts.com/images/client-side-export-flow.svg)
+
+
+### Export local pdf in a language containing non-Latin characters or Unicode Characters/UTF-8
+
+
+1. Select a custom font that contains those characters/symbols. In the example, the [NotoSans-Regular](https://fonts.google.com/noto/specimen/Noto+Sans) font was chosen from Google fonts.
+2. Download the `.ttf` file of that particular font.
+3. Go to [jsPDF's online font converter tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html) and:
+    - set `fontName` the same as it is called (`NotoSans-Regular`)
+    - set your desire `fontStyle`
+    - set the `Module format` to `ES modules`
+    - add file with the font's `.ttf`, in this case file is called `NotoSans-Regular.ttf`
+    - create a converted version of this font by clicking `Create`
+    - the `NotoSans-Regular-normal.js` file should be downloaded
+4. Change how the `jsPDF` is imported in the new file from
+    ```
+    import { jsPDF } from "jspdf"
+    ```
+    to
+    ```
+    const jsPDF = this.jsPDF;
+    ```
+5. Add correct URL path for the new font by setting the `pdfFontURL` property and then set the same `fontFamily`.
+
+    ```
+      exporting: {
+            chartOptions: {
+                chart: {
+                    style: {
+                    fontFamily: 'NotoSans-Regular'
+                    }
+                }
+            },
+            pdfFontURL: 'https://utils.highcharts.local/samples/data/NotoSans-Regular-normal.js',
+        },
+    ```
+    Please note that each property is case sensitive.

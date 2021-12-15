@@ -288,7 +288,11 @@ namespace OfflineExporting {
                     el.removeChild(titleElement);
                 });
             });
-            const svgData = svgToPdf(dummySVGContainer.firstChild as any, 0);
+            const svgData = svgToPdf(
+                dummySVGContainer.firstChild as any,
+                0,
+                options
+            );
             try {
                 downloadURL(svgData, filename);
                 if (successCallback) {
@@ -328,7 +332,14 @@ namespace OfflineExporting {
                 objectURLRevoke = true;
                 getScript(libURL + 'jspdf.js', function (): void {
                     getScript(libURL + 'svg2pdf.js', function (): void {
-                        downloadPDF();
+                        // Add new font if the URL is declared, #6417.
+                        if (options.pdfFontURL) {
+                            getScript(options.pdfFontURL, function (): void {
+                                downloadPDF();
+                            });
+                        } else {
+                            downloadPDF();
+                        }
                     });
                 });
             }
@@ -882,7 +893,11 @@ namespace OfflineExporting {
     /**
      * @private
      */
-    export function svgToPdf(svgElement: SVGElement, margin: number): string {
+    export function svgToPdf(
+        svgElement: SVGElement,
+        margin: number,
+        options: ExportingOptions
+    ): string {
         const width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
@@ -891,6 +906,14 @@ namespace OfflineExporting {
                 'pt',
                 [width, height]
             );
+
+        // Apply new font if the fontFamily set, #6417.
+        if (options.chartOptions &&
+            options.chartOptions.chart.style &&
+            options.chartOptions.chart.style.fontFamily
+        ) {
+            pdf.setFont(options.chartOptions.chart.style.fontFamily);
+        }
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
