@@ -239,9 +239,6 @@ namespace OfflineExporting {
          * @private
          */
         const downloadPDF = (): void => {
-            // Implementing custom font code file for the exported PDF, #6417.
-            // if (options.pdfFontURL) {}
-
             AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
