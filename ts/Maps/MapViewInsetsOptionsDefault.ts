@@ -80,6 +80,17 @@ const defaultOptions: MapViewInsetsOptions = {
  * The individual MapView insets, typically used for non-contiguous areas of a
  * country. Each item inherits from the generic `insetOptions`.
  *
+ * Some of the TopoJSON files of the [Highcharts Map
+ * Collection](https://code.highcharts.com/mapdata/) include a property called
+ * `hc-recommended-mapview`, and some of these include insets. In order to
+ * override the recommended inset options, an inset option with a matching id
+ * can be applied, and it will be merged into the embedded settings.
+ *
+ * @sample      maps/mapview/insets-extended
+ *              Extending the embedded insets
+ * @sample      maps/mapview/insets-complete
+ *              Complete inset config from scratch
+ *
  * @extends     mapView.insetOptions
  * @type        Array<Object>
  * @product     highmaps
@@ -92,6 +103,9 @@ const defaultOptions: MapViewInsetsOptions = {
  * `field` geometry. It is recommended that the `borderPath` partly follows the
  * outline of the `field` in order to make pointer positioning consistent.
  *
+ * @sample    maps/mapview/insets-complete
+ *            Complete inset config with `borderPath`
+ *
  * @product   highmaps
  * @type      {Object|undefined}
  * @apioption mapView.insets.borderPath
@@ -102,6 +116,9 @@ const defaultOptions: MapViewInsetsOptions = {
  * should be rendered, in terms of `units` and relative to the `relativeTo`
  * setting. If a `borderPath` is omitted, a border is rendered around the field.
  * If undefined, the inset is rendered in the full plot area.
+ *
+ * @sample    maps/mapview/insets-extended
+ *            Border path emitted, field is rendered
  *
  * @product   highmaps
  * @type      {Object|undefined}
@@ -114,6 +131,9 @@ const defaultOptions: MapViewInsetsOptions = {
  * this geometry are removed from the default map view and rendered in the
  * inset.
  *
+ * @sample    maps/mapview/insets-complete
+ *            Complete inset config with `geoBounds`
+ *
  * @product   highmaps
  * @type      {Object}
  * @apioption mapView.insets.geoBounds
@@ -121,6 +141,9 @@ const defaultOptions: MapViewInsetsOptions = {
 
 /**
  * The id of the inset, used for internal reference.
+ *
+ * @sample    maps/mapview/insets-extended
+ *            Extending recommended insets by id
  *
  * @product   highmaps
  * @type      {string}

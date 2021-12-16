@@ -66,6 +66,30 @@ type SVGTransformType = {
 const worldSize = 400.979322;
 const tileSize = 256;
 
+/*
+const mergeCollections = <
+    T extends Array<AnyRecord|undefined>
+>(a: T, b: T): T => {
+    b.forEach((newer, i): void => {
+        // Only merge by id supported for now. We may consider later to support
+        // more complex rules like those of `Chart.update` with `oneToOne`, but
+        // it is probably not needed. Existing insets can be disabled by
+        // overwriting the `geoBounds` with empty data.
+        if (newer && isString(newer.id)) {
+            const older = U.find(
+                a,
+                (aItem): boolean => (aItem && aItem.id) === newer.id
+            );
+            if (older) {
+                const aIndex = a.indexOf(older);
+                a[aIndex] = merge(older, newer);
+            }
+        }
+    });
+    return a;
+};
+*/
+
 /**
  * The map view handles zooming and centering on the map, and various
  * client-side projection capabilities.
@@ -131,8 +155,8 @@ class MapView {
             if (geoMap) {
                 recommendedMapView = geoMap['hc-recommended-mapview'];
 
-                // Provide a buest-guess recommended projection if not set in
-                // the map or in user options
+                // Provide a best-guess recommended projection if not set in the
+                // map or in user options
                 if (geoMap.bbox) {
                     const [x1, y1, x2, y2] = geoMap.bbox;
                     if (x2 - x1 > 180 && y2 - y1 > 90) {
@@ -160,6 +184,33 @@ class MapView {
             recommendedMapView,
             options
         );
+
+        // Merge the inset collections by id, or index if id missing
+        if (
+            recommendedMapView && recommendedMapView.insets &&
+            options &&
+            options.insets
+        ) {
+            type DeepInsetOptions = DeepPartial<MapViewInsetsOptions|undefined>;
+            const toObject = (
+                insets: DeepInsetOptions[]
+            ): Record<string, DeepInsetOptions> => {
+                const ob = {} as Record<string, DeepInsetOptions>;
+                insets.forEach((inset, i): void => {
+                    ob[inset && inset.id || `i${i}`] = inset;
+                });
+                return ob;
+            };
+
+            const insetsObj = merge(
+                    toObject(recommendedMapView.insets),
+                    toObject(options.insets)
+                ),
+                insets = Object
+                    .keys(insetsObj)
+                    .map((key): DeepInsetOptions => insetsObj[key]);
+            (o as any).insets = insets;
+        }
 
         this.chart = chart;
 
