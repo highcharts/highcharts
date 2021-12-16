@@ -64,7 +64,6 @@ declare global {
 
         interface MapNavigationChart extends Chart {
             mapNavButtons: Array<SVGElement>;
-            navButtonsGroup: SVGElement;
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
@@ -79,6 +78,7 @@ declare global {
         class MapNavigation {
             public constructor(chart: Chart);
             public chart: MapNavigationChart;
+            public navButtonsGroup: SVGElement;
             public unbindDblClick?: Function;
             public unbindMouseWheel?: Function;
             public init(chart: Chart): void;
@@ -159,7 +159,8 @@ MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
     options?: MapNavigationOptions
 ): void {
-    let chart = this.chart,
+    let mapNav = this,
+        chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         attr: ButtonThemeObject,
         states: ButtonThemeStatesObject|undefined,
@@ -187,7 +188,7 @@ MapNavigation.prototype.update = function (
     }
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-        chart.navButtonsGroup = chart.renderer.g().attr({
+        mapNav.navButtonsGroup = chart.renderer.g().attr({
             zIndex: 4 // #4955, // #8392
         }).add();
         objectEach(o.buttons, function (
@@ -232,7 +233,7 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add(chart.navButtonsGroup);
+                .add(mapNav.navButtonsGroup);
             button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
@@ -282,7 +283,7 @@ MapNavigation.prototype.update = function (
                     chart.exportingGroup && chart.exportingGroup.getBBox();
 
             if (expBtnBBox) {
-                const navBtnsBBox = chart.navButtonsGroup.getBBox();
+                const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
 
                 // If buttons overlap
                 if (isIntersectRect(expBtnBBox, navBtnsBBox)) {
@@ -298,7 +299,7 @@ MapNavigation.prototype.update = function (
                     // If bottom aligned and adjusting the mapNav button would
                     // translate it out of the plotBox, translate it up
                     // instead of down
-                    chart.navButtonsGroup.attr({
+                    mapNav.navButtonsGroup.attr({
                         translateY: mapNavVerticalAlign === 'bottom' ?
                             aboveExpBtn :
                             belowExpBtn
@@ -311,9 +312,7 @@ MapNavigation.prototype.update = function (
             // Align it after the plotBox is known (#12776)
             // and after the hamburger button's position is known
             // so they don't overlap (#15782)
-            addEvent(chart, 'render', (): void => {
-                adjustMapNavBtn();
-            });
+            addEvent(chart, 'render', adjustMapNavBtn);
         }
     }
 

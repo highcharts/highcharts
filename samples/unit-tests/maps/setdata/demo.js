@@ -872,8 +872,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     );
 
     // #15782 Right side
-    let mapNavY = chart.navButtonsGroup.getBBox().y +
-        chart.navButtonsGroup.translateY;
+    let mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.translateY;
     let expBtnEdge = chart.exportingGroup.getBBox().y +
         chart.exportingGroup.getBBox().height;
 
@@ -899,8 +899,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     });
 
     // #15782 Left side
-    mapNavY = chart.navButtonsGroup.getBBox().y +
-        chart.navButtonsGroup.translateY;
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.translateY;
     expBtnEdge = chart.exportingGroup.getBBox().y +
         chart.exportingGroup.getBBox().height;
 
@@ -926,8 +926,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         }
     });
 
-    mapNavY = chart.navButtonsGroup.getBBox().y +
-        chart.navButtonsGroup.getBBox().height;
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.getBBox().height;
     expBtnEdge = chart.exportingGroup.getBBox().y;
 
     assert.ok(
@@ -953,8 +953,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         }
     });
 
-    mapNavY = chart.navButtonsGroup.getBBox().y +
-        chart.navButtonsGroup.getBBox().height;
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.getBBox().height;
     expBtnEdge = chart.exportingGroup.getBBox().y;
 
     assert.ok(
