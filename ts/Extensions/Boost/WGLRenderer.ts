@@ -26,7 +26,7 @@ const { parse: color } = Color;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -198,7 +198,8 @@ function GLRenderer(
                 timeKDTree: false,
                 showSkipSummary: false
             }
-        };
+        },
+        dpr = 1;
 
     // /////////////////////////////////////////////////////////////////////////
 
@@ -206,7 +207,15 @@ function GLRenderer(
      * @private
      */
     function setOptions(options: Highcharts.BoostOptions): void {
+
+        // The pixelRatio defaults to 1. This is an antipattern, we should
+        // refactor the Boost options to include an object of default options as
+        // base for the merge, like other components.
+        if (!('pixelRatio' in options)) {
+            options.pixelRatio = void 1;
+        }
         merge(true, settings, options);
+        dpr = settings.pixelRatio || win.devicePixelRatio || 1;
     }
 
     /**
@@ -472,18 +481,25 @@ function GLRenderer(
             x: number,
             y: number,
             checkTreshold?: boolean,
-            pointSize?: number,
+            pointSize: number = 1,
             color?: Color.RGBA
         ): void {
             pushColor(color);
+
+            if (dpr !== 1 && !settings.useGPUTranslations) {
+                x *= dpr;
+                y *= dpr;
+                pointSize *= dpr;
+            }
+
             if (settings.usePreallocated) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
                 vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
-                data.push(checkTreshold ? 1 : 0);
-                data.push(pointSize || 1);
+                data.push(checkTreshold ? dpr : 0);
+                data.push(pointSize);
             }
         }
 
@@ -1150,12 +1166,12 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('xAxisTrans', axis.transA);
+        shader.setUniform('xAxisTrans', axis.transA * dpr);
         shader.setUniform('xAxisMin', axis.min as any);
-        shader.setUniform('xAxisMinPad', axis.minPixelPadding);
+        shader.setUniform('xAxisMinPad', axis.minPixelPadding * dpr);
         shader.setUniform('xAxisPointRange', axis.pointRange);
-        shader.setUniform('xAxisLen', axis.len);
-        shader.setUniform('xAxisPos', axis.pos);
+        shader.setUniform('xAxisLen', axis.len * dpr);
+        shader.setUniform('xAxisPos', axis.pos * dpr);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
@@ -1171,12 +1187,12 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('yAxisTrans', axis.transA);
+        shader.setUniform('yAxisTrans', axis.transA * dpr);
         shader.setUniform('yAxisMin', axis.min as any);
-        shader.setUniform('yAxisMinPad', axis.minPixelPadding);
+        shader.setUniform('yAxisMinPad', axis.minPixelPadding * dpr);
         shader.setUniform('yAxisPointRange', axis.pointRange);
-        shader.setUniform('yAxisLen', axis.len);
-        shader.setUniform('yAxisPos', axis.pos);
+        shader.setUniform('yAxisLen', axis.len * dpr);
+        shader.setUniform('yAxisPos', axis.pos * dpr);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
@@ -1201,12 +1217,8 @@ function GLRenderer(
     function render(chart: Chart): (false|undefined) {
 
         if (chart) {
-            if (!chart.chartHeight || !chart.chartWidth) {
-                // chart.setChartSize();
-            }
-
-            width = chart.chartWidth || 800;
-            height = chart.chartHeight || 400;
+            width = chart.chartWidth * dpr;
+            height = chart.chartHeight * dpr;
         } else {
             return false;
         }
