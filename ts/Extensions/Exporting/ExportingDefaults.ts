@@ -225,20 +225,21 @@ const exporting: ExportingOptions = {
     url: 'https://export.highcharts.com/',
 
     /**
-     * Allows implementing custom font code file for the exported PDF.
-     * Useful when implementing font which isn't supported by the jspdf.
-     * For example UTF-8, Chinese, Rusian, Japanese etc.
+     * Allows using a custom font code file for the exported PDF. Useful when
+     * implementing a font which isn't supported by jsPDF. For example UTF-8,
+     * Chinese, Russian, Japanese etc.
      *
      * When this is set, the external script-loading block for PDF is modified
-     * to also load the user-defined PDF font that is created from
-     * jsPDF's online font converter tool.
-     * By default undefined to don't increase the bundle size.
+     * to also load the user-defined PDF font that is created from jsPDF's
+     * [online font converter
+     * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
+     * By default `undefined` to avoid increasing the bundle size.
      *
-     * See more in
-     * [the docs](https://www.highcharts.com/docs/export-module/client-side-export).
+     * See more in [the
+     * docs](https://www.highcharts.com/docs/export-module/client-side-export).
      *
      * @sample {highcharts} highcharts/exporting/offline-downloading-pdf-utf-8/
-     *         Download pdf in a language containing non-Latin characters.
+     *         Download PDF in a language containing non-Latin characters.
      *
      * @type      {string}
      * @since     next
