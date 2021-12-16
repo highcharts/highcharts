@@ -978,6 +978,14 @@ Chart.prototype.drillUp = function (): void {
                 }
             });
 
+            // For category, axis reset the names that the new series
+            // starts from the beginning, #16135.
+            if (oldSeries.xAxis &&
+                oldSeries.xAxis.options.type === 'category'
+            ) {
+                oldSeries.xAxis.names = [];
+            }
+
             addedSeries = addedSeries || chart.addSeries(seriesOptions, false);
             if (
                 addedSeries.type === oldSeries.type &&

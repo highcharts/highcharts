@@ -362,3 +362,57 @@ QUnit.test('Multi-level drilldown gets mixed  (#3579)', function (assert) {
         'The legend is not showing right information'
     );
 });
+
+QUnit.test(
+    'Drilldown on the chart with category axis and cropThreshold set, #16135.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                keys: ['name', 'y', 'drilldown'],
+                cropThreshold: 5,
+                data: [
+                    ["A-0", 0, "DrillSeries"],
+                    ["A-1", 1, "DrillSeries"],
+                    ["A-2", 2, "DrillSeries"],
+                    ["A-3", 3, "DrillSeries"],
+                    ["A-4", 4, "DrillSeries"],
+                    ["A-5", 5, "DrillSeries"],
+                    ["A-6", 6, "DrillSeries"],
+                    ["A-7", 7, "DrillSeries"],
+                    ["A-8", 8, "DrillSeries"],
+                    ["A-9", 9, "DrillSeries"]
+                ]
+            }],
+            drilldown: {
+                drilldown: {
+                    breadcrumbs: {
+                        showFullPath: false
+                    },
+                    series: [{
+                        data: [
+                            ["x-0", 1],
+                            ["x-1", 2],
+                            ["x-2", 3]
+                        ],
+                        name: 'DrillSeries',
+                        id: 'DrillSeries'
+                    }]
+                }
+            }
+        });
+
+        chart.series[0].points[1].doDrilldown();
+        chart.drillUp();
+        assert.strictEqual(
+            chart.series[0].xData[chart.series[0].xData.length - 1],
+            9,
+            `After drilling down and up on the chart with the category axis
+            the main series should go back to its original state.`
+        );
+    });
