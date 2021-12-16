@@ -18,7 +18,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const { doc, win } = H;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -77,6 +77,13 @@ function createAndAttachRenderer(
     chart: Chart,
     series: Series
 ): Highcharts.BoostGLRenderer {
+
+    const dpr = (
+        chart.options &&
+        chart.options.boost &&
+        chart.options.boost.pixelRatio
+    ) || win.devicePixelRatio || 1;
+
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: Highcharts.BoostTargetObject = chart,
@@ -170,8 +177,8 @@ function createAndAttachRenderer(
                 .attr({
                     x: 0,
                     y: 0,
-                    width: width,
-                    height: height
+                    width,
+                    height
                 })
                 .css({
                     pointerEvents: 'none',
@@ -199,8 +206,8 @@ function createAndAttachRenderer(
         }
     }
 
-    (target.canvas as any).width = width;
-    (target.canvas as any).height = height;
+    (target.canvas as any).width = width * dpr;
+    (target.canvas as any).height = height * dpr;
 
     (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
 
