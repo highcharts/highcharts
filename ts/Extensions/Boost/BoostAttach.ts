@@ -78,12 +78,6 @@ function createAndAttachRenderer(
     series: Series
 ): Highcharts.BoostGLRenderer {
 
-    const dpr = (
-        chart.options &&
-        chart.options.boost &&
-        chart.options.boost.pixelRatio
-    ) || win.devicePixelRatio || 1;
-
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: Highcharts.BoostTargetObject = chart,
@@ -206,8 +200,8 @@ function createAndAttachRenderer(
         }
     }
 
-    (target.canvas as any).width = width * dpr;
-    (target.canvas as any).height = height * dpr;
+    (target.canvas as any).width = width;
+    (target.canvas as any).height = height;
 
     (target.boostClipRect as any).attr(chart.getBoostClipRect(target));
 

@@ -198,10 +198,16 @@ function GLRenderer(
                 timeKDTree: false,
                 showSkipSummary: false
             }
-        },
-        dpr = 1;
+        };
 
     // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @private
+     */
+    function getPixelRatio(): number {
+        return settings.pixelRatio || win.devicePixelRatio || 1;
+    }
 
     /**
      * @private
@@ -212,10 +218,9 @@ function GLRenderer(
         // refactor the Boost options to include an object of default options as
         // base for the merge, like other components.
         if (!('pixelRatio' in options)) {
-            options.pixelRatio = void 1;
+            options.pixelRatio = 1;
         }
         merge(true, settings, options);
-        dpr = settings.pixelRatio || win.devicePixelRatio || 1;
     }
 
     /**
@@ -412,7 +417,8 @@ function GLRenderer(
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
-            gapSize: number = false as any;
+            gapSize: number = false as any,
+            pixelRatio = getPixelRatio();
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -486,10 +492,10 @@ function GLRenderer(
         ): void {
             pushColor(color);
 
-            if (dpr !== 1 && !settings.useGPUTranslations) {
-                x *= dpr;
-                y *= dpr;
-                pointSize *= dpr;
+            if (pixelRatio !== 1 && !settings.useGPUTranslations) {
+                x *= pixelRatio;
+                y *= pixelRatio;
+                pointSize *= pixelRatio;
             }
 
             if (settings.usePreallocated) {
@@ -498,7 +504,7 @@ function GLRenderer(
             } else {
                 data.push(x);
                 data.push(y);
-                data.push(checkTreshold ? dpr : 0);
+                data.push(checkTreshold ? pixelRatio : 0);
                 data.push(pointSize);
             }
         }
@@ -1166,12 +1172,14 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('xAxisTrans', axis.transA * dpr);
+        const pixelRatio = getPixelRatio();
+
+        shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
-        shader.setUniform('xAxisMinPad', axis.minPixelPadding * dpr);
+        shader.setUniform('xAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('xAxisPointRange', axis.pointRange);
-        shader.setUniform('xAxisLen', axis.len * dpr);
-        shader.setUniform('xAxisPos', axis.pos * dpr);
+        shader.setUniform('xAxisLen', axis.len * pixelRatio);
+        shader.setUniform('xAxisPos', axis.pos * pixelRatio);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
@@ -1187,12 +1195,14 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('yAxisTrans', axis.transA * dpr);
+        const pixelRatio = getPixelRatio();
+
+        shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
-        shader.setUniform('yAxisMinPad', axis.minPixelPadding * dpr);
+        shader.setUniform('yAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('yAxisPointRange', axis.pointRange);
-        shader.setUniform('yAxisLen', axis.len * dpr);
-        shader.setUniform('yAxisPos', axis.pos * dpr);
+        shader.setUniform('yAxisLen', axis.len * pixelRatio);
+        shader.setUniform('yAxisPos', axis.pos * pixelRatio);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
@@ -1216,9 +1226,10 @@ function GLRenderer(
      */
     function render(chart: Chart): (false|undefined) {
 
+        const pixelRatio = getPixelRatio();
         if (chart) {
-            width = chart.chartWidth * dpr;
-            height = chart.chartHeight * dpr;
+            width = chart.chartWidth * pixelRatio;
+            height = chart.chartHeight * pixelRatio;
         } else {
             return false;
         }
