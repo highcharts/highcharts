@@ -1395,11 +1395,10 @@ function GLRenderer(
             setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'points') {
-                if (options.marker && isNumber(options.marker.radius)) {
-                    shader.setPointSize(options.marker.radius * 2.0);
-                } else {
-                    shader.setPointSize(1);
-                }
+                shader.setPointSize(pick(
+                    options.marker && options.marker.radius,
+                    0.5
+                ) * 2 * pixelRatio);
             }
 
             // If set to true, the toPixels translations in the shader
@@ -1407,7 +1406,12 @@ function GLRenderer(
             shader.setSkipTranslation(s.skipTranslation);
 
             if (s.series.type === 'bubble') {
-                shader.setBubbleUniforms(s.series as any, s.zMin, s.zMax);
+                shader.setBubbleUniforms(
+                    s.series as any,
+                    s.zMin,
+                    s.zMax,
+                    pixelRatio
+                );
             }
 
             shader.setDrawAsCircle(
@@ -1427,11 +1431,11 @@ function GLRenderer(
             }
 
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && isNumber(options.marker.radius)) {
-                    shader.setPointSize(options.marker.radius * 2.0);
-                } else {
-                    shader.setPointSize(10);
-                }
+                shader.setPointSize(pick(
+                    options.marker && options.marker.radius,
+                    5
+                ) * 2 * pixelRatio);
+
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
