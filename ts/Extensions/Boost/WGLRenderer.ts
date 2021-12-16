@@ -492,14 +492,20 @@ function GLRenderer(
         ): void {
             pushColor(color);
 
-            if (pixelRatio !== 1 && !settings.useGPUTranslations) {
+            // Correct for pixel ratio
+            if (
+                pixelRatio !== 1 && (
+                    !settings.useGPUTranslations ||
+                    inst.skipTranslation
+                )
+            ) {
                 x *= pixelRatio;
                 y *= pixelRatio;
                 pointSize *= pixelRatio;
             }
 
             if (settings.usePreallocated) {
-                vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize);
                 vlen += 4;
             } else {
                 data.push(x);
@@ -646,7 +652,7 @@ function GLRenderer(
                     // better color interpolation.
 
                     // If there's stroking, we do an additional rect
-                    if (series.type === 'treemap') {
+                    if (series.is('treemap')) {
                         swidth = swidth || 1;
                         scolor = color(pointAttr.stroke).rgba as any;
 
@@ -662,12 +668,12 @@ function GLRenderer(
                     //     swidth = 0;
                     // }
 
-                    // Fixes issues with inverted heatmaps (see #6981)
-                    // The root cause is that the coordinate system is flipped.
-                    // In other words, instead of [0,0] being top-left, it's
+                    // Fixes issues with inverted heatmaps (see #6981). The root
+                    // cause is that the coordinate system is flipped. In other
+                    // words, instead of [0,0] being top-left, it's
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
-                    if (series.type === 'heatmap' && chart.inverted) {
+                    if (series.is('heatmap') && chart.inverted) {
                         x = xAxis.len - x;
                         y = yAxis.len - y;
                         width = -width;
