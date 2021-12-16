@@ -34,7 +34,16 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
+export interface LinkOptions {
+    color?: ColorString;
+    lineWidth?: number;
+    radius: number;
+}
 export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions {
+    borderRadius?: number;
+    linkColor?: ColorString;
+    linkLineWidth?: number;
+    link?: LinkOptions;
     states: SeriesStatesOptions<OrganizationSeries>;
 }
 
@@ -49,6 +58,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels?: OrganizationDataLabelOptions;
     hangingIndent?: number;
     levels?: Array<OrganizationSeriesLevelOptions>;
+    link?: LinkOptions;
     linkColor?: ColorString;
     linkLineWidth?: number;
     linkRadius?: number;
@@ -62,6 +72,8 @@ declare module '../Sankey/SankeySeriesOptions' {
         linkColor?: OrganizationSeriesOptions['linkColor'];
         /** @requires OrganizationSeries */
         linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
+        /** @requires OrganizationSeries */
+        link?: OrganizationSeriesOptions['link'];
     }
 }
 

@@ -18,6 +18,8 @@
 
 import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
 import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
+import ColorString from '../../Core/Color/ColorString';
+import { LinkOptions } from './OrganizationSeriesOptions';
 
 /* *
  *
@@ -26,6 +28,10 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  * */
 
 export interface OrganizationPointOptions extends SankeyPointOptions {
+    linkColor?: ColorString;
+    linkLineWidth?: number;
+    link?: LinkOptions;
+    borderRadius?: number;
     dataLabels?: (OrganizationDataLabelOptions|Array<OrganizationDataLabelOptions>);
     offset?: (number|string);
 }

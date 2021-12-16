@@ -118,6 +118,37 @@ class OrganizationSeries extends SankeySeries {
          * @private
          */
         linkRadius: 10,
+        /**
+         * Link Styling options
+         */
+        link: { // link's default values to be restored when other depricated
+            // will be deleted
+            /**
+             * The color of the links between nodes.
+             *
+             * @type {Highcharts.ColorString}
+             * @private
+             */
+            // color: Palette.neutralColor60
+            /**
+             * The line width of the links connecting nodes, in pixels.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            // lineWidth: 1,
+            /**
+             * Radius for the rounded corners of the links between nodes.
+             *
+             * @sample   highcharts/series-organization/link-options
+             *           Square links
+             *
+             * @private
+             */
+            // radius: 10
+        },
         borderWidth: 1,
         /**
          * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
@@ -496,34 +527,46 @@ class OrganizationSeries extends SankeySeries {
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: OrganizationSeriesOptions = (
-                levelOptions.states &&
-                (levelOptions.states as any)[state as any]
-            ) || {},
-            values: (
-                OrganizationPointOptions &
-                OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
-                .reduce(function (
-                    obj: Record<string, unknown>,
-                    key: string
-                ): Record<string, unknown> {
-                    obj[key] = pick(
-                        (stateOptions as any)[key],
-                        (options as any)[key],
-                        (levelOptions as any)[key],
-                        (series.options as any)[key]
-                    );
-                    return obj;
-                }, {});
+            stateOptions: OrganizationSeriesOptions =
+                (levelOptions.states &&
+                    (levelOptions.states as any)[state as any]) ||
+                {},
+            borderRadius = pick(
+                stateOptions.borderRadius,
+                options.borderRadius,
+                levelOptions.borderRadius,
+                series.options.borderRadius
+            ),
+
+            linkColor = pick(
+                stateOptions.link ? stateOptions.link.color : void 0,
+                options.link ? options.link.color : void 0,
+                levelOptions.link ? levelOptions.link.color : void 0,
+                series.options.link ? series.options.link.color : void 0,
+                stateOptions.linkColor,
+                options.linkColor,
+                levelOptions.linkColor,
+                series.options.linkColor
+            ),
+
+            linkLineWidth = pick(
+                stateOptions.link ? stateOptions.link.lineWidth : void 0,
+                options.link ? options.link.lineWidth : void 0,
+                levelOptions.link ? levelOptions.link.lineWidth : void 0,
+                series.options.link ? series.options.link.lineWidth : void 0,
+                stateOptions.linkLineWidth,
+                options.linkLineWidth,
+                levelOptions.linkLineWidth,
+                series.options.linkLineWidth
+            );
 
         if (!point.isNode) {
-            attribs.stroke = values.linkColor;
-            attribs['stroke-width'] = values.linkLineWidth;
+            attribs.stroke = linkColor;
+            attribs['stroke-width'] = linkLineWidth;
             delete attribs.fill;
         } else {
-            if (values.borderRadius) {
-                attribs.r = values.borderRadius;
+            if (borderRadius) {
+                attribs.r = borderRadius;
             }
         }
         return attribs;

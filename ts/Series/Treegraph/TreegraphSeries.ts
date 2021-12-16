@@ -33,6 +33,7 @@ const {
 import U from '../../Core/Utilities.js';
 import ColumnSeries from '../Column/ColumnSeries';
 import { support } from 'jquery';
+import { Palette } from '../../Core/Color/Palettes';
 const { extend, merge, pick } = U;
 
 /* *
@@ -62,7 +63,11 @@ class TreegraphSeries extends OrganizationSeries {
      *
      *
      * @extends      plotOptions.treegraph
+    * @exclude       linkColor, linkLineWidth, linkRadius
      * @product      highcharts
+     * @requires     modules/sankey
+     * @requires     modules/organization
+     * @requires     modules/treegraph
      * @optionparent plotOptions.treegraph
      */
     public static defaultOptions: TreegraphSeriesOptions = merge(
@@ -73,7 +78,9 @@ class TreegraphSeries extends OrganizationSeries {
             minLinkWidth: 1,
             borderWidth: 1,
             link: {
-                type: 'straight'
+                type: 'straight',
+                width: 1,
+                color: Palette.neutralColor80
             }
         }
     );
@@ -250,7 +257,7 @@ class TreegraphSeries extends OrganizationSeries {
                 this.options.minLinkWidth
             ),
             crisp = (Math.round(options.borderWidth) % 2) / 2,
-            nodeRadius = node.options.radius as any,
+            nodeRadius = node.options.radius,
             borderRadius = options.borderRadius as any,
             nodeOffset = column.offset(node, translationFactor) as any,
             plotSizeY = chart.plotSizeY as number,
@@ -327,13 +334,14 @@ class TreegraphSeries extends OrganizationSeries {
             // Pass test in drawPoints
             node.plotY = 1;
             // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ? [
-                plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
-                plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
-            ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
-            ];
+            node.tooltipPos = chart.inverted ?
+                [
+                    plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                    plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+                ] : [
+                    node.shapeArgs.x + node.shapeArgs.width / 2,
+                    node.shapeArgs.y + node.shapeArgs.height / 2
+                ];
         } else {
             node.dlOptions = {
                 enabled: false
