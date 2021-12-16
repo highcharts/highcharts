@@ -377,16 +377,16 @@ QUnit.test(
                 keys: ['name', 'y', 'drilldown'],
                 cropThreshold: 5,
                 data: [
-                    ["A-0", 0, "DrillSeries"],
-                    ["A-1", 1, "DrillSeries"],
-                    ["A-2", 2, "DrillSeries"],
-                    ["A-3", 3, "DrillSeries"],
-                    ["A-4", 4, "DrillSeries"],
-                    ["A-5", 5, "DrillSeries"],
-                    ["A-6", 6, "DrillSeries"],
-                    ["A-7", 7, "DrillSeries"],
-                    ["A-8", 8, "DrillSeries"],
-                    ["A-9", 9, "DrillSeries"]
+                    ['A-0', 0, 'DrillSeries'],
+                    ['A-1', 1, 'DrillSeries'],
+                    ['A-2', 2, 'DrillSeries'],
+                    ['A-3', 3, 'DrillSeries'],
+                    ['A-4', 4, 'DrillSeries'],
+                    ['A-5', 5, 'DrillSeries'],
+                    ['A-6', 6, 'DrillSeries'],
+                    ['A-7', 7, 'DrillSeries'],
+                    ['A-8', 8, 'DrillSeries'],
+                    ['A-9', 9, 'DrillSeries']
                 ]
             }],
             drilldown: {
@@ -396,9 +396,9 @@ QUnit.test(
                     },
                     series: [{
                         data: [
-                            ["x-0", 1],
-                            ["x-1", 2],
-                            ["x-2", 3]
+                            ['x-0', 1],
+                            ['x-1', 2],
+                            ['x-2', 3]
                         ],
                         name: 'DrillSeries',
                         id: 'DrillSeries'
