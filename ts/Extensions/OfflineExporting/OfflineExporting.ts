@@ -330,8 +330,8 @@ namespace OfflineExporting {
                 getScript(libURL + 'jspdf.js', function (): void {
                     getScript(libURL + 'svg2pdf.js', function (): void {
                         // Add new font if the URL is declared, #6417.
-                        if (options.pdfFontURL) {
-                            getScript(options.pdfFontURL, function (): void {
+                        if (options.pdfFont && options.pdfFont.url) {
+                            getScript(options.pdfFont.url, function (): void {
                                 downloadPDF();
                             });
                         } else {
@@ -905,11 +905,8 @@ namespace OfflineExporting {
             );
 
         // Apply new font if the fontFamily set, #6417.
-        if (options.chartOptions &&
-            options.chartOptions.chart.style &&
-            options.chartOptions.chart.style.fontFamily
-        ) {
-            pdf.setFont(options.chartOptions.chart.style.fontFamily);
+        if (options.pdfFont && options.pdfFont.name) {
+            pdf.setFont(options.pdfFont.name);
         }
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes

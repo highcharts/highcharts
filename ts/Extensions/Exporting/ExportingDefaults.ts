@@ -228,24 +228,41 @@ const exporting: ExportingOptions = {
      * Allows using a custom font code file for the exported PDF. Useful when
      * implementing a font which isn't supported by jsPDF. For example UTF-8,
      * Chinese, Russian, Japanese etc.
-     *
-     * When this is set, the external script-loading block for PDF is modified
-     * to also load the user-defined PDF font that is created from jsPDF's
-     * [online font converter
-     * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
-     * By default `undefined` to avoid increasing the bundle size.
-     *
+     *s
      * See more in [the
      * docs](https://www.highcharts.com/docs/export-module/client-side-export).
      *
      * @sample {highcharts} highcharts/exporting/offline-downloading-pdf-utf-8/
      *         Download PDF in a language containing non-Latin characters.
      *
-     * @type      {string}
      * @since     next
-     * @apioption exporting.pdfFontURL
+     * @requires modules/offline-exporting
      */
-    pdfFontURL: void 0,
+    pdfFont: {
+        /**
+        * When pdfFont URL is set and custom font added,
+        * use this property to apply that font to exported PDF.
+        * Set the name the same as used in the jsPDF converter.
+        *
+        * @type      {string}
+        * @since     next
+        * @apioption exporting.pdfFont.name
+        */
+        name: void 0,
+
+        /**
+        * When this is set, the external script-loading block for PDF is
+        * modified to also load the user-defined PDF font that is created
+        * from jsPDF's [online font converter
+        * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
+        * By default `undefined` to avoid increasing the bundle size.
+        *
+        * @type      {string}
+        * @since     next
+        * @apioption exporting.pdfFont.url
+        */
+        url: void 0
+    },
 
     /**
      * When printing the chart from the menu item in the burger menu, if
