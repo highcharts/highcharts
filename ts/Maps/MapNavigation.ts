@@ -50,7 +50,6 @@ import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
-        mapNavButtons?: Array<SVGElement>;
         mapNavigation?: Highcharts.MapNavigation;
     }
 }
@@ -63,7 +62,6 @@ declare global {
     namespace Highcharts {
 
         interface MapNavigationChart extends Chart {
-            mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
@@ -78,6 +76,7 @@ declare global {
         class MapNavigation {
             public constructor(chart: Chart);
             public chart: MapNavigationChart;
+            public navButtons: Array<SVGElement>;
             public navButtonsGroup: SVGElement;
             public unbindDblClick?: Function;
             public unbindMouseWheel?: Function;
@@ -123,6 +122,7 @@ function MapNavigation(
     this: Highcharts.MapNavigation,
     chart: Chart
 ): void {
+    this.navButtons = [];
     this.init(chart);
 }
 
@@ -141,7 +141,6 @@ MapNavigation.prototype.init = function (
     chart: Chart
 ): void {
     this.chart = chart as Highcharts.MapNavigationChart;
-    chart.mapNavButtons = [];
 };
 
 /**
@@ -173,7 +172,7 @@ MapNavigation.prototype.update = function (
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
         },
-        mapNavButtons = chart.mapNavButtons;
+        navButtons = mapNav.navButtons;
 
     // Merge in new options in case of update, and register back to chart
     // options.
@@ -183,14 +182,16 @@ MapNavigation.prototype.update = function (
     }
 
     // Destroy buttons in case of dynamic update
-    while (mapNavButtons.length) {
-        (mapNavButtons.pop() as any).destroy();
+    while (navButtons.length) {
+        (navButtons.pop() as any).destroy();
     }
 
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
-        mapNav.navButtonsGroup = chart.renderer.g().attr({
-            zIndex: 4 // #4955, // #8392
-        }).add();
+        if (!mapNav.navButtonsGroup) {
+            mapNav.navButtonsGroup = chart.renderer.g().attr({
+                zIndex: 4 // #4955, // #8392
+            }).add();
+        }
         objectEach(o.buttons, function (
             buttonOptions: MapNavigationButtonOptions,
             n: string
@@ -239,7 +240,7 @@ MapNavigation.prototype.update = function (
             // Stop double click event (#4444)
             addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button);
+            navButtons.push(button);
 
             extend(buttonOptions, {
                 width: button.width,
@@ -287,7 +288,7 @@ MapNavigation.prototype.update = function (
 
                 // If buttons overlap
                 if (isIntersectRect(expBtnBBox, navBtnsBBox)) {
-                    // Adjust the mapVan buttons' position by translating them
+                    // Adjust the mapNav buttons' position by translating them
                     // above or below the exporting button
                     const aboveExpBtn = -navBtnsBBox.y - navBtnsBBox.height +
                             expBtnBBox.y - 5,
@@ -309,9 +310,9 @@ MapNavigation.prototype.update = function (
         };
 
         if (!chart.hasLoaded) {
-            // Align it after the plotBox is known (#12776)
-            // and after the hamburger button's position is known
-            // so they don't overlap (#15782)
+            // Align it after the plotBox is known (#12776) and after the
+            // hamburger button's position is known so they don't overlap
+            // (#15782)
             addEvent(chart, 'render', adjustMapNavBtn);
         }
     }
