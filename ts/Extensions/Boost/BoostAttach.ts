@@ -18,7 +18,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
-const { doc, win } = H;
+const { doc } = H;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
