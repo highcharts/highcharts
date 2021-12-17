@@ -164,21 +164,23 @@ class MapView {
                 }
 
                 // Panning rotates the globe
+                const minPlotSize = Math.min( // #16722
+                    chart.plotWidth,
+                    chart.plotHeight
+                );
+
                 if (
                     this.projection.options.name === 'Orthographic' &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < 3
+                    (this.minZoom || Infinity) < minPlotSize
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
                     // speed as moving the pointer across the center of the
                     // projection
-                    const ratio = 440 / (this.getScale() * Math.min(
-                        chart.plotWidth,
-                        chart.plotHeight
-                    ));
+                    const ratio = 440 / (this.getScale() * minPlotSize);
 
                     if (mouseDownRotation) {
                         const lon = (mouseDownX - chartX) * ratio -
