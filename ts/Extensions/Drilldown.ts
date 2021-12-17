@@ -932,7 +932,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             if (level.levelNumber + 1 > lastBreadcrumb.level) {
                 list.push({
                     level: level.levelNumber + 1,
-                    levelOptions: level.pointOptions
+                    levelOptions: merge({
+                        name: level.lowerSeries.name
+                    }, level.pointOptions)
                 });
             }
         });
