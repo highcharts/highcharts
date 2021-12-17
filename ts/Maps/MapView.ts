@@ -253,11 +253,17 @@ class MapView {
 
                 this.fitToBounds(void 0, void 0, false);
 
+                let customView = false;
                 if (isNumber(this.userOptions.zoom)) {
                     this.zoom = this.userOptions.zoom;
+                    customView = true;
                 }
                 if (this.userOptions.center) {
                     merge(true, this.center, this.userOptions.center);
+                    customView = true;
+                }
+                if (customView) {
+                    this.setView(void 0, void 0, false);
                 }
             }
         });
