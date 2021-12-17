@@ -697,10 +697,8 @@ class MapSeries extends ScatterSeries {
         // Apply the SVG transform
         transformGroups.forEach((transformGroup, i): void => {
             const view = i === 0 ? mapView : mapView.insets[i - 1],
-                svgTransform = view.svgTransform;
-            if (svgTransform) {
-
-                const strokeWidth = pick(
+                svgTransform = view.getSVGTransform(),
+                strokeWidth = pick(
                     (this.options as any)[(
                         this.pointAttrToOptions &&
                         (this.pointAttrToOptions as any)['stroke-width']
@@ -708,76 +706,73 @@ class MapSeries extends ScatterSeries {
                     1 // Styled mode
                 );
 
-                /*
-                Animate or move to the new zoom level. In order to prevent
-                flickering as the different transform components are set out of
-                sync (#5991), we run a fake animator attribute and set scale and
-                translation synchronously in the same step.
+            /*
+            Animate or move to the new zoom level. In order to prevent
+            flickering as the different transform components are set out of sync
+            (#5991), we run a fake animator attribute and set scale and
+            translation synchronously in the same step.
 
-                A possible improvement to the API would be to handle this in the
-                renderer or animation engine itself, to ensure that when we are
-                animating multiple properties, we make sure that each step for
-                each property is performed in the same step. Also, for symbols
-                and for transform properties, it should induce a single
-                updateTransform and symbolAttr call.
-                */
-                const scale = svgTransform.scaleX;
-                const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
-                if (renderer.globalAnimation && chart.hasRendered) {
-                    const startTranslateX = Number(
-                        transformGroup.attr('translateX')
-                    );
-                    const startTranslateY = Number(
-                        transformGroup.attr('translateY')
-                    );
-                    const startScale = Number(transformGroup.attr('scaleX'));
+            A possible improvement to the API would be to handle this in the
+            renderer or animation engine itself, to ensure that when we are
+            animating multiple properties, we make sure that each step for each
+            property is performed in the same step. Also, for symbols and for
+            transform properties, it should induce a single updateTransform and
+            symbolAttr call.
+            */
+            const scale = svgTransform.scaleX;
+            const flipFactor = svgTransform.scaleY > 0 ? 1 : -1;
+            if (renderer.globalAnimation && chart.hasRendered) {
+                const startTranslateX = Number(
+                    transformGroup.attr('translateX')
+                );
+                const startTranslateY = Number(
+                    transformGroup.attr('translateY')
+                );
+                const startScale = Number(transformGroup.attr('scaleX'));
 
-                    const step: AnimationStepCallbackFunction = (
-                        now,
-                        fx
-                    ): void => {
-                        const scaleStep = startScale +
-                            (scale - startScale) * fx.pos;
-                        transformGroup.attr({
-                            translateX: (
-                                startTranslateX + (
-                                    svgTransform.translateX - startTranslateX
-                                ) * fx.pos
-                            ),
-                            translateY: (
-                                startTranslateY + (
-                                    svgTransform.translateY - startTranslateY
-                                ) * fx.pos
-                            ),
-                            scaleX: scaleStep,
-                            scaleY: scaleStep * flipFactor
-                        });
+                const step: AnimationStepCallbackFunction = (
+                    now,
+                    fx
+                ): void => {
+                    const scaleStep = startScale +
+                        (scale - startScale) * fx.pos;
+                    transformGroup.attr({
+                        translateX: (
+                            startTranslateX + (
+                                svgTransform.translateX - startTranslateX
+                            ) * fx.pos
+                        ),
+                        translateY: (
+                            startTranslateY + (
+                                svgTransform.translateY - startTranslateY
+                            ) * fx.pos
+                        ),
+                        scaleX: scaleStep,
+                        scaleY: scaleStep * flipFactor
+                    });
 
-                        group.element.setAttribute(
-                            'stroke-width',
-                            strokeWidth / scaleStep
-                        );
-                    };
-
-                    transformGroup
-                        .attr({ animator: 0 })
-                        .animate({ animator: 1 }, { step });
-
-                // When dragging or first rendering, animation is off
-                } else {
-                    transformGroup.attr(svgTransform);
-
-                    // Set the stroke-width directly on the group element so the
-                    // children inherit it. We need to use setAttribute
-                    // directly, because the stroke-widthSetter method expects a
-                    // stroke color also to be set.
-                    transformGroup.element.setAttribute(
+                    group.element.setAttribute(
                         'stroke-width',
-                        strokeWidth / scale
+                        strokeWidth / scaleStep
                     );
-                }
+                };
 
+                transformGroup
+                    .attr({ animator: 0 })
+                    .animate({ animator: 1 }, { step });
 
+            // When dragging or first rendering, animation is off
+            } else {
+                transformGroup.attr(svgTransform);
+
+                // Set the stroke-width directly on the group element so the
+                // children inherit it. We need to use setAttribute directly,
+                // because the stroke-widthSetter method expects a stroke color
+                // also to be set.
+                transformGroup.element.setAttribute(
+                    'stroke-width',
+                    strokeWidth / scale
+                );
             }
         });
 
@@ -1179,7 +1174,7 @@ class MapSeries extends ScatterSeries {
         }
 
         if (mapView) {
-            const mainSvgTransform = mapView.svgTransform;
+            const mainSvgTransform = mapView.getSVGTransform();
 
             series.points.forEach(function (
                 point: (MapPoint&MapPoint.CacheObject)
@@ -1187,7 +1182,7 @@ class MapSeries extends ScatterSeries {
 
                 const svgTransform = (
                     isNumber(point.insetIndex) &&
-                    mapView.insets[point.insetIndex].svgTransform
+                    mapView.insets[point.insetIndex].getSVGTransform()
                 ) || mainSvgTransform;
 
                 // Record the middle point (loosely based on centroid),

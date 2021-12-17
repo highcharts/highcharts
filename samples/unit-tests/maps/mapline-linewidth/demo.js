@@ -17,7 +17,7 @@ QUnit.test(
         assert.close(
             chart.series[0].transformGroups[0].element.getAttribute(
                 'stroke-width'
-            ) * chart.mapView.svgTransform.scaleX,
+            ) * chart.mapView.getSVGTransform().scaleX,
             30,
             0.0000000001,
             'Line width should be set'

@@ -114,7 +114,6 @@ class MapView {
     public options: MapViewOptions;
     public padding: [number, number, number, number] = [0, 0, 0, 0];
     public projection: Projection;
-    public svgTransform?: SVGTransformType;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
 
@@ -253,17 +252,11 @@ class MapView {
 
                 this.fitToBounds(void 0, void 0, false);
 
-                let customView = false;
                 if (isNumber(this.userOptions.zoom)) {
                     this.zoom = this.userOptions.zoom;
-                    customView = true;
                 }
                 if (this.userOptions.center) {
                     merge(true, this.center, this.userOptions.center);
-                    customView = true;
-                }
-                if (customView) {
-                    this.setView(void 0, void 0, false);
                 }
             }
         });
@@ -405,6 +398,19 @@ class MapView {
         return (tileSize / worldSize) * Math.pow(2, this.zoom);
     }
 
+    // Calculate the SVG transform to be applied to series groups
+    public getSVGTransform(): SVGTransformType {
+        const { x, y, width, height } = this.getField(),
+            projectedCenter = this.projection.forward(this.center),
+            flipFactor = this.projection.hasCoordinates ? -1 : 1,
+            scaleX = this.getScale(),
+            scaleY = scaleX * flipFactor,
+            translateX = x + width / 2 - projectedCenter[0] * scaleX,
+            translateY = y + height / 2 - projectedCenter[1] * scaleY;
+
+        return { scaleX, scaleY, translateX, translateY };
+    }
+
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
         this.chart.series.forEach((s): void => {
             if (s.useMapGeometry) {
@@ -507,19 +513,6 @@ class MapView {
             }
 
             this.center = this.projection.inverse(projectedCenter);
-
-
-            // Calculate the SVG transform to be applied to series groups
-            const flipFactor = this.projection.hasCoordinates ? -1 : 1,
-                translateX = x + width / 2 - projectedCenter[0] * scale,
-                translateY = y + height / 2 - projectedCenter[1] * scale *
-                    flipFactor;
-            this.svgTransform = {
-                scaleX: scale,
-                scaleY: scale * flipFactor,
-                translateX,
-                translateY
-            };
 
 
             this.insets.forEach((inset): void => {
