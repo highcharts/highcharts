@@ -72,7 +72,17 @@ $("#mapDropdown").on('change', async function () {
             }
 
             return response.json();
-        });
+        })
+        .catch(e => console.log('Error', e));
+
+    if (!mapData) {
+        if (Highcharts.charts[0]) {
+            Highcharts.charts[0].showLoading(
+                '<i class="fa fa-frown"></i> Map not found'
+            );
+        }
+        return;
+    }
 
     // Update info box download links
     $("#download").html(
