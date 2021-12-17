@@ -719,7 +719,7 @@ input.highcharts-range-selector {
     font-weight: bold;
 }
 
-/* Highmaps */
+/* Highcharts Maps */
 .highcharts-map-series .highcharts-point {
     transition: fill 500ms, fill-opacity 500ms, stroke-width 250ms;
     stroke: $neutral-color-20;
@@ -739,6 +739,11 @@ input.highcharts-range-selector {
     font-size: 1.3em;
     font-weight: bold;
     text-align: center;
+}
+.highcharts-mapview-inset-border {
+    stroke: $neutral-color-20;
+    stroke-width: 1px;
+    fill: none;
 }
 .highcharts-coloraxis {
     stroke-width: 0;
