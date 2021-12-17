@@ -804,20 +804,23 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     ];
 
     // Initialize the chart
-    $('#container').highcharts('Map', {
+    const chart = Highcharts.mapChart('container', {
         title: {
-            text: 'Highmaps basic demo'
+            text: ''
         },
 
-        subtitle: {
-            text:
-                'Source map: <a href="https://code.highcharts.com/mapdata/custom/world.js">World</a>'
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'right'
+                }
+            }
         },
 
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                verticalAlign: 'bottom'
+                align: 'right'
             }
         },
 
@@ -866,5 +869,97 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         after,
         before,
         'The view should not change after updating data values'
+    );
+
+    // #15782 Right side
+    let mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.translateY;
+    let expBtnEdge = chart.exportingGroup.getBBox().y +
+        chart.exportingGroup.getBBox().height;
+
+    assert.ok(
+        mapNavY > expBtnEdge,
+        '#15782, mapNav should not overlap with export icon (right side).'
+    );
+
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'left'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                align: 'left'
+            }
+        }
+    });
+
+    // #15782 Left side
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.translateY;
+    expBtnEdge = chart.exportingGroup.getBBox().y +
+        chart.exportingGroup.getBBox().height;
+
+    assert.ok(
+        mapNavY > expBtnEdge,
+        '#15782, mapNav should not overlap with export icon (left side).'
+    );
+
+    // #15782 Bottom left side
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    verticalAlign: 'bottom'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        }
+    });
+
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.getBBox().height;
+    expBtnEdge = chart.exportingGroup.getBBox().y;
+
+    assert.ok(
+        mapNavY < expBtnEdge,
+        '#15782, mapNav should not overlap with ' +
+            'export icon (Bottom left side).'
+    );
+
+    // #15782 Bottom right side
+    chart.update({
+        exporting: {
+            buttons: {
+                contextButton: {
+                    align: 'right'
+                }
+            }
+        },
+
+        mapNavigation: {
+            buttonOptions: {
+                align: 'right'
+            }
+        }
+    });
+
+    mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
+        chart.mapNavigation.navButtonsGroup.getBBox().height;
+    expBtnEdge = chart.exportingGroup.getBBox().y;
+
+    assert.ok(
+        mapNavY < expBtnEdge,
+        '#15782, mapNav should not overlap with ' +
+            'export icon (Bottom right side).'
     );
 });
