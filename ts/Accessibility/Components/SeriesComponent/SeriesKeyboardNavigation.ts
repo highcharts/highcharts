@@ -299,7 +299,7 @@ class SeriesKeyboardNavigation {
             return keyboardNavigation.onSeriesDestroy(this);
         });
 
-        e.addEvent(chart, 'afterDrilldown', function (): void {
+        e.addEvent(chart, 'afterApplyDrilldown', function (): void {
             updateChartFocusAfterDrilling(this);
         });
 

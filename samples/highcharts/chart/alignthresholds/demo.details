@@ -3,5 +3,4 @@
  authors:
    - Torstein Hønsi
  js_wrap: b
- skipTest: true
 ...
