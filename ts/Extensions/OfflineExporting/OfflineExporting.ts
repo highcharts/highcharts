@@ -271,6 +271,10 @@ namespace OfflineExporting {
                 ): void {
                     setStylePropertyFromParents(el, property);
                 });
+                if (options.pdfFont && options.pdfFont.name) {
+                    el.style['font-family' as any] +=
+                        ', ' + options.pdfFont.name;
+                }
                 el.style['font-family' as any] = (
                     el.style['font-family' as any] &&
                     el.style['font-family' as any].split(' ').splice(-1)
@@ -904,7 +908,7 @@ namespace OfflineExporting {
                 [width, height]
             );
 
-        // Apply new font if the fontFamily set, #6417.
+        // Apply new font if the name set, #6417.
         if (options.pdfFont && options.pdfFont.name) {
             pdf.setFont(options.pdfFont.name);
         }

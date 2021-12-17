@@ -61,18 +61,15 @@ Decision flowchart of the module (click for large version):
     ```
     const jsPDF = this.jsPDF;
     ```
-5. Add correct URL path for the new font by setting the `pdfFontURL` property and then set the same `fontFamily`.
+5. Add correct URL path for the new font and then set the name for the same as used in the converter.
 
     ```
-      exporting: {
-            chartOptions: {
-                chart: {
-                    style: {
-                    fontFamily: 'NotoSans-Regular'
-                    }
-                }
+        exporting: {
+            ...
+            pdfFont: {
+            name: 'NotoSans-Regular',
+            url: 'URLForNotoSans-Regular-normal.js'
             },
-            pdfFontURL: 'https://utils.highcharts.local/samples/data/NotoSans-Regular-normal.js',
         },
     ```
     Please note that each property is case sensitive.

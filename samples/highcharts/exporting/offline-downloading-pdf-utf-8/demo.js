@@ -1,13 +1,9 @@
 Highcharts.chart('container', {
     exporting: {
-        chartOptions: {
-            chart: {
-                style: {
-                    fontFamily: 'NotoSans-Regular'
-                }
-            }
-        },
-        pdfFontURL: 'https://utils.highcharts.com/samples/data/NotoSans-Regular-normal.js'
+        pdfFont: {
+            name: 'NotoSans-Regular',
+            url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@e0a03be4acd87cf5dd92b224208e8f561fd986cd/samples/data/NotoSans-Regular-normal.js'
+        }
     },
 
     title: {
