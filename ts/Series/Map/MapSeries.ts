@@ -43,16 +43,11 @@ const { noop } = H;
 import LegendSymbol from '../../Core/Legend/LegendSymbol.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 const {
-    maps,
     splitPath
 } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapView from '../../Maps/MapView.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import MU from '../../Maps/MapUtilities.js';
-const {
-    pointInPolygon
-} = MU;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -828,30 +823,9 @@ class MapSeries extends ScatterSeries {
                             if (insets && isNumber(midX) && isNumber(midY)) {
                                 const inset = find(insets, (
                                     inset
-                                ): boolean|undefined => {
-                                    // @todo Move this over to the inset, in a
-                                    // new isInside function.
-                                    //
-                                    // @todo Instead of running the expensive
-                                    // pointInPolygon, find the rectangle bounds
-                                    // of the inset (in the inset constructor)
-                                    // and do a pre-filter on that. Most (almost
-                                    // all) of the times that will suffice.
-                                    if (inset.path && pointInPolygon(
-                                        { x: midX, y: midY },
-                                        // @todo: Transform the hit zone only
-                                        // once (in the MapViewInset
-                                        // constructor)
-                                        inset.path.map(
-                                            (segment): [number, number] => [
-                                                segment[1] || 0,
-                                                segment[2] || 0
-                                            ]
-                                        )
-                                    )) {
-                                        return true;
-                                    }
-                                });
+                                ): boolean|undefined => inset.isInside({
+                                    x: midX, y: midY
+                                }));
                                 if (inset) {
                                     // Project again, but with the inset
                                     // projection

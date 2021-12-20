@@ -158,6 +158,7 @@ $("#mapDropdown").on('change', async function () {
     };
 
     // Instantiate chart
+    console.time('map');
     Highcharts.mapChart('container', {
 
         chart: {
@@ -232,6 +233,7 @@ $("#mapDropdown").on('change', async function () {
             enableMouseTracking: false
         }]
     });
+    console.timeEnd('map');
 
     showDataLabels = $("#chkDataLabels").prop('checked');
 });

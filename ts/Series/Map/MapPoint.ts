@@ -27,6 +27,10 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import ColorMapMixin from '../ColorMapMixin.js';
+import MapUtilities from '../../Maps/MapUtilities.js';
+const {
+    boundsFromPath
+} = MapUtilities;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -144,41 +148,22 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      */
     public getProjectedBounds(projection: Projection): MapBounds|undefined {
         const path = MapPoint.getProjectedPath(this, projection),
+            bounds = boundsFromPath(path),
             properties = this.properties;
 
-        let x2 = -Number.MAX_VALUE,
-            x1 = Number.MAX_VALUE,
-            y2 = -Number.MAX_VALUE,
-            y1 = Number.MAX_VALUE,
-            validBounds;
-
-        path.forEach((seg): void => {
-            const x = seg[seg.length - 2];
-            const y = seg[seg.length - 1];
-            if (
-                typeof x === 'number' &&
-                typeof y === 'number'
-            ) {
-                x1 = Math.min(x1, x);
-                x2 = Math.max(x2, x);
-                y1 = Math.min(y1, y);
-                y2 = Math.max(y2, y);
-                validBounds = true;
-            }
-        });
-
-        if (validBounds) {
+        if (bounds) {
 
             // Cache point bounding box for use to position data labels, bubbles
             // etc
             const propMiddleX = properties && properties['hc-middle-x'],
-                midX = (
-                    x1 + (x2 - x1) * pick(
-                        this.middleX,
-                        isNumber(propMiddleX) ? propMiddleX : 0.5
-                    )
-                ),
                 propMiddleY = properties && properties['hc-middle-y'];
+
+            bounds.midX = (
+                bounds.x1 + (bounds.x2 - bounds.x1) * pick(
+                    this.middleX,
+                    isNumber(propMiddleX) ? propMiddleX : 0.5
+                )
+            );
 
             let middleYFraction = pick(
                 this.middleY,
@@ -189,9 +174,8 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
                 middleYFraction = 1 - middleYFraction;
             }
 
-            const midY = y2 - (y2 - y1) * middleYFraction;
-
-            return { midX, midY, x1, y1, x2, y2 };
+            bounds.midY = bounds.y2 - (bounds.y2 - bounds.y1) * middleYFraction;
+            return bounds;
         }
     }
 

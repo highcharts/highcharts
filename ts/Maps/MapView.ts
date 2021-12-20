@@ -37,6 +37,12 @@ import MapChart from '../Core/Chart/MapChart.js';
 const {
     maps
 } = MapChart;
+import MU from './MapUtilities.js';
+const {
+    boundsFromPath,
+    pointInPolygon
+} = MU;
+
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
@@ -852,10 +858,11 @@ class MapViewInset extends MapView {
 
     public allBounds: MapBounds[];
     public border?: SVGElement;
+    public geoBoundsProjectedBox?: MapBounds;
+    public geoBoundsProjectedPolygon?: Array<Array<number>>;
     public hitZone?: Polygon;
     public id?: string;
     public options: MapViewInsetsOptions;
-    public path?: SVGPath;
     public mapView: MapView;
 
     public constructor(
@@ -873,7 +880,14 @@ class MapViewInset extends MapView {
         if (this.options.geoBounds) {
             // The path in projected units in the map view's main projection.
             // This is used for hit testing where the points should render.
-            this.path = mapView.projection.path(this.options.geoBounds);
+            const path = mapView.projection.path(this.options.geoBounds);
+            this.geoBoundsProjectedBox = boundsFromPath(path);
+            this.geoBoundsProjectedPolygon = path.map(
+                (segment): [number, number] => [
+                    segment[1] || 0,
+                    segment[2] || 0
+                ]
+            );
         }
     }
 
@@ -931,6 +945,27 @@ class MapViewInset extends MapView {
 
     getProjectedBounds(): MapBounds|undefined {
         return MapView.compositeBounds(this.allBounds);
+    }
+
+    // Determine whether a point on the main projected plane is inside the
+    // geoBounds of the inset.
+    isInside(point: ProjectedXY): boolean {
+        const { geoBoundsProjectedBox, geoBoundsProjectedPolygon } = this;
+
+        return Boolean(
+            // First we do a pre-pass to check whether the test point is inside
+            // the rectangular bounding box of the polygon. This is less
+            // expensive and will rule out most cases.
+            geoBoundsProjectedBox &&
+            point.x >= geoBoundsProjectedBox.x1 &&
+            point.x <= geoBoundsProjectedBox.x2 &&
+            point.y >= geoBoundsProjectedBox.y1 &&
+            point.y <= geoBoundsProjectedBox.y2 &&
+            // Next, do the more expensive check whether the point is inside the
+            // polygon itself.
+            geoBoundsProjectedPolygon &&
+            pointInPolygon(point, geoBoundsProjectedPolygon)
+        );
     }
 
     // Render the map view inset with the border path
