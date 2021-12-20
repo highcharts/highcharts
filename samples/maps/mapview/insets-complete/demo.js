@@ -11,7 +11,9 @@
     // inset configuration. In most cases it is better extending an existing
     // one. The settings used in this demo are the same as the built-in
     // recommended options for USA.
-    delete topology.objects.default['hc-recommended-mapview'].insets;
+    if (topology.objects.default['hc-recommended-mapview']) {
+        delete topology.objects.default['hc-recommended-mapview'].insets;
+    }
 
     // Initialize the chart
     Highcharts.mapChart('container', {
