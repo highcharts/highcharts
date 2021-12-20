@@ -12,8 +12,12 @@ QUnit.module('MapView', () => {
                 options: {
                     chart: {}
                 },
-                plotWidth: 1000,
-                plotHeight: 1000
+                plotBox: {
+                    x: 0,
+                    y: 0,
+                    width: 1000,
+                    height: 100
+                }
             }, options);
 
             [

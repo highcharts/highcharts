@@ -119,6 +119,7 @@ class MapView {
     public minZoom?: number;
     public options: MapViewOptions;
     public padding: [number, number, number, number] = [0, 0, 0, 0];
+    public playingField: BBoxObject;
     public projection: Projection;
     public userOptions: DeepPartial<MapViewOptions>;
     public zoom: number;
@@ -229,6 +230,10 @@ class MapView {
         this.options = o;
         this.projection = new Projection(o.projection);
 
+        // Initialize with full plot box so we don't have to check for undefined
+        // every time we use it
+        this.playingField = chart.plotBox;
+
         /**
          * The current zoom level of the view.
          * @name Highcharts.MapView#zoom
@@ -251,6 +256,7 @@ class MapView {
 
         // Initialize and respond to chart size changes
         addEvent(chart, 'afterSetChartSize', (): void => {
+            this.playingField = this.getField();
             if (
                 this.minZoom === void 0 || // When initializing the chart
                 this.minZoom === this.zoom // When resizing the chart
@@ -309,7 +315,9 @@ class MapView {
                 relativeLength(padArr[3], fullField.width)
             ];
 
-            const { width, height } = this.getField();
+            // Apply the playing field, corrected with padding
+            this.playingField = this.getField();
+            const { width, height } = this.playingField;
 
             const scaleToPlotArea = Math.max(
                 (b.x2 - b.x1) / (width / tileSize),
@@ -406,7 +414,7 @@ class MapView {
 
     // Calculate the SVG transform to be applied to series groups
     public getSVGTransform(): SVGTransformType {
-        const { x, y, width, height } = this.getField(),
+        const { x, y, width, height } = this.playingField,
             projectedCenter = this.projection.forward(this.center),
             flipFactor = this.projection.hasCoordinates ? -1 : 1,
             scaleX = this.getScale(),
@@ -464,7 +472,7 @@ class MapView {
         const bounds = this.getProjectedBounds();
         if (bounds) {
             const projectedCenter = this.projection.forward(this.center),
-                { x, y, width, height } = this.getField(),
+                { x, y, width, height } = this.playingField,
                 scale = this.getScale(),
                 bottomLeft = this.projectedUnitsToPixels({
                     x: bounds.x1,
@@ -524,6 +532,7 @@ class MapView {
             this.insets.forEach((inset): void => {
                 if (inset.options.field) {
                     inset.hitZone = inset.getHitZone();
+                    inset.playingField = inset.getField();
                 }
             });
 
@@ -548,7 +557,7 @@ class MapView {
     public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
         const scale = this.getScale(),
             projectedCenter = this.projection.forward(this.center),
-            field = this.getField(),
+            field = this.playingField,
             centerPxX = field.x + field.width / 2,
             centerPxY = field.y + field.height / 2;
 
@@ -570,7 +579,7 @@ class MapView {
         const { x, y } = pos,
             scale = this.getScale(),
             projectedCenter = this.projection.forward(this.center),
-            field = this.getField(),
+            field = this.playingField,
             centerPxX = field.x + field.width / 2,
             centerPxY = field.y + field.height / 2;
 
@@ -895,7 +904,6 @@ class MapViewInset extends MapView {
     getField(padded: boolean = true): BBoxObject {
         const hitZone = this.hitZone;
         if (hitZone) {
-            // @todo: Cache. Called 4 times on first render.
             const padding = padded ? this.padding : [0, 0, 0, 0],
                 polygon = hitZone.coordinates[0],
                 xs = polygon.map((xy): number => xy[0]),
@@ -994,7 +1002,7 @@ class MapViewInset extends MapView {
                 field = (
                     options.relativeTo === 'mapBoundingBox' &&
                     mapView.getMapBBox()
-                ) || mapView.getField();
+                ) || mapView.playingField;
 
             const d = (borderPath.coordinates || []).reduce(
                 (d, lineString): SVGPath =>
