@@ -978,12 +978,9 @@ Chart.prototype.drillUp = function (): void {
                 }
             });
 
-            // For category, axis reset the names that the new series
-            // starts from the beginning, #16135.
-            if (oldSeries.xAxis &&
-                oldSeries.xAxis.options.type === 'category'
-            ) {
-                oldSeries.xAxis.names = [];
+            // Reset the names to start new series from the beginning, #16135.
+            if (oldSeries.xAxis && oldSeries.xAxis.names) {
+                oldSeries.xAxis.names.length = 0;
             }
 
             addedSeries = addedSeries || chart.addSeries(seriesOptions, false);
