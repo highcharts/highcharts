@@ -30,7 +30,6 @@
         "tools",
         "utils",
         ".gitignore",
-        "ant",
         "build.md",
         "build.properties",
         "build.xml"
