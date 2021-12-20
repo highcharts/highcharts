@@ -976,11 +976,6 @@ Chart.prototype.drillUp = function (): void {
                 }
             });
 
-            // Reset the names to start new series from the beginning, #16135.
-            if (oldSeries.xAxis && oldSeries.xAxis.names) {
-                oldSeries.xAxis.names.length = 0;
-            }
-
             addedSeries = addedSeries || chart.addSeries(seriesOptions, false);
             if (
                 addedSeries.type === oldSeries.type &&
@@ -993,6 +988,7 @@ Chart.prototype.drillUp = function (): void {
                 newSeries = addedSeries;
             }
         };
+    const drilldownLevelsNumber = (chart.drilldownLevels as any).length;
 
     while (i--) {
 
@@ -1017,6 +1013,16 @@ Chart.prototype.drillUp = function (): void {
                 }
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+            // Reset the names to start new series from the beginning.
+            // Do it once to preserve names when multiple
+            // series are added for the same axis, #16135.
+            if (oldSeries.xAxis &&
+                oldSeries.xAxis.names &&
+                (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+            ) {
+                oldSeries.xAxis.names.length = 0;
+            }
 
             level.levelSeriesOptions.forEach(addSeries);
 
