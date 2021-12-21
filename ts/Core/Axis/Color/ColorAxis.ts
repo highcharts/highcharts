@@ -45,7 +45,6 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     addEvent,
-    defined,
     extend,
     isNumber,
     merge,
