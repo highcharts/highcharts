@@ -1695,6 +1695,14 @@ merge<Annotation>(
                  */
 
                 /**
+                 * Fires when the annotation is clicked.
+                 *
+                 * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
+                 * @since     7.1.0
+                 * @apioption annotations.events.click
+                 */
+
+                /**
                  * Event callback when annotation is removed from the chart.
                  *
                  * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}

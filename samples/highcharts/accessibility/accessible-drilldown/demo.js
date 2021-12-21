@@ -90,6 +90,11 @@ Highcharts.chart('container', {
         ]
     }],
     drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
         series: [
             {
                 name: 'Chrome',

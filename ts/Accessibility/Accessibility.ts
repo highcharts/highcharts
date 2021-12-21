@@ -533,7 +533,7 @@ namespace Accessibility {
             });
 
             // Direct updates (events happen after render)
-            ['afterDrilldown', 'drillupall'].forEach((event): void => {
+            ['afterApplyDrilldown', 'drillupall'].forEach((event): void => {
                 addEvent(
                     ChartClass as typeof ChartComposition,
                     event,
