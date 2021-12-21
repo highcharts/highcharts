@@ -259,6 +259,10 @@ body {
     left: -18px;
 }
 
+#box1 {
+    z-index: 200;
+}
+
 #box1 .inner span {
     margin-left: -7px;
 }
