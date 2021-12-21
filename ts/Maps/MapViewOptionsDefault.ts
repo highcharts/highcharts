@@ -17,7 +17,6 @@
  * */
 
 import type MapViewOptions from './MapViewOptions';
-import D from '../Core/DefaultOptions.js';
 
 /**
  * The `mapView` options control the initial view of the chart, and how

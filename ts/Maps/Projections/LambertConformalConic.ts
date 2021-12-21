@@ -3,6 +3,7 @@
  * */
 
 'use strict';
+import type { MapBounds } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 import type ProjectionOptions from '../ProjectionOptions';
 
@@ -13,6 +14,8 @@ const sign = (Math as any).sign ||
     halfPI = Math.PI / 2,
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
+
+let clipBounds: MapBounds|undefined;
 
 let n = 0,
     c = 0;
@@ -25,6 +28,8 @@ const LambertConformalConic: ProjectionDefinition = {
             lat1 = parallels[0] || 0,
             lat2 = parallels[1] || lat1,
             cosLat1 = Math.cos(lat1);
+
+        clipBounds = options.clipBounds;
 
         // Apply the global variables
         n = lat1 === lat2 ?
@@ -50,11 +55,22 @@ const LambertConformalConic: ProjectionDefinition = {
                 lat = halfPI - eps10;
             }
         }
-        const r = c / Math.pow(tany(lat), n);
+        const r = c / Math.pow(tany(lat), n),
+            x = r * Math.sin(n * lon) * scale,
+            y = (c - r * Math.cos(n * lon)) * scale;
 
+        if (
+            clipBounds && (
+                x < clipBounds.x1 ||
+                x > clipBounds.x2 ||
+                y < clipBounds.y1 ||
+                y > clipBounds.y2
+            )
+        ) {
+            return [NaN, NaN];
+        }
         return [
-            r * Math.sin(n * lon) * scale,
-            (c - r * Math.cos(n * lon)) * scale
+            x, y
         ];
     },
 
