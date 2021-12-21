@@ -45,6 +45,7 @@ const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
     addEvent,
+    defined,
     extend,
     isNumber,
     merge,
@@ -565,14 +566,16 @@ class ColorAxis extends Axis implements AxisLike {
         this.setLegendColor();
 
         // Create the gradient
-        item.legendSymbol = this.chart.renderer.rect(
-            0,
-            (legend.baseline as any) - 11,
-            width,
-            height
-        ).attr({
-            zIndex: 1
-        }).add(item.legendGroup);
+        if (!item.legendSymbol) {
+            item.legendSymbol = this.chart.renderer.rect(
+                0,
+                (legend.baseline as any) - 11,
+                width,
+                height
+            ).attr({
+                zIndex: 1
+            }).add(item.legendGroup);
+        }
         const options = legend.options;
         const symbolPadding = options.symbolPadding || 0;
         const isSeries = !(item as any).series;
@@ -1018,8 +1021,9 @@ namespace ColorAxis {
 // Properties to preserve after destroy, for Axis.update (#5881, #6025).
 Array.prototype.push.apply(Axis.keepProps, ColorAxis.keepProps);
 
-addEvent(ColorAxis, 'afterGetOffset', function (): void {
+addEvent(ColorAxis, 'afterGetOffset', function (): void { // (#15551)
     if (this.coll === 'colorAxis') {
+
         const legend = this.chart.legend;
 
         legend.allItems.forEach(function (item): void {
