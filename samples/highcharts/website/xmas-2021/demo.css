@@ -247,7 +247,7 @@ body {
 }
 
 .box-left .inner span {
-    left: 20px;
+    left: 80px;
 }
 
 .box-center .inner span {
@@ -398,7 +398,7 @@ body {
     .box-right .inner {
         width: 45px;
         height: 170px;
-        font-size: 4em;
+        font-size: 3em;
         line-height: 200px;
     }
 
