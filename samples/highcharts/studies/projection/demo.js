@@ -85,7 +85,8 @@ const drawMap = projectionKey => {
         },
         lcc: {
             name: 'LambertConformalConic',
-            parallels: [-30, -40]
+            parallels: [30, 40],
+            clipBounds: { x1: -250, y1: -250, x2: 250, y2: 250 }
         },
         miller: {
             name: 'Miller'
