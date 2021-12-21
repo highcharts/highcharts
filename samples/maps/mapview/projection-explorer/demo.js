@@ -172,6 +172,12 @@
                     pointFormat: '{point.name}: {point.value}'
                 },
 
+                plotOptions: {
+                    series: {
+                        animationLimit: 500
+                    }
+                },
+
                 series: [{
                     name: 'Graticule',
                     type: 'mapline',
