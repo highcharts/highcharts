@@ -187,8 +187,7 @@ body {
     transform: perspective(360px) rotateY(0deg);
     margin-left: 0;
     height: 110px;
-    width: 300px;
-    transition: all 1000ms;
+    width: 320px;
     overflow: hidden;
 }
 
@@ -407,7 +406,7 @@ body {
     .box-center .inner:last-child,
     .box-right .inner:last-child {
         height: 180px;
-        width: 300px;
+        width: 540px;
     }
 
     .box-center .inner:last-child {
