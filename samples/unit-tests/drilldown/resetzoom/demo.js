@@ -435,11 +435,25 @@ QUnit.test('Drilldown and reset zoom should not crash the chart, #8095.', functi
         'Buttons should not overlap.'
     );
 
-    //chart.drillUp();
     Highcharts.fireEvent(chart.breadcrumbs, 'up', { newLevel: 1 });
     chart.series[0].points[0].doDrilldown();
 
     assert.ok(
         'No errors in the console.'
+    );
+
+    // Reset chart to initial state.
+    Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
+    chart.drillUp();
+
+    // Zoom in basic level.
+    controller.pan([100, 200], [300, 200]);
+
+    chart.series[0].points[0].doDrilldown();
+    chart.drillUp();
+    assert.strictEqual(
+        typeof chart.resetZoomButton,
+        'object',
+        'Reset zoom button should be visible again.'
     );
 });
