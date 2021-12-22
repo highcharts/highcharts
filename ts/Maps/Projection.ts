@@ -587,9 +587,12 @@ export default class Projection {
                                     lastValidLonLat,
                                     lonLat
                                 );
-                                greatCircle.forEach((lonLat): void =>
-                                    pushToPath(postclip.forward(lonLat)));
-
+                                greatCircle.forEach((lonLat): void => {
+                                    const p = postclip.forward(lonLat);
+                                    if (!isNaN(p[0])) {
+                                        pushToPath(p);
+                                    }
+                                });
                             // For lines, just jump over the gap
                             } else {
                                 movedTo = false;
@@ -628,6 +631,7 @@ export default class Projection {
             }
 
         }
+
         return path;
     }
 }
