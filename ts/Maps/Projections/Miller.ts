@@ -20,7 +20,14 @@ const Miller: ProjectionDefinition = {
     inverse: (xy): [number, number] => [
         (xy[0] / scale) / deg2rad,
         2.5 * (Math.atan(Math.exp(0.8 * (xy[1] / scale))) - quarterPI) / deg2rad
-    ]
+    ],
+
+    bounds: {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -146.91480769173063,
+        y2: 146.91480769173063
+    }
 };
 
 export default Miller;

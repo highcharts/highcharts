@@ -77,6 +77,13 @@ const EqualEarth: ProjectionDefinition = {
         const lat = d * Math.asin(Math.sin(paramLat) / M);
 
         return [lon, lat];
+    },
+
+    bounds: {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -97.52595454902263,
+        y2: 97.52595454902263
     }
 };
 

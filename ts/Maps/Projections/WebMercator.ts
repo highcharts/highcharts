@@ -32,7 +32,14 @@ const WebMercator: ProjectionDefinition = {
         (2 * Math.atan(Math.exp(xy[1] / r)) - (Math.PI / 2)) / deg2rad
     ],
 
-    maxLatitude
+    maxLatitude,
+
+    bounds: {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -200.3750834278071,
+        y2: 200.3750834278071
+    }
 };
 
 export default WebMercator;

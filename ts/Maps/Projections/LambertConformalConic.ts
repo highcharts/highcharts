@@ -15,7 +15,7 @@ const sign = (Math as any).sign ||
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
 
-let clipBounds: MapBounds|undefined;
+let projectedBounds: MapBounds|undefined;
 
 let n = 0,
     c = 0;
@@ -29,7 +29,9 @@ const LambertConformalConic: ProjectionDefinition = {
             lat2 = parallels[1] || lat1,
             cosLat1 = Math.cos(lat1);
 
-        clipBounds = options.clipBounds;
+        if (typeof options.projectedBounds === 'object') {
+            projectedBounds = options.projectedBounds;
+        }
 
         // Apply the global variables
         n = lat1 === lat2 ?
@@ -60,11 +62,11 @@ const LambertConformalConic: ProjectionDefinition = {
             y = (c - r * Math.cos(n * lon)) * scale;
 
         if (
-            clipBounds && (
-                x < clipBounds.x1 ||
-                x > clipBounds.x2 ||
-                y < clipBounds.y1 ||
-                y > clipBounds.y2
+            projectedBounds && (
+                x < projectedBounds.x1 ||
+                x > projectedBounds.x2 ||
+                y < projectedBounds.y1 ||
+                y > projectedBounds.y2
             )
         ) {
             return [NaN, NaN];
