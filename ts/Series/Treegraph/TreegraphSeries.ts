@@ -31,8 +31,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import ColumnSeries from '../Column/ColumnSeries';
-import { support } from 'jquery';
 import { Palette } from '../../Core/Color/Palettes';
 const { extend, merge, pick } = U;
 
@@ -63,7 +61,7 @@ class TreegraphSeries extends OrganizationSeries {
      *
      *
      * @extends      plotOptions.treegraph
-    * @exclude       linkColor, linkLineWidth, linkRadius
+     * @exclude       linkColor, linkLineWidth, linkRadius
      * @product      highcharts
      * @requires     modules/sankey
      * @requires     modules/organization
@@ -334,21 +332,25 @@ class TreegraphSeries extends OrganizationSeries {
             // Pass test in drawPoints
             node.plotY = 1;
             // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ?
-                [
-                    plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
-                    plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
-                ] : [
-                    node.shapeArgs.x + node.shapeArgs.width / 2,
-                    node.shapeArgs.y + node.shapeArgs.height / 2
-                ];
+            node.tooltipPos = chart.inverted ? [
+                plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+            ] : [
+                node.shapeArgs.x + node.shapeArgs.width / 2,
+                node.shapeArgs.y + node.shapeArgs.height / 2
+            ];
         } else {
             node.dlOptions = {
                 enabled: false
             };
         }
     }
-    public alignDataLabel(): void {
+    public alignDataLabel(point: TreegraphPoint): void {
+        // When the chart is inverte, you need to specify the height and width
+        // so that the ColumnSeries.alignLabel method workes.
+        if (this.chart.inverted && point.shapeArgs) {
+            point.shapeArgs.height = point.shapeArgs.width = 0;
+        }
         colProto.alignDataLabel.apply(this, arguments);
     }
 }
