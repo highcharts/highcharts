@@ -27,11 +27,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: { prototype: colProto },
-        organization: { prototype: orgProto }
+        organization: { prototype: orgProto },
+        sankey: { prototype: sankeyProto }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
+import { support } from 'jquery';
 const { extend, merge, pick } = U;
 
 /* *
@@ -241,6 +243,7 @@ class TreegraphSeries extends OrganizationSeries {
             };
         }
     }
+
     /**
      * Run translation operations for one node.
      * @private
@@ -249,14 +252,8 @@ class TreegraphSeries extends OrganizationSeries {
         const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
-            sum = node.getSum(),
-            height = Math.max(
-                Math.round(sum * translationFactor),
-                this.options.minLinkWidth
-            ),
             crisp = (Math.round(options.borderWidth) % 2) / 2,
-            nodeRadius = node.options.radius,
-            borderRadius = options.borderRadius as any,
+            nodeRadius = pick(node.options.radius, options.radius),
             nodeOffset = column.offset(node, translationFactor) as any,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
@@ -267,91 +264,82 @@ class TreegraphSeries extends OrganizationSeries {
                         column.top(translationFactor) + nodeOffset.relativeTop
                     )
                 ) + crisp,
-            left =
-                Math.floor(
-                    this.colDistance * node.column + options.borderWidth / 2
-                ) + crisp,
-            nodeLeft = chart.inverted ? (plotSizeX as number) - left : left,
-            nodeWidth = Math.round(this.nodeWidth);
+            nodeWidth = nodeRadius * 2;
 
-        node.sum = sum;
+        const maxRadius = (column as any).maxRadius;
+        const previousColumn = (this as any).nodeColumns[node.column - 1];
+        const emptySpaceWidth = (this as any).emptySpaceWidth;
+
+        const left = previousColumn ?
+            previousColumn.nodeX +
+                previousColumn.maxRadius * 2 +
+                emptySpaceWidth :
+            0;
+
+        const colDistance = this.colDistance;
+
+        const nodeLeft = chart.inverted ? (plotSizeX as number) - left : left;
+        node.sum = 1;
+
+
         // If node sum is 0, don't render the rect #12453
-        if (sum) {
-            // Draw the node
-            node.shapeType = 'circle';
-            node.nodeX = nodeLeft;
-            node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                let xPosition;
+        // Draw the node
+        node.shapeType = 'circle';
+        node.nodeX = nodeLeft;
+        node.nodeY = fromNodeTop;
+        (column as any).nodeX = nodeLeft;
 
-                if (options.alignNodes === 'right') {
-                    xPosition =
-                        nodeLeft +
-                        ((nodeRadius ? -nodeRadius + borderRadius * 2 : 0) ||
-                            borderRadius);
-                } else if (options.alignNodes === 'left') {
-                    xPosition = nodeLeft + (nodeRadius || borderRadius);
-                } else {
-                    xPosition = nodeLeft + borderRadius;
-                }
+        if (!chart.inverted) {
+            let xPosition = nodeLeft + maxRadius;
 
-                node.shapeArgs = {
-                    x: xPosition,
-                    y: fromNodeTop + borderRadius + nodeWidth / 2,
-                    r: node.options.radius || options.borderRadius
-                };
-            } else {
-                let positionY;
-
-                if (options.alignNodes === 'right') {
-                    positionY =
-                        nodeLeft +
-                        ((node.options.radius ? node.options.radius : 0) ||
-                            options.borderRadius) -
-                        (2 * node.options.radius || 0);
-                } else if (options.alignNodes === 'left') {
-                    positionY =
-                        nodeLeft -
-                        (node.options.radius || options.borderRadius);
-                } else {
-                    positionY = nodeLeft - borderRadius;
-                }
-                node.shapeArgs = {
-                    x: positionY,
-                    y: plotSizeY - fromNodeTop - nodeWidth
-                    // width: node.options.height || options.height || nodeWidth
-                    // height: node.options.width || options.width || height
-                };
+            if (options.alignNodes === 'right') {
+                xPosition += maxRadius - nodeWidth;
+            } else if (options.alignNodes === 'left') {
+                xPosition += nodeWidth - maxRadius;
             }
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
-            // Calculate data label options for the point
-            node.dlOptions = TreegraphSeries.getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            });
-            // Pass test in drawPoints
-            node.plotY = 1;
-            // Set the anchor position for tooltips
-            node.tooltipPos = chart.inverted ? [
-                plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
-                plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
-            ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
-            ];
+
+            node.shapeArgs = {
+                x: xPosition,
+                y: fromNodeTop + nodeWidth / 2,
+                r: node.options.radius || options.borderRadius
+            };
         } else {
-            node.dlOptions = {
-                enabled: false
+            let positionY;
+
+            if (options.alignNodes === 'right') {
+                positionY =
+                    nodeLeft +
+                    ((node.options.radius ? node.options.radius : 0) ||
+                        options.borderRadius) -
+                    (2 * node.options.radius || 0);
+            } else if (options.alignNodes === 'left') {
+                positionY =
+                    nodeLeft - (node.options.radius || options.borderRadius);
+            } else {
+                positionY = nodeLeft;
+            }
+            node.shapeArgs = {
+                x: positionY,
+                y: plotSizeY - fromNodeTop - nodeWidth
+                // width: node.options.height || options.height || nodeWidth
+                // height: node.options.width || options.width || height
             };
         }
+        node.shapeArgs.display = node.hasShape() ? '' : 'none';
+        // Calculate data label options for the point
+        node.dlOptions = TreegraphSeries.getDLOptions({
+            level: (this.mapOptionsToLevel as any)[node.level],
+            optionsPoint: node.options
+        });
+        // Pass test in drawPoints
+        node.plotY = 1;
+        // Set the anchor position for tooltips
+        node.tooltipPos = chart.inverted ?
+            [plotSizeY - node.shapeArgs.y, plotSizeX - node.shapeArgs.x] :
+            [node.shapeArgs.x, node.shapeArgs.y];
     }
-    public alignDataLabel(point: TreegraphPoint): void {
-        // When the chart is inverte, you need to specify the height and width
-        // so that the ColumnSeries.alignLabel method workes.
-        if (this.chart.inverted && point.shapeArgs) {
-            point.shapeArgs.height = point.shapeArgs.width = 0;
-        }
-        colProto.alignDataLabel.apply(this, arguments);
+    public alignDataLabel(): void {
+        sankeyProto.alignDataLabel.apply(this, arguments);
     }
 }
 

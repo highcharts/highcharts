@@ -768,12 +768,13 @@ class SankeySeries extends ColumnSeries {
             let exceedsMinLinkWidth: boolean;
             let factor = 0;
             let i: number;
+            // Will be changed after arcDiagram will be merged.
+            let maxRadius = (column as any).maxRadius || 0;
 
-            let remainingHeight = (
+            let remainingHeight =
                 (chart.plotSizeY as any) -
                 (options.borderWidth as any) -
-                (column.length - 1) * series.nodePadding
-            );
+                (column.length - 1) * series.nodePadding;
 
             // Because the minLinkWidth option doesn't obey the direct
             // translation, we need to run translation iteratively, check
@@ -789,11 +790,22 @@ class SankeySeries extends ColumnSeries {
                         remainingHeight -= minLinkWidth;
                         exceedsMinLinkWidth = true;
                     }
+
+                    maxRadius = Math.max(
+                        maxRadius,
+                        pick(
+                            (column[i].options as any).radius,
+                            (column[i].series.options as any).radius,
+                            0
+                        )
+                    );
                 }
                 if (!exceedsMinLinkWidth) {
                     break;
                 }
             }
+
+            (column as any).maxRadius = maxRadius;
 
             // Re-insert original nodes
             column.length = 0;
@@ -826,19 +838,25 @@ class SankeySeries extends ColumnSeries {
             (
                 translationFactor: number,
                 column: SankeySeries.ColumnArray
-            ): number => Math.min(
-                translationFactor,
-                getColumnTranslationFactor(column)
-            ),
+            ): number =>
+                Math.min(translationFactor, getColumnTranslationFactor(column)),
             Infinity
         );
 
-
+        let columns = (this as any).nodeColumns;
+        let sumOfRadius = columns.reduce(
+            (partialSum: number, column: any): number =>
+                partialSum + column.maxRadius,
+            0
+        );
+        (this as any).emptySpaceWidth =
+            ((chart as any).plotSizeX - sumOfRadius * 2) /
+            Math.max(1, nodeColumns.length - 1);
         this.colDistance =
-            (
-                (chart.plotSizeX as any) - nodeWidth -
-                (options.borderWidth as any)
-            ) / Math.max(1, nodeColumns.length - 1);
+            ((chart.plotSizeX as any) -
+                nodeWidth -
+                (options.borderWidth as any)) /
+            Math.max(1, nodeColumns.length - 1);
 
         // Calculate level options used in sankey and organization
         series.mapOptionsToLevel = getLevelOptions({
