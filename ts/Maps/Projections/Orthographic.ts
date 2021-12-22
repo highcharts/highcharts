@@ -38,6 +38,13 @@ const Orthographic: ProjectionDefinition = {
             Math.atan2(x * cSin, z * cCos) / deg2rad,
             Math.asin(z && y * cSin / z) / deg2rad
         ];
+    },
+
+    bounds: {
+        x1: -scale,
+        x2: scale,
+        y1: -scale,
+        y2: scale
     }
 };
 

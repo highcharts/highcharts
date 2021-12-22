@@ -15,7 +15,7 @@ export type ProjectionRotationOption = (
 );
 
 export interface ProjectionOptions {
-    clipBounds?: MapBounds;
+    projectedBounds?: 'world'|MapBounds;
     name?: string;
     parallels?: number[];
     rotation?: ProjectionRotationOption;

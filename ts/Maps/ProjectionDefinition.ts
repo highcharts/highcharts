@@ -8,6 +8,7 @@
  *
  * */
 
+import type { MapBounds } from './MapViewOptions';
 import type ProjectionOptions from './ProjectionOptions';
 
 export interface ProjectionFunction {
@@ -20,6 +21,7 @@ export interface Projector {
 }
 
 export interface ProjectionDefinition {
+    bounds?: MapBounds;
     forward: ProjectionFunction;
     inverse: ProjectionFunction;
     init?(options: ProjectionOptions): void;
