@@ -332,23 +332,7 @@ class MapView {
             [] as MapBounds[]
         );
 
-        // Handle the projectedBounds option
-        const projectedBounds = (
-            this.options.projection &&
-            this.options.projection.projectedBounds
-        );
-        if (
-            projectedBounds === 'world' &&
-            this.projection.def &&
-            this.projection.def.bounds
-        ) {
-            return this.projection.def.bounds;
-        }
-        if (isObject(projectedBounds)) {
-            return projectedBounds;
-        }
-
-        return MapView.compositeBounds(allBounds);
+        return this.projection.bounds || MapView.compositeBounds(allBounds);
     }
 
     public getScale(): number {

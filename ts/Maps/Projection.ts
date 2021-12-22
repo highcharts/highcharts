@@ -14,7 +14,8 @@ import type {
     GeoJSONGeometryMultiPoint
 } from './GeoJSON';
 import type {
-    LonLatArray
+    LonLatArray,
+    MapBounds
 } from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
 import type {
@@ -48,6 +49,7 @@ const wrapLon = (lon: number): number => {
 
 export default class Projection {
 
+    public bounds: MapBounds|undefined;
     public options: ProjectionOptions;
     // Whether the chart has points, lines or polygons given as coordinates
     // with positive up, as opposed to paths in the SVG plane with positive
@@ -163,7 +165,7 @@ export default class Projection {
 
     public constructor(options: ProjectionOptions = {}) {
         this.options = options;
-        const { name, rotation } = options;
+        const { name, projectedBounds, rotation } = options;
 
         this.rotator = rotation ? this.getRotator(rotation) : void 0;
         this.def = name ? Projection.registry[name] : void 0;
@@ -193,6 +195,11 @@ export default class Projection {
             this.forward = rotator.forward;
             this.inverse = rotator.inverse;
         }
+
+        // Projected bounds/clipping
+        this.bounds = projectedBounds === 'world' ?
+            def && def.bounds :
+            projectedBounds;
     }
 
     /*
