@@ -662,7 +662,6 @@ class MapView {
                             projection: {
                                 rotation: [-lon, -lat]
                             },
-                            center: [lon, lat],
                             zoom: this.zoom
                         }, true, false);
 
