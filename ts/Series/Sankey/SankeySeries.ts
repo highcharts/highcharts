@@ -849,9 +849,11 @@ class SankeySeries extends ColumnSeries {
                 partialSum + column.maxRadius,
             0
         );
+
         (this as any).emptySpaceWidth =
             ((chart as any).plotSizeX - sumOfRadius * 2) /
             Math.max(1, nodeColumns.length - 1);
+
         this.colDistance =
             ((chart.plotSizeX as any) -
                 nodeWidth -

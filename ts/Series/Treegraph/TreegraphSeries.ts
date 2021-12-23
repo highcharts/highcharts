@@ -34,6 +34,7 @@ const {
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
 import { support } from 'jquery';
+import CenteredUtilities from '../CenteredUtilities';
 const { extend, merge, pick } = U;
 
 /* *
@@ -290,12 +291,14 @@ class TreegraphSeries extends OrganizationSeries {
         (column as any).nodeX = nodeLeft;
 
         if (!chart.inverted) {
-            let xPosition = nodeLeft + maxRadius;
+            let xPosition = nodeLeft;
 
             if (options.alignNodes === 'right') {
-                xPosition += maxRadius - nodeWidth;
+                xPosition += (maxRadius * 2) - (nodeWidth / 2);
             } else if (options.alignNodes === 'left') {
-                xPosition += nodeWidth - maxRadius;
+                xPosition += (nodeWidth / 2);
+            } else {
+                xPosition += maxRadius;
             }
 
             node.shapeArgs = {
