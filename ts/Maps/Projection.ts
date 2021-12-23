@@ -66,7 +66,7 @@ export default class Projection {
     // Add a projection definition to the registry, accessible by its `name`.
     public static add(
         name: string,
-        definition: ProjectionDefinition
+        definition: typeof ProjectionDefinition
     ): void {
         Projection.registry[name] = definition;
     }
@@ -168,29 +168,26 @@ export default class Projection {
         const { name, projectedBounds, rotation } = options;
 
         this.rotator = rotation ? this.getRotator(rotation) : void 0;
-        this.def = name ? Projection.registry[name] : void 0;
+
+        const ProjectionDefinition = name ? Projection.registry[name] : void 0;
+        if (ProjectionDefinition) {
+            this.def = new ProjectionDefinition(options);
+        }
         const { def, rotator } = this;
 
         if (def) {
-            if (def.init) {
-                def.init(options);
-            }
             this.maxLatitude = def.maxLatitude || 90;
             this.hasGeoProjection = true;
         }
 
         if (rotator && def) {
-            this.forward = (lonLat): [number, number] => {
-                lonLat = rotator.forward(lonLat);
-                return def.forward(lonLat);
-            };
-            this.inverse = (xy): [number, number] => {
-                const lonLat = def.inverse(xy);
-                return rotator.inverse(lonLat);
-            };
+            this.forward = (lonLat): [number, number] =>
+                def.forward(rotator.forward(lonLat));
+            this.inverse = (xy): [number, number] =>
+                rotator.inverse(def.inverse(xy));
         } else if (def) {
-            this.forward = def.forward;
-            this.inverse = def.inverse;
+            this.forward = (lonLat): [number, number] => def.forward(lonLat);
+            this.inverse = (xy): [number, number] => def.inverse(xy);
         } else if (rotator) {
             this.forward = rotator.forward;
             this.inverse = rotator.inverse;

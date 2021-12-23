@@ -20,11 +20,11 @@ export interface Projector {
     inverse: ProjectionFunction;
 }
 
-export interface ProjectionDefinition {
+export declare class ProjectionDefinition {
+    constructor(options: ProjectionOptions);
     bounds?: MapBounds;
     forward: ProjectionFunction;
     inverse: ProjectionFunction;
-    init?(options: ProjectionOptions): void;
     maxLatitude?: number;
 }
 
