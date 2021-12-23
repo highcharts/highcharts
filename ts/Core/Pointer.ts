@@ -36,6 +36,7 @@ const {
 import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
+import SVGAttributes from './Renderer/SVG/SVGAttributes';
 const {
     addEvent,
     attr,
@@ -290,6 +291,49 @@ class Pointer {
     }
 
     /**
+     * Adjust selection marker dimensions.
+     * @private
+     * @function Highcharts.Pointer#getSelectionMarkerAttrs
+     * @emits afterGetSelectionMarkerAttrs
+     */
+    public getSelectionMarkerAttrs(
+        chartX: number,
+        chartY: number
+    ): SVGAttributes {
+        const zoomHor = this.zoomHor,
+            zoomVert = this.zoomVert,
+            mouseDownX = (this.mouseDownX || 0),
+            mouseDownY = (this.mouseDownY || 0);
+
+        let attrs: SVGAttributes = {},
+            size;
+
+        // Adjust the width of the selection marker
+        if (zoomHor) {
+            size = chartX - mouseDownX;
+            attrs.width =  Math.abs(size);
+            attrs.x = (size > 0 ? 0 : size) + mouseDownX;
+        }
+
+        // Adjust the height of the selection marker
+        if (zoomVert) {
+            size = chartY - mouseDownY;
+            attrs.height =  Math.abs(size);
+            attrs.y = (size > 0 ? 0 : size) + mouseDownY;
+        }
+
+        let event = { attrs, chartX, chartY };
+
+        fireEvent(
+            this,
+            'afterGetSelectionMarkerAttrs',
+            event
+        );
+
+        return event.attrs;
+    }
+
+    /**
      * Perform a drag operation in response to a mousemove event while the mouse
      * is down.
      * @private
@@ -384,21 +428,10 @@ class Pointer {
                 }
             }
 
-            // adjust the width of the selection marker
-            if (selectionMarker && zoomHor) {
-                size = chartX - mouseDownX;
-                selectionMarker.attr({
-                    width: Math.abs(size),
-                    x: (size > 0 ? 0 : size) + mouseDownX
-                });
-            }
-            // adjust the height of the selection marker
-            if (selectionMarker && zoomVert) {
-                size = chartY - mouseDownY;
-                selectionMarker.attr({
-                    height: Math.abs(size),
-                    y: (size > 0 ? 0 : size) + mouseDownY
-                });
+            if (selectionMarker){
+                selectionMarker.attr(
+                    this.getSelectionMarkerAttrs(chartX, chartY)
+                );
             }
 
             // panning

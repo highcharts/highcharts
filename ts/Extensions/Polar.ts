@@ -1195,7 +1195,7 @@ addEvent(Series, 'afterInit', function (): void {
  */
 addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
     const chart = this.chart;
-    if (chart.pane && chart.pane[0]) {
+    if (chart.polar && chart.pane && chart.pane[0]) {
         const center = chart.pane[0].center;
 
         let selectionMarker;
@@ -1212,6 +1212,85 @@ addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
         (event as any).selectionMarker = selectionMarker;
     }
 });
+
+/**
+ * Get attrs for Polar selection marker
+ * @private
+ */
+addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function(event):void {
+    const chart = this.chart;
+
+    if (chart.polar && chart.pane && chart.pane[0]) {
+        const center = chart.pane[0].center,
+            mouseDownX = (this.mouseDownX || 0),
+            mouseDownY = (this.mouseDownY || 0),
+            chartY = (event as any).chartY,
+            chartX = (event as any).chartX,
+            fullCircle = Math.PI * 2;
+
+        let attrs: SVGAttributes = {};
+
+        // Adjust the width of the selection marker
+        if (this.zoomHor) {
+            let startAngleRad = (chart as any).xAxis[0].startAngleRad,
+                sAngle = Math.atan2(
+                    mouseDownY - chart.plotTop - center[1],
+                    mouseDownX - chart.plotLeft - center[0]
+                ) - startAngleRad,
+                eAngle = Math.atan2(
+                    chartY - chart.plotTop - center[1],
+                    chartX - chart.plotLeft - center[0]
+                ) - startAngleRad;
+
+            if (sAngle <= 0) {
+                sAngle += fullCircle;
+            }
+
+            if (eAngle <= 0) {
+                eAngle += fullCircle;
+            }
+
+            if (eAngle < sAngle) {
+                // Swapping angles
+                eAngle = [sAngle, sAngle = eAngle][0];
+            }
+
+            attrs.start = sAngle + startAngleRad;
+            attrs.end = eAngle + startAngleRad;
+        }
+
+        // Adjust the height of the selection marker
+        if (this.zoomVert) {
+
+            let innerR = Math.sqrt(
+                    Math.pow(mouseDownX - chart.plotLeft - center[0], 2) +
+                    Math.pow(mouseDownY - chart.plotTop - center[1], 2)
+                ),
+                r = Math.sqrt(
+                    Math.pow(chartX - chart.plotLeft - center[0], 2) +
+                    Math.pow(chartY - chart.plotTop - center[1], 2)
+                );
+
+            if (r < innerR) {
+                // Swapping angles
+                innerR = [r, r = innerR][0];
+            }
+
+            if (r > center[2] / 2) {
+                r = center[2] / 2;
+            }
+
+            if (innerR < center[3] / 2) {
+                innerR = center[3] / 2;
+            }
+
+            attrs.r = r;
+            attrs.innerR = innerR;
+        }
+
+        (event as any).attrs = attrs;
+    }
+})
 
 /**
  * Extend chart.get to also search in panes. Used internally in
