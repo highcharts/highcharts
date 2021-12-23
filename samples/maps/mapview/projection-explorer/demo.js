@@ -10,6 +10,10 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
+    const antarctica = await fetch(
+        'https://code.highcharts.com/mapdata/custom/antarctica.topo.json'
+    ).then(response => response.json());
+
     const data = getRandomData(topology);
 
     // Get the graticule, the grid of meridians an parallels.
@@ -210,6 +214,12 @@
                         format: '{point.name}'
                     },
                     clip: false
+                }, {
+                    mapData: antarctica,
+                    allAreas: true,
+                    name: 'Antarctica',
+                    clip: false,
+                    opacity: 0.75
                 }, {
                     type: 'mapline',
                     data: [{
