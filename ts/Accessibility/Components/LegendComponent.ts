@@ -338,7 +338,7 @@ class LegendComponent extends AccessibilityComponent {
             this.updateLegendTitle();
 
             if (shouldRestoreFocus) {
-                (focusedElement as HTMLElement).focus();
+                this.chart.highlightLegendItem(this.highlightedLegendItemIx);
             }
             return true;
         }
