@@ -3,7 +3,7 @@
  * */
 
 'use strict';
-import type { LonLatArray } from '../MapViewOptions';
+import type { LonLatArray, MapBounds } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 import type ProjectionOptions from '../ProjectionOptions';
 
@@ -15,11 +15,11 @@ const sign = (Math as any).sign ||
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
 
-
 export default class LambertConformalConic implements ProjectionDefinition {
 
-    private n: number;
     private c: number;
+    private n: number;
+    private projectedBounds: MapBounds|undefined;
 
     constructor(options: ProjectionOptions) {
         const parallels = (options.parallels || [])
@@ -27,6 +27,10 @@ export default class LambertConformalConic implements ProjectionDefinition {
             lat1 = parallels[0] || 0,
             lat2 = parallels[1] || lat1,
             cosLat1 = Math.cos(lat1);
+
+        if (typeof options.projectedBounds === 'object') {
+            this.projectedBounds = options.projectedBounds;
+        }
 
         // Apply the global variables
         let n = lat1 === lat2 ?
@@ -45,7 +49,7 @@ export default class LambertConformalConic implements ProjectionDefinition {
 
     forward(lonLat: LonLatArray): [number, number] {
         const lon = lonLat[0] * deg2rad,
-            { c, n } = this;
+            { c, n, projectedBounds } = this;
         let lat = lonLat[1] * deg2rad;
         if (c > 0) {
             if (lat < -halfPI + eps10) {
@@ -56,11 +60,22 @@ export default class LambertConformalConic implements ProjectionDefinition {
                 lat = halfPI - eps10;
             }
         }
-        const r = c / Math.pow(tany(lat), n);
+        const r = c / Math.pow(tany(lat), n),
+            x = r * Math.sin(n * lon) * scale,
+            y = (c - r * Math.cos(n * lon)) * scale;
 
+        if (
+            projectedBounds && (
+                x < projectedBounds.x1 ||
+                x > projectedBounds.x2 ||
+                y < projectedBounds.y1 ||
+                y > projectedBounds.y2
+            )
+        ) {
+            return [NaN, NaN];
+        }
         return [
-            r * Math.sin(n * lon) * scale,
-            (c - r * Math.cos(n * lon)) * scale
+            x, y
         ];
     }
 

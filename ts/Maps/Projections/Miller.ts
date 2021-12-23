@@ -12,6 +12,13 @@ const quarterPI = Math.PI / 4,
 
 export default class Miller implements ProjectionDefinition {
 
+    bounds = {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -146.91480769173063,
+        y2: 146.91480769173063
+    };
+
     forward(lonLat: LonLatArray): [number, number] {
         return [
             lonLat[0] * deg2rad * scale,

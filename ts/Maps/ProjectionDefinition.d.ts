@@ -8,6 +8,7 @@
  *
  * */
 
+import type { MapBounds } from './MapViewOptions';
 import type ProjectionOptions from './ProjectionOptions';
 
 export interface ProjectionFunction {
@@ -21,6 +22,7 @@ export interface Projector {
 
 export declare class ProjectionDefinition {
     constructor(options: ProjectionOptions);
+    bounds?: MapBounds;
     forward: ProjectionFunction;
     inverse: ProjectionFunction;
     maxLatitude?: number;

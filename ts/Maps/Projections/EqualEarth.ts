@@ -22,6 +22,13 @@ const A1 = 1.340264,
 
 export default class EqualEarth implements ProjectionDefinition {
 
+    bounds = {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -97.52595454902263,
+        y2: 97.52595454902263
+    };
+
     forward(lonLat: LonLatArray): [number, number] {
         const d = Math.PI / 180,
             paramLat = Math.asin(M * Math.sin(lonLat[1] * d)),
@@ -79,4 +86,5 @@ export default class EqualEarth implements ProjectionDefinition {
 
         return [lon, lat];
     }
+
 }

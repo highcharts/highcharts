@@ -11,6 +11,13 @@ const deg2rad = Math.PI / 180,
 
 export default class Orthographic implements ProjectionDefinition {
 
+    bounds = {
+        x1: -scale,
+        x2: scale,
+        y1: -scale,
+        y2: scale
+    };
+
     forward(lonLat: LonLatArray): [number, number] {
 
         const lonDeg = lonLat[0],

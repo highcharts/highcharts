@@ -60,45 +60,56 @@
             name: undefined
         }, {
             equalearth: {
-                name: 'EqualEarth'
+                name: 'EqualEarth',
+                projectedBounds: 'world'
             },
             lcc: {
                 name: 'LambertConformalConic',
-                parallels: [-30, -40]
+                parallels: [30, 40],
+                projectedBounds: { x1: -200, y1: -200, x2: 200, y2: 200 }
             },
             miller: {
-                name: 'Miller'
+                name: 'Miller',
+                projectedBounds: 'world'
             },
             'ortho-africa': {
                 name: 'Orthographic',
-                rotation: [-15, 0]
+                rotation: [-15, 0],
+                projectedBounds: 'world'
             },
             'ortho-antarctica': {
                 name: 'Orthographic',
-                rotation: [0, 90]
+                rotation: [0, 90],
+                projectedBounds: 'world'
             },
             'ortho-asia': {
                 name: 'Orthographic',
-                rotation: [-90, -40]
+                rotation: [-90, -40],
+                projectedBounds: 'world'
             },
             'ortho-australia': {
                 name: 'Orthographic',
-                rotation: [-140, 30]
+                rotation: [-140, 30],
+                projectedBounds: 'world'
             },
             'ortho-europe': {
                 name: 'Orthographic',
-                rotation: [-15, -40]
+                rotation: [-15, -40],
+                projectedBounds: 'world'
             },
             'ortho-north-america': {
                 name: 'Orthographic',
-                rotation: [100, -45]
+                rotation: [100, -45],
+                projectedBounds: 'world'
             },
             'ortho-south-america': {
                 name: 'Orthographic',
-                rotation: [60, 10]
+                rotation: [60, 10],
+                projectedBounds: 'world'
             },
             webmerc: {
-                name: 'WebMercator'
+                name: 'WebMercator',
+                projectedBounds: 'world'
             }
         }[projectionKey] || {});
 

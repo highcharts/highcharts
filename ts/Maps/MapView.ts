@@ -403,7 +403,8 @@ class MapView {
             },
             [] as MapBounds[]
         );
-        return MapView.compositeBounds(allBounds);
+
+        return this.projection.bounds || MapView.compositeBounds(allBounds);
     }
 
     public getScale(): number {

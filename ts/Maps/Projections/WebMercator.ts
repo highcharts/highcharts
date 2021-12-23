@@ -13,6 +13,13 @@ const maxLatitude = 85.0511287798, // The latitude that defines a square
 
 export default class WebMercator implements ProjectionDefinition {
 
+    bounds = {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -200.3750834278071,
+        y2: 200.3750834278071
+    };
+
     forward(lonLat: LonLatArray): [number, number] {
 
         if (Math.abs(lonLat[1]) > maxLatitude) {
