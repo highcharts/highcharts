@@ -552,15 +552,7 @@ export default class Projection {
 
                     const valid = (
                         !isNaN(point[0]) &&
-                        !isNaN(point[1]) &&
-                        (
-                            !hasGeoProjection ||
-                            // Limited projections like Web Mercator
-                            (
-                                lonLat[1] <= this.maxLatitude &&
-                                lonLat[1] >= -this.maxLatitude
-                            )
-                        )
+                        !isNaN(point[1])
                     );
 
                     if (valid) {
