@@ -38,6 +38,8 @@ export type MapViewPaddingType = (
     [number|string, number|string, number|string, number|string]
 );
 
+export type ProjectedXYArray = [number, number] & { outside?: boolean };
+
 export interface ProjectedXY {
     x: number;
     y: number;

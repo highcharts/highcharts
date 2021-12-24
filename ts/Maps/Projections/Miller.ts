@@ -3,7 +3,7 @@
  * */
 
 'use strict';
-import type { LonLatArray } from '../MapViewOptions';
+import type { LonLatArray, ProjectedXYArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 const quarterPI = Math.PI / 4,
@@ -19,7 +19,7 @@ export default class Miller implements ProjectionDefinition {
         y2: 146.91480769173063
     };
 
-    forward(lonLat: LonLatArray): [number, number] {
+    forward(lonLat: LonLatArray): ProjectedXYArray {
         return [
             lonLat[0] * deg2rad * scale,
             1.25 * scale * Math.log(
@@ -28,7 +28,7 @@ export default class Miller implements ProjectionDefinition {
         ];
     }
 
-    inverse(xy: [number, number]): LonLatArray {
+    inverse(xy: ProjectedXYArray): LonLatArray {
         return [
             (xy[0] / scale) / deg2rad,
             2.5 * (Math.atan(

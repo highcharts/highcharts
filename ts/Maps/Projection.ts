@@ -551,8 +551,11 @@ export default class Projection {
                     const point = postclip.forward(lonLat);
 
                     const valid = (
+                        /*
                         !isNaN(point[0]) &&
-                        !isNaN(point[1])
+                        !isNaN(point[1]) &&
+                        */
+                        !point.outside
                     );
 
                     if (valid) {
@@ -585,7 +588,8 @@ export default class Projection {
                                 );
                                 greatCircle.forEach((lonLat): void => {
                                     const p = postclip.forward(lonLat);
-                                    if (!isNaN(p[0])) {
+                                    // if (!isNaN(p[0])) {
+                                    if (!p.outside) {
                                         pushToPath(p);
                                     }
                                 });

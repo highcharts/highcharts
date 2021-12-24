@@ -3,7 +3,7 @@
  * */
 
 'use strict';
-import type { LonLatArray } from '../MapViewOptions';
+import type { LonLatArray, ProjectedXYArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 const deg2rad = Math.PI / 180,
@@ -18,22 +18,23 @@ export default class Orthographic implements ProjectionDefinition {
         y2: scale
     };
 
-    forward(lonLat: LonLatArray): [number, number] {
+    forward(lonLat: LonLatArray): ProjectedXYArray {
 
         const lonDeg = lonLat[0],
             latDeg = lonLat[1];
 
-        if (lonDeg < -90 || lonDeg > 90) {
-            return [NaN, NaN];
-        }
         const lat = latDeg * deg2rad;
-        return [
+        const xy: ProjectedXYArray = [
             Math.cos(lat) * Math.sin(lonDeg * deg2rad) * scale,
             Math.sin(lat) * scale
         ];
+        if (lonDeg < -90 || lonDeg > 90) {
+            xy.outside = true;
+        }
+        return xy;
     }
 
-    inverse(xy: [number, number]): LonLatArray {
+    inverse(xy: ProjectedXYArray): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
             z = Math.sqrt(x * x + y * y),

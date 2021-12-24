@@ -142,7 +142,8 @@
 
             chart = Highcharts.mapChart('container', {
                 chart: {
-                    map: topology
+                    map: topology,
+                    plotBorderWidth: 1
                 },
 
                 title: {

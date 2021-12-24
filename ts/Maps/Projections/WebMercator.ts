@@ -4,7 +4,7 @@
 
 'use strict';
 
-import type { LonLatArray } from '../MapViewOptions';
+import type { LonLatArray, ProjectedXYArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 const maxLatitude = 85.0511287798, // The latitude that defines a square
@@ -20,21 +20,23 @@ export default class WebMercator implements ProjectionDefinition {
         y2: 200.3750834278071
     };
 
-    forward(lonLat: LonLatArray): [number, number] {
-
-        if (Math.abs(lonLat[1]) > maxLatitude) {
-            return [NaN, NaN];
-        }
+    forward(lonLat: LonLatArray): ProjectedXYArray {
 
         const sinLat = Math.sin(lonLat[1] * deg2rad);
 
-        return [
+        const xy: ProjectedXYArray = [
             r * lonLat[0] * deg2rad,
             r * Math.log((1 + sinLat) / (1 - sinLat)) / 2
         ];
+
+        if (Math.abs(lonLat[1]) > maxLatitude) {
+            xy.outside = true;
+        }
+
+        return xy;
     }
 
-    inverse(xy: [number, number]): LonLatArray {
+    inverse(xy: ProjectedXYArray): LonLatArray {
         return [
             xy[0] / (r * deg2rad),
             (2 * Math.atan(Math.exp(xy[1] / r)) - (Math.PI / 2)) / deg2rad
