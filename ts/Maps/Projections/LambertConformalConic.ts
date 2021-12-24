@@ -3,7 +3,11 @@
  * */
 
 'use strict';
-import type { LonLatArray, MapBounds } from '../MapViewOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    ProjectedXYArray
+} from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 import type ProjectionOptions from '../ProjectionOptions';
 
@@ -47,7 +51,7 @@ export default class LambertConformalConic implements ProjectionDefinition {
 
     }
 
-    forward(lonLat: LonLatArray): [number, number] {
+    forward(lonLat: LonLatArray): ProjectedXYArray {
         const lon = lonLat[0] * deg2rad,
             { c, n, projectedBounds } = this;
         let lat = lonLat[1] * deg2rad;
@@ -62,7 +66,8 @@ export default class LambertConformalConic implements ProjectionDefinition {
         }
         const r = c / Math.pow(tany(lat), n),
             x = r * Math.sin(n * lon) * scale,
-            y = (c - r * Math.cos(n * lon)) * scale;
+            y = (c - r * Math.cos(n * lon)) * scale,
+            xy: ProjectedXYArray = [x, y];
 
         if (
             projectedBounds && (
@@ -72,14 +77,12 @@ export default class LambertConformalConic implements ProjectionDefinition {
                 y > projectedBounds.y2
             )
         ) {
-            return [NaN, NaN];
+            xy.outside = true;
         }
-        return [
-            x, y
-        ];
+        return xy;
     }
 
-    inverse(xy: [number, number]): LonLatArray {
+    inverse(xy: ProjectedXYArray): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
             { c, n } = this,

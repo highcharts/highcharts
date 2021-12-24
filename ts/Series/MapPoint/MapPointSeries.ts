@@ -139,8 +139,10 @@ class MapPointSeries extends ScatterSeries {
                     );
                 if (coordinates) {
                     const xy = forward(coordinates);
-                    x = xy[0];
-                    y = xy[1];
+                    if (!(xy as any).outside) {
+                        x = xy[0];
+                        y = xy[1];
+                    }
 
                 // Map bubbles getting geometry from shape
                 } else if (p.bounds) {
