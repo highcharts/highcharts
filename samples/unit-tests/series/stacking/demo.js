@@ -699,4 +699,46 @@ QUnit.test('Date objects as X values, column', function (assert) {
             'Series 3 - Point should start from value=1 (#4024)'
         );
     });
+
+    QUnit.test(
+        'The centerInCategory, reversedStacks order of stacks, #16169.',
+        function (assert) {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        type: "column"
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: "normal",
+                            centerInCategory: true
+                        }
+                    },
+                    yAxis: {
+                        reversedStacks: false,
+                        stackLabels: {
+                            enabled: true
+                        }
+                    },
+                    series: [{
+                        data: [5],
+                        id: 0
+                    }, {
+                        data: [2],
+                        id: 1
+                    }, {
+                        data: [4],
+                        stack: "1"
+                    }, {
+                        data: [1],
+                        stack: "1"
+                    }]
+                }),
+                series = chart.series;
+
+            assert.ok(
+                series[0].points[0].barX < series[2].points[0].barX,
+                `Enabling centerInCategory and setting reversedStacks to false
+                should not affect the stack order.`
+            );
+        });
 }());
