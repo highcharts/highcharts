@@ -205,7 +205,13 @@ QUnit.test('Combination charts and column mapping', function (assert) {
     );
 });
 
-QUnit.test('Data config on updates', function (assert) {
+QUnit.test('Data config on updates and setOptions', function (assert) {
+    Highcharts.setOptions({
+        data: {
+            endRow: 2
+        }
+    });
+
     var chart = Highcharts.chart('container', {
             data: {
                 csv: [
@@ -241,6 +247,12 @@ QUnit.test('Data config on updates', function (assert) {
         chart.series.length,
         oldDataLength,
         'Switching back switchRowsAndColumns should restore number of series (#11095).'
+    );
+
+    assert.strictEqual(
+        chart.series.length,
+        2,
+        'Global data options should be merged with the chart options (#16568).'
     );
 });
 
