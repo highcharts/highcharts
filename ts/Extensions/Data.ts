@@ -30,6 +30,8 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 const {
     addEvent,
     defined,
@@ -2599,8 +2601,12 @@ addEvent(
         let chart = this, // eslint-disable-line no-invalid-this
             userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
+        const defaultDataOptions = getOptions().data;
 
-        if (userOptions && userOptions.data && !chart.hasDataDef) {
+        if (
+            (defaultDataOptions || userOptions && userOptions.data) &&
+            !chart.hasDataDef
+        ) {
             chart.hasDataDef = true;
             /**
              * The data parser for this chart.
@@ -2608,7 +2614,10 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new G.Data(extend(userOptions.data, {
+
+            const dataOptions = merge(defaultDataOptions, userOptions.data);
+
+            chart.data = new G.Data(extend(dataOptions, {
 
                 afterComplete: function (
                     dataOptions?: Partial<Options>
