@@ -247,9 +247,9 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#bodyFormatter
      */
-    public bodyFormatter(items: Array<Point>): Array<string> {
+    public bodyFormatter(items: Array<Point.PointLabelObject>): Array<string> {
         return items.map(function (item): string {
-            const tooltipOptions = (item as any).series.tooltipOptions;
+            const tooltipOptions = item.series.tooltipOptions;
 
             return (
                 (tooltipOptions as any)[
@@ -258,7 +258,7 @@ class Tooltip {
                 (item as any).point.tooltipFormatter
             ).call(
                 (item as any).point,
-                tooltipOptions[
+                (tooltipOptions as any)[
                     ((item as any).point.formatPrefix || 'point') + 'Format'
                 ] || ''
             );
@@ -305,8 +305,8 @@ class Tooltip {
         this: Tooltip.FormatterContextObject,
         tooltip: Tooltip
     ): (string|Array<string>) {
-        const items = this.points || splat(this);
-        let s: (string|Array<string>);
+        const items = "points" in this? this.points: splat(this) as Point.PointLabelObject[];
+        let s: Array<string>;
 
         // Build the header
         s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
@@ -1034,13 +1034,13 @@ class Tooltip {
         const tooltip = this,
             chart = this.chart,
             options = tooltip.options,
-            points: Array<Point> = splat(pointOrPoints),
+            points: Array<Point> = splat(pointOrPoints) as Point[],
             point = points[0],
             pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             styledMode = chart.styledMode;
-        let textConfig = {} as Tooltip.FormatterContextObject;
+        let textConfig: Tooltip.FormatterContextObject;
 
         if (!options.enabled) {
             return;
@@ -1076,16 +1076,15 @@ class Tooltip {
 
             textConfig = {
                 x: point.category,
-                y: point.y
-            } as any;
-            textConfig.points = pointConfig as any;
+                points: pointConfig
+            };
 
         // single point tooltip
         } else {
-            textConfig = point.getLabelConfig() as any;
+            textConfig = point.getLabelConfig();
         }
         this.len = pointConfig.length; // #6128
-        const text: (boolean|string) = (formatter as any).call(
+        const text: (false|string|Array<false|string>) = formatter.call(
             textConfig,
             tooltip
         );
@@ -1095,12 +1094,12 @@ class Tooltip {
         this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
         // update the inner HTML
-        if (text === false) {
+        if (!text) {
             this.hide();
         } else {
             // update text
             if (tooltip.split && tooltip.allowShared) { // #13868
-                this.renderSplit(text as any, points);
+                this.renderSplit(text, points);
             } else {
                 let checkX = x;
                 let checkY = y;
@@ -1410,7 +1409,7 @@ class Tooltip {
         }
 
         // Graceful degradation for legacy formatters
-        if (isString(labels)) {
+        if (!isArray(labels)) {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
@@ -1868,18 +1867,12 @@ namespace Tooltip {
             tooltip: Tooltip
         ): (false|string|Array<string>);
     }
-    export interface FormatterContextObject {
-        color: ColorType;
-        colorIndex?: number;
-        key: number;
-        percentage?: number;
-        point: Point;
-        points?: Array<FormatterContextObject>;
-        series: Series;
-        total?: number;
-        x: number;
-        y: number;
+    export interface SharedFormatterContextObject {
+        x: string;
+        points: Array<Point.PointLabelObject>;
     }
+    export type FormatterContextObject = SharedFormatterContextObject | Point.PointLabelObject;
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
