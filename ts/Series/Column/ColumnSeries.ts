@@ -793,8 +793,9 @@ class ColumnSeries extends Series {
     ): number {
         const stacking = this.options.stacking;
         if (!point.isNull && metrics.columnCount > 1) {
-            let indexInCategory = 0;
-            let totalInCategory = 0;
+            const reversedStacks = this.yAxis.options.reversedStacks;
+            let indexInCategory = 0,
+                totalInCategory = reversedStacks ? 0 : -metrics.columnCount;
 
             // Loop over all the stacks on the Y axis. When stacking is enabled,
             // these are real point stacks. When stacking is not enabled, but
@@ -822,7 +823,8 @@ class ColumnSeries extends Series {
                                     indexInCategory = totalInCategory;
                                 }
                                 if (stackItem.hasValidPoints) {
-                                    totalInCategory++;
+                                    reversedStacks ?
+                                        totalInCategory++ : totalInCategory--;
                                 }
 
                             // If `stacking` is not enabled, look for the index
