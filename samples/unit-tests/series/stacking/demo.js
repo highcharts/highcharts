@@ -705,11 +705,11 @@ QUnit.test('Date objects as X values, column', function (assert) {
         function (assert) {
             const chart = Highcharts.chart('container', {
                     chart: {
-                        type: "column"
+                        type: 'column'
                     },
                     plotOptions: {
                         column: {
-                            stacking: "normal",
+                            stacking: 'normal',
                             centerInCategory: true
                         }
                     },
@@ -720,17 +720,15 @@ QUnit.test('Date objects as X values, column', function (assert) {
                         }
                     },
                     series: [{
-                        data: [5],
-                        id: 0
+                        data: [5]
                     }, {
-                        data: [2],
-                        id: 1
+                        data: [2]
                     }, {
                         data: [4],
-                        stack: "1"
+                        stack: '1'
                     }, {
                         data: [1],
-                        stack: "1"
+                        stack: '1'
                     }]
                 }),
                 series = chart.series;

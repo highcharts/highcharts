@@ -823,7 +823,7 @@ class ColumnSeries extends Series {
                                     indexInCategory = totalInCategory;
                                 }
                                 if (stackItem.hasValidPoints) {
-                                    reversedStacks ?
+                                    reversedStacks ? // #16169
                                         totalInCategory++ : totalInCategory--;
                                 }
 
