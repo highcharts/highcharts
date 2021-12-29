@@ -33,8 +33,6 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { support } from 'jquery';
-import CenteredUtilities from '../CenteredUtilities';
 const { extend, merge, pick } = U;
 
 /* *
@@ -157,8 +155,8 @@ class TreegraphSeries extends OrganizationSeries {
               x2 += toNode.shapeArgs.width;
             } */
 
-        let x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
+        let x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
+            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
             y1 = Math.floor((fromNode.shapeArgs as any).y) + crisp,
             y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
             xMiddle =
@@ -271,24 +269,22 @@ class TreegraphSeries extends OrganizationSeries {
         const previousColumn = (this as any).nodeColumns[node.column - 1];
         const emptySpaceWidth = (this as any).emptySpaceWidth;
 
-        const left = previousColumn ?
-            previousColumn.nodeX +
+        const xOffset = previousColumn ?
+            previousColumn.xOffset +
                 previousColumn.maxRadius * 2 +
                 emptySpaceWidth :
             0;
 
-        const colDistance = this.colDistance;
-
-        const nodeLeft = chart.inverted ? (plotSizeX as number) - left : left;
+        const nodeLeft = chart.inverted ?
+            (plotSizeX as number) - xOffset :
+            xOffset;
         node.sum = 1;
 
-
-        // If node sum is 0, don't render the rect #12453
         // Draw the node
         node.shapeType = 'circle';
         node.nodeX = nodeLeft;
         node.nodeY = fromNodeTop;
-        (column as any).nodeX = nodeLeft;
+        (column as any).xOffset = xOffset;
 
         if (!chart.inverted) {
             let xPosition = nodeLeft;
@@ -307,25 +303,21 @@ class TreegraphSeries extends OrganizationSeries {
                 r: node.options.radius || options.borderRadius
             };
         } else {
-            let positionY;
-
+            let yPosition = nodeLeft;
             if (options.alignNodes === 'right') {
-                positionY =
-                    nodeLeft +
-                    ((node.options.radius ? node.options.radius : 0) ||
-                        options.borderRadius) -
-                    (2 * node.options.radius || 0);
+                yPosition -= (maxRadius * 2) - (nodeWidth / 2);
             } else if (options.alignNodes === 'left') {
-                positionY =
-                    nodeLeft - (node.options.radius || options.borderRadius);
+                yPosition -= (nodeWidth / 2);
             } else {
-                positionY = nodeLeft;
+                yPosition -= maxRadius;
             }
+
             node.shapeArgs = {
-                x: positionY,
-                y: plotSizeY - fromNodeTop - nodeWidth
-                // width: node.options.height || options.height || nodeWidth
-                // height: node.options.width || options.width || height
+                x: yPosition,
+                y: plotSizeY - fromNodeTop - nodeWidth,
+                r: node.options.radius || options.borderRadius,
+                width: node.options.height || options.height || nodeWidth,
+                height: node.options.height || options.height || nodeWidth
             };
         }
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
