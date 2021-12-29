@@ -298,7 +298,7 @@
         });
     };
 
-    drawMap('equalearth');
+    drawMap('webmerc');
 
     enableInputs();
 })();
