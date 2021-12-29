@@ -1217,7 +1217,7 @@ addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
  * Get attrs for Polar selection marker
  * @private
  */
-addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function(event):void {
+addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
     const chart = this.chart;
 
     if (chart.polar && chart.pane && chart.pane[0]) {
@@ -1290,7 +1290,7 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function(event):void {
 
         (event as any).attrs = attrs;
     }
-})
+});
 
 /**
  * Extend chart.get to also search in panes. Used internally in

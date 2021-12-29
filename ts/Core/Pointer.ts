@@ -311,14 +311,14 @@ class Pointer {
         // Adjust the width of the selection marker
         if (zoomHor) {
             size = chartX - mouseDownX;
-            attrs.width =  Math.abs(size);
+            attrs.width = Math.abs(size);
             attrs.x = (size > 0 ? 0 : size) + mouseDownX;
         }
 
         // Adjust the height of the selection marker
         if (zoomVert) {
             size = chartY - mouseDownY;
-            attrs.height =  Math.abs(size);
+            attrs.height = Math.abs(size);
             attrs.y = (size > 0 ? 0 : size) + mouseDownY;
         }
 
@@ -428,7 +428,7 @@ class Pointer {
                 }
             }
 
-            if (selectionMarker){
+            if (selectionMarker) {
                 selectionMarker.attr(
                     this.getSelectionMarkerAttrs(chartX, chartY)
                 );
