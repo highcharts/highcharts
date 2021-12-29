@@ -16,6 +16,7 @@
  *
  * */
 
+import type MapChart from '../../Core/Chart/MapChart';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -94,6 +95,7 @@ class MapPointSeries extends ScatterSeries {
      *  Properties
      *
      * */
+    public chart: MapChart = void 0 as any;
 
     public data: Array<MapPointPoint> = void 0 as any;
 
@@ -139,7 +141,7 @@ class MapPointSeries extends ScatterSeries {
                     );
                 if (coordinates) {
                     const xy = forward(coordinates);
-                    if (!(xy as any).outside) {
+                    if (!xy.outside) {
                         x = xy[0];
                         y = xy[1];
                     }
