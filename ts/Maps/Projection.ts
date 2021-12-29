@@ -656,22 +656,17 @@ export default class Projection {
                         // When entering the first valid point after a gap of
                         // invalid points, typically on the far side of the
                         // globe in an orthographic projection.
-                        if (lastInvalidPoint && lastValidLonLat) {
+                        if (lastInvalidPoint) {
 
-                            // For areas, in an orthographic projection, the
-                            // great circle between two visible points will be
-                            // close to the horizon. A possible exception may be
-                            // when the two points are on opposite sides of the
-                            // globe. It that poses a problem, we may have to
-                            // rewrite this to use the small circle related to
-                            // the current lon0 and lat0.
+                            const intersection = this.bounds && this
+                                .lineIntersectsBounds([
+                                    point, lastInvalidPoint
+                                ]);
+
                             if (isPolygon && hasGeoProjection) {
 
-                                if (this.bounds) {
-                                    const intersection = this
-                                        .lineIntersectsBounds([
-                                            point, lastInvalidPoint
-                                        ]);
+                                if (intersection) {
+
                                     if (lastValidPoint) {
                                         // Push the intermediate points
                                         this.getBoundsPerimeter(
@@ -679,24 +674,30 @@ export default class Projection {
                                             intersection
                                         ).forEach(pushToPath);
                                     }
-                                    pushToPath(intersection);
-                                    // perimeter.forEach()
-                                } else {
+
+                                } else if (lastValidLonLat) {
+                                    // Using a great circle is a simplificaction
+                                    // that works for the orthographic
+                                    // projection because the shapes are so
+                                    // skewed at the edges. The correct path for
+                                    // the edge would be to find the
+                                    // intersection of the small circle (clip
+                                    // angle), and render a small circle between
+                                    // the two intersections.
                                     const greatCircle = Projection.greatCircle(
                                         lastValidLonLat,
                                         lonLat
                                     );
                                     greatCircle.forEach((lonLat): void => {
-                                        const p = postclip.forward(lonLat);
-                                        // if (!isNaN(p[0])) {
-                                        if (!p.outside) {
-                                            pushToPath(p);
-                                        }
+                                        pushToPath(postclip.forward(lonLat));
                                     });
                                 }
                             // For lines, just jump over the gap
                             } else {
                                 movedTo = false;
+                            }
+                            if (intersection) {
+                                pushToPath(intersection);
                             }
                         }
 
