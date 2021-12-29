@@ -565,7 +565,7 @@ export default class Projection {
         // pre-projected.
         const hasGeoProjection = this.hasGeoProjection;
 
-        // @todo better test for when to do this
+        // @todo better test for when to do this (use clipAngle = 90?)
         const projectingToPlane = this.options.name !== 'Orthographic';
         // We need to rotate in a separate step before applying antimeridian
         // clipping
@@ -657,11 +657,13 @@ export default class Projection {
                         // invalid points, typically on the far side of the
                         // globe in an orthographic projection.
                         if (lastInvalidPoint) {
-
-                            const intersection = this.bounds && this
-                                .lineIntersectsBounds([
-                                    point, lastInvalidPoint
-                                ]);
+                            const intersection = (
+                                this.bounds &&
+                                projectingToPlane &&
+                                this.lineIntersectsBounds(
+                                    [point, lastInvalidPoint]
+                                )
+                            );
 
                             if (isPolygon && hasGeoProjection) {
 
