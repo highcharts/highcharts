@@ -286,40 +286,30 @@ class TreegraphSeries extends OrganizationSeries {
         node.nodeY = fromNodeTop;
         (column as any).xOffset = xOffset;
 
-        if (!chart.inverted) {
-            let xPosition = nodeLeft;
+        let nodePositionX = nodeLeft;
+        let multiply = chart.inverted ? -1 : 1;
+        let nodePositionY = chart.inverted ?
+            plotSizeY - fromNodeTop - nodeWidth :
+            fromNodeTop + nodeWidth / 2;
 
-            if (options.alignNodes === 'right') {
-                xPosition += (maxRadius * 2) - (nodeWidth / 2);
-            } else if (options.alignNodes === 'left') {
-                xPosition += (nodeWidth / 2);
-            } else {
-                xPosition += maxRadius;
-            }
-
-            node.shapeArgs = {
-                x: xPosition,
-                y: fromNodeTop + nodeWidth / 2,
-                r: node.options.radius || options.borderRadius
-            };
+        if (options.alignNodes === 'right') {
+            nodePositionX += ((maxRadius * 2) - (nodeWidth / 2)) * multiply;
+        } else if (options.alignNodes === 'left') {
+            nodePositionX += (nodeWidth / 2) * multiply;
         } else {
-            let yPosition = nodeLeft;
-            if (options.alignNodes === 'right') {
-                yPosition -= (maxRadius * 2) - (nodeWidth / 2);
-            } else if (options.alignNodes === 'left') {
-                yPosition -= (nodeWidth / 2);
-            } else {
-                yPosition -= maxRadius;
-            }
-
-            node.shapeArgs = {
-                x: yPosition,
-                y: plotSizeY - fromNodeTop - nodeWidth,
-                r: node.options.radius || options.borderRadius,
-                width: node.options.height || options.height || nodeWidth,
-                height: node.options.height || options.height || nodeWidth
-            };
+            nodePositionX += maxRadius * multiply;
         }
+
+
+        // shapeArgs width and height set to 0 to align dataLabels correctly
+        // in inverted chart
+        node.shapeArgs = {
+            x: nodePositionX,
+            y: nodePositionY,
+            r: node.options.radius || options.borderRadius,
+            width: 0,
+            height: 0
+        };
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point
         node.dlOptions = TreegraphSeries.getDLOptions({
@@ -333,6 +323,7 @@ class TreegraphSeries extends OrganizationSeries {
             [plotSizeY - node.shapeArgs.y, plotSizeX - node.shapeArgs.x] :
             [node.shapeArgs.x, node.shapeArgs.y];
     }
+
     public alignDataLabel(): void {
         sankeyProto.alignDataLabel.apply(this, arguments);
     }
