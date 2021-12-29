@@ -14,7 +14,8 @@ import type {
     GeoJSONGeometryMultiPoint
 } from './GeoJSON';
 import type {
-    LonLatArray
+    LonLatArray,
+    MapBounds
 } from './MapViewOptions';
 import type { ProjectionDefinition, Projector } from './ProjectionDefinition';
 import type {
@@ -48,6 +49,7 @@ const wrapLon = (lon: number): number => {
 
 export default class Projection {
 
+    public bounds: MapBounds|undefined;
     public options: ProjectionOptions;
     // Whether the chart has points, lines or polygons given as coordinates
     // with positive up, as opposed to paths in the SVG plane with positive
@@ -64,7 +66,7 @@ export default class Projection {
     // Add a projection definition to the registry, accessible by its `name`.
     public static add(
         name: string,
-        definition: ProjectionDefinition
+        definition: typeof ProjectionDefinition
     ): void {
         Projection.registry[name] = definition;
     }
@@ -163,36 +165,38 @@ export default class Projection {
 
     public constructor(options: ProjectionOptions = {}) {
         this.options = options;
-        const { name, rotation } = options;
+        const { name, projectedBounds, rotation } = options;
 
         this.rotator = rotation ? this.getRotator(rotation) : void 0;
-        this.def = name ? Projection.registry[name] : void 0;
+
+        const ProjectionDefinition = name ? Projection.registry[name] : void 0;
+        if (ProjectionDefinition) {
+            this.def = new ProjectionDefinition(options);
+        }
         const { def, rotator } = this;
 
         if (def) {
-            if (def.init) {
-                def.init(options);
-            }
             this.maxLatitude = def.maxLatitude || 90;
             this.hasGeoProjection = true;
         }
 
         if (rotator && def) {
-            this.forward = (lonLat): [number, number] => {
-                lonLat = rotator.forward(lonLat);
-                return def.forward(lonLat);
-            };
-            this.inverse = (xy): [number, number] => {
-                const lonLat = def.inverse(xy);
-                return rotator.inverse(lonLat);
-            };
+            this.forward = (lonLat): [number, number] =>
+                def.forward(rotator.forward(lonLat));
+            this.inverse = (xy): [number, number] =>
+                rotator.inverse(def.inverse(xy));
         } else if (def) {
-            this.forward = def.forward;
-            this.inverse = def.inverse;
+            this.forward = (lonLat): [number, number] => def.forward(lonLat);
+            this.inverse = (xy): [number, number] => def.inverse(xy);
         } else if (rotator) {
             this.forward = rotator.forward;
             this.inverse = rotator.inverse;
         }
+
+        // Projected bounds/clipping
+        this.bounds = projectedBounds === 'world' ?
+            def && def.bounds :
+            projectedBounds;
     }
 
     /*
@@ -587,9 +591,12 @@ export default class Projection {
                                     lastValidLonLat,
                                     lonLat
                                 );
-                                greatCircle.forEach((lonLat): void =>
-                                    pushToPath(postclip.forward(lonLat)));
-
+                                greatCircle.forEach((lonLat): void => {
+                                    const p = postclip.forward(lonLat);
+                                    if (!isNaN(p[0])) {
+                                        pushToPath(p);
+                                    }
+                                });
                             // For lines, just jump over the gap
                             } else {
                                 movedTo = false;
@@ -628,6 +635,7 @@ export default class Projection {
             }
 
         }
+
         return path;
     }
 }

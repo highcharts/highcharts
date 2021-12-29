@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { LonLatArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 const A1 = 1.340264,
@@ -19,9 +20,16 @@ const A1 = 1.340264,
     M = Math.sqrt(3) / 2.0,
     scale = 74.03120656864502;
 
-const EqualEarth: ProjectionDefinition = {
+export default class EqualEarth implements ProjectionDefinition {
 
-    forward: (lonLat): [number, number] => {
+    bounds = {
+        x1: -200.37508342789243,
+        x2: 200.37508342789243,
+        y1: -97.52595454902263,
+        y2: 97.52595454902263
+    };
+
+    forward(lonLat: LonLatArray): [number, number] {
         const d = Math.PI / 180,
             paramLat = Math.asin(M * Math.sin(lonLat[1] * d)),
             paramLatSq = paramLat * paramLat,
@@ -40,9 +48,9 @@ const EqualEarth: ProjectionDefinition = {
         );
 
         return [x, y];
-    },
+    }
 
-    inverse: (xy): [number, number] => {
+    inverse(xy: [number, number]): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
             d = 180 / Math.PI,
@@ -78,6 +86,5 @@ const EqualEarth: ProjectionDefinition = {
 
         return [lon, lat];
     }
-};
 
-export default EqualEarth;
+}

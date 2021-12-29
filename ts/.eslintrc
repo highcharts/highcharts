@@ -88,9 +88,9 @@
         "@typescript-eslint/no-unnecessary-type-assertion": 0, // @todo
         "@typescript-eslint/no-unsafe-argument": 0, // @todo
         "@typescript-eslint/no-unsafe-assignment": 0, // @todo
-        "@typescript-eslint/no-unsafe-call": 1, // @todo
+        "@typescript-eslint/no-unsafe-call": 0, // @todo
         "@typescript-eslint/no-unsafe-member-access": 0, // @todo
-        "@typescript-eslint/no-unsafe-return": 1, // @todo
+        "@typescript-eslint/no-unsafe-return": 0, // @todo
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,

@@ -3,15 +3,22 @@
  * */
 
 'use strict';
-
+import type { LonLatArray } from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 
 const deg2rad = Math.PI / 180,
     scale = 63.78460826781007;
 
-const Orthographic: ProjectionDefinition = {
+export default class Orthographic implements ProjectionDefinition {
 
-    forward: (lonLat): [number, number] => {
+    bounds = {
+        x1: -scale,
+        x2: scale,
+        y1: -scale,
+        y2: scale
+    };
+
+    forward(lonLat: LonLatArray): [number, number] {
 
         const lonDeg = lonLat[0],
             latDeg = lonLat[1];
@@ -24,9 +31,9 @@ const Orthographic: ProjectionDefinition = {
             Math.cos(lat) * Math.sin(lonDeg * deg2rad) * scale,
             Math.sin(lat) * scale
         ];
-    },
+    }
 
-    inverse: (xy): [number, number] => {
+    inverse(xy: [number, number]): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
             z = Math.sqrt(x * x + y * y),
@@ -39,6 +46,4 @@ const Orthographic: ProjectionDefinition = {
             Math.asin(z && y * cSin / z) / deg2rad
         ];
     }
-};
-
-export default Orthographic;
+}

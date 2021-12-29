@@ -8,7 +8,7 @@
  *
  * */
 
-import type { LonLatArray } from './MapViewOptions';
+import type { LonLatArray, MapViewOptions } from './MapViewOptions';
 
 export interface BaseGeometry {
     arcs?: number[]|number[][]|number[][][];
@@ -20,22 +20,22 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
     coordinates: LonLatArray;
 }
 
-interface LineString extends BaseGeometry{
+export interface LineString extends BaseGeometry{
     type: 'LineString';
     coordinates: LonLatArray[];
 }
 
-interface Polygon extends BaseGeometry {
+export interface Polygon extends BaseGeometry {
     type: 'Polygon';
     coordinates: LonLatArray[][];
 }
 
-interface MultiLineString extends BaseGeometry {
+export interface MultiLineString extends BaseGeometry {
     type: 'MultiLineString';
     coordinates: LonLatArray[][];
 }
 
-interface MultiPolygon extends BaseGeometry {
+export interface MultiPolygon extends BaseGeometry {
     type: 'MultiPolygon';
     coordinates: LonLatArray[][][];
 }
@@ -58,12 +58,14 @@ interface GeoJSONGeometryRegistry extends GeoJSONGeometryMultiPointRegistry {
 type GeoJSONGeometry = GeoJSONGeometryRegistry[keyof GeoJSONGeometryRegistry];
 
 export interface GeoJSON {
+    bbox: [number, number, number, number];
     copyright?: string;
     copyrightShort?: string;
     copyrightUrl?: string;
     crs?: AnyRecord;
     features: Array<GeoJSONFeature>;
     'hc-transform'?: Record<string, GeoJSONTransform>;
+    'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
     title?: string;
     type: 'FeatureCollection';
     version?: string;
@@ -89,6 +91,7 @@ interface GeoJSONTransform {
 
 export interface TopoJSON {
     arcs: number[][][];
+    bbox: [number, number, number, number];
     copyright?: string;
     copyrightShort?: string;
     copyrightUrl?: string;
@@ -103,6 +106,7 @@ interface TopoJSONObjects {
 interface TopoJSONObject {
     geometries: GeoJSONGeometry[];
     'hc-decoded-geojson'?: GeoJSON;
+    'hc-recommended-mapview'?: DeepPartial<MapViewOptions>;
 }
 interface TopoJSONTransform {
     scale: [number, number];

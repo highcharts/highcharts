@@ -187,8 +187,7 @@ body {
     transform: perspective(360px) rotateY(0deg);
     margin-left: 0;
     height: 110px;
-    width: 300px;
-    transition: all 1000ms;
+    width: 320px;
     overflow: hidden;
 }
 
@@ -248,7 +247,7 @@ body {
 }
 
 .box-left .inner span {
-    left: 20px;
+    left: 80px;
 }
 
 .box-center .inner span {
@@ -257,6 +256,10 @@ body {
 
 .box-right .inner span {
     left: -18px;
+}
+
+#box1 {
+    z-index: 200;
 }
 
 #box1 .inner span {
@@ -279,6 +282,22 @@ body {
 #item .ring1 .highcharts-point {
     transform-origin: center;
     transform: rotate(20deg);
+}
+
+#back {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0%;
+}
+
+#back a {
+    color: #fff;
+    opacity: 100%;
+}
+
+#back a:hover {
+    opacity: 80%;
 }
 
 /* ----------------------------------------------
@@ -379,7 +398,7 @@ body {
     .box-right .inner {
         width: 45px;
         height: 170px;
-        font-size: 4em;
+        font-size: 3em;
         line-height: 200px;
     }
 
@@ -387,7 +406,7 @@ body {
     .box-center .inner:last-child,
     .box-right .inner:last-child {
         height: 180px;
-        width: 300px;
+        width: 540px;
     }
 
     .box-center .inner:last-child {
