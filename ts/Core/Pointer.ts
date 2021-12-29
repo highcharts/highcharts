@@ -37,6 +37,7 @@ import { Palette } from '../Core/Color/Palettes.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
+import BBoxObject from './Renderer/BBoxObject';
 const {
     addEvent,
     attr,
@@ -267,7 +268,7 @@ class Pointer {
      * Create selection marker.
      * @private
      * @function Highcharts.Pointer#createSelectionMarker
-     * @emits afterSelectionMarker
+     * @emits afterCreateSelectionMarker
      */
     public createSelectionMarker(): SVGElement {
         const chart = this.chart;
@@ -460,6 +461,24 @@ class Pointer {
     }
 
     /**
+     * Get selection box to calculate extremes
+     * @private
+     * @function Highcharts.Pointer#getSelectionBox
+     */
+    public getSelectionBox(marker: SVGElement): Partial<BBoxObject> {
+        let x = marker.attr ? +marker.attr('x') : marker.x,
+            y = marker.attr ? +marker.attr('y') : marker.y,
+            width = marker.attr ?
+                marker.attr('width') :
+                marker.width,
+            height = marker.attr ?
+                marker.attr('height') :
+                marker.height;
+
+        return { x, y, width, height };
+    }
+
+    /**
      * On mouse up or touch end across the entire document, drop the selection.
      * @private
      * @function Highcharts.Pointer#drop
@@ -470,16 +489,14 @@ class Pointer {
             hasPinched = this.hasPinched;
 
         if (this.selectionMarker) {
-            let selectionBox = this.selectionMarker,
-                x = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
-                y = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
-                width = selectionBox.attr ?
-                    selectionBox.attr('width') :
-                    selectionBox.width,
-                height = selectionBox.attr ?
-                    selectionBox.attr('height') :
-                    selectionBox.height,
-                selectionData = {
+            const {
+                x,
+                y,
+                width,
+                height
+            } = this.getSelectionBox(this.selectionMarker);
+
+            let selectionData = {
                     originalEvent: e, // #4890
                     xAxis: [],
                     yAxis: [],
@@ -511,7 +528,9 @@ class Pointer {
                             )>)[axis.coll]]
                         ) &&
                         isNumber(x) &&
-                        isNumber(y)
+                        isNumber(y) &&
+                        isNumber(width) &&
+                        isNumber(height)
                     ) { // #859, #3569
                         const horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?
