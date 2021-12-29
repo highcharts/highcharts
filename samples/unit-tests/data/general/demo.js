@@ -1,5 +1,3 @@
-const defaultOptions = { ...Highcharts.defaultOptions };
-
 QUnit.test(
     'Parsing dates with timezone information (#10322)',
     function (assert) {
@@ -257,10 +255,8 @@ QUnit.test('Data config on updates and setOptions', function (assert) {
         'Global data options should be merged with the chart options (#16568).'
     );
     
-    // Back to default options after test.
-    Highcharts.setOptions({
-        data: null
-    });
+    // Clear the default options for other tests
+    delete Highcharts.defaultOptions.data;
 });
 
 QUnit.test(
