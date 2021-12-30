@@ -1829,7 +1829,7 @@ class Pointer {
                 point = chart.hoverPoint; // #13002
                 if (!point || (point.series as any)[axis.coll] !== axis) {
                     point = find(points, (p: Point): boolean =>
-                        (p.series as any)[axis.coll] === axis
+                        p.series && (p.series as any)[axis.coll] === axis
                     );
                 }
             }

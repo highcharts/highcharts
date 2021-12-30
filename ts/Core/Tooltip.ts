@@ -1042,7 +1042,7 @@ class Tooltip {
             styledMode = chart.styledMode;
         let textConfig = {} as Tooltip.FormatterContextObject;
 
-        if (!options.enabled) {
+        if (!options.enabled || !splat(pointOrPoints)[0].series) { // #16820
             return;
         }
 
