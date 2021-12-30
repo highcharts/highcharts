@@ -22,11 +22,9 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeySeries from '../Sankey/SankeySeries.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        column: { prototype: colProto },
         organization: { prototype: orgProto },
         sankey: { prototype: sankeyProto }
     }
@@ -91,27 +89,6 @@ class TreegraphSeries extends OrganizationSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-
-    /**
-     * General function to apply corner radius to a path - can be lifted to
-     * renderer or utilities if we need it elsewhere.
-     * @private
-     */
-    public static pointsToPath(from: any, to: any, factor: number): SVGPath {
-        const middleX = (from.x + to.x) / 2,
-            middleY = (from.y + to.y) / 2,
-            arcPointX1 = (from.x + middleX) / (2 - factor),
-            arcPointY1 = (from.y + middleY) / (2 - factor),
-            arcPointX2 = (middleX + to.x) / (2 + factor),
-            arcPointY2 = (middleY + to.y) / (2 + factor);
-
-        return [
-            ['M', from.x, from.y],
-            ['Q', arcPointX1, arcPointY1, middleX, middleY],
-            ['Q', arcPointX2, arcPointY2, to.x, to.y]
-        ];
-    }
-
     public data: Array<TreegraphPoint> = void 0 as any;
 
     public options: TreegraphSeriesOptions = void 0 as any;
@@ -140,113 +117,11 @@ class TreegraphSeries extends OrganizationSeries {
         return attribs;
     }
 
-    public translateLink(point: TreegraphPoint): void {
-        const fromNode = point.fromNode,
-            toNode = point.toNode,
-            crisp = (Math.round(this.options.linkLineWidth as any) % 2) / 2,
-            hangingIndent: number = this.options.hangingIndent as any,
-            toOffset = toNode.options.offset,
-            percentOffset =
-                /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-            inverted = this.chart.inverted;
-
-        /* if (inverted) {
-              x1 -= fromNode.shapeArgs.width;
-              x2 += toNode.shapeArgs.width;
-            } */
-
-        let x1 = Math.floor((fromNode.shapeArgs as any).x) + crisp,
-            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y1 = Math.floor((fromNode.shapeArgs as any).y) + crisp,
-            y2 = Math.floor((toNode.shapeArgs as any).y) + crisp,
-            xMiddle =
-                Math.floor(
-                    x2 +
-                        ((inverted ? 1 : -1) *
-                            (this.colDistance - this.nodeWidth)) /
-                            2
-                ) + crisp;
-        // Put the link on the side of the node when an offset is given. HR
-        // node in the main demo.
-        if (percentOffset && (percentOffset >= 50 || percentOffset <= -50)) {
-            xMiddle = x2 =
-                Math.floor(
-                    x2 +
-                        (inverted ? -0.5 : 0.5) *
-                            (toNode.shapeArgs as any).width
-                ) + crisp;
-            y2 = (toNode.shapeArgs as any).y;
-            if (percentOffset > 0) {
-                //
-                y2 += (toNode.shapeArgs as any).height;
-            }
-        }
-        if (toNode.hangsFrom === fromNode) {
-            if (this.chart.inverted) {
-                y1 =
-                    Math.floor(
-                        (fromNode.shapeArgs as any).y +
-                            (fromNode.shapeArgs as any).height -
-                            hangingIndent / 2
-                    ) + crisp;
-                y2 =
-                    (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height;
-            } else {
-                y1 =
-                    Math.floor(
-                        (fromNode.shapeArgs as any).y + hangingIndent / 2
-                    ) + crisp;
-            }
-            xMiddle = x2 =
-                Math.floor(
-                    (toNode.shapeArgs as any).x +
-                        (toNode.shapeArgs as any).width / 2
-                ) + crisp;
-        }
-        point.plotY = 1;
-        point.shapeType = 'path';
-
-        if (this.options.link && this.options.link.type === 'straight') {
-            point.shapeArgs = {
-                d: TreegraphSeries.curvedPath([
-                    ['M', x1, y1],
-                    ['L', x2, y2]
-                ])
-            };
-        } else if (this.options.link.type === 'curved') {
-            point.shapeArgs = {
-                d: TreegraphSeries.pointsToPath(
-                    {
-                        x: x1,
-                        y: y1
-                    },
-                    {
-                        x: x2,
-                        y: y2
-                    },
-                    0.1
-                )
-            };
-        } else {
-            point.shapeArgs = {
-                d: TreegraphSeries.curvedPath(
-                    [
-                        ['M', x1, y1],
-                        ['L', xMiddle, y1],
-                        ['L', xMiddle, y2],
-                        ['L', x2, y2]
-                    ],
-                    this.options.linkRadius as number
-                )
-            };
-        }
-    }
-
     /**
      * Run translation operations for one node.
      * @private
      */
+
     public translateNode(node: any, column: TreegraphSeries.ColumnArray): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,

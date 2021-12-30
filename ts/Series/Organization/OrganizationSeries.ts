@@ -417,6 +417,16 @@ class OrganizationSeries extends SankeySeries {
 
     /* eslint-disable valid-jsdoc */
 
+    // public render (){
+
+    //     this.options.link = {
+
+    //     };
+
+    //     super.render.apply(this, arguments)
+
+    // }
+
     public alignDataLabel(
         point: OrganizationPoint,
         dataLabel: SVGLabel,
@@ -576,6 +586,8 @@ class OrganizationSeries extends SankeySeries {
         let fromNode = point.fromNode,
             toNode = point.toNode,
             crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
+            factor = pick((this as any).options.link.offset, 0.5),
+            type = (this.options as any).link.type,
             x1 = Math.floor(
                 (fromNode.shapeArgs as any).x +
                 (fromNode.shapeArgs as any).width
@@ -648,14 +660,34 @@ class OrganizationSeries extends SankeySeries {
 
         point.plotY = 1;
         point.shapeType = 'path';
-        point.shapeArgs = {
-            d: OrganizationSeries.curvedPath([
-                ['M', x1, y1],
-                ['L', xMiddle, y1],
-                ['L', xMiddle, y2],
-                ['L', x2, y2]
-            ], this.options.linkRadius as any)
-        };
+        if (this.options.link && type === 'straight') {
+            point.shapeArgs = {
+                d: [
+                    ['M', x1, y1],
+                    ['L', x2, y2]
+                ]
+            };
+        } else if (type === 'curved') {
+            const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
+            point.shapeArgs = {
+                d: [
+                    ['M', x1, y1],
+                    ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
+                ]
+            };
+        } else {
+            point.shapeArgs = {
+                d: OrganizationSeries.curvedPath(
+                    [
+                        ['M', x1, y1],
+                        ['L', xMiddle, y1],
+                        ['L', xMiddle, y2],
+                        ['L', x2, y2]
+                    ],
+                    this.options.linkRadius as number
+                )
+            };
+        }
     }
 
     public translateNode(
