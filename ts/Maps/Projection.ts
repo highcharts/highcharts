@@ -26,7 +26,7 @@ import type {
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
-const { erase } = U;
+const { clamp, erase } = U;
 
 
 const deg2rad = Math.PI * 2 / 360;
@@ -366,7 +366,7 @@ export default class Projection {
 
     public maxLatitude = 90;
 
-    private clipOnAntimeridian(
+    private cutOnAntimeridian(
         poly: LonLatArray[],
         isPolygon: boolean
     ): LonLatArray[][] {
@@ -402,9 +402,16 @@ export default class Projection {
             ) {
 
                 // Interpolate to the intersection latitude
-                const fraction = -lon1 / (lon2 - lon1);
-                const lat = previousLonLat[1] +
-                    fraction * (lonLat[1] - previousLonLat[1]);
+                const fraction = clamp(
+                        (antimeridian - (lon1 + 360) % 360) /
+                            ((lon2 + 360) % 360 - (lon1 + 360) % 360),
+                        0,
+                        1
+                    ),
+                    lat = (
+                        previousLonLat[1] +
+                        fraction * (lonLat[1] - previousLonLat[1])
+                    );
 
                 intersections.push({
                     i,
@@ -539,13 +546,6 @@ export default class Projection {
             }
         }
 
-        // Insert great circles along the cuts
-        /*
-        if (isPolygon && polygons.length > 1 || polarIntersection) {
-            polygons.forEach(Projection.insertGreatCircles);
-        }
-        */
-
         return polygons;
     }
 
@@ -609,7 +609,7 @@ export default class Projection {
                 Projection.insertGreatCircles(poly);
 
                 if (projectingToPlane) {
-                    polygons = this.clipOnAntimeridian(poly, isPolygon);
+                    polygons = this.cutOnAntimeridian(poly, isPolygon);
                 }
             }
 
