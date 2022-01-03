@@ -182,7 +182,7 @@ QUnit.test('Positions of the stacked points.', function (assert) {
     });
 
     assert.strictEqual(
-        Highcharts.correctFloat(yAxis.endAngleRad - yAxis.startAngleRad),
+        yAxis.endAngleRad - yAxis.startAngleRad,
         yAxis.translate(firstSeries.stackedYData[6]),
         'The point[0] of both series are correctly stacked.'
     );
