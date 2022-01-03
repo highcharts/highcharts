@@ -217,7 +217,7 @@ QUnit.module('XSS', function () {
 });
 
 QUnit.test('Script injection through AST options', assert => {
-    const chart = Highcharts.chart('container', {
+    const options = {
 
         chart: {
             styledMode: true
@@ -230,11 +230,24 @@ QUnit.test('Script injection through AST options', assert => {
                 onerror: 'javascript:console.log(\'XSS\')' // eslint-disable-line
             }
         }
-    });
+    };
+
+    let chart = Highcharts.chart('container', options);
 
     assert.strictEqual(
         chart.container.querySelector('script'),
         null,
         'No script tag should be allowed in the definitions'
     );
+
+    Highcharts.AST.bypassHTMLFiltering = true;
+
+    chart = Highcharts.chart('container', options);
+
+    assert.ok(
+        chart.container.querySelector('script'),
+        'Script tag should be allowed in the definitions, #15345'
+    );
+
+    Highcharts.AST.bypassHTMLFiltering = false;
 });
