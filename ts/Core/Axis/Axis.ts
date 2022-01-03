@@ -856,9 +856,11 @@ class Axis {
             if (doPostTranslate) { // log, ordinal and broken axis
                 val = (axis.val2lin as any)(val);
             }
+            const value = sign * (val - (localMin as any)) * localA;
+
             returnValue = isNumber(localMin) ?
                 (
-                    correctFloat(sign * (val - (localMin as any)) * localA) +
+                    (!axis.isRadial ? correctFloat(value) : value) +
                     cvsOffset +
                     (sign * minPixelPadding) +
                     (isNumber(pointPlacement) ?
