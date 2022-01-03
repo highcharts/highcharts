@@ -51,6 +51,7 @@ module.exports = {
         ],
         'Maps': [
             'maps/getting-started',
+            'maps/mapview-and-projection',
             'maps/map-navigation',
             'maps/color-axis',
             'maps/map-collection',
@@ -59,6 +60,9 @@ module.exports = {
             'maps/adding-points-and-lines',
             'maps/latlon',
             'maps/map-series',
+            'maps/mapline-series',
+            'maps/mappoint-series',
+            'maps/mapbubble-series',
             'maps/tilemap-series'
         ],
         'Gantt': [
@@ -80,6 +84,7 @@ module.exports = {
             'chart-and-series-types/bar-chart',
             'chart-and-series-types/bell-curve-series',
             'chart-and-series-types/box-plot-series',
+            'chart-and-series-types/bubble-series',
             'chart-and-series-types/bullet-chart',
             'chart-and-series-types/column-chart',
             'chart-and-series-types/column-pyramid',

@@ -304,6 +304,7 @@ body {
     fill: #364b63;
     stroke: transparent;
 }
+
 #hero .highcharts-node:nth-of-type(1),
 #hero .highcharts-node:nth-of-type(4),
 #hero .highcharts-node:nth-of-type(6) {

@@ -13,7 +13,6 @@ Highcharts.getJSON(
          * 4. Verify that the length of the data is reasonable, about 3300
          *    counties.
          */
-
         var countiesMap = Highcharts.geojson(
                 Highcharts.maps['countries/us/us-all-all']
             ),

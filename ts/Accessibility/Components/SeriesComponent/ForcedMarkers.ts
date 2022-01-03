@@ -268,6 +268,7 @@ namespace ForcedMarkersComposition {
         } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
             unforceSeriesMarkerOptions(series);
+            delete series.resetA11yMarkerOptions;
         }
     }
 
@@ -306,21 +307,20 @@ namespace ForcedMarkersComposition {
 
 
     /**
+     * Reset markers to normal
      * @private
      */
     function unforceSeriesMarkerOptions(series: SeriesComposition): void {
         const resetMarkerOptions = series.resetA11yMarkerOptions;
-
         if (resetMarkerOptions) {
-            merge(true, series.options, {
+            const originalOpactiy = resetMarkerOptions.states &&
+                resetMarkerOptions.states.normal &&
+                resetMarkerOptions.states.normal.opacity;
+            series.update({
                 marker: {
                     enabled: resetMarkerOptions.enabled,
                     states: {
-                        normal: {
-                            opacity: resetMarkerOptions.states &&
-                                resetMarkerOptions.states.normal &&
-                                resetMarkerOptions.states.normal.opacity
-                        }
+                        normal: { opacity: originalOpactiy }
                     }
                 }
             });

@@ -109,6 +109,7 @@ Highcharts.chart("container", {
     series: [
         {
             type: "sunburst",
+            name: 'Total',
             data: data,
             allowDrillToNode: true,
             cursor: "pointer",

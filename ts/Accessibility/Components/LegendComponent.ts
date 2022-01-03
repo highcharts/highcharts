@@ -30,6 +30,7 @@ const {
     animObject
 } = A;
 import H from '../../Core/Globals.js';
+const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -120,6 +121,24 @@ function shouldDoLegendA11y(chart: Chart): boolean {
 }
 
 
+/**
+ * @private
+ */
+function setLegendItemHoverState(
+    hoverActive: boolean,
+    legendItem: Legend.Item
+): void {
+    legendItem.setState(hoverActive ? 'hover' : '', true);
+    ['legendGroup', 'legendItem', 'legendSymbol'].forEach((i): void => {
+        const obj = (legendItem as any)[i];
+        const el = obj && obj.element || obj;
+        if (el) {
+            fireEvent(el, hoverActive ? 'mouseover' : 'mouseout');
+        }
+    });
+}
+
+
 /* *
  *
  *  Class
@@ -143,8 +162,8 @@ class LegendComponent extends AccessibilityComponent {
      *
      * */
 
-
     public highlightedLegendItemIx: number = NaN;
+    private proxyGroup: HTMLElement|null = null;
 
 
     /* *
@@ -305,6 +324,11 @@ class LegendComponent extends AccessibilityComponent {
      * @private
      */
     public recreateProxies(): boolean {
+        const focusedElement = doc.activeElement;
+        const proxyGroup = this.proxyGroup;
+        const shouldRestoreFocus = focusedElement && proxyGroup &&
+            proxyGroup.contains(focusedElement);
+
         this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
@@ -312,6 +336,10 @@ class LegendComponent extends AccessibilityComponent {
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
             this.updateLegendTitle();
+
+            if (shouldRestoreFocus) {
+                (focusedElement as HTMLElement).focus();
+            }
             return true;
         }
         return false;
@@ -362,7 +390,7 @@ class LegendComponent extends AccessibilityComponent {
         const groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
 
-        this.proxyProvider.addGroup('legend', 'ul', {
+        this.proxyGroup = this.proxyProvider.addGroup('legend', 'ul', {
             // Filled by updateLegendTitle, to keep up to date without
             // recreating group
             'aria-label': '_placeholder_',
@@ -434,7 +462,7 @@ class LegendComponent extends AccessibilityComponent {
             component = this,
             chart = this.chart;
 
-        return new (KeyboardNavigationHandler as any)(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 [
                     [keys.left, keys.right, keys.up, keys.down],
@@ -474,25 +502,23 @@ class LegendComponent extends AccessibilityComponent {
                 return component.shouldHaveLegendNavigation();
             },
 
-            init: function (direction: number): void {
-                return component.onKbdNavigationInit(direction);
+            init: function (): void {
+                chart.highlightLegendItem(0);
+                component.highlightedLegendItemIx = 0;
             },
 
             terminate: function (): void {
                 component.highlightedLegendItemIx = -1;
                 chart.legend.allItems.forEach(
-                    (item): unknown => item.setState('', true));
+                    (item): void => setLegendItemHoverState(false, item));
             }
         });
     }
 
 
     /**
+     * Arrow key navigation
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {number} keyCode
-     * @return {number}
-     * Response code
      */
     public onKbdArrowKey(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -521,8 +547,7 @@ class LegendComponent extends AccessibilityComponent {
             return response.success;
         }
 
-        // No wrap, move
-        return response[direction > 0 ? 'next' : 'prev'];
+        return response.success;
     }
 
 
@@ -569,23 +594,6 @@ class LegendComponent extends AccessibilityComponent {
             legendA11yOptions.keyboardNavigation.enabled
         );
     }
-
-
-    /**
-     * @private
-     * @param {number} direction
-     */
-    public onKbdNavigationInit(
-        direction: number
-    ): void {
-        const chart = this.chart,
-            lastIx = chart.legend.allItems.length - 1,
-            ixToHighlight = direction > 0 ? 0 : lastIx;
-
-        chart.highlightLegendItem(ixToHighlight);
-        this.highlightedLegendItemIx = ixToHighlight;
-    }
-
 }
 
 
@@ -663,10 +671,7 @@ namespace LegendComponent {
 
         if (itemToHighlight) {
             if (isNumber(oldIx) && items[oldIx]) {
-                fireEvent(
-                    (items[oldIx].legendGroup as any).element,
-                    'mouseout'
-                );
+                setLegendItemHoverState(false, items[oldIx]);
             }
 
             scrollLegendToItem(this.legend, ix);
@@ -678,9 +683,8 @@ namespace LegendComponent {
                 this.setFocusToElement(legendItemProp as SVGElement, proxyBtn);
             }
 
-            if (itemToHighlight.legendGroup) {
-                fireEvent(itemToHighlight.legendGroup.element, 'mouseover');
-            }
+            setLegendItemHoverState(true, itemToHighlight);
+
             return true;
         }
         return false;

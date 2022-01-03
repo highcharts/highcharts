@@ -47,6 +47,7 @@ const SOURCE_GLOBS = [
     'js/Extensions/Annotations/ControlPoint.js',
     'js/Extensions/Annotations/NavigationBindings.js',
     'js/Extensions/Sonification/*.js',
+    'js/Extensions/Breadcrumbs.js',
     'js/Extensions/Data.js',
     'js/Extensions/DataGrouping.js',
     'js/Extensions/DraggablePoints.js',

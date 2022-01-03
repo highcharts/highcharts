@@ -2377,7 +2377,13 @@ class Data {
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
                 for (i = 0; i < (columns as any).length; i++) {
-                    (columns as any)[i].name = (columns as any)[i].shift();
+                    const curCol = (columns as any)[i];
+                    if (!defined(curCol.name)) {
+                        curCol.name = pick(
+                            curCol.shift(),
+                            ''
+                        ).toString();
+                    }
                 }
             }
 

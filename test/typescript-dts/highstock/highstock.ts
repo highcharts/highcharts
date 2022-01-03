@@ -9,6 +9,7 @@
 import * as Highcharts from 'highcharts/highstock';
 
 test_seriesLine();
+test_seriesCandleStick();
 test_theme();
 
 /**
@@ -36,6 +37,22 @@ function test_seriesLine() {
             }
         }]
     });
+}
+
+/**
+ * Tests Highcharts.seriesTypes.candlestick
+ */
+function test_seriesCandleStick() {
+    Highcharts.stockChart('container', {
+        series: [{
+            type: 'candlestick',
+            data: [[1, 2, 3, 4]],
+            tooltip: {
+                valueDecimals: 2
+            },
+            visible: false // #16572
+        }]
+    }, void 0);
 }
 
 /**

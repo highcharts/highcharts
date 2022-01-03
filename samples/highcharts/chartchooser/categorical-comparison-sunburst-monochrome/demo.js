@@ -110,6 +110,7 @@ Highcharts.chart("container", {
     series: [
         {
             type: "sunburst",
+            name: 'Total',
             data: data,
             borderWidth: 1.5,
             borderColor: "#000000",

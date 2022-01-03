@@ -146,6 +146,45 @@ function isSkipPoint(
 
 
 /**
+ * Get the first point that is not a skip point in this series.
+ * @private
+ */
+function getFirstValidPointInSeries(
+    series: SeriesKeyboardNavigation.SeriesComposition
+): SeriesKeyboardNavigation.PointComposition|null {
+    const points = series.points || [],
+        len = points.length;
+    for (let i = 0; i < len; ++i) {
+        if (!isSkipPoint(points[i])) {
+            return points[i];
+        }
+    }
+    return null;
+}
+
+
+/**
+ * Get the first point that is not a skip point in this chart.
+ * @private
+ */
+function getFirstValidPointInChart(
+    chart: SeriesKeyboardNavigation.ChartComposition
+): SeriesKeyboardNavigation.PointComposition|null {
+    const series = chart.series || [],
+        len = series.length;
+    for (let i = 0; i < len; ++i) {
+        if (!isSkipSeries(series[i])) {
+            const point = getFirstValidPointInSeries(series[i]);
+            if (point) {
+                return point;
+            }
+        }
+    }
+    return null;
+}
+
+
+/**
  * @private
  */
 function highlightLastValidPointInChart(
@@ -162,7 +201,7 @@ function highlightLastValidPointInChart(
         // Highlight first valid point in the series will also
         // look backwards. It always starts from currently
         // highlighted point.
-        res = chart.series[i].highlightFirstValidPoint();
+        res = chart.series[i].highlightNextValidPoint();
         if (res) {
             break;
         }
@@ -173,36 +212,30 @@ function highlightLastValidPointInChart(
 
 
 /**
+ * After drilling down/up, we need to set focus to the first point for
+ * screen readers and keyboard nav.
  * @private
  */
 function updateChartFocusAfterDrilling(
     chart: SeriesKeyboardNavigation.ChartComposition
 ): void {
-    highlightFirstValidPointInChart(chart);
-
-    if (chart.focusElement) {
-        chart.focusElement.removeFocusBorder();
+    const point = getFirstValidPointInChart(chart);
+    if (point) {
+        point.highlight(false); // Do not visually highlight
     }
 }
 
 
 /**
+ * Highlight the first point in chart that is not a skip point
  * @private
  */
 function highlightFirstValidPointInChart(
     chart: SeriesKeyboardNavigation.ChartComposition
 ): (boolean|SeriesKeyboardNavigation.PointComposition) {
-    let res: (boolean|SeriesKeyboardNavigation.PointComposition) = false;
-
     delete chart.highlightedPoint;
-
-    res = chart.series.reduce(
-        (acc, cur): (boolean|SeriesKeyboardNavigation.PointComposition) =>
-            acc || cur.highlightFirstValidPoint(),
-        false as (boolean|SeriesKeyboardNavigation.PointComposition)
-    );
-
-    return res;
+    const point = getFirstValidPointInChart(chart);
+    return point ? point.highlight() : false;
 }
 
 
@@ -266,7 +299,7 @@ class SeriesKeyboardNavigation {
             return keyboardNavigation.onSeriesDestroy(this);
         });
 
-        e.addEvent(chart, 'afterDrilldown', function (): void {
+        e.addEvent(chart, 'afterApplyDrilldown', function (): void {
             updateChartFocusAfterDrilling(this);
         });
 
@@ -319,11 +352,11 @@ class SeriesKeyboardNavigation {
 
 
     /**
+     * After drillup we want to find the point that was drilled down to and
+     * highlight it.
      * @private
      */
     public onDrillupAll(): void {
-        // After drillup we want to find the point that was drilled down to and
-        // highlight it.
         const last = this.lastDrilledDownPoint,
             chart = this.chart,
             series = last && getSeriesFromName(chart, last.seriesName);
@@ -332,6 +365,7 @@ class SeriesKeyboardNavigation {
         if (last && series && defined(last.x) && defined(last.y)) {
             point = getPointFromXY(series, last.x, last.y);
         }
+        point = point || getFirstValidPointInChart(chart);
 
         // Container focus can be lost on drillup due to deleted elements.
         if (chart.container) {
@@ -339,11 +373,7 @@ class SeriesKeyboardNavigation {
         }
 
         if (point && point.highlight) {
-            point.highlight();
-        }
-
-        if (chart.focusElement) {
-            chart.focusElement.removeFocusBorder();
+            point.highlight(false); // Do not visually highlight
         }
     }
 
@@ -357,7 +387,7 @@ class SeriesKeyboardNavigation {
             chart = this.chart,
             inverted = chart.inverted;
 
-        return new (KeyboardNavigationHandler as any)(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
                     function (
@@ -419,6 +449,10 @@ class SeriesKeyboardNavigation {
             ): number {
                 highlightFirstValidPointInChart(chart);
                 return this.response.success;
+            },
+
+            validate: function (): boolean {
+                return !!getFirstValidPointInChart(chart);
             },
 
             terminate: function (): void {
@@ -515,10 +549,6 @@ class SeriesKeyboardNavigation {
     /**
      * Function that attempts to highlight next/prev point. Handles wrap around.
      * @private
-     * @param {Highcharts.KeyboardNavigationHandler} handler
-     * @param {boolean} directionIsNext
-     * @return {number}
-     * response
      */
     public attemptHighlightAdjacentPoint(
         handler: KeyboardNavigationHandler,
@@ -530,8 +560,12 @@ class SeriesKeyboardNavigation {
             highlightSuccessful = chart.highlightAdjacentPoint(directionIsNext);
 
         if (!highlightSuccessful) {
-            if (wrapAround) {
-                return handler.init(directionIsNext ? 1 : -1);
+            if (wrapAround && (
+                directionIsNext ?
+                    highlightFirstValidPointInChart(chart) :
+                    highlightLastValidPointInChart(chart)
+            )) {
+                return handler.response.success;
             }
             return handler.response[directionIsNext ? 'next' : 'prev'];
         }
@@ -602,7 +636,7 @@ namespace SeriesKeyboardNavigation {
 
     export declare class PointComposition extends Accessibility.PointComposition {
         series: SeriesComposition;
-        highlight(): PointComposition;
+        highlight(highlightVisually?: boolean): PointComposition;
     }
 
     export declare class SeriesComposition extends Accessibility.SeriesComposition {
@@ -610,7 +644,7 @@ namespace SeriesKeyboardNavigation {
         data: Array<PointComposition>;
         pointClass: typeof PointComposition;
         points: Array<PointComposition>;
-        highlightFirstValidPoint(): (boolean|PointComposition);
+        highlightNextValidPoint(): (boolean|PointComposition);
     }
 
 
@@ -826,7 +860,7 @@ namespace SeriesKeyboardNavigation {
         // Highlight the new point or any first valid point back or forwards
         // from it
         newPoint.highlight();
-        return newPoint.series.highlightFirstValidPoint();
+        return newPoint.series.highlightNextValidPoint();
     }
 
 
@@ -885,8 +919,8 @@ namespace SeriesKeyboardNavigation {
                 }
             });
 
-            seriesProto.highlightFirstValidPoint = (
-                seriesHighlightFirstValidPoint
+            seriesProto.highlightNextValidPoint = (
+                seriesHighlightNextValidPoint
             );
 
         }
@@ -942,7 +976,7 @@ namespace SeriesKeyboardNavigation {
 
 
     /**
-     * Highlights a point (show tooltip and display hover state).
+     * Highlights a point (show tooltip, display hover state, focus element).
      *
      * @private
      * @function Highcharts.Point#highlight
@@ -951,11 +985,12 @@ namespace SeriesKeyboardNavigation {
      *         This highlighted point.
      */
     function pointHighlight(
-        this: PointComposition
+        this: PointComposition,
+        highlightVisually: boolean = true
     ): PointComposition {
         const chart = this.series.chart;
 
-        if (!this.isNull) {
+        if (!this.isNull && highlightVisually) {
             this.onMouseOver(); // Show the hover marker and tooltip
         } else {
             if (chart.tooltip) {
@@ -971,6 +1006,9 @@ namespace SeriesKeyboardNavigation {
         // change z-index and mess up the element.
         if (this.graphic) {
             chart.setFocusToElement(this.graphic);
+            if (!highlightVisually && chart.focusElement) {
+                chart.focusElement.removeFocusBorder();
+            }
         }
 
         chart.highlightedPoint = this;
@@ -984,9 +1022,9 @@ namespace SeriesKeyboardNavigation {
      * point in the series, use that as starting point.
      *
      * @private
-     * @function Highcharts.Series#highlightFirstValidPoint
+     * @function Highcharts.Series#highlightNextValidPoint
      */
-    function seriesHighlightFirstValidPoint(
+    function seriesHighlightNextValidPoint(
         this: SeriesComposition
     ): (boolean|PointComposition) {
         const curPoint = this.chart.highlightedPoint,

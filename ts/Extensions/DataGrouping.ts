@@ -1233,8 +1233,11 @@ Axis.prototype.setDataGrouping = function (
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
         ): void {
-            seriesOptions.dataGrouping = dataGrouping;
-        }, false);
+            // Merging dataGrouping options with already defined options #16759
+            seriesOptions.dataGrouping = typeof dataGrouping === 'boolean' ?
+                dataGrouping :
+                merge(dataGrouping, seriesOptions.dataGrouping);
+        });
     }
 
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
