@@ -451,9 +451,10 @@ jobs:
       - <<: *load_workspace
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
+      - run: sudo apt-get update -y
       - run:
-          name: install pre dependencies
-          command: sudo apt-get install cpio
+          name: Install pre dependencies
+          command: sudo apt-get install -y cpio
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr <<# parameters.add_build_metadata >>--build-metadata<</ parameters.add_build_metadata >> --since {}) && node changelog/generate-html
