@@ -45,7 +45,8 @@ const {
     fireEvent,
     merge,
     pick,
-    defined
+    defined,
+    isString
 } = U;
 
 /* *
@@ -485,7 +486,16 @@ class Breadcrumbs {
                     chart
                 ) || '';
 
-        if (returnText === '← ' && defined(defaultText)) {
+        if (
+            (
+                (
+                    isString(returnText) &&
+                    !returnText.length
+                ) ||
+                returnText === '← '
+            ) &&
+            defined(defaultText)
+        ) {
             returnText = !breadcrumbsOptions.showFullPath ?
                 '← ' + defaultText :
                 defaultText;
