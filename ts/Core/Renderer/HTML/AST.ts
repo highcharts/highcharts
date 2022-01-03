@@ -281,6 +281,28 @@ class AST {
 
     public static emptyHTML = emptyHTML;
 
+    /**
+     * Allow all the custom SVG and HTML attributes, references and tags
+     * (together with potentially harmful ones) to be added to the DOM
+     * from the chart configuration.
+     * In other words: disable the Highcharts.AST functionality.
+     *
+     * Note that, in case you want to allow only one tag or attribute,
+     * it's better to add only this one exception instead of disabling the
+     * filtering totally.
+     * See [allowedAttributes](Highcharts.AST#.allowedAttributes),
+     * [allowedReferences](Highcharts.AST#.allowedReferences) and
+     * [allowedTags](Highcharts.AST#.allowedTags).
+     *
+     * @example
+     * // Allow all custom attributes, references and tags (disable AST)
+     * Highcharts.AST.bypassHTMLFiltering = true;
+     *
+     * @name Highcharts.AST.bypassHTMLFiltering
+     * @static
+     */
+    public static bypassHTMLFiltering = false;
+
     /* *
      *
      *  Static Functions
@@ -413,13 +435,18 @@ class AST {
                 const textNode = item.textContent ?
                     H.doc.createTextNode(item.textContent) :
                     void 0;
+                // Whether to ignore the AST filtering totally, #15345
+                const bypassHTMLFiltering = AST.bypassHTMLFiltering === true;
                 let node: Text|Element|undefined;
 
                 if (tagName) {
                     if (tagName === '#text') {
                         node = textNode;
 
-                    } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                    } else if (
+                        AST.allowedTags.indexOf(tagName) !== -1 ||
+                        bypassHTMLFiltering
+                    ) {
                         const NS = tagName === 'svg' ?
                             SVG_NS :
                             (subParent.namespaceURI || SVG_NS);
@@ -441,7 +468,9 @@ class AST {
                         });
                         attr(
                             element as any,
-                            AST.filterUserAttributes(attributes)
+                            bypassHTMLFiltering ?
+                                attributes :
+                                AST.filterUserAttributes(attributes)
                         );
 
                         // Add text content
