@@ -173,8 +173,8 @@ QUnit.test('Map navigation button alignment', assert => {
     chart.setSize(600);
 
     assert.close(
-        chart.mapNavButtons[1].translateY +
-            chart.mapNavButtons[1].element.getBBox().height,
+        chart.mapNavigation.navButtons[1].translateY +
+            chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
         'The buttons should initially be bottom-aligned to the plot box (#12776)'
@@ -183,8 +183,8 @@ QUnit.test('Map navigation button alignment', assert => {
     chart.setSize(undefined, 380);
 
     assert.close(
-        chart.mapNavButtons[1].translateY +
-            chart.mapNavButtons[1].element.getBBox().height,
+        chart.mapNavigation.navButtons[1].translateY +
+            chart.mapNavigation.navButtons[1].element.getBBox().height,
         chart.plotTop + chart.plotHeight,
         1.5,
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'

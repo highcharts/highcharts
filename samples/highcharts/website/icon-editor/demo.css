@@ -8,6 +8,7 @@
 
 body {
     margin: 0 !important;
+    font-family: "IBM Plex Sans", sans-serif;
 }
 
 .chart-container .thick {
