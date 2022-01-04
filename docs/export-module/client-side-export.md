@@ -41,35 +41,27 @@ Decision flowchart of the module (click for large version):
 [![Offline export decision flowchart](https://assets.highcharts.com/images/client-side-export-flow.svg)](https://assets.highcharts.com/images/client-side-export-flow.svg)
 
 
-### Export local pdf in a language containing non-Latin characters or Unicode Characters/UTF-8
+### Export local PDF in a language containing non-Latin characters or Unicode Characters/UTF-8
 
+As described in the [jsPDF docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8), the 14 standard fonts in PDF are limited to the ASCII-codepage. Therefore, in order to support for example Chinese text in the exported PDF, a custom font has to be created and passed on to the exporting module.
 
-1. Select a custom font that contains those characters/symbols. In the example, the [NotoSans-Regular](https://fonts.google.com/noto/specimen/Noto+Sans) font was chosen from Google fonts.
+1. Select a custom font that contains the required characters/symbols. In the example, the [NotoSans-Regular](https://fonts.google.com/noto/specimen/Noto+Sans) font was chosen from Google fonts.
 2. Download the `.ttf` file of that particular font.
 3. Go to [jsPDF's online font converter tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html) and:
-    - set `fontName` the same as it is called (`NotoSans-Regular`)
-    - set your desire `fontStyle`
-    - set the `Module format` to `ES modules`
-    - add file with the font's `.ttf`, in this case file is called `NotoSans-Regular.ttf`
-    - create a converted version of this font by clicking `Create`
+    - set `fontName` to the same as the file is called (`NotoSans-Regular`)
+    - optionally, set your desired `fontStyle`
+    - change the `Module format` to `UMD`
+    - choose the `.ttf` file to convert, in this case the file is called `NotoSans-Regular.ttf`
+    - click `Create`
     - the `NotoSans-Regular-normal.js` file should be downloaded
-4. Change how the `jsPDF` is imported in the new file from
-    ```
-    import { jsPDF } from "jspdf"
-    ```
-    to
-    ```
-    const jsPDF = this.jsPDF;
-    ```
-5. Add correct URL path for the new font and then set the name for the same as used in the converter.
+4. Add the URL path for the new font file and then set the name for the same as used in the converter.
 
     ```
         exporting: {
             ...
             pdfFont: {
-            name: 'NotoSans-Regular',
-            url: 'URLForNotoSans-Regular-normal.js'
+                name: 'NotoSans-Regular',
+                url: '//path.to/NotoSans-Regular-normal.js'
             },
         },
     ```
-    Please note that each property is case sensitive.

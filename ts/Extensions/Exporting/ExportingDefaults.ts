@@ -228,11 +228,11 @@ const exporting: ExportingOptions = {
      * Allows using a custom font code file for the exported PDF. Useful when
      * implementing a font which isn't supported by jsPDF. For example UTF-8,
      * Chinese, Russian, Japanese etc.
-     *s
+     *
      * See more in [the
      * docs](https://www.highcharts.com/docs/export-module/client-side-export).
      *
-     * @sample {highcharts} highcharts/exporting/offline-downloading-pdf-utf-8/
+     * @sample {highcharts} highcharts/exporting/offline-download-pdffont/
      *         Download PDF in a language containing non-Latin characters.
      *
      * @since     next
@@ -240,9 +240,9 @@ const exporting: ExportingOptions = {
      */
     pdfFont: {
         /**
-        * When pdfFont URL is set and custom font added,
-        * use this property to apply that font to exported PDF.
-        * Set the name the same as used in the jsPDF converter.
+        * When `pdfFont.url` is set and a custom font added, use this property
+        * to apply that font to the exported PDF. Use the same name as used in
+        * the jsPDF converter.
         *
         * @type      {string}
         * @since     next
@@ -252,10 +252,11 @@ const exporting: ExportingOptions = {
 
         /**
         * When this is set, the external script-loading block for PDF is
-        * modified to also load the user-defined PDF font that is created
-        * from jsPDF's [online font converter
+        * modified to also load the user-defined PDF font that is created from
+        * jsPDF's [online font converter
         * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
-        * By default `undefined` to avoid increasing the bundle size.
+        * By default, no fonts are embedded in order to keep the bundle size
+        * down. The NotoSans-Regular file from the demo, for example, is 533 kB.
         *
         * @type      {string}
         * @since     next
