@@ -537,11 +537,19 @@ class SankeySeries extends ColumnSeries {
     public createNodeColumns(): Array<SankeySeries.ColumnArray> {
         const columns: Array<SankeySeries.ColumnArray> = [];
 
+        // Get columns offset including all sibiling and cousins etc.
         function getOffset(node: SankeyPoint): number {
             let offset = node.linksFrom.length;
 
             node.linksFrom.forEach((link): void => {
-                offset += getOffset(link.toNode);
+                if (link.id === link.toNode.linksTo[0].id) {
+                    // Node has children, that hangs directly from it:
+                    offset += getOffset(link.toNode);
+                } else {
+                    // If the node hangs from multiple parents, and this is not
+                    // the last one, ignore it:
+                    offset--;
+                }
             });
 
             return offset;
@@ -576,10 +584,12 @@ class SankeySeries extends ColumnSeries {
                         fromNode &&
                         (fromNode.options as any).layout === 'hanging'
                     ) {
-                        // Force all children of the hanging node
+                        // Default all children of the hanging node
                         // to have hanging layout
-                        // TO DO: Add info in docs
-                        (node.options as any).layout = 'hanging';
+                        (node.options as any).layout = pick(
+                            (node.options as any).layout,
+                            'hanging'
+                        );
                         node.hangsFrom = fromNode;
                         let i = -1;
                         find(
@@ -794,7 +804,6 @@ class SankeySeries extends ColumnSeries {
             const nodes = column.slice();
             const minLinkWidth = this.options.minLinkWidth || 0;
             let exceedsMinLinkWidth: boolean;
-            let factor = 0;
             let i: number;
 
             let remainingHeight = (
@@ -802,6 +811,8 @@ class SankeySeries extends ColumnSeries {
                 (options.borderWidth as any) -
                 (column.length - 1) * series.nodePadding
             );
+
+            let factor = remainingHeight;
 
             // Because the minLinkWidth option doesn't obey the direct
             // translation, we need to run translation iteratively, check
