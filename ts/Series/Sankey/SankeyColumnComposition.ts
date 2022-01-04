@@ -1,14 +1,13 @@
 import type SankeySeries from './SankeySeries';
 import SankeyPoint from './SankeyPoint';
 
-import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import ArcDiagramSeries from '../ArcDiagram/ArcDiagramSeries';
+import U from '../../Core/Utilities.js';
 const {
     relativeLength
 } = U;
@@ -42,11 +41,11 @@ namespace SankeyColumnComposition {
      * Series connected to column
      * @return {ArrayComposition} SankeyColumnArray
      */
-    export function compose(
-        array: Array<SankeyPoint>,
-        series: SankeySeries|ArcDiagramSeries
-    ): ArrayComposition {
-        const sankeyColumnArray = array as ArrayComposition;
+    export function compose<T extends SankeySeries>(
+        points: Array<T['pointClass']['prototype']>,
+        series: T
+    ): ArrayComposition<typeof points[0]> {
+        const sankeyColumnArray = points as ArrayComposition<typeof points[0]>;
         sankeyColumnArray.sankeyColumn =
             new SankeyColumnAdditions(sankeyColumnArray, series);
         return sankeyColumnArray;
@@ -61,7 +60,7 @@ namespace SankeyColumnComposition {
 
         constructor(
             array: ArrayComposition,
-            series: SankeySeries|ArcDiagramSeries
+            series: SankeySeries
         ) {
             this.array = array;
             this.series = series;
@@ -77,7 +76,7 @@ namespace SankeyColumnComposition {
 
         public additionalSpace?: number;
 
-        public series: SankeySeries|ArcDiagramSeries;
+        public series: SankeySeries;
 
         /**
          * Calculate translation factor used in column and nodes distribution
@@ -90,7 +89,7 @@ namespace SankeyColumnComposition {
          * Translation Factor
          */
         public getTranslationFactor(
-            series: SankeySeries|ArcDiagramSeries
+            series: SankeySeries
         ): number {
 
             const column = this.array,

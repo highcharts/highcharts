@@ -16,7 +16,7 @@
  *
  * */
 
-import type DependencyWheelSeries from './../DependencyWheel/DependencyWheelSeries';
+import type ArcDiagramSeries from './ArcDiagramSeries';
 import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -29,7 +29,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     center?: Array<(number|string|null)>;
     startAngle?: number;
-    states?: SeriesStatesOptions<DependencyWheelSeries>;
+    states?: SeriesStatesOptions<ArcDiagramSeries>;
     equalNodes?: boolean;
     centeredLinks?: boolean;
     majorRadius?: number;
