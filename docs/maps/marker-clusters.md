@@ -2,7 +2,7 @@ Marker clusters
 ===============
 
 ## Introduction
-Marker clusters is the concept of sampling the data values into larger blocks in order to ease readability and increase performance. It is a simple solution to display a large number of mappoints on a map. The number on a cluster shows how many markers it contains. As you zoom into the map the points will start to show, and the cluster will contain fewer markers.
+Marker clusters is the concept of sampling the data values into larger blocks in order to ease readability and increase performance. It is a simple solution to display a large number of map points on a map. The number label on a cluster graphic shows how many data points it represents. As you zoom into the map the individual points will start to show, and the cluster will contain fewer markers.
 
 The `marker-clusters` module supports `mappoint` and `scatter` series types.
 
