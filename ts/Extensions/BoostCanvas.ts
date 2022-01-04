@@ -34,7 +34,7 @@ const {
     doc,
     noop
 } = H;
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -565,7 +565,9 @@ const initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
+                        backgroundColor: color(
+                            Palette.backgroundColor
+                        ).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

@@ -47,9 +47,8 @@ Highcharts.chart('container', {
         name: 'Browsers',
         colorByPoint: true,
         accessibility: {
-            pointDescriptionFormatter: function (point) {
-                return point.index + '. ' + point.name + ', ' + point.y +
-                    '. Clickable.';
+            point: {
+                valueDescriptionFormat: '{index}. {point.name}, {point.y}. Clickable.'
             }
         },
         data: [
@@ -91,6 +90,11 @@ Highcharts.chart('container', {
         ]
     }],
     drilldown: {
+        breadcrumbs: {
+            position: {
+                align: 'right'
+            }
+        },
         series: [
             {
                 name: 'Chrome',

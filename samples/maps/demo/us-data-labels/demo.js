@@ -1,5 +1,5 @@
 // Load the data from the HTML table and tag it with an upper case name used for joining
-var data = [],
+const data = [],
     // Get the map data
     mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);
 
@@ -17,30 +17,12 @@ Highcharts.data({
     }
 });
 
-// Process mapdata
+// Prepare mapData for joining
 mapData.forEach(function (p) {
-    var path = p.path,
-        copy = {
-            path: path
-        };
-
-    // This point has a square legend to the right
-    if (path[0][1] === 9727) {
-
-        // Identify the box
-        Highcharts.seriesTypes.map.prototype.getBox.call({}, [copy]);
-
-        // Place the center of the data label in the center of the point legend box
-        p.middleX = ((path[0][1] + path[1][1]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
-        p.middleY = ((path[0][2] + path[2][2]) / 2 - copy._minY) / (copy._maxY - copy._minY); // eslint-disable-line no-underscore-dangle
-
-    }
-
-    // Tag it for joining
     p.ucName = p.name.toUpperCase();
 });
 
-// Initiate the chart
+// Initialize the chart
 Highcharts.mapChart('container', {
 
     title: {

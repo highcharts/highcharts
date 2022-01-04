@@ -18,7 +18,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         };
 
     for (region in data) {
-        if (data.hasOwnProperty(region)) {
+        if (Object.hasOwnProperty.call(data, region)) {
             regionVal = 0;
             regionP = {
                 id: 'id_' + regionI,
@@ -27,7 +27,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             };
             countryI = 0;
             for (country in data[region]) {
-                if (data[region].hasOwnProperty(country)) {
+                if (Object.hasOwnProperty.call(data[region], country)) {
                     countryP = {
                         id: regionP.id + '_' + countryI,
                         name: country,
@@ -36,7 +36,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
                     points.push(countryP);
                     causeI = 0;
                     for (cause in data[region][country]) {
-                        if (data[region][country].hasOwnProperty(cause)) {
+                        if (Object.hasOwnProperty.call(
+                            data[region][country], cause
+                        )) {
                             causeP = {
                                 id: countryP.id + '_' + causeI,
                                 name: causeName[cause],
@@ -58,6 +60,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     }
     Highcharts.chart('container', {
         series: [{
+            name: 'Regions',
             type: 'treemap',
             layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
@@ -65,13 +68,20 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             dataLabels: {
                 enabled: false
             },
-            levelIsConstant: false,
             levels: [{
                 level: 1,
                 dataLabels: {
                     enabled: true
                 },
-                borderWidth: 3
+                borderWidth: 3,
+                levelIsConstant: false
+            }, {
+                level: 1,
+                dataLabels: {
+                    style: {
+                        fontSize: '14px'
+                    }
+                }
             }],
             data: points
         }],

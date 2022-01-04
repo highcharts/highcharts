@@ -734,29 +734,50 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
     );
 });
 
-QUnit.test('DataGrouping and update', function (assert) {
+QUnit.test('DataGrouping with selected range and update', function (assert) {
     const chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 0,
+            buttons: [{
+                type: 'all',
+                text: 'All',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['millisecond', [3]]
+                    ]
+                }
+            }]
+        },
         series: [
             {
                 id: 'usdeur',
                 dataGrouping: {
-                    forced: true
+                    forced: true,
+                    approximation: () => 3
                 },
-                data: [1, 2, 3]
+                data: [1, 2, 3, 4, 5, 6]
             }
         ]
     });
+
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        3,
+        `When the scope is set in the dataGrouping options
+        it should work as well as without it (#16759)`
+    );
 
     chart.update(
         {
             series: [
                 {
                     id: 'usdeur',
-                    data: [3, 2, 1]
+                    data: [6, 5, 4, 3, 2, 1]
                 },
                 {
                     id: 'eurusd',
-                    data: [1, 2, 3]
+                    data: [1, 2, 3, 4, 5, 6]
                 }
             ]
         },
@@ -955,7 +976,7 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
     );
 });
 
-QUnit.test('Grouping each series when the only one requires that, #6765.', function (assert) {
+QUnit.test('The dataGrouping enabling/disabling.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         chart: {
             width: 400
@@ -978,6 +999,7 @@ QUnit.test('Grouping each series when the only one requires that, #6765.', funct
         ]
     });
 
+    // Grouping each series when the only one requires that, #6765.
     assert.strictEqual(
         chart.series[0].processedXData.length,
         2,
@@ -985,4 +1007,34 @@ QUnit.test('Grouping each series when the only one requires that, #6765.', funct
         It should be grouped the same as the second one is.
         Thus only two grouped points should be visible.`
     );
+
+    chart.series[0].remove();
+
+    const series = chart.series[0],
+        mapArray = [
+            'groupMap',
+            'hasGroupedData',
+            'currentDataGrouping'
+        ];
+
+    // When the dataGrouping is enabled, the properties should exist.
+    mapArray.forEach(prop => {
+        assert.ok(
+            series[prop],
+            `When the dataGrouping is enabled,
+            the series.${prop} property should be defined.`
+        );
+    });
+
+    // Set extremes to turn the dataGrouping off
+    chart.xAxis[0].setExtremes(0, 5);
+
+    // When the dataGrouping gets off, the properties should be deleted, #16238.
+    mapArray.forEach(prop => {
+        assert.notOk(
+            series[prop],
+            `When the dataGrouping gets disabled,
+            the series.${prop} property should be deleted.`
+        );
+    });
 });

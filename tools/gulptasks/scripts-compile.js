@@ -17,7 +17,7 @@ const SOURCE_DIRECTORY = 'code';
  * Split an array into multiple new arrays/chuncks
  *
  * @param {Array} arr to split
- * @param {Number} numParts to split array in
+ * @param {number} numParts to split array in
  * @return {Array} Array of arrays/chunks
  */
 function chunk(arr, numParts) {
@@ -43,7 +43,6 @@ async function task() {
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
 
-    const numberOfThreads = Math.max(2, os.cpus().length - 2);
     const threads = [];
 
     if (isMainThread) {
@@ -61,6 +60,9 @@ async function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
+        const numberOfThreads = argv.numThreads ?
+            argv.numThreads :
+            Math.max(2, os.cpus().length - 2);
         const batches = chunk(files, numberOfThreads);
 
         logLib.message(`Splitting files to compile in ${batches.length} batches.`);

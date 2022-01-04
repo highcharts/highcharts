@@ -32,6 +32,18 @@ Cypress.Commands.add('chart', () =>
     }))
 );
 
+Cypress.Commands.add('openIndicators', () =>
+    cy.get('.highcharts-indicators .highcharts-menu-item-btn')
+        .click()
+);
+
+Cypress.Commands.add('addIndicator', () =>
+    cy.get('.highcharts-popup-rhs-col')
+        .children('.highcharts-popup button')
+        .eq(0)
+        .click()
+);
+
 Cypress.Commands.add(
     'dragTo',
     {
@@ -54,4 +66,29 @@ Cypress.Commands.add(
         // Keep the dragged element as the subject
         cy.wrap(subject);
     }
+);
+
+Cypress.Commands.add('openIndicators', () =>
+    cy.get('.highcharts-indicators .highcharts-menu-item-btn')
+        .click()
+);
+
+Cypress.Commands.add('selectIndicator', (indicator) =>
+    cy.get('.highcharts-indicator-list')
+        .contains(indicator)
+        .click()
+);
+
+Cypress.Commands.add('selectAnnotation', (annotationClassName, parentClassName) => {
+
+    if(parentClassName) {
+        cy.get(`.${parentClassName}`).children().eq(1).click();
+    }
+    cy.get(`.${annotationClassName}`).click();
+})
+
+Cypress.Commands.add('selectRange', (range) =>
+    cy.get('.highcharts-range-selector-group')
+        .contains(range)
+        .click()
 );

@@ -50,7 +50,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         }
     });
 
-    // Initiate the chart
+    // Initialize the chart
     Highcharts.mapChart('container', {
         title: {
             text: 'Highmaps from geojson with multiple geometry types'

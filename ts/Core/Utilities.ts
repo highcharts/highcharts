@@ -296,7 +296,9 @@ function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
         // Arrays, primitives and DOM nodes are copied directly
         } else if (
             isObject(newer[key]) ||
-            newer[key] !== older[key]
+            newer[key] !== older[key] ||
+            // If the newer key is explicitly undefined, keep it (#10525)
+            (key in newer && !(key in older))
         ) {
             result[key] = newer[key];
         }
@@ -356,8 +358,8 @@ function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -489,9 +491,13 @@ function attr(
     value: (number|string)
 ): undefined;
 /**
- * Set or get an attribute or an object of attributes. To use as a setter, pass
- * a key and a value, or let the second argument be a collection of keys and
- * values. To use as a getter, pass only a string as the second argument.
+ * Set or get an attribute or an object of attributes.
+ *
+ * To use as a setter, pass a key and a value, or let the second argument be a
+ * collection of keys and values. When using a collection, passing a value of
+ * `null` or `undefined` will remove the attribute.
+ *
+ * To use as a getter, pass only a string as the second argument.
  *
  * @function Highcharts.attr
  *
@@ -533,7 +539,11 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val as any);
+            if (defined(val)) {
+                elem.setAttribute(key, val as any);
+            } else {
+                elem.removeAttribute(key);
+            }
         });
     }
     return ret;
@@ -776,7 +786,7 @@ function extendClass <T, TReturn = T>(
 }
 
 /**
- * Left-pad a string to a given length by adding a character repetetively.
+ * Left-pad a string to a given length by adding a character repetitively.
  *
  * @function Highcharts.pad
  *
@@ -996,10 +1006,11 @@ function normalizeTickInterval(
  *
  * @param {Function} sortFunction
  *        The function to sort it with, like with regular Array.prototype.sort.
- *
- * @return {void}
  */
-function stableSort(arr: Array<any>, sortFunction: Function): void {
+function stableSort<T>(
+    arr: Array<T>,
+    sortFunction: (a: T, b: T) => number
+): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -1010,7 +1021,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Add index to each item
     for (i = 0; i < length; i++) {
-        arr[i].safeI = i; // stable sort index
+        (arr[i] as any).safeI = i; // stable sort index
     }
 
     arr.sort(function (a: any, b: any): number {
@@ -1020,7 +1031,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // Remove index from items
     for (i = 0; i < length; i++) {
-        delete arr[i].safeI; // stable sort index
+        delete (arr[i] as any).safeI; // stable sort index
     }
 }
 
@@ -1102,7 +1113,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
 
 
 /**
- * Discard a HTML element by moving it to the bin and delete.
+ * Discard a HTML element
  *
  * @function Highcharts.discardElement
  *
@@ -1110,20 +1121,11 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-
-    // create a garbage bin element, not part of the DOM
-    if (!garbageBin) {
-        garbageBin = createElement('div');
+    if (element && element.parentElement) {
+        element.parentElement.removeChild(element);
     }
-
-    // move the node and empty bin
-    if (element) {
-        garbageBin.appendChild(element);
-    }
-    garbageBin.innerHTML = '';
 }
 
-let garbageBin: (globalThis.HTMLElement|undefined);
 
 /**
  * Fix JS round off float errors.
@@ -1140,7 +1142,9 @@ let garbageBin: (globalThis.HTMLElement|undefined);
  *         The corrected float number.
  */
 function correctFloat(num: number, prec?: number): number {
-    return parseFloat(
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
         num.toPrecision(prec || 14)
     );
 }
@@ -1382,7 +1386,7 @@ const find = (Array.prototype as any).find ?
         const length = arr.length;
 
         for (i = 0; i < length; i++) {
-            if (callback(arr[i], i)) { // eslint-disable-line callback-return
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
                 return arr[i];
             }
         }
@@ -1696,9 +1700,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
-     * @return {void}
      */
     function removeOneEvent(
         type: string,
@@ -1715,8 +1716,6 @@ function removeEvent<T>(
 
     /**
      * @private
-     * @param {any} eventCollection - collection
-     * @return {void}
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,

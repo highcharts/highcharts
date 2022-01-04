@@ -24,8 +24,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import OnSeriesComposition from '../OnSeriesComposition.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -263,7 +263,7 @@ class FlagsSeries extends ColumnSeries {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highstock
          */
-        fillColor: palette.backgroundColor,
+        fillColor: Palette.backgroundColor,
 
         /**
          * The color of the line/border of the flag.
@@ -298,7 +298,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                lineColor: palette.neutralColor100,
+                lineColor: Palette.neutralColor100,
 
                 /**
                  * The fill or background color of the flag.
@@ -306,7 +306,7 @@ class FlagsSeries extends ColumnSeries {
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highstock
                  */
-                fillColor: palette.highlightColor20
+                fillColor: Palette.highlightColor20
             }
         },
 
@@ -509,12 +509,21 @@ class FlagsSeries extends ColumnSeries {
 
         // Handle X-dimension overlapping
         if (!options.allowOverlapX) {
+            let maxDistance = 100;
+
             objectEach(boxesMap, function (box): void {
                 box.plotX = box.anchorX;
                 boxes.push(box);
+                maxDistance = Math.max(box.size, maxDistance);
             });
 
-            distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
+            // If necessary (for overlapping or long labels)  distribute it
+            // depending on the label width or a hardcoded value, #16041.
+            distribute(
+                boxes,
+                inverted ? yAxis.len : this.xAxis.len,
+                maxDistance
+            );
 
             points.forEach(function (point): void {
                 const box = point.graphic && boxesMap[point.plotX as any];
@@ -582,33 +591,37 @@ class FlagsSeries extends ColumnSeries {
                 if (point.unbindMouseOver) {
                     point.unbindMouseOver();
                 }
-                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function (): void {
+                point.unbindMouseOver = addEvent(
+                    graphic.element,
+                    'mouseover',
+                    function (): void {
 
-                    // Raise this point
-                    if ((point.stackIndex as any) > 0 &&
-                        !point.raised
-                    ) {
-                        point._y = (graphic as any).y;
-                        (graphic as any).attr({
-                            y: (point._y as any) - 8
-                        });
-                        point.raised = true;
-                    }
-
-                    // Revert other raised points
-                    points.forEach(function (otherPoint): void {
-                        if (
-                            otherPoint !== point &&
-                        otherPoint.raised &&
-                        otherPoint.graphic
+                        // Raise this point
+                        if ((point.stackIndex as any) > 0 &&
+                            !point.raised
                         ) {
-                            otherPoint.graphic.attr({
-                                y: otherPoint._y
+                            point._y = (graphic as any).y;
+                            (graphic as any).attr({
+                                y: (point._y as any) - 8
                             });
-                            otherPoint.raised = false;
+                            point.raised = true;
                         }
-                    });
-                });
+
+                        // Revert other raised points
+                        points.forEach(function (otherPoint): void {
+                            if (
+                                otherPoint !== point &&
+                            otherPoint.raised &&
+                            otherPoint.graphic
+                            ) {
+                                otherPoint.graphic.attr({
+                                    y: otherPoint._y
+                                });
+                                otherPoint.raised = false;
+                            }
+                        });
+                    }
+                );
             }
         });
     }
@@ -660,63 +673,40 @@ class FlagsSeries extends ColumnSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 
-interface FlagsSeries {
+interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
-    getPlotBox: typeof OnSeriesMixin['getPlotBox'];
-    init: typeof Series.prototype['init'];
+    group: typeof ColumnSeries.prototype.group;
     pointClass: typeof FlagsPoint;
     takeOrdinalPosition: boolean;
-    translate: typeof OnSeriesMixin['translate'];
+    init: typeof Series.prototype['init'];
+    remove: typeof ColumnSeries.prototype.remove;
 }
+
+OnSeriesComposition.compose(FlagsSeries);
 extend(FlagsSeries.prototype, {
-
     allowDG: false,
-
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
-     */
-    buildKDTree: noop,
-
     forceCrop: true,
-
-    getPlotBox: OnSeriesMixin.getPlotBox,
-
+    invertible: false, // Flags series group should not be invertible (#14063).
+    noSharedTooltip: true,
+    pointClass: FlagsPoint,
+    sorted: false,
+    takeOrdinalPosition: false, // #1074
+    trackerGroups: ['markerGroup'],
+    buildKDTree: noop,
     /**
      * Inherit the initialization from base Series.
-     *
      * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
     init: Series.prototype.init,
-
     /**
      * Don't invert the flag marker group (#4960).
-     *
      * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop,
-
-    // Flags series group should not be invertible (#14063).
-    invertible: false,
-
-    noSharedTooltip: true,
-
-    pointClass: FlagsPoint,
-
-    sorted: false,
-
-    takeOrdinalPosition: false, // #1074
-
-    trackerGroups: ['markerGroup'],
-
-    translate: OnSeriesMixin.translate
-
+    invertGroups: noop
 });
 
 /* *

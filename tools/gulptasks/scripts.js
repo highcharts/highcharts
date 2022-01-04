@@ -143,7 +143,7 @@ function task() {
         }
     }
 
-    if (argv.debug) {
+    if (argv.debug && !argv.force) {
         logLib.warn('Skipping task in debug mode...');
         return Promise.resolve();
     }

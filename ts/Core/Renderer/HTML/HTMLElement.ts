@@ -128,10 +128,12 @@ class HTMLElement extends SVGElement {
             const htmlElementProto = HTMLElement.prototype,
                 svgElementProto = SVGElementClass.prototype;
 
-            svgElementProto.getSpanCorrection = htmlElementProto.getSpanCorrection;
+            svgElementProto.getSpanCorrection = htmlElementProto
+                .getSpanCorrection;
             svgElementProto.htmlCss = htmlElementProto.htmlCss;
             svgElementProto.htmlGetBBox = htmlElementProto.htmlGetBBox;
-            svgElementProto.htmlUpdateTransform = htmlElementProto.htmlUpdateTransform;
+            svgElementProto.htmlUpdateTransform = htmlElementProto
+                .htmlUpdateTransform;
             svgElementProto.setSpanRotation = htmlElementProto.setSpanRotation;
         }
 
@@ -252,6 +254,9 @@ class HTMLElement extends SVGElement {
 
         /** @private */
         function getTextPxLength(): number {
+            if (wrapper.textPxLength) {
+                return wrapper.textPxLength;
+            }
             // Reset multiline/ellipsis in order to read width (#4928,
             // #5417)
             css(elem, {
@@ -296,34 +301,39 @@ class HTMLElement extends SVGElement {
                     wrapper.textAlign
                 ].join(',');
 
-            let baseline;
+            let baseline,
+                hasBoxWidthChanged = false;
 
             // Update textWidth. Use the memoized textPxLength if possible, to
             // avoid the getTextPxLength function using elem.offsetWidth.
             // Calling offsetWidth affects rendering time as it forces layout
             // (#7656).
-            if (
-                textWidth !== wrapper.oldTextWidth &&
-                (
-                    ((textWidth as any) > wrapper.oldTextWidth) ||
-                    (wrapper.textPxLength || getTextPxLength()) > (textWidth as any)
-                ) && (
-                    // Only set the width if the text is able to word-wrap, or
-                    // text-overflow is ellipsis (#9537)
-                    /[ \-]/.test(elem.textContent || elem.innerText) ||
-                    elem.style.textOverflow === 'ellipsis'
-                )
-            ) { // #983, #1254
-                css(elem, {
-                    width: textWidth + 'px',
-                    display: 'block',
-                    whiteSpace: whiteSpace || 'normal' // #3331
-                });
-                wrapper.oldTextWidth = textWidth;
-                wrapper.hasBoxWidthChanged = true; // #8159
-            } else {
-                wrapper.hasBoxWidthChanged = false; // #8159
+            if (textWidth !== wrapper.oldTextWidth) { // #983, #1254
+                const textPxLength = getTextPxLength();
+                if (
+                    (
+                        (textWidth > wrapper.oldTextWidth) ||
+                        textPxLength > textWidth
+                    ) && (
+                        // Only set the width if the text is able to word-wrap,
+                        // or text-overflow is ellipsis (#9537)
+                        /[ \-]/.test(elem.textContent || elem.innerText) ||
+                        elem.style.textOverflow === 'ellipsis'
+                    )
+                ) {
+                    css(elem, {
+                        width: (textPxLength > textWidth) || rotation ?
+                            textWidth + 'px' :
+                            'auto', // #16261
+                        display: 'block',
+                        whiteSpace: whiteSpace || 'normal' // #3331
+                    });
+                    wrapper.oldTextWidth = textWidth;
+                    hasBoxWidthChanged = true; // #8159
+                }
             }
+            wrapper.hasBoxWidthChanged = hasBoxWidthChanged; // #8159
+
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {

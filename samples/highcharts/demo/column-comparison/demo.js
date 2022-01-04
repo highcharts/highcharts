@@ -1,4 +1,4 @@
-var dataPrev = {
+const dataPrev = {
     2016: [
         ['South Korea', 0],
         ['Japan', 0],
@@ -51,7 +51,7 @@ var dataPrev = {
     ]
 };
 
-var data = {
+const data = {
     2016: [
         ['South Korea', 0],
         ['Japan', 0],
@@ -104,52 +104,48 @@ var data = {
     ]
 };
 
-var countries = [{
+const countries = [{
     name: 'South Korea',
-    flag: 197582,
+    flag: 'kr',
     color: 'rgb(201, 36, 39)'
 }, {
     name: 'Japan',
-    flag: 197604,
+    flag: 'jp',
     color: 'rgb(201, 36, 39)'
 }, {
     name: 'Australia',
-    flag: 197507,
+    flag: 'au',
     color: 'rgb(0, 82, 180)'
 }, {
     name: 'Germany',
-    flag: 197571,
+    flag: 'de',
     color: 'rgb(0, 0, 0)'
 }, {
     name: 'Russia',
-    flag: 197408,
+    flag: 'ru',
     color: 'rgb(240, 240, 240)'
 }, {
     name: 'China',
-    flag: 197375,
+    flag: 'cz',
     color: 'rgb(255, 217, 68)'
 }, {
     name: 'Great Britain',
-    flag: 197374,
+    flag: 'gb',
     color: 'rgb(0, 82, 180)'
 }, {
     name: 'United States',
-    flag: 197484,
+    flag: 'us',
     color: 'rgb(215, 0, 38)'
 }];
 
 
-function getData(data) {
-    return data.map(function (country, i) {
-        return {
-            name: country[0],
-            y: country[1],
-            color: countries[i].color
-        };
-    });
-}
+const getData = data => data.map((country, i) => ({
+    name: country[0],
+    y: country[1],
+    color: countries[i].color
+}));
 
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
@@ -181,17 +177,21 @@ var chart = Highcharts.chart('container', {
         labels: {
             useHTML: true,
             animate: true,
-            formatter: function () {
-                var value = this.value,
-                    output;
+            formatter: ctx => {
+                let flag;
 
                 countries.forEach(function (country) {
-                    if (country.name === value) {
-                        output = country.flag;
+                    if (country.name === ctx.value) {
+                        flag = country.flag;
                     }
                 });
 
-                return '<span><img src="https://image.flaticon.com/icons/svg/197/' + output + '.svg" style="width: 40px; height: 40px;"/><br></span>';
+                return `${flag.toUpperCase()}<br><span class="f32">
+                    <span class="flag ${flag}"></span>
+                </span>`;
+            },
+            style: {
+                textAlign: 'center'
             }
         }
     },
@@ -228,24 +228,27 @@ var chart = Highcharts.chart('container', {
     }
 });
 
-var years = [2016, 2012, 2008, 2004, 2000];
+const years = [2016, 2012, 2008, 2004, 2000];
 
-years.forEach(function (year) {
-    var btn = document.getElementById(year);
+years.forEach(year => {
+    const btn = document.getElementById(year);
 
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', () => {
 
-        document.querySelectorAll('.buttons button.active').forEach(function (active) {
-            active.className = '';
-        });
+        document.querySelectorAll('.buttons button.active')
+            .forEach(active => {
+                active.className = '';
+            });
         btn.className = 'active';
 
         chart.update({
             title: {
-                text: 'Summer Olympics ' + year + ' - Top 5 countries by Gold medals'
+                text: `Summer Olympics ${year} - Top 5 countries by Gold medals`
             },
             subtitle: {
-                text: 'Comparing to results from Summer Olympics ' + (year - 4) + ' - Source: <a href="https://en.wikipedia.org/wiki/' + (year) + '_Summer_Olympics_medal_table">Wikipedia</a>'
+                text: 'Comparing to results from Summer Olympics ' +
+                    (year - 4) + ' - Source: <a href="https://en.wikipedia.org/wiki/' +
+                    (year) + '_Summer_Olympics_medal_table">Wikipedia</a>'
             },
             series: [{
                 name: year - 4,

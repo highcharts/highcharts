@@ -29,7 +29,10 @@ class CrookedLine extends Annotation {
      * Constructors
      *
      * */
-    public constructor(chart: Highcharts.AnnotationChart, options: CrookedLine.Options) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: CrookedLine.Options
+    ) {
         super(chart, options);
     }
 
@@ -44,8 +47,12 @@ class CrookedLine extends Annotation {
      * @private
      */
     public setClipAxes(): void {
-        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis as any];
-        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis as any];
+        this.clipXAxis = this.chart.xAxis[
+            this.options.typeOptions.xAxis as any
+        ];
+        this.clipYAxis = this.chart.yAxis[
+            this.options.typeOptions.yAxis as any
+        ];
     }
 
     public getPointsOptions(): Array<MockPointOptions> {
@@ -97,15 +104,15 @@ class CrookedLine extends Annotation {
                     points: this.points.map(function (
                         _point: Highcharts.AnnotationPointType,
                         i: number
-                    ): any {
+                    ): Function {
                         return function (
                             target: Highcharts.AnnotationControllable
                         ): Highcharts.AnnotationPointType {
                             return target.annotation.points[i];
-                        } as any;
+                        };
                     })
                 }),
-                false as any
+                0
             );
 
         typeOptions.line = shape.options;
@@ -234,8 +241,10 @@ CrookedLine.prototype.defaultOptions = merge(
                         );
 
                         // Update options:
-                        (target.options as any).typeOptions.points[this.index].x = target.points[this.index].x;
-                        (target.options as any).typeOptions.points[this.index].y = target.points[this.index].y;
+                        (target.options as any).typeOptions
+                            .points[this.index].x = target.points[this.index].x;
+                        (target.options as any).typeOptions
+                            .points[this.index].y = target.points[this.index].y;
 
                         target.redraw(false);
                     }

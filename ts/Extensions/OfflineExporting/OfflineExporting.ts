@@ -29,6 +29,7 @@ import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -49,6 +50,27 @@ const {
     fireEvent,
     merge
 } = U;
+
+AST.allowedAttributes.push(
+    'data-z-index',
+    'fill-opacity',
+    'rx',
+    'ry',
+    'stroke-dasharray',
+    'stroke-linejoin',
+    'text-anchor',
+    'transform',
+    'version',
+    'viewBox',
+    'visibility',
+    'xmlns',
+    'xmlns:xlink'
+);
+AST.allowedTags.push(
+    'desc',
+    'clippath',
+    'g'
+);
 
 /* *
  *
@@ -185,7 +207,6 @@ namespace OfflineExporting {
      * @param {Function} [successCallback]
      * The callback function in case of success
      *
-     * @return {void}
      */
     export function downloadSVGLocal(
         svg: string,
@@ -198,7 +219,10 @@ namespace OfflineExporting {
             filename = (
                 (options.filename || 'chart') +
                 '.' +
-                (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])
+                (
+                    imageType === 'image/svg+xml' ?
+                        'svg' : imageType.split('/')[1]
+                )
             ),
             scale = options.scale || 1;
         let svgurl: string,
@@ -211,12 +235,11 @@ namespace OfflineExporting {
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
-        /**
+        /*
          * @private
-         * @return {void}
          */
         const downloadPDF = (): void => {
-            dummySVGContainer.innerHTML = svg;
+            AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
                 // there. Searches up hierarchy until it finds prop, or hits the
@@ -412,9 +435,9 @@ namespace OfflineExporting {
      *         a different background color can be added here, or
      *         `dataLabels` for export only.
      *
-     * @return {void}
      *
      * @requires modules/exporting
+     * @requires modules/offline-exporting
      */
     function exportChartLocal(
         this: Chart,
@@ -445,10 +468,9 @@ namespace OfflineExporting {
                         H.isMS || options.type === 'application/pdf'
                     )
                 ) {
-                    fallbackToExportServer(
-                        'Image type not supported' +
-                        'for charts with embedded HTML' as any
-                    );
+                    fallbackToExportServer(new Error(
+                        'Image type not supported for charts with embedded HTML'
+                    ));
                 } else {
                     OfflineExporting.downloadSVGLocal(
                         svg,
@@ -462,25 +484,27 @@ namespace OfflineExporting {
                 }
             },
 
-            // Return true if the SVG contains images with external data.
-            // With the boost module there are `image` elements with encoded
-            // PNGs, these are supported by svg2pdf and should
-            // pass (#10243).
+            // Return true if the SVG contains images with external data. With
+            // the boost module there are `image` elements with encoded PNGs,
+            // these are supported by svg2pdf and should pass (#10243).
             hasExternalImages = function (): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
                     function (image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
-                        return href !== '' && (href as any).indexOf('data:') !== 0;
+                        return (
+                            href !== '' &&
+                            typeof href === 'string' &&
+                            href.indexOf('data:') !== 0
+                        );
                     }
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the
-        // renderer for inline styles that we want to pass through. There
-        // are so many styles by default in IE that we don't want to
-        // blacklist them all.
-        if (H.isMS && chart.styledMode) {
+        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // for inline styles that we want to pass through. There are so many
+        // styles by default in IE that we don't want to blacklist them all.
+        if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,
                 /^border/,
@@ -529,9 +553,9 @@ namespace OfflineExporting {
                 hasExternalImages()
             )
         ) {
-            fallbackToExportServer(
-                'Image type not supported for this chart/browser.' as any
-            );
+            fallbackToExportServer(new Error(
+                'Image type not supported for this chart/browser.'
+            ));
             return;
         }
 
@@ -580,7 +604,6 @@ namespace OfflineExporting {
      * @param {Highcharts.Options} chartOptions
      * @param {Function} failCallback
      * @param {Function} successCallback
-     * @return {void}
      */
     function getSVGForLocalExport(
         this: Chart,
@@ -592,10 +615,13 @@ namespace OfflineExporting {
         const chart = this as Exporting.ChartComposition,
             // After grabbing the SVG of the chart's copy container we need
             // to do sanitation on the SVG
-            sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
+            sanitize = (svg: string): string => chart.sanitizeSVG(
+                svg,
+                chartCopyOptions as any
+            ),
             // When done with last image we have our SVG
             checkDone = (): void => {
-                if (images && imagesEmbedded === images.length) {
+                if (images && imagesEmbedded === imagesLength) {
                     successCallback(sanitize(
                         (chartCopyContainer as any).innerHTML
                     ));
@@ -622,12 +648,11 @@ namespace OfflineExporting {
             };
 
         let el: SVGImageElement,
-            i: number,
-            l: number,
             chartCopyContainer: (HTMLDOMElement|undefined),
             chartCopyOptions: (Options|undefined),
             href: (string|null) = null,
             images: (Array<SVGImageElement>|HTMLCollectionOf<SVGImageElement>|undefined),
+            imagesLength = 0,
             imagesEmbedded = 0;
 
         // Hook into getSVG to get a copy of the chart copy's
@@ -637,7 +662,9 @@ namespace OfflineExporting {
         ): void => {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
-            images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
+            imagesLength = images.length;
         });
 
         // Trigger hook to get chart copy
@@ -647,12 +674,14 @@ namespace OfflineExporting {
             // If there are no images to embed, the SVG is okay now.
             if (!images || !images.length) {
                 // Use SVG of chart copy
-                successCallback(sanitize((chartCopyContainer as any).innerHTML));
+                successCallback(
+                    sanitize((chartCopyContainer as any).innerHTML)
+                );
                 return;
             }
 
             // Go through the images we want to embed
-            for (i = 0, l = images.length; i < l; ++i) {
+            for (let i = 0; i < images.length; i++) {
                 el = images[i];
                 href = el.getAttributeNS(
                     'http://www.w3.org/1999/xlink',
@@ -675,8 +704,9 @@ namespace OfflineExporting {
 
                 // Hidden, boosted series have blank href (#10243)
                 } else {
-                    ++imagesEmbedded;
+                    imagesEmbedded++;
                     el.parentNode.removeChild(el);
+                    i--;
                     checkDone();
                 }
             }
@@ -754,7 +784,9 @@ namespace OfflineExporting {
                         } else {
                             canvas.height = img.height * scale;
                             canvas.width = img.width * scale;
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(
+                                img, 0, 0, canvas.width, canvas.height
+                            );
 
                             // Now we try to get the contents of the canvas.
                             try {
@@ -819,8 +851,6 @@ namespace OfflineExporting {
      *
      * @private
      * @function Highcharts.svgToDataURL
-     * @param {string} svg
-     * @return {string}
      */
     export function svgToDataUrl(svg: string): string {
         // Webkit and not chrome
@@ -832,10 +862,9 @@ namespace OfflineExporting {
 
         try {
             // Safari requires data URI since it doesn't allow navigation to
-            // blob URLs. Firefox has an issue with Blobs and internal
-            // references, leading to gradients not working using Blobs (#4550).
-            // foreignObjects also dont work well in Blobs in Chrome (#14780).
-            if (!webKit && !H.isFirefox && svg.indexOf('<foreignObject') === -1) {
+            // blob URLs. ForeignObjects also dont work well in Blobs in Chrome
+            // (#14780).
+            if (!webKit && svg.indexOf('<foreignObject') === -1) {
                 return domurl.createObjectURL(new win.Blob([svg], {
                     type: 'image/svg+xml;charset-utf-16'
                 }));
@@ -854,7 +883,8 @@ namespace OfflineExporting {
         const width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
-                height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
+                // setting orientation to portrait if height exceeds width
+                height > width ? 'p' : 'l',
                 'pt',
                 [width, height]
             );

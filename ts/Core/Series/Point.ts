@@ -313,7 +313,9 @@ class Point {
         // copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ? extend(point.options, options as any) : options;
+        point.options = point.options ?
+            extend(point.options, options as any) :
+            options;
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
@@ -332,7 +334,10 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
+            point.y = Point.prototype.getNestedProperty.call(
+                point,
+                pointValKey
+            ) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -477,7 +482,7 @@ class Point {
      * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} [defaultFunction]
      *        Default event handler.
      *
-     * @fires Highcharts.Point#event:*
+     * @emits Highcharts.Point#event:*
      */
     public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
@@ -545,8 +550,6 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#getGraphicalProps
-     * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {Highcharts.PointGraphicalProps}
      */
     public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
         const point = this,
@@ -657,8 +660,7 @@ class Point {
     /**
      * Utility to check if point has new shape type. Used in column series and
      * all others that are based on column series.
-     *
-     * @return boolean|undefined
+     * @private
      */
     public hasNewShapeType(): boolean|undefined {
         const point = this;
@@ -685,7 +687,7 @@ class Point {
      * @return {Highcharts.Point}
      *         The Point instance.
      *
-     * @fires Highcharts.Point#event:afterInit
+     * @emits Highcharts.Point#event:afterInit
      */
     public init(
         series: Series,
@@ -721,13 +723,14 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
@@ -792,7 +795,6 @@ class Point {
     /**
      * @private
      * @function Highcharts.Point#resolveColor
-     * @return {void}
      */
     public resolveColor(): void {
         const series = this.series,
@@ -961,7 +963,7 @@ class Point {
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
-     * @fires Highcharts.Point#event:update
+     * @emits Highcharts.Point#event:update
      */
     public update(
         options: (PointOptions|PointShortOptions),
@@ -987,7 +989,9 @@ class Point {
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             const hasDummyGraphic = graphic && point.hasDummyGraphic;
-            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            const shouldDestroyGraphic = point.y === null ?
+                !hasDummyGraphic :
+                hasDummyGraphic;
             if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
@@ -1108,8 +1112,8 @@ class Point {
      * is `true`, selected points are accumulated on Control, Shift or Cmd
      * clicking the point.
      *
-     * @fires Highcharts.Point#event:select
-     * @fires Highcharts.Point#event:unselect
+     * @emits Highcharts.Point#event:select
+     * @emits Highcharts.Point#event:unselect
      */
     public select(
         selected?: boolean,
@@ -1203,7 +1207,7 @@ class Point {
      * events.
      *
      * @function Highcharts.Point#onMouseOut
-     * @fires Highcharts.Point#event:mouseOut
+     * @emits Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
         const point = this,
@@ -1265,7 +1269,7 @@ class Point {
      * @param {boolean} [move]
      *        State for animation.
      *
-     * @fires Highcharts.Point#event:afterSetState
+     * @emits Highcharts.Point#event:afterSetState
      */
     public setState(
         state?: (StatesOptionsKey|''),
@@ -1279,7 +1283,9 @@ class Point {
                 {}
             ),
             markerOptions = (
-                (defaultOptions.plotOptions as any)[series.type as any].marker &&
+                (defaultOptions.plotOptions as any)[
+                    series.type as any
+                ].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
@@ -1355,8 +1361,11 @@ class Point {
                 );
 
                 // Some inactive points (e.g. slices in pie) should apply
-                // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
+                // opacity also for their labels
+                if (
+                    series.options.inactiveOtherPoints &&
+                    isNumber(pointAttribs.opacity)
+                ) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1442,7 +1451,9 @@ class Point {
                     }
                 }
 
-                if (!chart.styledMode && stateMarkerGraphic) {
+                if (!chart.styledMode && stateMarkerGraphic &&
+                    point.state !== 'inactive'
+                ) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
             }

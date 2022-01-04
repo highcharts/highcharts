@@ -2,7 +2,7 @@ var chart,
     transform,
     position;
 
-// Initiate the chart
+// Initialize the chart
 chart = Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps lat/lon demo'

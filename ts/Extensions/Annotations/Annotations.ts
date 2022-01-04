@@ -49,6 +49,7 @@ const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
 import ControllableMixin from './Mixins/ControllableMixin.js';
 import ControllableRect from './Controllables/ControllableRect.js';
 import ControllableCircle from './Controllables/ControllableCircle.js';
+import ControllableEllipse from './Controllables/ControllableEllipse.js';
 import ControllablePath from './Controllables/ControllablePath.js';
 import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
@@ -58,7 +59,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 const {
     addEvent,
     defined,
@@ -104,7 +105,10 @@ declare global {
             controlPointsGroup: SVGElement;
             options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
-            addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
+            addAnnotation(
+                userOptions: AnnotationsOptions,
+                redraw?: boolean
+            ): Annotation;
             drawAnnotations(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
@@ -185,6 +189,7 @@ declare global {
         interface AnnotationsOptions extends AnnotationControllableOptionsObject { // @todo AnnotationOptions.d.ts
             animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
+            crop: boolean;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -203,6 +208,7 @@ declare global {
             fill: ColorType;
             height?: number;
             r: number;
+            ry: number;
             shapes: Array<AnnotationsShapeOptions>;
             snap: number;
             src: string;
@@ -316,6 +322,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public static shapesMap: Record<string, Function> = {
         'rect': ControllableRect,
         'circle': ControllableCircle,
+        'ellipse': ControllableEllipse,
         'path': ControllablePath,
         'image': ControllableImage
     };
@@ -498,14 +505,22 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     ): Highcharts.AnnotationsOptions {
         const mergedOptions = {} as Highcharts.AnnotationsOptions;
 
-        (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (name: ('labels'|'shapes')): void {
+        (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach(function (
+            name: ('labels'|'shapes')
+        ): void {
             if (baseOptions[name]) {
                 if (newOptions[name]) {
                     mergedOptions[name] = splat(newOptions[name]).map(
                         function (
-                            basicOptions: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions),
+                            basicOptions: (
+                                Highcharts.AnnotationsLabelsOptions|
+                                Highcharts.AnnotationsShapesOptions
+                            ),
                             i: number
-                        ): (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions) {
+                        ): (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                            ) {
                             return merge(baseOptions[name][i], basicOptions);
                         }
                     ) as any;
@@ -545,8 +560,14 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public addClipPaths(): void {
         this.setClipAxes();
 
-        if (this.clipXAxis && this.clipYAxis) {
-            this.clipRect = this.chart.renderer.clipRect(this.getClipBox() as any);
+        if (
+            this.clipXAxis &&
+            this.clipYAxis &&
+            this.options.crop // #15399
+        ) {
+            this.clipRect = this.chart.renderer.clipRect(
+                this.getClipBox() as any
+            );
         }
     }
 
@@ -560,7 +581,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
                 .reduce(
                     function (
                         axes: Array<AxisType>,
-                        labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
+                        labelOrShape: (
+                            Highcharts.AnnotationsLabelsOptions|
+                            Highcharts.AnnotationsShapesOptions
+                        )
                     ): Array<AxisType> {
                         const point = labelOrShape &&
                             (
@@ -691,8 +715,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
         this.shapesGroup = renderer
             .g('annotation-shapes')
-            .add(this.graphic)
-            .clip(this.chart.plotBoxClip);
+            .add(this.graphic);
+
+        if (this.options.crop) { // #15399
+            this.shapesGroup.clip(this.chart.plotBoxClip);
+        }
 
         this.labelsGroup = renderer
             .g('annotation-labels')
@@ -752,7 +779,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
 
     public setControlPointsVisibility(visible: boolean): void {
         const setItemControlPointsVisibility = function (
-            item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+            item: (
+                Highcharts.AnnotationLabelType|
+                Highcharts.AnnotationShapeType
+            )
         ): void {
             item.setControlPointsVisibility(visible);
         };
@@ -776,7 +806,10 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public destroy(): void {
         const chart = this.chart,
             destroyItem = function (
-                item: (Highcharts.AnnotationLabelType|Highcharts.AnnotationShapeType)
+                item: (
+                    Highcharts.AnnotationLabelType|
+                    Highcharts.AnnotationShapeType
+                )
             ): void {
                 item.destroy();
             };
@@ -812,7 +845,6 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
      * New user options for the annotation.
      *
-     * @return {void}
      */
     public update(
         userOptions: DeepPartial<Highcharts.AnnotationsOptions>,
@@ -852,7 +884,11 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     /**
      * Initialisation of a single shape
      * @private
-     * @param {Object} shapeOptions - a confg object for a single shape
+     * @param {Object} shapeOptions
+     * a confg object for a single shape
+     * @param {number} index
+     * annotation may have many shapes, this is the shape's index saved in
+     * shapes.index.
      */
     public initShape(
         shapeOptions: Partial<Highcharts.AnnotationsShapesOptions>,
@@ -947,7 +983,9 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         let hasVisiblePoints = false,
             label = item.graphic;
 
-        item.points.forEach(function (point: Highcharts.AnnotationPointType): void {
+        item.points.forEach(function (
+            point: Highcharts.AnnotationPointType
+        ): void {
             if (
                 point.series.visible !== false &&
                 point.visible !== false
@@ -1069,9 +1107,19 @@ merge<Annotation>(
                  *          Animation defer settings
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @since 8.2.0
-                 * @apioption annotations.animation
                  */
                 animation: {},
+
+                /**
+                 * Whether to hide the part of the annotation
+                 * that is outside the plot area.
+                 *
+                 * @sample highcharts/annotations/label-crop-overflow/
+                 *         Crop line annotation
+                 * @type  {boolean}
+                 * @since 9.3.0
+                 */
+                crop: true,
 
                 /**
                  * The animation delay time in milliseconds.
@@ -1143,7 +1191,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: palette.neutralColor100,
+                    borderColor: Palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1228,7 +1276,9 @@ merge<Annotation>(
                      * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
                      * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
                      */
-                    formatter: function (this: Highcharts.AnnotationPoint): (number|string) {
+                    formatter: function (
+                        this: Highcharts.AnnotationPoint
+                    ): (number|string) {
                         return defined(this.y) ? this.y : 'Annotation label';
                     },
 
@@ -1468,6 +1518,36 @@ merge<Annotation>(
                 shapeOptions: {
 
                     /**
+                     *
+                     * The radius of the shape in y direction.
+                     * Used for the ellipse.
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.ry
+                     **/
+
+                    /**
+                     *
+                     * The xAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.xAxis
+                     **/
+
+                    /**
+                     * The yAxis index to which the points should be attached.
+                     * Used for the ellipse.
+                     *
+                     * @type      {number}
+                     * @apioption annotations.shapeOptions.yAxis
+                     **/
+
+
+                    /**
                      * The width of the shape.
                      *
                      * @sample highcharts/annotations/shape/
@@ -1488,10 +1568,14 @@ merge<Annotation>(
                      */
 
                     /**
-                     * The type of the shape, e.g. circle or rectangle.
+                     * The type of the shape.
+                     * Avaliable options are circle, rect and ellipse.
                      *
                      * @sample highcharts/annotations/shape/
                      *         Basic shape annotation
+                     *
+                     * @sample highcharts/annotations/ellipse/
+                     *         Ellipse annotation
                      *
                      * @type      {string}
                      * @default   rect
@@ -1584,9 +1668,10 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: palette.neutralColor100,
-                        'stroke-width': 2,
-                        fill: palette.backgroundColor
+                        cursor: 'pointer',
+                        fill: Palette.backgroundColor,
+                        stroke: Palette.neutralColor100,
+                        'stroke-width': 2
                     },
                     visible: false,
                     events: {}
@@ -1607,6 +1692,14 @@ merge<Annotation>(
                  * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
                  * @since     7.1.0
                  * @apioption annotations.events.afterUpdate
+                 */
+
+                /**
+                 * Fires when the annotation is clicked.
+                 *
+                 * @type      {Highcharts.EventCallbackFunction<Highcharts.Annotation>}
+                 * @since     7.1.0
+                 * @apioption annotations.events.click
                  */
 
                 /**
@@ -1667,7 +1760,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
     ): Annotation {
-        const Constructor = (Annotation as any).types[(userOptions as any).type] || Annotation,
+        const Constructor = (Annotation as any)
+                .types[(userOptions as any).type] || Annotation,
             annotation = new Constructor(this, userOptions);
 
         this.annotations.push(annotation);
@@ -1681,7 +1775,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
      * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
-     *
+     * @sample highcharts/annotations/add-annotation/
+     *         Add annotation
      * @return {Highcharts.Annotation} - The newly generated annotation.
      */
     addAnnotation: function (
@@ -1714,7 +1809,9 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         idOrAnnotation: (number|string|Annotation)
     ): void {
         const annotations = this.annotations,
-            annotation: Annotation = (idOrAnnotation as any).coll === 'annotations' ?
+            annotation: Annotation = (
+                (idOrAnnotation as any).coll === 'annotations'
+            ) ?
                 idOrAnnotation :
                 find(
                     annotations,
@@ -1877,7 +1974,7 @@ chartProto.callbacks.push(function (
                             // Annotation placed on a exported data point
                             // - add new column
                             if (!wasAdded) {
-                                event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                event.dataRows.forEach((row: any): void => {
                                     if (
                                         !wasAdded &&
                                         row.xValues &&
@@ -1888,8 +1985,10 @@ chartProto.callbacks.push(function (
                                             joinAnnotations &&
                                             row.length > startRowLength
                                         ) {
-                                            row[row.length - 1] +=
-                                            annotationSeparator + annotationText;
+                                            row[row.length - 1] += (
+                                                annotationSeparator +
+                                                annotationText
+                                            );
                                         } else {
                                             row.push(annotationText);
                                         }

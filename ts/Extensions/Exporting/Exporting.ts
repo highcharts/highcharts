@@ -36,7 +36,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
-import chartNavigationMixin from '../../Mixins/Navigation.js';
+import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
 import ExportingDefaults from './ExportingDefaults.js';
@@ -47,7 +47,7 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import Palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -313,7 +313,6 @@ namespace Exporting {
      * @private
      * @function Highcharts.Chart#addButton
      * @param {Highcharts.NavigationButtonOptions} options
-     * @return {void}
      * @requires modules/exporting
      */
     function addButton(
@@ -490,9 +489,8 @@ namespace Exporting {
      *
      * @param {Highcharts.Chart} chart
      *        Chart that was (or suppose to be) printed
-     * @return {void}
      *
-     * @fires Highcharts.Chart#event:afterPrint
+     * @emits Highcharts.Chart#event:afterPrint
      */
     function afterPrint(
         this: ChartComposition
@@ -542,9 +540,8 @@ namespace Exporting {
      *
      * @private
      *
-     * @return {void}
      *
-     * @fires Highcharts.Chart#event:beforePrint
+     * @emits Highcharts.Chart#event:beforePrint
      */
     function beforePrint(
         this: ChartComposition
@@ -565,7 +562,8 @@ namespace Exporting {
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        const handleMaxWidth: (boolean|number) = printMaxWidth && chart.chartWidth > printMaxWidth;
+        const handleMaxWidth: (boolean|number) = printMaxWidth &&
+            chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
                 chart.options.chart.width,
@@ -671,7 +669,11 @@ namespace Exporting {
             chartProto.renderExporting = renderExporting;
 
             chartProto.callbacks.push(chartCallback);
-            addEvent(ChartClass as typeof ChartComposition, 'init', onChartInit);
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'init',
+                onChartInit
+            );
 
             if (G.isSafari) {
                 G.win.matchMedia('print').addListener(
@@ -710,7 +712,6 @@ namespace Exporting {
      *        The width of the opener button
      * @param {number} height
      *        The height of the opener button
-     * @return {void}
      * @requires modules/exporting
      */
     function contextMenu(
@@ -831,9 +832,12 @@ namespace Exporting {
                         );
 
                     } else {
-                        // When chart initialized with the table,
-                        // wrong button text displayed, #14352.
-                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                        // When chart initialized with the table, wrong button
+                        // text displayed, #14352.
+                        if (
+                            item.textKey === 'viewData' &&
+                            chart.isDataTableVisible
+                        ) {
                             item.textKey = 'hideData';
                         }
 
@@ -916,7 +920,6 @@ namespace Exporting {
      * @private
      * @function Highcharts.Chart#destroyExport
      * @param {global.Event} [e]
-     * @return {void}
      * @requires modules/exporting
      */
     function destroyExport(
@@ -1045,8 +1048,8 @@ namespace Exporting {
      *
      * @function Highcharts.Chart#getChartHTML
      *
-     * @returns {string}
-     *          The unfiltered SVG of the chart.
+     * @return {string}
+     * The unfiltered SVG of the chart.
      *
      * @requires modules/exporting
      */
@@ -1116,7 +1119,7 @@ namespace Exporting {
      * @return {string}
      *         The SVG representation of the rendered chart.
      *
-     * @fires Highcharts.Chart#event:getSVG
+     * @emits Highcharts.Chart#event:getSVG
      *
      * @requires modules/exporting
      */
@@ -1209,8 +1212,11 @@ namespace Exporting {
             }
         });
 
-        // generate the chart copy
-        const chartCopy = new Chart(options, chart.callback) as ChartComposition;
+        // Generate the chart copy
+        const chartCopy = new (chart.constructor as typeof Chart)(
+            options,
+            chart.callback
+        ) as ChartComposition;
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
@@ -1266,10 +1272,6 @@ namespace Exporting {
     /**
      * @private
      * @function Highcharts.Chart#getSVGForExport
-     * @param {Highcharts.ExportingOptions} options
-     * @param {Highcharts.Options} chartOptions
-     * @return {string}
-     * @requires modules/exporting
      */
     function getSVGForExport(
         this: ChartComposition,
@@ -1302,9 +1304,9 @@ namespace Exporting {
      * Make hyphenated property names out of camelCase
      * @private
      * @param {string} prop
-     *        Property name in camelCase
+     * Property name in camelCase
      * @return {string}
-     *         Hyphenated property name
+     * Hyphenated property name
      */
     function hyphenate(prop: string): string {
         return prop.replace(
@@ -1320,19 +1322,18 @@ namespace Exporting {
      *
      * @private
      * @function Highcharts.Chart#inlineStyles
-     * @return {void}
      *
-     * @todo: What are the border styles for text about? In general, text has a
-     * lot of properties.
-     * @todo: Make it work with IE9 and IE10.
+     * @todo What are the border styles for text about? In general, text has a
+     *       lot of properties.
+     *
+     * @todo Make it work with IE9 and IE10.
      *
      * @requires modules/exporting
      */
     function inlineStyles(
         this: ChartComposition
     ): void {
-        const renderer = this.renderer,
-            blacklist = inlineBlacklist,
+        const blacklist = inlineBlacklist,
             whitelist = inlineWhitelist, // For IE
             defaultStyles: Record<string, CSSObject> = {};
         let dummySVG: SVGElement;
@@ -1356,8 +1357,7 @@ namespace Exporting {
          * @private
          * @param {Highcharts.HTMLDOMElement} node
          *        Element child
-         * @return {void}
-         */
+             */
         function recurse(node: HTMLDOMElement): void {
             let styles: CSSObject,
                 parentStyles: (CSSObject|SVGAttributes),
@@ -1376,13 +1376,15 @@ namespace Exporting {
              *        Style value
              * @param {string} prop
              *        Style property name
-             * @return {void}
-             */
-            function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
+                     */
+            function filterStyles(
+                val: (string|number|boolean|undefined),
+                prop: string
+            ): void {
 
                 // Check against whitelist & blacklist
                 blacklisted = whitelisted = false;
-                if (whitelist) {
+                if (whitelist.length) {
                     // Styled mode in IE has a whitelist instead.
                     // Exclude all props not in this list.
                     i = whitelist.length;
@@ -1397,10 +1399,10 @@ namespace Exporting {
                     blacklisted = true;
                 }
 
-                i = (blacklist as any).length;
+                i = blacklist.length;
                 while (i-- && !blacklisted) {
                     blacklisted = (
-                        (blacklist as any)[i].test(prop) ||
+                        blacklist[i].test(prop) ||
                         typeof val === 'function'
                     );
                 }
@@ -1434,12 +1436,12 @@ namespace Exporting {
 
             if (
                 node.nodeType === 1 &&
-                (unstyledElements as any).indexOf(node.nodeName) === -1
+                unstyledElements.indexOf(node.nodeName) === -1
             ) {
                 styles = win.getComputedStyle(node, null) as any;
                 parentStyles = node.nodeName === 'svg' ?
                     {} :
-                    win.getComputedStyle(node.parentNode as any, null) as any;
+                    win.getComputedStyle(node.parentNode, null) as any;
 
                 // Get default styles from the browser so that we don't have to
                 // add these
@@ -1505,8 +1507,7 @@ namespace Exporting {
         /**
          * Remove the dummy objects used to get defaults
          * @private
-         * @return {void}
-         */
+             */
         function tearDown(): void {
             dummySVG.parentNode.removeChild(dummySVG);
             // Remove trash from DOM that stayed after each exporting
@@ -1527,7 +1528,6 @@ namespace Exporting {
      *
      * @param {Highcharts.HTMLDOMElement} moveTo
      *        Move target
-     * @return {void}
      */
     function moveContainers(this: Chart, moveTo: HTMLDOMElement): void {
         const chart = this;
@@ -1560,8 +1560,7 @@ namespace Exporting {
              *        Options to update
              * @param {boolean} [redraw=true]
              *        Whether to redraw
-             * @return {void}
-             */
+                     */
             update = (
                 prop: ('exporting'|'navigation'),
                 options: (ExportingOptions|NavigationOptions),
@@ -1586,15 +1585,14 @@ namespace Exporting {
         // Register update() method for navigation. Can not be set the same way
         // as for exporting, because navigation options are shared with bindings
         // which has separate update() logic.
-        chartNavigationMixin.addUpdate(
-            function (
+        ChartNavigationComposition
+            .compose(chart).navigation
+            .addUpdate((
                 options: NavigationOptions,
                 redraw?: boolean
-            ): void {
+            ): void => {
                 update('navigation', options, redraw);
-            },
-            chart
-        );
+            });
     }
 
     /**
@@ -1608,10 +1606,9 @@ namespace Exporting {
      *
      * @function Highcharts.Chart#print
      *
-     * @return {void}
      *
-     * @fires Highcharts.Chart#event:beforePrint
-     * @fires Highcharts.Chart#event:afterPrint
+     * @emits Highcharts.Chart#event:beforePrint
+     * @emits Highcharts.Chart#event:afterPrint
      *
      * @requires modules/exporting
      */
@@ -1651,7 +1648,6 @@ namespace Exporting {
      * Add the buttons on chart load
      * @private
      * @function Highcharts.Chart#renderExporting
-     * @return {void}
      * @requires modules/exporting
      */
     function renderExporting(this: ChartComposition): void {
@@ -1765,7 +1761,10 @@ namespace Exporting {
  *
  * */
 
-defaultOptions.exporting = merge(ExportingDefaults.exporting, defaultOptions.exporting);
+defaultOptions.exporting = merge(
+    ExportingDefaults.exporting,
+    defaultOptions.exporting
+);
 defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 
 // Buttons and menus are collected in a separate config option set called
@@ -1773,12 +1772,15 @@ defaultOptions.lang = merge(ExportingDefaults.lang, defaultOptions.lang);
 // zoom and pan right click menus.
 /**
  * A collection of options for buttons and menus appearing in the exporting
- * module.
+ * module or in Stock Tools.
  *
  * @requires     modules/exporting
  * @optionparent navigation
  */
-defaultOptions.navigation = merge(ExportingDefaults.navigation, defaultOptions.navigation);
+defaultOptions.navigation = merge(
+    ExportingDefaults.navigation,
+    defaultOptions.navigation
+);
 
 /* *
  *

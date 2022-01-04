@@ -9,25 +9,36 @@ QUnit.test('Ordinal general tests.', function (assert) {
             xAxis: {
                 min: 1458054620689
             },
-            series: [
-                {
-                    type: 'column',
-                    data: [
-                        [1451577600000, 305899579],
-                        [1454256000000, 303016703],
-                        [1456761600000, 308008429],
-                        [1459440000000, 328699625],
-                        [1462032000000, 350010305],
-                        [1464710400000, 365809905],
-                        [1467302400000, 364839585],
-                        [1469980800000, 386193804],
-                        [1472659200000, 387630083],
-                        [1475251200000, 405138911]
-                    ]
+            series: [{
+                type: 'column',
+                data: [
+                    [1451577600000, 305899579],
+                    [1454256000000, 303016703],
+                    [1456761600000, 308008429],
+                    [1459440000000, 328699625],
+                    [1462032000000, 350010305],
+                    [1464710400000, 365809905],
+                    [1467302400000, 364839585],
+                    [1469980800000, 386193804],
+                    [1472659200000, 387630083],
+                    [1475251200000, 405138911]
+                ]
+            },
+            {
+                data: [1, 2, 3, 4, [420, 44]],
+                dataGrouping: {
+                    forced: true,
+                    units: [['millisecond', [1, 42]]]
                 }
-            ]
+            },
+            {
+                type: 'column',
+                data: [1, 2, 3],
+                visible: false
+            }]
         }),
-        tickPositions = chart.xAxis[0].tickPositions;
+        tickPositions = chart.xAxis[0].tickPositions,
+        controller = new TestController(chart);
 
     assert.ok(
         tickPositions[0] >= chart.xAxis[0].min,
@@ -53,6 +64,13 @@ QUnit.test('Ordinal general tests.', function (assert) {
         'Last tick should be smaller than axis max when ' +
             'ordinal is enabled (#12716).'
     );
+
+    chart.xAxis[0].setExtremes(0, 5);
+    chart.xAxis[0].setExtremes(0, 500);
+
+    controller.click(100, 100);
+
+    assert.ok(true, 'Click should not throw #16255');
 });
 
 QUnit.test(
@@ -472,5 +490,89 @@ QUnit.test('val2lin- unit tests', function (assert) {
         `If the value we are looking for is outside the extended ordinal
         positions array, the method should return the approximate index
         extrapolated from the slope of the array`
+    );
+});
+
+QUnit.test('Ordianl axis, data grouping and boost module, #14055.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [10, 4],
+                [11, 1],
+                [12, 2],
+                [14, 3]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `When the boost module is present and the chart is initiated with
+        the default options, the ordinal positions should be calculated.`
+    );
+    assert.notOk(
+        chart.series[0].currentDataGrouping,
+        `When the boost module is present and the chart is initiated with
+        the default options, the data should not be grouped.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect,
+        `When the boost module is present and the chart is initiated with
+        the default options, the chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        boostThreshold: 1
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length,
+        `After updating the boostThreshold,
+        ordinal positions should be still calculated.`
+    );
+    assert.notOk(
+        chart.series[0].boostClipRect && chart.series[0].currentDataGrouping,
+        `After updating the boostThreshold,
+        the chart should not be boosted nor grouped.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            forced: true,
+            units: [
+                ['millisecond', [2]]
+            ]
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+            chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced) for the chart,
+        series should be boosted and grouped.`
+    );
+    assert.notOk(
+        (
+            chart.series[0].boostClipRect ||
+            chart.boostClipRect
+        ) &&
+        chart.series[0].currentDataGrouping,
+        `When data grouping is enabled (forced), chart should not be boosted.`
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            enabled: false
+        }
+    });
+    assert.ok(
+        chart.xAxis[0].ordinal.positions.length &&
+        (
+            chart.series[0].boostClipRect ||
+            chart.boostClipRect
+        ),
+        `Only after explicitly disabling the data grouping
+        chart should be boosted.`
     );
 });

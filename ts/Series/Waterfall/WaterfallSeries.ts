@@ -18,7 +18,7 @@ import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import palette from '../../Core/Color/Palette.js';
+import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -58,9 +58,12 @@ import '../../Core/DefaultOptions.js';
 /**
  * Returns true if the key is a direct property of the object.
  * @private
- * @param {*} obj - Object with property to test
- * @param {string} key - Property key to test
- * @return {boolean} - Whether it is a direct property
+ * @param {*} obj
+ * Object with property to test
+ * @param {string} key
+ * Property key to test
+ * @return {boolean}
+ * Whether it is a direct property
  */
 function ownProp(obj: unknown, key: string): boolean {
     return Object.hasOwnProperty.call(obj, key);
@@ -143,7 +146,7 @@ class WaterfallSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        lineColor: palette.neutralColor80,
+        lineColor: Palette.neutralColor80,
 
         /**
          * A name for the dash style to use for the line connecting the columns
@@ -170,7 +173,7 @@ class WaterfallSeries extends ColumnSeries {
          * @since   3.0
          * @product highcharts
          */
-        borderColor: palette.neutralColor80,
+        borderColor: Palette.neutralColor80,
 
         states: {
             hover: {

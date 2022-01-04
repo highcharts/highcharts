@@ -224,7 +224,8 @@ var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
 
 Highcharts.seriesType(
   'linearregressionzones',
-  'sma', {
+  'sma',
+  {
     color: '#00ff00',
     params: {
       zoneDistance: 5
@@ -261,9 +262,10 @@ Highcharts.seriesType(
         lineColor: '#ff0000'
       }
     }
-  }, {
-    getValues: function(series) {
-      return this.getLinearRegressionZones(series.xData, series.yData);
+  },
+  {
+    getValues: function (series) {
+        return this.getLinearRegressionZones(series.xData, series.yData);
     },
     getLinearRegressionZones: getLinearRegressionZones,
 
@@ -273,17 +275,57 @@ Highcharts.seriesType(
     nameSuffixes: ['%'],
     parallelArrays: ['x', 'y', 'y1', 'y2', 'y3', 'y4'],
     pointArrayMap: ['y1', 'y2', 'y', 'y3', 'y4'],
-    pointValKey: 'y',
-
-    drawGraph: multipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
-    translate: multipleLinesMixin.translate,
-    toYData: multipleLinesMixin.toYData
+    pointValKey: 'y'
   }
 );
+
+var multipleLinesMixin = Highcharts._modules['Mixins/MultipleLines.js'];
+
+if (multipleLinesMixin) {
+  Highcharts.extend(
+    Highcharts.seriesTypes.linearregressionzones.prototype,
+    {
+      drawGraph: multipleLinesMixin.drawGraph,
+      getTranslatedLinesNames: multipleLinesMixin.getTranslatedLinesNames,
+      translate: multipleLinesMixin.translate,
+      toYData: multipleLinesMixin.toYData
+    }
+  );
+} else { // Highcharts v9.2.3+
+  Highcharts._modules['Stock/Indicators/MultipleLinesComposition.js'].compose(
+    Highcharts.seriesTypes.linearregressionzones
+  );
+}
 ```
 
 A live demo of the above multiline indicator can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-regression-multiple-lines/).
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highstock/series.trendline)._
 
+### 4. Indicators calculated on events.
+
+The idea behind creating a custom indicator that is calculated after some chart event (for example `afterSetExtremes`) is similar to the ones previously mentioned with a few additions.
+
+The most important object to add while creating the indicators is `calculateOn` where inside are specified two properties:
+*   `chart` - on which chart's event the indicator should be calculated, mainly you can choose from `init` (before the linked series is processed) and `render` (after processing the linked series).
+*   `xAxis` - on which xAxis' event the indicator should be recalculated (e.g. `afterSetExtremes`),
+
+Example configuration should look like:
+``` JS
+Highcharts.seriesType('customIndicator', 'sma', {}, {
+    getValues: function (series) {
+        return this.getSum(
+            series.processedXData || series.xData,
+            series.processedYData || series.yData
+        );
+    },
+    calculateOn: {
+        chart: 'init',
+        xAxis: 'afterSetExtremes'
+    },
+    getSum: getSum
+});
+```
+
+
+A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-indicator-on-event/).

@@ -114,7 +114,7 @@ class Scatter3DSeries extends ScatterSeries {
 
 /* *
  *
- *  Prototype Properties
+ *  Class Prototype
  *
  * */
 

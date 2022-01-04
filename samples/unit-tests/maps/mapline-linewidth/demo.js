@@ -2,28 +2,25 @@ QUnit.test(
     'Setting lineWidth of mapline series should work in all browsers (#5201)',
     function (assert) {
         var chart = Highcharts.mapChart('container', {
-                series: [
-                    {
-                        type: 'mapline',
-                        data: Highcharts.geojson(
-                            Highcharts.maps['countries/us/custom/us-small'],
-                            'mapline'
-                        ),
-                        lineWidth: 30
-                    }
-                ]
-            }),
-            groupStroke = chart.series[0].group.element.getAttribute(
-                'stroke-width'
-            ),
-            pointStroke = chart.series[0].points[0].graphic.element
-                .getAttribute('stroke-width');
+            series: [
+                {
+                    type: 'mapline',
+                    data: Highcharts.geojson(
+                        Highcharts.maps['countries/us/custom/us-small'],
+                        'mapline'
+                    ),
+                    lineWidth: 30
+                }
+            ]
+        });
 
-        assert.strictEqual(
-            pointStroke === '30' ||
-                (pointStroke === 'inherit' && groupStroke === '30'),
-            true,
-            'lineWidth has been set'
+        assert.close(
+            chart.series[0].transformGroups[0].element.getAttribute(
+                'stroke-width'
+            ) * chart.mapView.getSVGTransform().scaleX,
+            30,
+            0.0000000001,
+            'Line width should be set'
         );
     }
 );

@@ -64,7 +64,7 @@ class MACDIndicator extends SMAIndicator {
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set and should be loaded after the
-     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
+     * `stock/indicators/indicators.js`.
      *
      * @sample stock/indicators/macd
      *         MACD indicator
@@ -76,8 +76,7 @@ class MACDIndicator extends SMAIndicator {
      * @requires     stock/indicators/macd
      * @optionparent plotOptions.macd
      */
-    public static defaultOptions: MACDOptions =
-    merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: MACDOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The short period for indicator calculations.
@@ -180,7 +179,7 @@ class MACDIndicator extends SMAIndicator {
     public graphmacd: (SVGElement|undefined) = void 0 as any;
     public graphsignal: (SVGElement|undefined) = void 0 as any;
     public macdZones: MACDZonesOptions = void 0 as any;
-    public signalZones: MACDZonesOptions= void 0 as any;
+    public signalZones: MACDZonesOptions = void 0 as any;
 
     /**
      *
@@ -315,7 +314,9 @@ class MACDIndicator extends SMAIndicator {
                 indicator.zones =
                 (indicator as any)[indicator.currentLineZone].zones;
 
-                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(
+                    indicator
+                );
                 (indicator as any)['graph' + lineName] = indicator.graph;
             }
         );
@@ -373,7 +374,9 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        let indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+        let indexToShift: number = (
+                (params.longPeriod as any) - (params.shortPeriod as any)
+            ), // #14197
             j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
@@ -489,12 +492,10 @@ interface MACDIndicator {
     pointArrayMap: Array<string>;
     pointClass: typeof MACDPoint;
     pointValKey: string;
-    requiredIndicators: Array<string>;
 }
 
 extend(MACDIndicator.prototype, {
     nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
-    requiredIndicators: ['ema'],
     // "y" value is treated as Histogram data
     pointArrayMap: ['y', 'signal', 'MACD'],
     parallelArrays: ['x', 'y', 'signal', 'MACD'],

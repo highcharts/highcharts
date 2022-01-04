@@ -17,6 +17,7 @@
  * */
 
 import type MapBubblePointOptions from './MapBubblePointOptions';
+import MapPoint from '../Map/MapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -84,22 +85,11 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
         return typeof this.z === 'number';
     }
 
+    public getProjectedBounds = MapPoint.prototype.getProjectedBounds;
+
     /* eslint-enable valid-jsdoc */
 
 }
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface MapBubblePoint {
-    ttBelow: boolean;
-}
-extend(MapBubblePoint.prototype, {
-    ttBelow: false
-});
 
 /* *
  *

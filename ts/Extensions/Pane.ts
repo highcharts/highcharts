@@ -16,8 +16,9 @@ import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
+import CU from '../Series/CenteredUtilities.js';
 import H from '../Core/Globals.js';
-import palette from '../Core/Color/Palette.js';
+import { Palette } from '../Core/Color/Palettes.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -106,8 +107,6 @@ declare global {
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
-
-import centeredSeriesMixin from '../Mixins/CenteredSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -406,7 +405,7 @@ class Pane {
          * @since   2.3.0
          * @product highcharts
          */
-        borderColor: palette.neutralColor20,
+        borderColor: Palette.neutralColor20,
 
         /**
          * The background color or gradient for the pane.
@@ -423,8 +422,8 @@ class Pane {
 
             /** @ignore-option */
             stops: [
-                [0, palette.backgroundColor],
-                [1, palette.neutralColor10]
+                [0, Palette.backgroundColor],
+                [1, Palette.neutralColor10]
             ]
 
         },
@@ -463,14 +462,13 @@ class Pane {
      * @private
      * @function Highcharts.Pane#updateCenter
      * @param {Highcharts.Axis} [axis]
-     * @return {void}
      */
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
         this.center = (
             axis ||
             this.axis ||
             ({} as Record<string, Array<number>>)
-        ).center = centeredSeriesMixin.getCenter.call(this as any);
+        ).center = CU.getCenter.call(this as any);
     }
 
     /**
@@ -498,7 +496,6 @@ class Pane {
      * @param {Highcharts.PaneOptions} options
      *        New pane options
      * @param {boolean} [redraw]
-     * @return {void}
      */
     public update(
         options: Highcharts.PaneOptions,
@@ -520,10 +517,12 @@ class Pane {
 /**
  * Check whether element is inside or outside pane.
  * @private
- * @param  {number} x Element's x coordinate
- * @param  {number} y Element's y coordinate
- * @param  {Array<number>} center Pane's center (x, y) and diameter
- * @return {boolean}
+ * @param  {number} x
+ * Element's x coordinate
+ * @param  {number} y
+ * Element's y coordinate
+ * @param  {Array<number>} center
+ * Pane's center (x, y) and diameter
  */
 function isInsidePane(
     x: number,

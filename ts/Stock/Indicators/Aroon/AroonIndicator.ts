@@ -16,7 +16,7 @@ import type AroonPoint from '../Aroon/AroonPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -73,7 +73,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  * @augments Highcharts.Series
  */
 
-class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndicator {
+class AroonIndicator extends SMAIndicator {
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
@@ -207,32 +207,26 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
 
 /* *
 *
-*   Prototype Properties
+*   Class Prototype
 *
 * */
 
-interface AroonIndicator {
+interface AroonIndicator extends MultipleLinesComposition.Composition {
     pointArrayMap: Array<string>;
     pointValKey: string;
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
-    drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
-    toYData: typeof MultipleLinesMixin.toYData;
-    translate: typeof MultipleLinesMixin.translate;
     pointClass: typeof AroonPoint;
+    toYData: MultipleLinesComposition.Composition['toYData'];
 }
-
 extend(AroonIndicator.prototype, {
+    areaLinesNames: [],
     linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
-    pointValKey: 'y',
-    drawGraph: MultipleLinesMixin.drawGraph,
-    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
-    toYData: MultipleLinesMixin.toYData,
-    translate: MultipleLinesMixin.translate
+    pointValKey: 'y'
 });
+MultipleLinesComposition.compose(AroonIndicator);
 
 /* *
  *

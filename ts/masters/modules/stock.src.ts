@@ -12,8 +12,10 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import OrdinalAxis from '../../Core/Axis/OrdinalAxis.js';
+import DataModifyComposition from '../../Series/DataModifyComposition.js';
 import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
+import '../../Series/HLC/HLCSeries.js';
 import '../../Series/OHLC/OHLCSeries.js';
 import '../../Series/Candlestick/CandlestickSeries.js';
 import '../../Series/Flags/FlagsSeries.js';
@@ -29,3 +31,4 @@ G.StockChart = G.stockChart = StockChart.stockChart;
 // Compositions
 Scrollbar.compose(G.Axis);
 OrdinalAxis.compose(G.Axis, G.Series, G.Chart);
+DataModifyComposition.compose(G.Series, G.Axis, G.Point);

@@ -45,9 +45,10 @@ QUnit.test('Column type navigator', function (assert) {
         navGroupBox.y + nav.height / 2
     );
 
-    assert.strictEqual(
+    assert.close(
         xAxis.max - xAxis.min,
         xAxis.minRange,
+        0.0000001,
         'It should not be possible to zoom below minRange'
     );
 

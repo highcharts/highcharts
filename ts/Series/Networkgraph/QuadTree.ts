@@ -290,9 +290,7 @@ extend(
         /**
          * Determine which of the quadrants should be used when placing node in
          * the QuadTree. Returned index is always in range `< 0 , 3 >`.
-         *
-         * @param {Highcharts.Point} point
-         * @return {number}
+         * @private
          */
         getBoxPosition: function (
             this: Highcharts.QuadTreeNode,
