@@ -35,12 +35,20 @@ declare global {
     }
     interface Window {
         canvg: CanvgNamespace;
-        jsPDF: typeof jsPDF;
+        jspdf: jspdf;
         svg2pdf: Function;
+    }
+
+    interface jspdf {
+        jsPDF: typeof jsPDF;
     }
     class jsPDF {
         constructor (a: string, b: string, c: Array<number>);
         output: Function;
-        setFont(fontFamily: string): void
+        setFont(fontFamily: string): void;
+        svg (
+            svgElement: SVGElement,
+            options: AnyRecord
+        ): Promise<jsPDF>;
     }
 }

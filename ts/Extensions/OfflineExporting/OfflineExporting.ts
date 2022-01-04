@@ -27,7 +27,6 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -289,19 +288,23 @@ namespace OfflineExporting {
                     el.removeChild(titleElement);
                 });
             });
-            const svgData = svgToPdf(
+
+            svgToPdf(
                 dummySVGContainer.firstChild as any,
                 0,
-                options
-            );
-            try {
-                downloadURL(svgData, filename);
-                if (successCallback) {
-                    successCallback();
+                options,
+                (pdfData: string): void => {
+                    try {
+                        downloadURL(pdfData, filename);
+                        if (successCallback) {
+                            successCallback();
+                        }
+                    } catch (e) {
+                        failCallback(e);
+                    }
                 }
-            } catch (e) {
-                failCallback(e);
-            }
+            );
+
         };
 
         // Initiate download depending on file type
@@ -324,7 +327,7 @@ namespace OfflineExporting {
                 failCallback(e);
             }
         } else if (imageType === 'application/pdf') {
-            if (win.jsPDF && win.svg2pdf) {
+            if (win.jspdf && win.jspdf.jsPDF) {
                 downloadPDF();
             } else {
                 // Must load pdf libraries first. // Don't destroy the object
@@ -897,11 +900,12 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
-        options: ExportingOptions
-    ): string {
-        const width = svgElement.width.baseVal.value + 2 * margin,
-            height = svgElement.height.baseVal.value + 2 * margin,
-            pdf = new win.jsPDF( // eslint-disable-line new-cap
+        options: ExportingOptions,
+        callback: Function
+    ): void {
+        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
+            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+            pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',
                 'pt',
@@ -910,7 +914,7 @@ namespace OfflineExporting {
 
         // Apply new font if the name set, #6417.
         if (options.pdfFont && options.pdfFont.name) {
-            pdf.setFont(options.pdfFont.name);
+            pdfDoc.setFont(options.pdfFont.name);
         }
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes
@@ -953,8 +957,13 @@ namespace OfflineExporting {
             }
         );
 
-        win.svg2pdf(svgElement, pdf, { removeInvalid: true });
-        return pdf.output('datauristring');
+        pdfDoc.svg(svgElement, {
+            x: 0,
+            y: 0,
+            width,
+            height,
+            removeInvalid: true
+        }).then(():void => callback(pdfDoc.output('datauristring')));
     }
 
 }

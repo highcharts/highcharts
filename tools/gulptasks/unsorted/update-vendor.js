@@ -19,19 +19,19 @@ function updateVendor() {
 
     const promises = [
         [
-            './node_modules/jspdf/dist/jspdf.node.js',
+            './node_modules/jspdf/dist/jspdf.umd.js',
             './vendor/jspdf.src.js'
         ],
         [
-            './node_modules/jspdf/dist/jspdf.es.min.js',
+            './node_modules/jspdf/dist/jspdf.umd.min.js',
             './vendor/jspdf.js'
         ],
         [
-            './node_modules/svg2pdf.js/dist/svg2pdf.es.js',
+            './node_modules/svg2pdf.js/dist/svg2pdf.umd.js',
             './vendor/svg2pdf.src.js'
         ],
         [
-            './node_modules/svg2pdf.js/dist/svg2pdf.es.min.js',
+            './node_modules/svg2pdf.js/dist/svg2pdf.umd.min.js',
             './vendor/svg2pdf.js'
         ]
     ].map(([source, target]) => copyFile(source, target));
