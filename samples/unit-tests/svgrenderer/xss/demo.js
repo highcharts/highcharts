@@ -207,6 +207,25 @@ QUnit.module('XSS', function () {
                 'Tag tricks, scripts should be stripped out from DOM'
             );
 
+            // Disable AST filtering to allow black-listed tags
+            Highcharts.AST.bypassHTMLFiltering = true;
+
+            text = ren.text(
+                '<customTag></customTag>',
+                x,
+                y += lineHeight,
+                useHTML
+            )
+            .add();
+
+            assert[useHTML ? 'ok' : 'notOk'](
+                document.querySelector('customTag'),
+                'AST disabled: black-listed tag should ' +
+                    (useHTML ? '' : 'not') + ' be added, #15345'
+            );
+
+            Highcharts.AST.bypassHTMLFiltering = false;
+
             // Reset
             window.alert = realAlert;
 
@@ -217,7 +236,7 @@ QUnit.module('XSS', function () {
 });
 
 QUnit.test('Script injection through AST options', assert => {
-    const options = {
+    const chart = Highcharts.chart('container', {
 
         chart: {
             styledMode: true
@@ -230,24 +249,11 @@ QUnit.test('Script injection through AST options', assert => {
                 onerror: 'javascript:console.log(\'XSS\')' // eslint-disable-line
             }
         }
-    };
-
-    let chart = Highcharts.chart('container', options);
+    });
 
     assert.strictEqual(
         chart.container.querySelector('script'),
         null,
         'No script tag should be allowed in the definitions'
     );
-
-    Highcharts.AST.bypassHTMLFiltering = true;
-
-    chart = Highcharts.chart('container', options);
-
-    assert.ok(
-        chart.container.querySelector('script'),
-        'Script tag should be allowed in the definitions, #15345'
-    );
-
-    Highcharts.AST.bypassHTMLFiltering = false;
 });
