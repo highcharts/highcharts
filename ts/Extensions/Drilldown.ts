@@ -932,7 +932,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             if (level.levelNumber + 1 > lastBreadcrumb.level) {
                 list.push({
                     level: level.levelNumber + 1,
-                    levelOptions: level.pointOptions
+                    levelOptions: merge({
+                        name: level.lowerSeries.name
+                    }, level.pointOptions)
                 });
             }
         });
@@ -988,6 +990,7 @@ Chart.prototype.drillUp = function (): void {
                 newSeries = addedSeries;
             }
         };
+    const drilldownLevelsNumber = (chart.drilldownLevels as any).length;
 
     while (i--) {
 
@@ -1012,6 +1015,16 @@ Chart.prototype.drillUp = function (): void {
                 }
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+            // Reset the names to start new series from the beginning.
+            // Do it once to preserve names when multiple
+            // series are added for the same axis, #16135.
+            if (oldSeries.xAxis &&
+                oldSeries.xAxis.names &&
+                (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+            ) {
+                oldSeries.xAxis.names.length = 0;
+            }
 
             level.levelSeriesOptions.forEach(addSeries);
 

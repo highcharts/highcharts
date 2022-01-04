@@ -13,7 +13,10 @@
  *  Imports
  *
  * */
+import type ColorType from '../Core/Color/ColorType';
 import type ProjectionOptions from './ProjectionOptions';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type { MultiLineString, Polygon } from './GeoJSON';
 
 /* *
  *
@@ -29,6 +32,12 @@ declare module '../Core/Options' {
 
 export type LonLatArray = [number, number];
 
+export type MapViewPaddingType = (
+    number|
+    string|
+    [number|string, number|string, number|string, number|string]
+);
+
 export interface ProjectedXY {
     x: number;
     y: number;
@@ -43,10 +52,29 @@ export interface MapBounds {
     y2: number;
 }
 
+export interface MapViewInsetsOptions extends MapViewInsetOptionsOptions {
+    borderPath?: MultiLineString;
+    center: LonLatArray;
+    field?: Polygon;
+    geoBounds?: Polygon;
+    id?: string;
+    projection?: ProjectionOptions;
+}
+
+export interface MapViewInsetOptionsOptions {
+    borderColor: ColorType;
+    borderWidth: number;
+    padding: MapViewPaddingType;
+    relativeTo: ('mapBoundingBox'|'plotBox');
+    units: ('percent'|'pixels');
+}
+
 export interface MapViewOptions {
     center: LonLatArray;
+    insetOptions?: MapViewInsetOptionsOptions;
+    insets?: MapViewInsetsOptions[];
     maxZoom?: number;
-    padding: (number|string);
+    padding: MapViewPaddingType;
     projection?: ProjectionOptions;
     zoom?: number;
 }

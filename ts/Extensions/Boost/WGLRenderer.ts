@@ -26,7 +26,7 @@ const { parse: color } = Color;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
-const { doc } = H;
+const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -205,7 +205,21 @@ function GLRenderer(
     /**
      * @private
      */
+    function getPixelRatio(): number {
+        return settings.pixelRatio || win.devicePixelRatio || 1;
+    }
+
+    /**
+     * @private
+     */
     function setOptions(options: Highcharts.BoostOptions): void {
+
+        // The pixelRatio defaults to 1. This is an antipattern, we should
+        // refactor the Boost options to include an object of default options as
+        // base for the merge, like other components.
+        if (!('pixelRatio' in options)) {
+            options.pixelRatio = 1;
+        }
         merge(true, settings, options);
     }
 
@@ -403,7 +417,8 @@ function GLRenderer(
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             threshold: number = options.threshold as any,
-            gapSize: number = false as any;
+            gapSize: number = false as any,
+            pixelRatio = getPixelRatio();
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -472,18 +487,31 @@ function GLRenderer(
             x: number,
             y: number,
             checkTreshold?: boolean,
-            pointSize?: number,
+            pointSize: number = 1,
             color?: Color.RGBA
         ): void {
             pushColor(color);
+
+            // Correct for pixel ratio
+            if (
+                pixelRatio !== 1 && (
+                    !settings.useGPUTranslations ||
+                    inst.skipTranslation
+                )
+            ) {
+                x *= pixelRatio;
+                y *= pixelRatio;
+                pointSize *= pixelRatio;
+            }
+
             if (settings.usePreallocated) {
-                vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize);
                 vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
-                data.push(checkTreshold ? 1 : 0);
-                data.push(pointSize || 1);
+                data.push(checkTreshold ? pixelRatio : 0);
+                data.push(pointSize);
             }
         }
 
@@ -624,7 +652,7 @@ function GLRenderer(
                     // better color interpolation.
 
                     // If there's stroking, we do an additional rect
-                    if (series.type === 'treemap') {
+                    if (series.is('treemap')) {
                         swidth = swidth || 1;
                         scolor = color(pointAttr.stroke).rgba as any;
 
@@ -640,12 +668,12 @@ function GLRenderer(
                     //     swidth = 0;
                     // }
 
-                    // Fixes issues with inverted heatmaps (see #6981)
-                    // The root cause is that the coordinate system is flipped.
-                    // In other words, instead of [0,0] being top-left, it's
+                    // Fixes issues with inverted heatmaps (see #6981). The root
+                    // cause is that the coordinate system is flipped. In other
+                    // words, instead of [0,0] being top-left, it's
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
-                    if (series.type === 'heatmap' && chart.inverted) {
+                    if (series.is('heatmap') && chart.inverted) {
                         x = xAxis.len - x;
                         y = yAxis.len - y;
                         width = -width;
@@ -1150,12 +1178,14 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('xAxisTrans', axis.transA);
+        const pixelRatio = getPixelRatio();
+
+        shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
-        shader.setUniform('xAxisMinPad', axis.minPixelPadding);
+        shader.setUniform('xAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('xAxisPointRange', axis.pointRange);
-        shader.setUniform('xAxisLen', axis.len);
-        shader.setUniform('xAxisPos', axis.pos);
+        shader.setUniform('xAxisLen', axis.len * pixelRatio);
+        shader.setUniform('xAxisPos', axis.pos * pixelRatio);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
@@ -1171,12 +1201,14 @@ function GLRenderer(
             return;
         }
 
-        shader.setUniform('yAxisTrans', axis.transA);
+        const pixelRatio = getPixelRatio();
+
+        shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
-        shader.setUniform('yAxisMinPad', axis.minPixelPadding);
+        shader.setUniform('yAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('yAxisPointRange', axis.pointRange);
-        shader.setUniform('yAxisLen', axis.len);
-        shader.setUniform('yAxisPos', axis.pos);
+        shader.setUniform('yAxisLen', axis.len * pixelRatio);
+        shader.setUniform('yAxisPos', axis.pos * pixelRatio);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
         shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
@@ -1200,13 +1232,10 @@ function GLRenderer(
      */
     function render(chart: Chart): (false|undefined) {
 
+        const pixelRatio = getPixelRatio();
         if (chart) {
-            if (!chart.chartHeight || !chart.chartWidth) {
-                // chart.setChartSize();
-            }
-
-            width = chart.chartWidth || 800;
-            height = chart.chartHeight || 400;
+            width = chart.chartWidth * pixelRatio;
+            height = chart.chartHeight * pixelRatio;
         } else {
             return false;
         }
@@ -1372,11 +1401,10 @@ function GLRenderer(
             setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'points') {
-                if (options.marker && isNumber(options.marker.radius)) {
-                    shader.setPointSize(options.marker.radius * 2.0);
-                } else {
-                    shader.setPointSize(1);
-                }
+                shader.setPointSize(pick(
+                    options.marker && options.marker.radius,
+                    0.5
+                ) * 2 * pixelRatio);
             }
 
             // If set to true, the toPixels translations in the shader
@@ -1384,7 +1412,12 @@ function GLRenderer(
             shader.setSkipTranslation(s.skipTranslation);
 
             if (s.series.type === 'bubble') {
-                shader.setBubbleUniforms(s.series as any, s.zMin, s.zMax);
+                shader.setBubbleUniforms(
+                    s.series as any,
+                    s.zMin,
+                    s.zMax,
+                    pixelRatio
+                );
             }
 
             shader.setDrawAsCircle(
@@ -1404,11 +1437,11 @@ function GLRenderer(
             }
 
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && isNumber(options.marker.radius)) {
-                    shader.setPointSize(options.marker.radius * 2.0);
-                } else {
-                    shader.setPointSize(10);
-                }
+                shader.setPointSize(pick(
+                    options.marker && options.marker.radius,
+                    5
+                ) * 2 * pixelRatio);
+
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
