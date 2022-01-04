@@ -178,14 +178,19 @@ function getExtremesForInstrumentProps(
             chart.options.sonification.defaultInstrumentOptions
         ),
         optionDefToInstrDef = (
-            optionDef: SonificationInstrumentOptions|DefaultSonificationInstrumentOptions
+            optionDef: (
+                SonificationInstrumentOptions|
+                DefaultSonificationInstrumentOptions
+            )
         ): PointSonify.PointInstrument => ({
             instrumentMapping: optionDef.mapping
         } as PointSonify.PointInstrument);
     let allInstrumentDefinitions = (instruments || []).slice(0);
 
     if (defaultInstrumentDef) {
-        allInstrumentDefinitions.push(optionDefToInstrDef(defaultInstrumentDef));
+        allInstrumentDefinitions.push(
+            optionDefToInstrDef(defaultInstrumentDef)
+        );
     }
 
     chart.series.forEach((series): void => {
@@ -211,11 +216,10 @@ function getExtremesForInstrumentProps(
                 ];
 
                 if (typeof value === 'string' && !newExtremes[value]) {
-                    // This instrument parameter is mapped to a data prop.
-                    // If we don't have predefined data extremes, find them.
-                    newExtremes[value] = SonificationUtilities.calculateDataExtremes(
-                        chart, value
-                    );
+                    // This instrument parameter is mapped to a data prop. If we
+                    // don't have predefined data extremes, find them.
+                    newExtremes[value] = SonificationUtilities
+                        .calculateDataExtremes(chart, value);
                 }
             }
         );

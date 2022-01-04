@@ -809,8 +809,9 @@ Highcharts.chart('container', {
         text: 'Euromonitor Rank - Source <a href="https://en.wikipedia.org/wiki/List_of_cities_by_international_visitors">Wikipedia</a>'
     },
     series: [{
-        type: "sunburst",
+        type: 'sunburst',
         data: data,
+        name: 'Root',
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {

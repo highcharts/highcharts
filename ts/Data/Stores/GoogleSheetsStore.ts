@@ -88,12 +88,9 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> {
     ) {
         super(table);
         this.options = merge(GoogleSheetsStore.defaultOptions, options);
-        this.parser = (
-            parser ||
-            new GoogleSheetsParser({
-                firstRowAsNames: this.options.firstRowAsNames
-            })
-        );
+        this.parser = parser || new GoogleSheetsParser({
+            firstRowAsNames: this.options.firstRowAsNames
+        });
     }
 
     /* *

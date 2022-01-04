@@ -197,7 +197,10 @@ class WindbarbSeries extends ColumnSeries {
 
                 return [
                     // Wind speed
-                    values.reduce(function (sum: number, value: number): number {
+                    values.reduce(function (
+                        sum: number,
+                        value: number
+                    ): number {
                         return sum + value;
                     }, 0) / values.length,
                     // Wind direction

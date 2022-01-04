@@ -222,6 +222,7 @@ interface AroonIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(AroonIndicator.prototype, {
+    areaLinesNames: [],
     linesApiNames: ['aroonDown'],
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],

@@ -93,7 +93,9 @@ class DependencyWheelPoint extends SankeyPoint {
             this.dataLabelPath = renderer
                 .arc({
                     open: true,
-                    longArc: Math.abs(Math.abs(start) - Math.abs(end)) < Math.PI ? 0 : 1
+                    longArc: Math.abs(
+                        Math.abs(start) - Math.abs(end)
+                    ) < Math.PI ? 0 : 1
                 })
                 // Add it inside the data label group so it gets destroyed
                 // with the label

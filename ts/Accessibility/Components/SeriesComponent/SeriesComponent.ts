@@ -68,7 +68,7 @@ class SeriesComponent extends AccessibilityComponent {
         PointClass: typeof Point,
         SeriesClass: typeof Series
     ): void {
-        // Handle forcing markers
+        NewDataAnnouncer.compose(SeriesClass);
         ForcedMarkers.compose(SeriesClass);
         SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }

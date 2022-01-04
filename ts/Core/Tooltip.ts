@@ -294,6 +294,12 @@ class Tooltip {
      * the context here is an object holding point, series, x, y etc.
      *
      * @function Highcharts.Tooltip#defaultFormatter
+     *
+     * @param {Highcharts.Tooltip} tooltip
+     *
+     * @return {string|Array<string>}
+     * Returns a string (single tooltip and shared)
+     * or an array of strings (split tooltip)
      */
     public defaultFormatter(
         this: Tooltip.FormatterContextObject,
@@ -393,8 +399,12 @@ class Tooltip {
                         plotX += xAxis.pos - plotLeft;
                         plotY += yAxis.pos - plotTop;
                     } else { // #14771
-                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
-                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                        plotX += (
+                            plotTop + chart.plotHeight - xAxis.len - xAxis.pos
+                        );
+                        plotY += (
+                            plotLeft + chart.plotWidth - yAxis.len - yAxis.pos
+                        );
                     }
                 }
             });
@@ -444,7 +454,10 @@ class Tooltip {
             ),
             pointerEvents = (
                 options.style.pointerEvents ||
-                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
+                (
+                    !this.followPointer &&
+                    options.stickOnContact ? 'auto' : 'none'
+                )
             ),
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
@@ -610,7 +623,11 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#getPosition
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Point): PositionObject {
+    public getPosition(
+        boxWidth: number,
+        boxHeight: number,
+        point: Point
+    ): PositionObject {
 
         const chart = this.chart,
             distance = this.distance,
@@ -1040,7 +1057,9 @@ class Tooltip {
         );
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
+        tooltip.followPointer = (
+            !tooltip.split && point.series.tooltipOptions.followPointer
+        );
         const anchor = tooltip.getAnchor(pointOrPoints, mouseEvent),
             x = anchor[0],
             y = anchor[1];
@@ -1066,7 +1085,10 @@ class Tooltip {
             textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
-        const text: (boolean|string) = (formatter as any).call(textConfig, tooltip);
+        const text: (boolean|string) = (formatter as any).call(
+            textConfig,
+            tooltip
+        );
 
         // register the current series
         const currentSeries = point.series;
@@ -1196,9 +1218,12 @@ class Tooltip {
         } = tooltip;
 
         // The area which the tooltip should be limited to. Limit to scrollable
-        // plot area if enabled, otherwise limit to the chart container.
-        // If outside is true it should be the whole viewport
-        const bounds = tooltip.outside && typeof scrollablePixelsX !== 'number' ?
+        // plot area if enabled, otherwise limit to the chart container. If
+        // outside is true it should be the whole viewport
+        const bounds = (
+            tooltip.outside &&
+            typeof scrollablePixelsX !== 'number'
+        ) ?
             doc.documentElement.getBoundingClientRect() : {
                 left: scrollLeft,
                 right: scrollLeft + chartWidth,
@@ -1237,7 +1262,11 @@ class Tooltip {
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
+                anchorX = xAxis.pos + clamp(
+                    plotX,
+                    -distance,
+                    xAxis.len + distance
+                );
 
                 // Set anchorY, limit to the scrollable plot area
                 if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
@@ -1462,14 +1491,17 @@ class Tooltip {
             return boxes;
         }, []);
 
-        // Realign the tooltips towards the right if there is not enough
-        // space to the left and there is space to to the right
+        // Realign the tooltips towards the right if there is not enough space
+        // to the left and there is space to to the right
         if (!positioner && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
             const { outside } = tooltip;
             const boxStart = (outside ? chartLeft : 0) + box.anchorX;
 
-            if (boxStart < bounds.left && boxStart + box.boxWidth < bounds.right) {
+            if (
+                boxStart < bounds.left &&
+                boxStart + box.boxWidth < bounds.right
+            ) {
                 return true;
             }
 
@@ -1552,7 +1584,9 @@ class Tooltip {
                         attributes.anchorX = anchorX + offset;
                     }
                     if (isHeader) {
-                        attributes.x = (boxExtremes.right - boxExtremes.left) / 2;
+                        attributes.x = (
+                            boxExtremes.right - boxExtremes.left
+                        ) / 2;
                         attributes.anchorX = anchorX + offset;
                     }
                 }
@@ -1635,12 +1669,17 @@ class Tooltip {
         box.y = Math.min(0, anchorPos[1]);
         box.width = (
             anchorPos[0] < 0 ?
-                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                Math.max(
+                    Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])
+                ) :
                 Math.max(Math.abs(anchorPos[0]), labelBBox.width)
         );
         box.height = (
             anchorPos[1] < 0 ?
-                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                Math.max(
+                    Math.abs(anchorPos[1]),
+                    (labelBBox.height - Math.abs(anchorPos[1]))
+                ) :
                 Math.max(Math.abs(anchorPos[1]), labelBBox.height)
         );
 

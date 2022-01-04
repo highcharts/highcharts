@@ -106,7 +106,9 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -127,7 +129,9 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = (
+                    this.renderer.scrollablePlotBox = merge(this.plotBox)
+                );
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
@@ -327,7 +331,9 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
+                zIndex: (
+                    chartOptions.style && chartOptions.style.zIndex || 0
+                ) + 2,
                 top: 0
             },
             null as any,
@@ -359,7 +365,7 @@ Chart.prototype.applyFixed = function (): void {
             .add();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
-        addEvent(this, 'afterDrilldown', this.moveFixedElements);
+        addEvent(this, 'afterApplyDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {

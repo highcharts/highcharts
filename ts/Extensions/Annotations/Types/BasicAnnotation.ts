@@ -230,7 +230,9 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    const position = target.getAbsolutePosition(target.points[1]);
+                    const position = target.getAbsolutePosition(
+                        target.points[1]
+                    );
 
                     target.translatePoint(
                         e.chartX - position.x,
@@ -263,8 +265,12 @@ class BasicAnnotation extends Annotation {
                     e: Highcharts.AnnotationEventObject,
                     target: ControllableEllipse
                 ): void {
-                    const position = target.getAbsolutePosition(target.points[0]),
-                        position2 = target.getAbsolutePosition(target.points[1]),
+                    const position = target.getAbsolutePosition(
+                            target.points[0]
+                        ),
+                        position2 = target.getAbsolutePosition(
+                            target.points[1]
+                        ),
                         newR = target.getDistanceFromLine(
                             position,
                             position2,
@@ -272,7 +278,9 @@ class BasicAnnotation extends Annotation {
                             e.chartY
                         ),
                         yAxis = target.getYAxis(),
-                        newRY = Math.abs(yAxis.toValue(0) - yAxis.toValue(newR));
+                        newRY = Math.abs(
+                            yAxis.toValue(0) - yAxis.toValue(newR)
+                        );
 
                     target.setYRadius(newRY);
 
@@ -288,7 +296,10 @@ class BasicAnnotation extends Annotation {
      *
      * */
 
-    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationsOptions) {
+    public constructor(
+        chart: Highcharts.AnnotationChart,
+        options: Highcharts.AnnotationsOptions
+    ) {
         super(chart, options);
     }
 

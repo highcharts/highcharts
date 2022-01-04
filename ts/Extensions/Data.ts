@@ -30,6 +30,8 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import D from '../Core/DefaultOptions.js';
+const { getOptions } = D;
 const {
     addEvent,
     defined,
@@ -2156,7 +2158,11 @@ class Data {
             parser: function (match: (RegExpMatchArray|null)): number {
                 return (
                     match ?
-                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        Date.UTC(
+                            +match[3] + 2000,
+                            (match[1] as any) - 1,
+                            +match[2]
+                        ) :
                         NaN
                 );
             }
@@ -2214,7 +2220,10 @@ class Data {
             if (!match) {
                 if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
                     val = val
-                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(
+                            /\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/,
+                            '$1$2:$3'
+                        )
                         .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
                         .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
@@ -2369,7 +2378,13 @@ class Data {
             // Get the names and shift the top row
             if (this.firstRowAsNames) {
                 for (i = 0; i < (columns as any).length; i++) {
-                    (columns as any)[i].name = (columns as any)[i].shift();
+                    const curCol = (columns as any)[i];
+                    if (!defined(curCol.name)) {
+                        curCol.name = pick(
+                            curCol.shift(),
+                            ''
+                        ).toString();
+                    }
                 }
             }
 
@@ -2585,8 +2600,12 @@ addEvent(
         let chart = this, // eslint-disable-line no-invalid-this
             userOptions: Partial<Options> = (e.args[0] || {}),
             callback = e.args[1];
+        const defaultDataOptions = getOptions().data;
 
-        if (userOptions && userOptions.data && !chart.hasDataDef) {
+        if (
+            (defaultDataOptions || userOptions && userOptions.data) &&
+            !chart.hasDataDef
+        ) {
             chart.hasDataDef = true;
             /**
              * The data parser for this chart.
@@ -2594,7 +2613,10 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new G.Data(extend(userOptions.data, {
+
+            const dataOptions = merge(defaultDataOptions, userOptions.data);
+
+            chart.data = new G.Data(extend(dataOptions, {
 
                 afterComplete: function (
                     dataOptions?: Partial<Options>

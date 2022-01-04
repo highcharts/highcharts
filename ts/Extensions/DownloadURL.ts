@@ -41,7 +41,9 @@ const win = Highcharts.win,
  * @return {string|undefined}
  *         Blob
  */
-const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
+const dataURLtoBlob = Highcharts.dataURLtoBlob = function (
+    dataURL: string
+): (string|undefined) {
     const parts = dataURL
         .replace(/filename=.*;/, '')
         .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);

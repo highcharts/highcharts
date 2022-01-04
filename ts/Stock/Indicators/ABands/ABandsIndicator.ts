@@ -101,6 +101,17 @@ class ABandsIndicator extends SMAIndicator {
      * @optionparent plotOptions.abands
      */
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Option for fill color between lines in Accelleration bands Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type {Highcharts.Color}
+         * @since 9.3.2
+         * @apioption plotOptions.abands.fillColor
+         *
+         */
         params: {
             period: 20,
             /**
@@ -260,6 +271,7 @@ interface ABandsIndicator extends MultipleLinesComposition.Composition {
     toYData: MultipleLinesComposition.Composition['toYData'];
 }
 extend(ABandsIndicator.prototype, {
+    areaLinesNames: ['top', 'bottom'],
     linesApiNames: ['topLine', 'bottomLine'],
     nameBase: 'Acceleration Bands',
     nameComponents: ['period', 'factor'],

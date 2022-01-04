@@ -205,7 +205,11 @@ declare global {
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
-            public setInputExtremes(name: string, min: number, max: number): void;
+            public setInputExtremes(
+                name: string,
+                min: number,
+                max: number
+            ): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -823,9 +827,8 @@ class RangeSelector {
      * */
     public buttons: Array<SVGElement> = void 0 as any;
     public buttonGroup?: SVGElement;
-    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> = (
-        RangeSelector.prototype.defaultButtons
-    );
+    public buttonOptions: Array<Highcharts.RangeSelectorButtonsOptions> =
+        RangeSelector.prototype.defaultButtons;
     public chart: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
@@ -979,7 +982,8 @@ class RangeSelector {
             // If the navigator exist and the axis range is declared reset that
             // range and from now on only use the range set by a user, #14742.
             if (chart.navigator && chart.navigator.baseSeries[0]) {
-                chart.navigator.baseSeries[0].xAxis.options.range = void 0 as any;
+                chart.navigator.baseSeries[0].xAxis.options
+                    .range = void 0 as any;
             }
 
             newMin = dataMin;
@@ -1052,9 +1056,12 @@ class RangeSelector {
         chart: Chart
     ): void {
         const rangeSelector = this,
-            options =
-                chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
-            buttonOptions = options.buttons || rangeSelector.defaultButtons.slice(),
+            options = (
+                chart.options.rangeSelector as Highcharts.RangeSelectorOptions
+            ),
+            buttonOptions = (
+                options.buttons || rangeSelector.defaultButtons.slice()
+            ),
             selectedOption = options.selected,
             blurInputs = function (): void {
                 const minInput = rangeSelector.minInput,
@@ -1076,7 +1083,11 @@ class RangeSelector {
         rangeSelector.buttonOptions = buttonOptions;
 
         this.eventsToUnbind = [];
-        this.eventsToUnbind.push(addEvent(chart.container, 'mousedown', blurInputs));
+        this.eventsToUnbind.push(addEvent(
+            chart.container,
+            'mousedown',
+            blurInputs
+        ));
         this.eventsToUnbind.push(addEvent(chart, 'resize', blurInputs));
 
         // Extend the buttonOptions with actual range
@@ -1094,18 +1105,22 @@ class RangeSelector {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
-                addEvent(chart.xAxis[0], 'setExtremes', function (e: any): void {
-                    if (
-                        (this.max as any) - (this.min as any) !==
-                            chart.fixedRange &&
-                        e.trigger !== 'rangeSelectorButton' &&
-                        e.trigger !== 'updatedData' &&
-                        rangeSelector.forcedDataGrouping &&
-                        !rangeSelector.frozenStates
-                    ) {
-                        this.setDataGrouping(false, false);
+                addEvent(
+                    chart.xAxis[0],
+                    'setExtremes',
+                    function (e: any): void {
+                        if (
+                            (this.max as any) - (this.min as any) !==
+                                chart.fixedRange &&
+                            e.trigger !== 'rangeSelectorButton' &&
+                            e.trigger !== 'updatedData' &&
+                            rangeSelector.forcedDataGrouping &&
+                            !rangeSelector.frozenStates
+                        ) {
+                            this.setDataGrouping(false, false);
+                        }
                     }
-                });
+                );
             }
         }));
     }
@@ -1295,7 +1310,8 @@ class RangeSelector {
      */
     public getInputValue(name: string): number {
         const input = name === 'min' ? this.minInput : this.maxInput;
-        const options = this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions;
+        const options = this.chart.options
+            .rangeSelector as Highcharts.RangeSelectorOptions;
         const time = this.chart.time;
 
         if (input) {
@@ -1336,7 +1352,10 @@ class RangeSelector {
             }
 
             input.value = time.dateFormat(
-                this.inputTypeFormats[input.type] || options.inputEditDateFormat,
+                (
+                    this.inputTypeFormats[input.type] ||
+                    options.inputEditDateFormat
+                ),
                 updatedTime
             );
             if (dateBox) {
@@ -1394,7 +1413,9 @@ class RangeSelector {
             const { inputBoxWidth } = this.options;
 
             css(input, {
-                width: isTextInput ? ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') : 'auto',
+                width: isTextInput ?
+                    ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') :
+                    'auto',
                 height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
                 border: '2px solid silver'
             });
@@ -1446,7 +1467,11 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
-    public defaultInputDateParser(inputDate: string, useUTC: boolean, time?: Time): number {
+    public defaultInputDateParser(
+        inputDate: string,
+        useUTC: boolean,
+        time?: Time
+    ): number {
         const hasTimezone = (str: string): boolean =>
             str.length > 6 &&
             (str.lastIndexOf('-') === str.length - 6 ||
@@ -1489,7 +1514,9 @@ class RangeSelector {
      * @private
      * @function Highcharts.RangeSelector#drawInput
      */
-    public drawInput(name: ('min'|'max')): Highcharts.RangeSelectorInputElements {
+    public drawInput(
+        name: ('min'|'max')
+    ): Highcharts.RangeSelectorInputElements {
         const {
             chart,
             div,
@@ -1603,7 +1630,10 @@ class RangeSelector {
 
         // #14788: Setting input.type to an unsupported type throws in IE, so
         // we need to use setAttribute instead
-        input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
+        input.setAttribute(
+            'type',
+            preferredInputType(options.inputDateFormat || '%b %e, %Y')
+        );
 
         if (!chart.styledMode) {
             // Styles
@@ -1817,17 +1847,26 @@ class RangeSelector {
                 chart.scroller && chart.scroller.getUnionExtremes()
             ) || chart.xAxis[0] || {};
 
-            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+            if (
+                defined(unionExtremes.dataMin) &&
+                defined(unionExtremes.dataMax)
+            ) {
                 const minRange = chart.xAxis[0].minRange || 0;
 
                 this.setInputExtremes(
                     'min',
                     unionExtremes.dataMin,
-                    Math.min(unionExtremes.dataMax, this.getInputValue('max')) - minRange
+                    Math.min(
+                        unionExtremes.dataMax,
+                        this.getInputValue('max')
+                    ) - minRange
                 );
                 this.setInputExtremes(
                     'max',
-                    Math.max(unionExtremes.dataMin, this.getInputValue('min')) + minRange,
+                    Math.max(
+                        unionExtremes.dataMin,
+                        this.getInputValue('min')
+                    ) + minRange,
                     unionExtremes.dataMax
                 );
             }
@@ -2209,7 +2248,10 @@ class RangeSelector {
      * @param {number} xOffsetForExportButton
      * @param {number} [width]
      */
-    public alignButtonGroup(xOffsetForExportButton: number, width?: number): void {
+    public alignButtonGroup(
+        xOffsetForExportButton: number,
+        width?: number
+    ): void {
         const { chart, options, buttonGroup, buttons } = this;
         const { buttonPosition } = options;
         const plotLeft = chart.plotLeft - chart.spacing[3];
@@ -2675,7 +2717,9 @@ class RangeSelector {
             maxInput = rSelector.maxInput;
 
         if (rSelector.eventsToUnbind) {
-            rSelector.eventsToUnbind.forEach((unbind: Function): void => unbind());
+            rSelector.eventsToUnbind.forEach((
+                unbind: Function
+            ): void => unbind());
             rSelector.eventsToUnbind = void 0;
         }
 
@@ -2773,8 +2817,8 @@ function preferredInputType(format: string): string {
         return 'text';
     }
 
-    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some((char: string): boolean =>
-        format.indexOf('%' + char) !== -1);
+    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y']
+        .some((char: string): boolean => format.indexOf('%' + char) !== -1);
     const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
         format.indexOf('%' + char) !== -1);
 
@@ -2811,7 +2855,8 @@ Axis.prototype.minFromRange = function (): (number|undefined) {
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Time.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const timeName: Time.TimeUnitValue = type === 'year' ?
+                'FullYear' : 'Month';
             const date = new time.Date(base);
             const basePeriod = time.get(timeName, date);
 

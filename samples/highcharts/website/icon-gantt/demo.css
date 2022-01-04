@@ -1,7 +1,7 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
 body {
-    margin: 0;
+    margin: 0 !important;
 }
 
 /* BUTTONS OUTSIDE CHART */
@@ -31,14 +31,9 @@ textarea {
     user-select: none;
     background-color: transparent;
     border: 1px solid transparent;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .main-container .modal {
@@ -52,6 +47,13 @@ textarea {
     overflow-x: hidden;
     overflow-y: auto;
     outline: 0;
+}
+
+.main-container .modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 0.5rem;
+    pointer-events: none;
 }
 
 .main-container .fade {
@@ -72,13 +74,6 @@ textarea {
 
 .main-container .modal.show .modal-dialog {
     transform: none;
-}
-
-.main-container .modal-dialog {
-    position: relative;
-    width: auto;
-    margin: 0.5rem;
-    pointer-events: none;
 }
 
 .main-container .modal-body {
@@ -114,6 +109,23 @@ textarea {
 .main-container .modal-title {
     margin-bottom: 0;
     line-height: 1.5;
+    font-size: 1.2em;
+}
+
+.modal-footer .btn:first-child {
+    margin-right: 10px;
+}
+
+.main-container .btn-close {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: #000;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    border: 0;
+    border-radius: 0.25rem;
+    opacity: 50%;
 }
 
 .main-container .modal-header .btn-close {
@@ -132,18 +144,6 @@ textarea {
     border-top: 1px solid #dee2e6;
     border-bottom-right-radius: calc(0.3rem - 1px);
     border-bottom-left-radius: calc(0.3rem - 1px);
-}
-
-.main-container .btn-close {
-    box-sizing: content-box;
-    width: 1em;
-    height: 1em;
-    padding: 0.25em;
-    color: #000;
-    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-    border: 0;
-    border-radius: 0.25rem;
-    opacity: 50%;
 }
 
 #modal-backdrop {
@@ -222,37 +222,36 @@ textarea {
     opacity: 100%;
 }
 
-.main-container .btn-primary {
+.main-container .btn {
     background-color: #2f2b38;
     border-color: #2f2b38;
 }
 
-.main-container .btn-primary:hover {
+.main-container .btn:hover {
     background-color: #2f2b38;
     border-color: #2f2b38;
     opacity: 80%;
 }
 
-.main-container .btn-primary.disabled,
-.main-container .btn-primary:disabled {
+.main-container .btn.disabled,
+.main-container .btn:disabled {
     color: #fff;
-    background-color: #2f2b38;
-    border-color: #2f2b38;
+    opacity: 40%;
 }
 
-.main-container .btn-check:focus + .btn-primary,
-.main-container .btn-primary:focus {
+.main-container .btn:focus,
+.main-container .btn-check:focus + .btn {
     color: #fff;
     background-color: #2f2b38;
     border-color: #2f2b38;
     box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
 }
 
-.main-container .btn-secondary {
-    color: #fff;
-    background-color: #6c757d;
-    border-color: #6c757d;
-    margin-left: 4px;
+.highcharts-tooltip.highcharts-color-0,
+.highcharts-tooltip.highcharts-color-1,
+.highcharts-tooltip.highcharts-color-2 {
+    fill: #f0f0f0;
+    stroke: #f0f0f0;
 }
 
 /* CHART */
@@ -316,7 +315,7 @@ textarea {
 
 .chart-container .highcharts-minor-grid-line {
     stroke: #f2f2f2;
-    opacity: 50%;
+    opacity: 20%;
     stroke-dasharray: 2px;
 }
 
@@ -339,6 +338,13 @@ textarea {
 .chart-container text.highcharts-data-label {
     fill: #fff;
     font-weight: 400;
+}
+
+.chart-container .highcharts-point-select .highcharts-color-0,
+.chart-container .highcharts-color-0.highcharts-point-select,
+.chart-container .highcharts-point-select .highcharts-color-1,
+.chart-container .highcharts-point-select .highcharts-color-2 {
+    fill: #f0f0f0 !important;
 }
 
 .chart-container .highcharts-color-0 {
@@ -377,7 +383,7 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: url(#bg-gradient);
+    fill: url("#bg-gradient");
     fill: #2f2b38;
     transition: all 1s;
 }
@@ -386,14 +392,14 @@ textarea {
     fill: #2f2b38;
 }
 
-.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
-    stroke-width: 1px;
-}
-
 .chart-container .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
 }
 
 .chart-container .highcharts-plot-band,
@@ -422,12 +428,17 @@ textarea {
 
 .chart-container .highcharts-tooltip-box,
 .highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
-    stroke-width: 0;
+    stroke-width: 1;
     border: none;
     stroke: #fff;
     fill: #fff;
     fill-opacity: 1;
     filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
+}
+
+.chart-container .highcharts-data-label-box {
+    fill: #2f2b38;
+    stroke-width: 0;
 }
 
 .chart-container .highcharts-tooltip text {
@@ -637,11 +648,6 @@ textarea {
         height: 500px;
     }
 
-    .main-container .modal-dialog {
-        max-width: 500px;
-        margin: 1.75rem auto;
-    }
-
     .main-container .form-control {
         width: 95%;
     }
@@ -649,10 +655,6 @@ textarea {
     .main-container .modal-dialog {
         max-width: 500px;
         margin: 1.75rem auto;
-    }
-
-    .main-container .form-control {
-        width: 95%;
     }
 
     #gantt .highcharts-title {

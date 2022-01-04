@@ -60,10 +60,6 @@ class VMLRenderer3D {
      *
      * */
 
-    /**
-     * @todo double compose protection
-     * @private
-     */
     public static compose(
         vmlClass: typeof Highcharts.VMLRenderer,
         svgClass: typeof SVGRenderer

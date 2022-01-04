@@ -298,68 +298,72 @@ class SMAIndicator extends LineSeries {
         );
 
         // Only after series are linked indicator can be processed.
-        const linkedSeriesUnbiner = addEvent(Chart, 'afterLinkSeries', function (): void {
-            const hasEvents = !!indicator.dataEventsToUnbind.length;
+        const linkedSeriesUnbiner = addEvent(
+            Chart,
+            'afterLinkSeries',
+            function (): void {
+                const hasEvents = !!indicator.dataEventsToUnbind.length;
 
-            if (indicator.linkedParent) {
-                if (!hasEvents) {
-                    // No matter which indicator,
-                    // always recalculate after updating the data.
-                    indicator.dataEventsToUnbind.push(
-                        addEvent(
-                            indicator.linkedParent,
-                            'updatedData',
-                            function (): void {
-                                indicator.recalculateValues();
-                            }
-                        )
-                    );
-
-                    // Some indicators (like VBP) requires an additional
-                    // event (afterSetExtremes) to properly show the data.
-                    if (indicator.calculateOn.xAxis) {
+                if (indicator.linkedParent) {
+                    if (!hasEvents) {
+                        // No matter which indicator, always recalculate after
+                        // updating the data.
                         indicator.dataEventsToUnbind.push(
                             addEvent(
-                                indicator.linkedParent.xAxis,
-                                indicator.calculateOn.xAxis,
+                                indicator.linkedParent,
+                                'updatedData',
                                 function (): void {
                                     indicator.recalculateValues();
                                 }
                             )
                         );
-                    }
-                }
 
-                // Most indicators are being calculated on chart's init.
-                if (indicator.calculateOn.chart === 'init') {
-                    if (!indicator.processedYData) {
-                        indicator.recalculateValues();
-                    }
-                } else if (!hasEvents) {
-                    // Some indicators (like VBP) has to recalculate their
-                    // values after other chart's events (render).
-                    const unbinder = addEvent(
-                        indicator.chart,
-                        indicator.calculateOn.chart,
-                        function (): void {
-                            indicator.recalculateValues();
-                            // Call this just once.
-                            unbinder();
+                        // Some indicators (like VBP) requires an additional
+                        // event (afterSetExtremes) to properly show the data.
+                        if (indicator.calculateOn.xAxis) {
+                            indicator.dataEventsToUnbind.push(
+                                addEvent(
+                                    indicator.linkedParent.xAxis,
+                                    indicator.calculateOn.xAxis,
+                                    function (): void {
+                                        indicator.recalculateValues();
+                                    }
+                                )
+                            );
                         }
-                    );
+                    }
+
+                    // Most indicators are being calculated on chart's init.
+                    if (indicator.calculateOn.chart === 'init') {
+                        if (!indicator.processedYData) {
+                            indicator.recalculateValues();
+                        }
+                    } else if (!hasEvents) {
+                        // Some indicators (like VBP) has to recalculate their
+                        // values after other chart's events (render).
+                        const unbinder = addEvent(
+                            indicator.chart,
+                            indicator.calculateOn.chart,
+                            function (): void {
+                                indicator.recalculateValues();
+                                // Call this just once.
+                                unbinder();
+                            }
+                        );
+                    }
+                } else {
+                    return error(
+                        'Series ' +
+                        indicator.options.linkedTo +
+                        ' not found! Check `linkedTo`.',
+                        false,
+                        chart
+                    ) as any;
                 }
-            } else {
-                return error(
-                    'Series ' +
-                    indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.',
-                    false,
-                    chart
-                ) as any;
+            }, {
+                order: 0
             }
-        }, {
-            order: 0
-        });
+        );
 
         // Make sure we find series which is a base for an indicator
         // chart.linkSeries();
@@ -375,15 +379,12 @@ class SMAIndicator extends LineSeries {
         let indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
-                indicator.getValues(
-                    indicator.linkedParent,
-                    indicator.options.params as any
-                ) || {
-                    values: [],
-                    xData: [],
-                    yData: []
-                }),
+            emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
+                values: [],
+                xData: [],
+                yData: []
+            },
+            processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
             croppedDataValues = [],
             overwriteData = true,
             oldFirstPointIndex,
@@ -392,6 +393,19 @@ class SMAIndicator extends LineSeries {
             min,
             max,
             i;
+
+        // Updating an indicator with redraw=false may destroy data.
+        // If there will be a following update for the parent series,
+        // we will try to access Series object without any properties
+        // (except for prototyped ones). This is what happens
+        // for example when using Axis.setDataGrouping(). See #16670
+        processedData = indicator.linkedParent.options ?
+            (
+                indicator.getValues(
+                    indicator.linkedParent,
+                    indicator.options.params as any
+                ) || emptySet
+            ) : emptySet;
 
         // We need to update points to reflect changes in all,
         // x and y's, values. However, do it only for non-grouped

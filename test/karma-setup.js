@@ -90,6 +90,9 @@ Highcharts.setOptions({
     },
     tooltip: {
         animation: false
+    },
+    drilldown: {
+        animation: false
     }
 });
 // Save default functions from the default options, as they are not stringified
@@ -178,6 +181,26 @@ XMLHttpRequest.prototype.send = function () {
     } else {
         return send.apply(this, arguments);
     }
+}
+
+// Hijack fetch to run local sources. Note the oldIE-friendly syntax.
+if (window.Promise) {
+    window.fetch = function (url) {
+        return new Promise(function (resolve, reject) {
+            var localData = url && window.JSONSources[url];
+            if (localData) {
+                // Fake the return
+                resolve({
+                    ok: true,
+                    json: function () {
+                        return localData;
+                    }
+                });
+            } else {
+                reject('Sample error, URL "' + url + '" missing in JSONSources (trying to fetch)');
+            }
+        });
+    };
 }
 
 function resetDefaultOptions(testName) {

@@ -1,12 +1,13 @@
 #container {
-	height: 300px;
-	min-width: 310px;
-	max-width: 800px;
+    height: 300px;
+    min-width: 310px;
+    max-width: 800px;
 }
 
 .small-chart .highcharts-subtitle {
-	display: none;
+    display: none;
 }
+
 .small-chart .highcharts-legend {
-	display: none;
+    display: none;
 }

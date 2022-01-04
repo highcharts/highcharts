@@ -33,8 +33,9 @@ function destroyExtraLabels(
         prop: string,
         i: number = props.length;
 
-    (SMAIndicator.prototype.pointClass.prototype as any)[functionName]
-        .call(point);
+    (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[
+        functionName
+    ].call(point);
 
     while (i--) {
         prop = 'dataLabel' + props[i];

@@ -37,14 +37,14 @@
         "max-len": [
             "error",
             {
-                "code": 100,
+                "code": 80,
                 "comments": 80,
                 "ignoreRegExpLiterals": true,
                 "ignoreStrings": true,
                 "ignoreTemplateLiterals": true,
                 "ignoreTrailingComments": true,
                 "ignoreUrls": true,
-                "ignorePattern": "eslint-disable-line|headerFormat|pointFormat| (extends|implements) |@\\w|\\w<|\\.\\/| highcharts\\/|\\]\\(#"
+                "ignorePattern": "`|eslint-disable-line|headerFormat|pointFormat|static defaultOptions| (extends|implements) |@\\w|\\w<|\\.\\/| highcharts\\/|\\]\\(#"
             }
         ],
         "multiline-ternary": [
@@ -178,9 +178,9 @@
         "@typescript-eslint/no-unnecessary-type-assertion": 0, // @todo
         "@typescript-eslint/no-unsafe-argument": 0, // @todo
         "@typescript-eslint/no-unsafe-assignment": 0, // @todo
-        "@typescript-eslint/no-unsafe-call": 1, // @todo
+        "@typescript-eslint/no-unsafe-call": 0, // @todo
         "@typescript-eslint/no-unsafe-member-access": 0, // @todo
-        "@typescript-eslint/no-unsafe-return": 1, // @todo
+        "@typescript-eslint/no-unsafe-return": 0, // @todo
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,

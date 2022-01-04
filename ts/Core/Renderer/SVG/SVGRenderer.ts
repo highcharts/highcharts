@@ -154,7 +154,15 @@ class SVGRenderer implements SVGRendererLike {
         allowHTML?: boolean,
         styledMode?: boolean
     ) {
-        this.init(container, width, height, style, forExport, allowHTML, styledMode);
+        this.init(
+            container,
+            width,
+            height,
+            style,
+            forExport,
+            allowHTML,
+            styledMode
+        );
     }
 
     /* *
@@ -439,7 +447,9 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = (
+                    hitElement && hitElement.id
+                ) === 'hitme';
                 doc.body.removeChild(svg);
             }
 
@@ -1646,10 +1656,14 @@ class SVGRenderer implements SVGRendererLike {
                 const tspans = element.getElementsByTagName('tspan'),
                     parentVal = element.getAttribute(key);
 
-                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
+                for (
+                    let i = 0, tspan: SVGTSpanElement;
+                    i < tspans.length;
+                    i++
+                ) {
                     tspan = tspans[i];
-                    // If the x values are equal, the tspan represents a
-                    // linebreak
+                    // If the x values are equal, the tspan represents a line
+                    // break
                     if (tspan.getAttribute(key) === parentVal) {
                         tspan.setAttribute(key, value);
                     }

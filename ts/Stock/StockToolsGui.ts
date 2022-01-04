@@ -2083,7 +2083,10 @@ class Toolbar {
      *
      * @param {Object} - general options for Stock Tools
      */
-    public update(options: Highcharts.StockToolsOptions, redraw?: boolean): void {
+    public update(
+        options: Highcharts.StockToolsOptions,
+        redraw?: boolean
+    ): void {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
@@ -2257,10 +2260,17 @@ addEvent(Chart, 'render', function (): void {
         stockTools = chart.stockTools,
         button = stockTools &&
             stockTools.toolbar &&
-            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+            stockTools.toolbar.querySelector(
+                '.highcharts-current-price-indicator'
+            ) as any;
 
     // Change the initial button background.
-    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+    if (
+        stockTools &&
+        chart.navigationBindings &&
+        chart.options.series &&
+        button
+    ) {
         if (
             chart.navigationBindings.constructor.prototype.utils
                 .isPriceIndicatorEnabled(chart.series)

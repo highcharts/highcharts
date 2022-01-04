@@ -123,7 +123,10 @@ extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
             e.chartY - chart.plotTop
         ) && chart.mapView) {
             chart.mapView.zoomBy(
-                ((chart.options.mapNavigation as any).mouseWheelSensitivity - 1) * -delta,
+                (
+                    (chart.options.mapNavigation as any).mouseWheelSensitivity -
+                    1
+                ) * -delta,
                 void 0,
                 [e.chartX, e.chartY],
                 // Delta less than 1 indicates stepless/trackpad zooming, avoid

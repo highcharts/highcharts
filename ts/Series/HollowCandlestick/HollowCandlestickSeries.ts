@@ -172,10 +172,15 @@ class HollowCandlestickSeries extends CandlestickSeries {
      */
     public getPriceMovement(): void {
         const series = this,
-            processedYData = series.allGroupedData || series.yData, // procesed and grouped data
+            // procesed and grouped data
+            processedYData = series.allGroupedData || series.yData,
             hollowCandlestickData = this.hollowCandlestickData;
 
-        if (!hollowCandlestickData.length && processedYData && processedYData.length) {
+        if (
+            !hollowCandlestickData.length &&
+            processedYData &&
+            processedYData.length
+        ) {
 
             // First point is allways bullish (transparent).
             hollowCandlestickData.push({
@@ -187,7 +192,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
                 const dataPoint: any = processedYData[i],
                     previousDataPoint: any = processedYData[i - 1];
 
-                hollowCandlestickData.push(series.isBullish(dataPoint, previousDataPoint));
+                hollowCandlestickData.push(series.isBullish(
+                    dataPoint,
+                    previousDataPoint
+                ));
             }
         }
     }
@@ -259,7 +267,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @param {Array<(number)>} previousDataPoint
      * Previous point.
      */
-    public isBullish(dataPoint: Array<(number)>, previousDataPoint: Array<(number)>): HollowcandleInfo {
+    public isBullish(
+        dataPoint: Array<(number)>,
+        previousDataPoint: Array<(number)>
+    ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
             isBullish: dataPoint[0] <= dataPoint[3],
@@ -292,7 +303,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             hollowcandleInfo = this.hollowCandlestickData[index];
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
-        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) || attribs.stroke;
+        attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
+            attribs.stroke;
 
         // Select or hover states
         if (state) {

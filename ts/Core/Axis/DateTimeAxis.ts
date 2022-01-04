@@ -240,8 +240,10 @@ namespace DateTimeAxis{
         ): NormalizedObject {
             const units = (
                 unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+                    // unit name
+                    'millisecond',
+                    // allowed multiples
+                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]
                 ], [
                     'second',
                     [1, 2, 5, 10, 15, 30]

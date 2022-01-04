@@ -134,7 +134,9 @@ namespace WaterfallAxis {
         public renderStackTotals(): void {
             const yAxis = this.axis,
                 waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
+                stackTotalGroup = (
+                    yAxis.stacking && yAxis.stacking.stackTotalGroup
+                ),
                 dummyStackItem = new StackItem(
                     yAxis as any,
                     yAxis.options.stackLabels as any,
@@ -179,7 +181,10 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
+    export function compose(
+        AxisClass: typeof Axis,
+        ChartClass: typeof Chart
+    ): void {
 
         addEvent(AxisClass, 'init', onInit);
         addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);

@@ -248,7 +248,9 @@ class Pointer {
                 Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
             }
             if (Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = Pointer.unbindDocumentTouchEnd();
+                Pointer.unbindDocumentTouchEnd = (
+                    Pointer.unbindDocumentTouchEnd()
+                );
             }
         }
 
@@ -1140,10 +1142,8 @@ class Pointer {
             chart.pointer.chartPosition = void 0;
         }
 
-        if ( // #11635, Firefox wheel scroll does not fire out events consistently
-            tooltip &&
-            !tooltip.isHidden
-        ) {
+        // #11635, Firefox wheel scroll does not fire out events consistently
+        if (tooltip && !tooltip.isHidden) {
             this.reset();
         }
     }
@@ -1321,7 +1321,12 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
+        if (
+            hasZoom &&
+            self.initiated &&
+            !fireClickEvent &&
+            e.cancelable !== false
+        ) {
             e.preventDefault();
         }
 
@@ -1549,7 +1554,8 @@ class Pointer {
             clip[xy] = clipXY - plotLeftTop;
             clip[wh] = selectionWH;
         }
-        const scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+        const scaleKey = inverted ?
+            (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
         const transformScale = inverted ? 1 / scale : scale;
 
         selectionMarker[wh] = selectionWH;
@@ -1957,7 +1963,9 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+            hoverChart.pointer.onContainerMouseLeave(
+                { relatedTarget: true } as any
+            );
         }
 
         if (

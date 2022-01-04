@@ -93,7 +93,11 @@ function getCirclePath(
 
 class TimeCycles extends CrookedLine {
 
-    public init(annotation: Annotation, options: TimeCyclesOptions, index?: number): void {
+    public init(
+        annotation: Annotation,
+        options: TimeCyclesOptions,
+        index?: number
+    ): void {
         if (defined(options.yAxis)) {
             (options.points as MockPointOptions[]).forEach((point): void => {
                 point.yAxis = options.yAxis;
@@ -114,7 +118,9 @@ class TimeCycles extends CrookedLine {
 
     public getPath(): SVGPath {
 
-        return ([getStartingPath(this.startX, this.y)] as SVGPath).concat(getCirclePath(
+        return (
+            [getStartingPath(this.startX, this.y)] as SVGPath
+        ).concat(getCirclePath(
             this.pixelInterval,
             this.numberOfCircles,
             this.startX,
@@ -140,12 +146,22 @@ class TimeCycles extends CrookedLine {
     public addControlPoints(): void {
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
-        options.controlPointOptions.style.cursor = this.chart.inverted ? 'ns-resize' : 'ew-resize';
+        options.controlPointOptions.style.cursor = this.chart.inverted ?
+            'ns-resize' :
+            'ew-resize';
 
         typeOptions.controlPointOptions.forEach(
             (option: Highcharts.AnnotationControlPointOptionsObject): void => {
-                const controlPointsOptions = merge(options.controlPointOptions, option);
-                const controlPoint = new ControlPoint(this.chart, this, controlPointsOptions, 0);
+                const controlPointsOptions = merge(
+                    options.controlPointOptions,
+                    option
+                );
+                const controlPoint = new ControlPoint(
+                    this.chart,
+                    this,
+                    controlPointsOptions,
+                    0
+                );
                 this.controlPoints.push(controlPoint);
             }
         );
@@ -173,16 +189,20 @@ class TimeCycles extends CrookedLine {
             return;
         }
 
-        const y = isNumber(yValue) ? yAxis.toPixels(yValue) : yAxis.top + yAxis.height,
+        const y = isNumber(yValue) ?
+                yAxis.toPixels(yValue) :
+                yAxis.top + yAxis.height,
             x = isNumber(xValue1) ? xAxis.toPixels(xValue1) : xAxis.left,
             x2 = isNumber(xValue2) ? xAxis.toPixels(xValue2) : xAxis.left + 30,
             xAxisLength = xAxis.len,
             pixelInterval = Math.round(Math.max(Math.abs(x2 - x), 2)),
             // There can be 2 not full circles on the chart, so add 2.
             numberOfCircles = Math.floor(xAxisLength / pixelInterval) + 2,
-            // Calculate where the annotation should start drawing
-            // relative to first point.
-            pixelShift = (Math.floor((x - xAxis.left) / pixelInterval) + 1) * pixelInterval;
+            // Calculate where the annotation should start drawing relative to
+            // first point.
+            pixelShift = (
+                Math.floor((x - xAxis.left) / pixelInterval) + 1
+            ) * pixelInterval;
 
         this.startX = x - pixelShift;
         this.y = y;
@@ -234,7 +254,9 @@ TimeCycles.prototype.defaultOptions = merge(
                         e: Highcharts.AnnotationEventObject,
                         target: TimeCycles
                     ): void {
-                        const position = target.anchor(target.points[0]).absolutePosition;
+                        const position = target.anchor(
+                            target.points[0]
+                        ).absolutePosition;
                         target.translatePoint(e.chartX - position.x, 0, 0);
                         target.redraw(false);
                     }
@@ -258,7 +280,9 @@ TimeCycles.prototype.defaultOptions = merge(
                         e: Highcharts.AnnotationEventObject,
                         target: TimeCycles
                     ): void {
-                        const position = target.anchor(target.points[1]).absolutePosition;
+                        const position = target.anchor(
+                            target.points[1]
+                        ).absolutePosition;
                         target.translatePoint(e.chartX - position.x, 0, 1);
                         target.redraw(false);
                     }

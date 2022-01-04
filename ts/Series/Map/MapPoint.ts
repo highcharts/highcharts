@@ -16,17 +16,21 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMapComposition';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type { MapBounds } from '../../Maps/MapViewOptions';
 import type PointerEvent from '../../Core/PointerEvent';
-
-import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type Projection from '../../Maps/Projection';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import GeoJSONGeometry from '../../Maps/GeoJSON';
+import ColorMapMixin from '../ColorMapMixin.js';
+import MapUtilities from '../../Maps/MapUtilities.js';
+const {
+    boundsFromPath
+} = MapUtilities;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -36,7 +40,9 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    extend
+    extend,
+    isNumber,
+    pick
 } = U;
 
 /* *
@@ -55,7 +61,11 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
-    public geometry?: GeoJSONGeometry;
+    public geometry?: GeoJSONGeometryMultiPoint;
+
+    public group?: SVGElement;
+
+    public insetIndex?: number;
 
     public labelrank?: number;
 
@@ -115,7 +125,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
-            const mapKey = super.getNestedProperty.call(point, joinKey) as string;
+            const mapKey = super.getNestedProperty.call(
+                point,
+                joinKey
+            ) as string;
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {
@@ -126,6 +139,44 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         }
 
         return point;
+    }
+
+    /*
+     * Get the bounds in terms of projected units
+     * @param projection
+     * @return MapBounds|undefined The computed bounds
+     */
+    public getProjectedBounds(projection: Projection): MapBounds|undefined {
+        const path = MapPoint.getProjectedPath(this, projection),
+            bounds = boundsFromPath(path),
+            properties = this.properties;
+
+        if (bounds) {
+
+            // Cache point bounding box for use to position data labels, bubbles
+            // etc
+            const propMiddleX = properties && properties['hc-middle-x'],
+                propMiddleY = properties && properties['hc-middle-y'];
+
+            bounds.midX = (
+                bounds.x1 + (bounds.x2 - bounds.x1) * pick(
+                    this.middleX,
+                    isNumber(propMiddleX) ? propMiddleX : 0.5
+                )
+            );
+
+            let middleYFraction = pick(
+                this.middleY,
+                isNumber(propMiddleY) ? propMiddleY : 0.5
+            );
+            // No geographic geometry, only path given => flip
+            if (!this.geometry) {
+                middleYFraction = 1 - middleYFraction;
+            }
+
+            bounds.midY = bounds.y2 - (bounds.y2 - bounds.y1) * middleYFraction;
+            return bounds;
+        }
     }
 
     /**
@@ -174,18 +225,21 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-interface MapPointProperties {
-    [key: string]: number|string;
-}
-
-interface MapPoint extends ColorMapComposition.PointComposition {
+interface MapPoint {
     bounds?: MapBounds;
-    dataLabelOnNull: ColorMapComposition.PointComposition['dataLabelOnNull'];
-    isValid: ColorMapComposition.PointComposition['isValid'];
+    dataLabelOnNull: ColorMapMixin.ColorMapPoint['dataLabelOnNull'];
+    isValid: ColorMapMixin.ColorMapPoint['isValid'];
     middleX?: number;
     middleY?: number;
-    properties?: MapPointProperties;
+    moveToTopOnHover: ColorMapMixin.ColorMapPoint['moveToTopOnHover'];
+    properties?: Record<string, (number|string)>;
+    value: ColorMapMixin.ColorMapPoint['value'];
 }
+extend(MapPoint.prototype, {
+    dataLabelOnNull: ColorMapMixin.PointMixin.dataLabelOnNull,
+    isValid: ColorMapMixin.PointMixin.isValid,
+    moveToTopOnHover: ColorMapMixin.PointMixin.moveToTopOnHover
+});
 
 /* *
  *

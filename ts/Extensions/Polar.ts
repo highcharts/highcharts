@@ -403,14 +403,10 @@ if (seriesTypes.spline) {
                         this.connectEnds
                     );
 
-                    const rightContX = (
-                        connectors.prevPointCont &&
-                        connectors.prevPointCont.rightContX
-                    );
-                    const rightContY = (
-                        connectors.prevPointCont &&
-                        connectors.prevPointCont.rightContY
-                    );
+                    const rightContX = connectors.prevPointCont &&
+                        connectors.prevPointCont.rightContX;
+                    const rightContY = connectors.prevPointCont &&
+                        connectors.prevPointCont.rightContY;
 
                     ret = [
                         'C',
@@ -436,9 +432,8 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        seriesTypes.areasplinerange.prototype.getPointSpline = (
-            seriesTypes.spline.prototype.getPointSpline
-        );
+        seriesTypes.areasplinerange.prototype
+            .getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 
@@ -700,7 +695,9 @@ wrap(seriesProto, 'animate', polarAnimate);
 
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
-    columnProto = seriesTypes.column.prototype as unknown as Highcharts.PolarSeries;
+    columnProto = (
+        seriesTypes.column.prototype as unknown as Highcharts.PolarSeries
+    );
 
     columnProto.polarArc = function (
         this: (ColumnSeries&Highcharts.PolarSeries),
@@ -1037,7 +1034,9 @@ if (seriesTypes.column) {
                     labelPos =
                         (this as Highcharts.PolarSeries).yAxis.postTranslate(
                         // angle
-                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
+                            (
+                                (shapeArgs.start || 0) + (shapeArgs.end || 0)
+                            ) / 2 -
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius

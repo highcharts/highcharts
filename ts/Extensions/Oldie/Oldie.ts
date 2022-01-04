@@ -592,7 +592,9 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartX: Math.round(
+                Math.max((e as any).x, (e as any).clientX - chartPosition.left)
+            ),
             chartY: Math.round((e as any).y)
         }) as T;
     };
@@ -820,7 +822,8 @@ if (!svg) {
          *
          * @function Highcharts.VMLElement#updateTransform
          */
-        updateTransform: SVGElement.prototype.htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
+        updateTransform: SVGElement.prototype
+            .htmlUpdateTransform as HTMLElement['htmlUpdateTransform'],
 
         /**
          * Set the rotation of a span with oldIE's filter
@@ -1791,9 +1794,12 @@ if (!svg) {
                     ret = stopColor as any;
                 }
 
-            // If the color is an rgba color, split it and add a fill node
-            // to hold the opacity component
-            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
+            // If the color is an rgba color, split it and add a fill node to
+            // hold the opacity component
+            } else if (
+                regexRgba.test(colorOption as any) &&
+                elem.tagName !== 'IMG'
+            ) {
 
                 colorObject = color(colorOption);
 

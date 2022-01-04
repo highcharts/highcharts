@@ -338,10 +338,8 @@ addEvent(Series, 'afterRender', function (): void {
                     seriesOptions.lastPrice
             ) {
                 // Set the default color from the series, #14888.
-                yAxis.crosshair.color = yAxis.options.crosshair.color = (
-                    seriesOptions.lastPrice.color ||
-                    series.color
-                );
+                yAxis.crosshair.color = yAxis.options.crosshair.color =
+                    seriesOptions.lastPrice.color || series.color;
             }
 
             yAxis.cross = series.lastPrice;
@@ -357,7 +355,9 @@ addEvent(Series, 'afterRender', function (): void {
             // Save price
             if (series.yAxis.cross) {
                 series.lastPrice = series.yAxis.cross;
-                series.lastPrice.addClass('highcharts-color-' + series.colorIndex); // #15222
+                series.lastPrice.addClass(
+                    'highcharts-color-' + series.colorIndex
+                ); // #15222
                 series.lastPrice.y = yValue;
             }
         }

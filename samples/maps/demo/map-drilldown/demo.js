@@ -1,8 +1,3 @@
-/*
-TODO:
-- Check data labels after drilling. Label rank? New positions?
-*/
-
 let data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']);
 const separators = Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline');
 
@@ -63,27 +58,12 @@ Highcharts.mapChart('container', {
                         });
                     });
                 }
-
-                this.setTitle(null, { text: e.point.name });
-            },
-            drillup: function () {
-                this.setTitle(null, { text: '' });
             }
         }
     },
 
     title: {
         text: 'Highcharts Map Drilldown'
-    },
-
-    subtitle: {
-        text: '',
-        floating: true,
-        align: 'right',
-        y: 50,
-        style: {
-            fontSize: '16px'
-        }
     },
 
     colorAxis: {

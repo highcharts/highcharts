@@ -184,7 +184,9 @@ declare global {
             'windbarb'|'ichimoku-averages'|'hlc'
         );
         type DataGroupingAnchor = ('start'|'middle'|'end');
-        type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
+        type DataGroupingAnchorExtremes = (
+            'start'|'middle'|'end'|'firstPoint'|'lastPoint'
+        );
         type AnchorChoiceType = Record<string, number>;
     }
 }
@@ -387,7 +389,10 @@ H.approximations = {
     }
 };
 
-const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void {
+const applyGrouping = function (
+    this: Series,
+    hasExtemesChanged: boolean
+): void {
     let series = this,
         chart = series.chart,
         options = series.options,
@@ -411,7 +416,10 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
 
     // Skip if skipDataGrouping method returns false or if grouping is disabled
     // (in that order).
-    skip = skipDataGrouping(series, hasExtemesChanged) === false || !groupingEnabled;
+    skip = skipDataGrouping(
+        series,
+        hasExtemesChanged
+    ) === false || !groupingEnabled;
 
     // Revert original requireSorting value if changed
     if (revertRequireSorting) {
@@ -486,14 +494,20 @@ const applyGrouping = function (this: Series, hasExtemesChanged: boolean): void 
                 groupedYData = groupedData.groupedYData,
                 gapSize = 0;
 
-            // The smoothed option is deprecated, instead,
-            // there is a fallback to the new anchoring mechanism. #12455.
-            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
+            // The smoothed option is deprecated, instead, there is a fallback
+            // to the new anchoring mechanism. #12455.
+            if (
+                dataGroupingOptions &&
+                dataGroupingOptions.smoothed &&
+                groupedXData.length
+            ) {
                 dataGroupingOptions.firstAnchor = 'firstPoint';
                 dataGroupingOptions.anchor = 'middle';
                 dataGroupingOptions.lastAnchor = 'lastPoint';
 
-                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
+                error(32, false, chart, {
+                    'dataGrouping.smoothed': 'use dataGrouping.anchor'
+                });
             }
 
             anchorPoints(series, groupedXData, xMax);
@@ -591,7 +605,10 @@ const groupData = function (
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
-        groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll,
+        groupAll = (
+            this.options.dataGrouping &&
+            this.options.dataGrouping.groupAll
+        ),
         pos = 0,
         start = 0,
         valuesLen,
@@ -753,7 +770,9 @@ const anchorPoints = function (
 ): any {
     const options = series.options,
         dataGroupingOptions = options.dataGrouping,
-        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize;
+        totalRange = (
+            series.currentDataGrouping && series.currentDataGrouping.gapSize
+        );
     let i;
 
     // DataGrouping x-coordinates.
@@ -765,8 +784,10 @@ const anchorPoints = function (
 
         // Anchor points that are not extremes.
         if (anchor && anchor !== 'start') {
-            const shiftInterval: number = totalRange *
-                ({ middle: 0.5, end: 1 } as Highcharts.AnchorChoiceType)[anchor];
+            const shiftInterval: number = (
+                totalRange *
+                ({ middle: 0.5, end: 1 } as Highcharts.AnchorChoiceType)[anchor]
+            );
 
             i = groupedXData.length - 1;
             while (i-- && i > 0) {
@@ -805,7 +826,9 @@ const anchorPoints = function (
             totalRange &&
             groupedXData[groupedDataLength] >= xMax - totalRange
         ) {
-            const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
+            const lastGroupStart = series.groupMap[
+                series.groupMap.length - 1
+            ].start;
 
             groupedXData[groupedDataLength] = ({
                 middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
@@ -861,7 +884,10 @@ const adjustExtremes = function (
                 xAxis.max >= xAxis.dataMax
             ) || xAxis.max === xAxis.dataMax
         ) {
-            xAxis.max = Math.max(groupedXData[groupedXData.length - 1], xAxis.max);
+            xAxis.max = Math.max(
+                groupedXData[groupedXData.length - 1],
+                xAxis.max
+            );
         }
         xAxis.dataMax = Math.max(
             groupedXData[groupedXData.length - 1],
@@ -1080,7 +1106,10 @@ seriesProto.generatePoints = function (): void {
  *
  * @function Highcharts.Axis#applyGrouping
  */
-Axis.prototype.applyGrouping = function (this: Axis, e: Highcharts.PostProcessDataEvent): void {
+Axis.prototype.applyGrouping = function (
+    this: Axis,
+    e: Highcharts.PostProcessDataEvent
+): void {
     const axis = this,
         series = axis.series;
 
@@ -1088,7 +1117,10 @@ Axis.prototype.applyGrouping = function (this: Axis, e: Highcharts.PostProcessDa
         // Reset the groupPixelWidth, then calculate if needed.
         series.groupPixelWidth = void 0; // #2110
 
-        series.groupPixelWidth = axis.getGroupPixelWidth && axis.getGroupPixelWidth();
+        series.groupPixelWidth = (
+            axis.getGroupPixelWidth &&
+            axis.getGroupPixelWidth()
+        );
 
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
@@ -1139,7 +1171,10 @@ Axis.prototype.getGroupPixelWidth = function (): number {
             // limit defined in groupPixelWidth
             if (
                 series[i].groupPixelWidth ||
-                dataLength > ((this.chart.plotSizeX as any) / groupPixelWidth) ||
+                (
+                    dataLength >
+                    ((this.chart.plotSizeX as any) / groupPixelWidth)
+                ) ||
                 (dataLength && dgOptions.forced)
             ) {
                 doGrouping = true;
@@ -1197,8 +1232,11 @@ Axis.prototype.setDataGrouping = function (
         (this as any).chart.options.series.forEach(function (
             seriesOptions: any
         ): void {
-            seriesOptions.dataGrouping = dataGrouping;
-        }, false);
+            // Merging dataGrouping options with already defined options #16759
+            seriesOptions.dataGrouping = typeof dataGrouping === 'boolean' ?
+                dataGrouping :
+                merge(dataGrouping, seriesOptions.dataGrouping);
+        });
     }
 
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
@@ -1325,14 +1363,16 @@ addEvent(Series, 'afterSetOptions', function (
 
     let options = e.options,
         type = this.type,
-        plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
+        plotOptions = this.chart.options.plotOptions,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
             (D.defaultOptions.plotOptions as any)[type].dataGrouping,
-        // External series, for example technical indicators should also
-        // inherit commonOptions which are not available outside this module
-        baseOptions = (this as IndicatorLike).useCommonDataGrouping && commonOptions;
+        // External series, for example technical indicators should also inherit
+        // commonOptions which are not available outside this module
+        baseOptions = (
+            (this as IndicatorLike).useCommonDataGrouping && commonOptions
+        );
 
-    if (specificOptions[type] || baseOptions) { // #1284
+    if (plotOptions && (specificOptions[type] || baseOptions)) { // #1284
         if (!defaultOptions) {
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }

@@ -465,7 +465,9 @@ namespace DataLabel {
                 chart.options.plotOptions.series.dataLabels as any,
                 chart.options.plotOptions &&
                 chart.options.plotOptions[series.type] &&
-                (chart.options.plotOptions[series.type] as any).dataLabels as any
+                (
+                    chart.options.plotOptions[series.type] as any
+                ).dataLabels as any
             ),
             seriesDlOptions as any
         );
@@ -511,8 +513,11 @@ namespace DataLabel {
                 pointOptions = splat(
                     mergeArrays(
                         seriesDlOptions as any,
-                        (point.dlOptions as any) || // dlOptions is used in treemaps
+                        // dlOptions is used in treemaps
+                        (
+                            (point.dlOptions as any) ||
                             (point.options && point.options.dataLabels)
+                        )
                     )
                 );
 
@@ -538,8 +543,8 @@ namespace DataLabel {
                         style,
                         rotation,
                         attr: any,
-                        dataLabel: SVGLabel = point.dataLabels ? point.dataLabels[i] :
-                            point.dataLabel as any;
+                        dataLabel: SVGLabel = point.dataLabels ?
+                            point.dataLabels[i] : point.dataLabel as any;
 
                     const labelDistance = pick(
                             (labelOptions as any).distance,
@@ -553,7 +558,9 @@ namespace DataLabel {
                         labelConfig = point.getLabelConfig();
 
                         formatString = pick(
-                            (labelOptions as any)[point.formatPrefix + 'Format'],
+                            (labelOptions as any)[
+                                point.formatPrefix + 'Format'
+                            ],
                             labelOptions.format
                         );
 
@@ -612,7 +619,10 @@ namespace DataLabel {
                         }
 
                         // Remove unused attributes (#947)
-                        objectEach(attr, function (val: any, name: string): void {
+                        objectEach(attr, function (
+                            val: any,
+                            name: string
+                        ): void {
                             if (typeof val === 'undefined') {
                                 delete attr[name];
                             }
@@ -621,9 +631,15 @@ namespace DataLabel {
 
                     // If the point is outside the plot area, destroy it. #678,
                     // #820
-                    if (dataLabel && (!labelEnabled || !defined(labelText))) {
-                        point.dataLabel =
-                            point.dataLabel && point.dataLabel.destroy();
+                    if (
+                        dataLabel && (
+                            !labelEnabled ||
+                            !defined(labelText) ||
+                            !!dataLabel.div !== !!labelOptions.useHTML
+                        )
+                    ) {
+                        point.dataLabel = dataLabel =
+                            point.dataLabel && point.dataLabel.destroy() as any;
                         if (point.dataLabels) {
                             // Remove point.dataLabels if this was the last one
                             if (point.dataLabels.length === 1) {
@@ -636,7 +652,9 @@ namespace DataLabel {
                             delete point.dataLabel;
                         }
                         if (connector) {
-                            point.connector = (point.connector as any).destroy();
+                            point.connector = (
+                                point.connector as any
+                            ).destroy();
                             if (point.connectors) {
                                 // Remove point.connectors if this was the last
                                 // one
@@ -647,11 +665,12 @@ namespace DataLabel {
                                 }
                             }
                         }
+                    }
 
                     // Individual labels are disabled if the are explicitly
                     // disabled in the point options, or if they fall outside
                     // the plot area.
-                    } else if (labelEnabled && defined(labelText)) {
+                    if (labelEnabled && defined(labelText)) {
 
                         if (!dataLabel) {
                             // Create new label element
@@ -686,7 +705,8 @@ namespace DataLabel {
                             }
 
                             dataLabel.addClass(
-                                ' highcharts-data-label-color-' + point.colorIndex +
+                                ' highcharts-data-label-color-' +
+                                point.colorIndex +
                                 ' ' + (labelOptions.className || '') +
                                 ( // #3398
                                     labelOptions.useHTML ?
@@ -707,7 +727,9 @@ namespace DataLabel {
                         if (!chart.styledMode) {
                             // Styles must be applied before add in order to
                             // read text bounding box
-                            dataLabel.css(style as any).shadow(labelOptions.shadow);
+                            dataLabel.css(style as any).shadow(
+                                labelOptions.shadow
+                            );
                         }
 
                         if (!dataLabel.added) {
@@ -728,7 +750,9 @@ namespace DataLabel {
                                 !labelOptions.textPath.enabled
                             ) {
                                 // clean the DOM
-                                point.dataLabelPath = point.dataLabelPath.destroy();
+                                point.dataLabelPath = (
+                                    point.dataLabelPath.destroy()
+                                );
                             }
                         }
 

@@ -194,11 +194,12 @@ namespace SeriesSonify {
                 Partial<SonifySeriesOptions>|
                 Array<Partial<SonifySeriesOptions>>
             ) = chartSonifyOptions.seriesOptions || {},
+            sonification = series.chart.options.sonification,
             pointPlayTime = (
-                series.chart.options.sonification &&
-                series.chart.options.sonification.defaultInstrumentOptions &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping &&
-                series.chart.options.sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
+                sonification &&
+                sonification.defaultInstrumentOptions &&
+                sonification.defaultInstrumentOptions.mapping &&
+                sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
                 'x'
             ),
             configOptions = chartOptionsToSonifySeriesOptions(series);
@@ -215,15 +216,24 @@ namespace SeriesSonify {
                 // calculating twice.
                 timeExtremes: getTimeExtremes(series, pointPlayTime),
                 // Some options we just pass on
-                instruments: chartSonifyOptions.instruments || configOptions.instruments,
-                onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
+                instruments: (
+                    chartSonifyOptions.instruments || configOptions.instruments
+                ),
+                onStart: (
+                    chartSonifyOptions.onSeriesStart || configOptions.onStart
+                ),
                 onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
                 earcons: chartSonifyOptions.earcons || configOptions.earcons,
-                masterVolume: pick(chartSonifyOptions.masterVolume, configOptions.masterVolume)
+                masterVolume: pick(
+                    chartSonifyOptions.masterVolume,
+                    configOptions.masterVolume
+                )
             },
             // Merge in the specific series options by ID if any are passed in
             isArray(additionalSeriesOptions) ? (
-                find(additionalSeriesOptions, function (optEntry: any): boolean {
+                find(additionalSeriesOptions, function (
+                    optEntry: any
+                ): boolean {
                     return optEntry.id === pick(series.id, series.options.id);
                 }) || {}
             ) : additionalSeriesOptions,
@@ -252,14 +262,21 @@ namespace SeriesSonify {
     ): TimelinePath {
         // options.timeExtremes is internal and used so that the calculations
         // from chart.sonify can be reused.
-        const timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
+        const timeExtremes = options.timeExtremes || getTimeExtremes(
+                series,
+                options.pointPlayTime
+            ),
             // Compute any data extremes that aren't defined yet
             dataExtremes = getExtremesForInstrumentProps(
                 series.chart, options.instruments, options.dataExtremes as any
             ),
             minimumSeriesDurationMs = 10,
             // Get the duration of the final note
-            finalNoteDuration = getFinalNoteDuration(series, options.instruments, dataExtremes),
+            finalNoteDuration = getFinalNoteDuration(
+                series,
+                options.instruments,
+                dataExtremes
+            ),
             // Get time offset for a point, relative to duration
             pointToTime = function (point: PointSonify.Composition): number {
                 return virtualAxisTranslate(
@@ -278,7 +295,10 @@ namespace SeriesSonify {
             // Make copies of the instruments used for this series, to allow
             // multiple series with the same instrument to play together
             instrumentCopies = makeInstrumentCopies(options.instruments),
-            instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
+            instruments = applyMasterVolumeToInstruments(
+                instrumentCopies,
+                masterVolume
+            ),
             // Go through the points, convert to events, optionally add Earcons
             timelineEvents = series.points.reduce(function (
                 events: Array<TimelineEvent>,
@@ -331,9 +351,11 @@ namespace SeriesSonify {
                     // Check for hidden series
                     if (
                         !eventObject.series.visible &&
-                        !eventObject.series.chart.series.some(function (series): boolean {
-                            return series.visible;
-                        })
+                        !eventObject.series.chart.series.some(
+                            function (series): boolean {
+                                return series.visible;
+                            }
+                        )
                     ) {
                         // We have no visible series, stop the path.
                         (event.timelinePath as any).timeline.pause();
@@ -347,8 +369,11 @@ namespace SeriesSonify {
                 }
             },
             onEventEnd: function (eventData: Timeline.SignalData): void {
-                const eventObject = eventData.event && eventData.event.options &&
-                        eventData.event.options.eventObject;
+                const eventObject = (
+                    eventData.event &&
+                    eventData.event.options &&
+                    eventData.event.options.eventObject
+                );
 
                 if (eventObject instanceof Point && options.onPointEnd) {
                     options.onPointEnd(eventData.event, eventObject);
@@ -375,13 +400,14 @@ namespace SeriesSonify {
     function chartOptionsToSonifySeriesOptions(
         series: Composition
     ): Partial<SonifySeriesOptions> {
-        const seriesOpts = series.options.sonification || {} as SonifySeriesOptions,
-            chartOpts = (
-                series.chart.options.sonification ||
-                {} as ChartSonify.ChartSonificationOptions
-            ),
-            chartEvents = chartOpts.events || {} as ChartSonify.ChartSonificationEventsOptions,
-            seriesEvents = seriesOpts.events || {} as SeriesSonificationEventsOptions;
+        const seriesOpts = series.options.sonification ||
+                {} as SonifySeriesOptions,
+            chartOpts = series.chart.options.sonification ||
+                {} as ChartSonify.ChartSonificationOptions,
+            chartEvents = chartOpts.events ||
+                {} as ChartSonify.ChartSonificationEventsOptions,
+            seriesEvents = seriesOpts.events ||
+                {} as SeriesSonificationEventsOptions;
 
         return { // Chart options
             onEnd: seriesEvents.onSeriesEnd || chartEvents.onSeriesEnd,
@@ -394,7 +420,8 @@ namespace SeriesSonify {
                 chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
             ),
             masterVolume: chartOpts.masterVolume,
-            instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
+            // Deals with chart-level defaults
+            instruments: getSeriesInstrumentOptions(series),
             earcons: seriesOpts.earcons || chartOpts.earcons
         };
     }
@@ -529,7 +556,9 @@ namespace SeriesSonify {
 
         // Convert series options to PointInstrumentObjects and merge with
         // default options
-        return (seriesInstrOpts).map((optionSet): PointSonify.PointInstrument => {
+        return (seriesInstrOpts).map((
+            optionSet
+        ): PointSonify.PointInstrument => {
             // Allow setting option to null to use default
             removeNullsFromObject(optionSet.mapping || {});
             removeNullsFromObject(optionSet);
@@ -543,7 +572,10 @@ namespace SeriesSonify {
                     mapping: void 0,
                     instrument: void 0
                 }) as Partial<PointSonify.PointInstrumentOptions>,
-                instrumentMapping: merge(defaultInstrOpts.mapping, optionSet.mapping)
+                instrumentMapping: merge(
+                    defaultInstrOpts.mapping,
+                    optionSet.mapping
+                )
             };
         });
     }

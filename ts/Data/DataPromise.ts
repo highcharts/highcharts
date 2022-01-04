@@ -186,7 +186,8 @@ class DataPromise<T> implements Promise<T> {
                         const result = onrejected(reason);
                         if (result instanceof DataPromise) {
                             result.then(
-                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
+                                (value?: (
+                                    TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
                                     newPromise.resolved(value),
                                 (reason?: unknown): void =>
                                     newPromise.rejected(reason)
@@ -213,7 +214,8 @@ class DataPromise<T> implements Promise<T> {
                         const result = onfulfilled(value);
                         if (result instanceof DataPromise) {
                             result.then(
-                                (value?: (TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
+                                (value?: (
+                                    TResult1|TResult2|PromiseLike<(TResult1|TResult2)>)): void =>
                                     newPromise.resolved(value),
                                 (reason?: unknown): void =>
                                     newPromise.rejected(reason)

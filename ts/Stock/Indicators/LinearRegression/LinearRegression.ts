@@ -370,7 +370,10 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-SeriesRegistry.registerSeriesType('linearRegression', LinearRegressionIndicator);
+SeriesRegistry.registerSeriesType(
+    'linearRegression',
+    LinearRegressionIndicator
+);
 
 /* *
  *

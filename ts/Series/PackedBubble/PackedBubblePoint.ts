@@ -118,7 +118,9 @@ class PackedBubblePoint extends BubbleSeries.prototype.pointClass implements Hig
 
         if (this.isParentNode && seriesOptions.parentNode) {
             const temp = seriesOptions.allowPointSelect;
-            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            seriesOptions.allowPointSelect = (
+                seriesOptions.parentNode.allowPointSelect
+            );
             Point.prototype.firePointEvent.apply(this, arguments);
             seriesOptions.allowPointSelect = temp;
         } else {
