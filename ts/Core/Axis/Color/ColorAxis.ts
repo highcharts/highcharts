@@ -1021,23 +1021,18 @@ namespace ColorAxis {
 Array.prototype.push.apply(Axis.keepProps, ColorAxis.keepProps);
 
 addEvent(ColorAxis, 'afterGetOffset', function (): void { // (#15551)
-    if (this.coll === 'colorAxis') {
 
-        const legend = this.chart.legend;
+    const legend = this.chart.legend;
 
-        legend.allItems.forEach(function (item): void {
-            const isSeries = !(item as any).series,
-                series = !isSeries && (item as any).series.drawLegendSymbol ?
-                    (item as any).series :
-                    item;
+    legend.allItems.forEach(function (item): void {
+        // Drawing gives access to `maxLabelLength` used to adjust axis later.
+        if (item instanceof ColorAxis) {
+            item.drawLegendSymbol(legend, item);
+        }
+    });
 
-            // Gives access to `maxLabelLength`
-            series.drawLegendSymbol(legend, item);
-        });
-
-        legend.render();
-        this.chart.getMargins(true);
-    }
+    legend.render();
+    this.chart.getMargins(true);
 });
 
 /* *
