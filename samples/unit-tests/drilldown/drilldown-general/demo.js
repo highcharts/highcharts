@@ -229,7 +229,7 @@ QUnit.test('Drilldown methods', function (assert) {
         },
         data: [2, 5]
     });
-    Highcharts.fireEvent(chart.series[0].points[0].graphic.element, 'mouseover');
+    chart.series[0].points[0].onMouseOver();
     assert.ok(
         true,
         `Adding drill down series through mouseover should not
