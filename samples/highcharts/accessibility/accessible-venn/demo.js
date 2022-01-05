@@ -72,11 +72,12 @@ const chart = Highcharts.chart('container', {
         point: {
             events: {
                 mouseOver: function () {
-                    var point = this;
-                    var pointName = point.name;
-                    var category = pointName.split(',')[0];
+                    const point = this;
+                    const pointName = point.name;
+                    const category = pointName.split(',')[0];
 
                     clearTimeout(nextMouseOver);
+
                     nextMouseOver = setTimeout(function () {
                         getByClass('data-label').forEach(function (e) {
                             e.classList.remove('over');
@@ -92,6 +93,7 @@ const chart = Highcharts.chart('container', {
                             caption.classList.remove('visible');
                             label.classList.add('over');
                             getEl('aicon').classList.add('over');
+
                         }
                     }, 100);
                 }
@@ -344,7 +346,9 @@ getEl('after').addEventListener('focus', removeOverlay);
 
 getEl('removeOverlay').onclick = removeOverlay;
 
+
 // Venn code
+
 
 function removeHover() {
     getByClass('data-label').forEach(function (e) {
