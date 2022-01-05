@@ -40,6 +40,10 @@ const {
     win,
     doc
 } = H;
+import HU from '../../Core/HttpUtilities.js';
+const {
+    ajax
+} = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -94,6 +98,13 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
+interface PDFFontsBase64 {
+    bold?: string;
+    bolditalic?: string;
+    italic?: string;
+    normal?: string;
+}
+
 /* *
  *
  * Constants
@@ -101,6 +112,7 @@ declare module '../../Core/Chart/ChartLike' {
  * */
 
 const composedClasses: Array<Function> = [];
+const pdfFontsBase64: PDFFontsBase64 = {};
 
 /* *
  *
@@ -274,8 +286,7 @@ namespace OfflineExporting {
                     setStylePropertyFromParents(el, property);
                 });
                 if (pdfFont) {
-                    el.style['font-family' as any] +=
-                        ', ' + pdfFont.name;
+                    el.style['font-family' as any] += ', pdf-font';
                 }
                 el.style['font-family' as any] = (
                     el.style['font-family' as any] &&
@@ -354,9 +365,32 @@ namespace OfflineExporting {
                     getScript(libURL + 'svg2pdf.js', function (): void {
                         // Add new font if the URL is declared, #6417.
                         if (pdfFont) {
-                            getScript(pdfFont.url, function (): void {
-                                downloadPDF();
-                            });
+                            if (pdfFont.normal) {
+                                ajax({
+                                    url: pdfFont.normal.replace(
+                                        '{libURL}',
+                                        libURL
+                                    ),
+                                    responseType: 'blob',
+                                    success: (data, xhr): void => {
+                                        const reader = new FileReader();
+                                        reader.onloadend = function (): void {
+                                            if (
+                                                typeof this.result === 'string'
+                                            ) {
+                                                pdfFontsBase64.normal = (
+                                                    this.result.split(',')[1]
+                                                );
+                                            }
+
+                                            downloadPDF();
+                                        };
+
+                                        reader.readAsDataURL(xhr.response);
+                                    }
+                                });
+                            }
+
                         } else {
                             downloadPDF();
                         }
@@ -921,6 +955,7 @@ namespace OfflineExporting {
     ): void {
         const width = Number(svgElement.getAttribute('width')) + 2 * margin,
             height = Number(svgElement.getAttribute('height')) + 2 * margin,
+            pdfFont = options.pdfFont,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',
@@ -929,8 +964,17 @@ namespace OfflineExporting {
             );
 
         // Apply new font if the name set, #6417.
-        if (options.pdfFont && options.pdfFont.name) {
-            pdfDoc.setFont(options.pdfFont.name);
+        if (pdfFont && pdfFont.normal && pdfFontsBase64.normal) {
+            pdfDoc.addFileToVFS(
+                pdfFont.normal,
+                pdfFontsBase64.normal
+            );
+            pdfDoc.addFont(
+                pdfFont.normal,
+                'pdf-font',
+                'normal'
+            );
+            pdfDoc.setFont('pdf-font');
         }
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes

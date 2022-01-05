@@ -225,9 +225,20 @@ const exporting: ExportingOptions = {
     url: 'https://export.highcharts.com/',
 
     /**
-     * Settings for a custom font code file for the exported PDF. Useful when
-     * implementing a font which isn't supported by jsPDF. For example UTF-8,
-     * Chinese, Russian, Japanese etc.
+     * Settings for a custom font for the exported PDF. This is used for
+     * languages containing non-ASCII characters, like Chinese, Russian,
+     * Japanese etc.
+     *
+     * The default behaviour is to load fonts from the Highcharts CDN when
+     * non-ASCII characters are detected in the SVG. Font loading can be forced
+     * or disabled by setting the `enabled` option, or custom fonts can be
+     * loaded by setting your own file locations.
+     *
+     * The default font, [Noto
+     * Sans](https://fonts.google.com/noto/specimen/Noto+Sans), is a Google font
+     * designed to support all modern and ancient languages. The file is 533 kB,
+     * so in order to keep the weight down, it may be beneficial to replace it
+     * with a font that is more targeted at your specific language.
      *
      * See more in [the
      * docs](https://www.highcharts.com/docs/export-module/client-side-export).
@@ -248,33 +259,11 @@ const exporting: ExportingOptions = {
         enabled: void 0,
 
         /**
-        * The font name to apply. Use the same name as used in the jsPDF
-        * converter.
-        *
-        * @type      {string}
-        * @since     next
-        * @apioption exporting.pdfFont.name
+        * The TTF font file for normal `font-style`. By default, as per the
+        * `enabled` setting, a font file is loaded from the Highcharts CDN if
+        * there are non-ASCII characters in the SVG.
         */
-        name: 'NotoSans-Regular',
-
-        /**
-        * The font file that is created from jsPDF's [online font converter
-        * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
-        * By default, as per the `enabled` setting, a font file is loaded from
-        * the Highcharts CDN if there are non-ASCII characters in the SVG.
-        *
-        * The default font, [Noto
-        * Sans](https://fonts.google.com/noto/specimen/Noto+Sans), is a Google
-        * font designed to support all modern and ancient languages. The file is
-        * 533 kB, so in order to keep the weight down, it may be beneficial to
-        * replace it with a font that is more targeted at your specific
-        * language.
-        *
-        * @type      {string}
-        * @since     next
-        * @apioption exporting.pdfFont.url
-        */
-        url: 'https://code.highcharts.com/@product.version@/lib/fonts/NotoSans-Regular-normal.js'
+        normal: '{libURL}/fonts/NotoSans-Regular.ttf'
     },
 
     /**

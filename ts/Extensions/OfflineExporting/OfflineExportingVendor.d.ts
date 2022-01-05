@@ -44,6 +44,15 @@ declare global {
     }
     class jsPDF {
         constructor (a: string, b: string, c: Array<number>);
+        addFileToVFS(
+            filename: string,
+            data: string
+        ): void;
+        addFont(
+            filename: string,
+            name: string,
+            style: 'bold'|'bolditalic'|'italic'|'normal'
+        ): void;
         output: Function;
         setFont(fontFamily: string): void;
         svg (
