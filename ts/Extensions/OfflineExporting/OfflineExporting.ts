@@ -47,6 +47,7 @@ const {
     error,
     extend,
     fireEvent,
+    pick,
     merge
 } = U;
 
@@ -230,7 +231,9 @@ namespace OfflineExporting {
             libURL = (
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
-            objectURLRevoke = true;
+            objectURLRevoke = true,
+            pdfFont = options.pdfFont;
+
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
@@ -270,9 +273,9 @@ namespace OfflineExporting {
                 ): void {
                     setStylePropertyFromParents(el, property);
                 });
-                if (options.pdfFont && options.pdfFont.name) {
+                if (pdfFont) {
                     el.style['font-family' as any] +=
-                        ', ' + options.pdfFont.name;
+                        ', ' + pdfFont.name;
                 }
                 el.style['font-family' as any] = (
                     el.style['font-family' as any] &&
@@ -327,6 +330,19 @@ namespace OfflineExporting {
                 failCallback(e);
             }
         } else if (imageType === 'application/pdf') {
+
+            // If there are no non-ASCII characters in the SVG, do not use
+            // pdfFont
+            if (
+                pdfFont && !pick(
+                    pdfFont.enabled,
+                    // eslint-disable-next-line no-control-regex
+                    /[^\u0000-\u007F\u200B]+/u.test(svg)
+                )
+            ) {
+                pdfFont = void 0;
+            }
+
             if (win.jspdf && win.jspdf.jsPDF) {
                 downloadPDF();
             } else {
@@ -337,8 +353,8 @@ namespace OfflineExporting {
                 getScript(libURL + 'jspdf.js', function (): void {
                     getScript(libURL + 'svg2pdf.js', function (): void {
                         // Add new font if the URL is declared, #6417.
-                        if (options.pdfFont && options.pdfFont.url) {
-                            getScript(options.pdfFont.url, function (): void {
+                        if (pdfFont) {
+                            getScript(pdfFont.url, function (): void {
                                 downloadPDF();
                             });
                         } else {

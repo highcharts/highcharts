@@ -43,8 +43,9 @@ export interface ExportingOptions {
     libURL?: string;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     pdfFont?: {
-        name?: string;
-        url?: string
+        enabled?: boolean;
+        name: string;
+        url: string
     };
     printMaxWidth?: number;
     scale?: number;

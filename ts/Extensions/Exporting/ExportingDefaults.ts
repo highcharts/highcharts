@@ -225,7 +225,7 @@ const exporting: ExportingOptions = {
     url: 'https://export.highcharts.com/',
 
     /**
-     * Allows using a custom font code file for the exported PDF. Useful when
+     * Settings for a custom font code file for the exported PDF. Useful when
      * implementing a font which isn't supported by jsPDF. For example UTF-8,
      * Chinese, Russian, Japanese etc.
      *
@@ -239,30 +239,42 @@ const exporting: ExportingOptions = {
      * @requires modules/offline-exporting
      */
     pdfFont: {
+
         /**
-        * When `pdfFont.url` is set and a custom font added, use this property
-        * to apply that font to the exported PDF. Use the same name as used in
-        * the jsPDF converter.
+         * Whether to enable a custom PDF font. The default value is `undefined`
+         * which means the custom font will only be loaded and applied if there
+         * are non-ASCII characters in the SVG.
+         */
+        enabled: void 0,
+
+        /**
+        * The font name to apply. Use the same name as used in the jsPDF
+        * converter.
         *
         * @type      {string}
         * @since     next
         * @apioption exporting.pdfFont.name
         */
-        name: void 0,
+        name: 'NotoSans-Regular',
 
         /**
-        * When this is set, the external script-loading block for PDF is
-        * modified to also load the user-defined PDF font that is created from
-        * jsPDF's [online font converter
+        * The font file that is created from jsPDF's [online font converter
         * tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html).
-        * By default, no fonts are embedded in order to keep the bundle size
-        * down. The NotoSans-Regular file from the demo, for example, is 533 kB.
+        * By default, as per the `enabled` setting, a font file is loaded from
+        * the Highcharts CDN if there are non-ASCII characters in the SVG.
+        *
+        * The default font, [Noto
+        * Sans](https://fonts.google.com/noto/specimen/Noto+Sans), is a Google
+        * font designed to support all modern and ancient languages. The file is
+        * 533 kB, so in order to keep the weight down, it may be beneficial to
+        * replace it with a font that is more targeted at your specific
+        * language.
         *
         * @type      {string}
         * @since     next
         * @apioption exporting.pdfFont.url
         */
-        url: void 0
+        url: 'https://code.highcharts.com/@product.version@/lib/fonts/NotoSans-Regular-normal.js'
     },
 
     /**
