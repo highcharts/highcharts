@@ -114,6 +114,12 @@ class DependencyWheelPoint extends SankeyPoint {
             clockwise: +upperHalf
         });
 
+        if (this.dataLabelPath.r) {
+            label.css({
+                width: '' + (end - start) * this.dataLabelPath.r
+            });
+        }
+
         return this.dataLabelPath;
     }
 
