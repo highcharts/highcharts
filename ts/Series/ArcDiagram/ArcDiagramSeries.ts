@@ -66,7 +66,7 @@ class ArcDiagramSeries extends SankeySeries {
      * @since        next
      * @product      highcharts
      * @requires     modules/arc-diagram
-     * @optionparent plotOptions.sankey
+     * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
         nodeShape: 'circle',
@@ -545,7 +545,7 @@ export default ArcDiagramSeries;
  * An `arcdiagram` series. If the [type](#series.arcdiagram.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.sankey
+ * @extends   series,plotOptions.arcdiagram
  * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/sankey
@@ -558,7 +558,7 @@ export default ArcDiagramSeries;
  * diagram are auto-generated instances of `Highcharts.Point`, but options can
  * be applied here and linked by the `id`.
  *
- * @extends   series.sankey.nodes
+ * @extends   series.arcdiagram.nodes
  * @type      {Array<*>}
  * @product   highcharts
  * @excluding offset
@@ -587,7 +587,7 @@ export default ArcDiagramSeries;
  *  ```
  *
  * @type      {Array<*>}
- * @extends   series.sankey.data
+ * @extends   series.arcdiagram.data
  * @product   highcharts
  * @excluding outgoing, dataLabels
  * @apioption series.arcdiagram.data
