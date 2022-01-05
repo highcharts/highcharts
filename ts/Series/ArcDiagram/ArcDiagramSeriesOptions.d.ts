@@ -33,9 +33,10 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     equalNodes?: boolean;
     centeredLinks?: boolean;
     majorRadius?: number;
+    reversed: boolean;
     scale?: number;
     nodeShape?: string; // experimental
-    centerPos?: boolean;
+    centerPos?: string;
     linkWeight?: number;
 }
 

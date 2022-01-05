@@ -19,8 +19,8 @@
  * */
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
-
 import ArcDiagramPoint from './ArcDiagramPoint.js';
+
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -51,12 +51,6 @@ const {
  */
 class ArcDiagramSeries extends SankeySeries {
 
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
     /**
      *  Arc diagram series is a chart drawing style in which
      *  the vertices of the chart are positioned along a line
@@ -64,35 +58,27 @@ class ArcDiagramSeries extends SankeySeries {
      *  in one of the two half-planes delimited by the line,
      *  or as smooth curves formed by sequences of semicircles.
      *
-     * @sample highcharts/demo/dependency-wheel/
-     *         Dependency wheel
+     * @sample highcharts/demo/arc-diagram/
+     *         Arc Diagram
      *
      * @extends      plotOptions.sankey
      * @exclude      dataSorting
-     * @since        7.1.0
+     * @since        next
      * @product      highcharts
      * @requires     modules/arc-diagram
-     * @optionparent plotOptions.dependencywheel
+     * @optionparent plotOptions.sankey
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
+        nodeShape: 'circle',
         /**
-         * The center of the wheel relative to the plot area. Can be
-         * percentages or pixel values. The default behaviour is to
-         * center the wheel inside the plot area.
+         * Wheter the nodes with different values should have the same size.
          *
-         * @type    {Array<number|string|null>}
-         * @default [null, null]
+         * @type    {boolean}
+         * @since next
+         * @default false
          * @product highcharts
          */
-        center: [null, null],
-        curveFactor: 0.6,
-        nodeShape: 'circle',
-        equalNodes: false,
-
-        /**
-         * The start angle of the dependency wheel, in degrees where 0 is up.
-         */
-        startAngle: 0
+        equalNodes: false
     } as ArcDiagramSeriesOptions);
 
     /* *
@@ -117,7 +103,11 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
+    /**
+     * Create node columns by analyzing the nodes and the relations between
+     * incoming and outgoing links.
+     * @private
+     */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
             chart = series.chart,
@@ -180,7 +170,7 @@ class ArcDiagramSeries extends SankeySeries {
             // Re-insert original nodes
             column.length = 0;
             nodes.forEach((node): void => {
-                (node as any).scale = scale;
+                node.scale = scale;
                 column.push(node);
             });
             column.sankeyColumn.maxRadius = maxRadius;
@@ -247,22 +237,23 @@ class ArcDiagramSeries extends SankeySeries {
      * @private
      */
     public translateLink(point: ArcDiagramPoint): void {
-        const fromNode = point.fromNode,
+        const series = this,
+            fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
-            translationFactor = this.translationFactor,
+            translationFactor = series.translationFactor,
             pointOptions = point.options,
-            seriesOptions = this.options,
+            seriesOptions = series.options,
             linkWeight = pick(
                 pointOptions.linkWeight,
                 seriesOptions.linkWeight,
                 Math.max(
                     (point.weight || 0) *
                     translationFactor *
-                    (fromNode as any).scale,
-                    (this.options.minLinkWidth || 0)
+                    fromNode.scale,
+                    (series.options.minLinkWidth || 0)
                 )),
-            centeredLinks = (point.series.options as any).centeredLinks,
+            centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
 
         const getX = (
@@ -270,7 +261,7 @@ class ArcDiagramSeries extends SankeySeries {
             fromOrTo: string
         ): number => {
             const linkLeft = (
-                (node.offset(point, fromOrTo) as any) *
+                (node.offset(point, fromOrTo) || 0) *
                 translationFactor
             );
             const x = Math.min(
@@ -297,7 +288,7 @@ class ArcDiagramSeries extends SankeySeries {
             [fromX, toX] = [toX, fromX];
         }
 
-        if ((chart as any).options.chart.reversed) {
+        if (seriesOptions.reversed) {
             [fromX, toX] = [toX, fromX];
             bottom = (chart.plotSizeY || 0) - bottom;
             linkWidth = -linkWidth;
@@ -314,7 +305,7 @@ class ArcDiagramSeries extends SankeySeries {
         const majorRadius = (
             (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
         ) * pick(
-            (point.series.options as any).majorRadius,
+            seriesOptions.majorRadius,
             Math.min(
                 Math.abs(toX + linkWeight - fromX) / 2,
                 fromNode.nodeY - Math.abs(linkWeight)
@@ -347,7 +338,7 @@ class ArcDiagramSeries extends SankeySeries {
                 ],
                 ['Z']
             ]
-        } as any;
+        };
 
         point.dlBox = {
             x: nodeTop + (bottom - nodeTop) / 2,
@@ -382,18 +373,19 @@ class ArcDiagramSeries extends SankeySeries {
         node: ArcDiagramPoint,
         column: SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>
     ): void {
-        const translationFactor = this.translationFactor,
-            chart = this.chart,
+        const series = this,
+            translationFactor = series.translationFactor,
+            chart = series.chart,
             maxNodesLength = chart.inverted ?
                 chart.plotWidth : chart.plotHeight,
-            options = this.options,
+            options = series.options,
             maxRadius = Math.min(
                 chart.plotWidth,
                 chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
             sum = node.getSum() * (column.sankeyColumn.scale || 0),
-            equalNodes = (node.series.options as any).equalNodes,
+            equalNodes = options.equalNodes,
             nodeHeight = equalNodes ?
                 maxRadius :
                 Math.max(
@@ -403,14 +395,14 @@ class ArcDiagramSeries extends SankeySeries {
             crisp = Math.round(options.borderWidth || 0) % 2 / 2,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
             fromNodeLeft = Math.floor(pick(
-                (nodeOffset as any).absoluteLeft,
+                nodeOffset && nodeOffset.absoluteLeft,
                 (
-                    column.sankeyColumn.left(translationFactor) +
-                    (nodeOffset as any).relativeLeft
+                    (column.sankeyColumn.left(translationFactor) || 0) +
+                    (nodeOffset && nodeOffset.relativeLeft || 0)
                 )
             )) + crisp,
-            top = (options as any).centerPos ? // POC for centering the nodes
-                parseInt((options as any).centerPos, 10) *
+            top = options.centerPos ?
+                parseInt(options.centerPos, 10) *
                 (
                     (
                         chart.inverted ?
@@ -434,16 +426,17 @@ class ArcDiagramSeries extends SankeySeries {
         // If node sum is 0, don’t render the rect #12453
         if (sum) {
             // Draw the node
-            node.shapeType = (node.series.options as any).nodeShape;
+            node.shapeType = options.nodeShape;
             node.nodeX = fromNodeLeft;
             node.nodeY = top;
 
-            let x = fromNodeLeft,
-                y = top,
+            const x = fromNodeLeft,
                 width = node.options.width || options.width || nodeHeight,
                 height = node.options.height || options.height || nodeHeight;
 
-            if ((chart as any).options.chart.reversed) {
+            let y = top;
+
+            if (options.reversed) {
                 y = (chart.plotSizeY || 0) - top;
                 if (chart.inverted) {
                     y = (chart.plotSizeY || 0) - top;
@@ -549,19 +542,19 @@ export default ArcDiagramSeries;
  * */
 
 /**
- * A `dependencywheel` series. If the [type](#series.dependencywheel.type)
+ * An `arcdiagram` series. If the [type](#series.arcdiagram.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.dependencywheel
+ * @extends   series,plotOptions.sankey
  * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/sankey
- * @requires  modules/dependency-wheel
- * @apioption series.dependencywheel
+ * @requires  modules/arc-diagram
+ * @apioption series.arcdiagram
  */
 
 /**
- * A collection of options for the individual nodes. The nodes in a dependency
+ * A collection of options for the individual nodes. The nodes in an arc
  * diagram are auto-generated instances of `Highcharts.Point`, but options can
  * be applied here and linked by the `id`.
  *
@@ -569,11 +562,11 @@ export default ArcDiagramSeries;
  * @type      {Array<*>}
  * @product   highcharts
  * @excluding offset
- * @apioption series.dependencywheel.nodes
+ * @apioption series.arcdiagram.nodes
  */
 
 /**
- * An array of data points for the series. For the `dependencywheel` series
+ * An array of data points for the series. For the `arcdiagram` series
  * type, points can be given in the following way:
  *
  * An array of objects with named values. The following snippet shows only a
@@ -597,14 +590,14 @@ export default ArcDiagramSeries;
  * @extends   series.sankey.data
  * @product   highcharts
  * @excluding outgoing, dataLabels
- * @apioption series.dependencywheel.data
+ * @apioption series.arcdiagram.data
  */
 
 /**
  * Individual data label for each node. The options are the same as
- * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
+ * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
  *
- * @apioption series.dependencywheel.nodes.dataLabels
+ * @apioption series.arcdiagram.nodes.dataLabels
  */
 
 ''; // adds doclets above to the transpiled file

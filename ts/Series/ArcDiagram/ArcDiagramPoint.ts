@@ -66,6 +66,8 @@ class ArcDiagramPoint extends SankeyPoint {
 
     public series: ArcDiagramSeries = void 0 as any;
 
+    public scale: number = void 0 as any;
+
     public shapeArgs: SVGAttributes = void 0 as any;
 
     public toNode: ArcDiagramPoint = void 0 as any;
@@ -106,8 +108,12 @@ class ArcDiagramPoint extends SankeyPoint {
             x: shapeArgs.x,
             y: shapeArgs.y,
             r: (
-                shapeArgs.r +
-                ((this.dataLabel as any).options.distance || 0)
+                (
+                    shapeArgs.r || 0
+                ) + (
+                    this.dataLabel &&
+                    this.dataLabel.options.distance as number || 0
+                )
             ),
             start: (upperHalf ? start : end),
             end: (upperHalf ? end : start),

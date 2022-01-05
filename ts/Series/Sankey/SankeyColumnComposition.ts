@@ -16,19 +16,13 @@ namespace SankeyColumnComposition {
         sankeyColumn: SankeyColumnAdditions;
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
     /**
-     * Extends axis with stacking support.
+     * SankeyColumn Composition
      * @private
      * @function Highcharts.SankeyColumn#compose
      *
-     * @param {Array<SankeyPoint>} array
-     * The array of arrays of nodes
+     * @param {Array<SankeyPoint>} points
+     * The array of nodes
      * @param {SankeySeries} series
      * Series connected to column
      * @return {ArrayComposition} SankeyColumnArray
@@ -51,14 +45,14 @@ namespace SankeyColumnComposition {
     export class SankeyColumnAdditions {
 
         constructor(
-            array: ArrayComposition,
+            points: ArrayComposition,
             series: SankeySeries
         ) {
-            this.array = array;
+            this.points = points;
             this.series = series;
         }
 
-        public array: ArrayComposition;
+        public points: ArrayComposition;
 
         public maxLength?: number;
 
@@ -84,7 +78,7 @@ namespace SankeyColumnComposition {
             series: SankeySeries
         ): number {
 
-            const column = this.array,
+            const column = this.points,
                 nodes = column.slice(),
                 chart = series.chart,
                 minLinkWidth = series.options.minLinkWidth || 0;
@@ -93,8 +87,8 @@ namespace SankeyColumnComposition {
                 factor = 0,
                 i: number,
                 remainingHeight = (
-                    (chart.plotSizeY as any) -
-                    (series.options.borderWidth as any) -
+                    (chart.plotSizeY || 0) -
+                    (series.options.borderWidth || 0) -
                     (column.length - 1) * series.nodePadding
                 );
             // Because the minLinkWidth option doesn't obey the direct
@@ -127,19 +121,19 @@ namespace SankeyColumnComposition {
 
 
         /**
-         * Calculate translation factor used in column and nodes distribution
+         * Get the top position of the column in pixels
          * @private
          * @function Highcharts.SankeyColumn#top
          *
          * @param {number} factor
          * The Translation Factor
-         * @return {number} TranslationFactor
-         * Translation Factor
+         * @return {number} top
+         * The top position of the column
          */
         public top(factor: number): number {
             const series = this.series;
             const nodePadding = series.nodePadding;
-            const height = this.array.reduce(function (
+            const height = this.points.reduce(function (
                 height: number,
                 node: SankeyPoint
             ): number {
@@ -148,7 +142,7 @@ namespace SankeyColumnComposition {
                 }
                 const nodeHeight = Math.max(
                     node.getSum() * factor,
-                    series.options.minLinkWidth as any
+                    series.options.minLinkWidth || 0
                 );
                 height += nodeHeight;
                 return height;
@@ -158,14 +152,14 @@ namespace SankeyColumnComposition {
 
 
         /**
-         * Calculate translation factor used in column and nodes distribution
+         * Get the left position of the column in pixels
          * @private
          * @function Highcharts.SankeyColumn#top
          *
          * @param {number} factor
          * The Translation Factor
-         * @return {number} TranslationFactor
-         * Translation Factor
+         * @return {number} left
+         * The left position of the column
          */
         public left(factor: number): number {
             const series = this.series,
@@ -174,7 +168,7 @@ namespace SankeyColumnComposition {
             const maxNodesLength = chart.inverted ?
                     chart.plotHeight : chart.plotWidth,
                 nodePadding = series.nodePadding;
-            const width = this.array.reduce(function (
+            const width = this.points.reduce(function (
                 width: number,
                 node: SankeyPoint
             ): number {
@@ -185,12 +179,12 @@ namespace SankeyColumnComposition {
                     maxNodesLength / node.series.nodes.length - nodePadding :
                     Math.max(
                         node.getSum() * factor,
-                        series.options.minLinkWidth as any
+                        series.options.minLinkWidth || 0
                     );
                 width += nodeWidth;
                 return width;
             }, 0);
-            return ((chart.plotSizeX as any) - Math.round(width)) / 2;
+            return ((chart.plotSizeX || 0) - Math.round(width)) / 2;
         }
 
 
@@ -206,7 +200,7 @@ namespace SankeyColumnComposition {
          * Sum of all nodes inside column
          */
         public sum(this: SankeyColumnAdditions): number {
-            return this.array.reduce(function (
+            return this.points.reduce(function (
                 sum: number,
                 node: SankeyPoint
             ): number {
@@ -230,7 +224,7 @@ namespace SankeyColumnComposition {
             node: SankeyPoint,
             factor: number
         ): (Record<string, number>|undefined) {
-            const column = this.array,
+            const column = this.points,
                 series = this.series,
                 nodePadding = series.nodePadding;
 
