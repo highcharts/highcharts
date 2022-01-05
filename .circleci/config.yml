@@ -396,7 +396,8 @@ jobs:
             npx karma start test/karma-conf.js --tests gantt/*/* --single-run
             --splitbrowsers << parameters.browsers >> --browsercount 1 --visualcompare --no-fail-on-empty-test-suite --no-fail-on-failing-test-suite
           when: always
-      - run: "sudo apt-get install -y librsvg2-bin"
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y librsvg2-bin
       - run:
           name: "Generate PNGs and diff"
           command: |
