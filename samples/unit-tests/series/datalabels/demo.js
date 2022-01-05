@@ -70,7 +70,7 @@ QUnit.test('Bottom -90', function (assert) {
         chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
         'Labels are visible'
     );
-    assert.strictEqual(
+    assert.close(
         Math.round(
             chart.series[0].points[0].dataLabel.element.getBoundingClientRect()
                 .bottom
@@ -79,6 +79,7 @@ QUnit.test('Bottom -90', function (assert) {
             chart.series[0].points[1].dataLabel.element.getBoundingClientRect()
                 .bottom
         ),
+        1.1,
         'Labels are equally bottom aligned'
     );
 });
