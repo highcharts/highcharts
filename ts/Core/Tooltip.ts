@@ -1046,7 +1046,7 @@ class Tooltip {
             return;
         }
 
-        U.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
