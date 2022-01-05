@@ -19,18 +19,16 @@
  * */
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
-import type SankeySeriesType from '../Sankey/SankeySeries';
-import DependencyWheelPoint from '../DependencyWheel/DependencyWheelPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+import ArcDiagramPoint from './ArcDiagramPoint.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import ArcDiagramPoint from './ArcDiagramPoint';
-import SankeyPoint from '../Sankey/SankeyPoint';
 const {
     extend,
     merge,
@@ -107,7 +105,7 @@ class ArcDiagramSeries extends SankeySeries {
 
     public options: ArcDiagramSeriesOptions = void 0 as any;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = void 0 as any;
+    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> = void 0 as any;
 
     public nodes: Array<ArcDiagramPoint> = void 0 as any;
 
@@ -124,7 +122,7 @@ class ArcDiagramSeries extends SankeySeries {
         const series = this,
             chart = series.chart,
             // column needs casting, to much methods required at the same time
-            column = SankeyColumnComposition.compose([], this) as SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>;
+            column = SankeyColumnComposition.compose([] as Array<ArcDiagramPoint>, series);
 
         column.sankeyColumn.maxLength = chart.inverted ?
             chart.plotHeight : chart.plotWidth;
@@ -516,7 +514,7 @@ class ArcDiagramSeries extends SankeySeries {
 
 interface ArcDiagramSeries {
     orderNodes: boolean;
-    pointClass: typeof DependencyWheelPoint;
+    pointClass: typeof ArcDiagramPoint;
 }
 extend(ArcDiagramSeries.prototype, {
     orderNodes: false
@@ -533,7 +531,7 @@ declare module '../../Core/Series/SeriesType' {
         arcdiagram: typeof ArcDiagramSeries;
     }
 }
-ArcDiagramSeries.prototype.pointClass = DependencyWheelPoint;
+ArcDiagramSeries.prototype.pointClass = ArcDiagramPoint;
 SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
 
 /* *

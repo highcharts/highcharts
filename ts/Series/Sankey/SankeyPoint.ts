@@ -30,13 +30,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import ArcDiagramSeries from '../ArcDiagram/ArcDiagramSeries';
-import DependencyWheelSeries from '../DependencyWheel/DependencyWheelSeries';
-import OrganizationSeries from '../Organization/OrganizationSeries';
-const {
-    defined,
-    extend
-} = U;
+const { defined } = U;
 
 /* *
  *
@@ -78,11 +72,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public outgoing?: boolean;
 
-    public series:
-    SankeySeries|
-    ArcDiagramSeries|
-    DependencyWheelSeries|
-    OrganizationSeries = void 0 as any;
+    public series: SankeySeries = void 0 as any;
 
     public sum?: number;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  Dependency wheel module
+ *  Arc diagram module
  *
  *  (c) 2018-2021 Torstein Honsi
  *
@@ -18,22 +18,24 @@
  *
  * */
 
-import type DependencyWheelPointOptions from './../DependencyWheel/DependencyWheelPointOptions';
+import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
+import ArcDiagramSeries from './ArcDiagramSeries';
 import NodesComposition from '../NodesComposition.js';
-
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sankey: SankeySeries
+        sankey: {
+            prototype: {
+                pointClass: SankeyPoint
+            }
+        }
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import ArcDiagramSeries from './ArcDiagramSeries';
-import SankeyPoint from '../Sankey/SankeyPoint';
 const { extend } = U;
 
 /* *
@@ -60,7 +62,7 @@ class ArcDiagramPoint extends SankeyPoint {
 
     public linksTo: Array<ArcDiagramPoint> = void 0 as any;
 
-    public options: DependencyWheelPointOptions = void 0 as any;
+    public options: ArcDiagramPointOptions = void 0 as any;
 
     public series: ArcDiagramSeries = void 0 as any;
 
