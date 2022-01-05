@@ -1630,7 +1630,7 @@ export default Point;
  */
 
 /**
- * Configuration hash for the data label and tooltip formatters.
+ * Configuration for the data label and tooltip formatters.
  *
  * @interface Highcharts.PointLabelObject
  *//**
