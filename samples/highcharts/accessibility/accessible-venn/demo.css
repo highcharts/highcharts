@@ -166,8 +166,6 @@ body {
 .data-label h4 {
     font-weight: normal;
     display: none;
-
-    /* text-shadow: 0 0 3px rgb(255 255 255 / 50%); */
     font-size: 16px;
     margin: 0 0 5px;
 }
@@ -183,8 +181,6 @@ body {
     margin: 0;
     padding: 0;
     white-space: normal;
-
-    /* text-shadow: 0 0 3px rgb(255 255 255 / 50%); */
 }
 
 .data-label .info {
@@ -259,22 +255,25 @@ body {
     margin-left: 20px;
 }
 
-#legal-icon::before {
-    content: "";
+#legal-icon {
     left: -30px;
     position: absolute;
     width: 50px;
     height: 50px;
-    background: url(risk.png) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/risk.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
 }
 
-#legal.over #legal-icon::before {
+#legal.over #legal-icon {
+    animation: rain 3s steps(5, end);
     left: 140px;
     top: 10px;
     height: 100px;
     width: 100px;
     transform: translate(-30px, -10px);
-    background: url(risk.gif) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/risk-s.png);
+    background-position: 0 -600;
 }
 
 #legal.over {
@@ -371,21 +370,26 @@ body {
     color: #000;
 }
 
-#innovation-icon::before {
-    content: "";
+#innovation-icon {
     left: 130px;
     top: 170px;
     position: absolute;
     width: 50px;
     height: 50px;
-    background: url(innovation.png) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/innovation.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
 }
 
-#innovation.over #innovation-icon::before {
-    transform: translate(-30px, -10px);
-    background: url(innovation.gif) no-repeat;
+#innovation.over #innovation-icon {
+    animation: rocket 0.8s steps(4, jump-none) forwards;
+    transform: translate(-30px, -12px);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/innovation-s.png);
+    background-position: 0 -600px;
+    background-repeat: no-repeat;
     height: 94px;
     width: 100px;
+    position: absolute;
 }
 
 #brand {
@@ -407,20 +411,26 @@ body {
     color: #000;
 }
 
-#brand-icon::before {
+#brand-icon {
     content: "";
     left: 40px;
     position: absolute;
     width: 50px;
     height: 50px;
-    background: url(brand.png) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/brand.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
 }
 
-#brand.over #brand-icon::before {
+#brand.over #brand-icon {
+    animation: gem 3s steps(12, end);
     left: 130px;
     top: 10px;
-    transform: translateY(10px) scale(1.4);
-    background: url(brand.gif) no-repeat;
+    height: 100px;
+    width: 100px;
+    transform: translate(-24px, 0) scale(0.8);
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/brand-s.png);
+    background-position: 0 -1200px;
 }
 
 #brand.over h4 {
@@ -450,22 +460,25 @@ body {
     color: #fff;
 }
 
-#reach-icon::before {
-    content: "";
+#reach-icon {
     left: 125px;
     top: 40px;
     position: absolute;
     width: 50px;
     height: 50px;
-    background: url(reach.png) no-repeat;
+    background: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/reach.png);
+    background-repeat: no-repeat;
+    background-position: 0 0;
 }
 
-#reach.over #reach-icon::before {
-    transform: translate(-20px, -10px);
+#reach.over #reach-icon {
+    animation: globe 1s steps(5, end);
+    transform: translate(-20px, -15px);
     top: 70px;
     width: 100px;
     height: 100px;
-    background: url(reach.gif) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/c922f9992ff5ac6598a8f3e61c84189869754bf3/samples/graphics/accessible-venn-images/reach-s.png);
+    background-position: 0 -500;
 }
 
 #reach.over p {
@@ -490,7 +503,9 @@ body {
     top: -40px;
     position: absolute;
     transform: scale(0.9);
-    background: url(a11y.png) no-repeat;
+    background-image: url(https://cdn.rawgit.com/highcharts/highcharts/41c01aa756da48ce175cd11466c790470d32cd75/samples/graphics/accessible-venn-images/a11y.png);
+    background-position: 0 0;
+    background-repeat: no-repeat;
 }
 
 /* #aicon.over #aicon-icon::before {
@@ -523,5 +538,45 @@ body {
 @media (max-width: 575px) {
     .btn {
         min-width: 140px;
+    }
+}
+
+@keyframes rocket {
+    from {
+        background-position: 0 -600;
+    }
+
+    to {
+        background-position: 0 0;
+    }
+}
+
+@keyframes gem {
+    0% {
+        background-position: 0 -1200px;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+@keyframes rain {
+    0% {
+        background-position: 0 -500px;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+@keyframes globe {
+    0% {
+        background-position: 0 -500px;
+    }
+
+    100% {
+        background-position: 0 0;
     }
 }
