@@ -602,12 +602,10 @@ function syncTimeout(
  *
  * @function Highcharts.clearTimeout
  *
- * @param {number} id
- *        Id of a timeout.
- *
- * @return {void}
+ * @param {number|undefined} id
+ * Id of a timeout.
  */
-function internalClearTimeout(id: number): void {
+function internalClearTimeout(id: (number|undefined)): void {
     if (defined(id)) {
         clearTimeout(id);
     }
