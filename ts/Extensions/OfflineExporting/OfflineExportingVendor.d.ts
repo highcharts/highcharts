@@ -42,16 +42,33 @@ declare global {
     interface jspdf {
         jsPDF: typeof jsPDF;
     }
+
+    interface JsPDFEventFunction {
+        (
+            this: jsPDF
+        ): void
+    }
+
+    interface JsPDFEvent {
+        0: string;
+        1: JsPDFEventFunction;
+    }
+
+    interface JsPDFAPI {
+        events: JsPDFEvent[];
+    }
     class jsPDF {
+        static API: JsPDFAPI;
         constructor (a: string, b: string, c: Array<number>);
         addFileToVFS(
             filename: string,
             data: string
         ): void;
         addFont(
-            filename: string,
-            name: string,
-            style: 'bold'|'bolditalic'|'italic'|'normal'
+            postScriptName: string,
+            id: string,
+            fontStyle: 'bold'|'bolditalic'|'italic'|'normal',
+            fontWeight?: number|string
         ): void;
         output: Function;
         setFont(fontFamily: string): void;

@@ -252,18 +252,34 @@ const exporting: ExportingOptions = {
     pdfFont: {
 
         /**
-         * Whether to enable a custom PDF font. The default value is `undefined`
-         * which means the custom font will only be loaded and applied if there
-         * are non-ASCII characters in the SVG.
+         * Whether to enable a custom PDF font. Setting it to `undefined` makes
+         * sure the font files are loaded and applied on demand, only if there
+         * are non-ASCII characters in the SVG. Setting it to `true` forces the
+         * font file download regardless of content.
          */
-        enabled: void 0,
+        enabled: false,
 
         /**
         * The TTF font file for normal `font-style`. By default, as per the
         * `enabled` setting, a font file is loaded from the Highcharts CDN if
         * there are non-ASCII characters in the SVG.
         */
-        normal: '{libURL}/fonts/NotoSans-Regular.ttf'
+        normal: '{libURL}/fonts/NotoSans-Regular.ttf',
+
+        /**
+        * The TTF font file for bold text.
+        */
+        bold: '{libURL}/fonts/NotoSans-Bold.ttf',
+
+        /**
+         * The TTF font file for bold and italic text.
+         */
+        bolditalic: '{libURL}/fonts/NotoSans-BoldItalic.ttf',
+
+        /**
+         * The TTF font file for italic text.
+         */
+        italic: '{libURL}/fonts/NotoSans-Italic.ttf'
     },
 
     /**

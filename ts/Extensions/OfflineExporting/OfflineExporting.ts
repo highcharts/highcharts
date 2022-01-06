@@ -98,13 +98,6 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
-interface PDFFontsBase64 {
-    bold?: string;
-    bolditalic?: string;
-    italic?: string;
-    normal?: string;
-}
-
 /* *
  *
  * Constants
@@ -112,7 +105,6 @@ interface PDFFontsBase64 {
  * */
 
 const composedClasses: Array<Function> = [];
-const pdfFontsBase64: PDFFontsBase64 = {};
 
 /* *
  *
@@ -250,6 +242,121 @@ namespace OfflineExporting {
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
         /*
+         * Detect if and to what extent we need to load TTF fonts for the PDF,
+         * then load them and proceed.
+         * @private
+         */
+        const loadPdfFonts = (
+            svgElement: SVGElement,
+            callback: Function
+        ): void => {
+
+            const hasNonASCII = (s: string): boolean => (
+                // eslint-disable-next-line no-control-regex
+                /[^\u0000-\u007F\u200B]+/u.test(s)
+            );
+
+            const addFont = (
+                variant: 'bold'|'bolditalic'|'italic'|'normal',
+                base64: string
+            ): void => {
+                win.jspdf.jsPDF.API.events.push([
+                    'initialized',
+                    function (): void {
+                        this.addFileToVFS(variant, base64);
+                        this.addFont(variant, 'HighchartsFont', variant);
+                        this.setFont('HighchartsFont');
+                    }
+                ]);
+            };
+
+            interface FontLabelsNeeded {
+                bold?: 1;
+                bolditalic?: 1;
+                italic?: 1;
+                normal?: 1;
+            }
+            const fontLabelsNeeded: FontLabelsNeeded = {};
+
+            // If there are no non-ASCII characters in the SVG, do not use
+            // pdfFont
+            if (
+                pdfFont && !pick(
+                    pdfFont.enabled,
+                    hasNonASCII(svgElement.textContent || '')
+                )
+            ) {
+                pdfFont = void 0;
+            }
+
+            // For each font label, detect if there is an element with non-ASCII
+            // characters that require we load that font.
+            svgElement.style.position = 'absolute';
+            svgElement.style.top = '-999em';
+            doc.body.appendChild(svgElement);
+            [].forEach.call(svgElement.querySelectorAll('text,tspan'), (
+                node: SVGElement
+            ): void => {
+                const style = win.getComputedStyle(node, null),
+                    hasNon = node.textContent && hasNonASCII(node.textContent),
+                    bold = (
+                        (
+                            style.fontWeight === '700' ||
+                            style.fontWeight === 'bold'
+                        ) &&
+                        hasNon
+                    ),
+                    italic = style.fontStyle === 'italic' && hasNon;
+
+                if (bold && italic) {
+                    fontLabelsNeeded.bolditalic = 1;
+                } else if (bold) {
+                    fontLabelsNeeded.bold = 1;
+                } else if (italic) {
+                    fontLabelsNeeded.italic = 1;
+                } else if (hasNon) {
+                    fontLabelsNeeded.normal = 1;
+                }
+            });
+            doc.body.removeChild(svgElement);
+
+            // Add new font if the URL is declared, #6417.
+            const fontVariants = Object.keys(
+                fontLabelsNeeded
+            ) as ('bold'|'bolditalic'|'italic'|'normal')[];
+            let pending = fontVariants.length;
+            fontVariants.forEach((variant): void => {
+                const url = pdfFont && pdfFont[variant];
+                if (url) {
+                    ajax({
+                        url: url.replace('{libURL}', libURL),
+                        responseType: 'blob',
+                        success: (data, xhr): void => {
+                            const reader = new FileReader();
+                            reader.onloadend = function (): void {
+                                if (typeof this.result === 'string') {
+                                    addFont(variant, this.result.split(',')[1]);
+                                }
+                                pending--;
+                                if (pending === 0) {
+                                    return callback();
+                                }
+                            };
+
+                            reader.readAsDataURL(xhr.response);
+                        },
+                        error: ():number => pending--
+                    });
+                } else {
+                    pending--;
+                }
+            });
+            if (pending === 0) {
+                return callback();
+            }
+        };
+
+        /*
          * @private
          */
         const downloadPDF = (): void => {
@@ -278,20 +385,20 @@ namespace OfflineExporting {
             // Workaround for the text styling. Making sure it does pick up
             // settings for parent elements.
             [].forEach.call(textElements, function (el: SVGDOMElement): void {
-                // Workaround for the text styling. making sure it does pick up@
+                // Workaround for the text styling. making sure it does pick up
                 // the root element
                 ['font-family', 'font-size'].forEach(function (
                     property: string
                 ): void {
                     setStylePropertyFromParents(el, property);
                 });
-                if (pdfFont) {
-                    el.style['font-family' as any] += ', pdf-font';
-                }
-                el.style['font-family' as any] = (
-                    el.style['font-family' as any] &&
-                    el.style['font-family' as any].split(' ').splice(-1)
-                ) as any;
+
+                el.style['font-family' as any] = pdfFont ?
+                    'HighchartsFont' :
+                    (
+                        el.style['font-family' as any] &&
+                        el.style['font-family' as any].split(' ').splice(-1)
+                    ) as any;
 
                 // Workaround for plotband with width, removing title from text
                 // nodes
@@ -303,21 +410,26 @@ namespace OfflineExporting {
                 });
             });
 
-            svgToPdf(
-                dummySVGContainer.firstChild as any,
-                0,
-                options,
-                (pdfData: string): void => {
-                    try {
-                        downloadURL(pdfData, filename);
-                        if (successCallback) {
-                            successCallback();
+            const svgNode = dummySVGContainer.querySelector('svg');
+            if (svgNode) {
+                loadPdfFonts(svgNode, (): void => {
+                    svgToPdf(
+                        svgNode,
+                        0,
+                        options,
+                        (pdfData: string): void => {
+                            try {
+                                downloadURL(pdfData, filename);
+                                if (successCallback) {
+                                    successCallback();
+                                }
+                            } catch (e) {
+                                failCallback(e);
+                            }
                         }
-                    } catch (e) {
-                        failCallback(e);
-                    }
-                }
-            );
+                    );
+                });
+            }
 
         };
 
@@ -342,18 +454,6 @@ namespace OfflineExporting {
             }
         } else if (imageType === 'application/pdf') {
 
-            // If there are no non-ASCII characters in the SVG, do not use
-            // pdfFont
-            if (
-                pdfFont && !pick(
-                    pdfFont.enabled,
-                    // eslint-disable-next-line no-control-regex
-                    /[^\u0000-\u007F\u200B]+/u.test(svg)
-                )
-            ) {
-                pdfFont = void 0;
-            }
-
             if (win.jspdf && win.jspdf.jsPDF) {
                 downloadPDF();
             } else {
@@ -362,39 +462,7 @@ namespace OfflineExporting {
                 // solution would be nice, but this will do for now.
                 objectURLRevoke = true;
                 getScript(libURL + 'jspdf.js', function (): void {
-                    getScript(libURL + 'svg2pdf.js', function (): void {
-                        // Add new font if the URL is declared, #6417.
-                        if (pdfFont) {
-                            if (pdfFont.normal) {
-                                ajax({
-                                    url: pdfFont.normal.replace(
-                                        '{libURL}',
-                                        libURL
-                                    ),
-                                    responseType: 'blob',
-                                    success: (data, xhr): void => {
-                                        const reader = new FileReader();
-                                        reader.onloadend = function (): void {
-                                            if (
-                                                typeof this.result === 'string'
-                                            ) {
-                                                pdfFontsBase64.normal = (
-                                                    this.result.split(',')[1]
-                                                );
-                                            }
-
-                                            downloadPDF();
-                                        };
-
-                                        reader.readAsDataURL(xhr.response);
-                                    }
-                                });
-                            }
-
-                        } else {
-                            downloadPDF();
-                        }
-                    });
+                    getScript(libURL + 'svg2pdf.js', downloadPDF);
                 });
             }
         } else {
@@ -964,6 +1032,7 @@ namespace OfflineExporting {
             );
 
         // Apply new font if the name set, #6417.
+        /*
         if (pdfFont && pdfFont.normal && pdfFontsBase64.normal) {
             pdfDoc.addFileToVFS(
                 pdfFont.normal,
@@ -976,6 +1045,7 @@ namespace OfflineExporting {
             );
             pdfDoc.setFont('pdf-font');
         }
+        */
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
