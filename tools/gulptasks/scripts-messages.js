@@ -33,7 +33,7 @@ const htmlEscapeTable = {
         replacement: '&gt;'
     }
 };
-const parseMarkdownCRLF = /\r\n|'\r/;
+const parseMarkdownCRLF = /\r\n|\r/;
 const parseMarkdownBlockCode = /(?:^|\r\n|\n|\r)```(\w*)([\s\S]+?)[\n\r]+```/;
 const parseMarkdownCode = /`([^`\s](?:[^`]|\s)*?)`/;
 const parseMarkdownHeadline = /(?:^|\r\n|\n|\r)(#{1,5})([^\n\r]*)\1?/;
