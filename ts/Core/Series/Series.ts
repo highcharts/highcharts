@@ -2325,7 +2325,6 @@ class Series {
             // some API data
             point.category = (
                 categories &&
-                point.x !== null &&
                 typeof categories[point.x] !== 'undefined' ?
                     categories[point.x] :
                     point.x as any
