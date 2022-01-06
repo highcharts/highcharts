@@ -236,7 +236,7 @@ class Point {
      */
     public visible: boolean = true;
 
-    public x: (number|null) = void 0 as any;
+    public x: number = void 0 as any;
 
     public y?: (number|null);
 
