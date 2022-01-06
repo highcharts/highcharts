@@ -1570,7 +1570,7 @@ namespace Point {
         plural: Array<string>;
     }
     export interface PointLabelObject {
-        x?: string;
+        x?: (number|string);
         y?: (number|null);
         color?: ColorType;
         colorIndex?: number;
@@ -1672,7 +1672,7 @@ export default Point;
  *//**
  * The y value of the point.
  * @name Highcharts.PointLabelObject#y
- * @type {number|undefined}
+ * @type {number|null|undefined}
  */
 
 /**
