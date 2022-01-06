@@ -2188,8 +2188,10 @@ class Series {
             }
 
             /**
-             * This is the translated X value for the point. Depending
-             * on the series type this value might not be defined.
+             * The translated X value for the point in terms of pixels. Relative
+             * to the X axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
@@ -2287,8 +2289,10 @@ class Series {
                 );
                 if (typeof translated !== 'undefined') {
                     /**
-                     * This is the translated Y value for the point. Depending
-                     * on the series type this value might not be defined.
+                     * The translated Y value for the point in terms of pixels.
+                     * Relative to the Y axis position if the series has one,
+                     * otherwise relative to the plot area. Depending on the
+                     * series type this value might not be defined.
                      * @name Highcharts.Point#plotY
                      * @type {number|undefined}
                      */
