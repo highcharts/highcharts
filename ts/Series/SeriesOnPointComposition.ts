@@ -18,6 +18,8 @@
 
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { pie } = SeriesRegistry.seriesTypes;
 
 import U from '../Core/Utilities.js';
 const {
@@ -103,9 +105,11 @@ namespace SeriesOnPointComposition {
         // PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
         if (composedClasses.indexOf(SeriesClass) === -1) {
-            composedClasses.push(SeriesClass);
 
+            composedClasses.push(SeriesClass);
+            pie.prototype.getCenter = getCenter;
             // const seriesProto = SeriesClass.prototype as SeriesComposition;
+            // seriesProto.setCompare = seriesSetCompare;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
 
@@ -131,6 +135,12 @@ namespace SeriesOnPointComposition {
         }
 
         this.seriesOnPoint = seriesOnPoint;
+    }
+
+    function getCenter(this: any): any {
+        const connectedPoint = this.chart.get(this.options.onPoint.id);
+
+        return [connectedPoint.plotX, connectedPoint.plotY, 50, 0];
     }
 
     /* *

@@ -129,6 +129,8 @@ namespace CenteredUtilities {
         if (positions[3] > positions[2]) {
             positions[3] = positions[2];
         }
+
+        // Here is the original method
         return positions;
     }
 
