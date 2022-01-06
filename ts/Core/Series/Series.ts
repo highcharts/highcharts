@@ -2302,9 +2302,10 @@ class Series {
             // some API data
             point.category = (
                 categories &&
-                typeof (categories as any)[point.x as any] !== 'undefined' ?
-                    (categories as any)[point.x as any] :
-                    point.x
+                point.x !== null &&
+                typeof categories[point.x] !== 'undefined' ?
+                    categories[point.x] :
+                    point.x as any
             );
 
             // Determine auto enabling of markers (#3635, #5099)
