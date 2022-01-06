@@ -115,6 +115,13 @@ declare module '../Renderer/SVG/SVGElementLike' {
     }
 }
 
+declare module './PointLike' {
+    interface PointLike {
+        plotX?: number;
+        plotY?: number;
+    }
+}
+
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -2180,8 +2187,14 @@ class Series {
                 point.isNull = true;
             }
 
-            // Get the plotX translation
+            /**
+             * This is the translated X value for the point. Depending
+             * on the series type this value might not be defined.
+             * @name Highcharts.Point#plotX
+             * @type {number|undefined}
+             */
             point.plotX = plotX = correctFloat( // #5236
+                // Get the plotX translation
                 limitedRange((xAxis.translate as any)( // #3923
                     xValue,
                     0,
@@ -2273,6 +2286,12 @@ class Series {
                     yValue, false, true, false, true
                 );
                 if (typeof translated !== 'undefined') {
+                    /**
+                     * This is the translated Y value for the point. Depending
+                     * on the series type this value might not be defined.
+                     * @name Highcharts.Point#plotY
+                     * @type {number|undefined}
+                     */
                     point.plotY = limitedRange(translated);
                 }
             }
