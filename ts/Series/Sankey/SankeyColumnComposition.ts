@@ -2,7 +2,10 @@ import type SankeySeries from './SankeySeries';
 import type SankeyPoint from './SankeyPoint';
 
 import U from '../../Core/Utilities.js';
-const { relativeLength } = U;
+const {
+    defined,
+    relativeLength
+} = U;
 
 namespace SankeyColumnComposition {
 
@@ -231,12 +234,24 @@ namespace SankeyColumnComposition {
             let offset = 0,
                 totalNodeOffset;
 
+            if (series.is('organization') && node.hangsFrom) {
+                return {
+                    absoluteTop: node.hangsFrom.nodeY
+                };
+            }
+
             for (let i = 0; i < column.length; i++) {
                 const sum = column[i].getSum();
                 const height = Math.max(
                     sum * factor,
                     series.options.minLinkWidth || 0
                 );
+                const directionOffset = node.options[
+                        series.chart.inverted ?
+                            'offsetHorizontal' :
+                            'offsetVertical'
+                    ],
+                    optionOffset = node.options.offset || 0;
 
                 if (sum) {
                     totalNodeOffset = height + nodePadding;
@@ -246,9 +261,15 @@ namespace SankeyColumnComposition {
                 }
                 if (column[i] === node) {
                     return {
-                        relativeTop: offset + relativeLength(
-                            node.options.offset || 0,
-                            totalNodeOffset
+                        relativeTop: offset + (
+                            defined(directionOffset) ?
+                                // directionOffset is a percent
+                                // of the node height
+                                relativeLength(directionOffset, height) :
+                                relativeLength(
+                                    optionOffset,
+                                    totalNodeOffset
+                                )
                         )
                     };
                 }

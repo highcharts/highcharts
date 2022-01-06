@@ -455,33 +455,6 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
-    public createNodeColumn(): SankeyColumnComposition.ArrayComposition<OrganizationPoint> {
-        const column: SankeyColumnComposition.ArrayComposition<OrganizationPoint> =
-            SankeyColumnComposition.compose([], this) as SankeyColumnComposition.ArrayComposition<OrganizationPoint>;
-
-        // Wrap the offset function so that the hanging node's children are
-        // aligned to their parent
-        wrap(column.sankeyColumn, 'offset', function (
-            this: OrganizationPoint,
-            proceed: SankeyColumnComposition.SankeyColumnAdditions['offset'],
-            node: OrganizationPoint,
-            factor: number
-        ): (Record<string, number>|undefined) {
-            const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
-
-            // Modify the default output if the parent's layout is 'hanging'
-            if (node.hangsFrom) {
-                return {
-                    absoluteTop: node.hangsFrom.nodeY
-                };
-            }
-
-            return offset;
-        });
-
-        return column;
-    }
-
     public pointAttribs(
         point: OrganizationPoint,
         state?: StatesOptionsKey
