@@ -1607,7 +1607,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
-            updatingNames = xAxis.categories && !xAxis.names.length;
+            updatingNames = !!(xAxis.categories && !xAxis.names.length);
         }
 
         // optionally filter out points outside the plot area
@@ -2323,11 +2323,9 @@ class Series {
             );
 
             // some API data
-            point.category = (
-                categories &&
-                typeof categories[point.x] !== 'undefined' ?
-                    categories[point.x] :
-                    point.x as any
+            point.category = pick(
+                categories && categories[point.x],
+                point.x as any
             );
 
             // Determine auto enabling of markers (#3635, #5099)
