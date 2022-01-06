@@ -31,7 +31,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-const { extend, merge, pick } = U;
+const { merge, pick, addEvent } = U;
 
 /* *
  *
@@ -202,8 +202,37 @@ class TreegraphSeries extends OrganizationSeries {
     public alignDataLabel(): void {
         sankeyProto.alignDataLabel.apply(this, arguments);
     }
-}
 
+    public createNodeColumns(): Array<TreegraphSeries.ColumnArray> {
+        const originalNodes = this.nodes;
+        this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
+        const nodeColumns = super.createNodeColumns.apply(this, arguments);
+        this.nodes = originalNodes;
+        return nodeColumns;
+    }
+}
+// Handle showing and hiding of the points
+addEvent(TreegraphSeries, 'click', function (e: any): void {
+    const point = e.point as TreegraphPoint;
+    point.collapsed = !point.collapsed;
+
+    collapseTreeFromPoint(point, point.collapsed);
+    this.redraw();
+});
+
+function collapseTreeFromPoint(
+    point: TreegraphPoint,
+    collapsed: boolean
+): void {
+    point.linksFrom.forEach((link: any): void => {
+        link.toNode.hidden = collapsed;
+        link.update({ visible: !collapsed }, false);
+        // to change
+        link.toNode.graphic.attr({ opacity: !collapsed ? 1 : 0 });
+        link.toNode.dataLabel[collapsed ? 'hide' : 'show'](false);
+        collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
+    });
+}
 /* *
  *
  *  Prototype Properties
@@ -214,10 +243,6 @@ interface TreegraphSeries {
     inverted?: boolean;
     pointClass: typeof TreegraphPoint;
 }
-
-extend(TreegraphSeries.prototype, {
-    // alignDataLabel: colProto.alignDataLabel
-});
 
 /* *
  *
@@ -256,4 +281,4 @@ export default TreegraphSeries;
  *
  * */
 
-''; // gets doclets above into transpilat
+''; // gets doclets above into transpiled version

@@ -27,6 +27,7 @@ import type OrganizationPoint from '../Organization/OrganizationPoint';
 declare class TreegraphPoint extends OrganizationPoint {
     public options: TreegraphPointOptions;
     public series: TreegraphSeries;
+    public collapsed: boolean;
 }
 
 /* *
