@@ -439,6 +439,16 @@ class SunburstSeries extends TreemapSeries {
     public static defaultOptions: SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
 
         /**
+         * Breadcrumbs options.
+         *
+         *
+         * @since     next
+         * @product   highcharts
+         * @extends breadcrumbs
+         * @optionparent plotOptions.sunburst.breadcrumbs
+         */
+
+        /**
          * Set options on specific levels. Takes precedence over series options,
          * but not point options.
          *
@@ -655,11 +665,14 @@ class SunburstSeries extends TreemapSeries {
         },
 
         /**
-         * Options for the button appearing when traversing down in a treemap.
+         * Options for the button appearing when traversing down in a sunburst.
+         * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
          *
          * @extends   plotOptions.treemap.traverseUpButton
          * @since     6.0.0
+         * @deprecated
          * @apioption plotOptions.sunburst.traverseUpButton
+         *
          */
 
         /**
@@ -1051,7 +1064,6 @@ class SunburstSeries extends TreemapSeries {
         tree = series.tree = series.getTree();
 
         // Render traverseUpButton, after series.nodeMap i calculated.
-        series.renderTraverseUpButton(rootId);
         mapIdToNode = series.nodeMap;
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';

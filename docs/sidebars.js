@@ -51,6 +51,7 @@ module.exports = {
         ],
         'Maps': [
             'maps/getting-started',
+            'maps/mapview-and-projection',
             'maps/map-navigation',
             'maps/color-axis',
             'maps/map-collection',
@@ -59,6 +60,10 @@ module.exports = {
             'maps/adding-points-and-lines',
             'maps/latlon',
             'maps/map-series',
+            'maps/mapline-series',
+            'maps/mappoint-series',
+            'maps/mapbubble-series',
+            'maps/marker-clusters',
             'maps/tilemap-series'
         ],
         'Gantt': [

@@ -379,15 +379,12 @@ class SMAIndicator extends LineSeries {
         let indicator = this,
             oldData = indicator.points || [],
             oldDataLength = (indicator.xData || []).length,
-            processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
-                indicator.getValues(
-                    indicator.linkedParent,
-                    indicator.options.params as any
-                ) || {
-                    values: [],
-                    xData: [],
-                    yData: []
-                }),
+            emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
+                values: [],
+                xData: [],
+                yData: []
+            },
+            processedData: IndicatorValuesObject<typeof LineSeries.prototype>,
             croppedDataValues = [],
             overwriteData = true,
             oldFirstPointIndex,
@@ -396,6 +393,19 @@ class SMAIndicator extends LineSeries {
             min,
             max,
             i;
+
+        // Updating an indicator with redraw=false may destroy data.
+        // If there will be a following update for the parent series,
+        // we will try to access Series object without any properties
+        // (except for prototyped ones). This is what happens
+        // for example when using Axis.setDataGrouping(). See #16670
+        processedData = indicator.linkedParent.options ?
+            (
+                indicator.getValues(
+                    indicator.linkedParent,
+                    indicator.options.params as any
+                ) || emptySet
+            ) : emptySet;
 
         // We need to update points to reflect changes in all,
         // x and y's, values. However, do it only for non-grouped

@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
@@ -111,6 +112,13 @@ declare module '../Chart/ChartLike'{
 declare module '../Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
         survive?: boolean;
+    }
+}
+
+declare module './PointLike' {
+    interface PointLike {
+        plotX?: number;
+        plotY?: number;
     }
 }
 
@@ -1777,7 +1785,9 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = options.data,
+            dataOptions = (
+                (series as unknown as MapSeries).processedData || options.data
+            ),
             processedXData = series.processedXData,
             processedYData = series.processedYData,
             PointClass = series.pointClass,
@@ -2177,8 +2187,16 @@ class Series {
                 point.isNull = true;
             }
 
-            // Get the plotX translation
+            /**
+             * The translated X value for the point in terms of pixels. Relative
+             * to the X axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotX
+             * @type {number|undefined}
+             */
             point.plotX = plotX = correctFloat( // #5236
+                // Get the plotX translation
                 limitedRange((xAxis.translate as any)( // #3923
                     xValue,
                     0,
@@ -2270,6 +2288,14 @@ class Series {
                     yValue, false, true, false, true
                 );
                 if (typeof translated !== 'undefined') {
+                    /**
+                     * The translated Y value for the point in terms of pixels.
+                     * Relative to the Y axis position if the series has one,
+                     * otherwise relative to the plot area. Depending on the
+                     * series type this value might not be defined.
+                     * @name Highcharts.Point#plotY
+                     * @type {number|undefined}
+                     */
                     point.plotY = limitedRange(translated);
                 }
             }
@@ -2921,7 +2947,7 @@ class Series {
             axis;
 
         // add event hook
-        fireEvent(series, 'destroy');
+        fireEvent(series, 'destroy', { keepEventsForUpdate });
 
         // remove events
         this.removeEvents(keepEventsForUpdate);
@@ -3953,7 +3979,12 @@ class Series {
         }
         (dataOptions as any).splice(i, 0, options);
 
-        if (isInTheMiddle) {
+        if (
+            isInTheMiddle ||
+            // When processedData is present we need to splice an empty slot
+            // into series.data, otherwise generatePoints won't pick it up.
+            (series as unknown as MapSeries).processedData
+        ) {
             series.data.splice(i, 0, null as any);
             series.processData();
         }
@@ -4152,7 +4183,6 @@ class Series {
     ): void {
 
         options = cleanRecursively(options, this.userOptions);
-
         fireEvent(this, 'update', { options: options });
 
         const series = this,
@@ -4197,6 +4227,7 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            options.joinBy ||
             options.mapData || // #11636
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
@@ -4224,6 +4255,9 @@ class Series {
                 // Networkgraph (#14397)
                 'nodes',
                 'layout',
+
+                // Treemap
+                'level',
 
                 // Map specific, consider moving it to series-specific preserve-
                 // properties (#10617)
@@ -4295,8 +4329,6 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
-                // @todo slow, consider alternatives mentioned:
-                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,

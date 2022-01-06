@@ -410,6 +410,12 @@ class ProxyProvider {
      */
     private updatePosContainerPositions(): void {
         const chart = this.chart;
+
+        // If exporting, don't add these containers to the DOM.
+        if (chart.renderer.forExport) {
+            return; 
+        }
+
         const rendererSVGEl = chart.renderer.box;
         chart.container.insertBefore(
             this.afterChartProxyPosContainer,

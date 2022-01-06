@@ -6661,7 +6661,7 @@
    *               2014 Diego Casorran, https://github.com/diegocr
    *               2014 James Robb, https://github.com/jamesbrobb
    *
-   * 
+   *
    */
 
   /**
@@ -8486,7 +8486,7 @@
    *               2014 James Hall, james@parall.ax
    *               2014 Diego Casorran, https://github.com/diegocr
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -11982,7 +11982,7 @@
    * ====================================================================
    * Copyright (c) 2013 Youssef Beddad, youssef.beddad@gmail.com
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -12274,7 +12274,7 @@
    *
    * Copyright (c) 2014 James Robb, https://github.com/jamesbrobb
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -13060,7 +13060,7 @@
    * Copyright (c) 2012 Willow Systems Corporation, willow-systems.com
    *               2014 Diego Casorran, https://github.com/diegocr
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -13412,7 +13412,7 @@
    jsPDF standard_fonts_metrics plugin
    * Copyright (c) 2012 Willow Systems Corporation, willow-systems.com
    * MIT license.
-   * 
+   *
    * ====================================================================
    */
 
@@ -13468,7 +13468,7 @@
     	else:
     		raise Exception("Don't know what to do with value type %s" % type(value))
     		vals.append(keystring+valuestring)
-    
+
     return '{' + ''.join(vals) + '}'
     def uncompress(data):
     	decoded = '0123456789abcdef'
@@ -13545,7 +13545,7 @@
     */
 
     /**
-    Uncompresses data compressed into custom, base16-like format. 
+    Uncompresses data compressed into custom, base16-like format.
     @public
     @function
     @param
@@ -13781,7 +13781,7 @@
   /** @license
    * Copyright (c) 2012 Willow Systems Corporation, willow-systems.com
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -13990,7 +13990,7 @@
    * ====================================================================
    * Copyright (c) 2013 Eduardo Menezes de Morais, eduardo.morais@usp.br
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -14378,7 +14378,7 @@
    * jsPDF XMP metadata plugin
    * Copyright (c) 2016 Jussi Utunen, u-jussi@suomi24.fi
    *
-   * 
+   *
    * ====================================================================
    */
 
@@ -14705,10 +14705,10 @@
                       if (Object.prototype.toString.call(text[s]) === '[object Array]') {
                           cmapConfirm = fonts[key].metadata.cmap.unicode.codeMap[strText[s][0].charCodeAt(0)]; //Make sure the cmap has the corresponding glyph id
                       } else {
-                          
+
                       }
                   //}
-                  
+
               } else {
                   cmapConfirm = fonts[key].metadata.cmap.unicode.codeMap[strText[s].charCodeAt(0)]; //Make sure the cmap has the corresponding glyph id
               }*/
@@ -15281,7 +15281,7 @@
   //
   // https://github.com/deanm/omggif
   //
-  // 
+  //
   //
   // omggif is a JavaScript implementation of a GIF 89a encoder and decoder,
   // including animation and compression.  It does not rely on any specific
@@ -16085,8 +16085,8 @@
   }
 
   try {
-    
-    
+
+
   } catch (e) {} // CommonJS.
 
   /*
@@ -16266,25 +16266,25 @@
     Copyright (c) 2008, Adobe Systems Incorporated
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without 
+    Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are
     met:
 
-    * Redistributions of source code must retain the above copyright notice, 
+    * Redistributions of source code must retain the above copyright notice,
       this list of conditions and the following disclaimer.
-    
+
     * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the 
+      notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    
-    * Neither the name of Adobe Systems Incorporated nor the names of its 
-      contributors may be used to endorse or promote products derived from 
+
+    * Neither the name of Adobe Systems Incorporated nor the names of its
+      contributors may be used to endorse or promote products derived from
       this software without specific prior written permission.
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
     IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
     THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
     CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
     EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
     PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -16310,8 +16310,8 @@
    1. Redistributions of source code must retain the above copyright notice,
    this list of conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above copyright 
-   notice, this list of conditions and the following disclaimer in 
+   2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
    the documentation and/or other materials provided with the distribution.
 
    3. The names of the authors may not be used to endorse or promote products
@@ -20667,8 +20667,8 @@
   # PNG.js
   # Copyright (c) 2011 Devon Govett
   # MIT LICENSE
-  # 
-  # 
+  #
+  #
   */
   (function (global) {
     var PNG;
@@ -21267,7 +21267,7 @@
    *               Justin D'Arcangelo <justindarc@gmail.com>
    *               Yury Delendik
    *
-   * 
+   *
    */
   var DecodeStream = function () {
     function constructor() {

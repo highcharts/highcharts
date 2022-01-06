@@ -24,7 +24,6 @@ Gulp.registry(new GulpForwardReference());
 }([
     'default',
     'dist',
-    'dist-ant',
     'dist-clean',
     'dist-compress',
     'dist-copy',

@@ -228,6 +228,7 @@ interface MapBubbleSeries {
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
+    processData: typeof MapSeries.prototype['processData'];
     setOptions: typeof MapSeries.prototype['setOptions'];
     xyFromShape: boolean;
 }
@@ -244,6 +245,8 @@ extend(MapBubbleSeries.prototype, {
     pointArrayMap: ['z'],
 
     pointClass: MapBubblePoint,
+
+    processData: MapSeries.prototype.processData,
 
     setData: MapSeries.prototype.setData,
 

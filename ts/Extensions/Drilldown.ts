@@ -54,6 +54,8 @@ const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
+import Breadcrumbs from './Breadcrumbs.js';
+
 const {
     addEvent,
     removeEvent,
@@ -96,8 +98,7 @@ declare module '../Core/Chart/ChartLike' {
         ): void;
         applyDrilldown(): void;
         drillUp(): void;
-        getDrilldownBackText(): (string|undefined);
-        showDrillUpButton(): void;
+
     }
 }
 
@@ -178,7 +179,7 @@ declare global {
             textDecoration?: string;
         }
         interface DrilldownDrillUpButtonOptions {
-            position?: (AlignObject|DrilldownDrillUpButtonPositionOptions);
+            position: (AlignObject|DrilldownDrillUpButtonPositionOptions);
             relativeTo?: ButtonRelativeToValue;
             theme?: object;
         }
@@ -390,10 +391,12 @@ extend(
          * @since    3.0.8
          * @product  highcharts highmaps
          * @requires modules/drilldown
+         * @apioption lang.drillUpText
+         *
+         * @deprecated
          *
          * @private
          */
-        drillUpText: '◁ Back to {series.name}'
     }
 );
 
@@ -428,6 +431,17 @@ defaultOptions.drilldown = {
      * @product   highcharts
      * @apioption drilldown.allowPointDrilldown
      */
+
+    /**
+     * Breadcrumbs options.
+     *
+     *
+     * @since     next
+     * @product   highcharts
+     * @extends breadcrumbs
+     * @optionparent drilldown.breadcrumbs
+     */
+
 
     /**
      * An array of series configurations for the drill down. Each series
@@ -519,17 +533,23 @@ defaultOptions.drilldown = {
     },
 
     /**
+     *
      * Options for the drill up button that appears when drilling down on a
      * series. The text for the button is defined in
      * [lang.drillUpText](#lang.drillUpText).
      *
-     * @sample {highcharts} highcharts/drilldown/drillupbutton/
-     *         Drill up button
-     * @sample {highmaps} highcharts/drilldown/drillupbutton/
-     *         Drill up button
+     * This option is deprecated since 9.3.2, use `drilldown.breadcrumbs`
+     * instead.
+     *
+     * @sample highcharts/breadcrumbs/single-button
+     *         Breadcrumbs set up like a legacy button
+     * @sample {highcharts} highcharts/drilldown/drillupbutton/ Drill up button
+     * @sample {highmaps} highcharts/drilldown/drillupbutton/ Drill up button
      *
      * @since   3.0.8
      * @product highcharts highmaps
+     *
+     * @deprecated
      */
     drillUpButton: {
         /**
@@ -869,64 +889,57 @@ Chart.prototype.applyDrilldown = function (): void {
     }
 
     this.pointer.reset();
-    this.redraw();
-    this.showDrillUpButton();
+
     fireEvent(this, 'afterDrilldown');
+
+    this.redraw();
+    fireEvent(this, 'afterApplyDrilldown');
 };
 
-Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
-    let drilldownLevels = this.drilldownLevels,
-        lastLevel: Highcharts.DrilldownLevelObject;
+/**
+ * This method creates an array of arrays containing a level number
+ * with the corresponding series/point.
+ *
+ * @requires  modules/breadcrumbs
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ *        Highcharts Chart object.
+ * @return {Array<Breadcrumbs.BreadcrumbOptions>}
+ *        List for Highcharts Breadcrumbs.
+ */
+const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.BreadcrumbOptions> {
+    const list: Array<Breadcrumbs.BreadcrumbOptions> = [],
+        drilldownLevels = chart.drilldownLevels;
 
-    if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
-        lastLevel = drilldownLevels[drilldownLevels.length - 1];
-        (lastLevel as any).series = lastLevel.seriesOptions;
-        return format(this.options.lang.drillUpText || '', lastLevel);
+    // The list is based on drilldown levels from the chart object
+    if (drilldownLevels && drilldownLevels.length) {
+        // Add the initial series as the first element.
+        if (!list[0]) {
+            list.push({
+                level: 0,
+                levelOptions: drilldownLevels[0].seriesOptions
+            });
+        }
+
+        const lastBreadcrumb = list[list.length - 1];
+
+        drilldownLevels.forEach(function (level): void {
+            // If level is already added to breadcrumbs list,
+            // don't add it again- drilling categories
+            // + 1 because of the wrong levels numeration
+            // in drilldownLevels array.
+            if (level.levelNumber + 1 > lastBreadcrumb.level) {
+                list.push({
+                    level: level.levelNumber + 1,
+                    levelOptions: merge({
+                        name: level.lowerSeries.name
+                    }, level.pointOptions)
+                });
+            }
+        });
     }
-};
-
-Chart.prototype.showDrillUpButton = function (): void {
-    let chart = this,
-        backText = this.getDrilldownBackText(),
-        buttonOptions = (chart.options.drilldown as any).drillUpButton,
-        attr,
-        states,
-        alignTo = (
-            buttonOptions.relativeTo === 'chart' ||
-            buttonOptions.relativeTo === 'spacingBox' ?
-                null :
-                'scrollablePlotBox'
-        );
-
-    if (!this.drillUpButton) {
-        attr = buttonOptions.theme;
-        states = attr && attr.states;
-
-        this.drillUpButton = this.renderer
-            .button(
-                backText as any,
-                null as any,
-                null as any,
-                function (): void {
-                    chart.drillUp();
-                },
-                attr,
-                states && states.hover,
-                states && states.select
-            )
-            .addClass('highcharts-drillup-button')
-            .attr({
-                align: buttonOptions.position.align,
-                zIndex: 7
-            })
-            .add()
-            .align(buttonOptions.position, false, alignTo as any);
-    } else {
-        this.drillUpButton.attr({
-            text: backText
-        })
-            .align();
-    }
+    return list;
 };
 
 /**
@@ -944,6 +957,7 @@ Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
+    fireEvent(this, 'beforeDrillUp');
 
     let chart = this,
         drilldownLevels = chart.drilldownLevels as any,
@@ -976,6 +990,7 @@ Chart.prototype.drillUp = function (): void {
                 newSeries = addedSeries;
             }
         };
+    const drilldownLevelsNumber = (chart.drilldownLevels as any).length;
 
     while (i--) {
 
@@ -1001,14 +1016,22 @@ Chart.prototype.drillUp = function (): void {
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
 
+            // Reset the names to start new series from the beginning.
+            // Do it once to preserve names when multiple
+            // series are added for the same axis, #16135.
+            if (oldSeries.xAxis &&
+                oldSeries.xAxis.names &&
+                (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+            ) {
+                oldSeries.xAxis.names.length = 0;
+            }
+
             level.levelSeriesOptions.forEach(addSeries);
 
             fireEvent(chart, 'drillup', {
                 seriesOptions: level.seriesPurgedOptions ||
                     level.seriesOptions
             });
-
-            this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
@@ -1042,21 +1065,13 @@ Chart.prototype.drillUp = function (): void {
             // it to the chart and show it.
             if (level.resetZoomButton) {
                 chart.resetZoomButton = level.resetZoomButton;
-                chart.resetZoomButton.show();
             }
         }
     }
 
-    this.redraw();
+    fireEvent(chart, 'afterDrillUp');
 
-    if (this.drilldownLevels.length === 0) {
-        this.drillUpButton = (this.drillUpButton as any).destroy();
-    } else {
-        (this.drillUpButton as any).attr({
-            text: this.getDrilldownBackText()
-        })
-            .align();
-    }
+    this.redraw();
 
     (this.ddDupes as any).length = []; // #3315
 
@@ -1120,33 +1135,6 @@ addEvent(Chart, 'afterInit', function (): void {
     };
 });
 
-// Shift the drillUpButton to make the space for resetZoomButton, #8095.
-addEvent(Chart, 'afterShowResetZoom', function (): void {
-    const chart = this,
-        bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
-        buttonOptions = (
-            chart.options.drilldown &&
-            chart.options.drilldown.drillUpButton
-        );
-
-    if (
-        this.drillUpButton &&
-        bbox &&
-        buttonOptions &&
-        buttonOptions.position &&
-        buttonOptions.position.x
-    ) {
-        this.drillUpButton.align({
-            x: buttonOptions.position.x - bbox.width - 10,
-            y: buttonOptions.position.y,
-            align: buttonOptions.position.align
-        },
-        false,
-        buttonOptions.relativeTo || 'plotBox'
-        );
-    }
-});
-
 addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
         axis.ddPoints = {};
@@ -1190,6 +1178,46 @@ addEvent(Chart, 'render', function (): void {
     });
 });
 
+addEvent(H.Breadcrumbs, 'up', function (
+    e: any
+): void {
+    const chart = this.chart,
+        drillUpsNumber = this.getLevel() - e.newLevel;
+    for (let i = 0; i < drillUpsNumber; i++) {
+        chart.drillUp();
+    }
+});
+
+addEvent(Chart, 'afterDrilldown', function (): void {
+
+    const chart = this,
+        drilldownOptions = chart.options.drilldown;
+
+    const breadcrumbsOptions = drilldownOptions &&
+        drilldownOptions.breadcrumbs;
+
+    if (!chart.breadcrumbs) {
+        chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
+    }
+    chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
+
+});
+
+addEvent(Chart, 'afterDrillUp', function (): void {
+    const chart = this;
+    chart.breadcrumbs &&
+        chart.breadcrumbs.updateProperties(createBreadcrumbsList(chart));
+});
+
+addEvent(Chart, 'update', function (e: any): void {
+    const breadcrumbs = this.breadcrumbs,
+        breadcrumbOptions = e.options.drilldown &&
+            e.options.drilldown.breadcrumbs;
+
+    if (breadcrumbs && breadcrumbOptions) {
+        breadcrumbs.update(e.options.drilldown.breadcrumbs);
+    }
+});
 
 /**
  * When drilling up, keep the upper series invisible until the lower series has
@@ -1757,28 +1785,14 @@ addEvent(Point, 'afterSetState', function (): void {
     }
 });
 
-// After zooming out, shift the drillUpButton to the previous position, #8095.
-addEvent(Chart, 'selection', function (event: any): void {
-    if (event.resetSelection === true && this.drillUpButton) {
-        const buttonOptions = (
-            this.options.drilldown && this.options.drilldown.drillUpButton
-        );
-
-        if (buttonOptions && buttonOptions.position) {
-            this.drillUpButton.align({
-                x: buttonOptions.position.x,
-                y: buttonOptions.position.y,
-                align: buttonOptions.position.align
-            },
-            false,
-            buttonOptions.relativeTo || 'plotBox'
-            );
-        }
-    }
-});
-
 addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
+
+addEvent(Chart, 'drillupall', function (): void {
+    if (this.resetZoomButton) {
+        this.showResetZoom();
     }
 });

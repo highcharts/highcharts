@@ -47,6 +47,7 @@ const {
     seriesTypes
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
+import { CursorValue } from '../Core/Renderer/CSSObject';
 const {
     addEvent,
     clamp,
@@ -151,7 +152,7 @@ declare global {
         interface DragDropHandleOptionsObject {
             className?: string;
             color?: ColorType;
-            cursor?: string;
+            cursor?: CursorValue;
             lineColor?: ColorString;
             lineWidth?: number;
             pathFormatter?: Function;
@@ -1197,11 +1198,11 @@ const defaultGuideBoxOptions: (
 
 
 /**
- * Options for the drag handles.
+ * Options for the drag handles available in column series.
  *
  * @declare      Highcharts.DragDropHandleOptionsObject
  * @since        6.2.0
- * @optionparent plotOptions.series.dragDrop.dragHandle
+ * @optionparent plotOptions.column.dragDrop.dragHandle
  *
  * @private
  */
@@ -1214,7 +1215,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {Function}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.pathFormatter
+     * @apioption plotOptions.column.dragDrop.dragHandle.pathFormatter
      */
     // pathFormatter: null,
 
@@ -1225,7 +1226,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
      *
      * @type      {string}
      * @since     6.2.0
-     * @apioption plotOptions.series.dragDrop.dragHandle.cursor
+     * @apioption plotOptions.column.dragDrop.dragHandle.cursor
      */
     // cursor: null,
 
@@ -2512,8 +2513,8 @@ Point.prototype.showDragHandles = function (): void {
 
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
-                (val.axis === 'x') !== !!chart.inverted ?
-                'ew-resize' : 'ns-resize';
+                ((val.axis === 'x') !== !!chart.inverted ?
+                    'ew-resize' : 'ns-resize');
 
             // Create and add the handle element if it doesn't exist
             handle = (chart.dragHandles as any)[val.optionName];
