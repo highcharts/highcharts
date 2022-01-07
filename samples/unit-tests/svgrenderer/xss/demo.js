@@ -52,7 +52,7 @@ QUnit.module('XSS', function () {
             // JavaScript directive
             text = ren
                 .text(
-                    'This is a link to <a href="javascript:alert(\'XSS\')">an simple JS directive</a>, <br>' +
+                    'This is a link to <a href="javascript:alert(\'XSS\')">a simple JS directive</a>, <br>' +
                     'an image <IMG SRC="javascript:alert(\'XSS\');">, <br>' +
                     'an unquoted image <IMG SRC=javascript:alert(\'XSS\')>, <br>' +
                     'a case insensitive attack vector <IMG SRC=JaVaScRiPt:alert(\'XSS\')>, <br>' +
@@ -207,24 +207,41 @@ QUnit.module('XSS', function () {
                 'Tag tricks, scripts should be stripped out from DOM'
             );
 
-            // Disable AST filtering to allow black-listed tags
-            Highcharts.AST.bypassHTMLFiltering = true;
+            if (useHTML) {
+                // Disable AST filtering to allow black-listed tags
+                Highcharts.AST.bypassHTMLFiltering = true;
 
-            text = ren.text(
-                '<customTag></customTag>',
-                x,
-                y += lineHeight,
-                useHTML
-            )
-            .add();
+                text = ren.text(
+                    [
+                        '<customTag></customTag>',
+                        '<span id="elemWithCustomAttribute" customAttribute="testValue"></span>',
+                        '<a href="javascript:alert(\'XSS\')">a simple JS directive</a>',
+                    ].join(',<br>'),
+                    x,
+                    y += lineHeight,
+                    useHTML
+                )
+                .add();
 
-            assert[useHTML ? 'ok' : 'notOk'](
-                document.querySelector('customTag'),
-                'AST disabled: black-listed tag should ' +
-                    (useHTML ? '' : 'not') + ' be added, #15345'
-            );
+                assert.ok(
+                    document.querySelector('customTag'),
+                    'AST disabled: custom tag should be added, #15345'
+                );
 
-            Highcharts.AST.bypassHTMLFiltering = false;
+                assert.strictEqual(
+                    document.getElementById('elemWithCustomAttribute')
+                        .getAttribute('customAttribute'),
+                    'testValue',
+                    'AST disabled: custom attribute should be added, #15345'
+                );
+
+                assert.ok(
+                    /javascript/i.test(text.element.outerHTML),
+                    'AST disabled: custom JavaScript directive should be allowed, #15345'
+                );
+
+                Highcharts.AST.bypassHTMLFiltering = false;
+            }
 
             // Reset
             window.alert = realAlert;
