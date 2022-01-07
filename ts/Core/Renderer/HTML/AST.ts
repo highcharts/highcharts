@@ -284,20 +284,27 @@ class AST {
     public static emptyHTML = emptyHTML;
 
     /**
-     * Allow all the custom SVG and HTML attributes, references and tags
-     * (together with potentially harmful ones) to be added to the DOM
-     * from the chart configuration.
-     * In other words: disable the Highcharts.AST functionality.
+     * Allow all custom SVG and HTML attributes, references and tags (together
+     * with potentially harmful ones) to be added to the DOM from the chart
+     * configuration. In other words, disable the the allow-listing which is the
+     * primary functionality of the AST.
      *
-     * Note that, in case you want to allow only one tag or attribute,
-     * it's better to add only this one exception instead of disabling the
-     * filtering totally.
+     * WARNING: Setting this property to `true` while allowing untrusted user
+     * data in the chart configuration will expose your application to XSS
+     * security risks!
+     *
+     * Note that in case you want to allow a known set of tags or attributes,
+     * you should allow-list them instead of disabling the filtering totally.
      * See [allowedAttributes](Highcharts.AST#.allowedAttributes),
      * [allowedReferences](Highcharts.AST#.allowedReferences) and
-     * [allowedTags](Highcharts.AST#.allowedTags).
+     * [allowedTags](Highcharts.AST#.allowedTags). The `bypassHTMLFiltering`
+     * setting is intended only for those cases where allow-listing is not
+     * practical, and the chart configuration already comes from a secure
+     * source.
      *
      * @example
-     * // Allow all custom attributes, references and tags (disable AST)
+     * // Allow all custom attributes, references and tags (disable DOM XSS
+     * // filtering)
      * Highcharts.AST.bypassHTMLFiltering = true;
      *
      * @name Highcharts.AST.bypassHTMLFiltering
@@ -455,7 +462,7 @@ class AST {
                     H.doc.createTextNode(item.textContent) :
                     void 0;
                 // Whether to ignore the AST filtering totally, #15345
-                const bypassHTMLFiltering = AST.bypassHTMLFiltering === true;
+                const bypassHTMLFiltering = AST.bypassHTMLFiltering;
                 let node: Text|Element|undefined;
 
                 if (tagName) {
