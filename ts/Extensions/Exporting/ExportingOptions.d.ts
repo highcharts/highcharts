@@ -45,7 +45,6 @@ export interface ExportingOptions {
     pdfFont?: {
         bold?: string;
         bolditalic?: string;
-        enabled?: boolean;
         italic?: string;
         normal?: string;
     };

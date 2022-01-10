@@ -242,8 +242,9 @@ namespace OfflineExporting {
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
         /*
-         * Detect if and to what extent we need to load TTF fonts for the PDF,
-         * then load them and proceed.
+         * Detect if we need to load TTF fonts for the PDF, then load them and
+         * proceed.
+         *
          * @private
          */
         const loadPdfFonts = (
@@ -256,6 +257,8 @@ namespace OfflineExporting {
                 /[^\u0000-\u007F\u200B]+/u.test(s)
             );
 
+            // Register an event in order to add the font once jsPDF is
+            // initialized
             const addFont = (
                 variant: 'bold'|'bolditalic'|'italic'|'normal',
                 base64: string
@@ -264,96 +267,74 @@ namespace OfflineExporting {
                     'initialized',
                     function (): void {
                         this.addFileToVFS(variant, base64);
-                        this.addFont(variant, 'HighchartsFont', variant);
-                        this.setFont('HighchartsFont');
+                        this.addFont(
+                            variant,
+                            'HighchartsFont',
+                            variant
+                        );
+                        if (!(this as any).getFontList().HighchartsFont) {
+                            this.setFont('HighchartsFont');
+                        }
                     }
                 ]);
             };
 
-            interface FontLabelsNeeded {
-                bold?: 1;
-                bolditalic?: 1;
-                italic?: 1;
-                normal?: 1;
-            }
-            const fontLabelsNeeded: FontLabelsNeeded = {};
-
             // If there are no non-ASCII characters in the SVG, do not use
-            // pdfFont
-            if (
-                pdfFont && !pick(
-                    pdfFont.enabled,
-                    hasNonASCII(svgElement.textContent || '')
-                )
-            ) {
+            // bother downloading the font files
+            if (pdfFont && !hasNonASCII(svgElement.textContent || '')) {
                 pdfFont = void 0;
             }
 
-            // For each font label, detect if there is an element with non-ASCII
-            // characters that require we load that font.
-            svgElement.style.position = 'absolute';
-            svgElement.style.top = '-999em';
-            doc.body.appendChild(svgElement);
-            [].forEach.call(svgElement.querySelectorAll('text,tspan'), (
-                node: SVGElement
-            ): void => {
-                const style = win.getComputedStyle(node, null),
-                    hasNon = node.textContent && hasNonASCII(node.textContent),
-                    bold = (
-                        (
-                            style.fontWeight === '700' ||
-                            style.fontWeight === 'bold'
-                        ) &&
-                        hasNon
-                    ),
-                    italic = style.fontStyle === 'italic' && hasNon;
-
-                if (bold && italic) {
-                    fontLabelsNeeded.bolditalic = 1;
-                } else if (bold) {
-                    fontLabelsNeeded.bold = 1;
-                } else if (italic) {
-                    fontLabelsNeeded.italic = 1;
-                } else if (hasNon) {
-                    fontLabelsNeeded.normal = 1;
-                }
-            });
-            doc.body.removeChild(svgElement);
 
             // Add new font if the URL is declared, #6417.
-            const fontVariants = Object.keys(
-                fontLabelsNeeded
-            ) as ('bold'|'bolditalic'|'italic'|'normal')[];
-            let pending = fontVariants.length;
-            fontVariants.forEach((variant): void => {
+            const variants = ['normal', 'italic', 'bold', 'bolditalic'] as
+                ('bold'|'bolditalic'|'italic'|'normal')[];
+
+            // Shift the first element off the variants and add as a font.
+            // Then asynchronously trigger the next variant until calling the
+            // callback when the variants are empty.
+            let normalBase64: string|undefined;
+            const shiftAndLoadVariant = (): void => {
+                const variant = variants.shift();
+
+                // All variants shifted and possibly loaded, proceed
+                if (!variant) {
+                    return callback();
+                }
+
                 const url = pdfFont && pdfFont[variant];
+
                 if (url) {
                     ajax({
-                        url: url.replace('{libURL}', libURL),
+                        url,
                         responseType: 'blob',
                         success: (data, xhr): void => {
                             const reader = new FileReader();
                             reader.onloadend = function (): void {
                                 if (typeof this.result === 'string') {
-                                    addFont(variant, this.result.split(',')[1]);
+                                    const base64 = this.result.split(',')[1];
+                                    addFont(variant, base64);
+
+                                    if (variant === 'normal') {
+                                        normalBase64 = base64;
+                                    }
                                 }
-                                pending--;
-                                if (pending === 0) {
-                                    return callback();
-                                }
+                                shiftAndLoadVariant();
                             };
 
                             reader.readAsDataURL(xhr.response);
                         },
-                        error: ():number => pending--
+                        error: shiftAndLoadVariant
                     });
                 } else {
-                    pending--;
+                    // For other variants, fall back to normal text weight/style
+                    if (normalBase64) {
+                        addFont(variant, normalBase64);
+                    }
+                    shiftAndLoadVariant();
                 }
-            });
-            if (pending === 0) {
-                return callback();
-            }
+            };
+            shiftAndLoadVariant();
         };
 
         /*
