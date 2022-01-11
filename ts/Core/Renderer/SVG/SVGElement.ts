@@ -1061,19 +1061,12 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Return the SVG element for chaining.
      */
-    public css(styles: CSSObject): this {
+    public css(styles?: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element,
-            // These CSS properties are interpreted internally by the SVG
-            // renderer, but are not supported by SVG and should not be added to
-            // the DOM. In styled mode, no CSS should find its way to the DOM
-            // whatsoever (#6173, #6474).
-            svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
+            elem = this.element;
 
         let textWidth,
-            serializedCss = '',
-            hyphenate: Function,
             hasNew = !oldStyles;
 
         // convert legacy
@@ -1118,29 +1111,28 @@ class SVGElement implements SVGElementLike {
             // store object
             this.styles = styles;
 
-            if (textWidth && (!svg && this.renderer.forExport)) {
+            if (textWidth && (!svg && this.renderer.forExport) && styles) {
                 delete styles.width;
             }
 
-            // Serialize and set style attribute
-            if (elem.namespaceURI === this.SVG_NS) { // #7633
-                hyphenate = function (a: string, b: string): string {
-                    return '-' + b.toLowerCase();
-                };
-                objectEach(styles, function (style, n): void {
-                    if (svgPseudoProps.indexOf(n) === -1) {
-                        serializedCss +=
-                        n.replace(/([A-Z])/g, hyphenate as any) + ':' +
-                        style + ';';
-                    }
-                });
-                if (serializedCss) {
-                    attr(elem, 'style', serializedCss); // #1881
-                }
-            } else {
-                css(elem, styles);
-            }
+            const stylesToApply = merge(styles);
+            if (elem.namespaceURI === this.SVG_NS) {
 
+                // These CSS properties are interpreted internally by the SVG
+                // renderer, but are not supported by SVG and should not be
+                // added to the DOM. In styled mode, no CSS should find its way
+                // to the DOM whatsoever (#6173, #6474).
+                (
+                    ['textOutline', 'textOverflow', 'width'] as
+                    ('textOutline'|'textOverflow'|'width')[]
+                ).forEach(
+                    (key): boolean|undefined => (
+                        stylesToApply &&
+                        delete stylesToApply[key]
+                    )
+                );
+            }
+            css(elem, stylesToApply);
 
             if (this.added) {
 

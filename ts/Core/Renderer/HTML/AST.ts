@@ -496,7 +496,11 @@ class AST {
 
         const nodes: Array<AST.Node> = [];
 
-        markup = markup.trim();
+        markup = markup
+            .trim()
+            // The style attribute throws a warning when CSP (#6884), so use an
+            // alias and pick it up below
+            .replace(/ style="/g, ' data-style="');
 
         let doc;
         if (hasValidDOMParser) {
@@ -531,7 +535,11 @@ class AST {
             if (parsedAttributes) {
                 const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                    attributes[attrib.name] = attrib.value;
+                    attributes[
+                        attrib.name as string === 'data-style' ?
+                            'style' :
+                            attrib.name
+                    ] = attrib.value;
                 });
                 astNode.attributes = attributes;
             }
