@@ -374,12 +374,14 @@ namespace OfflineExporting {
                     setStylePropertyFromParents(el, property);
                 });
 
-                el.style['font-family' as any] = pdfFont ?
+                el.style.fontFamily = pdfFont && pdfFont.normal ?
+                    // Custom PDF font
                     'HighchartsFont' :
-                    (
-                        el.style['font-family' as any] &&
-                        el.style['font-family' as any].split(' ').splice(-1)
-                    ) as any;
+                    // Generic font (serif, sans-serif etc)
+                    String(
+                        el.style.fontFamily &&
+                        el.style.fontFamily.split(' ').splice(-1)
+                    );
 
                 // Workaround for plotband with width, removing title from text
                 // nodes
@@ -397,7 +399,6 @@ namespace OfflineExporting {
                     svgToPdf(
                         svgNode,
                         0,
-                        options,
                         (pdfData: string): void => {
                             try {
                                 downloadURL(pdfData, filename);
@@ -999,34 +1000,16 @@ namespace OfflineExporting {
     export function svgToPdf(
         svgElement: SVGElement,
         margin: number,
-        options: ExportingOptions,
         callback: Function
     ): void {
         const width = Number(svgElement.getAttribute('width')) + 2 * margin,
             height = Number(svgElement.getAttribute('height')) + 2 * margin,
-            pdfFont = options.pdfFont,
             pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
                 // setting orientation to portrait if height exceeds width
                 height > width ? 'p' : 'l',
                 'pt',
                 [width, height]
             );
-
-        // Apply new font if the name set, #6417.
-        /*
-        if (pdfFont && pdfFont.normal && pdfFontsBase64.normal) {
-            pdfDoc.addFileToVFS(
-                pdfFont.normal,
-                pdfFontsBase64.normal
-            );
-            pdfDoc.addFont(
-                pdfFont.normal,
-                'pdf-font',
-                'normal'
-            );
-            pdfDoc.setFont('pdf-font');
-        }
-        */
 
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
