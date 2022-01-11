@@ -1176,7 +1176,6 @@ class Legend {
                     r: options.borderRadius
                 })
                 .add(legendGroup);
-            box.isNew = true;
         }
 
         // Presentational
@@ -1191,7 +1190,7 @@ class Legend {
         }
 
         if (legendWidth > 0 && legendHeight > 0) {
-            box[box.isNew ? 'attr' : 'animate'](
+            box[box.placed ? 'animate' : 'attr'](
                 box.crisp.call({}, { // #7260
                     x: 0,
                     y: 0,
@@ -1199,7 +1198,6 @@ class Legend {
                     height: legendHeight
                 }, box.strokeWidth())
             );
-            box.isNew = false;
         }
 
         // hide the border if no items
@@ -1255,6 +1253,7 @@ class Legend {
             alignTo = merge(alignTo, { y });
         }
 
+        this.group.placed = chart.hasRendered;
         this.group.align(merge(options, {
             width: this.legendWidth,
             height: this.legendHeight,
