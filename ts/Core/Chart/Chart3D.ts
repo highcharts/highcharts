@@ -1833,19 +1833,7 @@ namespace Chart3D {
      */
     function onAfterGetContainer(this: Chart): void {
         if (this.styledMode) {
-            this.renderer.definition({
-                tagName: 'style',
-                textContent:
-                    '.highcharts-3d-top{' +
-                        'filter: url(#highcharts-brighter)' +
-                    '}\n' +
-                    '.highcharts-3d-side{' +
-                        'filter: url(#highcharts-darker)' +
-                    '}\n'
-            });
-
-            // Add add definitions used by brighter and darker faces of the
-            // cuboids.
+            // Add definitions used by brighter and darker faces of the cuboids.
             [{
                 name: 'darker',
                 slope: 0.6
