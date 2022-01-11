@@ -520,11 +520,21 @@ function attr(
 ): (string|null|undefined) {
     let ret;
 
+    const setAttribute = (key: string, val: string|number|boolean): void => {
+        // The style attribute can't be set when CSP disallows it. Parse it into
+        // style properties instead (#6884).
+        if (key === 'style' && isString(val)) {
+            css(elem, val);
+        } else {
+            elem.setAttribute(key, val);
+        }
+    };
+
     // if the prop is a string
     if (isString(prop)) {
         // set the value
         if (defined(value)) {
-            elem.setAttribute(prop, value as string);
+            setAttribute(prop, value);
 
         // get the value
         } else if (elem && elem.getAttribute) {
@@ -540,7 +550,7 @@ function attr(
     } else {
         objectEach(prop, function (val, key): void {
             if (defined(val)) {
-                elem.setAttribute(key, val as any);
+                setAttribute(key, val);
             } else {
                 elem.removeAttribute(key);
             }
@@ -691,15 +701,30 @@ function pick<T>(): T|undefined {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
  *        An HTML DOM element.
  *
- * @param {Highcharts.CSSObject} styles
- *        Style object with camel case property names.
+ * @param {Highcharts.CSSObject|string} styles
+ *        Style object with camel case property names. Alternatively a style
+ *        string like given in HTML or SVG style attribute.
  *
  * @return {void}
  */
 function css(
     el: DOMElementType,
-    styles: CSSObject
+    styles: CSSObject|string
 ): void {
+    if (isString(styles)) {
+        styles = styles
+            .split(';')
+            .reduce((styles, line: string): CSSObject => {
+                const pair = line.split(':'),
+                    key = pair[0].replace(
+                        /-([a-z])/g,
+                        (g): string => g[1].toUpperCase()
+                    );
+
+                (styles as any)[key] = pair[1];
+                return styles;
+            }, {} as CSSObject);
+    }
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
             styles.filter =

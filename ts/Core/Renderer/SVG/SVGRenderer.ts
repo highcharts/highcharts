@@ -703,7 +703,12 @@ class SVGRenderer implements SVGRendererLike {
             // (reference to options.rangeSelector.buttonTheme)
             normalState = theme ? merge(theme) : {};
 
-        const userNormalStyle = normalState && normalState.style || {};
+        const normalStyle = merge({
+            color: Palette.neutralColor80,
+            cursor: 'pointer',
+            fontWeight: 'normal'
+        }, normalState.style);
+        delete normalState.style;
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -712,8 +717,7 @@ class SVGRenderer implements SVGRendererLike {
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
         // Presentational
-        let normalStyle: any,
-            hoverStyle: any,
+        let hoverStyle: any,
             pressedStyle: any,
             disabledStyle: any;
 
@@ -723,17 +727,8 @@ class SVGRenderer implements SVGRendererLike {
             normalState = merge({
                 fill: Palette.neutralColor3,
                 stroke: Palette.neutralColor20,
-                'stroke-width': 1,
-                style: {
-                    color: Palette.neutralColor80,
-                    cursor: 'pointer',
-                    fontWeight: 'normal'
-                }
-            }, {
-                style: userNormalStyle
+                'stroke-width': 1
             }, normalState);
-            normalStyle = normalState.style;
-            delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
