@@ -1960,30 +1960,32 @@ class Data {
      *        Column index
      */
     public parseColumn(
-        column: Array<Highcharts.DataValueType>,
+        column: Array<Highcharts.DataValueType> & { name?: string },
         col: number
     ): void {
-        let rawColumns = this.rawColumns,
+        const rawColumns = this.rawColumns,
             columns = this.columns,
-            row = column.length,
-            val: Highcharts.DataValueType,
-            floatVal,
-            trimVal,
-            trimInsideVal,
             firstRowAsNames = this.firstRowAsNames,
             isXColumn = (this.valueCount as any).xColumns.indexOf(col) !== -1,
-            dateVal,
             backup: Array<Highcharts.DataValueType> = [],
-            diff,
             chartOptions = this.chartOptions,
-            descending,
             columnTypes = this.options.columnTypes || [],
             columnType = columnTypes[col],
             forceCategory = isXColumn && ((
                 chartOptions &&
                 chartOptions.xAxis &&
                 splat(chartOptions.xAxis)[0].type === 'category'
-            ) || columnType === 'string');
+            ) || columnType === 'string'),
+            columnHasName = defined(column.name);
+
+        let row = column.length,
+            val: Highcharts.DataValueType,
+            floatVal,
+            trimVal,
+            trimInsideVal,
+            dateVal,
+            diff,
+            descending;
 
         if (!rawColumns[col]) {
             rawColumns[col] = [];
@@ -2002,7 +2004,10 @@ class Data {
 
             // Disable number or date parsing by setting the X axis type to
             // category
-            if (forceCategory || (row === 0 && firstRowAsNames)) {
+            if (
+                forceCategory ||
+                (row === 0 && firstRowAsNames && !columnHasName)
+            ) {
                 column[row] = '' + trimVal;
 
             } else if (+trimInsideVal === floatVal) { // is numeric
