@@ -49,7 +49,6 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,
-    find,
     isObject,
     merge,
     pick,
@@ -537,92 +536,9 @@ class SankeySeries extends ColumnSeries {
     public createNodeColumns(): Array<SankeySeries.ColumnArray> {
         const columns: Array<SankeySeries.ColumnArray> = [];
 
-        // Get columns offset including all sibiling and cousins etc.
-        function getOffset(node: SankeyPoint): number {
-            let offset = node.linksFrom.length;
-
-            node.linksFrom.forEach((link): void => {
-                if (link.id === link.toNode.linksTo[0].id) {
-                    // Node has children, that hangs directly from it:
-                    offset += getOffset(link.toNode);
-                } else {
-                    // If the node hangs from multiple parents, and this is not
-                    // the last one, ignore it:
-                    offset--;
-                }
-            });
-
-            return offset;
-        }
-
         this.nodes.forEach(function (node: SankeyPoint): void {
-            let fromColumn = -1,
-                fromNode;
 
-            if (!defined(node.options.column)) {
-                // No links to this node, place it left
-                if (node.linksTo.length === 0) {
-                    node.column = 0;
-
-                // There are incoming links, place it to the right of the
-                // highest order column that links to this one.
-                } else {
-                    for (let i = 0; i < node.linksTo.length; i++) {
-                        const point = node.linksTo[i];
-                        if (
-                            (point.fromNode.column as any) > fromColumn &&
-                            point.fromNode !== node // #16080
-                        ) {
-                            fromNode = point.fromNode;
-                            fromColumn = (fromNode.column as any);
-                        }
-                    }
-                    node.column = fromColumn + 1;
-
-                    // Hanging layout for organization chart
-                    if (
-                        fromNode &&
-                        (fromNode.options as any).layout === 'hanging'
-                    ) {
-                        // Default all children of the hanging node
-                        // to have hanging layout
-                        (node.options as any).layout = pick(
-                            (node.options as any).layout,
-                            'hanging'
-                        );
-                        node.hangsFrom = fromNode;
-                        let i = -1;
-                        find(
-                            fromNode.linksFrom,
-                            function (
-                                link: SankeyPoint,
-                                index: number
-                            ): boolean {
-                                const found = link.toNode === node;
-                                if (found) {
-                                    i = index;
-                                }
-                                return found;
-                            }
-                        );
-
-                        // For all sibling's children (recursively)
-                        // increase the column offset to prevent overlapping
-                        for (let j = 0; j < fromNode.linksFrom.length; j++) {
-                            let link = fromNode.linksFrom[j];
-
-                            if (link.toNode.id === node.id) {
-                                // Break
-                                j = fromNode.linksFrom.length;
-                            } else {
-                                i += getOffset(link.toNode);
-                            }
-
-                        }
-                        node.column += i;
-                    }
-                }
-            }
+            node.setNodeColumn();
 
             if (!columns[node.column as any]) {
                 columns[node.column as any] = this.createNodeColumn();

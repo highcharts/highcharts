@@ -21,7 +21,7 @@ export function describe(...text: string[]): void {
 export function reportError(error: (AssertionError & Error)): void {
     const { actual, expected, code, message: errorMessage, stack } = error;
 
-    const printArrayOrString = (array: string | []) =>
+    const printArrayOrString = (array: unknown) =>
         (Array.isArray(array) ? JSON.stringify(array, undefined, 4) : array);
 
     failure(`${code} ${errorMessage}

@@ -113,7 +113,7 @@ namespace DataModifyComposition {
             mode: 'compare'|'cumulative',
             modeState?: boolean|null|'percent'|'value',
             redraw?: boolean
-        ): void
+        ): void;
     }
 
     export declare class PointComposition extends Point {

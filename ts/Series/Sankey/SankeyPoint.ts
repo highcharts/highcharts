@@ -31,8 +31,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    defined,
-    extend
+    defined
 } = U;
 
 /* *
@@ -42,7 +41,6 @@ const {
  * */
 
 class SankeyPoint extends ColumnSeries.prototype.pointClass {
-
     /* *
      *
      *  Properties
@@ -114,6 +112,50 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
         Point.prototype.getClassName.call(this);
     }
+
+    /**
+     * If there are incoming links, place it to the right of the
+     * highest order column that links to this one.
+     *
+     * @private
+     */
+    public getFromNode(): { fromNode?: SankeyPoint, fromColumn: number } {
+        const node = this;
+
+        let fromColumn = -1,
+            fromNode;
+
+        for (let i = 0; i < node.linksTo.length; i++) {
+            const point = node.linksTo[i];
+            if (
+                (point.fromNode.column as any) > fromColumn &&
+                point.fromNode !== node // #16080
+            ) {
+                fromNode = point.fromNode;
+                fromColumn = (fromNode.column as any);
+            }
+        }
+
+        return { fromNode, fromColumn };
+    }
+
+    /**
+     * Calculate node.column if it's not set by user
+     * @private
+     */
+    public setNodeColumn(): void {
+        const node = this;
+
+        if (!defined(node.options.column)) {
+            // No links to this node, place it left
+            if (node.linksTo.length === 0) {
+                node.column = 0;
+            } else {
+                node.column = node.getFromNode().fromColumn + 1;
+            }
+        }
+    }
+
 
     /**
      * @private
