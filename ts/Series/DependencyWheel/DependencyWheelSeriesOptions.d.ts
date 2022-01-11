@@ -19,6 +19,7 @@
 import type DependencyWheelSeries from './DependencyWheelSeries';
 import type SankeySeriesOptions from '../Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import SankeyDataLabelOptions from '../Sankey/SankeyDataLabelOptions';
 
 /* *
  *
@@ -26,10 +27,15 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
+interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     center?: Array<(number|string|null)>;
+    dataLabels: DependencyWheelDataLabelOptions;
     startAngle?: number;
     states?: SeriesStatesOptions<DependencyWheelSeries>;
 }
 
-export default DependencyWheelSeriesOptions;
+interface DependencyWheelDataLabelOptions extends SankeyDataLabelOptions {
+    rotationMode?: 'circular';
+}
+
+export { DependencyWheelSeriesOptions, DependencyWheelDataLabelOptions };

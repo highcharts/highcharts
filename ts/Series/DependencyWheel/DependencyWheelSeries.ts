@@ -18,7 +18,10 @@
  *
  * */
 
-import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
+import type {
+    DependencyWheelSeriesOptions,
+    DependencyWheelDataLabelOptions
+} from './DependencyWheelSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -35,6 +38,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    isNumber,
+    isObject,
     merge
 } = U;
 
@@ -249,13 +254,68 @@ class DependencyWheelSeries extends SankeySeries {
     }
 
     /**
+     * Calculate additional data label's options if needed.
+     *
+     * @private
+     * @function getDlOptions
+     *
+     * @param {DependencyWheelPoint} point
+     *        Point for which the data label options should be calculated.
+     *
+     * @return {DependencyWheelDataLabelOptions}
+     *         Set of data label options for given point.
+     */
+    public getDlOptions(
+        point: DependencyWheelPoint
+    ): DependencyWheelDataLabelOptions {
+        const optionsSeries = point.series.options.dataLabels,
+            optionsPoint = point.options.dataLabels;
+
+        let options = merge(
+            {
+                style: {}
+            },
+            optionsSeries,
+            optionsPoint
+        );
+
+        if (!isNumber(options.rotation)) {
+            const shapeArgs = isObject(point.shapeArgs) ? point.shapeArgs : {},
+                rotationMode = options.rotationMode;
+
+            if (
+                rotationMode === 'circular' &&
+                shapeArgs.start &&
+                shapeArgs.end
+            ) {
+                const rotationRad =
+                    shapeArgs.end - (shapeArgs.end - shapeArgs.start) / 2,
+                    rad2deg = 180 / Math.PI;
+
+                let rotation = (rotationRad * rad2deg) % 180;
+
+                // Prevent text from rotating upside down.
+                if (rotation > 90) {
+                    rotation -= 180;
+                } else if (rotation < -90) {
+                    rotation += 180;
+                }
+
+                options.rotation = rotation;
+            }
+        }
+
+        return options;
+    }
+
+    /**
      * @private
      * @todo Override the refactored sankey translateLink and translateNode
      * functions instead of the whole translate function.
      */
     public translate(): void {
-
-        const options = this.options,
+        const dependecyWheel = this,
+            options = this.options,
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
             center = this.getCenter(),
@@ -294,6 +354,8 @@ class DependencyWheelSeries extends SankeySeries {
                     width: 1,
                     height: 1
                 };
+
+                node.dlOptions = dependecyWheel.getDlOptions(node);
 
                 // Draw the links from this node
                 node.linksFrom.forEach(function (point): void {
