@@ -1033,8 +1033,6 @@ Chart.prototype.drillUp = function (): void {
                     level.seriesOptions
             });
 
-            this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
-
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
                 (newSeries as any).options.animation =
@@ -1067,7 +1065,6 @@ Chart.prototype.drillUp = function (): void {
             // it to the chart and show it.
             if (level.resetZoomButton) {
                 chart.resetZoomButton = level.resetZoomButton;
-                chart.resetZoomButton.show();
             }
         }
     }
@@ -1791,5 +1788,11 @@ addEvent(Point, 'afterSetState', function (): void {
 addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
+
+addEvent(Chart, 'drillupall', function (): void {
+    if (this.resetZoomButton) {
+        this.showResetZoom();
     }
 });

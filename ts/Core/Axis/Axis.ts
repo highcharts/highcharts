@@ -187,7 +187,7 @@ class Axis {
     public axisTitle?: SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
-    public categories: Array<string> = void 0 as any;
+    public categories?: Array<string>;
     public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
@@ -420,7 +420,7 @@ class Axis {
          * @type {Array<string>}
          * @readonly
          */
-        axis.categories = (options.categories as any) || axis.hasNames;
+        axis.categories = options.categories || (axis.hasNames ? [] : void 0);
         if (!axis.names) { // Preserve on update (#3830)
             axis.names = [];
             (axis.names as any).keys = {};
@@ -856,9 +856,11 @@ class Axis {
             if (doPostTranslate) { // log, ordinal and broken axis
                 val = (axis.val2lin as any)(val);
             }
+            const value = sign * (val - (localMin as any)) * localA;
+
             returnValue = isNumber(localMin) ?
                 (
-                    sign * (val - (localMin as any)) * localA +
+                    (!axis.isRadial ? correctFloat(value) : value) +
                     cvsOffset +
                     (sign * minPixelPadding) +
                     (isNumber(pointPlacement) ?
@@ -1364,7 +1366,7 @@ class Axis {
      * The X value that the point is given.
      */
     public nameToX(point: Point): number {
-        const explicitCategories = isArray(this.categories),
+        const explicitCategories = isArray(this.options.categories),
             names = explicitCategories ? this.categories : this.names;
 
         let nameX = point.options.x,
@@ -1373,7 +1375,7 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames ?
+            nameX = this.options.uniqueNames && names ?
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
@@ -1383,8 +1385,8 @@ class Axis {
                 point.series.autoIncrement();
         }
         if (nameX === -1) { // Not found in currenct categories
-            if (!explicitCategories) {
-                x = (names as any).length;
+            if (!explicitCategories && names) {
+                x = names.length;
             }
         } else {
             x = nameX;

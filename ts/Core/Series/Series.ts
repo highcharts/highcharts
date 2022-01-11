@@ -115,6 +115,13 @@ declare module '../Renderer/SVG/SVGElementLike' {
     }
 }
 
+declare module './PointLike' {
+    interface PointLike {
+        plotX?: number;
+        plotY?: number;
+    }
+}
+
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
@@ -1600,7 +1607,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
-            updatingNames = xAxis.categories && !xAxis.names.length;
+            updatingNames = !!(xAxis.categories && !xAxis.names.length);
         }
 
         // optionally filter out points outside the plot area
@@ -2180,8 +2187,16 @@ class Series {
                 point.isNull = true;
             }
 
-            // Get the plotX translation
+            /**
+             * The translated X value for the point in terms of pixels. Relative
+             * to the X axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotX
+             * @type {number|undefined}
+             */
             point.plotX = plotX = correctFloat( // #5236
+                // Get the plotX translation
                 limitedRange((xAxis.translate as any)( // #3923
                     xValue,
                     0,
@@ -2273,6 +2288,14 @@ class Series {
                     yValue, false, true, false, true
                 );
                 if (typeof translated !== 'undefined') {
+                    /**
+                     * The translated Y value for the point in terms of pixels.
+                     * Relative to the Y axis position if the series has one,
+                     * otherwise relative to the plot area. Depending on the
+                     * series type this value might not be defined.
+                     * @name Highcharts.Point#plotY
+                     * @type {number|undefined}
+                     */
                     point.plotY = limitedRange(translated);
                 }
             }
@@ -2300,11 +2323,9 @@ class Series {
             );
 
             // some API data
-            point.category = (
-                categories &&
-                typeof (categories as any)[point.x as any] !== 'undefined' ?
-                    (categories as any)[point.x as any] :
-                    point.x
+            point.category = pick(
+                categories && categories[point.x],
+                point.x as any
             );
 
             // Determine auto enabling of markers (#3635, #5099)
