@@ -120,6 +120,8 @@ body {
 #stock {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
 }
 
 #stock .transparent {

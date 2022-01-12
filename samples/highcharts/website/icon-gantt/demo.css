@@ -380,6 +380,7 @@ textarea {
     user-select: none;
     touch-action: manipulation;
     outline: none;
+    top: 0 !important;
 }
 
 .chart-container .highcharts-background {
@@ -460,6 +461,8 @@ textarea {
 #gantt {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
 }
 
 #gantt .hide {
