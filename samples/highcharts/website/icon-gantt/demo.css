@@ -2,6 +2,8 @@
 
 body {
     margin: 0 !important;
+
+    /* background: linear-gradient(180deg, #201836 0, #46465c 100%); */
 }
 
 /* BUTTONS OUTSIDE CHART */
@@ -384,13 +386,12 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: url("#bg-gradient");
-    fill: #2f2b38;
+    fill: #211836;
     transition: all 1s;
 }
 
 .chart-container .highcharts-background.on {
-    fill: #2f2b38;
+    fill: #211836;
 }
 
 .chart-container .highcharts-grid-line {
@@ -463,6 +464,7 @@ textarea {
     height: 250px;
     border-radius: 4px;
     background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #gantt .hide {

@@ -160,6 +160,7 @@ body {
     transition: all 1s;
     border-radius: 4px;
     background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 .chart-container .highcharts-series-15.highcharts-arearange-series.cover {
