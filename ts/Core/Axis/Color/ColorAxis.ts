@@ -575,28 +575,19 @@ class ColorAxis extends Axis implements AxisLike {
                 zIndex: 1
             }).add(item.legendGroup);
         }
-        const options = legend.options,
-            symbolPadding = options.symbolPadding || 0,
-            series = (item as any).series.drawLegendSymbol ?
-                (item as any).series :
-                item,
-            seriesOptions = series.options,
-            showCheckbox = legend.createCheckboxForItem &&
-                seriesOptions &&
-                seriesOptions.showCheckbox,
-            itemExtraWidth = legend.symbolWidth + symbolPadding +
-                        itemDistance + (showCheckbox ? 20 : 0);
+
         // Set how much space this legend item takes up
         axis.legendItemWidth = (
             width +
             padding +
-            (horiz ? itemDistance : labelPadding) + (
-                (options.layout === 'vertical') &&
-                (item as ColorAxis).maxLabelLength &&
-                ((item as ColorAxis).maxLabelLength > itemExtraWidth) &&
-                ((item as ColorAxis).maxLabelLength - itemExtraWidth) ||
-                0
-            ));
+            (
+                horiz ?
+                    itemDistance :
+                    (legendOptions.symbolPadding || 0) +
+                    this.maxLabelLength +
+                    padding
+            )
+        );
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
