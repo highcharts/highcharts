@@ -1076,9 +1076,9 @@ class SVGElement implements SVGElementLike {
 
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
-            objectEach(styles, function (style, n): void {
-                if (oldStyles && oldStyles[n] !== style) {
-                    (newStyles as any)[n] = style;
+            objectEach(styles, function (value, n: keyof CSSObject): void {
+                if (oldStyles && oldStyles[n] !== value) {
+                    newStyles[n] = value;
                     hasNew = true;
                 }
             });

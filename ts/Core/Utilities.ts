@@ -504,7 +504,7 @@ function attr(
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *        The DOM element to receive the attribute(s).
  *
- * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
+ * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
  *        The property or an object of key-value pairs.
  *
  * @param {number|string} [value]
@@ -515,46 +515,51 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|HTMLAttributes|SVGAttributes),
+    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
-    let ret;
 
-    const setAttribute = (key: string, val: string|number|boolean): void => {
-        // The style attribute can't be set when CSP disallows it. Parse it into
-        // style properties instead (#6884).
-        if (key === 'style' && isString(val)) {
-            css(elem, val);
+    const isGetter = isString(keyOrAttribs) && !defined(value);
+
+    let ret: string|null|undefined;
+
+    const attrSingle = (
+        value: number|string|boolean|undefined,
+        key: string
+    ): void => {
+
+        // Set the value
+        if (defined(value)) {
+            // The style attribute can't be set when CSP disallows it. Parse it
+            // into style properties instead (#6884).
+            if (key === 'style' && isString(value)) {
+                css(elem, value);
+            } else {
+                elem.setAttribute(key, value);
+            }
+
+        // Get the value
+        } else if (isGetter) {
+            ret = elem.getAttribute(key);
+
+            // IE7 and below cannot get class through getAttribute (#7850)
+            if (!ret && key === 'class') {
+                ret = elem.getAttribute(key + 'Name');
+            }
+
+        // Remove the value
         } else {
-            elem.setAttribute(key, val);
+            elem.removeAttribute(key);
         }
     };
 
-    // if the prop is a string
-    if (isString(prop)) {
-        // set the value
-        if (defined(value)) {
-            setAttribute(prop, value);
+    // If keyOrAttribs is a string
+    if (isString(keyOrAttribs)) {
+        attrSingle(value, keyOrAttribs);
 
-        // get the value
-        } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop);
-
-            // IE7 and below cannot get class through getAttribute (#7850)
-            if (!ret && prop === 'class') {
-                ret = elem.getAttribute(prop + 'Name');
-            }
-        }
-
-    // else if prop is defined, it is a hash of key/value pairs
+    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val, key): void {
-            if (defined(val)) {
-                setAttribute(key, val);
-            } else {
-                elem.removeAttribute(key);
-            }
-        });
+        objectEach(keyOrAttribs, attrSingle);
     }
     return ret;
 }
