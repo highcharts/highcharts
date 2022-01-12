@@ -3,7 +3,11 @@
  * */
 
 'use strict';
-import type { MapBounds } from '../MapViewOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    ProjectedXYArray
+} from '../MapViewOptions';
 import type ProjectionDefinition from '../ProjectionDefinition';
 import type ProjectionOptions from '../ProjectionOptions';
 
@@ -15,24 +19,25 @@ const sign = (Math as any).sign ||
     eps10 = 1e-6,
     tany = (y: number): number => Math.tan((halfPI + y) / 2);
 
-let clipBounds: MapBounds|undefined;
+export default class LambertConformalConic implements ProjectionDefinition {
 
-let n = 0,
-    c = 0;
+    private c: number;
+    private n: number;
+    private projectedBounds: MapBounds|undefined;
 
-const LambertConformalConic: ProjectionDefinition = {
-
-    init: (options: ProjectionOptions): void => {
+    constructor(options: ProjectionOptions) {
         const parallels = (options.parallels || [])
                 .map((n): number => n * deg2rad),
             lat1 = parallels[0] || 0,
             lat2 = parallels[1] || lat1,
             cosLat1 = Math.cos(lat1);
 
-        clipBounds = options.clipBounds;
+        if (typeof options.projectedBounds === 'object') {
+            this.projectedBounds = options.projectedBounds;
+        }
 
         // Apply the global variables
-        n = lat1 === lat2 ?
+        let n = lat1 === lat2 ?
             Math.sin(lat1) :
             Math.log(
                 cosLat1 / Math.cos(lat2)) / Math.log(tany(lat2) / tany(lat1)
@@ -40,11 +45,15 @@ const LambertConformalConic: ProjectionDefinition = {
         if (Math.abs(n) < 1e-10) {
             n = (sign(n) || 1) * 1e-10;
         }
-        c = cosLat1 * Math.pow(tany(lat1), n) / n;
-    },
 
-    forward: (lonLat): [number, number] => {
-        const lon = lonLat[0] * deg2rad;
+        this.n = n;
+        this.c = cosLat1 * Math.pow(tany(lat1), n) / n;
+
+    }
+
+    forward(lonLat: LonLatArray): ProjectedXYArray {
+        const lon = lonLat[0] * deg2rad,
+            { c, n, projectedBounds } = this;
         let lat = lonLat[1] * deg2rad;
         if (c > 0) {
             if (lat < -halfPI + eps10) {
@@ -57,26 +66,26 @@ const LambertConformalConic: ProjectionDefinition = {
         }
         const r = c / Math.pow(tany(lat), n),
             x = r * Math.sin(n * lon) * scale,
-            y = (c - r * Math.cos(n * lon)) * scale;
+            y = (c - r * Math.cos(n * lon)) * scale,
+            xy: ProjectedXYArray = [x, y];
 
         if (
-            clipBounds && (
-                x < clipBounds.x1 ||
-                x > clipBounds.x2 ||
-                y < clipBounds.y1 ||
-                y > clipBounds.y2
+            projectedBounds && (
+                x < projectedBounds.x1 ||
+                x > projectedBounds.x2 ||
+                y < projectedBounds.y1 ||
+                y > projectedBounds.y2
             )
         ) {
-            return [NaN, NaN];
+            xy.outside = true;
         }
-        return [
-            x, y
-        ];
-    },
+        return xy;
+    }
 
-    inverse: (xy): [number, number] => {
+    inverse(xy: ProjectedXYArray): LonLatArray {
         const x = xy[0] / scale,
             y = xy[1] / scale,
+            { c, n } = this,
             cy = c - y,
             rho = sign(n) * Math.sqrt(x * x + cy * cy);
 
@@ -88,8 +97,5 @@ const LambertConformalConic: ProjectionDefinition = {
             (l / n) / deg2rad,
             (2 * Math.atan(Math.pow(c / rho, 1 / n)) - halfPI) / deg2rad
         ];
-
     }
-};
-
-export default LambertConformalConic;
+}

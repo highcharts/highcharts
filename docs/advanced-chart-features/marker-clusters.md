@@ -5,10 +5,7 @@ Marker clusters
 Marker clusters is the concept of sampling the data values into larger blocks in order to ease readability and increase performance. It is a simple solution to display a large number of markers on a map, or a chart. The number on a cluster shows how many markers it contains. As you zoom into the map the points will start to show, and the cluster will contain fewer markers.
 
 The `marker-clusters` module supports `mappoint` and `scatter` series types.
-
-**Maps demo**
-
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/maps/marker-clusters/europe allow="fullscreen"></iframe>
+For more map related info, see the [marker-clusters in Highcharts Maps](https://highcharts.com/docs/maps/marker-clusters) article.
 
 **Scatter demo**
 

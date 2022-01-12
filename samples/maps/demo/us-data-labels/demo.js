@@ -1,5 +1,5 @@
 // Load the data from the HTML table and tag it with an upper case name used for joining
-var data = [],
+const data = [],
     // Get the map data
     mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);
 
@@ -17,41 +17,8 @@ Highcharts.data({
     }
 });
 
-// Process mapdata
+// Prepare mapData for joining
 mapData.forEach(function (p) {
-    const coordinates = p.geometry.coordinates;
-
-    // This point has a square legend to the right
-    // @todo: Add hs-middle-x and hs-middle-y to the geojson map data instead of
-    // this hack
-    const legendBox = coordinates[0][0];
-    if (legendBox[0][0] === 9727) {
-
-        // Identify the box
-        const bounds = Highcharts.seriesTypes.map.prototype
-            .getProjectedBounds
-            .call({
-                chart: {
-                    mapView: {
-                        projection: new Highcharts._modules[// eslint-disable-line no-underscore-dangle
-                            'Maps/Projection.js'
-                        ]()
-                    }
-                },
-                points: [p]
-            });
-
-        // Place the center of the data label in the center of the point legend
-        // box
-        p.middleX = ((legendBox[0][0] + legendBox[1][0]) / 2 - bounds.x1) /
-            (bounds.x2 - bounds.x1);
-        p.middleY = ((legendBox[0][1] + legendBox[2][1]) / 2 - bounds.y2) /
-            (bounds.y1 - bounds.y2);
-
-        delete p.bounds;
-    }
-
-    // Tag it for joining
     p.ucName = p.name.toUpperCase();
 });
 
