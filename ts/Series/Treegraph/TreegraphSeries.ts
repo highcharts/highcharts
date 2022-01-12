@@ -94,6 +94,8 @@ class TreegraphSeries extends OrganizationSeries {
     public options: TreegraphSeriesOptions = void 0 as any;
 
     public points: Array<TreegraphPoint> = void 0 as any;
+
+    public siblingDistance: number = void 0 as any;
     /* *
      *
      *  Functions
