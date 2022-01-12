@@ -714,21 +714,22 @@ function css(
     if (isString(styles)) {
         styles = styles
             .split(';')
-            .reduce((styles, line: string): CSSObject => {
-                const pair = line.split(':'),
+            .reduce((styles, line): CSSObject => {
+                const pair = line.split(':').map((s): string => s.trim()),
                     key = pair[0].replace(
                         /-([a-z])/g,
                         (g): string => g[1].toUpperCase()
                     );
 
-                (styles as any)[key] = pair[1];
+                if (pair[1]) {
+                    (styles as any)[key] = pair[1];
+                }
                 return styles;
             }, {} as CSSObject);
     }
     if (H.isMS && !H.svg) { // #2686
-        if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter =
-                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
+        if (styles && defined(styles.opacity)) {
+            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
         }
     }
     extend(el.style, styles as any);
