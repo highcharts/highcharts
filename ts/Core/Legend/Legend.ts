@@ -764,18 +764,18 @@ class Legend {
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
-                legend.setItemEvents(item as Legend.Item, li, useHTML);
+                legend.setItemEvents(item, li, useHTML);
             }
 
         }
 
         // Add the HTML checkbox on top
         if (showCheckbox && !item.checkbox && legend.createCheckboxForItem) {
-            legend.createCheckboxForItem(item as Legend.Item);
+            legend.createCheckboxForItem(item);
         }
 
         // Colorize the items
-        legend.colorizeItem(item as Legend.Item, item.visible);
+        legend.colorizeItem(item, item.visible);
 
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
