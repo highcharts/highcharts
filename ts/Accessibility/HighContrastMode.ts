@@ -84,8 +84,7 @@ function isHighContrastModeActive(): boolean {
         return bi === 'none';
     }
 
-    // Not used for other browsers
-    return false;
+    return win.matchMedia && win.matchMedia('(forced-colors: active)').matches;
 }
 
 /**
