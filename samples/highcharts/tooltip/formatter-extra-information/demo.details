@@ -1,7 +1,7 @@
 ---
  name: Highcharts Demo
  authors:
-   - Torstein Hønsi
+   - Karol Kolodziej
  compareTooltips: true
  js_wrap: b
 ...
