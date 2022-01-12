@@ -515,20 +515,18 @@ function getSVG(chart) {
         if (chart.styledMode) {
             svg = svg.replace(
                 '</defs>',
-                `
-                <style>
-                * {
-                    fill: rgba(0, 0, 0, 0.1);
-                    stroke: black;
-                    stroke-width: 1px;
-                }
-                text, tspan {
-                    fill: blue;
-                    stroke: none;
-                }
-                </style>
-                </defs>
-                `
+                '<style>' +
+                '* {' +
+                '   fill: rgba(0, 0, 0, 0.1);' +
+                '   stroke: black;' +
+                '   stroke-width: 1px;' +
+                '}' +
+                'text, tspan {' +
+                '    fill: blue;' +
+                '    stroke: none;' +
+                '}' +
+                '</style>' +
+                '</defs>'
             );
         }
 
