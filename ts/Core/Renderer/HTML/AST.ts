@@ -16,6 +16,7 @@
  *
  * */
 
+import type CSSObject from '../CSSObject';
 import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
@@ -28,6 +29,7 @@ import U from '../../Utilities.js';
 const {
     attr,
     createElement,
+    css,
     error,
     isFunction,
     isString,
@@ -323,6 +325,23 @@ class AST {
         return attributes;
     }
 
+    public static parseStyle(style: string): CSSObject {
+        return style
+            .split(';')
+            .reduce((styles, line): CSSObject => {
+                const pair = line.split(':').map((s): string => s.trim()),
+                    key = pair[0].replace(
+                        /-([a-z])/g,
+                        (g): string => g[1].toUpperCase()
+                    );
+
+                if (pair[1]) {
+                    (styles as any)[key] = pair[1];
+                }
+                return styles;
+            }, {} as CSSObject);
+    }
+
     /**
      * Utility function to set html content for an element by passing in a
      * markup string. The markup is safely parsed by the AST class to avoid
@@ -434,6 +453,7 @@ class AST {
                                 key !== 'tagName' &&
                                 key !== 'attributes' &&
                                 key !== 'children' &&
+                                key !== 'style' &&
                                 key !== 'textContent'
                             ) {
                                 (attributes as any)[key] = val;
@@ -443,6 +463,10 @@ class AST {
                             element as any,
                             AST.filterUserAttributes(attributes)
                         );
+
+                        if (item.style) {
+                            css(element as any, item.style);
+                        }
 
                         // Add text content
                         if (textNode) {
@@ -535,11 +559,11 @@ class AST {
             if (parsedAttributes) {
                 const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                    attributes[
-                        attrib.name as string === 'data-style' ?
-                            'style' :
-                            attrib.name
-                    ] = attrib.value;
+                    if (attrib.name as string === 'data-style') {
+                        astNode.style = AST.parseStyle(attrib.value);
+                    } else {
+                        attributes[attrib.name] = attrib.value;
+                    }
                 });
                 astNode.attributes = attributes;
             }
@@ -587,6 +611,7 @@ namespace AST {
     export interface Node {
         attributes?: (HTMLAttributes&SVGAttributes);
         children?: Array<Node>;
+        style?: CSSObject;
         tagName?: string;
         textContent?: string;
     }

@@ -530,13 +530,7 @@ function attr(
 
         // Set the value
         if (defined(value)) {
-            // The style attribute can't be set when CSP disallows it. Parse it
-            // into style properties instead (#6884).
-            if (key === 'style' && isString(value)) {
-                css(elem, value);
-            } else {
-                elem.setAttribute(key, value);
-            }
+            elem.setAttribute(key, value);
 
         // Get the value
         } else if (isGetter) {
@@ -714,24 +708,8 @@ function pick<T>(): T|undefined {
  */
 function css(
     el: DOMElementType,
-    styles: CSSObject|string
+    styles: CSSObject
 ): void {
-    if (isString(styles)) {
-        styles = styles
-            .split(';')
-            .reduce((styles, line): CSSObject => {
-                const pair = line.split(':').map((s): string => s.trim()),
-                    key = pair[0].replace(
-                        /-([a-z])/g,
-                        (g): string => g[1].toUpperCase()
-                    );
-
-                if (pair[1]) {
-                    (styles as any)[key] = pair[1];
-                }
-                return styles;
-            }, {} as CSSObject);
-    }
     if (H.isMS && !H.svg) { // #2686
         if (styles && defined(styles.opacity)) {
             styles.filter = `alpha(opacity=${styles.opacity * 100})`;
