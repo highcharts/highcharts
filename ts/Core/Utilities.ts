@@ -700,9 +700,8 @@ function pick<T>(): T|undefined {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
  *        An HTML DOM element.
  *
- * @param {Highcharts.CSSObject|string} styles
- *        Style object with camel case property names. Alternatively a style
- *        string like given in HTML or SVG style attribute.
+ * @param {Highcharts.CSSObject} styles
+ *        Style object with camel case property names.
  *
  * @return {void}
  */
