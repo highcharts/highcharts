@@ -83,6 +83,7 @@ body {
     height: 250px;
     border-radius: 4px;
     background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #maps .highcharts-background {
