@@ -716,10 +716,11 @@ class SVGRenderer implements SVGRendererLike {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
-        // Presentational
-        let hoverStyle: any,
-            pressedStyle: any,
-            disabledStyle: any;
+        // Presentational. The string type is a mistake, it is just for
+        // compliance with SVGAttribute and is not used in button theme.
+        let hoverStyle: CSSObject|string|undefined,
+            pressedStyle: CSSObject|string|undefined,
+            disabledStyle: CSSObject|string|undefined;
 
         if (!styledMode) {
 
@@ -799,13 +800,16 @@ class SVGRenderer implements SVGRendererLike {
                         hoverState,
                         pressedState,
                         disabledState
-                    ][state || 0])
-                    .css([
-                        normalStyle,
-                        hoverStyle,
-                        pressedStyle,
-                        disabledStyle
                     ][state || 0]);
+                const css = [
+                    normalStyle,
+                    hoverStyle,
+                    pressedStyle,
+                    disabledStyle
+                ][state || 0];
+                if (isObject(css)) {
+                    label.css(css);
+                }
             }
         };
 
