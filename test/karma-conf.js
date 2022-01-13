@@ -299,9 +299,6 @@ module.exports = function (config) {
 
         // These ones fail
         exclude: argv.oldie ? [] : [
-            // The configuration currently loads classic mode only. Styled mode
-            // needs to be a separate instance.
-            'samples/unit-tests/series-pie/styled-mode/demo.js',
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?

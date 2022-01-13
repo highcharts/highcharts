@@ -205,7 +205,13 @@ QUnit.test('Combination charts and column mapping', function (assert) {
     );
 });
 
-QUnit.test('Data config on updates', function (assert) {
+QUnit.test('Data config on updates and setOptions', function (assert) {
+    Highcharts.setOptions({
+        data: {
+            endRow: 2
+        }
+    });
+
     var chart = Highcharts.chart('container', {
             data: {
                 csv: [
@@ -242,6 +248,15 @@ QUnit.test('Data config on updates', function (assert) {
         oldDataLength,
         'Switching back switchRowsAndColumns should restore number of series (#11095).'
     );
+
+    assert.strictEqual(
+        chart.series.length,
+        2,
+        'Global data options should be merged with the chart options (#16568).'
+    );
+
+    // Clear the default options for other tests
+    delete Highcharts.defaultOptions.data;
 });
 
 QUnit.test(
@@ -347,5 +362,34 @@ QUnit.test('Update column names', function (assert) {
         chart.series[0].name,
         'D',
         'Should be able to update series name.'
+    );
+});
+
+
+QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    enabled: true
+                }
+            }
+        },
+        data: {
+            columns: [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]],
+            firstRowAsNames: true
+        }
+    });
+
+    chart.update({
+        data: {
+            dataRefreshRate: 90
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.data.dataRefreshRate,
+        90,
+        'Should be able to update data options despite using columns and having data grouping options.'
     );
 });

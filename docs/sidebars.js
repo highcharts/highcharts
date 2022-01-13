@@ -63,6 +63,7 @@ module.exports = {
             'maps/mapline-series',
             'maps/mappoint-series',
             'maps/mapbubble-series',
+            'maps/marker-clusters',
             'maps/tilemap-series'
         ],
         'Gantt': [

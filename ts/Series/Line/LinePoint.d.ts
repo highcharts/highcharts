@@ -38,8 +38,6 @@ declare module '../../Core/Series/PointLike' {
         low?: number;
         negative?: boolean;
         options: PointOptions;
-        plotX?: number;
-        plotY?: number;
         stackTotal?: number;
         stackY?: (number|null);
         yBottom?: number;

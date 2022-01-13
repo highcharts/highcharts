@@ -8,23 +8,31 @@
  *
  * */
 
-import type { MapBounds } from './MapViewOptions';
+import type {
+    LonLatArray,
+    MapBounds,
+    ProjectedXYArray
+} from './MapViewOptions';
 import type ProjectionOptions from './ProjectionOptions';
 
-export interface ProjectionFunction {
-    (coords: [number, number]): [number, number];
+export interface ProjectionForwardFunction {
+    (coords: LonLatArray): ProjectedXYArray;
+}
+
+export interface ProjectionInverseFunction {
+    (xy: ProjectedXYArray): LonLatArray;
 }
 
 export interface Projector {
-    forward: ProjectionFunction;
-    inverse: ProjectionFunction;
+    forward: ProjectionForwardFunction;
+    inverse: ProjectionInverseFunction;
 }
 
 export declare class ProjectionDefinition {
     constructor(options: ProjectionOptions);
     bounds?: MapBounds;
-    forward: ProjectionFunction;
-    inverse: ProjectionFunction;
+    forward: ProjectionForwardFunction;
+    inverse: ProjectionInverseFunction;
     maxLatitude?: number;
 }
 

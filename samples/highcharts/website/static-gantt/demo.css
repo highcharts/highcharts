@@ -383,13 +383,12 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: url("#bg-gradient");
-    fill: #2f2b38;
+    fill: #211836;
     transition: all 1s;
 }
 
 .chart-container .highcharts-background.on {
-    fill: #2f2b38;
+    fill: #211836;
 }
 
 .chart-container .highcharts-grid-line {
@@ -460,6 +459,8 @@ textarea {
 #gantt {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
 }
 
 #gantt .hide {
