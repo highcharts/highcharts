@@ -329,3 +329,41 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
 
 
 A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-indicator-on-event/).
+
+
+### 5. Custom column indicator.
+
+The principle of creating a custom column indicator is similar to the ordinary one.
+Still, the `getValues` method for calculating points position is required.
+
+Along with that, in order to render the column,
+some other methods like `markerAttribs`,  `drawGraph`, `crispCol`, `drawPoints`, `getColumnMetrics`, `translate` needs to be inherited from the column series prototype as shown in the code snippet below.
+
+Additionally, to correctly render that indicator, the `threshold`, `groupPadding` and `pointPadding`
+properties need to be defined.
+
+Example configuration should look like:
+``` JS
+Highcharts.seriesType(
+    'customIndicator',
+    'sma', {
+        name: 'Sum of previous 2 points',
+        threshold: 0,
+        groupPadding: 0.2,
+        pointPadding: 0.2,
+    }, {
+        getValues: function(series) {
+            return this.getSum(series.xData, series.yData);
+        },
+        getSum: getSum,
+        markerAttribs: Highcharts.noop,
+        drawGraph: Highcharts.noop,
+        crispCol: Highcharts.seriesTypes.column.prototype.crispCol,
+        drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+        getColumnMetrics: Highcharts.seriesTypes.column.prototype.getColumnMetrics,
+        translate: Highcharts.seriesTypes.column.prototype.translate
+    }
+);
+```
+
+A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/).
