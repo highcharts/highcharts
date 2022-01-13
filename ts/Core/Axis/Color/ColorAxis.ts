@@ -557,6 +557,8 @@ class ColorAxis extends Axis implements AxisLike {
             horiz ? 12 : ColorAxis.defaultLegendLength
         );
         const labelPadding = pick(
+            // @todo: This option is not documented, nor implemented when
+            // vertical
             (legendOptions as any).labelPadding,
             horiz ? 16 : 30
         );
@@ -583,9 +585,7 @@ class ColorAxis extends Axis implements AxisLike {
             (
                 horiz ?
                     itemDistance :
-                    (legendOptions.symbolPadding || 0) +
-                    this.maxLabelLength +
-                    padding
+                    this.options.labels.x + this.maxLabelLength
             )
         );
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
