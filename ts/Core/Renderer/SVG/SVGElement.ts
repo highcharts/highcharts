@@ -1141,7 +1141,7 @@ class SVGElement implements SVGElementLike {
                 }
 
                 // Apply text outline after added
-                if (styles && styles.textOutline) {
+                if (styles.textOutline) {
                     this.applyTextOutline(styles.textOutline);
                 }
             }
