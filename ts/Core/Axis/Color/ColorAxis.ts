@@ -44,7 +44,6 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
 const {
-    addEvent,
     extend,
     isNumber,
     merge,
@@ -499,6 +498,19 @@ class ColorAxis extends Axis implements AxisLike {
 
             // Call the base
             super.getOffset();
+
+            const legend = this.chart.legend;
+
+            // Adds `maxLabelLength` needed for label padding corrections done
+            // by `render()` and `getMargins()` (#15551).
+            legend.allItems.forEach(function (item): void {
+                if (item instanceof ColorAxis) {
+                    item.drawLegendSymbol(legend, item);
+                }
+            });
+
+            legend.render();
+            this.chart.getMargins(true);
 
             // First time only
             if (!axis.added) {
@@ -1009,21 +1021,6 @@ namespace ColorAxis {
 
 // Properties to preserve after destroy, for Axis.update (#5881, #6025).
 Array.prototype.push.apply(Axis.keepProps, ColorAxis.keepProps);
-
-addEvent(ColorAxis, 'afterGetOffset', function (): void { // (#15551)
-
-    const legend = this.chart.legend;
-
-    legend.allItems.forEach(function (item): void {
-        // Drawing gives access to `maxLabelLength` used to adjust axis later.
-        if (item instanceof ColorAxis) {
-            item.drawLegendSymbol(legend, item);
-        }
-    });
-
-    legend.render();
-    this.chart.getMargins(true);
-});
 
 /* *
  *
