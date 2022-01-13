@@ -1292,6 +1292,38 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
     }
 });
 
+
+/**
+ * Get selection dimensions
+ * @private
+ */
+addEvent(Pointer, 'afterGetSelectionBox', function (event):void {
+    const marker = (event as any).marker,
+        xAxis = this.chart.xAxis[0],
+        yAxis = this.chart.yAxis[0];
+
+    if (this.chart.polar) {
+        let start = (
+            marker.attr ? marker.attr('start') : marker.start
+        ) - (xAxis as any).startAngleRad + xAxis.pos;
+
+        let r = (marker.attr ? marker.attr('r') : marker.r) + yAxis.pos;
+
+        let end = (
+            marker.attr ? marker.attr('end') : marker.end
+        ) - (xAxis as any).startAngleRad + xAxis.pos;
+
+        let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR) +
+            yAxis.pos;
+
+        (event as any).x = start;
+        (event as any).width = end;
+        (event as any).y = r;
+        (event as any).height = innerR;
+    }
+});
+
+
 /**
  * Extend chart.get to also search in panes. Used internally in
  * responsiveness and chart.update.

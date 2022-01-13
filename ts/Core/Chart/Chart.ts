@@ -3523,6 +3523,52 @@ class Chart {
     }
 
     /**
+     * Checks if mouse pointer is within pane.
+     *
+     * @private
+     * @function Highcharts.Chart#isWithinPane
+     * @emits Highcharts.Chart#event:afterIsWithinPane
+     */
+    public isWithinPane(
+        axis: Axis,
+        mouseDownX: number | undefined,
+        mouseDownY: number | undefined
+    ): boolean {
+        const chart = this,
+            mouseDownPos = chart.inverted ? mouseDownX : mouseDownY,
+            axisStartPos = chart.inverted ? axis.left : axis.top,
+            axisEndPos = chart.inverted ?
+                axisStartPos + axis.width : axisStartPos + axis.height,
+            isXAxis = axis.isXAxis;
+
+        let isWithinPane = false;
+
+        // Check if zoomed area is within the pane (#1289).
+        // In case of multiple panes only one pane should be zoomed.
+        if (
+            !defined(mouseDownPos) ||
+            (
+                !isXAxis &&
+                mouseDownPos >= axisStartPos &&
+                mouseDownPos <= axisEndPos
+            ) ||
+            isXAxis
+        ) {
+            isWithinPane = true;
+        }
+
+        let event = { isWithinPane, mouseDownX, mouseDownY };
+
+        fireEvent(
+            this,
+            'afterIsWithinPane',
+            event
+        );
+
+        return event.isWithinPane;
+    }
+
+    /**
      * Zoom into a given portion of the chart given by axis coordinates.
      *
      * @private
@@ -3531,9 +3577,7 @@ class Chart {
      */
     public zoom(event: Pointer.SelectEventObject): void {
         const chart = this,
-            pointer = chart.pointer,
-            mouseDownPos = chart.inverted ?
-                pointer.mouseDownX : pointer.mouseDownY;
+            pointer = chart.pointer;
 
         let displayButton = false,
             hasZoomed;
@@ -3550,29 +3594,18 @@ class Chart {
                 axisData: Pointer.SelectDataObject
             ): void {
                 const axis = axisData.axis,
-                    axisStartPos = chart.inverted ? axis.left : axis.top,
-                    axisEndPos = chart.inverted ?
-                        axisStartPos + axis.width : axisStartPos + axis.height,
                     isXAxis = axis.isXAxis;
 
-                let isWithinPane = false;
-
-                // Check if zoomed area is within the pane (#1289).
-                // In case of multiple panes only one pane should be zoomed.
-                if (
-                    (
-                        !isXAxis &&
-                        (mouseDownPos as any) >= axisStartPos &&
-                        (mouseDownPos as any) <= axisEndPos
-                    ) ||
-                    isXAxis ||
-                    !defined(mouseDownPos)
-                ) {
-                    isWithinPane = true;
-                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                if (
+                    pointer[isXAxis ? 'zoomX' : 'zoomY'] &&
+                    chart.isWithinPane(
+                        axis,
+                        pointer.mouseDownX,
+                        pointer.mouseDownY
+                    )
+                ) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;

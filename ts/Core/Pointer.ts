@@ -464,6 +464,7 @@ class Pointer {
      * Get selection box to calculate extremes
      * @private
      * @function Highcharts.Pointer#getSelectionBox
+     * @emits afterGetSelectionBox
      */
     public getSelectionBox(marker: SVGElement): Partial<BBoxObject> {
         let x = marker.attr ? +marker.attr('x') : marker.x,
@@ -475,7 +476,15 @@ class Pointer {
                 marker.attr('height') :
                 marker.height;
 
-        return { x, y, width, height };
+        let event = { x, y, width, height, marker };
+
+        fireEvent(
+            this,
+            'afterGetSelectionBox',
+            event
+        );
+
+        return event;
     }
 
     /**

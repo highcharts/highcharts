@@ -23,6 +23,7 @@ import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
+    defined,
     extend,
     merge,
     pick,
@@ -558,6 +559,21 @@ Chart.prototype.getHoverPane = function (
     }
     return hoverPane;
 };
+
+// Check if mouse pointer is within pane for polar
+addEvent(Chart, 'afterIsWithinPane', function (event): any {
+    const chart = this,
+        x = (event as any).mouseDownX,
+        y = (event as any).mouseDownY;
+
+    if (chart.polar && chart.pane && defined(x) && defined(y)) {
+        (event as any).isWithinPane = isInsidePane(
+            x,
+            y,
+            chart.pane[0].center
+        );
+    }
+});
 
 addEvent(Chart, 'afterIsInsidePlot', function (
     e: {
