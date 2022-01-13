@@ -22,8 +22,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type F from '../FormatUtilities';
-import type Point from '../Series/Point';
-import type Series from '../Series/Series';
+import type Legend from './Legend';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 /* *
@@ -34,67 +33,68 @@ import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 
 declare module '../Options' {
     interface Options {
-        legend?: LegendOptions;
+        legend: LegendOptions;
     }
 }
 
 export interface LegendOptions {
-    align?: AlignValue;
-    alignColumns?: boolean;
+    align: AlignValue;
+    alignColumns: boolean;
     backgroundColor?: ColorType;
-    borderColor?: ColorType;
-    borderRadius?: number;
+    borderColor: ColorType;
+    borderRadius: number;
     borderWidth?: number;
-    className?: string;
-    enabled?: boolean;
+    className: string;
+    enabled: boolean;
     floating?: boolean;
-    itemCheckboxStyle?: CSSObject;
+    itemCheckboxStyle: CSSObject;
     itemDistance?: number;
-    itemHiddenStyle?: CSSObject;
-    itemHoverStyle?: CSSObject;
+    itemHiddenStyle: CSSObject;
+    itemHoverStyle: CSSObject;
     itemMarginBottom?: number;
     itemMarginTop?: number;
-    itemStyle?: CSSObject;
+    itemStyle: CSSObject;
     itemWidth?: number;
-    layout?: ('horizontal'|'vertical'|'proximate');
+    layout: ('horizontal'|'vertical'|'proximate');
     labelFormat?: string;
-    labelFormatter?: F.FormatterCallback<Series|Point>;
+    labelFormatter: F.FormatterCallback<Legend.Item>;
     /** @deprecated */
     lineHeight?: number;
     margin?: number;
     maxHeight?: number;
-    navigation?: LegendNavigationOptions;
+    navigation: LegendNavigationOptions;
     padding?: number;
     reversed?: boolean;
     rtl?: boolean;
-    shadow?: (boolean|Partial<ShadowOptionsObject>);
-    squareSymbol?: boolean;
+    shadow: (boolean|Partial<ShadowOptionsObject>);
+    squareSymbol: boolean;
     /** @deprecated */
     style?: CSSObject;
     symbolHeight?: number;
-    symbolPadding?: number;
+    symbolPadding: number;
     symbolRadius?: number;
     symbolWidth?: number;
-    title?: LegendTitleOptions;
+    title: LegendTitleOptions;
     useHTML?: boolean;
-    verticalAlign?: VerticalAlignValue;
+    verticalAlign: VerticalAlignValue;
     width?: (number|string);
-    x?: number;
-    y?: number;
+    x: number;
+    y: number;
 }
 
 export interface LegendNavigationOptions {
-    activeColor?: ColorType;
+    activeColor: ColorType;
     animation?: (boolean|Partial<AnimationOptions>);
     arrowSize?: number;
     enabled?: boolean;
-    inactiveColor?: ColorType;
+    inactiveColor: ColorType;
     style?: CSSObject;
 }
 
 export interface LegendTitleOptions {
-    style?: CSSObject;
+    style: CSSObject;
     text?: string;
+    width?: number;
 }
 
 /* *

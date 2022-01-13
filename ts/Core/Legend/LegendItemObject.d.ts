@@ -16,6 +16,7 @@
 
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type ColorType from '../Color/ColorType';
 import type Legend from './Legend';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
@@ -31,6 +32,7 @@ export interface LegendItemObject {
     chart: Chart;
     checkbox?: Legend.CheckBoxElement;
     checkboxOffset?: number;
+    color?: ColorType;
     itemHeight?: number;
     itemWidth?: number;
     legendGroup?: SVGElement;
@@ -40,6 +42,7 @@ export interface LegendItemObject {
     legendItemWidth?: number;
     legendLine?: SVGElement;
     legendSymbol?: SVGElement;
+    name?: string;
     pageIx?: number;
     symbol?: SymbolKey;
 }
