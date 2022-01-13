@@ -1,3 +1,8 @@
+#container {
+    height: 400px;
+    min-width: 310px;
+}
+
 .highcharts-popup-annotations {
     display: none;
     position: absolute;

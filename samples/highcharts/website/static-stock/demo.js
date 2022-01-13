@@ -164,10 +164,13 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             {
                 labels: {
                     align: 'right',
-                    x: -3
+                    x: -3,
+                    style: {
+                        color: 'transparent'
+                    }
                 },
                 title: {
-                    text: 'OHLC'
+                    text: ''
                 },
                 height: '60%',
                 lineWidth: 2,
@@ -181,10 +184,13 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             {
                 labels: {
                     align: 'right',
-                    x: -3
+                    x: -3,
+                    style: {
+                        color: 'transparent'
+                    }
                 },
                 title: {
-                    text: 'Volume'
+                    text: null
                 },
                 top: '65%',
                 height: '35%',
@@ -192,7 +198,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 lineWidth: 2,
                 visible: false
             },
-            //0
+            //2
             {
                 min: -2,
                 max: 18,
@@ -203,7 +209,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                 endOnTick: false,
                 visible: false
             },
-            ///1 -
+            ///3
             {
                 min: -2,
                 max: 18,
