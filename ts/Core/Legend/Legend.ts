@@ -183,7 +183,7 @@ class Legend {
 
     public offsetWidth: number = 0;
 
-    public options: LegendOptions = {};
+    public options: LegendOptions = void 0 as any;
 
     public padding: number = 0;
 
@@ -329,7 +329,7 @@ class Legend {
      *
      * @emits Highcharts.Legends#event:afterUpdate
      */
-    public update(options: LegendOptions, redraw?: boolean): void {
+    public update(options: DeepPartial<LegendOptions>, redraw?: boolean): void {
         const chart = this.chart;
 
         this.setOptions(merge(true, this.options, options));
@@ -371,10 +371,10 @@ class Legend {
                 legendSymbol = item.legendSymbol,
                 hiddenColor = (legend.itemHiddenStyle as any).color,
                 textColor = visible ?
-                    (options.itemStyle as any).color :
+                    options.itemStyle.color :
                     hiddenColor,
                 symbolColor = visible ?
-                    ((item as any).color || hiddenColor) :
+                    (item.color || hiddenColor) :
                     hiddenColor,
                 markerOptions = item.options && (item.options as any).marker;
             let symbolAttr: SVGAttributes = { fill: symbolColor };
@@ -447,7 +447,7 @@ class Legend {
             const attribs = {
                 translateX: ltr ?
                     itemX :
-                    legend.legendWidth - itemX - 2 * (symbolPadding as any) - 4,
+                    legend.legendWidth - itemX - 2 * symbolPadding - 4,
                 translateY: itemY
             };
             const complete = (): void => {
@@ -585,7 +585,7 @@ class Legend {
         let bBox,
             titleHeight = 0;
 
-        if ((titleOptions as any).text) {
+        if (titleOptions.text) {
             if (!this.title) {
                 /**
                  * SVG element of the legend title.
@@ -595,27 +595,27 @@ class Legend {
                  * @type {Highcharts.SVGElement}
                  */
                 this.title = this.chart.renderer.label(
-                    (titleOptions as any).text,
+                    titleOptions.text,
                     padding - 3,
                     padding - 4,
-                    null as any,
-                    null as any,
-                    null as any,
+                    void 0,
+                    void 0,
+                    void 0,
                     options.useHTML,
-                    null as any,
+                    void 0,
                     'legend-title'
                 )
                     .attr({ zIndex: 1 });
 
                 if (!this.chart.styledMode) {
-                    this.title.css((titleOptions as any).style);
+                    this.title.css(titleOptions.style);
                 }
 
                 this.title.add(this.group);
             }
 
             // Set the max title width (#7253)
-            if (!(titleOptions as any).width) {
+            if (!titleOptions.width) {
                 this.title.css({
                     width: this.maxLegendWidth + 'px'
                 });
@@ -644,7 +644,7 @@ class Legend {
         (item.legendItem as any).attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
-                (options.labelFormatter as any).call(item)
+                options.labelFormatter.call(item)
         });
     }
 
@@ -943,12 +943,12 @@ class Legend {
         // Use the first letter of each alignment option in order to detect
         // the side. (#4189 - use charAt(x) notation instead of [x] for IE7)
         if (this.proximate) {
-            return (options.align as any).charAt(0) + 'tv';
+            return options.align.charAt(0) + 'tv';
         }
         return options.floating ? '' : (
-            (options.align as any).charAt(0) +
-            (options.verticalAlign as any).charAt(0) +
-            (options.layout as any).charAt(0)
+            options.align.charAt(0) +
+            options.verticalAlign.charAt(0) +
+            options.layout.charAt(0)
         );
     }
 
@@ -1090,12 +1090,11 @@ class Legend {
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
             options.width as any,
-            (chart.spacingBox as any).width - padding
+            chart.spacingBox.width - padding
         );
 
         // Compute how wide the legend is allowed to be
-        allowedWidth =
-            (chart.spacingBox as any).width - 2 * padding - (options.x as any);
+        allowedWidth = chart.spacingBox.width - 2 * padding - options.x;
         if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
             allowedWidth /= 2;
         }
@@ -1278,8 +1277,8 @@ class Legend {
             padding = this.padding,
             maxHeight = options.maxHeight,
             navOptions = options.navigation,
-            animation = pick((navOptions as any).animation, true),
-            arrowSize = (navOptions as any).arrowSize || 12,
+            animation = pick(navOptions.animation, true),
+            arrowSize = navOptions.arrowSize || 12,
             pages = this.pages,
             allItems = this.allItems,
             clipToHeight = function (height?: number): void {
@@ -1313,8 +1312,8 @@ class Legend {
         let clipHeight: number,
             lastY: number,
             spaceHeight = (
-                (chart.spacingBox as any).height +
-                (alignTop ? -(optionsY as any) : optionsY) - padding
+                chart.spacingBox.height +
+                (alignTop ? -optionsY : optionsY) - padding
             ),
             nav = this.nav,
             clipRect = this.clipRect;
@@ -1338,7 +1337,7 @@ class Legend {
             legendHeight &&
             spaceHeight > 0 &&
             legendHeight > spaceHeight &&
-            (navOptions as any).enabled !== false
+            navOptions.enabled !== false
         ) {
 
             this.clipHeight = clipHeight =
@@ -1416,8 +1415,8 @@ class Legend {
                 this.pager = renderer.text('', 15, 10)
                     .addClass('highcharts-legend-navigation');
 
-                if (!chart.styledMode) {
-                    this.pager.css((navOptions as any).style);
+                if (!chart.styledMode && navOptions.style) {
+                    this.pager.css(navOptions.style);
                 }
                 this.pager.add(nav);
 
@@ -1620,9 +1619,7 @@ class Legend {
                         }
 
                         if (!styledMode) {
-                            legendItem.css(
-                                legend.options.itemHoverStyle as any
-                            );
+                            legendItem.css(legend.options.itemHoverStyle);
                         }
                     })
                     .on('mouseout', function (): void {
@@ -1630,8 +1627,8 @@ class Legend {
                             legendItem.css(
                                 merge(
                                     item.visible ?
-                                        legend.itemStyle as any :
-                                        legend.itemHiddenStyle as any
+                                        legend.itemStyle :
+                                        legend.itemHiddenStyle
                                 )
                             );
                         }
