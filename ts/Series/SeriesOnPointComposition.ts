@@ -138,8 +138,36 @@ namespace SeriesOnPointComposition {
     }
 
     function getCenter(this: any): any {
-        const connectedPoint = this.chart.get(this.options.onPoint.id);
+        const connectedPoint = this.chart.get(this.options.onPoint.id),
+            position = this.options.onPoint.position;
 
+        if (position !== void 0) {
+            let x = position.x,
+                y = position.y,
+                offsetX = position.offsetX,
+                offsetY = position.offsetY;
+
+            if (x || y) {
+                return [
+                    x + (offsetX || 0),
+                    y + (offsetY || 0),
+                    50,
+                    0
+                ];
+            }
+
+            return [
+                connectedPoint.plotX + (offsetX || 0),
+                connectedPoint.plotY + (offsetY || 0),
+                50,
+                0
+            ];
+        }
+
+        // 0: centerX, relative to width
+        // 1: centerY, relative to height
+        // 2: size, relative to smallestSize
+        // 3: innerSize, relative to size
         return [connectedPoint.plotX, connectedPoint.plotY, 50, 0];
     }
 
@@ -183,7 +211,7 @@ namespace SeriesOnPointComposition {
          *        Will be added to 10.
          */
         public initSeriesOnPoint(valueToAdd: number): void {
-            console.log(10 + valueToAdd); // eslint-disable-line no-console
+
         }
     }
 
