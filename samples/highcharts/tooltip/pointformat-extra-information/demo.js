@@ -1,13 +1,7 @@
 Highcharts.chart('container', {
 
     tooltip: {
-        formatter: function () {
-            const basicInformation = 'The value for <b>' + this.x +
-                '</b> is <b>' + this.y + '</b>',
-                extraInformation = this.point.custom && this.point.custom.extraInformation || '';
-
-            return basicInformation + '<br>' + extraInformation;
-        }
+        pointFormat: 'The value for <b>{point.x}</b> is <b>{point.y}</b><br>{point.custom.extraInformation}'
     },
 
     xAxis: {

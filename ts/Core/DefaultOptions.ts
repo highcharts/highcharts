@@ -2059,8 +2059,6 @@ const defaultOptions: Options = {
          *         Extending default formatter
          * @sample {highstock} stock/tooltip/formatter/
          *         Formatting with shared tooltip
-         * @sample {highcharts|highstock} highcharts/tooltip/formatter-extra-infromation/
-         *         Show extra information about points in the tooltip
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
@@ -2491,6 +2489,8 @@ const defaultOptions: Options = {
          *
          * @sample {highcharts} highcharts/tooltip/pointformat/
          *         A different point format with value suffix
+         * @sample {highcharts|highstock} highcharts/tooltip/pointformat-extra-infromation/
+         *         Show extra information about points in the tooltip
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *
