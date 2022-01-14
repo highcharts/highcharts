@@ -254,7 +254,7 @@ namespace OfflineExporting {
 
             const hasNonASCII = (s: string): boolean => (
                 // eslint-disable-next-line no-control-regex
-                /[^\u0000-\u007F\u200B]+/u.test(s)
+                /[^\u0000-\u007F\u200B]+/.test(s)
             );
 
             // Register an event in order to add the font once jsPDF is
