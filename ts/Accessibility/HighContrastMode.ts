@@ -61,7 +61,7 @@ declare module '../Core/Series/PointLike' {
  */
 function isHighContrastModeActive(): boolean {
     // Use media query on Edge, but not on IE
-    const isEdge = /(Edg)/u.test(win.navigator.userAgent);
+    const isEdge = /(Edg)/.test(win.navigator.userAgent);
     if (win.matchMedia && isEdge) {
         return win.matchMedia('(-ms-high-contrast: active)').matches;
     }
