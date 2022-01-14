@@ -83,6 +83,7 @@
                 "unnecessary": false
             }
         ],
+        "require-unicode-regexp": 0, // @todo after IE
         "semi": 0, // ts
         "semi-spacing": [
             "error",
