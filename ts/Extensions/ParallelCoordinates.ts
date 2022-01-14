@@ -80,7 +80,7 @@ declare module '../Core/Chart/ChartLike'{
         ];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
-        setParallelInfo(options: Partial<Options>): void;
+        setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
 declare module '../Core/Chart/ChartOptions'{
@@ -214,7 +214,7 @@ setOptions({
 // Initialize parallelCoordinates
 addEvent(Chart, 'init', function (
     e: {
-        args: { 0: Partial<Options> };
+        args: { 0: DeepPartial<Options> };
     }
 ): void {
     const options = e.args[0],
@@ -326,7 +326,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
-        options: Partial<Options>
+        options: DeepPartial<Options>
     ): void {
         const chart = this,
             seriesOptions: Array<SeriesOptions> =

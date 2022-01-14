@@ -504,7 +504,7 @@ function attr(
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *        The DOM element to receive the attribute(s).
  *
- * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
+ * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
  *        The property or an object of key-value pairs.
  *
  * @param {number|string} [value]
@@ -515,36 +515,45 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|HTMLAttributes|SVGAttributes),
+    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
-    let ret;
 
-    // if the prop is a string
-    if (isString(prop)) {
-        // set the value
+    const isGetter = isString(keyOrAttribs) && !defined(value);
+
+    let ret: string|null|undefined;
+
+    const attrSingle = (
+        value: number|string|boolean|undefined,
+        key: string
+    ): void => {
+
+        // Set the value
         if (defined(value)) {
-            elem.setAttribute(prop, value as string);
+            elem.setAttribute(key, value);
 
-        // get the value
-        } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop);
+        // Get the value
+        } else if (isGetter) {
+            ret = elem.getAttribute(key);
 
             // IE7 and below cannot get class through getAttribute (#7850)
-            if (!ret && prop === 'class') {
-                ret = elem.getAttribute(prop + 'Name');
+            if (!ret && key === 'class') {
+                ret = elem.getAttribute(key + 'Name');
             }
-        }
 
-    // else if prop is defined, it is a hash of key/value pairs
+        // Remove the value
+        } else {
+            elem.removeAttribute(key);
+        }
+    };
+
+    // If keyOrAttribs is a string
+    if (isString(keyOrAttribs)) {
+        attrSingle(value, keyOrAttribs);
+
+    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val, key): void {
-            if (defined(val)) {
-                elem.setAttribute(key, val as any);
-            } else {
-                elem.removeAttribute(key);
-            }
-        });
+        objectEach(keyOrAttribs, attrSingle);
     }
     return ret;
 }
@@ -701,9 +710,8 @@ function css(
     styles: CSSObject
 ): void {
     if (H.isMS && !H.svg) { // #2686
-        if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter =
-                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
+        if (styles && defined(styles.opacity)) {
+            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
         }
     }
     extend(el.style, styles as any);

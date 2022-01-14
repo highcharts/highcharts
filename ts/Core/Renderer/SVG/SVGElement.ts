@@ -1064,28 +1064,21 @@ class SVGElement implements SVGElementLike {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element,
-            // These CSS properties are interpreted internally by the SVG
-            // renderer, but are not supported by SVG and should not be added to
-            // the DOM. In styled mode, no CSS should find its way to the DOM
-            // whatsoever (#6173, #6474).
-            svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
+            elem = this.element;
 
         let textWidth,
-            serializedCss = '',
-            hyphenate: Function,
             hasNew = !oldStyles;
 
         // convert legacy
-        if (styles && styles.color) {
+        if (styles.color) {
             styles.fill = styles.color;
         }
 
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
-            objectEach(styles, function (style, n): void {
-                if (oldStyles && oldStyles[n] !== style) {
-                    (newStyles as any)[n] = style;
+            objectEach(styles, function (value, n: keyof CSSObject): void {
+                if (oldStyles && oldStyles[n] !== value) {
+                    (newStyles as any)[n] = value;
                     hasNew = true;
                 }
             });
@@ -1101,18 +1094,16 @@ class SVGElement implements SVGElementLike {
             }
 
             // Get the text width from style
-            if (styles) {
-                // Previously set, unset it (#8234)
-                if (styles.width === null || styles.width as any === 'auto') {
-                    delete this.textWidth;
+            // Previously set, unset it (#8234)
+            if (styles.width === null || styles.width as any === 'auto') {
+                delete this.textWidth;
 
-                // Apply new
-                } else if (
-                    elem.nodeName.toLowerCase() === 'text' &&
-                    styles.width
-                ) {
-                    textWidth = this.textWidth = pInt(styles.width);
-                }
+            // Apply new
+            } else if (
+                elem.nodeName.toLowerCase() === 'text' &&
+                styles.width
+            ) {
+                textWidth = this.textWidth = pInt(styles.width);
             }
 
             // store object
@@ -1122,37 +1113,36 @@ class SVGElement implements SVGElementLike {
                 delete styles.width;
             }
 
-            // Serialize and set style attribute
-            if (elem.namespaceURI === this.SVG_NS) { // #7633
-                hyphenate = function (a: string, b: string): string {
-                    return '-' + b.toLowerCase();
-                };
-                objectEach(styles, function (style, n): void {
-                    if (svgPseudoProps.indexOf(n) === -1) {
-                        serializedCss +=
-                        n.replace(/([A-Z])/g, hyphenate as any) + ':' +
-                        style + ';';
-                    }
-                });
-                if (serializedCss) {
-                    attr(elem, 'style', serializedCss); // #1881
-                }
-            } else {
-                css(elem, styles);
-            }
+            const stylesToApply = merge(styles);
+            if (elem.namespaceURI === this.SVG_NS) {
 
+                // These CSS properties are interpreted internally by the SVG
+                // renderer, but are not supported by SVG and should not be
+                // added to the DOM. In styled mode, no CSS should find its way
+                // to the DOM whatsoever (#6173, #6474).
+                (
+                    ['textOutline', 'textOverflow', 'width'] as
+                    ('textOutline'|'textOverflow'|'width')[]
+                ).forEach(
+                    (key): boolean|undefined => (
+                        stylesToApply &&
+                        delete stylesToApply[key]
+                    )
+                );
+            }
+            css(elem, stylesToApply);
 
             if (this.added) {
 
                 // Rebuild text after added. Cache mechanisms in the buildText
                 // will prevent building if there are no significant changes.
                 if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this as any);
+                    this.renderer.buildText(this);
                 }
 
                 // Apply text outline after added
-                if (styles && styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline as any);
+                if (styles.textOutline) {
+                    this.applyTextOutline(styles.textOutline);
                 }
             }
         }
