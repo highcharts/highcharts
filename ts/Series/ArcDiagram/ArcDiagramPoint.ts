@@ -49,8 +49,6 @@ class ArcDiagramPoint extends SankeyPoint {
      *
      * */
 
-    public angle: number = void 0 as any;
-
     public fromNode: ArcDiagramPoint = void 0 as any;
 
     public index: number = void 0 as any;

@@ -65,16 +65,61 @@ class ArcDiagramSeries extends SankeySeries {
      *         Arc Diagram
      *
      * @extends      plotOptions.sankey
-     * @excluding    dataSorting
+     * @excluding    curveFactor, dataSorting
      * @since        next
      * @product      highcharts
      * @requires     modules/arc-diagram
      * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
-        nodeShape: 'circle',
+
         /**
-         * Wheter the nodes with different values should have the same size.
+         * The option to center links rather than position them
+         * one after another
+         *
+         * @type    {boolean}
+         * @since next
+         * @default false
+         * @product highcharts
+         */
+        centeredLinks: false,
+
+        /**
+         * The option to center links rather than position them
+         * one after another
+         *
+         * @type    {boolean}
+         * @since next
+         * @default undefined
+         * @product highcharts
+         * @apioption series.arcdiagram.majorRadius
+         */
+
+        /**
+         * The offset of an arc diagram nodes column in relation
+         * to the plotArea. The offset equal to 50% places nodes
+         * in the center of a chart.
+         *
+         * @type    {string}
+         * @since next
+         * @default undefined
+         * @product highcharts
+         * @apioption series.arcdiagram.offset
+         */
+
+        /**
+         * The global link weight. If not set, width will is calculated
+         * per link, depending on the weight value.
+         *
+         * @type    {number}
+         * @since next
+         * @default undefined
+         * @product highcharts
+         * @apioption series.arcdiagram.linkWeight
+         */
+
+        /**
+         * Whether nodes with different values should have the same size.
          *
          * @type    {boolean}
          * @since next
@@ -82,8 +127,9 @@ class ArcDiagramSeries extends SankeySeries {
          * @product highcharts
          */
         equalNodes: false,
+        keys: ['from', 'to', 'weight'],
         /**
-         * Wheter the series should be placed on the other side of plotArea.
+         * Whether series should be placed on the other side of plotArea.
          *
          * @type    {boolean}
          * @since next
@@ -431,8 +477,8 @@ class ArcDiagramSeries extends SankeySeries {
                     (nodeOffset && nodeOffset.relativeLeft || 0)
                 )
             )) + crisp,
-            top = options.centerPos ?
-                parseInt(options.centerPos, 10) *
+            top = options.offset ?
+                parseInt(options.offset, 10) *
                 (
                     (
                         chart.inverted ?
@@ -491,39 +537,26 @@ class ArcDiagramSeries extends SankeySeries {
                 y + height / 2
             ];
 
-            if (options.nodeShape === 'circle') {
-                node.shapeType = 'path';
-                node.shapeArgs = {
-                    d: symbols.circle(
-                        x, y - height / 2,
-                        width,
-                        height
-                    ),
-                    x: x + width / 2,
-                    y: y,
-                    r: height / 2,
-                    width: width,
-                    height,
-                    display: node.hasShape() ? '' : 'none'
-                };
-
-                node.dlBox = {
-                    x: x + width / 2,
-                    y: y,
-                    height: 0,
-                    width: 0
-                };
-
-            } else {
-                node.shapeArgs = {
-                    x,
-                    y,
+            node.shapeType = 'path';
+            node.shapeArgs = {
+                d: symbols.circle(
+                    x, y - height / 2,
                     width,
-                    height,
-                    display: node.hasShape() ? '' : 'none'
-                };
-            }
+                    height
+                ),
+                x: x + width / 2,
+                y: y,
+                r: height / 2,
+                width: width,
+                height
+            };
 
+            node.dlBox = {
+                x: x + width / 2,
+                y: y,
+                height: 0,
+                width: 0
+            };
         } else {
             node.dlOptions = {
                 enabled: false
@@ -599,11 +632,17 @@ export default ArcDiagramSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.arcdiagram
- * @exclude   dataSorting
+ * @exclude   dataSorting, boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/sankey
  * @requires  modules/arc-diagram
  * @apioption series.arcdiagram
+ */
+
+/**
+ * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.arcdiagram.data.dataLabels
  */
 
 /**
@@ -616,6 +655,23 @@ export default ArcDiagramSeries;
  * @product   highcharts
  * @excluding offset
  * @apioption series.arcdiagram.nodes
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+ *
+ * @type    {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ *
+ * @apioption series.organization.nodes.dataLabels
+ */
+
+/**
+ * Individual data label for each node. The options are the same as
+ * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+ *
+ * @type    {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ *
  */
 
 /**
@@ -644,13 +700,6 @@ export default ArcDiagramSeries;
  * @product   highcharts
  * @excluding outgoing, dataLabels
  * @apioption series.arcdiagram.data
- */
-
-/**
- * Individual data label for each node. The options are the same as
- * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
- *
- * @apioption series.arcdiagram.nodes.dataLabels
  */
 
 ''; // adds doclets above to the transpiled file
