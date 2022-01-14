@@ -61,7 +61,7 @@ declare module '../Core/Series/PointLike' {
  */
 function isHighContrastModeActive(): boolean {
     // Use media query on Edge, but not on IE
-    const isEdge = /(Edg)/.test(win.navigator.userAgent);
+    const isEdge = /(Edg)/u.test(win.navigator.userAgent);
     if (win.matchMedia && isEdge) {
         return win.matchMedia('(-ms-high-contrast: active)').matches;
     }
@@ -84,8 +84,8 @@ function isHighContrastModeActive(): boolean {
         return bi === 'none';
     }
 
-    // Not used for other browsers
-    return false;
+    // Other browsers use the forced-colors standard
+    return win.matchMedia && win.matchMedia('(forced-colors: active)').matches;
 }
 
 /**
