@@ -94,7 +94,7 @@
     "lint-staged": "^11.1.2",
     "log-update": "^4.0.0",
     "lolex": "^6.0.0",
-    "marked": "^3.0.2",
+    "marked": "^4.0.10",
     "mkdirp": "^1.0.4",
     "pixelmatch": "^5.2.1",
     "plugin-error": "^1.0.1",
