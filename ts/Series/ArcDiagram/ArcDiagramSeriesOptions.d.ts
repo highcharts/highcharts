@@ -28,7 +28,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     center?: Array<(number|string|null)>;
-    startAngle?: number;
     states?: SeriesStatesOptions<ArcDiagramSeries>;
     equalNodes?: boolean;
     centeredLinks?: boolean;

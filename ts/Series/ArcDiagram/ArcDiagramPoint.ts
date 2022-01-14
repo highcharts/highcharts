@@ -20,9 +20,6 @@
 
 import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-
 import ArcDiagramSeries from './ArcDiagramSeries';
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -80,48 +77,6 @@ class ArcDiagramPoint extends SankeyPoint {
      * */
 
     /* eslint-disable valid-jsdoc */
-
-    /**
-     * Return a text path that the data label uses.
-     * @private
-     */
-    public getDataLabelPath(label: SVGLabel): SVGElement {
-        const renderer = this.series.chart.renderer,
-            shapeArgs = this.shapeArgs,
-            upperHalf = this.angle < 0 || this.angle > Math.PI,
-            start = shapeArgs.start || 0,
-            end = shapeArgs.end || 0;
-
-        if (!this.dataLabelPath) {
-            this.dataLabelPath = renderer
-                .arc({
-                    open: true,
-                    longArc: Math.abs(Math.abs(start) -
-                        Math.abs(end)) < Math.PI ? 0 : 1
-                })
-                // Add it inside the data label group so it gets destroyed
-                // with the label
-                .add(label);
-        }
-
-        this.dataLabelPath.attr({
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (
-                (
-                    shapeArgs.r || 0
-                ) + (
-                    this.dataLabel &&
-                    this.dataLabel.options.distance as number || 0
-                )
-            ),
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf
-        });
-
-        return this.dataLabelPath;
-    }
 
     public isValid(): boolean {
         // No null points here

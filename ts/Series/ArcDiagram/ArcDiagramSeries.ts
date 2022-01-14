@@ -23,6 +23,9 @@ import ArcDiagramPoint from './ArcDiagramPoint.js';
 
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
+
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -62,7 +65,7 @@ class ArcDiagramSeries extends SankeySeries {
      *         Arc Diagram
      *
      * @extends      plotOptions.sankey
-     * @exclude      dataSorting
+     * @excluding    dataSorting
      * @since        next
      * @product      highcharts
      * @requires     modules/arc-diagram
@@ -78,7 +81,34 @@ class ArcDiagramSeries extends SankeySeries {
          * @default false
          * @product highcharts
          */
-        equalNodes: false
+        equalNodes: false,
+        /**
+         * Wheter the series should be placed on the other side of plotArea.
+         *
+         * @type    {boolean}
+         * @since next
+         * @default false
+         * @product highcharts
+         */
+        reversed: false,
+        /**
+         * Options for the data labels appearing on top of the nodes and links.
+         * For Arc diagram charts, data labels are visible for the nodes
+         * by default, but hidden for links. This is controlled
+         * by modifying the `nodeFormat`, and the `format` that applies to links
+         * and is an empty string by default.
+         *
+         * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
+         *
+         * @private
+         */
+        dataLabels: {
+            linkTextPath: {
+                attributes: {
+                    startOffset: '25%'
+                }
+            }
+        }
     } as ArcDiagramSeriesOptions);
 
     /* *
@@ -341,8 +371,8 @@ class ArcDiagramSeries extends SankeySeries {
         };
 
         point.dlBox = {
-            x: nodeTop + (bottom - nodeTop) / 2,
-            y: fromX + (toX - fromX) / 2,
+            x: fromX + (toX - fromX) / 2,
+            y: bottom - majorRadius,
             height: linkWeight,
             width: 0
         };
@@ -426,7 +456,6 @@ class ArcDiagramSeries extends SankeySeries {
         // If node sum is 0, don’t render the rect #12453
         if (sum) {
             // Draw the node
-            node.shapeType = options.nodeShape;
             node.nodeX = fromNodeLeft;
             node.nodeY = top;
 
@@ -462,8 +491,14 @@ class ArcDiagramSeries extends SankeySeries {
                 y + height / 2
             ];
 
-            if (node.shapeType === 'circle') {
+            if (options.nodeShape === 'circle') {
+                node.shapeType = 'path';
                 node.shapeArgs = {
+                    d: symbols.circle(
+                        x, y - height / 2,
+                        width,
+                        height
+                    ),
                     x: x + width / 2,
                     y: y,
                     r: height / 2,
@@ -494,6 +529,24 @@ class ArcDiagramSeries extends SankeySeries {
                 enabled: false
             };
         }
+    }
+    // Networkgraph has two separate collecions of nodes and lines, render
+    // dataLabels for both sets:
+    public drawDataLabels(): void {
+        const textPath = (this.options.dataLabels as any).textPath;
+
+        // Render node labels:
+        SankeySeries.prototype.drawDataLabels.apply(this, arguments as any);
+
+        // Render link labels:
+        this.points = this.data;
+        (this.options.dataLabels as any).textPath =
+            (this.options.dataLabels as any).linkTextPath;
+        SankeySeries.prototype.drawDataLabels.apply(this, arguments as any);
+
+        // Restore nodes
+        this.points = this.nodes;
+        (this.options.dataLabels as any).textPath = textPath;
     }
 
     /* eslint-enable valid-jsdoc */

@@ -12,7 +12,13 @@ Highcharts.chart('container', {
     },
     series: [{
         keys: ['from', 'to', 'weight'],
+        centerPos: '50%',
         type: 'arcdiagram',
+        dataLabels: {
+            align: 'right',
+            x: -15,
+            padding: 0
+        },
         data: [
             ['Brazil', 'Portugal', 5],
             ['Brazil', 'France', 1],

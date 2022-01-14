@@ -10,6 +10,7 @@ Highcharts.chart('container', {
         linkWeight: 1,
         keys: ['from', 'to', 'weight'],
         type: 'arcdiagram',
+        centeredLinks: true,
         data: [
             ['Brazil', 'Portugal', 5],
             ['Brazil', 'France', 1],
