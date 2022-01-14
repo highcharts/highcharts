@@ -43,25 +43,20 @@ Decision flowchart of the module (click for large version):
 
 ### Export local PDF in a language containing non-Latin characters or Unicode Characters/UTF-8
 
-As described in the [jsPDF docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8), the 14 standard fonts in PDF are limited to the ASCII-codepage. Therefore, in order to support for example Chinese text in the exported PDF, a custom font has to be created and passed on to the exporting module.
+As described in the [jsPDF docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8), the 14 standard fonts in PDF are limited to the ASCII-codepage. Therefore, in order to support for example Chinese text in the exported PDF, one or more TTF font files have to be passed on to the exporting module.
 
-1. Select a custom font that contains the required characters/symbols. In the example, the [NotoSans-Regular](https://fonts.google.com/noto/specimen/Noto+Sans) font was chosen from Google fonts.
-2. Download the `.ttf` file of that particular font.
-3. Go to [jsPDF's online font converter tool](https://rawgit.com/MrRio/jsPDF/master/fontconverter/fontconverter.html) and:
-    - set `fontName` to the same as the file is called (`NotoSans-Regular`)
-    - optionally, set your desired `fontStyle`
-    - change the `Module format` to `UMD`
-    - choose the `.ttf` file to convert, in this case the file is called `NotoSans-Regular.ttf`
-    - click `Create`
-    - the `NotoSans-Regular-normal.js` file should be downloaded
-4. Add the URL path for the new font file and then set the name for the same as used in the converter.
+TTF font files are available from several resources online. A good resource is Google Fonts, and the [Noto](https://fonts.google.com/?query=noto) set of fonts that support a variety of different languages. Given the volume of languages and glyphs, there is no single font files that covers all languages.
 
-    ```
-        exporting: {
-            ...
-            pdfFont: {
-                name: 'NotoSans-Regular',
-                url: '//path.to/NotoSans-Regular-normal.js'
-            },
-        },
-    ```
+For the sake of our feature demo, we are loading font files from our own website:
+
+```
+exporting: {
+    pdfFont: {
+        normal: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Regular.ttf',
+        bold: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Bold.ttf',
+        bolditalic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-BoldItalic.ttf',
+        italic: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Italic.ttf'
+    }
+}
+```
+[View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-pdffont/)

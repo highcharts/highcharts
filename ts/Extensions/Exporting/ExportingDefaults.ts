@@ -225,20 +225,15 @@ const exporting: ExportingOptions = {
     url: 'https://export.highcharts.com/',
 
     /**
-     * Settings for a custom font for the exported PDF. This is used for
-     * languages containing non-ASCII characters, like Chinese, Russian,
-     * Japanese etc.
+     * Settings for a custom font for the exported PDF, when using the
+     * `offline-exporting` module. This is used for languages containing
+     * non-ASCII characters, like Chinese, Russian, Japanese etc.
      *
-     * The default behaviour is to load fonts from the Highcharts CDN when
-     * non-ASCII characters are detected in the SVG. Font loading can be forced
-     * or disabled by setting the `enabled` option, or custom fonts can be
-     * loaded by setting your own file locations.
-     *
-     * The default font, [Noto
-     * Sans](https://fonts.google.com/noto/specimen/Noto+Sans), is a Google font
-     * designed to support all modern and ancient languages. The file is 533 kB,
-     * so in order to keep the weight down, it may be beneficial to replace it
-     * with a font that is more targeted at your specific language.
+     * As described in the [jsPDF
+     * docs](https://github.com/parallax/jsPDF#use-of-unicode-characters--utf-8),
+     * the 14 standard fonts in PDF are limited to the ASCII-codepage.
+     * Therefore, in order to support other text in the exported PDF, one or
+     * more TTF font files have to be passed on to the exporting module.
      *
      * See more in [the
      * docs](https://www.highcharts.com/docs/export-module/client-side-export).
@@ -252,9 +247,9 @@ const exporting: ExportingOptions = {
     pdfFont: {
 
         /**
-         * The TTF font file for normal `font-style`. By default, as per the
-         * `enabled` setting, a font file is loaded from the Highcharts CDN if
-         * there are non-ASCII characters in the SVG.
+         * The TTF font file for normal `font-style`. If font variations like
+         * `bold` or `italic` are not defined, the `normal` font will be used
+         * for those too.
          *
          * @type string|undefined
          */
