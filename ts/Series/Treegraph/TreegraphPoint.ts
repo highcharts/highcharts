@@ -16,7 +16,7 @@
 
 import type TreegraphPointOptions from './TreegraphPointOptions';
 import type TreegraphSeries from './TreegraphSeries';
-import type OrganizationPoint from '../Organization/OrganizationPoint';
+import OrganizationPoint from '../Organization/OrganizationPoint.js';
 
 /* *
  *
@@ -24,10 +24,10 @@ import type OrganizationPoint from '../Organization/OrganizationPoint';
  *
  * */
 
-declare class TreegraphPoint extends OrganizationPoint {
-    public options: TreegraphPointOptions;
-    public series: TreegraphSeries;
-    public collapsed: boolean;
+class TreegraphPoint extends OrganizationPoint {
+    public options: TreegraphPointOptions = void 0 as any;
+    public series: TreegraphSeries = void 0 as any;
+    public collapsed: boolean = void 0 as any;
 }
 
 /* *

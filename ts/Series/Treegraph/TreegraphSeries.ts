@@ -18,20 +18,27 @@
 
 import type TreegraphPoint from './TreegraphPoint';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
+import TreegraphNode from './TreegraphNode.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeySeries from '../Sankey/SankeySeries.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import TU from '../TreeUtilities.js';
+const { getLevelOptions } = TU;
 const {
     seriesTypes: {
         organization: { prototype: orgProto },
         sankey: { prototype: sankeyProto }
     }
 } = SeriesRegistry;
+
+import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-const { merge, pick, addEvent } = U;
+const { merge, pick, addEvent, relativeLength } = U;
+
+import './TreegraphLayout.js';
 
 /* *
  *
@@ -74,6 +81,7 @@ class TreegraphSeries extends OrganizationSeries {
             alignNodes: 'right',
             minLinkWidth: 1,
             borderWidth: 1,
+            siblingDistance: 20,
             link: {
                 type: 'straight',
                 width: 1,
@@ -103,7 +111,161 @@ class TreegraphSeries extends OrganizationSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
+    public translate(): void {
 
+        // Get the translation factor needed for each column to fill up the
+        // plot height
+        const getColumnTranslationFactor = (
+            column: SankeySeries.ColumnArray
+        ): number => {
+            const nodes = column.slice();
+            const minLinkWidth = this.options.minLinkWidth || 0;
+            let exceedsMinLinkWidth: boolean;
+            let factor = 0;
+            let i: number;
+            // Will be changed after arcDiagram will be merged.
+            let maxRadius = (column as any).maxRadius || 0;
+
+            let remainingHeight =
+                (chart.plotSizeY as any) -
+                (options.borderWidth as any) -
+                (column.length - 1) * series.nodePadding;
+
+            // Because the minLinkWidth option doesn't obey the direct
+            // translation, we need to run translation iteratively, check
+            // node heights, remove those nodes affected by minLinkWidth,
+            // check again, etc.
+            while (column.length) {
+                factor = remainingHeight / column.sum();
+                exceedsMinLinkWidth = false;
+                i = column.length;
+                while (i--) {
+                    if (column[i].getSum() * factor < minLinkWidth) {
+                        column.splice(i, 1);
+                        remainingHeight -= minLinkWidth;
+                        exceedsMinLinkWidth = true;
+                    }
+
+                    maxRadius = Math.max(
+                        maxRadius,
+                        pick(
+                            (column[i].options as any).radius,
+                            (column[i].series.options as any).radius,
+                            0
+                        )
+                    );
+                }
+                if (!exceedsMinLinkWidth) {
+                    break;
+                }
+            }
+
+            (column as any).maxRadius = maxRadius;
+
+            // Re-insert original nodes
+            column.length = 0;
+            nodes.forEach((node): number => column.push(node));
+            return factor;
+        };
+
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+
+        this.nodeColumns = this.createNodeColumns();
+        this.nodeWidth = relativeLength(
+            this.options.nodeWidth as any,
+            this.chart.plotSizeX as any
+        );
+
+        const series = this,
+            chart = this.chart,
+            options = this.options,
+            nodeWidth = this.nodeWidth,
+            nodeColumns = this.nodeColumns;
+
+        this.nodePadding = this.getNodePadding();
+
+        // Find out how much space is needed. Base it on the translation
+        // factor of the most spaceous column.
+        this.translationFactor = nodeColumns.reduce(
+            (
+                translationFactor: number,
+                column: SankeySeries.ColumnArray
+            ): number =>
+                Math.min(translationFactor, getColumnTranslationFactor(column)),
+            Infinity
+        );
+
+        let columns = (this as any).nodeColumns;
+        let sumOfRadius = columns.reduce(
+            (partialSum: number, column: any): number =>
+                partialSum + column.maxRadius,
+            0
+        );
+
+        (this as any).emptySpaceWidth =
+            ((chart as any).plotSizeX - sumOfRadius * 2) /
+            Math.max(1, nodeColumns.length - 1);
+
+
+        this.colDistance =
+            ((chart.plotSizeX as any) -
+                nodeWidth -
+                (options.borderWidth as any)) /
+            Math.max(1, nodeColumns.length - 1);
+
+        // Calculate level options used in sankey and organization
+        series.mapOptionsToLevel = getLevelOptions({
+            // NOTE: if support for allowTraversingTree is added, then from
+            // should be the level of the root node.
+            from: 1,
+            levels: options.levels,
+            to: nodeColumns.length - 1, // Height of the tree
+            defaults: {
+                borderColor: options.borderColor,
+                borderRadius: options.borderRadius, // organization series
+                borderWidth: options.borderWidth,
+                color: series.color,
+                colorByPoint: options.colorByPoint,
+                // NOTE: if support for allowTraversingTree is added, then
+                // levelIsConstant should be optional.
+                levelIsConstant: true,
+                linkColor: options.linkColor, // organization series
+                linkLineWidth: options.linkLineWidth, // organization series
+                linkOpacity: options.linkOpacity,
+                states: options.states
+            }
+        });
+
+        const layout = new H.treeLayouts.Walker();
+        layout.init(series);
+        // First translate all nodes so we can use them when drawing links
+        nodeColumns.forEach(function (
+            this: TreegraphSeries,
+            column: TreegraphSeries.ColumnArray
+        ): void {
+
+            column.forEach(function (node): void {
+                series.translateNode(node, column);
+            });
+
+        }, this);
+
+        // Then translate links
+        this.nodes.forEach(function (node): void {
+            // Translate the links from this node
+            node.linksFrom.forEach(function (linkPoint): void {
+                // If weight is 0 - don't render the link path #12453,
+                // render null points (for organization chart)
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                    series.translateLink(linkPoint as TreegraphPoint);
+                    linkPoint.allowShadow = false;
+                }
+            });
+        });
+    }
     public pointAttribs(
         point: TreegraphPoint,
         state: StatesOptionsKey
@@ -243,7 +405,7 @@ function collapseTreeFromPoint(
 
 interface TreegraphSeries {
     inverted?: boolean;
-    pointClass: typeof TreegraphPoint;
+    pointClass: typeof TreegraphNode;
 }
 
 /* *
@@ -253,7 +415,7 @@ interface TreegraphSeries {
  * */
 
 namespace TreegraphSeries {
-    export interface ColumnArray extends SankeySeries.ColumnArray {}
+    export interface ColumnArray<T = TreegraphPoint> extends SankeySeries.ColumnArray {}
 }
 
 /* *
@@ -262,6 +424,7 @@ namespace TreegraphSeries {
  *
  * */
 
+TreegraphSeries.prototype.pointClass = TreegraphNode;
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treegraph: typeof TreegraphSeries;
