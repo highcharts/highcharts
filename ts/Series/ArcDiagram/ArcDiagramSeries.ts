@@ -65,10 +65,14 @@ class ArcDiagramSeries extends SankeySeries {
      *         Arc Diagram
      *
      * @extends      plotOptions.sankey
-     * @excluding    curveFactor, dataSorting
      * @since        next
      * @product      highcharts
      * @requires     modules/arc-diagram
+     * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
+     *               dataSorting, dragDrop, getExtremesFromAll, nodePadding,
+     *               centerInCategory, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointStart, relativeXValue, softThreshold,
+     *               stack, stacking, step, xAxis, yAxis
      * @optionparent plotOptions.arcdiagram
      */
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
@@ -164,6 +168,12 @@ class ArcDiagramSeries extends SankeySeries {
                 attributes: {
                     startOffset: '25%'
                 }
+            }
+        },
+        marker: {
+            symbol: 'circle',
+            states: {
+
             }
         }
     } as ArcDiagramSeriesOptions);
@@ -471,6 +481,7 @@ class ArcDiagramSeries extends SankeySeries {
                 chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
+            symbol = options.marker && options.marker.symbol,
             sum = node.getSum() * (column.sankeyColumn.scale || 0),
             equalNodes = options.equalNodes,
             nodeHeight = equalNodes ?
@@ -550,7 +561,7 @@ class ArcDiagramSeries extends SankeySeries {
 
             node.shapeType = 'path';
             node.shapeArgs = {
-                d: symbols.circle(
+                d: symbols[symbol || 'circle'](
                     x, y - height / 2,
                     width,
                     height
@@ -643,7 +654,12 @@ export default ArcDiagramSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.arcdiagram
- * @exclude   dataSorting, boostThreshold, boostBlending
+ * @exclude   dataSorting, boostThreshold, boostBlending, curveFactor,
+ *            connectEnds, connectNulls, colorAxis, colorKey, dataSorting,
+ *            dragDrop, getExtremesFromAll, nodePadding, centerInCategory,
+ *            pointInterval, pointIntervalUnit, pointPlacement,
+ *            pointStart, relativeXValue, softThreshold, stack,
+ *            stacking, step, xAxis, yAxis
  * @product   highcharts
  * @requires  modules/sankey
  * @requires  modules/arc-diagram
