@@ -30,7 +30,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     states?: SeriesStatesOptions<ArcDiagramSeries>;
     equalNodes?: boolean;
     centeredLinks?: boolean;
-    majorRadius?: number;
+    linkRadius?: number;
     reversed: boolean;
     scale?: number;
     offset?: string;

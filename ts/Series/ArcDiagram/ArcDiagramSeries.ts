@@ -85,14 +85,14 @@ class ArcDiagramSeries extends SankeySeries {
         centeredLinks: false,
 
         /**
-         * The option to center links rather than position them
-         * one after another
+         * The radius of the link arc. If not set,
+         * it is calculated automatically.
          *
          * @type    {boolean}
          * @since next
          * @default undefined
          * @product highcharts
-         * @apioption series.arcdiagram.majorRadius
+         * @apioption series.arcdiagram.linkRadius
          */
 
         /**
@@ -149,6 +149,17 @@ class ArcDiagramSeries extends SankeySeries {
          * @private
          */
         dataLabels: {
+            /**
+             * Options for a _link_ label text which should follow link
+             * connection. Border and background are disabled for a label that
+             * follows a path.
+             *
+             * **Note:** Only SVG-based renderer supports this option. Setting
+             * `useHTML` to true will disable this option.
+             *
+             * @extends plotOptions.arcdiagram.dataLabels.linkTextPath
+             * @since   next
+             */
             linkTextPath: {
                 attributes: {
                     startOffset: '25%'
@@ -378,10 +389,10 @@ class ArcDiagramSeries extends SankeySeries {
             toX + linkWeight
         ];
 
-        const majorRadius = (
+        const linkRadius = (
             (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
         ) * pick(
-            seriesOptions.majorRadius,
+            seriesOptions.linkRadius,
             Math.min(
                 Math.abs(toX + linkWeight - fromX) / 2,
                 fromNode.nodeY - Math.abs(linkWeight)
@@ -394,7 +405,7 @@ class ArcDiagramSeries extends SankeySeries {
                 [
                     'A',
                     (toX + linkWeight - fromX) / 2,
-                    majorRadius,
+                    linkRadius,
                     0,
                     0,
                     1,
@@ -405,7 +416,7 @@ class ArcDiagramSeries extends SankeySeries {
                 [
                     'A',
                     (toX - fromX - linkWeight) / 2,
-                    majorRadius - linkWeight,
+                    linkRadius - linkWeight,
                     0,
                     0,
                     0,
@@ -418,7 +429,7 @@ class ArcDiagramSeries extends SankeySeries {
 
         point.dlBox = {
             x: fromX + (toX - fromX) / 2,
-            y: bottom - majorRadius,
+            y: bottom - linkRadius,
             height: linkWeight,
             width: 0
         };
@@ -650,10 +661,10 @@ export default ArcDiagramSeries;
  * diagram are auto-generated instances of `Highcharts.Point`, but options can
  * be applied here and linked by the `id`.
  *
- * @extends   series.arcdiagram.nodes
+ * @extends   series.sankey.nodes
  * @type      {Array<*>}
  * @product   highcharts
- * @excluding offset
+ * @excluding column, level
  * @apioption series.arcdiagram.nodes
  */
 
@@ -663,7 +674,7 @@ export default ArcDiagramSeries;
  *
  * @type    {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
  *
- * @apioption series.organization.nodes.dataLabels
+ * @apioption series.arcdiagram.nodes.dataLabels
  */
 
 /**
@@ -696,7 +707,7 @@ export default ArcDiagramSeries;
  *  ```
  *
  * @type      {Array<*>}
- * @extends   series.arcdiagram.data
+ * @extends   series.sankey.data
  * @product   highcharts
  * @excluding outgoing, dataLabels
  * @apioption series.arcdiagram.data
