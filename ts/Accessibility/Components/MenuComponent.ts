@@ -189,8 +189,25 @@ class MenuComponent extends AccessibilityComponent {
      * proxy overlay.
      */
     public onChartRender(): void {
+        const chart = this.chart,
+            focusEl = chart.focusElement,
+            a11y = chart.accessibility;
         this.proxyProvider.clearGroup('chartMenu');
         this.proxyMenuButton();
+
+        if (
+            this.exportButtonProxy &&
+            focusEl &&
+            focusEl === chart.exportingGroup
+        ) {
+            if (focusEl.focusBorder) {
+                chart.setFocusToElement(
+                    focusEl, this.exportButtonProxy.buttonElement
+                );
+            } else if (a11y) {
+                a11y.keyboardNavigation.tabindexContainer.focus();
+            }
+        }
     }
 
 
