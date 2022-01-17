@@ -335,9 +335,9 @@ A live demo of the example above can be found [here](https://jsfiddle.net/gh/get
 
 The principle of creating a custom column indicator is similar to the ordinary one.
 Still, the `getValues` method for calculating points position is required.
-
-Along with that, in order to render the column,
-some other methods like `markerAttribs`,  `drawGraph`, `crispCol`, `drawPoints`, `getColumnMetrics`, `translate` needs to be inherited from the column series prototype as shown in the code snippet below.
+Along with that, in order to render the column, some other methods like `crispCol`, `drawPoints`, `getColumnMetrics`, `translate`
+need to be inherited from the column series prototype and the `markerAttribs`,  `drawGraph` need to be overwritten with empty function
+as shown in the code snippet below.
 
 Additionally, to correctly render that indicator, the `threshold`, `groupPadding` and `pointPadding`
 properties need to be defined.
@@ -350,7 +350,7 @@ Highcharts.seriesType(
         name: 'Sum of previous 2 points',
         threshold: 0,
         groupPadding: 0.2,
-        pointPadding: 0.2,
+        pointPadding: 0.2
     }, {
         getValues: function(series) {
             return this.getSum(series.xData, series.yData);
