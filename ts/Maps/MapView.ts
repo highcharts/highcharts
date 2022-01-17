@@ -163,18 +163,19 @@ class MapView {
                     ).slice();
                 }
 
-                // Panning rotates the globe
-                const minPlotSize = Math.min( // #16722
+                const minPlotSize = Math.min(
                     chart.plotWidth,
                     chart.plotHeight
                 );
 
+                // Panning rotates the globe
                 if (
                     this.projection.options.name === 'Orthographic' &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
                     (this.minZoom || Infinity) <
+                        // #16722. (Threshold tested empirically)
                         (minPlotSize / (this.getScale() * 10))
                 ) {
 
