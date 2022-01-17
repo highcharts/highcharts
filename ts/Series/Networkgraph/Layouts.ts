@@ -144,7 +144,7 @@ declare global {
             public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
-            ): void
+            ): void;
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public restartSimulation(): void;
