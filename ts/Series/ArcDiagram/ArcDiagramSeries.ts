@@ -20,12 +20,13 @@
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
 import ArcDiagramPoint from './ArcDiagramPoint.js';
-
+import BubbleSeries from '../Bubble/BubbleSeries.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -170,11 +171,21 @@ class ArcDiagramSeries extends SankeySeries {
                 }
             }
         },
+        /**
+         * @extends   plotOptions.series.marker
+         * @excluding enabled, enabledThreshold, height, radius, width
+         */
         marker: {
             symbol: 'circle',
-            states: {
-
-            }
+            /**
+             * In arc-diagram charts, the radius is overridden and determined
+             * based on the point's data value.
+             *
+             * @ignore-option
+             */
+            radius: null as any,
+            fillOpacity: 1,
+            states: {}
         }
     } as ArcDiagramSeriesOptions);
 
@@ -231,7 +242,10 @@ class ArcDiagramSeries extends SankeySeries {
                 additionalSpace = 0,
                 remainingWidth =
                     (chart.plotSizeX || 0) -
-                    (series.options.borderWidth || 0) -
+                    (
+                        series.options.marker &&
+                        series.options.marker.lineWidth || 0
+                    ) -
                     (column.length - 1) *
                     series.nodePadding;
 
@@ -490,7 +504,10 @@ class ArcDiagramSeries extends SankeySeries {
                     sum * translationFactor,
                     this.options.minLinkWidth || 0
                 ),
-            crisp = Math.round(options.borderWidth || 0) % 2 / 2,
+            crisp = Math.round(
+                options.marker &&
+                options.marker.lineWidth || 0
+            ) % 2 / 2,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
             fromNodeLeft = Math.floor(pick(
                 nodeOffset && nodeOffset.absoluteLeft,
@@ -515,7 +532,10 @@ class ArcDiagramSeries extends SankeySeries {
                 (chart.inverted ?
                     chart.plotWidth : chart.plotHeight) - (Math.floor(
                     this.colDistance * (node.column || 0) +
-                    (options.borderWidth || 0) / 2
+                    (
+                        options.marker &&
+                        options.marker.lineWidth || 0
+                    ) / 2
                 ) + crisp +
                 (column.sankeyColumn.scale || 0) *
                     (column.sankeyColumn.maxRadius || 0) / 2
@@ -604,6 +624,31 @@ class ArcDiagramSeries extends SankeySeries {
         (this.options.dataLabels as any).textPath = textPath;
     }
 
+    public markerAttribs(
+        point: ArcDiagramPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        if (point.isNode) {
+            return BubbleSeries.prototype.markerAttribs.apply(
+                this,
+                arguments as any
+            );
+        }
+        return super.markerAttribs.apply(this, arguments as any);
+    }
+
+    public pointAttribs(
+        point?: ArcDiagramPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        if (point && point.isNode) {
+            return BubbleSeries.prototype.pointAttribs.apply(
+                this,
+                arguments as any
+            );
+        }
+        return super.pointAttribs.apply(this, arguments as any);
+    }
     /* eslint-enable valid-jsdoc */
 }
 
@@ -666,6 +711,11 @@ export default ArcDiagramSeries;
  * @apioption series.arcdiagram
  */
 
+/**
+ * @extends   plotOptions.series.marker
+ * @excluding enabled, enabledThreshold, height, radius, width
+ * @apioption series.arcdiagram.marker
+ */
 /**
  * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
  * @product   highcharts
