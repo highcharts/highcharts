@@ -190,3 +190,150 @@ QUnit.test('Map navigation button alignment', assert => {
         'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
     );
 });
+
+QUnit.test('Orthographic map rotation and panning.', assert => {
+    const getGraticule = () => {
+        const data = [];
+
+        // Meridians
+        for (let x = -180; x <= 180; x += 15) {
+            data.push({
+                geometry: {
+                    type: 'LineString',
+                    coordinates: x % 90 === 0 ? [
+                        [x, -90],
+                        [x, 0],
+                        [x, 90]
+                    ] : [
+                        [x, -80],
+                        [x, 80]
+                    ]
+                }
+            });
+        }
+
+        // Latitudes
+        for (let y = -90; y <= 90; y += 10) {
+            const coordinates = [];
+            for (let x = -180; x <= 180; x += 5) {
+                coordinates.push([x, y]);
+            }
+            data.push({
+                geometry: {
+                    type: 'LineString',
+                    coordinates
+                },
+                lineWidth: y === 0 ? 2 : undefined
+            });
+        }
+
+        return data;
+    };
+
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            animation: false
+        },
+
+        title: {
+            text: ''
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        mapNavigation: {
+            enabled: true,
+            enableDoubleClickZoomTo: true,
+            buttonOptions: {
+                verticalAlign: 'top'
+            }
+        },
+
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic'
+            }
+        },
+
+        colorAxis: {
+            tickPixelInterval: 100,
+            minColor: '#BFCFAD',
+            maxColor: '#31784B',
+            max: 1000
+        },
+
+        tooltip: {
+            pointFormat: '{point.name}: {point.value}'
+        },
+
+        plotOptions: {
+            series: {
+                clip: false,
+                animation: false
+            }
+        },
+
+        series: [{
+            name: 'Graticule',
+            id: 'graticule',
+            type: 'mapline',
+            data: getGraticule(),
+            nullColor: 'rgba(0, 0, 0, 0.05)'
+        }, {
+            type: 'mappoint',
+            data: [{
+                name: 'A',
+                id: 'A',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [0, 80]
+                }
+            }],
+            color: '#313f77'
+        }]
+    });
+
+    const controller = new TestController(chart);
+
+    // Pan to the limit
+    controller.pan([300, 50], [300, 350]);
+    // // Zoom twice - should still be in the glob rotation mode
+    controller.click(20, 20);
+    controller.click(20, 20);
+
+    // store yValue.
+    const point = chart.get('A');
+    const oldPlotY = point.plotY;
+
+    controller.pan([305, 50], [305, 350]);
+
+    // Zoom again twice - should change panning mode
+    controller.click(20, 20);
+    controller.click(20, 20);
+
+    // Pan last time - should move the point (compare position with the one
+    // right before the pan)
+    controller.pan([310, 50], [310, 200]);
+
+    assert.ok(
+        point.plotY > (oldPlotY + 100),
+        'Zooming should enable panning (#16722).'
+    );
+
+    // Zoom out twice - should change to rotation mode.
+    controller.click(20, 50);
+    controller.click(20, 50);
+
+    // Rotate
+    controller.pan([305, 50], [305, 350]);
+
+    assert.close(
+        point.plotY,
+        oldPlotY,
+        1,
+        'Zooming out should enable rotation (#16722).'
+    );
+});
