@@ -547,7 +547,7 @@ class SVGElement implements SVGElementLike {
                 }
             }, deferTime);
         } else {
-            this.attr(params, void 0, complete);
+            this.attr(params, void 0, complete || animOptions.complete);
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
