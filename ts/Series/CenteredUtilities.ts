@@ -48,6 +48,7 @@ namespace CenteredUtilities {
         innerSize?: (number|string);
         size?: (number|string);
         slicedOffset?: number;
+        thickness?: number;
     }
 
     export interface RadianAngles {
@@ -129,6 +130,11 @@ namespace CenteredUtilities {
         if (positions[3] > positions[2]) {
             positions[3] = positions[2];
         }
+        // thickness overrides innerSize (#6647)
+        if (options.thickness) {
+            positions[3] = positions[2] - options.thickness * 2;
+        }        
+
         return positions;
     }
 
