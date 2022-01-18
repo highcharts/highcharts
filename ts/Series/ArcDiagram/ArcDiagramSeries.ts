@@ -20,7 +20,7 @@
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
 import ArcDiagramPoint from './ArcDiagramPoint.js';
-import BubbleSeries from '../Bubble/BubbleSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -616,28 +616,20 @@ class ArcDiagramSeries extends SankeySeries {
         (this.options.dataLabels as any).textPath = textPath;
     }
 
-    public markerAttribs(
-        point: ArcDiagramPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
-        if (point.isNode) {
-            return BubbleSeries.prototype.markerAttribs.apply(
-                this,
-                arguments as any
-            );
-        }
-        return super.markerAttribs.apply(this, arguments as any);
-    }
-
     public pointAttribs(
         point?: ArcDiagramPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            return BubbleSeries.prototype.pointAttribs.apply(
+            const attrs = Series.prototype.pointAttribs.apply(
                 this,
                 arguments as any
             );
+            return {
+                fill: attrs.fill,
+                stroke: attrs.stroke,
+                'stroke-width': attrs['stroke-width']
+            };
         }
         return super.pointAttribs.apply(this, arguments as any);
     }
