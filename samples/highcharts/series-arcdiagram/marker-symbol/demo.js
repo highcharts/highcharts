@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         text: 'Highcharts Arc Diagram'
     },
     subtitle: {
-        text: 'Arc Diagram with linkTextPath'
+        text: 'Arc Diagram with marker symbols'
     },
     series: [{
         linkWeight: 1,
@@ -17,7 +17,7 @@ Highcharts.chart('container', {
         },
         centeredLinks: true,
         dataLabels: {
-            format: '{point.fromNode.name} -> {point.toNode.name}',
+            format: '{point.fromNode.name} → {point.toNode.name}',
             nodeFormat: '{point.name}',
             color: 'black',
             linkTextPath: {

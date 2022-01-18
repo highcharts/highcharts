@@ -5,20 +5,22 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts Arc Diagram'
+        text: 'Highcharts Inverted Arc Diagram'
     },
-    subtitle: {
-        text: 'Arc Diagram with centered links'
-    },
+
     series: [{
         keys: ['from', 'to', 'weight'],
         centerPos: '50%',
         type: 'arcdiagram',
         dataLabels: {
             align: 'right',
-            x: -15,
+            x: -20,
+            y: -2,
+            color: '#333333',
+            overflow: 'allow',
             padding: 0
         },
+        offset: '60%',
         data: [
             ['Brazil', 'Portugal', 5],
             ['Brazil', 'France', 1],

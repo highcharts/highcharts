@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         type: 'arcdiagram',
         centeredLinks: true,
         dataLabels: {
-            format: '{point.fromNode.name} -> {point.toNode.name}',
+            format: '{point.fromNode.name} → {point.toNode.name}',
             nodeFormat: '{point.name}',
             color: 'black',
             linkTextPath: {

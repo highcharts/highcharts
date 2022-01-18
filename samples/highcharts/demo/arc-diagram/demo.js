@@ -8,6 +8,7 @@ Highcharts.chart('container', {
     series: [{
         keys: ['from', 'to', 'weight'],
         type: 'arcdiagram',
+        name: 'Train connections',
         linkWeight: 1,
         centeredLinks: true,
         dataLabels: {
