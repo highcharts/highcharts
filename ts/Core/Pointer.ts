@@ -899,7 +899,7 @@ class Pointer {
      *
      * @function Highcharts.Pointer#inClass
      *
-     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} elem
+     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
      * The element to investigate.
      *
      * @param {string} className
