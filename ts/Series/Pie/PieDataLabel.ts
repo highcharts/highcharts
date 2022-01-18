@@ -656,6 +656,9 @@ namespace ColumnDataLabel {
                     relativeLength(options.innerSize || 0, newSize),
                     newSize
                 );
+                options.thickness ? // #6647
+                newSize - options.thickness * 2
+                :
                 this.translate(center);
 
                 if (this.drawDataLabels) {
