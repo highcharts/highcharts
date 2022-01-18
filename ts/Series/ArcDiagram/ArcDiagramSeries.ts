@@ -90,10 +90,14 @@ class ArcDiagramSeries extends SankeySeries {
         centeredLinks: false,
 
         /**
-         * The radius of the link arc. If not set,
-         * it is calculated automatically.
+         * The radius of the link arc.
+         * If not set, series renders a semi-circle between the nodes,
+         * except when overflowing the edge of the plot area,
+         * in which case an arc touching the edge is rendered.
+         * If `linkRadius` is set, an arc extending
+         * to the given value is rendered.
          *
-         * @type    {boolean}
+         * @type    {number}
          * @since next
          * @default undefined
          * @product highcharts
@@ -102,18 +106,21 @@ class ArcDiagramSeries extends SankeySeries {
 
         /**
          * The offset of an arc diagram nodes column in relation
-         * to the plotArea. The offset equal to 50% places nodes
-         * in the center of a chart.
+         * to the `plotArea`. The offset equal to 50% places nodes
+         * in the center of a chart. By default the series
+         * is placed so that the biggest node is touching the bottom
+         * border of the `plotArea`.
          *
          * @type    {string}
          * @since next
-         * @default undefined
+         * @default '100%'
          * @product highcharts
          * @apioption series.arcdiagram.offset
          */
+        offset: '100%',
 
         /**
-         * The global link weight. If not set, width will is calculated
+         * The global link weight. If not set, width is calculated
          * per link, depending on the weight value.
          *
          * @type    {number}
@@ -125,6 +132,9 @@ class ArcDiagramSeries extends SankeySeries {
 
         /**
          * Whether nodes with different values should have the same size.
+         * If set to true, all nodes are calculated based on the `nodePadding`
+         * and current `plotArea`. It might be possible to override it using
+         * `marker.radius` property.
          *
          * @type    {boolean}
          * @since next
@@ -132,9 +142,8 @@ class ArcDiagramSeries extends SankeySeries {
          * @product highcharts
          */
         equalNodes: false,
-        keys: ['from', 'to', 'weight'],
         /**
-         * Whether series should be placed on the other side of plotArea.
+         * Whether the series should be placed on the other side of the `plotArea`.
          *
          * @type    {boolean}
          * @since next
@@ -144,7 +153,7 @@ class ArcDiagramSeries extends SankeySeries {
         reversed: false,
         /**
          * Options for the data labels appearing on top of the nodes and links.
-         * For Arc diagram charts, data labels are visible for the nodes
+         * For arc diagram charts, data labels are visible for the nodes
          * by default, but hidden for links. This is controlled
          * by modifying the `nodeFormat`, and the `format` that applies to links
          * and is an empty string by default.
@@ -173,17 +182,10 @@ class ArcDiagramSeries extends SankeySeries {
         },
         /**
          * @extends   plotOptions.series.marker
-         * @excluding enabled, enabledThreshold, height, radius, width
+         * @excluding enabled, enabledThreshold, height, width
          */
         marker: {
             symbol: 'circle',
-            /**
-             * In arc-diagram charts, the radius is overridden and determined
-             * based on the point's data value.
-             *
-             * @ignore-option
-             */
-            radius: null as any,
             fillOpacity: 1,
             states: {}
         }
@@ -495,7 +497,6 @@ class ArcDiagramSeries extends SankeySeries {
                 chart.plotHeight,
                 maxNodesLength / node.series.nodes.length - this.nodePadding
             ),
-            symbol = options.marker && options.marker.symbol,
             sum = node.getSum() * (column.sankeyColumn.scale || 0),
             equalNodes = options.equalNodes,
             nodeHeight = equalNodes ?
@@ -516,30 +517,23 @@ class ArcDiagramSeries extends SankeySeries {
                     (nodeOffset && nodeOffset.relativeLeft || 0)
                 )
             )) + crisp,
-            top = options.offset ?
-                parseInt(options.offset, 10) *
+            markerOptions = merge(options.marker, node.options.marker),
+            symbol = markerOptions.symbol,
+            markerRadius = markerOptions.radius,
+            top = parseInt(options.offset, 10) *
                 (
                     (
                         chart.inverted ?
                             chart.plotWidth : chart.plotHeight
-                    ) -
-                    Math.min(
-                        maxRadius / 2,
+                    ) - (
+                        Math.floor(
+                            this.colDistance * (node.column || 0) +
+                            (markerOptions.lineWidth || 0) / 2
+                        ) + crisp +
                         (column.sankeyColumn.scale || 0) *
-                            (column.sankeyColumn.maxRadius || 0) / 2
+                        (column.sankeyColumn.maxRadius || 0) / 2
                     )
-                ) / 100 :
-                (chart.inverted ?
-                    chart.plotWidth : chart.plotHeight) - (Math.floor(
-                    this.colDistance * (node.column || 0) +
-                    (
-                        options.marker &&
-                        options.marker.lineWidth || 0
-                    ) / 2
-                ) + crisp +
-                (column.sankeyColumn.scale || 0) *
-                    (column.sankeyColumn.maxRadius || 0) / 2
-                );
+                ) / 100;
         node.sum = sum;
         // If node sum is 0, don’t render the rect #12453
         if (sum) {
@@ -582,15 +576,13 @@ class ArcDiagramSeries extends SankeySeries {
             node.shapeType = 'path';
             node.shapeArgs = {
                 d: symbols[symbol || 'circle'](
-                    x, y - height / 2,
-                    width,
-                    height
+                    x,
+                    y - (markerRadius || height) / 2,
+                    markerRadius || width,
+                    markerRadius || height
                 ),
-                x: x + width / 2,
-                y: y,
-                r: height / 2,
-                width: width,
-                height
+                width: markerRadius || width,
+                height: markerRadius || height
             };
 
             node.dlBox = {
@@ -617,10 +609,10 @@ class ArcDiagramSeries extends SankeySeries {
         this.points = this.data;
         (this.options.dataLabels as any).textPath =
             (this.options.dataLabels as any).linkTextPath;
-        SankeySeries.prototype.drawDataLabels.apply(this, arguments as any);
+        super.drawDataLabels.apply(this, arguments as any);
 
         // Restore nodes
-        this.points = this.nodes;
+        this.points = this.points.concat(this.nodes || []);
         (this.options.dataLabels as any).textPath = textPath;
     }
 

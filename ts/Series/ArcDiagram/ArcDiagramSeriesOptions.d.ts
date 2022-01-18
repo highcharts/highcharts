@@ -33,7 +33,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     linkRadius?: number;
     reversed: boolean;
     scale?: number;
-    offset?: string;
+    offset: string;
     linkWeight?: number;
 }
 
