@@ -1,5 +1,12 @@
 @import "https://code.highcharts.com/css/highcharts.css";
 
+#container {
+    height: 400px;
+    margin: auto;
+    min-width: 310px;
+    max-width: 600px;
+}
+
 .highcharts-boxplot-series .highcharts-point {
     stroke-width: 2px;
 }

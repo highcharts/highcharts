@@ -78,8 +78,8 @@ function chartHasMapZoom(
 ): boolean {
     return !!(
         chart.mapZoom &&
-        chart.mapNavButtons &&
-        chart.mapNavButtons.length
+        chart.mapNavigation &&
+        chart.mapNavigation.navButtons.length
     );
 }
 
@@ -147,8 +147,8 @@ class ZoomComponent extends AccessibilityComponent {
             component = this;
 
         // Make map zoom buttons accessible
-        if (chart.mapNavButtons) {
-            chart.mapNavButtons.forEach(function (
+        if (chart.mapNavigation) {
+            chart.mapNavigation.navButtons.forEach(function (
                 button: SVGElement,
                 i: number
             ): void {
@@ -351,7 +351,7 @@ class ZoomComponent extends AccessibilityComponent {
                 !isBackwards && this.focusedMapNavButtonIx;
 
         // Deselect old
-        chart.mapNavButtons[this.focusedMapNavButtonIx].setState(0);
+        chart.mapNavigation.navButtons[this.focusedMapNavButtonIx].setState(0);
 
         if (isMoveOutOfRange) {
             chart.mapZoom(); // Reset zoom
@@ -360,7 +360,9 @@ class ZoomComponent extends AccessibilityComponent {
 
         // Select other button
         this.focusedMapNavButtonIx += isBackwards ? -1 : 1;
-        const button = chart.mapNavButtons[this.focusedMapNavButtonIx];
+        const button = chart.mapNavigation.navButtons[
+            this.focusedMapNavButtonIx
+        ];
         chart.setFocusToElement(button.box, button.element);
         button.setState(2);
 
@@ -392,8 +394,8 @@ class ZoomComponent extends AccessibilityComponent {
         direction: number
     ): void {
         const chart: Highcharts.MapNavigationChart = this.chart as any,
-            zoomIn = chart.mapNavButtons[0],
-            zoomOut = chart.mapNavButtons[1],
+            zoomIn = chart.mapNavigation.navButtons[0],
+            zoomOut = chart.mapNavigation.navButtons[1],
             initialButton = direction > 0 ? zoomIn : zoomOut;
 
         chart.setFocusToElement(initialButton.box, initialButton.element);

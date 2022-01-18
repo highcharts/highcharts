@@ -3463,7 +3463,7 @@ const ball = function () {
     getStarData();
 
     Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@2e11000c966a20f08afc4e0927b91df99821de99/samples/data/world-countries.topo.json',
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts/samples/data/world-countries.topo.json',
         topology => {
 
             // Convert the topoJSON feature into geoJSON
@@ -3849,6 +3849,7 @@ document.getElementById('open').addEventListener('click',
 
         this.style.display = 'none';
         document.getElementById('center-message').style.opacity = 0;
+        document.getElementById('back').style.opacity = 1;
 
         flip(wordChart, 1, 'left', 0);
         flip(snowglobeChart, 2, 'center', 0);

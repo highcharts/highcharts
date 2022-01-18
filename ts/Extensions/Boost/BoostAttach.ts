@@ -77,6 +77,7 @@ function createAndAttachRenderer(
     chart: Chart,
     series: Series
 ): Highcharts.BoostGLRenderer {
+
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: Highcharts.BoostTargetObject = chart,
@@ -170,8 +171,8 @@ function createAndAttachRenderer(
                 .attr({
                     x: 0,
                     y: 0,
-                    width: width,
-                    height: height
+                    width,
+                    height
                 })
                 .css({
                     pointerEvents: 'none',

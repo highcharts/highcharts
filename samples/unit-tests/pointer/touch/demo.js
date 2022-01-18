@@ -166,6 +166,8 @@ QUnit.test('followPointer and followTouchMove', function (assert) {
             target: points[0].graphic.element
         });
 
+        chart.pointer.res = false;
+
         chart.pointer.onContainerTouchMove({
             type: 'touchmove',
             touches: [

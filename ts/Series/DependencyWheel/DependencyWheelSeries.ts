@@ -152,7 +152,6 @@ class DependencyWheelSeries extends SankeySeries {
             this,
             id
         ) as DependencyWheelPoint;
-        node.index = this.nodes.length - 1;
 
         /**
          * Return the sum of incoming and outgoing links.

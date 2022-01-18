@@ -123,7 +123,11 @@ $("#mapDropdown").change(function () {
             },
 
             mapNavigation: {
-                enabled: true
+                enabled: true,
+                buttonOptions: {
+                    alignTo: 'spacingBox',
+                    x: 10
+                }
             },
 
             colorAxis: {

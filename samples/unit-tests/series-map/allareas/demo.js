@@ -6,7 +6,7 @@ QUnit.test(
 
         const getRenderedHeight = () => Math.abs(
             chart.series[0].points[0].graphic.getBBox().height *
-            chart.series[0].svgTransform.scaleY
+            chart.mapView.getSVGTransform().scaleY
         );
 
         chart = Highcharts.mapChart('container', {

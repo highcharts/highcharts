@@ -932,7 +932,9 @@ const createBreadcrumbsList = function (chart: Chart): Array<Breadcrumbs.Breadcr
             if (level.levelNumber + 1 > lastBreadcrumb.level) {
                 list.push({
                     level: level.levelNumber + 1,
-                    levelOptions: level.pointOptions
+                    levelOptions: merge({
+                        name: level.lowerSeries.name
+                    }, level.pointOptions)
                 });
             }
         });
@@ -988,6 +990,7 @@ Chart.prototype.drillUp = function (): void {
                 newSeries = addedSeries;
             }
         };
+    const drilldownLevelsNumber = (chart.drilldownLevels as any).length;
 
     while (i--) {
 
@@ -1013,14 +1016,22 @@ Chart.prototype.drillUp = function (): void {
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
 
+            // Reset the names to start new series from the beginning.
+            // Do it once to preserve names when multiple
+            // series are added for the same axis, #16135.
+            if (oldSeries.xAxis &&
+                oldSeries.xAxis.names &&
+                (drilldownLevelsNumber === 0 || i === drilldownLevelsNumber)
+            ) {
+                oldSeries.xAxis.names.length = 0;
+            }
+
             level.levelSeriesOptions.forEach(addSeries);
 
             fireEvent(chart, 'drillup', {
                 seriesOptions: level.seriesPurgedOptions ||
                     level.seriesOptions
             });
-
-            this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
@@ -1054,7 +1065,6 @@ Chart.prototype.drillUp = function (): void {
             // it to the chart and show it.
             if (level.resetZoomButton) {
                 chart.resetZoomButton = level.resetZoomButton;
-                chart.resetZoomButton.show();
             }
         }
     }
@@ -1778,5 +1788,11 @@ addEvent(Point, 'afterSetState', function (): void {
 addEvent(Chart, 'drillup', function (): void {
     if (this.resetZoomButton) {
         this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
+
+addEvent(Chart, 'drillupall', function (): void {
+    if (this.resetZoomButton) {
+        this.showResetZoom();
     }
 });
