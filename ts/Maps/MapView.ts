@@ -72,6 +72,17 @@ type SVGTransformType = {
 const worldSize = 400.979322;
 const tileSize = 256;
 
+// Compute the zoom from given bounds and the size of the playing field. Used in
+// two places, hence the local function.
+const zoomFromBounds = (b: MapBounds, playingField: BBoxObject): number => {
+    const { width, height } = playingField,
+        scaleToField = Math.max(
+            (b.x2 - b.x1) / (width / tileSize),
+            (b.y2 - b.y1) / (height / tileSize)
+        );
+    return Math.log(worldSize / scaleToField) / Math.log(2);
+};
+
 /*
 const mergeCollections = <
     T extends Array<AnyRecord|undefined>
@@ -317,13 +328,8 @@ class MapView {
 
             // Apply the playing field, corrected with padding
             this.playingField = this.getField();
-            const { width, height } = this.playingField;
 
-            const scaleToPlotArea = Math.max(
-                (b.x2 - b.x1) / (width / tileSize),
-                (b.y2 - b.y1) / (height / tileSize)
-            );
-            const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
+            const zoom = zoomFromBounds(b, this.playingField);
 
             // Reset minZoom when fitting to natural bounds
             if (!bounds) {
@@ -634,20 +640,11 @@ class MapView {
 
                 // Get the natural zoom level of the projection itself when
                 // zoomed to view the full world
-                const getProjectionZoom = (): number => {
-                    const b = projection.def && projection.def.bounds;
-                    if (b) {
-                        const { width, height } = this.playingField,
-                            scaleToPlotArea = Math.max(
-                                (b.x2 - b.x1) / (width / tileSize),
-                                (b.y2 - b.y1) / (height / tileSize)
-                            );
-                        return Math.log(
-                            worldSize / scaleToPlotArea
-                        ) / Math.log(2);
-                    }
-                    return 0;
-                };
+                const worldBounds = projection.def && projection.def.bounds,
+                    worldZoom = (
+                        worldBounds &&
+                        zoomFromBounds(worldBounds, this.playingField)
+                    ) || -Infinity;
 
                 // Panning rotates the globe
                 if (
@@ -655,7 +652,7 @@ class MapView {
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < getProjectionZoom() * 1.1
+                    (this.minZoom || Infinity) < worldZoom * 1.1
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
