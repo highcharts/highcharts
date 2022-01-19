@@ -23,7 +23,8 @@ const { pie } = SeriesRegistry.seriesTypes;
 
 import U from '../Core/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    isObject
 } = U;
 
 /* *
@@ -141,34 +142,32 @@ namespace SeriesOnPointComposition {
         const connectedPoint = this.chart.get(this.options.onPoint.id),
             position = this.options.onPoint.position;
 
-        if (position !== void 0) {
-            let x = position.x,
-                y = position.y,
-                offsetX = position.offsetX,
-                offsetY = position.offsetY;
+        let x = connectedPoint.plotX,
+            y = connectedPoint.plotY;
 
-            if (x || y) {
-                return [
-                    x + (offsetX || 0),
-                    y + (offsetY || 0),
-                    50,
-                    0
-                ];
+        if (isObject(position)) {
+            if (position.x) {
+                x = position.x;
             }
 
-            return [
-                connectedPoint.plotX + (offsetX || 0),
-                connectedPoint.plotY + (offsetY || 0),
-                50,
-                0
-            ];
+            if (position.y) {
+                y = position.y;
+            }
+
+            if (position.offsetX) {
+                x += position.offsetX;
+            }
+
+            if (position.offsetY) {
+                y += position.offsetY;
+            }
         }
 
         // 0: centerX, relative to width
         // 1: centerY, relative to height
         // 2: size, relative to smallestSize
         // 3: innerSize, relative to size
-        return [connectedPoint.plotX, connectedPoint.plotY, 50, 0];
+        return [x, y, 50, 0];
     }
 
     /* *
