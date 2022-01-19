@@ -1472,7 +1472,7 @@ namespace Exporting {
                 }
 
                 // Loop through all styles and add them inline if they are ok
-                if (G.isFirefox || G.isMS) {
+                if (G.isFirefox || G.isMS || G.isSafari) {
                     // Some browsers put lots of styles on the prototype
                     for (const p in styles) { // eslint-disable-line guard-for-in
                         filterStyles((styles as any)[p], p);
