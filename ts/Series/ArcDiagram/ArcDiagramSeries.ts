@@ -19,20 +19,22 @@
  * */
 
 import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
-import ArcDiagramPoint from './ArcDiagramPoint.js';
-import Series from '../../Core/Series/Series.js';
-import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
+import ArcDiagramPoint from './ArcDiagramPoint.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
+
 const { prototype: { symbols } } = SVGRenderer;
 const {
     seriesTypes: {
         sankey: SankeySeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
@@ -554,11 +556,13 @@ class ArcDiagramSeries extends SankeySeries {
                 }
             }
 
-            // Calculate data label options for the point
-            node.dlOptions = SankeySeries.getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            });
+            if (this.mapOptionsToLevel) {
+                // Calculate data label options for the point
+                node.dlOptions = SankeySeries.getDLOptions({
+                    level: this.mapOptionsToLevel[node.level],
+                    optionsPoint: node.options
+                });
+            }
 
             // Pass test in drawPoints
             node.plotX = 1;
@@ -600,20 +604,22 @@ class ArcDiagramSeries extends SankeySeries {
     // Networkgraph has two separate collecions of nodes and lines, render
     // dataLabels for both sets:
     public drawDataLabels(): void {
-        const textPath = (this.options.dataLabels as any).textPath;
+        if (this.options.dataLabels) {
+            const textPath = this.options.dataLabels.textPath;
 
-        // Render node labels:
-        SankeySeries.prototype.drawDataLabels.apply(this, arguments as any);
+            // Render node labels:
+            SankeySeries.prototype.drawDataLabels.apply(this, arguments);
 
-        // Render link labels:
-        this.points = this.data;
-        (this.options.dataLabels as any).textPath =
-            (this.options.dataLabels as any).linkTextPath;
-        super.drawDataLabels.apply(this, arguments as any);
+            // Render link labels:
+            this.points = this.data;
+            this.options.dataLabels.textPath =
+                this.options.dataLabels.linkTextPath;
+            super.drawDataLabels.apply(this, arguments);
 
-        // Restore nodes
-        this.points = this.points.concat(this.nodes || []);
-        (this.options.dataLabels as any).textPath = textPath;
+            // Restore nodes
+            this.points = this.points.concat(this.nodes || []);
+            this.options.dataLabels.textPath = textPath;
+        }
     }
 
     public pointAttribs(
@@ -621,17 +627,13 @@ class ArcDiagramSeries extends SankeySeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
-            const attrs = Series.prototype.pointAttribs.apply(
+            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
                 this,
-                arguments as any
+                arguments
             );
-            return {
-                fill: attrs.fill,
-                stroke: attrs.stroke,
-                'stroke-width': attrs['stroke-width']
-            };
+            return attrs;
         }
-        return super.pointAttribs.apply(this, arguments as any);
+        return super.pointAttribs.apply(this, arguments);
     }
     /* eslint-enable valid-jsdoc */
 }
