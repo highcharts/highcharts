@@ -5,7 +5,6 @@
  * https://www.highcharts.com/maps/demo/geojson instead.
  *
  * @todo
- * - Automatic projection from bbox, no WebMercator
  * - Remove jQuery where not necessary (the combobox is probably still best
  *   implemented with jQuery UI)
  */
@@ -64,11 +63,30 @@ $("#mapDropdown").on('change', async function () {
     }
 
     // Load the map
+    let filesize = '';
     const mapData = await fetch(topojsonPath)
-        .then(response => response.json());
+        .then(response => {
+            const size = response.headers.get('content-length');
+            if (size) {
+                filesize = Math.round(size / 1024) + ' kB';
+            }
+
+            return response.json();
+        })
+        .catch(e => console.log('Error', e));
+
+    if (!mapData) {
+        if (Highcharts.charts[0]) {
+            Highcharts.charts[0].showLoading(
+                '<i class="fa fa-frown"></i> Map not found'
+            );
+        }
+        return;
+    }
 
     // Update info box download links
     $("#download").html(
+        '<small>' + filesize + '</small> <br><br>' +
         '<a class="button" target="_blank" href="https://jsfiddle.net/gh/get/jquery/1.11.0/' +
             'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
             'View clean demo</a>' +
@@ -140,19 +158,22 @@ $("#mapDropdown").on('change', async function () {
     };
 
     // Instantiate chart
+    console.time('map');
     Highcharts.mapChart('container', {
+
+        chart: {
+            map: mapData
+        },
 
         title: {
             text: null
         },
 
         mapNavigation: {
-            enabled: true
-        },
-
-        mapView: {
-            projection: {
-                name: 'WebMercator'
+            enabled: true,
+            buttonOptions: {
+                alignTo: 'spacingBox',
+                x: 10
             }
         },
 
@@ -177,7 +198,6 @@ $("#mapDropdown").on('change', async function () {
 
         series: [{
             data,
-            mapData,
             joinBy: ['hc-key', 'key'],
             name: 'Random data',
             states: {
@@ -187,7 +207,12 @@ $("#mapDropdown").on('change', async function () {
             },
             dataLabels: {
                 enabled: showDataLabels,
-                formatter
+                formatter,
+                style: {
+                    fontWeight: 100,
+                    fontSize: '10px',
+                    textOutline: 'none'
+                }
             },
             point: {
                 events: {
@@ -196,13 +221,19 @@ $("#mapDropdown").on('change', async function () {
             }
         }, {
             type: 'mapline',
-            name: "Separators",
+            name: "Lines",
             data: Highcharts.geojson(mapData, 'mapline'),
-            nullColor: 'gray',
+            /*
+            data: [{
+                geometry: mapData.objects.default['hc-recommended-mapview'].insets[0].geoBounds
+            }],
+            // */
+            nullColor: '#333333',
             showInLegend: false,
             enableMouseTracking: false
         }]
     });
+    console.timeEnd('map');
 
     showDataLabels = $("#chkDataLabels").prop('checked');
 });

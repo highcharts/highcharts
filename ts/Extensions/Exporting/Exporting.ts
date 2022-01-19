@@ -872,7 +872,7 @@ namespace Exporting {
                             } as any;
                             css(element, extend({
                                 cursor: 'pointer'
-                            }, navOptions.menuItemStyle as any));
+                            } as CSSObject, navOptions.menuItemStyle || {}));
                         }
                     }
 

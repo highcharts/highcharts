@@ -48,7 +48,7 @@ namespace DrawPointComposition {
         renderer: SVGRenderer;
         shadow?: (boolean|Partial<ShadowOptionsObject>);
         shapeArgs?: SVGAttributes;
-        shapeType: string;
+        shapeType: 'arc'|'circle'|'path'|'rect'|'text';
     }
 
     /* *
@@ -126,12 +126,15 @@ namespace DrawPointComposition {
 
         if (this.shouldDraw()) {
             if (!graphic) {
-                this.graphic = graphic =
-                    (renderer as any)[params.shapeType](params.shapeArgs)
-                        .add(params.group);
+                this.graphic = graphic = params.shapeType === 'text' ?
+                    renderer.text() :
+                    renderer[params.shapeType](params.shapeArgs || {});
+                graphic.add(params.group);
             }
-            (graphic as any)
-                .css(css)
+            if (css) {
+                graphic.css(css);
+            }
+            graphic
                 .attr(params.attribs)
                 .animate(
                     animatableAttribs,

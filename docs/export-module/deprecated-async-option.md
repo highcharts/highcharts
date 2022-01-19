@@ -1,7 +1,7 @@
-Deprecating the export server async option
+Deprecated the export server async option
 ------------------------------------------
 
-Version 2.2 of the Highcharts Node.js Export Server, due December 1st 2021, will deprecate the `async` option. The reasons for that is that it makes the application dependent on saving state, and complicates load balancing. Furthermore it is no longer needed in browsers because we can render the returned image directly as a base64 encoded `src`.
+Version 2.2 of the Highcharts Node.js Export Server deprecated the `async` option. The reasons for that is that it made the application dependent on saving state, and complicated load balancing. Furthermore it is no longer needed in browsers because we can render the returned image directly as a base64 encoded `src`.
 
 Here's how to migrate from the `async` option.
 
