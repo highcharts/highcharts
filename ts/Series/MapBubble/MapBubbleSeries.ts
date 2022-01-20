@@ -22,6 +22,8 @@ import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
 const {
     seriesTypes: {
         mappoint: MapPointSeries
@@ -247,6 +249,8 @@ extend(MapBubbleSeries.prototype, {
     pointClass: MapBubblePoint,
 
     processData: MapSeries.prototype.processData,
+
+    searchPoint: noop as any, // #16896
 
     setData: MapSeries.prototype.setData,
 
