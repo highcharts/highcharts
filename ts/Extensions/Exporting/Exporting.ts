@@ -1472,13 +1472,17 @@ namespace Exporting {
                 }
 
                 // Loop through all styles and add them inline if they are ok
-                if (G.isFirefox || G.isMS || G.isSafari) {
-                    // Some browsers put lots of styles on the prototype
-                    for (const p in styles) { // eslint-disable-line guard-for-in
+                for (const p in styles) {
+                    if (
+                        // Some browsers put lots of styles on the prototype...
+                        G.isFirefox ||
+                        G.isMS ||
+                        G.isSafari || // #16902
+                        // ... Chrome puts them on the instance
+                        Object.hasOwnProperty.call(styles, p)
+                    ) {
                         filterStyles((styles as any)[p], p);
                     }
-                } else {
-                    objectEach(styles, filterStyles as any);
                 }
 
                 // Apply styles
