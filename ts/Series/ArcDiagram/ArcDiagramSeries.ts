@@ -81,8 +81,8 @@ class ArcDiagramSeries extends SankeySeries {
     public static defaultOptions: ArcDiagramSeriesOptions = merge(SankeySeries.defaultOptions, {
 
         /**
-         * The option to center links rather than position them
-         * one after another
+         * The option to center links rather than position them one after
+         * another
          *
          * @type    {boolean}
          * @since next
@@ -92,12 +92,10 @@ class ArcDiagramSeries extends SankeySeries {
         centeredLinks: false,
 
         /**
-         * The radius of the link arc.
-         * If not set, series renders a semi-circle between the nodes,
-         * except when overflowing the edge of the plot area,
-         * in which case an arc touching the edge is rendered.
-         * If `linkRadius` is set, an arc extending
-         * to the given value is rendered.
+         * The radius of the link arc. If not set, series renders a semi-circle
+         * between the nodes, except when overflowing the edge of the plot area,
+         * in which case an arc touching the edge is rendered. If `linkRadius`
+         * is set, an arc extending to the given value is rendered.
          *
          * @type    {number}
          * @since next
@@ -107,11 +105,10 @@ class ArcDiagramSeries extends SankeySeries {
          */
 
         /**
-         * The offset of an arc diagram nodes column in relation
-         * to the `plotArea`. The offset equal to 50% places nodes
-         * in the center of a chart. By default the series
-         * is placed so that the biggest node is touching the bottom
-         * border of the `plotArea`.
+         * The offset of an arc diagram nodes column in relation to the
+         * `plotArea`. The offset equal to 50% places nodes in the center of a
+         * chart. By default the series is placed so that the biggest node is
+         * touching the bottom border of the `plotArea`.
          *
          * @type    {string}
          * @since next
@@ -122,8 +119,8 @@ class ArcDiagramSeries extends SankeySeries {
         offset: '100%',
 
         /**
-         * The global link weight. If not set, width is calculated
-         * per link, depending on the weight value.
+         * The global link weight. If not set, width is calculated per link,
+         * depending on the weight value.
          *
          * @type    {number}
          * @since next
@@ -133,10 +130,10 @@ class ArcDiagramSeries extends SankeySeries {
          */
 
         /**
-         * Whether nodes with different values should have the same size.
-         * If set to true, all nodes are calculated based on the `nodePadding`
-         * and current `plotArea`. It might be possible to override it using
-         * `marker.radius` property.
+         * Whether nodes with different values should have the same size. If set
+         * to true, all nodes are calculated based on the `nodePadding` and
+         * current `plotArea`. It is possible to override it using the
+         * `marker.radius` option.
          *
          * @type    {boolean}
          * @since next
@@ -145,7 +142,8 @@ class ArcDiagramSeries extends SankeySeries {
          */
         equalNodes: false,
         /**
-         * Whether the series should be placed on the other side of the `plotArea`.
+         * Whether the series should be placed on the other side of the
+         * `plotArea`.
          *
          * @type    {boolean}
          * @since next
@@ -155,10 +153,10 @@ class ArcDiagramSeries extends SankeySeries {
         reversed: false,
         /**
          * Options for the data labels appearing on top of the nodes and links.
-         * For arc diagram charts, data labels are visible for the nodes
-         * by default, but hidden for links. This is controlled
-         * by modifying the `nodeFormat`, and the `format` that applies to links
-         * and is an empty string by default.
+         * For arc diagram charts, data labels are visible for the nodes by
+         * default, but hidden for links. This is controlled by modifying the
+         * `nodeFormat`, and the `format` that applies to links and is an empty
+         * string by default.
          *
          * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
          *
@@ -229,8 +227,8 @@ class ArcDiagramSeries extends SankeySeries {
         column.sankeyColumn.maxLength = chart.inverted ?
             chart.plotHeight : chart.plotWidth;
 
-        // Get the translation factor needed for each column to fill up the
-        // plot height
+        // Get the translation factor needed for each column to fill up the plot
+        // height
         column.sankeyColumn.getTranslationFactor = (
             series: ArcDiagramSeries
         ): number => {
@@ -254,9 +252,9 @@ class ArcDiagramSeries extends SankeySeries {
                     series.nodePadding;
 
             // Because the minLinkWidth option doesn't obey the direct
-            // translation, we need to run translation iteratively, check
-            // node heights, remove those nodes affected by minLinkWidth,
-            // check again, etc.
+            // translation, we need to run translation iteratively, check node
+            // heights, remove those nodes affected by minLinkWidth, check
+            // again, etc.
             while (column.length) {
                 factor = remainingWidth / column.sankeyColumn.sum();
                 skipPoint = false;
@@ -709,9 +707,9 @@ export default ArcDiagramSeries;
  */
 
 /**
- * A collection of options for the individual nodes. The nodes in an arc
- * diagram are auto-generated instances of `Highcharts.Point`, but options can
- * be applied here and linked by the `id`.
+ * A collection of options for the individual nodes. The nodes in an arc diagram
+ * are auto-generated instances of `Highcharts.Point`, but options can be
+ * applied here and linked by the `id`.
  *
  * @extends   series.sankey.nodes
  * @type      {Array<*>}
@@ -721,28 +719,30 @@ export default ArcDiagramSeries;
  */
 
 /**
- * Individual data label for each node. The options are the same as
- * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+ * Individual data label for each node. The options are the same as the ones for
+ * [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
  *
- * @type    {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @type
+ * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
  *
  * @apioption series.arcdiagram.nodes.dataLabels
  */
 
 /**
- * Individual data label for each node. The options are the same as
- * the ones for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+ * Individual data label for each node. The options are the same as the ones for
+ * [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
  *
- * @type    {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @type
+ * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
  *
  */
 
 /**
- * An array of data points for the series. For the `arcdiagram` series
- * type, points can be given in the following way:
+ * An array of data points for the series. For the `arcdiagram` series type,
+ * points can be given in the following way:
  *
- * An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
+ * An array of objects with named values. The following snippet shows only a few
+ * settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
  * this option is not available.
  *
