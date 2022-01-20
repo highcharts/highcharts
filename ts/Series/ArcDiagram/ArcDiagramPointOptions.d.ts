@@ -1,6 +1,6 @@
 /* *
  *
- *  Dependency wheel module
+ *  Arc diagram module
  *
  *  (c) 2018-2021 Torstein Honsi
  *
@@ -24,8 +24,8 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  *
  * */
 
-export interface DependencyWheelPointOptions extends SankeyPointOptions {
+export interface ArcDiagramPointOptions extends SankeyPointOptions {
     linkWeight?: number;
 }
 
-export default DependencyWheelPointOptions;
+export default ArcDiagramPointOptions;
