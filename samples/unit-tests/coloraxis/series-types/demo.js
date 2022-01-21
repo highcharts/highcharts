@@ -16,6 +16,7 @@ QUnit.module('Color axis for series types', function () {
                     'sunburst',
                     'sankey',
                     'dependencywheel',
+                    'arcdiagram',
                     'venn',
                     'wordcloud'
                 ].includes(type)
