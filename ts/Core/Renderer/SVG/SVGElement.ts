@@ -547,7 +547,7 @@ class SVGElement implements SVGElementLike {
                 }
             }, deferTime);
         } else {
-            this.attr(params, void 0, complete);
+            this.attr(params, void 0, complete || animOptions.complete);
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
@@ -1061,7 +1061,7 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Return the SVG element for chaining.
      */
-    public css(styles?: CSSObject): this {
+    public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
             elem = this.element;
@@ -1070,7 +1070,7 @@ class SVGElement implements SVGElementLike {
             hasNew = !oldStyles;
 
         // convert legacy
-        if (styles && styles.color) {
+        if (styles.color) {
             styles.fill = styles.color;
         }
 
@@ -1078,7 +1078,7 @@ class SVGElement implements SVGElementLike {
         if (oldStyles) {
             objectEach(styles, function (value, n: keyof CSSObject): void {
                 if (oldStyles && oldStyles[n] !== value) {
-                    newStyles[n] = value;
+                    (newStyles as any)[n] = value;
                     hasNew = true;
                 }
             });
@@ -1094,24 +1094,22 @@ class SVGElement implements SVGElementLike {
             }
 
             // Get the text width from style
-            if (styles) {
-                // Previously set, unset it (#8234)
-                if (styles.width === null || styles.width as any === 'auto') {
-                    delete this.textWidth;
+            // Previously set, unset it (#8234)
+            if (styles.width === null || styles.width as any === 'auto') {
+                delete this.textWidth;
 
-                // Apply new
-                } else if (
-                    elem.nodeName.toLowerCase() === 'text' &&
-                    styles.width
-                ) {
-                    textWidth = this.textWidth = pInt(styles.width);
-                }
+            // Apply new
+            } else if (
+                elem.nodeName.toLowerCase() === 'text' &&
+                styles.width
+            ) {
+                textWidth = this.textWidth = pInt(styles.width);
             }
 
             // store object
             this.styles = styles;
 
-            if (textWidth && (!svg && this.renderer.forExport) && styles) {
+            if (textWidth && (!svg && this.renderer.forExport)) {
                 delete styles.width;
             }
 
@@ -1139,12 +1137,12 @@ class SVGElement implements SVGElementLike {
                 // Rebuild text after added. Cache mechanisms in the buildText
                 // will prevent building if there are no significant changes.
                 if (this.element.nodeName === 'text') {
-                    this.renderer.buildText(this as any);
+                    this.renderer.buildText(this);
                 }
 
                 // Apply text outline after added
-                if (styles && styles.textOutline) {
-                    this.applyTextOutline(styles.textOutline as any);
+                if (styles.textOutline) {
+                    this.applyTextOutline(styles.textOutline);
                 }
             }
         }

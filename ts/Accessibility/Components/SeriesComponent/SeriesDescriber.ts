@@ -497,13 +497,13 @@ function defaultPointDescriptionFormatter(
     point: Accessibility.PointComposition
 ): string {
     const series = point.series,
-        chart = series.chart,
+        shouldExposeSeriesName = series.chart.series.length > 1 ||
+            series.options.name,
         valText = getPointValueDescription(point),
         description = point.options && point.options.accessibility &&
             point.options.accessibility.description,
         userDescText = description ? ' ' + description : '',
-        seriesNameText = chart.series.length > 1 && series.name ?
-            ' ' + series.name + '.' : '',
+        seriesNameText = shouldExposeSeriesName ? ' ' + series.name + '.' : '',
         annotationsDesc = getPointAnnotationDescription(point),
         pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
 

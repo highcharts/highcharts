@@ -996,10 +996,11 @@ class Pointer {
         element: DOMElementType,
         className: string
     ): (boolean|undefined) {
-        let elemClassName;
+        let elem: DOMElementType|null = element,
+            elemClassName;
 
-        while (element) {
-            elemClassName = attr(element, 'class');
+        while (elem) {
+            elemClassName = attr(elem, 'class');
             if (elemClassName) {
                 if (elemClassName.indexOf(className) !== -1) {
                     return true;
@@ -1008,7 +1009,7 @@ class Pointer {
                     return false;
                 }
             }
-            element = element.parentNode as any;
+            elem = elem.parentElement;
         }
     }
 
