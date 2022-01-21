@@ -28,13 +28,13 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                 var controller = new TestController(chart),
                     series1Point = chart.series[0].points[0],
                     series1PointPosition = {
-                        x: chart.plotLeft + series1Point.plotX,
-                        y: chart.plotTop + series1Point.plotY
+                        x: Math.round(chart.plotLeft + series1Point.plotX),
+                        y: Math.round(chart.plotTop + series1Point.plotY)
                     },
                     series2Point = chart.series[1].points[0],
                     series2PointPosition = {
-                        x: chart.plotLeft + series2Point.plotX,
-                        y: chart.plotTop + series2Point.plotY
+                        x: Math.round(chart.plotLeft + series2Point.plotX),
+                        y: Math.round(chart.plotTop + series2Point.plotY)
                     },
                     tooltip = chart.tooltip;
 
@@ -83,7 +83,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                     'Tooltip should have label text of first series. (2)'
                 );
 
-                controller.moveTo(chart.PlotLeft, chart.plotTop);
+                controller.moveTo(chart.plotLeft, chart.plotTop);
                 controller.moveTo(
                     series2PointPosition.x,
                     series2PointPosition.y
