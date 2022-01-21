@@ -1307,19 +1307,19 @@ addEvent(Pointer, 'afterGetSelectionBox', function (event):void {
             marker.attr ? marker.attr('start') : marker.start
         ) - (xAxis as any).startAngleRad + xAxis.pos;
 
-        let r = (marker.attr ? marker.attr('r') : marker.r) + yAxis.pos;
+        let r = (marker.attr ? marker.attr('r') : marker.r);
 
         let end = (
             marker.attr ? marker.attr('end') : marker.end
         ) - (xAxis as any).startAngleRad + xAxis.pos;
 
-        let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR) +
-            yAxis.pos;
+        let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR);
 
         (event as any).x = start;
         (event as any).width = end;
-        (event as any).y = r;
-        (event as any).height = innerR;
+        // innerR goes from pane's center but toValue computes values from top
+        (event as any).y = yAxis.len + yAxis.pos - innerR;
+        (event as any).height = innerR - r;
     }
 });
 
