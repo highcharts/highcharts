@@ -1,4 +1,5 @@
 import TreegraphPoint from './TreegraphPoint.js';
+import TreegraphSeries from './TreegraphSeries.js';
 
 class TreegraphNode extends TreegraphPoint {
     public mod: number = void 0 as any;
@@ -10,6 +11,11 @@ class TreegraphNode extends TreegraphPoint {
     public relativeXPosition: number = void 0 as any;
     public xPosition: number = void 0 as any;
     public yPosition: number = void 0 as any;
+
+    public linksFrom: Array<TreegraphPoint> = void 0 as any;
+    public linksTo: Array<TreegraphPoint> = void 0 as any;
+    public nodeHeight?: number;
+    public series: TreegraphSeries = void 0 as any;
 
     // get the next left node which is either first child or thread
     public nextLeft(this: TreegraphNode): TreegraphNode | undefined {
@@ -40,7 +46,7 @@ class TreegraphNode extends TreegraphPoint {
             return null;
         }
         const children = parent.linksFrom;
-        return children[0] ? (children[0].toNode as TreegraphNode) : null;
+        return children[0] ? (children[0].toNode) : null;
     }
     // get nodes left sibling (if it exists)
     public getLeftSibling(this: TreegraphNode): TreegraphNode | null {

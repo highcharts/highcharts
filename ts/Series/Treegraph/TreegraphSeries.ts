@@ -18,11 +18,12 @@
 
 import type TreegraphPoint from './TreegraphPoint';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
-import TreegraphNode from './TreegraphNode.js';
-import OrganizationSeries from '../Organization/OrganizationSeries.js';
-import SankeySeries from '../Sankey/SankeySeries.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
+import TreegraphNode from './TreegraphNode.js';
+import OrganizationSeries from '../Organization/OrganizationSeries.js';
+import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import TU from '../TreeUtilities.js';
 const { getLevelOptions } = TU;
@@ -104,6 +105,11 @@ class TreegraphSeries extends OrganizationSeries {
     public points: Array<TreegraphPoint> = void 0 as any;
 
     public siblingDistance: number = void 0 as any;
+
+    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>> = void 0 as any;
+
+    public nodes: Array<TreegraphNode> = void 0 as any;
+
     /* *
      *
      *  Functions
@@ -112,61 +118,6 @@ class TreegraphSeries extends OrganizationSeries {
 
     /* eslint-disable valid-jsdoc */
     public translate(): void {
-
-        // Get the translation factor needed for each column to fill up the
-        // plot height
-        const getColumnTranslationFactor = (
-            column: SankeySeries.ColumnArray
-        ): number => {
-            const nodes = column.slice();
-            const minLinkWidth = this.options.minLinkWidth || 0;
-            let exceedsMinLinkWidth: boolean;
-            let factor = 0;
-            let i: number;
-            // Will be changed after arcDiagram will be merged.
-            let maxRadius = (column as any).maxRadius || 0;
-
-            let remainingHeight =
-                (chart.plotSizeY as any) -
-                (options.borderWidth as any) -
-                (column.length - 1) * series.nodePadding;
-
-            // Because the minLinkWidth option doesn't obey the direct
-            // translation, we need to run translation iteratively, check
-            // node heights, remove those nodes affected by minLinkWidth,
-            // check again, etc.
-            while (column.length) {
-                factor = remainingHeight / column.sum();
-                exceedsMinLinkWidth = false;
-                i = column.length;
-                while (i--) {
-                    if (column[i].getSum() * factor < minLinkWidth) {
-                        column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
-                        exceedsMinLinkWidth = true;
-                    }
-
-                    maxRadius = Math.max(
-                        maxRadius,
-                        pick(
-                            (column[i].options as any).radius,
-                            (column[i].series.options as any).radius,
-                            0
-                        )
-                    );
-                }
-                if (!exceedsMinLinkWidth) {
-                    break;
-                }
-            }
-
-            (column as any).maxRadius = maxRadius;
-
-            // Re-insert original nodes
-            column.length = 0;
-            nodes.forEach((node): number => column.push(node));
-            return factor;
-        };
 
         if (!this.processedXData) {
             this.processData();
@@ -192,9 +143,12 @@ class TreegraphSeries extends OrganizationSeries {
         this.translationFactor = nodeColumns.reduce(
             (
                 translationFactor: number,
-                column: SankeySeries.ColumnArray
+                column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
             ): number =>
-                Math.min(translationFactor, getColumnTranslationFactor(column)),
+                Math.min(
+                    translationFactor,
+                    column.sankeyColumn.getTranslationFactor(series)
+                ),
             Infinity
         );
 
@@ -244,7 +198,7 @@ class TreegraphSeries extends OrganizationSeries {
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
             this: TreegraphSeries,
-            column: TreegraphSeries.ColumnArray
+            column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
         ): void {
 
             column.forEach(function (node): void {
@@ -286,20 +240,23 @@ class TreegraphSeries extends OrganizationSeries {
      * @private
      */
 
-    public translateNode(node: any, column: TreegraphSeries.ColumnArray): void {
+    public translateNode(node: any, column: SankeyColumnComposition.ArrayComposition<TreegraphNode>): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
             crisp = (Math.round(options.borderWidth) % 2) / 2,
             nodeRadius = pick(node.options.radius, options.radius),
-            nodeOffset = column.offset(node, translationFactor) as any,
+            nodeOffset = column.sankeyColumn.offset(
+                node, translationFactor
+            ) as any,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
             fromNodeTop =
                 Math.floor(
                     pick(
                         nodeOffset.absoluteTop,
-                        column.top(translationFactor) + nodeOffset.relativeTop
+                        column.sankeyColumn.top(translationFactor) +
+                            nodeOffset.relativeTop
                     )
                 ) + crisp,
             nodeWidth = nodeRadius * 2;
@@ -367,12 +324,68 @@ class TreegraphSeries extends OrganizationSeries {
         sankeyProto.alignDataLabel.apply(this, arguments);
     }
 
-    public createNodeColumns(): Array<TreegraphSeries.ColumnArray> {
+    public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>> {
         const originalNodes = this.nodes;
         this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
         const nodeColumns = super.createNodeColumns.apply(this, arguments);
+        nodeColumns.forEach(function (column): void {
+            column.sankeyColumn.getTranslationFactor =
+                function (series): number {
+                    const nodes = column.slice();
+                    const minLinkWidth = series.options.minLinkWidth || 0;
+                    let exceedsMinLinkWidth: boolean;
+                    let factor = 0;
+                    let i: number;
+                    // Will be changed after arcDiagram will be merged.
+                    let maxRadius = (column as any).maxRadius || 0;
+
+                    let remainingHeight =
+                        (series.chart.plotSizeY as any) -
+                        (series.options.borderWidth as any) -
+                        (column.length - 1) * series.nodePadding;
+
+                    // Because the minLinkWidth option doesn't obey the direct
+                    // translation, we need to run translation iteratively,
+                    // check node heights, remove those nodes affected
+                    // by minLinkWidth, check again, etc.
+                    while (column.length) {
+                        factor = remainingHeight / column.sankeyColumn.sum();
+                        exceedsMinLinkWidth = false;
+                        i = column.length;
+                        while (i--) {
+                            if (
+                                column[i].getSum() *
+                                factor < minLinkWidth
+                            ) {
+                                column.splice(i, 1);
+                                remainingHeight -= minLinkWidth;
+                                exceedsMinLinkWidth = true;
+                            }
+
+                            maxRadius = Math.max(
+                                maxRadius,
+                                pick(
+                                    (column[i].options as any).radius,
+                                    (column[i].series.options as any).radius,
+                                    0
+                                )
+                            );
+                        }
+                        if (!exceedsMinLinkWidth) {
+                            break;
+                        }
+                    }
+
+                    (column as any).maxRadius = maxRadius;
+
+                    // Re-insert original nodes
+                    column.length = 0;
+                    nodes.forEach((node): number => column.push(node));
+                    return factor;
+                };
+        });
         this.nodes = originalNodes;
-        return nodeColumns;
+        return nodeColumns as unknown as Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>>;
     }
 }
 // Handle showing and hiding of the points
@@ -406,16 +419,6 @@ function collapseTreeFromPoint(
 interface TreegraphSeries {
     inverted?: boolean;
     pointClass: typeof TreegraphNode;
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TreegraphSeries {
-    export interface ColumnArray<T = TreegraphPoint> extends SankeySeries.ColumnArray {}
 }
 
 /* *
