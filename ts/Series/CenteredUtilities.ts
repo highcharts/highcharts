@@ -48,7 +48,7 @@ namespace CenteredUtilities {
         innerSize?: (number|string);
         size?: (number|string);
         slicedOffset?: number;
-        thickness?: number;
+        thickness?: (number|0);
     }
 
     export interface RadianAngles {
@@ -79,7 +79,8 @@ namespace CenteredUtilities {
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
-            smallestSize = Math.min(plotWidth, plotHeight);
+            smallestSize = Math.min(plotWidth, plotHeight),
+            thickness = options.thickness as number * 2 || {};
 
         let handleSlicingRoom,
             size = options.size,
@@ -130,11 +131,12 @@ namespace CenteredUtilities {
         if (positions[3] > positions[2]) {
             positions[3] = positions[2];
         }
-        // thickness overrides innerSize (#6647)
-        if (options.thickness) {
-            positions[3] = positions[2] - options.thickness * 2;
-        }        
-
+        // thickness overrides innerSize, less than size (#6647)  
+        if (thickness < positions[2]) {
+            if (isNumber(thickness) && thickness > 0) {
+              positions[3] = positions[2] - thickness;
+            }
+        }
         return positions;
     }
 
