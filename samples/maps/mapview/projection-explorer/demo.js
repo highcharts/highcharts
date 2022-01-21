@@ -259,6 +259,9 @@
                         nullColor: '#e0e0e0',
                         borderColor: '#ffffff',
                         borderWidth: 0.25
+                    },
+                    mapline: {
+                        color: Highcharts.getOptions().colors[0]
                     }
                 },
 
@@ -274,7 +277,6 @@
                 }, {
                     data: getParallelsGeometries(projection.parallels),
                     type: 'mapline',
-                    color: 'blue',
                     id: 'parallels'
                 }]
             });
@@ -372,7 +374,6 @@
                     smallChart.addSeries({
                         data: getParallelsGeometries(parallels),
                         type: 'mapline',
-                        color: 'blue',
                         id: 'parallels'
                     }, true, false);
                 }
