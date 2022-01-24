@@ -577,6 +577,26 @@ class PieSeries extends Series {
          */
 
         /**
+         *
+         *
+         *
+         *
+         * `thickness` 
+         *
+         *
+         *
+         * 
+         *
+         * 
+         * @type      {number}
+         * @default   undefined
+         * @product   highcharts
+         *
+         * @private
+         */
+        thickness: undefined,
+
+        /**
          * Sticky tracking of mouse events. When true, the `mouseOut` event
          * on a series isn't triggered until the mouse moves over another
          * series, or out of the plot area. When false, the `mouseOut` event on
