@@ -262,8 +262,6 @@ extend(MapBubbleSeries.prototype, {
 
     processData: MapSeries.prototype.processData,
 
-    searchPoint: noop as any, // #16896
-
     setData: MapSeries.prototype.setData,
 
     setOptions: MapSeries.prototype.setOptions,
