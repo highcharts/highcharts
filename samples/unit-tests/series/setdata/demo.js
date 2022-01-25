@@ -648,3 +648,54 @@ QUnit.test('#8795: Hovering after zooming in and using setData with redraw set t
 
     assert.ok(true, 'It should not throw');
 });
+
+QUnit.test(
+    `The setData method with the createDataCoppy property
+    should not mutate the data, #4259.`,
+    assert => {
+        const oriData = [
+                [0, 0],
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [4, 4]
+            ],
+            newData = [0, 2, 4, 6, 8],
+            chart = Highcharts.chart('container', {
+                chart: {
+                    createDataCoppy: true
+                },
+                series: [{}]
+            }, function () {
+                this.series[0].setData(oriData);
+            });
+
+        assert.deepEqual(
+            oriData,
+            [
+                [0, 0],
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [4, 4]
+            ],
+            `When the createDataCoppy property is set, the setData method
+            should not mutate the original data array.`
+        );
+
+        chart.series[0].setData(newData);
+
+        assert.deepEqual(
+            oriData,
+            [
+                [0, 0],
+                [1, 1],
+                [2, 2],
+                [3, 3],
+                [4, 4]
+            ],
+            `When the createDataCoppy property is set, the setData method
+            fired again, should not mutate the original data array.`
+        );
+    }
+);

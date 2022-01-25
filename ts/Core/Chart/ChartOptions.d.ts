@@ -95,6 +95,7 @@ export interface ChartOptions {
     borderWidth?: number;
     className?: string;
     colorCount?: number;
+    createDataCoppy?: boolean;
     events?: ChartEventsOptions;
     height?: (null|number|string);
     ignoreHiddenSeries?: boolean;

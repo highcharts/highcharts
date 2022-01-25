@@ -528,6 +528,20 @@ const ChartDefaults: ChartOptions = {
     colorCount: 10,
 
     /**
+     * By default, (because of memory and performance reasons) the chart
+     * does not copy the data but keeps it as a reference.
+     * In some cases, this might result in mutating the original data source.
+     * In order to prevent that set that property to true.
+     * Please note that changing that might decrease performance,
+     * especially with bigger sets of data.
+     *
+     * @type      {boolean}
+     * @default   undefined
+     * @since     next
+     * @apioption chart.createDataCoppy
+     */
+
+    /**
      * Alias of `type`.
      *
      * @sample {highcharts} highcharts/chart/defaultseriestype/

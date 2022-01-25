@@ -1021,6 +1021,17 @@ class Point {
             i = point.index as any;
             series.updateParallelArrays(point, i);
 
+            // If this is the first time we're writing back to options,
+            // and createDataCoppy enabled create
+            // a copy so that we don't mutate the source array. (#4259)
+            if (seriesOptions.data &&
+                !seriesOptions.isCopy &&
+                !!chart.options.chart.createDataCoppy
+            ) {
+                seriesOptions.data = seriesOptions.data.slice();
+                seriesOptions.isCopy = true;
+            }
+
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).

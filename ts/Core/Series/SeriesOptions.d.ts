@@ -105,6 +105,7 @@ export interface SeriesOptions {
     findNearestPointBy?: SeriesFindNearestPointByValue;
     getExtremesFromAll?: boolean;
     id?: string;
+    isCopy?: boolean;
     index?: number;
     inactiveOtherPoints?: boolean;
     /** @private */
