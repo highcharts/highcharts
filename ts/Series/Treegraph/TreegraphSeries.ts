@@ -25,7 +25,9 @@ import TreegraphNode from './TreegraphNode.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import TU from '../TreeUtilities.js';
+const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
 const {
     seriesTypes: {
@@ -40,6 +42,7 @@ import { Palette } from '../../Core/Color/Palettes';
 const { merge, pick, addEvent, relativeLength } = U;
 
 import './TreegraphLayout.js';
+import RendererRegistry from '../../Core/Renderer/RendererRegistry';
 
 /* *
  *
@@ -231,12 +234,17 @@ class TreegraphSeries extends OrganizationSeries {
             }
         });
 
-        let ay = (plotSizeY - minYRadius - maxYRadius) / (maxY - minY);
-        let by = minYRadius - ay * minY;
-        let ax = (plotSizeX - minXRadius - maxXRadius) / (maxX - minX);
-        let bx = minXRadius - ax * minX;
+        let ay = (maxY === minY ?
+            1 :
+            (plotSizeY - 2 * minYRadius) / (maxY - minY));
+        let by = (maxY === minY ? plotSizeY / 2 : -ay * minY);
+        let ax = (maxX === minX ?
+            1 :
+            (plotSizeX - 2 * maxXRadius) / (maxX - minX));
+        let bx = (maxX === minX ? plotSizeX / 2 : -ax * minX);
 
         series.layoutModifier = { ax, bx, ay, by };
+
 
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
@@ -283,7 +291,7 @@ class TreegraphSeries extends OrganizationSeries {
      */
 
     public translateNode(
-        node: any,
+        node: TreegraphNode,
         column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
     ): void {
         const translationFactor = this.translationFactor,
@@ -331,12 +339,26 @@ class TreegraphSeries extends OrganizationSeries {
 
         // shapeArgs width and height set to 0 to align dataLabels correctly
         // in inverted chart
+        node.shapeType = 'path';
+        const markerOptions = merge(options.marker, node.options.marker);
+        const symbol = markerOptions.symbol;
+        const markerRadius = pick(
+            node.options.radius,
+            markerOptions.radius,
+            this.options.radius
+        );
         node.shapeArgs = {
-            x: chart.inverted ? plotSizeX - x : x,
+            d: symbols[symbol || 'circle'](
+                chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
+                y,
+                // y - (markerRadius || height) / 2,
+                markerRadius * 2,
+                markerRadius * 2
+            ),
+            x: chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
             y: y,
-            r: node.options.radius || options.borderRadius,
-            width: 0,
-            height: 0
+            width: markerRadius * 2,
+            height: markerRadius * 2
         };
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point
@@ -348,8 +370,8 @@ class TreegraphSeries extends OrganizationSeries {
         node.plotY = 1;
         // Set the anchor position for tooltips
         node.tooltipPos = chart.inverted ?
-            [plotSizeY - node.shapeArgs.y, plotSizeX - node.shapeArgs.x] :
-            [node.shapeArgs.x, node.shapeArgs.y];
+            [plotSizeY - y, plotSizeX - x] :
+            [x, y];
     }
 
     public alignDataLabel(): void {
@@ -439,11 +461,12 @@ function collapseTreeFromPoint(
         link.toNode.hidden = collapsed;
         link.update({ visible: !collapsed }, false);
         // to change
-        link.toNode.graphic.animate({ opacity: !collapsed ? 1 : 0 });
-        link.toNode.dataLabel[collapsed ? 'hide' : 'show'](false);
+        link.toNode.update({ visible: !collapsed }, false);
         collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
     });
 }
+// TODO check for circular data
+// TODO check drilldown support
 /* *
  *
  *  Prototype Properties

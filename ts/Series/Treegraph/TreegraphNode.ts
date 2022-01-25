@@ -8,6 +8,7 @@ class TreegraphNode extends TreegraphPoint {
     public shift: number = void 0 as any;
     public change: number = void 0 as any;
     public preX: number = void 0 as any;
+    public column: number = void 0 as any;
     public relativeXPosition: number = void 0 as any;
     public xPosition: number = void 0 as any;
     public yPosition: number = void 0 as any;
