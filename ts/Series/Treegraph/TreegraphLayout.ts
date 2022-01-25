@@ -67,7 +67,9 @@ extend(H.treeLayouts.Walker.prototype, {
             node.mod = 0;
             node.ancestor = node;
             node.shift = 0;
+            node.thread = void 0 as any;
             node.change = 0;
+            node.preX = 0;
         });
     },
     // Adds the value to each node, which indicates, what is his sibling number.
@@ -134,8 +136,11 @@ extend(H.treeLayouts.Walker.prototype, {
         modSum: number
     ): void {
         const treeLayout = this;
-        node.xPosition = node.preX + modSum;
-        node.yPosition = node.level * treeLayout.levelSeparation;
+        // when the chart is not iverted we want the tree to be positioned from
+        // left to right with root node close to the chart border, this is why
+        // x and y positions are switched.
+        node.yPosition = node.preX + modSum;
+        node.xPosition = node.level * treeLayout.levelSeparation;
         node.linksFrom.forEach(function (link): void {
             treeLayout.secondWalk(link.toNode as any, modSum + node.mod);
         });

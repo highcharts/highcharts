@@ -106,9 +106,15 @@ class TreegraphSeries extends OrganizationSeries {
 
     public siblingDistance: number = void 0 as any;
 
-    public nodeColumns: Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>> = void 0 as any;
+    public nodeColumns: Array<
+    SankeyColumnComposition.ArrayComposition<TreegraphNode>
+    > = void 0 as any;
 
     public nodes: Array<TreegraphNode> = void 0 as any;
+
+    public layoutModifier: { ax: number; bx: number; ay: number; by: number } =
+        void 0 as any;
+    layoutAlgorythm: Highcharts.TreegraphLayout = void 0 as any;
 
     /* *
      *
@@ -118,7 +124,6 @@ class TreegraphSeries extends OrganizationSeries {
 
     /* eslint-disable valid-jsdoc */
     public translate(): void {
-
         if (!this.processedXData) {
             this.processData();
         }
@@ -132,6 +137,8 @@ class TreegraphSeries extends OrganizationSeries {
 
         const series = this,
             chart = this.chart,
+            plotSizeX = chart.plotSizeX as number,
+            plotSizeY = chart.plotSizeY as number,
             options = this.options,
             nodeWidth = this.nodeWidth,
             nodeColumns = this.nodeColumns;
@@ -163,7 +170,6 @@ class TreegraphSeries extends OrganizationSeries {
             ((chart as any).plotSizeX - sumOfRadius * 2) /
             Math.max(1, nodeColumns.length - 1);
 
-
         this.colDistance =
             ((chart.plotSizeX as any) -
                 nodeWidth -
@@ -193,19 +199,55 @@ class TreegraphSeries extends OrganizationSeries {
             }
         });
 
-        const layout = new H.treeLayouts.Walker();
-        layout.init(series);
+        // if (this.layout) {
+        const layoutAlgorythm = new H.treeLayouts.Walker();
+        // }
+        layoutAlgorythm.init(series);
+        let minX = Infinity,
+            maxX = -Infinity,
+            minY = Infinity,
+            maxY = -Infinity,
+            maxXRadius = 0,
+            maxYRadius = 0,
+            minXRadius = 0,
+            minYRadius = 0;
+            // TODO move this search to layout Algorythm
+        series.nodes.forEach((node: TreegraphNode): void => {
+            if (node.xPosition < minX) {
+                minX = node.xPosition;
+                minXRadius = pick(node.options.radius, series.options.radius);
+            }
+            if (node.xPosition > maxX) {
+                maxX = node.xPosition;
+                maxXRadius = pick(node.options.radius, series.options.radius);
+            }
+            if (node.yPosition < minY) {
+                minY = node.yPosition;
+                minYRadius = pick(node.options.radius, series.options.radius);
+            }
+            if (node.yPosition > maxY) {
+                maxY = node.yPosition;
+                maxYRadius = pick(node.options.radius, series.options.radius);
+            }
+        });
+
+        let ay = (plotSizeY - minYRadius - maxYRadius) / (maxY - minY);
+        let by = minYRadius - ay * minY;
+        let ax = (plotSizeX - minXRadius - maxXRadius) / (maxX - minX);
+        let bx = minXRadius - ax * minX;
+
+        series.layoutModifier = { ax, bx, ay, by };
+
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
             this: TreegraphSeries,
             column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
         ): void {
-
             column.forEach(function (node): void {
                 series.translateNode(node, column);
             });
-
-        }, this);
+        },
+        this);
 
         // Then translate links
         this.nodes.forEach(function (node): void {
@@ -240,14 +282,17 @@ class TreegraphSeries extends OrganizationSeries {
      * @private
      */
 
-    public translateNode(node: any, column: SankeyColumnComposition.ArrayComposition<TreegraphNode>): void {
+    public translateNode(
+        node: any,
+        column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
+    ): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
             options = this.options,
             crisp = (Math.round(options.borderWidth) % 2) / 2,
-            nodeRadius = pick(node.options.radius, options.radius),
             nodeOffset = column.sankeyColumn.offset(
-                node, translationFactor
+                node,
+                translationFactor
             ) as any,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
@@ -258,10 +303,8 @@ class TreegraphSeries extends OrganizationSeries {
                         column.sankeyColumn.top(translationFactor) +
                             nodeOffset.relativeTop
                     )
-                ) + crisp,
-            nodeWidth = nodeRadius * 2;
+                ) + crisp;
 
-        const maxRadius = (column as any).maxRadius;
         const previousColumn = (this as any).nodeColumns[node.column - 1];
         const emptySpaceWidth = (this as any).emptySpaceWidth;
 
@@ -282,26 +325,15 @@ class TreegraphSeries extends OrganizationSeries {
         node.nodeY = fromNodeTop;
         (column as any).xOffset = xOffset;
 
-        let nodePositionX = nodeLeft;
-        let multiply = chart.inverted ? -1 : 1;
-        let nodePositionY = chart.inverted ?
-            plotSizeY - fromNodeTop - nodeWidth :
-            fromNodeTop + nodeWidth / 2;
-
-        if (options.alignNodes === 'right') {
-            nodePositionX += ((maxRadius * 2) - (nodeWidth / 2)) * multiply;
-        } else if (options.alignNodes === 'left') {
-            nodePositionX += (nodeWidth / 2) * multiply;
-        } else {
-            nodePositionX += maxRadius * multiply;
-        }
-
+        const { ax, bx, ay, by } = this.layoutModifier,
+            x = ax * node.xPosition + bx,
+            y = ay * node.yPosition + by;
 
         // shapeArgs width and height set to 0 to align dataLabels correctly
         // in inverted chart
         node.shapeArgs = {
-            x: nodePositionX,
-            y: nodePositionY,
+            x: chart.inverted ? plotSizeX - x : x,
+            y: y,
             r: node.options.radius || options.borderRadius,
             width: 0,
             height: 0
@@ -324,68 +356,70 @@ class TreegraphSeries extends OrganizationSeries {
         sankeyProto.alignDataLabel.apply(this, arguments);
     }
 
-    public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>> {
+    public createNodeColumns(): Array<
+    SankeyColumnComposition.ArrayComposition<TreegraphNode>
+    > {
         const originalNodes = this.nodes;
         this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
         const nodeColumns = super.createNodeColumns.apply(this, arguments);
         nodeColumns.forEach(function (column): void {
-            column.sankeyColumn.getTranslationFactor =
-                function (series): number {
-                    const nodes = column.slice();
-                    const minLinkWidth = series.options.minLinkWidth || 0;
-                    let exceedsMinLinkWidth: boolean;
-                    let factor = 0;
-                    let i: number;
-                    // Will be changed after arcDiagram will be merged.
-                    let maxRadius = (column as any).maxRadius || 0;
+            column.sankeyColumn.getTranslationFactor = function (
+                series
+            ): number {
+                const nodes = column.slice();
+                const minLinkWidth = series.options.minLinkWidth || 0;
+                let exceedsMinLinkWidth: boolean;
+                let factor = 0;
+                let i: number;
+                // Will be changed after arcDiagram will be merged.
+                let maxRadius = (column as any).maxRadius || 0;
 
-                    let remainingHeight =
-                        (series.chart.plotSizeY as any) -
-                        (series.options.borderWidth as any) -
-                        (column.length - 1) * series.nodePadding;
+                let remainingHeight =
+                    (series.chart.plotSizeY as any) -
+                    (series.options.borderWidth as any) -
+                    (column.length - 1) * series.nodePadding;
 
-                    // Because the minLinkWidth option doesn't obey the direct
-                    // translation, we need to run translation iteratively,
-                    // check node heights, remove those nodes affected
-                    // by minLinkWidth, check again, etc.
-                    while (column.length) {
-                        factor = remainingHeight / column.sankeyColumn.sum();
-                        exceedsMinLinkWidth = false;
-                        i = column.length;
-                        while (i--) {
-                            if (
-                                column[i].getSum() *
-                                factor < minLinkWidth
-                            ) {
-                                column.splice(i, 1);
-                                remainingHeight -= minLinkWidth;
-                                exceedsMinLinkWidth = true;
-                            }
-
-                            maxRadius = Math.max(
-                                maxRadius,
-                                pick(
-                                    (column[i].options as any).radius,
-                                    (column[i].series.options as any).radius,
-                                    0
-                                )
-                            );
+                // Because the minLinkWidth option doesn't obey the direct
+                // translation, we need to run translation iteratively,
+                // check node heights, remove those nodes affected
+                // by minLinkWidth, check again, etc.
+                while (column.length) {
+                    factor = remainingHeight / column.sankeyColumn.sum();
+                    exceedsMinLinkWidth = false;
+                    i = column.length;
+                    while (i--) {
+                        if (column[i].getSum() * factor < minLinkWidth) {
+                            column.splice(i, 1);
+                            remainingHeight -= minLinkWidth;
+                            exceedsMinLinkWidth = true;
                         }
-                        if (!exceedsMinLinkWidth) {
-                            break;
-                        }
+
+                        maxRadius = Math.max(
+                            maxRadius,
+                            pick(
+                                (column[i].options as any).radius,
+                                (column[i].series.options as any).radius,
+                                0
+                            )
+                        );
                     }
+                    if (!exceedsMinLinkWidth) {
+                        break;
+                    }
+                }
 
-                    (column as any).maxRadius = maxRadius;
+                (column as any).maxRadius = maxRadius;
 
-                    // Re-insert original nodes
-                    column.length = 0;
-                    nodes.forEach((node): number => column.push(node));
-                    return factor;
-                };
+                // Re-insert original nodes
+                column.length = 0;
+                nodes.forEach((node): number => column.push(node));
+                return factor;
+            };
         });
         this.nodes = originalNodes;
-        return nodeColumns as unknown as Array<SankeyColumnComposition.ArrayComposition<TreegraphNode>>;
+        return nodeColumns as unknown as Array<
+        SankeyColumnComposition.ArrayComposition<TreegraphNode>
+        >;
     }
 }
 // Handle showing and hiding of the points
@@ -405,7 +439,7 @@ function collapseTreeFromPoint(
         link.toNode.hidden = collapsed;
         link.update({ visible: !collapsed }, false);
         // to change
-        link.toNode.graphic.attr({ opacity: !collapsed ? 1 : 0 });
+        link.toNode.graphic.animate({ opacity: !collapsed ? 1 : 0 });
         link.toNode.dataLabel[collapsed ? 'hide' : 'show'](false);
         collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
     });

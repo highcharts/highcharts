@@ -11,7 +11,7 @@ class TreegraphNode extends TreegraphPoint {
     public relativeXPosition: number = void 0 as any;
     public xPosition: number = void 0 as any;
     public yPosition: number = void 0 as any;
-
+    public hidden = false;
     public linksFrom: Array<TreegraphPoint> = void 0 as any;
     public linksTo: Array<TreegraphPoint> = void 0 as any;
     public nodeHeight?: number;
@@ -46,7 +46,12 @@ class TreegraphNode extends TreegraphPoint {
             return null;
         }
         const children = parent.linksFrom;
-        return children[0] ? (children[0].toNode) : null;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i] && !children[i].toNode.hidden) {
+                return children[i].toNode;
+            }
+        }
+        return null;
     }
     // get nodes left sibling (if it exists)
     public getLeftSibling(this: TreegraphNode): TreegraphNode | null {
@@ -55,22 +60,32 @@ class TreegraphNode extends TreegraphPoint {
             return null;
         }
         const children = parent.linksFrom;
-        return children[this.relativeXPosition - 1] ?
-            (children[this.relativeXPosition - 1].toNode as TreegraphNode) :
-            null;
+        for (let i = this.relativeXPosition - 1; i >= 0; i--) {
+            if (children[i] && !children[i].toNode.hidden) {
+                return children[i].toNode;
+            }
+        }
+        return null;
     }
 
     // get the node's first child (if it exists)
     public getLeftMostChild(this: TreegraphNode): TreegraphNode | null {
-        return this.linksFrom[0] && (this.linksFrom[0].toNode as TreegraphNode);
+        for (let i = 0; i < this.linksFrom.length; i++) {
+            if (!this.linksFrom[i].toNode.hidden) {
+                return this.linksFrom[i].toNode;
+            }
+        }
+        return null;
     }
 
     // get the node's last child (if it exists)
     public getRightMostChild(this: TreegraphNode): TreegraphNode | null {
-        return (
-            this.linksFrom[this.linksFrom.length - 1] &&
-            (this.linksFrom[this.linksFrom.length - 1].toNode as TreegraphNode)
-        );
+        for (let i = this.linksFrom.length - 1; i >= 0; i--) {
+            if (!this.linksFrom[i].toNode.hidden) {
+                return this.linksFrom[i].toNode;
+            }
+        }
+        return null;
     }
 
     // Get the parent of current node or return null for root of the tree.
@@ -81,13 +96,21 @@ class TreegraphNode extends TreegraphPoint {
     }
     // Check if the node is a leaf, so if it has any children.
     public isLeaf(this: TreegraphNode): boolean {
-        return !this.linksFrom.length;
+        for (let i = 0; i < this.linksFrom.length; i++) {
+            if (!this.linksFrom[i].toNode.hidden) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public getFirstChild(this: TreegraphNode): TreegraphNode | null {
-        return this.linksFrom[0] ?
-            (this.linksFrom[0].toNode as TreegraphNode) :
-            null;
+        for (let i = 0; i < this.linksFrom.length; i++) {
+            if (!this.linksFrom[i].toNode.hidden) {
+                return this.linksFrom[i].toNode;
+            }
+        }
+        return null;
     }
 }
 
