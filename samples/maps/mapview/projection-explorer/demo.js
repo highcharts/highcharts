@@ -107,7 +107,6 @@
 
             chart = Highcharts.mapChart('container', {
                 chart: {
-                    map: topology,
                     height: '65%'
                 },
 
@@ -151,6 +150,9 @@
                 plotOptions: {
                     series: {
                         animationLimit: 500
+                    },
+                    mapline: {
+                        enableMouseTracking: false
                     }
                 },
 
@@ -162,6 +164,7 @@
                     color: '#e8e8e8'
                 }, {
                     data,
+                    mapData: topology,
                     joinBy: null,
                     name: 'Random data',
                     states: {
