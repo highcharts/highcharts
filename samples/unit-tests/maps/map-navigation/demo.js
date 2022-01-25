@@ -191,41 +191,36 @@ QUnit.test('Map navigation button alignment', assert => {
     );
 });
 
-QUnit.skip('Orthographic map rotation and panning.', assert => {
-    const getGraticule = () => {
+QUnit.test('Orthographic map rotation and panning.', assert => {
+    const getGraticule = partial => {
         const data = [];
-
         // Meridians
-        for (let x = -180; x <= 180; x += 15) {
+        for (let x = -180; x <= 180; x += 180) {
             data.push({
                 geometry: {
                     type: 'LineString',
-                    coordinates: x % 90 === 0 ? [
-                        [x, -90],
-                        [x, 0],
-                        [x, 90]
+                    coordinates: partial ? [
+                        [x, 90],
+                        [x, 45]
                     ] : [
-                        [x, -80],
-                        [x, 80]
+                        [x, 90],
+                        [x, 0],
+                        [x, -90]
                     ]
                 }
             });
         }
 
-        // Latitudes
-        for (let y = -90; y <= 90; y += 10) {
-            const coordinates = [];
-            for (let x = -180; x <= 180; x += 5) {
-                coordinates.push([x, y]);
-            }
-            data.push({
-                geometry: {
-                    type: 'LineString',
-                    coordinates
-                },
-                lineWidth: y === 0 ? 2 : undefined
-            });
+        const coordinates = [];
+        for (let x = -180; x <= 180; x += 90) {
+            coordinates.push([x, 0]); // only equator
         }
+        data.push({
+            geometry: {
+                type: 'LineString',
+                coordinates
+            }
+        });
 
         return data;
     };
@@ -254,7 +249,8 @@ QUnit.skip('Orthographic map rotation and panning.', assert => {
         mapView: {
             maxZoom: 30,
             projection: {
-                name: 'Orthographic'
+                name: 'Orthographic',
+                rotation: [0, -90]
             }
         },
 
@@ -280,7 +276,7 @@ QUnit.skip('Orthographic map rotation and panning.', assert => {
             name: 'Graticule',
             id: 'graticule',
             type: 'mapline',
-            data: getGraticule(),
+            data: getGraticule(true),
             nullColor: 'rgba(0, 0, 0, 0.05)'
         }, {
             type: 'mappoint',
@@ -296,44 +292,38 @@ QUnit.skip('Orthographic map rotation and panning.', assert => {
         }]
     });
 
-    const controller = new TestController(chart);
+    const controller = new TestController(chart),
+        point = chart.get('A'),
+        oldPlotY = point.plotY;
+    let oldRotation = chart.mapView.projection.options.rotation;
 
-    // Pan to the limit
-    controller.pan([300, 50], [300, 350]);
-    // // Zoom twice - should still be in the glob rotation mode
-    controller.click(20, 20);
-    controller.click(20, 20);
-
-    // store yValue.
-    const point = chart.get('A');
-    const oldPlotY = point.plotY;
-
-    controller.pan([305, 50], [305, 350]);
-
-    // Zoom again twice - should change panning mode
-    controller.click(20, 20);
-    controller.click(20, 20);
-
-    // Pan last time - should move the point (compare position with the one
-    // right before the pan)
-    controller.pan([310, 50], [310, 200]);
+    controller.click(20, 20, void 0, true); // Zoom needed to pan initially.
+    controller.pan([305, 50], [350, 150]);
 
     assert.ok(
-        point.plotY > (oldPlotY + 100),
-        'Zooming should enable panning (#16722).'
+        (point.plotY > oldPlotY),
+        'Panning should be activated (#16722).'
     );
 
-    // Zoom out twice - should change to rotation mode.
-    controller.click(20, 50);
-    controller.click(20, 50);
+    assert.deepEqual(
+        chart.mapView.projection.options.rotation,
+        oldRotation,
+        'Rotation should not be activated (#16722).'
+    );
 
-    // Rotate
-    controller.pan([305, 50], [305, 350]);
+    // Test on fully loaded graticule
+    chart.series[0].update({
+        data: getGraticule(false)
+    });
+    chart.setSize(500, 500); // Note: Otherwise map doesn't update.
 
-    assert.close(
-        point.plotY,
-        oldPlotY,
-        1,
-        'Zooming out should enable rotation (#16722).'
+    oldRotation = chart.mapView.projection.options.rotation;
+
+    controller.pan([305, 50], [350, 150]);
+
+    assert.notDeepEqual(
+        chart.mapView.projection.options.rotation,
+        oldRotation,
+        'Rotation should be activated (#16722).'
     );
 });
