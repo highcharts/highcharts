@@ -577,16 +577,8 @@ class PieSeries extends Series {
          */
 
         /**
-         *
-         *
-         *
-         *
-         * `thickness` 
-         *
-         *
-         *
-         * 
-         *
+         * Thickness describing the ring size for a donut type chart, overriding 
+         * [innerSize](#plotOptions.pie.innerSize).
          * 
          * @type      {number}
          * @default   undefined
