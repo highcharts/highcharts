@@ -577,16 +577,16 @@ class PieSeries extends Series {
          */
 
         /**
-         * Thickness describing the ring size for a donut type chart, overriding 
-         * [innerSize](#plotOptions.pie.innerSize).
-         * 
+         * Thickness describing the ring size for a donut type chart,
+         * overriding [innerSize](#plotOptions.pie.innerSize).
+         *
          * @type      {number}
          * @default   undefined
          * @product   highcharts
-         *
+         * @since     next
+         * @apioption plotOptions.pie.thickness
          * @private
          */
-        thickness: undefined,
 
         /**
          * Sticky tracking of mouse events. When true, the `mouseOut` event
