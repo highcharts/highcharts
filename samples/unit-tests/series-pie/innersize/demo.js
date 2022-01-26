@@ -87,8 +87,8 @@ QUnit.test(
     }
 );
 
-QUnit.test('Thickness cannot be greater than size.(#6647)', function (assert) {
-    var chart = Highcharts.chart('container', {
+QUnit.test('Thickness cannot be greater than size.(#6647)', assert => {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'
         },
@@ -111,7 +111,7 @@ QUnit.test('Thickness cannot be greater than size.(#6647)', function (assert) {
         ]
     });
 
-    var series = chart.series[0],
+    let series = chart.series[0],
         thickness = series.options.thickness,
         size = series.center[2];
 
