@@ -131,11 +131,12 @@ namespace CenteredUtilities {
         if (positions[3] > positions[2]) {
             positions[3] = positions[2];
         }
-        // thickness overrides innerSize and need to be less than pie size (#6647)
-        if (thickness * 2 < positions[2]) {
-            if (isNumber(thickness * 2) && thickness * 2 > 0) {
-                positions[3] = positions[2] - thickness * 2;
-            }
+        // thickness overrides innerSize, need to be less than pie size (#6647)
+        if (
+            thickness < positions[2] &&
+            isNumber(thickness) && thickness > 0
+        ) {
+            positions[3] = positions[2] - thickness * 2;
         }
         return positions;
     }
