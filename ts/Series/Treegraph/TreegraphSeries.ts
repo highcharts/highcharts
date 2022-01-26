@@ -42,7 +42,6 @@ import { Palette } from '../../Core/Color/Palettes';
 const { merge, pick, addEvent, relativeLength } = U;
 
 import './TreegraphLayout.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry';
 
 /* *
  *
@@ -350,13 +349,12 @@ class TreegraphSeries extends OrganizationSeries {
         node.shapeArgs = {
             d: symbols[symbol || 'circle'](
                 chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
-                y,
-                // y - (markerRadius || height) / 2,
+                y - markerRadius + this.options.radius,
                 markerRadius * 2,
                 markerRadius * 2
             ),
             x: chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
-            y: y,
+            y: y - markerRadius + this.options.radius,
             width: markerRadius * 2,
             height: markerRadius * 2
         };
