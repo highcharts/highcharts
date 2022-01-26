@@ -84,7 +84,6 @@ class TreegraphSeries extends OrganizationSeries {
             alignNodes: 'right',
             minLinkWidth: 1,
             borderWidth: 1,
-            siblingDistance: 20,
             link: {
                 type: 'straight',
                 width: 1,
@@ -105,8 +104,6 @@ class TreegraphSeries extends OrganizationSeries {
     public options: TreegraphSeriesOptions = void 0 as any;
 
     public points: Array<TreegraphPoint> = void 0 as any;
-
-    public siblingDistance: number = void 0 as any;
 
     public nodeColumns: Array<
     SankeyColumnComposition.ArrayComposition<TreegraphNode>

@@ -1,9 +1,8 @@
 import TreegraphSeries from './TreegraphSeries';
-import TreegraphPoint from './TreegraphPoint';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
-import TreegraphNode from './TreegraphNode.js';
+import type TreegraphNode from './TreegraphNode.js';
 declare global {
     namespace Highcharts {
         class TreegraphLayout {
@@ -50,7 +49,7 @@ extend(H.treeLayouts.Walker.prototype, {
         const treeLayout = this;
         const nodes = series.nodes as TreegraphNode[];
         this.initValues(nodes);
-        this.siblingDistance = series.options.siblingDistance;
+        this.siblingDistance = 50;
         this.levelSeparation = 50;
         const root = nodes[0];
         if (root) {
