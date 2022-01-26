@@ -13,6 +13,7 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
+import type MapSeries from '../Series/Map/MapSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 import type {
@@ -402,7 +403,10 @@ class MapView {
         const allBounds = this.chart.series.reduce(
             (acc, s): MapBounds[] => {
                 const bounds = s.getProjectedBounds && s.getProjectedBounds();
-                if (bounds) {
+                if (
+                    bounds &&
+                    (s as MapSeries).options.affectsMapView !== false
+                ) {
                     acc.push(bounds);
                 }
                 return acc;
