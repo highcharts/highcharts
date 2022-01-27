@@ -1022,11 +1022,11 @@ class Point {
             series.updateParallelArrays(point, i);
 
             // If this is the first time we're writing back to options,
-            // and createDataCoppy enabled create
+            // and allowMutatingData enabled create
             // a copy so that we don't mutate the source array. (#4259)
             if (seriesOptions.data &&
                 !seriesOptions.isCopy &&
-                !!chart.options.chart.createDataCoppy
+                !chart.options.chart.allowMutatingData
             ) {
                 seriesOptions.data = seriesOptions.data.slice();
                 seriesOptions.isCopy = true;

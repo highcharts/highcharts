@@ -535,10 +535,9 @@ const ChartDefaults: ChartOptions = {
      * especially with bigger sets of data.
      *
      * @type      {boolean}
-     * @default   undefined
      * @since     next
-     * @apioption chart.createDataCoppy
      */
+    allowMutatingData: true,
 
     /**
      * Alias of `type`.
