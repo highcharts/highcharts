@@ -465,12 +465,32 @@ class MapView {
     }
 
     /**
+     * Convert map coordinates in longitude/latitude to pixels
+     *
+     * @function Highcharts.MapView#lonLatToPixels
+     * @since  next
+     * @param  {Highcharts.MapLonLatObject} lonLat
+     *         The map coordinates
+     * @return {Highcharts.PositionObject|undefined}
+     *         The pixel position
+     */
+    public lonLatToPixels(
+        lonLat: Highcharts.MapLonLatObject
+    ): PositionObject|undefined {
+        const pos = this.lonLatToProjectedUnits(lonLat);
+        if (pos) {
+            return this.projectedUnitsToPixels(pos);
+        }
+    }
+
+    /**
      * Get projected units from longitude/latitude. Insets are accounted for.
      * Returns an object with x and y values corresponding to positions on the
      * projected plane.
      *
      * @requires modules/map
      *
+     * @since next
      * @sample maps/series/latlon-to-point/ Find a point from lon/lat
      *
      * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
@@ -539,6 +559,8 @@ class MapView {
      * object with the numeric properties `lon` and `lat`.
      *
      * @requires modules/map
+     *
+     * @since next
      *
      * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
      *
@@ -738,6 +760,22 @@ class MapView {
         const y = centerPxY + scale * (projectedCenter[1] - pos.y);
 
         return { x, y };
+    }
+
+    /**
+     * Convert pixel position to longitude and latitude.
+     *
+     * @function Highcharts.MapView#pixelsToLonLat
+     * @since  next
+     * @param  {Highcharts.PositionObject} pos
+     *         The position in pixels
+     * @return {Highcharts.MapLonLatObject|undefined}
+     *         The map coordinates
+     */
+    public pixelsToLonLat(
+        pos: PositionObject
+    ): Highcharts.MapLonLatObject|undefined {
+        return this.projectedUnitsToLonLat(this.pixelsToProjectedUnits(pos));
     }
 
     /**
