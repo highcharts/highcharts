@@ -4,20 +4,33 @@
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
-    const us = await fetch(
-        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    const eu = await fetch(
+        'https://code.highcharts.com/mapdata/custom/european-union.topo.json'
     ).then(response => response.json());
-    const data = new Array(us.objects.default.geometries.length).fill(1)
+
+    // Brexit
+    eu.objects.default.geometries.splice(
+        eu.objects.default.geometries.findIndex(g => g.id === 'GB'),
+        1
+    );
+
+    // Random demo data
+    const data = new Array(eu.objects.default.geometries.length)
+        .fill(1)
         .map((val, i) => i);
 
     // Initialize the chart
     Highcharts.mapChart('container', {
 
         chart: {
-            map: us
+            map: eu
         },
 
         title: {
+            text: 'European Union'
+        },
+
+        subtitle: {
             text: 'World map backdrop does not affect the map view'
         },
 
@@ -46,9 +59,10 @@
             borderColor: 'rgba(0, 0, 0, 0)',
             nullColor: 'rgba(196, 196, 196, 0.2)'
         }, {
-            // US map
+            // EU map
             data,
-            joinBy: null
+            joinBy: null,
+            borderColor: '#666'
         }]
     });
 })();
