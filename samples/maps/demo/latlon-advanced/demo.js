@@ -83,18 +83,22 @@ document.getElementById('container').addEventListener('mousemove', function (e) 
         }
 
         e = chart.pointer.normalize(e);
-        const projectedPosition = chart.mapView.pixelsToProjectedUnits({
-            x: Math.round(e.chartX - chart.plotLeft),
-            y: Math.round(e.chartY - chart.plotTop)
-        });
-        const position = chart.mapView.projectedUnitsToLonLat(
-            projectedPosition
-        );
+
+        // @todo Legacy code, remove after launch of v10
+        if (!e.lon && !e.lat) {
+            const projectedPosition = chart.mapView.pixelsToProjectedUnits({
+                x: Math.round(e.chartX - chart.plotLeft),
+                y: Math.round(e.chartY - chart.plotTop)
+            });
+            const position = chart.fromPointToLatLon(projectedPosition);
+            e.lon = position.lon;
+            e.lat = position.lat;
+        }
 
         chart.lbl.attr({
             x: e.chartX + 5,
             y: e.chartY - 22,
-            text: 'Lat: ' + position.lat.toFixed(2) + '<br>Lon: ' + position.lon.toFixed(2)
+            text: 'Lat: ' + e.lat.toFixed(2) + '<br>Lon: ' + e.lon.toFixed(2)
         });
     }
 });
