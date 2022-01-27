@@ -432,6 +432,140 @@ class MapView {
         return { scaleX, scaleY, translateX, translateY };
     }
 
+    /**
+     * Get projected units from longitude/latitude. Insets are accounted for.
+     * Returns an object with x and y values corresponding to positions on the
+     * projected plane.
+     *
+     * @requires modules/map
+     *
+     * @sample maps/series/latlon-to-point/ Find a point from lon/lat
+     *
+     * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
+     *
+     * @return {Highcharts.ProjectedXY} X and Y coordinates in terms of
+     *      projected values
+     */
+    public lonLatToProjectedUnits(
+        lonLat: Highcharts.MapLonLatObject
+    ): ProjectedXY|undefined {
+        const chart = this.chart,
+            mapTransforms = chart.mapTransforms;
+
+        // Legacy, built-in transforms
+        if (mapTransforms) {
+            for (const transform in mapTransforms) {
+                if (
+                    Object.hasOwnProperty.call(mapTransforms, transform) &&
+                    mapTransforms[transform].hitZone
+                ) {
+                    const coords = chart.transformFromLatLon(
+                        lonLat,
+                        mapTransforms[transform]
+                    );
+                    if (coords && pointInPolygon(
+                        coords,
+                        mapTransforms[transform].hitZone.coordinates[0]
+                    )) {
+                        return coords;
+                    }
+                }
+            }
+
+            return chart.transformFromLatLon(
+                lonLat,
+                mapTransforms['default'] // eslint-disable-line dot-notation
+            );
+        }
+
+        // Handle insets
+        for (const inset of this.insets) {
+            if (
+                inset.options.geoBounds &&
+                pointInPolygon(
+                    { x: lonLat.lon, y: lonLat.lat },
+                    inset.options.geoBounds.coordinates[0]
+                )
+            ) {
+                const insetProjectedPoint = inset.projection.forward(
+                        [lonLat.lon, lonLat.lat]
+                    ),
+                    pxPoint = inset.projectedUnitsToPixels(
+                        { x: insetProjectedPoint[0], y: insetProjectedPoint[1] }
+                    );
+
+                return this.pixelsToProjectedUnits(pxPoint);
+            }
+        }
+
+        const point = this.projection.forward([lonLat.lon, lonLat.lat]);
+        return { x: point[0], y: point[1] };
+    }
+
+    /**
+     * Calculate longitude/latitude values for a point or position. Returns an
+     * object with the numeric properties `lon` and `lat`.
+     *
+     * @requires modules/map
+     *
+     * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
+     *
+     * @param {Highcharts.Point|Highcharts.ProjectedXY} point
+     *        A `Point` instance or anything containing `x` and `y` properties
+     *        with numeric values.
+     *
+     * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and
+     *         `lon` properties.
+     */
+    public projectedUnitsToLonLat(
+        point: ProjectedXY
+    ): Highcharts.MapLonLatObject|undefined {
+        const chart = this.chart,
+            mapTransforms = chart.mapTransforms;
+
+        // Legacy, built-in transforms
+        if (mapTransforms) {
+            for (const transform in mapTransforms) {
+                if (
+                    Object.hasOwnProperty.call(mapTransforms, transform) &&
+                    mapTransforms[transform].hitZone &&
+                    pointInPolygon(
+                        point,
+                        mapTransforms[transform].hitZone.coordinates[0]
+                    )
+                ) {
+                    return chart.transformToLatLon(
+                        point,
+                        mapTransforms[transform]
+                    );
+                }
+            }
+
+            return chart.transformToLatLon(
+                point,
+                mapTransforms['default'] // eslint-disable-line dot-notation
+            );
+        }
+
+        const pxPoint = this.projectedUnitsToPixels(point);
+        for (const inset of this.insets) {
+            if (
+                inset.hitZone &&
+                pointInPolygon(pxPoint, inset.hitZone.coordinates[0])
+            ) {
+                const insetProjectedPoint = inset
+                        .pixelsToProjectedUnits(pxPoint),
+                    coordinates = inset.projection.inverse(
+                        [insetProjectedPoint.x, insetProjectedPoint.y]
+                    );
+                return { lon: coordinates[0], lat: coordinates[1] };
+            }
+        }
+
+        const coordinates = this.projection.inverse([point.x, point.y]);
+        return { lon: coordinates[0], lat: coordinates[1] };
+    }
+
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
         this.chart.series.forEach((s): void => {
             if (s.useMapGeometry) {

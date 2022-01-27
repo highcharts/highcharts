@@ -45,7 +45,7 @@ const chart = Highcharts.mapChart('container', {
 });
 
 document.getElementById('addCircle').onclick = () => {
-    const projectedPos = chart.fromLatLonToPoint({
+    const projectedPos = chart.mapView.lonLatToProjectedUnits({
             lat: 51.507222,
             lon: -0.1275
         }),

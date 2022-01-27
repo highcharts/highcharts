@@ -47,22 +47,22 @@ declare module '../Core/Chart/ChartLike'{
         mapTransforms?: any;
         /** @requires modules/maps */
         fromLatLonToPoint(
-            latLon: Highcharts.MapLatLonObject
+            latLon: Highcharts.MapLonLatObject
         ): ProjectedXY|undefined;
         /** @requires modules/maps */
         fromPointToLatLon(
             point: ProjectedXY
-        ): (Highcharts.MapLatLonObject|undefined);
+        ): (Highcharts.MapLonLatObject|undefined);
         /** @requires modules/maps */
         transformFromLatLon(
-            latLon: Highcharts.MapLatLonObject,
+            latLon: Highcharts.MapLonLatObject,
             transform: any
         ): ProjectedXY|undefined;
         /** @requires modules/maps */
         transformToLatLon(
             point: ProjectedXY,
             transform: any
-        ): (Highcharts.MapLatLonObject|undefined);
+        ): (Highcharts.MapLonLatObject|undefined);
     }
 }
 
@@ -84,7 +84,7 @@ declare global {
             path?: SVGPath;
             properties?: object;
         }
-        interface MapLatLonObject {
+        interface MapLonLatObject {
             lat: number;
             lon: number;
         }
@@ -226,14 +226,14 @@ declare global {
 /**
  * A latitude/longitude object.
  *
- * @interface Highcharts.MapLatLonObject
+ * @interface Highcharts.MapLonLatObject
  *//**
  * The latitude.
- * @name Highcharts.MapLatLonObject#lat
+ * @name Highcharts.MapLonLatObject#lat
  * @type {number}
  *//**
  * The longitude.
- * @name Highcharts.MapLatLonObject#lon
+ * @name Highcharts.MapLonLatObject#lon
  * @type {number}
  */
 
@@ -264,7 +264,7 @@ declare global {
  *
  * @function Highcharts.Chart#transformFromLatLon
  *
- * @param {Highcharts.MapLatLonObject} latLon
+ * @param {Highcharts.MapLonLatObject} latLon
  *        A latitude/longitude object.
  *
  * @param {*} transform
@@ -275,7 +275,7 @@ declare global {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (
-    latLon: Highcharts.MapLatLonObject,
+    latLon: Highcharts.MapLonLatObject,
     transform: any
 ): ProjectedXY|undefined {
 
@@ -340,13 +340,13 @@ Chart.prototype.transformFromLatLon = function (
  * @param {*} transform The transform definition to use as explained in the
  *        {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
  *
- * @return {Highcharts.MapLatLonObject|undefined} An object with `lat` and `lon`
+ * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and `lon`
  *         properties.
  */
 Chart.prototype.transformToLatLon = function (
     point: ProjectedXY,
     transform: any
-): (Highcharts.MapLatLonObject|undefined) {
+): (Highcharts.MapLonLatObject|undefined) {
 
     const proj4 = this.options.chart.proj4 || win.proj4;
     if (!proj4) {
@@ -387,12 +387,11 @@ Chart.prototype.transformToLatLon = function (
 };
 
 /**
- * Highcharts Maps only. Calculate latitude/longitude values for a point.
- * Returns an object with the numeric properties `lat` and `lon`.
+ * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
+ *
+ * @deprecated
  *
  * @requires modules/map
- *
- * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
  *
  * @function Highcharts.Chart#fromPointToLatLon
  *
@@ -400,132 +399,33 @@ Chart.prototype.transformToLatLon = function (
  *        instance or anything containing `x` and `y` properties with numeric
  *        values.
  *
- * @return {Highcharts.MapLatLonObject|undefined} An object with `lat` and `lon`
+ * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and `lon`
  *         properties.
  */
 Chart.prototype.fromPointToLatLon = function (
     point: ProjectedXY
-): (Highcharts.MapLatLonObject|undefined) {
-
-    // Legacy, built-in transforms
-    const transforms = this.mapTransforms;
-    if (transforms) {
-        for (const transform in transforms) {
-            if (
-                Object.hasOwnProperty.call(transforms, transform) &&
-                transforms[transform].hitZone &&
-                pointInPolygon(
-                    point,
-                    transforms[transform].hitZone.coordinates[0]
-                )
-            ) {
-                return this.transformToLatLon(point, transforms[transform]);
-            }
-        }
-
-        return this.transformToLatLon(
-            point,
-            transforms['default'] // eslint-disable-line dot-notation
-        );
-    }
-
-    const mapView = this.mapView;
-    if (mapView && typeof point.y === 'number') {
-        const pxPoint = mapView.projectedUnitsToPixels(point);
-        for (const inset of mapView.insets) {
-            if (
-                inset.hitZone &&
-                pointInPolygon(pxPoint, inset.hitZone.coordinates[0])
-            ) {
-                const insetProjectedPoint = inset
-                        .pixelsToProjectedUnits(pxPoint),
-                    coordinates = inset.projection.inverse(
-                        [insetProjectedPoint.x, insetProjectedPoint.y]
-                    );
-                return { lon: coordinates[0], lat: coordinates[1] };
-            }
-        }
-
-        const coordinates = mapView.projection.inverse([point.x, point.y]);
-        return { lon: coordinates[0], lat: coordinates[1] };
-    }
+): (Highcharts.MapLonLatObject|undefined) {
+    return this.mapView && this.mapView.projectedUnitsToLonLat(point);
 };
 
 /**
- * Highcharts Maps only. Get chart coordinates from latitude/longitude. Returns
- * an object with x and y values corresponding to the `xAxis` and `yAxis`.
+ * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
+ *
+ * @deprecated
  *
  * @requires modules/map
  *
- * @sample maps/series/latlon-to-point/ Find a point from lat/lon
- *
  * @function Highcharts.Chart#fromLatLonToPoint
  *
- * @param {Highcharts.MapLatLonObject} latLon Coordinates.
+ * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
  *
  * @return {Highcharts.ProjectedXY}
  *      X and Y coordinates in terms of projected values
  */
 Chart.prototype.fromLatLonToPoint = function (
-    latLon: Highcharts.MapLatLonObject
+    lonLat: Highcharts.MapLonLatObject
 ): ProjectedXY|undefined {
-    let transforms = this.mapTransforms,
-        transform,
-        coords;
-
-    // Legacy, built-in transforms
-    if (transforms) {
-        for (transform in transforms) {
-            if (
-                Object.hasOwnProperty.call(transforms, transform) &&
-                transforms[transform].hitZone
-            ) {
-                coords = this.transformFromLatLon(
-                    latLon,
-                    transforms[transform]
-                );
-                if (coords && pointInPolygon(
-                    coords,
-                    transforms[transform].hitZone.coordinates[0]
-                )) {
-                    return coords;
-                }
-            }
-        }
-
-        return this.transformFromLatLon(
-            latLon,
-            transforms['default'] // eslint-disable-line dot-notation
-        );
-    }
-
-    const mapView = this.mapView;
-    if (mapView) {
-        for (const inset of mapView.insets) {
-            if (
-                inset.options.geoBounds &&
-                pointInPolygon(
-                    { x: latLon.lon, y: latLon.lat },
-                    inset.options.geoBounds.coordinates[0]
-                )
-            ) {
-                const insetProjectedPoint = inset.projection.forward(
-                        [latLon.lon, latLon.lat]
-                    ),
-                    pxPoint = inset.projectedUnitsToPixels(
-                        { x: insetProjectedPoint[0], y: insetProjectedPoint[1] }
-                    ),
-                    mapViewProjectedPoint = mapView.pixelsToProjectedUnits(
-                        pxPoint
-                    );
-
-                return mapViewProjectedPoint;
-            }
-        }
-
-        const point = mapView.projection.forward([latLon.lon, latLon.lat]);
-        return { x: point[0], y: point[1] };
-    }
+    return this.mapView && this.mapView.lonLatToProjectedUnits(lonLat);
 };
 
 /*

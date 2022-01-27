@@ -17,8 +17,8 @@
             y: Math.round(e.chartY - chart.plotTop)
         });
 
-        // Convert to latLon
-        const p = chart.fromPointToLatLon(pos);
+        // Convert to lonLat
+        const p = chart.mapView.projectedUnitsToLonLat(pos);
         p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
 
         // Add point

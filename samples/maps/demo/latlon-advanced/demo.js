@@ -87,7 +87,9 @@ document.getElementById('container').addEventListener('mousemove', function (e) 
             x: Math.round(e.chartX - chart.plotLeft),
             y: Math.round(e.chartY - chart.plotTop)
         });
-        const position = chart.fromPointToLatLon(projectedPosition);
+        const position = chart.mapView.projectedUnitsToLonLat(
+            projectedPosition
+        );
 
         chart.lbl.attr({
             x: e.chartX + 5,

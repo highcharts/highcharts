@@ -27,7 +27,7 @@ function showMap(mapKey) {
 
                     series.addPoint(
                         supportsLatLon ?
-                            this.fromPointToLatLon(pos) :
+                            this.mapView.projectedUnitsToLonLat(pos) :
                             pos
                     );
                 }
@@ -73,7 +73,8 @@ function showMap(mapKey) {
                             var newLatLon;
                             if (supportsLatLon) {
                                 newLatLon = this.series.chart
-                                    .fromPointToLatLon(this);
+                                    .mapView
+                                    .projectedUnitsToLonLat(this);
                                 this.lat = newLatLon.lat;
                                 this.lon = newLatLon.lon;
                             }
