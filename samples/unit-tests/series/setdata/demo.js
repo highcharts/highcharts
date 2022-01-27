@@ -663,11 +663,11 @@ QUnit.test(
             newData = [0, 2, 4, 6, 8],
             chart = Highcharts.chart('container', {
                 chart: {
-                    createDataCoppy: true
+                    allowMutatingData: false
                 },
-                series: [{}]
-            }, function () {
-                this.series[0].setData(oriData);
+                series: [{
+                    data: oriData
+                }]
             });
 
         assert.deepEqual(
@@ -679,12 +679,11 @@ QUnit.test(
                 [3, 3],
                 [4, 4]
             ],
-            `When the createDataCoppy property is set, the setData method
-            should not mutate the original data array.`
+            `When the allowMutatingData property is set to false,
+            he original data array should not be modified after initial render.`
         );
 
         chart.series[0].setData(newData);
-
         assert.deepEqual(
             oriData,
             [
@@ -694,8 +693,8 @@ QUnit.test(
                 [3, 3],
                 [4, 4]
             ],
-            `When the createDataCoppy property is set, the setData method
-            fired again, should not mutate the original data array.`
+            `When the allowMutatingData property is set to false, the setData
+            should not mutate the original data array.`
         );
     }
 );
