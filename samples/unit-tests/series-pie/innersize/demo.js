@@ -86,3 +86,38 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Thickness cannot be greater than size.(#6647)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie'
+        },
+        plotOptions: {
+            pie: {
+                size: '50%',
+                thickness: 90
+            }
+        },
+        series: [
+            {
+                data: [
+                    ['Firefox', 44.2],
+                    ['IE7', 26.6],
+                    ['IE6', 20],
+                    ['Chrome', 3.1],
+                    ['Other', 5.4]
+                ]
+            }
+        ]
+    });
+
+    const series = chart.series[0],
+        thickness = series.options.thickness,
+        size = series.center[2];
+
+    assert.strictEqual(
+        thickness > size,
+        false,
+        'Thickness is not greater than size'
+    );
+});

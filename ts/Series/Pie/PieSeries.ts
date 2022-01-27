@@ -442,6 +442,18 @@ class PieSeries extends Series {
          */
 
         /**
+         * Thickness describing the ring size for a donut type chart,
+         * overriding [innerSize](#plotOptions.pie.innerSize).
+         *
+         * @type      {number}
+         * @default   undefined
+         * @product   highcharts
+         * @since     next
+         * @apioption plotOptions.pie.thickness
+         * @private
+         */
+
+        /**
          * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
          * this option tells whether the series shall be redrawn as if the
          * hidden point were `null`.
