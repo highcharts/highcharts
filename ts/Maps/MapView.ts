@@ -458,6 +458,8 @@ class MapView {
      *
      * @requires modules/map
      *
+     * @function Highcharts.MapView#lonLatToProjectedUnits
+     *
      * @since next
      * @sample maps/series/latlon-to-point/ Find a point from lon/lat
      *
@@ -527,6 +529,8 @@ class MapView {
      * object with the numeric properties `lon` and `lat`.
      *
      * @requires modules/map
+     *
+     * @function Highcharts.MapView#projectedUnitsToLonLat
      *
      * @since next
      *
