@@ -11,10 +11,20 @@
         // `this` is either Series or Chart
         const chart = this.chart || this;
 
-        const p = chart.mapView.pixelsToLonLat({
-            x: Math.round(e.chartX - chart.plotLeft),
-            y: Math.round(e.chartY - chart.plotTop)
-        });
+        let p = { lon: e.lon, lat: e.lat };
+
+        // @todo Legacy, remove after launching v10
+        if (p.lon === undefined || p.lat === 'undefined') {
+            // Get position in pre-projected units
+            const pos = chart.mapView.pixelsToProjectedUnits({
+                x: Math.round(e.chartX - chart.plotLeft),
+                y: Math.round(e.chartY - chart.plotTop)
+            });
+
+            // Convert to latLon
+            p = chart.fromPointToLatLon(pos);
+        }
+
         p.name = '[N' + p.lat.toFixed(2) + ', E' + p.lon.toFixed(2) + ']';
 
         // Add point

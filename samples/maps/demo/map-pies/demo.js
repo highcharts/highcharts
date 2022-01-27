@@ -40,9 +40,7 @@ Highcharts.seriesType('mappie', 'pie', {
         }
         // Handle lat/lon support
         if (options.center.lat !== undefined) {
-            const projectedPos = chart.mapView.lonLatToProjectedUnits(
-                    options.center
-                ),
+            const projectedPos = chart.fromLatLonToPoint(options.center),
                 pixelPos = chart.mapView.projectedUnitsToPixels(projectedPos);
 
             options.center = [
@@ -338,11 +336,11 @@ chart.series[0].points.forEach(function (state) {
 
     // Draw connector to state center if the pie has been offset
     if (pieOffset.drawConnector !== false) {
-        const centerPoint = chart.mapView.lonLatToProjectedUnits({
+        const centerPoint = chart.fromLatLonToPoint({
                 lat: centerLat,
                 lon: centerLon
             }),
-            offsetPoint = chart.mapView.lonLatToProjectedUnits({
+            offsetPoint = chart.fromLatLonToPoint({
                 lat: centerLat + (pieOffset.lat || 0),
                 lon: centerLon + (pieOffset.lon || 0)
             });
