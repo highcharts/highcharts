@@ -18,13 +18,12 @@
  *
  * */
 
-import type {
-    DependencyWheelSeriesOptions,
-    DependencyWheelDataLabelOptions
-} from './DependencyWheelSeriesOptions';
+import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
+
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import CircularDataLabels from '../CircularDataLabels.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
@@ -38,9 +37,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    isNumber,
-    isObject,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -120,6 +118,12 @@ class DependencyWheelSeries extends SankeySeries {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    public getDlOptions(
+        params: any
+    ): any {
+        return void 0 as any;
+    }
 
     public animate(init?: boolean): void {
         if (!init) {
@@ -254,61 +258,6 @@ class DependencyWheelSeries extends SankeySeries {
     }
 
     /**
-     * Calculate additional data label's options if needed.
-     *
-     * @private
-     * @function getDlOptions
-     *
-     * @param {DependencyWheelPoint} point
-     *        Point for which the data label options should be calculated.
-     *
-     * @return {DependencyWheelDataLabelOptions}
-     *         Set of data label options for given point.
-     */
-    public getDlOptions(
-        point: DependencyWheelPoint
-    ): DependencyWheelDataLabelOptions {
-        const optionsSeries = point.series.options.dataLabels,
-            optionsPoint = point.options.dataLabels;
-
-        let options = merge(
-            {
-                style: {}
-            },
-            optionsSeries,
-            optionsPoint
-        );
-
-        if (!isNumber(options.rotation)) {
-            const shapeArgs = isObject(point.shapeArgs) ? point.shapeArgs : {},
-                rotationMode = options.rotationMode;
-
-            if (
-                rotationMode === 'circular' &&
-                shapeArgs.start &&
-                shapeArgs.end
-            ) {
-                const rotationRad =
-                    shapeArgs.end - (shapeArgs.end - shapeArgs.start) / 2,
-                    rad2deg = 180 / Math.PI;
-
-                let rotation = (rotationRad * rad2deg) % 180;
-
-                // Prevent text from rotating upside down.
-                if (rotation > 90) {
-                    rotation -= 180;
-                } else if (rotation < -90) {
-                    rotation += 180;
-                }
-
-                options.rotation = rotation;
-            }
-        }
-
-        return options;
-    }
-
-    /**
      * @private
      * @todo Override the refactored sankey translateLink and translateNode
      * functions instead of the whole translate function.
@@ -333,7 +282,8 @@ class DependencyWheelSeries extends SankeySeries {
                     innerR = r - (options.nodeWidth as any),
                     start = startAngle + factor * (shapeArgs.y || 0),
                     end = startAngle +
-                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
+                        factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0)),
+                    radians = end - start;
 
                 // Middle angle
                 node.angle = start + (end - start) / 2;
@@ -345,8 +295,9 @@ class DependencyWheelSeries extends SankeySeries {
                     r: r,
                     innerR: innerR,
                     start: start,
-                    end: end
-                };
+                    end: end,
+                    radius: r
+                } as any;
 
                 node.dlBox = {
                     x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
@@ -355,10 +306,25 @@ class DependencyWheelSeries extends SankeySeries {
                     height: 1
                 };
 
-                node.dlOptions = dependecyWheel.getDlOptions(node);
+                // Calculate additional properties to get data labels options.
+                if (
+                    node.shapeArgs &&
+                    node.shapeArgs.innerR &&
+                    node.shapeArgs.r
+                ) {
+                    node.innerArcLength = radians * node.shapeArgs.innerR;
+                    node.outerArcLength = radians * node.shapeArgs.r;
+                }
+
+                node.dlOptions = (dependecyWheel).getDlOptions({
+                    point: node,
+                    level: void 0,
+                    optionsPoint: node.options,
+                    shapeArgs: node.shapeArgs
+                });
 
                 // Draw the links from this node
-                node.linksFrom.forEach(function (point): void {
+                node.linksFrom.forEach(function (point: any): void {
                     if (point.linkBase) {
                         let distance;
                         const corners = point.linkBase.map(function (
@@ -476,6 +442,8 @@ declare module '../../Core/Series/SeriesType' {
 }
 DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
 SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
+
+CircularDataLabels.compose(DependencyWheelSeries as any);
 
 /* *
  *
