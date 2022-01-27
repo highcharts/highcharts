@@ -24,9 +24,6 @@ import type {
     ProjectionRotationOption
 } from './ProjectionOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-
-import PC from '../Core/Geometry/PolygonClip.js';
-const { clipLineString, clipPolygon } = PC;
 import registry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
 const { clamp, erase } = U;
@@ -246,6 +243,49 @@ export default class Projection {
         return ret;
     }
 
+    // Get the intermediate points along the perimeter of the bounds, in
+    // practice the corners
+    public getBoundsPerimeter(
+        p1: ProjectedXYArray,
+        p2: ProjectedXYArray
+    ): ProjectedXYArray[] {
+        const corners: ProjectedXYArray[] = [];
+
+        // If they're on the same side, no interpolation
+        if (p1[0] === p2[0] || p1[1] === p2[1]) {
+            return corners;
+        }
+
+        let addCorner = false;
+
+        if (this.bounds) {
+            const { x1, x2, y1, y2 } = this.bounds,
+                sides = [x1, y2, x2, y1, x1, y2, x2];
+            sides.forEach((val, side): void => {
+                const dim = side % 2;
+                if (addCorner) {
+                    corners.push(
+                        dim === 0 ?
+                            [val, sides[side - 1]] :
+                            [sides[side - 1], val]
+                    );
+                }
+                if (Math.abs(p1[dim] - val) < 0.5) {
+                    addCorner = true;
+                }
+                if (Math.abs(p2[dim] - val) < 0.5) {
+                    addCorner = false;
+                }
+            });
+        }
+        // Going the long way around the perimeter, try the other way around
+        if (corners.length > 2) {
+            return this.getBoundsPerimeter(p2, p1);
+        }
+
+        return corners;
+    }
+
     /*
      * Take the rotation options and return the appropriate projection functions
      */
@@ -440,41 +480,26 @@ export default class Projection {
                 // Insert dummy points close to the pole
                 if (polarIntersection) {
                     for (let i = 0; i < polygons.length; i++) {
-                        const { direction, lat } = polarIntersection,
-                            poly = polygons[i],
-                            indexOf = poly.indexOf(polarIntersection.lonLat);
+                        const poly = polygons[i];
+                        const indexOf = poly.indexOf(polarIntersection.lonLat);
                         if (indexOf > -1) {
                             const polarLatitude =
-                                (lat < 0 ? -1 : 1) *
+                                (polarIntersection.lat < 0 ? -1 : 1) *
                                 this.maxLatitude;
                             const lon1 = wrapLon(
                                 antimeridian +
-                                direction * floatCorrection
+                                polarIntersection.direction * floatCorrection
                             );
                             const lon2 = wrapLon(
                                 antimeridian -
-                                direction * floatCorrection
+                                polarIntersection.direction * floatCorrection
                             );
 
                             const polarSegment = Projection.greatCircle(
-                                [lon1, lat],
+                                [lon1, polarIntersection.lat],
                                 [lon1, polarLatitude],
                                 true
-                            );
-
-                            // Circle around the pole point in order to make
-                            // polygon clipping right. Without this, Antarctica
-                            // would wrap the wrong way in an LLC projection
-                            // with parallels [30, 40].
-                            for (
-                                let lon = lon1 + 120 * direction;
-                                lon > -180 && lon < 180;
-                                lon += 120 * direction
-                            ) {
-                                polarSegment.push([lon, polarLatitude]);
-                            }
-
-                            polarSegment.push(...Projection.greatCircle(
+                            ).concat(Projection.greatCircle(
                                 [lon2, polarLatitude],
                                 [lon2, polarIntersection.lat],
                                 true
@@ -528,7 +553,7 @@ export default class Projection {
     // Take a GeoJSON geometry and return a translated SVGPath
     public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
 
-        const { bounds, def, rotator } = this;
+        const { def, rotator } = this;
         const antimeridian = 180;
 
         const path: SVGPath = [];
@@ -546,16 +571,6 @@ export default class Projection {
         // clipping
         const preclip = projectingToPlane ? rotator : void 0;
         const postclip = projectingToPlane ? (def || this) : this;
-
-        let boundsPolygon: [number, number][]|undefined;
-        if (bounds) {
-            boundsPolygon = [
-                [bounds.x1, bounds.y1],
-                [bounds.x2, bounds.y1],
-                [bounds.x2, bounds.y2],
-                [bounds.x1, bounds.y2]
-            ];
-        }
 
         const addToPath = (
             polygon: LonLatArray[]
@@ -603,10 +618,12 @@ export default class Projection {
                     return;
                 }
 
-                let movedTo = false;
-                let firstValidLonLat: LonLatArray|undefined;
-                let lastValidLonLat: LonLatArray|undefined;
-                let gap = false;
+                let movedTo = false,
+                    firstValidLonLat: LonLatArray|undefined,
+                    lastValidLonLat: LonLatArray|undefined,
+                    lastValidPoint: ProjectedXYArray|undefined,
+                    lastInvalidPoint: ProjectedXYArray|undefined;
+
                 const pushToPath = (point: [number, number]): void => {
                     if (!movedTo) {
                         path.push(['M', point[0], point[1]]);
@@ -616,106 +633,89 @@ export default class Projection {
                     }
                 };
 
-                let someOutside = false,
-                    someInside = false;
-                let points = poly.map(
-                    (lonLat): ProjectedXYArray => {
-                        const xy = postclip.forward(lonLat);
-                        if (xy.outside) {
-                            someOutside = true;
-                        } else {
-                            someInside = true;
-                        }
+                for (let i = 0; i < poly.length; i++) {
+                    const lonLat = poly[i],
+                        point = postclip.forward(lonLat);
 
-                        // Mercator projects pole points to Infinity, and
-                        // clipPolygon is not able to handle it.
-                        if (xy[1] === Infinity) {
-                            xy[1] = 10e9;
-                        } else if (xy[1] === -Infinity) {
-                            xy[1] = -10e9;
-                        }
-                        return xy;
-                    }
-                );
+                    if (!point.outside) {
 
-                if (projectingToPlane) {
-                    if (someOutside) {
-                        // All points are outside
-                        if (!someInside) {
-                            return;
-                        }
-                        // Some inside, some outside. Clip to the bounds.
-                        if (boundsPolygon) {
-
-                            // Polygons
-                            if (isPolygon) {
-                                points = clipPolygon(points, boundsPolygon);
-
-                            // Linestrings
-                            } else if (bounds) {
-                                clipLineString(points, boundsPolygon)
-                                    .forEach((points): void => {
-                                        movedTo = false;
-                                        points.forEach(pushToPath);
-                                    });
-                                return;
-
+                        // In order to be able to interpolate if the first or
+                        // last point is invalid (on the far side of the globe
+                        // in an orthographic projection), we need to push the
+                        // first valid point to the end of the polygon.
+                        if (isPolygon && !firstValidLonLat) {
+                            firstValidLonLat = lonLat;
+                            // To get the intersection right we need the last
+                            // invalid point too.
+                            if (poly[i - 1]) {
+                                poly.push(poly[i - 1]);
                             }
+                            poly.push(lonLat);
                         }
-                    }
-                    points.forEach(pushToPath);
 
-                // For orthographic projection, or when a clipAngle applies
-                } else {
-                    for (let i = 0; i < points.length; i++) {
-                        const lonLat = poly[i],
-                            point = points[i];
+                        // When entering the first valid point after a gap of
+                        // invalid points, typically on the far side of the
+                        // globe in an orthographic projection.
+                        if (lastInvalidPoint) {
+                            const intersection = (
+                                this.bounds &&
+                                projectingToPlane &&
+                                this.lineIntersectsBounds(
+                                    [point, lastInvalidPoint]
+                                )
+                            );
 
-                        if (!point.outside) {
+                            if (isPolygon && hasGeoProjection) {
 
-                            // In order to be able to interpolate if the first
-                            // or last point is invalid (on the far side of the
-                            // globe in an orthographic projection), we need to
-                            // push the first valid point to the end of the
-                            // polygon.
-                            if (isPolygon && !firstValidLonLat) {
-                                firstValidLonLat = lonLat;
-                                poly.push(lonLat);
-                            }
+                                if (intersection) {
 
-                            // When entering the first valid point after a gap
-                            // of invalid points, typically on the far side of
-                            // the globe in an orthographic projection.
-                            if (gap && lastValidLonLat) {
+                                    if (lastValidPoint) {
+                                        // Push the intermediate points
+                                        this.getBoundsPerimeter(
+                                            lastValidPoint,
+                                            intersection
+                                        ).forEach(pushToPath);
+                                    }
 
-                                // For areas, in an orthographic projection, the
-                                // great circle between two visible points will
-                                // be close to the horizon. A possible exception
-                                // may be when the two points are on opposite
-                                // sides of the globe. It that poses a problem,
-                                // we may have to rewrite this to use the small
-                                // circle related to the current lon0 and lat0.
-                                if (isPolygon && hasGeoProjection) {
+                                } else if (lastValidLonLat) {
+                                    // Using a great circle is a simplificaction
+                                    // that works for the orthographic
+                                    // projection because the shapes are so
+                                    // skewed at the edges. The correct path for
+                                    // the edge would be to find the
+                                    // intersection of the small circle (clip
+                                    // angle), and render a small circle between
+                                    // the two intersections.
                                     const greatCircle = Projection.greatCircle(
                                         lastValidLonLat,
                                         lonLat
                                     );
-                                    greatCircle.forEach((lonLat): void =>
-                                        pushToPath(postclip.forward(lonLat)));
-
-                                // For lines, just jump over the gap
-                                } else {
-                                    movedTo = false;
+                                    greatCircle.forEach((lonLat): void => {
+                                        pushToPath(postclip.forward(lonLat));
+                                    });
                                 }
+                            // For lines, just jump over the gap
+                            } else {
+                                movedTo = false;
                             }
-
-                            pushToPath(point);
-
-                            lastValidLonLat = lonLat;
-                            gap = false;
-                        } else {
-                            gap = true;
+                            if (intersection) {
+                                pushToPath(intersection);
+                            }
                         }
+
+                        pushToPath(point);
+
+                        lastValidLonLat = lonLat;
+                        lastValidPoint = point;
+                        lastInvalidPoint = void 0;
+                    } else {
+                        if (lastValidPoint && !lastInvalidPoint) {
+                            lastValidPoint = this.lineIntersectsBounds([
+                                lastValidPoint, point
+                            ]);
+                            pushToPath(lastValidPoint);
+                        }
+                        lastInvalidPoint = point;
                     }
                 }
             });
@@ -742,6 +742,7 @@ export default class Projection {
             }
 
         }
+
         return path;
     }
 }

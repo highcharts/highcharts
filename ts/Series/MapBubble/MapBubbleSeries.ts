@@ -17,14 +17,11 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
-import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
 const {
     seriesTypes: {
         mappoint: MapPointSeries
@@ -39,7 +36,6 @@ const {
 import '../../Core/DefaultOptions.js';
 import '../Bubble/BubbleSeries.js';
 import '../Map/MapSeries.js';
-import Point from '../../Core/Series/Point';
 
 /* *
  *
@@ -212,16 +208,6 @@ class MapBubbleSeries extends BubbleSeries {
     public options: MapBubbleSeriesOptions = void 0 as any;
 
     public points: Array<MapBubblePoint> = void 0 as any;
-
-    public searchPoint(
-        e: PointerEvent,
-        compareX?: boolean
-    ): (Point|undefined) {
-        return this.searchKDTree({
-            clientX: e.chartX - this.chart.plotLeft,
-            plotY: e.chartY - this.chart.plotTop
-        }, compareX, e);
-    }
 
     translate(): void {
         MapPointSeries.prototype.translate.call(this);

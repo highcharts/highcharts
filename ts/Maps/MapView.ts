@@ -72,17 +72,6 @@ type SVGTransformType = {
 const worldSize = 400.979322;
 const tileSize = 256;
 
-// Compute the zoom from given bounds and the size of the playing field. Used in
-// two places, hence the local function.
-const zoomFromBounds = (b: MapBounds, playingField: BBoxObject): number => {
-    const { width, height } = playingField,
-        scaleToField = Math.max(
-            (b.x2 - b.x1) / (width / tileSize),
-            (b.y2 - b.y1) / (height / tileSize)
-        );
-    return Math.log(worldSize / scaleToField) / Math.log(2);
-};
-
 /*
 const mergeCollections = <
     T extends Array<AnyRecord|undefined>
@@ -328,8 +317,13 @@ class MapView {
 
             // Apply the playing field, corrected with padding
             this.playingField = this.getField();
+            const { width, height } = this.playingField;
 
-            const zoom = zoomFromBounds(b, this.playingField);
+            const scaleToPlotArea = Math.max(
+                (b.x2 - b.x1) / (width / tileSize),
+                (b.y2 - b.y1) / (height / tileSize)
+            );
+            const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
 
             // Reset minZoom when fitting to natural bounds
             if (!bounds) {
@@ -598,7 +592,7 @@ class MapView {
 
     public setUpEvents(): void {
 
-        const { chart, projection } = this;
+        const chart = this.chart;
 
         // Set up panning for maps. In orthographic projections the globe will
         // rotate, otherwise adjust the map center.
@@ -638,21 +632,13 @@ class MapView {
                     ).slice();
                 }
 
-                // Get the natural zoom level of the projection itself when
-                // zoomed to view the full world
-                const worldBounds = projection.def && projection.def.bounds,
-                    worldZoom = (
-                        worldBounds &&
-                        zoomFromBounds(worldBounds, this.playingField)
-                    ) || -Infinity;
-
                 // Panning rotates the globe
                 if (
-                    projection.options.name === 'Orthographic' &&
+                    this.projection.options.name === 'Orthographic' &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < worldZoom * 1.1
+                    (this.minZoom || Infinity) < 3
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same
