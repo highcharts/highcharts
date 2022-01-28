@@ -639,6 +639,9 @@ export default class Projection {
                 );
 
                 if (projectingToPlane) {
+                    // Wrap around in order for pointInPolygon to work
+                    points.push(points[0]);
+
                     if (someOutside) {
                         // All points are outside
                         if (!someInside) {
