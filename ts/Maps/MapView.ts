@@ -181,12 +181,10 @@ class MapView {
 
 
             const allGeoBounds: MapBounds[] = [];
-            let mainGeoMap: GeoJSON|undefined;
             geoMaps.forEach((geoMap): void => {
                 if (geoMap) {
                     // Use the first geo map as main
-                    if (!mainGeoMap) {
-                        mainGeoMap = geoMap;
+                    if (!recommendedMapView) {
                         recommendedMapView = geoMap['hc-recommended-mapview'];
                     }
 
@@ -209,20 +207,22 @@ class MapView {
             if (geoBounds) {
 
                 const { x1, y1, x2, y2 } = geoBounds;
-                if (x2 - x1 > 180 && y2 - y1 > 90) {
-                    recommendedProjection = {
+                recommendedProjection = (x2 - x1 > 180 && y2 - y1 > 90) ?
+                    // Wide angle, go for the world view
+                    {
                         name: 'EqualEarth'
-                    };
-                } else {
-                    recommendedProjection = {
+                    } :
+                    // Narrower angle, use a projection better suited for local
+                    // view
+                    {
                         name: 'LambertConformalConic',
                         parallels: [y1, y2],
                         rotation: [-(x1 + x2) / 2]
                     };
-                }
             }
 
-            this.geoMap = mainGeoMap;
+            // Register the main geo map (from options.chart.map) if set
+            this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
