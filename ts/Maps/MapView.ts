@@ -13,6 +13,7 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
+import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 import type {
@@ -48,6 +49,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    defined,
     fireEvent,
     isArray,
     isNumber,
@@ -57,6 +59,8 @@ const {
     pick,
     relativeLength
 } = U;
+
+type MapDataType = string|GeoJSON|TopoJSON|MapPointOptions[];
 
 type SVGTransformType = {
     scaleX: number;
@@ -165,32 +169,60 @@ class MapView {
         let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
         let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
-            // Handle the global map
-            const geoMap = this.getGeoMap(chart.options.chart.map);
 
-            // Handle the recommended map view if set
-            if (geoMap) {
-                recommendedMapView = geoMap['hc-recommended-mapview'];
+            // Handle the global map and series-level mapData
+            const geoMaps = [
+                chart.options.chart.map,
+                ...(chart.options.series || []).map(
+                    (s): (MapDataType|undefined) => s.mapData
+                )
+            ]
+                .map((mapData): GeoJSON|undefined => this.getGeoMap(mapData));
 
-                // Provide a best-guess recommended projection if not set in the
-                // map or in user options
-                if (geoMap.bbox) {
-                    const [x1, y1, x2, y2] = geoMap.bbox;
-                    if (x2 - x1 > 180 && y2 - y1 > 90) {
-                        recommendedProjection = {
-                            name: 'EqualEarth'
-                        };
-                    } else {
-                        recommendedProjection = {
-                            name: 'LambertConformalConic',
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        };
+
+            const allGeoBounds: MapBounds[] = [];
+            let mainGeoMap: GeoJSON|undefined;
+            geoMaps.forEach((geoMap): void => {
+                if (geoMap) {
+                    // Use the first geo map as main
+                    if (!mainGeoMap) {
+                        mainGeoMap = geoMap;
+                        recommendedMapView = geoMap['hc-recommended-mapview'];
                     }
+
+                    // Combine the bounding boxes of all loaded maps
+                    if (geoMap.bbox) {
+                        const [x1, y1, x2, y2] = geoMap.bbox;
+                        allGeoBounds.push({ x1, y1, x2, y2 });
+                    }
+                }
+            });
+
+            // Get the composite bounds
+            const geoBounds = (
+                allGeoBounds.length &&
+                MapView.compositeBounds(allGeoBounds)
+            );
+
+            // Provide a best-guess recommended projection if not set in the map
+            // or in user options
+            if (geoBounds) {
+
+                const { x1, y1, x2, y2 } = geoBounds;
+                if (x2 - x1 > 180 && y2 - y1 > 90) {
+                    recommendedProjection = {
+                        name: 'EqualEarth'
+                    };
+                } else {
+                    recommendedProjection = {
+                        name: 'LambertConformalConic',
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    };
                 }
             }
 
-            this.geoMap = geoMap;
+            this.geoMap = mainGeoMap;
         }
 
         this.userOptions = options || {};
@@ -355,11 +387,11 @@ class MapView {
         };
     }
 
-    public getGeoMap(map?: string|GeoJSON|TopoJSON): GeoJSON|undefined {
+    public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
             return maps[map];
         }
-        if (isObject(map)) {
+        if (isObject(map, true)) {
             if (map.type === 'FeatureCollection') {
                 return map;
             }
