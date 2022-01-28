@@ -802,7 +802,7 @@ function generateTileChart() {
         mapLen = Highcharts.maps[currentMapKey].features.length,
         outputData = function () {
             $('#outputData').val(JSON.stringify(
-                Highcharts.map(currentData, function (point) {
+                currentData.map(point => {
                     var filterProps = ['center', 'extremes', 'hc-middle-y',
                         'hc-middle-x', 'selected', 'color'];
                     filterProps.forEach(prop => delete point[prop]);
@@ -889,9 +889,7 @@ function generateTileChart() {
 
     if (invert) {
         // Find max Y, since Y axis must be reversed
-        maxY = data.reduce((a, b) => {
-            return Math.max(a && a.y || 0, b && b.y || 0);
-        });
+        maxY = data.reduce((a, b) => Math.max(a && a.y || 0, b && b.y || 0));
         data.forEach(point => {
             var temp = point.x;
             point.x = maxY - point.y;
