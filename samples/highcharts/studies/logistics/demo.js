@@ -69,7 +69,6 @@
             },
             isNumber = Highcharts.isNumber,
             merge = Highcharts.merge,
-            reduce = Highcharts.reduce,
             objectEach = Highcharts.objectEach;
 
         var defaultOptions = {
@@ -214,7 +213,7 @@
                 totalIdle = firstPoint > min ? firstPoint - min : 0,
                 max = xAxis.max;
 
-            reduce(points, function (next, current) {
+            points.reduce((next, current) => {
                 var start = current.end,
                     end = next ? next.start : max,
                     idle = (start < end) ? end - start : 0,
@@ -733,13 +732,12 @@ var customResize = function (e, chart) {
  * Check if new points collide with existing ones
  */
 var newPointsColliding = function (newPoints, chart) {
-    var reduce = Highcharts.reduce,
-        keys = Highcharts.keys,
+    var keys = Highcharts.keys,
         pick = Highcharts.pick,
         inArray = Highcharts.inArray,
         groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
         y,
-        minX = reduce(keys(newPoints), function (acc, id) {
+        minX = keys(newPoints).reduce((acc, id) => {
             y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
             return Math.min(
                 acc, pick(
@@ -747,7 +745,7 @@ var newPointsColliding = function (newPoints, chart) {
                 )
             );
         }, Infinity),
-        maxX = reduce(keys(newPoints), function (acc, id) {
+        maxX = keys(newPoints).reduce((acc, id) => {
             return Math.max(
                 acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
             );
