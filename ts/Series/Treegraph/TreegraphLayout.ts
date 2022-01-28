@@ -1,8 +1,8 @@
 import TreegraphSeries from './TreegraphSeries';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { extend } = U;
-import type TreegraphNode from './TreegraphNode.js';
+const { extend, merge } = U;
+import TreegraphNode from './TreegraphNode.js';
 declare global {
     namespace Highcharts {
         class TreegraphLayout {
@@ -12,6 +12,8 @@ declare global {
             public init(series: TreegraphSeries): void;
             public initValues(nodes: TreegraphNode[]): void;
             public calculateInitialX(root: TreegraphNode, index: number): void;
+            public beforeWalk(nodes: TreegraphNode[]): void;
+            public afterWalk(nodes: TreegraphNode[]): void;
             public firstWalk(node: TreegraphNode): void;
             public secondWalk(node: TreegraphNode, modSum: number): void;
             public executeShifts(node: TreegraphNode): void;
@@ -53,10 +55,65 @@ extend(H.treeLayouts.Walker.prototype, {
         this.levelSeparation = 50;
         const root = nodes[0];
         if (root) {
+            treeLayout.beforeWalk(nodes);
             treeLayout.calculateInitialX(root, 0);
             treeLayout.firstWalk(root);
             treeLayout.secondWalk(root, -root.preX);
+            treeLayout.afterWalk(nodes);
         }
+    },
+    // Clear values created in a preWalk.
+    afterWalk: function (nodes: TreegraphNode[]): void {
+
+    },
+    //
+    beforeWalk: function (
+        this: Highcharts.TreegraphLayout,
+        nodes: TreegraphNode[]
+    ): void {
+        // const treeLayout = this as Highcharts.TreegraphLayout;
+        // nodes.forEach(node => {
+        //     node.linksFrom.forEach((link, index): void => {
+        //     // support for children placed in distant columns
+        //     if (
+        //         link.toNode &&
+        //         (link.toNode.column - node.column > 1)
+        //     ) {
+        //         // For further columns treat the nodes as a
+        //         // single parent-child pairs till the column is achieved
+        //         let gapSize = link.toNode.column - node.column - 1;
+        //         let dummyNode;
+        //         while (gapSize > 0) {
+        //             console.log(link.toNode.id)
+        //             dummyNode = new TreegraphNode();
+        //             dummyNode.linksFrom = [];
+        //             dummyNode.linksTo = [];
+        //             dummyNode.id = link.toNode.id + '-' + gapSize;
+        //             dummyNode.shapeArgs = {};
+        //             dummyNode.mod = 0;
+        //             dummyNode.ancestor = node;
+        //             dummyNode.shift = 0;
+        //             dummyNode.thread = void 0 as any;
+        //             dummyNode.change = 0;
+        //             dummyNode.preX = 0;
+        //             // node -> dummyNode -> link.toNode
+        //             dummyNode.linksFrom.push(merge(link));
+        //             dummyNode.linksFrom[0].fromNode = dummyNode;
+        //             dummyNode.linksTo.push(merge(node.linksFrom[0]));
+        //             dummyNode.linksTo[0].toNode = dummyNode;
+        //             dummyNode.linksTo[0].to = void 0 as any;
+        //             dummyNode.column = link.toNode.column - gapSize;
+        //             dummyNode.level = link.toNode.level - gapSize;
+        //             (node as any).linksFrom[index].trueToNode = link.toNode;
+        //             (node as any).linksFrom[index].toNode = dummyNode;
+        //             //(node as any).linksFrom[index].to = void 0 as any;
+        //             (link.toNode as any).linksTo[0].trueFromNode = node;
+        //             (link.toNode as any).linksTo[0].fromNode = dummyNode;
+        //             gapSize--;
+        //         }
+        //     }
+        // });
+        // })
     },
     // Init the values of the node. probably redundant, since this can be
     // performed in the init of the chart, but might be useful for repositioning

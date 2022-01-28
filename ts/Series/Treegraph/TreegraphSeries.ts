@@ -66,15 +66,16 @@ class TreegraphSeries extends OrganizationSeries {
      * */
 
     /**
-     * A treegraph series.
+     * A treegraph series is a diagram, which shows a relation of the paren
      *
      *
      * @extends      plotOptions.treegraph
-     * @exclude       linkColor, linkLineWidth, linkRadius
+     * @since        next
      * @product      highcharts
      * @requires     modules/sankey
      * @requires     modules/organization
      * @requires     modules/treegraph
+     * @exclude      linkColor, linkLineWidth, linkRadius
      * @optionparent plotOptions.treegraph
      */
     public static defaultOptions: TreegraphSeriesOptions = merge(
