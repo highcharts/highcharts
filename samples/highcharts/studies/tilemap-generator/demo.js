@@ -889,7 +889,7 @@ function generateTileChart() {
 
     if (invert) {
         // Find max Y, since Y axis must be reversed
-        maxY = Highcharts.reduce(data, function (a, b) {
+        maxY = data.reduce((a, b) => {
             return Math.max(a && a.y || 0, b && b.y || 0);
         });
         data.forEach(point => {
