@@ -732,12 +732,11 @@ var customResize = function (e, chart) {
  * Check if new points collide with existing ones
  */
 var newPointsColliding = function (newPoints, chart) {
-    var keys = Highcharts.keys,
-        pick = Highcharts.pick,
+    var pick = Highcharts.pick,
         inArray = Highcharts.inArray,
         groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
         y,
-        minX = keys(newPoints).reduce((acc, id) => {
+        minX = Object.keys(newPoints).reduce((acc, id) => {
             y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
             return Math.min(
                 acc, pick(
@@ -745,7 +744,7 @@ var newPointsColliding = function (newPoints, chart) {
                 )
             );
         }, Infinity),
-        maxX = keys(newPoints).reduce((acc, id) => {
+        maxX = Object.keys(newPoints).reduce(function (acc, id) {
             return Math.max(
                 acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
             );
