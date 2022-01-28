@@ -18,7 +18,7 @@ declare global {
             public apportion(
                 node: TreegraphNode,
                 defaultAncestor: TreegraphNode
-            ): void;
+            ): TreegraphNode;
             public setArea(x: number, y: number, w: number, h: number): void;
             public moveSubtree(
                 ancestor: TreegraphNode,
@@ -106,9 +106,17 @@ extend(H.treeLayouts.Walker.prototype, {
             // children, and then calculate its shift in the apportion function
             // (most crucial part part ofthe algorythm)
             let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
+            // node.linksFrom.forEach(function (link): void {
+            //     treeLayout.firstWalk(link.toNode as any);
+            //     treeLayout.apportion(link.toNode as any, defaultAncestor);
+            // });
+
             node.linksFrom.forEach(function (link): void {
                 treeLayout.firstWalk(link.toNode as any);
-                treeLayout.apportion(link.toNode as any, defaultAncestor);
+                defaultAncestor = treeLayout.apportion(
+                    link.toNode as any,
+                    defaultAncestor
+                );
             });
             treeLayout.executeShifts(node);
 
@@ -164,7 +172,7 @@ extend(H.treeLayouts.Walker.prototype, {
         this: Highcharts.TreegraphLayout,
         node: TreegraphNode,
         defaultAncestor: TreegraphNode
-    ): void {
+    ): TreegraphNode {
         const treeLayout = this;
         let leftSibling = node.getLeftSibling();
         if (leftSibling) {
@@ -232,6 +240,7 @@ extend(H.treeLayouts.Walker.prototype, {
             }
             defaultAncestor = node;
         }
+        return defaultAncestor;
     },
 
     // Shifts the subtree from leftNode to rightNode.
