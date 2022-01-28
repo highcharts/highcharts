@@ -12,7 +12,7 @@
             isOK = false;
         }
 
-        Highcharts.each(start, function (item, i) {
+        start.forEach((item, i) => {
             if (/[a-zA-Z]/.test(item) && !/[a-zA-Z]/.test(end[i])) {
                 isOK = false;
             } else if (!/[a-zA-Z]/.test(item) && /[a-zA-Z]/.test(end[i])) {
