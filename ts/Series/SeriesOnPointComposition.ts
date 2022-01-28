@@ -16,15 +16,25 @@
  *
  * */
 
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type ColorString from '../Core/Color/ColorString';
+import type ColorType from '../Core/Color/ColorType';
+
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+
 const { pie } = SeriesRegistry.seriesTypes;
+const drawPoints = pie.prototype.drawPoints;
+const getCenter = pie.prototype.getCenter;
 
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    isObject
+    isArray,
+    isObject,
+    pick
 } = U;
 
 /* *
@@ -41,14 +51,23 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        seriesOnPoint?: SeriesOnPointComposition.Additions;
+        seriesDrawConnector(): void;
+        getConnectorAttributes(): SVGAttributes|void;
+        onPoint?: SeriesOnPointComposition.Additions;
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        valueToAdd?: number;
+        onPoint?: SeriesOnPointComposition.Additions;
     }
+}
+
+interface Position {
+    x?: number
+    y?: number;
+    offsetX?: number;
+    offsetY?: number;
 }
 
 /* *
@@ -70,7 +89,7 @@ namespace SeriesOnPointComposition {
     }
 
     export declare class SeriesComposition extends Series {
-        seriesOnPoint: Additions;
+        onPoint: Additions;
         initSeriesOnPoint(valueToAdd: number): void;
     }
 
@@ -106,11 +125,13 @@ namespace SeriesOnPointComposition {
         // PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
         if (composedClasses.indexOf(SeriesClass) === -1) {
-
             composedClasses.push(SeriesClass);
-            pie.prototype.getCenter = getCenter;
-            // const seriesProto = SeriesClass.prototype as SeriesComposition;
-            // seriesProto.setCompare = seriesSetCompare;
+
+            const seriesProto = SeriesClass.prototype as SeriesComposition;
+            pie.prototype.getCenter = seriesGetCenter;
+            seriesProto.getConnectorAttributes = getConnectorAttributes;
+            seriesProto.seriesDrawConnector = seriesDrawConnector;
+            pie.prototype.drawPoints = seriesDrawPoints;
 
             addEvent(SeriesClass, 'afterInit', afterInit);
 
@@ -127,39 +148,47 @@ namespace SeriesOnPointComposition {
      * @function Highcharts.Series#init
     */
     function afterInit(this: Series): void {
-        const valueToAdd = this.options.valueToAdd;
-        let seriesOnPoint: Additions|undefined;
+        const options = this.options;
+        let onPoint: Additions|undefined;
 
-        if (valueToAdd) {
-            seriesOnPoint = new Additions(this as SeriesComposition);
-            seriesOnPoint.initSeriesOnPoint(valueToAdd);
+        if (options.onPoint) {
+            onPoint = new Additions(this as SeriesComposition);
+            onPoint.initSeriesOnPoint();
         }
 
-        this.seriesOnPoint = seriesOnPoint;
+        this.onPoint = onPoint;
     }
 
-    function getCenter(this: any): any {
-        const connectedPoint = this.chart.get(this.options.onPoint.id),
-            position = this.options.onPoint.position;
+    function seriesGetCenter(this: Series): Array<number> {
+        let ret = getCenter.call(this);
 
-        let x = connectedPoint.plotX,
-            y = connectedPoint.plotY;
+        const connectedPoint = this.chart
+            .get((this.options.onPoint as any).id) as Point;
 
-        if (isObject(position)) {
+        if (connectedPoint.plotX && connectedPoint.plotY) {
+            ret[0] = connectedPoint.plotX;
+            ret[1] = connectedPoint.plotY;
+        }
+
+        const onPoint = this.options.onPoint;
+
+        if (onPoint && onPoint.position) {
+            const position = onPoint.position;
+
             if (position.x) {
-                x = position.x;
+                ret[0] = position.x;
             }
 
             if (position.y) {
-                y = position.y;
+                ret[1] = position.y;
             }
 
             if (position.offsetX) {
-                x += position.offsetX;
+                ret[0] += position.offsetX;
             }
 
             if (position.offsetY) {
-                y += position.offsetY;
+                ret[1] += position.offsetY;
             }
         }
 
@@ -167,7 +196,94 @@ namespace SeriesOnPointComposition {
         // 1: centerY, relative to height
         // 2: size, relative to smallestSize
         // 3: innerSize, relative to size
-        return [x, y, 50, 0];
+        return ret;
+    }
+
+    /**
+     * Get connector line path and styles that connects dumbbell point's low and
+     * high values.
+     * @private
+     *
+     * @param {Highcharts.Point} point The point to inspect.
+     *
+     * @return {Highcharts.SVGAttributes} attribs The path and styles.
+     */
+    function getConnectorAttributes(this: Series): SVGAttributes|void {
+        const series = this,
+            chart = series.chart,
+            onPoint: any = series.options.onPoint,
+            connectorOpts = onPoint && onPoint.connectorOptions,
+            position = onPoint.position,
+            connectedPoint = chart.get(onPoint.id);
+
+        if (
+            connectedPoint instanceof Point &&
+            position &&
+            connectedPoint.plotX &&
+            connectedPoint.plotY
+        ) {
+            let attribs: SVGAttributes = {
+                d: SVGRenderer.prototype.crispLine([[
+                    'M',
+                    connectedPoint.plotX,
+                    connectedPoint.plotY
+                ], [
+                    'L',
+                    connectedPoint.plotX + position.offsetX,
+                    connectedPoint.plotY + position.offsetY
+                ]], connectorOpts.width, 'ceil')
+            };
+
+            attribs['stroke-width'] = connectorOpts.width;
+
+            if (!chart.styledMode) {
+                attribs.stroke = connectorOpts.color;
+
+                if (connectorOpts.dashStyle) {
+                    attribs.dashstyle = connectorOpts.dashStyle;
+                }
+            }
+
+            return attribs;
+        }
+    }
+
+    /**
+     * Draw connector line that connects dumbbell point's low and high values.
+     * @private
+     *
+     * @param {Highcharts.Point} point The point to inspect.
+     *
+     */
+    function seriesDrawConnector(this: Series): void {
+        const series = this;
+        // animationLimit = pick(series.options.animationLimit, 250),
+        // verb = point.connector && series.chart.pointCount < animationLimit ?
+        // 'animate' : 'attr';
+
+        if (series.onPoint) {
+            if (!series.onPoint.connector) {
+                (series.onPoint as any).connector =
+                    series.chart.renderer.path()
+                        .addClass('highcharts-connector-seriespoint')
+                        .attr({
+                            zIndex: -1
+                        })
+                        .add(series.markerGroup);
+            }
+
+            const attribs = this.getConnectorAttributes();
+
+            (series.onPoint as any).connector['attr'](attribs);
+        }
+    }
+
+    function seriesDrawPoints(this: Series): void {
+        const series = this;
+
+        drawPoints.call(series);
+
+        this.seriesDrawConnector();
     }
 
     /* *
@@ -192,6 +308,7 @@ namespace SeriesOnPointComposition {
          */
         public constructor(series: SeriesComposition) {
             this.series = series;
+            this.position = {};
         }
 
         /* *
@@ -202,6 +319,10 @@ namespace SeriesOnPointComposition {
 
         public series: SeriesComposition;
 
+        public connector: SVGElement = void 0 as any;
+
+        public position: Position;
+
         /**
          * @ignore
          * @function Highcharts.Series#initCompare
@@ -209,7 +330,7 @@ namespace SeriesOnPointComposition {
          * @param {number} [valueToAdd]
          *        Will be added to 10.
          */
-        public initSeriesOnPoint(valueToAdd: number): void {
+        public initSeriesOnPoint(): void {
 
         }
     }
