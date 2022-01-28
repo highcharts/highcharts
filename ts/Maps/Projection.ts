@@ -684,6 +684,7 @@ export default class Projection {
                             if (isPolygon && !firstValidLonLat) {
                                 firstValidLonLat = lonLat;
                                 poly.push(lonLat);
+                                points.push(point);
                             }
 
                             // When entering the first valid point after a gap
