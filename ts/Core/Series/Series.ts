@@ -88,6 +88,7 @@ const {
     getNestedProperty,
     isArray,
     isNumber,
+    isObject,
     isString,
     merge,
     objectEach,
@@ -4225,8 +4226,11 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            options.dataSorting &&
+                typeof options.dataSorting.enabled !== 'undefined' ||
             options.joinBy ||
             options.mapData || // #11636
+            series.hasOptionChanged('enabled', 'dataSorting') ||
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
@@ -4374,6 +4378,21 @@ class Series {
             (series as any)[prop] = (preserve as any)[prop];
         });
 
+        // When switching back from sorted data to unsorted, reset indexes:
+        if (
+            options.data &&
+            options.dataSorting &&
+            options.dataSorting.enabled === false &&
+            oldOptions.dataSorting &&
+            oldOptions.dataSorting.enabled === true
+        ) {
+            options.data.forEach((point): void => {
+                if (isObject(point, true)) {
+                    point.x = point.index = void 0;
+                }
+            });
+        }
+
         series.init(chart, options);
 
         // Remove particular elements of the points. Check `series.options`
@@ -4430,6 +4449,18 @@ class Series {
             series.isDirtyData = true;
         }
 
+        // If dataSorting was turned on, set the indexes
+        if (
+            options.dataSorting &&
+            options.dataSorting.enabled === true &&
+            (
+                !oldOptions.dataSorting ||
+                oldOptions.dataSorting.enabled === false
+            )
+        ) {
+            chart.setSeriesData();
+        }
+
         fireEvent(this, 'afterUpdate');
 
         if (pick(redraw, true)) {
@@ -4450,11 +4481,17 @@ class Series {
      * Check if the option has changed.
      * @private
      */
-    public hasOptionChanged(optionName: string): boolean {
+    public hasOptionChanged(optionName: string, parentName?: string): boolean {
         const chart = this.chart,
-            option = (this.options as any)[optionName],
+            option = parentName && (this.options as any)[parentName] ?
+                (this.options as any)[parentName][optionName] :
+                (this.options as any)[optionName],
             plotOptions = chart.options.plotOptions,
-            oldOption = (this.userOptions as any)[optionName];
+            oldOption = parentName && (this.userOptions as any)[parentName] ?
+                (this.userOptions as any)[parentName][optionName] :
+                (this.userOptions as any)[optionName],
+            seriesPlotOptions = plotOptions && (plotOptions.series as any),
+            typePlotOptions = plotOptions && (plotOptions[this.type] as any);
 
         if (oldOption) {
             return option !== oldOption;
@@ -4462,12 +4499,18 @@ class Series {
 
         return option !==
             pick(
-                plotOptions &&
-                    plotOptions[this.type] &&
-                    (plotOptions[this.type] as any)[optionName],
-                plotOptions &&
-                    plotOptions.series &&
-                    (plotOptions as any).series[optionName],
+                typePlotOptions &&
+                (
+                    parentName && typePlotOptions[parentName] ?
+                        typePlotOptions[parentName][optionName] :
+                        typePlotOptions[optionName]
+                ),
+                seriesPlotOptions &&
+                (
+                    parentName && seriesPlotOptions[parentName] ?
+                        seriesPlotOptions[parentName][optionName] :
+                        seriesPlotOptions[optionName]
+                ),
                 option
             );
     }

@@ -1,12 +1,13 @@
 QUnit.test('Data sorting ', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const dataset = [1, 2, 3],
+        chart = Highcharts.chart('container', {
             chart: {
                 animation: false
             },
             series: [
                 {
                     type: 'column',
-                    data: [1, 2, 3],
+                    data: dataset.slice(),
                     dataSorting: {
                         enabled: true
                     }
@@ -107,6 +108,33 @@ QUnit.test('Data sorting ', function (assert) {
         series.points[2].x,
         0,
         'Series should be sorted in polar chart.'
+    );
+
+    // Reset dataset
+    series.setData(dataset.slice());
+
+    series.update({
+        dataSorting: {
+            enabled: false
+        }
+    });
+
+    assert.deepEqual(
+        series.points.map(p => p.y),
+        dataset,
+        'Disabling dataSorting should restore default order (#13033).'
+    );
+
+    series.update({
+        dataSorting: {
+            enabled: true
+        }
+    });
+
+    assert.deepEqual(
+        series.points.map(p => p.y),
+        dataset.sort(),
+        'Enabling dataSorting should order data descending (#13033).'
     );
 });
 
