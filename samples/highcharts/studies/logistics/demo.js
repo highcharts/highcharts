@@ -25,7 +25,7 @@
          * draw - Handles the drawing of a point.
          * TODO: add type checking.
          *
-         * @param  {object} params Parameters.
+         * @param  {Object} params Parameters.
          * @return {undefined} Returns undefined.
          */
         var draw = function draw(params) {
@@ -63,8 +63,7 @@
 
     var renderHeatIndicators = (function (Highcharts, draw) {
 
-        var each = Highcharts.each,
-            extend = Highcharts.extend,
+        var extend = Highcharts.extend,
             isFunction = function (x) {
                 return typeof x === 'function';
             },
@@ -235,7 +234,7 @@
             // as a dependency somehow.
             calculateSeriesIdleTime(series);
 
-            each(series.points, function (point) {
+            series.points.forEach(point => {
                 // Get existing indicator from point, or create a new one.
                 var heatIndicator = point.heatIndicator || new HeatIndicator({
                     group: series.group,
@@ -263,8 +262,7 @@
 
     var renderEPRIndicators = (function (Highcharts, draw) {
 
-        var each = Highcharts.each,
-            objectEach = Highcharts.objectEach,
+        var objectEach = Highcharts.objectEach,
             extend = Highcharts.extend,
             isNumber = Highcharts.isNumber,
             merge = Highcharts.merge;
@@ -374,7 +372,7 @@
         };
 
         var renderEPRIndicators = function (series) {
-            each(series.points, function (point) {
+            series.points.forEach(point => {
                 var options = point.options && point.options.indicator || {},
                     // point.options.indicator is copied to point.indicator, so
                     // we use point.indicatorObj instead.

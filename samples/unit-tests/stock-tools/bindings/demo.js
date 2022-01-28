@@ -71,77 +71,68 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 
     // Annotations with multiple steps:
-    Highcharts.each(
-        [
-            'circle-annotation',
-            'rectangle-annotation',
-            'ellipse-annotation',
-            'segment',
-            'arrow-segment',
-            'ray',
-            'arrow-ray',
-            'infinity-line',
-            'arrow-infinity-line',
-            'crooked3',
-            'crooked5',
-            'elliott3',
-            'elliott5',
-            'pitchfork',
-            'fibonacci',
-            'parallel-channel',
-            'measure-xy',
-            'measure-y',
-            'measure-x'
-        ],
-        function (name) {
-            selectButton(name);
-            // Start and steps: annotations, run each step
-            controller.click(
-                points[2].plotX + plotLeft - 5,
-                points[2].plotY + plotTop - 5
-            );
-            Highcharts.each(
-                chart.navigationBindings.boundClassNames['highcharts-' + name]
-                    .steps,
-                function (step, index) {
-                    controller.click(
-                        points[4 + index].plotX + plotLeft - 5,
-                        points[4 + index].plotY + plotTop - 5
-                    );
-                }
-            );
+    [
+        'circle-annotation',
+        'rectangle-annotation',
+        'ellipse-annotation',
+        'segment',
+        'arrow-segment',
+        'ray',
+        'arrow-ray',
+        'infinity-line',
+        'arrow-infinity-line',
+        'crooked3',
+        'crooked5',
+        'elliott3',
+        'elliott5',
+        'pitchfork',
+        'fibonacci',
+        'parallel-channel',
+        'measure-xy',
+        'measure-y',
+        'measure-x'
+    ].forEach(name => {
+        selectButton(name);
+        // Start and steps: annotations, run each step
+        controller.click(
+            points[2].plotX + plotLeft - 5,
+            points[2].plotY + plotTop - 5
+        );
+        chart.navigationBindings.boundClassNames['highcharts-' + name].steps
+            .forEach((_, index) => {
+                controller.click(
+                    points[4 + index].plotX + plotLeft - 5,
+                    points[4 + index].plotY + plotTop - 5
+                );
+            });
 
-            assert.strictEqual(
-                chart.annotations.length,
-                ++annotationsCounter,
-                'Annotation: ' + name + ' added without errors.'
-            );
-        }
-    );
+        assert.strictEqual(
+            chart.annotations.length,
+            ++annotationsCounter,
+            'Annotation: ' + name + ' added without errors.'
+        );
+    });
 
     // Annotations with just one "start" event:
-    Highcharts.each(
-        [
-            'label-annotation',
-            'vertical-line',
-            'horizontal-line',
-            'vertical-counter',
-            'vertical-label',
-            'vertical-arrow'
-            // 'vertical-double-arrow'
-        ],
-        function (name) {
-            selectButton(name);
+    [
+        'label-annotation',
+        'vertical-line',
+        'horizontal-line',
+        'vertical-counter',
+        'vertical-label',
+        'vertical-arrow'
+        // 'vertical-double-arrow'
+    ].forEach(name => {
+        selectButton(name);
 
-            controller.click(points[2].plotX, points[2].plotY);
+        controller.click(points[2].plotX, points[2].plotY);
 
-            assert.strictEqual(
-                chart.annotations.length,
-                ++annotationsCounter,
-                'Annotation: ' + name + ' added without errors.'
-            );
-        }
-    );
+        assert.strictEqual(
+            chart.annotations.length,
+            ++annotationsCounter,
+            'Annotation: ' + name + ' added without errors.'
+        );
+    });
 
     // Test control points, measure-y annotation
     controller.click(
@@ -207,7 +198,7 @@ QUnit.test('Bindings general tests', function (assert) {
     // Hide all:
     selectButton('toggle-annotations');
 
-    Highcharts.each(chart.annotations, function (annotation) {
+    chart.annotations.forEach(annotation => {
         if (annotation.options.visible) {
             visibleAnnotations = true;
         }
@@ -223,7 +214,7 @@ QUnit.test('Bindings general tests', function (assert) {
     selectButton('toggle-annotations');
 
     visibleAnnotations = true;
-    Highcharts.each(chart.annotations, function (annotation) {
+    chart.annotations.forEach(annotation => {
         if (!annotation.options.visible) {
             visibleAnnotations = false;
         }
@@ -236,7 +227,7 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     // Series types change:
-    Highcharts.each(['line', 'ohlc', 'candlestick'], function (type) {
+    ['line', 'ohlc', 'candlestick'].forEach(type => {
         selectButton('series-type-' + type);
         assert.strictEqual(
             chart.series[0].type,

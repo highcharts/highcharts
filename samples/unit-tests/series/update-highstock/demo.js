@@ -57,7 +57,7 @@ QUnit.test(
             }),
             afterUpdateIndexes;
 
-        Highcharts.each(chart.series, function (s, i) {
+        chart.series.forEach((s, i) => {
             s.update(
                 {
                     name: 'Name ' + i
