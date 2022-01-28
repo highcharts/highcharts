@@ -5,7 +5,7 @@
     ).then(response => response.json());
 
     // Initialize the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps simple flight routes demo'
@@ -112,7 +112,7 @@
         ];
     }
 
-    var londonPoint = chart.get('London'),
+    const londonPoint = chart.get('London'),
         lerwickPoint = chart.get('Lerwick');
 
     // Add a series of lines for London
