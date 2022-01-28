@@ -64,56 +64,97 @@ extend(H.treeLayouts.Walker.prototype, {
     },
     // Clear values created in a preWalk.
     afterWalk: function (nodes: TreegraphNode[]): void {
+        nodes.forEach((node): void => {
+            node.linksFrom.forEach((link, index): void => {
 
+                if ((node as any).linksFrom[index].trueToNode) {
+                    node.linksFrom[index].toNode =
+                        (node as any).linksFrom[index].trueToNode;
+                }
+
+                // Then connection from chhild to dummyNode
+                if (
+                    (node as any).linksTo.length &&
+                    (node as any).linksTo[0].trueFromNode
+                ) {
+                    node.linksTo[0].fromNode =
+                        (node as any).linksTo[0].trueFromNode;
+                }
+            });
+        });
     },
     //
     beforeWalk: function (
         this: Highcharts.TreegraphLayout,
         nodes: TreegraphNode[]
     ): void {
-        // const treeLayout = this as Highcharts.TreegraphLayout;
-        // nodes.forEach(node => {
-        //     node.linksFrom.forEach((link, index): void => {
-        //     // support for children placed in distant columns
-        //     if (
-        //         link.toNode &&
-        //         (link.toNode.column - node.column > 1)
-        //     ) {
-        //         // For further columns treat the nodes as a
-        //         // single parent-child pairs till the column is achieved
-        //         let gapSize = link.toNode.column - node.column - 1;
-        //         let dummyNode;
-        //         while (gapSize > 0) {
-        //             console.log(link.toNode.id)
-        //             dummyNode = new TreegraphNode();
-        //             dummyNode.linksFrom = [];
-        //             dummyNode.linksTo = [];
-        //             dummyNode.id = link.toNode.id + '-' + gapSize;
-        //             dummyNode.shapeArgs = {};
-        //             dummyNode.mod = 0;
-        //             dummyNode.ancestor = node;
-        //             dummyNode.shift = 0;
-        //             dummyNode.thread = void 0 as any;
-        //             dummyNode.change = 0;
-        //             dummyNode.preX = 0;
-        //             // node -> dummyNode -> link.toNode
-        //             dummyNode.linksFrom.push(merge(link));
-        //             dummyNode.linksFrom[0].fromNode = dummyNode;
-        //             dummyNode.linksTo.push(merge(node.linksFrom[0]));
-        //             dummyNode.linksTo[0].toNode = dummyNode;
-        //             dummyNode.linksTo[0].to = void 0 as any;
-        //             dummyNode.column = link.toNode.column - gapSize;
-        //             dummyNode.level = link.toNode.level - gapSize;
-        //             (node as any).linksFrom[index].trueToNode = link.toNode;
-        //             (node as any).linksFrom[index].toNode = dummyNode;
-        //             //(node as any).linksFrom[index].to = void 0 as any;
-        //             (link.toNode as any).linksTo[0].trueFromNode = node;
-        //             (link.toNode as any).linksTo[0].fromNode = dummyNode;
-        //             gapSize--;
-        //         }
-        //     }
-        // });
-        // })
+        const treeLayout = this as Highcharts.TreegraphLayout;
+        nodes.forEach((node): void => {
+            node.linksFrom.forEach((link, index): void => {
+                // support for children placed in distant columns
+                if (
+                    link.toNode &&
+                    (link.toNode.column - node.column > 1)
+                ) {
+                    // For further columns treat the nodes as a
+                    // single parent-child pairs till the column is achieved
+                    let gapSize = link.toNode.column - node.column - 1,
+                        dummyNode,
+                        parent = node,
+                        child = link.toNode;
+                    // parent -> dummyNode -> child
+                    let createDummyNode = function (
+                        parent: TreegraphNode,
+                        child: TreegraphNode
+                    ): TreegraphNode {
+                        // initialise dummy node.
+                        dummyNode = new TreegraphNode();
+                        dummyNode.linksFrom = [];
+                        dummyNode.linksTo = [];
+                        dummyNode.id = link.toNode.id + '-' + gapSize;
+                        dummyNode.shapeArgs = {};
+                        dummyNode.mod = 0;
+                        dummyNode.ancestor = parent;
+                        dummyNode.shift = 0;
+                        dummyNode.thread = void 0 as any;
+                        dummyNode.change = 0;
+                        dummyNode.preX = 0;
+
+                        // add connection from new node to the previous points
+
+                        // first connection to itself:
+                        dummyNode.linksFrom.push(merge(parent.linksFrom[0]));
+                        dummyNode.linksFrom[0].fromNode = dummyNode;
+                        dummyNode.linksTo.push(merge(parent.linksFrom[0]));
+                        dummyNode.linksTo[0].toNode = dummyNode;
+                        dummyNode.linksTo[0].fromNode = parent;
+                        dummyNode.linksFrom[0].toNode = child;
+                        // temporary:
+                        dummyNode.linksTo[0].to = void 0 as any;
+
+                        dummyNode.column = child.column - gapSize;
+                        dummyNode.level = child.level - gapSize;
+
+                        // Then connection from parent to dummyNode
+                        if (!(parent as any).linksFrom[index].trueToNode) {
+                            (parent as any).linksFrom[index].trueToNode = child;
+                        }
+                        parent.linksFrom[index].toNode = dummyNode;
+
+                        // Then connection from chhild to dummyNode
+                        if (!(child as any).linksTo[0].trueFromNode) {
+                            (child as any).linksTo[0].trueFromNode = parent;
+                        }
+                        child.linksTo[0].fromNode = dummyNode;
+                        return dummyNode;
+                    };
+                    while (gapSize > 0) {
+                        child = createDummyNode(parent, child);
+                        gapSize--;
+                    }
+                }
+            });
+        });
     },
     // Init the values of the node. probably redundant, since this can be
     // performed in the init of the chart, but might be useful for repositioning
@@ -163,10 +204,6 @@ extend(H.treeLayouts.Walker.prototype, {
             // children, and then calculate its shift in the apportion function
             // (most crucial part part ofthe algorythm)
             let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
-            // node.linksFrom.forEach(function (link): void {
-            //     treeLayout.firstWalk(link.toNode as any);
-            //     treeLayout.apportion(link.toNode as any, defaultAncestor);
-            // });
 
             node.linksFrom.forEach(function (link): void {
                 treeLayout.firstWalk(link.toNode as any);

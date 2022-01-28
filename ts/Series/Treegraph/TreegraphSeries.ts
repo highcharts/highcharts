@@ -21,11 +21,12 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import TreegraphNode from './TreegraphNode.js';
+import NodesComposition from '../NodesComposition.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import TreegraphNode from './TreegraphNode.js';
 import TU from '../TreeUtilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
@@ -39,7 +40,7 @@ const {
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-const { merge, pick, addEvent, relativeLength } = U;
+const { merge, pick, addEvent, relativeLength, stableSort } = U;
 
 import './TreegraphLayout.js';
 
@@ -121,6 +122,51 @@ class TreegraphSeries extends OrganizationSeries {
      *  Functions
      *
      * */
+
+    /**
+     * Extend generatePoints by adding the nodes, which are Point objects
+     * but pushed to the this.nodes array.
+     * @private
+     */
+    public generatePoints(): void {
+        NodesComposition.generatePoints.apply(this, arguments as any);
+
+        /**
+         * Order the nodes, starting with the root node(s). (#9818)
+         * @private
+         */
+        function order(node: TreegraphNode, level: number): void {
+            // Prevents circular recursion:
+            level = node.level || level;
+            node.level = level;
+            node.linksFrom.forEach(function (
+                link: TreegraphPoint
+            ): void {
+                if (link.toNode) {
+                    order(link.toNode, level + 1);
+                }
+            });
+        }
+
+        if (this.orderNodes) {
+            this.nodes
+                // Identify the root node(s)
+                .filter(function (node: TreegraphNode): boolean {
+                    return node.linksTo.length === 0;
+                })
+                // Start by the root node(s) and recursively set the level
+                // on all following nodes.
+                .forEach(function (node: TreegraphNode): void {
+                    order(node, 0);
+                });
+            stableSort(this.nodes, function (
+                a: TreegraphPoint,
+                b: TreegraphPoint
+            ): number {
+                return a.level - b.level;
+            });
+        }
+    }
 
     /* eslint-disable valid-jsdoc */
     public translate(): void {

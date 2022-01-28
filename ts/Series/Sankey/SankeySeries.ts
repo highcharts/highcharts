@@ -530,19 +530,6 @@ class SankeySeries extends ColumnSeries {
          * Order the nodes, starting with the root node(s). (#9818)
          * @private
          */
-        // function order(node: SankeyPoint, level: number): void {
-        //     // Prevents circular recursion:
-        //     if (typeof node.level === 'undefined') {
-        //         node.level = level;
-        //         node.linksFrom.forEach(function (
-        //             link: SankeyPoint
-        //         ): void {
-        //             if (link.toNode) {
-        //                 order(link.toNode, level + 1);
-        //             }
-        //         });
-        //     }
-        // }
         function order(node: SankeyPoint, level: number): void {
             // Prevents circular recursion:
             if (typeof node.level === 'undefined') {
@@ -552,14 +539,6 @@ class SankeySeries extends ColumnSeries {
                 ): void {
                     if (link.toNode) {
                         order(link.toNode, level + 1);
-                    }
-                });
-            } else {
-                node.linksFrom.forEach(function (
-                    link: SankeyPoint
-                ): void {
-                    if (link.toNode) {
-                        order(link.toNode, node.level + 1);
                     }
                 });
             }
