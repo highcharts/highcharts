@@ -95,6 +95,7 @@ export interface SeriesOptions {
     colorIndex?: number;
     colors?: Array<ColorType>;
     connectNulls?: boolean;
+    copyOfOriginalData?: boolean;
     crisp?: (boolean|number);
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
@@ -105,7 +106,6 @@ export interface SeriesOptions {
     findNearestPointBy?: SeriesFindNearestPointByValue;
     getExtremesFromAll?: boolean;
     id?: string;
-    isCopy?: boolean;
     index?: number;
     inactiveOtherPoints?: boolean;
     /** @private */

@@ -474,6 +474,17 @@ class Series {
         // point.
         chart.orderSeries(this.insert(chartSeries));
 
+        // If this is the first time we're writing back to options,
+        // and allowMutatingData enabled create
+        // a copy so that we don't mutate the source array. (#4259)
+        if (options.data &&
+            !options.copyOfOriginalData &&
+            !chart.options.chart.allowMutatingData
+        ) {
+            options.data = JSON.parse(JSON.stringify(options.data));
+            options.copyOfOriginalData = true;
+        }
+
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
             series.setDataSortingOptions();

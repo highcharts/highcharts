@@ -650,13 +650,26 @@ QUnit.test('#8795: Hovering after zooming in and using setData with redraw set t
 });
 
 QUnit.test(
-    `The setData method with the createDataCoppy property
+    `The setData method with the allowMutatingData property set to false
     should not mutate the data, #4259.`,
     assert => {
         const oriData = [
                 [0, 0],
                 [1, 1],
-                [2, 2],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            referenceArray = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
                 [3, 3],
                 [4, 4]
             ],
@@ -672,29 +685,58 @@ QUnit.test(
 
         assert.deepEqual(
             oriData,
-            [
-                [0, 0],
-                [1, 1],
-                [2, 2],
-                [3, 3],
-                [4, 4]
-            ],
-            `When the allowMutatingData property is set to false,
-            he original data array should not be modified after initial render.`
+            referenceArray,
+            `Original data array should not be modified after initial render.`
         );
 
         chart.series[0].setData(newData);
         assert.deepEqual(
             oriData,
-            [
-                [0, 0],
-                [1, 1],
-                [2, 2],
-                [3, 3],
-                [4, 4]
-            ],
-            `When the allowMutatingData property is set to false, the setData
-            should not mutate the original data array.`
+            referenceArray,
+            `The setData should not mutate the original data array.`
+        );
+
+        chart.series[0].points[0].remove();
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Removing point should not mutate the original data array.`
+        );
+
+        chart.series[0].points[0].update({
+            x: -1,
+            y: -1
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Updating point should not mutate the original data array.`
+        );
+
+        chart.series[0].addPoint({
+            x: 10,
+            y: 10
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Adding point should not mutate the original data array.`
+        );
+
+        chart.series[0].update({
+            data: [5, 4, 3, 2, 1]
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Updating series should not mutate the original data array.`
+        );
+
+        chart.series[0].remove();
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Removing series should not mutate the original data array.`
         );
     }
 );
