@@ -1,53 +1,61 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initialize the chart
-    Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        chart: {
-            events: {
-                load: e => e.target.addSeries({
-                    type: 'mappoint',
-                    colorAxis: false,
-                    data: [{
-                        x: 4450,
-                        y: 8550,
-                        name: 'Point added on chart load'
-                    }],
-                    name: 'Series added on chart load'
-                })
-            }
-        },
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        title: {
-            text: 'Add series on chart load'
-        },
+        // Initialize the chart
+        Highcharts.mapChart('container', {
 
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            chart: {
+                events: {
+                    load: e => e.target.addSeries({
+                        type: 'mappoint',
+                        colorAxis: false,
+                        data: [{
+                            x: 4450,
+                            y: 8550,
+                            name: 'Point added on chart load'
+                        }],
+                        name: 'Series added on chart load'
+                    })
                 }
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            title: {
+                text: 'Add series on chart load'
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
+
+})();

@@ -20,9 +20,15 @@ glob('samples/maps/**/demo.html', async (err, matches) => {
     let i = 0;
     for (const file of matches) {
         const html = await (await fs.readFile(file)).toString();
-        const match = html.match(
+        let match = html.match(
             /<script src="https:\/\/code\.highcharts\.com\/mapdata\/([a-z\/\.\-]+)\.js"><\/script>/u
         );
+
+        if (file.indexOf('transform') !== -1) {
+            // eslint-disable-next-line no-console
+            console.log(`Skipping ${file}`.red);
+            match = void 0;
+        }
 
         if (match) {
             const jsFile = file.replace(/\.html$/u, '.js'),
