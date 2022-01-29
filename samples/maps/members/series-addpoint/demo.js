@@ -1,32 +1,34 @@
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
+
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json'
+    ).then(response => response.json());
 
 
     // Remove Greenland from the map and the data set
-    var mapDataIndex,
-        dataIndex,
-        mapData = Highcharts.geojson(Highcharts.maps['custom/world']),
-        greenland;
+    const mapData = Highcharts.geojson(topology),
+        mapDataIndex = mapData.findIndex(d => d.properties['iso-a2'] === 'GL'),
+        dataIndex = data.findIndex(d => d.name === 'Greenland');
 
-    for (mapDataIndex = 0; mapDataIndex < mapData.length; mapDataIndex += 1) {
-        if (mapData[mapDataIndex].properties['iso-a2'] === 'GL') {
-            break;
-        }
-    }
-    for (dataIndex = 0; dataIndex < data.length; dataIndex += 1) {
-        if (data[dataIndex].name === 'Greenland') {
-            break;
-        }
-    }
-
-    greenland = Highcharts.extend(data[dataIndex], mapData[mapDataIndex]); // for use below
+    const greenland = Highcharts.extend(data[dataIndex], mapData[mapDataIndex]);
     data.splice(dataIndex, 1);
     mapData.splice(mapDataIndex, 1);
 
     // Initialize the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Add point'
+        },
+
+        mapView: {
+            projection: {
+                name: 'Miller'
+            }
         },
 
         legend: {
@@ -40,6 +42,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             max: 1000,
             type: 'logarithmic'
         },
+
         series: [{
             data: data,
             mapData: mapData,
@@ -64,4 +67,5 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         chart.series[0].addPoint(greenland);
         button.disabled = true;
     };
-});
+
+})();
