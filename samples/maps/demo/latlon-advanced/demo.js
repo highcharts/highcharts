@@ -65,38 +65,35 @@
 
     // Display custom label with lat/lon next to crosshairs
     document.getElementById('container').addEventListener('mousemove', e => {
-        if (chart) {
-            if (!chart.lbl) {
-                chart.lbl = chart.renderer.text('', 0, 0)
-                    .attr({
-                        zIndex: 5
-                    })
-                    .css({
-                        color: '#505050'
-                    })
-                    .add();
-            }
+        if (!chart.lbl) {
+            chart.lbl = chart.renderer.text('', 0, 0)
+                .attr({
+                    zIndex: 5
+                })
+                .css({
+                    color: '#505050'
+                })
+                .add();
+        }
 
-            e = chart.pointer.normalize(e);
+        e = chart.pointer.normalize(e);
+
+        // @todo Legacy code, remove after launch of v10
+        if (!e.lon && !e.lat) {
             const projectedPosition = chart.mapView.pixelsToProjectedUnits({
                 x: Math.round(e.chartX - chart.plotLeft),
                 y: Math.round(e.chartY - chart.plotTop)
             });
             const position = chart.fromPointToLatLon(projectedPosition);
-
-            chart.lbl.attr({
-                x: e.chartX + 5,
-                y: e.chartY - 22,
-                text: 'Lon: ' + position.lon.toFixed(2) +
-                    '<br>Lat: ' + position.lat.toFixed(2)
-            });
+            e.lon = position.lon;
+            e.lat = position.lat;
         }
-    });
 
-    document.getElementById('container').addEventListener('mouseout', () => {
-        if (chart && chart.lbl) {
-            chart.lbl = chart.lbl.destroy();
-        }
+        chart.lbl.attr({
+            x: e.chartX + 5,
+            y: e.chartY - 22,
+            text: 'Lat: ' + e.lat.toFixed(2) + '<br>Lon: ' + e.lon.toFixed(2)
+        });
     });
 
 })();

@@ -225,9 +225,16 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         return data;
     };
 
+    let event;
     const chart = Highcharts.mapChart('container', {
         chart: {
-            animation: false
+            animation: false,
+            events: {
+                click: function (e) {
+                    // Assign the global event
+                    event = e;
+                }
+            }
         },
 
         title: {
@@ -326,4 +333,21 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         oldRotation,
         'Rotation should be activated (#16722).'
     );
+
+    // Test event properties
+    controller.click(300, 300);
+    assert.close(
+        event.lon,
+        10.2,
+        5,
+        'Longitude should be available on event'
+    );
+
+    assert.close(
+        event.lat,
+        38.4,
+        10,
+        'Latitude should be available on event'
+    );
+
 });
