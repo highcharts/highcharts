@@ -4,7 +4,7 @@
  *
  * Usage: From root, run
  *
- * node tools/go-topojson.js
+ * node tools/go-topojson
  */
 
 require('colors');
@@ -35,7 +35,7 @@ glob('samples/maps/**/demo.html', async (err, matches) => {
             jsLines.unshift(
                 '(async () => {',
                 '',
-                '    const mapData = await fetch(',
+                '    const topology = await fetch(',
                 `        'https://code.highcharts.com/mapdata/${map}.topo.json'`,
                 '    ).then(response => response.json());',
                 ''
@@ -43,10 +43,10 @@ glob('samples/maps/**/demo.html', async (err, matches) => {
             jsLines.push('})();');
 
             const newJS = jsLines.join('\n')
-                .replace(`map: '${map}'`, 'map: mapData')
+                .replace(`map: '${map}'`, 'map: topology')
                 .replace(
                     `mapData: Highcharts.maps['${map}']`,
-                    'mapData'
+                    'mapData: topology'
                 );
 
             const newHTML = html.replace(`\n${match[0]}`, '');
