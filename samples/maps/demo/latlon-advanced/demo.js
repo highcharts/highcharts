@@ -1,25 +1,28 @@
-const H = Highcharts,
-    map = H.maps['countries/us/us-all'];
+(async () => {
 
-let chart;
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+    ).then(response => response.json());
 
-// Add series with state capital bubbles
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json', function (json) {
+    const data = await fetch(
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-capitals.json'
+    ).then(response => response.json());
 
-    const data = json.map(p => {
+    data.forEach(p => {
         p.z = p.population;
-        return p;
     });
 
-    chart = Highcharts.mapChart('container', {
+    const H = Highcharts;
+
+    const chart = Highcharts.mapChart('container', {
         title: {
-            text: 'Highcharts Maps lat/lon demo'
+            text: 'Highcharts Maps lon/lat demo'
         },
 
         tooltip: {
             pointFormat: '{point.capital}, {point.parentState}<br>' +
-                'Lat: {point.lat}<br>' +
                 'Lon: {point.lon}<br>' +
+                'Lat: {point.lat}<br>' +
                 'Population: {point.population}'
         },
 
@@ -43,16 +46,9 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
         series: [{
             name: 'Basemap',
-            mapData: map,
+            mapData: topology,
             borderColor: '#606060',
             nullColor: 'rgba(200, 200, 200, 0.2)',
-            showInLegend: false
-        }, {
-            name: 'Separators',
-            type: 'mapline',
-            data: H.geojson(map, 'mapline'),
-            color: '#101010',
-            enableMouseTracking: false,
             showInLegend: false
         }, {
             type: 'mapbubble',
@@ -66,39 +62,41 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             color: H.getOptions().colors[0]
         }]
     });
-});
 
-// Display custom label with lat/lon next to crosshairs
-document.getElementById('container').addEventListener('mousemove', function (e) {
-    if (chart) {
-        if (!chart.lbl) {
-            chart.lbl = chart.renderer.text('', 0, 0)
-                .attr({
-                    zIndex: 5
-                })
-                .css({
-                    color: '#505050'
-                })
-                .add();
+    // Display custom label with lat/lon next to crosshairs
+    document.getElementById('container').addEventListener('mousemove', e => {
+        if (chart) {
+            if (!chart.lbl) {
+                chart.lbl = chart.renderer.text('', 0, 0)
+                    .attr({
+                        zIndex: 5
+                    })
+                    .css({
+                        color: '#505050'
+                    })
+                    .add();
+            }
+
+            e = chart.pointer.normalize(e);
+            const projectedPosition = chart.mapView.pixelsToProjectedUnits({
+                x: Math.round(e.chartX - chart.plotLeft),
+                y: Math.round(e.chartY - chart.plotTop)
+            });
+            const position = chart.fromPointToLatLon(projectedPosition);
+
+            chart.lbl.attr({
+                x: e.chartX + 5,
+                y: e.chartY - 22,
+                text: 'Lon: ' + position.lon.toFixed(2) +
+                    '<br>Lat: ' + position.lat.toFixed(2)
+            });
         }
+    });
 
-        e = chart.pointer.normalize(e);
-        const projectedPosition = chart.mapView.pixelsToProjectedUnits({
-            x: Math.round(e.chartX - chart.plotLeft),
-            y: Math.round(e.chartY - chart.plotTop)
-        });
-        const position = chart.fromPointToLatLon(projectedPosition);
+    document.getElementById('container').addEventListener('mouseout', () => {
+        if (chart && chart.lbl) {
+            chart.lbl = chart.lbl.destroy();
+        }
+    });
 
-        chart.lbl.attr({
-            x: e.chartX + 5,
-            y: e.chartY - 22,
-            text: 'Lat: ' + position.lat.toFixed(2) + '<br>Lon: ' + position.lon.toFixed(2)
-        });
-    }
-});
-
-document.getElementById('container').addEventListener('mouseout', function () {
-    if (chart && chart.lbl) {
-        chart.lbl = chart.lbl.destroy();
-    }
-});
+})();
