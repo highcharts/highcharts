@@ -557,7 +557,9 @@ class MapView {
         }
 
         const point = this.projection.forward([lonLat.lon, lonLat.lat]);
-        return { x: point[0], y: point[1] };
+        if (!point.outside) {
+            return { x: point[0], y: point[1] };
+        }
     }
 
     /**
