@@ -45,11 +45,17 @@ declare module '../Core/Chart/ChartLike'{
         mapCreditsFull?: string;
         /** @requires modules/maps */
         mapTransforms?: any;
-        /** @requires modules/maps */
+        /**
+         * @requires modules/maps
+         * @deprecated
+         */
         fromLatLonToPoint(
             latLon: Highcharts.MapLonLatObject
         ): ProjectedXY|undefined;
-        /** @requires modules/maps */
+        /**
+         * @requires modules/maps
+         * @deprecated
+         */
         fromPointToLatLon(
             point: ProjectedXY
         ): (Highcharts.MapLonLatObject|undefined);

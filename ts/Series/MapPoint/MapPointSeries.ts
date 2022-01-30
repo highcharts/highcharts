@@ -128,22 +128,30 @@ class MapPointSeries extends ScatterSeries {
 
         // Create map based translation
         if (mapView) {
-            const { forward, hasCoordinates } = mapView.projection;
+            const { hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
 
-                const geometry = p.options.geometry,
-                    coordinates = (
-                        geometry &&
-                        geometry.type === 'Point' &&
-                        geometry.coordinates
-                    );
+                const { geometry, lon, lat } = p.options;
+                let coordinates = (
+                    geometry &&
+                    geometry.type === 'Point' &&
+                    geometry.coordinates
+                );
+
+                if (isNumber(lon) && isNumber(lat)) {
+                    coordinates = [lon, lat];
+                }
+
                 if (coordinates) {
-                    const xy = forward(coordinates);
-                    if (!xy.outside) {
-                        x = xy[0];
-                        y = xy[1];
+                    const xy = mapView.lonLatToProjectedUnits({
+                        lon: coordinates[0],
+                        lat: coordinates[1]
+                    });
+                    if (xy) {
+                        x = xy.x;
+                        y = xy.y;
                     }
 
                 // Map bubbles getting geometry from shape
