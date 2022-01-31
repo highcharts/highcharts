@@ -156,7 +156,13 @@ class ColorAxis extends Axis implements AxisLike {
         LegendClass: typeof Legend,
         SeriesClass: typeof Series
     ): void {
-        ColorAxisComposition.compose(ColorAxis, ChartClass, FxClass, LegendClass, SeriesClass);
+        ColorAxisComposition.compose(
+            ColorAxis,
+            ChartClass,
+            FxClass,
+            LegendClass,
+            SeriesClass
+        );
     }
 
     /* *
@@ -183,7 +189,8 @@ class ColorAxis extends Axis implements AxisLike {
      * */
 
     public added?: boolean;
-    public beforePadding = false as any; // Prevents unnecessary padding with `hc-more`
+    // Prevents unnecessary padding with `hc-more`
+    public beforePadding = false as any;
     public chart: Chart = void 0 as any;
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
@@ -492,6 +499,19 @@ class ColorAxis extends Axis implements AxisLike {
             // Call the base
             super.getOffset();
 
+            const legend = this.chart.legend;
+
+            // Adds `maxLabelLength` needed for label padding corrections done
+            // by `render()` and `getMargins()` (#15551).
+            legend.allItems.forEach(function (item): void {
+                if (item instanceof ColorAxis) {
+                    item.drawLegendSymbol(legend, item);
+                }
+            });
+
+            legend.render();
+            this.chart.getMargins(true);
+
             // First time only
             if (!axis.added) {
 
@@ -549,6 +569,8 @@ class ColorAxis extends Axis implements AxisLike {
             horiz ? 12 : ColorAxis.defaultLegendLength
         );
         const labelPadding = pick(
+            // @todo: This option is not documented, nor implemented when
+            // vertical
             (legendOptions as any).labelPadding,
             horiz ? 16 : 30
         );
@@ -557,17 +579,27 @@ class ColorAxis extends Axis implements AxisLike {
         this.setLegendColor();
 
         // Create the gradient
-        item.legendSymbol = this.chart.renderer.rect(
-            0,
-            (legend.baseline as any) - 11,
-            width,
-            height
-        ).attr({
-            zIndex: 1
-        }).add(item.legendGroup);
+        if (!item.legendSymbol) {
+            item.legendSymbol = this.chart.renderer.rect(
+                0,
+                (legend.baseline as any) - 11,
+                width,
+                height
+            ).attr({
+                zIndex: 1
+            }).add(item.legendGroup);
+        }
 
         // Set how much space this legend item takes up
-        axis.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
+        axis.legendItemWidth = (
+            width +
+            padding +
+            (
+                horiz ?
+                    itemDistance :
+                    this.options.labels.x + this.maxLabelLength
+            )
+        );
         axis.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
     }
 
@@ -701,7 +733,9 @@ class ColorAxis extends Axis implements AxisLike {
         let crossPos;
 
         if (point) {
-            crossPos = axis.toPixels(point.getNestedProperty(point.series.colorKey) as number);
+            crossPos = axis.toPixels(point.getNestedProperty(
+                point.series.colorKey
+            ) as number);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {
@@ -900,7 +934,9 @@ class ColorAxis extends Axis implements AxisLike {
                         visible: true,
                         setState: noop,
                         isDataClass: true,
-                        setVisible: function (this: ColorAxis.LegendItemObject): void {
+                        setVisible: function (
+                            this: ColorAxis.LegendItemObject
+                        ): void {
                             vis = axis.visible = !vis;
                             axis.series.forEach(function (series): void {
                                 series.points.forEach(function (

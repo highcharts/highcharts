@@ -80,17 +80,22 @@ function resolveJSON(js) {
     const codeblocks = [];
 
     while (match = regex.exec(js)) {
-        let src = match[2];
+        let src = match[2],
+            innerMatch,
+            filename,
+            data;
 
-        let innerMatch = src.match(
+        // Look for sources that can be matched to samples/data
+        innerMatch = src.match(
             /^(https:\/\/cdn.jsdelivr.net\/gh\/highcharts\/highcharts@[a-z0-9\.]+|https:\/\/www.highcharts.com)\/samples\/data\/([a-z0-9\-\.]+$)/
-        ) || src.match(/^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/);
+        ) || src.match(
+            /^(https:\/\/demo-live-data.highcharts.com)\/([a-z0-9\-\.]+$)/
+        );
 
         if (innerMatch) {
 
-            let filename = innerMatch[2];
-
-            let data = fs.readFileSync(
+            filename = innerMatch[2];
+            data = fs.readFileSync(
                 path.join(
                     __dirname,
                     '..',
@@ -99,15 +104,32 @@ function resolveJSON(js) {
                 ),
                 'utf8'
             );
+        }
 
-            if (data) {
+        // Look for sources that can be matched to the map collection
+        innerMatch = src.match(
+            /^(https:\/\/code.highcharts.com\/mapdata\/([a-z\/\.\-]+))$/
+        );
+        if (innerMatch) {
+            filename = innerMatch[2];
+            data = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    '..',
+                    'node_modules/@highcharts/map-collection',
+                    filename
+                ),
+                'utf8'
+            );
+        }
 
-                if (/json$/.test(filename)) {
-                    codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
-                }
-                if (/csv$/.test(filename)) {
-                    codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
-                }
+        if (data) {
+
+            if (/json$/.test(filename)) {
+                codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
+            }
+            if (/csv$/.test(filename)) {
+                codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
             }
         }
     }
@@ -277,9 +299,6 @@ module.exports = function (config) {
 
         // These ones fail
         exclude: argv.oldie ? [] : [
-            // The configuration currently loads classic mode only. Styled mode
-            // needs to be a separate instance.
-            'samples/unit-tests/series-pie/styled-mode/demo.js',
             // Themes alter the whole default options structure. Set up a
             // separate test suite? Or perhaps somehow decouple the options so
             // they are not mutated for later tests?

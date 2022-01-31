@@ -1,0 +1,30 @@
+.main {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+#container {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#small-world-container {
+    max-width: 150px;
+    min-width: 75px;
+    height: 150px;
+}
+
+h1 {
+    font-size: 1.5rem !important;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+
+.btn-group {
+    flex-wrap: wrap;
+}

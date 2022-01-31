@@ -248,7 +248,9 @@ class Pointer {
                 Pointer.unbindDocumentMouseUp = Pointer.unbindDocumentMouseUp();
             }
             if (Pointer.unbindDocumentTouchEnd) {
-                Pointer.unbindDocumentTouchEnd = Pointer.unbindDocumentTouchEnd();
+                Pointer.unbindDocumentTouchEnd = (
+                    Pointer.unbindDocumentTouchEnd()
+                );
             }
         }
 
@@ -911,10 +913,11 @@ class Pointer {
         element: DOMElementType,
         className: string
     ): (boolean|undefined) {
-        let elemClassName;
+        let elem: DOMElementType|null = element,
+            elemClassName;
 
-        while (element) {
-            elemClassName = attr(element, 'class');
+        while (elem) {
+            elemClassName = attr(elem, 'class');
             if (elemClassName) {
                 if (elemClassName.indexOf(className) !== -1) {
                     return true;
@@ -923,7 +926,7 @@ class Pointer {
                     return false;
                 }
             }
-            element = element.parentNode as any;
+            elem = elem.parentElement;
         }
     }
 
@@ -974,6 +977,9 @@ class Pointer {
      * Takes a browser event object and extends it with custom Highcharts
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
+     *
+     * On map charts, the properties `lon` and `lat` are added to the event
+     * object given that the chart has projection information.
      *
      * @function Highcharts.Pointer#normalize
      *
@@ -1139,10 +1145,8 @@ class Pointer {
             chart.pointer.chartPosition = void 0;
         }
 
-        if ( // #11635, Firefox wheel scroll does not fire out events consistently
-            tooltip &&
-            !tooltip.isHidden
-        ) {
+        // #11635, Firefox wheel scroll does not fire out events consistently
+        if (tooltip && !tooltip.isHidden) {
             this.reset();
         }
     }
@@ -1320,7 +1324,12 @@ class Pointer {
 
         // On touch devices, only proceed to trigger click if a handler is
         // defined
-        if (hasZoom && self.initiated && !fireClickEvent && e.cancelable !== false) {
+        if (
+            hasZoom &&
+            self.initiated &&
+            !fireClickEvent &&
+            e.cancelable !== false
+        ) {
             e.preventDefault();
         }
 
@@ -1548,7 +1557,8 @@ class Pointer {
             clip[xy] = clipXY - plotLeftTop;
             clip[wh] = selectionWH;
         }
-        const scaleKey = inverted ? (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
+        const scaleKey = inverted ?
+            (horiz ? 'scaleY' : 'scaleX') : 'scale' + XY;
         const transformScale = inverted ? 1 / scale : scale;
 
         selectionMarker[wh] = selectionWH;
@@ -1776,12 +1786,13 @@ class Pointer {
              * The mouseOver event should be triggered when hoverPoint
              * is correct.
              */
-            hoverPoint.firePointEvent('mouseOver');
+            hoverPoint.firePointEvent('mouseOver', void 0, () : void => {
 
-            // Draw tooltip if necessary
-            if (tooltip) {
-                tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
-            }
+                // Draw tooltip if necessary
+                if (tooltip && hoverPoint) {
+                    tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
+                }
+            });
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
             const anchor = tooltip.getAnchor([{} as any], e);
@@ -1823,7 +1834,7 @@ class Pointer {
                 point = chart.hoverPoint; // #13002
                 if (!point || (point.series as any)[axis.coll] !== axis) {
                     point = find(points, (p: Point): boolean =>
-                        (p.series as any)[axis.coll] === axis
+                        p.series && (p.series as any)[axis.coll] === axis
                     );
                 }
             }
@@ -1957,7 +1968,9 @@ class Pointer {
             hoverChart &&
             hoverChart !== chart
         ) {
-            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+            hoverChart.pointer.onContainerMouseLeave(
+                { relatedTarget: true } as any
+            );
         }
 
         if (

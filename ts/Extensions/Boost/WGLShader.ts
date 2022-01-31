@@ -38,7 +38,8 @@ declare global {
             setBubbleUniforms(
                 series: BubbleSeries,
                 zCalcMin: number,
-                zCalcMax: number
+                zCalcMax: number,
+                pixelRatio: number
             ): void;
             setColor(color: Array<number>): void;
             setDrawAsCircle(flag?: boolean): void;
@@ -481,7 +482,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
     function setBubbleUniforms(
         series: BubbleSeries,
         zCalcMin: number,
-        zCalcMax: number
+        zCalcMax: number,
+        pixelRatio = 1
     ): void {
         let seriesOptions = series.options,
             zMin = Number.MAX_VALUE,
@@ -515,8 +517,8 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             setUniform('bubbleZMin', zMin);
             setUniform('bubbleZMax', zMax);
             setUniform('bubbleZThreshold', series.options.zThreshold as any);
-            setUniform('bubbleMinSize', pxSizes.minPxSize);
-            setUniform('bubbleMaxSize', pxSizes.maxPxSize);
+            setUniform('bubbleMinSize', pxSizes.minPxSize * pixelRatio);
+            setUniform('bubbleMaxSize', pxSizes.maxPxSize * pixelRatio);
         }
     }
 

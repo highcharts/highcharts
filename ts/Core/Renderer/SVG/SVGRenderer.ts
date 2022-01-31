@@ -154,7 +154,15 @@ class SVGRenderer implements SVGRendererLike {
         allowHTML?: boolean,
         styledMode?: boolean
     ) {
-        this.init(container, width, height, style, forExport, allowHTML, styledMode);
+        this.init(
+            container,
+            width,
+            height,
+            style,
+            forExport,
+            allowHTML,
+            styledMode
+        );
     }
 
     /* *
@@ -439,7 +447,9 @@ class SVGRenderer implements SVGRendererLike {
                 });
 
                 const hitElement = doc.elementFromPoint(6, 6);
-                hasInternalReferenceBug = (hitElement && hitElement.id) === 'hitme';
+                hasInternalReferenceBug = (
+                    hitElement && hitElement.id
+                ) === 'hitme';
                 doc.body.removeChild(svg);
             }
 
@@ -693,7 +703,12 @@ class SVGRenderer implements SVGRendererLike {
             // (reference to options.rangeSelector.buttonTheme)
             normalState = theme ? merge(theme) : {};
 
-        const userNormalStyle = normalState && normalState.style || {};
+        const normalStyle = merge({
+            color: Palette.neutralColor80,
+            cursor: 'pointer',
+            fontWeight: 'normal'
+        }, normalState.style);
+        delete normalState.style;
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
@@ -701,11 +716,11 @@ class SVGRenderer implements SVGRendererLike {
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
 
-        // Presentational
-        let normalStyle: any,
-            hoverStyle: any,
-            pressedStyle: any,
-            disabledStyle: any;
+        // Presentational. The string type is a mistake, it is just for
+        // compliance with SVGAttribute and is not used in button theme.
+        let hoverStyle: CSSObject|string|undefined,
+            pressedStyle: CSSObject|string|undefined,
+            disabledStyle: CSSObject|string|undefined;
 
         if (!styledMode) {
 
@@ -713,17 +728,8 @@ class SVGRenderer implements SVGRendererLike {
             normalState = merge({
                 fill: Palette.neutralColor3,
                 stroke: Palette.neutralColor20,
-                'stroke-width': 1,
-                style: {
-                    color: Palette.neutralColor80,
-                    cursor: 'pointer',
-                    fontWeight: 'normal'
-                }
-            }, {
-                style: userNormalStyle
+                'stroke-width': 1
             }, normalState);
-            normalStyle = normalState.style;
-            delete normalState.style;
 
             // Hover state
             hoverState = merge(normalState, {
@@ -794,13 +800,16 @@ class SVGRenderer implements SVGRendererLike {
                         hoverState,
                         pressedState,
                         disabledState
-                    ][state || 0])
-                    .css([
-                        normalStyle,
-                        hoverStyle,
-                        pressedStyle,
-                        disabledStyle
                     ][state || 0]);
+                const css = [
+                    normalStyle,
+                    hoverStyle,
+                    pressedStyle,
+                    disabledStyle
+                ][state || 0];
+                if (isObject(css)) {
+                    label.css(css);
+                }
             }
         };
 
@@ -1646,10 +1655,14 @@ class SVGRenderer implements SVGRendererLike {
                 const tspans = element.getElementsByTagName('tspan'),
                     parentVal = element.getAttribute(key);
 
-                for (let i = 0, tspan: SVGTSpanElement; i < tspans.length; i++) {
+                for (
+                    let i = 0, tspan: SVGTSpanElement;
+                    i < tspans.length;
+                    i++
+                ) {
                     tspan = tspans[i];
-                    // If the x values are equal, the tspan represents a
-                    // linebreak
+                    // If the x values are equal, the tspan represents a line
+                    // break
                     if (tspan.getAttribute(key) === parentVal) {
                         tspan.setAttribute(key, value);
                     }

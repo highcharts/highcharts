@@ -150,7 +150,11 @@ Chart.prototype.getBoostClipRect = function (target: Chart): BBoxObject {
         const verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
         if (verticalAxes.length <= 1) {
             clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
-            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+            clipBox.height = (
+                verticalAxes[0].pos -
+                this.plotTop +
+                verticalAxes[0].len
+            );
         } else {
             clipBox.height = this.plotHeight;
         }
@@ -570,7 +574,9 @@ Series.prototype.destroyGraphics = function (): void {
     });
 
     if ((this as any).getZonesGraphs) {
-        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        const props: string[][] = (this as any).getZonesGraphs(
+            [['graph', 'highcharts-graph']]
+        );
         props.forEach((prop): void => {
             const zoneGraph: SVGElement = (this as any)[prop[0]];
             if (zoneGraph) {

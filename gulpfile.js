@@ -24,8 +24,6 @@ Gulp.registry(new GulpForwardReference());
 }([
     'default',
     'dist',
-    'dist-ant',
-    'dist-api',
     'dist-clean',
     'dist-compress',
     'dist-copy',
@@ -50,6 +48,7 @@ Gulp.registry(new GulpForwardReference());
     'jsdoc-watch',
     'jsdoc-websearch',
     'jsdoc-wrappers',
+    'jsdoc-zips',
     'lint',
     'lint-dts',
     'lint-samples',

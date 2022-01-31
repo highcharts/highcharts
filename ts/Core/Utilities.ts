@@ -296,7 +296,9 @@ function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
         // Arrays, primitives and DOM nodes are copied directly
         } else if (
             isObject(newer[key]) ||
-            newer[key] !== older[key]
+            newer[key] !== older[key] ||
+            // If the newer key is explicitly undefined, keep it (#10525)
+            (key in newer && !(key in older))
         ) {
             result[key] = newer[key];
         }
@@ -502,7 +504,7 @@ function attr(
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
  *        The DOM element to receive the attribute(s).
  *
- * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
+ * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
  *        The property or an object of key-value pairs.
  *
  * @param {number|string} [value]
@@ -513,36 +515,45 @@ function attr(
  */
 function attr(
     elem: DOMElementType,
-    prop: (string|HTMLAttributes|SVGAttributes),
+    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
     value?: (number|string)
 ): (string|null|undefined) {
-    let ret;
 
-    // if the prop is a string
-    if (isString(prop)) {
-        // set the value
+    const isGetter = isString(keyOrAttribs) && !defined(value);
+
+    let ret: string|null|undefined;
+
+    const attrSingle = (
+        value: number|string|boolean|undefined,
+        key: string
+    ): void => {
+
+        // Set the value
         if (defined(value)) {
-            elem.setAttribute(prop, value as string);
+            elem.setAttribute(key, value);
 
-        // get the value
-        } else if (elem && elem.getAttribute) {
-            ret = elem.getAttribute(prop);
+        // Get the value
+        } else if (isGetter) {
+            ret = elem.getAttribute(key);
 
             // IE7 and below cannot get class through getAttribute (#7850)
-            if (!ret && prop === 'class') {
-                ret = elem.getAttribute(prop + 'Name');
+            if (!ret && key === 'class') {
+                ret = elem.getAttribute(key + 'Name');
             }
-        }
 
-    // else if prop is defined, it is a hash of key/value pairs
+        // Remove the value
+        } else {
+            elem.removeAttribute(key);
+        }
+    };
+
+    // If keyOrAttribs is a string
+    if (isString(keyOrAttribs)) {
+        attrSingle(value, keyOrAttribs);
+
+    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val, key): void {
-            if (defined(val)) {
-                elem.setAttribute(key, val as any);
-            } else {
-                elem.removeAttribute(key);
-            }
-        });
+        objectEach(keyOrAttribs, attrSingle);
     }
     return ret;
 }
@@ -600,12 +611,10 @@ function syncTimeout(
  *
  * @function Highcharts.clearTimeout
  *
- * @param {number} id
- *        Id of a timeout.
- *
- * @return {void}
+ * @param {number|undefined} id
+ * Id of a timeout.
  */
-function internalClearTimeout(id: number): void {
+function internalClearTimeout(id: (number|undefined)): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -701,9 +710,8 @@ function css(
     styles: CSSObject
 ): void {
     if (H.isMS && !H.svg) { // #2686
-        if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter =
-                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
+        if (styles && defined(styles.opacity)) {
+            styles.filter = `alpha(opacity=${styles.opacity * 100})`;
         }
     }
     extend(el.style, styles as any);
@@ -784,7 +792,7 @@ function extendClass <T, TReturn = T>(
 }
 
 /**
- * Left-pad a string to a given length by adding a character repetetively.
+ * Left-pad a string to a given length by adding a character repetitively.
  *
  * @function Highcharts.pad
  *
@@ -1111,7 +1119,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
 
 
 /**
- * Discard a HTML element by moving it to the bin and delete.
+ * Discard a HTML element
  *
  * @function Highcharts.discardElement
  *
@@ -1119,20 +1127,11 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *        The HTML node to discard.
  */
 function discardElement(element?: HTMLDOMElement): void {
-
-    // create a garbage bin element, not part of the DOM
-    if (!garbageBin) {
-        garbageBin = createElement('div');
+    if (element && element.parentElement) {
+        element.parentElement.removeChild(element);
     }
-
-    // move the node and empty bin
-    if (element) {
-        garbageBin.appendChild(element);
-    }
-    garbageBin.innerHTML = '';
 }
 
-let garbageBin: (globalThis.HTMLElement|undefined);
 
 /**
  * Fix JS round off float errors.

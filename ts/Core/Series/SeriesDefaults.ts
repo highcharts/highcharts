@@ -1350,6 +1350,9 @@ const seriesDefaults: SeriesOptions = {
          * parameter, `event`, is passed to the function, containing common
          * event information.
          *
+         * Returning `false` cancels the default behavior, which is to show a
+         * tooltip for the point.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
          *         Show values in the chart's corner on mouse over
          *
@@ -1709,9 +1712,9 @@ const seriesDefaults: SeriesOptions = {
 
         // eslint-disable-next-line valid-jsdoc
         /**
-         * Callback JavaScript function to format the data label. Note that
-         * if a `format` is defined, the format takes precedence and the
-         * formatter is ignored.
+         * Callback JavaScript function to format the data label. Note that if a
+         * `format` is defined, the format takes precedence and the formatter is
+         * ignored.
          *
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value
@@ -1720,7 +1723,8 @@ const seriesDefaults: SeriesOptions = {
          */
         formatter: function (this: Point.PointLabelObject): string {
             const { numberFormatter } = this.series.chart;
-            return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
+            return typeof this.y !== 'number' ?
+                '' : numberFormatter(this.y, -1);
         },
 
         /**
@@ -2126,7 +2130,7 @@ const seriesDefaults: SeriesOptions = {
              * @deprecated
              *
              * @extends   plotOptions.series.marker
-             * @excluding states
+             * @excluding states, symbol
              * @product   highcharts highstock
              */
             marker: {

@@ -11,3 +11,4 @@
  */
 'use strict';
 import '../../Extensions/Drilldown.js';
+import '../../Extensions/Breadcrumbs.js';

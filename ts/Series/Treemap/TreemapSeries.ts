@@ -30,7 +30,7 @@ import type {
     TreemapSeriesOptions,
     TreemapSeriesUpButtonOptions
 } from './TreemapSeriesOptions';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesOptions, SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -56,6 +56,7 @@ import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
+import Breadcrumbs from '../../Extensions/Breadcrumbs.js';
 const {
     getColor,
     getLevelOptions,
@@ -70,6 +71,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isNumber,
     isObject,
     isString,
     merge,
@@ -107,7 +109,7 @@ class TreemapSeries extends ScatterSeries {
      *         Treemap
      *
      * @extends      plotOptions.scatter
-     * @excluding    dragDrop, marker, jitter, dataSorting
+     * @excluding    cluster, connectEnds, connectNulls, dataSorting, dragDrop, jitter, marker
      * @product      highcharts
      * @requires     modules/treemap
      * @optionparent plotOptions.treemap
@@ -149,6 +151,15 @@ class TreemapSeries extends ScatterSeries {
          */
         borderRadius: 0,
 
+        /**
+         * Breadcrumbs options.
+         *
+         *
+         * @since     next
+         * @product   highcharts
+         * @extends breadcrumbs
+         * @optionparent plotOptions.treemap.breadcrumbs
+         */
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
@@ -327,57 +338,11 @@ class TreemapSeries extends ScatterSeries {
          */
         levelIsConstant: true,
         /**
-         * Options for the button appearing when drilling down in a treemap.
-         * Deprecated and replaced by
-         * [traverseUpButton](#plotOptions.treemap.traverseUpButton).
+         * Options for the button appearing when traversing down in a treemap.
+         *
+         * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
          *
          * @deprecated
-         */
-        drillUpButton: {
-
-            /**
-             * The position of the button.
-             *
-             * @deprecated
-             */
-            position: {
-
-                /**
-                 * Vertical alignment of the button.
-                 *
-                 * @deprecated
-                 * @type      {Highcharts.VerticalAlignValue}
-                 * @default   top
-                 * @product   highcharts
-                 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
-                 */
-
-                /**
-                 * Horizontal alignment of the button.
-                 *
-                 * @deprecated
-                 * @type {Highcharts.AlignValue}
-                 */
-                align: 'right',
-
-                /**
-                 * Horizontal offset of the button.
-                 *
-                 * @deprecated
-                 */
-                x: -10,
-
-                /**
-                 * Vertical offset of the button.
-                 *
-                 * @deprecated
-                 */
-                y: 10
-            }
-        },
-
-        /**
-         * Options for the button appearing when traversing down in a treemap.
          */
         traverseUpButton: {
 
@@ -657,6 +622,8 @@ class TreemapSeries extends ScatterSeries {
 
     public tree: TreemapSeries.NodeObject = void 0 as any;
 
+    public level?: number = void 0 as any;
+
     /* *
      *
      *  Function
@@ -932,7 +899,10 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick<TreemapSeriesLayoutAlgorithmValue|undefined, TreemapSeriesLayoutAlgorithmValue>(
+            algorithm = pick<
+            TreemapSeriesLayoutAlgorithmValue|undefined,
+            TreemapSeriesLayoutAlgorithmValue
+            >(
                 (
                     (series as any)[
                         (level && level.layoutAlgorithm) as any
@@ -981,6 +951,53 @@ class TreemapSeries extends ScatterSeries {
                 series.calculateChildrenAreas(child, child.values);
             }
         });
+    }
+
+    /**
+    * Create level list.
+    *
+    * @requires  modules/breadcrumbs
+    *
+    * @function TreemapSeries#createList
+    * @param {TreemapSeries} this
+    *        Treemap Series class.
+    */
+    public createList(e: any): any {
+        const chart = this.chart,
+            breadcrumbs = chart.breadcrumbs,
+            list: Array<Breadcrumbs.BreadcrumbOptions> = [];
+
+        if (breadcrumbs) {
+
+            let currentLevelNumber = 0;
+
+            list.push({
+                level: currentLevelNumber,
+                levelOptions: chart.series[0]
+            });
+
+            let node = e.target.nodeMap[e.newRootId];
+            const extraNodes = [];
+
+            // When the root node is set and has parent,
+            // recreate the path from the node tree.
+            while (node.parent || node.parent === '') {
+                extraNodes.push(node);
+                node = e.target.nodeMap[node.parent];
+            }
+            extraNodes.reverse().forEach(function (node): void {
+                list.push({
+                    level: ++currentLevelNumber,
+                    levelOptions: node
+                });
+            });
+            // If the list has only first element, we should clear it
+            if (list.length <= 1) {
+                list.length = 0;
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -1184,7 +1201,12 @@ class TreemapSeries extends ScatterSeries {
         id: string,
         redraw?: boolean
     ): void {
-        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
+        error(
+            32,
+            false,
+            void 0,
+            { 'treemap.drillToNode': 'use treemap.setRootNode' }
+        );
         this.setRootNode(id, redraw);
     }
 
@@ -1295,8 +1317,14 @@ class TreemapSeries extends ScatterSeries {
         chart: Chart,
         options: DeepPartial<TreemapSeriesOptions>
     ): void {
-        let series = this,
-            setOptionsEvent;
+
+        const series = this,
+            breadcrumbsOptions = merge(
+                options.drillUpButton,
+                options.breadcrumbs
+            );
+
+        let setOptionsEvent;
 
         // If color series logic is loaded, add some properties
         this.colorAttribs = ColorMapMixin.SeriesMixin.colorAttribs;
@@ -1335,7 +1363,67 @@ class TreemapSeries extends ScatterSeries {
             series.eventsToUnbind.push(
                 addEvent(series, 'click', series.onClickDrillToNode as any)
             );
+
+            series.eventsToUnbind.push(
+                addEvent(series, 'setRootNode', function (e: any): void {
+                    const chart = series.chart;
+                    if (chart.breadcrumbs) {
+                        // Create a list using the event after drilldown.
+                        chart.breadcrumbs.updateProperties(
+                            series.createList(e)
+                        );
+                    }
+                })
+            );
+
+            series.eventsToUnbind.push(
+                addEvent(
+                    series,
+                    'update',
+                    function (e: any, redraw?: boolean): void {
+                        const breadcrumbs = this.chart.breadcrumbs;
+
+                        if (breadcrumbs && e.options.breadcrumbs) {
+                            breadcrumbs.update(e.options.breadcrumbs);
+                        }
+                    })
+            );
+
+            series.eventsToUnbind.push(
+                addEvent(series, 'destroy',
+                    function destroyEvents(e: any): void {
+                        const chart = this.chart;
+                        if (chart.breadcrumbs) {
+                            chart.breadcrumbs.destroy();
+                            if (!e.keepEventsForUpdate) {
+                                chart.breadcrumbs = void 0;
+                            }
+                        }
+                    }
+                )
+            );
         }
+
+        if (
+            !chart.breadcrumbs
+        ) {
+            chart.breadcrumbs = new Breadcrumbs(
+                chart as Chart,
+                breadcrumbsOptions as any
+            );
+        }
+
+        series.eventsToUnbind.push(
+            addEvent(chart.breadcrumbs, 'up', function (
+                e: any
+            ): void {
+                const drillUpsNumber = this.level - e.newLevel;
+
+                for (let i = 0; i < drillUpsNumber; i++) {
+                    series.drillUp();
+                }
+            })
+        );
     }
 
     /**
@@ -1423,60 +1511,6 @@ class TreemapSeries extends ScatterSeries {
         return attr;
     }
 
-    public renderTraverseUpButton(rootId: string): void {
-        let series = this,
-            nodeMap = series.nodeMap,
-            node = nodeMap[rootId],
-            name = node.name,
-            buttonOptions: TreemapSeriesUpButtonOptions = series.options.traverseUpButton as any,
-            backText = pick(buttonOptions.text, name, '◁ Back'),
-            attr,
-            states;
-
-        if (rootId === '' || (
-            series.is('sunburst') &&
-            series.tree.children.length === 1 &&
-            rootId === series.tree.children[0].id
-        )) {
-            if (series.drillUpButton) {
-                series.drillUpButton = series.drillUpButton.destroy();
-            }
-        } else if (!this.drillUpButton) {
-            attr = buttonOptions.theme;
-            states = attr && attr.states;
-
-            this.drillUpButton = this.chart.renderer
-                .button(
-                    backText,
-                    0,
-                    0,
-                    function (): void {
-                        series.drillUp();
-                    },
-                    attr,
-                    states && states.hover,
-                    states && states.select
-                )
-                .addClass('highcharts-drillup-button')
-                .attr({
-                    align: (buttonOptions.position as any).align,
-                    zIndex: 7
-                })
-                .add()
-                .align(
-                    buttonOptions.position,
-                    false,
-                    buttonOptions.relativeTo || 'plotBox'
-                );
-        } else {
-            this.drillUpButton.placed = false;
-            this.drillUpButton.attr({
-                text: backText
-            })
-                .align();
-        }
-    }
-
     /**
      * Set the node's color recursively, from the parent down.
      * @private
@@ -1552,9 +1586,13 @@ class TreemapSeries extends ScatterSeries {
                 const { height, width, x, y } = values;
                 const crispCorr = getCrispCorrection(point);
                 const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                const x2 = Math.round(
+                    xAxis.toPixels(x + width, true)
+                ) - crispCorr;
                 const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                const y2 = Math.round(
+                    yAxis.toPixels(y + height, true)
+                ) - crispCorr;
 
                 // Set point values
                 const shapeArgs = {
@@ -1673,7 +1711,9 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(tree: TreemapSeries.NodeObject): TreemapSeries.NodeObject {
+    public setTreeValues(
+        tree: TreemapSeries.NodeObject
+    ): TreemapSeries.NodeObject {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,
@@ -1782,7 +1822,6 @@ class TreemapSeries extends ScatterSeries {
             rootNode = series.nodeMap[rootId];
         }
 
-        series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions<this>({
             from: rootNode.level + 1,
             levels: options.levels,

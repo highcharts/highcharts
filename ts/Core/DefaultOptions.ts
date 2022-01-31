@@ -17,8 +17,7 @@
  * */
 
 import type { Options } from './Options';
-import type Point from './Series/Point';
-import type Series from './Series/Series';
+import type Legend from './Legend/Legend';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
 import Color from './Color/Color.js';
@@ -1244,7 +1243,7 @@ const defaultOptions: Options = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Series|Point)
+            this: Legend.Item
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;
@@ -2489,6 +2488,8 @@ const defaultOptions: Options = {
          *
          * @sample {highcharts} highcharts/tooltip/pointformat/
          *         A different point format with value suffix
+         * @sample {highcharts|highstock} highcharts/tooltip/pointformat-extra-information/
+         *         Show extra information about points in the tooltip
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo
          *

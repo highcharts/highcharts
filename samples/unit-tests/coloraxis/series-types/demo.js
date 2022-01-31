@@ -7,6 +7,8 @@ QUnit.module('Color axis for series types', function () {
                 ![
                     'gauge',
                     'solidgauge',
+                    'map', // Needs a map for coordinates
+                    'mapline', // Needs a map for coordinates
                     'mapbubble', // Needs a map for coordinates
                     'mappoint', // Needs a map for coordinates
                     'networkgraph',
@@ -14,6 +16,7 @@ QUnit.module('Color axis for series types', function () {
                     'sunburst',
                     'sankey',
                     'dependencywheel',
+                    'arcdiagram',
                     'venn',
                     'wordcloud'
                 ].includes(type)

@@ -175,7 +175,9 @@ class NavigatorAxis {
             const axis = this;
 
             if (!axis.navigatorAxis) {
-                axis.navigatorAxis = new NavigatorAxisAdditions(axis as NavigatorAxis);
+                axis.navigatorAxis = new NavigatorAxisAdditions(
+                    axis as NavigatorAxis
+                );
             }
         });
 

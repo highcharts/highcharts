@@ -69,6 +69,7 @@ declare module './AxisLike' {
     interface AxisLike {
         axisBorder?: SVGElement;
         hiddenLabels: Array<SVGElement>;
+        hiddenMarks: Array<SVGElement>;
         rightWall?: SVGElement;
         getMaxLabelDimensions(
             ticks: Record<string, Tick>,
@@ -225,10 +226,18 @@ namespace GridAxis {
             // Add event handlers
             addEvent(AxisClass, 'init', onInit);
             addEvent(AxisClass, 'afterGetOffset', onAfterGetOffset);
-            addEvent(AxisClass, 'afterGetTitlePosition', onAfterGetTitlePosition);
+            addEvent(
+                AxisClass,
+                'afterGetTitlePosition',
+                onAfterGetTitlePosition
+            );
             addEvent(AxisClass, 'afterInit', onAfterInit);
             addEvent(AxisClass, 'afterRender', onAfterRender);
-            addEvent(AxisClass, 'afterSetAxisTranslation', onAfterSetAxisTranslation);
+            addEvent(
+                AxisClass,
+                'afterSetAxisTranslation',
+                onAfterSetAxisTranslation
+            );
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
             addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions2);
             addEvent(AxisClass, 'afterSetScale', onAfterSetScale);
@@ -239,7 +248,11 @@ namespace GridAxis {
 
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
 
-        addEvent(TickClass, 'afterGetLabelPosition', onTickAfterGetLabelPosition);
+        addEvent(
+            TickClass,
+            'afterGetLabelPosition',
+            onTickAfterGetLabelPosition
+        );
         addEvent(TickClass, 'labelFormat', onTickLabelFormat);
 
         return AxisClass as (T&typeof GridAxis);
@@ -311,7 +324,10 @@ namespace GridAxis {
             this.treeGrid.mapOfPosToGridNode
         ) {
             const treeDepth = this.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            dimensions.width += this.options.labels.indentation * (treeDepth - 1);
+            dimensions.width += (
+                this.options.labels.indentation *
+                (treeDepth - 1)
+            );
         }
 
         return dimensions;
@@ -523,7 +539,10 @@ namespace GridAxis {
                                 axis.left,
                                 startPoint[2] || 0
                             ],
-                            upperBorderPath = [upperBorderStartPoint, upperBorderEndPoint],
+                            upperBorderPath = [
+                                upperBorderStartPoint,
+                                upperBorderEndPoint
+                            ],
                             lowerBorderEndPoint: SVGPath.Segment = [
                                 'L',
                                 axis.chart.chartWidth - axis.chart.marginRight,
@@ -534,10 +553,15 @@ namespace GridAxis {
                                 endPoint[1] || 0,
                                 axis.toPixels(max + axis.tickmarkOffset)
                             ],
-                            lowerBorderPath = [lowerBorderStartPoint, lowerBorderEndPoint];
+                            lowerBorderPath = [
+                                lowerBorderStartPoint,
+                                lowerBorderEndPoint
+                            ];
 
                         if (!axis.grid.upperBorder && min % 1 !== 0) {
-                            axis.grid.upperBorder = axis.grid.renderBorder(upperBorderPath);
+                            axis.grid.upperBorder = axis.grid.renderBorder(
+                                upperBorderPath
+                            );
                         }
                         if (axis.grid.upperBorder) {
                             axis.grid.upperBorder.attr({
@@ -550,7 +574,9 @@ namespace GridAxis {
                         }
 
                         if (!axis.grid.lowerBorder && max % 1 !== 0) {
-                            axis.grid.lowerBorder = axis.grid.renderBorder(lowerBorderPath);
+                            axis.grid.lowerBorder = axis.grid.renderBorder(
+                                lowerBorderPath
+                            );
                         }
                         if (axis.grid.lowerBorder) {
                             axis.grid.lowerBorder.attr({
@@ -563,10 +589,12 @@ namespace GridAxis {
                         }
                     }
 
-                    // Render an extra line parallel to the existing axes,
-                    // to close the grid.
+                    // Render an extra line parallel to the existing axes, to
+                    // close the grid.
                     if (!axis.grid.axisLineExtra) {
-                        axis.grid.axisLineExtra = axis.grid.renderBorder(linePath);
+                        axis.grid.axisLineExtra = axis.grid.renderBorder(
+                            linePath
+                        );
                     } else {
                         axis.grid.axisLineExtra.attr({
                             stroke: options.lineColor,
@@ -577,8 +605,7 @@ namespace GridAxis {
                         });
                     }
 
-                    // show or hide the line depending on
-                    // options.showEmpty
+                    // show or hide the line depending on options.showEmpty
                     axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
                 }
             }
@@ -597,13 +624,23 @@ namespace GridAxis {
                 )
             ) {
                 const tickmarkOffset = axis.tickmarkOffset,
-                    lastTick = axis.tickPositions[axis.tickPositions.length - 1],
+                    lastTick = axis.tickPositions[
+                        axis.tickPositions.length - 1
+                    ],
                     firstTick = axis.tickPositions[0];
 
-                let label: SVGElement|undefined;
+                let label: SVGElement|undefined,
+                    tickMark: SVGElement|undefined;
+
 
                 while ((label = axis.hiddenLabels.pop()) && label.element) {
                     label.show(); // #15453
+                }
+                while (
+                    (tickMark = axis.hiddenMarks.pop()) &&
+                    tickMark.element
+                ) {
+                    tickMark.show(); // #16439
                 }
 
                 // Hide/show firts tick label.
@@ -627,12 +664,12 @@ namespace GridAxis {
                 }
 
                 const mark = axis.ticks[lastTick].mark;
-                if (mark) {
-                    if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
-                        mark.hide();
-                    } else if (axis.ticks[lastTick - 1]) {
-                        mark.show();
-                    }
+                if (
+                    mark &&
+                    lastTick - max < tickmarkOffset &&
+                    lastTick - max > 0 && axis.ticks[lastTick].isLast
+                ) {
+                    axis.hiddenMarks.push(mark.hide());
                 }
             }
         }
@@ -665,7 +702,8 @@ namespace GridAxis {
                     options.labels &&
                     !defined(userLabels.align) &&
                     (
-                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any)
+                            .range === false ||
                         tickInfo.count > 1 // years
                     )
                 ) {
@@ -949,7 +987,10 @@ namespace GridAxis {
             const labelPadding =
                 (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
             const distance = horiz ?
-                gridOptions.cellHeight || labelPadding + maxLabelDimensions.height :
+                (
+                    gridOptions.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
                 labelPadding + maxLabelDimensions.width;
             if (isArray(e.tickSize)) {
                 e.tickSize[0] = distance;
@@ -964,7 +1005,9 @@ namespace GridAxis {
      */
     function onChartAfterSetChartSize(this: Chart): void {
         this.axes.forEach(function (axis): void {
-            (axis.grid && axis.grid.columns || []).forEach(function (column): void {
+            (axis.grid && axis.grid.columns || []).forEach(function (
+                column
+            ): void {
                 column.setAxisSize();
                 column.setAxisTranslation();
             });
@@ -1001,7 +1044,9 @@ namespace GridAxis {
         const gridOptions = userOptions.grid || {};
 
         if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+            userOptions.tickColor = userOptions.lineColor = (
+                gridOptions.borderColor
+            );
         }
 
         if (!axis.grid) {
@@ -1009,6 +1054,7 @@ namespace GridAxis {
         }
 
         axis.hiddenLabels = [];
+        axis.hiddenMarks = [];
     }
 
     /**
@@ -1335,7 +1381,10 @@ namespace GridAxis {
                 otherAxis: Axis,
                 index: number
             ): void {
-                if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
+                if (
+                    otherAxis.side === axis.side &&
+                    !otherAxis.options.isInternal
+                ) {
                     lastIndex = index;
                     if (otherAxis === parentAxis) {
                         // Get the index of the axis in question
@@ -1346,7 +1395,11 @@ namespace GridAxis {
 
             return (
                 lastIndex === thisIndex &&
-                (isNumber(columnIndex) ? (columns as any).length === columnIndex : true)
+                (
+                    isNumber(columnIndex) ?
+                        (columns as any).length === columnIndex :
+                        true
+                )
             );
         }
 

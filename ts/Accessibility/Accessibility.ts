@@ -160,7 +160,6 @@ class Accessibility {
         this.keyboardNavigation = new (KeyboardNavigation as any)(
             chart, this.components
         );
-        this.update();
     }
 
 
@@ -187,7 +186,9 @@ class Accessibility {
         }
 
         const components = this.components;
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].initBase(chart, proxyProvider);
             components[componentName].init();
         });
@@ -235,7 +236,9 @@ class Accessibility {
         this.proxyProvider.updateGroupOrder(kbdNavOrder);
 
         // Update markup
-        this.getComponentOrder().forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (
+            componentName: string
+        ): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -454,6 +457,9 @@ namespace Accessibility {
                 a11y.update();
             } else {
                 this.accessibility = a11y = new (Accessibility as any)(this);
+                if (a11y && !a11y.zombie) {
+                    a11y.update();
+                }
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
@@ -527,7 +533,7 @@ namespace Accessibility {
             });
 
             // Direct updates (events happen after render)
-            ['afterDrilldown', 'drillupall'].forEach((event): void => {
+            ['afterApplyDrilldown', 'drillupall'].forEach((event): void => {
                 addEvent(
                     ChartClass as typeof ChartComposition,
                     event,

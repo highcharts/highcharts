@@ -1,0 +1,7 @@
+---
+ name: Highcharts Static Gantt Chart for Gantt Product Page
+ authors:
+   - Nancy Dillon
+ skipTest: true
+ js_wrap: b
+...

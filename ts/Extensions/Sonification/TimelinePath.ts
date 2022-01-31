@@ -114,9 +114,9 @@ class TimelinePath {
         this.updateEventIdMap();
 
         // Signal events to fire
-        this.signalHandler = new SU.SignalHandler(
-            ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
-        );
+        this.signalHandler = new SU.SignalHandler([
+            'playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd'
+        ]);
         this.signalHandler.registerSignalCallbacks(
             merge(options as any, { masterOnEnd: options.onEnd })
         );

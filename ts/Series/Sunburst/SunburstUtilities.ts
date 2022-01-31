@@ -99,7 +99,8 @@ namespace SunburstUtilities {
             ): boolean {
                 return levels.indexOf(+k) === -1;
             });
-            diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
+            diffRadius = remainingSize = isNumber(p.diffRadius) ?
+                p.diffRadius : 0;
 
             // Convert percentage to pixels.
             // Calculate the remaining size to divide between "weight" levels.

@@ -16,21 +16,29 @@
  *
  * */
 
+import type CSSObject from '../CSSObject';
 import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
-const { SVG_NS } = H;
+const {
+    SVG_NS,
+    win
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
     createElement,
-    discardElement,
+    css,
     error,
+    isFunction,
     isString,
     objectEach,
     splat
 } = U;
+const {
+    trustedTypes
+} = win;
 
 /* *
  *
@@ -38,10 +46,29 @@ const {
  *
  * */
 
+// Create the trusted type policy. This should not be exposed.
+const trustedTypesPolicy = (
+    trustedTypes &&
+    isFunction(trustedTypes.createPolicy) &&
+    trustedTypes.createPolicy(
+        'highcharts', {
+            createHTML: (s: string): string => s
+        }
+    )
+);
+
+const emptyHTML = trustedTypesPolicy ?
+    trustedTypesPolicy.createHTML('') as unknown as string :
+    '';
+
+
 // In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 const hasValidDOMParser = (function (): boolean {
     try {
-        return Boolean(new DOMParser().parseFromString('', 'text/html'));
+        return Boolean(new DOMParser().parseFromString(
+            emptyHTML,
+            'text/html'
+        ));
     } catch (e) {
         return false;
     }
@@ -254,6 +281,37 @@ class AST {
         '#text'
     ];
 
+    public static emptyHTML = emptyHTML;
+
+    /**
+     * Allow all custom SVG and HTML attributes, references and tags (together
+     * with potentially harmful ones) to be added to the DOM from the chart
+     * configuration. In other words, disable the the allow-listing which is the
+     * primary functionality of the AST.
+     *
+     * WARNING: Setting this property to `true` while allowing untrusted user
+     * data in the chart configuration will expose your application to XSS
+     * security risks!
+     *
+     * Note that in case you want to allow a known set of tags or attributes,
+     * you should allow-list them instead of disabling the filtering totally.
+     * See [allowedAttributes](Highcharts.AST#.allowedAttributes),
+     * [allowedReferences](Highcharts.AST#.allowedReferences) and
+     * [allowedTags](Highcharts.AST#.allowedTags). The `bypassHTMLFiltering`
+     * setting is intended only for those cases where allow-listing is not
+     * practical, and the chart configuration already comes from a secure
+     * source.
+     *
+     * @example
+     * // Allow all custom attributes, references and tags (disable DOM XSS
+     * // filtering)
+     * Highcharts.AST.bypassHTMLFiltering = true;
+     *
+     * @name Highcharts.AST.bypassHTMLFiltering
+     * @static
+     */
+    public static bypassHTMLFiltering = false;
+
     /* *
      *
      *  Static Functions
@@ -296,6 +354,23 @@ class AST {
         return attributes;
     }
 
+    public static parseStyle(style: string): CSSObject {
+        return style
+            .split(';')
+            .reduce((styles, line): CSSObject => {
+                const pair = line.split(':').map((s): string => s.trim()),
+                    key = pair[0].replace(
+                        /-([a-z])/g,
+                        (g): string => g[1].toUpperCase()
+                    );
+
+                if (pair[1]) {
+                    (styles as any)[key] = pair[1];
+                }
+                return styles;
+            }, {} as CSSObject);
+    }
+
     /**
      * Utility function to set html content for an element by passing in a
      * markup string. The markup is safely parsed by the AST class to avoid
@@ -312,7 +387,7 @@ class AST {
      * Markup string
      */
     public static setElementHTML(el: Element, html: string): void {
-        el.innerHTML = ''; // Clear previous
+        el.innerHTML = AST.emptyHTML; // Clear previous
         if (html) {
             const ast = new AST(html);
             ast.addToDOM(el);
@@ -386,13 +461,18 @@ class AST {
                 const textNode = item.textContent ?
                     H.doc.createTextNode(item.textContent) :
                     void 0;
+                // Whether to ignore the AST filtering totally, #15345
+                const bypassHTMLFiltering = AST.bypassHTMLFiltering;
                 let node: Text|Element|undefined;
 
                 if (tagName) {
                     if (tagName === '#text') {
                         node = textNode;
 
-                    } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                    } else if (
+                        AST.allowedTags.indexOf(tagName) !== -1 ||
+                        bypassHTMLFiltering
+                    ) {
                         const NS = tagName === 'svg' ?
                             SVG_NS :
                             (subParent.namespaceURI || SVG_NS);
@@ -407,6 +487,7 @@ class AST {
                                 key !== 'tagName' &&
                                 key !== 'attributes' &&
                                 key !== 'children' &&
+                                key !== 'style' &&
                                 key !== 'textContent'
                             ) {
                                 (attributes as any)[key] = val;
@@ -414,8 +495,14 @@ class AST {
                         });
                         attr(
                             element as any,
-                            AST.filterUserAttributes(attributes)
+                            bypassHTMLFiltering ?
+                                attributes :
+                                AST.filterUserAttributes(attributes)
                         );
+
+                        if (item.style) {
+                            css(element as any, item.style);
+                        }
 
                         // Add text content
                         if (textNode) {
@@ -427,7 +514,10 @@ class AST {
                         node = element;
 
                     } else {
-                        error(`Highcharts warning: Invalid tagName '${tagName}' in config`);
+                        error(
+                            'Highcharts warning: Invalid tagName ' +
+                            tagName + ' in config'
+                        );
                     }
                 }
 
@@ -466,14 +556,22 @@ class AST {
 
         const nodes: Array<AST.Node> = [];
 
-        markup = markup.trim();
+        markup = markup
+            .trim()
+            // The style attribute throws a warning when parsing when CSP is
+            // enabled (#6884), so use an alias and pick it up below
+            .replace(/ style="/g, ' data-style="');
 
         let doc;
-        let body;
         if (hasValidDOMParser) {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
+            doc = new DOMParser().parseFromString(
+                trustedTypesPolicy ?
+                    trustedTypesPolicy.createHTML(markup) as unknown as string :
+                    markup,
+                'text/html'
+            );
         } else {
-            body = createElement('div');
+            const body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
         }
@@ -497,7 +595,11 @@ class AST {
             if (parsedAttributes) {
                 const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
-                    attributes[attrib.name] = attrib.value;
+                    if (attrib.name as string === 'data-style') {
+                        astNode.style = AST.parseStyle(attrib.value);
+                    } else {
+                        attributes[attrib.name] = attrib.value;
+                    }
                 });
                 astNode.attributes = attributes;
             }
@@ -524,10 +626,6 @@ class AST {
             (childNode): void => appendChildNodes(childNode, nodes)
         );
 
-        if (body) {
-            discardElement(body);
-        }
-
         return nodes;
     }
 }
@@ -549,6 +647,7 @@ namespace AST {
     export interface Node {
         attributes?: (HTMLAttributes&SVGAttributes);
         children?: Array<Node>;
+        style?: CSSObject;
         tagName?: string;
         textContent?: string;
     }

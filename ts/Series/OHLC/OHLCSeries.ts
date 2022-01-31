@@ -75,7 +75,7 @@ class OHLCSeries extends HLCSeries {
      * @sample stock/demo/ohlc/
      *         OHLC chart
      *
-     * @extends      plotOptions.ohlc
+     * @extends      plotOptions.hlc
      * @product      highstock
      * @optionparent plotOptions.ohlc
      */
@@ -346,6 +346,14 @@ addEvent(Series, 'afterSetOptions', function (
  * @excluding y, marker
  * @product   highstock
  * @apioption series.ohlc.data
+ */
+
+/**
+ * The closing value of each data point.
+ *
+ * @type      {number}
+ * @product   highstock
+ * @apioption series.ohlc.data.close
  */
 
 /**

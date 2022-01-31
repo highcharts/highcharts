@@ -63,7 +63,9 @@ function findPointInDataArray<T extends Accessibility.PointComposition>(
     point: T
 ): T {
     const candidates = (point.series.data as Array<T>).filter(
-        (candidate): boolean => (point.x === candidate.x && point.y === candidate.y)
+        (candidate): boolean => (
+            point.x === candidate.x && point.y === candidate.y
+        )
     );
 
     return candidates.length === 1 ? candidates[0] : point;
@@ -150,8 +152,11 @@ class NewDataAnnouncer {
      */
     public init(): void {
         const chart = this.chart;
-        const announceOptions = (chart.options.accessibility as any).announceNewData;
-        const announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
+        const announceOptions = (
+            (chart.options.accessibility as any).announceNewData
+        );
+        const announceType = announceOptions.interruptUser ?
+            'assertive' : 'polite';
 
         this.lastAnnouncementTime = 0;
         this.dirty = {
@@ -183,7 +188,7 @@ class NewDataAnnouncer {
             chart = this.chart,
             e = this.eventProvider;
 
-        e.addEvent(chart, 'afterDrilldown', function (): void {
+        e.addEvent(chart, 'afterApplyDrilldown', function (): void {
             announcer.lastAnnouncementTime = 0;
         });
 
@@ -241,7 +246,9 @@ class NewDataAnnouncer {
             this.queueAnnouncement(
                 Object
                     .keys(this.dirty.allSeries)
-                    .map((ix): Accessibility.SeriesComposition => announcer.dirty.allSeries[ix]),
+                    .map((ix): Accessibility.SeriesComposition =>
+                        announcer.dirty.allSeries[ix]
+                    ),
                 this.dirty.newSeries,
                 newPoint
             );
@@ -352,7 +359,8 @@ class NewDataAnnouncer {
         }
 
         // Default formatter - use lang options
-        const multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+        const multiple = H.charts && H.charts.length > 1 ?
+                'Multiple' : 'Single',
             langKey = newSeries ? 'newSeriesAnnounce' + multiple :
                 newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce',
             chartTitle = getChartTitle(chart);

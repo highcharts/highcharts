@@ -69,7 +69,8 @@ function isHighContrastModeActive(): boolean {
     // Test BG image for IE
     if (isMS && win.getComputedStyle) {
         const testDiv = doc.createElement('div');
-        const imageSrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+        const imageSrc = 'data:image/gif;base64,' +
+            'R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
         testDiv.style.backgroundImage = `url(${imageSrc})`; // #13071
         doc.body.appendChild(testDiv);
 
@@ -83,8 +84,8 @@ function isHighContrastModeActive(): boolean {
         return bi === 'none';
     }
 
-    // Not used for other browsers
-    return false;
+    // Other browsers use the forced-colors standard
+    return win.matchMedia && win.matchMedia('(forced-colors: active)').matches;
 }
 
 /**

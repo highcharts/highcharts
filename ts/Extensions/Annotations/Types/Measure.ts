@@ -379,7 +379,12 @@ class Measure extends Annotation {
         userOptions: Measure.MeasureOptions,
         index?: number
     ): void {
-        Annotation.prototype.init.call(this, annotationOrChart, userOptions, index);
+        Annotation.prototype.init.call(
+            this,
+            annotationOrChart,
+            userOptions,
+            index
+        );
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -503,8 +508,10 @@ class Measure extends Annotation {
         }
 
         if (this.labels.length > 0) {
-            (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
-                        Measure.calculations.defaultFormatter.call(this);
+            (this.labels[0] as any).text = (
+                (formatter && formatter.call(this)) ||
+                Measure.calculations.defaultFormatter.call(this)
+            );
 
         } else {
             this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
@@ -755,7 +762,11 @@ class Measure extends Annotation {
         }
 
         if (setStartPoints) {
-            (Measure.calculations.updateStartPoints.call as any)(this, true, false as any);
+            (Measure.calculations.updateStartPoints.call as any)(
+                this,
+                true,
+                false as any
+            );
         }
 
         // #11174 - clipBox was not recalculate during resize / redraw
@@ -769,13 +780,17 @@ class Measure extends Annotation {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
+        this.controlPoints.forEach(function (
+            controlPoint: Highcharts.AnnotationControlPoint
+        ): void {
             controlPoint.redraw();
         });
     }
 
     public translate(dx: number, dy: number): void {
-        this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
+        this.shapes.forEach(function (
+            item: Highcharts.AnnotationShapeType
+        ): void {
             item.translate(dx, dy);
         });
 

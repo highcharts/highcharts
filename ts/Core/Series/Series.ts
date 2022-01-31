@@ -24,6 +24,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type MapSeries from '../../Series/Map/MapSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
@@ -111,6 +112,13 @@ declare module '../Chart/ChartLike'{
 declare module '../Renderer/SVG/SVGElementLike' {
     interface SVGElementLike {
         survive?: boolean;
+    }
+}
+
+declare module './PointLike' {
+    interface PointLike {
+        plotX?: number;
+        plotY?: number;
     }
 }
 
@@ -1505,8 +1513,14 @@ class Series {
 
         // Sorting
         const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
+            const aValue = getNestedProperty(
+                sortKey,
+                a
+            ) as (boolean|number|string);
+            const bValue = getNestedProperty(
+                sortKey,
+                b
+            ) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         }) as Array<Point>;
         // Set x value depending on the position in the array
@@ -1593,7 +1607,7 @@ class Series {
             xExtremes = xAxis.getExtremes();
             min = xExtremes.min;
             max = xExtremes.max;
-            updatingNames = xAxis.categories && !xAxis.names.length;
+            updatingNames = !!(xAxis.categories && !xAxis.names.length);
         }
 
         // optionally filter out points outside the plot area
@@ -1706,7 +1720,9 @@ class Series {
         series.cropStart = processedData.cropStart;
         series.processedXData = processedData.xData;
         series.processedYData = processedData.yData;
-        series.closestPointRange = series.basePointRange = processedData.closestPointRange;
+        series.closestPointRange = (
+            series.basePointRange = processedData.closestPointRange
+        );
 
         fireEvent(series, 'afterProcessData');
     }
@@ -1769,7 +1785,9 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = options.data,
+            dataOptions = (
+                (series as unknown as MapSeries).processedData || options.data
+            ),
             processedXData = series.processedXData,
             processedYData = series.processedYData,
             PointClass = series.pointClass,
@@ -1847,7 +1865,9 @@ class Series {
                  * @sample stock/members/point-datagroup
                  *         Click to inspect raw data points
                  */
-                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
+                point.dataGroup = (series.groupMap as any)[
+                    groupCropStartIndex + i
+                ];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -1864,7 +1884,8 @@ class Series {
                  * @readonly
                  */
                 // For faster access in Point.update
-                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
+                point.index = hasGroupedData ?
+                    (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
@@ -2158,14 +2179,24 @@ class Series {
             ) + series.stackKey];
 
             if (
-                yAxis.positiveValuesOnly && !yAxis.validatePositiveValue(yValue) ||
-                xAxis.positiveValuesOnly && !xAxis.validatePositiveValue(xValue)
+                yAxis.positiveValuesOnly &&
+                !yAxis.validatePositiveValue(yValue) ||
+                xAxis.positiveValuesOnly &&
+                !xAxis.validatePositiveValue(xValue)
             ) {
                 point.isNull = true;
             }
 
-            // Get the plotX translation
+            /**
+             * The translated X value for the point in terms of pixels. Relative
+             * to the X axis position if the series has one, otherwise relative
+             * to the plot area. Depending on the series type this value might
+             * not be defined.
+             * @name Highcharts.Point#plotX
+             * @type {number|undefined}
+             */
             point.plotX = plotX = correctFloat( // #5236
+                // Get the plotX translation
                 limitedRange((xAxis.translate as any)( // #3923
                     xValue,
                     0,
@@ -2257,6 +2288,14 @@ class Series {
                     yValue, false, true, false, true
                 );
                 if (typeof translated !== 'undefined') {
+                    /**
+                     * The translated Y value for the point in terms of pixels.
+                     * Relative to the Y axis position if the series has one,
+                     * otherwise relative to the plot area. Depending on the
+                     * series type this value might not be defined.
+                     * @name Highcharts.Point#plotY
+                     * @type {number|undefined}
+                     */
                     point.plotY = limitedRange(translated);
                 }
             }
@@ -2284,11 +2323,9 @@ class Series {
             );
 
             // some API data
-            point.category = (
-                categories &&
-                typeof (categories as any)[point.x as any] !== 'undefined' ?
-                    (categories as any)[point.x as any] :
-                    point.x
+            point.category = pick(
+                categories && categories[point.x],
+                point.x as any
             );
 
             // Determine auto enabling of markers (#3635, #5099)
@@ -2479,8 +2516,12 @@ class Series {
                     width: 99,
                     height: inverted ? chart.chartWidth : chart.chartHeight
                 };
-                markerAnimationClipRect = chart.renderer.clipRect(markerClipBox);
-                chart.sharedClips[animationClipKey + 'm'] = markerAnimationClipRect;
+                markerAnimationClipRect = chart.renderer.clipRect(
+                    markerClipBox
+                );
+                chart.sharedClips[
+                    animationClipKey + 'm'
+                ] = markerAnimationClipRect;
             } else {
                 // When height changes during animation, typically due to
                 // responsive settings
@@ -2612,7 +2653,9 @@ class Series {
                 if (shouldDrawMarker) {
                     // Shortcuts
                     const symbol = pick(
-                        pointMarkerOptions.symbol, series.symbol, 'rect' as SymbolKey
+                        pointMarkerOptions.symbol,
+                        series.symbol,
+                        'rect' as SymbolKey
                     );
 
                     markerAttribs = series.markerAttribs(
@@ -2840,7 +2883,9 @@ class Series {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+            seriesStateOptions = (
+                (seriesMarkerOptions as any).states[state] || {}
+            );
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
@@ -2900,7 +2945,7 @@ class Series {
             axis;
 
         // add event hook
-        fireEvent(series, 'destroy');
+        fireEvent(series, 'destroy', { keepEventsForUpdate });
 
         // remove events
         this.removeEvents(keepEventsForUpdate);
@@ -3932,7 +3977,12 @@ class Series {
         }
         (dataOptions as any).splice(i, 0, options);
 
-        if (isInTheMiddle) {
+        if (
+            isInTheMiddle ||
+            // When processedData is present we need to splice an empty slot
+            // into series.data, otherwise generatePoints won't pick it up.
+            (series as unknown as MapSeries).processedData
+        ) {
             series.data.splice(i, 0, null as any);
             series.processData();
         }
@@ -4131,7 +4181,6 @@ class Series {
     ): void {
 
         options = cleanRecursively(options, this.userOptions);
-
         fireEvent(this, 'update', { options: options });
 
         const series = this,
@@ -4176,6 +4225,8 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            options.joinBy ||
+            options.mapData || // #11636
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
@@ -4202,6 +4253,9 @@ class Series {
                 // Networkgraph (#14397)
                 'nodes',
                 'layout',
+
+                // Treemap
+                'level',
 
                 // Map specific, consider moving it to series-specific preserve-
                 // properties (#10617)
@@ -4237,7 +4291,11 @@ class Series {
                 series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
-                plotOptions && plotOptions.series && plotOptions.series.pointStart,
+                (
+                    plotOptions &&
+                    plotOptions.series &&
+                    plotOptions.series.pointStart
+                ),
                 oldOptions.pointStart,
                 // when updating after addPoint
                 (series.xData as any)[0]
@@ -4269,8 +4327,6 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
-                // @todo slow, consider alternatives mentioned:
-                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
@@ -4280,8 +4336,10 @@ class Series {
                 // Legacy (IE < 11)
                 } else {
 
-                    const ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
-                        series.hcEvents;
+                    const ownEvents = Object.hasOwnProperty.call(
+                        series,
+                        'hcEvents'
+                    ) && series.hcEvents;
                     for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
                         (series as any)[n] = void 0;
                     }
@@ -4404,8 +4462,12 @@ class Series {
 
         return option !==
             pick(
-                plotOptions && plotOptions[this.type] && (plotOptions[this.type] as any)[optionName],
-                plotOptions && plotOptions.series && (plotOptions as any).series[optionName],
+                plotOptions &&
+                    plotOptions[this.type] &&
+                    (plotOptions[this.type] as any)[optionName],
+                plotOptions &&
+                    plotOptions.series &&
+                    (plotOptions as any).series[optionName],
                 option
             );
     }

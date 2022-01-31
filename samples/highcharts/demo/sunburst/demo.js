@@ -1396,6 +1396,7 @@ Highcharts.chart('container', {
     series: [{
         type: 'sunburst',
         data: data,
+        name: 'Root',
         allowDrillToNode: true,
         cursor: 'pointer',
         dataLabels: {

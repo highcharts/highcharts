@@ -94,34 +94,7 @@ declare global {
         changedTouches: Array<Touch>;
     }
 
-    /**
-     * @private
-     * @deprecated
-     * @todo Rename UMD argument `win` to `window`
-     */
-    const win: Window|undefined;
-
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-/**
- * @private
- * @deprecated
- * @todo Rename UMD argument `win` to `window`; move code to `Globals.win`
- */
-const w = (
-    typeof win !== 'undefined' ?
-        win :
-        typeof window !== 'undefined' ?
-            window :
-            {}
-// eslint-disable-next-line node/no-unsupported-features/es-builtins
-) as (Window&typeof globalThis);
 
 /* *
  *
@@ -143,12 +116,18 @@ namespace Globals {
     export const SVG_NS = 'http://www.w3.org/2000/svg',
         product = 'Highcharts',
         version = '@product.version@',
-        win = w,
+        win = (
+            typeof window !== 'undefined' ?
+                window :
+                {}
+        ) as (Window&typeof globalThis), // eslint-disable-line node/no-unsupported-features/es-builtins
         doc = win.document,
         svg = (
             doc &&
             doc.createElementNS &&
-            !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
+            !!(
+                doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement
+            ).createSVGRect
         ),
         userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,

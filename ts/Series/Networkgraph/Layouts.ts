@@ -144,7 +144,7 @@ declare global {
             public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
-            ): void
+            ): void;
             public repulsiveForces(): void;
             public resetSimulation(): void;
             public restartSimulation(): void;
@@ -368,7 +368,9 @@ extend(
             this.setDiffTemperature();
         },
 
-        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
+        restartSimulation: function (
+            this: Highcharts.NetworkgraphLayout
+        ): void {
 
             if (!this.simulation) {
                 // When dragging nodes, we don't need to calculate

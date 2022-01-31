@@ -55,13 +55,15 @@ function test_labelStyling() {
             }]
         }],
         drilldown: {
-            drillUpButton: {
+            breadcrumbs: {
                 relativeTo: relativeToValues.spacingBox,
                 position: {
+                    align: 'right',
+                    verticalAlign: 'top',
                     y: 0,
                     x: 0
                 },
-                theme: {
+                buttonTheme: {
                     fill: 'white',
                     'stroke-width': 1,
                     stroke: 'silver',

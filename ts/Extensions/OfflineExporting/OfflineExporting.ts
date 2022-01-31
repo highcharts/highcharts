@@ -27,8 +27,8 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type ExportingOptions from '../Exporting/ExportingOptions';
 import type Options from '../../Core/Options';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/DefaultOptions.js';
 const { defaultOptions } = D;
@@ -40,6 +40,10 @@ const {
     win,
     doc
 } = H;
+import HU from '../../Core/HttpUtilities.js';
+const {
+    ajax
+} = HU;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -47,8 +51,30 @@ const {
     error,
     extend,
     fireEvent,
+    pick,
     merge
 } = U;
+
+AST.allowedAttributes.push(
+    'data-z-index',
+    'fill-opacity',
+    'rx',
+    'ry',
+    'stroke-dasharray',
+    'stroke-linejoin',
+    'text-anchor',
+    'transform',
+    'version',
+    'viewBox',
+    'visibility',
+    'xmlns',
+    'xmlns:xlink'
+);
+AST.allowedTags.push(
+    'desc',
+    'clippath',
+    'g'
+);
 
 /* *
  *
@@ -197,7 +223,10 @@ namespace OfflineExporting {
             filename = (
                 (options.filename || 'chart') +
                 '.' +
-                (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])
+                (
+                    imageType === 'image/svg+xml' ?
+                        'svg' : imageType.split('/')[1]
+                )
             ),
             scale = options.scale || 1;
         let svgurl: string,
@@ -206,15 +235,113 @@ namespace OfflineExporting {
             libURL = (
                 options.libURL || (defaultOptions.exporting as any).libURL
             ),
-            objectURLRevoke = true;
+            objectURLRevoke = true,
+            pdfFont = options.pdfFont;
+
         // Allow libURL to end with or without fordward slash
         libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL;
 
-        /**
+        /*
+         * Detect if we need to load TTF fonts for the PDF, then load them and
+         * proceed.
+         *
          * @private
-             */
+         */
+        const loadPdfFonts = (
+            svgElement: SVGElement,
+            callback: Function
+        ): void => {
+
+            const hasNonASCII = (s: string): boolean => (
+                // eslint-disable-next-line no-control-regex
+                /[^\u0000-\u007F\u200B]+/.test(s)
+            );
+
+            // Register an event in order to add the font once jsPDF is
+            // initialized
+            const addFont = (
+                variant: 'bold'|'bolditalic'|'italic'|'normal',
+                base64: string
+            ): void => {
+                win.jspdf.jsPDF.API.events.push([
+                    'initialized',
+                    function (): void {
+                        this.addFileToVFS(variant, base64);
+                        this.addFont(
+                            variant,
+                            'HighchartsFont',
+                            variant
+                        );
+                        if (!(this as any).getFontList().HighchartsFont) {
+                            this.setFont('HighchartsFont');
+                        }
+                    }
+                ]);
+            };
+
+            // If there are no non-ASCII characters in the SVG, do not use
+            // bother downloading the font files
+            if (pdfFont && !hasNonASCII(svgElement.textContent || '')) {
+                pdfFont = void 0;
+            }
+
+
+            // Add new font if the URL is declared, #6417.
+            const variants = ['normal', 'italic', 'bold', 'bolditalic'] as
+                ('bold'|'bolditalic'|'italic'|'normal')[];
+
+            // Shift the first element off the variants and add as a font.
+            // Then asynchronously trigger the next variant until calling the
+            // callback when the variants are empty.
+            let normalBase64: string|undefined;
+            const shiftAndLoadVariant = (): void => {
+                const variant = variants.shift();
+
+                // All variants shifted and possibly loaded, proceed
+                if (!variant) {
+                    return callback();
+                }
+
+                const url = pdfFont && pdfFont[variant];
+
+                if (url) {
+                    ajax({
+                        url,
+                        responseType: 'blob',
+                        success: (data, xhr): void => {
+                            const reader = new FileReader();
+                            reader.onloadend = function (): void {
+                                if (typeof this.result === 'string') {
+                                    const base64 = this.result.split(',')[1];
+                                    addFont(variant, base64);
+
+                                    if (variant === 'normal') {
+                                        normalBase64 = base64;
+                                    }
+                                }
+                                shiftAndLoadVariant();
+                            };
+
+                            reader.readAsDataURL(xhr.response);
+                        },
+                        error: shiftAndLoadVariant
+                    });
+                } else {
+                    // For other variants, fall back to normal text weight/style
+                    if (normalBase64) {
+                        addFont(variant, normalBase64);
+                    }
+                    shiftAndLoadVariant();
+                }
+            };
+            shiftAndLoadVariant();
+        };
+
+        /*
+         * @private
+         */
         const downloadPDF = (): void => {
-            dummySVGContainer.innerHTML = svg;
+            AST.setElementHTML(dummySVGContainer, svg);
             const textElements = dummySVGContainer.getElementsByTagName('text'),
                 // Copy style property to element from parents if it's not
                 // there. Searches up hierarchy until it finds prop, or hits the
@@ -239,17 +366,22 @@ namespace OfflineExporting {
             // Workaround for the text styling. Making sure it does pick up
             // settings for parent elements.
             [].forEach.call(textElements, function (el: SVGDOMElement): void {
-                // Workaround for the text styling. making sure it does pick up@
+                // Workaround for the text styling. making sure it does pick up
                 // the root element
                 ['font-family', 'font-size'].forEach(function (
                     property: string
                 ): void {
                     setStylePropertyFromParents(el, property);
                 });
-                el.style['font-family' as any] = (
-                    el.style['font-family' as any] &&
-                    el.style['font-family' as any].split(' ').splice(-1)
-                ) as any;
+
+                el.style.fontFamily = pdfFont && pdfFont.normal ?
+                    // Custom PDF font
+                    'HighchartsFont' :
+                    // Generic font (serif, sans-serif etc)
+                    String(
+                        el.style.fontFamily &&
+                        el.style.fontFamily.split(' ').splice(-1)
+                    );
 
                 // Workaround for plotband with width, removing title from text
                 // nodes
@@ -260,15 +392,27 @@ namespace OfflineExporting {
                     el.removeChild(titleElement);
                 });
             });
-            const svgData = svgToPdf(dummySVGContainer.firstChild as any, 0);
-            try {
-                downloadURL(svgData, filename);
-                if (successCallback) {
-                    successCallback();
-                }
-            } catch (e) {
-                failCallback(e);
+
+            const svgNode = dummySVGContainer.querySelector('svg');
+            if (svgNode) {
+                loadPdfFonts(svgNode, (): void => {
+                    svgToPdf(
+                        svgNode,
+                        0,
+                        (pdfData: string): void => {
+                            try {
+                                downloadURL(pdfData, filename);
+                                if (successCallback) {
+                                    successCallback();
+                                }
+                            } catch (e) {
+                                failCallback(e);
+                            }
+                        }
+                    );
+                });
             }
+
         };
 
         // Initiate download depending on file type
@@ -291,7 +435,8 @@ namespace OfflineExporting {
                 failCallback(e);
             }
         } else if (imageType === 'application/pdf') {
-            if (win.jsPDF && win.svg2pdf) {
+
+            if (win.jspdf && win.jspdf.jsPDF) {
                 downloadPDF();
             } else {
                 // Must load pdf libraries first. // Don't destroy the object
@@ -299,9 +444,7 @@ namespace OfflineExporting {
                 // solution would be nice, but this will do for now.
                 objectURLRevoke = true;
                 getScript(libURL + 'jspdf.js', function (): void {
-                    getScript(libURL + 'svg2pdf.js', function (): void {
-                        downloadPDF();
-                    });
+                    getScript(libURL + 'svg2pdf.js', downloadPDF);
                 });
             }
         } else {
@@ -443,10 +586,9 @@ namespace OfflineExporting {
                         H.isMS || options.type === 'application/pdf'
                     )
                 ) {
-                    fallbackToExportServer(
-                        'Image type not supported' +
-                        'for charts with embedded HTML' as any
-                    );
+                    fallbackToExportServer(new Error(
+                        'Image type not supported for charts with embedded HTML'
+                    ));
                 } else {
                     OfflineExporting.downloadSVGLocal(
                         svg,
@@ -460,24 +602,26 @@ namespace OfflineExporting {
                 }
             },
 
-            // Return true if the SVG contains images with external data.
-            // With the boost module there are `image` elements with encoded
-            // PNGs, these are supported by svg2pdf and should
-            // pass (#10243).
+            // Return true if the SVG contains images with external data. With
+            // the boost module there are `image` elements with encoded PNGs,
+            // these are supported by svg2pdf and should pass (#10243).
             hasExternalImages = function (): boolean {
                 return [].some.call(
                     chart.container.getElementsByTagName('image'),
                     function (image: HTMLDOMElement): boolean {
                         const href = image.getAttribute('href');
-                        return href !== '' && (href as any).indexOf('data:') !== 0;
+                        return (
+                            href !== '' &&
+                            typeof href === 'string' &&
+                            href.indexOf('data:') !== 0
+                        );
                     }
                 );
             };
 
-        // If we are on IE and in styled mode, add a whitelist to the
-        // renderer for inline styles that we want to pass through. There
-        // are so many styles by default in IE that we don't want to
-        // blacklist them all.
+        // If we are on IE and in styled mode, add a whitelist to the renderer
+        // for inline styles that we want to pass through. There are so many
+        // styles by default in IE that we don't want to blacklist them all.
         if (H.isMS && chart.styledMode && !Exporting.inlineWhitelist.length) {
             Exporting.inlineWhitelist.push(
                 /^blockSize/,
@@ -527,9 +671,9 @@ namespace OfflineExporting {
                 hasExternalImages()
             )
         ) {
-            fallbackToExportServer(
-                'Image type not supported for this chart/browser.' as any
-            );
+            fallbackToExportServer(new Error(
+                'Image type not supported for this chart/browser.'
+            ));
             return;
         }
 
@@ -589,7 +733,10 @@ namespace OfflineExporting {
         const chart = this as Exporting.ChartComposition,
             // After grabbing the SVG of the chart's copy container we need
             // to do sanitation on the SVG
-            sanitize = (svg: string): string => chart.sanitizeSVG(svg, chartCopyOptions as any),
+            sanitize = (svg: string): string => chart.sanitizeSVG(
+                svg,
+                chartCopyOptions as any
+            ),
             // When done with last image we have our SVG
             checkDone = (): void => {
                 if (images && imagesEmbedded === imagesLength) {
@@ -633,7 +780,8 @@ namespace OfflineExporting {
         ): void => {
             chartCopyOptions = e.chartCopy.options;
             chartCopyContainer = e.chartCopy.container.cloneNode(true) as any;
-            images = chartCopyContainer && chartCopyContainer.getElementsByTagName('image') || [];
+            images = chartCopyContainer && chartCopyContainer
+                .getElementsByTagName('image') || [];
             imagesLength = images.length;
         });
 
@@ -644,7 +792,9 @@ namespace OfflineExporting {
             // If there are no images to embed, the SVG is okay now.
             if (!images || !images.length) {
                 // Use SVG of chart copy
-                successCallback(sanitize((chartCopyContainer as any).innerHTML));
+                successCallback(
+                    sanitize((chartCopyContainer as any).innerHTML)
+                );
                 return;
             }
 
@@ -752,7 +902,9 @@ namespace OfflineExporting {
                         } else {
                             canvas.height = img.height * scale;
                             canvas.width = img.width * scale;
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(
+                                img, 0, 0, canvas.width, canvas.height
+                            );
 
                             // Now we try to get the contents of the canvas.
                             try {
@@ -845,11 +997,16 @@ namespace OfflineExporting {
     /**
      * @private
      */
-    export function svgToPdf(svgElement: SVGElement, margin: number): string {
-        const width = svgElement.width.baseVal.value + 2 * margin,
-            height = svgElement.height.baseVal.value + 2 * margin,
-            pdf = new win.jsPDF( // eslint-disable-line new-cap
-                height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
+    export function svgToPdf(
+        svgElement: SVGElement,
+        margin: number,
+        callback: Function
+    ): void {
+        const width = Number(svgElement.getAttribute('width')) + 2 * margin,
+            height = Number(svgElement.getAttribute('height')) + 2 * margin,
+            pdfDoc = new win.jspdf.jsPDF( // eslint-disable-line new-cap
+                // setting orientation to portrait if height exceeds width
+                height > width ? 'p' : 'l',
                 'pt',
                 [width, height]
             );
@@ -894,8 +1051,13 @@ namespace OfflineExporting {
             }
         );
 
-        win.svg2pdf(svgElement, pdf, { removeInvalid: true });
-        return pdf.output('datauristring');
+        pdfDoc.svg(svgElement, {
+            x: 0,
+            y: 0,
+            width,
+            height,
+            removeInvalid: true
+        }).then(():void => callback(pdfDoc.output('datauristring')));
     }
 
 }

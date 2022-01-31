@@ -16,20 +16,26 @@ function showMap(mapKey) {
             events: {
                 click: function (e) {
                     const series = this.get(
-                            document
-                                .querySelector('input[name=series]:checked')
-                                .value
-                        ),
-                        pos = this.mapView.pixelsToProjectedUnits({
+                        document
+                            .querySelector('input[name=series]:checked')
+                            .value
+                    );
+
+                    let p = { lon: e.lon, lat: e.lat };
+
+                    // @todo Legacy, remove after launching v10
+                    if (p.lon === undefined || p.lat === undefined) {
+                        const pos = this.mapView.pixelsToProjectedUnits({
                             x: Math.round(e.chartX - this.plotLeft),
                             y: Math.round(e.chartY - this.plotTop)
                         });
 
-                    series.addPoint(
-                        supportsLatLon ?
+                        p = supportsLatLon ?
                             this.fromPointToLatLon(pos) :
-                            pos
-                    );
+                            pos;
+                    }
+
+                    series.addPoint(p);
                 }
             },
             animation: false

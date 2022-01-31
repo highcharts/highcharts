@@ -189,7 +189,10 @@ class PivotPointsIndicator extends SMAIndicator {
             pivotPoints: Array<LinePoint>
         ): void {
             path = path.concat(
-                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
+                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
+                    indicator,
+                    pivotPoints
+                )
             );
         });
 
@@ -250,9 +253,8 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(
-                        indicator, arguments
-                    );
+                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels
+                        .apply(indicator, arguments);
                 }
             );
         }

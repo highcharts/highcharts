@@ -34,18 +34,19 @@ import { Palette } from '../Color/Palettes.js';
 const ChartDefaults: ChartOptions = {
 
     /**
-     * Default `mapData` for all series. If set to a string, it functions
-     * as an index into the `Highcharts.maps` array. Otherwise it is
-     * interpreted as map data.
+     * Default `mapData` for all series, in terms of a GeoJSON or TopoJSON
+     * object. If set to a string, it functions as an index into the
+     * `Highcharts.maps` array.
      *
-     * @see [mapData](#series.map.mapData)
+     * For picking out individual shapes and geometries to use for each series
+     * of the map, see [series.mapData](#series.map.mapData).
      *
      * @sample    maps/demo/geojson
-     *            Loading geoJSON data
+     *            Loading GeoJSON data
      * @sample    maps/chart/topojson
-     *            Loading topoJSON converted to geoJSON
+     *            Loading TopoJSON data
      *
-     * @type      {string|Array<*>|Highcharts.GeoJSON}
+     * @type      {string|Array<*>|Highcharts.GeoJSON|Highcharts.TopoJSON}
      * @since     5.0.0
      * @product   highmaps
      * @apioption chart.map
@@ -62,7 +63,7 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * When using multiple axis, the ticks of two or more opposite axes
+     * When using multiple axes, the ticks of two or more opposite axes
      * will automatically be aligned by adding ticks to the axis or axes
      * with the least ticks, as if `tickAmount` were specified.
      *
@@ -70,8 +71,8 @@ const ChartDefaults: ChartOptions = {
      * lines look messy, it's a good idea to hide them for the secondary
      * axis by setting `gridLineWidth` to 0.
      *
-     * If `startOnTick` or `endOnTick` in an Axis options are set to false,
-     * then the `alignTicks ` will be disabled for the Axis.
+     * If `startOnTick` or `endOnTick` in the axis options are set to false,
+     * then the `alignTicks ` will be disabled for the axis.
      *
      * Disabled for logarithmic axes.
      *
@@ -89,6 +90,27 @@ const ChartDefaults: ChartOptions = {
      * @product   highcharts highstock gantt
      * @apioption chart.alignTicks
      */
+
+    /**
+     * When using multiple axes, align the thresholds. When this is true, other
+     * ticks will also be aligned.
+     *
+     *
+     * Note that for line series and some other series types, the `threshold`
+     * option is set to `null` by default. This will in turn cause their y-axis
+     * to not have a threshold. In order to avoid that, set the series
+     * `threshold` to 0 or another number.
+     *
+     * If `startOnTick` or `endOnTick` in the axis options are set to false, or
+     * if the axis is logarithmic, the threshold will not be aligned.
+     *
+     * @sample {highcharts} highcharts/chart/alignthresholds/ Set to true
+     *
+     * @since next
+     * @product   highcharts highstock gantt
+     * @apioption chart.alignThresholds
+     */
+    alignThresholds: false,
 
     /**
      * Set the overall animation for all chart updating. Animation can be
@@ -944,9 +966,10 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highstock} stock/chart/zoomtype-xy/
      *         Xy
+     * @sample {highmaps} maps/chart/zoomtype-xy/
+     *         Map with selection zoom
      *
      * @type       {string}
-     * @product    highcharts highstock gantt
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.zoomType
      */

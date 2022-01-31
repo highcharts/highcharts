@@ -116,7 +116,7 @@ class BBIndicator extends SMAIndicator {
          *      Background fill between lines.
          *
          * @type      {Highcharts.Color}
-         * @since     next
+         * @since 9.3.2
          * @apioption plotOptions.bb.fillColor
          *
          */

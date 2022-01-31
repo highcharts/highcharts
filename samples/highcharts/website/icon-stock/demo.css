@@ -49,21 +49,21 @@ body {
     -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: 300;
-    fill: #fff;
+    fill: #2f2b38;
     font-size: 12px;
     user-select: none;
     touch-action: manipulation;
     outline: none;
 }
 
-.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
-    stroke-width: 1px;
-}
-
 .chart-container .highcharts-grid-line {
     fill: none;
     stroke: transparent;
     z-index: 40;
+}
+
+.chart-container .highcharts-xaxis-grid .highcharts-grid-line {
+    stroke-width: 1px;
 }
 
 .chart-container .highcharts-plot-band,
@@ -100,7 +100,7 @@ body {
 
 .chart-container .highcharts-tooltip text {
     fill: #333;
-    font-family: Arial, sans-serif;
+    font-family: "IBM Plex Sans", sans-serif;
 }
 
 .chart-container .highcharts-tooltip {
@@ -120,6 +120,9 @@ body {
 #stock {
     width: 250px;
     height: 250px;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 #stock .transparent {
@@ -147,6 +150,7 @@ body {
 #stock .highcharts-range-selector-group.fade-in {
     opacity: 100%;
     transition: opacity 1s;
+    transform: translate(-20px, 30px);
 }
 
 #stock .highcharts-title {
@@ -218,6 +222,60 @@ body {
     transition: transform 2s;
 }
 
+#stock .green-line .highcharts-graph {
+    fill: transparent;
+    stroke-width: 18px;
+    stroke: #8bf2b6;
+}
+
+#stock .stick .highcharts-point {
+    stroke: #8087e8;
+    fill: #8087e8;
+}
+
+#stock .column .highcharts-point {
+    fill: #8bf2b6;
+    stroke: transparent;
+    opacity: 100%;
+}
+
+#stock .column .highcharts-pointshow {
+    opacity: 100%;
+}
+
+#stock .green-line .highcharts-point:nth-of-type(3) {
+    clip-path: polygon(12.14% 16.43%, 82.86% 17.14%, 82.86% 89.29%);
+    fill: #8bf2b6;
+    fill: transparent;
+    transform: translate(50px, -50px) scale(0.1);
+    transform-origin: center;
+    transition: all 1s;
+}
+
+#stock .purple-line .highcharts-graph {
+    fill: transparent;
+    stroke-width: 18px;
+    stroke: #8087e8;
+}
+
+#stock .white-line .highcharts-graph {
+    fill: transparent;
+    stroke-width: 18px;
+    stroke: #fff;
+}
+
+#stock .green-line.hide .highcharts-point,
+#stock .green-line.hide .highcharts-graph {
+    opacity: 0%;
+    transition: none;
+}
+
+#stock .purple-line.hide .highcharts-point,
+#stock .purple-line.hide .highcharts-graph {
+    opacity: 0%;
+    transition: none;
+}
+
 #stock .purple {
     fill: #8087e8;
     stroke: transparent;
@@ -228,11 +286,6 @@ body {
 }
 
 /* line */
-#stock .purple-line .highcharts-graph {
-    fill: transparent;
-    stroke-width: 18px;
-    stroke: #8087e8;
-}
 
 #stock .purple-line.fade-out .highcharts-graph {
     opacity: 0%;
@@ -275,11 +328,6 @@ body {
 }
 
 /* line */
-#stock .green-line .highcharts-graph {
-    fill: transparent;
-    stroke-width: 18px;
-    stroke: #8bf2b6;
-}
 
 #stock .green-line.fade-out .highcharts-graph {
     opacity: 0%;
@@ -287,14 +335,6 @@ body {
 }
 
 /* arrow */
-#stock .green-line .highcharts-point:nth-of-type(3) {
-    clip-path: polygon(12.14% 16.43%, 82.86% 17.14%, 82.86% 89.29%);
-    fill: #8bf2b6;
-    fill: transparent;
-    transform: translate(50px, -50px) scale(0.1);
-    transform-origin: center;
-    transition: all 1s;
-}
 
 #stock .green-line.static .highcharts-point:nth-of-type(3) {
     fill: #8bf2b6;
@@ -307,14 +347,6 @@ body {
     transform: none;
 }
 
-#stock .green-line.hide .highcharts-point,
-#stock .green-line.hide .highcharts-graph,
-#stock .purple-line.hide .highcharts-point,
-#stock .purple-line.hide .highcharts-graph {
-    opacity: 0%;
-    transition: none;
-}
-
 #stock .stick {
     opacity: 0%;
 }
@@ -322,11 +354,6 @@ body {
 #stock .stick.fade-in {
     opacity: 100%;
     transition: opacity 1s;
-}
-
-#stock .stick .highcharts-point {
-    stroke: #8087e8;
-    fill: #8087e8;
 }
 
 #stock .stick .highcharts-point-down {
@@ -337,23 +364,6 @@ body {
 #stock .highcharts-navigator-series {
     fill: transparent;
     stroke: #6f9ccd;
-}
-
-#stock .column .highcharts-point {
-    fill: #8bf2b6;
-    stroke: transparent;
-    opacity: 0%;
-}
-
-#stock .column.fade-in .highcharts-point {
-    transition: opacity 1s;
-    opacity: 100%;
-}
-
-#stock .white-line .highcharts-graph {
-    fill: transparent;
-    stroke-width: 18px;
-    stroke: #fff;
 }
 
 #stock .stock-top,
@@ -476,10 +486,6 @@ body {
         height: 400px;
     }
 
-    #stock .highcharts-input-group {
-        transform: translate(230px, -70px);
-    }
-
     #stock .highcharts-subtitle {
         font-weight: 400;
         font-size: 0.9em;
@@ -498,10 +504,6 @@ body {
     #stock {
         width: 500px;
         height: 500px;
-    }
-
-    #stock .highcharts-input-group {
-        transform: none;
     }
 
     #stock .purple-line .highcharts-graph {
