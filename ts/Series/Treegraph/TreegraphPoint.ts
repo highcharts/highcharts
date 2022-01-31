@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -18,9 +18,9 @@ import type TreegraphPointOptions from './TreegraphPointOptions';
 import type TreegraphSeries from './TreegraphSeries';
 import OrganizationPoint from '../Organization/OrganizationPoint.js';
 import TreegraphNode from './TreegraphNode.js';
-// import NodesComposition from '../NodesComposition';
-// import U from '../../Core/Utilities';
-// const { extend } = U;
+import NodesComposition from '../NodesComposition.js';
+import U from '../../Core/Utilities.js';
+const { extend } = U
 
 
 /* *
@@ -46,12 +46,12 @@ class TreegraphPoint extends OrganizationPoint {
     public toNode: TreegraphNode = void 0 as any;
 }
 
-// interface TreegraphPoint {
-//     setState: typeof NodesComposition['setNodeState'];
-// }
-// extend(TreegraphPoint.prototype, {
-//     setState: NodesComposition.setNodeState
-// });
+interface TreegraphPoint {
+    setState: typeof NodesComposition['setNodeState'];
+}
+extend(TreegraphPoint.prototype, {
+    setState: NodesComposition.setNodeState
+});
 /* *
  *
  *  Export Default

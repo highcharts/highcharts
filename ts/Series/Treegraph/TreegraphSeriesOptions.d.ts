@@ -15,6 +15,7 @@
  * */
 
 import type OrganizationSeriesOptions from '../Organization/OrganizationSeriesOptions';
+import { PointMarkerOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -23,9 +24,9 @@ import type OrganizationSeriesOptions from '../Organization/OrganizationSeriesOp
  * */
 
 export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
-    radius: number;
     minLinkWidth: number;
     borderWidth: number;
+    marker: PointMarkerOptions;
     alignNodes: string;
     link: any;
 }

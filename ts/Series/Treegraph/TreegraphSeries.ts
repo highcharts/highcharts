@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import NodesComposition from '../NodesComposition.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import TreegraphNode from './TreegraphNode.js';
@@ -43,7 +44,6 @@ import { Palette } from '../../Core/Color/Palettes';
 const { merge, pick, addEvent, relativeLength, stableSort } = U;
 
 import './TreegraphLayout.js';
-import Series from '../../Core/Series/Series';
 
 /* *
  *
@@ -83,10 +83,15 @@ class TreegraphSeries extends OrganizationSeries {
     public static defaultOptions: TreegraphSeriesOptions = merge(
         OrganizationSeries.defaultOptions,
         {
-            radius: 10,
             alignNodes: 'right',
             minLinkWidth: 1,
             borderWidth: 1,
+            marker: {
+                radius: 10,
+                symbol: 'circle',
+                fillOpacity: 1,
+                states: {}
+            },
             link: {
                 type: 'straight',
                 width: 1,
@@ -109,7 +114,7 @@ class TreegraphSeries extends OrganizationSeries {
     public points: Array<TreegraphPoint> = void 0 as any;
 
     public nodeColumns: Array<
-    SankeyColumnComposition.ArrayComposition<TreegraphNode>
+        SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > = void 0 as any;
 
     public nodes: Array<TreegraphNode> = void 0 as any;
@@ -140,9 +145,7 @@ class TreegraphSeries extends OrganizationSeries {
             // Prevents circular recursion:
             level = node.level || level;
             node.level = level;
-            node.linksFrom.forEach(function (
-                link: TreegraphPoint
-            ): void {
+            node.linksFrom.forEach(function (link: TreegraphPoint): void {
                 if (link.toNode) {
                     order(link.toNode, level + 1);
                 }
@@ -160,12 +163,12 @@ class TreegraphSeries extends OrganizationSeries {
                 .forEach(function (node: TreegraphNode): void {
                     order(node, 0);
                 });
-            stableSort(this.nodes, function (
-                a: TreegraphPoint,
-                b: TreegraphPoint
-            ): number {
-                return a.level - b.level;
-            });
+            stableSort(
+                this.nodes,
+                function (a: TreegraphPoint, b: TreegraphPoint): number {
+                    return a.level - b.level;
+                }
+            );
         }
     }
 
@@ -255,40 +258,58 @@ class TreegraphSeries extends OrganizationSeries {
             minY = Infinity,
             maxY = -Infinity,
             maxXRadius = 0,
-            maxYRadius = 0,
             minXRadius = 0,
+            maxYRadius = 0,
             minYRadius = 0;
-            // TODO move this search to layout Algorythm
+        // TODO move this search to layout Algorythm
         series.nodes.forEach((node: TreegraphNode): void => {
+            const markerOptions = merge(options.marker, node.options.marker);
+            const symbol = markerOptions.symbol;
+            // const markerRadius = pick(
+            //     node.options.radius,
+            //     markerOptions.radius,
+            //     this.options.radius
+            // );
+            node.symbol = symbol;
+            const nodeSizeY =
+                symbol === 'circle'
+                    ? pick(markerOptions.radius) as number * 2
+                    : markerOptions.height as any;
+            const nodeSizeX =
+                symbol === 'circle'
+                    ? pick(markerOptions.radius) as number * 2
+                    : markerOptions.width as any;
+            node.nodeSizeX = nodeSizeX;
+            node.nodeSizeY = nodeSizeY;
+
             if (node.xPosition < minX) {
                 minX = node.xPosition;
-                minXRadius = pick(node.options.radius, series.options.radius);
+                minXRadius = nodeSizeY as number;
             }
             if (node.xPosition > maxX) {
                 maxX = node.xPosition;
-                maxXRadius = pick(node.options.radius, series.options.radius);
+                maxXRadius = nodeSizeX as number;
             }
             if (node.yPosition < minY) {
                 minY = node.yPosition;
-                minYRadius = pick(node.options.radius, series.options.radius);
+                minYRadius = nodeSizeY as number;
             }
             if (node.yPosition > maxY) {
                 maxY = node.yPosition;
-                maxYRadius = pick(node.options.radius, series.options.radius);
+                maxYRadius = nodeSizeY as number;
             }
         });
 
         let ay = (maxY === minY ?
             1 :
-            (plotSizeY - 2 * minYRadius) / (maxY - minY));
+            (plotSizeY - minYRadius) / (maxY - minY));
         let by = (maxY === minY ? plotSizeY / 2 : -ay * minY);
         let ax = (maxX === minX ?
             1 :
-            (plotSizeX - 2 * maxXRadius) / (maxX - minX));
+            (plotSizeX - maxXRadius) / (maxX - minX));
         let bx = (maxX === minX ? plotSizeX / 2 : -ax * minX);
 
         series.layoutModifier = { ax, bx, ay, by };
-
 
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
@@ -314,19 +335,19 @@ class TreegraphSeries extends OrganizationSeries {
             });
         });
     }
+
     public pointAttribs(
         point: TreegraphPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
-        const series = this,
-            attribs = orgProto.pointAttribs.call(this, point, state);
-
-        if (point.isNode) {
-            attribs.r =
-                point.options.radius || series.options.radius || attribs.r;
+        if (point && point.isNode) {
+            const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
+                this,
+                arguments
+            );
+            return attrs;
         }
-
-        return attribs;
+        return super.pointAttribs.apply(this, arguments);
     }
 
     /**
@@ -360,22 +381,20 @@ class TreegraphSeries extends OrganizationSeries {
         const previousColumn = (this as any).nodeColumns[node.column - 1];
         const emptySpaceWidth = (this as any).emptySpaceWidth;
 
-        const xOffset = previousColumn ?
-            previousColumn.xOffset +
-                previousColumn.maxRadius * 2 +
-                emptySpaceWidth :
-            0;
+        const xOffset = previousColumn
+            ? previousColumn.xOffset +
+              previousColumn.maxRadius * 2 +
+              emptySpaceWidth
+            : 0;
 
-        const nodeLeft = chart.inverted ?
-            (plotSizeX as number) - xOffset :
-            xOffset;
+        const nodeLeft = chart.inverted
+            ? (plotSizeX as number) - xOffset
+            : xOffset;
         node.sum = 1;
 
         // Draw the node
-        node.shapeType = 'circle';
         node.nodeX = nodeLeft;
         node.nodeY = fromNodeTop;
-        (column as any).xOffset = xOffset;
 
         const { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
@@ -385,24 +404,45 @@ class TreegraphSeries extends OrganizationSeries {
         // in inverted chart
         node.shapeType = 'path';
         const markerOptions = merge(options.marker, node.options.marker);
-        const symbol = markerOptions.symbol;
+        const symbol = node.symbol;
         const markerRadius = pick(
             node.options.radius,
             markerOptions.radius,
-            this.options.radius
+            this.options.marker.radius
         );
-        node.shapeArgs = {
-            d: symbols[symbol || 'circle'](
-                chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
-                y - markerRadius + this.options.radius,
-                markerRadius * 2,
-                markerRadius * 2
-            ),
-            x: chart.inverted ? plotSizeX - markerRadius * 2 - x : x,
-            y: y - markerRadius + this.options.radius,
-            width: markerRadius * 2,
-            height: markerRadius * 2
-        };
+
+        let shapeArgs;
+            let width = node.nodeSizeX;
+            let height = node.nodeSizeY;
+        if (symbol === 'circle') {
+            shapeArgs = {
+                d: symbols.circle(
+                    chart.inverted ? plotSizeX - width - x : x,
+                    y,
+                    markerRadius * 2,
+                    markerRadius * 2
+                ),
+                x: chart.inverted ? plotSizeX - width - x : x,
+                y: y,
+                width: markerRadius * 2,
+                height: markerRadius * 2
+            };
+        } else {
+            shapeArgs = {
+                d: symbols[symbol || 'circle'](
+                    chart.inverted ? plotSizeX - width - x : x,
+                    y,
+                    width,
+                    height
+                ),
+                x: chart.inverted ? plotSizeX - width - x : x,
+                y: y,
+                width,
+                height
+            };
+        }
+        node.shapeArgs =  shapeArgs;
+
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point
         node.dlOptions = TreegraphSeries.getDLOptions({
@@ -412,9 +452,9 @@ class TreegraphSeries extends OrganizationSeries {
         // Pass test in drawPoints
         node.plotY = 1;
         // Set the anchor position for tooltips
-        node.tooltipPos = chart.inverted ?
-            [plotSizeY - y, plotSizeX - x] :
-            [x, y];
+        node.tooltipPos = chart.inverted
+            ? [plotSizeY - y, plotSizeX - x]
+            : [x, y];
     }
 
     public alignDataLabel(): void {
@@ -422,7 +462,7 @@ class TreegraphSeries extends OrganizationSeries {
     }
 
     public createNodeColumns(): Array<
-    SankeyColumnComposition.ArrayComposition<TreegraphNode>
+        SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > {
         const originalNodes = this.nodes;
         this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
@@ -483,7 +523,7 @@ class TreegraphSeries extends OrganizationSeries {
         });
         this.nodes = originalNodes;
         return nodeColumns as unknown as Array<
-        SankeyColumnComposition.ArrayComposition<TreegraphNode>
+            SankeyColumnComposition.ArrayComposition<TreegraphNode>
         >;
     }
 }

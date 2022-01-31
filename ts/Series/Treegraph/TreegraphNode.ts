@@ -15,6 +15,8 @@ class TreegraphNode extends TreegraphPoint {
     public hidden = false;
     public linksFrom: Array<TreegraphPoint> = void 0 as any;
     public linksTo: Array<TreegraphPoint> = void 0 as any;
+    public nodeSizeX: number = void 0 as any;
+    public nodeSizeY: number = void 0 as any;
     public nodeHeight?: number;
     public series: TreegraphSeries = void 0 as any;
 
