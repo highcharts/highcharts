@@ -43,6 +43,7 @@ import { Palette } from '../../Core/Color/Palettes';
 const { merge, pick, addEvent, relativeLength, stableSort } = U;
 
 import './TreegraphLayout.js';
+import Series from '../../Core/Series/Series';
 
 /* *
  *
@@ -488,7 +489,7 @@ class TreegraphSeries extends OrganizationSeries {
 }
 // Handle showing and hiding of the points
 addEvent(TreegraphSeries, 'click', function (e: any): void {
-    const point = e.point as TreegraphPoint;
+    const point = e.point as TreegraphNode;
     point.collapsed = !point.collapsed;
 
     collapseTreeFromPoint(point, point.collapsed);
@@ -496,13 +497,12 @@ addEvent(TreegraphSeries, 'click', function (e: any): void {
 });
 
 function collapseTreeFromPoint(
-    point: TreegraphPoint,
+    point: TreegraphNode,
     collapsed: boolean
 ): void {
-    point.linksFrom.forEach((link: any): void => {
+    point.linksFrom.forEach((link: TreegraphPoint): void => {
         link.toNode.hidden = collapsed;
         link.update({ visible: !collapsed }, false);
-        // to change
         link.toNode.update({ visible: !collapsed }, false);
         collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
     });

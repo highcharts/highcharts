@@ -67,18 +67,18 @@ extend(H.treeLayouts.Walker.prototype, {
         nodes.forEach((node): void => {
             node.linksFrom.forEach((link, index): void => {
 
-                if ((node as any).linksFrom[index].trueToNode) {
+                if (node.linksFrom[index].trueToNode) {
                     node.linksFrom[index].toNode =
                         (node as any).linksFrom[index].trueToNode;
                 }
 
-                // Then connection from chhild to dummyNode
+                // Then connection from child to dummyNode
                 if (
-                    (node as any).linksTo.length &&
-                    (node as any).linksTo[0].trueFromNode
+                    node.linksTo.length &&
+                    node.linksTo[0].trueFromNode
                 ) {
                     node.linksTo[0].fromNode =
-                        (node as any).linksTo[0].trueFromNode;
+                        node.linksTo[0].trueFromNode;
                 }
             });
         });
@@ -136,14 +136,14 @@ extend(H.treeLayouts.Walker.prototype, {
                         dummyNode.level = child.level - gapSize;
 
                         // Then connection from parent to dummyNode
-                        if (!(parent as any).linksFrom[index].trueToNode) {
-                            (parent as any).linksFrom[index].trueToNode = child;
+                        if (!parent.linksFrom[index].trueToNode) {
+                            parent.linksFrom[index].trueToNode = child;
                         }
                         parent.linksFrom[index].toNode = dummyNode;
 
                         // Then connection from chhild to dummyNode
-                        if (!(child as any).linksTo[0].trueFromNode) {
-                            (child as any).linksTo[0].trueFromNode = parent;
+                        if (!child.linksTo[0].trueFromNode) {
+                            child.linksTo[0].trueFromNode = parent;
                         }
                         child.linksTo[0].fromNode = dummyNode;
                         return dummyNode;
@@ -177,7 +177,7 @@ extend(H.treeLayouts.Walker.prototype, {
     ): void {
         const treeLayout = this as Highcharts.TreegraphLayout;
         node.linksFrom.forEach((link, index): void => {
-            treeLayout.calculateInitialX((link as any).toNode, index);
+            treeLayout.calculateInitialX(link.toNode, index);
         });
         node.relativeXPosition = index;
     },
@@ -208,7 +208,7 @@ extend(H.treeLayouts.Walker.prototype, {
             node.linksFrom.forEach(function (link): void {
                 treeLayout.firstWalk(link.toNode as any);
                 defaultAncestor = treeLayout.apportion(
-                    link.toNode as any,
+                    link.toNode,
                     defaultAncestor
                 );
             });
@@ -243,7 +243,7 @@ extend(H.treeLayouts.Walker.prototype, {
         node.yPosition = node.preX + modSum;
         node.xPosition = node.level * treeLayout.levelSeparation;
         node.linksFrom.forEach(function (link): void {
-            treeLayout.secondWalk(link.toNode as any, modSum + node.mod);
+            treeLayout.secondWalk(link.toNode, modSum + node.mod);
         });
     },
     // shift all children of the current node from right to left.
