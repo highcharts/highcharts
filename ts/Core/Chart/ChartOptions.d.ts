@@ -27,6 +27,10 @@ import type { NumberFormatterCallbackFunction } from '../Options';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
 
 /* *
  *
@@ -61,6 +65,10 @@ export interface ChartAddSeriesEventObject {
 export interface ChartClickCallbackFunction {
     (this: Chart, event: PointerEvent): void;
 }
+export interface ChartCloningnCallbackFunction {
+    (data: Array<(PointOptions|PointShortOptions)>):
+    Array<(PointOptions|PointShortOptions)>;
+}
 
 export interface ChartClickEventAxisObject {
     axis: Axis;
@@ -94,6 +102,7 @@ export interface ChartOptions {
     borderRadius?: number;
     borderWidth?: number;
     className?: string;
+    cloningMethod?: ChartCloningnCallbackFunction
     colorCount?: number;
     allowMutatingData?: boolean;
     events?: ChartEventsOptions;
