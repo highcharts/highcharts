@@ -481,7 +481,9 @@ class Series {
             !options.copyOfOriginalData &&
             !chart.options.chart.allowMutatingData
         ) {
-            options.data = JSON.parse(JSON.stringify(options.data));
+            options.data = chart.options.chart.cloningMethod ?
+                chart.options.chart.cloningMethod(options.data) :
+                JSON.parse(JSON.stringify(options.data));
             options.copyOfOriginalData = true;
         }
 
