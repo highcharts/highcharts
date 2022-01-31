@@ -161,14 +161,15 @@ class MapPointSeries extends ScatterSeries {
                 }
 
                 if (isNumber(x) && isNumber(y)) {
+                    p.x = x;
+                    p.y = y;
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
                     p.plotY = hasCoordinates ?
                         plotCoords.y :
                         this.chart.plotHeight - plotCoords.y;
                 } else {
-                    p.plotX = void 0;
-                    p.plotY = void 0;
+                    p.y = p.plotX = p.plotY = void 0;
                 }
 
                 p.isInside = this.isPointInside(p);
