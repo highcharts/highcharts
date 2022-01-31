@@ -2886,6 +2886,22 @@ export default DefaultOptions;
  */
 
 /**
+ * Gets fired when the chart is being initialized.
+ * Allows implementing your own copying method.
+ *
+ * @callback Highcharts.ChartCloningnCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the cloning occurs.
+ *
+ * @param {Array<(PointOptions|PointShortOptions)>} data
+ *        The data array.
+ *
+ * @return {Array<(PointOptions|PointShortOptions)>}
+ *         Return the copied data array.
+ */
+
+/**
  * Contains an axes of the clicked spot.
  *
  * @interface Highcharts.ChartClickEventAxisObject
