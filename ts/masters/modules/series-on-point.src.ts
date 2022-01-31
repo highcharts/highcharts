@@ -17,4 +17,4 @@ import SeriesOnPointComposition from '../../Series/SeriesOnPointComposition.js';
 
 const G: AnyRecord = Highcharts;
 
-SeriesOnPointComposition.compose(G.Series);
+SeriesOnPointComposition.compose(G.Series, G.Chart);

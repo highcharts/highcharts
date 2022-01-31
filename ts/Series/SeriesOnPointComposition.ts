@@ -25,15 +25,18 @@ import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
-const { pie } = SeriesRegistry.seriesTypes;
+const { pie, bubble } = SeriesRegistry.seriesTypes;
 const drawPoints = pie.prototype.drawPoints;
 const getCenter = pie.prototype.getCenter;
+const translate = pie.prototype.translate;
 
 import U from '../Core/Utilities.js';
+import Chart from '../Core/Chart/Chart';
 const {
     addEvent,
     isArray,
     isObject,
+    isNumber,
     pick
 } = U;
 
@@ -121,7 +124,8 @@ namespace SeriesOnPointComposition {
      * Point class to use.
      */
     export function compose<T extends typeof Series>(
-        SeriesClass: T
+        SeriesClass: T,
+        ChartClass: typeof Chart
         // PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
         if (composedClasses.indexOf(SeriesClass) === -1) {
@@ -132,14 +136,59 @@ namespace SeriesOnPointComposition {
             seriesProto.getConnectorAttributes = getConnectorAttributes;
             seriesProto.seriesDrawConnector = seriesDrawConnector;
             pie.prototype.drawPoints = seriesDrawPoints;
+            pie.prototype.translate = seriesTranslate;
+            (pie as any).prototype.bubblePadding = true;
+            (pie as any).prototype.getRadius = bubble.prototype.getRadius;
+            (pie as any).prototype.getRadii = bubble.prototype.getRadii;
+            (pie as any).prototype.getZExtremes =
+                bubble.prototype.getZExtremes;
+            (pie as any).prototype.getPxExtremes =
+                bubble.prototype.getPxExtremes;
 
-            addEvent(SeriesClass, 'afterInit', afterInit);
+            addEvent(pie, 'afterInit', afterInit);
+            addEvent(pie, 'update', update);
 
+        }
+
+        if (composedClasses.indexOf(ChartClass) === -1) {
+            composedClasses.push(ChartClass);
+
+            addEvent(ChartClass, 'beforeRender', getZData);
+            addEvent(ChartClass, 'predraw', getZData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
     }
 
+    /**
+     * Extend series.init by adding a methods to add a value.
+     *
+     * @ignore
+     * @function Highcharts.Series#init
+    */
+    function getZData(this: Chart): void {
+        const zData: Array<number> = [];
+
+        this.series.forEach((series): void => {
+            if (series.options.onPoint) {
+                zData.push(series.options.onPoint.z);
+            }
+        });
+
+        this.series.forEach((series): void => {
+            series.zData = zData;
+        });
+    }
+
+    /**
+     * Extend series.init by adding a methods to add a value.
+     *
+     * @ignore
+     * @function Highcharts.Series#init
+    */
+    function update(this: Series): void {
+        delete this.chart.bubbleZExtremes;
+    }
 
     /**
      * Extend series.init by adding a methods to add a value.
@@ -159,37 +208,54 @@ namespace SeriesOnPointComposition {
         this.onPoint = onPoint;
     }
 
+    function seriesTranslate(this: any): void {
+        this.getRadii();
+
+        translate.call(this);
+    }
+
     function seriesGetCenter(this: Series): Array<number> {
+        const onPointOptions = this.options.onPoint;
+
         let ret = getCenter.call(this);
 
-        const connectedPoint = this.chart
-            .get((this.options.onPoint as any).id) as Point;
+        if (onPointOptions) {
+            const connectedPoint = this.chart.get(onPointOptions.id);
 
-        if (connectedPoint.plotX && connectedPoint.plotY) {
-            ret[0] = connectedPoint.plotX;
-            ret[1] = connectedPoint.plotY;
+            if (
+                connectedPoint instanceof Point &&
+                connectedPoint.plotX &&
+                connectedPoint.plotY
+            ) {
+                ret[0] = connectedPoint.plotX;
+                ret[1] = connectedPoint.plotY;
+            }
+
+            const position = onPointOptions.position;
+
+            if (position) {
+                if (position.x) {
+                    ret[0] = position.x;
+                }
+
+                if (position.y) {
+                    ret[1] = position.y;
+                }
+
+                if (position.offsetX) {
+                    ret[0] += position.offsetX;
+                }
+
+                if (position.offsetY) {
+                    ret[1] += position.offsetY;
+                }
+            }
         }
 
-        const onPoint = this.options.onPoint;
+        const radius = this.radii && this.radii[(this.options as any).pieIndex];
 
-        if (onPoint && onPoint.position) {
-            const position = onPoint.position;
-
-            if (position.x) {
-                ret[0] = position.x;
-            }
-
-            if (position.y) {
-                ret[1] = position.y;
-            }
-
-            if (position.offsetX) {
-                ret[0] += position.offsetX;
-            }
-
-            if (position.offsetY) {
-                ret[1] += position.offsetY;
-            }
+        if (isNumber(radius)) {
+            ret[2] = radius * 2;
         }
 
         // 0: centerX, relative to width
@@ -321,7 +387,11 @@ namespace SeriesOnPointComposition {
 
         public connector: SVGElement = void 0 as any;
 
+        public id: string = void 0 as any;
+
         public position: Position;
+
+        z: number = void 0 as any;
 
         /**
          * @ignore
