@@ -56,7 +56,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
     /* eslint-disable valid-jsdoc */
 
     public applyOptions(
-        options: (Highcharts.MapLatLonObject&MapPointPointOptions),
+        options: (Highcharts.MapLonLatObject&MapPointPointOptions),
         x?: number
     ): MapPointPoint {
         const mergedOptions = (
