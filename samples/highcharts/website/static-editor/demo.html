@@ -1,46 +1,17 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-more.js"></script> 
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/highcharts-more.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/modules/data.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/funnel.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://code.highcharts.com/6.1.0/modules/annotations.js" type="text/javascript" charset="utf-8"></script>
+
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 
-<div class="chart-container" id="fjords" ></div>
 
-<!-- <div class="chart-container" id="fjords2" ></div> -->
-</div>
-<div class="title-container">
-    <div id="title">
-        <p class="subtitle">Sea water temperature in</p>
-        <h3 class="title"> Sognefjorden </h3>
-        <p class="small-in">-in-</p>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle jan" 
-            type="button" id="dropdownMenuButton" 
-            aria-haspopup="true" aria-expanded="false">
-            January
-            </button>
-            <div class="month-container d-none " 
-             aria-labelledby="dropdownMenuButton">
-                <a class="month active"  
-                href="#" data-index=0 id="jan">Jan</a>
-                <a class="month" href="#" data-index=1 id="feb">Feb</a>
-                <a class="month" href="#" data-index=2 id="mar">Mar</a>
-                <a class="month" href="#" data-index=3 id="apr">Apr</a>
-                <a class="month" href="#" data-index=4 id="may">May</a>
-                <a class="month" href="#" data-index=5 id="jun">Jun</a>
-                <a class="month" href="#" data-index=6 id="jul">Jul</a>
-                <a class="month" href="#" data-index=7 id="aug">Aug</a>
-                <a class="month" href="#" data-index=8 id="sep">Sep</a>
-                <a class="month" href="#" data-index=9 id="oct">Oct</a>
-                <a class="month" href="#" data-index=10 id="nov">Nov</a>
-                <a class="month" href="#" data-index=11 id="dec">Dec</a>
-            </div>
-        </div>
-        <div role="region" id="tempInfo" aria-live="polite">
-            <h2 id="month">January</h2>
-            <p id="avgTemp">6 degrees celsius</p>
-          </div>
-          
-    </div>
-</div>
+<div class="chart-container" id="editor"></div>
 
