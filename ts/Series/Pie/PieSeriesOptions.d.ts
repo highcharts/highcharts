@@ -40,6 +40,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     slicedOffset?: number;
     startAngle?: number;
     states?: SeriesStatesOptions<PieSeries>;
+    thickness?: number;
 }
 
 /* *
