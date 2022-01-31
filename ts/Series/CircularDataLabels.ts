@@ -82,7 +82,7 @@ namespace CircularDataLabels {
             optionsSeries = point.series.options.dataLabels,
             options = merge<any>({
                 style: {}
-            }, optionsLevel, optionsPoint, optionsSeries),
+            }, optionsSeries, optionsLevel, optionsPoint),
             rotationRad: (number|undefined),
             rotation: (number|undefined),
             rotationMode = options.rotationMode;
