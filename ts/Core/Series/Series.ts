@@ -481,9 +481,18 @@ class Series {
             !options.copyOfOriginalData &&
             !chart.options.chart.allowMutatingData
         ) {
-            options.data = chart.options.chart.cloningMethod ?
-                chart.options.chart.cloningMethod(options.data) :
-                JSON.parse(JSON.stringify(options.data));
+            if (chart.options.chart.cloningMethod) {
+                options.data = chart.options.chart.cloningMethod(options.data);
+            } else {
+                try {
+                    options.data = JSON.parse(JSON.stringify(options.data));
+                } catch (error) {
+                    throw new Error(
+                        `Not able to copy the dataset,
+                        use your own chart.cloningMethod.`
+                    );
+                }
+            }
             options.copyOfOriginalData = true;
         }
 
