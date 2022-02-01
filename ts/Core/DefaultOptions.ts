@@ -2894,10 +2894,10 @@ export default DefaultOptions;
  * @param {Highcharts.Chart} this
  *        The chart on which the cloning occurs.
  *
- * @param {Array<(Highcharts.PointOptions|Highcharts.PointShortOptions)>} data
+ * @param {Array<*>} data
  *        The data array.
  *
- * @return {Array<(Highcharts.PointOptions|Highcharts.PointShortOptions)>}
+ * @return {Array<*>}
  *         Return the copied data array.
  */
 
