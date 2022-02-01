@@ -45,6 +45,12 @@ const { merge, pick, addEvent, relativeLength, stableSort } = U;
 
 import './TreegraphLayout.js';
 
+interface LayoutAlgorythmParameters {
+    ax: number;
+    bx: number;
+    ay: number;
+    by: number;
+}
 /* *
  *
  *  Class
@@ -83,8 +89,10 @@ class TreegraphSeries extends OrganizationSeries {
     public static defaultOptions: TreegraphSeriesOptions = merge(
         OrganizationSeries.defaultOptions,
         {
+            layout: 'Walker',
             alignNodes: 'right',
             minLinkWidth: 1,
+            reversed: false,
             borderWidth: 1,
             marker: {
                 radius: 10,
@@ -114,13 +122,12 @@ class TreegraphSeries extends OrganizationSeries {
     public points: Array<TreegraphPoint> = void 0 as any;
 
     public nodeColumns: Array<
-        SankeyColumnComposition.ArrayComposition<TreegraphNode>
+    SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > = void 0 as any;
 
     public nodes: Array<TreegraphNode> = void 0 as any;
 
-    public layoutModifier: { ax: number; bx: number; ay: number; by: number } =
-        void 0 as any;
+    public layoutModifier: LayoutAlgorythmParameters = void 0 as any;
     layoutAlgorythm: Highcharts.TreegraphLayout = void 0 as any;
 
     /* *
@@ -128,6 +135,15 @@ class TreegraphSeries extends OrganizationSeries {
      *  Functions
      *
      * */
+
+    public init(): void {
+        super.init.apply(this, arguments);
+        if (H.treeLayouts[this.options.layout]) {
+            this.layoutAlgorythm = new H.treeLayouts[this.options.layout]();
+        } else {
+            this.layoutAlgorythm = new H.treeLayouts.Walker();
+        }
+    }
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
@@ -143,13 +159,18 @@ class TreegraphSeries extends OrganizationSeries {
          */
         function order(node: TreegraphNode, level: number): void {
             // Prevents circular recursion:
-            level = node.level || level;
-            node.level = level;
-            node.linksFrom.forEach(function (link: TreegraphPoint): void {
-                if (link.toNode) {
-                    order(link.toNode, level + 1);
-                }
-            });
+            if (node.wasVisited) {
+                throw Error('circular dependency deteceted');
+            } else {
+                level = node.level || level;
+                node.level = level;
+                (node as any).wasVisited = true;
+                node.linksFrom.forEach(function (link: TreegraphPoint): void {
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
+                });
+            }
         }
 
         if (this.orderNodes) {
@@ -172,6 +193,61 @@ class TreegraphSeries extends OrganizationSeries {
         }
     }
 
+    private getLayoutModifiers(): LayoutAlgorythmParameters {
+        const chart = this.chart,
+            plotSizeX = chart.plotSizeX as number,
+            plotSizeY = chart.plotSizeY as number;
+        let minX = Infinity,
+            maxX = -Infinity,
+            minY = Infinity,
+            maxY = -Infinity,
+            maxXSize = 0,
+            minXSize = 0,
+            maxYSize = 0,
+            minYSize = 0;
+        this.nodes.forEach((node: TreegraphNode): void => {
+            const markerOptions = merge(
+                this.options.marker,
+                node.options.marker
+            );
+            const symbol = markerOptions.symbol;
+            node.symbol = symbol;
+            const nodeSizeY =
+                symbol === 'circle' ?
+                    (pick(markerOptions.radius) as number) * 2 :
+                    (markerOptions.height as any);
+            const nodeSizeX =
+                symbol === 'circle' ?
+                    (pick(markerOptions.radius) as number) * 2 :
+                    (markerOptions.width as any);
+            node.nodeSizeX = nodeSizeX;
+            node.nodeSizeY = nodeSizeY;
+
+            if (node.xPosition < minX) {
+                minX = node.xPosition;
+                minXSize = nodeSizeY as number;
+            }
+            if (node.xPosition > maxX) {
+                maxX = node.xPosition;
+                maxXSize = nodeSizeX as number;
+            }
+            if (node.yPosition < minY) {
+                minY = node.yPosition;
+                minYSize = nodeSizeY as number;
+            }
+            if (node.yPosition > maxY) {
+                maxY = node.yPosition;
+                maxYSize = nodeSizeY as number;
+            }
+        });
+
+        let ay = maxY === minY ? 1 : (plotSizeY - minYSize) / (maxY - minY);
+        let by = maxY === minY ? plotSizeY / 2 : -ay * minY;
+        let ax = maxX === minX ? 1 : (plotSizeX - maxXSize) / (maxX - minX);
+        let bx = maxX === minX ? plotSizeX / 2 : -ax * minX;
+        return { ax, bx, ay, by };
+    }
+
     /* eslint-disable valid-jsdoc */
     public translate(): void {
         if (!this.processedXData) {
@@ -186,45 +262,10 @@ class TreegraphSeries extends OrganizationSeries {
         );
 
         const series = this,
-            chart = this.chart,
-            plotSizeX = chart.plotSizeX as number,
-            plotSizeY = chart.plotSizeY as number,
             options = this.options,
-            nodeWidth = this.nodeWidth,
             nodeColumns = this.nodeColumns;
 
         this.nodePadding = this.getNodePadding();
-
-        // Find out how much space is needed. Base it on the translation
-        // factor of the most spaceous column.
-        this.translationFactor = nodeColumns.reduce(
-            (
-                translationFactor: number,
-                column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
-            ): number =>
-                Math.min(
-                    translationFactor,
-                    column.sankeyColumn.getTranslationFactor(series)
-                ),
-            Infinity
-        );
-
-        let columns = (this as any).nodeColumns;
-        let sumOfRadius = columns.reduce(
-            (partialSum: number, column: any): number =>
-                partialSum + column.maxRadius,
-            0
-        );
-
-        (this as any).emptySpaceWidth =
-            ((chart as any).plotSizeX - sumOfRadius * 2) /
-            Math.max(1, nodeColumns.length - 1);
-
-        this.colDistance =
-            ((chart.plotSizeX as any) -
-                nodeWidth -
-                (options.borderWidth as any)) /
-            Math.max(1, nodeColumns.length - 1);
 
         // Calculate level options used in sankey and organization
         series.mapOptionsToLevel = getLevelOptions({
@@ -250,77 +291,17 @@ class TreegraphSeries extends OrganizationSeries {
         });
 
         // if (this.layout) {
-        const layoutAlgorythm = new H.treeLayouts.Walker();
         // }
-        layoutAlgorythm.init(series);
-        let minX = Infinity,
-            maxX = -Infinity,
-            minY = Infinity,
-            maxY = -Infinity,
-            maxXRadius = 0,
-            minXRadius = 0,
-            maxYRadius = 0,
-            minYRadius = 0;
-        // TODO move this search to layout Algorythm
-        series.nodes.forEach((node: TreegraphNode): void => {
-            const markerOptions = merge(options.marker, node.options.marker);
-            const symbol = markerOptions.symbol;
-            // const markerRadius = pick(
-            //     node.options.radius,
-            //     markerOptions.radius,
-            //     this.options.radius
-            // );
-            node.symbol = symbol;
-            const nodeSizeY =
-                symbol === 'circle'
-                    ? pick(markerOptions.radius) as number * 2
-                    : markerOptions.height as any;
-            const nodeSizeX =
-                symbol === 'circle'
-                    ? pick(markerOptions.radius) as number * 2
-                    : markerOptions.width as any;
-            node.nodeSizeX = nodeSizeX;
-            node.nodeSizeY = nodeSizeY;
-
-            if (node.xPosition < minX) {
-                minX = node.xPosition;
-                minXRadius = nodeSizeY as number;
-            }
-            if (node.xPosition > maxX) {
-                maxX = node.xPosition;
-                maxXRadius = nodeSizeX as number;
-            }
-            if (node.yPosition < minY) {
-                minY = node.yPosition;
-                minYRadius = nodeSizeY as number;
-            }
-            if (node.yPosition > maxY) {
-                maxY = node.yPosition;
-                maxYRadius = nodeSizeY as number;
-            }
-        });
-
-        let ay = (maxY === minY ?
-            1 :
-            (plotSizeY - minYRadius) / (maxY - minY));
-        let by = (maxY === minY ? plotSizeY / 2 : -ay * minY);
-        let ax = (maxX === minX ?
-            1 :
-            (plotSizeX - maxXRadius) / (maxX - minX));
-        let bx = (maxX === minX ? plotSizeX / 2 : -ax * minX);
-
-        series.layoutModifier = { ax, bx, ay, by };
+        this.layoutAlgorythm.init(series);
+        series.layoutModifier = this.getLayoutModifiers();
 
         // First translate all nodes so we can use them when drawing links
-        nodeColumns.forEach(function (
-            this: TreegraphSeries,
-            column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
-        ): void {
-            column.forEach(function (node): void {
-                series.translateNode(node, column);
-            });
-        },
-        this);
+        this.nodes.forEach((node): void => {
+            // To Change - wasVisited set to false to enable next generatePoints
+            // run
+            node.wasVisited = false;
+            series.translateNode(node);
+        });
 
         // Then translate links
         this.nodes.forEach(function (node): void {
@@ -355,93 +336,30 @@ class TreegraphSeries extends OrganizationSeries {
      * @private
      */
 
-    public translateNode(
-        node: TreegraphNode,
-        column: SankeyColumnComposition.ArrayComposition<TreegraphNode>
-    ): void {
-        const translationFactor = this.translationFactor,
-            chart = this.chart,
-            options = this.options,
-            crisp = (Math.round(options.borderWidth) % 2) / 2,
-            nodeOffset = column.sankeyColumn.offset(
-                node,
-                translationFactor
-            ) as any,
+    public translateNode(node: TreegraphNode): void {
+        const chart = this.chart,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
-            fromNodeTop =
-                Math.floor(
-                    pick(
-                        nodeOffset.absoluteTop,
-                        column.sankeyColumn.top(translationFactor) +
-                            nodeOffset.relativeTop
-                    )
-                ) + crisp;
-
-        const previousColumn = (this as any).nodeColumns[node.column - 1];
-        const emptySpaceWidth = (this as any).emptySpaceWidth;
-
-        const xOffset = previousColumn
-            ? previousColumn.xOffset +
-              previousColumn.maxRadius * 2 +
-              emptySpaceWidth
-            : 0;
-
-        const nodeLeft = chart.inverted
-            ? (plotSizeX as number) - xOffset
-            : xOffset;
-        node.sum = 1;
-
-        // Draw the node
-        node.nodeX = nodeLeft;
-        node.nodeY = fromNodeTop;
-
-        const { ax, bx, ay, by } = this.layoutModifier,
+            { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
-            y = ay * node.yPosition + by;
+            y = ay * node.yPosition + by,
+            symbol = node.symbol,
+            width = node.nodeSizeX,
+            height = node.nodeSizeY,
+            reversed = this.options.reversed,
+            nodeX = chart.inverted ? plotSizeX - width - x : x,
+            nodeY = reversed ? plotSizeY - height - y : y;
 
-        // shapeArgs width and height set to 0 to align dataLabels correctly
-        // in inverted chart
         node.shapeType = 'path';
-        const markerOptions = merge(options.marker, node.options.marker);
-        const symbol = node.symbol;
-        const markerRadius = pick(
-            node.options.radius,
-            markerOptions.radius,
-            this.options.marker.radius
-        );
-
-        let shapeArgs;
-            let width = node.nodeSizeX;
-            let height = node.nodeSizeY;
-        if (symbol === 'circle') {
-            shapeArgs = {
-                d: symbols.circle(
-                    chart.inverted ? plotSizeX - width - x : x,
-                    y,
-                    markerRadius * 2,
-                    markerRadius * 2
-                ),
-                x: chart.inverted ? plotSizeX - width - x : x,
-                y: y,
-                width: markerRadius * 2,
-                height: markerRadius * 2
-            };
-        } else {
-            shapeArgs = {
-                d: symbols[symbol || 'circle'](
-                    chart.inverted ? plotSizeX - width - x : x,
-                    y,
-                    width,
-                    height
-                ),
-                x: chart.inverted ? plotSizeX - width - x : x,
-                y: y,
-                width,
-                height
-            };
-        }
-        node.shapeArgs =  shapeArgs;
+        node.nodeX = node.plotX = nodeX;
+        node.nodeY = node.plotY = nodeY;
+        node.shapeArgs = {
+            d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
+            x: nodeX,
+            y: nodeY,
+            width,
+            height
+        };
 
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point
@@ -452,9 +370,9 @@ class TreegraphSeries extends OrganizationSeries {
         // Pass test in drawPoints
         node.plotY = 1;
         // Set the anchor position for tooltips
-        node.tooltipPos = chart.inverted
-            ? [plotSizeY - y, plotSizeX - x]
-            : [x, y];
+        node.tooltipPos = chart.inverted ?
+            [plotSizeY - y, plotSizeX - x] :
+            [x, y];
     }
 
     public alignDataLabel(): void {
@@ -462,68 +380,14 @@ class TreegraphSeries extends OrganizationSeries {
     }
 
     public createNodeColumns(): Array<
-        SankeyColumnComposition.ArrayComposition<TreegraphNode>
+    SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > {
         const originalNodes = this.nodes;
         this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
         const nodeColumns = super.createNodeColumns.apply(this, arguments);
-        nodeColumns.forEach(function (column): void {
-            column.sankeyColumn.getTranslationFactor = function (
-                series
-            ): number {
-                const nodes = column.slice();
-                const minLinkWidth = series.options.minLinkWidth || 0;
-                let exceedsMinLinkWidth: boolean;
-                let factor = 0;
-                let i: number;
-                // Will be changed after arcDiagram will be merged.
-                let maxRadius = (column as any).maxRadius || 0;
-
-                let remainingHeight =
-                    (series.chart.plotSizeY as any) -
-                    (series.options.borderWidth as any) -
-                    (column.length - 1) * series.nodePadding;
-
-                // Because the minLinkWidth option doesn't obey the direct
-                // translation, we need to run translation iteratively,
-                // check node heights, remove those nodes affected
-                // by minLinkWidth, check again, etc.
-                while (column.length) {
-                    factor = remainingHeight / column.sankeyColumn.sum();
-                    exceedsMinLinkWidth = false;
-                    i = column.length;
-                    while (i--) {
-                        if (column[i].getSum() * factor < minLinkWidth) {
-                            column.splice(i, 1);
-                            remainingHeight -= minLinkWidth;
-                            exceedsMinLinkWidth = true;
-                        }
-
-                        maxRadius = Math.max(
-                            maxRadius,
-                            pick(
-                                (column[i].options as any).radius,
-                                (column[i].series.options as any).radius,
-                                0
-                            )
-                        );
-                    }
-                    if (!exceedsMinLinkWidth) {
-                        break;
-                    }
-                }
-
-                (column as any).maxRadius = maxRadius;
-
-                // Re-insert original nodes
-                column.length = 0;
-                nodes.forEach((node): number => column.push(node));
-                return factor;
-            };
-        });
         this.nodes = originalNodes;
         return nodeColumns as unknown as Array<
-            SankeyColumnComposition.ArrayComposition<TreegraphNode>
+        SankeyColumnComposition.ArrayComposition<TreegraphNode>
         >;
     }
 }
@@ -547,7 +411,6 @@ function collapseTreeFromPoint(
         collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
     });
 }
-// TODO check for circular data
 // TODO check drilldown support
 /* *
  *

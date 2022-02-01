@@ -19,6 +19,7 @@ class TreegraphNode extends TreegraphPoint {
     public nodeSizeY: number = void 0 as any;
     public nodeHeight?: number;
     public series: TreegraphSeries = void 0 as any;
+    wasVisited: any;
 
     // get the next left node which is either first child or thread
     public nextLeft(this: TreegraphNode): TreegraphNode | undefined {

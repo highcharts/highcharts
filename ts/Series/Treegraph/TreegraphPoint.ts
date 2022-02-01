@@ -20,7 +20,7 @@ import OrganizationPoint from '../Organization/OrganizationPoint.js';
 import TreegraphNode from './TreegraphNode.js';
 import NodesComposition from '../NodesComposition.js';
 import U from '../../Core/Utilities.js';
-const { extend } = U
+const { extend } = U;
 
 
 /* *
