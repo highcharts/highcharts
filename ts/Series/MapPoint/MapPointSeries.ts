@@ -17,7 +17,9 @@
  * */
 
 import type MapChart from '../../Core/Chart/MapChart';
+import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
@@ -118,6 +120,37 @@ class MapPointSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * Resolve `lon`, `lat` or `geometry` options and project the resulted
+     * coordinates.
+     *
+     * @private
+     */
+    public projectPoint(
+        pointOptions: MapPointPointOptions
+    ): ProjectedXY|undefined {
+        const mapView = this.chart.mapView;
+        if (mapView) {
+            const { geometry, lon, lat } = pointOptions;
+            let coordinates = (
+                geometry &&
+                geometry.type === 'Point' &&
+                geometry.coordinates
+            );
+
+            if (isNumber(lon) && isNumber(lat)) {
+                coordinates = [lon, lat];
+            }
+
+            if (coordinates) {
+                return mapView.lonLatToProjectedUnits({
+                    lon: coordinates[0],
+                    lat: coordinates[1]
+                });
+            }
+        }
+    }
+
     public translate(): void {
         const mapView = this.chart.mapView;
 
@@ -133,26 +166,10 @@ class MapPointSeries extends ScatterSeries {
 
                 let { x = void 0, y = void 0 } = p;
 
-                const { geometry, lon, lat } = p.options;
-                let coordinates = (
-                    geometry &&
-                    geometry.type === 'Point' &&
-                    geometry.coordinates
-                );
-
-                if (isNumber(lon) && isNumber(lat)) {
-                    coordinates = [lon, lat];
-                }
-
-                if (coordinates) {
-                    const xy = mapView.lonLatToProjectedUnits({
-                        lon: coordinates[0],
-                        lat: coordinates[1]
-                    });
-                    if (xy) {
-                        x = xy.x;
-                        y = xy.y;
-                    }
+                const xy = this.projectPoint(p.options);
+                if (xy) {
+                    x = xy.x;
+                    y = xy.y;
 
                 // Map bubbles getting geometry from shape
                 } else if (p.bounds) {
@@ -161,8 +178,6 @@ class MapPointSeries extends ScatterSeries {
                 }
 
                 if (isNumber(x) && isNumber(y)) {
-                    p.x = x;
-                    p.y = y;
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
                     p.plotY = hasCoordinates ?
