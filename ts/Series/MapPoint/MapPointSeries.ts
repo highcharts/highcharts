@@ -178,10 +178,6 @@ class MapPointSeries extends ScatterSeries {
                 }
 
                 if (isNumber(x) && isNumber(y)) {
-                    // The point.x and y properties don't really make much
-                    // sense, but the flight route demo uses them
-                    p.x = x;
-                    p.y = y;
 
                     // Establish plotX and plotY
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
