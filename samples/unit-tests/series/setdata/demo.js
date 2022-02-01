@@ -732,6 +732,17 @@ QUnit.test(
             `Updating series should not mutate the original data array.`
         );
 
+        chart.update({
+            series: [{
+                data: [8, 9, 8, 9, 8, 9, 8]
+            }]
+        });
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Updating chart should not mutate the original data array.`
+        );
+
         chart.series[0].remove();
         assert.deepEqual(
             oriData,
