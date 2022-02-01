@@ -348,7 +348,7 @@ class TreegraphSeries extends OrganizationSeries {
             height = node.nodeSizeY,
             reversed = this.options.reversed,
             nodeX = chart.inverted ? plotSizeX - width - x : x,
-            nodeY = reversed ? plotSizeY - height - y : y;
+            nodeY = !reversed ? plotSizeY - height - y : y;
 
         node.shapeType = 'path';
         node.nodeX = node.plotX = nodeX;
