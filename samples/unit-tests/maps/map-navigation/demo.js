@@ -338,14 +338,14 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
     controller.click(300, 300);
     assert.close(
         event.lon,
-        10.2,
+        12.1,
         5,
         'Longitude should be available on event'
     );
 
     assert.close(
         event.lat,
-        38.4,
+        68.6,
         10,
         'Latitude should be available on event'
     );

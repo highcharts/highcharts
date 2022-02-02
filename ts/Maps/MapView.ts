@@ -812,7 +812,7 @@ class MapView {
 
     public setUpEvents(): void {
 
-        const { chart, projection } = this;
+        const { chart } = this;
 
         // Set up panning for maps. In orthographic projections the globe will
         // rotate, otherwise adjust the map center.
@@ -821,7 +821,8 @@ class MapView {
         let mouseDownRotation: number[]|undefined;
         const onPan = (e: PointerEvent): void => {
 
-            const pinchDown = chart.pointer.pinchDown;
+            const pinchDown = chart.pointer.pinchDown,
+                projection = this.projection;
 
             let {
                 mouseDownX,
@@ -879,19 +880,21 @@ class MapView {
 
                     if (mouseDownRotation) {
                         const lon = (mouseDownX - chartX) * ratio -
-                            mouseDownRotation[0];
-                        const lat = clamp(
-                            -mouseDownRotation[1] -
-                                (mouseDownY - chartY) * ratio,
-                            -80,
-                            80
-                        );
+                                mouseDownRotation[0],
+                            lat = clamp(
+                                -mouseDownRotation[1] -
+                                    (mouseDownY - chartY) * ratio,
+                                -80,
+                                80
+                            ),
+                            zoom = this.zoom;
                         this.update({
                             projection: {
                                 rotation: [-lon, -lat]
-                            },
-                            zoom: this.zoom
-                        }, true, false);
+                            }
+                        }, false);
+                        this.zoom = zoom;
+                        chart.redraw(false);
 
                     }
 
