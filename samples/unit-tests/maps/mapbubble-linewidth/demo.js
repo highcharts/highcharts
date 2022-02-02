@@ -51,4 +51,10 @@ QUnit.test('MapBubble', function (assert) {
         `When hovering over mapbubble series with shared tooltip,
         there should be no errors in the console.`
     );
+
+    // Passing the default joinBy value for MapBubbleSeries (#16750).
+    assert.ok(
+        chart.series[1].joinBy[0] === "hc-key",
+        `Checking default options for joinBy: 'hc-key'.`
+    );
 });

@@ -195,7 +195,7 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         animationLimit: 500,
-
+        joinBy: 'hc-key',
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
         }
