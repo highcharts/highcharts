@@ -95,7 +95,6 @@ export interface SeriesOptions {
     colorIndex?: number;
     colors?: Array<ColorType>;
     connectNulls?: boolean;
-    copyOfOriginalData?: boolean;
     crisp?: (boolean|number);
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;

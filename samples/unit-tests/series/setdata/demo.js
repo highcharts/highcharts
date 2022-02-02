@@ -760,3 +760,55 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    `Updating the allowMutatingData property to false and setting data
+    should not mutate the original data, #4259.`,
+    assert => {
+        const oriData = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            referenceArray = [
+                [0, 0],
+                [1, 1],
+                {
+                    x: 2,
+                    y: 2
+                },
+                [3, 3],
+                [4, 4]
+            ],
+            newData = [0, 2, 4, 6, 8],
+            chart = Highcharts.chart('container', {
+                series: [{
+                    data: oriData
+                }]
+            });
+
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `Original data array should not be modified after initial render.`
+        );
+
+        chart.update({
+            chart: {
+                allowMutatingData: false
+            }
+        });
+        chart.series[0].setData(newData);
+        assert.deepEqual(
+            oriData,
+            referenceArray,
+            `After updating the allowMutatingData property to false,
+            setData should not mutate the original data.`
+        );
+    }
+);

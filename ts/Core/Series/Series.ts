@@ -474,28 +474,6 @@ class Series {
         // point.
         chart.orderSeries(this.insert(chartSeries));
 
-        // If this is the first time we're writing back to options,
-        // and allowMutatingData enabled create
-        // a copy so that we don't mutate the source array. (#4259)
-        if (options.data &&
-            !options.copyOfOriginalData &&
-            !chart.options.chart.allowMutatingData
-        ) {
-            if (chart.options.chart.cloningMethod) {
-                options.data = chart.options.chart.cloningMethod(options.data);
-            } else {
-                try {
-                    options.data = JSON.parse(JSON.stringify(options.data));
-                } catch (error) {
-                    throw new Error(
-                        `Not able to copy the dataset,
-                        use your own chart.cloningMethod.`
-                    );
-                }
-            }
-            options.copyOfOriginalData = true;
-        }
-
         // Set options for series with sorting and set data later.
         if (options.dataSorting && options.dataSorting.enabled) {
             series.setDataSortingOptions();
@@ -1351,7 +1329,26 @@ class Series {
             indexOfY = 1,
             firstPoint = null;
 
-        data = data || [];
+        // If this is the first time we're writing back to options,
+        // and allowMutatingData enabled create
+        // a copy so that we don't mutate the source array. (#4259)
+        if (!chart.options.chart.allowMutatingData) {
+            if (chart.options.chart.cloningMethod) {
+                data = chart.options.chart.cloningMethod(data);
+            } else {
+                try {
+                    data = JSON.parse(JSON.stringify(options.data));
+                } catch (error) {
+                    throw new Error(
+                        `Not able to copy the dataset,
+                        use your own chart.cloningMethod.`
+                    );
+                }
+            }
+        } else {
+            data = data || [];
+        }
+
         const dataLength = data.length;
         redraw = pick(redraw, true);
 
