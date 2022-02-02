@@ -115,6 +115,7 @@ class OrganizationSeries extends SankeySeries {
          * @sample   highcharts/series-organization/link-options
          *           Square links
          *
+         * @deprecated
          * @private
          */
         linkRadius: 10,
@@ -129,7 +130,7 @@ class OrganizationSeries extends SankeySeries {
              * @type {Highcharts.ColorString}
              * @private
              */
-            // color: Palette.neutralColor60
+            color: Palette.neutralColor60,
             /**
              * The line width of the links connecting nodes, in pixels.
              *
@@ -138,7 +139,7 @@ class OrganizationSeries extends SankeySeries {
              *
              * @private
              */
-            // lineWidth: 1,
+            lineWidth: 1,
             /**
              * Radius for the rounded corners of the links between nodes.
              *
@@ -147,7 +148,11 @@ class OrganizationSeries extends SankeySeries {
              *
              * @private
              */
-            // radius: 10
+            radius: 10,
+            /**
+             * Type of the link shape.
+             */
+            type: 'default'
         },
         borderWidth: 1,
         /**
@@ -287,25 +292,30 @@ class OrganizationSeries extends SankeySeries {
          */
         hangingIndent: 20,
         /**
-         * The color of the links between nodes.
+         * The color of the links between nodes. This option is moved to
+         * link object.
          *
          * @type {Highcharts.ColorString}
+         * @deprecated
          * @private
          */
         linkColor: Palette.neutralColor60,
         /**
-         * The line width of the links connecting nodes, in pixels.
+         * The line width of the links connecting nodes, in pixels. This option
+         * is now depricated and moved to the link object.
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
          *
+         * @deprecated
          * @private
          */
         linkLineWidth: 1,
         /**
          * In a horizontal chart, the width of the nodes in pixels. Node that
          * most organization charts are vertical, so the name of this option
-         * is counterintuitive.
+         * is counterintuitive. This option is now depricated and moved to the
+         * link object.
          *
          * @private
          */

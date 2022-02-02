@@ -37,6 +37,7 @@ export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 export interface LinkOptions {
     color?: ColorString;
     lineWidth?: number;
+    type: 'curved' | 'straight' | 'default';
     radius: number;
 }
 export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions {

@@ -26,10 +26,8 @@ import { PointMarkerOptions } from '../../Core/Series/PointOptions';
 export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
     layout: string;
     reversed: boolean;
-    minLinkWidth: number;
     borderWidth: number;
     marker: PointMarkerOptions;
-    alignNodes: string;
     link: any;
 }
 

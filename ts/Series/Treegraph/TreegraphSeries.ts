@@ -74,14 +74,17 @@ class TreegraphSeries extends OrganizationSeries {
      * */
 
     /**
-     * A treegraph series is a diagram, which shows a relation of the paren
+     * A treegraph series is a diagram, which shows a relation between ancestors
+     * and descendants with a clear parent - child relation. Our treegraph
+     * algorythm accepts the data, where each point (apart from the root of the
+     * tree) has a single parent. The best examples of the dataStructures, which
+     * best reflect this chart are e.g. genealogy tree or directory scructure.
      *
      *
      * @extends      plotOptions.treegraph
      * @since        next
      * @product      highcharts
      * @requires     modules/sankey
-     * @requires     modules/organization
      * @requires     modules/treegraph
      * @exclude      linkColor, linkLineWidth, linkRadius
      * @optionparent plotOptions.treegraph
@@ -89,9 +92,17 @@ class TreegraphSeries extends OrganizationSeries {
     public static defaultOptions: TreegraphSeriesOptions = merge(
         OrganizationSeries.defaultOptions,
         {
+            /**
+             * The option to choose the layout alogrythm, which should be used
+             * to calculate the positions of the nodes.
+             *
+             * @type {'Walker'}
+             * @since next
+             * @default 'Walker'
+             * @product highcharts
+             * @apioption series.treegraph.layout
+             */
             layout: 'Walker',
-            alignNodes: 'right',
-            minLinkWidth: 1,
             reversed: false,
             borderWidth: 1,
             marker: {
@@ -101,7 +112,8 @@ class TreegraphSeries extends OrganizationSeries {
                 states: {}
             },
             link: {
-                type: 'straight',
+                type: 'curved',
+                minWidth: 1,
                 width: 1,
                 color: Palette.neutralColor80
             }
@@ -223,28 +235,32 @@ class TreegraphSeries extends OrganizationSeries {
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
-            if (node.xPosition < minX) {
+            if (node.xPosition <= minX) {
                 minX = node.xPosition;
-                minXSize = nodeSizeY as number;
+                minXSize = Math.max(nodeSizeY as number, minXSize);
             }
-            if (node.xPosition > maxX) {
+            if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
-                maxXSize = nodeSizeX as number;
+                maxXSize = Math.max(nodeSizeX as number, maxXSize);
             }
-            if (node.yPosition < minY) {
+            if (node.yPosition <= minY) {
                 minY = node.yPosition;
-                minYSize = nodeSizeY as number;
+                minYSize = Math.max(nodeSizeY as number, minYSize);
             }
-            if (node.yPosition > maxY) {
+            if (node.yPosition >= maxY) {
                 maxY = node.yPosition;
-                maxYSize = nodeSizeY as number;
+                maxYSize = Math.max(nodeSizeY as number, maxYSize);
             }
         });
 
-        let ay = maxY === minY ? 1 : (plotSizeY - minYSize) / (maxY - minY);
-        let by = maxY === minY ? plotSizeY / 2 : -ay * minY;
-        let ax = maxX === minX ? 1 : (plotSizeX - maxXSize) / (maxX - minX);
-        let bx = maxX === minX ? plotSizeX / 2 : -ax * minX;
+        const ay = maxY === minY ?
+                1 :
+                (plotSizeY - (minYSize + maxYSize) / 2) / (maxY - minY),
+            by = maxY === minY ? 0 : -ay * minY + minYSize / 2,
+            ax = maxX === minX ?
+                1 :
+                (plotSizeX - (maxXSize + maxXSize) / 2) / (maxX - minX),
+            bx = maxX === minX ? 0 : -ax * minX + minXSize / 2;
         return { ax, bx, ay, by };
     }
 
@@ -347,8 +363,8 @@ class TreegraphSeries extends OrganizationSeries {
             width = node.nodeSizeX,
             height = node.nodeSizeY,
             reversed = this.options.reversed,
-            nodeX = chart.inverted ? plotSizeX - width - x : x,
-            nodeY = !reversed ? plotSizeY - height - y : y;
+            nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
+            nodeY = !reversed ? plotSizeY - height / 2 - y : y + height / 2;
 
         node.shapeType = 'path';
         node.nodeX = node.plotX = nodeX;
