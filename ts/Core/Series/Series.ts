@@ -1333,11 +1333,18 @@ class Series {
         // and allowMutatingData enabled create
         // a copy so that we don't mutate the source array. (#4259)
         if (!chart.options.chart.allowMutatingData) {
+            // Remove old reference
+            if (series.options.data) {
+                delete series.options.data;
+            }
+            if (series.userOptions.data) {
+                delete series.userOptions.data;
+            }
             if (chart.options.chart.cloningMethod) {
                 data = chart.options.chart.cloningMethod(data);
             } else {
                 try {
-                    data = JSON.parse(JSON.stringify(options.data));
+                    data = JSON.parse(JSON.stringify(data));
                 } catch (error) {
                     throw new Error(
                         `Not able to copy the dataset,
@@ -1359,6 +1366,7 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
+            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&
