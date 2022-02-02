@@ -168,5 +168,4 @@
             path: pointsToPath(lerwickPoint, chart.get('Liverpool'))
         }]
     }, true, false);
-
 })();
