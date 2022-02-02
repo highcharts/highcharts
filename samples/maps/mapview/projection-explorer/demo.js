@@ -16,7 +16,23 @@
 
     const data = getRandomData(topology);
 
-    // Get the graticule, the grid of meridians an parallels.
+    // Get geometries for parallels
+    function getParallelsGeometries(parallels) {
+        return parallels.map(lat => {
+            const coordinates = [];
+            for (let lon = -180; lon <= 180; lon += 5) {
+                coordinates.push([lon, lat]);
+            }
+            return {
+                geometry: {
+                    type: 'LineString',
+                    coordinates
+                },
+                lineWidth: lat === 0 ? 2 : undefined
+            };
+        });
+    }
+
     function getGraticule() {
         const data = [];
 
@@ -38,24 +54,16 @@
         }
 
         // Parallels
+        const parallels = [];
         for (let y = -90; y <= 90; y += 10) {
-            const coordinates = [];
-            for (let x = -180; x <= 180; x += 5) {
-                coordinates.push([x, y]);
-            }
-            data.push({
-                geometry: {
-                    type: 'LineString',
-                    coordinates
-                },
-                lineWidth: y === 0 ? 2 : undefined
-            });
+            parallels.push(y);
         }
+        data.push(...getParallelsGeometries(parallels));
 
         return data;
     }
 
-    let chart;
+    let chart, smallChart;
 
     const drawMap = projectionKey => {
 
@@ -76,39 +84,8 @@
                 name: 'Miller',
                 projectedBounds: 'world'
             },
-            'ortho-africa': {
+            ortho: {
                 name: 'Orthographic',
-                rotation: [-15, 0],
-                projectedBounds: 'world'
-            },
-            'ortho-antarctica': {
-                name: 'Orthographic',
-                rotation: [0, 90],
-                projectedBounds: 'world'
-            },
-            'ortho-asia': {
-                name: 'Orthographic',
-                rotation: [-90, -40],
-                projectedBounds: 'world'
-            },
-            'ortho-australia': {
-                name: 'Orthographic',
-                rotation: [-140, 30],
-                projectedBounds: 'world'
-            },
-            'ortho-europe': {
-                name: 'Orthographic',
-                rotation: [-15, -40],
-                projectedBounds: 'world'
-            },
-            'ortho-north-america': {
-                name: 'Orthographic',
-                rotation: [100, -45],
-                projectedBounds: 'world'
-            },
-            'ortho-south-america': {
-                name: 'Orthographic',
-                rotation: [60, 10],
                 projectedBounds: 'world'
             },
             webmerc: {
@@ -117,23 +94,11 @@
             }
         }[projectionKey] || {});
 
-        // Ortho, pre-rotated views
-        if (projection.rotation) {
-            document.getElementById('rotation-lambda').value =
-                projection.rotation[0] || 0;
-            document.getElementById('rotation-phi').value =
-                projection.rotation[1] || 0;
-            document.getElementById('rotation-gamma').value =
-                projection.rotation[2] || 0;
-
-        // Otherwise, keep the rotation
-        } else {
-            projection.rotation = [
-                parseInt(document.getElementById('rotation-lambda').value, 10),
-                parseInt(document.getElementById('rotation-phi').value, 10),
-                parseInt(document.getElementById('rotation-gamma').value, 10)
-            ];
-        }
+        projection.rotation = [
+            document.getElementById('rotation-lambda').value,
+            document.getElementById('rotation-phi').value,
+            document.getElementById('rotation-gamma').value
+        ].map(Number);
 
         // Initialize the chart
         if (!chart) {
@@ -142,16 +107,11 @@
 
             chart = Highcharts.mapChart('container', {
                 chart: {
-                    map: topology
+                    height: '65%'
                 },
 
                 title: {
-                    text: 'Highcharts Projection Explorer',
-                    floating: true,
-                    align: 'left',
-                    style: {
-                        textOutline: '2px white'
-                    }
+                    text: undefined
                 },
 
                 legend: {
@@ -190,6 +150,9 @@
                 plotOptions: {
                     series: {
                         animationLimit: 500
+                    },
+                    mapline: {
+                        enableMouseTracking: false
                     }
                 },
 
@@ -201,6 +164,7 @@
                     color: '#e8e8e8'
                 }, {
                     data,
+                    mapData: topology,
                     joinBy: null,
                     name: 'Random data',
                     states: {
@@ -253,7 +217,6 @@
             });
             console.timeEnd('@mapChart');
 
-
         } else {
             chart.update({
                 mapView: {
@@ -262,37 +225,161 @@
             });
         }
 
+
+        if (projection.name === 'LambertConformalConic') {
+            smallChart = Highcharts.mapChart('small-world-container', {
+                title: {
+                    text: undefined
+                },
+
+                credits: {
+                    enabled: false
+                },
+
+                legend: {
+                    enabled: false
+                },
+
+                exporting: {
+                    enabled: false
+                },
+
+                mapView: {
+                    projection: {
+                        name: 'Orthographic',
+                        rotation: [0, -10, 0]
+                    }
+                },
+
+                plotOptions: {
+                    series: {
+                        enableMouseTracking: false
+                    },
+                    map: {
+                        animationLimit: 500,
+                        allAreas: true,
+                        clip: false,
+                        nullColor: '#e0e0e0',
+                        borderColor: '#ffffff',
+                        borderWidth: 0.25
+                    },
+                    mapline: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+
+                series: [{
+                    name: 'Graticule',
+                    type: 'mapline',
+                    data: getGraticule(),
+                    color: '#f8f8f8'
+                }, {
+                    mapData: topology
+                }, {
+                    mapData: antarctica
+                }, {
+                    data: getParallelsGeometries(projection.parallels),
+                    type: 'mapline',
+                    id: 'parallels'
+                }]
+            });
+        }
+
+
         document.querySelectorAll('#projection-buttons button').forEach(btn =>
             btn.classList.remove('active')
         );
-        document.querySelector(`#projection-buttons #${projectionKey}`).classList.add('active');
+
+        const button = document.querySelector(
+            `#projection-buttons #${projectionKey}`
+        );
+
+        button.classList.add('active');
+
+        // Toggle projection-dependent panels
+        const panels = (button.getAttribute('data-panels') || '').split(',');
+        document.querySelectorAll('.toggle-panel').forEach(panel => {
+            panel.style.display = panels.includes(panel.id) ? '' : 'none';
+        });
+
+
     };
 
 
     const enableInputs = () => {
+
         document.querySelectorAll('#projection-buttons button').forEach(btn =>
             btn.addEventListener('click', e => drawMap(e.target.id))
         );
+
         document.querySelectorAll('.rotation').forEach(input => {
             input.addEventListener('input', () => {
-                const lambda = document.getElementById('rotation-lambda').value;
-                const phi = document.getElementById('rotation-phi').value;
-                const gamma = document.getElementById('rotation-gamma').value;
-                document.getElementById('rotation-lambda-output')
-                    .innerText = lambda;
-                document.getElementById('rotation-phi-output').innerText = phi;
-                document.getElementById('rotation-gamma-output').innerText = gamma;
+                const rotation = [
+                    document.getElementById('rotation-lambda').value,
+                    document.getElementById('rotation-phi').value,
+                    document.getElementById('rotation-gamma').value
+                ].map(Number);
 
-                const rotation = chart.mapView.projection.options.rotation ||
-                    [0, 0];
-                rotation[0] = parseInt(lambda, 10);
-                rotation[1] = parseInt(phi, 10);
-                rotation[2] = parseInt(gamma, 10);
+                document.getElementById('rotation-lambda-output')
+                    .innerText = rotation[0];
+                document.getElementById('rotation-phi-output')
+                    .innerText = rotation[1];
+                document.getElementById('rotation-gamma-output')
+                    .innerText = rotation[2];
+
                 chart.mapView.update({
                     projection: {
                         rotation
                     }
                 }, true, false);
+            });
+        });
+
+        document.querySelectorAll('.preset-rotations a').forEach(input => {
+            input.addEventListener('click', () => {
+                const rotation = input.getAttribute('data-rotation')
+                    .split(',')
+                    .map(Number);
+                chart.mapView.update({
+                    projection: {
+                        rotation
+                    }
+                }, true, false);
+
+                rotation.push(0);
+                rotation.forEach((value, i) => {
+                    const name = ['lambda', 'phi', 'gamma'][i];
+                    document.getElementById(`rotation-${name}`).value = value;
+                    document.getElementById(`rotation-${name}-output`)
+                        .innerText = value;
+                });
+            });
+        });
+
+        document.querySelectorAll('.parallels').forEach(input => {
+            input.addEventListener('input', () => {
+                const parallels = [
+                    Number(document.getElementById('parallels-0').value),
+                    Number(document.getElementById('parallels-1').value)
+                ];
+                chart.mapView.update({
+                    projection: {
+                        parallels
+                    }
+                }, true, false);
+                document.getElementById('parallels-0-output')
+                    .innerText = parallels[0];
+                document.getElementById('parallels-1-output')
+                    .innerText = parallels[1];
+
+                if (smallChart) {
+                    smallChart.get('parallels').remove();
+                    smallChart.addSeries({
+                        data: getParallelsGeometries(parallels),
+                        type: 'mapline',
+                        id: 'parallels'
+                    }, true, false);
+                }
             });
         });
     };

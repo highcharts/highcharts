@@ -13,6 +13,8 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type { GeoJSON, Polygon, TopoJSON } from './GeoJSON';
+import type MapSeries from '../Series/Map/MapSeries';
+import type MapPointOptions from '../Series/Map/MapPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 import type {
@@ -48,6 +50,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
+    defined,
     fireEvent,
     isArray,
     isNumber,
@@ -57,6 +60,8 @@ const {
     pick,
     relativeLength
 } = U;
+
+type MapDataType = string|GeoJSON|TopoJSON|MapPointOptions[];
 
 type SVGTransformType = {
     scaleX: number;
@@ -71,6 +76,17 @@ type SVGTransformType = {
  */
 const worldSize = 400.979322;
 const tileSize = 256;
+
+// Compute the zoom from given bounds and the size of the playing field. Used in
+// two places, hence the local function.
+const zoomFromBounds = (b: MapBounds, playingField: BBoxObject): number => {
+    const { width, height } = playingField,
+        scaleToField = Math.max(
+            (b.x2 - b.x1) / (width / tileSize),
+            (b.y2 - b.y1) / (height / tileSize)
+        );
+    return Math.log(worldSize / scaleToField) / Math.log(2);
+};
 
 /*
 const mergeCollections = <
@@ -154,32 +170,60 @@ class MapView {
         let recommendedMapView: DeepPartial<MapViewOptions>|undefined;
         let recommendedProjection: DeepPartial<ProjectionOptions>|undefined;
         if (!(this instanceof MapViewInset)) {
-            // Handle the global map
-            const geoMap = this.getGeoMap(chart.options.chart.map);
 
-            // Handle the recommended map view if set
-            if (geoMap) {
-                recommendedMapView = geoMap['hc-recommended-mapview'];
+            // Handle the global map and series-level mapData
+            const geoMaps = [
+                chart.options.chart.map,
+                ...(chart.options.series || []).map(
+                    (s): (MapDataType|undefined) => s.mapData
+                )
+            ]
+                .map((mapData): GeoJSON|undefined => this.getGeoMap(mapData));
 
-                // Provide a best-guess recommended projection if not set in the
-                // map or in user options
-                if (geoMap.bbox) {
-                    const [x1, y1, x2, y2] = geoMap.bbox;
-                    if (x2 - x1 > 180 && y2 - y1 > 90) {
-                        recommendedProjection = {
-                            name: 'EqualEarth'
-                        };
-                    } else {
-                        recommendedProjection = {
-                            name: 'LambertConformalConic',
-                            parallels: [y1, y2],
-                            rotation: [-(x1 + x2) / 2]
-                        };
+
+            const allGeoBounds: MapBounds[] = [];
+            geoMaps.forEach((geoMap): void => {
+                if (geoMap) {
+                    // Use the first geo map as main
+                    if (!recommendedMapView) {
+                        recommendedMapView = geoMap['hc-recommended-mapview'];
+                    }
+
+                    // Combine the bounding boxes of all loaded maps
+                    if (geoMap.bbox) {
+                        const [x1, y1, x2, y2] = geoMap.bbox;
+                        allGeoBounds.push({ x1, y1, x2, y2 });
                     }
                 }
+            });
+
+            // Get the composite bounds
+            const geoBounds = (
+                allGeoBounds.length &&
+                MapView.compositeBounds(allGeoBounds)
+            );
+
+            // Provide a best-guess recommended projection if not set in the map
+            // or in user options
+            if (geoBounds) {
+
+                const { x1, y1, x2, y2 } = geoBounds;
+                recommendedProjection = (x2 - x1 > 180 && y2 - y1 > 90) ?
+                    // Wide angle, go for the world view
+                    {
+                        name: 'EqualEarth'
+                    } :
+                    // Narrower angle, use a projection better suited for local
+                    // view
+                    {
+                        name: 'LambertConformalConic',
+                        parallels: [y1, y2],
+                        rotation: [-(x1 + x2) / 2]
+                    };
             }
 
-            this.geoMap = geoMap;
+            // Register the main geo map (from options.chart.map) if set
+            this.geoMap = geoMaps[0];
         }
 
         this.userOptions = options || {};
@@ -317,13 +361,8 @@ class MapView {
 
             // Apply the playing field, corrected with padding
             this.playingField = this.getField();
-            const { width, height } = this.playingField;
 
-            const scaleToPlotArea = Math.max(
-                (b.x2 - b.x1) / (width / tileSize),
-                (b.y2 - b.y1) / (height / tileSize)
-            );
-            const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
+            const zoom = zoomFromBounds(b, this.playingField);
 
             // Reset minZoom when fitting to natural bounds
             if (!bounds) {
@@ -349,11 +388,11 @@ class MapView {
         };
     }
 
-    public getGeoMap(map?: string|GeoJSON|TopoJSON): GeoJSON|undefined {
+    public getGeoMap(map?: MapDataType): GeoJSON|undefined {
         if (isString(map)) {
             return maps[map];
         }
-        if (isObject(map)) {
+        if (isObject(map, true)) {
             if (map.type === 'FeatureCollection') {
                 return map;
             }
@@ -396,7 +435,10 @@ class MapView {
         const allBounds = this.chart.series.reduce(
             (acc, s): MapBounds[] => {
                 const bounds = s.getProjectedBounds && s.getProjectedBounds();
-                if (bounds) {
+                if (
+                    bounds &&
+                    (s as MapSeries).options.affectsMapView !== false
+                ) {
                     acc.push(bounds);
                 }
                 return acc;
@@ -424,6 +466,168 @@ class MapView {
             translateY = y + height / 2 - projectedCenter[1] * scaleY;
 
         return { scaleX, scaleY, translateX, translateY };
+    }
+
+    /**
+     * Convert map coordinates in longitude/latitude to pixels
+     *
+     * @function Highcharts.MapView#lonLatToPixels
+     * @since  next
+     * @param  {Highcharts.MapLonLatObject} lonLat
+     *         The map coordinates
+     * @return {Highcharts.PositionObject|undefined}
+     *         The pixel position
+     */
+    public lonLatToPixels(
+        lonLat: Highcharts.MapLonLatObject
+    ): PositionObject|undefined {
+        const pos = this.lonLatToProjectedUnits(lonLat);
+        if (pos) {
+            return this.projectedUnitsToPixels(pos);
+        }
+    }
+
+    /**
+     * Get projected units from longitude/latitude. Insets are accounted for.
+     * Returns an object with x and y values corresponding to positions on the
+     * projected plane.
+     *
+     * @requires modules/map
+     *
+     * @function Highcharts.MapView#lonLatToProjectedUnits
+     *
+     * @since next
+     * @sample maps/series/latlon-to-point/ Find a point from lon/lat
+     *
+     * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
+     *
+     * @return {Highcharts.ProjectedXY} X and Y coordinates in terms of
+     *      projected values
+     */
+    public lonLatToProjectedUnits(
+        lonLat: Highcharts.MapLonLatObject
+    ): ProjectedXY|undefined {
+        const chart = this.chart,
+            mapTransforms = chart.mapTransforms;
+
+        // Legacy, built-in transforms
+        if (mapTransforms) {
+            for (const transform in mapTransforms) {
+                if (
+                    Object.hasOwnProperty.call(mapTransforms, transform) &&
+                    mapTransforms[transform].hitZone
+                ) {
+                    const coords = chart.transformFromLatLon(
+                        lonLat,
+                        mapTransforms[transform]
+                    );
+                    if (coords && pointInPolygon(
+                        coords,
+                        mapTransforms[transform].hitZone.coordinates[0]
+                    )) {
+                        return coords;
+                    }
+                }
+            }
+
+            return chart.transformFromLatLon(
+                lonLat,
+                mapTransforms['default'] // eslint-disable-line dot-notation
+            );
+        }
+
+        // Handle insets
+        for (const inset of this.insets) {
+            if (
+                inset.options.geoBounds &&
+                pointInPolygon(
+                    { x: lonLat.lon, y: lonLat.lat },
+                    inset.options.geoBounds.coordinates[0]
+                )
+            ) {
+                const insetProjectedPoint = inset.projection.forward(
+                        [lonLat.lon, lonLat.lat]
+                    ),
+                    pxPoint = inset.projectedUnitsToPixels(
+                        { x: insetProjectedPoint[0], y: insetProjectedPoint[1] }
+                    );
+
+                return this.pixelsToProjectedUnits(pxPoint);
+            }
+        }
+
+        const point = this.projection.forward([lonLat.lon, lonLat.lat]);
+        if (!point.outside) {
+            return { x: point[0], y: point[1] };
+        }
+    }
+
+    /**
+     * Calculate longitude/latitude values for a point or position. Returns an
+     * object with the numeric properties `lon` and `lat`.
+     *
+     * @requires modules/map
+     *
+     * @function Highcharts.MapView#projectedUnitsToLonLat
+     *
+     * @since next
+     *
+     * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
+     *
+     * @param {Highcharts.Point|Highcharts.ProjectedXY} point
+     *        A `Point` instance or anything containing `x` and `y` properties
+     *        with numeric values.
+     *
+     * @return {Highcharts.MapLonLatObject|undefined} An object with `lat` and
+     *         `lon` properties.
+     */
+    public projectedUnitsToLonLat(
+        point: ProjectedXY
+    ): Highcharts.MapLonLatObject|undefined {
+        const chart = this.chart,
+            mapTransforms = chart.mapTransforms;
+
+        // Legacy, built-in transforms
+        if (mapTransforms) {
+            for (const transform in mapTransforms) {
+                if (
+                    Object.hasOwnProperty.call(mapTransforms, transform) &&
+                    mapTransforms[transform].hitZone &&
+                    pointInPolygon(
+                        point,
+                        mapTransforms[transform].hitZone.coordinates[0]
+                    )
+                ) {
+                    return chart.transformToLatLon(
+                        point,
+                        mapTransforms[transform]
+                    );
+                }
+            }
+
+            return chart.transformToLatLon(
+                point,
+                mapTransforms['default'] // eslint-disable-line dot-notation
+            );
+        }
+
+        const pxPoint = this.projectedUnitsToPixels(point);
+        for (const inset of this.insets) {
+            if (
+                inset.hitZone &&
+                pointInPolygon(pxPoint, inset.hitZone.coordinates[0])
+            ) {
+                const insetProjectedPoint = inset
+                        .pixelsToProjectedUnits(pxPoint),
+                    coordinates = inset.projection.inverse(
+                        [insetProjectedPoint.x, insetProjectedPoint.y]
+                    );
+                return { lon: coordinates[0], lat: coordinates[1] };
+            }
+        }
+
+        const coordinates = this.projection.inverse([point.x, point.y]);
+        return { lon: coordinates[0], lat: coordinates[1] };
     }
 
     public redraw(animation?: boolean|Partial<AnimationOptions>): void {
@@ -569,6 +773,22 @@ class MapView {
     }
 
     /**
+     * Convert pixel position to longitude and latitude.
+     *
+     * @function Highcharts.MapView#pixelsToLonLat
+     * @since  next
+     * @param  {Highcharts.PositionObject} pos
+     *         The position in pixels
+     * @return {Highcharts.MapLonLatObject|undefined}
+     *         The map coordinates
+     */
+    public pixelsToLonLat(
+        pos: PositionObject
+    ): Highcharts.MapLonLatObject|undefined {
+        return this.projectedUnitsToLonLat(this.pixelsToProjectedUnits(pos));
+    }
+
+    /**
      * Convert pixel position to projected units
      *
      * @function Highcharts.MapView#pixelsToProjectedUnits
@@ -592,7 +812,7 @@ class MapView {
 
     public setUpEvents(): void {
 
-        const chart = this.chart;
+        const { chart, projection } = this;
 
         // Set up panning for maps. In orthographic projections the globe will
         // rotate, otherwise adjust the map center.
@@ -632,13 +852,21 @@ class MapView {
                     ).slice();
                 }
 
+                // Get the natural zoom level of the projection itself when
+                // zoomed to view the full world
+                const worldBounds = projection.def && projection.def.bounds,
+                    worldZoom = (
+                        worldBounds &&
+                        zoomFromBounds(worldBounds, this.playingField)
+                    ) || -Infinity;
+
                 // Panning rotates the globe
                 if (
-                    this.projection.options.name === 'Orthographic' &&
+                    projection.options.name === 'Orthographic' &&
 
                     // ... but don't rotate if we're loading only a part of the
                     // world
-                    (this.minZoom || Infinity) < 3
+                    (this.minZoom || Infinity) < worldZoom * 1.1
                 ) {
 
                     // Empirical ratio where the globe rotates roughly the same

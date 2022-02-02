@@ -31,11 +31,11 @@ import type {
 } from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
-import type SankeySeriesType from '../Sankey/SankeySeries';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -495,33 +495,6 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
-    public createNodeColumn(): OrganizationSeries.ColumnArray {
-        const column: OrganizationSeries.ColumnArray = super.createNodeColumn
-            .call(this) as any;
-
-        // Wrap the offset function so that the hanging node's children are
-        // aligned to their parent
-        wrap(column, 'offset', function (
-            this: OrganizationPoint,
-            proceed: SankeySeriesType.ColumnArray['offset'],
-            node: OrganizationPoint,
-            factor: number
-        ): (Record<string, number>|undefined) {
-            const offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
-
-            // Modify the default output if the parent's layout is 'hanging'
-            if (node.hangsFrom) {
-                return {
-                    absoluteTop: node.hangsFrom.nodeY
-                };
-            }
-
-            return offset;
-        });
-
-        return column;
-    }
-
     public pointAttribs(
         point: OrganizationPoint,
         state?: StatesOptionsKey
@@ -657,7 +630,7 @@ class OrganizationSeries extends SankeySeries {
 
     public translateNode(
         node: OrganizationPoint,
-        column: OrganizationSeries.ColumnArray
+        column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
     ): void {
         SankeySeries.prototype.translateNode.call(this, node, column);
         let parentNode = node.hangsFrom,
@@ -715,18 +688,6 @@ interface OrganizationSeries {
 extend(OrganizationSeries.prototype, {
     pointClass: OrganizationPoint
 });
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace OrganizationSeries {
-    export interface ColumnArray<T = OrganizationPoint> extends SankeySeriesType.ColumnArray<T> {
-        offset(node: T, factor: number): (Record<string, number>|undefined);
-    }
-}
 
 /* *
  *

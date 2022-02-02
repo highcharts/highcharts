@@ -1,3 +1,10 @@
+#container {
+    min-width: 310px;
+    height: 530px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .planets-title-container {
     text-align: center;
     color: #000;

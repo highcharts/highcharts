@@ -44,10 +44,13 @@ body {
     user-select: none;
     touch-action: manipulation;
     outline: none;
+    top: 0 !important;
 }
 
 .chart-container .highcharts-background {
-    background-color: #f0f0f0;
+    fill: #fff;
+    transform: translate(-0.5px, -0.5px);
+    width: 500px;
 }
 
 .chart-container .highcharts-grid-line {
@@ -155,6 +158,9 @@ body {
     overflow: visible;
     margin-top: 0;
     transition: all 1s;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: 1px solid #46465c;
 }
 
 .chart-container .highcharts-series-15.highcharts-arearange-series.cover {

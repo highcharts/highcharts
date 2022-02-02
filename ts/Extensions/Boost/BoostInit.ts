@@ -287,7 +287,7 @@ function init(): void {
 
                             }
                             // Add points and reset
-                            if (clientX !== lastClientX) {
+                            if (!compareX || clientX !== lastClientX) {
                                 // maxI is number too:
                                 if (typeof minI !== 'undefined') {
                                     plotY =

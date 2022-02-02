@@ -966,9 +966,10 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highstock} stock/chart/zoomtype-xy/
      *         Xy
+     * @sample {highmaps} maps/chart/zoomtype-xy/
+     *         Map with selection zoom
      *
      * @type       {string}
-     * @product    highcharts highstock gantt
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.zoomType
      */

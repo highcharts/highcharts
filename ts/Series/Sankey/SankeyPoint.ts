@@ -30,9 +30,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
+const { defined } = U;
 
 /* *
  *
