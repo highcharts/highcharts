@@ -166,6 +166,17 @@ class MapSeries extends ScatterSeries {
      */
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
+        /**
+         * Whether the MapView takes this series into account when computing the
+         * default zoom and center of the map.
+         *
+         * @sample maps/series/affectsmapview/
+         *         US map with world map backdrop
+         *
+         * @since next
+         */
+        affectsMapView: true,
+
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
