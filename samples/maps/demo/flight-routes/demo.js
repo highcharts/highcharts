@@ -102,8 +102,11 @@
     });
 
     // Function to return an SVG path between two points, with an arc
-    function pointsToPath(from, to, invertArc) {
-        const curve = 0.05,
+    function pointsToPath(fromPoint, toPoint, invertArc) {
+        const
+            from = chart.mapView.lonLatToProjectedUnits(fromPoint),
+            to = chart.mapView.lonLatToProjectedUnits(toPoint),
+            curve = 0.05,
             arcPointX = (from.x + to.x) / (invertArc ? 2 + curve : 2 - curve),
             arcPointY = (from.y + to.y) / (invertArc ? 2 + curve : 2 - curve);
         return [
@@ -143,7 +146,7 @@
             id: 'London - Bristol',
             path: pointsToPath(londonPoint, chart.get('Bristol'), true)
         }]
-    });
+    }, true, false);
 
     // Add a series of lines for Lerwick
     chart.addSeries({
@@ -164,6 +167,6 @@
             id: 'Lerwick - Liverpool',
             path: pointsToPath(lerwickPoint, chart.get('Liverpool'))
         }]
-    });
+    }, true, false);
 
 })();
