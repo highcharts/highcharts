@@ -88,7 +88,8 @@ QUnit.test('MapView Inset', assert => {
 
     const coords1 = { lon: 95, lat: 55 },
         projectedPos = chart.fromLatLonToPoint(coords1),
-        chartPos = chart.mapView.projectedUnitsToPixels(projectedPos);
+        mapView = chart.mapView,
+        chartPos = mapView.projectedUnitsToPixels(projectedPos);
 
     assert.deepEqual(
         chartPos,
@@ -100,6 +101,14 @@ QUnit.test('MapView Inset', assert => {
         chart.fromPointToLatLon(chart.mapView.pixelsToProjectedUnits(chartPos)),
         coords1,
         'fromPointToLatLon: inside inset'
+    );
+
+    assert.deepEqual(
+        mapView.pixelsToLonLat(
+            mapView.lonLatToPixels(coords1)
+        ),
+        coords1,
+        'pixels <-> lonLat roundtrip, inside inset'
     );
 
     const coords2 = { lon: 5, lat: 5 },
