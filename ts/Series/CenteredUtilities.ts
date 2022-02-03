@@ -80,7 +80,7 @@ namespace CenteredUtilities {
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
             smallestSize = Math.min(plotWidth, plotHeight),
-            thickness = options.thickness || 0;
+            thickness = options.thickness;
 
         let handleSlicingRoom,
             size = options.size,
@@ -133,8 +133,8 @@ namespace CenteredUtilities {
         }
         // thickness overrides innerSize, need to be less than pie size (#6647)
         if (
-            thickness < positions[2] &&
-            isNumber(thickness) && thickness > 0
+            isNumber(thickness) &&
+            thickness * 2 < positions[2] && thickness > 0
         ) {
             positions[3] = positions[2] - thickness * 2;
         }
