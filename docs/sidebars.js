@@ -80,6 +80,7 @@ module.exports = {
             'chart-and-series-types/funnel-3d',
             'chart-and-series-types/pyramid-3d',
             'chart-and-series-types/angular-gauges',
+            'chart-and-series-types/arc-diagram',
             'chart-and-series-types/area-chart',
             'chart-and-series-types/areaspline-chart',
             'chart-and-series-types/bar-chart',
