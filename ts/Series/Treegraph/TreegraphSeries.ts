@@ -40,7 +40,6 @@ const {
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-import { Palette } from '../../Core/Color/Palettes';
 const { merge, pick, addEvent, relativeLength, stableSort } = U;
 
 import './TreegraphLayout.js';
@@ -100,22 +99,66 @@ class TreegraphSeries extends OrganizationSeries {
              * @since next
              * @default 'Walker'
              * @product highcharts
-             * @apioption series.treegraph.layout
              */
             layout: 'Walker',
+            /**
+             * Whether the first node should be placed on the opposite side of
+             * the plotArea. In default, the oldest child is positioned on the
+             * bottom (left in the inverted chart).
+             *
+             * @type {boolean}
+             * @since next
+             * @default false
+             * @product highcharts
+             *
+             */
             reversed: false,
-            borderWidth: 1,
+            /**
+             * @extends   plotOptions.series.marker
+             * @excluding enabled, enabledThreshold, height, width
+             */
             marker: {
                 radius: 10,
                 symbol: 'circle',
                 fillOpacity: 1,
                 states: {}
             },
+            /**
+             * Options for the data labels appearing on top of the nodes and
+             * links. For treegraph charts, data labels are visible for the
+             * nodes by default, but hidden for links. This is controlled by
+             * modifying the `nodeFormat`, and the `format` that applies to
+             * links and is an empty string by default.
+             *
+             * @declare Highcharts.SeriesTreegraphDataLabelsOptionsObject
+             *
+             * @private
+             */
+            dataLabels: {
+                /**
+                 * Options for a _link_ label text which should follow link
+                 * connection. Border and background are disabled for a label
+                 * that follows a path.
+                 *
+                 * **Note:** Only SVG-based renderer supports this option.
+                 * Setting `useHTML` to true will disable this option.
+                 *
+                 * @extends plotOptions.treegraph.dataLabels.linkTextPath
+                 * @since   next
+                 */
+                linkTextPath: {
+                    attributes: {
+                        startOffset: '50%'
+                    }
+                },
+                useHTML: false
+            },
             link: {
-                type: 'curved',
-                minWidth: 1,
-                width: 1,
-                color: Palette.neutralColor80
+                /**
+                 * @default 'curved'
+                 *
+                 */
+                type: 'curved'
             }
         }
     );
@@ -306,9 +349,7 @@ class TreegraphSeries extends OrganizationSeries {
             }
         });
 
-        // if (this.layout) {
-        // }
-        this.layoutAlgorythm.init(series);
+        this.layoutAlgorythm.calculatePositions(series);
         series.layoutModifier = this.getLayoutModifiers();
 
         // First translate all nodes so we can use them when drawing links
@@ -326,11 +367,33 @@ class TreegraphSeries extends OrganizationSeries {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
                 if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                    linkPoint.dataLabelOnNull = true;
                     series.translateLink(linkPoint as TreegraphPoint);
                     linkPoint.allowShadow = false;
                 }
             });
         });
+    }
+
+    // Networkgraph has two separate collecions of nodes and lines, render
+    // dataLabels for both sets:
+    public drawDataLabels(): void {
+        if (this.options.dataLabels) {
+            const textPath = this.options.dataLabels.textPath;
+
+            // Render node labels:
+            super.drawDataLabels.apply(this, arguments);
+
+            // Render link labels:
+            this.points = this.data;
+            this.options.dataLabels.textPath =
+                this.options.dataLabels.linkTextPath;
+            super.drawDataLabels.apply(this, arguments);
+
+            // Restore nodes
+            this.points = this.points.concat(this.nodes || []);
+            this.options.dataLabels.textPath = textPath;
+        }
     }
 
     public pointAttribs(
@@ -467,4 +530,83 @@ export default TreegraphSeries;
  *
  * */
 
+/**
+ * An `treegraph` series. If the [type](#series.arcdiagram.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.treegraph
+ * @exclude   dataSorting, boostThreshold, boostBlending, curveFactor,
+ *            connectEnds, connectNulls, colorAxis, colorKey, dataSorting,
+ *            dragDrop, getExtremesFromAll, nodePadding, centerInCategory,
+ *            pointInterval, pointIntervalUnit, pointPlacement,
+ *            pointStart, relativeXValue, softThreshold, stack,
+ *            stacking, step, xAxis, yAxis
+ * @product   highcharts
+ * @requires  modules/sankey
+ * @requires  modules/treegraph
+ * @apioption series.treegraph
+ */
+
+
+/**
+ * @extends   plotOptions.series.marker
+ * @excluding enabled, enabledThreshold
+ * @apioption series.treegraph.marker
+ */
+
+/**
+ * @type      {Highcharts.SeriesTreegraphDataLabelsOptionsObject|Array<Highcharts.SeriesTreegraphDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.treegraph.data.dataLabels
+ */
+
+/**
+ * A collection of options for the individual nodes. The nodes in a treegraph
+ * are auto-generated instances of `Highcharts.Point`, but options can be
+ * applied here and linked by the `id`.
+ *
+ * @extends   series.organization.nodes
+ * @type      {Array<*>}
+ * @product   highcharts
+ * @excluding level
+ * @apioption series.treegraph.nodes
+ */
+
+/**
+ * Individual data label for each node. The options are the same as the ones for
+ * [series.treegraph.dataLabels](#series.treegraph.dataLabels).
+ *
+ * @type
+ * {Highcharts.SeriesTreegraphDataLabelsOptionsObject|Array<Highcharts.SeriesTreegraphDataLabelsOptionsObject>}
+ *
+ * @apioption series.treegraph.nodes.dataLabels
+ */
+/**
+ * An array of data points for the series. For the `treegraph` series type,
+ * points can be given in the following way:
+ *
+ * An array of objects with named values. The following snippet shows only a few
+ * settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ * The data of the treegraph series needs to be formatted in such a way, that
+ * there are no circular dependencies on the nodes, and there is a single
+ * root node.
+ *
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2'
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3',
+ *     }]
+ *  ```
+ *
+ * @type      {Array<*>}
+ * @extends   series.sankey.data
+ * @product   highcharts
+ * @excluding outgoing, dataLabels, weight
+ * @apioption series.treegraph.data
+ */
 ''; // gets doclets above into transpiled version

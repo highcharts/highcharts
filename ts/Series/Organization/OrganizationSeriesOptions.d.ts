@@ -35,8 +35,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
 export interface LinkOptions {
-    color?: ColorString;
-    lineWidth?: number;
+    color: ColorString;
+    lineWidth: number;
     type: 'curved' | 'straight' | 'default';
     radius: number;
 }
@@ -59,7 +59,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels?: OrganizationDataLabelOptions;
     hangingIndent?: number;
     levels?: Array<OrganizationSeriesLevelOptions>;
-    link?: LinkOptions;
+    link: LinkOptions;
     linkColor?: ColorString;
     linkLineWidth?: number;
     linkRadius?: number;

@@ -117,8 +117,9 @@ class OrganizationSeries extends SankeySeries {
          *
          * @deprecated
          * @private
+         * @apioption series.organization.linkRadius
          */
-        linkRadius: 10,
+
         /**
          * Link Styling options
          */
@@ -142,6 +143,7 @@ class OrganizationSeries extends SankeySeries {
             lineWidth: 1,
             /**
              * Radius for the rounded corners of the links between nodes.
+             * works for default link type.
              *
              * @sample   highcharts/series-organization/link-options
              *           Square links
@@ -151,8 +153,26 @@ class OrganizationSeries extends SankeySeries {
             radius: 10,
             /**
              * Type of the link shape.
+             *
+             * @type {'default' | 'curved' | 'straight'}
+             * @default 'default'
+             * @since next
+             * @product highcharts
+             *
              */
             type: 'default'
+            /**
+             * Modifier of the shape of the curved link. Works best for values
+             * between 0 and 1, where 0 is a straight line, and 1 is a shape
+             * close to the default one.
+             *
+             * @default 0.5
+             * @type {number}
+             * @since next
+             * @product highcharts
+             * @apioption series.organization.link.offset
+             *
+             */
         },
         borderWidth: 1,
         /**
@@ -298,8 +318,9 @@ class OrganizationSeries extends SankeySeries {
          * @type {Highcharts.ColorString}
          * @deprecated
          * @private
+         * @apioption series.organization.linkColor
          */
-        linkColor: Palette.neutralColor60,
+
         /**
          * The line width of the links connecting nodes, in pixels. This option
          * is now depricated and moved to the link object.
@@ -308,9 +329,10 @@ class OrganizationSeries extends SankeySeries {
          *           Square links
          *
          * @deprecated
+         * @apioption series.organization.linkLineWidth
          * @private
          */
-        linkLineWidth: 1,
+
         /**
          * In a horizontal chart, the width of the nodes in pixels. Node that
          * most organization charts are vertical, so the name of this option
@@ -426,17 +448,6 @@ class OrganizationSeries extends SankeySeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-
-    // public render (){
-
-    //     this.options.link = {
-
-    //     };
-
-    //     super.render.apply(this, arguments)
-
-    // }
-
     public alignDataLabel(
         point: OrganizationPoint,
         dataLabel: SVGLabel,
@@ -532,10 +543,10 @@ class OrganizationSeries extends SankeySeries {
             ),
 
             linkColor = pick(
-                stateOptions.link ? stateOptions.link.color : void 0,
-                options.link ? options.link.color : void 0,
-                levelOptions.link ? levelOptions.link.color : void 0,
-                series.options.link ? series.options.link.color : void 0,
+                stateOptions.link && stateOptions.link.color,
+                options.link && options.link.color,
+                levelOptions.link && levelOptions.link.color,
+                series.options.link && series.options.link.color,
                 stateOptions.linkColor,
                 options.linkColor,
                 levelOptions.linkColor,
@@ -543,14 +554,14 @@ class OrganizationSeries extends SankeySeries {
             ),
 
             linkLineWidth = pick(
-                stateOptions.link ? stateOptions.link.lineWidth : void 0,
-                options.link ? options.link.lineWidth : void 0,
-                levelOptions.link ? levelOptions.link.lineWidth : void 0,
-                series.options.link ? series.options.link.lineWidth : void 0,
                 stateOptions.linkLineWidth,
                 options.linkLineWidth,
                 levelOptions.linkLineWidth,
-                series.options.linkLineWidth
+                series.options.linkLineWidth,
+                stateOptions.link && stateOptions.link.lineWidth,
+                options.link && options.link.lineWidth,
+                levelOptions.link && levelOptions.link.lineWidth,
+                series.options.link && series.options.link.lineWidth
             );
 
         if (!point.isNode) {
@@ -568,22 +579,29 @@ class OrganizationSeries extends SankeySeries {
     public translateLink(point: OrganizationPoint): void {
         let fromNode = point.fromNode,
             toNode = point.toNode,
-            crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
+            linkWidth = pick(
+                this.options.linkLineWidth,
+                this.options.link.lineWidth
+            ),
+            crisp = (Math.round(linkWidth) % 2) / 2,
             factor = pick((this as any).options.link.offset, 0.5),
             type = (this.options as any).link.type,
-            x1 = Math.floor(
-                (fromNode.shapeArgs as any).x +
-                (fromNode.shapeArgs as any).width
-            ) + crisp,
-            y1 = Math.floor(
-                (fromNode.shapeArgs as any).y +
-                (fromNode.shapeArgs as any).height / 2
-            ) + crisp,
+            x1 =
+                Math.floor(
+                    (fromNode.shapeArgs as any).x +
+                        (fromNode.shapeArgs as any).width
+                ) + crisp,
+            y1 =
+                Math.floor(
+                    (fromNode.shapeArgs as any).y +
+                        (fromNode.shapeArgs as any).height / 2
+                ) + crisp,
             x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 = Math.floor(
-                (toNode.shapeArgs as any).y +
-                (toNode.shapeArgs as any).height / 2
-            ) + crisp,
+            y2 =
+                Math.floor(
+                    (toNode.shapeArgs as any).y +
+                        (toNode.shapeArgs as any).height / 2
+                ) + crisp,
             xMiddle,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,
@@ -596,9 +614,7 @@ class OrganizationSeries extends SankeySeries {
             x2 += (toNode.shapeArgs as any).width;
         }
         xMiddle = Math.floor(
-            x2 +
-            (inverted ? 1 : -1) *
-            (this.colDistance - this.nodeWidth) / 2
+            (x2 + x1) / 2
         ) + crisp;
 
         // Put the link on the side of the node when an offset is given. HR
@@ -667,10 +683,17 @@ class OrganizationSeries extends SankeySeries {
                         ['L', xMiddle, y2],
                         ['L', x2, y2]
                     ],
-                    this.options.linkRadius as number
+                    pick(this.options.linkRadius, this.options.link.radius)
                 )
             };
         }
+        point.dlBox = {
+            x: (x1 + x2) / 2,
+            y: (y1 + y2) / 2,
+            height: linkWidth,
+            width: 0
+        };
+
     }
 
     public translateNode(

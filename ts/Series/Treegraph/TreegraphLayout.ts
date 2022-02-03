@@ -9,7 +9,7 @@ declare global {
             public constructor();
             public siblingDistance: number;
             public levelSeparation: number;
-            public init(series: TreegraphSeries): void;
+            public calculatePositions(series: TreegraphSeries): void;
             public initValues(nodes: TreegraphNode[]): void;
             public calculateInitialX(root: TreegraphNode, index: number): void;
             public beforeWalk(nodes: TreegraphNode[]): void;
@@ -44,7 +44,7 @@ extend(H.treeLayouts.Walker.prototype, {
     // pre order traversal top to bottom (second walk) where adding all of the
     // modifiers is performed.
     // link to the paper: http://dirk.jivas.de/papers/buchheim02improving.pdf
-    init: function (
+    calculatePositions: function (
         this: Highcharts.TreegraphLayout,
         series: TreegraphSeries
     ): void {

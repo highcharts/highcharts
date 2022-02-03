@@ -26,9 +26,7 @@ import { PointMarkerOptions } from '../../Core/Series/PointOptions';
 export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
     layout: string;
     reversed: boolean;
-    borderWidth: number;
     marker: PointMarkerOptions;
-    link: any;
 }
 
 
