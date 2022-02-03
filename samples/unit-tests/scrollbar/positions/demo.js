@@ -80,7 +80,7 @@ QUnit.test(
             ]
         });
 
-        Highcharts.each(chart.yAxis, function (axis, index) {
+        chart.yAxis.forEach((axis, index) => {
             assert.strictEqual(
                 axis.scrollbar.x > chart.plotLeft + chart.plotWidth,
                 true,

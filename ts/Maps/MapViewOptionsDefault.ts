@@ -71,7 +71,13 @@ const defaultOptions: MapViewOptions = {
      * given in geographic coordinates, typically from TopoJSON or GeoJSON.
      *
      * @type   {Object}
-     * @sample {highmaps} maps/demo/topojson-projection Orthographic projection
+     *
+     * @sample maps/mapview/projection-explorer
+     *         Projection explorer
+     * @sample maps/mapview/projection-custom
+     *         Custom UTM projection definition
+     * @sample maps/demo/topojson-projection
+     *         Orthographic projection
      */
     projection: {
 
@@ -80,6 +86,10 @@ const defaultOptions: MapViewOptions = {
          * `LambertConformalConic`, `Miller`, `Orthographic` and `WebMercator`.
          *
          * @type   {string}
+         * @sample maps/mapview/projection-explorer
+         *         Projection explorer
+         * @sample maps/mapview/projection-custom
+         *         Custom UTM projection definition
          * @sample maps/demo/topojson-projection
          *         Orthographic projection
          */
@@ -92,6 +102,8 @@ const defaultOptions: MapViewOptions = {
          *
          * @sample maps/mapview/projection-parallels
          *         LCC projection with parallels
+         * @sample maps/mapview/projection-explorer
+         *         Projection explorer
          * @type {Array<number>}
          */
         parallels: void 0,

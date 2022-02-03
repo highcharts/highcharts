@@ -1,7 +1,6 @@
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-
         height: 1000,
         width: 1000,
         borderWidth: 1

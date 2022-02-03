@@ -84,9 +84,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     function round(array) {
-        return Highcharts.map(array, function (value) {
-            return value === null ? null : Number(value.toFixed(3));
-        });
+        return array.map(value =>
+            (value === null ? null : Number(value.toFixed(3)))
+        );
     }
 
     var expectedData = [

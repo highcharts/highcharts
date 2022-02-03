@@ -40,6 +40,12 @@ export interface LinkOptions {
     type: 'curved' | 'straight' | 'default';
     radius: number;
 }
+
+export type OrganizationHangingIndentTranslationValue = (
+    'inherit'|'cumulative'|'shrink'
+);
+
+
 export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions {
     borderRadius?: number;
     linkColor?: ColorString;
@@ -58,11 +64,13 @@ export interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions {
 export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     dataLabels?: OrganizationDataLabelOptions;
     hangingIndent?: number;
+    hangingIndentTranslation?: OrganizationHangingIndentTranslationValue;
     levels?: Array<OrganizationSeriesLevelOptions>;
     link: LinkOptions;
     linkColor?: ColorString;
     linkLineWidth?: number;
     linkRadius?: number;
+    minNodeLength?: number;
     nodes?: Array<OrganizationSeriesNodeOptions>;
     states?: SeriesStatesOptions<OrganizationSeries>;
 }
