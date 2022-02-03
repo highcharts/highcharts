@@ -55,6 +55,8 @@ const rootPath = process.cwd();
  * */
 
 /**
+ * Escape the HTML
+ *
  * @param {string} str
  * String to escape.
  *
@@ -73,6 +75,8 @@ function escapeHTML(str) {
 }
 
 /**
+ * Read a readme.md file and parse it.
+ *
  * @param {string} directoryPath
  * Directory of error.
  *
@@ -114,6 +118,8 @@ function parseErrorDirectory(directoryPath) {
 }
 
 /**
+ * Read the directory with markdown errors.
+ *
  * @param {string} directoryPath
  * Directory of markdown files.
  *
@@ -150,6 +156,8 @@ function parseErrorsDirectory(directoryPath) {
 }
 
 /**
+ * Parse the markdown.
+ *
  * @param {string} text
  * Markdown text to parse.
  *
@@ -234,6 +242,8 @@ function parseMarkdown(text, extractTitle) {
 }
 
 /**
+ * Write parsed errors to a file.
+ *
  * @param {*} parsedErrors
  * Errors object.
  *
@@ -295,6 +305,8 @@ function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
  * */
 
 /**
+ * Main gulp task.
+ *
  * @return {Promise}
  * Promise to keep
  */
@@ -309,8 +321,7 @@ function scriptsMessages() {
         ))
         .catch(error => {
             logLib.failure(error);
-            // eslint-disable-next-line no-process-exit
-            process.exit(1);
+            process.exit(1); // eslint-disable-line
         });
 }
 
