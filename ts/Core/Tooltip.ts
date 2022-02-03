@@ -1843,6 +1843,10 @@ class Tooltip {
 
             anchorX += chartPosition.left - pos.x;
             anchorY += chartPosition.top - pos.y;
+
+            // Corrects positions, occurs with tooltip positioner. #16944
+            pos.x -= this.distance / 2;
+            pos.y -= this.distance / 2;
         }
 
         // do the move
