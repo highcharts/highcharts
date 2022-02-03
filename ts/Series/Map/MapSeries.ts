@@ -757,7 +757,7 @@ class MapSeries extends ScatterSeries {
                         scaleY: scaleStep * flipFactor
                     });
 
-                    group.element.setAttribute(
+                    transformGroup.element.setAttribute(
                         'stroke-width',
                         strokeWidth / scaleStep
                     );

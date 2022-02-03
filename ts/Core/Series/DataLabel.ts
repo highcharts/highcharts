@@ -544,13 +544,13 @@ namespace DataLabel {
                         rotation,
                         attr: any,
                         dataLabel: SVGLabel = point.dataLabels ?
-                            point.dataLabels[i] : point.dataLabel as any;
+                            point.dataLabels[i] : point.dataLabel as any,
+                        isNew = !dataLabel;
 
                     const labelDistance = pick(
-                            (labelOptions as any).distance,
-                            point.labelDistance
-                        ),
-                        isNew = !dataLabel;
+                        (labelOptions as any).distance,
+                        point.labelDistance
+                    );
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
@@ -635,9 +635,20 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML
+                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            (
+                                // Change from no rotation to rotation and
+                                // vice versa. Don't use defined() because
+                                // rotation = 0 means also rotation = undefined
+                                (
+                                    !dataLabel.rotation ||
+                                    !labelOptions.rotation
+                                ) &&
+                                dataLabel.rotation !== labelOptions.rotation
+                            )
                         )
                     ) {
+                        isNew = true;
                         point.dataLabel = dataLabel =
                             point.dataLabel && point.dataLabel.destroy() as any;
                         if (point.dataLabels) {

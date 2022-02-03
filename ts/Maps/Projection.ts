@@ -540,10 +540,13 @@ export default class Projection {
         // pre-projected.
         const hasGeoProjection = this.hasGeoProjection;
 
-        // @todo better test for when to do this (use clipAngle = 90?)
-        const projectingToPlane = this.options.name !== 'Orthographic';
+        // Detect whether we need to do antimeridian cutting and clipping to
+        // bounds. The alternative (currently for Orthographic) is to apply a
+        // clip angle.
+        const projectingToPlane = !def || def.antimeridianCutting !== false;
+
         // We need to rotate in a separate step before applying antimeridian
-        // clipping
+        // cutting
         const preclip = projectingToPlane ? rotator : void 0;
         const postclip = projectingToPlane ? (def || this) : this;
 
@@ -686,6 +689,7 @@ export default class Projection {
                             if (isPolygon && !firstValidLonLat) {
                                 firstValidLonLat = lonLat;
                                 poly.push(lonLat);
+                                points.push(point);
                             }
 
                             // When entering the first valid point after a gap

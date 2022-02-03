@@ -42,10 +42,8 @@ QUnit.test(
             ]
         });
 
-        function toFastAroonWithRound(arr) {
-            return Highcharts.map(arr, function (point) {
-                return parseFloat(point.toFixed(4));
-            });
+        function toAroonWithRound(arr) {
+            return arr.map(point => parseFloat(point.toFixed(4)));
         }
 
         assert.strictEqual(
@@ -118,7 +116,7 @@ QUnit.test(
         });
 
         assert.deepEqual(
-            toFastAroonWithRound(chart.series[1].yData),
+            toAroonWithRound(chart.series[1].yData),
             [
                 71.4286,
                 71.4286,
@@ -145,7 +143,7 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         assert.deepEqual(
-            toFastAroonWithRound(chart.series[1].yData),
+            toAroonWithRound(chart.series[1].yData),
             [
                 71.4286,
                 71.4286,

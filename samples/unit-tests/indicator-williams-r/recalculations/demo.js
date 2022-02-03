@@ -41,9 +41,7 @@ QUnit.test('Test Williams %R calculations on data updates.', function (assert) {
     });
 
     function toFastWilliamsWithRound(arr) {
-        return Highcharts.map(arr, function (point) {
-            return [parseFloat(point.toFixed(4))];
-        });
+        return arr.map(point => [parseFloat(point.toFixed(4))]);
     }
 
     assert.strictEqual(

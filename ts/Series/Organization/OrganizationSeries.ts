@@ -256,6 +256,31 @@ class OrganizationSeries extends SankeySeries {
          */
         hangingIndent: 20,
         /**
+         * Defines the indentation of a `hanging` layout parent's children.
+         * Possible options:
+         *
+         * - `inherit` (default): Only the first child adds the indentation,
+         * children of a child with indentation inherit the indentation.
+         * - `cumulative`: All children of a child with indentation add its
+         * own indent. The option may cause overlapping of nodes.
+         * Then use `shrink` option:
+         * - `shrink`: Nodes shrink by the
+         * [hangingIndent](#plotOptions.organization.hangingIndent)
+         * value until they reach the
+         * [minNodeLength](#plotOptions.organization.minNodeLength).
+         *
+         * @sample highcharts/series-organization/hanging-cumulative
+         *         Every indent increases the indentation
+         *
+         * @sample highcharts/series-organization/hanging-shrink
+         *         Every indent decreases the nodes' width
+         *
+         * @type {Highcharts.OrganizationHangingIndentTranslationValue}
+         * @since next
+         * @default inherit
+         */
+        hangingIndentTranslation: 'inherit',
+        /**
          * The color of the links between nodes.
          *
          * @type {Highcharts.ColorString}
@@ -272,9 +297,24 @@ class OrganizationSeries extends SankeySeries {
          */
         linkLineWidth: 1,
         /**
-         * In a horizontal chart, the width of the nodes in pixels. Node that
+         * In a horizontal chart, the minimum width of the **hanging** nodes
+         * only, in pixels. In a vertical chart, the minimum height of the
+         * **haning** nodes only, in pixels too.
+         *
+         * Note: Used only when
+         * [hangingIndentTranslation](#plotOptions.organization.hangingIndentTranslation)
+         * is set to `shrink`.
+         *
+         * @see [nodeWidth](#plotOptions.organization.nodeWidth)
+         * @private
+         */
+        minNodeLength: 10,
+        /**
+         * In a horizontal chart, the width of the nodes in pixels. Note that
          * most organization charts are vertical, so the name of this option
          * is counterintuitive.
+         *
+         * @see [minNodeLength](#plotOptions.organization.minNodeLength)
          *
          * @private
          */
@@ -593,17 +633,43 @@ class OrganizationSeries extends SankeySeries {
         column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
     ): void {
         SankeySeries.prototype.translateNode.call(this, node, column);
+        let parentNode = node.hangsFrom,
+            indent = this.options.hangingIndent || 0,
+            sign = this.chart.inverted ? -1 : 1,
+            shapeArgs = (node.shapeArgs as any),
+            indentLogic = this.options.hangingIndentTranslation,
+            minLength = this.options.minNodeLength || 10;
 
-        if (node.hangsFrom) {
-            (node.shapeArgs as any).height -=
-                this.options.hangingIndent as any;
-            if (!this.chart.inverted) {
-                (node.shapeArgs as any).y += this.options.hangingIndent;
+        if (parentNode) {
+            if (indentLogic === 'cumulative') {
+                // Move to the right:
+                shapeArgs.height -= indent;
+                shapeArgs.y -= sign * indent;
+                while (parentNode) {
+                    shapeArgs.y += sign * indent;
+                    parentNode = parentNode.hangsFrom;
+                }
+            } else if (indentLogic === 'shrink') {
+                // Resize the node:
+                while (
+                    parentNode &&
+                    shapeArgs.height > indent + minLength
+                ) {
+                    shapeArgs.height -= indent;
+                    parentNode = parentNode.hangsFrom;
+                }
+            } else {
+                // indentLogic === "inherit"
+                // Do nothing (v9.3.2 and prev versions):
+                shapeArgs.height -= indent;
+                if (!this.chart.inverted) {
+                    shapeArgs.y += indent;
+                }
             }
         }
         node.nodeHeight = this.chart.inverted ?
-            (node.shapeArgs as any).width :
-            (node.shapeArgs as any).height;
+            shapeArgs.width :
+            shapeArgs.height;
     }
 
     /* eslint-enable valid-jsdoc */
@@ -656,6 +722,14 @@ export default OrganizationSeries;
  * nodes in the diagram.
  *
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
+ */
+
+/**
+ * Indent translation value for the child nodes in an organization chart, when
+ * parent has `hanging` layout. Option can shrink nodes (for tight charts),
+ * translate children to the left, or render nodes directly under the parent.
+ *
+ * @typedef {"inherit"|"cumulative"|"shrink"} Highcharts.OrganizationHangingIndentTranslationValue
  */
 
 ''; // detach doclets above
@@ -731,6 +805,9 @@ export default OrganizationSeries;
 /**
  * Layout for the node's children. If `hanging`, this node's children will hang
  * below their parent, allowing a tighter packing of nodes in the diagram.
+ *
+ * Note: Since @next version, the `hanging` layout is set by default for
+ * children of a parent using `hanging` layout.
  *
  * @sample highcharts/demo/organization-chart
  *         Hanging layout
