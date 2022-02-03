@@ -18,6 +18,7 @@
 
 
 import type SunburstSeries from './Sunburst/SunburstSeries.js';
+import type SunburstDataLabelOptions from '../Series/Sunburst/SunburstDataLabelOptions';
 import type DependencyWheelSeries from './DependencyWheel/DependencyWheelSeries.js';
 
 import U from '../Core/Utilities.js';
@@ -35,6 +36,19 @@ const {
  * */
 
 namespace CircularDataLabels {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+    export interface CicrularDlOptionsParams extends SunburstSeries.DlOptionsParams {
+
+    }
+
+    export interface CicrularDlOptions extends SunburstDataLabelOptions {
+
+    }
 
     /* *
      *
@@ -61,7 +75,7 @@ namespace CircularDataLabels {
     }
 
     function getDlOptions(
-        params: SunburstSeries.DlOptionsParams
+        params: CicrularDlOptionsParams
     ): any {
         // Set options to new object to avoid problems with scope
         let point = params.point,
@@ -80,9 +94,14 @@ namespace CircularDataLabels {
                     {}
             )[0],
             optionsSeries = point.series.options.dataLabels,
-            options = merge<any>({
-                style: {}
-            }, optionsSeries, optionsLevel, optionsPoint),
+            options = merge<CicrularDlOptions>(
+                {
+                    style: {}
+                },
+                optionsSeries,
+                optionsLevel,
+                optionsPoint
+            ),
             rotationRad: (number|undefined),
             rotation: (number|undefined),
             rotationMode = options.rotationMode;
