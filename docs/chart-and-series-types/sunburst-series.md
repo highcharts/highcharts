@@ -62,3 +62,9 @@ Below is an example where the first level will use have `colorByPoint: true`, an
 ### Static or dynamic levels
 
 `levelIsConstant` is an option used together with the `levels` and `allowDrillToNode` options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
+
+### Navigating through levels
+For multiple levels consider using breadcrumb from drilldown module to help navigate through the chart.
+
+Read more about the breadcrumbs [here](https://www.highcharts.com/docs/advanced-chart-features/breadcrumbs).
+

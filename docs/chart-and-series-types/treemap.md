@@ -149,6 +149,11 @@ levelIsConstant is an option used together with the levels and allowDrillToNode 
 
 An [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset) where levelIsConstant is set to false.
 
+##### Navigating through levels
+For multiple levels consider using breadcrumb from drilldown module to help navigate through the chart.
+
+Read more about the breadcrumbs [here](https://www.highcharts.com/docs/advanced-chart-features/breadcrumbs).
+
 ### Use with ColorAxis
 
 <iframe style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treemap-coloraxis allow="fullscreen"></iframe>
