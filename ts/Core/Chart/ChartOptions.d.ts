@@ -132,6 +132,7 @@ export interface ChartOptions {
     type?: string;
     width?: (null|number);
     zoomBySingleTouch?: boolean;
+    zooming?: Partial<ChartZoomingOptions>;
     zoomType?: ('x'|'xy'|'y');
 }
 
@@ -172,6 +173,11 @@ export interface ChartSelectionContextObject {
     yAxis: Array<ChartSelectionAxisContextObject>;
 }
 
+export interface ChartZoomingOptions {
+    singleTouch: boolean;
+    type?: ('x'|'xy'|'y');
+    pinchType?: string;
+}
 /* *
  *
  *  Default Export
