@@ -53,8 +53,10 @@ QUnit.test('MapBubble', function (assert) {
     );
 
     // Passing the default joinBy value for MapBubbleSeries (#16750).
-    assert.ok(
-        chart.series[1].joinBy[0] === "hc-key",
-        `Checking default options for joinBy: 'hc-key'.`
+    assert.strictEqual(
+        chart.series[1].joinBy[0],
+        'hc-key',
+        `The value of joinBy in the mapbubble series 
+        should be 'hc-key' by default.`
     );
 });
