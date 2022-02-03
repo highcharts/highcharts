@@ -15,8 +15,8 @@
                         type: 'mappoint',
                         colorAxis: false,
                         data: [{
-                            x: 4450,
-                            y: 8550,
+                            lon: 6.58,
+                            lat: 61.09,
                             name: 'Point added on chart load'
                         }],
                         name: 'Series added on chart load'

@@ -78,17 +78,6 @@
 
         e = chart.pointer.normalize(e);
 
-        // @todo Legacy code, remove after launch of v10
-        if (!e.lon && !e.lat) {
-            const projectedPosition = chart.mapView.pixelsToProjectedUnits({
-                x: Math.round(e.chartX - chart.plotLeft),
-                y: Math.round(e.chartY - chart.plotTop)
-            });
-            const position = chart.fromPointToLatLon(projectedPosition);
-            e.lon = position.lon;
-            e.lat = position.lat;
-        }
-
         chart.lbl.attr({
             x: e.chartX + 5,
             y: e.chartY - 22,

@@ -43,8 +43,8 @@
     });
 
     const zoomToEurope = () => chart.mapView.setView(
-        [4500, 8300], // In terms of pre-projected units
-        -1
+        [10, 52],
+        3.8
     );
 
     document.getElementById('setextremes').onclick = zoomToEurope;

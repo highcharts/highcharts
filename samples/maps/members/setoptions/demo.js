@@ -14,34 +14,41 @@
                     y2: 1
                 },
                 stops: [
-                    [0, '#011590'],
-                    [0.15, '#004AB3'],
-                    [0.4, '#0378D7'],
-                    [0.6, '#0378D7'],
-                    [0.75, '#004AB3'],
-                    [1, '#011590']
+                    [0, '#111'],
+                    [0.15, '#222'],
+                    [0.4, '#333'],
+                    [0.6, '#333'],
+                    [0.75, '#222'],
+                    [1, '#111']
                 ]
             }
         },
         title: {
             style: {
-                color: 'white'
+                color: '#ccc'
             }
         },
         legend: {
             title: {
                 style: {
-                    color: 'white'
+                    color: '#ccc'
                 }
             }
         },
         colorAxis: {
-            minColor: '#373832',
-            maxColor: '#baFF55',
+            minColor: '#666',
+            maxColor: '#888',
             labels: {
                 style: {
-                    color: 'white'
+                    color: '#888'
                 }
+            }
+        },
+
+        plotOptions: {
+            map: {
+                borderWidth: 0.25,
+                borderColor: '#111'
             }
         }
 
