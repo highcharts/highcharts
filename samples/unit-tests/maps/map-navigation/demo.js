@@ -192,6 +192,7 @@ QUnit.test('Map navigation button alignment', assert => {
 });
 
 QUnit.test('Orthographic map rotation and panning.', assert => {
+
     const getGraticule = partial => {
         const data = [];
         // Meridians
@@ -304,6 +305,24 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         oldPlotY = point.plotY;
     let oldRotation = chart.mapView.projection.options.rotation;
 
+    // Test event properties
+    controller.click(350, 300, void 0, true);
+    // No idea why Safari fails this, possibly related to test controller. It
+    // works in practice.
+    assert.close(
+        event.lon,
+        20.4,
+        5,
+        'Longitude should be available on event'
+    );
+
+    assert.close(
+        event.lat,
+        49.2,
+        10,
+        'Latitude should be available on event'
+    );
+
     // Zoom needed to pan initially.
     chart.mapView.zoomBy(1);
 
@@ -338,25 +357,5 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         oldRotation,
         'Rotation should be activated (#16722).'
     );
-
-    // Test event properties
-    controller.click(350, 300, void 0, true);
-    // No idea why Safari fails this, possibly related to test controller. It
-    // works in practice.
-    if (navigator.userAgent.indexOf('Safari') === -1) {
-        assert.close(
-            event.lon,
-            12.1,
-            5,
-            'Longitude should be available on event'
-        );
-
-        assert.close(
-            event.lat,
-            68.6,
-            10,
-            'Latitude should be available on event'
-        );
-    }
 
 });
