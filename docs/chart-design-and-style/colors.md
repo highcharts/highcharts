@@ -35,6 +35,12 @@ The color is given as an object literal containing two properties:
 
 In modern SVG enabled browsers the linear gradients can be applied to both fills (backgrounds) and strokes (lines). Internet Explorer 8 and less doesn't support gradients on lines, so in these browsers only the first stop color is used.
 
+Note that linear gradients can be differently defined (as an array or an object). Also, start/end positions might be calculated differently depending on the `gradientUnits` property (this property can only be set in linear gradient declared as object).
+
+`gradientUnits` values:
+*   **`userSpaceOnUse`** Default when gradient declared as an array. Start and end positions have to be declared as pixels on the chart.
+*   **`objectBoundingBox`** Default when gradient declared as an object. Start and end positions are in the range of 0 to 1 as described above. Using this might sometimes result in the disappearance of the coloured element.
+
 See the online example of a [linear gradient chart background](https://jsfiddle.net/highcharts/4rTBY/).
 
 Radial gradients
