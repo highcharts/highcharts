@@ -31,6 +31,15 @@ const drilldown = async function (e) {
             d.value = i;
         });
 
+        // Apply the recommended map view if any
+        chart.mapView.update(
+            Highcharts.merge(
+                { insets: undefined },
+                topology.objects.default['hc-recommended-mapview']
+            ),
+            false
+        );
+
         // Hide loading and add series
         chart.hideLoading();
         clearTimeout(fail);
@@ -45,6 +54,13 @@ const drilldown = async function (e) {
     }
 };
 
+// On drill up, reset to the top-level map view
+const drillup = function (e) {
+    if (e.seriesOptions.custom && e.seriesOptions.custom.mapView) {
+        e.target.mapView.update(e.seriesOptions.custom.mapView, false);
+    }
+};
+
 (async () => {
 
     const topology = await fetch(
@@ -52,6 +68,8 @@ const drilldown = async function (e) {
     ).then(response => response.json());
 
     const data = Highcharts.geojson(topology);
+
+    const mapView = topology.objects.default['hc-recommended-mapview'];
 
     // Set drilldown pointers
     data.forEach((d, i) => {
@@ -63,7 +81,8 @@ const drilldown = async function (e) {
     Highcharts.mapChart('container', {
         chart: {
             events: {
-                drilldown
+                drilldown,
+                drillup
             }
         },
 
@@ -77,15 +96,7 @@ const drilldown = async function (e) {
             maxColor: '#005645'
         },
 
-        // @todo: Handle insets
-        // mapView: topology.objects.default['hc-recommended-mapview'],
-        mapView: {
-            projection: {
-                name: 'LambertConformalConic',
-                rotation: [100],
-                parallels: [35, 45]
-            }
-        },
+        mapView,
 
         mapNavigation: {
             enabled: true,
@@ -110,6 +121,9 @@ const drilldown = async function (e) {
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal-code}'
+            },
+            custom: {
+                mapView
             }
         }],
 
