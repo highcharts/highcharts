@@ -6,6 +6,7 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
+
 const editor = function () {
     Highcharts.chart('editor',
         {
@@ -66,9 +67,6 @@ const editor = function () {
                             chart.redraw();
                         }, 1400);
 
-
-                    },
-                    redraw: function () {
 
                     }
                 }
@@ -302,9 +300,6 @@ const editor = function () {
                 {
                     type: 'column',
                     colorByPoint: 'true',
-                    pointWidth: 60,
-                    pointPadding: 0,
-                    groupPadding: 0,
                     xAxis: 1,
                     yAxis: 1,
                     data: [
@@ -325,7 +320,53 @@ const editor = function () {
                         }
                     ]
                 }
-            ]
+            ],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 380
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            column: {
+                                pointWidth: 30,
+                                pointPadding: 0,
+                                groupPadding: 0
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 399
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            column: {
+                                pointWidth: 50,
+                                pointPadding: 0,
+                                groupPadding: 0
+                            }
+                        }
+                    }
+                },
+                {
+                    condition: {
+                        minWidth: 499
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            column: {
+                                pointWidth: 60,
+                                pointPadding: 0,
+                                groupPadding: 0
+                            }
+                        }
+                    }
+                }
+
+                ]
+            }
         }
     );
 };
