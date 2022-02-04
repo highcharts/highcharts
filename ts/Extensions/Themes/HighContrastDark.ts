@@ -47,16 +47,15 @@ namespace HighContrastDarkTheme {
 
     export const options: DeepPartial<Options> = {
         colors: [
-            '#a6f0ff',
-            '#70d49e',
-            '#e898a5',
-            '#007faa',
-            '#f9db72',
-            '#f45b5b',
-            '#1e824c',
-            '#e7934c',
-            '#dadfe1',
-            '#a0618b'
+            '#316ee7',
+            '#A2EBAB',
+            '#606FBD',
+            '#FC9B59',
+            '#DF2B23',
+            '#64D3E7',
+            '#BB16F2',
+            '#92CFC3',
+            '#797182'
         ],
 
         chart: {
