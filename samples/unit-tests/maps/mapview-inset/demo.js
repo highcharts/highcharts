@@ -38,6 +38,33 @@ QUnit.test('MapView Inset', assert => {
         }]
     };
 
+    const inset = {
+        field: {
+            type: 'Polygon',
+            coordinates: [
+                [
+                    [0, 80],
+                    [20, 80],
+                    [20, 100],
+                    [0, 100]
+                ]
+            ]
+        },
+        geoBounds: {
+            type: 'Polygon',
+            coordinates: [
+                [
+                    [80, 40],
+                    [80, 70],
+                    [110, 70],
+                    [110, 40],
+                    [80, 40]
+                ]
+            ]
+
+        }
+    };
+
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: geojson,
@@ -51,32 +78,7 @@ QUnit.test('MapView Inset', assert => {
             insetOptions: {
                 relativeTo: 'plotBox'
             },
-            insets: [{
-                field: {
-                    type: 'Polygon',
-                    coordinates: [
-                        [
-                            [0, 80],
-                            [20, 80],
-                            [20, 100],
-                            [0, 100]
-                        ]
-                    ]
-                },
-                geoBounds: {
-                    type: 'Polygon',
-                    coordinates: [
-                        [
-                            [80, 40],
-                            [80, 70],
-                            [110, 70],
-                            [110, 40],
-                            [80, 40]
-                        ]
-                    ]
-
-                }
-            }]
+            insets: [inset]
         },
         series: [{
             dataLabels: {
@@ -145,9 +147,56 @@ QUnit.test('MapView Inset', assert => {
                 p.plotY < chart.plotTop + chart.plotHeight
             ),
             `Plot coordinates of ${p.name} should be within pane (currently \
- [${p.plotX}, ${p.plotY}])`
+                [${p.plotX}, ${p.plotY}])`
         );
     });
 
+
+    // Update - remove the inset
+    const xyBefore = chart.mapView.lonLatToPixels({ lon: 95, lat: 55 });
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-mapview-inset-border')
+            .length,
+        1,
+        'There should be one inset border initially'
+    );
+    chart.mapView.update({ insets: undefined });
+    assert.strictEqual(
+        chart.mapView.insets.length,
+        0,
+        'Inset should be removed by update'
+    );
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-mapview-inset-border')
+            .length,
+        0,
+        'There should be no inset border after update'
+    );
+
+    assert.notDeepEqual(
+        chart.mapView.lonLatToPixels({ lon: 95, lat: 55 }),
+        xyBefore,
+        'Translation inside what was previously the inset should change'
+    );
+
+    // Update - reintroduce the inset
+    chart.mapView.update({ insets: [inset] });
+    assert.strictEqual(
+        chart.mapView.insets.length,
+        1,
+        'Inset should be added by update'
+    );
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-mapview-inset-border')
+            .length,
+        1,
+        'There should be one inset border after update'
+    );
+
+    assert.deepEqual(
+        chart.mapView.lonLatToPixels({ lon: 95, lat: 55 }),
+        xyBefore,
+        'Translation inside what was previously the inset should change'
+    );
 
 });
