@@ -90,6 +90,7 @@ declare module '../../Core/Series/SeriesLike' {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
+        transformGroups?: Array<SVGElement>|undefined;
         useMapGeometry?: boolean;
     }
 }
@@ -588,6 +589,7 @@ class MapSeries extends ScatterSeries {
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
+            delete point.insetIndex;
             delete point.projectedPath;
         });
         delete this.bounds;
@@ -636,18 +638,22 @@ class MapSeries extends ScatterSeries {
         // Set groups that handle transform during zooming and panning in order
         // to preserve clipping on series.group
         this.transformGroups = transformGroups;
-        if (!transformGroups.length) {
-            [mapView].concat(mapView.insets).forEach((view): void => {
-                const transformGroup = renderer.g().add(group);
-                transformGroups.push(transformGroup);
-            });
+        if (!transformGroups[0]) {
+            transformGroups[0] = renderer.g().add(group);
         }
+        mapView.insets.forEach((inset, i): void => {
+            if (!transformGroups[i + 1]) {
+                transformGroups.push(renderer.g().add(group));
+            }
+        });
 
         // Draw the shapes again
         if (this.doFullTranslate()) {
 
             // Individual point actions.
             this.points.forEach((point): void => {
+
+                const { graphic, shapeArgs } = point;
 
                 // Points should be added in the corresponding transform group
                 point.group = transformGroups[
@@ -656,9 +662,15 @@ class MapSeries extends ScatterSeries {
                         0
                 ];
 
+                // When the point has been moved between insets after
+                // MapView.update
+                if (graphic && graphic.parentGroup !== point.group) {
+                    graphic.add(point.group);
+                }
+
                 // Restore state color on update/redraw (#3529)
-                if (point.shapeArgs && chart.hasRendered && !chart.styledMode) {
-                    point.shapeArgs.fill = this.pointAttribs(
+                if (shapeArgs && chart.hasRendered && !chart.styledMode) {
+                    shapeArgs.fill = this.pointAttribs(
                         point,
                         point.state
                     ).fill;
