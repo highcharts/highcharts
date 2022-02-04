@@ -280,7 +280,7 @@ class TreegraphSeries extends OrganizationSeries {
 
             if (node.xPosition <= minX) {
                 minX = node.xPosition;
-                minXSize = Math.max(nodeSizeY as number, minXSize);
+                minXSize = Math.max(nodeSizeX as number, minXSize);
             }
             if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
@@ -423,8 +423,8 @@ class TreegraphSeries extends OrganizationSeries {
             x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
             symbol = node.symbol,
-            width = node.nodeSizeX,
             height = node.nodeSizeY,
+            width = node.nodeSizeX,
             reversed = this.options.reversed,
             nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
             nodeY = !reversed ? plotSizeY - height / 2 - y : y + height / 2;

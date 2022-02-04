@@ -1,16 +1,30 @@
+const dataLabelsColor = '#C3CEDA';
+const expeditionColor = '#738FA7';
+const plotBackgroundColor = '#071330';
+const markerColor = '#0C4160';
+
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-        height: 1000,
-        width: 1000,
-        borderWidth: 1
+        plotBackgroundColor: plotBackgroundColor,
+        borderWidth: 1,
+        width: 800,
+        height: 1000
     },
 
     title: {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in a Quest to Single Mountain marked green'
+        text: 'Dwarfs participating in a Quest to Lonley Mountain marked green'
+    },
+
+    plotOptions: {
+        treegraph: {
+            dataLabels: {
+                color: dataLabelsColor
+            }
+        }
     },
 
     series: [
@@ -18,101 +32,45 @@ Highcharts.chart('container', {
             type: 'treegraph',
             marker: {
                 symbol: 'rect',
-                width: 60,
-                height: 40,
-                fillColor: 'gold'
+                height: 70,
+                width: 50,
+                fillColor: markerColor
             },
-            dataLabels: {
-                color: '#222'
-            },
+
             link: {
-                type: 'curved'
+                type: 'curved',
+                lineWidth: 2,
+                color: markerColor
             },
+
             nodes: [
                 {
                     id: 'Durin the Deathless',
-                    name: 'Durin the Deathless',
-                    title: '(First Age)'
-                },
-                {
-                    id: 'Durin VI',
-                    name: 'Durin VI',
-                    title: '1731 - 1980'
-                },
-                {
-                    id: 'Nain I',
-                    name: 'Nain I',
-                    title: '1832 - 1981'
-                },
-                {
-                    id: 'Thrain I',
-                    name: 'Thrain I',
-                    title: '1934 - 2190'
-                },
-                {
-                    id: 'Thorin I',
-                    name: 'Thorin I',
-                    title: '2035 - 2289'
-                },
-                {
-                    id: 'Gloin',
-                    name: 'Gloin',
-                    title: '2136 - 2385'
-                },
-                {
-                    id: 'Oin',
-                    name: 'Oin',
-                    title: '2238 - 2585'
-                },
-                {
-                    id: 'Nain II',
-                    name: 'Nain II',
-                    title: '2338 - 2585'
-                },
-                {
-                    id: 'Dain I',
-                    name: 'Dain I',
-                    title: '2440 - 2589'
-                },
-                {
-                    id: 'Borin',
-                    name: 'Borin',
-                    title: '2450 - 2711'
-                },
-                {
-                    id: 'Farin',
-                    name: 'Farin',
-                    title: '2560 - 2803'
-                },
-                {
-                    id: 'Fundin',
-                    name: 'Fundin',
-                    title: '2662 - 2799'
+                    name: 'Durin the Deathless'
                 },
                 {
                     id: 'Thorin II Oakenshield',
                     name: 'Thorin II Oakenshield',
                     title: '2746 - 2941',
+
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
-                },
-                {
-                    id: 'Gorin',
-                    name: 'Gorin',
-                    title: '2671 - 2923'
                 },
                 {
                     id: 'Gimli',
                     name: 'Gimli',
-                    title: '2879 - 120 FA?'
+                    marker: {
+                        symbol: 'circle',
+                        radius: 30
+                    }
                 },
                 {
                     id: 'Fili',
                     name: 'Fili',
                     title: '2859 - 2941',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -120,7 +78,7 @@ Highcharts.chart('container', {
                     name: 'Kili',
                     title: '2864 - 2941',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -128,7 +86,7 @@ Highcharts.chart('container', {
                     name: 'Balin',
                     title: '2763 - 2994',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -136,7 +94,7 @@ Highcharts.chart('container', {
                     name: 'Dwalin',
                     title: '2772 - 3112',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -144,7 +102,7 @@ Highcharts.chart('container', {
                     name: 'Oin II',
                     title: '2774 - 2994',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -152,26 +110,27 @@ Highcharts.chart('container', {
                     name: 'Gloin II',
                     title: '2783 - 15 F.A.',
                     marker: {
-                        fillColor: 'green'
+                        fillColor: expeditionColor
                     }
                 }
             ],
-            keys: ['from', 'to'],
+            keys: ['from', 'to', 'link.color'],
+
             data: [
-                ['Durin the Deathless', 'Durin VI'],
-                ['Durin VI', 'Nain I'],
-                ['Nain I', 'Thrain I'],
-                ['Thrain I', 'Thorin I'],
-                ['Thorin I', 'Gloin'],
-                ['Gloin', 'Oin'],
-                ['Oin', 'Nain II'],
-                ['Nain II', 'Dain I'],
+                ['Durin the Deathless', 'Durin VI', 'gold'],
+                ['Durin VI', 'Nain I', 'gold'],
+                ['Nain I', 'Thrain I', 'gold'],
+                ['Thrain I', 'Thorin I', 'gold'],
+                ['Thorin I', 'Gloin', 'gold'],
+                ['Gloin', 'Oin', 'gold'],
+                ['Oin', 'Nain II', 'gold'],
+                ['Nain II', 'Dain I', 'gold'],
                 ['Nain II', 'Borin'],
-                ['Dain I', 'Thror'],
+                ['Dain I', 'Thror', 'gold'],
                 ['Dain I', 'Fror'],
                 ['Dain I', 'Gror'],
-                ['Thror', 'Thrain II'],
-                ['Thrain II', 'Thorin II Oakenshield'],
+                ['Thror', 'Thrain II', 'gold'],
+                ['Thrain II', 'Thorin II Oakenshield', 'gold'],
                 ['Thrain II', 'Frerin'],
                 ['Thrain II', 'Dis'],
                 ['Dis', 'Kili'],
@@ -179,6 +138,7 @@ Highcharts.chart('container', {
                 ['Gror', 'Nain'],
                 ['Nain', 'Dain II IronFoot'],
                 ['Dain II IronFoot', 'Thorin II Stonehelm'],
+                ['Thorin II Stonehelm', 'Durin VII'],
                 ['Borin', 'Farin'],
                 ['Farin', 'Fundin'],
                 ['Fundin', 'Balin'],
