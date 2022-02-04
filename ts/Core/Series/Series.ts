@@ -1327,7 +1327,8 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null;
+            firstPoint = null,
+            copiedData;
 
         // If this is the first time we're writing back to options,
         // and allowMutatingData enabled create
@@ -1340,21 +1341,11 @@ class Series {
             if (series.userOptions.data) {
                 delete series.userOptions.data;
             }
-            if (chart.options.chart.cloningMethod) {
-                data = chart.options.chart.cloningMethod(data);
-            } else {
-                try {
-                    data = JSON.parse(JSON.stringify(data));
-                } catch (error) {
-                    throw new Error(
-                        `Not able to copy the dataset,
-                        use your own chart.cloningMethod.`
-                    );
-                }
-            }
-        } else {
-            data = data || [];
+            copiedData = merge(true, data);
+
         }
+        data = copiedData || data || [];
+
 
         const dataLength = data.length;
         redraw = pick(redraw, true);
