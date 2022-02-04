@@ -1,5 +1,5 @@
-const dataLabelsColor = '#C3CEDA';
-const expeditionColor = '#738FA7';
+const expeditionColor = '#C3CEDA';
+const linkColor = '#738FA7';
 const plotBackgroundColor = '#071330';
 const markerColor = '#0C4160';
 
@@ -22,7 +22,17 @@ Highcharts.chart('container', {
     plotOptions: {
         treegraph: {
             dataLabels: {
-                color: dataLabelsColor
+                nodeFormatter: function () {
+                    return this.point.description ?
+                        `${this.point.name}<br>${this.point.description}` :
+                        `${this.point.name}`;
+                },
+                color: expeditionColor,
+                crop: false,
+                style: {
+                    width: 70,
+                    textOverflow: 'clip'
+                }
             }
         }
     },
@@ -33,6 +43,8 @@ Highcharts.chart('container', {
             marker: {
                 symbol: 'rect',
                 height: 70,
+                lineWidth: 1,
+                lineColor: 'white',
                 width: 50,
                 fillColor: markerColor
             },
@@ -51,10 +63,11 @@ Highcharts.chart('container', {
                 {
                     id: 'Thorin II Oakenshield',
                     name: 'Thorin II Oakenshield',
-                    title: '2746 - 2941',
+                    description: '2746 - 2941',
 
                     marker: {
-                        fillColor: expeditionColor
+                        height: 100,
+                        fillColor: linkColor
                     }
                 },
                 {
@@ -68,49 +81,49 @@ Highcharts.chart('container', {
                 {
                     id: 'Fili',
                     name: 'Fili',
-                    title: '2859 - 2941',
+                    description: '2859 - 2941',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 },
                 {
                     id: 'Kili',
                     name: 'Kili',
-                    title: '2864 - 2941',
+                    description: '2864 - 2941',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 },
                 {
                     id: 'Balin',
                     name: 'Balin',
-                    title: '2763 - 2994',
+                    description: '2763 - 2994',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 },
                 {
                     id: 'Dwalin',
                     name: 'Dwalin',
-                    title: '2772 - 3112',
+                    description: '2772 - 3112',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 },
                 {
                     id: 'Oin II',
                     name: 'Oin II',
-                    title: '2774 - 2994',
+                    description: '2774 - 2994',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 },
                 {
                     id: 'Gloin II',
                     name: 'Gloin II',
-                    title: '2783 - 15 F.A.',
+                    description: '2783 - 15 F.A.',
                     marker: {
-                        fillColor: expeditionColor
+                        fillColor: linkColor
                     }
                 }
             ],

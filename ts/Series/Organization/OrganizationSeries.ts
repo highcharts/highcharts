@@ -653,10 +653,14 @@ class OrganizationSeries extends SankeySeries {
             x1 -= (fromNode.shapeArgs as any).width;
             x2 += (toNode.shapeArgs as any).width;
         }
-        xMiddle = Math.floor(
-            (x2 + x1) / 2
-
-        ) + crisp;
+        xMiddle = this.colDistance ?
+            Math.floor(
+                x2 +
+                    ((inverted ? 1 : -1) *
+                        (this.colDistance - this.nodeWidth)) /
+                        2
+            ) + crisp :
+            Math.floor((x2 + x1) / 2) + crisp;
 
         // Put the link on the side of the node when an offset is given. HR
         // node in the main demo.

@@ -33,16 +33,16 @@ const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
 const {
     seriesTypes: {
-        organization: { prototype: orgProto },
         sankey: { prototype: sankeyProto }
     }
 } = SeriesRegistry;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, pick, addEvent, relativeLength, stableSort } = U;
+const { merge, pick, addEvent, stableSort } = U;
 
 import './TreegraphLayout.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 
 interface LayoutAlgorythmParameters {
     ax: number;
@@ -115,13 +115,46 @@ class TreegraphSeries extends OrganizationSeries {
             reversed: false,
             /**
              * @extends   plotOptions.series.marker
-             * @excluding enabled, enabledThreshold, height, width
+             * @excluding enabled, enabledThreshold
              */
             marker: {
                 radius: 10,
+                lineWidth: 0,
                 symbol: 'circle',
                 fillOpacity: 1,
                 states: {}
+            },
+            /**
+             * @extends plotOptions.series.tooltip
+             * @exclude pointFormat, pointFormatter
+             */
+            tooltip: {
+                /**
+                 * The HTML of the point's line in the tooltip. Variables are
+                 * enclosed by curly brackets. Available variables are point.x,
+                 * point.y, series.name and series.color and other properties on
+                 * the same form. Furthermore, point.y can be extended by the
+                 * tooltip.valuePrefix and tooltip.valueSuffix variables. This
+                 * can also be overridden for each series, which makes it a good
+                 * hook for displaying units.In styled mode, the dot is
+                 * colored by a class name rather than the point color.
+                 *
+                 * @type {string}
+                 * @since next
+                 * @default '{point.fromNode.name} \u2192 {point.toNode.name}'
+                 * @product highcharts
+                 *
+                 */
+                linkFormat: '{point.fromNode.name} \u2192 {point.toNode.name}'
+                /**
+                 * A callback function for formatting the HTML output for a
+                 * single point in the tooltip. Like the linkFormatter string,
+                 * but with more flexibility.
+                 *
+                 * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
+                 * @apioption series.treegraph.linkFormatter
+                 *
+                 */
             },
             /**
              * Options for the data labels appearing on top of the nodes and
@@ -135,6 +168,7 @@ class TreegraphSeries extends OrganizationSeries {
              * @private
              */
             dataLabels: {
+                nodeFormat: '{point.name}',
                 /**
                  * Options for a _link_ label text which should follow link
                  * connection. Border and background are disabled for a label
@@ -213,13 +247,13 @@ class TreegraphSeries extends OrganizationSeries {
          * @private
          */
         function order(node: TreegraphNode, level: number): void {
-            // Prevents circular recursion:
+            // Prevents circular dependencies in the data:
             if (node.wasVisited) {
                 throw Error('circular dependency deteceted');
             } else {
                 level = node.level || level;
                 node.level = level;
-                (node as any).wasVisited = true;
+                node.wasVisited = true;
                 node.linksFrom.forEach(function (link: TreegraphPoint): void {
                     if (link.toNode) {
                         order(link.toNode, level + 1);
@@ -246,6 +280,10 @@ class TreegraphSeries extends OrganizationSeries {
                 }
             );
         }
+        // To enable tooltip for link
+        this.data.forEach(function (link): void {
+            link.formatPrefix = 'link';
+        });
     }
 
     private getLayoutModifiers(): LayoutAlgorythmParameters {
@@ -267,14 +305,12 @@ class TreegraphSeries extends OrganizationSeries {
             );
             const symbol = markerOptions.symbol;
             node.symbol = symbol;
-            const nodeSizeY =
-                symbol === 'circle' ?
-                    (pick(markerOptions.radius) as number) * 2 :
-                    (markerOptions.height as any);
-            const nodeSizeX =
-                symbol === 'circle' ?
-                    (pick(markerOptions.radius) as number) * 2 :
-                    (markerOptions.width as any);
+            const nodeSizeY = symbol === 'circle' ?
+                (pick(markerOptions.radius) as number) * 2 :
+                (markerOptions.height as any);
+            const nodeSizeX = symbol === 'circle' ?
+                (pick(markerOptions.radius) as number) * 2 :
+                (markerOptions.width as any);
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
@@ -296,14 +332,17 @@ class TreegraphSeries extends OrganizationSeries {
             }
         });
 
+        // Calculate the values of linear transformation, which will later be
+        // applied as `nodePosition = a * x + b` for each direction.
         const ay = maxY === minY ?
                 1 :
                 (plotSizeY - (minYSize + maxYSize) / 2) / (maxY - minY),
-            by = maxY === minY ? 0 : -ay * minY + minYSize / 2,
+            by = maxY === minY ? plotSizeY / 2 : -ay * minY + minYSize / 2,
             ax = maxX === minX ?
                 1 :
                 (plotSizeX - (maxXSize + maxXSize) / 2) / (maxX - minX),
-            bx = maxX === minX ? 0 : -ax * minX + minXSize / 2;
+            bx = maxX === minX ? plotSizeX / 2 : -ax * minX + minXSize / 2;
+
         return { ax, bx, ay, by };
     }
 
@@ -313,12 +352,7 @@ class TreegraphSeries extends OrganizationSeries {
             this.processData();
         }
         this.generatePoints();
-
         this.nodeColumns = this.createNodeColumns();
-        this.nodeWidth = relativeLength(
-            this.options.nodeWidth as any,
-            this.chart.plotSizeX as any
-        );
 
         const series = this,
             options = this.options,
@@ -368,14 +402,14 @@ class TreegraphSeries extends OrganizationSeries {
                 // render null points (for organization chart)
                 if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     linkPoint.dataLabelOnNull = true;
-                    series.translateLink(linkPoint as TreegraphPoint);
+                    series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }
             });
         });
     }
 
-    // Networkgraph has two separate collecions of nodes and lines, render
+    // Treegraph has two separate collecions of nodes and lines, render
     // dataLabels for both sets:
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
@@ -397,7 +431,7 @@ class TreegraphSeries extends OrganizationSeries {
     }
 
     public pointAttribs(
-        point: TreegraphPoint,
+        point: TreegraphPoint | TreegraphNode,
         state: StatesOptionsKey
     ): SVGAttributes {
         if (point && point.isNode) {
