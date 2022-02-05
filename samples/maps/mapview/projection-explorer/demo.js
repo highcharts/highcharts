@@ -340,18 +340,30 @@
                 const rotation = input.getAttribute('data-rotation')
                     .split(',')
                     .map(Number);
-                chart.mapView.update({
-                    projection: {
-                        rotation
-                    }
-                }, true, false);
-
                 rotation.push(0);
-                rotation.forEach((value, i) => {
-                    const name = ['lambda', 'phi', 'gamma'][i];
-                    document.getElementById(`rotation-${name}`).value = value;
-                    document.getElementById(`rotation-${name}-output`)
-                        .innerText = value;
+
+                const geodesic = Highcharts.Projection.greatCircle(
+                    chart.mapView.projection.options.rotation,
+                    rotation
+                );
+
+                geodesic.forEach((rotationStep, i) => {
+                    setTimeout(() => {
+                        rotationStep.push(0);
+                        chart.mapView.update({
+                            projection: {
+                                rotation: rotationStep
+                            }
+                        }, true, false);
+
+                        rotationStep.forEach((value, i) => {
+                            const name = ['lambda', 'phi', 'gamma'][i];
+                            document.getElementById(`rotation-${name}`)
+                                .value = Math.round(value);
+                            document.getElementById(`rotation-${name}-output`)
+                                .innerText = Math.round(value);
+                        });
+                    }, 25 * i);
                 });
             });
         });
