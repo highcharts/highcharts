@@ -50,6 +50,7 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,
+    find,
     isObject,
     merge,
     pick,
@@ -449,8 +450,53 @@ class SankeySeries extends ColumnSeries {
         const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
 
         this.nodes.forEach(function (node: SankeyPoint): void {
+            let fromColumn = -1,
+                fromNode;
 
-            node.setNodeColumn();
+            if (!defined(node.options.column)) {
+                // No links to this node, place it left
+                if (node.linksTo.length === 0) {
+                    node.column = 0;
+
+                // There are incoming links, place it to the right of the
+                // highest order column that links to this one.
+                } else {
+                    for (let i = 0; i < node.linksTo.length; i++) {
+                        const point = node.linksTo[i];
+                        if (
+                            (point.fromNode.column as any) > fromColumn &&
+                            point.fromNode !== node // #16080
+                        ) {
+                            fromNode = point.fromNode;
+                            fromColumn = (fromNode.column as any);
+                        }
+                    }
+                    node.column = fromColumn + 1;
+
+                    // Hanging layout for organization chart
+                    if (
+                        fromNode &&
+                        (fromNode.options as any).layout === 'hanging'
+                    ) {
+                        node.hangsFrom = fromNode;
+                        let i = -1;
+                        find(
+                            fromNode.linksFrom,
+                            function (
+                                link: SankeyPoint,
+                                index: number
+                            ): boolean {
+                                const found = link.toNode === node;
+                                if (found) {
+                                    i = index;
+                                }
+                                return found;
+                            }
+                        );
+                        node.column += i;
+                    }
+                }
+            }
 
             if (!columns[node.column as any]) {
                 columns[node.column as any] =
@@ -659,11 +705,12 @@ class SankeySeries extends ColumnSeries {
             Infinity
         );
 
+
         this.colDistance =
-            ((chart.plotSizeX as any) -
-                nodeWidth -
-                (options.borderWidth as any)) /
-            Math.max(1, nodeColumns.length - 1);
+            (
+                (chart.plotSizeX as any) - nodeWidth -
+                (options.borderWidth as any)
+            ) / Math.max(1, nodeColumns.length - 1);
 
         // Calculate level options used in sankey and organization
         series.mapOptionsToLevel = getLevelOptions({

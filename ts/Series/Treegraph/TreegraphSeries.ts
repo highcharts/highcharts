@@ -95,6 +95,10 @@ class TreegraphSeries extends OrganizationSeries {
              * The option to choose the layout alogrythm, which should be used
              * to calculate the positions of the nodes.
              *
+             *
+             * @sample highcharts/demo/treegraph-chart
+             *         Treegraph chart
+             *
              * @type {'Walker'}
              * @since next
              * @default 'Walker'
@@ -111,6 +115,8 @@ class TreegraphSeries extends OrganizationSeries {
              * @default false
              * @product highcharts
              *
+             * @sample highcharts/series-treegraph/reversed-nodes
+             *         Treegraph series with reversed nodes.
              */
             reversed: false,
             /**
@@ -182,6 +188,10 @@ class TreegraphSeries extends OrganizationSeries {
                  *
                  * @extends plotOptions.treegraph.dataLabels.linkTextPath
                  * @since   next
+                 *
+                 *
+                 * @sample highcharts/series-treegraph/link-text-path
+                 *         Treegraph series with link text path dataLabels.
                  */
                 linkTextPath: {
                     attributes: {
@@ -464,7 +474,7 @@ class TreegraphSeries extends OrganizationSeries {
             width = node.nodeSizeX,
             reversed = this.options.reversed,
             nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
-            nodeY = !reversed ? plotSizeY - y - height / 2 : y + height / 2;
+            nodeY = !reversed ? plotSizeY - y - height / 2 : y - height / 2;
 
         node.shapeType = 'path';
         node.nodeX = node.plotX = nodeX;
