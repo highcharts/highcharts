@@ -626,22 +626,19 @@ class OrganizationSeries extends SankeySeries {
             crisp = (Math.round(linkWidth) % 2) / 2,
             factor = pick((this as any).options.link.offset, 0.5),
             type = (this.options as any).link.type,
-            x1 =
-                Math.floor(
-                    (fromNode.shapeArgs as any).x +
-                        (fromNode.shapeArgs as any).width
-                ) + crisp,
-            y1 =
-                Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                        (fromNode.shapeArgs as any).height / 2
-                ) + crisp,
+            x1 = Math.floor(
+                (fromNode.shapeArgs as any).x +
+                    (fromNode.shapeArgs as any).width
+            ) + crisp,
+            y1 = Math.floor(
+                (fromNode.shapeArgs as any).y +
+                    (fromNode.shapeArgs as any).height / 2
+            ) + crisp,
             x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 =
-                Math.floor(
-                    (toNode.shapeArgs as any).y +
-                        (toNode.shapeArgs as any).height / 2
-                ) + crisp,
+            y2 = Math.floor(
+                (toNode.shapeArgs as any).y +
+                    (toNode.shapeArgs as any).height / 2
+            ) + crisp,
             xMiddle,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,

@@ -118,6 +118,9 @@ class TreegraphSeries extends OrganizationSeries {
              * @excluding enabled, enabledThreshold
              */
             marker: {
+                style: {
+                    cursor: 'pointer'
+                },
                 radius: 10,
                 lineWidth: 0,
                 symbol: 'circle',
@@ -461,7 +464,7 @@ class TreegraphSeries extends OrganizationSeries {
             width = node.nodeSizeX,
             reversed = this.options.reversed,
             nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
-            nodeY = !reversed ? plotSizeY - height / 2 - y : y + height / 2;
+            nodeY = !reversed ? plotSizeY - y - height / 2 : y + height / 2;
 
         node.shapeType = 'path';
         node.nodeX = node.plotX = nodeX;
@@ -524,7 +527,7 @@ function collapseTreeFromPoint(
         collapseTreeFromPoint(link.toNode, link.toNode.collapsed || collapsed);
     });
 }
-// TODO check drilldown support
+
 /* *
  *
  *  Prototype Properties

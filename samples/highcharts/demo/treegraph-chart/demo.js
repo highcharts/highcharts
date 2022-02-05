@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in a Quest to Lonley Mountain marked green'
+        text: 'Dwarfs participating in a Quest to Lonley Mountain marked.'
     },
 
     plotOptions: {
