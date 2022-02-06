@@ -1,0 +1,10 @@
+---
+name: Treegraph chart
+authors:
+  - Pawel Lysy
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...
