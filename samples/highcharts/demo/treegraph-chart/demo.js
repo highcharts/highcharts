@@ -40,7 +40,6 @@ Highcharts.chart('container', {
     series: [
         {
             type: 'treegraph',
-            reversed: true,
             marker: {
                 symbol: 'rect',
                 height: 70,
