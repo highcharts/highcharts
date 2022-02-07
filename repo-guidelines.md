@@ -52,7 +52,8 @@ When creating a new official series type, there are some requirements that shoul
 
 In general, ESLint picks up and stops styling issues, but some things can be mentioned in particular.
 
-1. In prose text inside doclets, code comments, documentation article markdown and blog posts, avoid line breaks without paragraphs. Doclets and comments should wrap at max 80 characters.
+#### 1. Avoid line breaks without paragraphs
+In prose text inside doclets, code comments, documentation article markdown and blog posts, avoid line breaks without paragraphs. Doclets and comments should wrap at max 80 characters.
 
 Bad (line break inside paragraph):
 ```
