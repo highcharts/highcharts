@@ -1,5 +1,15 @@
+/* *
+ *
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 import TreegraphPoint from './TreegraphPoint.js';
-import TreegraphSeries from './TreegraphSeries.js';
+import type TreegraphSeries from './TreegraphSeries.js';
 
 class TreegraphNode extends TreegraphPoint {
     public mod: number = void 0 as any;
@@ -48,13 +58,12 @@ class TreegraphNode extends TreegraphPoint {
     // get node's first sibling.
     public getLeftMostSibling(this: TreegraphNode): TreegraphNode | null {
         let parent = this.getParent();
-        if (!parent) {
-            return null;
-        }
-        const children = parent.linksFrom;
-        for (let i = 0; i < children.length; i++) {
-            if (children[i] && !children[i].toNode.hidden) {
-                return children[i].toNode;
+        if (parent) {
+            const children = parent.linksFrom;
+            for (let i = 0; i < children.length; i++) {
+                if (children[i] && !children[i].toNode.hidden) {
+                    return children[i].toNode;
+                }
             }
         }
         return null;
@@ -62,13 +71,12 @@ class TreegraphNode extends TreegraphPoint {
     // get nodes left sibling (if it exists)
     public getLeftSibling(this: TreegraphNode): TreegraphNode | null {
         let parent = this.getParent();
-        if (!parent) {
-            return null;
-        }
-        const children = parent.linksFrom;
-        for (let i = this.relativeXPosition - 1; i >= 0; i--) {
-            if (children[i] && !children[i].toNode.hidden) {
-                return children[i].toNode;
+        if (parent) {
+            const children = parent.linksFrom;
+            for (let i = this.relativeXPosition - 1; i >= 0; i--) {
+                if (children[i] && !children[i].toNode.hidden) {
+                    return children[i].toNode;
+                }
             }
         }
         return null;
@@ -76,9 +84,10 @@ class TreegraphNode extends TreegraphPoint {
 
     // get the node's first child (if it exists)
     public getLeftMostChild(this: TreegraphNode): TreegraphNode | null {
-        for (let i = 0; i < this.linksFrom.length; i++) {
-            if (!this.linksFrom[i].toNode.hidden) {
-                return this.linksFrom[i].toNode;
+        const linksFrom = this.linksFrom;
+        for (let i = 0; i < linksFrom.length; i++) {
+            if (!linksFrom[i].toNode.hidden) {
+                return linksFrom[i].toNode;
             }
         }
         return null;
@@ -86,9 +95,10 @@ class TreegraphNode extends TreegraphPoint {
 
     // get the node's last child (if it exists)
     public getRightMostChild(this: TreegraphNode): TreegraphNode | null {
-        for (let i = this.linksFrom.length - 1; i >= 0; i--) {
-            if (!this.linksFrom[i].toNode.hidden) {
-                return this.linksFrom[i].toNode;
+        const linksFrom = this.linksFrom;
+        for (let i = linksFrom.length - 1; i >= 0; i--) {
+            if (!linksFrom[i].toNode.hidden) {
+                return linksFrom[i].toNode;
             }
         }
         return null;

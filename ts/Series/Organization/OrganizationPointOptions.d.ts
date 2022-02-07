@@ -18,8 +18,8 @@
 
 import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
 import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
-import ColorString from '../../Core/Color/ColorString';
-import { LinkOptions } from './OrganizationSeriesOptions';
+import type ColorString from '../../Core/Color/ColorString';
+import type { LinkOptions } from './OrganizationSeriesOptions';
 
 /* *
  *

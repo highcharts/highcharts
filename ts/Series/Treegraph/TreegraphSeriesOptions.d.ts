@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,7 @@
  * */
 
 import type OrganizationSeriesOptions from '../Organization/OrganizationSeriesOptions';
-import { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *

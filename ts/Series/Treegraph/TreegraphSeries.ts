@@ -34,9 +34,10 @@ const { getLevelOptions } = TU;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, pick, addEvent, stableSort } = U;
+const { merge, pick, addEvent, stableSort, error } = U;
 
 import './TreegraphLayout.js';
+import Point from '../../Core/Series/Point';
 
 interface LayoutAlgorythmParameters {
     ax: number;
@@ -171,7 +172,9 @@ class TreegraphSeries extends OrganizationSeries {
              * @private
              */
             dataLabels: {
-                nodeFormat: '{point.name}',
+                nodeFormatter: function (this: Point.PointLabelObject): string {
+                    return this.point.name;
+                },
                 /**
                  * Options for a _link_ label text which should follow link
                  * connection. Border and background are disabled for a label
@@ -262,7 +265,7 @@ class TreegraphSeries extends OrganizationSeries {
         function order(node: TreegraphNode, level: number): void {
             // Prevents circular dependencies in the data:
             if (node.wasVisited) {
-                throw Error('circular dependency deteceted');
+                error(28);
             } else {
                 level = node.level || level;
                 node.level = level;
@@ -309,16 +312,16 @@ class TreegraphSeries extends OrganizationSeries {
             minYSize = 0;
         this.nodes.forEach((node: TreegraphNode): void => {
             const markerOptions = merge(
-                this.options.marker,
-                node.options.marker
-            );
-            const symbol = markerOptions.symbol;
-            const nodeSizeY = symbol === 'circle' ?
-                (pick(markerOptions.radius) as number) * 2 :
-                (markerOptions.height as any);
-            const nodeSizeX = symbol === 'circle' ?
-                (pick(markerOptions.radius) as number) * 2 :
-                (markerOptions.width as any);
+                    this.options.marker,
+                    node.options.marker
+                ),
+                symbol = markerOptions.symbol,
+                nodeSizeY = symbol === 'circle' ?
+                    (pick(markerOptions.radius) as number) * 2 :
+                    (markerOptions.height as number),
+                nodeSizeX = symbol === 'circle' ?
+                    (pick(markerOptions.radius) as number) * 2 :
+                    (markerOptions.width as number);
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
@@ -461,10 +464,7 @@ class TreegraphSeries extends OrganizationSeries {
             { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
-            markerOptions = merge(
-                this.options.marker,
-                node.options.marker
-            ),
+            markerOptions = merge(this.options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             height = node.nodeSizeY,
             width = node.nodeSizeX,
@@ -472,31 +472,32 @@ class TreegraphSeries extends OrganizationSeries {
             nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
             nodeY = !reversed ? plotSizeY - y - height / 2 : y - height / 2;
 
-        node = merge(node, {
-            shapeType: 'path',
-            nodeX,
-            nodeY,
-            plotX: nodeX,
-            plotY: nodeY,
-            shapeArgs: {
-                d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
-                x: nodeX,
-                y: nodeY,
-                width,
-                height,
-                display: node.hasShape() ? '' : 'none'
-            },
-            // Calculate data label options for the point
-            dlOptions: TreegraphSeries.getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            }),
-            // to prevent error when running generate points, this property
-            // needs to be reset to false.
-            wasVisited: false,
-            // Set the anchor position for tooltips
-            tooltipPos: chart.inverted ? [plotSizeY - y, plotSizeX - x] : [x, y]
+        node.shapeType = 'path';
+        node.nodeX = node.plotX = nodeX;
+        node.nodeY = node.plotY = nodeY;
+        node.shapeArgs = {
+            d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
+            x: nodeX,
+            y: nodeY,
+            width,
+            height,
+            display: node.hasShape() ? '' : 'none'
+        };
+
+        // Calculate data label options for the point
+        node.dlOptions = TreegraphSeries.getDLOptions({
+            level: (this.mapOptionsToLevel as any)[node.level],
+            optionsPoint: node.options
         });
+        // Pass test in drawPoints
+        node.plotY = 1;
+        // Set the anchor position for tooltips
+        node.tooltipPos = chart.inverted ?
+            [plotSizeY - y, plotSizeX - x] :
+            [x, y];
+        // to prevent error in generatePoints this property needs to be reset
+        // to false.
+        node.wasVisited = false;
     }
 
     public createNodeColumns(): Array<

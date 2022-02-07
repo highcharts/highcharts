@@ -110,7 +110,8 @@ class OrganizationSeries extends SankeySeries {
          */
         borderRadius: 3,
         /**
-         * Radius for the rounded corners of the links between nodes.
+         * Radius for the rounded corners of the links between nodes. This
+         * option is now deprecated, and moved to link.radius.
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
@@ -122,6 +123,8 @@ class OrganizationSeries extends SankeySeries {
 
         /**
          * Link Styling options
+         * @since next
+         * @product highcharts
          */
         link: {
             /**
@@ -346,7 +349,7 @@ class OrganizationSeries extends SankeySeries {
 
         /**
          * The line width of the links connecting nodes, in pixels. This option
-         * is now depricated and moved to the link object.
+         * is now deprecated and moved to the link object.
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links

@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in a Quest to Lonley Mountain marked.'
+        text: 'Dwarfs participating in a Quest to the Lonely Mountain marked.'
     },
 
     plotOptions: {
@@ -28,7 +28,6 @@ Highcharts.chart('container', {
                         `${this.point.name}`;
                 },
                 color: expeditionColor,
-                crop: false,
                 style: {
                     width: 70,
                     textOverflow: 'clip'
@@ -65,6 +64,11 @@ Highcharts.chart('container', {
                     name: 'Thorin II Oakenshield',
                     description: '2746 - 2941',
 
+                    dataLabels: {
+                        style: {
+                            width: 100
+                        }
+                    },
                     marker: {
                         height: 100,
                         fillColor: linkColor
@@ -164,8 +168,7 @@ Highcharts.chart('container', {
         }
     ],
     exporting: {
-        allowHTML: true,
         sourceWidth: 800,
-        sourceHeight: 600
+        sourceHeight: 1000
     }
 });

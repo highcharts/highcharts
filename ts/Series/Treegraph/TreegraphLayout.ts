@@ -1,3 +1,13 @@
+/* *
+ *
+ *  (c) 2010-2022 Pawel Lysy Grzegorz Blachlinski
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 import TreegraphSeries from './TreegraphSeries';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -11,8 +21,8 @@ declare global {
             public levelSeparation: number;
             public calculatePositions(series: TreegraphSeries): void;
             public initValues(nodes: TreegraphNode[]): void;
-            public calculateInitialX(root: TreegraphNode, index: number): void;
-            public beforeWalk(nodes: TreegraphNode[]): void;
+            public calculateRelativeX(root: TreegraphNode, index: number): void;
+            public beforeLayout(nodes: TreegraphNode[]): void;
             public afterWalk(nodes: TreegraphNode[]): void;
             public firstWalk(node: TreegraphNode): void;
             public secondWalk(node: TreegraphNode, modSum: number): void;
@@ -55,8 +65,8 @@ extend(H.treeLayouts.Walker.prototype, {
         this.levelSeparation = 50;
         const root = nodes[0];
         if (root) {
-            treeLayout.beforeWalk(nodes);
-            treeLayout.calculateInitialX(root, 0);
+            treeLayout.beforeLayout(nodes);
+            treeLayout.calculateRelativeX(root, 0);
             treeLayout.firstWalk(root);
             treeLayout.secondWalk(root, -root.preX);
             treeLayout.afterWalk(nodes);
@@ -67,7 +77,7 @@ extend(H.treeLayouts.Walker.prototype, {
         nodes.forEach((node): void => {
             node.linksFrom.forEach((link, index): void => {
 
-                if (node.linksFrom[index].trueToNode) {
+                if (node.linksFrom[index].oldToNode) {
                     node.linksFrom[index].toNode =
                         (node as any).linksFrom[index].trueToNode;
                 }
@@ -75,16 +85,16 @@ extend(H.treeLayouts.Walker.prototype, {
                 // Then connection from child to dummyNode
                 if (
                     node.linksTo.length &&
-                    node.linksTo[0].trueFromNode
+                    node.linksTo[0].oldFromNode
                 ) {
                     node.linksTo[0].fromNode =
-                        node.linksTo[0].trueFromNode;
+                        node.linksTo[0].oldFromNode;
                 }
             });
         });
     },
     //
-    beforeWalk: function (
+    beforeLayout: function (
         this: Highcharts.TreegraphLayout,
         nodes: TreegraphNode[]
     ): void {
@@ -136,14 +146,14 @@ extend(H.treeLayouts.Walker.prototype, {
                         dummyNode.level = child.level - gapSize;
 
                         // Then connection from parent to dummyNode
-                        if (!parent.linksFrom[index].trueToNode) {
-                            parent.linksFrom[index].trueToNode = child;
+                        if (!parent.linksFrom[index].oldToNode) {
+                            parent.linksFrom[index].oldToNode = child;
                         }
                         parent.linksFrom[index].toNode = dummyNode;
 
                         // Then connection from chhild to dummyNode
-                        if (!child.linksTo[0].trueFromNode) {
-                            child.linksTo[0].trueFromNode = parent;
+                        if (!child.linksTo[0].oldFromNode) {
+                            child.linksTo[0].oldFromNode = parent;
                         }
                         child.linksTo[0].fromNode = dummyNode;
                         return dummyNode;
@@ -170,14 +180,14 @@ extend(H.treeLayouts.Walker.prototype, {
         });
     },
     // Adds the value to each node, which indicates, what is his sibling number.
-    calculateInitialX: function (
+    calculateRelativeX: function (
         this: Highcharts.TreegraphLayout,
         node: TreegraphNode,
         index: number
     ): void {
-        const treeLayout = this as Highcharts.TreegraphLayout;
+        const treeLayout = this;
         node.linksFrom.forEach((link, index): void => {
-            treeLayout.calculateInitialX(link.toNode, index);
+            treeLayout.calculateRelativeX(link.toNode, index);
         });
         node.relativeXPosition = index;
     },
@@ -202,11 +212,11 @@ extend(H.treeLayouts.Walker.prototype, {
         } else {
             // if the node has children, perform the recursive first walk for
             // its children, and then calculate its shift in the apportion
-            // function (most crucial part part ofthe algorythm)
+            // function (most crucial part part of the algorythm)
             let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
 
             node.linksFrom.forEach(function (link): void {
-                treeLayout.firstWalk(link.toNode as any);
+                treeLayout.firstWalk(link.toNode);
                 defaultAncestor = treeLayout.apportion(
                     link.toNode,
                     defaultAncestor
@@ -255,7 +265,7 @@ extend(H.treeLayouts.Walker.prototype, {
             change = 0;
         for (let i = node.linksFrom.length - 1; i >= 0; i--) {
             let link = node.linksFrom[i];
-            let childNode = link.toNode as TreegraphNode;
+            let childNode = link.toNode;
             childNode.preX += shift;
             childNode.mod += shift;
             change += childNode.change;
@@ -270,15 +280,15 @@ extend(H.treeLayouts.Walker.prototype, {
         const treeLayout = this;
         let leftSibling = node.getLeftSibling();
         if (leftSibling) {
-            let rightIntNode = node;
-            let rightOutNode = node;
-            let leftIntNode = leftSibling;
-            let leftOutNode =
-                rightIntNode.getLeftMostSibling() as TreegraphNode;
-            let rightIntMod = rightIntNode.mod as number;
-            let rightOutMod = rightOutNode.mod as number;
-            let leftIntMod = leftIntNode.mod as number;
-            let leftOutMod = leftOutNode.mod as number;
+            let rightIntNode = node,
+                rightOutNode = node,
+                leftIntNode = leftSibling,
+                leftOutNode =
+                    rightIntNode.getLeftMostSibling() as TreegraphNode,
+                rightIntMod = rightIntNode.mod,
+                rightOutMod = rightOutNode.mod,
+                leftIntMod = leftIntNode.mod,
+                leftOutMod = leftOutNode.mod;
 
             while (
                 leftIntNode &&
@@ -286,10 +296,10 @@ extend(H.treeLayouts.Walker.prototype, {
                 rightIntNode &&
                 rightIntNode.nextLeft()
             ) {
-                leftIntNode = leftIntNode.nextRight() as any;
-                leftOutNode = leftOutNode.nextRight() as any;
-                rightIntNode = rightIntNode.nextLeft() as any;
-                rightOutNode = rightOutNode.nextLeft() as any;
+                leftIntNode = leftOutNode =
+                    leftIntNode.nextRight() as TreegraphNode;
+                rightIntNode = rightOutNode =
+                    rightOutNode.nextLeft() as TreegraphNode;
 
                 rightOutNode.ancestor = node;
                 let siblingDistance = this.siblingDistance;
@@ -319,9 +329,7 @@ extend(H.treeLayouts.Walker.prototype, {
                 leftIntNode.nextRight() &&
                 !rightOutNode.nextRight()
             ) {
-                rightOutNode.thread = (
-                    leftIntNode as TreegraphNode
-                ).nextRight();
+                rightOutNode.thread = leftIntNode.nextRight();
                 rightOutNode.mod += leftIntMod - rightOutMod;
             }
             if (
@@ -329,7 +337,7 @@ extend(H.treeLayouts.Walker.prototype, {
                 rightIntNode.nextLeft() &&
                 !leftOutNode.nextLeft()
             ) {
-                leftOutNode.thread = (rightIntNode as TreegraphNode).nextLeft();
+                leftOutNode.thread = rightIntNode.nextLeft();
                 leftOutNode.mod += rightIntMod - leftOutMod;
             }
             defaultAncestor = node;
@@ -346,9 +354,9 @@ extend(H.treeLayouts.Walker.prototype, {
         let subtrees = rightNode.relativeXPosition - leftNode.relativeXPosition;
         rightNode.change -= shift / subtrees;
         rightNode.shift += shift;
-        leftNode.change += shift / subtrees;
         rightNode.preX += shift;
         rightNode.mod += shift;
+        leftNode.change += shift / subtrees;
     },
     setArea: function (
         this: Highcharts.TreegraphLayout,

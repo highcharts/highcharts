@@ -17,7 +17,7 @@
 import type TreegraphPointOptions from './TreegraphPointOptions';
 import type TreegraphSeries from './TreegraphSeries';
 import OrganizationPoint from '../Organization/OrganizationPoint.js';
-import TreegraphNode from './TreegraphNode.js';
+import type TreegraphNode from './TreegraphNode.js';
 import NodesComposition from '../NodesComposition.js';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
@@ -39,9 +39,9 @@ class TreegraphPoint extends OrganizationPoint {
 
     public fromNode: TreegraphNode = void 0 as any;
 
-    public trueFromNode?: TreegraphNode;
+    public oldFromNode?: TreegraphNode;
 
-    public trueToNode?: TreegraphNode;
+    public oldToNode?: TreegraphNode;
 
     public toNode: TreegraphNode = void 0 as any;
 
