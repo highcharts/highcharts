@@ -44,6 +44,11 @@ class TreegraphPoint extends OrganizationPoint {
     public trueToNode?: TreegraphNode;
 
     public toNode: TreegraphNode = void 0 as any;
+
+    // To allow tooltip on links.
+    public formatPrefix = 'link';
+
+    public dataLabelOnNull = true;
 }
 
 interface TreegraphPoint {

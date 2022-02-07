@@ -31,18 +31,12 @@ import TreegraphNode from './TreegraphNode.js';
 import TU from '../TreeUtilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
-const {
-    seriesTypes: {
-        sankey: { prototype: sankeyProto }
-    }
-} = SeriesRegistry;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { merge, pick, addEvent, stableSort } = U;
 
 import './TreegraphLayout.js';
-import SankeySeries from '../Sankey/SankeySeries.js';
 
 interface LayoutAlgorythmParameters {
     ax: number;
@@ -107,7 +101,7 @@ class TreegraphSeries extends OrganizationSeries {
             layout: 'Walker',
             /**
              * Whether the first node should be placed on the opposite side of
-             * the plotArea. In default, the oldest child is positioned on the
+             * the plotArea. By default, the oldest child is positioned on the
              * bottom (left in the inverted chart).
              *
              * @type {boolean}
@@ -299,10 +293,6 @@ class TreegraphSeries extends OrganizationSeries {
                 }
             );
         }
-        // To enable tooltip for link
-        this.data.forEach(function (link): void {
-            link.formatPrefix = 'link';
-        });
     }
 
     private getLayoutModifiers(): LayoutAlgorythmParameters {
@@ -323,7 +313,6 @@ class TreegraphSeries extends OrganizationSeries {
                 node.options.marker
             );
             const symbol = markerOptions.symbol;
-            node.symbol = symbol;
             const nodeSizeY = symbol === 'circle' ?
                 (pick(markerOptions.radius) as number) * 2 :
                 (markerOptions.height as any);
@@ -407,9 +396,6 @@ class TreegraphSeries extends OrganizationSeries {
 
         // First translate all nodes so we can use them when drawing links
         this.nodes.forEach((node): void => {
-            // To Change - wasVisited set to false to enable next generatePoints
-            // run
-            node.wasVisited = false;
             series.translateNode(node);
         });
 
@@ -444,7 +430,7 @@ class TreegraphSeries extends OrganizationSeries {
             super.drawDataLabels.apply(this, arguments);
 
             // Restore nodes
-            this.points = this.points.concat(this.nodes || []);
+            this.points = this.points.concat(this.nodes);
             this.options.dataLabels.textPath = textPath;
         }
     }
@@ -475,54 +461,53 @@ class TreegraphSeries extends OrganizationSeries {
             { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
-            symbol = node.symbol,
+            markerOptions = merge(
+                this.options.marker,
+                node.options.marker
+            ),
+            symbol = markerOptions.symbol,
             height = node.nodeSizeY,
             width = node.nodeSizeX,
             reversed = this.options.reversed,
             nodeX = chart.inverted ? plotSizeX - width / 2 - x : x - width / 2,
             nodeY = !reversed ? plotSizeY - y - height / 2 : y - height / 2;
 
-        node.shapeType = 'path';
-        node.nodeX = node.plotX = nodeX;
-        node.nodeY = node.plotY = nodeY;
-        node.shapeArgs = {
-            d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
-            x: nodeX,
-            y: nodeY,
-            width,
-            height
-        };
-
-        node.shapeArgs.display = node.hasShape() ? '' : 'none';
-        // Calculate data label options for the point
-        node.dlOptions = TreegraphSeries.getDLOptions({
-            level: (this.mapOptionsToLevel as any)[node.level],
-            optionsPoint: node.options
+        node = merge(node, {
+            shapeType: 'path',
+            nodeX,
+            nodeY,
+            plotX: nodeX,
+            plotY: nodeY,
+            shapeArgs: {
+                d: symbols[symbol || 'circle'](nodeX, nodeY, width, height),
+                x: nodeX,
+                y: nodeY,
+                width,
+                height,
+                display: node.hasShape() ? '' : 'none'
+            },
+            // Calculate data label options for the point
+            dlOptions: TreegraphSeries.getDLOptions({
+                level: (this.mapOptionsToLevel as any)[node.level],
+                optionsPoint: node.options
+            }),
+            // to prevent error when running generate points, this property
+            // needs to be reset to false.
+            wasVisited: false,
+            // Set the anchor position for tooltips
+            tooltipPos: chart.inverted ? [plotSizeY - y, plotSizeX - x] : [x, y]
         });
-        // Pass test in drawPoints
-        node.plotY = 1;
-        // Set the anchor position for tooltips
-        node.tooltipPos = chart.inverted ?
-            [plotSizeY - y, plotSizeX - x] :
-            [x, y];
-    }
-
-    public alignDataLabel(): void {
-        sankeyProto.alignDataLabel.apply(this, arguments);
     }
 
     public createNodeColumns(): Array<
     SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > {
-        const originalNodes = this.nodes;
-        this.nodes = this.nodes.filter((value: any): boolean => !value.hidden);
-        const nodeColumns = super.createNodeColumns.apply(this, arguments);
-        this.nodes = originalNodes;
-        return nodeColumns as unknown as Array<
+        return super.createNodeColumns.apply(this, arguments) as Array<
         SankeyColumnComposition.ArrayComposition<TreegraphNode>
         >;
     }
 }
+
 // Handle showing and hiding of the points
 addEvent(TreegraphSeries, 'click', function (e: any): void {
     const point = e.point as TreegraphNode;

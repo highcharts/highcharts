@@ -19,7 +19,7 @@ class TreegraphNode extends TreegraphPoint {
     public nodeSizeY: number = void 0 as any;
     public nodeHeight?: number;
     public series: TreegraphSeries = void 0 as any;
-    wasVisited: any;
+    public wasVisited = false;
 
     // get the next left node which is either first child or thread
     public nextLeft(this: TreegraphNode): TreegraphNode | undefined {
@@ -30,6 +30,8 @@ class TreegraphNode extends TreegraphPoint {
     public nextRight(this: TreegraphNode): TreegraphNode | undefined {
         return this.getRightMostChild() || this.thread;
     }
+
+
     // return the left one of the greatest uncommon ancestors of a leftInternal
     // node and it's right neighbor
     public getAncestor(

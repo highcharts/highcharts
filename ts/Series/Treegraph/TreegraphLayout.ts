@@ -200,9 +200,9 @@ extend(H.treeLayouts.Walker.prototype, {
                 node.preX = 0;
             }
         } else {
-            // if the node has children perform the recursive first walk for its
-            // children, and then calculate its shift in the apportion function
-            // (most crucial part part ofthe algorythm)
+            // if the node has children, perform the recursive first walk for
+            // its children, and then calculate its shift in the apportion
+            // function (most crucial part part ofthe algorythm)
             let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
 
             node.linksFrom.forEach(function (link): void {
