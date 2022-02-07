@@ -161,7 +161,7 @@ class TreegraphSeries extends OrganizationSeries {
                  * but with more flexibility.
                  *
                  * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
-                 * @apioption series.treegraph.linkFormatter
+                 * @apioption series.treegraph.tooltip.linkFormatter
                  *
                  */
             },
@@ -198,6 +198,10 @@ class TreegraphSeries extends OrganizationSeries {
                         startOffset: '50%'
                     }
                 },
+                /**
+                 * @default 'curved'
+                 *
+                 */
                 useHTML: false
             },
             link: {
@@ -617,8 +621,15 @@ export default TreegraphSeries;
  * @extends   series.organization.nodes
  * @type      {Array<*>}
  * @product   highcharts
- * @excluding level
  * @apioption series.treegraph.nodes
+ */
+
+/**
+ *
+ *
+ * @sample highcharts/series-treegraph/node-level
+ *         Treegraph series with node's level modified.
+ * @apioption series.treegraph.nodes.level
  */
 
 /**

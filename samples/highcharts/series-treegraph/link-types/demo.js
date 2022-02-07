@@ -3,7 +3,6 @@ Highcharts.chart('container', {
         text: 'Treegraph: Different type of links'
     },
     series: [{
-        reversed: true,
         marker: {
             radius: 30
         },

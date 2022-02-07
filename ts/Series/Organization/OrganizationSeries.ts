@@ -311,6 +311,7 @@ class OrganizationSeries extends SankeySeries {
         /**
          * Defines the indentation of a `hanging` layout parent's children.
          * Possible options:
+         *
          * - `inherit` (default): Only the first child adds the indentation,
          * children of a child with indentation inherit the indentation.
          * - `cumulative`: All children of a child with indentation add its
@@ -371,8 +372,7 @@ class OrganizationSeries extends SankeySeries {
         /**
          * In a horizontal chart, the width of the nodes in pixels. Note that
          * most organization charts are vertical, so the name of this option
-         * is counterintuitive. This option is now depricated and moved to the
-         * link object.
+         * is counterintuitive.
          *
          * @see [minNodeLength](#plotOptions.organization.minNodeLength)
          *
@@ -581,14 +581,14 @@ class OrganizationSeries extends SankeySeries {
             ),
 
             linkColor = pick(
-                stateOptions.link && stateOptions.link.color,
-                options.link && options.link.color,
-                levelOptions.link && levelOptions.link.color,
-                series.options.link && series.options.link.color,
                 stateOptions.linkColor,
                 options.linkColor,
                 levelOptions.linkColor,
-                series.options.linkColor
+                series.options.linkColor,
+                stateOptions.link && stateOptions.link.color,
+                options.link && options.link.color,
+                levelOptions.link && levelOptions.link.color,
+                series.options.link && series.options.link.color
             ),
 
             linkLineWidth = pick(
@@ -628,22 +628,19 @@ class OrganizationSeries extends SankeySeries {
                 point.options.link && point.options.link.type,
                 this.options.link.type
             ),
-            x1 =
-                Math.floor(
-                    (fromNode.shapeArgs as any).x +
-                        (fromNode.shapeArgs as any).width
-                ) + crisp,
-            y1 =
-                Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                        (fromNode.shapeArgs as any).height / 2
-                ) + crisp,
+            x1 = Math.floor(
+                (fromNode.shapeArgs as any).x +
+                (fromNode.shapeArgs as any).width
+            ) + crisp,
+            y1 = Math.floor(
+                (fromNode.shapeArgs as any).y +
+                (fromNode.shapeArgs as any).height / 2
+            ) + crisp,
             x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 =
-                Math.floor(
-                    (toNode.shapeArgs as any).y +
-                        (toNode.shapeArgs as any).height / 2
-                ) + crisp,
+            y2 = Math.floor(
+                (toNode.shapeArgs as any).y +
+                (toNode.shapeArgs as any).height / 2
+            ) + crisp,
             xMiddle,
             hangingIndent: number = this.options.hangingIndent as any,
             toOffset = toNode.options.offset,
@@ -706,7 +703,7 @@ class OrganizationSeries extends SankeySeries {
 
         point.plotY = 1;
         point.shapeType = 'path';
-        if (this.options.link && type === 'straight') {
+        if (type === 'straight') {
             point.shapeArgs = {
                 d: [
                     ['M', x1, y1],
