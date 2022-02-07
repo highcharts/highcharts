@@ -311,9 +311,6 @@ class OrganizationSeries extends SankeySeries {
         /**
          * Defines the indentation of a `hanging` layout parent's children.
          * Possible options:
-         * The color of the links between nodes. This option is moved to
-         * link object.
-         *
          * - `inherit` (default): Only the first child adds the indentation,
          * children of a child with indentation inherit the indentation.
          * - `cumulative`: All children of a child with indentation add its
@@ -336,7 +333,9 @@ class OrganizationSeries extends SankeySeries {
          */
         hangingIndentTranslation: 'inherit',
         /**
-
+         *
+         * The color of the links between nodes. This option is moved to
+         * link object.
          *
          * @type {Highcharts.ColorString}
          * @deprecated
