@@ -4383,10 +4383,10 @@ a.highed-assigndatapanel-change-series-type-link:hover {
         -webkit-box-sizing: border-box !important;
     }
 
-    .highed-chart-frame,
+    /* .highed-chart-frame,
     .highed-assigndatapanel-header-desc {
         display: none;
-    }
+    } */
 }
 
 @media only screen and (max-width: 768px) {
@@ -4511,7 +4511,7 @@ i.highed-parent-splitter {
         border-radius: 30px;
         background-color: white;
         cursor: pointer;
-        display: block;
+        display: none;
     }
 }
 
@@ -4708,7 +4708,7 @@ highed-vsplitter,
 }
 
 .highed-vsplitter .panel {
-    background-color: #5749ad;
+    background-color: #46465c;
 }
 
 .right .highed-vsplitter .bottom {
@@ -4809,6 +4809,18 @@ highed-vsplitter,
     transform: none !important;
 }
 
+@media (max-width: 400px) {
+    .highed-overlay-modal {
+        width: 250px !important;
+        height: 400px !important;
+        min-width: 250px !important;
+        min-height: 300px !important;
+        left: 20px !important;
+        top: 20px !important;
+        transform: none !important;
+    }
+}
+
 .color-row {
     width: 25%;
     display: inline-block;
@@ -4890,6 +4902,27 @@ highed-vsplitter,
     box-sizing: border-box !important;
     -moz-box-sizing: border-box !important;
     -webkit-box-sizing: border-box !important;
+}
+
+@media (max-width: 400px) {
+    .highed-optionspanel {
+        padding-left: 75px;
+    }
+
+    .highed-toolbox-icons {
+        float: none;
+    }
+
+    .highed-dtable-extra-options {
+        width: 110px;
+    }
+
+    .highed-import-button,
+    .highed-import-button.small {
+        font-size: 11px;
+        max-width: 52px;
+        min-width: 30px;
+    }
 }
 
 .highed-optionspanel-button {

@@ -18138,6 +18138,9 @@ highed.ChartPreview = function (parent, attributes) {
                     title: {
                         text: 'Chart Title'
                     },
+                    scrolling: {
+                        enabled: false
+                    },
                     subtitle: {
                         text: ''
                     },
