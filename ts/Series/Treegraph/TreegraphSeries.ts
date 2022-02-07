@@ -204,6 +204,8 @@ class TreegraphSeries extends OrganizationSeries {
                 /**
                  * @default 'curved'
                  *
+                 * @sample highcharts/series-treegraph/link-types
+                 *         Different link types
                  */
                 type: 'curved'
             }
