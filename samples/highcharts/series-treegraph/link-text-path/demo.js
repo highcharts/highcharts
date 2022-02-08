@@ -6,6 +6,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: '#222',
+                nodeFormat: '{point.name}',
                 format: '{point.from} \u2192 {point.to}'
             },
             type: 'treegraph',

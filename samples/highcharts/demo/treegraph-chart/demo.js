@@ -1,7 +1,8 @@
-const expeditionColor = '#C3CEDA';
-const linkColor = '#738FA7';
+const dataLabelColor = '#C3CEDA';
+const expeditionColor = '#738FA7';
 const plotBackgroundColor = '#071330';
 const markerColor = '#0C4160';
+const kingBorderColor = '#cf9700';
 
 Highcharts.chart('container', {
     chart: {
@@ -9,14 +10,14 @@ Highcharts.chart('container', {
         plotBackgroundColor: plotBackgroundColor,
         borderWidth: 1,
         width: 800,
-        height: 1000
+        height: 1200
     },
 
     title: {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in a Quest to the Lonely Mountain marked.'
+        text: 'Dwarfs participating in a Quest to the Lonely Mountain marked in brighter color. <br> Drarf kings marked with golden border.'
     },
 
     plotOptions: {
@@ -27,7 +28,7 @@ Highcharts.chart('container', {
                         `${this.point.name}<br>${this.point.description}` :
                         `${this.point.name}`;
                 },
-                color: expeditionColor,
+                color: dataLabelColor,
                 style: {
                     width: 70,
                     textOverflow: 'clip'
@@ -57,7 +58,89 @@ Highcharts.chart('container', {
             nodes: [
                 {
                     id: 'Durin the Deathless',
-                    name: 'Durin the Deathless'
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Durin VI',
+                    level: 2,
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Nain I',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Thrain I',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Thorin I',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Gloin',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Oin',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Nain II',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Dain I',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Thror',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Thrain II',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Dain II IronFoot',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Thorin II Stonehelm',
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
+                },
+                {
+                    id: 'Durin VII',
+                    level: 15,
+                    marker: {
+                        lineColor: kingBorderColor
+                    }
                 },
                 {
                     id: 'Thorin II Oakenshield',
@@ -70,16 +153,18 @@ Highcharts.chart('container', {
                         }
                     },
                     marker: {
+                        lineColor: kingBorderColor,
                         height: 100,
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
                     id: 'Gimli',
                     name: 'Gimli',
+                    description: '2879 - 120FA?',
                     marker: {
                         symbol: 'circle',
-                        radius: 30
+                        radius: 35
                     }
                 },
                 {
@@ -87,7 +172,7 @@ Highcharts.chart('container', {
                     name: 'Fili',
                     description: '2859 - 2941',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -95,7 +180,7 @@ Highcharts.chart('container', {
                     name: 'Kili',
                     description: '2864 - 2941',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -103,7 +188,7 @@ Highcharts.chart('container', {
                     name: 'Balin',
                     description: '2763 - 2994',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -111,7 +196,7 @@ Highcharts.chart('container', {
                     name: 'Dwalin',
                     description: '2772 - 3112',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -119,7 +204,7 @@ Highcharts.chart('container', {
                     name: 'Oin II',
                     description: '2774 - 2994',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 },
                 {
@@ -127,27 +212,27 @@ Highcharts.chart('container', {
                     name: 'Gloin II',
                     description: '2783 - 15 F.A.',
                     marker: {
-                        fillColor: linkColor
+                        fillColor: expeditionColor
                     }
                 }
             ],
-            keys: ['from', 'to', 'link.color'],
+            keys: ['from', 'to'],
 
             data: [
-                ['Durin the Deathless', 'Durin VI', 'gold'],
-                ['Durin VI', 'Nain I', 'gold'],
-                ['Nain I', 'Thrain I', 'gold'],
-                ['Thrain I', 'Thorin I', 'gold'],
-                ['Thorin I', 'Gloin', 'gold'],
-                ['Gloin', 'Oin', 'gold'],
-                ['Oin', 'Nain II', 'gold'],
-                ['Nain II', 'Dain I', 'gold'],
+                ['Durin the Deathless', 'Durin VI'],
+                ['Durin VI', 'Nain I'],
+                ['Nain I', 'Thrain I'],
+                ['Thrain I', 'Thorin I'],
+                ['Thorin I', 'Gloin'],
+                ['Gloin', 'Oin'],
+                ['Oin', 'Nain II'],
+                ['Nain II', 'Dain I'],
                 ['Nain II', 'Borin'],
-                ['Dain I', 'Thror', 'gold'],
+                ['Dain I', 'Thror'],
                 ['Dain I', 'Fror'],
                 ['Dain I', 'Gror'],
-                ['Thror', 'Thrain II', 'gold'],
-                ['Thrain II', 'Thorin II Oakenshield', 'gold'],
+                ['Thror', 'Thrain II', kingBorderColor],
+                ['Thrain II', 'Thorin II Oakenshield'],
                 ['Thrain II', 'Frerin'],
                 ['Thrain II', 'Dis'],
                 ['Dis', 'Kili'],
