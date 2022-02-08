@@ -256,7 +256,7 @@ class TreegraphSeries extends OrganizationSeries {
      * @private
      */
     public generatePoints(): void {
-        NodesComposition.generatePoints.apply(this, arguments as any);
+        NodesComposition.generatePoints.apply(this, arguments);
 
         /**
          * Order the nodes, starting with the root node(s). (#9818)
@@ -371,7 +371,7 @@ class TreegraphSeries extends OrganizationSeries {
 
         this.nodePadding = this.getNodePadding();
 
-        // Calculate level options used in sankey and organization
+        // Calculate level options used in sankey, organization, and treegraph.
         series.mapOptionsToLevel = getLevelOptions({
             // NOTE: if support for allowTraversingTree is added, then from
             // should be the level of the root node.
@@ -403,17 +403,13 @@ class TreegraphSeries extends OrganizationSeries {
         });
 
         // Then translate links
-        this.nodes.forEach(function (node): void {
-            // Translate the links from this node
-            node.linksFrom.forEach(function (linkPoint): void {
-                // If weight is 0 - don't render the link path #12453,
-                // render null points (for organization chart)
-                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
-                    linkPoint.dataLabelOnNull = true;
-                    series.translateLink(linkPoint);
-                    linkPoint.allowShadow = false;
-                }
-            });
+        this.points.forEach(function (linkPoint): void {
+            // If weight is 0 - don't render the link path #12453,
+            // render null points (for organization chart)
+            if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                series.translateLink(linkPoint);
+                linkPoint.allowShadow = false;
+            }
         });
     }
 
