@@ -110,16 +110,8 @@ extend(H.treeLayouts.Walker.prototype, {
                     ): TreegraphNode {
                         // initialise dummy node.
                         dummyNode = new TreegraphNode();
-                        dummyNode.linksFrom = [];
-                        dummyNode.linksTo = [];
-                        dummyNode.shapeArgs = {};
                         dummyNode.id = link.toNode.id + '-' + gapSize;
-                        dummyNode.mod = 0;
                         dummyNode.ancestor = parent;
-                        dummyNode.shift = 0;
-                        dummyNode.thread = void 0 as any;
-                        dummyNode.change = 0;
-                        dummyNode.preX = 0;
 
                         // add connection from new node to the previous points
 
@@ -130,9 +122,6 @@ extend(H.treeLayouts.Walker.prototype, {
                         dummyNode.linksTo[0].toNode = dummyNode;
                         dummyNode.linksTo[0].fromNode = parent;
                         dummyNode.linksFrom[0].toNode = child;
-                        // temporary:
-                        dummyNode.linksTo[0].to = void 0 as any;
-
                         dummyNode.column = child.column - gapSize;
                         dummyNode.level = child.level - gapSize;
 

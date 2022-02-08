@@ -12,19 +12,19 @@ import TreegraphPoint from './TreegraphPoint.js';
 import type TreegraphSeries from './TreegraphSeries.js';
 
 class TreegraphNode extends TreegraphPoint {
-    public mod: number = void 0 as any;
+    public mod: number = 0;
     public thread?: TreegraphNode;
     public ancestor: TreegraphNode = void 0 as any;
-    public shift: number = void 0 as any;
-    public change: number = void 0 as any;
-    public preX: number = void 0 as any;
+    public shift: number = 0;
+    public change: number = 0;
+    public preX: number = 0;
     public column: number = void 0 as any;
     public relativeXPosition: number = void 0 as any;
     public xPosition: number = void 0 as any;
     public yPosition: number = void 0 as any;
     public hidden = false;
-    public linksFrom: Array<TreegraphPoint> = void 0 as any;
-    public linksTo: Array<TreegraphPoint> = void 0 as any;
+    public linksFrom: Array<TreegraphPoint> = [];
+    public linksTo: Array<TreegraphPoint> = [];
     public nodeSizeX: number = void 0 as any;
     public nodeSizeY: number = void 0 as any;
     public nodeHeight?: number;
