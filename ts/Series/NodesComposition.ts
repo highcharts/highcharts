@@ -107,6 +107,7 @@ namespace NodesComposition {
         public options: SeriesCompositionOptions;
         public pointClass: typeof PointComposition;
         public points: Array<PointComposition>;
+        public nodeClass?: typeof PointComposition;
         public createNode(
             id: string
         ): PointComposition;
@@ -174,7 +175,7 @@ namespace NodesComposition {
         id: string
     ): PointComposition {
 
-        const PointClass = this.pointClass,
+        const PointClass = this.nodeClass || this.pointClass,
             findById = <T>(
                 nodes: Array<T>,
                 id: string
