@@ -3,12 +3,9 @@ Highcharts.chart('container', {
         text: 'Treegraph: move the node to different level.'
     },
     series: [{
-        marker: {
-            radius: 30
-        },
         nodes: [{
-            id: 'E',
-            level: 2
+            id: 'B',
+            level: 3
         }],
         type: 'treegraph',
         keys: ['from', 'to'],

@@ -16369,7 +16369,7 @@ highed.highchartsErrors = {
     // Browser does not support SVG
     27: { title: 'This browser does not support SVG.', text: 'This happens in old IE when the oldie.js module is not loaded.' },
     // Data has circular dependency.
-    28: { title: 'Circular dependency detected.', text: 'The treegraph algorythm expects the data to have no circular dependencies.' }
+    28: { title: 'Circular dependency detected.', text: 'The treegraph algorithm expects the data to have no circular dependencies.' }
 };
 
 /******************************************************************************

@@ -17,8 +17,6 @@ declare global {
     namespace Highcharts {
         class TreegraphLayout {
             public constructor();
-            public siblingDistance: number;
-            public levelSeparation: number;
             public calculatePositions(series: TreegraphSeries): void;
             public initValues(nodes: TreegraphNode[]): void;
             public calculateRelativeX(root: TreegraphNode, index: number): void;
@@ -61,8 +59,6 @@ extend(H.treeLayouts.Walker.prototype, {
         const treeLayout = this;
         const nodes = series.nodes as TreegraphNode[];
         this.initValues(nodes);
-        this.siblingDistance = 50;
-        this.levelSeparation = 50;
         const root = nodes[0];
         if (root) {
             treeLayout.beforeLayout(nodes);
@@ -75,20 +71,15 @@ extend(H.treeLayouts.Walker.prototype, {
     // Clear values created in a preWalk.
     afterLayout: function (nodes: TreegraphNode[]): void {
         nodes.forEach((node): void => {
-            node.linksFrom.forEach((link, index): void => {
+            node.linksFrom.forEach((link): void => {
 
-                if (node.linksFrom[index].oldToNode) {
-                    node.linksFrom[index].toNode =
-                        (node as any).linksFrom[index].trueToNode;
+                if (link.oldToNode) {
+                    link.toNode = link.oldToNode;
                 }
 
                 // Then connection from child to dummyNode
-                if (
-                    node.linksTo.length &&
-                    node.linksTo[0].oldFromNode
-                ) {
-                    node.linksTo[0].fromNode =
-                        node.linksTo[0].oldFromNode;
+                if (link.oldFromNode) {
+                    link.fromNode = link.oldFromNode;
                 }
             });
         });
@@ -151,7 +142,7 @@ extend(H.treeLayouts.Walker.prototype, {
                         }
                         parent.linksFrom[index].toNode = dummyNode;
 
-                        // Then connection from chhild to dummyNode
+                        // Then connection from child to dummyNode
                         if (!child.linksTo[0].oldFromNode) {
                             child.linksTo[0].oldFromNode = parent;
                         }
@@ -199,7 +190,8 @@ extend(H.treeLayouts.Walker.prototype, {
     ): void {
         const treeLayout = this;
         let leftSibling;
-        let siblingDistance = this.siblingDistance;
+        // arbitrary value used to position nodes in respect to each other.
+        let siblingDistance = 1;
         // if the node is a leaf, set it's position based on the left siblings.
         if (node.isLeaf()) {
             leftSibling = node.getLeftSibling();
@@ -251,7 +243,7 @@ extend(H.treeLayouts.Walker.prototype, {
         // left to right with root node close to the chart border, this is why
         // x and y positions are switched.
         node.yPosition = node.preX + modSum;
-        node.xPosition = node.level * treeLayout.levelSeparation;
+        node.xPosition = node.level;
         node.linksFrom.forEach(function (link): void {
             treeLayout.secondWalk(link.toNode, modSum + node.mod);
         });
@@ -302,7 +294,7 @@ extend(H.treeLayouts.Walker.prototype, {
                     rightOutNode.nextLeft() as TreegraphNode;
 
                 rightOutNode.ancestor = node;
-                let siblingDistance = this.siblingDistance;
+                let siblingDistance = 1;
                 let shift =
                     leftIntNode.preX +
                     leftIntMod -
