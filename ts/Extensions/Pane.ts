@@ -563,15 +563,21 @@ Chart.prototype.getHoverPane = function (
 // Check if mouse pointer is within pane for polar
 addEvent(Chart, 'afterIsWithinPane', function (event): any {
     const chart = this,
-        x = (event as any).mouseDownX,
-        y = (event as any).mouseDownY;
+        x = (event as any).mouseDownX - chart.plotLeft,
+        y = (event as any).mouseDownY - chart.plotTop;
+
+    let isWithinPane = false;
 
     if (chart.polar && chart.pane && defined(x) && defined(y)) {
-        (event as any).isWithinPane = isInsidePane(
-            x,
-            y,
-            chart.pane[0].center
-        );
+        chart.pane.forEach((pane): void => {
+            isWithinPane = isWithinPane || isInsidePane(
+                x,
+                y,
+                pane.center
+            );
+        });
+
+        (event as any).isWithinPane = isWithinPane;
     }
 });
 
