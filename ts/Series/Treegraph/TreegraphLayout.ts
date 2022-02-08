@@ -23,7 +23,7 @@ declare global {
             public initValues(nodes: TreegraphNode[]): void;
             public calculateRelativeX(root: TreegraphNode, index: number): void;
             public beforeLayout(nodes: TreegraphNode[]): void;
-            public afterWalk(nodes: TreegraphNode[]): void;
+            public afterLayout(nodes: TreegraphNode[]): void;
             public firstWalk(node: TreegraphNode): void;
             public secondWalk(node: TreegraphNode, modSum: number): void;
             public executeShifts(node: TreegraphNode): void;
@@ -69,11 +69,11 @@ extend(H.treeLayouts.Walker.prototype, {
             treeLayout.calculateRelativeX(root, 0);
             treeLayout.firstWalk(root);
             treeLayout.secondWalk(root, -root.preX);
-            treeLayout.afterWalk(nodes);
+            treeLayout.afterLayout(nodes);
         }
     },
     // Clear values created in a preWalk.
-    afterWalk: function (nodes: TreegraphNode[]): void {
+    afterLayout: function (nodes: TreegraphNode[]): void {
         nodes.forEach((node): void => {
             node.linksFrom.forEach((link, index): void => {
 
@@ -121,8 +121,8 @@ extend(H.treeLayouts.Walker.prototype, {
                         dummyNode = new TreegraphNode();
                         dummyNode.linksFrom = [];
                         dummyNode.linksTo = [];
-                        dummyNode.id = link.toNode.id + '-' + gapSize;
                         dummyNode.shapeArgs = {};
+                        dummyNode.id = link.toNode.id + '-' + gapSize;
                         dummyNode.mod = 0;
                         dummyNode.ancestor = parent;
                         dummyNode.shift = 0;

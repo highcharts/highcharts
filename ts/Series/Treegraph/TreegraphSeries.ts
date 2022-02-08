@@ -39,7 +39,7 @@ const { merge, pick, addEvent, stableSort, error } = U;
 import './TreegraphLayout.js';
 import Point from '../../Core/Series/Point';
 
-interface LayoutAlgorythmParameters {
+interface LayoutModifiers {
     ax: number;
     bx: number;
     ay: number;
@@ -232,7 +232,7 @@ class TreegraphSeries extends OrganizationSeries {
 
     public nodes: Array<TreegraphNode> = void 0 as any;
 
-    public layoutModifier: LayoutAlgorythmParameters = void 0 as any;
+    public layoutModifier: LayoutModifiers = void 0 as any;
     layoutAlgorythm: Highcharts.TreegraphLayout = void 0 as any;
 
     /* *
@@ -298,7 +298,7 @@ class TreegraphSeries extends OrganizationSeries {
         }
     }
 
-    private getLayoutModifiers(): LayoutAlgorythmParameters {
+    private getLayoutModifiers(): LayoutModifiers {
         const chart = this.chart,
             plotSizeX = chart.plotSizeX as number,
             plotSizeY = chart.plotSizeY as number;
@@ -480,10 +480,11 @@ class TreegraphSeries extends OrganizationSeries {
             x: nodeX,
             y: nodeY,
             width,
-            height,
-            display: node.hasShape() ? '' : 'none'
+            height
         };
 
+
+        node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point
         node.dlOptions = TreegraphSeries.getDLOptions({
             level: (this.mapOptionsToLevel as any)[node.level],
