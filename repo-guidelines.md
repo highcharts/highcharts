@@ -46,3 +46,30 @@ When creating a new official series type, there are some requirements that shoul
 * Styled mode. Everything that is stylable should be put inside conditional code. Add appropriate class names to all elements. Set up demo in the `/css` demo folder.
 * Boost module. If it makes sense for the series type, implement boosting. Otherwise, make sure it is ignored.
 * API docs. Test run the new series with `gulp jsdoc --watch` and make sure the output is correct. Remember to exclude members from the parent.
+
+
+# Style guide
+
+In general, ESLint picks up and stops styling issues, but some things can be mentioned in particular.
+
+#### 1. Avoid line breaks without paragraphs
+In prose text inside doclets, code comments, documentation article markdown and blog posts, avoid line breaks without paragraphs. Doclets and comments should wrap at max 80 characters.
+
+Bad (line break inside paragraph):
+```
+This feature turns something off, so that it does not show.
+It is `undefined` by defalt.
+```
+
+Good (single paragraph, break at 80):
+```
+This feature turns something off, so that it does not show. It is `undefined` by
+defalt.
+```
+
+Good (two paragraph):
+```
+This feature turns something off, so that it does not show.
+
+It is `undefined` by defalt.
+```
