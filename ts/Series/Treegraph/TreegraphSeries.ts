@@ -371,9 +371,7 @@ class TreegraphSeries extends OrganizationSeries {
 
         this.nodePadding = this.getNodePadding();
 
-
         // Calculate level options used in sankey, organization, and treegraph.
-
         series.mapOptionsToLevel = getLevelOptions({
             // NOTE: if support for allowTraversingTree is added, then from
             // should be the level of the root node.
