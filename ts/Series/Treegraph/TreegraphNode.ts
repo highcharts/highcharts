@@ -31,12 +31,6 @@ class TreegraphNode extends TreegraphPoint {
     public series: TreegraphSeries = void 0 as any;
     public wasVisited = false;
 
-    constructor() {
-        super();
-        this.linksFrom = [];
-        this.linksTo = [];
-        this.shapeArgs = {};
-    }
     // get the next left node which is either first child or thread
     public nextLeft(this: TreegraphNode): TreegraphNode | undefined {
         return this.getLeftMostChild() || this.thread;
