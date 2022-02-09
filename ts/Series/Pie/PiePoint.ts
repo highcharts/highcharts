@@ -180,20 +180,18 @@ class PiePoint extends Point {
     }
 
     /**
-     * Toggle the visibility of the pie slice or other data point. Note that
-     * this method is available only for some series, like pie, treemap and
-     * sunburst.
+     * Toggle the visibility of a pie slice or other data point. Note that this
+     * method is available only for some series, like pie, treemap and sunburst.
      *
      * @function Highcharts.Point#setVisible
      *
      * @param {boolean} [vis]
-     * True to show the pie slice or other data point, false to hide.
-     * If undefined, the visibility is toggled.
+     * True to show the pie slice or other data point, false to hide. If
+     * undefined, the visibility is toggled.
      *
-     * @param {boolean} [redraw]
-     * Whether to redraw the chart after the point is altered. If doing more
-     * operations on the chart, it is a good idea to set redraw to false and
-     * call {@link Chart#redraw|chart.redraw()} after.
+     * @param {boolean} [redraw] Whether to redraw the chart after the point is
+     * altered. If doing more operations on the chart, it is a good idea to set
+     * redraw to false and call {@link Chart#redraw|chart.redraw()} after.
      *
      */
     public setVisible(
