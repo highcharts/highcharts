@@ -20,8 +20,11 @@ declare global {
             public calculatePositions(series: TreegraphSeries): void;
             public resetValues(nodes: TreegraphNode[]): void;
             public calculateRelativeX(root: TreegraphNode, index: number): void;
-            public beforeLayout(nodes: TreegraphNode[]): void;
-            public afterLayout(nodes: TreegraphNode[]): void;
+            public beforeLayout(series: TreegraphSeries): TreegraphNode;
+            public afterLayout(
+                nodes: TreegraphNode[],
+                artificialRoot: TreegraphNode
+            ): void;
             public firstWalk(node: TreegraphNode): void;
             public secondWalk(node: TreegraphNode, modSum: number): void;
             public executeShifts(node: TreegraphNode): void;
@@ -101,15 +104,15 @@ extend(H.treeLayouts.Walker, {
 });
 extend(H.treeLayouts.Walker.prototype, {
     /**
-    * Walker algorythm of positioning the nodes in the treegraph improved by
-    * Buchheim to run in the linear time. Basic algorithm consists of post
-    * order traversal, which starts from going bottom up (first walk), and then
-    * pre order traversal top to bottom (second walk) where adding all of the
-    * modifiers is performed.
-    * link to the paper: http://dirk.jivas.de/papers/buchheim02improving.pdf
-    *
-    * @param {TreegraphSeries} series the Treegraph series
-    */
+     * Walker algorythm of positioning the nodes in the treegraph improved by
+     * Buchheim to run in the linear time. Basic algorithm consists of post
+     * order traversal, which starts from going bottom up (first walk), and then
+     * pre order traversal top to bottom (second walk) where adding all of the
+     * modifiers is performed.
+     * link to the paper: http://dirk.jivas.de/papers/buchheim02improving.pdf
+     *
+     * @param {TreegraphSeries} series the Treegraph series
+     */
     calculatePositions: function (
         this: Highcharts.TreegraphLayout,
         series: TreegraphSeries
@@ -117,32 +120,31 @@ extend(H.treeLayouts.Walker.prototype, {
         const treeLayout = this;
         const nodes = series.nodes as TreegraphNode[];
         this.resetValues(nodes);
-        const root = nodes[0];
+        const root = treeLayout.beforeLayout(series);
         if (root) {
-            treeLayout.beforeLayout(nodes);
             treeLayout.calculateRelativeX(root, 0);
             treeLayout.firstWalk(root);
             treeLayout.secondWalk(root, -root.preX);
-            treeLayout.afterLayout(nodes);
+            treeLayout.afterLayout(nodes, root);
         }
     },
     /**
      * Create dummyNodes as parents for nodes, which column is changed.
      *
      * @param nodes all of the nodes.
+     * @return {TreegraphNode} new Root
      */
+
     beforeLayout: function (
         this: Highcharts.TreegraphLayout,
-        nodes: TreegraphNode[]
-    ): void {
+        series: TreegraphSeries
+    ): TreegraphNode {
         const treeLayout = this as Highcharts.TreegraphLayout;
+        const nodes = series.nodes;
         nodes.forEach((node): void => {
             node.linksFrom.forEach((link, index): void => {
                 // Support for children placed in distant columns.
-                if (
-                    link.toNode &&
-                    (link.toNode.column - node.column > 1)
-                ) {
+                if (link.toNode && link.toNode.column - node.column > 1) {
                     // For further columns treat the nodes as a
                     // single parent-child pairs till the column is achieved.
                     let gapSize = link.toNode.column - node.column - 1,
@@ -161,6 +163,22 @@ extend(H.treeLayouts.Walker.prototype, {
                 }
             });
         });
+        // Add new root to support rendering of multiple trees (forest).
+        const newRoot = new TreegraphNode();
+        const previousRoots = series.nodeColumns[0];
+        newRoot.id = 'newRoot';
+        newRoot.ancestor = newRoot;
+        previousRoots.forEach((previousRoot): void => {
+            newRoot.linksFrom.push({
+                fromNode: newRoot,
+                toNode: previousRoot
+            } as any);
+            previousRoot.linksTo.push({
+                fromNode: newRoot,
+                toNode: previousRoot
+            } as any);
+        });
+        return newRoot;
     },
     /**
      * Reset the caluclated values from the previous run.
@@ -177,12 +195,12 @@ extend(H.treeLayouts.Walker.prototype, {
         });
     },
     /**
-    * Assigns the value to each node, which indicates, what is his sibling
-    * number.
-    *
-    * @param node root node
-    * @param index index to which the nodes position should be set
-    */
+     * Assigns the value to each node, which indicates, what is his sibling
+     * number.
+     *
+     * @param node root node
+     * @param index index to which the nodes position should be set
+     */
     calculateRelativeX: function (
         this: Highcharts.TreegraphLayout,
         node: TreegraphNode,
@@ -424,10 +442,16 @@ extend(H.treeLayouts.Walker.prototype, {
      * Clear values created in a beforeLayout.
      * @param {TreegraphNode[]} nodes all of the nodes of the Treegraph Series.
      */
-    afterLayout: function (nodes: TreegraphNode[]): void {
+    afterLayout: function (
+        nodes: TreegraphNode[],
+        artificialRoot: TreegraphNode
+    ): void {
+        artificialRoot.linksFrom.forEach((link): void => {
+            link.toNode.linksTo.length = 0;
+        });
+
         nodes.forEach((node): void => {
             node.linksFrom.forEach((link): void => {
-
                 if (link.oldToNode) {
                     link.toNode = link.oldToNode;
                 }
