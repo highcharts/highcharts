@@ -16,7 +16,6 @@
  *
  * */
 
-import type TreegraphPoint from './TreegraphPoint';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -28,6 +27,7 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import TreegraphNode from './TreegraphNode.js';
+import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
@@ -560,7 +560,8 @@ function collapseTreeFromPoint(
 
 interface TreegraphSeries {
     inverted?: boolean;
-    pointClass: typeof TreegraphNode;
+    pointClass: typeof TreegraphPoint;
+    nodeClass: typeof TreegraphNode;
 }
 
 /* *
@@ -569,7 +570,8 @@ interface TreegraphSeries {
  *
  * */
 
-TreegraphSeries.prototype.pointClass = TreegraphNode;
+TreegraphSeries.prototype.pointClass = TreegraphPoint;
+TreegraphSeries.prototype.nodeClass = TreegraphNode;
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treegraph: typeof TreegraphSeries;
