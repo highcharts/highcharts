@@ -36,6 +36,12 @@ declare global {
                 shift: number
             ): void;
             public box: Record<string, number>;
+            public static createDummyNode(
+                parentNode: TreegraphNode,
+                childNode: TreegraphNode,
+                gap: number,
+                index: number
+            ): TreegraphNode;
         }
         let treeLayouts: Record<string, typeof TreegraphLayout>;
     }
@@ -45,6 +51,54 @@ H.treeLayouts = {
     Walker: function (): void {}
 } as any;
 
+extend(H.treeLayouts.Walker, {
+    /**
+     * Create dummy node, which allows to manually set the level of the node.
+     *
+     * @param {TreegraphNode} parent Parent node, to which the dummyNode should be connected.
+     * @param {TreegraphNode} child Child node, which should be connected to dummyNode.
+     * @param {number} gapSize Remainig gap size
+     * @param {number} index the index of the link
+     *
+     * @return {TreegraphNode} DummyNode as a parent of nodes, which column
+     * changes
+     */
+    createDummyNode: function (
+        parent: TreegraphNode,
+        child: TreegraphNode,
+        gapSize: number,
+        index: number
+    ): TreegraphNode {
+        // Initialise dummy node.
+        let dummyNode = new TreegraphNode();
+        dummyNode.id = parent.id + '-' + gapSize;
+        dummyNode.ancestor = parent;
+        // Add connection from new node to the previous points.
+
+        // First connection to itself.
+        dummyNode.linksFrom.push(merge(parent.linksFrom[0]));
+        dummyNode.linksFrom[0].fromNode = dummyNode;
+        dummyNode.linksTo.push(merge(parent.linksFrom[0]));
+        dummyNode.linksTo[0].toNode = dummyNode;
+        dummyNode.linksTo[0].fromNode = parent;
+        dummyNode.linksFrom[0].toNode = child;
+        dummyNode.column = child.column - gapSize;
+        dummyNode.level = child.level - gapSize;
+
+        // Then connection from parent to dummyNode.
+        if (!parent.linksFrom[index].oldToNode) {
+            parent.linksFrom[index].oldToNode = child;
+        }
+        parent.linksFrom[index].toNode = dummyNode;
+
+        // Then connection from child to dummyNode.
+        if (!child.linksTo[0].oldFromNode) {
+            child.linksTo[0].oldFromNode = parent;
+        }
+        child.linksTo[0].fromNode = dummyNode;
+        return dummyNode;
+    }
+});
 extend(H.treeLayouts.Walker.prototype, {
     /**
     * Walker algorythm of positioning the nodes in the treegraph improved by
@@ -92,46 +146,16 @@ extend(H.treeLayouts.Walker.prototype, {
                     // For further columns treat the nodes as a
                     // single parent-child pairs till the column is achieved.
                     let gapSize = link.toNode.column - node.column - 1,
-                        dummyNode,
                         parent = node,
                         child = link.toNode;
                     // parent -> dummyNode -> child
-                    let createDummyNode = function (
-                        parent: TreegraphNode,
-                        child: TreegraphNode
-                    ): TreegraphNode {
-                        // Initialise dummy node.
-                        dummyNode = new TreegraphNode();
-                        dummyNode.id = link.toNode.id + '-' + gapSize;
-                        dummyNode.ancestor = parent;
-
-                        // Add connection from new node to the previous points.
-
-                        // First connection to itself.
-                        dummyNode.linksFrom.push(merge(parent.linksFrom[0]));
-                        dummyNode.linksFrom[0].fromNode = dummyNode;
-                        dummyNode.linksTo.push(merge(parent.linksFrom[0]));
-                        dummyNode.linksTo[0].toNode = dummyNode;
-                        dummyNode.linksTo[0].fromNode = parent;
-                        dummyNode.linksFrom[0].toNode = child;
-                        dummyNode.column = child.column - gapSize;
-                        dummyNode.level = child.level - gapSize;
-
-                        // Then connection from parent to dummyNode.
-                        if (!parent.linksFrom[index].oldToNode) {
-                            parent.linksFrom[index].oldToNode = child;
-                        }
-                        parent.linksFrom[index].toNode = dummyNode;
-
-                        // Then connection from child to dummyNode.
-                        if (!child.linksTo[0].oldFromNode) {
-                            child.linksTo[0].oldFromNode = parent;
-                        }
-                        child.linksTo[0].fromNode = dummyNode;
-                        return dummyNode;
-                    };
                     while (gapSize > 0) {
-                        child = createDummyNode(parent, child);
+                        child = H.treeLayouts.Walker.createDummyNode(
+                            parent,
+                            child,
+                            gapSize,
+                            index
+                        );
                         gapSize--;
                     }
                 }
@@ -259,8 +283,7 @@ extend(H.treeLayouts.Walker.prototype, {
         let shift = 0,
             change = 0;
         for (let i = node.linksFrom.length - 1; i >= 0; i--) {
-            let link = node.linksFrom[i];
-            let childNode = link.toNode;
+            const childNode = node.linksFrom[i].toNode;
             childNode.preX += shift;
             childNode.mod += shift;
             change += childNode.change;
