@@ -31,19 +31,35 @@ class TreegraphNode extends TreegraphPoint {
     public series: TreegraphSeries = void 0 as any;
     public wasVisited = false;
 
-    // get the next left node which is either first child or thread
+    /**
+     * Get the next left node which is either first child or thread.
+     *
+     * @return {TreegraphNode | undefined} Next left node child or thread.
+     */
     public nextLeft(this: TreegraphNode): TreegraphNode | undefined {
         return this.getLeftMostChild() || this.thread;
     }
 
-    // get the next right node which is either last child or thread
+    /**
+     * Get the next right node which is either last child or thread.
+     *
+     * @return {TreegraphNode | undefined} Next right node child or thread.
+     */
     public nextRight(this: TreegraphNode): TreegraphNode | undefined {
         return this.getRightMostChild() || this.thread;
     }
 
 
-    // return the left one of the greatest uncommon ancestors of a leftInternal
-    // node and it's right neighbor
+    /**
+     * Return the left one of the greatest uncommon ancestors of a leftInternal
+     * node and it's right neighbor.
+     *
+     * @param leftIntNode {TreegraphNode} leftInternalNode
+     * @param defaultAncestor {TreegraphNode} defaultAncestor
+     * @return {TreegraphNode} Left one of the greatest uncommon ancestors of a
+     * leftInternal node and it's right neighbor.
+     *
+     */
     public getAncestor(
         this: TreegraphNode,
         leftIntNode: TreegraphNode,
@@ -55,8 +71,14 @@ class TreegraphNode extends TreegraphPoint {
         }
         return defaultAncestor;
     }
-    // get node's first sibling.
-    public getLeftMostSibling(this: TreegraphNode): TreegraphNode | null {
+    /**
+     * Get node's first sibling, which is not hidden.
+     *
+     * @return {TreegraphNode | undefined} First sibling of the node which is
+     * not hidden or undefined, if it does not exists
+     *
+     */
+    public getLeftMostSibling(this: TreegraphNode): TreegraphNode | undefined {
         let parent = this.getParent();
         if (parent) {
             const children = parent.linksFrom;
@@ -66,10 +88,13 @@ class TreegraphNode extends TreegraphPoint {
                 }
             }
         }
-        return null;
     }
-    // get nodes left sibling (if it exists)
-    public getLeftSibling(this: TreegraphNode): TreegraphNode | null {
+    /**
+     * Get node's left sibling (if it exists).
+     *
+     * @return {TreegraphNode | undefined} left sibling of the node
+     */
+    public getLeftSibling(this: TreegraphNode): TreegraphNode | undefined {
         let parent = this.getParent();
         if (parent) {
             const children = parent.linksFrom;
@@ -79,38 +104,54 @@ class TreegraphNode extends TreegraphPoint {
                 }
             }
         }
-        return null;
     }
 
-    // get the node's first child (if it exists)
-    public getLeftMostChild(this: TreegraphNode): TreegraphNode | null {
+    /**
+     * Get the node's first child (if it exists).
+     *
+     * @return {TreegraphNode | undefined} node's first child which isn't
+     * hidden
+     */
+    public getLeftMostChild(this: TreegraphNode): TreegraphNode | undefined {
         const linksFrom = this.linksFrom;
         for (let i = 0; i < linksFrom.length; i++) {
             if (!linksFrom[i].toNode.hidden) {
                 return linksFrom[i].toNode;
             }
         }
-        return null;
     }
 
-    // get the node's last child (if it exists)
-    public getRightMostChild(this: TreegraphNode): TreegraphNode | null {
+    /**
+     * Get the node's last child (if it exists).
+     *
+     * @return {TreegraphNode | undefined} node's last child which isn't hidden
+     *
+     */
+    public getRightMostChild(this: TreegraphNode): TreegraphNode | undefined {
         const linksFrom = this.linksFrom;
         for (let i = linksFrom.length - 1; i >= 0; i--) {
             if (!linksFrom[i].toNode.hidden) {
                 return linksFrom[i].toNode;
             }
         }
-        return null;
     }
 
-    // Get the parent of current node or return null for root of the tree.
-    public getParent(this: TreegraphNode): TreegraphNode | null {
-        return this.linksTo[0] ?
-            (this.linksTo[0].fromNode as TreegraphNode) :
-            null;
+    /**
+     * Get the parent of current node or return undefined for root of the tree.
+     *
+     * @return {TreegraphNode | undefined} Node's parent or undefined for root.
+     */
+    public getParent(this: TreegraphNode): TreegraphNode | undefined {
+        if (this.linksTo[0]) {
+            return this.linksTo[0].fromNode;
+        }
     }
-    // Check if the node is a leaf, so if it has any children.
+
+    /**
+     * Check if the node is a leaf (if it has any children).
+     *
+     * @return {boolean} If the node has no visible children return true.
+     */
     public isLeaf(this: TreegraphNode): boolean {
         for (let i = 0; i < this.linksFrom.length; i++) {
             if (!this.linksFrom[i].toNode.hidden) {
@@ -120,13 +161,17 @@ class TreegraphNode extends TreegraphPoint {
         return true;
     }
 
-    public getFirstChild(this: TreegraphNode): TreegraphNode | null {
+    /**
+     * Get node's first child which is not hidden.
+     *
+     * @return {TreegraphNode | undefined} First child.
+     */
+    public getFirstChild(this: TreegraphNode): TreegraphNode | undefined {
         for (let i = 0; i < this.linksFrom.length; i++) {
             if (!this.linksFrom[i].toNode.hidden) {
                 return this.linksFrom[i].toNode;
             }
         }
-        return null;
     }
 }
 

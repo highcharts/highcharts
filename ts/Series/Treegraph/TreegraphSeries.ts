@@ -263,7 +263,7 @@ class TreegraphSeries extends OrganizationSeries {
          * @private
          */
         function order(node: TreegraphNode, level: number): void {
-            // Prevents circular dependencies in the data:
+            // Prevents circular dependencies in the data.
             if (node.wasVisited) {
                 error(28);
             } else {
@@ -298,6 +298,13 @@ class TreegraphSeries extends OrganizationSeries {
         }
     }
 
+
+    /**
+     * calculate `a` and `b` parameters of linear transformation, where
+     * `finalPosition = a * calculatedPosition + b`.
+     *
+     * @return {LayoutModifiers} `a` and `b` parameter for x and y direction.
+     */
     private getLayoutModifiers(): LayoutModifiers {
         const chart = this.chart,
             plotSizeX = chart.plotSizeX as number,
@@ -357,7 +364,10 @@ class TreegraphSeries extends OrganizationSeries {
         return { ax, bx, ay, by };
     }
 
-    /* eslint-disable valid-jsdoc */
+    /**
+     * Run pre-translation by generating the nodeColumns.
+     * @private
+     */
     public translate(): void {
         if (!this.processedXData) {
             this.processData();
@@ -397,15 +407,15 @@ class TreegraphSeries extends OrganizationSeries {
         this.layoutAlgorythm.calculatePositions(series);
         series.layoutModifier = this.getLayoutModifiers();
 
-        // First translate all nodes so we can use them when drawing links
+        // First translate all nodes so we can use them when drawing links.
         this.nodes.forEach((node): void => {
             series.translateNode(node);
         });
 
-        // Then translate links
+        // Then translate links.
         this.points.forEach(function (linkPoint): void {
             // If weight is 0 - don't render the link path #12453,
-            // render null points (for organization chart)
+            // render null points.
             if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                 series.translateLink(linkPoint);
                 linkPoint.allowShadow = false;
@@ -413,27 +423,33 @@ class TreegraphSeries extends OrganizationSeries {
         });
     }
 
-    // Treegraph has two separate collecions of nodes and lines, render
-    // dataLabels for both sets:
+    /**
+     * Treegraph has two separate collecions of nodes and lines,
+     * render dataLabels for both sets.
+     */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
             const textPath = this.options.dataLabels.textPath;
 
-            // Render node labels:
+            // Render node labels.
             super.drawDataLabels.apply(this, arguments);
 
-            // Render link labels:
+            // Render link labels.
             this.points = this.data;
             this.options.dataLabels.textPath =
                 this.options.dataLabels.linkTextPath;
             super.drawDataLabels.apply(this, arguments);
 
-            // Restore nodes
+            // Restore nodes.
             this.points = this.points.concat(this.nodes);
             this.options.dataLabels.textPath = textPath;
         }
     }
 
+    /**
+     * Return the presentational attributes.
+     * @private
+     */
     public pointAttribs(
         point: TreegraphPoint | TreegraphNode,
         state: StatesOptionsKey
@@ -452,7 +468,6 @@ class TreegraphSeries extends OrganizationSeries {
      * Run translation operations for one node.
      * @private
      */
-
     public translateNode(node: TreegraphNode): void {
         const chart = this.chart,
             plotSizeY = chart.plotSizeY as number,
@@ -481,22 +496,25 @@ class TreegraphSeries extends OrganizationSeries {
 
 
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
-        // Calculate data label options for the point
+        // Calculate data label options for the point.
         node.dlOptions = TreegraphSeries.getDLOptions({
             level: (this.mapOptionsToLevel as any)[node.level],
             optionsPoint: node.options
         });
-        // Pass test in drawPoints
-        node.plotY = 1;
-        // Set the anchor position for tooltips
+        // Set the anchor position for tooltip.
         node.tooltipPos = chart.inverted ?
             [plotSizeY - y, plotSizeX - x] :
             [x, y];
-        // to prevent error in generatePoints this property needs to be reset
+        // To prevent error in generatePoints this property needs to be reset
         // to false.
         node.wasVisited = false;
     }
 
+    /**
+     * Create node columns by analyzing the nodes and the relations between
+     * incoming and outgoing links.
+     * @private
+     */
     public createNodeColumns(): Array<
     SankeyColumnComposition.ArrayComposition<TreegraphNode>
     > {
@@ -515,6 +533,13 @@ addEvent(TreegraphSeries, 'click', function (e: any): void {
     this.redraw();
 });
 
+/**
+ * Recurive function, which sets node's  and each nodes' children parameter
+ * 'hidden' to be equal to passed `collapsed` value.
+
+ * @param point {TreegraphNode} point which should be collapsed
+ * @param collapsed {boolean}
+ */
 function collapseTreeFromPoint(
     point: TreegraphNode,
     collapsed: boolean
