@@ -300,7 +300,7 @@ class TreegraphSeries extends OrganizationSeries {
 
 
     /**
-     * calculate `a` and `b` parameters of linear transformation, where
+     * Calculate `a` and `b` parameters of linear transformation, where
      * `finalPosition = a * calculatedPosition + b`.
      *
      * @return {LayoutModifiers} `a` and `b` parameter for x and y direction.
@@ -594,7 +594,7 @@ export default TreegraphSeries;
  * */
 
 /**
- * An `treegraph` series. If the [type](#series.arcdiagram.type)
+ * An `treegraph` series. If the [type](#series.treegraph.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treegraph
@@ -653,16 +653,25 @@ export default TreegraphSeries;
  */
 /**
  * An array of data points for the series. For the `treegraph` series type,
- * points can be given in the following way:
+ * points can be given in the following ways:
  *
- * An array of objects with named values. The following snippet shows only a few
- * settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
- * this option is not available.
- * The data of the treegraph series needs to be formatted in such a way, that
- * there are no circular dependencies on the nodes, and there is a single
- * root node.
+ * 1. The array of arrays, with `keys` property, which defines how the fields in
+ *     array should be interpretated
+ *    ```js
+ *       keys: ['from', 'to'],
+ *       data: [
+ *           ['Category1', 'Category2'],
+ *           ['Category2', 'Category3']
+ *       ]
  *
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the
+ *    series' [turboThreshold](#series.area.turboThreshold),
+ *    this option is not available.
+ *    The data of the treegraph series needs to be formatted in such a way, that
+ *    there are no circular dependencies on the nodes, and there is a single
+ *    root node.
  *  ```js
  *     data: [{
  *         from: 'Category1',
