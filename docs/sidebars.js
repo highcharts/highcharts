@@ -114,6 +114,7 @@ module.exports = {
             'chart-and-series-types/stream-graph',
             'chart-and-series-types/sunburst-series',
             'chart-and-series-types/timeline-series',
+            'chart-and-series-types/treegraph-chart',
             'chart-and-series-types/treemap',
             'chart-and-series-types/variable-radius-pie-chart',
             'chart-and-series-types/variwide-chart',
