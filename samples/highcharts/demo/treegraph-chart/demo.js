@@ -1,13 +1,11 @@
 const dataLabelColor = '#C3CEDA';
-const expeditionColor = '#738FA7';
-const plotBackgroundColor = '#071330';
+const expeditionColor = '#071330';
 const markerColor = '#0C4160';
 const kingBorderColor = '#cf9700';
 
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-        plotBackgroundColor: plotBackgroundColor,
         borderWidth: 1,
         width: 800,
         height: 1200
@@ -43,8 +41,6 @@ Highcharts.chart('container', {
             marker: {
                 symbol: 'rect',
                 height: 70,
-                lineWidth: 1,
-                lineColor: 'white',
                 width: 50,
                 fillColor: markerColor
             },
@@ -58,88 +54,102 @@ Highcharts.chart('container', {
             nodes: [
                 {
                     id: 'Durin the Deathless',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Durin VI',
+                    color: kingBorderColor,
                     level: 2,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Nain I',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Thrain I',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Thorin I',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Gloin',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Oin',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Nain II',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Dain I',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Thror',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Thrain II',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Dain II IronFoot',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Thorin II Stonehelm',
+                    color: kingBorderColor,
                     marker: {
-                        lineColor: kingBorderColor
+                        lineWidth: 3
                     }
                 },
                 {
                     id: 'Durin VII',
                     level: 15,
                     marker: {
-                        lineColor: kingBorderColor
+                        color: kingBorderColor,
+                        lineWidth: 3
                     }
                 },
                 {
@@ -147,13 +157,15 @@ Highcharts.chart('container', {
                     name: 'Thorin II Oakenshield',
                     description: '2746 - 2941',
 
+                    color: kingBorderColor,
                     dataLabels: {
                         style: {
                             width: 100
                         }
                     },
                     marker: {
-                        lineColor: kingBorderColor,
+                        lineWidth: 3,
+
                         height: 100,
                         fillColor: expeditionColor
                     }
@@ -231,7 +243,7 @@ Highcharts.chart('container', {
                 ['Dain I', 'Thror'],
                 ['Dain I', 'Fror'],
                 ['Dain I', 'Gror'],
-                ['Thror', 'Thrain II', kingBorderColor],
+                ['Thror', 'Thrain II'],
                 ['Thrain II', 'Thorin II Oakenshield'],
                 ['Thrain II', 'Frerin'],
                 ['Thrain II', 'Dis'],

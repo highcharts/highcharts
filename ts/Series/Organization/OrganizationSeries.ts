@@ -111,7 +111,8 @@ class OrganizationSeries extends SankeySeries {
         borderRadius: 3,
         /**
          * Radius for the rounded corners of the links between nodes. This
-         * option is now deprecated, and moved to link.radius.
+         * option is now deprecated, and moved to
+         * [link.radius](#plotOptions.organization.link.radius).
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
@@ -145,7 +146,7 @@ class OrganizationSeries extends SankeySeries {
             lineWidth: 1,
             /**
              * Radius for the rounded corners of the links between nodes.
-             * works for default link type.
+             * Works for `default` link type.
              *
              * @sample   highcharts/series-organization/link-options
              *           Square links
@@ -156,9 +157,11 @@ class OrganizationSeries extends SankeySeries {
             /**
              * Type of the link shape.
              *
+             * @sample   highcharts/series-organization/different-link-types
+             *           Different link types
+             *
              * @type {'default' | 'curved' | 'straight'}
              * @default 'default'
-             * @since next
              * @product highcharts
              *
              */
@@ -339,7 +342,7 @@ class OrganizationSeries extends SankeySeries {
         /**
          *
          * The color of the links between nodes. This option is moved to
-         * link object.
+         * [link.color](#plotOptions.organization.link.color).
          *
          * @type {Highcharts.ColorString}
          * @deprecated
@@ -349,7 +352,8 @@ class OrganizationSeries extends SankeySeries {
 
         /**
          * The line width of the links connecting nodes, in pixels. This option
-         * is now deprecated and moved to the link object.
+         * is now deprecated and moved to the
+         * [link.radius](#plotOptions.organization.link.lineWidth).
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links

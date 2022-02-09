@@ -31,13 +31,15 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+export type OrganizationChartLinkTypes = 'curved' | 'straight' | 'default';
+
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
 export interface LinkOptions {
     color: ColorString;
     lineWidth: number;
-    type: 'curved' | 'straight' | 'default';
+    type: OrganizationChartLinkTypes;
     radius: number;
 }
 
