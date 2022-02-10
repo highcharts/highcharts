@@ -23,6 +23,7 @@ import type DependencyWheelSeries from './DependencyWheel/DependencyWheelSeries.
 
 import U from '../Core/Utilities.js';
 const {
+    defined,
     isNumber,
     isObject,
     merge,
@@ -106,7 +107,7 @@ namespace CircularDataLabels {
             rotation: (number|undefined),
             rotationMode = options.rotationMode;
 
-        if (!isNumber(options.rotation)) {
+        if (!isNumber(options.rotation) && defined(rotationMode)) {
             if (rotationMode === 'auto' || rotationMode === 'circular') {
                 if (
                     (point.innerArcLength as any) < 1 &&

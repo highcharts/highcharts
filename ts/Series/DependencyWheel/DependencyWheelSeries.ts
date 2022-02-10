@@ -512,6 +512,25 @@ export default DependencyWheelSeries;
  */
 
 /**
+ * Decides how the data label will be rotated relative to the
+ * perimeter of the dependencywheel. Valid values are `auto`,
+ * `parallel` and `perpendicular`.
+ * The `perpendicular` option works similar to `auto` and position
+ * labels perpendicularly to the circumference.
+ * The `parallel` option fits the labels inside of the node.
+ *
+ * The `rotation` and `textPath` option takes precedence over `rotationMode`.
+ *
+ * @type       {string}
+ * @sample {highcharts} highcharts/plotoptions/dependencywheel-datalabels-rotationmode-circular/
+ *         Perpendicular rotation mode
+ * @validvalue ["auto", "perpendicular", "parallel"]
+ * @since      next
+ * @default    undefined
+ * @apioption  series.dependencywheel.dataLabels.rotationMode
+ */
+
+/**
  * Individual data label for each node. The options are the same as
  * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
  *
