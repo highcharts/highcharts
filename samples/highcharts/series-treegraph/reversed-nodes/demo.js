@@ -15,10 +15,5 @@ Highcharts.chart('container', {
             ['B', 'E'],
             ['A', 'D']
         ]
-    }],
-    exporting: {
-        allowHTML: true,
-        sourceWidth: 800,
-        sourceHeight: 600
-    }
+    }]
 });

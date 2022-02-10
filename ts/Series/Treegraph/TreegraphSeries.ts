@@ -297,10 +297,16 @@ class TreegraphSeries extends OrganizationSeries {
                 symbol = markerOptions.symbol,
                 nodeSizeY = symbol === 'circle' ?
                     (pick(markerOptions.radius) as number) * 2 :
-                    (markerOptions.height as number),
+                    (pick(
+                        markerOptions.height as number,
+                        (markerOptions.radius as number) * 2)
+                    ),
                 nodeSizeX = symbol === 'circle' ?
-                    (pick(markerOptions.radius) as number) * 2 :
-                    (markerOptions.width as number);
+                    (markerOptions.radius as number) * 2 :
+                    (pick(
+                        markerOptions.width as number,
+                        (markerOptions.radius as any) * 2)
+                    );
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 

@@ -17,10 +17,5 @@ Highcharts.chart('container', {
             ['B', 'E', 'curved'],
             ['A', 'D']
         ]
-    }],
-    exporting: {
-        allowHTML: true,
-        sourceWidth: 800,
-        sourceHeight: 600
-    }
+    }]
 });
