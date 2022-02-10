@@ -254,51 +254,20 @@ class TreegraphSeries extends OrganizationSeries {
         }
     }
 
-    /**
-     * Extend generatePoints by adding the nodes, which are Point objects
-     * but pushed to the this.nodes array.
-     * @private
-     */
-    public generatePoints(): void {
-        NodesComposition.generatePoints.apply(this, arguments);
-
-        /**
-         * Order the nodes, starting with the root node(s). (#9818)
-         * @private
-         */
-        function order(node: TreegraphNode, level: number): void {
-            // Prevents circular dependencies in the data.
-            if (node.wasVisited) {
-                error(28);
-            } else {
-                level = node.level || level;
-                node.level = level;
-                node.wasVisited = true;
-                node.linksFrom.forEach(function (link: TreegraphPoint): void {
-                    if (link.toNode) {
-                        order(link.toNode, level + 1);
-                    }
-                });
-            }
-        }
-
-        if (this.orderNodes) {
-            this.nodes
-                // Identify the root node(s)
-                .filter(function (node: TreegraphNode): boolean {
-                    return node.linksTo.length === 0;
-                })
-                // Start by the root node(s) and recursively set the level
-                // on all following nodes.
-                .forEach(function (node: TreegraphNode): void {
-                    order(node, 0);
-                });
-            stableSort(
-                this.nodes,
-                function (a: TreegraphPoint, b: TreegraphPoint): number {
-                    return a.level - b.level;
+    public order(node: TreegraphNode, level: number): void {
+        const series = this;
+        // Prevents circular dependencies in the data.
+        if (node.wasVisited) {
+            error(28);
+        } else {
+            level = node.level || level;
+            node.level = level;
+            node.wasVisited = true;
+            node.linksFrom.forEach(function (link: TreegraphPoint): void {
+                if (link.toNode) {
+                    series.order(link.toNode, level + 1);
                 }
-            );
+            });
         }
     }
 
