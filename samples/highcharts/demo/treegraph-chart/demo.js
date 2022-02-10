@@ -147,8 +147,8 @@ Highcharts.chart('container', {
                 {
                     id: 'Durin VII',
                     level: 15,
+                    color: kingBorderColor,
                     marker: {
-                        color: kingBorderColor,
                         lineWidth: 3
                     }
                 },

@@ -30,7 +30,6 @@ const { extend } = U;
  * */
 
 class TreegraphPoint extends OrganizationPoint {
-
     public options: TreegraphPointOptions = void 0 as any;
 
     public series: TreegraphSeries = void 0 as any;
@@ -45,10 +44,17 @@ class TreegraphPoint extends OrganizationPoint {
 
     public toNode: TreegraphNode = void 0 as any;
 
-    // To allow tooltip on links.
-    public formatPrefix = 'link';
-
     public dataLabelOnNull = true;
+
+    public applyOptions(
+        options: TreegraphPointOptions,
+        x?: number | undefined
+    ): TreegraphPoint {
+        super.applyOptions.call(this, options, x);
+        // to allow the tooltip for TreegraphPoint.
+        this.formatPrefix = 'link';
+        return this;
+    }
 }
 
 interface TreegraphPoint {

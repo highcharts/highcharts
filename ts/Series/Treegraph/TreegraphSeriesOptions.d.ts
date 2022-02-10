@@ -23,6 +23,8 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  *
  * */
 
+
+export type TreegraphLayoutTypes = 'Walker';
 export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
     layout: string;
     reversed: boolean;

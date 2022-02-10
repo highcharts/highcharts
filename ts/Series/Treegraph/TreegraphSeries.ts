@@ -52,7 +52,7 @@ interface LayoutModifiers {
  * */
 
 /**
- * treegraph series type.
+ * The Treegraph series type.
  *
  * @private
  * @class
@@ -102,7 +102,7 @@ class TreegraphSeries extends OrganizationSeries {
             layout: 'Walker',
             /**
              * Whether the first node should be placed on the opposite side of
-             * the plotArea. By default, the oldest child is positioned on the
+             * the `plotArea`. By default, the oldest child is positioned on the
              * bottom (left in the inverted chart).
              *
              * @type {boolean}
@@ -135,13 +135,14 @@ class TreegraphSeries extends OrganizationSeries {
             tooltip: {
                 /**
                  * The HTML of the point's line in the tooltip. Variables are
-                 * enclosed by curly brackets. Available variables are point.x,
-                 * point.y, series.name and series.color and other properties on
-                 * the same form. Furthermore, point.y can be extended by the
-                 * tooltip.valuePrefix and tooltip.valueSuffix variables. This
-                 * can also be overridden for each series, which makes it a good
-                 * hook for displaying units.In styled mode, the dot is
-                 * colored by a class name rather than the point color.
+                 * enclosed by curly brackets. Available variables are
+                 * `point.x`,  `point.y`, `series.name` and `series.color` and
+                 * other properties on the same form. Furthermore, `point.y` can
+                 * be extended by the `tooltip.valuePrefix` and
+                 * `tooltip.valueSuffix` variables. This can also be overridden
+                 * for each series, which makes it a good hook for displaying
+                 * units. In styled mode, the dot is colored by a class name
+                 * rather than the point color.
                  *
                  * @type {string}
                  * @since next
@@ -152,7 +153,7 @@ class TreegraphSeries extends OrganizationSeries {
                 linkFormat: '{point.fromNode.name} \u2192 {point.toNode.name}'
                 /**
                  * A callback function for formatting the HTML output for a
-                 * single point in the tooltip. Like the linkFormatter string,
+                 * single point in the tooltip. Like the `linkFormatter` string,
                  * but with more flexibility.
                  *
                  * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
@@ -201,6 +202,9 @@ class TreegraphSeries extends OrganizationSeries {
                  */
                 useHTML: false
             },
+            /**
+             * @extends plotOptions.organization.link
+             */
             link: {
                 /**
                  * @default 'curved'
@@ -297,7 +301,6 @@ class TreegraphSeries extends OrganizationSeries {
             );
         }
     }
-
 
     /**
      * Calculate `a` and `b` parameters of linear transformation, where
@@ -417,6 +420,7 @@ class TreegraphSeries extends OrganizationSeries {
             // If weight is 0 - don't render the link path #12453,
             // render null points.
             if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                linkPoint.formatPrefix = 'link';
                 series.translateLink(linkPoint);
                 linkPoint.allowShadow = false;
             }
@@ -493,7 +497,6 @@ class TreegraphSeries extends OrganizationSeries {
             width,
             height
         };
-
 
         node.shapeArgs.display = node.hasShape() ? '' : 'none';
         // Calculate data label options for the point.
