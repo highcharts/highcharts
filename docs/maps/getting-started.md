@@ -13,13 +13,12 @@ For basics, see [Highcharts installation](https://highcharts.com/docs/getting-st
 
 If you already have Highcharts installed in the web page and want to run Highcharts Maps as a plugin, include this script tag _after_ `highcharts.js`:
 
-
     <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 
 Load the map
 ------------
 
-Highcharts Maps loads its maps from [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) or [TopoJSON](https://github.com/topojson/topojson) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highcharts Maps loads its maps from [TopoJSON](https://github.com/topojson/topojson) or [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
 
 There are three basic sources for your map:
 
