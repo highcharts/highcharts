@@ -1,0 +1,26 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<h1>Scatter plot trends example - height/weight dataset</h1>
+<p>
+    Example data visualization proof of concept illustrating simplifying scatter plots into simple trend lines.
+</p>
+
+<div id="controls">
+    <h2>Trend controls</h2>
+    <input type="range" id="detail" name="detail" min="2" max="20" value="5">
+    <label for="detail">Trend detail</label>
+    <button onclick="updateTrends()">
+        Update trends
+    </button>
+    <button onclick="sonifyTrends()">
+        Sonify trends
+    </button>
+</div>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+</figure>
