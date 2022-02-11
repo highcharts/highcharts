@@ -1,5 +1,5 @@
 ---
- name: Chad - Highmaps
- description: Highmaps demo
+ name: Chad - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

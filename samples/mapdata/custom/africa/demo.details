@@ -1,5 +1,5 @@
 ---
- name: Africa - Highmaps
- description: Highmaps demo
+ name: Africa - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

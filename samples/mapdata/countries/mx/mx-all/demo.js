@@ -1,78 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['mx-3622', 0],
-    ['mx-bc', 1],
-    ['mx-bs', 2],
-    ['mx-so', 3],
-    ['mx-cl', 4],
-    ['mx-na', 5],
-    ['mx-cm', 6],
-    ['mx-qr', 7],
-    ['mx-mx', 8],
-    ['mx-mo', 9],
-    ['mx-df', 10],
-    ['mx-qt', 11],
-    ['mx-tb', 12],
-    ['mx-cs', 13],
-    ['mx-nl', 14],
-    ['mx-si', 15],
-    ['mx-ch', 16],
-    ['mx-ve', 17],
-    ['mx-za', 18],
-    ['mx-ag', 19],
-    ['mx-ja', 20],
-    ['mx-mi', 21],
-    ['mx-oa', 22],
-    ['mx-pu', 23],
-    ['mx-gr', 24],
-    ['mx-tl', 25],
-    ['mx-tm', 26],
-    ['mx-co', 27],
-    ['mx-yu', 28],
-    ['mx-dg', 29],
-    ['mx-gj', 30],
-    ['mx-sl', 31],
-    ['mx-hg', 32]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/mx/mx-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/mx/mx-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['mx-3622', 10], ['mx-bc', 11], ['mx-bs', 12], ['mx-so', 13],
+        ['mx-cl', 14], ['mx-na', 15], ['mx-cm', 16], ['mx-qr', 17],
+        ['mx-mx', 18], ['mx-mo', 19], ['mx-df', 20], ['mx-qt', 21],
+        ['mx-tb', 22], ['mx-cs', 23], ['mx-nl', 24], ['mx-si', 25],
+        ['mx-ch', 26], ['mx-ve', 27], ['mx-za', 28], ['mx-ag', 29],
+        ['mx-ja', 30], ['mx-mi', 31], ['mx-oa', 32], ['mx-pu', 33],
+        ['mx-gr', 34], ['mx-tl', 35], ['mx-tm', 36], ['mx-co', 37],
+        ['mx-yu', 38], ['mx-dg', 39], ['mx-gj', 40], ['mx-sl', 41],
+        ['mx-hg', 42]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mx/mx-all.js">Mexico</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mx/mx-all.topo.json">Mexico</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -1,5 +1,5 @@
 ---
- name: Nebraska - Highmaps
- description: Highmaps demo
+ name: Nebraska - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

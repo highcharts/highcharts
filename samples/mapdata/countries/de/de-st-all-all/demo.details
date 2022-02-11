@@ -1,5 +1,5 @@
 ---
- name: Sachsen-Anhalt - Highmaps
- description: Highmaps demo
+ name: Sachsen-Anhalt - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
