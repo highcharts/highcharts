@@ -46,8 +46,8 @@
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
-    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#npm-hotfix",
-    "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#npm-hotfix",
+    "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.30",
+    "@highcharts/highcharts-utils": "github:highcharts/highcharts-utils#v1.0.0",
     "@octokit/rest": "^18.10.0",
     "@types/jquery": "^3.5.6",
     "@types/qunit": "^2.11.2",
