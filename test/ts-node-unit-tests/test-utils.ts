@@ -27,8 +27,8 @@ export function reportError(error: (AssertionError & Error)): void {
     failure(`${code} ${errorMessage}
         ${stack?.split('\n')[1]}
 
-Got: ${printArrayOrString(actual as string | [])}
+Got: ${printArrayOrString(actual as any)}
 
-Expected: ${printArrayOrString(expected as string | [])}
+Expected: ${printArrayOrString(expected as any)}
 `);
 }
