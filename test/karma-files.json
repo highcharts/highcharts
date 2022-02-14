@@ -41,6 +41,7 @@
 	"code/modules/pattern-fill.src.js",
 	"code/modules/price-indicator.src.js",
 	"code/modules/sankey.src.js",
+	"code/modules/arc-diagram.src.js",
 	"code/modules/dependency-wheel.src.js",
 	"code/modules/series-label.src.js",
 	"code/modules/solid-gauge.src.js",

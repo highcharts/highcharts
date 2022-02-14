@@ -2,8 +2,8 @@ QUnit.test('Pie radial gradient (#3801)', function (assert) {
     const colors = Highcharts.defaultOptions.colors;
     // Radialize the colors
     Highcharts.setOptions({
-        colors: Highcharts.map(Highcharts.getOptions().colors, function () {
-            return {
+        colors: Highcharts.getOptions().colors.map(() =>
+            ({
                 radialGradient: {
                     cx: 0.5,
                     cy: 0.5,
@@ -13,8 +13,8 @@ QUnit.test('Pie radial gradient (#3801)', function (assert) {
                     [0, '#FFFFFF'],
                     [0.2, '#000000']
                 ]
-            };
-        })
+            })
+        )
     });
 
     // Build the chart

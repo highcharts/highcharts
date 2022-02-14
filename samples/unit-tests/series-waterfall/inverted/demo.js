@@ -38,33 +38,30 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
             Math.abs(boxP2.x - (boxP1.x + boxP1.width));
 
     function compareWithColumnRange(xAxisReversed, yAxisReversed) {
-        Highcharts.each(chart.series[0].points, function (point, index) {
-            Highcharts.each(
-                [
-                    ['plotX', 'plotX'],
-                    ['plotY', 'plotHigh']
-                ],
-                function (prop) {
-                    assert.close(
-                        point[prop[0]],
-                        // Columnrange can have switched plotHigh and plotLow..
-                        Math.min(
-                            columnRange.points[index][prop[0]],
-                            columnRange.points[index][prop[1]]
-                        ),
-                        1,
-                        'xAxis.reversed=' +
-                            xAxisReversed +
-                            ' yAxis.reversed=' +
-                            yAxisReversed +
-                            ' Property: ' +
-                            prop[0] +
-                            ' for a point x=' +
-                            point.x +
-                            ' for waterfall and columnrange are the same.'
-                    );
-                }
-            );
+        chart.series[0].points.forEach((point, index) => {
+            [
+                ['plotX', 'plotX'],
+                ['plotY', 'plotHigh']
+            ].forEach(prop => {
+                assert.close(
+                    point[prop[0]],
+                    // Columnrange can have switched plotHigh and plotLow..
+                    Math.min(
+                        columnRange.points[index][prop[0]],
+                        columnRange.points[index][prop[1]]
+                    ),
+                    1,
+                    'xAxis.reversed=' +
+                        xAxisReversed +
+                        ' yAxis.reversed=' +
+                        yAxisReversed +
+                        ' Property: ' +
+                        prop[0] +
+                        ' for a point x=' +
+                        point.x +
+                        ' for waterfall and columnrange are the same.'
+                );
+            });
         });
     }
 

@@ -217,7 +217,7 @@ for (n in maps) {
         break;
     }
 }
-Highcharts.each(mapData.features, function (feature) {
+mapData.forEach(feature => {
     data.push({
         'hc-key': feature.properties['hc-key'],
         value: 1

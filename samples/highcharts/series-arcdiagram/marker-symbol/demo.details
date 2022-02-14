@@ -1,0 +1,7 @@
+---
+ name: Highcharts Arc Diagram with custom marker symbol
+ authors:
+   - Piotr Madej
+   - Grzegorz Blachliński
+ js_wrap: b
+...

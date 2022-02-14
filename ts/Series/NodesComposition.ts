@@ -12,7 +12,8 @@
  *
  * */
 
-import type PointOptions from '../Core/Series/PointOptions';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
@@ -23,6 +24,7 @@ const {
     defined,
     extend,
     find,
+    merge,
     pick
 } = U;
 
@@ -147,6 +149,7 @@ namespace NodesComposition {
 
             pointProto.setNodeState = setNodeState;
             pointProto.setState = setNodeState;
+            pointProto.update = updateNode;
         }
 
         if (composedClasses.indexOf(SeriesClass) === -1) {
@@ -196,19 +199,6 @@ namespace NodesComposition {
             );
             node.linksTo = [];
             node.linksFrom = [];
-            node.formatPrefix = 'node';
-            // for use in formats
-            node.name = node.name || node.options.id || '';
-            // Mass is used in networkgraph:
-            node.mass = pick(
-                // Node:
-                node.options.mass,
-                node.options.marker && node.options.marker.radius,
-                // Series:
-                this.options.marker && this.options.marker.radius,
-                // Default:
-                4
-            );
 
             /**
              * Return the largest sum of either the incoming or outgoing links.
@@ -266,8 +256,22 @@ namespace NodesComposition {
                 );
             };
 
-            this.nodes.push(node);
+            node.index = this.nodes.push(node) - 1;
         }
+
+        node.formatPrefix = 'node';
+        // for use in formats
+        node.name = node.name || node.options.id || '';
+        // Mass is used in networkgraph:
+        node.mass = pick(
+            // Node:
+            node.options.mass,
+            node.options.marker && node.options.marker.radius,
+            // Series:
+            this.options.marker && this.options.marker.radius,
+            // Default:
+            4
+        );
         return node;
     }
 
@@ -390,6 +394,71 @@ namespace NodesComposition {
         }
 
         Point.prototype.setState.apply(this, args as any);
+    }
+
+    /**
+     * When updating a node, don't update `series.options.data`, but `series.options.nodes`
+     */
+    export function updateNode(
+        this: PointComposition,
+        options: (PointOptions|PointShortOptions),
+        redraw?: boolean,
+        animation?: (boolean|Partial<AnimationOptions>),
+        runEvent?: boolean
+    ): void {
+        const nodes = this.series.options.nodes,
+            data = this.series.options.data,
+            dataLength = data && data.length || 0,
+            linkConfig = data && data[this.index];
+
+        Point.prototype.update.call(
+            this,
+            options,
+            this.isNode ? false : redraw, // Hold the redraw for nodes
+            animation,
+            runEvent
+        );
+
+        if (this.isNode) {
+            // this.index refers to `series.nodes`, not `options.nodes` array
+            let nodeIndex = (nodes || [])
+                    .reduce( // Array.findIndex needs a polyfill
+                        (prevIndex, n, index): number =>
+                            (this.id === n.id ? index : prevIndex),
+                        -1
+                    ),
+                // Merge old config with new config. New config is stored in
+                // options.data, because of default logic in point.update()
+                nodeConfig = merge(
+                    nodes && nodes[nodeIndex] || {},
+                    data && data[this.index] || {}
+                );
+
+            // Restore link config
+            if (data) {
+                if (linkConfig) {
+                    data[this.index] = linkConfig;
+                } else {
+                    // Remove node from config if there's more nodes than links
+                    data.length = dataLength;
+                }
+            }
+
+            // Set node config
+            if (nodes) {
+                if (nodeIndex >= 0) {
+                    nodes[nodeIndex] = nodeConfig;
+                } else {
+                    nodes.push(nodeConfig);
+                }
+            } else {
+                this.series.options.nodes = [nodeConfig];
+            }
+
+            if (pick(redraw, true)) {
+                this.series.chart.redraw(animation);
+            }
+        }
     }
 
 }

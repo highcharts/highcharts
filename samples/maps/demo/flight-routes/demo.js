@@ -141,7 +141,7 @@ chart.addSeries({
         id: 'London - Bristol',
         path: pointsToPath(londonPoint, chart.get('Bristol'), true)
     }]
-});
+}, true, false);
 
 // Add a series of lines for Lerwick
 chart.addSeries({
@@ -162,4 +162,4 @@ chart.addSeries({
         id: 'Lerwick - Liverpool',
         path: pointsToPath(lerwickPoint, chart.get('Liverpool'))
     }]
-});
+}, true, false);

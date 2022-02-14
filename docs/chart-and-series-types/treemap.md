@@ -5,7 +5,7 @@ Treemap
 
 ### Requirements
 
-The treemap chart requires the file`modules/treemap.js`.  
+The treemap chart requires the file`modules/treemap.js`.
 For use with [colorAxis](https://api.highcharts.com/highmaps/colorAxis), the `modules/heatmap.js` must be included as well.
 
 ### Data structure
@@ -16,7 +16,7 @@ The tree automatically has one node at the top representing the root node. If a 
 
 The following is an example of how the tree is built in Highcharts:
 
-    
+
     data: [{
         name: 'I have children',
         id: 'id-1'
@@ -29,7 +29,7 @@ The following is an example of how the tree is built in Highcharts:
         parent: 'id-1',
         value: 1
     }]
-    
+
 
 ### Algorithms
 
@@ -81,12 +81,12 @@ The each child which is passed along has the following variables:
 
 A starting point for the function could be the following
 
-    
+
     function myFunction(parent, children) {
         childrenAreas = [];
         Highcharts.each(children, function(child) {
             // Do some calculations
-    
+
             // These return values are required for each child
             childrenAreas.push({
                 x: someXValue,
@@ -97,17 +97,17 @@ A starting point for the function could be the following
         });
         return childrenAreas;
     };
-    
+
 
 After the algorithm function is finished, then we have to add it by extending the treemap prototype with the function
 
-    
+
     Highcharts.seriesTypes.treemap.prototype.myCustomAlgorithm = myFunction;
-    
+
 
 Afterwards when you declare the chart options, then specify that the series.layoutAlgorithm should be your new custom algorithm.
 
-    
+
     var chart = new Highcharts.Chart({
         ...
         series: [{
@@ -116,7 +116,7 @@ Afterwards when you declare the chart options, then specify that the series.layo
         }],
         ...
     });
-    
+
 
 ### Work with levels
 
@@ -124,7 +124,7 @@ The levels option gives the ability to set options on a specific level. This com
 
 Below is an example where the first level will use the Slice And Dice algorithm, and the rest will use the Squarified algorithm. Also all points on the second level will be colored blue, while the rest will be in the color red.
 
-    
+
     var chart = new Highcharts.Chart({
         ...
         series: [{
@@ -141,13 +141,19 @@ Below is an example where the first level will use the Slice And Dice algorithm,
         }],
         ...
     });
-    
+
 
 ##### Level Is Constant:
 
 levelIsConstant is an option used together with the levels and allowDrillToNode options. By default it is set to true. When set to false the first level visible when drilling is considered to be level one. Otherwise the level will be the same as in the tree structure.
 
 An [example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-large-dataset) where levelIsConstant is set to false.
+
+##### Traversing through levels
+
+When the `allowTraversingTree` option is true, clicking on a point will set that point as the rendered root node. To help navigate through levels, breadcrumbs are rendered, showing a single button to the previous level or the full path back to the root node.
+
+Read more about the breadcrumbs [here](https://www.highcharts.com/docs/advanced-chart-features/breadcrumbs).
 
 ### Use with ColorAxis
 
@@ -157,7 +163,7 @@ For use with colorAxis, then the `modules/heatmap.js`must be included as well.
 
 After the module is included in your project, a colorAxis object can be defined in the chart options. Read the [API](https://api.highcharts.com/highmaps/colorAxis) for details about its options.
 
-    
+
     var chart = new Highcharts.Chart({
         ...
         colorAxis: {
@@ -166,11 +172,11 @@ After the module is included in your project, a colorAxis object can be defined 
         },
         ...
     });
-    
+
 
 And each point needs its own colorValue.
 
-    
+
     var chart = new Highcharts.Chart({
         ...
         colorAxis: {
@@ -187,7 +193,7 @@ And each point needs its own colorValue.
         }],
         ...
     });
-    
+
 
 [Full example is found here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/treemap-coloraxis)
 

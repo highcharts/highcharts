@@ -68,10 +68,20 @@ SVGElement3D.base = {
 
         // build parts
         (elem3d.parts as any).forEach(function (part: string): void {
-            elem3d[part] = renderer.path((paths as any)[part]).attr({
+            const attribs: SVGAttributes = {
                 'class': 'highcharts-3d-' + part,
                 zIndex: zIndexes[part] || 0
-            }).add(elem3d);
+            };
+            if (renderer.styledMode) {
+                if (part === 'top') {
+                    attribs.filter = 'url(#highcharts-brighter)';
+                } else if (part === 'side') {
+                    attribs.filter = 'url(#highcharts-darker)';
+                }
+            }
+            elem3d[part] = renderer.path((paths as any)[part])
+                .attr(attribs)
+                .add(elem3d);
         });
 
         elem3d.attr({
@@ -221,11 +231,12 @@ SVGElement3D.cuboid = merge(SVGElement3D.base, {
                 zIndex: paths.zIndexes.group
             });
 
-            // If sides that are forced to render changed, recalculate
-            // colors.
+            // If sides that are forced to render changed, recalculate colors.
             if (forcedSides !== this.forcedSides) {
                 this.forcedSides = forcedSides;
-                SVGElement3D.cuboid.fillSetter.call(this, this.fill);
+                if (!this.renderer.styledMode) {
+                    SVGElement3D.cuboid.fillSetter.call(this, this.fill);
+                }
             }
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);

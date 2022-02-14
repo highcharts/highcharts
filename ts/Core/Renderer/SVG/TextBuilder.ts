@@ -34,6 +34,7 @@ const {
 import U from '../../Utilities.js';
 const {
     attr,
+    extend,
     isString,
     objectEach,
     pick
@@ -414,34 +415,29 @@ class TextBuilder {
     ): void {
 
         const modifyChild = (node: AST.Node, i: number): void => {
-            const { attributes = {}, children, tagName } = node,
+            const { attributes = {}, children, style = {}, tagName } = node,
                 styledMode = this.renderer.styledMode;
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-strong'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-strong';
                 } else {
-                    attributes.style = (
-                        'font-weight:bold;' + (attributes.style || '')
-                    );
+                    style.fontWeight = 'bold';
                 }
             } else if (tagName === 'i' || tagName === 'em') {
                 if (styledMode) {
-                    attributes['class'] = 'highcharts-emphasized'; // eslint-disable-line dot-notation
+                    // eslint-disable-next-line dot-notation
+                    attributes['class'] = 'highcharts-emphasized';
                 } else {
-                    attributes.style = (
-                        'font-style:italic;' + (attributes.style || '')
-                    );
+                    style.fontStyle = 'italic';
                 }
             }
 
-            // Modify attributes
-            if (isString(attributes.style)) {
-                attributes.style = attributes.style.replace(
-                    /(;| |^)color([ :])/,
-                    '$1fill$2'
-                );
+            // Modify styling
+            if (style && style.color) {
+                style.fill = style.color;
             }
 
             // Handle breaks
@@ -471,7 +467,7 @@ class TextBuilder {
             if (tagName !== '#text' && tagName !== 'a') {
                 node.tagName = 'tspan';
             }
-            node.attributes = attributes;
+            extend(node, { attributes, style });
 
             // Recurse
             if (children) {

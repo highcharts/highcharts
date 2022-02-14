@@ -37,6 +37,7 @@ import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SankeyColumnComposition from './SankeyColumnComposition.js';
 const {
     series: Series,
     seriesTypes: {
@@ -49,7 +50,6 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     extend,
-    find,
     isObject,
     merge,
     pick,
@@ -416,7 +416,7 @@ class SankeySeries extends ColumnSeries {
 
     public mapOptionsToLevel?: (Record<string, SankeySeriesLevelOptions>|null);
 
-    public nodeColumns?: Array<SankeySeries.ColumnArray>;
+    public nodeColumns?: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>>;
 
     public nodeLookup: Record<string, SankeyPoint> = void 0 as any;
 
@@ -441,153 +441,20 @@ class SankeySeries extends ColumnSeries {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * Create a node column.
-     * @private
-     */
-    public createNodeColumn(): SankeySeries.ColumnArray {
-        const series = this,
-            chart = this.chart,
-            column: SankeySeries.ColumnArray = [] as any;
-
-        column.sum = function (this: SankeySeries.ColumnArray): number {
-            return this.reduce(function (
-                sum: number,
-                node: SankeyPoint
-            ): number {
-                return sum + node.getSum();
-            }, 0);
-        };
-        // Get the offset in pixels of a node inside the column.
-        column.offset = function (
-            this: SankeySeries.ColumnArray,
-            node: SankeyPoint,
-            factor: number
-        ): (Record<string, number>|undefined) {
-            let offset = 0,
-                totalNodeOffset,
-                nodePadding = series.nodePadding;
-
-            for (let i = 0; i < column.length; i++) {
-                const sum = column[i].getSum(),
-                    height = Math.max(
-                        sum * factor,
-                        series.options.minLinkWidth as any
-                    ),
-                    directionOffset = node.options[chart.inverted ?
-                        'offsetHorizontal' :
-                        'offsetVertical'
-                    ],
-                    optionOffset = node.options.offset || 0;
-
-                if (sum) {
-                    totalNodeOffset = height + nodePadding;
-                } else {
-                    // If node sum equals 0 nodePadding is missed #12453
-                    totalNodeOffset = 0;
-                }
-                if (column[i] === node) {
-                    return {
-                        relativeTop: offset + (defined(directionOffset) ?
-                            // directionOffset is a percent of the node height
-                            relativeLength(
-                                directionOffset,
-                                height
-                            ) : relativeLength(
-                                optionOffset,
-                                totalNodeOffset
-                            )
-                        )
-                    };
-                }
-                offset += totalNodeOffset;
-            }
-        };
-
-        // Get the top position of the column in pixels.
-        column.top = function (
-            this: SankeySeries.ColumnArray,
-            factor: number
-        ): number {
-            const nodePadding = series.nodePadding;
-            const height = this.reduce(function (
-                height: number,
-                node: SankeyPoint
-            ): number {
-                if (height > 0) {
-                    height += nodePadding;
-                }
-                const nodeHeight = Math.max(
-                    node.getSum() * factor,
-                    series.options.minLinkWidth as any
-                );
-                height += nodeHeight;
-                return height;
-            }, 0);
-            return ((chart.plotSizeY as any) - height) / 2;
-        };
-
-        return column;
-    }
-
-    /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
      * @private
      */
-    public createNodeColumns(): Array<SankeySeries.ColumnArray> {
-        const columns: Array<SankeySeries.ColumnArray> = [];
+    public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> {
+        const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
 
         this.nodes.forEach(function (node: SankeyPoint): void {
-            let fromColumn = -1,
-                fromNode;
 
-            if (!defined(node.options.column)) {
-                // No links to this node, place it left
-                if (node.linksTo.length === 0) {
-                    node.column = 0;
-
-                // There are incoming links, place it to the right of the
-                // highest order column that links to this one.
-                } else {
-                    for (let i = 0; i < node.linksTo.length; i++) {
-                        const point = node.linksTo[i];
-                        if (
-                            (point.fromNode.column as any) > fromColumn &&
-                            point.fromNode !== node // #16080
-                        ) {
-                            fromNode = point.fromNode;
-                            fromColumn = (fromNode.column as any);
-                        }
-                    }
-                    node.column = fromColumn + 1;
-
-                    // Hanging layout for organization chart
-                    if (
-                        fromNode &&
-                        (fromNode.options as any).layout === 'hanging'
-                    ) {
-                        node.hangsFrom = fromNode;
-                        let i = -1;
-                        find(
-                            fromNode.linksFrom,
-                            function (
-                                link: SankeyPoint,
-                                index: number
-                            ): boolean {
-                                const found = link.toNode === node;
-                                if (found) {
-                                    i = index;
-                                }
-                                return found;
-                            }
-                        );
-                        node.column += i;
-                    }
-                }
-            }
+            node.setNodeColumn();
 
             if (!columns[node.column as any]) {
-                columns[node.column as any] = this.createNodeColumn();
+                columns[node.column as any] =
+                    SankeyColumnComposition.compose([], this);
             }
 
             columns[node.column as any].push(node);
@@ -597,7 +464,8 @@ class SankeySeries extends ColumnSeries {
         // Fill in empty columns (#8865)
         for (let i = 0; i < columns.length; i++) {
             if (typeof columns[i] === 'undefined') {
-                columns[i] = this.createNodeColumn();
+                columns[i] =
+                    SankeyColumnComposition.compose([], this);
             }
         }
 
@@ -758,49 +626,6 @@ class SankeySeries extends ColumnSeries {
      */
     public translate(): void {
 
-        // Get the translation factor needed for each column to fill up the
-        // plot height
-        const getColumnTranslationFactor = (
-            column: SankeySeries.ColumnArray
-        ): number => {
-            const nodes = column.slice();
-            const minLinkWidth = this.options.minLinkWidth || 0;
-            let exceedsMinLinkWidth: boolean;
-            let factor = 0;
-            let i: number;
-
-            let remainingHeight = (
-                (chart.plotSizeY as any) -
-                (options.borderWidth as any) -
-                (column.length - 1) * series.nodePadding
-            );
-
-            // Because the minLinkWidth option doesn't obey the direct
-            // translation, we need to run translation iteratively, check
-            // node heights, remove those nodes affected by minLinkWidth,
-            // check again, etc.
-            while (column.length) {
-                factor = remainingHeight / column.sum();
-                exceedsMinLinkWidth = false;
-                i = column.length;
-                while (i--) {
-                    if (column[i].getSum() * factor < minLinkWidth) {
-                        column.splice(i, 1);
-                        remainingHeight -= minLinkWidth;
-                        exceedsMinLinkWidth = true;
-                    }
-                }
-                if (!exceedsMinLinkWidth) {
-                    break;
-                }
-            }
-
-            // Re-insert original nodes
-            column.length = 0;
-            nodes.forEach((node): number => column.push(node));
-            return factor;
-        };
-
         if (!this.processedXData) {
             this.processData();
         }
@@ -822,13 +647,14 @@ class SankeySeries extends ColumnSeries {
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
+
         this.translationFactor = nodeColumns.reduce(
             (
                 translationFactor: number,
-                column: SankeySeries.ColumnArray
+                column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
             ): number => Math.min(
                 translationFactor,
-                getColumnTranslationFactor(column)
+                column.sankeyColumn.getTranslationFactor(series)
             ),
             Infinity
         );
@@ -866,7 +692,7 @@ class SankeySeries extends ColumnSeries {
         // First translate all nodes so we can use them when drawing links
         nodeColumns.forEach(function (
             this: SankeySeries,
-            column: SankeySeries.ColumnArray
+            column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
         ): void {
 
             column.forEach(function (node: SankeyPoint): void {
@@ -1067,7 +893,7 @@ class SankeySeries extends ColumnSeries {
      */
     public translateNode(
         node: SankeyPoint,
-        column: SankeySeries.ColumnArray
+        column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
     ): void {
         const translationFactor = this.translationFactor,
             chart = this.chart,
@@ -1079,11 +905,11 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             crisp = Math.round(options.borderWidth as any) % 2 / 2,
-            nodeOffset = column.offset(node, translationFactor),
+            nodeOffset = column.sankeyColumn.offset(node, translationFactor),
             fromNodeTop = Math.floor(pick(
                 (nodeOffset as any).absoluteTop,
                 (
-                    column.top(translationFactor) +
+                    column.sankeyColumn.top(translationFactor) +
                     (nodeOffset as any).relativeTop
                 )
             )) + crisp,
@@ -1095,7 +921,6 @@ class SankeySeries extends ColumnSeries {
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
                 left;
-
         node.sum = sum;
         // If node sum is 0, don't render the rect #12453
         if (sum) {
@@ -1187,24 +1012,10 @@ extend(SankeySeries.prototype, {
     isCartesian: false,
     orderNodes: true,
     noSharedTooltip: true,
-    pointArrayMap: ['from', 'to'],
+    pointArrayMap: ['from', 'to', 'weight'],
     pointClass: SankeyPoint,
     searchPoint: H.noop as any
 });
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace SankeySeries {
-    export interface ColumnArray<T = SankeyPoint> extends Array<T> {
-        offset(node: T, factor: number): (Record<string, number>|undefined);
-        sum(): number;
-        top(factor: number): number;
-    }
-}
 
 /* *
  *

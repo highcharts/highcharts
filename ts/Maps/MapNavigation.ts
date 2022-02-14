@@ -65,6 +65,7 @@ declare global {
             mapNavigation: MapNavigation;
             pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
+            /** @deprecated */
             mapZoom(
                 howMuch?: number,
                 xProjected?: number,
@@ -443,6 +444,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
      *
      * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
+     * @deprecated
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]

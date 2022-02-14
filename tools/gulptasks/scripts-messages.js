@@ -33,14 +33,15 @@ const htmlEscapeTable = {
         replacement: '&gt;'
     }
 };
-const parseMarkdownBlockCode = /(?:^|\r\n|\n|\r)```(\w*)([\s\S]+?)[\n\r]+```/;
+const parseMarkdownCRLF = /\r\n|\r/;
+const parseMarkdownBlockCode = /(?:^|\n)```(\w*)([\s\S]+?)[\n]+```/;
 const parseMarkdownCode = /`([^`\s](?:[^`]|\s)*?)`/;
-const parseMarkdownHeadline = /(?:^|\r\n|\n|\r)(#{1,5})([^\n\r]*)\1?/;
+const parseMarkdownHeadline = /(?:^|\n)(#{1,5})([^\n]*)\1?/;
 const parseMarkdownFormat = /(?:^| )(\*{1,3})(\w(?:[^\*]| )*?)\1/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 const parseMarkdownList =
-    /(?:^|\r\n|\n|\r)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\r\n|\n|\r)+|$)/;
-const parseMarkdownParagraphs = / {2,}(?:\r\n|\n|\r)| ?(?:\r\n|\n|\r){2,}/;
+    /(?:^|\n)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\n)+|$)/;
+const parseMarkdownParagraphs = / {2,}(?:\n)| ?(?:\n){2,}/;
 const parseBlockCodePlaceholder = /<<<>>>/;
 const parseListSpaces = /<\/li><\/ul><p>\s*?<\/p><ul><li>/;
 const parseParagraphSpaces = /<p><\/p>/;
@@ -54,6 +55,8 @@ const rootPath = process.cwd();
  * */
 
 /**
+ * Escape the HTML
+ *
  * @param {string} str
  * String to escape.
  *
@@ -72,6 +75,8 @@ function escapeHTML(str) {
 }
 
 /**
+ * Read a readme.md file and parse it.
+ *
  * @param {string} directoryPath
  * Directory of error.
  *
@@ -113,6 +118,8 @@ function parseErrorDirectory(directoryPath) {
 }
 
 /**
+ * Read the directory with markdown errors.
+ *
  * @param {string} directoryPath
  * Directory of markdown files.
  *
@@ -149,6 +156,8 @@ function parseErrorsDirectory(directoryPath) {
 }
 
 /**
+ * Parse the markdown.
+ *
  * @param {string} text
  * Markdown text to parse.
  *
@@ -173,6 +182,7 @@ function parseMarkdown(text, extractTitle) {
 
     text = ('<p>' + text
         .trim()
+        .replace(new RegExp(parseMarkdownCRLF, 'g'), '\n')
         .replace(
             new RegExp(parseMarkdownBlockCode, 'g'),
             (match, language, content) => {
@@ -232,6 +242,8 @@ function parseMarkdown(text, extractTitle) {
 }
 
 /**
+ * Write parsed errors to a file.
+ *
  * @param {*} parsedErrors
  * Errors object.
  *
@@ -293,6 +305,8 @@ function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
  * */
 
 /**
+ * Main gulp task.
+ *
  * @return {Promise}
  * Promise to keep
  */
@@ -307,8 +321,7 @@ function scriptsMessages() {
         ))
         .catch(error => {
             logLib.failure(error);
-            // eslint-disable-next-line no-process-exit
-            process.exit(1);
+            process.exit(1); // eslint-disable-line
         });
 }
 
