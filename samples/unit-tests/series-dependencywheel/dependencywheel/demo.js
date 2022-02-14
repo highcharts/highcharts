@@ -16,23 +16,52 @@ QUnit.test('Dependency wheel', function (assert) {
                 ['France', 'South Africa', 1],
                 ['Spain', 'Senegal', 1]
             ],
-            type: 'dependencywheel',
-            dataLabels: {
-                color: '#000',
-                textPath: {
-                    enabled: true,
-                    attributes: {
-                        dy: 5
-                    }
-                },
-                distance: 10,
-                style: {
-                    textOverflow: 'ellipsis'
-                }
-            }
+            type: 'dependencywheel'
         }]
     });
 
+    assert.strictEqual(
+        chart.series[0].nodes[0].dataLabel.attr('rotation'),
+        0,
+        `Initially, the labels should not be rotated.`
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].fromNode.dataLabel.text.textStr,
+        'Canada',
+        'Initially, the labels should not be cropped.'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            rotationMode: 'perpendicular'
+        }
+    });
+    assert.close(
+        chart.series[0].nodes[0].dataLabel.attr('rotation'),
+        -90,
+        5,
+        'Defining the rotationMode should result in rotating the label.'
+    );
+    assert.strictEqual(
+        chart.series[0].points[0].fromNode.dataLabel.textStr,
+        'Canada',
+        'When the rotationMode is defined, the labels should not be cropped.'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            textPath: {
+                enabled: true,
+                attributes: {
+                    dy: 5
+                }
+            },
+            distance: 10,
+            style: {
+                textOverflow: 'ellipsis'
+            }
+        }
+    });
     assert.strictEqual(
         chart.series[0].points[0].fromNode.dataLabel.text.element.textContent,
         'CanadaC…',
