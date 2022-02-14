@@ -16,7 +16,6 @@
  *
  * */
 
-import type MapBubblePointOptions from './MapBubblePointOptions';
 import MapPoint from '../Map/MapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -25,11 +24,6 @@ const {
         map: MapSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
 
 /* *
  *
@@ -47,36 +41,6 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * @private
-     */
-    public applyOptions(
-        options: MapBubblePointOptions,
-        x?: number
-    ): MapBubblePoint {
-        let point: MapBubblePoint;
-
-        if (
-            options &&
-            typeof (options as any).lat !== 'undefined' &&
-            typeof (options as any).lon !== 'undefined'
-        ) {
-            point = super.applyOptions.call(
-                this,
-                merge(
-                    options,
-                    this.series.chart.fromLatLonToPoint(options as any)
-                ),
-                x
-            ) as MapBubblePoint;
-        } else {
-            point = MapSeries.prototype.pointClass.prototype
-                .applyOptions.call(
-                    this, options as any, x as any
-                ) as any;
-        }
-        return point;
-    }
 
     /**
      * @private
@@ -85,6 +49,7 @@ class MapBubblePoint extends BubbleSeries.prototype.pointClass {
         return typeof this.z === 'number';
     }
 
+    public applyOptions = MapSeries.prototype.pointClass.prototype.applyOptions;
     public getProjectedBounds = MapPoint.prototype.getProjectedBounds;
 
     /* eslint-enable valid-jsdoc */

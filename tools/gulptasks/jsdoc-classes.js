@@ -77,7 +77,8 @@ const SOURCE_GLOBS = [
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
 
 const TEMPLATE_DIRECTORY = Path.join(
-    'node_modules', 'highcharts-documentation-generators', 'docstrap'
+    'node_modules', '@highcharts', 'highcharts-documentation-generators',
+    'docstrap'
 );
 
 /* *

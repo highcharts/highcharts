@@ -1,6 +1,5 @@
-// This should maybe be a visual test
-QUnit.test('MapBubble with LineWidth', function (assert) {
-    var chart = Highcharts.mapChart('container', {
+QUnit.test('MapBubble', function (assert) {
+    const chart = Highcharts.mapChart('container', {
         series: [
             {
                 mapData: Highcharts.maps['countries/gb/gb-all']
@@ -33,9 +32,31 @@ QUnit.test('MapBubble with LineWidth', function (assert) {
             }
         ]
     });
+
     assert.strictEqual(
         chart.series[1].graph['stroke-width'],
         2,
-        'Points have stroke width'
+        'MapBubble with linewidth- points should have stroke width.'
+    );
+
+    chart.update({
+        tooltip: {
+            shared: true
+        }
+    });
+    // Hover over the chart.
+    chart.pointer.runPointActions({ chartX: 200, chartY: 200 });
+    assert.ok(
+        true,
+        `When hovering over mapbubble series with shared tooltip,
+        there should be no errors in the console.`
+    );
+
+    // Passing the default joinBy value for MapBubbleSeries (#16750).
+    assert.strictEqual(
+        chart.series[1].joinBy[0],
+        'hc-key',
+        `The value of joinBy in the mapbubble series 
+        should be 'hc-key' by default.`
     );
 });

@@ -73,7 +73,7 @@ declare global {
                 cy: (number|undefined),
                 dx: number,
                 dy: number
-            ): void
+            ): void;
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
