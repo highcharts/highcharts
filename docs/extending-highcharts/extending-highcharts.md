@@ -5,13 +5,9 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
 
 *   Major chart concepts correspond to JavaScript prototypes or "classes" which are exposed on the Highcharts namespace and can easily be modified. Examples are `Highcharts.Series`, `Highcharts.Tooltip`, `Highcharts.Chart`, `Highcharts.Axis`, `Highcharts.Legend` etc. Check [full list](https://api.highcharts.com/class-reference/classes.list) of classes.
 *   Constructor logic is consequently kept in a method, `init`, to allow overriding the initialization.
-*   Events can be added to the instance through framework event binding. If your framework is jQuery, you can for example run:
-    `$(chart).bind('load', someFunction);`
-
-    Or use the Highcharts built-in method:
-
+*   Events can be added with 'addEvent':
     `Highcharts.addEvent(chart, 'load', someFunction);`
-*   Some, but not all, prototypes and properties are listed at [api.highcharts.com](https://api.highcharts.com/class-reference/classes.list) under Members and Methods. Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of `highcharts.src.js`.
+*   Some, but not all, prototypes and properties are listed at [api.highcharts.com](https://api.highcharts.com/class-reference/classes.list). Some prototypes and properties are not listed, which means they may change in future versions as we optimize and adapt the library. We do not discourage using these members, but warn that your plugin should be tested with future versions of Highcharts. These members can be identified by inspecting the Highcharts namespace as well as generated chart objects in developer tools, and by studying the source code of `highcharts.src.js`.
 
 Wrapping up a plugin
 --------------------
@@ -20,8 +16,10 @@ Highcharts plugins should be wrapped in an anonymous self-executing function in
 
 ```js
 (function (H) {
-    var localVar,         // local variable
-        Series = H.Series; // shortcut to Highcharts prototype
+    const { Chart, Series } = H; // shortcuts to Highcharts classes
+
+    let localVar; // local variable
+
     doSomething();
 }(Highcharts));
 ```
@@ -33,13 +31,13 @@ Events can be added to both a class and an instance. In order to add a general l
 
 ```js
 H.addEvent(H.Chart, 'load', function(e) {
-    var chart = e.target;
+    const chart = e.target;
     H.addEvent(chart.container, 'click', function(e) {
         e = chart.pointer.normalize(e);
-        console.log('Clicked chart at ' + e.chartX + ', ' + e.chartY);
+        console.log(`Clicked chart at ${e.chartX}, ${e.chartY}`);
     });
     H.addEvent(chart.xAxis[0], 'afterSetExtremes', function(e) {
-        console.log('Set extremes to ' + e.min + ', ' + e.max);
+        console.log(`Set extremes to ${e.min}, ${e.max}`);
     });
 });
 ```
@@ -72,6 +70,25 @@ H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
 ```
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/wrap-drawgraph/)
+
+Since v10, all module functions are available through a `window` event, `HighchartsModuleLoaded`. This includes utility functions and members that are not deliberately exposed. It is a powerful API, and was created with the intention of making it easier for the Highcharts developers and support team to provide temporary workarounds for bugs, or for special client requests. It should be warned that the module paths are not canonical, and may be subject to change as the product evolves. The `HighchartsModuleLoaded` event handlers must be defined before Highcharts is loaded. When loading ES modules, this will not work, and is also not necessary.
+
+```js
+window.addEventListener('HighchartsModuleLoaded', function(e) {
+    if (e.detail.path === 'Core/FormatUtilities.js') {
+        // The original function
+        const numberFormat = e.detail.module.numberFormat;
+
+        // A stupid proof of concept - modify all formatted numbers
+        e.detail.module.numberFormat = function () {
+            const n = numberFormat.apply(this, arguments);
+            return '~' + n;
+        }
+    }
+});
+```
+
+[Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/members/module-loaded-event/)
 
 Example extension
 -----------------
@@ -137,7 +154,7 @@ H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
     });
 });
 ```
-    
+
 
 Now the trackball will be displayed, but we also need to hide it when the tooltip is removed. Therefore som extra functionality is also needed in the hide method. A new wrap is added inside the function containing the plugin:
 
