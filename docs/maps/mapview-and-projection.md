@@ -14,7 +14,7 @@ By default, a map is centered within the plot area of the chart. For custom zoom
 The center and zoom options can be updated in run time by the [setView](https://api.highcharts.com/class-reference/Highcharts.MapView#setView) function.
 
 ### Projection
-The map view also controls the map's projection settings. Highcharts Maps includes some basic built-in projections, other projections can be [custom built and plugged in](https://www.highcharts.com/samples/maps/mapview/projection-custom). By default, Highcharts will guess the best projection to use for a map, based on the geographic extent. For more details see the [API docs](https://api.highcharts.com/highmaps/mapView.projection) or try out the Projection Explorer below.
+The map view also controls the map's projection settings. Highcharts Maps includes some basic built-in projections, other projections can be [custom built and plugged in](https://www.highcharts.com/samples/maps/mapview/projection-custom-proj4js). By default, Highcharts will guess the best projection to use for a map, based on the geographic extent. For more details see the [API docs](https://api.highcharts.com/highmaps/mapView.projection) or try out the Projection Explorer below.
 
 <iframe style="width: 100%; height: 900px; border: none;" src='https://www.highcharts.com/samples/embed/maps/mapview/projection-explorer' allow="fullscreen"></iframe>
 
