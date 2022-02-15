@@ -18,7 +18,7 @@ If you already have Highcharts installed in the web page and want to run Highcha
 Load the map
 ------------
 
-Highcharts Maps loads its maps from [TopoJSON](https://github.com/topojson/topojson) or [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/geojson-multiple-types/).
+Highcharts Maps loads its maps from [TopoJSON](https://github.com/topojson/topojson) or [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) which are open standards for description of geographic features. Most GIS software supports these formats as export from for instance Shapefile or KML export. Read more in the [API reference](https://api.highcharts.com/class-reference/Highcharts.GeoJSON) and [see the live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/demo/mapline-mappoint/).
 
 There are three basic sources for your map:
 

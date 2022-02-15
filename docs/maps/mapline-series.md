@@ -2,7 +2,7 @@ Map line series
 ===============
 
 A `mapline` series is a special case of the map series where the value colors are applied to the strokes rather than the fills.
-It can also be used for freeform drawing, like separators, in the map.
+It can also be used for freeform drawing of lines in the map.
 
 <iframe style="width: 100%; height: 520px; border: none;" src="https://highcharts.com/samples/embed/maps/demo/mapline-mappoint" allow="fullscreen"></iframe>
 
