@@ -71,7 +71,7 @@ H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/wrap-drawgraph/)
 
-Since v10, all module functions are available through a `window` event, `HighchartsModuleLoaded`. This includes utility functions and members that are not deliberately exposed. It is a powerful API, and was created with the intention of making it easier for the Highcharts developers and support team to provide temporary workarounds for bugs, or for special client requests. It should be warned that the module paths are not canonical, and may be subject to change as the product evolves. The `HighchartsModuleLoaded` event handlers must be defined before Highcharts is loaded. When loading ES modules, this will not work, and is also not necessary.
+Since v10 all module functions are available through a `window` event, `HighchartsModuleLoaded`. This includes utility functions and members that are not deliberately exposed. It is a powerful API that was created with the intention of making it easier for the Highcharts developers and support team to provide temporary workarounds for bugs, or for special client requests. It should be warned that the module paths are not canonical, and may be subject to change as the product evolves. The `HighchartsModuleLoaded` event handlers must be defined before Highcharts is loaded. When loading ES modules, this will not work, and is also not necessary because [modules can be accessed directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/extending-members/).
 
 ```js
 window.addEventListener('HighchartsModuleLoaded', function(e) {
