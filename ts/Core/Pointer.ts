@@ -978,6 +978,9 @@ class Pointer {
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
      *
+     * On map charts, the properties `lon` and `lat` are added to the event
+     * object given that the chart has projection information.
+     *
      * @function Highcharts.Pointer#normalize
      *
      * @param {global.MouseEvent|global.PointerEvent|global.TouchEvent} e
@@ -1966,7 +1969,7 @@ class Pointer {
             hoverChart !== chart
         ) {
             hoverChart.pointer.onContainerMouseLeave(
-                { relatedTarget: true } as any
+                { relatedTarget: chart.container } as any
             );
         }
 

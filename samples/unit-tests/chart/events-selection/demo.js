@@ -35,8 +35,8 @@ QUnit.test('Chart select points by drag', function (assert) {
      */
     var selectPointsByDrag = function (e) {
         // Select points
-        Highcharts.each(this.series, function (series) {
-            Highcharts.each(series.points, function (point) {
+        this.series.forEach(series => {
+            series.points.forEach(point => {
                 if (
                     point.x >= e.xAxis[0].min &&
                     point.x <= e.xAxis[0].max &&
