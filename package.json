@@ -75,7 +75,7 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "^5.1.0",
     "gzip-size": "^6.0.0",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.0",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.4.1",
     "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.20",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
     "husky": "4.3.6",
