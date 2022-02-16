@@ -195,12 +195,12 @@ namespace SeriesOnPointComposition {
      * @function Highcharts.Chart#getZData
      */
     function getZData(this: Chart): void {
-        const zData: Array<number> = [];
+        const zData: Array<number|null> = [];
 
         this.series.forEach((series: Series): void => {
-            if (series.options.onPoint) {
-                zData.push(series.options.onPoint.z);
-            }
+            const onPoint = series.options.onPoint;
+
+            zData.push(onPoint ? onPoint.z : null);
         });
 
         this.series.forEach((series: Series): void => {
@@ -285,7 +285,7 @@ namespace SeriesOnPointComposition {
             }
         }
 
-        const radius = this.radii && this.radii[(this.options as any).pieIndex];
+        const radius = this.radii && this.radii[this.index];
 
         if (isNumber(radius)) {
             ret[2] = radius * 2;
