@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Rafal i Pjoter
+ *  (c) 2010-2021 Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -17,27 +17,34 @@
  * */
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
 
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
-const { pie, bubble } = SeriesRegistry.seriesTypes;
-const drawPoints = pie.prototype.drawPoints;
-const getCenter = pie.prototype.getCenter;
-const translate = pie.prototype.translate;
+const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
+import CU from './CenteredUtilities.js';
+const { getCenter } = CU;
+
+// const pieDrawPoints = pie.prototype.drawPoints;
+// const sunburstDrawPoints = sunburst.prototype.drawPoints;
+const drawPointsFunctions = {
+    pieDrawPoints: pie.prototype.drawPoints,
+    sunburstDrawPoints: sunburst.prototype.drawPoints
+};
+// const pieTranslate = pie.prototype.translate;
+// const sunburstTranslate = sunburst.prototype.translate;
+const translateFunctions = {
+    pieTranslate: pie.prototype.translate,
+    sunburstTranslate: sunburst.prototype.translate
+};
 
 import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
 const {
     addEvent,
-    isArray,
-    isObject,
-    isNumber,
-    pick
+    isNumber
 } = U;
 
 /* *
@@ -46,16 +53,29 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
-
-    }
-}
+type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
+type BubbleZExtremes = { zMin: number; zMax: number };
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         seriesDrawConnector(): void;
         getConnectorAttributes(): SVGAttributes|void;
+        getRadii(
+            zMin: number,
+            zMax: number,
+            minSize: number,
+            maxSize: number
+        ): void;
+        getRadius(
+            zMin: number,
+            zMax: number,
+            minSize: number,
+            maxSize: number,
+            value: (number|null|undefined),
+            yValue?: (number|null|undefined)
+        ): (number|null);
+        getPxExtremes(): BubblePxExtremes;
+        getZExtremes(): BubbleZExtremes|undefined;
         onPoint?: SeriesOnPointComposition.Additions;
     }
 }
@@ -87,13 +107,8 @@ namespace SeriesOnPointComposition {
      *
      * */
 
-    export declare class PointComposition extends Point {
-
-    }
-
     export declare class SeriesComposition extends Series {
         onPoint: Additions;
-        initSeriesOnPoint(valueToAdd: number): void;
     }
 
     /* *
@@ -120,100 +135,110 @@ namespace SeriesOnPointComposition {
      * @param SeriesClass
      * Series class to use.
      *
-     * @param PointClass
-     * Point class to use.
+     * @param ChartClass
+     * Chart class to use.
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,
         ChartClass: typeof Chart
-        // PointClass: typeof Point
     ): (typeof SeriesComposition&T) {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
             const seriesProto = SeriesClass.prototype as SeriesComposition;
-            pie.prototype.getCenter = seriesGetCenter;
+
             seriesProto.getConnectorAttributes = getConnectorAttributes;
             seriesProto.seriesDrawConnector = seriesDrawConnector;
+
+            pie.prototype.getCenter = seriesGetCenter;
             pie.prototype.drawPoints = seriesDrawPoints;
             pie.prototype.translate = seriesTranslate;
-            (pie as any).prototype.bubblePadding = true;
-            (pie as any).prototype.getRadius = bubble.prototype.getRadius;
-            (pie as any).prototype.getRadii = bubble.prototype.getRadii;
-            (pie as any).prototype.getZExtremes =
-                bubble.prototype.getZExtremes;
-            (pie as any).prototype.getPxExtremes =
-                bubble.prototype.getPxExtremes;
+            pie.prototype.bubblePadding = true;
+            pie.prototype.getRadius = bubble.prototype.getRadius;
+            pie.prototype.getRadii = bubble.prototype.getRadii;
+            pie.prototype.getZExtremes = bubble.prototype.getZExtremes;
+            pie.prototype.getPxExtremes = bubble.prototype.getPxExtremes;
 
-            addEvent(pie, 'afterInit', afterInit);
-            addEvent(pie, 'update', update);
+            sunburst.prototype.getCenter = seriesGetCenter;
+            sunburst.prototype.drawPoints = seriesDrawPoints;
+            sunburst.prototype.translate = seriesTranslate;
+            sunburst.prototype.bubblePadding = true;
+            sunburst.prototype.getRadius = bubble.prototype.getRadius;
+            sunburst.prototype.getRadii = bubble.prototype.getRadii;
+            sunburst.prototype.getZExtremes = bubble.prototype.getZExtremes;
+            sunburst.prototype.getPxExtremes = bubble.prototype.getPxExtremes;
 
+            addEvent(SeriesClass, 'afterInit', afterInit);
+            addEvent(SeriesClass, 'update', update);
         }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
             addEvent(ChartClass, 'beforeRender', getZData);
-            addEvent(ChartClass, 'predraw', getZData);
+            addEvent(ChartClass, 'beforeRedraw', getZData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
     }
 
     /**
-     * Extend series.init by adding a methods to add a value.
-     *
      * @ignore
-     * @function Highcharts.Series#init
-    */
+     * @function Highcharts.Chart#getZData
+     */
     function getZData(this: Chart): void {
         const zData: Array<number> = [];
 
-        this.series.forEach((series): void => {
+        this.series.forEach((series: Series): void => {
             if (series.options.onPoint) {
                 zData.push(series.options.onPoint.z);
             }
         });
 
-        this.series.forEach((series): void => {
+        this.series.forEach((series: Series): void => {
             series.zData = zData;
         });
     }
 
     /**
-     * Extend series.init by adding a methods to add a value.
+     * Clear bubbleZExtremes to reset z calculations on update.
      *
      * @ignore
-     * @function Highcharts.Series#init
     */
     function update(this: Series): void {
         delete this.chart.bubbleZExtremes;
     }
 
     /**
-     * Extend series.init by adding a methods to add a value.
+     * Initialize Series on point on series init.
      *
      * @ignore
-     * @function Highcharts.Series#init
     */
     function afterInit(this: Series): void {
-        const options = this.options;
-        let onPoint: Additions|undefined;
-
-        if (options.onPoint) {
-            onPoint = new Additions(this as SeriesComposition);
-            onPoint.initSeriesOnPoint();
+        if (this.options.onPoint) {
+            this.onPoint = new Additions(this as SeriesComposition);
         }
-
-        this.onPoint = onPoint;
     }
 
-    function seriesTranslate(this: any): void {
-        this.getRadii();
+    /**
+     * Fire series.getRadii method to calculate required z data before original
+     * translate.
+     *
+     * @ignore
+     * @function Highcharts.Series#translate
+    */
+    function seriesTranslate(this: Series): void {
+        this.getRadii(0, 0, 0, 0);
 
-        translate.call(this);
+        (translateFunctions as any)[this.type + 'Translate'].call(this);
     }
 
+    /**
+     * Recalculate series.center (x, y and size).
+     *
+     * @ignore
+     * @function Highcharts.Series#getCenter
+    */
     function seriesGetCenter(this: Series): Array<number> {
         const onPointOptions = this.options.onPoint;
 
@@ -258,96 +283,82 @@ namespace SeriesOnPointComposition {
             ret[2] = radius * 2;
         }
 
-        // 0: centerX, relative to width
-        // 1: centerY, relative to height
-        // 2: size, relative to smallestSize
-        // 3: innerSize, relative to size
         return ret;
     }
 
     /**
-     * Get connector line path and styles that connects dumbbell point's low and
-     * high values.
+     * Get connector line path and styles that connects series and point.
+     *
      * @private
      *
-     * @param {Highcharts.Point} point The point to inspect.
-     *
-     * @return {Highcharts.SVGAttributes} attribs The path and styles.
+     * @return {Highcharts.SVGAttributes} attribs - the path and styles.
      */
     function getConnectorAttributes(this: Series): SVGAttributes|void {
-        const series = this,
-            chart = series.chart,
-            onPoint: any = series.options.onPoint,
-            connectorOpts = onPoint && onPoint.connectorOptions,
-            position = onPoint.position,
-            connectedPoint = chart.get(onPoint.id);
+        const chart = this.chart,
+            onPointOptions = this.options.onPoint;
 
-        if (
-            connectedPoint instanceof Point &&
-            position &&
-            connectedPoint.plotX &&
-            connectedPoint.plotY
-        ) {
-            let attribs: SVGAttributes = {
-                d: SVGRenderer.prototype.crispLine([[
-                    'M',
-                    connectedPoint.plotX,
-                    connectedPoint.plotY
-                ], [
-                    'L',
-                    connectedPoint.plotX + position.offsetX,
-                    connectedPoint.plotY + position.offsetY
-                ]], connectorOpts.width, 'ceil')
-            };
+        if (onPointOptions) {
+            const connectorOpts = onPointOptions.connectorOptions,
+                position = onPointOptions.position,
+                connectedPoint = chart.get(onPointOptions.id);
 
-            attribs['stroke-width'] = connectorOpts.width;
+            if (
+                connectedPoint instanceof Point &&
+                position &&
+                connectedPoint.plotX &&
+                connectedPoint.plotY
+            ) {
+                let attribs: SVGAttributes = {
+                    d: SVGRenderer.prototype.crispLine([[
+                        'M',
+                        connectedPoint.plotX,
+                        connectedPoint.plotY
+                    ], [
+                        'L',
+                        connectedPoint.plotX + (position.offsetX || 0),
+                        connectedPoint.plotY + (position.offsetY || 0)
+                    ]], connectorOpts.width || 1, 'ceil')
+                };
 
-            if (!chart.styledMode) {
-                attribs.stroke = connectorOpts.color;
+                attribs['stroke-width'] = connectorOpts.width;
 
-                if (connectorOpts.dashStyle) {
-                    attribs.dashstyle = connectorOpts.dashStyle;
+                if (!chart.styledMode) {
+                    attribs.stroke = (connectorOpts as any).color;
+
+                    if ((connectorOpts as any).dashStyle) {
+                        attribs.dashstyle = (connectorOpts as any).dashStyle;
+                    }
                 }
-            }
 
-            return attribs;
+                return attribs;
+            }
         }
     }
 
     /**
-     * Draw connector line that connects dumbbell point's low and high values.
+     * Draw connector line that connects series and initial point's position.
      * @private
-     *
-     * @param {Highcharts.Point} point The point to inspect.
-     *
      */
     function seriesDrawConnector(this: Series): void {
-        const series = this;
-        // animationLimit = pick(series.options.animationLimit, 250),
-        // verb = point.connector && series.chart.pointCount < animationLimit ?
-        // 'animate' : 'attr';
-
-        if (series.onPoint) {
-            if (!series.onPoint.connector) {
-                (series.onPoint as any).connector =
-                    series.chart.renderer.path()
-                        .addClass('highcharts-connector-seriespoint')
-                        .attr({
-                            zIndex: -1
-                        })
-                        .add(series.markerGroup);
+        if (this.onPoint) {
+            if (!this.onPoint.connector) {
+                (this.onPoint.connector as any) = this.chart.renderer.path()
+                    .addClass('highcharts-connector-seriespoint')
+                    .attr({
+                        zIndex: -1
+                    })
+                    .add(this.markerGroup);
             }
 
             const attribs = this.getConnectorAttributes();
-
-            (series.onPoint as any).connector['attr'](attribs);
+            if (this.onPoint.connector) {
+                (this.onPoint.connector as any)['attr'](attribs);
+            }
         }
     }
 
     function seriesDrawPoints(this: Series): void {
-        const series = this;
-
-        drawPoints.call(series);
+        (drawPointsFunctions as any)[this.type + 'DrawPoints'].call(this);
 
         this.seriesDrawConnector();
     }
@@ -385,24 +396,15 @@ namespace SeriesOnPointComposition {
 
         public series: SeriesComposition;
 
-        public connector: SVGElement = void 0 as any;
+        public connector?: SVGElement = void 0 as any;
+
+        public connectorOptions: SVGAttributes = void 0 as any;
 
         public id: string = void 0 as any;
 
         public position: Position;
 
         z: number = void 0 as any;
-
-        /**
-         * @ignore
-         * @function Highcharts.Series#initCompare
-         *
-         * @param {number} [valueToAdd]
-         *        Will be added to 10.
-         */
-        public initSeriesOnPoint(): void {
-
-        }
     }
 
 }

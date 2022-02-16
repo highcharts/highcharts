@@ -1038,7 +1038,7 @@ class SunburstSeries extends TreemapSeries {
     public translate(this: SunburstSeries): void {
         let series = this,
             options = series.options,
-            positions = series.center = getCenter.call(series),
+            positions = series.center = series.getCenter(),
             radians = series.startAndEndRadians = getStartAndEndRadians(
                 options.startAngle,
                 options.endAngle
@@ -1138,11 +1138,13 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
+    getCenter: typeof CU['getCenter'];
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    getCenter: getCenter,
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
