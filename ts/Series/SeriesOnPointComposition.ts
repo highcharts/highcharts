@@ -31,14 +31,19 @@ const { getCenter } = CU;
 // const sunburstDrawPoints = sunburst.prototype.drawPoints;
 const drawPointsFunctions = {
     pieDrawPoints: pie.prototype.drawPoints,
-    sunburstDrawPoints: sunburst.prototype.drawPoints
+    sunburstDrawPoints: (): void => {}
 };
 // const pieTranslate = pie.prototype.translate;
 // const sunburstTranslate = sunburst.prototype.translate;
 const translateFunctions = {
     pieTranslate: pie.prototype.translate,
-    sunburstTranslate: sunburst.prototype.translate
+    sunburstTranslate: (): void => {}
 };
+if (sunburst) {
+    drawPointsFunctions.sunburstDrawPoints = sunburst.prototype.drawPoints;
+    translateFunctions.sunburstTranslate = sunburst.prototype.translate;
+}
+
 
 import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
@@ -145,7 +150,8 @@ namespace SeriesOnPointComposition {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
 
-            const seriesProto = SeriesClass.prototype as SeriesComposition;
+            const seriesProto = SeriesClass.prototype as SeriesComposition,
+                bubbleProto = bubble.prototype;
 
             seriesProto.getConnectorAttributes = getConnectorAttributes;
             seriesProto.seriesDrawConnector = seriesDrawConnector;
@@ -154,19 +160,21 @@ namespace SeriesOnPointComposition {
             pie.prototype.drawPoints = seriesDrawPoints;
             pie.prototype.translate = seriesTranslate;
             pie.prototype.bubblePadding = true;
-            pie.prototype.getRadius = bubble.prototype.getRadius;
-            pie.prototype.getRadii = bubble.prototype.getRadii;
-            pie.prototype.getZExtremes = bubble.prototype.getZExtremes;
-            pie.prototype.getPxExtremes = bubble.prototype.getPxExtremes;
+            pie.prototype.getRadius = bubbleProto.getRadius;
+            pie.prototype.getRadii = bubbleProto.getRadii;
+            pie.prototype.getZExtremes = bubbleProto.getZExtremes;
+            pie.prototype.getPxExtremes = bubbleProto.getPxExtremes;
 
-            sunburst.prototype.getCenter = seriesGetCenter;
-            sunburst.prototype.drawPoints = seriesDrawPoints;
-            sunburst.prototype.translate = seriesTranslate;
-            sunburst.prototype.bubblePadding = true;
-            sunburst.prototype.getRadius = bubble.prototype.getRadius;
-            sunburst.prototype.getRadii = bubble.prototype.getRadii;
-            sunburst.prototype.getZExtremes = bubble.prototype.getZExtremes;
-            sunburst.prototype.getPxExtremes = bubble.prototype.getPxExtremes;
+            if (sunburst) {
+                sunburst.prototype.getCenter = seriesGetCenter;
+                sunburst.prototype.drawPoints = seriesDrawPoints;
+                sunburst.prototype.translate = seriesTranslate;
+                sunburst.prototype.bubblePadding = true;
+                sunburst.prototype.getRadius = bubbleProto.getRadius;
+                sunburst.prototype.getRadii = bubbleProto.getRadii;
+                sunburst.prototype.getZExtremes = bubbleProto.getZExtremes;
+                sunburst.prototype.getPxExtremes = bubbleProto.getPxExtremes;
+            }
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'update', update);
