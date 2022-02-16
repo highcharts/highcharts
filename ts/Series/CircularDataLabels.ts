@@ -80,8 +80,7 @@ namespace CircularDataLabels {
     ): any {
         // Set options to new object to avoid problems with scope
         let point = params.point,
-            shape: Partial<SunburstSeries.NodeValuesObject> =
-                isObject(params.shapeArgs) ? params.shapeArgs : {},
+            shape: Partial<SunburstSeries.NodeValuesObject> = params.shapeArgs,
             optionsPoint = (
                 isObject(params.optionsPoint) ?
                     params.optionsPoint.dataLabels :

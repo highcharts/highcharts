@@ -295,8 +295,7 @@ class DependencyWheelSeries extends SankeySeries {
                     r: r,
                     innerR: innerR,
                     start: start,
-                    end: end,
-                    radius: r
+                    end: end
                 } as any;
 
                 node.dlBox = {
@@ -316,9 +315,8 @@ class DependencyWheelSeries extends SankeySeries {
                     node.outerArcLength = radians * node.shapeArgs.r;
                 }
 
-                node.dlOptions = (dependecyWheel).getDlOptions({
+                node.dlOptions = dependecyWheel.getDlOptions({
                     point: node,
-                    level: void 0,
                     optionsPoint: node.options,
                     shapeArgs: node.shapeArgs
                 });
@@ -510,7 +508,7 @@ export default DependencyWheelSeries;
  * The `rotation` and `textPath` option takes precedence over `rotationMode`.
  *
  * @type       {string}
- * @sample {highcharts} highcharts/plotoptions/dependencywheel-datalabels-rotationmode-circular/
+ * @sample {highcharts} highcharts/plotoptions/dependencywheel-datalabels-rotationmode-perpendicular/
  *         Perpendicular rotation mode
  * @validvalue ["auto", "perpendicular", "parallel"]
  * @since      next
