@@ -77,7 +77,7 @@ namespace CircularDataLabels {
 
     function getDlOptions(
         params: CicrularDlOptionsParams
-    ): any {
+    ): CicrularDlOptions {
         // Set options to new object to avoid problems with scope
         let point = params.point,
             shape: Partial<SunburstSeries.NodeValuesObject> = params.shapeArgs,

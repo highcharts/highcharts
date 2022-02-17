@@ -19,7 +19,6 @@
  * */
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
-import type SankeySeriesType from '../Sankey/SankeySeries';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
