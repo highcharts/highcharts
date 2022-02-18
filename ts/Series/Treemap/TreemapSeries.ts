@@ -79,6 +79,7 @@ const {
     stableSort
 } = U;
 import './TreemapComposition.js';
+import TreemapNode from './TreemapNode.js';
 
 /* *
  *
@@ -612,7 +613,7 @@ class TreemapSeries extends ScatterSeries {
 
     public mapOptionsToLevel: Record<string, TreemapSeriesOptions> = void 0 as any;
 
-    public nodeMap: Record<string, TreemapSeries.NodeObject> = void 0 as any;
+    public nodeMap: Record<string, TreemapNode.Node> = void 0 as any;
 
     public options: TreemapSeriesOptions = void 0 as any;
 
@@ -620,7 +621,7 @@ class TreemapSeries extends ScatterSeries {
 
     public rootNode: string = void 0 as any;
 
-    public tree: TreemapSeries.NodeObject = void 0 as any;
+    public tree: TreemapNode.Node = void 0 as any;
 
     public level?: number = void 0 as any;
 
@@ -702,8 +703,8 @@ class TreemapSeries extends ScatterSeries {
 
     public algorithmFill(
         directionChange: boolean,
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         let childrenArea: Array<unknown> = [],
             pTot,
@@ -718,7 +719,7 @@ class TreemapSeries extends ScatterSeries {
             pH;
 
         children.forEach(function (
-            child: TreemapSeries.NodeObject
+            child: TreemapNode.Node
         ): void {
             pTot =
                 (parent.width * parent.height) * (child.val / parent.val);
@@ -750,8 +751,8 @@ class TreemapSeries extends ScatterSeries {
 
     public algorithmLowAspectRatio(
         directionChange: boolean,
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         let childrenArea: Array<unknown> = [],
             series = this,
@@ -773,7 +774,7 @@ class TreemapSeries extends ScatterSeries {
 
         // Loop through and calculate all areas
         children.forEach(function (
-            child: TreemapSeries.NodeObject
+            child: TreemapNode.Node
         ): void {
             pTot =
                 (parent.width * parent.height) * (child.val / parent.val);
@@ -836,48 +837,6 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
-    public buildNode(
-        id: string,
-        i: number,
-        level: number,
-        list: TreemapSeries.ListOfParentsObject,
-        parent?: string
-    ): TreemapSeries.NodeObject {
-        let series = this,
-            children: Array<TreemapSeries.NodeObject> = [],
-            point = series.points[i],
-            height = 0,
-            node: TreemapSeries.NodeObject,
-            child: TreemapSeries.NodeObject;
-
-        // Actions
-        ((list[id] || [])).forEach(function (i: number): void {
-            child = series.buildNode(
-                series.points[i].id,
-                i,
-                (level + 1),
-                list,
-                id
-            );
-            height = Math.max(child.height + 1, height);
-            children.push(child);
-        });
-        node = {
-            id,
-            i,
-            children,
-            height,
-            level,
-            parent,
-            visible: false // @todo move this to better location
-        } as any;
-        series.nodeMap[node.id] = node;
-        if (point) {
-            point.node = node;
-        }
-        return node;
-    }
-
     /**
      * Recursive function which calculates the area for all children of a
      * node.
@@ -892,7 +851,7 @@ class TreemapSeries extends ScatterSeries {
      * The rectangular area of the parent.
      */
     public calculateChildrenAreas(
-        parent: TreemapSeries.NodeObject,
+        parent: TreemapNode.Node,
         area: TreemapSeries.AreaObject
     ): void {
         let series = this,
@@ -912,12 +871,12 @@ class TreemapSeries extends ScatterSeries {
                 options.layoutAlgorithm as any
             ),
             alternate = options.alternateStartingDirection,
-            childrenValues: Array<TreemapSeries.NodeValuesObject> = [],
+            childrenValues: Array<TreemapNode.NodeValuesObject> = [],
             children;
 
         // Collect all children which should be included
         children = parent.children.filter(function (
-            n: TreemapSeries.NodeObject
+            n: TreemapNode.Node
         ): boolean {
             return !n.ignore;
         });
@@ -929,10 +888,10 @@ class TreemapSeries extends ScatterSeries {
         }
         childrenValues = series[algorithm](area as any, children) as any;
         children.forEach(function (
-            child: TreemapSeries.NodeObject,
+            child: TreemapNode.Node,
             index: number
         ): void {
-            const values: TreemapSeries.NodeValuesObject =
+            const values: TreemapNode.NodeValuesObject =
                 childrenValues[index];
 
             child.values = merge(values, {
@@ -945,7 +904,7 @@ class TreemapSeries extends ScatterSeries {
                 // Axis.translate at setPointValues. #12488
                 y: TreemapUtilities.AXIS_MAX - values.y - values.height,
                 width: (values.width / series.axisRatio)
-            } as TreemapSeries.NodeValuesObject);
+            } as TreemapNode.NodeValuesObject);
             // If node has children, then call method recursively
             if (child.children.length) {
                 series.calculateChildrenAreas(child, child.values);
@@ -1177,7 +1136,7 @@ class TreemapSeries extends ScatterSeries {
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
         let series = this,
             drillId: (boolean|string) = false,
-            nodeParent: TreemapSeries.NodeObject;
+            nodeParent: TreemapNode.Node;
 
         if ((point.node.parent !== series.rootNode) &&
             point.node.isLeaf
@@ -1301,7 +1260,7 @@ class TreemapSeries extends ScatterSeries {
             parentList = series.getListOfParents(this.data, allIds);
 
         series.nodeMap = {};
-        return series.buildNode('', -1, 0, parentList);
+        return series.nodeClass.buildNode(series, '', -1, 0, parentList);
     }
 
     /**
@@ -1516,7 +1475,7 @@ class TreemapSeries extends ScatterSeries {
      * @private
      */
     public setColorRecursive(
-        node: TreemapSeries.NodeObject,
+        node: TreemapNode.Node,
         parentColor?: ColorType,
         colorIndex?: number,
         index?: number,
@@ -1547,7 +1506,7 @@ class TreemapSeries extends ScatterSeries {
 
             // Do it all again with the children
             (node.children || []).forEach(function (
-                child: TreemapSeries.NodeObject,
+                child: TreemapNode.Node,
                 i: number
             ): void {
                 series.setColorRecursive(
@@ -1711,9 +1670,7 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
-    public setTreeValues(
-        tree: TreemapSeries.NodeObject
-    ): TreemapSeries.NodeObject {
+    public setTreeValues(tree: TreemapNode.Node): TreemapNode.Node {
         let series = this,
             options = series.options,
             idRoot = series.rootNode,
@@ -1725,13 +1682,13 @@ class TreemapSeries extends ScatterSeries {
                     true
             ),
             childrenTotal = 0,
-            children: Array<TreemapSeries.NodeObject> = [],
+            children: Array<TreemapNode.Node> = [],
             val,
             point = series.points[tree.i];
 
         // First give the children some values
         tree.children.forEach(function (
-            child: TreemapSeries.NodeObject
+            child: TreemapNode.Node
         ): void {
             child = series.setTreeValues(child);
             children.push(child);
@@ -1741,8 +1698,8 @@ class TreemapSeries extends ScatterSeries {
         });
         // Sort the children
         stableSort(children, function (
-            a: TreemapSeries.NodeObject,
-            b: TreemapSeries.NodeObject
+            a: TreemapNode.Node,
+            b: TreemapNode.Node
         ): number {
             return (a.sortIndex || 0) - (b.sortIndex || 0);
         });
@@ -1768,29 +1725,29 @@ class TreemapSeries extends ScatterSeries {
     }
 
     public sliceAndDice(
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         return this.algorithmFill(true, parent, children);
     }
 
     public squarified(
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         return this.algorithmLowAspectRatio(true, parent, children);
     }
 
     public strip(
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         return this.algorithmLowAspectRatio(false, parent, children);
     }
 
     public stripes(
-        parent: TreemapSeries.NodeValuesObject,
-        children: Array<TreemapSeries.NodeObject>
+        parent: TreemapNode.NodeValuesObject,
+        children: Array<TreemapNode.Node>
     ): Array<unknown> {
         return this.algorithmFill(false, parent, children);
     }
@@ -1803,8 +1760,8 @@ class TreemapSeries extends ScatterSeries {
             rootNode,
             pointValues,
             seriesArea,
-            tree: TreemapSeries.NodeObject,
-            val: TreemapSeries.NodeValuesObject;
+            tree: TreemapNode.Node,
+            val: TreemapNode.NodeValuesObject;
 
         // Call prototype function
         Series.prototype.translate.call(series);
@@ -1834,9 +1791,9 @@ class TreemapSeries extends ScatterSeries {
 
         // Parents of the root node is by default visible
         TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (
-            node: TreemapSeries.NodeObject
-        ): (boolean|TreemapSeries.NodeObject) {
-            let next: (boolean|TreemapSeries.NodeObject) = false,
+            node: TreemapNode.Node
+        ): (boolean|TreemapNode.Node) {
+            let next: (boolean|TreemapNode.Node) = false,
                 p = node.parent;
 
             node.visible = true;
@@ -1849,13 +1806,13 @@ class TreemapSeries extends ScatterSeries {
         TreemapUtilities.recursive(
             series.nodeMap[series.rootNode].children,
             function (
-                children: Array<TreemapSeries.NodeObject>
-            ): (boolean|Array<TreemapSeries.NodeObject>) {
-                let next: (boolean|Array<TreemapSeries.NodeObject>) =
+                children: Array<TreemapNode.Node>
+            ): (boolean|Array<TreemapNode.Node>) {
+                let next: (boolean|Array<TreemapNode.Node>) =
                         false;
 
                 children.forEach(function (
-                    child: TreemapSeries.NodeObject
+                    child: TreemapNode.Node
                 ): void {
                     child.visible = true;
                     if (child.children.length) {
@@ -1925,6 +1882,7 @@ interface TreemapSeries extends TU.Series {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof TreemapPoint;
+    nodeClass: typeof TreemapNode.Node;
     trackerGroups: Array<string>;
     utils: {
         recursive: typeof TreemapUtilities.recursive;
@@ -1941,6 +1899,7 @@ extend(TreemapSeries.prototype, {
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],
     pointClass: TreemapPoint,
+    nodeClass: TreemapNode.Node,
     trackerGroups: ['group', 'dataLabelsGroup'],
     utils: {
         recursive: TreemapUtilities.recursive
@@ -1958,25 +1917,6 @@ namespace TreemapSeries {
         direction: number;
     }
     export type ListOfParentsObject = Record<string, Array<number>>;
-    export interface NodeObject extends TU.NodeObject {
-        children: Array<NodeObject>;
-        childrenTotal?: number;
-        height: number;
-        ignore?: boolean;
-        isLeaf?: boolean;
-        levelDynamic?: number;
-        name?: string;
-        parent?: string;
-        pointValues?: NodeValuesObject;
-        sortIndex?: number;
-        val: number;
-        values?: NodeValuesObject;
-        zIndex?: number;
-    }
-    export interface NodeValuesObject extends BBoxObject {
-        direction: number;
-        val: number;
-    }
     export interface SetRootNodeObject {
         newRootId?: string;
         previousRootId?: string;
