@@ -438,7 +438,7 @@ defaultOptions.drilldown = {
      *
      * @since     next
      * @product   highcharts
-     * @extends breadcrumbs
+     * @extends   navigation.breadcrumbs
      * @optionparent drilldown.breadcrumbs
      */
 

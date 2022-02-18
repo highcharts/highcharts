@@ -146,11 +146,14 @@ extend(
  */
 class Breadcrumbs {
     /**
-     * Options for breadcrumbs
+     * Options for breadcrumbs. Breadcrumbs general options are defined in
+     * `navigation.breadcrumbs`. Specific options for drilldown are set in
+     * `drilldown.breadcrumbs` and for tree-like series traversing, in
+     * `plotOptions[series].breadcrumbs`.
      *
      * @since   next
      * @product highcharts
-     * @optionparent breadcrumbs
+     * @optionparent navigation.breadcrumbs
      */
     public static defaultBreadcrumbsOptions = {
         /**
@@ -215,7 +218,7 @@ class Breadcrumbs {
          *
          * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
          * @since     next
-         * @apioption breadcrumbs.events.click
+         * @apioption navigation.breadcrumbs.events.click
          */
 
         /**
@@ -249,7 +252,7 @@ class Breadcrumbs {
          * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
          * @since     next
          * @default   undefined
-         * @apioption breadcrumbs.formatter
+         * @apioption navigation.breadcrumbs.formatter
          */
 
         /**
@@ -361,7 +364,7 @@ class Breadcrumbs {
         useHTML: false,
 
         /**
-         * The zIndex of the group.
+         * The z index of the breadcrumbs group.
          *
          * @type      {number}
          * @since     next
@@ -1255,216 +1258,4 @@ export default Breadcrumbs;
  * @type { SVGAttributes | BreadcrumbsButtonThemeOptions | undefined }
  */
 
-/**
- * Options for breadcrumbs
- *
- * @since   next
- * @product highcharts
- * @apioption navigation.breadcrumbs
- */
-
-/**
- * A collection of attributes for the buttons. The object takes SVG
- * attributes like `fill`, `stroke`, `stroke-width`, as well as `style`,
- * a collection of CSS properties for the text.
- *
- * The object can also be extended with states, so you can set
- * presentational options for `hover`, `select` or `disabled` button
- * states.
- *
- * @sample {highcharts} highcharts/breadcrumbs/single-button
- *         Themed, single button
- *
- * @type       {Highcharts.SVGAttributes}
- * @since      next
- * @product    highcharts
- * @apioption navigation.breadcrumbs.buttonTheme
- */
-
-/**
- * The default padding for each button and separator in each direction.
- *
- * @type      {number}
- * @since     next
- * @default   5
- * @apioption navigation.breadcrumbs.buttonSpacing
- */
-
-/**
- * Fires when clicking on the breadcrumbs button. Two arguments are
- * passed to the function. First breadcrumb button as an SVG element.
- * Second is the breadcrumbs class, containing reference to the chart,
- * series etc.
- *
- * ```js
- * click: function(button, breadcrumbs) {
- *   console.log(button);
- * }
- * ```
- *
- * Return false to stop default buttons click action.
- *
- * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
- * @since     next
- * @apioption navigation.breadcrumbs.events.click
- */
-
-/**
- * When the breadcrumbs are floating, the plot area will not move to
- * make space for it. By default, the chart will not make space for the
- * buttons. This property won't work when positioned in the middle.
- *
- * @sample highcharts/breadcrumbs/single-button
- *         Floating button
- * @default   false
- * @type      {boolean}
- * @since     next
- * @apioption navigation.breadcrumbs.floating
- */
-
-/**
- * A format string for the breadcrumbs button. Variables are enclosed by
- * curly brackets. Available values are passed in the declared point
- * options.
- *
- * @type      {string|undefined}
- * @since     next
- * @default   undefined
- * @sample {highcharts} highcharts/breadcrumbs/format Display custom
- *          values in breadcrumb button.
- * @apioption navigation.breadcrumbs.format
- */
-
-/**
- * Callback function to format the breadcrumb text from scratch.
- *
- * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
- * @since     next
- * @default   undefined
-@apioption navigation.breadcrumbs.formatter
- */
-
-/**
- * What box to align the button to. Can be either `plotBox` or
- * `spacingBox`.
- *
- * @type       {Highcharts.ButtonRelativeToValue}
- * @default    plotBox
- * @since      next
- * @product    highcharts highmaps
- * @apioption navigation.breadcrumbs.relativeTo
- */
-
-/**
- * Positioning for the button row. The breadcrumbs buttons will be
- * aligned properly for the default chart layout (title,  subtitle,
- * legend, range selector) for the custom chart layout set the position
- * properties.
- * @type       {Highcharts.BreadcrumbsAlignOptions}
- * @since      next
- * @product    highcharts highmaps
- * @sample     {highcharts} highcharts/breadcrumbs/single-button
- *             Single, right aligned button
- * @apioption navigation.breadcrumbs.position
- */
-
-/**
- * Horizontal alignment of the breadcrumbs buttons.
- *
- * @type {Highcharts.AlignValue}
- * @default   left
- * @apioption navigation.breadcrumbs.position.align
- */
-
-/**
- * Vertical alignment of the breadcrumbs buttons.
- *
- * @type {Highcharts.VerticalAlignValue}
- * @default   top
- * @apioption navigation.breadcrumbs.position.verticalAlign
- */
-
-/**
- * The X offset of the breadcrumbs button group.
- *
- * @type {number}
- * @default   0
- * @apioption navigation.breadcrumbs.position.x
- */
-
-/**
- * The Y offset of the breadcrumbs button group. When `undefined`,
- * and `floating` is `false`, the `y` position is adapted so that
- * the breadcrumbs are rendered outside the target area.
- *
- * @type {number|undefined}
- * @default   0
- * @apioption navigation.breadcrumbs.position.y
- */
-
-/**
- * Options object for Breadcrumbs separator.
- *
- * @since next
- * @apioption navigation.breadcrumbs.separator
- */
-
-/**
- * @type {string}
- * @since next
- * @product highcharts
- * @default /
- * @apioption navigation.breadcrumbs.separator.text
- */
-
-/**
- * CSS styles for the breadcrumbs separator.
- *
- * In styled mode, the breadcrumbs separators are styled by the
- * `.highcharts-separator` rule with its different states.
- *  @type {Highcharts.CSSObject}
- *  @since     next
- * @apioption navigation.breadcrumbs.separator.style
- */
-
-/**
- * Show full path or only a single button.
- *
- * @type      {boolean}
- * @since     next
- * @default   true
- * @sample {highcharts} highcharts/breadcrumbs/single-button
- *          Single, styled button
- * @apioption navigation.breadcrumbs.showFullPath
- */
-
-/**
- * CSS styles for all breadcrumbs.
- *
- * In styled mode, the breadcrumbs buttons are styled by the
- * `.highcharts-range-selector-buttons .highcharts-button` rule with its
- * different states.
- *  @type {Highcharts.SVGAttributes}
- *  @since     next
- *  @default   undefined
- * @apioption navigation.breadcrumbs.style
- */
-
-/**
- * Whether to use HTML to render the breadcrumbs items texts.
- *
- * @type      {boolean}
- * @since     next
- * @default   false
- * @apioption navigation.breadcrumbs.useHTML
- */
-
-/**
- * The zIndex of the group.
- *
- * @type      {number}
- * @since     next
- * @default   7
- * @apioption navigation.breadcrumbs.zIndex
- */
 (''); // Keeps doclets above in JS file
