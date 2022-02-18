@@ -1320,9 +1320,12 @@ class TreemapSeries extends ScatterSeries {
 
         const series = this,
             breadcrumbsOptions = merge(
+                chart.options.navigation &&
+                chart.options.navigation.breadcrumbs,
                 options.drillUpButton,
                 options.breadcrumbs
             );
+
 
         let setOptionsEvent;
 
