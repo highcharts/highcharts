@@ -19,7 +19,7 @@
  * */
 
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type TreemapSeries from './TreemapSeries';
+import TreemapNode from './TreemapNode.js';
 
 /* *
  *
@@ -158,7 +158,7 @@ namespace TreemapAlgorithmGroup {
         aspectRatio(w: number, h: number): number;
     }
     export interface PlotObject extends PositionObject {
-        parent: TreemapSeries.NodeValuesObject;
+        parent: TreemapNode.NodeValuesObject;
     }
 }
 

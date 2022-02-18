@@ -44,6 +44,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,
@@ -68,7 +69,7 @@ class TreemapPoint extends ScatterPoint {
 
     public name: string = void 0 as any;
 
-    public node: TreemapSeries.NodeObject = void 0 as any;
+    public node: TreemapNode.Node = void 0 as any;
 
     public options: TreemapPointOptions = void 0 as any;
 
