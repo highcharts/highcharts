@@ -35,7 +35,6 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../ColorMapMixin.js';
@@ -614,6 +613,8 @@ class TreemapSeries extends ScatterSeries {
     public mapOptionsToLevel: Record<string, TreemapSeriesOptions> = void 0 as any;
 
     public nodeMap: Record<string, TreemapNode.Node> = void 0 as any;
+
+    public nodeList: TreemapNode.Node[] = void 0 as any;
 
     public options: TreemapSeriesOptions = void 0 as any;
 
@@ -1260,7 +1261,8 @@ class TreemapSeries extends ScatterSeries {
             parentList = series.getListOfParents(this.data, allIds);
 
         series.nodeMap = {};
-        return series.nodeClass.buildNode(series, '', -1, 0, parentList);
+        series.nodeList = [];
+        return series.NodeClass.buildNode(series, '', -1, 0, parentList);
     }
 
     /**
@@ -1882,7 +1884,7 @@ interface TreemapSeries extends TU.Series {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof TreemapPoint;
-    nodeClass: typeof TreemapNode.Node;
+    NodeClass: typeof TreemapNode.Node;
     trackerGroups: Array<string>;
     utils: {
         recursive: typeof TreemapUtilities.recursive;
@@ -1899,7 +1901,7 @@ extend(TreemapSeries.prototype, {
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],
     pointClass: TreemapPoint,
-    nodeClass: TreemapNode.Node,
+    NodeClass: TreemapNode.Node,
     trackerGroups: ['group', 'dataLabelsGroup'],
     utils: {
         recursive: TreemapUtilities.recursive

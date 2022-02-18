@@ -19,12 +19,14 @@ namespace TreemapNode {
         levelDynamic?: number;
         name?: string;
         parent?: string;
+        parentNode?: Node;
         pointValues?: NodeValuesObject;
         sortIndex?: number;
         val: number = void 0 as any;
         values?: NodeValuesObject;
         visible = false;
         zIndex?: number;
+        series: TreemapSeries = void 0 as any;
 
         public init(
             id: string,
@@ -32,6 +34,7 @@ namespace TreemapNode {
             children: Array<Node>,
             height: number,
             level: number,
+            series: TreemapSeries,
             parent?: string
         ): Node {
             this.id = id;
@@ -39,6 +42,7 @@ namespace TreemapNode {
             this.children = children;
             this.height = height;
             this.level = level;
+            this.series = series;
             this.parent = parent;
             return this;
         }
@@ -59,7 +63,7 @@ namespace TreemapNode {
 
             // Actions
             (list[id] || []).forEach(function (i: number): void {
-                child = Node.buildNode(
+                child = series.NodeClass.buildNode(
                     series,
                     series.points[i].id,
                     i,
@@ -70,9 +74,22 @@ namespace TreemapNode {
                 height = Math.max(child.height + 1, height);
                 children.push(child);
             });
-            node = new Node().init(id, index, children, height, level, parent);
+            node = new series.NodeClass().init(
+                id,
+                index,
+                children,
+                height,
+                level,
+                series,
+                parent
+            );
+
+            children.forEach((child): void => {
+                child.parentNode = node;
+            });
 
             series.nodeMap[node.id] = node;
+            series.nodeList.push(node);
             if (point) {
                 point.node = node;
             }
