@@ -444,7 +444,7 @@ class SunburstSeries extends TreemapSeries {
          *
          * @since     next
          * @product   highcharts
-         * @extends breadcrumbs
+         * @extends   navigation.breadcrumbs
          * @optionparent plotOptions.sunburst.breadcrumbs
          */
 

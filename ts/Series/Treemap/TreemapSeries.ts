@@ -157,7 +157,7 @@ class TreemapSeries extends ScatterSeries {
          *
          * @since     next
          * @product   highcharts
-         * @extends breadcrumbs
+         * @extends   navigation.breadcrumbs
          * @optionparent plotOptions.treemap.breadcrumbs
          */
         /**
