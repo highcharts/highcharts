@@ -14,8 +14,8 @@
  *
  * */
 
-import type OrganizationSeriesOptions from '../Organization/OrganizationSeriesOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
 
 /* *
  *
@@ -25,7 +25,7 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 
 
 export type TreegraphLayoutTypes = 'Walker';
-export interface TreegraphSeriesOptions extends OrganizationSeriesOptions {
+export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     layout: string;
     reversed: boolean;
     marker: PointMarkerOptions;

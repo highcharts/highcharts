@@ -35,6 +35,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../ColorMapMixin.js';

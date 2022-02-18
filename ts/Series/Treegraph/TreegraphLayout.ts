@@ -13,35 +13,39 @@ import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { extend, merge } = U;
 import TreegraphNode from './TreegraphNode.js';
+
 declare global {
     namespace Highcharts {
         class TreegraphLayout {
             public constructor();
             public calculatePositions(series: TreegraphSeries): void;
-            public resetValues(nodes: TreegraphNode[]): void;
-            public calculateRelativeX(root: TreegraphNode, index: number): void;
-            public beforeLayout(nodes: TreegraphNode[]): void;
-            public afterLayout(nodes: TreegraphNode[]): void;
-            public firstWalk(node: TreegraphNode): void;
-            public secondWalk(node: TreegraphNode, modSum: number): void;
-            public executeShifts(node: TreegraphNode): void;
+            public resetValues(nodes: TreegraphNode.Node[]): void;
+            public calculateRelativeX(
+                root: TreegraphNode.Node,
+                index: number
+            ): void;
+            public beforeLayout(nodes: TreegraphNode.Node[]): void;
+            public afterLayout(nodes: TreegraphNode.Node[]): void;
+            public firstWalk(node: TreegraphNode.Node): void;
+            public secondWalk(node: TreegraphNode.Node, modSum: number): void;
+            public executeShifts(node: TreegraphNode.Node): void;
             public apportion(
-                node: TreegraphNode,
-                defaultAncestor: TreegraphNode
-            ): TreegraphNode;
+                node: TreegraphNode.Node,
+                defaultAncestor: TreegraphNode.Node
+            ): TreegraphNode.Node;
             public setArea(x: number, y: number, w: number, h: number): void;
             public moveSubtree(
-                ancestor: TreegraphNode,
-                node: TreegraphNode,
+                ancestor: TreegraphNode.Node,
+                node: TreegraphNode.Node,
                 shift: number
             ): void;
             public box: Record<string, number>;
             public static createDummyNode(
-                parentNode: TreegraphNode,
-                childNode: TreegraphNode,
+                parentNode: TreegraphNode.Node,
+                childNode: TreegraphNode.Node,
                 gap: number,
                 index: number
-            ): TreegraphNode;
+            ): TreegraphNode.Node;
         }
         let treeLayouts: Record<string, typeof TreegraphLayout>;
     }
@@ -55,47 +59,38 @@ extend(H.treeLayouts.Walker, {
     /**
      * Create dummy node, which allows to manually set the level of the node.
      *
-     * @param {TreegraphNode} parent Parent node, to which the dummyNode should be connected.
-     * @param {TreegraphNode} child Child node, which should be connected to dummyNode.
+     * @param {TreegraphNode.Node} parent Parent node, to which the dummyNode should be connected.
+     * @param {TreegraphNode.Node} child Child node, which should be connected to dummyNode.
      * @param {number} gapSize Remainig gap size
      * @param {number} index the index of the link
      *
-     * @return {TreegraphNode} DummyNode as a parent of nodes, which column
+     * @return {TreegraphNode.Node} DummyNode as a parent of nodes, which column
      * changes
      */
     createDummyNode: function (
-        parent: TreegraphNode,
-        child: TreegraphNode,
+        parent: TreegraphNode.Node,
+        child: TreegraphNode.Node,
         gapSize: number,
         index: number
-    ): TreegraphNode {
+    ): TreegraphNode.Node {
         // Initialise dummy node.
-        let dummyNode = new TreegraphNode();
+        let dummyNode = new TreegraphNode.Node();
         dummyNode.id = parent.id + '-' + gapSize;
         dummyNode.ancestor = parent;
         // Add connection from new node to the previous points.
 
         // First connection to itself.
-        dummyNode.linksFrom.push(merge(parent.linksFrom[0]));
-        dummyNode.linksFrom[0].fromNode = dummyNode;
-        dummyNode.linksTo.push(merge(parent.linksFrom[0]));
-        dummyNode.linksTo[0].toNode = dummyNode;
-        dummyNode.linksTo[0].fromNode = parent;
-        dummyNode.linksFrom[0].toNode = child;
+        dummyNode.children.push(child);
+        dummyNode.parent = parent.id;
         dummyNode.column = child.column - gapSize;
         dummyNode.level = child.level - gapSize;
 
         // Then connection from parent to dummyNode.
-        if (!parent.linksFrom[index].oldToNode) {
-            parent.linksFrom[index].oldToNode = child;
-        }
-        parent.linksFrom[index].toNode = dummyNode;
+        parent.children[child.relativeXPosition] = dummyNode;
+        child.oldParentNode = parent;
 
         // Then connection from child to dummyNode.
-        if (!child.linksTo[0].oldFromNode) {
-            child.linksTo[0].oldFromNode = parent;
-        }
-        child.linksTo[0].fromNode = dummyNode;
+        child.parent = dummyNode.id;
         return dummyNode;
     }
 });
@@ -115,12 +110,12 @@ extend(H.treeLayouts.Walker.prototype, {
         series: TreegraphSeries
     ): void {
         const treeLayout = this;
-        const nodes = series.nodes as TreegraphNode[];
+        const nodes = series.nodeList as TreegraphNode.Node[];
         this.resetValues(nodes);
-        const root = nodes[0];
+        const root = series.tree;
         if (root) {
-            treeLayout.beforeLayout(nodes);
             treeLayout.calculateRelativeX(root, 0);
+            treeLayout.beforeLayout(nodes);
             treeLayout.firstWalk(root);
             treeLayout.secondWalk(root, -root.preX);
             treeLayout.afterLayout(nodes);
@@ -133,21 +128,20 @@ extend(H.treeLayouts.Walker.prototype, {
      */
     beforeLayout: function (
         this: Highcharts.TreegraphLayout,
-        nodes: TreegraphNode[]
+        nodes: TreegraphNode.Node[]
     ): void {
         const treeLayout = this as Highcharts.TreegraphLayout;
         nodes.forEach((node): void => {
-            node.linksFrom.forEach((link, index): void => {
+            node.children.forEach((child, index): void => {
                 // Support for children placed in distant columns.
                 if (
-                    link.toNode &&
-                    (link.toNode.column - node.column > 1)
+                    child &&
+                    (child.column - node.column > 1)
                 ) {
                     // For further columns treat the nodes as a
                     // single parent-child pairs till the column is achieved.
-                    let gapSize = link.toNode.column - node.column - 1,
-                        parent = node,
-                        child = link.toNode;
+                    let gapSize = child.column - node.column - 1,
+                        parent = node;
                     // parent -> dummyNode -> child
                     while (gapSize > 0) {
                         child = H.treeLayouts.Walker.createDummyNode(
@@ -164,10 +158,10 @@ extend(H.treeLayouts.Walker.prototype, {
     },
     /**
      * Reset the caluclated values from the previous run.
-     * @param {TreegraphNode[]} nodes all of the nodes.
+     * @param {TreegraphNode.Node[]} nodes all of the nodes.
      */
-    resetValues: function (nodes: TreegraphNode[]): void {
-        nodes.forEach((node: TreegraphNode): void => {
+    resetValues: function (nodes: TreegraphNode.Node[]): void {
+        nodes.forEach((node: TreegraphNode.Node): void => {
             node.mod = 0;
             node.ancestor = node;
             node.shift = 0;
@@ -185,12 +179,12 @@ extend(H.treeLayouts.Walker.prototype, {
     */
     calculateRelativeX: function (
         this: Highcharts.TreegraphLayout,
-        node: TreegraphNode,
+        node: TreegraphNode.Node,
         index: number
     ): void {
         const treeLayout = this;
-        node.linksFrom.forEach((link, index): void => {
-            treeLayout.calculateRelativeX(link.toNode, index);
+        node.children.forEach((child, index): void => {
+            treeLayout.calculateRelativeX(child, index);
         });
         node.relativeXPosition = index;
     },
@@ -198,19 +192,19 @@ extend(H.treeLayouts.Walker.prototype, {
      * Recursive post order traversal of the tree, where the initial position
      * of the nodes is calculated.
      *
-     * @param {TreegraphNode} node the node for which the position should be
+     * @param {TreegraphNode.Node} node the node for which the position should be
      * calculated
      */
     firstWalk: function (
         this: Highcharts.TreegraphLayout,
-        node: TreegraphNode
+        node: TreegraphNode.Node
     ): void {
         const treeLayout = this;
         let leftSibling;
         // Arbitrary value used to position nodes in respect to each other.
         let siblingDistance = 1;
         // If the node is a leaf, set it's position based on the left siblings.
-        if (node.isLeaf()) {
+        if (!node.hasChildren()) {
             leftSibling = node.getLeftSibling();
             if (leftSibling) {
                 node.preX = leftSibling.preX + siblingDistance;
@@ -222,19 +216,19 @@ extend(H.treeLayouts.Walker.prototype, {
             // If the node has children, perform the recursive first walk for
             // its children, and then calculate its shift in the apportion
             // function (most crucial part part of the algorythm).
-            let defaultAncestor = node.getLeftMostChild() as TreegraphNode;
+            let defaultAncestor = node.getLeftMostChild() as TreegraphNode.Node;
 
-            node.linksFrom.forEach(function (link): void {
-                treeLayout.firstWalk(link.toNode);
+            node.children.forEach(function (child): void {
+                treeLayout.firstWalk(child);
                 defaultAncestor = treeLayout.apportion(
-                    link.toNode,
+                    child,
                     defaultAncestor
                 );
             });
             treeLayout.executeShifts(node);
 
-            let leftChild = node.getLeftMostChild() as TreegraphNode;
-            let rightChild = node.getRightMostChild() as TreegraphNode;
+            let leftChild = node.getLeftMostChild() as TreegraphNode.Node;
+            let rightChild = node.getRightMostChild() as TreegraphNode.Node;
             // Set the position of the parent as a middle point of its children
             // and move it by the value of the leftSibling (if it exists).
             let midPoint = (leftChild.preX + rightChild.preX) / 2;
@@ -252,13 +246,13 @@ extend(H.treeLayouts.Walker.prototype, {
      * Pre order traversal of the tree, which sets the final xPosition of the
      * node as its preX value and sum of all if it's parents' modifiers.
      *
-     * @param {TreegraphNode} node the node, for which the final position
+     * @param {TreegraphNode.Node} node the node, for which the final position
      * should be calculated.
      * @param {number} modSum The sum of modifiers of all of the parents.
      */
     secondWalk: function (
         this: Highcharts.TreegraphLayout,
-        node: TreegraphNode,
+        node: TreegraphNode.Node,
         modSum: number
     ): void {
         const treeLayout = this;
@@ -267,23 +261,23 @@ extend(H.treeLayouts.Walker.prototype, {
         // x and y positions are switched.
         node.yPosition = node.preX + modSum;
         node.xPosition = node.level;
-        node.linksFrom.forEach(function (link): void {
-            treeLayout.secondWalk(link.toNode, modSum + node.mod);
+        node.children.forEach(function (child): void {
+            treeLayout.secondWalk(child, modSum + node.mod);
         });
     },
     /**
      *  Shift all children of the current node from right to left.
      *
-     * @param {TreegraphNode} node the parent node.
+     * @param {TreegraphNode.Node} node the parent node.
      */
     executeShifts: function (
         this: Highcharts.TreegraphLayout,
-        node: TreegraphNode
+        node: TreegraphNode.Node
     ): void {
         let shift = 0,
             change = 0;
-        for (let i = node.linksFrom.length - 1; i >= 0; i--) {
-            const childNode = node.linksFrom[i].toNode;
+        for (let i = node.children.length - 1; i >= 0; i--) {
+            const childNode = node.children[i];
             childNode.preX += shift;
             childNode.mod += shift;
             change += childNode.change;
@@ -303,14 +297,14 @@ extend(H.treeLayouts.Walker.prototype, {
      * Finally we add a new thread (if necessary) and we adjust ancestor of
      * right outernal node or defaultAncestor.
      *
-     * @param {TreegraphNode} node
+     * @param {TreegraphNode.Node} node
      * @param defaultAncestor the default ancestor of the passed node.
      */
     apportion: function (
         this: Highcharts.TreegraphLayout,
-        node: TreegraphNode,
-        defaultAncestor: TreegraphNode
-    ): TreegraphNode {
+        node: TreegraphNode.Node,
+        defaultAncestor: TreegraphNode.Node
+    ): TreegraphNode.Node {
         const treeLayout = this;
         let leftSibling = node.getLeftSibling();
         if (leftSibling) {
@@ -318,7 +312,7 @@ extend(H.treeLayouts.Walker.prototype, {
                 rightOutNode = node,
                 leftIntNode = leftSibling,
                 leftOutNode =
-                    rightIntNode.getLeftMostSibling() as TreegraphNode,
+                    rightIntNode.getLeftMostSibling() as TreegraphNode.Node,
                 rightIntMod = rightIntNode.mod,
                 rightOutMod = rightOutNode.mod,
                 leftIntMod = leftIntNode.mod,
@@ -331,9 +325,9 @@ extend(H.treeLayouts.Walker.prototype, {
                 rightIntNode.nextLeft()
             ) {
                 leftIntNode = leftOutNode =
-                    leftIntNode.nextRight() as TreegraphNode;
+                    leftIntNode.nextRight() as TreegraphNode.Node;
                 rightIntNode = rightOutNode =
-                    rightOutNode.nextLeft() as TreegraphNode;
+                    rightOutNode.nextLeft() as TreegraphNode.Node;
 
                 rightOutNode.ancestor = node;
                 let siblingDistance = 1;
@@ -382,13 +376,13 @@ extend(H.treeLayouts.Walker.prototype, {
     /**
      * Shifts the subtree from leftNode to rightNode.
      *
-     * @param {TreegraphNode} leftNode
-     * @param {TreegraphNode} rightNode
+     * @param {TreegraphNode.Node} leftNode
+     * @param {TreegraphNode.Node} rightNode
      * @param {number} shift The value, by which the subtree should be moved.
      */
     moveSubtree: function (
-        leftNode: TreegraphNode,
-        rightNode: TreegraphNode,
+        leftNode: TreegraphNode.Node,
+        rightNode: TreegraphNode.Node,
         shift: number
     ): void {
         let subtrees = rightNode.relativeXPosition - leftNode.relativeXPosition;
@@ -422,21 +416,15 @@ extend(H.treeLayouts.Walker.prototype, {
     },
     /**
      * Clear values created in a beforeLayout.
-     * @param {TreegraphNode[]} nodes all of the nodes of the Treegraph Series.
+     * @param {TreegraphNode.Node[]} nodes all of the nodes of the Treegraph Series.
      */
-    afterLayout: function (nodes: TreegraphNode[]): void {
+    afterLayout: function (nodes: TreegraphNode.Node[]): void {
         nodes.forEach((node): void => {
-            node.linksFrom.forEach((link): void => {
-
-                if (link.oldToNode) {
-                    link.toNode = link.oldToNode;
-                }
-
-                // Then connection from child to dummyNode.
-                if (link.oldFromNode) {
-                    link.fromNode = link.oldFromNode;
-                }
-            });
+            if (node.oldParentNode) {
+                delete node.oldParentNode.children[node.relativeXPosition];
+                node.oldParentNode.children[node.relativeXPosition] = node;
+                node.oldParentNode = void 0;
+            }
         });
     }
 });

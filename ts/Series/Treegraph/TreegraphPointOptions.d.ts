@@ -14,7 +14,7 @@
  *
  * */
 
-import type OrganizationPointOptions from '../Organization/OrganizationPointOptions';
+import TreemapPointOptions from '../Treemap/TreemapPointOptions';
 
 /* *
  *
@@ -22,7 +22,7 @@ import type OrganizationPointOptions from '../Organization/OrganizationPointOpti
  *
  * */
 
-export interface TreegraphPointOptions extends OrganizationPointOptions {
+export interface TreegraphPointOptions extends TreemapPointOptions {
 }
 
 export default TreegraphPointOptions;
