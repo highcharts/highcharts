@@ -20,7 +20,6 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstDataLabelOptions from './SunburstDataLabelOptions';
@@ -28,7 +27,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-import type TreemapSeriesType from '../Treemap/TreemapSeries';
 
 import CU from '../CenteredUtilities.js';
 const {
@@ -55,7 +53,7 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
-import SunburstNode from './SunburstNode';
+import SunburstNode from './SunburstNode.js';
 const {
     error,
     extend,
@@ -1142,11 +1140,13 @@ class SunburstSeries extends TreemapSeries {
 interface SunburstSeries {
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
+    NodeClass: typeof SunburstNode.Node;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: SunburstPoint,
+    NodeClass: SunburstNode.Node,
     utils: SunburstUtilities
 });
 

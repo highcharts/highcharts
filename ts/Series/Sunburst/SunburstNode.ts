@@ -22,13 +22,9 @@ namespace SunburstNode {
         color?: ColorType;
         colorIndex?: number;
         shapeArgs?: NodeValuesObject;
+        series: SunburstSeries = void 0 as any;
         sliced?: boolean;
         values?: NodeValuesObject;
-
-        public init(): Node {
-            super.init.apply(this, arguments);
-            return this;
-        }
     }
 }
 export default SunburstNode;

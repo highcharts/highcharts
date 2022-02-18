@@ -10,10 +10,11 @@ Highcharts.chart('container', {
         type: 'treegraph',
         keys: ['from', 'to'],
         data: [
-            ['A', 'B'],
-            ['B', 'C'],
-            ['B', 'E'],
-            ['A', 'D']
+            { id: 'A' },
+            { id: 'B', parent: 'A' },
+            { id: 'C', parent: 'B' },
+            { id: 'E', parent: 'B' },
+            { id: 'D', parent: 'A' }
         ]
     }]
 });
