@@ -152,7 +152,8 @@ class TreemapSeries extends ScatterSeries {
         borderRadius: 0,
 
         /**
-         * Breadcrumbs options.
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the traversed levels.
          *
          *
          * @since     next
