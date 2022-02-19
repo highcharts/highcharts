@@ -348,7 +348,7 @@ class Breadcrumbs {
          * CSS styles for all breadcrumbs.
          *
          * In styled mode, the breadcrumbs buttons are styled by the
-         * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+         * `.highcharts-breadcrumbs-buttons .highcharts-button` rule with its
          * different states.
          *  @type {Highcharts.SVGAttributes}
          *  @since     next
