@@ -392,6 +392,7 @@ class Breadcrumbs {
             chart.options.drilldown &&
                 chart.options.drilldown.drillUpButton,
             Breadcrumbs.defaultBreadcrumbsOptions,
+            chart.options.navigation && chart.options.navigation.breadcrumbs,
             userOptions
         );
 

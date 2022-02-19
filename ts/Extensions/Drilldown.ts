@@ -1192,14 +1192,7 @@ addEvent(Chart, 'afterDrilldown', function (): void {
 
     const chart = this,
         drilldownOptions = chart.options.drilldown,
-        navigationOptions = chart.options.navigation;
-
-    const breadcrumbsOptions = merge(
-        navigationOptions &&
-        navigationOptions.breadcrumbs,
-        drilldownOptions &&
-        drilldownOptions.breadcrumbs
-    );
+        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
 
     if (!chart.breadcrumbs) {
         chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);
@@ -1216,17 +1209,11 @@ addEvent(Chart, 'afterDrillUp', function (): void {
 
 addEvent(Chart, 'update', function (e: any): void {
     const breadcrumbs = this.breadcrumbs,
-        drilldownOptions = e.options.drilldown,
-        navigationOptions = e.options.navigation,
-        breadcrumbOptions = merge(
-            navigationOptions &&
-            navigationOptions.breadcrumbs,
-            drilldownOptions &&
-            drilldownOptions.breadcrumbs
-        );
+        breadcrumbOptions = e.options.drilldown &&
+            e.options.drilldown.breadcrumbs;
 
     if (breadcrumbs && breadcrumbOptions) {
-        breadcrumbs.update(breadcrumbOptions);
+        breadcrumbs.update(e.options.drilldown.breadcrumbs);
     }
 });
 
