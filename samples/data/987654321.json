@@ -1,0 +1,22 @@
+{
+    "xData": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "datasets": [{
+        "name": "Speed",
+        "data": [43, 52, 60, 62.5, 67, 64, 70, 68, 74, 75, 80, 98],
+        "unit": "km/h",
+        "type": "line",
+        "valueDecimals": 1
+    }, {
+        "name": "Elevation",
+        "data": [3002, 3023, 3569, 3662, 3896, 3742, 4229, 4592, 4783, 4947, 5324, 6057],
+        "unit": "m",
+        "type": "area",
+        "valueDecimals": 0
+    }, {
+        "name": "Heart rate",
+        "data": [0.75, 0.83, 1.09, 0.96, 1.08, 1.16, 1.21, 1.25, 1.32, 1.33, 1.42, 1.56],
+        "unit": "bpm",
+        "type": "area",
+        "valueDecimals": 0
+    }]
+}
