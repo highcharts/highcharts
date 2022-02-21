@@ -1099,7 +1099,7 @@ class TreemapSeries extends ScatterSeries {
                 renderer,
                 shadow,
                 shapeArgs,
-                shapeType: 'rect'
+                shapeType: (point.shapeType as any) || 'rect'
             });
 
             // If setRootNode is allowed, set a point cursor on clickables &
