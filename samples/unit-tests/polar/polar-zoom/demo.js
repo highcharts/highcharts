@@ -47,7 +47,11 @@ QUnit.test('Axes zoom', function (assert) {
             endOnTick: false,
             max: 8
         },
+        xAxis: {
+            max: 8
+        },
         series: [{
+            pointPlacement: 'between',
             type: 'column',
             data: [2, 4, 6, 8]
         }]
@@ -55,11 +59,11 @@ QUnit.test('Axes zoom', function (assert) {
 
     const controller = new TestController(chart),
         [centerX, centerY, diameter] = chart.pane[0].center,
-        min = 4,
-        max = 8,
+        minY = 4,
+        maxY = 8,
         xPos = centerX + chart.plotLeft,
-        minPosY = chart.yAxis[0].toPixels(min) + centerY - diameter / 2,
-        maxPosY = chart.yAxis[0].toPixels(max) + centerY - diameter / 2;
+        minPosY = chart.yAxis[0].toPixels(minY) + centerY - diameter / 2,
+        maxPosY = chart.yAxis[0].toPixels(maxY) + centerY - diameter / 2;
 
     controller.mouseDown(xPos, minPosY);
     controller.mouseMove(xPos, maxPosY);
@@ -67,17 +71,17 @@ QUnit.test('Axes zoom', function (assert) {
 
     assert.strictEqual(
         chart.yAxis[0].getExtremes().min,
-        min,
-        'Zooming from 4 to 8 should set correct min'
+        minY,
+        `Zooming y axis from ${minY} to ${maxY} should set correct min`
     );
 
     assert.strictEqual(
         chart.yAxis[0].getExtremes().max,
-        max,
-        'Zooming from 4 to 8 should set correct min'
+        maxY,
+        `Zooming y axis from ${minY} to ${maxY} should set correct max`
     );
 
-    chart.yAxis[0].setExtremes(0, 8);
+    chart.yAxis[0].setExtremes();
 
     controller.mouseDown(xPos, maxPosY);
     controller.mouseMove(xPos, minPosY);
@@ -85,13 +89,84 @@ QUnit.test('Axes zoom', function (assert) {
 
     assert.strictEqual(
         chart.yAxis[0].getExtremes().min,
-        min,
-        'Zooming from 8 to 4 should set correct min'
+        minY,
+        `Zooming y axis from ${maxY} to ${minY} should set correct min`
     );
 
     assert.strictEqual(
         chart.yAxis[0].getExtremes().max,
-        max,
-        'Zooming from 8 to 4 should set correct max'
+        maxY,
+        `Zooming y axis from ${maxY} to ${minY} should set correct max`
+    );
+
+    chart.update({
+        chart: {
+            zoomType: 'x'
+        }
+    });
+
+    const minX = 4,
+        maxX = 6,
+        yPos = centerY + chart.plotTop;
+
+    controller.mouseDown(xPos, yPos + diameter / 4);
+    controller.mouseMove(xPos - diameter / 4, yPos);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        minX,
+        `Zooming x axis from ${minX} to ${maxX} should set correct min`
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        maxX,
+        `Zooming x axis from ${minX} to ${maxX} should set correct max`
+    );
+
+    chart.xAxis[0].setExtremes();
+
+    controller.mouseDown(xPos - diameter / 4, yPos);
+    controller.mouseMove(xPos, yPos + diameter / 4);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        minX,
+        `Zooming x axis from ${maxX} to ${minX} should set correct min`
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        maxX,
+        `Zooming x axis from ${maxX} to ${minX} should set correct max`
+    );
+
+    chart.xAxis[0].setExtremes();
+    chart.yAxis[0].setExtremes();
+
+    chart.update({
+        chart: {
+            zoomType: 'xy'
+        }
+    });
+
+    controller.mouseDown(xPos - diameter / 4, yPos);
+    controller.mouseMove(xPos, yPos + diameter / 2);
+    controller.mouseUp();
+
+    assert.deepEqual(
+        [chart.xAxis[0].getExtremes().min, chart.yAxis[0].getExtremes().min],
+        [minX, minY],
+        `Zooming xy from (x1: ${maxX}, y1: ${minY})
+        to (x2: ${minX}, y2: ${maxY}) should set correct min`
+    );
+
+    assert.deepEqual(
+        [chart.xAxis[0].getExtremes().max, chart.yAxis[0].getExtremes().max],
+        [maxX, maxY],
+        `Zooming xy from (x1: ${maxX}, y1: ${minY})
+        to (x2: ${minX}, y2: ${maxY}) should set correct max`
     );
 });
