@@ -44,7 +44,7 @@ Configuration Data Options
 
 In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
-Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not be kick in.
+Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not kick in.
 
 Series boosting versus chart boosting
 -------------------------------------
