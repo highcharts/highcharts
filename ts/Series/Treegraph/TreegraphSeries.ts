@@ -171,8 +171,9 @@ class TreegraphSeries extends TreemapSeries {
              * @private
              */
             dataLabels: {
-                nodeFormatter: function (this: Point.PointLabelObject): string {
-                    return this.point.name;
+                enabled: true,
+                formatter: function (this: Point.PointLabelObject): string {
+                    return this.point.id;
                 },
                 /**
                  * Options for a _link_ label text which should follow link
@@ -365,24 +366,25 @@ class TreegraphSeries extends TreemapSeries {
      * Treegraph has two separate collecions of nodes and lines,
      * render dataLabels for both sets.
      */
-    // public drawDataLabels(): void {
-    //     if (this.options.dataLabels) {
-    //         const textPath = this.options.dataLabels.textPath;
+    public drawDataLabels(): void {
+        if (this.options.dataLabels) {
+            Series.prototype.drawDataLabels.call(this);
+            //     const textPath = this.options.dataLabels.textPath;
 
-    //         // Render node labels.
-    //         super.drawDataLabels.apply(this, arguments);
+            //     // Render node labels.
+            //     super.drawDataLabels.apply(this, arguments);
 
-    //         // Render link labels.
-    //         this.points = this.data;
-    //         this.options.dataLabels.textPath =
-    //             this.options.dataLabels.linkTextPath;
-    //         super.drawDataLabels.apply(this, arguments);
+            //     // Render link labels.
+            //     this.points = this.data;
+            //     this.options.dataLabels.textPath =
+            //         this.options.dataLabels.linkTextPath;
+            //     super.drawDataLabels.apply(this, arguments);
 
-    //         // Restore nodes.
-    //         this.points = this.points.concat(this.nodes);
-    //         this.options.dataLabels.textPath = textPath;
-    //     }
-    // }
+            //     // Restore nodes.
+            //     this.points = this.points.concat(this.nodes);
+            //     this.options.dataLabels.textPath = textPath;
+        }
+    }
 
     /**
      * Return the presentational attributes.
