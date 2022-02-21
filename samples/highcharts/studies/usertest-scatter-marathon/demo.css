@@ -20,6 +20,7 @@
 .highcharts-data-table {
     max-height: 500px;
     overflow: auto;
+    width: 550px;
     padding-bottom: 5px;
 }
 

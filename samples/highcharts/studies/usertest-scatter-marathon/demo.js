@@ -62,7 +62,9 @@ function updateTrends(chart, detail) {
             type: 'spline',
             showInLegend: false,
             enableMouseInteraction: false,
+            includeInDataExport: false,
             marker: { enabled: false },
+            xBinSize,
             name: 'Trend for ' + series.name
         });
     });
@@ -75,10 +77,10 @@ function announce(text) {
     setTimeout(() => (liveReg.textContent = ''), 4000);
 }
 
-function sonifyChart(chart) {
+function sonifyChart(chart, firstSeriesIx, secondSeriesIx) {
     focusResetElement = document.activeElement;
-    const firstSeries = chart.series[2];
-    const secondSeries = chart.series[3];
+    const firstSeries = chart.series[firstSeriesIx === undefined ? 2 : firstSeriesIx];
+    const secondSeries = chart.series[secondSeriesIx === undefined ? 3 : secondSeriesIx];
 
     announce('Play ' + firstSeries.name);
 
@@ -98,7 +100,7 @@ function sonifyChart(chart) {
             onEnd: function () {
                 setTimeout(() => announce('Play ' + secondSeries.name), 300);
                 setTimeout(function () {
-                    chart.series[3].sonify({
+                    secondSeries.sonify({
                         onEnd: function () {
                             setTimeout(() => {
                                 const series = secondSeries;
@@ -199,7 +201,8 @@ function makeChart(container, detail, duration) {
                 descriptionFormatter: function (point) {
                     const year = Math.round(point.x);
                     const time = Highcharts.dateFormat('%H:%M:%S', point.y);
-                    return `Period around ${year}, ${time} average winning time.`;
+                    const periodSize = Math.round(point.series.options.xBinSize);
+                    return `${periodSize} year period around ${year}, ${time} average winning time.`;
                 }
             },
             keyboardNavigation: {
@@ -208,7 +211,7 @@ function makeChart(container, detail, duration) {
                 }
             },
             screenReaderSection: {
-                beforeChartFormat: 'Interactive scatter plot with trend lines. The x axis, displaying years, ranges from 1895 to 2020. The y axis, displaying winning times, ranges from 2 hours to 3h 45m.'
+                beforeChartFormat: 'Interactive scatter plot with trend lines. The X axis, displaying years, ranges from 1895 to 2020. The Y axis, displaying winning times, ranges from 2 hours to 3h 45m.'
             }
         },
         lang: {
@@ -254,11 +257,6 @@ function makeChart(container, detail, duration) {
             }
         },
         plotOptions: {
-            scatter: {
-                sonification: {
-                    enabled: false
-                }
-            },
             series: {
                 states: {
                     inactive: {
@@ -294,3 +292,4 @@ document.getElementById('lowDetailSonify').onclick = () => sonifyChart(lowChart)
 document.getElementById('mediumDetailSonify').onclick = () => sonifyChart(mediumChart);
 document.getElementById('highDetailSonify').onclick = () => sonifyChart(highChart);
 document.getElementById('highestDetailSonify').onclick = () => sonifyChart(highestChart);
+document.getElementById('plotSonify').onclick = () => sonifyChart(highestChart, 0, 1);
