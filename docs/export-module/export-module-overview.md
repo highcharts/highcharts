@@ -7,10 +7,10 @@ Additionally there's the [export data module](https://api.highcharts.com/highcha
 
 To enable exporting, the module needs to be included, it can be downloaded from [https://code.highcharts.com/](https://code.highcharts.com/) and included after highcharts.js or highstock.js. The module can also be included directly from [https://code.highcharts.com/](https://code.highcharts.com/) like this:
 
-    
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>  
-    <!-- optional -->  
-    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>  
+
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <!-- optional -->
+    <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
 ### The button
@@ -31,23 +31,8 @@ Since Highcharts 3.0 and Highcharts Stock 1.3, the size of the exported image is
 *   If a size still hasn't been found, it defaults to 600 by 400 pixels.
 *   After rendering the chart with the above size, and all text sizes in relation to that, the actual image _resolution_ is determined by [exporting.scale](https://api.highcharts.com/highcharts/exporting.scale) which defaults to 2. In practice this means that a 600x400 chart will return an image of 1200x800 pixels by default. The rationale behind this is quite simple - if we used a scale of 1 and just set the sourceWidth to 1200 and sourceHeight to 800, all the text would become too small. And if we didn't scale it up, the resolution would be too small for print. 
 
-See also [Setting up the export server](https://highcharts.com/docs/export-module/setting-up-the-server).
+### The Highcharts Export Server
 
-### Description of POST parameters for the Highcharts Export Server
+For an overview of the features of the public export server, see the [documentation on GitHub](https://github.com/highcharts/node-export-server#http-server).
 
-Normally Highcharts sends data to the export server for saving a graph as an image or PDF. Use the following POST parameters if you want to request the export server yourself.
-
-|||
-|--- |--- |
-|svg|The string representation of a SVG file you want to export. Can be ignored when you provide the options parameter.|
-|options|Use this parameter if you want to create a graph out of a Highcharts configuration. The options are sent as a JSON string. This parameter overrides the svg option. Example of content:`{xAxis: {categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']},series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]};`|
-|type|The content-type of the file to output. Can be one of `image/png`, `image/jpeg`, `application/pdf`, or `image/svg+xml`.|
-|filename|The name of the exported file. Defaults to 'Chart'.|
-|scale|To scale the original SVG. For example, if the chart.width option in the chart configuration is set to 600 and the scale is set to 2, the output raster image will have a pixel width of 1200. So this is a convenient way of increasing the resolution without decreasing the font size and line widths in the chart. This is ignored if the -width parameter is set. For now we allow a maximum scaling of 4. This is for ensuring a good repsonse time. Scaling is a bit resource intensive.|
-|width|Set the exact pixel width of the exported image or pdf. This overrides the -scale parameter. The maximum allowed width is 2000px|
-|constr|The constructor name. Can be one of 'Chart' or 'StockChart'. This depends on whether you want to generate Highcharts Stock or basic Highcharts. Only applicable when using this in combination with the options parameter.|
-|callback|String containing a JavaScript callback. The callback is a function which will be called in the constructor of Highcharts to be executed on chart load. All code of the callback must be enclosed by a function. Only applicable when using this in combination with the options parameter. Example callback: `function(chart) { chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({ fill : '#FCFFC5', stroke : 'black', 'stroke-width' : 1 }).add(); }`|
-|resources|Stringified JSON which can contain two properties, js and css. Example: `{"css": "g.highcharts-series path {stroke-width:2;stroke: pink}", "js": "document.body.style.webkitTransform = \"rotate(-10deg)\";" }` css: css inserted in the body of the page, js: javascript inserted in the body of the page|
-|async|Can be true or false. Default is false. When setting async to true a download link is returned to the client, instead of an image. This download link can be reused for 30 seconds. After that, the file will be deleted from the server.|
-
-Here's an example of how to perform an Ajax Post and return an image: https://jsfiddle.net/6h8o16g0/
+See also [Setting up the export server](https://highcharts.com/docs/export-module/setting-up-the-server) for instructions on how to run your own export server.
