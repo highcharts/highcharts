@@ -25,7 +25,11 @@ import TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
 
 
 export type TreegraphLayoutTypes = 'Walker';
+export type linkOptions = {
+
+};
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
+    link: any;
     layout: string;
     reversed: boolean;
     marker: PointMarkerOptions;

@@ -23,6 +23,8 @@ import TreemapPointOptions from '../Treemap/TreemapPointOptions';
  * */
 
 export interface TreegraphPointOptions extends TreemapPointOptions {
+    borderRadius: any;
+    link: any;
 }
 
 export default TreegraphPointOptions;

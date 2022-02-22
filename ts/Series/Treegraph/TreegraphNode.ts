@@ -20,6 +20,8 @@ namespace TreegraphNode {
         public shift: number = 0;
         public change: number = 0;
         public children: Array<Node> = void 0 as any;
+        public x?: number;
+        public y?: number;
         public preX: number = 0;
         public column: number = void 0 as any;
         public oldParentNode?: Node;
