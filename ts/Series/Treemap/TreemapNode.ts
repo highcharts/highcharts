@@ -1,5 +1,6 @@
 import type TreemapSeries from './TreemapSeries.js';
 import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type TreemapPoint from './TreemapPoint.js';
 
 namespace TreemapNode {
     export interface NodeValuesObject extends BBoxObject {
@@ -27,6 +28,7 @@ namespace TreemapNode {
         visible = false;
         zIndex?: number;
         series: TreemapSeries = void 0 as any;
+        point: TreemapPoint = void 0 as any;
 
         public init(
             id: string,
@@ -92,9 +94,11 @@ namespace TreemapNode {
             series.nodeList.push(node);
             if (point) {
                 point.node = node;
+                node.point = point;
             }
             return node;
         }
     }
 }
+
 export default TreemapNode;
