@@ -140,7 +140,7 @@ function sonifyChart(chart, firstSeriesIx, secondSeriesIx) {
     }, 700);
 }
 
-function makeChart(container, detail, duration) {
+function makeChart(container, detail, duration, title) {
 
     // Parse CSV to desired format
     const csv = document.getElementById('csv').innerHTML;
@@ -197,12 +197,20 @@ function makeChart(container, detail, duration) {
             }
         },
         accessibility: {
+            series: {
+                pointDescriptionEnabledThreshold: false
+            },
             point: {
                 descriptionFormatter: function (point) {
-                    const year = Math.round(point.x);
                     const time = Highcharts.dateFormat('%H:%M:%S', point.y);
-                    const periodSize = Math.round(point.series.options.xBinSize);
-                    return `${periodSize} year period around ${year}, ${time} average winning time.`;
+                    const year = Math.round(point.x);
+                    if (point.series.type === 'scatter') {
+                        return `${year}, ${time} winning time, ${point.custom.name}`;
+                    }
+                    const periodSize = point.series.options.xBinSize;
+                    const yearStart = Math.round(point.x - periodSize / 2);
+                    const yearEnd = Math.round(point.x + periodSize / 2);
+                    return `${time} winning time, average between ${yearStart} and ${yearEnd}.`;
                 }
             },
             keyboardNavigation: {
@@ -211,7 +219,7 @@ function makeChart(container, detail, duration) {
                 }
             },
             screenReaderSection: {
-                beforeChartFormat: 'Interactive scatter plot with trend lines. The X axis, displaying years, ranges from 1895 to 2020. The Y axis, displaying winning times, ranges from 2 hours to 3h 45m.'
+                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The X axis, displaying years, ranges from 1895 to 2020. The Y axis, displaying winning times, ranges from 2 hours to 3h 45m.'
             }
         },
         lang: {
@@ -230,6 +238,9 @@ function makeChart(container, detail, duration) {
             }
         },
         title: {
+            text: title
+        },
+        subtitle: {
             text: 'Marathon winning times 1897-2018'
         },
         tooltip: {
@@ -281,11 +292,11 @@ function makeChart(container, detail, duration) {
     return chart;
 }
 
-const lowestChart = makeChart('lowestContainer', 3, 600);
-const lowChart = makeChart('lowContainer', 5, 800);
-const mediumChart = makeChart('mediumContainer', 8, 1000);
-const highChart = makeChart('highContainer', 12, 1600);
-const highestChart = makeChart('highestContainer', 20, 1800);
+const lowestChart = makeChart('lowestContainer', 3, 600, 'Lowest detail');
+const lowChart = makeChart('lowContainer', 5, 800, 'Low detail');
+const mediumChart = makeChart('mediumContainer', 8, 1000, 'Medium detail');
+const highChart = makeChart('highContainer', 12, 1600, 'High detail');
+const highestChart = makeChart('highestContainer', 20, 1800, 'Highest detail');
 
 document.getElementById('lowestDetailSonify').onclick = () => sonifyChart(lowestChart);
 document.getElementById('lowDetailSonify').onclick = () => sonifyChart(lowChart);

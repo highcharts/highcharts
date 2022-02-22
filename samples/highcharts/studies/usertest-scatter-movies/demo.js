@@ -97,11 +97,13 @@ function sonifySeries(series) {
                 if (focusResetElement) {
                     focusResetElement.focus();
                 }
-                series.update({
-                    accessibility: {
-                        enabled: true
-                    }
-                });
+                setTimeout(() => {
+                    series.update({
+                        accessibility: {
+                            enabled: true
+                        }
+                    });
+                }, 100);
             }
         }),
     400);
@@ -154,11 +156,20 @@ const chart = Highcharts.chart('container', {
                 document.getElementById('dataTable').focus();
             }
         },
+        series: {
+            pointDescriptionEnabledThreshold: false
+        },
         point: {
             descriptionFormatter: function (point) {
-                const imdbSegment = point.x.toFixed(1);
                 const rt = Math.round(point.y);
-                return `Segment around IMDB ${imdbSegment}, ${rt} average Rotten Tomatoes score.`;
+                const imdb = point.x.toFixed(1);
+                if (point.series.type !== 'scatter') {
+                    const imdbSegmentStart = (point.x - point.series.options.xBinSize / 2).toFixed(1);
+                    const imdbSegmentEnd = (point.x + point.series.options.xBinSize / 2).toFixed(1);
+                    return `${rt} Rotten Tomatoes score, average between ${imdbSegmentStart} and ${imdbSegmentEnd} IMDB ratings.`;
+                }
+
+                return `${point.options.title}, ${rt} Rotten Tomatoes, ${imdb} IMDB.`;
             }
         }
     },
@@ -222,13 +233,6 @@ Highcharts.addEvent(chart, 'exportData', function (e) {
     console.log(e.dataRows);
 });
 
-
-/*Highcharts.addEvent(chart, 'aftergetTableAST', function (e) {
-    const headerRow = e.tree.children[1].children[0].children;
-    headerRow[0].textContent = 'IMDB rating';
-    headerRow[1].textContent = 'Rotten Tomatoes score';
-});
-*/
 
 updateTrends(chart, 7);
 
