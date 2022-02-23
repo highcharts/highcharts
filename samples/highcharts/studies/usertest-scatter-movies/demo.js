@@ -63,7 +63,7 @@ function updateTrends(chart, detail) {
             includeInDataExport: false,
             marker: { enabled: false },
             xBinSize,
-            name: 'Trend for Movie ratings'
+            name: 'Trend average for Movie ratings'
         });
     });
     chart.redraw();
@@ -120,7 +120,21 @@ const chart = Highcharts.chart('container', {
             x: 1,
             y: 0,
             title: 2
-        }]
+        }],
+        parsed: function (columns) {
+            const rows = [];
+            for (let i = 1; i < columns[0].length; ++i) {
+                const row = columns.map(c => c[i]);
+                rows.push(row);
+            }
+            rows.sort((a, b) => a[1] - b[1]);
+
+            columns.forEach((col, colIx) => {
+                for (let i = 1; i < col.length; ++i) {
+                    col[i] = rows[i - 1][colIx];
+                }
+            });
+        }
     },
     exporting: {
         enabled: false
@@ -166,7 +180,7 @@ const chart = Highcharts.chart('container', {
                 if (point.series.type !== 'scatter') {
                     const imdbSegmentStart = (point.x - point.series.options.xBinSize / 2).toFixed(1);
                     const imdbSegmentEnd = (point.x + point.series.options.xBinSize / 2).toFixed(1);
-                    return `${rt} Rotten Tomatoes score, average between ${imdbSegmentStart} and ${imdbSegmentEnd} IMDB ratings.`;
+                    return `${rt} Rotten Tomatoes score, averaged between ${imdbSegmentStart} and ${imdbSegmentEnd} IMDB ratings.`;
                 }
 
                 return `${point.options.title}, ${rt} Rotten Tomatoes, ${imdb} IMDB.`;
@@ -195,6 +209,9 @@ const chart = Highcharts.chart('container', {
         title: {
             text: 'Rotten Tomatoes score'
         },
+        accessibility: {
+            rangeDescription: 'Data range: 24 to 97.'
+        },
         min: 20,
         max: 100
     },
@@ -207,6 +224,9 @@ const chart = Highcharts.chart('container', {
         },
         title: {
             text: 'IMDB score'
+        },
+        accessibility: {
+            rangeDescription: 'Data range: 4.4 to 9.0.'
         },
         min: 2,
         max: 10

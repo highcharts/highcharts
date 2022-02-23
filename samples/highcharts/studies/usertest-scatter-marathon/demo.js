@@ -65,7 +65,7 @@ function updateTrends(chart, detail) {
             includeInDataExport: false,
             marker: { enabled: false },
             xBinSize,
-            name: 'Trend for ' + series.name
+            name: 'Trend average for ' + series.name
         });
     });
     chart.redraw();
@@ -210,7 +210,7 @@ function makeChart(container, detail, duration, title) {
                     const periodSize = point.series.options.xBinSize;
                     const yearStart = Math.round(point.x - periodSize / 2);
                     const yearEnd = Math.round(point.x + periodSize / 2);
-                    return `${time} winning time, average between ${yearStart} and ${yearEnd}.`;
+                    return `${time} winning time, averaged between ${yearStart} and ${yearEnd}.`;
                 }
             },
             keyboardNavigation: {
@@ -219,7 +219,7 @@ function makeChart(container, detail, duration, title) {
                 }
             },
             screenReaderSection: {
-                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The X axis, displaying years, ranges from 1895 to 2020. The Y axis, displaying winning times, ranges from 2 hours to 3h 45m.'
+                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The X axis, displaying years, has data ranging from 1897 to 2018. The Y axis, displaying winning times, has data ranging from 2:02:57 to 3:30:00.'
             }
         },
         lang: {
