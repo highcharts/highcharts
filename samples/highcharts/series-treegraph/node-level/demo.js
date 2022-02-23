@@ -4,18 +4,11 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'treegraph',
-        keys: ['id', 'parent', 'column'],
+        keys: ['id', 'parent', 'level'],
         data: [
             ['A'],
-            ['B', 'A'],
-            ['D', 'A', 3],
-            ['E', 'B'],
-            ['F', 'B'],
-            ['G', 'D'],
-            ['H', 'D'],
-            ['I', 'D'],
-            ['J', 'E'],
-            ['K', 'E']
+            ['D', 'A', 3, 3],
+            ['B', 'A']
         ]
     }]
 });

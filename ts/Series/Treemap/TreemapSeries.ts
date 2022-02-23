@@ -1263,9 +1263,57 @@ class TreemapSeries extends ScatterSeries {
 
         series.nodeMap = {};
         series.nodeList = [];
-        return series.NodeClass.buildNode(series, '', -1, 0, parentList);
+        return series.buildTree('', -1, 0, parentList);
     }
 
+    public buildTree(
+        id: string,
+        index: number,
+        level: number,
+        list: Record<string, number[]>,
+        parent?: string
+    ): this['tree'] {
+        let series = this,
+            children: Array<TreemapNode.Node> = [],
+            point = series.points[index],
+            height = 0,
+            node: TreemapNode.Node,
+            child: TreemapNode.Node;
+
+        // Actions
+        (list[id] || []).forEach(function (i: number): void {
+            child = series.buildTree(
+                series.points[i].id,
+                i,
+                level + 1,
+                list,
+                id
+            );
+            height = Math.max(child.height + 1, height);
+            children.push(child);
+        });
+        node = new series.NodeClass().init(
+            id,
+            index,
+            children,
+            height,
+            level,
+            series,
+            parent
+        );
+
+        children.forEach((child): void => {
+            child.parentNode = node;
+        });
+
+        series.nodeMap[node.id] = node;
+        series.nodeList.push(node);
+        if (point) {
+            point.node = node;
+            node.point = point;
+        }
+        return node;
+    }
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
