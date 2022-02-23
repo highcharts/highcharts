@@ -6,16 +6,16 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: '#222',
-                nodeFormat: '{point.name}',
-                format: '{point.from} \u2192 {point.to}'
+                linkFormat: '{point.id} \u2192 {point.parent}'
             },
             type: 'treegraph',
-            keys: ['from', 'to'],
+            keys: ['id', 'parent'],
             data: [
-                ['A', 'B'],
-                ['B', 'C'],
-                ['B', 'E'],
-                ['A', 'D']
+                ['A'],
+                ['B', 'A'],
+                ['C', 'B'],
+                ['E', 'B'],
+                ['D', 'A']
             ]
         }
     ]

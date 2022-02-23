@@ -40,6 +40,7 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import seriesDefaults from '../../Core/Series/SeriesDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -407,6 +408,10 @@ class TreegraphSeries extends TreemapSeries {
 
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
+
+        series.links.forEach((link): void => {
+            link.destroy();
+        });
         series.links = series.getLinks();
         rootNode = series.nodeMap[rootId];
 
@@ -434,7 +439,6 @@ class TreegraphSeries extends TreemapSeries {
         this.layoutAlgorythm.calculatePositions(series);
         series.layoutModifier = this.getLayoutModifier();
 
-
         this.points.forEach((point): void => {
             this.translateNode(point);
         });
@@ -447,6 +451,9 @@ class TreegraphSeries extends TreemapSeries {
 
     public translateLink(link: TreegraphLink): void {
         OrganizationSeries.prototype.translateLink.apply(this, arguments);
+        if (link.dlBox) {
+            link.dlBox.centerX = link.dlBox.x;
+        }
     }
 
     /**
@@ -465,7 +472,7 @@ class TreegraphSeries extends TreemapSeries {
             this.points = this.links as any;
             (this as any).options.dataLabels.textPath =
                 (this as any).options.dataLabels.linkTextPath;
-            super.drawDataLabels.apply(this, arguments);
+            Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Restore nodes.
             this.points = this.points.concat(points);
@@ -527,19 +534,12 @@ class TreegraphSeries extends TreemapSeries {
         }
         return attribs;
     }
-    // public pointAttribs(): SVGAttributes {
-    //     const { opacity, ...attrs } = Series.prototype.pointAttribs.apply(
-    //         this,
-    //         arguments
-    //     );
-    //     return attrs;
-    // }
 
     public drawPoints(): void {
         super.drawPoints.apply(this, arguments);
         const points = this.points;
         this.points = this.links as any;
-        OrganizationSeries.prototype.drawPoints.apply(this, arguments);
+        ColumnSeries.prototype.drawPoints.apply(this, arguments);
         this.points = points;
     }
     /**

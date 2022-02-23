@@ -9,16 +9,13 @@ Highcharts.chart('container', {
                 radius: 30
             },
             type: 'treegraph',
-            keys: ['from', 'to'],
-            dataLabels: {
-                allowOverlap: false
-            },
+            keys: ['id', 'parent'],
             data: [
-                { id: 'A' },
-                { id: 'B', parent: 'A' },
-                { id: 'C', parent: 'B' },
-                { id: 'E', parent: 'B' },
-                { id: 'D', parent: 'A' }
+                ['A'],
+                ['B', 'A'],
+                ['C', 'B'],
+                ['E', 'B'],
+                ['D', 'A']
             ]
         }
     ]
