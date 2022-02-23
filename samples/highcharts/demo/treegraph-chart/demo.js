@@ -20,12 +20,18 @@ Highcharts.chart('container', {
 
     plotOptions: {
         treegraph: {
+            marker: {
+                symbol: 'rect',
+                height: 70,
+                width: 50,
+                fillColor: markerColor
+            },
+
+            link: {
+                lineWidth: 4,
+                color: markerColor
+            },
             dataLabels: {
-                nodeFormatter: function () {
-                    return this.point.description ?
-                        `${this.point.name}<br>${this.point.description}` :
-                        `${this.point.name}`;
-                },
                 color: dataLabelColor,
                 style: {
                     width: 70,
@@ -38,20 +44,8 @@ Highcharts.chart('container', {
     series: [
         {
             type: 'treegraph',
-            marker: {
-                symbol: 'rect',
-                height: 70,
-                width: 50,
-                fillColor: markerColor
-            },
 
-            link: {
-                type: 'curved',
-                lineWidth: 2,
-                color: markerColor
-            },
-
-            nodes: [
+            data: [
                 {
                     id: 'Durin the Deathless',
                     color: kingBorderColor,
@@ -61,14 +55,16 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Durin VI',
+                    parent: 'Durin the Deathless',
                     color: kingBorderColor,
-                    level: 2,
+                    level: 3,
                     marker: {
                         lineWidth: 3
                     }
                 },
                 {
                     id: 'Nain I',
+                    parent: 'Durin VI',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -76,6 +72,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Thrain I',
+                    parent: 'Nain I',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -83,6 +80,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Thorin I',
+                    parent: 'Thrain I',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -90,6 +88,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Gloin',
+                    parent: 'Thorin I',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -97,6 +96,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Oin',
+                    parent: 'Gloin',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -104,6 +104,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Nain II',
+                    parent: 'Oin',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -111,42 +112,26 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Dain I',
+                    parent: 'Nain II',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
                     }
                 },
+                { id: 'Borin', parent: 'Nain II' },
                 {
                     id: 'Thror',
+                    parent: 'Dain I',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
                     }
                 },
+                { id: 'Fror', parent: 'Dain I' },
+                { id: 'Gror', parent: 'Dain I' },
                 {
                     id: 'Thrain II',
-                    color: kingBorderColor,
-                    marker: {
-                        lineWidth: 3
-                    }
-                },
-                {
-                    id: 'Dain II IronFoot',
-                    color: kingBorderColor,
-                    marker: {
-                        lineWidth: 3
-                    }
-                },
-                {
-                    id: 'Thorin II Stonehelm',
-                    color: kingBorderColor,
-                    marker: {
-                        lineWidth: 3
-                    }
-                },
-                {
-                    id: 'Durin VII',
-                    level: 15,
+                    parent: 'Thror',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -154,6 +139,7 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Thorin II Oakenshield',
+                    parent: 'Thrain II',
                     name: 'Thorin II Oakenshield',
                     description: '2746 - 2941',
 
@@ -170,25 +156,11 @@ Highcharts.chart('container', {
                         fillColor: expeditionColor
                     }
                 },
-                {
-                    id: 'Gimli',
-                    name: 'Gimli',
-                    description: '2879 - 120FA?',
-                    marker: {
-                        symbol: 'circle',
-                        radius: 35
-                    }
-                },
-                {
-                    id: 'Fili',
-                    name: 'Fili',
-                    description: '2859 - 2941',
-                    marker: {
-                        fillColor: expeditionColor
-                    }
-                },
+                { id: 'Frerin', parent: 'Thrain II' },
+                { id: 'Dis', parent: 'Thrain II' },
                 {
                     id: 'Kili',
+                    parent: 'Dis',
                     name: 'Kili',
                     description: '2864 - 2941',
                     marker: {
@@ -196,7 +168,45 @@ Highcharts.chart('container', {
                     }
                 },
                 {
+                    id: 'Fili',
+                    parent: 'Dis',
+                    name: 'Fili',
+                    description: '2859 - 2941',
+                    marker: {
+                        fillColor: expeditionColor
+                    }
+                },
+                { id: 'Nain', parent: 'Gror' },
+                {
+                    id: 'Dain II IronFoot',
+                    parent: 'Nain',
+                    color: kingBorderColor,
+                    marker: {
+                        lineWidth: 3
+                    }
+                },
+                {
+                    id: 'Thorin II Stonehelm',
+                    parent: 'Dain II IronFoot',
+                    color: kingBorderColor,
+                    marker: {
+                        lineWidth: 3
+                    }
+                },
+                {
+                    id: 'Durin VII',
+                    parent: 'Thorin II Stonehelm',
+                    level: 15,
+                    color: kingBorderColor,
+                    marker: {
+                        lineWidth: 3
+                    }
+                },
+                { id: 'Farin', parent: 'Borin' },
+                { id: 'Fundin', parent: 'Farin' },
+                {
                     id: 'Balin',
+                    parent: 'Fundin',
                     name: 'Balin',
                     description: '2763 - 2994',
                     marker: {
@@ -205,14 +215,17 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Dwalin',
+                    parent: 'Fundin',
                     name: 'Dwalin',
                     description: '2772 - 3112',
                     marker: {
                         fillColor: expeditionColor
                     }
                 },
+                { id: 'Groin', parent: 'Farin' },
                 {
                     id: 'Oin II',
+                    parent: 'Groin',
                     name: 'Oin II',
                     description: '2774 - 2994',
                     marker: {
@@ -221,46 +234,23 @@ Highcharts.chart('container', {
                 },
                 {
                     id: 'Gloin II',
+                    parent: 'Groin',
                     name: 'Gloin II',
                     description: '2783 - 15 F.A.',
                     marker: {
                         fillColor: expeditionColor
                     }
+                },
+                {
+                    id: 'Gimli',
+                    parent: 'Gloin II',
+                    name: 'Gimli',
+                    description: '2879 - 120FA?',
+                    marker: {
+                        symbol: 'circle',
+                        radius: 35
+                    }
                 }
-            ],
-            keys: ['from', 'to'],
-
-            data: [
-                ['Durin the Deathless', 'Durin VI'],
-                ['Durin VI', 'Nain I'],
-                ['Nain I', 'Thrain I'],
-                ['Thrain I', 'Thorin I'],
-                ['Thorin I', 'Gloin'],
-                ['Gloin', 'Oin'],
-                ['Oin', 'Nain II'],
-                ['Nain II', 'Dain I'],
-                ['Nain II', 'Borin'],
-                ['Dain I', 'Thror'],
-                ['Dain I', 'Fror'],
-                ['Dain I', 'Gror'],
-                ['Thror', 'Thrain II'],
-                ['Thrain II', 'Thorin II Oakenshield'],
-                ['Thrain II', 'Frerin'],
-                ['Thrain II', 'Dis'],
-                ['Dis', 'Kili'],
-                ['Dis', 'Fili'],
-                ['Gror', 'Nain'],
-                ['Nain', 'Dain II IronFoot'],
-                ['Dain II IronFoot', 'Thorin II Stonehelm'],
-                ['Thorin II Stonehelm', 'Durin VII'],
-                ['Borin', 'Farin'],
-                ['Farin', 'Fundin'],
-                ['Fundin', 'Balin'],
-                ['Fundin', 'Dwalin'],
-                ['Farin', 'Groin'],
-                ['Groin', 'Oin II'],
-                ['Groin', 'Gloin II'],
-                ['Gloin II', 'Gimli']
             ]
         }
     ],
