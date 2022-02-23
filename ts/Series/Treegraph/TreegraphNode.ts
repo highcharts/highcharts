@@ -10,6 +10,7 @@
 
 import type TreegraphSeries from './TreegraphSeries.js';
 import TreemapNode from '../Treemap/TreemapNode.js';
+import TreegraphPoint from './TreegraphPoint.js';
 
 namespace TreegraphNode {
     export interface NodeValuesObject extends TreemapNode.NodeValuesObject {}
@@ -23,6 +24,7 @@ namespace TreegraphNode {
         public x?: number;
         public y?: number;
         public preX: number = 0;
+        public point: TreegraphPoint = void 0 as any;
         public column: number = void 0 as any;
         public oldParentNode?: Node;
         public parentNode: Node = void 0 as any;
@@ -35,7 +37,7 @@ namespace TreegraphNode {
         public nodeHeight?: number;
         public series: TreegraphSeries = void 0 as any;
         public wasVisited = false;
-
+        public collapsed: boolean = false;
         /**
          * Get the next left node which is either first child or thread.
          *
