@@ -3,21 +3,19 @@ Highcharts.chart('container', {
         text: 'Treegraph: move the node to different level.'
     },
     series: [{
-        nodes: [{
-            id: 'B',
-            level: 3
-        }],
         type: 'treegraph',
-        keys: ['from', 'to'],
+        keys: ['id', 'parent', 'column'],
         data: [
-            ['A', 'B'],
-            ['B', 'C'],
-            ['B', 'I'],
-            ['A', 'D'],
-            ['A', 'E'],
-            ['E', 'F'],
-            ['E', 'G'],
-            ['E', 'H']
+            ['A'],
+            ['B', 'A'],
+            ['D', 'A', 3],
+            ['E', 'B'],
+            ['F', 'B'],
+            ['G', 'D'],
+            ['H', 'D'],
+            ['I', 'D'],
+            ['J', 'E'],
+            ['K', 'E']
         ]
     }]
 });

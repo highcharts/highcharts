@@ -10,12 +10,13 @@ Highcharts.chart('container', {
             type: 'straight'
         },
         type: 'treegraph',
-        keys: ['from', 'to', 'link.type'],
+        keys: ['id', 'parent', 'link.type'],
         data: [
-            ['A', 'B', 'default'],
-            ['B', 'C'],
-            ['B', 'E', 'curved'],
-            ['A', 'D']
+            ['A'],
+            ['B', 'A', 'curved'],
+            ['C', 'B', 'default'],
+            ['E', 'B'],
+            ['D', 'A']
         ]
     }]
 });
