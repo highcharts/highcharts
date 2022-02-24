@@ -100,7 +100,8 @@ class Announcer {
             clearTimeout(this.clearAnnouncementRegionTimer);
         }
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
-            this.announceRegion.innerHTML = AST.emptyHTML;
+            // TODO: Fix properly after user testing
+            this.announceRegion.innerHTML = '';
             delete this.clearAnnouncementRegionTimer;
         }, 1000);
     }
