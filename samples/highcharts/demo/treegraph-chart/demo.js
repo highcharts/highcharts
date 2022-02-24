@@ -33,6 +33,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: dataLabelColor,
+                format: '{point.id} \n {point.description}',
                 style: {
                     width: 70,
                     textOverflow: 'clip'
@@ -57,7 +58,6 @@ Highcharts.chart('container', {
                     id: 'Durin VI',
                     parent: 'Durin the Deathless',
                     color: kingBorderColor,
-                    level: 3,
                     marker: {
                         lineWidth: 3
                     }
