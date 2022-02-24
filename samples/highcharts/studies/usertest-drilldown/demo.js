@@ -186,6 +186,19 @@ function makeChart(container, title, expandableLabel) {
             }]
         }],
         drilldown: {
+            breadcrumbs: {
+                showFullPath: false,
+                floating: true,
+                buttonTheme: {
+                    fill: '#f7f7f7',
+                    padding: 8,
+                    stroke: '#cccccc',
+                    'stroke-width': 1
+                },
+                position: {
+                    align: 'right'
+                }
+            },
             series: [{
                 id: 'animals',
                 name: 'Animals',
