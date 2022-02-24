@@ -5,16 +5,29 @@
 <script src="https://code.highcharts.com/modules/sonification.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
+<main>
 <h1>Scatter plot trends example - movie rating dataset</h1>
 <p>Here we are visualizing a simple dataset plotting the IMDB rating of popular movies against the Rotten Tomatoes score of the same movie.</p>
+<p>There is a clear correlation between the ratings, but there are discrepancies, particularly with the lower ratings.</p>
 
+<h2>Play as sound</h2>
+<p>
+   Click the buttons below to play either a simplified trend of the plot, or every data point in the plot as sound. Each sound represents a data value. The sounds will play from left to right along the X axis, from lowest to highest IMDB rating. The pitch of the sounds will go up or down to indicate an increase or decrease in Rotten Tomatoes score as you go along.
+</p>
+<label>
+   Sound speed
+   <input id="speed" type="range" min="1" max="10" value="5">
+</label>
 <button id="sonifyTrend">Play trend as sound</button>
 <button id="sonifyPlot">Play plot as sound</button>
 
+<h2>Visualization</h2>
+<a href="#tables">Go to data tables</a>
 <figure>
     <div id="container"></div>
 </figure>
 
+<h2 id="tables">Data tables</h2>
 <div class="highcharts-data-table">
 <table tabindex="-1" summary="Table representation of trend line." id="dataTableTrend">
     <caption class="highcharts-table-caption">Movie ratings on IMDB vs Rotten Tomatoes - Trend</caption>
@@ -57,1977 +70,1978 @@
 </table>
 
 <table tabindex="-1" summary="Table representation of plot." id="dataTable">
-    <caption class="highcharts-table-caption">Movie ratings on IMDB vs Rotten Tomatoes - Data points</caption>
-    <thead>
-       <tr>
-          <th scope="col">IMDB rating</th>
-          <th scope="col">Rotten Tomatoes score</th>
-          <th scope="col">Movie title</th>
-       </tr>
-    </thead>
-    <tbody>
-       <tr>
-          <td>4.4</td>
-          <td>38</td>
-          <td>Staying Alive</td>
-       </tr>
-       <tr>
-          <td>4.6</td>
-          <td>61</td>
-          <td>The Twilight Saga: New Moon</td>
-       </tr>
-       <tr>
-          <td>4.8</td>
-          <td>24</td>
-          <td>The Flintstones</td>
-       </tr>
-       <tr>
-          <td>4.9</td>
-          <td>94</td>
-          <td>The Twilight Saga: Breaking Dawn - Part 1</td>
-       </tr>
-       <tr>
-          <td>4.9</td>
-          <td>60</td>
-          <td>The Twilight Saga: Eclipse</td>
-       </tr>
-       <tr>
-          <td>5.1</td>
-          <td>46</td>
-          <td>Smokey and the Bandit II</td>
-       </tr>
-       <tr>
-          <td>5.3</td>
-          <td>35</td>
-          <td>Dr. Dolittle</td>
-       </tr>
-       <tr>
-          <td>5.3</td>
-          <td>28</td>
-          <td>Godzilla</td>
-       </tr>
-       <tr>
-          <td>5.4</td>
-          <td>33</td>
-          <td>Batman Forever</td>
-       </tr>
-       <tr>
-          <td>5.5</td>
-          <td>44</td>
-          <td>The Smurfs</td>
-       </tr>
-       <tr>
-          <td>5.5</td>
-          <td>44</td>
-          <td>The Nutty Professor</td>
-       </tr>
-       <tr>
-          <td>5.5</td>
-          <td>38</td>
-          <td>Crocodile" Dundee II</td>
-       </tr>
-       <tr>
-          <td>5.6</td>
-          <td>70</td>
-          <td>The Twilight Saga: Breaking Dawn - Part 2</td>
-       </tr>
-       <tr>
-          <td>5.6</td>
-          <td>40</td>
-          <td>101 Dalmatians</td>
-       </tr>
-       <tr>
-          <td>5.7</td>
-          <td>27</td>
-          <td>Planet of the Apes</td>
-       </tr>
-       <tr>
-          <td>5.7</td>
-          <td>69</td>
-          <td>The Best Little Whorehouse in Texas</td>
-       </tr>
-       <tr>
-          <td>5.7</td>
-          <td>54</td>
-          <td>The Blue Lagoon</td>
-       </tr>
-       <tr>
-          <td>5.7</td>
-          <td>38</td>
-          <td>Jaws 2</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>52</td>
-          <td>Transformers: Age of Extinction</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>48</td>
-          <td>Indecent Proposal</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>47</td>
-          <td>Look Who's Talking</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>59</td>
-          <td>Cocktail</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>47</td>
-          <td>Three Men and a Baby</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>47</td>
-          <td>The Golden Child</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>52</td>
-          <td>The Karate Kid, Part II</td>
-       </tr>
-       <tr>
-          <td>5.8</td>
-          <td>30</td>
-          <td>King Kong</td>
-       </tr>
-       <tr>
-          <td>5.9</td>
-          <td>37</td>
-          <td>Jurassic Park III</td>
-       </tr>
-       <tr>
-          <td>5.9</td>
-          <td>38</td>
-          <td>Twins</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>58</td>
-          <td>Transformers: Revenge of the Fallen</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>49</td>
-          <td>Shark Tale</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>46</td>
-          <td>Men in Black II</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>67</td>
-          <td>Pearl Harbor</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>55</td>
-          <td>How the Grinch Stole Christmas</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>44</td>
-          <td>Mission: Impossible II</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>39</td>
-          <td>Eraser</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>49</td>
-          <td>Casper</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>51</td>
-          <td>Kindergarten Cop</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>38</td>
-          <td>The Jewel of the Nile</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>45</td>
-          <td>Any Which Way You Can</td>
-       </tr>
-       <tr>
-          <td>6</td>
-          <td>60</td>
-          <td>Private Benjamin</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>53</td>
-          <td>Shrek the Third</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>61</td>
-          <td>Superman Returns</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>41</td>
-          <td>Die Another Day</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>43</td>
-          <td>Deep Impact</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>43</td>
-          <td>Waterworld</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>64</td>
-          <td>The Bodyguard</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>62</td>
-          <td>Flashdance</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>58</td>
-          <td>Porky's</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>62</td>
-          <td>The Cannonball Run</td>
-       </tr>
-       <tr>
-          <td>6.1</td>
-          <td>38</td>
-          <td>The Deep</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>54</td>
-          <td>Indiana Jones and the Kingdom of the Crystal Skull</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>51</td>
-          <td>Spider-Man 3</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>58</td>
-          <td>Twister</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>65</td>
-          <td>Sister Act</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>53</td>
-          <td>Honey, I Shrunk the Kids</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>43</td>
-          <td>Moonraker</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>53</td>
-          <td>The Amityville Horror</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>56</td>
-          <td>Every Which Way but Loose</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>62</td>
-          <td>Hooper</td>
-       </tr>
-       <tr>
-          <td>6.2</td>
-          <td>60</td>
-          <td>The Apple Dumpling Gang</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>51</td>
-          <td>Cars 2</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>56</td>
-          <td>Transformers: Dark of the Moon</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>58</td>
-          <td>Meet the Fockers</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>63</td>
-          <td>The Mummy Returns</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>74</td>
-          <td>My Best Friend's Wedding</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>51</td>
-          <td>Cliffhanger</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>57</td>
-          <td>Spies Like Us</td>
-       </tr>
-       <tr>
-          <td>6.3</td>
-          <td>53</td>
-          <td>Shampoo</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>54</td>
-          <td>Shrek Forever After</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>66</td>
-          <td>Mamma Mia!</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>67</td>
-          <td>Night at the Museum</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>60</td>
-          <td>Ocean's Twelve</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>50</td>
-          <td>The Day After Tomorrow</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>47</td>
-          <td>Terminator 3: Rise of the Machines</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>47</td>
-          <td>Dinosaur</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>64</td>
-          <td>The Perfect Storm</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>54</td>
-          <td>What Women Want</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>50</td>
-          <td>The World Is Not Enough</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>66</td>
-          <td>Air Force One</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>58</td>
-          <td>Beverly Hills Cop II</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>58</td>
-          <td>The Secret of My Success</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>60</td>
-          <td>Rambo: First Blood Part II</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>72</td>
-          <td>Footloose</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>57</td>
-          <td>Mr. Mom</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>42</td>
-          <td>Star Trek: The Motion Picture</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>56</td>
-          <td>Funny Lady</td>
-       </tr>
-       <tr>
-          <td>6.4</td>
-          <td>77</td>
-          <td>The Other Side of the Mountain</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>53</td>
-          <td>The Hangover Part II</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>55</td>
-          <td>Alice in Wonderland</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>60</td>
-          <td>Hancock</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>67</td>
-          <td>National Treasure: Book of Secrets</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>70</td>
-          <td>Happy Feet</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>57</td>
-          <td>The Da Vinci Code</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>58</td>
-          <td>Mr. &amp;amp; Mrs. Smith</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>42</td>
-          <td>War of the Worlds</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>78</td>
-          <td>Bad Boys II</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>52</td>
-          <td>The Lost World: Jurassic Park</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>53</td>
-          <td>Tomorrow Never Dies</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>61</td>
-          <td>The Pelican Brief</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>61</td>
-          <td>Home Alone 2: Lost in New York</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>61</td>
-          <td>Ghostbusters II</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>62</td>
-          <td>The Witches of Eastwick</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>58</td>
-          <td>Crocodile" Dundee</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>68</td>
-          <td>Back to School</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>69</td>
-          <td>Annie</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>59</td>
-          <td>Oh, God!</td>
-       </tr>
-       <tr>
-          <td>6.5</td>
-          <td>71</td>
-          <td>A Star Is Born</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>73</td>
-          <td>The Chronicles of Narnia: Prince Caspian</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>73</td>
-          <td>My Big Fat Greek Wedding</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>59</td>
-          <td>What Lies Beneath</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>71</td>
-          <td>Austin Powers: The Spy Who Shagged Me</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>60</td>
-          <td>Star Wars Episode I: The Phantom Menace</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>73</td>
-          <td>Armageddon</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>64</td>
-          <td>Lethal Weapon 4</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>62</td>
-          <td>Ransom</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>64</td>
-          <td>Pocahontas</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>56</td>
-          <td>Stakeout</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>60</td>
-          <td>Cocoon</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>64</td>
-          <td>Police Academy</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>61</td>
-          <td>Star Trek III: The Search for Spock</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>48</td>
-          <td>Octopussy</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>54</td>
-          <td>Sudden Impact</td>
-       </tr>
-       <tr>
-          <td>6.6</td>
-          <td>74</td>
-          <td>9 to 5</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>62</td>
-          <td>Ice Age: Continental Drift</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>54</td>
-          <td>Pirates of the Caribbean: On Stranger Tides</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>57</td>
-          <td>Angels &amp;amp; Demons</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>66</td>
-          <td>Madagascar: Escape 2 Africa</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>58</td>
-          <td>Quantum of Solace</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>51</td>
-          <td>Charlie and the Chocolate Factory</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>62</td>
-          <td>Hitch</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>57</td>
-          <td>Bruce Almighty</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>61</td>
-          <td>The Matrix Revolutions</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>67</td>
-          <td>Signs</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>59</td>
-          <td>Star Wars Episode II: Attack of the Clones</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>63</td>
-          <td>Hannibal</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>62</td>
-          <td>Lethal Weapon 3</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>64</td>
-          <td>City Slickers</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>76</td>
-          <td>Hook</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>65</td>
-          <td>Hot Shots!</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>81</td>
-          <td>Teenage Mutant Ninja Turtles</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>80</td>
-          <td>Rocky IV</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>74</td>
-          <td>Rocky III</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>70</td>
-          <td>Revenge of the Pink Panther</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>71</td>
-          <td>Midway</td>
-       </tr>
-       <tr>
-          <td>6.7</td>
-          <td>67</td>
-          <td>Signs</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>73</td>
-          <td>The Hunger Games: Mockingjay - Part 1</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>69</td>
-          <td>Mission: Impossible III</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>62</td>
-          <td>X-Men: The Last Stand</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>75</td>
-          <td>Liar Liar</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>61</td>
-          <td>Jumanji</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>67</td>
-          <td>The Mask</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>75</td>
-          <td>Sleepless in Seattle</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>64</td>
-          <td>The Firm</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>66</td>
-          <td>The Addams Family</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>70</td>
-          <td>Ruthless People</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>84</td>
-          <td>Top Gun</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>72</td>
-          <td>Risky Business</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>64</td>
-          <td>For Your Eyes Only</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>75</td>
-          <td>Superman II</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>77</td>
-          <td>Stir Crazy</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>72</td>
-          <td>Saturday Night Fever</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>85</td>
-          <td>Smokey and the Bandit</td>
-       </tr>
-       <tr>
-          <td>6.8</td>
-          <td>59</td>
-          <td>The Enforcer</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>66</td>
-          <td>The Amazing Spider-Man 2</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>71</td>
-          <td>Men in Black 3</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>71</td>
-          <td>Ice Age: The Meltdown</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>67</td>
-          <td>Madagascar</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>61</td>
-          <td>The Chronicles of Narnia: The Lion, the Witch and the Wardrobe</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>75</td>
-          <td>Independence Day</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>69</td>
-          <td>The Hunchback of Notre Dame</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>74</td>
-          <td>Clear and Present Danger</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>76</td>
-          <td>Mrs. Doubtfire</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>64</td>
-          <td>Basic Instinct</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>72</td>
-          <td>Robin Hood: Prince of Thieves</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>66</td>
-          <td>Presumed Innocent</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>68</td>
-          <td>Pretty Woman</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>85</td>
-          <td>Coming to America</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>71</td>
-          <td>Fatal Attraction</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>71</td>
-          <td>An American Tail</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>69</td>
-          <td>Romancing the Stone</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>69</td>
-          <td>48 Hrs.</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>77</td>
-          <td>Arthur</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>80</td>
-          <td>Stripes</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>68</td>
-          <td>Heaven Can Wait</td>
-       </tr>
-       <tr>
-          <td>6.9</td>
-          <td>72</td>
-          <td>Silver Streak</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>73</td>
-          <td>Madagascar 3: Europe's Most Wanted</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>63</td>
-          <td>Ice Age: Dawn of the Dinosaurs</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>79</td>
-          <td>Meet the Parents</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>79</td>
-          <td>Notting Hill</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>75</td>
-          <td>The Mummy</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>73</td>
-          <td>Batman Returns</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>85</td>
-          <td>Wayne's World</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>80</td>
-          <td>Ghost</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>81</td>
-          <td>An Officer and a Gentleman</td>
-       </tr>
-       <tr>
-          <td>7</td>
-          <td>77</td>
-          <td>Time Bandits</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>71</td>
-          <td>Maleficent</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>78</td>
-          <td>Thor: The Dark World</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>77</td>
-          <td>The Amazing Spider-Man</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>72</td>
-          <td>Iron Man 2</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>72</td>
-          <td>Pirates of the Caribbean: At World's End</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>80</td>
-          <td>The Passion of the Christ</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>60</td>
-          <td>There's Something About Mary</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>71</td>
-          <td>Mission: Impossible</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>74</td>
-          <td>Four Weddings and a Funeral</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>70</td>
-          <td>Die Hard 2</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>81</td>
-          <td>Moonstruck</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>75</td>
-          <td>WarGames</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>81</td>
-          <td>Rocky II</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>76</td>
-          <td>The Spy Who Loved Me</td>
-       </tr>
-       <tr>
-          <td>7.1</td>
-          <td>82</td>
-          <td>The Return of the Pink Panther</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>84</td>
-          <td>Fast &amp;amp; Furious 6</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>76</td>
-          <td>Man of Steel</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>68</td>
-          <td>I Am Legend</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>86</td>
-          <td>Transformers</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>80</td>
-          <td>Cars</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>69</td>
-          <td>Shrek 2</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>74</td>
-          <td>Troy</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>72</td>
-          <td>The Matrix Reloaded</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>74</td>
-          <td>Tarzan</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>72</td>
-          <td>A Bug's Life</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>80</td>
-          <td>Shakespeare in Love</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>79</td>
-          <td>Men in Black</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>79</td>
-          <td>The Full Monty</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>83</td>
-          <td>GoldenEye</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>76</td>
-          <td>Speed</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>76</td>
-          <td>True Lies</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>76</td>
-          <td>Born on the Fourth of July</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>77</td>
-          <td>Lethal Weapon 2</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>84</td>
-          <td>Out Of Africa</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>77</td>
-          <td>Gremlins</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>81</td>
-          <td>The Karate Kid</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>81</td>
-          <td>Chariots of Fire</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>75</td>
-          <td>The Four Seasons</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>85</td>
-          <td>The Jerk</td>
-       </tr>
-       <tr>
-          <td>7.2</td>
-          <td>88</td>
-          <td>Grease</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>79</td>
-          <td>Iron Man 3</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>81</td>
-          <td>The Hunger Games</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>83</td>
-          <td>Fast Five</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>74</td>
-          <td>Kung Fu Panda 2</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>72</td>
-          <td>Pirates of the Caribbean: Dead Man's Chest</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>50</td>
-          <td>King Kong</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>81</td>
-          <td>Spider-Man 2</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>79</td>
-          <td>Harry Potter and the Chamber of Secrets</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>67</td>
-          <td>Spider-Man</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>79</td>
-          <td>Jerry Maguire</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>84</td>
-          <td>Dumb and Dumber</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>77</td>
-          <td>Cape Fear</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>81</td>
-          <td>Big</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>82</td>
-          <td>Good Morning, Vietnam</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>81</td>
-          <td>Star Trek IV: The Voyage Home</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>81</td>
-          <td>Beverly Hills Cop</td>
-       </tr>
-       <tr>
-          <td>7.3</td>
-          <td>86</td>
-          <td>Superman</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>82</td>
-          <td>Monsters University</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>76</td>
-          <td>Mission: Impossible - Ghost Protocol</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>81</td>
-          <td>Harry Potter and the Order of the Phoenix</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>77</td>
-          <td>The Simpsons Movie</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>83</td>
-          <td>X-Men</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>86</td>
-          <td>The Rock</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>78</td>
-          <td>Back to the Future Part III</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>79</td>
-          <td>Home Alone</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>82</td>
-          <td>Beetlejuice</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>84</td>
-          <td>Terms of Endearment</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>78</td>
-          <td>Poltergeist</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>81</td>
-          <td>Tootsie</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>86</td>
-          <td>A Bridge Too Far</td>
-       </tr>
-       <tr>
-          <td>7.4</td>
-          <td>84</td>
-          <td>The Goodbye Girl</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>76</td>
-          <td>The Hobbit: The Battle of the Five Armies</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>85</td>
-          <td>Despicable Me 2</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>77</td>
-          <td>Harry Potter and the Half-Blood Prince</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>85</td>
-          <td>X2</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>82</td>
-          <td>Harry Potter and the Sorcerer's Stone</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>84</td>
-          <td>Mulan</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>80</td>
-          <td>Bram Stoker's Dracula</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>78</td>
-          <td>Total Recall</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>80</td>
-          <td>Witness</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>85</td>
-          <td>Trading Places</td>
-       </tr>
-       <tr>
-          <td>7.5</td>
-          <td>86</td>
-          <td>Coal Miner's Daughter</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>77</td>
-          <td>Sherlock Holmes</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>82</td>
-          <td>Kung Fu Panda</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>74</td>
-          <td>Harry Potter and the Goblet of Fire</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>82</td>
-          <td>Ice Age</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>87</td>
-          <td>The Fifth Element</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>86</td>
-          <td>Apollo 13</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>83</td>
-          <td>Die Hard with a Vengeance</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>86</td>
-          <td>Interview with the Vampire: The Vampire Chronicles</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>89</td>
-          <td>A Few Good Men</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>84</td>
-          <td>Batman</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>88</td>
-          <td>The Little Mermaid</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>84</td>
-          <td>The Naked Gun: From the Files of Police Squad!</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>85</td>
-          <td>Lethal Weapon</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>81</td>
-          <td>Indiana Jones and the Temple of Doom</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>89</td>
-          <td>National Lampoon's Animal House</td>
-       </tr>
-       <tr>
-          <td>7.6</td>
-          <td>80</td>
-          <td>The Omen</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>89</td>
-          <td>Dawn of the Planet of the Apes</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>86</td>
-          <td>Frozen</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>90</td>
-          <td>The Hunger Games: Catching Fire</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>82</td>
-          <td>Despicable Me</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>84</td>
-          <td>Harry Potter and the Deathly Hallows - Part 1</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>65</td>
-          <td>Star Wars Episode III: Revenge of the Sith</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>83</td>
-          <td>The Last Samurai</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>80</td>
-          <td>Minority Report</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>83</td>
-          <td>Cast Away</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>69</td>
-          <td>Titanic</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>89</td>
-          <td>Philadelphia</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>84</td>
-          <td>Who Framed Roger Rabbit</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>90</td>
-          <td>Star Trek II: The Wrath of Khan</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>87</td>
-          <td>On Golden Pond</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>88</td>
-          <td>The Muppet Movie</td>
-       </tr>
-       <tr>
-          <td>7.7</td>
-          <td>85</td>
-          <td>Close Encounters of the Third Kind</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>92</td>
-          <td>Captain America: The Winter Soldier</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>86</td>
-          <td>Skyfall</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>87</td>
-          <td>Tangled</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>84</td>
-          <td>The Hangover</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>86</td>
-          <td>Harry Potter and the Prisoner of Azkaban</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>79</td>
-          <td>Ocean's Eleven</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>87</td>
-          <td>As Good as It Gets</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>89</td>
-          <td>The Fugitive</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>85</td>
-          <td>Back to the Future Part II</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>94</td>
-          <td>The Color Purple</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>91</td>
-          <td>The Goonies</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>88</td>
-          <td>Ghostbusters</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>89</td>
-          <td>Airplane!</td>
-       </tr>
-       <tr>
-          <td>7.8</td>
-          <td>89</td>
-          <td>Kramer vs. Kramer</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>80</td>
-          <td>Gravity</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>82</td>
-          <td>Avatar</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>91</td>
-          <td>Iron Man</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>90</td>
-          <td>Shrek</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>86</td>
-          <td>Toy Story 2</td>
-       </tr>
-       <tr>
-          <td>7.9</td>
-          <td>71</td>
-          <td>E.T. the Extra-Terrestrial</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>86</td>
-          <td>The Hobbit: The Desolation of Smaug</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>83</td>
-          <td>The Hobbit: An Unexpected Journey</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>87</td>
-          <td>Ratatouille</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>89</td>
-          <td>Casino Royale</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>74</td>
-          <td>The Incredibles</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>90</td>
-          <td>Jurassic Park</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>92</td>
-          <td>Aladdin</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>92</td>
-          <td>Beauty and the Beast</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>88</td>
-          <td>JFK</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>87</td>
-          <td>Dances with Wolves</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>92</td>
-          <td>Dead Poets Society</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>90</td>
-          <td>Rain Man</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>89</td>
-          <td>The Untouchables</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>93</td>
-          <td>The Blues Brothers</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>90</td>
-          <td>Dawn of the Dead</td>
-       </tr>
-       <tr>
-          <td>8</td>
-          <td>92</td>
-          <td>All the President's Men</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>93</td>
-          <td>Guardians of the Galaxy</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>92</td>
-          <td>X-Men: Days of Future Past</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>89</td>
-          <td>Harry Potter and the Deathly Hallows - Part 2</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>86</td>
-          <td>Pirates of the Caribbean: The Curse of the Black Pearl</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>90</td>
-          <td>Monsters, Inc.</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>93</td>
-          <td>Platoon</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>88</td>
-          <td>The Terminator</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>93</td>
-          <td>Annie Hall</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>68</td>
-          <td>Rocky</td>
-       </tr>
-       <tr>
-          <td>8.1</td>
-          <td>90</td>
-          <td>Dog Day Afternoon</td>
-       </tr>
-       <tr>
-          <td>8.2</td>
-          <td>91</td>
-          <td>The Avengers</td>
-       </tr>
-       <tr>
-          <td>8.2</td>
-          <td>91</td>
-          <td>How to Train Your Dragon</td>
-       </tr>
-       <tr>
-          <td>8.2</td>
-          <td>86</td>
-          <td>Finding Nemo</td>
-       </tr>
-       <tr>
-          <td>8.2</td>
-          <td>89</td>
-          <td>The Sixth Sense</td>
-       </tr>
-       <tr>
-          <td>8.2</td>
-          <td>92</td>
-          <td>The Deer Hunter</td>
-       </tr>
-       <tr>
-          <td>8.3</td>
-          <td>90</td>
-          <td>Up</td>
-       </tr>
-       <tr>
-          <td>8.3</td>
-          <td>94</td>
-          <td>Batman Begins</td>
-       </tr>
-       <tr>
-          <td>8.3</td>
-          <td>92</td>
-          <td>Toy Story</td>
-       </tr>
-       <tr>
-          <td>8.3</td>
-          <td>94</td>
-          <td>Indiana Jones and the Last Crusade</td>
-       </tr>
-       <tr>
-          <td>8.3</td>
-          <td>94</td>
-          <td>Die Hard</td>
-       </tr>
-       <tr>
-          <td>8.4</td>
-          <td>89</td>
-          <td>Toy Story 3</td>
-       </tr>
-       <tr>
-          <td>8.4</td>
-          <td>89</td>
-          <td>WALL-E</td>
-       </tr>
-       <tr>
-          <td>8.4</td>
-          <td>93</td>
-          <td>American Beauty</td>
-       </tr>
-       <tr>
-          <td>8.4</td>
-          <td>94</td>
-          <td>Aliens</td>
-       </tr>
-       <tr>
-          <td>8.4</td>
-          <td>95</td>
-          <td>Star Wars Episode VI: Return of the Jedi</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>90</td>
-          <td>The Dark Knight Rises</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>87</td>
-          <td>Gladiator</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>93</td>
-          <td>The Lion King</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>94</td>
-          <td>Terminator 2: Judgment Day</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>94</td>
-          <td>Back to the Future</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>94</td>
-          <td>Alien</td>
-       </tr>
-       <tr>
-          <td>8.5</td>
-          <td>94</td>
-          <td>Apocalypse Now</td>
-       </tr>
-       <tr>
-          <td>8.6</td>
-          <td>95</td>
-          <td>Saving Private Ryan</td>
-       </tr>
-       <tr>
-          <td>8.6</td>
-          <td>95</td>
-          <td>The Silence of the Lambs</td>
-       </tr>
-       <tr>
-          <td>8.6</td>
-          <td>96</td>
-          <td>Raiders of the Lost Ark</td>
-       </tr>
-       <tr>
-          <td>8.7</td>
-          <td>86</td>
-          <td>Interstellar</td>
-       </tr>
-       <tr>
-          <td>8.7</td>
-          <td>95</td>
-          <td>The Lord of the Rings: The Two Towers</td>
-       </tr>
-       <tr>
-          <td>8.7</td>
-          <td>85</td>
-          <td>The Matrix</td>
-       </tr>
-       <tr>
-          <td>8.7</td>
-          <td>95</td>
-          <td>Seven</td>
-       </tr>
-       <tr>
-          <td>8.7</td>
-          <td>96</td>
-          <td>Star Wars</td>
-       </tr>
-       <tr>
-          <td>8.8</td>
-          <td>91</td>
-          <td>Inception</td>
-       </tr>
-       <tr>
-          <td>8.8</td>
-          <td>95</td>
-          <td>The Lord of the Rings: The Fellowship of the Ring</td>
-       </tr>
-       <tr>
-          <td>8.8</td>
-          <td>95</td>
-          <td>Forrest Gump</td>
-       </tr>
-       <tr>
-          <td>8.8</td>
-          <td>97</td>
-          <td>Star Wars Episode V: The Empire Strikes Back</td>
-       </tr>
-       <tr>
-          <td>8.9</td>
-          <td>86</td>
-          <td>The Lord of the Rings: The Return of the King</td>
-       </tr>
-       <tr>
-          <td>8.9</td>
-          <td>97</td>
-          <td>Schindler's List</td>
-       </tr>
-       <tr>
-          <td>9</td>
-          <td>94</td>
-          <td>The Dark Knight</td>
-       </tr>
-    </tbody>
+   <caption class="highcharts-table-caption">Movie ratings on IMDB vs Rotten Tomatoes - Data points</caption>
+   <thead>
+     <tr>
+       <th scope="col">Movie title</th>
+       <th scope="col">IMDB rating</th>
+       <th scope="col">Rotten Tomatoes score</th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+       <td>Staying Alive</td>
+       <td>4.4</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>The Twilight Saga: New Moon</td>
+       <td>4.6</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>The Flintstones</td>
+       <td>4.8</td>
+       <td>24</td>
+     </tr>
+     <tr>
+       <td>The Twilight Saga: Breaking Dawn - Part 1</td>
+       <td>4.9</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>The Twilight Saga: Eclipse</td>
+       <td>4.9</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Smokey and the Bandit II</td>
+       <td>5.1</td>
+       <td>46</td>
+     </tr>
+     <tr>
+       <td>Dr. Dolittle</td>
+       <td>5.3</td>
+       <td>35</td>
+     </tr>
+     <tr>
+       <td>Godzilla</td>
+       <td>5.3</td>
+       <td>28</td>
+     </tr>
+     <tr>
+       <td>Batman Forever</td>
+       <td>5.4</td>
+       <td>33</td>
+     </tr>
+     <tr>
+       <td>The Smurfs</td>
+       <td>5.5</td>
+       <td>44</td>
+     </tr>
+     <tr>
+       <td>The Nutty Professor</td>
+       <td>5.5</td>
+       <td>44</td>
+     </tr>
+     <tr>
+       <td>Crocodile" Dundee II</td>
+       <td>5.5</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>The Twilight Saga: Breaking Dawn - Part 2</td>
+       <td>5.6</td>
+       <td>70</td>
+     </tr>
+     <tr>
+       <td>101 Dalmatians</td>
+       <td>5.6</td>
+       <td>40</td>
+     </tr>
+     <tr>
+       <td>Planet of the Apes</td>
+       <td>5.7</td>
+       <td>27</td>
+     </tr>
+     <tr>
+       <td>The Best Little Whorehouse in Texas</td>
+       <td>5.7</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>The Blue Lagoon</td>
+       <td>5.7</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>Jaws 2</td>
+       <td>5.7</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>Transformers: Age of Extinction</td>
+       <td>5.8</td>
+       <td>52</td>
+     </tr>
+     <tr>
+       <td>Indecent Proposal</td>
+       <td>5.8</td>
+       <td>48</td>
+     </tr>
+     <tr>
+       <td>Look Who's Talking</td>
+       <td>5.8</td>
+       <td>47</td>
+     </tr>
+     <tr>
+       <td>Cocktail</td>
+       <td>5.8</td>
+       <td>59</td>
+     </tr>
+     <tr>
+       <td>Three Men and a Baby</td>
+       <td>5.8</td>
+       <td>47</td>
+     </tr>
+     <tr>
+       <td>The Golden Child</td>
+       <td>5.8</td>
+       <td>47</td>
+     </tr>
+     <tr>
+       <td>The Karate Kid, Part II</td>
+       <td>5.8</td>
+       <td>52</td>
+     </tr>
+     <tr>
+       <td>King Kong</td>
+       <td>5.8</td>
+       <td>30</td>
+     </tr>
+     <tr>
+       <td>Jurassic Park III</td>
+       <td>5.9</td>
+       <td>37</td>
+     </tr>
+     <tr>
+       <td>Twins</td>
+       <td>5.9</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>Transformers: Revenge of the Fallen</td>
+       <td>6</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>Shark Tale</td>
+       <td>6</td>
+       <td>49</td>
+     </tr>
+     <tr>
+       <td>Men in Black II</td>
+       <td>6</td>
+       <td>46</td>
+     </tr>
+     <tr>
+       <td>Pearl Harbor</td>
+       <td>6</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>How the Grinch Stole Christmas</td>
+       <td>6</td>
+       <td>55</td>
+     </tr>
+     <tr>
+       <td>Mission: Impossible II</td>
+       <td>6</td>
+       <td>44</td>
+     </tr>
+     <tr>
+       <td>Eraser</td>
+       <td>6</td>
+       <td>39</td>
+     </tr>
+     <tr>
+       <td>Casper</td>
+       <td>6</td>
+       <td>49</td>
+     </tr>
+     <tr>
+       <td>Kindergarten Cop</td>
+       <td>6</td>
+       <td>51</td>
+     </tr>
+     <tr>
+       <td>The Jewel of the Nile</td>
+       <td>6</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>Any Which Way You Can</td>
+       <td>6</td>
+       <td>45</td>
+     </tr>
+     <tr>
+       <td>Private Benjamin</td>
+       <td>6</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Shrek the Third</td>
+       <td>6.1</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>Superman Returns</td>
+       <td>6.1</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Die Another Day</td>
+       <td>6.1</td>
+       <td>41</td>
+     </tr>
+     <tr>
+       <td>Deep Impact</td>
+       <td>6.1</td>
+       <td>43</td>
+     </tr>
+     <tr>
+       <td>Waterworld</td>
+       <td>6.1</td>
+       <td>43</td>
+     </tr>
+     <tr>
+       <td>The Bodyguard</td>
+       <td>6.1</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Flashdance</td>
+       <td>6.1</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Porky's</td>
+       <td>6.1</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>The Cannonball Run</td>
+       <td>6.1</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>The Deep</td>
+       <td>6.1</td>
+       <td>38</td>
+     </tr>
+     <tr>
+       <td>Indiana Jones and the Kingdom of the Crystal Skull</td>
+       <td>6.2</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>Spider-Man 3</td>
+       <td>6.2</td>
+       <td>51</td>
+     </tr>
+     <tr>
+       <td>Twister</td>
+       <td>6.2</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>Sister Act</td>
+       <td>6.2</td>
+       <td>65</td>
+     </tr>
+     <tr>
+       <td>Honey, I Shrunk the Kids</td>
+       <td>6.2</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>Moonraker</td>
+       <td>6.2</td>
+       <td>43</td>
+     </tr>
+     <tr>
+       <td>The Amityville Horror</td>
+       <td>6.2</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>Every Which Way but Loose</td>
+       <td>6.2</td>
+       <td>56</td>
+     </tr>
+     <tr>
+       <td>Hooper</td>
+       <td>6.2</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>The Apple Dumpling Gang</td>
+       <td>6.2</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Cars 2</td>
+       <td>6.3</td>
+       <td>51</td>
+     </tr>
+     <tr>
+       <td>Transformers: Dark of the Moon</td>
+       <td>6.3</td>
+       <td>56</td>
+     </tr>
+     <tr>
+       <td>Meet the Fockers</td>
+       <td>6.3</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>The Mummy Returns</td>
+       <td>6.3</td>
+       <td>63</td>
+     </tr>
+     <tr>
+       <td>My Best Friend's Wedding</td>
+       <td>6.3</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Cliffhanger</td>
+       <td>6.3</td>
+       <td>51</td>
+     </tr>
+     <tr>
+       <td>Spies Like Us</td>
+       <td>6.3</td>
+       <td>57</td>
+     </tr>
+     <tr>
+       <td>Shampoo</td>
+       <td>6.3</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>Shrek Forever After</td>
+       <td>6.4</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>Mamma Mia!</td>
+       <td>6.4</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Night at the Museum</td>
+       <td>6.4</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>Ocean's Twelve</td>
+       <td>6.4</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>The Day After Tomorrow</td>
+       <td>6.4</td>
+       <td>50</td>
+     </tr>
+     <tr>
+       <td>Terminator 3: Rise of the Machines</td>
+       <td>6.4</td>
+       <td>47</td>
+     </tr>
+     <tr>
+       <td>Dinosaur</td>
+       <td>6.4</td>
+       <td>47</td>
+     </tr>
+     <tr>
+       <td>The Perfect Storm</td>
+       <td>6.4</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>What Women Want</td>
+       <td>6.4</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>The World Is Not Enough</td>
+       <td>6.4</td>
+       <td>50</td>
+     </tr>
+     <tr>
+       <td>Air Force One</td>
+       <td>6.4</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Beverly Hills Cop II</td>
+       <td>6.4</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>The Secret of My Success</td>
+       <td>6.4</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>Rambo: First Blood Part II</td>
+       <td>6.4</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Footloose</td>
+       <td>6.4</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Mr. Mom</td>
+       <td>6.4</td>
+       <td>57</td>
+     </tr>
+     <tr>
+       <td>Star Trek: The Motion Picture</td>
+       <td>6.4</td>
+       <td>42</td>
+     </tr>
+     <tr>
+       <td>Funny Lady</td>
+       <td>6.4</td>
+       <td>56</td>
+     </tr>
+     <tr>
+       <td>The Other Side of the Mountain</td>
+       <td>6.4</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>The Hangover Part II</td>
+       <td>6.5</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>Alice in Wonderland</td>
+       <td>6.5</td>
+       <td>55</td>
+     </tr>
+     <tr>
+       <td>Hancock</td>
+       <td>6.5</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>National Treasure: Book of Secrets</td>
+       <td>6.5</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>Happy Feet</td>
+       <td>6.5</td>
+       <td>70</td>
+     </tr>
+     <tr>
+       <td>The Da Vinci Code</td>
+       <td>6.5</td>
+       <td>57</td>
+     </tr>
+     <tr>
+       <td>Mr. &amp;amp; Mrs. Smith</td>
+       <td>6.5</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>War of the Worlds</td>
+       <td>6.5</td>
+       <td>42</td>
+     </tr>
+     <tr>
+       <td>Bad Boys II</td>
+       <td>6.5</td>
+       <td>78</td>
+     </tr>
+     <tr>
+       <td>The Lost World: Jurassic Park</td>
+       <td>6.5</td>
+       <td>52</td>
+     </tr>
+     <tr>
+       <td>Tomorrow Never Dies</td>
+       <td>6.5</td>
+       <td>53</td>
+     </tr>
+     <tr>
+       <td>The Pelican Brief</td>
+       <td>6.5</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Home Alone 2: Lost in New York</td>
+       <td>6.5</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Ghostbusters II</td>
+       <td>6.5</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>The Witches of Eastwick</td>
+       <td>6.5</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Crocodile" Dundee</td>
+       <td>6.5</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>Back to School</td>
+       <td>6.5</td>
+       <td>68</td>
+     </tr>
+     <tr>
+       <td>Annie</td>
+       <td>6.5</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>Oh, God!</td>
+       <td>6.5</td>
+       <td>59</td>
+     </tr>
+     <tr>
+       <td>A Star Is Born</td>
+       <td>6.5</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>The Chronicles of Narnia: Prince Caspian</td>
+       <td>6.6</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>My Big Fat Greek Wedding</td>
+       <td>6.6</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>What Lies Beneath</td>
+       <td>6.6</td>
+       <td>59</td>
+     </tr>
+     <tr>
+       <td>Austin Powers: The Spy Who Shagged Me</td>
+       <td>6.6</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Star Wars Episode I: The Phantom Menace</td>
+       <td>6.6</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Armageddon</td>
+       <td>6.6</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>Lethal Weapon 4</td>
+       <td>6.6</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Ransom</td>
+       <td>6.6</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Pocahontas</td>
+       <td>6.6</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Stakeout</td>
+       <td>6.6</td>
+       <td>56</td>
+     </tr>
+     <tr>
+       <td>Cocoon</td>
+       <td>6.6</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Police Academy</td>
+       <td>6.6</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Star Trek III: The Search for Spock</td>
+       <td>6.6</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Octopussy</td>
+       <td>6.6</td>
+       <td>48</td>
+     </tr>
+     <tr>
+       <td>Sudden Impact</td>
+       <td>6.6</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>9 to 5</td>
+       <td>6.6</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Ice Age: Continental Drift</td>
+       <td>6.7</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Pirates of the Caribbean: On Stranger Tides</td>
+       <td>6.7</td>
+       <td>54</td>
+     </tr>
+     <tr>
+       <td>Angels &amp;amp; Demons</td>
+       <td>6.7</td>
+       <td>57</td>
+     </tr>
+     <tr>
+       <td>Madagascar: Escape 2 Africa</td>
+       <td>6.7</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Quantum of Solace</td>
+       <td>6.7</td>
+       <td>58</td>
+     </tr>
+     <tr>
+       <td>Charlie and the Chocolate Factory</td>
+       <td>6.7</td>
+       <td>51</td>
+     </tr>
+     <tr>
+       <td>Hitch</td>
+       <td>6.7</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Bruce Almighty</td>
+       <td>6.7</td>
+       <td>57</td>
+     </tr>
+     <tr>
+       <td>The Matrix Revolutions</td>
+       <td>6.7</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Signs</td>
+       <td>6.7</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>Star Wars Episode II: Attack of the Clones</td>
+       <td>6.7</td>
+       <td>59</td>
+     </tr>
+     <tr>
+       <td>Hannibal</td>
+       <td>6.7</td>
+       <td>63</td>
+     </tr>
+     <tr>
+       <td>Lethal Weapon 3</td>
+       <td>6.7</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>City Slickers</td>
+       <td>6.7</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Hook</td>
+       <td>6.7</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Hot Shots!</td>
+       <td>6.7</td>
+       <td>65</td>
+     </tr>
+     <tr>
+       <td>Teenage Mutant Ninja Turtles</td>
+       <td>6.7</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Rocky IV</td>
+       <td>6.7</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Rocky III</td>
+       <td>6.7</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Revenge of the Pink Panther</td>
+       <td>6.7</td>
+       <td>70</td>
+     </tr>
+     <tr>
+       <td>Midway</td>
+       <td>6.7</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Signs</td>
+       <td>6.7</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>The Hunger Games: Mockingjay - Part 1</td>
+       <td>6.8</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>Mission: Impossible III</td>
+       <td>6.8</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>X-Men: The Last Stand</td>
+       <td>6.8</td>
+       <td>62</td>
+     </tr>
+     <tr>
+       <td>Liar Liar</td>
+       <td>6.8</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>Jumanji</td>
+       <td>6.8</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>The Mask</td>
+       <td>6.8</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>Sleepless in Seattle</td>
+       <td>6.8</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>The Firm</td>
+       <td>6.8</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>The Addams Family</td>
+       <td>6.8</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Ruthless People</td>
+       <td>6.8</td>
+       <td>70</td>
+     </tr>
+     <tr>
+       <td>Top Gun</td>
+       <td>6.8</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Risky Business</td>
+       <td>6.8</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>For Your Eyes Only</td>
+       <td>6.8</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Superman II</td>
+       <td>6.8</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>Stir Crazy</td>
+       <td>6.8</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Saturday Night Fever</td>
+       <td>6.8</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Smokey and the Bandit</td>
+       <td>6.8</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>The Enforcer</td>
+       <td>6.8</td>
+       <td>59</td>
+     </tr>
+     <tr>
+       <td>The Amazing Spider-Man 2</td>
+       <td>6.9</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Men in Black 3</td>
+       <td>6.9</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Ice Age: The Meltdown</td>
+       <td>6.9</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Madagascar</td>
+       <td>6.9</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>The Chronicles of Narnia: The Lion, the Witch and the Wardrobe</td>
+       <td>6.9</td>
+       <td>61</td>
+     </tr>
+     <tr>
+       <td>Independence Day</td>
+       <td>6.9</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>The Hunchback of Notre Dame</td>
+       <td>6.9</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>Clear and Present Danger</td>
+       <td>6.9</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Mrs. Doubtfire</td>
+       <td>6.9</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Basic Instinct</td>
+       <td>6.9</td>
+       <td>64</td>
+     </tr>
+     <tr>
+       <td>Robin Hood: Prince of Thieves</td>
+       <td>6.9</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Presumed Innocent</td>
+       <td>6.9</td>
+       <td>66</td>
+     </tr>
+     <tr>
+       <td>Pretty Woman</td>
+       <td>6.9</td>
+       <td>68</td>
+     </tr>
+     <tr>
+       <td>Coming to America</td>
+       <td>6.9</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Fatal Attraction</td>
+       <td>6.9</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>An American Tail</td>
+       <td>6.9</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Romancing the Stone</td>
+       <td>6.9</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>48 Hrs.</td>
+       <td>6.9</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>Arthur</td>
+       <td>6.9</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Stripes</td>
+       <td>6.9</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Heaven Can Wait</td>
+       <td>6.9</td>
+       <td>68</td>
+     </tr>
+     <tr>
+       <td>Silver Streak</td>
+       <td>6.9</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Madagascar 3: Europe's Most Wanted</td>
+       <td>7</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>Ice Age: Dawn of the Dinosaurs</td>
+       <td>7</td>
+       <td>63</td>
+     </tr>
+     <tr>
+       <td>Meet the Parents</td>
+       <td>7</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>Notting Hill</td>
+       <td>7</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>The Mummy</td>
+       <td>7</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>Batman Returns</td>
+       <td>7</td>
+       <td>73</td>
+     </tr>
+     <tr>
+       <td>Wayne's World</td>
+       <td>7</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Ghost</td>
+       <td>7</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>An Officer and a Gentleman</td>
+       <td>7</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Time Bandits</td>
+       <td>7</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Maleficent</td>
+       <td>7.1</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Thor: The Dark World</td>
+       <td>7.1</td>
+       <td>78</td>
+     </tr>
+     <tr>
+       <td>The Amazing Spider-Man</td>
+       <td>7.1</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Iron Man 2</td>
+       <td>7.1</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Pirates of the Caribbean: At World's End</td>
+       <td>7.1</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>The Passion of the Christ</td>
+       <td>7.1</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>There's Something About Mary</td>
+       <td>7.1</td>
+       <td>60</td>
+     </tr>
+     <tr>
+       <td>Mission: Impossible</td>
+       <td>7.1</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>Four Weddings and a Funeral</td>
+       <td>7.1</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Die Hard 2</td>
+       <td>7.1</td>
+       <td>70</td>
+     </tr>
+     <tr>
+       <td>Moonstruck</td>
+       <td>7.1</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>WarGames</td>
+       <td>7.1</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>Rocky II</td>
+       <td>7.1</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>The Spy Who Loved Me</td>
+       <td>7.1</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>The Return of the Pink Panther</td>
+       <td>7.1</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Fast &amp;amp; Furious 6</td>
+       <td>7.2</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Man of Steel</td>
+       <td>7.2</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>I Am Legend</td>
+       <td>7.2</td>
+       <td>68</td>
+     </tr>
+     <tr>
+       <td>Transformers</td>
+       <td>7.2</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Cars</td>
+       <td>7.2</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Shrek 2</td>
+       <td>7.2</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>Troy</td>
+       <td>7.2</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>The Matrix Reloaded</td>
+       <td>7.2</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Tarzan</td>
+       <td>7.2</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>A Bug's Life</td>
+       <td>7.2</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>Shakespeare in Love</td>
+       <td>7.2</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Men in Black</td>
+       <td>7.2</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>The Full Monty</td>
+       <td>7.2</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>GoldenEye</td>
+       <td>7.2</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Speed</td>
+       <td>7.2</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>True Lies</td>
+       <td>7.2</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Born on the Fourth of July</td>
+       <td>7.2</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Lethal Weapon 2</td>
+       <td>7.2</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Out Of Africa</td>
+       <td>7.2</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Gremlins</td>
+       <td>7.2</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>The Karate Kid</td>
+       <td>7.2</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Chariots of Fire</td>
+       <td>7.2</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>The Four Seasons</td>
+       <td>7.2</td>
+       <td>75</td>
+     </tr>
+     <tr>
+       <td>The Jerk</td>
+       <td>7.2</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Grease</td>
+       <td>7.2</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>Iron Man 3</td>
+       <td>7.3</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>The Hunger Games</td>
+       <td>7.3</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Fast Five</td>
+       <td>7.3</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Kung Fu Panda 2</td>
+       <td>7.3</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Pirates of the Caribbean: Dead Man's Chest</td>
+       <td>7.3</td>
+       <td>72</td>
+     </tr>
+     <tr>
+       <td>King Kong</td>
+       <td>7.3</td>
+       <td>50</td>
+     </tr>
+     <tr>
+       <td>Spider-Man 2</td>
+       <td>7.3</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Chamber of Secrets</td>
+       <td>7.3</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>Spider-Man</td>
+       <td>7.3</td>
+       <td>67</td>
+     </tr>
+     <tr>
+       <td>Jerry Maguire</td>
+       <td>7.3</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>Dumb and Dumber</td>
+       <td>7.3</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Cape Fear</td>
+       <td>7.3</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Big</td>
+       <td>7.3</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Good Morning, Vietnam</td>
+       <td>7.3</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Star Trek IV: The Voyage Home</td>
+       <td>7.3</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Beverly Hills Cop</td>
+       <td>7.3</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>Superman</td>
+       <td>7.3</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Monsters University</td>
+       <td>7.4</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Mission: Impossible - Ghost Protocol</td>
+       <td>7.4</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Order of the Phoenix</td>
+       <td>7.4</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>The Simpsons Movie</td>
+       <td>7.4</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>X-Men</td>
+       <td>7.4</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>The Rock</td>
+       <td>7.4</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Back to the Future Part III</td>
+       <td>7.4</td>
+       <td>78</td>
+     </tr>
+     <tr>
+       <td>Home Alone</td>
+       <td>7.4</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>Beetlejuice</td>
+       <td>7.4</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Terms of Endearment</td>
+       <td>7.4</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Poltergeist</td>
+       <td>7.4</td>
+       <td>78</td>
+     </tr>
+     <tr>
+       <td>Tootsie</td>
+       <td>7.4</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>A Bridge Too Far</td>
+       <td>7.4</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>The Goodbye Girl</td>
+       <td>7.4</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>The Hobbit: The Battle of the Five Armies</td>
+       <td>7.5</td>
+       <td>76</td>
+     </tr>
+     <tr>
+       <td>Despicable Me 2</td>
+       <td>7.5</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Half-Blood Prince</td>
+       <td>7.5</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>X2</td>
+       <td>7.5</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Sorcerer's Stone</td>
+       <td>7.5</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Mulan</td>
+       <td>7.5</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Bram Stoker's Dracula</td>
+       <td>7.5</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Total Recall</td>
+       <td>7.5</td>
+       <td>78</td>
+     </tr>
+     <tr>
+       <td>Witness</td>
+       <td>7.5</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Trading Places</td>
+       <td>7.5</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Coal Miner's Daughter</td>
+       <td>7.5</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Sherlock Holmes</td>
+       <td>7.6</td>
+       <td>77</td>
+     </tr>
+     <tr>
+       <td>Kung Fu Panda</td>
+       <td>7.6</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Goblet of Fire</td>
+       <td>7.6</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Ice Age</td>
+       <td>7.6</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>The Fifth Element</td>
+       <td>7.6</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>Apollo 13</td>
+       <td>7.6</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Die Hard with a Vengeance</td>
+       <td>7.6</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Interview with the Vampire: The Vampire Chronicles</td>
+       <td>7.6</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>A Few Good Men</td>
+       <td>7.6</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Batman</td>
+       <td>7.6</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>The Little Mermaid</td>
+       <td>7.6</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>The Naked Gun: From the Files of Police Squad!</td>
+       <td>7.6</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Lethal Weapon</td>
+       <td>7.6</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Indiana Jones and the Temple of Doom</td>
+       <td>7.6</td>
+       <td>81</td>
+     </tr>
+     <tr>
+       <td>National Lampoon's Animal House</td>
+       <td>7.6</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>The Omen</td>
+       <td>7.6</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Dawn of the Planet of the Apes</td>
+       <td>7.7</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Frozen</td>
+       <td>7.7</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>The Hunger Games: Catching Fire</td>
+       <td>7.7</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Despicable Me</td>
+       <td>7.7</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Deathly Hallows - Part 1</td>
+       <td>7.7</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Star Wars Episode III: Revenge of the Sith</td>
+       <td>7.7</td>
+       <td>65</td>
+     </tr>
+     <tr>
+       <td>The Last Samurai</td>
+       <td>7.7</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Minority Report</td>
+       <td>7.7</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Cast Away</td>
+       <td>7.7</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Titanic</td>
+       <td>7.7</td>
+       <td>69</td>
+     </tr>
+     <tr>
+       <td>Philadelphia</td>
+       <td>7.7</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Who Framed Roger Rabbit</td>
+       <td>7.7</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Star Trek II: The Wrath of Khan</td>
+       <td>7.7</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>On Golden Pond</td>
+       <td>7.7</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>The Muppet Movie</td>
+       <td>7.7</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>Close Encounters of the Third Kind</td>
+       <td>7.7</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Captain America: The Winter Soldier</td>
+       <td>7.8</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Skyfall</td>
+       <td>7.8</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Tangled</td>
+       <td>7.8</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>The Hangover</td>
+       <td>7.8</td>
+       <td>84</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Prisoner of Azkaban</td>
+       <td>7.8</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Ocean's Eleven</td>
+       <td>7.8</td>
+       <td>79</td>
+     </tr>
+     <tr>
+       <td>As Good as It Gets</td>
+       <td>7.8</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>The Fugitive</td>
+       <td>7.8</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Back to the Future Part II</td>
+       <td>7.8</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>The Color Purple</td>
+       <td>7.8</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>The Goonies</td>
+       <td>7.8</td>
+       <td>91</td>
+     </tr>
+     <tr>
+       <td>Ghostbusters</td>
+       <td>7.8</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>Airplane!</td>
+       <td>7.8</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Kramer vs. Kramer</td>
+       <td>7.8</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Gravity</td>
+       <td>7.9</td>
+       <td>80</td>
+     </tr>
+     <tr>
+       <td>Avatar</td>
+       <td>7.9</td>
+       <td>82</td>
+     </tr>
+     <tr>
+       <td>Iron Man</td>
+       <td>7.9</td>
+       <td>91</td>
+     </tr>
+     <tr>
+       <td>Shrek</td>
+       <td>7.9</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Toy Story 2</td>
+       <td>7.9</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>E.T. the Extra-Terrestrial</td>
+       <td>7.9</td>
+       <td>71</td>
+     </tr>
+     <tr>
+       <td>The Hobbit: The Desolation of Smaug</td>
+       <td>8</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>The Hobbit: An Unexpected Journey</td>
+       <td>8</td>
+       <td>83</td>
+     </tr>
+     <tr>
+       <td>Ratatouille</td>
+       <td>8</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>Casino Royale</td>
+       <td>8</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>The Incredibles</td>
+       <td>8</td>
+       <td>74</td>
+     </tr>
+     <tr>
+       <td>Jurassic Park</td>
+       <td>8</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Aladdin</td>
+       <td>8</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Beauty and the Beast</td>
+       <td>8</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>JFK</td>
+       <td>8</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>Dances with Wolves</td>
+       <td>8</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>Dead Poets Society</td>
+       <td>8</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Rain Man</td>
+       <td>8</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>The Untouchables</td>
+       <td>8</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>The Blues Brothers</td>
+       <td>8</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>Dawn of the Dead</td>
+       <td>8</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>All the President's Men</td>
+       <td>8</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Guardians of the Galaxy</td>
+       <td>8.1</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>X-Men: Days of Future Past</td>
+       <td>8.1</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Harry Potter and the Deathly Hallows - Part 2</td>
+       <td>8.1</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>Pirates of the Caribbean: The Curse of the Black Pearl</td>
+       <td>8.1</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Monsters, Inc.</td>
+       <td>8.1</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Platoon</td>
+       <td>8.1</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>The Terminator</td>
+       <td>8.1</td>
+       <td>88</td>
+     </tr>
+     <tr>
+       <td>Annie Hall</td>
+       <td>8.1</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>Rocky</td>
+       <td>8.1</td>
+       <td>68</td>
+     </tr>
+     <tr>
+       <td>Dog Day Afternoon</td>
+       <td>8.1</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>The Avengers</td>
+       <td>8.2</td>
+       <td>91</td>
+     </tr>
+     <tr>
+       <td>How to Train Your Dragon</td>
+       <td>8.2</td>
+       <td>91</td>
+     </tr>
+     <tr>
+       <td>Finding Nemo</td>
+       <td>8.2</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>The Sixth Sense</td>
+       <td>8.2</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>The Deer Hunter</td>
+       <td>8.2</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Up</td>
+       <td>8.3</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Batman Begins</td>
+       <td>8.3</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Toy Story</td>
+       <td>8.3</td>
+       <td>92</td>
+     </tr>
+     <tr>
+       <td>Indiana Jones and the Last Crusade</td>
+       <td>8.3</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Die Hard</td>
+       <td>8.3</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Toy Story 3</td>
+       <td>8.4</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>WALL-E</td>
+       <td>8.4</td>
+       <td>89</td>
+     </tr>
+     <tr>
+       <td>American Beauty</td>
+       <td>8.4</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>Aliens</td>
+       <td>8.4</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Star Wars Episode VI: Return of the Jedi</td>
+       <td>8.4</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>The Dark Knight Rises</td>
+       <td>8.5</td>
+       <td>90</td>
+     </tr>
+     <tr>
+       <td>Gladiator</td>
+       <td>8.5</td>
+       <td>87</td>
+     </tr>
+     <tr>
+       <td>The Lion King</td>
+       <td>8.5</td>
+       <td>93</td>
+     </tr>
+     <tr>
+       <td>Terminator 2: Judgment Day</td>
+       <td>8.5</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Back to the Future</td>
+       <td>8.5</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Alien</td>
+       <td>8.5</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Apocalypse Now</td>
+       <td>8.5</td>
+       <td>94</td>
+     </tr>
+     <tr>
+       <td>Saving Private Ryan</td>
+       <td>8.6</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>The Silence of the Lambs</td>
+       <td>8.6</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>Raiders of the Lost Ark</td>
+       <td>8.6</td>
+       <td>96</td>
+     </tr>
+     <tr>
+       <td>Interstellar</td>
+       <td>8.7</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>The Lord of the Rings: The Two Towers</td>
+       <td>8.7</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>The Matrix</td>
+       <td>8.7</td>
+       <td>85</td>
+     </tr>
+     <tr>
+       <td>Seven</td>
+       <td>8.7</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>Star Wars</td>
+       <td>8.7</td>
+       <td>96</td>
+     </tr>
+     <tr>
+       <td>Inception</td>
+       <td>8.8</td>
+       <td>91</td>
+     </tr>
+     <tr>
+       <td>The Lord of the Rings: The Fellowship of the Ring</td>
+       <td>8.8</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>Forrest Gump</td>
+       <td>8.8</td>
+       <td>95</td>
+     </tr>
+     <tr>
+       <td>Star Wars Episode V: The Empire Strikes Back</td>
+       <td>8.8</td>
+       <td>97</td>
+     </tr>
+     <tr>
+       <td>The Lord of the Rings: The Return of the King</td>
+       <td>8.9</td>
+       <td>86</td>
+     </tr>
+     <tr>
+       <td>Schindler's List</td>
+       <td>8.9</td>
+       <td>97</td>
+     </tr>
+     <tr>
+       <td>The Dark Knight</td>
+       <td>9</td>
+       <td>94</td>
+     </tr>
+   </tbody>
  </table>
+
 </div>
 
 <pre id="csv" style="display:none">Rotten Tomatoes,IMDB,Title
@@ -2425,3 +2439,4 @@
 67,6.7,Signs
 </pre>
     
+</main>

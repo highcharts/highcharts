@@ -140,12 +140,14 @@ const chart = Highcharts.chart('container', {
         enabled: false
     },
     sonification: {
-        duration: 1600,
-        masterVolume: 0.6,
+        duration: 5000 - parseFloat(document.getElementById('speed').value) * 400,
+        masterVolume: 0.4,
         defaultInstrumentOptions: {
+            minFrequency: 349,
+            maxFrequency: 1568,
             mapping: {
                 pan: 'x',
-                duration: 160
+                duration: 260
             }
         },
         events: {
@@ -165,10 +167,7 @@ const chart = Highcharts.chart('container', {
             }
         },
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>',
-            onViewDataTableClick: function () {
-                document.getElementById('dataTable').focus();
-            }
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line. The scatter plot has 392 data points, and the trend line series has 7 data points.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         },
         series: {
             pointDescriptionEnabledThreshold: false
@@ -180,7 +179,7 @@ const chart = Highcharts.chart('container', {
                 if (point.series.type !== 'scatter') {
                     const imdbSegmentStart = (point.x - point.series.options.xBinSize / 2).toFixed(1);
                     const imdbSegmentEnd = (point.x + point.series.options.xBinSize / 2).toFixed(1);
-                    return `${rt} Rotten Tomatoes score, averaged between ${imdbSegmentStart} and ${imdbSegmentEnd} IMDB ratings.`;
+                    return `${rt} Rotten Tomatoes score, averaged of all movies between IMDB ratings ${imdbSegmentStart} and ${imdbSegmentEnd}.`;
                 }
 
                 return `${point.options.title}, ${rt} Rotten Tomatoes, ${imdb} IMDB.`;
@@ -249,12 +248,12 @@ const chart = Highcharts.chart('container', {
 });
 chart.series[0].update({ name: 'Movie ratings' });
 
-Highcharts.addEvent(chart, 'exportData', function (e) {
-    console.log(e.dataRows);
-});
-
-
 updateTrends(chart, 7);
 
+document.getElementById('speed').onchange = () => chart.update({
+    sonification: {
+        duration: 5000 - parseFloat(document.getElementById('speed').value) * 400
+    }
+});
 document.getElementById('sonifyPlot').onclick = () => sonifySeries(chart.series[0]);
 document.getElementById('sonifyTrend').onclick = () => sonifySeries(chart.series[1]);

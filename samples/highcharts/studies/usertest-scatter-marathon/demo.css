@@ -1,3 +1,7 @@
+main {
+    max-width: 1100px;
+}
+
 .container {
     height: 500px;
 }

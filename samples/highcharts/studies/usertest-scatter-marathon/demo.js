@@ -134,13 +134,13 @@ function sonifyChart(chart, firstSeriesIx, secondSeriesIx) {
                             }, 400);
                         }
                     });
-                }, 1300);
+                }, 1500);
             }
         });
-    }, 700);
+    }, 800);
 }
 
-function makeChart(container, detail, duration, title) {
+function makeChart(container, detail, title) {
 
     // Parse CSV to desired format
     const csv = document.getElementById('csv').innerHTML;
@@ -178,9 +178,11 @@ function makeChart(container, detail, duration, title) {
             marginRight: 125
         },
         sonification: {
-            duration: duration,
-            masterVolume: 0.6,
+            duration: 600,
+            masterVolume: 0.5,
             defaultInstrumentOptions: {
+                minFrequency: 349,
+                maxFrequency: 1568,
                 mapping: {
                     pan: 'x',
                     duration: 160
@@ -219,7 +221,7 @@ function makeChart(container, detail, duration, title) {
                 }
             },
             screenReaderSection: {
-                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The X axis, displaying years, has data ranging from 1897 to 2018. The Y axis, displaying winning times, has data ranging from 2:02:57 to 3:30:00.'
+                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The chart plots winning time data for male and female competition classes. The X axis, displaying years, has data ranging from 1897 to 2018. The Y axis, displaying winning times, has data ranging from 2:02:57 to 3:30:00.'
             }
         },
         lang: {
@@ -292,11 +294,23 @@ function makeChart(container, detail, duration, title) {
     return chart;
 }
 
-const lowestChart = makeChart('lowestContainer', 3, 600, 'Lowest detail');
-const lowChart = makeChart('lowContainer', 5, 800, 'Low detail');
-const mediumChart = makeChart('mediumContainer', 8, 1000, 'Medium detail');
-const highChart = makeChart('highContainer', 12, 1600, 'High detail');
-const highestChart = makeChart('highestContainer', 20, 1800, 'Highest detail');
+const lowestChart = makeChart('lowestContainer', 3, 'Lowest detail');
+const lowChart = makeChart('lowContainer', 5, 'Low detail');
+const mediumChart = makeChart('mediumContainer', 8, 'Medium detail');
+const highChart = makeChart('highContainer', 12, 'High detail');
+const highestChart = makeChart('highestContainer', 20, 'Highest detail');
+
+function setChartDuration() {
+    const speed = parseFloat(document.getElementById('speed').value);
+    const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 40, 350);
+    lowestChart.update({ sonification: { duration: getDuration(3) } });
+    lowChart.update({ sonification: { duration: getDuration(5) } });
+    mediumChart.update({ sonification: { duration: getDuration(8) } });
+    highChart.update({ sonification: { duration: getDuration(12) } });
+    highestChart.update({ sonification: { duration: getDuration(20) } });
+}
+
+setChartDuration();
 
 document.getElementById('lowestDetailSonify').onclick = () => sonifyChart(lowestChart);
 document.getElementById('lowDetailSonify').onclick = () => sonifyChart(lowChart);
@@ -304,3 +318,14 @@ document.getElementById('mediumDetailSonify').onclick = () => sonifyChart(medium
 document.getElementById('highDetailSonify').onclick = () => sonifyChart(highChart);
 document.getElementById('highestDetailSonify').onclick = () => sonifyChart(highestChart);
 document.getElementById('plotSonify').onclick = () => sonifyChart(highestChart, 0, 1);
+document.getElementById('speed').onchange = setChartDuration;
+
+document.addEventListener('keydown', function (e) {
+    if (e.keyCode === 27) {
+        lowestChart.cancelSonify();
+        lowChart.cancelSonify();
+        mediumChart.cancelSonify();
+        highChart.cancelSonify();
+        highestChart.cancelSonify();
+    }
+});

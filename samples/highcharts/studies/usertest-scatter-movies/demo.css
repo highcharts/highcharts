@@ -1,3 +1,7 @@
+main {
+    max-width: 900px;
+}
+
 #container {
     height: 600px;
     width: 650px;
@@ -13,7 +17,11 @@
     max-height: 500px;
     overflow: auto;
     padding-bottom: 5px;
-    width: 600px;
+    width: 100%;
+}
+
+.highcharts-data-table td {
+    max-width: 150px;
 }
 
 .highcharts-data-table table {
