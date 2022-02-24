@@ -88,14 +88,19 @@ QUnit.test(
 );
 
 QUnit.test('Thickness cannot be greater than size.(#6647)', assert => {
-    const chart = Highcharts.chart('container', {
+    let clicks = 0;
+    const chart = new Highcharts.chart('container', {
         chart: {
             type: 'pie'
         },
         plotOptions: {
             pie: {
-                size: '50%',
-                thickness: 90
+                thickness: 100,
+                events: {
+                    click: () => {
+                        clicks++;
+                    }
+                }
             }
         },
         series: [
@@ -116,8 +121,41 @@ QUnit.test('Thickness cannot be greater than size.(#6647)', assert => {
         size = series.center[2];
 
     assert.strictEqual(
-        thickness > size,
-        false,
-        'Thickness is not greater than size'
+        thickness,
+        series.points[0].shapeArgs.r - series.points[0].shapeArgs.innerR,
+        'Thickness should be same as points distance.'
     );
+
+    assert.strictEqual(
+        thickness + series.points[0].shapeArgs.innerR,
+        size / 2,
+        'Thickness should not be greater than size.'
+    );
+
+    const controller = new TestController(chart);
+
+    controller.moveTo(
+        chart.plotLeft + chart.series[0].center[0] - 55,
+        chart.plotTop + chart.series[0].center[1] + 5
+    );
+
+    controller.click(
+        chart.plotLeft + chart.series[0].center[0] - 55,
+        chart.plotTop + chart.series[0].center[1] + 5
+    );
+    assert.strictEqual(
+        clicks, 1, 'Clicking on a side of a pie slice should fire click event.'
+    );
+
+    series.update({
+        thickness: undefined
+    });
+    assert.ok(true, `After disable thickness, shouldn't be displayed.`);
+
+    series.update({
+        thickness: 20,
+        size: '50%',
+        innerSize: '150px'
+    });
+    assert.ok(true, 'Should working after update and override innerSize.');
 });
