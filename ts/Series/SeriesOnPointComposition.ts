@@ -315,16 +315,16 @@ namespace SeriesOnPointComposition {
                 connectedPoint.plotX &&
                 connectedPoint.plotY
             ) {
+                const xFrom = position.x || connectedPoint.plotX,
+                    yFrom = position.y || connectedPoint.plotY,
+                    xTo = xFrom + (position.offsetX || 0),
+                    yTo = yFrom + (position.offsetY || 0);
+
                 let attribs: SVGAttributes = {
-                    d: SVGRenderer.prototype.crispLine([[
-                        'M',
-                        connectedPoint.plotX,
-                        connectedPoint.plotY
-                    ], [
-                        'L',
-                        connectedPoint.plotX + (position.offsetX || 0),
-                        connectedPoint.plotY + (position.offsetY || 0)
-                    ]], connectorOpts.width || 1, 'ceil')
+                    d: SVGRenderer.prototype.crispLine([
+                        ['M', xFrom, yFrom],
+                        ['L', xTo, yTo]
+                    ], connectorOpts.width || 1, 'ceil')
                 };
 
                 attribs['stroke-width'] = connectorOpts.width;
@@ -440,14 +440,12 @@ export default SeriesOnPointComposition;
  */
 
 /**
- * Whether or not a connector line should be drawn when `position.offsetX` and
- * `position.offsetY` are defined.
+ * A name for the dash style to use for connector.
  *
- * @default     true
  * @requires    modules/series-on-point
  * @since       next
- * @type        {boolean}
- * @apioption   plotOptions.series.onPoint.connectorOptions.enabled
+ * @type        string
+ * @apioption   plotOptions.series.onPoint.connectorOptions.dashStyle
  */
 
 /**
