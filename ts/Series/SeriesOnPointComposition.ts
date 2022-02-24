@@ -27,23 +27,20 @@ const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
 import CU from './CenteredUtilities.js';
 const { getCenter } = CU;
 
-// const pieDrawPoints = pie.prototype.drawPoints;
-// const sunburstDrawPoints = sunburst.prototype.drawPoints;
 const drawPointsFunctions = {
     pieDrawPoints: pie.prototype.drawPoints,
     sunburstDrawPoints: (): void => {}
 };
-// const pieTranslate = pie.prototype.translate;
-// const sunburstTranslate = sunburst.prototype.translate;
+
 const translateFunctions = {
     pieTranslate: pie.prototype.translate,
     sunburstTranslate: (): void => {}
 };
+
 if (sunburst) {
     drawPointsFunctions.sunburstDrawPoints = sunburst.prototype.drawPoints;
     translateFunctions.sunburstTranslate = sunburst.prototype.translate;
 }
-
 
 import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
@@ -204,6 +201,7 @@ namespace SeriesOnPointComposition {
         });
 
         this.series.forEach((series: Series): void => {
+            // Save z values of all the series
             series.zData = zData;
         });
     }
@@ -285,6 +283,7 @@ namespace SeriesOnPointComposition {
             }
         }
 
+        // Get and set the size
         const radius = this.radii && this.radii[this.index];
 
         if (isNumber(radius)) {
@@ -430,5 +429,85 @@ export default SeriesOnPointComposition;
  *  API Options
  *
  * */
+
+/**
+ * Color of a connector line. By default it's the series' color.
+ *
+ * @requires    modules/series-on-point
+ * @since       next
+ * @type        {string}
+ * @apioption   plotOptions.series.onPoint.connectorOptions.color
+ */
+
+/**
+ * Whether or not a connector line should be drawn when `position.offsetX` and
+ * `position.offsetY` are defined.
+ *
+ * @default     true
+ * @requires    modules/series-on-point
+ * @since       next
+ * @type        {boolean}
+ * @apioption   plotOptions.series.onPoint.connectorOptions.enabled
+ */
+
+/**
+ * Pixel width of a connector line.
+ *
+ * @default     1
+ * @requires    modules/series-on-point
+ * @type        {number}
+ * @since       next
+ * @product     highcharts highstock
+ * @apioption   plotOptions.series.onPoint.connectorOptions.width
+*/
+
+/**
+ * An id of the point that we connect series to.
+
+ * @requires   modules/series-on-point
+ * @since      next
+ * @type       {string}
+ * @apioption  plotOptions.series.onPoint.id
+ */
+
+/**
+ * Series center offset from the original x position. If defined, the connector
+ * line is drawn connecting original position with new position.
+ *
+ * @requires   modules/series-on-point
+ * @since      next
+ * @type       {number}
+ * @apioption  plotOptions.series.onPoint.position.offsetX
+ */
+
+/**
+ * Series center offset from the original y position. If defined, the connector
+ * line is drawn from original position to a new position.
+ *
+ * @requires   modules/series-on-point
+ * @since      next
+ * @type       {number}
+ * @apioption  plotOptions.series.onPoint.position.offsetY
+ */
+
+/**
+ * X position of the series center. By default, the series is displayed on a
+ * point that it's connected to.
+ *
+ * @requires   modules/series-on-point
+ * @since      next
+ * @type       {number}
+ * @apioption  plotOptions.series.onPoint.position.x
+ */
+
+/**
+ * Y position of the series center. By default, the series is displayed on a
+ * point that it's connected to.
+ *
+ * @requires   modules/series-on-point
+ * @since      next
+ * @type       {number}
+ * @apioption  plotOptions.series.onPoint.position.y
+ */
 
 ''; // keeps doclets above in transpiled file
