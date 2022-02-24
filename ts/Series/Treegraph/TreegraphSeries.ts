@@ -41,6 +41,7 @@ import TreegraphLink from './TreegraphLink.js';
 import seriesDefaults from '../../Core/Series/SeriesDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import { DataLabelFormatterCallback } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -230,7 +231,9 @@ class TreegraphSeries extends TreemapSeries {
              */
             dataLabels: {
                 enabled: true,
-                format: '{point.id}',
+                formatter: function (this: Point.PointLabelObject): string {
+                    return this.point.id;
+                },
                 linkFormat: '',
                 /**
                  * Options for a _link_ label text which should follow link
