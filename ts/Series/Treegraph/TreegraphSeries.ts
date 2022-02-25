@@ -82,9 +82,9 @@ class TreegraphSeries extends TreemapSeries {
      * @extends      plotOptions.treegraph
      * @since        next
      * @product      highcharts
-     * @requires     modules/sankey
      * @requires     modules/treegraph
-     * @exclude      linkColor, linkLineWidth, linkRadius
+     * @exclude     layoutAlgorithm, dashStyle, linecap, lineWidth, negativeColor,
+     *              threshold, zones, zoneAxis
      * @optionparent plotOptions.treegraph
      */
     public static defaultOptions: TreegraphSeriesOptions = merge(
@@ -142,6 +142,8 @@ class TreegraphSeries extends TreemapSeries {
                 color: Palette.neutralColor60,
                 /**
                  * The line width of the links connecting nodes, in pixels.
+                 * @type {number} width in pixels
+                 * @default 1
                  *
                  * @sample   highcharts/series-organization/link-options
                  *           Square links
@@ -585,7 +587,7 @@ class TreegraphSeries extends TreemapSeries {
 
         // Set the anchor position for tooltip.
         point.tooltipPos = chart.inverted ?
-            [plotSizeY - y, plotSizeX - x] :
+            [plotSizeY - y, x] :
             [nodeX + width / 2, nodeY];
         // To prevent error in generatePoints this property needs to be reset
         // to false.
@@ -677,7 +679,6 @@ export default TreegraphSeries;
  *            pointStart, relativeXValue, softThreshold, stack,
  *            stacking, step, xAxis, yAxis
  * @product   highcharts
- * @requires  modules/sankey
  * @requires  modules/treegraph
  * @apioption series.treegraph
  */
@@ -696,17 +697,6 @@ export default TreegraphSeries;
  */
 
 /**
- * A collection of options for the individual nodes. The nodes in a treegraph
- * are auto-generated instances of `Highcharts.Point`, but options can be
- * applied here and linked by the `id`.
- *
- * @extends   series.organization.nodes
- * @type      {Array<*>}
- * @product   highcharts
- * @apioption series.treegraph.nodes
- */
-
-/**
  *
  *
  * @sample highcharts/series-treegraph/node-level
@@ -714,15 +704,6 @@ export default TreegraphSeries;
  * @apioption series.treegraph.nodes.level
  */
 
-/**
- * Individual data label for each node. The options are the same as the ones for
- * [series.treegraph.dataLabels](#series.treegraph.dataLabels).
- *
- * @type
- * {Highcharts.SeriesTreegraphDataLabelsOptionsObject|Array<Highcharts.SeriesTreegraphDataLabelsOptionsObject>}
- *
- * @apioption series.treegraph.nodes.dataLabels
- */
 /**
  * An array of data points for the series. For the `treegraph` series type,
  * points can be given in the following ways:
