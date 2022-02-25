@@ -12,63 +12,22 @@
 
 <h2>Play as sound</h2>
 <p>
-   Click the buttons below to play either a simplified trend of the plot, or every data point in the plot as sound. Each sound represents a data value. The sounds will play from left to right along the X axis, from lowest to highest IMDB rating. The pitch of the sounds will go up or down to indicate an increase or decrease in Rotten Tomatoes score as you go along.
+   Click the buttons below to play either a simplified trend of the plot, or every data point in the plot as sound. Each sound represents a data value. The sounds will play from left to right along the X axis, starting with the movie with the lowest IMDB rating, and ending with the one with the highest IMDB rating. The stereo panning will also help indicate the location on the X axis. The pitch of the sounds will go up or down as they play to indicate an increase or decrease in Rotten Tomatoes score as you go along.
 </p>
 <label>
-   Sound speed
+   Sound speed, low to high
    <input id="speed" type="range" min="1" max="10" value="5">
 </label>
 <button id="sonifyTrend">Play trend as sound</button>
 <button id="sonifyPlot">Play plot as sound</button>
 
 <h2>Visualization</h2>
-<a href="#tables">Go to data tables</a>
+<a href="#dataTable">Go to data table</a>
 <figure>
     <div id="container"></div>
 </figure>
 
-<h2 id="tables">Data tables</h2>
 <div class="highcharts-data-table">
-<table tabindex="-1" summary="Table representation of trend line." id="dataTableTrend">
-    <caption class="highcharts-table-caption">Movie ratings on IMDB vs Rotten Tomatoes - Trend</caption>
-    <thead>
-        <tr>
-           <th scope="col">IMDB rating segment</th>
-           <th scope="col">Rotten Tomatoes score average</th>
-        </tr>
-     </thead>
-     <tbody>
-        <tr>
-           <td>4.4 to 5.1</td>
-           <td>55</td>
-        </tr>
-        <tr>
-            <td>5.1 to 5.7</td>
-            <td>44</td>
-         </tr>
-         <tr>
-            <td>5.7 to 6.4</td>
-            <td>52</td>
-         </tr>
-         <tr>
-            <td>6.4 to 7.0</td>
-            <td>66</td>
-         </tr>
-         <tr>
-            <td>7.0 to 7.7</td>
-            <td>79</td>
-         </tr>
-         <tr>
-            <td>7.7 to 8.3</td>
-            <td>87</td>
-         </tr>
-         <tr>
-            <td>8.3 to 9.0</td>
-            <td>93</td>
-         </tr>
-     </tbody>
-</table>
-
 <table tabindex="-1" summary="Table representation of plot." id="dataTable">
    <caption class="highcharts-table-caption">Movie ratings on IMDB vs Rotten Tomatoes - Data points</caption>
    <thead>
@@ -80,67 +39,67 @@
    </thead>
    <tbody>
      <tr>
-       <td>Staying Alive</td>
+       <th scope="row">Staying Alive</td>
        <td>4.4</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>The Twilight Saga: New Moon</td>
+       <th scope="row">The Twilight Saga: New Moon</td>
        <td>4.6</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>The Flintstones</td>
+       <th scope="row">The Flintstones</td>
        <td>4.8</td>
        <td>24</td>
      </tr>
      <tr>
-       <td>The Twilight Saga: Breaking Dawn - Part 1</td>
+       <th scope="row">The Twilight Saga: Breaking Dawn - Part 1</td>
        <td>4.9</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>The Twilight Saga: Eclipse</td>
+       <th scope="row">The Twilight Saga: Eclipse</td>
        <td>4.9</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Smokey and the Bandit II</td>
+       <th scope="row">Smokey and the Bandit II</td>
        <td>5.1</td>
        <td>46</td>
      </tr>
      <tr>
-       <td>Dr. Dolittle</td>
+       <th scope="row">Dr. Dolittle</td>
        <td>5.3</td>
        <td>35</td>
      </tr>
      <tr>
-       <td>Godzilla</td>
+       <th scope="row">Godzilla</td>
        <td>5.3</td>
        <td>28</td>
      </tr>
      <tr>
-       <td>Batman Forever</td>
+       <th scope="row">Batman Forever</td>
        <td>5.4</td>
        <td>33</td>
      </tr>
      <tr>
-       <td>The Smurfs</td>
+       <th scope="row">The Smurfs</td>
        <td>5.5</td>
        <td>44</td>
      </tr>
      <tr>
-       <td>The Nutty Professor</td>
+       <th scope="row">The Nutty Professor</td>
        <td>5.5</td>
        <td>44</td>
      </tr>
      <tr>
-       <td>Crocodile" Dundee II</td>
+       <th scope="row">Crocodile" Dundee II</td>
        <td>5.5</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>The Twilight Saga: Breaking Dawn - Part 2</td>
+       <th scope="row">The Twilight Saga: Breaking Dawn - Part 2</td>
        <td>5.6</td>
        <td>70</td>
      </tr>
@@ -150,542 +109,542 @@
        <td>40</td>
      </tr>
      <tr>
-       <td>Planet of the Apes</td>
+       <th scope="row">Planet of the Apes</td>
        <td>5.7</td>
        <td>27</td>
      </tr>
      <tr>
-       <td>The Best Little Whorehouse in Texas</td>
+       <th scope="row">The Best Little Whorehouse in Texas</td>
        <td>5.7</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>The Blue Lagoon</td>
+       <th scope="row">The Blue Lagoon</td>
        <td>5.7</td>
        <td>54</td>
      </tr>
      <tr>
-       <td>Jaws 2</td>
+       <th scope="row">Jaws 2</td>
        <td>5.7</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>Transformers: Age of Extinction</td>
+       <th scope="row">Transformers: Age of Extinction</td>
        <td>5.8</td>
        <td>52</td>
      </tr>
      <tr>
-       <td>Indecent Proposal</td>
+       <th scope="row">Indecent Proposal</td>
        <td>5.8</td>
        <td>48</td>
      </tr>
      <tr>
-       <td>Look Who's Talking</td>
+       <th scope="row">Look Who's Talking</td>
        <td>5.8</td>
        <td>47</td>
      </tr>
      <tr>
-       <td>Cocktail</td>
+       <th scope="row">Cocktail</td>
        <td>5.8</td>
        <td>59</td>
      </tr>
      <tr>
-       <td>Three Men and a Baby</td>
+       <th scope="row">Three Men and a Baby</td>
        <td>5.8</td>
        <td>47</td>
      </tr>
      <tr>
-       <td>The Golden Child</td>
+       <th scope="row">The Golden Child</td>
        <td>5.8</td>
        <td>47</td>
      </tr>
      <tr>
-       <td>The Karate Kid, Part II</td>
+       <th scope="row">The Karate Kid, Part II</td>
        <td>5.8</td>
        <td>52</td>
      </tr>
      <tr>
-       <td>King Kong</td>
+       <th scope="row">King Kong</td>
        <td>5.8</td>
        <td>30</td>
      </tr>
      <tr>
-       <td>Jurassic Park III</td>
+       <th scope="row">Jurassic Park III</td>
        <td>5.9</td>
        <td>37</td>
      </tr>
      <tr>
-       <td>Twins</td>
+       <th scope="row">Twins</td>
        <td>5.9</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>Transformers: Revenge of the Fallen</td>
+       <th scope="row">Transformers: Revenge of the Fallen</td>
        <td>6</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>Shark Tale</td>
+       <th scope="row">Shark Tale</td>
        <td>6</td>
        <td>49</td>
      </tr>
      <tr>
-       <td>Men in Black II</td>
+       <th scope="row">Men in Black II</td>
        <td>6</td>
        <td>46</td>
      </tr>
      <tr>
-       <td>Pearl Harbor</td>
+       <th scope="row">Pearl Harbor</td>
        <td>6</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>How the Grinch Stole Christmas</td>
+       <th scope="row">How the Grinch Stole Christmas</td>
        <td>6</td>
        <td>55</td>
      </tr>
      <tr>
-       <td>Mission: Impossible II</td>
+       <th scope="row">Mission: Impossible II</td>
        <td>6</td>
        <td>44</td>
      </tr>
      <tr>
-       <td>Eraser</td>
+       <th scope="row">Eraser</td>
        <td>6</td>
        <td>39</td>
      </tr>
      <tr>
-       <td>Casper</td>
+       <th scope="row">Casper</td>
        <td>6</td>
        <td>49</td>
      </tr>
      <tr>
-       <td>Kindergarten Cop</td>
+       <th scope="row">Kindergarten Cop</td>
        <td>6</td>
        <td>51</td>
      </tr>
      <tr>
-       <td>The Jewel of the Nile</td>
+       <th scope="row">The Jewel of the Nile</td>
        <td>6</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>Any Which Way You Can</td>
+       <th scope="row">Any Which Way You Can</td>
        <td>6</td>
        <td>45</td>
      </tr>
      <tr>
-       <td>Private Benjamin</td>
+       <th scope="row">Private Benjamin</td>
        <td>6</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Shrek the Third</td>
+       <th scope="row">Shrek the Third</td>
        <td>6.1</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>Superman Returns</td>
+       <th scope="row">Superman Returns</td>
        <td>6.1</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Die Another Day</td>
+       <th scope="row">Die Another Day</td>
        <td>6.1</td>
        <td>41</td>
      </tr>
      <tr>
-       <td>Deep Impact</td>
+       <th scope="row">Deep Impact</td>
        <td>6.1</td>
        <td>43</td>
      </tr>
      <tr>
-       <td>Waterworld</td>
+       <th scope="row">Waterworld</td>
        <td>6.1</td>
        <td>43</td>
      </tr>
      <tr>
-       <td>The Bodyguard</td>
+       <th scope="row">The Bodyguard</td>
        <td>6.1</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Flashdance</td>
+       <th scope="row">Flashdance</td>
        <td>6.1</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Porky's</td>
+       <th scope="row">Porky's</td>
        <td>6.1</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>The Cannonball Run</td>
+       <th scope="row">The Cannonball Run</td>
        <td>6.1</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>The Deep</td>
+       <th scope="row">The Deep</td>
        <td>6.1</td>
        <td>38</td>
      </tr>
      <tr>
-       <td>Indiana Jones and the Kingdom of the Crystal Skull</td>
+       <th scope="row">Indiana Jones and the Kingdom of the Crystal Skull</td>
        <td>6.2</td>
        <td>54</td>
      </tr>
      <tr>
-       <td>Spider-Man 3</td>
+       <th scope="row">Spider-Man 3</td>
        <td>6.2</td>
        <td>51</td>
      </tr>
      <tr>
-       <td>Twister</td>
+       <th scope="row">Twister</td>
        <td>6.2</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>Sister Act</td>
+       <th scope="row">Sister Act</td>
        <td>6.2</td>
        <td>65</td>
      </tr>
      <tr>
-       <td>Honey, I Shrunk the Kids</td>
+       <th scope="row">Honey, I Shrunk the Kids</td>
        <td>6.2</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>Moonraker</td>
+       <th scope="row">Moonraker</td>
        <td>6.2</td>
        <td>43</td>
      </tr>
      <tr>
-       <td>The Amityville Horror</td>
+       <th scope="row">The Amityville Horror</td>
        <td>6.2</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>Every Which Way but Loose</td>
+       <th scope="row">Every Which Way but Loose</td>
        <td>6.2</td>
        <td>56</td>
      </tr>
      <tr>
-       <td>Hooper</td>
+       <th scope="row">Hooper</td>
        <td>6.2</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>The Apple Dumpling Gang</td>
+       <th scope="row">The Apple Dumpling Gang</td>
        <td>6.2</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Cars 2</td>
+       <th scope="row">Cars 2</td>
        <td>6.3</td>
        <td>51</td>
      </tr>
      <tr>
-       <td>Transformers: Dark of the Moon</td>
+       <th scope="row">Transformers: Dark of the Moon</td>
        <td>6.3</td>
        <td>56</td>
      </tr>
      <tr>
-       <td>Meet the Fockers</td>
+       <th scope="row">Meet the Fockers</td>
        <td>6.3</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>The Mummy Returns</td>
+       <th scope="row">The Mummy Returns</td>
        <td>6.3</td>
        <td>63</td>
      </tr>
      <tr>
-       <td>My Best Friend's Wedding</td>
+       <th scope="row">My Best Friend's Wedding</td>
        <td>6.3</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Cliffhanger</td>
+       <th scope="row">Cliffhanger</td>
        <td>6.3</td>
        <td>51</td>
      </tr>
      <tr>
-       <td>Spies Like Us</td>
+       <th scope="row">Spies Like Us</td>
        <td>6.3</td>
        <td>57</td>
      </tr>
      <tr>
-       <td>Shampoo</td>
+       <th scope="row">Shampoo</td>
        <td>6.3</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>Shrek Forever After</td>
+       <th scope="row">Shrek Forever After</td>
        <td>6.4</td>
        <td>54</td>
      </tr>
      <tr>
-       <td>Mamma Mia!</td>
+       <th scope="row">Mamma Mia!</td>
        <td>6.4</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Night at the Museum</td>
+       <th scope="row">Night at the Museum</td>
        <td>6.4</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>Ocean's Twelve</td>
+       <th scope="row">Ocean's Twelve</td>
        <td>6.4</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>The Day After Tomorrow</td>
+       <th scope="row">The Day After Tomorrow</td>
        <td>6.4</td>
        <td>50</td>
      </tr>
      <tr>
-       <td>Terminator 3: Rise of the Machines</td>
+       <th scope="row">Terminator 3: Rise of the Machines</td>
        <td>6.4</td>
        <td>47</td>
      </tr>
      <tr>
-       <td>Dinosaur</td>
+       <th scope="row">Dinosaur</td>
        <td>6.4</td>
        <td>47</td>
      </tr>
      <tr>
-       <td>The Perfect Storm</td>
+       <th scope="row">The Perfect Storm</td>
        <td>6.4</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>What Women Want</td>
+       <th scope="row">What Women Want</td>
        <td>6.4</td>
        <td>54</td>
      </tr>
      <tr>
-       <td>The World Is Not Enough</td>
+       <th scope="row">The World Is Not Enough</td>
        <td>6.4</td>
        <td>50</td>
      </tr>
      <tr>
-       <td>Air Force One</td>
+       <th scope="row">Air Force One</td>
        <td>6.4</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Beverly Hills Cop II</td>
+       <th scope="row">Beverly Hills Cop II</td>
        <td>6.4</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>The Secret of My Success</td>
+       <th scope="row">The Secret of My Success</td>
        <td>6.4</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>Rambo: First Blood Part II</td>
+       <th scope="row">Rambo: First Blood Part II</td>
        <td>6.4</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Footloose</td>
+       <th scope="row">Footloose</td>
        <td>6.4</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Mr. Mom</td>
+       <th scope="row">Mr. Mom</td>
        <td>6.4</td>
        <td>57</td>
      </tr>
      <tr>
-       <td>Star Trek: The Motion Picture</td>
+       <th scope="row">Star Trek: The Motion Picture</td>
        <td>6.4</td>
        <td>42</td>
      </tr>
      <tr>
-       <td>Funny Lady</td>
+       <th scope="row">Funny Lady</td>
        <td>6.4</td>
        <td>56</td>
      </tr>
      <tr>
-       <td>The Other Side of the Mountain</td>
+       <th scope="row">The Other Side of the Mountain</td>
        <td>6.4</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>The Hangover Part II</td>
+       <th scope="row">The Hangover Part II</td>
        <td>6.5</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>Alice in Wonderland</td>
+       <th scope="row">Alice in Wonderland</td>
        <td>6.5</td>
        <td>55</td>
      </tr>
      <tr>
-       <td>Hancock</td>
+       <th scope="row">Hancock</td>
        <td>6.5</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>National Treasure: Book of Secrets</td>
+       <th scope="row">National Treasure: Book of Secrets</td>
        <td>6.5</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>Happy Feet</td>
+       <th scope="row">Happy Feet</td>
        <td>6.5</td>
        <td>70</td>
      </tr>
      <tr>
-       <td>The Da Vinci Code</td>
+       <th scope="row">The Da Vinci Code</td>
        <td>6.5</td>
        <td>57</td>
      </tr>
      <tr>
-       <td>Mr. &amp;amp; Mrs. Smith</td>
+       <th scope="row">Mr. &amp;amp; Mrs. Smith</td>
        <td>6.5</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>War of the Worlds</td>
+       <th scope="row">War of the Worlds</td>
        <td>6.5</td>
        <td>42</td>
      </tr>
      <tr>
-       <td>Bad Boys II</td>
+       <th scope="row">Bad Boys II</td>
        <td>6.5</td>
        <td>78</td>
      </tr>
      <tr>
-       <td>The Lost World: Jurassic Park</td>
+       <th scope="row">The Lost World: Jurassic Park</td>
        <td>6.5</td>
        <td>52</td>
      </tr>
      <tr>
-       <td>Tomorrow Never Dies</td>
+       <th scope="row">Tomorrow Never Dies</td>
        <td>6.5</td>
        <td>53</td>
      </tr>
      <tr>
-       <td>The Pelican Brief</td>
+       <th scope="row">The Pelican Brief</td>
        <td>6.5</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Home Alone 2: Lost in New York</td>
+       <th scope="row">Home Alone 2: Lost in New York</td>
        <td>6.5</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Ghostbusters II</td>
+       <th scope="row">Ghostbusters II</td>
        <td>6.5</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>The Witches of Eastwick</td>
+       <th scope="row">The Witches of Eastwick</td>
        <td>6.5</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Crocodile" Dundee</td>
+       <th scope="row">Crocodile" Dundee</td>
        <td>6.5</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>Back to School</td>
+       <th scope="row">Back to School</td>
        <td>6.5</td>
        <td>68</td>
      </tr>
      <tr>
-       <td>Annie</td>
+       <th scope="row">Annie</td>
        <td>6.5</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>Oh, God!</td>
+       <th scope="row">Oh, God!</td>
        <td>6.5</td>
        <td>59</td>
      </tr>
      <tr>
-       <td>A Star Is Born</td>
+       <th scope="row">A Star Is Born</td>
        <td>6.5</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>The Chronicles of Narnia: Prince Caspian</td>
+       <th scope="row">The Chronicles of Narnia: Prince Caspian</td>
        <td>6.6</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>My Big Fat Greek Wedding</td>
+       <th scope="row">My Big Fat Greek Wedding</td>
        <td>6.6</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>What Lies Beneath</td>
+       <th scope="row">What Lies Beneath</td>
        <td>6.6</td>
        <td>59</td>
      </tr>
      <tr>
-       <td>Austin Powers: The Spy Who Shagged Me</td>
+       <th scope="row">Austin Powers: The Spy Who Shagged Me</td>
        <td>6.6</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Star Wars Episode I: The Phantom Menace</td>
+       <th scope="row">Star Wars Episode I: The Phantom Menace</td>
        <td>6.6</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Armageddon</td>
+       <th scope="row">Armageddon</td>
        <td>6.6</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>Lethal Weapon 4</td>
+       <th scope="row">Lethal Weapon 4</td>
        <td>6.6</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Ransom</td>
+       <th scope="row">Ransom</td>
        <td>6.6</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Pocahontas</td>
+       <th scope="row">Pocahontas</td>
        <td>6.6</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Stakeout</td>
+       <th scope="row">Stakeout</td>
        <td>6.6</td>
        <td>56</td>
      </tr>
      <tr>
-       <td>Cocoon</td>
+       <th scope="row">Cocoon</td>
        <td>6.6</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Police Academy</td>
+       <th scope="row">Police Academy</td>
        <td>6.6</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Star Trek III: The Search for Spock</td>
+       <th scope="row">Star Trek III: The Search for Spock</td>
        <td>6.6</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Octopussy</td>
+       <th scope="row">Octopussy</td>
        <td>6.6</td>
        <td>48</td>
      </tr>
      <tr>
-       <td>Sudden Impact</td>
+       <th scope="row">Sudden Impact</td>
        <td>6.6</td>
        <td>54</td>
      </tr>
@@ -695,287 +654,287 @@
        <td>74</td>
      </tr>
      <tr>
-       <td>Ice Age: Continental Drift</td>
+       <th scope="row">Ice Age: Continental Drift</td>
        <td>6.7</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Pirates of the Caribbean: On Stranger Tides</td>
+       <th scope="row">Pirates of the Caribbean: On Stranger Tides</td>
        <td>6.7</td>
        <td>54</td>
      </tr>
      <tr>
-       <td>Angels &amp;amp; Demons</td>
+       <th scope="row">Angels &amp;amp; Demons</td>
        <td>6.7</td>
        <td>57</td>
      </tr>
      <tr>
-       <td>Madagascar: Escape 2 Africa</td>
+       <th scope="row">Madagascar: Escape 2 Africa</td>
        <td>6.7</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Quantum of Solace</td>
+       <th scope="row">Quantum of Solace</td>
        <td>6.7</td>
        <td>58</td>
      </tr>
      <tr>
-       <td>Charlie and the Chocolate Factory</td>
+       <th scope="row">Charlie and the Chocolate Factory</td>
        <td>6.7</td>
        <td>51</td>
      </tr>
      <tr>
-       <td>Hitch</td>
+       <th scope="row">Hitch</td>
        <td>6.7</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Bruce Almighty</td>
+       <th scope="row">Bruce Almighty</td>
        <td>6.7</td>
        <td>57</td>
      </tr>
      <tr>
-       <td>The Matrix Revolutions</td>
+       <th scope="row">The Matrix Revolutions</td>
        <td>6.7</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Signs</td>
+       <th scope="row">Signs</td>
        <td>6.7</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>Star Wars Episode II: Attack of the Clones</td>
+       <th scope="row">Star Wars Episode II: Attack of the Clones</td>
        <td>6.7</td>
        <td>59</td>
      </tr>
      <tr>
-       <td>Hannibal</td>
+       <th scope="row">Hannibal</td>
        <td>6.7</td>
        <td>63</td>
      </tr>
      <tr>
-       <td>Lethal Weapon 3</td>
+       <th scope="row">Lethal Weapon 3</td>
        <td>6.7</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>City Slickers</td>
+       <th scope="row">City Slickers</td>
        <td>6.7</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Hook</td>
+       <th scope="row">Hook</td>
        <td>6.7</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Hot Shots!</td>
+       <th scope="row">Hot Shots!</td>
        <td>6.7</td>
        <td>65</td>
      </tr>
      <tr>
-       <td>Teenage Mutant Ninja Turtles</td>
+       <th scope="row">Teenage Mutant Ninja Turtles</td>
        <td>6.7</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Rocky IV</td>
+       <th scope="row">Rocky IV</td>
        <td>6.7</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Rocky III</td>
+       <th scope="row">Rocky III</td>
        <td>6.7</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Revenge of the Pink Panther</td>
+       <th scope="row">Revenge of the Pink Panther</td>
        <td>6.7</td>
        <td>70</td>
      </tr>
      <tr>
-       <td>Midway</td>
+       <th scope="row">Midway</td>
        <td>6.7</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Signs</td>
+       <th scope="row">Signs</td>
        <td>6.7</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>The Hunger Games: Mockingjay - Part 1</td>
+       <th scope="row">The Hunger Games: Mockingjay - Part 1</td>
        <td>6.8</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>Mission: Impossible III</td>
+       <th scope="row">Mission: Impossible III</td>
        <td>6.8</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>X-Men: The Last Stand</td>
+       <th scope="row">X-Men: The Last Stand</td>
        <td>6.8</td>
        <td>62</td>
      </tr>
      <tr>
-       <td>Liar Liar</td>
+       <th scope="row">Liar Liar</td>
        <td>6.8</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>Jumanji</td>
+       <th scope="row">Jumanji</td>
        <td>6.8</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>The Mask</td>
+       <th scope="row">The Mask</td>
        <td>6.8</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>Sleepless in Seattle</td>
+       <th scope="row">Sleepless in Seattle</td>
        <td>6.8</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>The Firm</td>
+       <th scope="row">The Firm</td>
        <td>6.8</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>The Addams Family</td>
+       <th scope="row">The Addams Family</td>
        <td>6.8</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Ruthless People</td>
+       <th scope="row">Ruthless People</td>
        <td>6.8</td>
        <td>70</td>
      </tr>
      <tr>
-       <td>Top Gun</td>
+       <th scope="row">Top Gun</td>
        <td>6.8</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Risky Business</td>
+       <th scope="row">Risky Business</td>
        <td>6.8</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>For Your Eyes Only</td>
+       <th scope="row">For Your Eyes Only</td>
        <td>6.8</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Superman II</td>
+       <th scope="row">Superman II</td>
        <td>6.8</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>Stir Crazy</td>
+       <th scope="row">Stir Crazy</td>
        <td>6.8</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Saturday Night Fever</td>
+       <th scope="row">Saturday Night Fever</td>
        <td>6.8</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Smokey and the Bandit</td>
+       <th scope="row">Smokey and the Bandit</td>
        <td>6.8</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>The Enforcer</td>
+       <th scope="row">The Enforcer</td>
        <td>6.8</td>
        <td>59</td>
      </tr>
      <tr>
-       <td>The Amazing Spider-Man 2</td>
+       <th scope="row">The Amazing Spider-Man 2</td>
        <td>6.9</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Men in Black 3</td>
+       <th scope="row">Men in Black 3</td>
        <td>6.9</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Ice Age: The Meltdown</td>
+       <th scope="row">Ice Age: The Meltdown</td>
        <td>6.9</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Madagascar</td>
+       <th scope="row">Madagascar</td>
        <td>6.9</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>The Chronicles of Narnia: The Lion, the Witch and the Wardrobe</td>
+       <th scope="row">The Chronicles of Narnia: The Lion, the Witch and the Wardrobe</td>
        <td>6.9</td>
        <td>61</td>
      </tr>
      <tr>
-       <td>Independence Day</td>
+       <th scope="row">Independence Day</td>
        <td>6.9</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>The Hunchback of Notre Dame</td>
+       <th scope="row">The Hunchback of Notre Dame</td>
        <td>6.9</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>Clear and Present Danger</td>
+       <th scope="row">Clear and Present Danger</td>
        <td>6.9</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Mrs. Doubtfire</td>
+       <th scope="row">Mrs. Doubtfire</td>
        <td>6.9</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Basic Instinct</td>
+       <th scope="row">Basic Instinct</td>
        <td>6.9</td>
        <td>64</td>
      </tr>
      <tr>
-       <td>Robin Hood: Prince of Thieves</td>
+       <th scope="row">Robin Hood: Prince of Thieves</td>
        <td>6.9</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Presumed Innocent</td>
+       <th scope="row">Presumed Innocent</td>
        <td>6.9</td>
        <td>66</td>
      </tr>
      <tr>
-       <td>Pretty Woman</td>
+       <th scope="row">Pretty Woman</td>
        <td>6.9</td>
        <td>68</td>
      </tr>
      <tr>
-       <td>Coming to America</td>
+       <th scope="row">Coming to America</td>
        <td>6.9</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Fatal Attraction</td>
+       <th scope="row">Fatal Attraction</td>
        <td>6.9</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>An American Tail</td>
+       <th scope="row">An American Tail</td>
        <td>6.9</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Romancing the Stone</td>
+       <th scope="row">Romancing the Stone</td>
        <td>6.9</td>
        <td>69</td>
      </tr>
@@ -985,1064 +944,1062 @@
        <td>69</td>
      </tr>
      <tr>
-       <td>Arthur</td>
+       <th scope="row">Arthur</td>
        <td>6.9</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Stripes</td>
+       <th scope="row">Stripes</td>
        <td>6.9</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Heaven Can Wait</td>
+       <th scope="row">Heaven Can Wait</td>
        <td>6.9</td>
        <td>68</td>
      </tr>
      <tr>
-       <td>Silver Streak</td>
+       <th scope="row">Silver Streak</td>
        <td>6.9</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Madagascar 3: Europe's Most Wanted</td>
+       <th scope="row">Madagascar 3: Europe's Most Wanted</td>
        <td>7</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>Ice Age: Dawn of the Dinosaurs</td>
+       <th scope="row">Ice Age: Dawn of the Dinosaurs</td>
        <td>7</td>
        <td>63</td>
      </tr>
      <tr>
-       <td>Meet the Parents</td>
+       <th scope="row">Meet the Parents</td>
        <td>7</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>Notting Hill</td>
+       <th scope="row">Notting Hill</td>
        <td>7</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>The Mummy</td>
+       <th scope="row">The Mummy</td>
        <td>7</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>Batman Returns</td>
+       <th scope="row">Batman Returns</td>
        <td>7</td>
        <td>73</td>
      </tr>
      <tr>
-       <td>Wayne's World</td>
+       <th scope="row">Wayne's World</td>
        <td>7</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Ghost</td>
+       <th scope="row">Ghost</td>
        <td>7</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>An Officer and a Gentleman</td>
+       <th scope="row">An Officer and a Gentleman</td>
        <td>7</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Time Bandits</td>
+       <th scope="row">Time Bandits</td>
        <td>7</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Maleficent</td>
+       <th scope="row">Maleficent</td>
        <td>7.1</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Thor: The Dark World</td>
+       <th scope="row">Thor: The Dark World</td>
        <td>7.1</td>
        <td>78</td>
      </tr>
      <tr>
-       <td>The Amazing Spider-Man</td>
+       <th scope="row">The Amazing Spider-Man</td>
        <td>7.1</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Iron Man 2</td>
+       <th scope="row">Iron Man 2</td>
        <td>7.1</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Pirates of the Caribbean: At World's End</td>
+       <th scope="row">Pirates of the Caribbean: At World's End</td>
        <td>7.1</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>The Passion of the Christ</td>
+       <th scope="row">The Passion of the Christ</td>
        <td>7.1</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>There's Something About Mary</td>
+       <th scope="row">There's Something About Mary</td>
        <td>7.1</td>
        <td>60</td>
      </tr>
      <tr>
-       <td>Mission: Impossible</td>
+       <th scope="row">Mission: Impossible</td>
        <td>7.1</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>Four Weddings and a Funeral</td>
+       <th scope="row">Four Weddings and a Funeral</td>
        <td>7.1</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Die Hard 2</td>
+       <th scope="row">Die Hard 2</td>
        <td>7.1</td>
        <td>70</td>
      </tr>
      <tr>
-       <td>Moonstruck</td>
+       <th scope="row">Moonstruck</td>
        <td>7.1</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>WarGames</td>
+       <th scope="row">WarGames</td>
        <td>7.1</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>Rocky II</td>
+       <th scope="row">Rocky II</td>
        <td>7.1</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>The Spy Who Loved Me</td>
+       <th scope="row">The Spy Who Loved Me</td>
        <td>7.1</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>The Return of the Pink Panther</td>
+       <th scope="row">The Return of the Pink Panther</td>
        <td>7.1</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Fast &amp;amp; Furious 6</td>
+       <th scope="row">Fast &amp;amp; Furious 6</td>
        <td>7.2</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Man of Steel</td>
+       <th scope="row">Man of Steel</td>
        <td>7.2</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>I Am Legend</td>
+       <th scope="row">I Am Legend</td>
        <td>7.2</td>
        <td>68</td>
      </tr>
      <tr>
-       <td>Transformers</td>
+       <th scope="row">Transformers</td>
        <td>7.2</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Cars</td>
+       <th scope="row">Cars</td>
        <td>7.2</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Shrek 2</td>
+       <th scope="row">Shrek 2</td>
        <td>7.2</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>Troy</td>
+       <th scope="row">Troy</td>
        <td>7.2</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>The Matrix Reloaded</td>
+       <th scope="row">The Matrix Reloaded</td>
        <td>7.2</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Tarzan</td>
+       <th scope="row">Tarzan</td>
        <td>7.2</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>A Bug's Life</td>
+       <th scope="row">A Bug's Life</td>
        <td>7.2</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>Shakespeare in Love</td>
+       <th scope="row">Shakespeare in Love</td>
        <td>7.2</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Men in Black</td>
+       <th scope="row">Men in Black</td>
        <td>7.2</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>The Full Monty</td>
+       <th scope="row">The Full Monty</td>
        <td>7.2</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>GoldenEye</td>
+       <th scope="row">GoldenEye</td>
        <td>7.2</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Speed</td>
+       <th scope="row">Speed</td>
        <td>7.2</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>True Lies</td>
+       <th scope="row">True Lies</td>
        <td>7.2</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Born on the Fourth of July</td>
+       <th scope="row">Born on the Fourth of July</td>
        <td>7.2</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Lethal Weapon 2</td>
+       <th scope="row">Lethal Weapon 2</td>
        <td>7.2</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Out Of Africa</td>
+       <th scope="row">Out Of Africa</td>
        <td>7.2</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Gremlins</td>
+       <th scope="row">Gremlins</td>
        <td>7.2</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>The Karate Kid</td>
+       <th scope="row">The Karate Kid</td>
        <td>7.2</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Chariots of Fire</td>
+       <th scope="row">Chariots of Fire</td>
        <td>7.2</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>The Four Seasons</td>
+       <th scope="row">The Four Seasons</td>
        <td>7.2</td>
        <td>75</td>
      </tr>
      <tr>
-       <td>The Jerk</td>
+       <th scope="row">The Jerk</td>
        <td>7.2</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Grease</td>
+       <th scope="row">Grease</td>
        <td>7.2</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>Iron Man 3</td>
+       <th scope="row">Iron Man 3</td>
        <td>7.3</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>The Hunger Games</td>
+       <th scope="row">The Hunger Games</td>
        <td>7.3</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Fast Five</td>
+       <th scope="row">Fast Five</td>
        <td>7.3</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Kung Fu Panda 2</td>
+       <th scope="row">Kung Fu Panda 2</td>
        <td>7.3</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Pirates of the Caribbean: Dead Man's Chest</td>
+       <th scope="row">Pirates of the Caribbean: Dead Man's Chest</td>
        <td>7.3</td>
        <td>72</td>
      </tr>
      <tr>
-       <td>King Kong</td>
+       <th scope="row">King Kong</td>
        <td>7.3</td>
        <td>50</td>
      </tr>
      <tr>
-       <td>Spider-Man 2</td>
+       <th scope="row">Spider-Man 2</td>
        <td>7.3</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Chamber of Secrets</td>
+       <th scope="row">Harry Potter and the Chamber of Secrets</td>
        <td>7.3</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>Spider-Man</td>
+       <th scope="row">Spider-Man</td>
        <td>7.3</td>
        <td>67</td>
      </tr>
      <tr>
-       <td>Jerry Maguire</td>
+       <th scope="row">Jerry Maguire</td>
        <td>7.3</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>Dumb and Dumber</td>
+       <th scope="row">Dumb and Dumber</td>
        <td>7.3</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Cape Fear</td>
+       <th scope="row">Cape Fear</td>
        <td>7.3</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Big</td>
+       <th scope="row">Big</td>
        <td>7.3</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Good Morning, Vietnam</td>
+       <th scope="row">Good Morning, Vietnam</td>
        <td>7.3</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Star Trek IV: The Voyage Home</td>
+       <th scope="row">Star Trek IV: The Voyage Home</td>
        <td>7.3</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Beverly Hills Cop</td>
+       <th scope="row">Beverly Hills Cop</td>
        <td>7.3</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>Superman</td>
+       <th scope="row">Superman</td>
        <td>7.3</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Monsters University</td>
+       <th scope="row">Monsters University</td>
        <td>7.4</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Mission: Impossible - Ghost Protocol</td>
+       <th scope="row">Mission: Impossible - Ghost Protocol</td>
        <td>7.4</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Order of the Phoenix</td>
+       <th scope="row">Harry Potter and the Order of the Phoenix</td>
        <td>7.4</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>The Simpsons Movie</td>
+       <th scope="row">The Simpsons Movie</td>
        <td>7.4</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>X-Men</td>
+       <th scope="row">X-Men</td>
        <td>7.4</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>The Rock</td>
+       <th scope="row">The Rock</td>
        <td>7.4</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Back to the Future Part III</td>
+       <th scope="row">Back to the Future Part III</td>
        <td>7.4</td>
        <td>78</td>
      </tr>
      <tr>
-       <td>Home Alone</td>
+       <th scope="row">Home Alone</td>
        <td>7.4</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>Beetlejuice</td>
+       <th scope="row">Beetlejuice</td>
        <td>7.4</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Terms of Endearment</td>
+       <th scope="row">Terms of Endearment</td>
        <td>7.4</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Poltergeist</td>
+       <th scope="row">Poltergeist</td>
        <td>7.4</td>
        <td>78</td>
      </tr>
      <tr>
-       <td>Tootsie</td>
+       <th scope="row">Tootsie</td>
        <td>7.4</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>A Bridge Too Far</td>
+       <th scope="row">A Bridge Too Far</td>
        <td>7.4</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>The Goodbye Girl</td>
+       <th scope="row">The Goodbye Girl</td>
        <td>7.4</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>The Hobbit: The Battle of the Five Armies</td>
+       <th scope="row">The Hobbit: The Battle of the Five Armies</td>
        <td>7.5</td>
        <td>76</td>
      </tr>
      <tr>
-       <td>Despicable Me 2</td>
+       <th scope="row">Despicable Me 2</td>
        <td>7.5</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Half-Blood Prince</td>
+       <th scope="row">Harry Potter and the Half-Blood Prince</td>
        <td>7.5</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>X2</td>
+       <th scope="row">X2</td>
        <td>7.5</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Sorcerer's Stone</td>
+       <th scope="row">Harry Potter and the Sorcerer's Stone</td>
        <td>7.5</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Mulan</td>
+       <th scope="row">Mulan</td>
        <td>7.5</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Bram Stoker's Dracula</td>
+       <th scope="row">Bram Stoker's Dracula</td>
        <td>7.5</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Total Recall</td>
+       <th scope="row">Total Recall</td>
        <td>7.5</td>
        <td>78</td>
      </tr>
      <tr>
-       <td>Witness</td>
+       <th scope="row">Witness</td>
        <td>7.5</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Trading Places</td>
+       <th scope="row">Trading Places</td>
        <td>7.5</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Coal Miner's Daughter</td>
+       <th scope="row">Coal Miner's Daughter</td>
        <td>7.5</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Sherlock Holmes</td>
+       <th scope="row">Sherlock Holmes</td>
        <td>7.6</td>
        <td>77</td>
      </tr>
      <tr>
-       <td>Kung Fu Panda</td>
+       <th scope="row">Kung Fu Panda</td>
        <td>7.6</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Goblet of Fire</td>
+       <th scope="row">Harry Potter and the Goblet of Fire</td>
        <td>7.6</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Ice Age</td>
+       <th scope="row">Ice Age</td>
        <td>7.6</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>The Fifth Element</td>
+       <th scope="row">The Fifth Element</td>
        <td>7.6</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>Apollo 13</td>
+       <th scope="row">Apollo 13</td>
        <td>7.6</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Die Hard with a Vengeance</td>
+       <th scope="row">Die Hard with a Vengeance</td>
        <td>7.6</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Interview with the Vampire: The Vampire Chronicles</td>
+       <th scope="row">Interview with the Vampire: The Vampire Chronicles</td>
        <td>7.6</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>A Few Good Men</td>
+       <th scope="row">A Few Good Men</td>
        <td>7.6</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Batman</td>
+       <th scope="row">Batman</td>
        <td>7.6</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>The Little Mermaid</td>
+       <th scope="row">The Little Mermaid</td>
        <td>7.6</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>The Naked Gun: From the Files of Police Squad!</td>
+       <th scope="row">The Naked Gun: From the Files of Police Squad!</td>
        <td>7.6</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Lethal Weapon</td>
+       <th scope="row">Lethal Weapon</td>
        <td>7.6</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Indiana Jones and the Temple of Doom</td>
+       <th scope="row">Indiana Jones and the Temple of Doom</td>
        <td>7.6</td>
        <td>81</td>
      </tr>
      <tr>
-       <td>National Lampoon's Animal House</td>
+       <th scope="row">National Lampoon's Animal House</td>
        <td>7.6</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>The Omen</td>
+       <th scope="row">The Omen</td>
        <td>7.6</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Dawn of the Planet of the Apes</td>
+       <th scope="row">Dawn of the Planet of the Apes</td>
        <td>7.7</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Frozen</td>
+       <th scope="row">Frozen</td>
        <td>7.7</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>The Hunger Games: Catching Fire</td>
+       <th scope="row">The Hunger Games: Catching Fire</td>
        <td>7.7</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Despicable Me</td>
+       <th scope="row">Despicable Me</td>
        <td>7.7</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Deathly Hallows - Part 1</td>
+       <th scope="row">Harry Potter and the Deathly Hallows - Part 1</td>
        <td>7.7</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Star Wars Episode III: Revenge of the Sith</td>
+       <th scope="row">Star Wars Episode III: Revenge of the Sith</td>
        <td>7.7</td>
        <td>65</td>
      </tr>
      <tr>
-       <td>The Last Samurai</td>
+       <th scope="row">The Last Samurai</td>
        <td>7.7</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Minority Report</td>
+       <th scope="row">Minority Report</td>
        <td>7.7</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Cast Away</td>
+       <th scope="row">Cast Away</td>
        <td>7.7</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Titanic</td>
+       <th scope="row">Titanic</td>
        <td>7.7</td>
        <td>69</td>
      </tr>
      <tr>
-       <td>Philadelphia</td>
+       <th scope="row">Philadelphia</td>
        <td>7.7</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Who Framed Roger Rabbit</td>
+       <th scope="row">Who Framed Roger Rabbit</td>
        <td>7.7</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Star Trek II: The Wrath of Khan</td>
+       <th scope="row">Star Trek II: The Wrath of Khan</td>
        <td>7.7</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>On Golden Pond</td>
+       <th scope="row">On Golden Pond</td>
        <td>7.7</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>The Muppet Movie</td>
+       <th scope="row">The Muppet Movie</td>
        <td>7.7</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>Close Encounters of the Third Kind</td>
+       <th scope="row">Close Encounters of the Third Kind</td>
        <td>7.7</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Captain America: The Winter Soldier</td>
+       <th scope="row">Captain America: The Winter Soldier</td>
        <td>7.8</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Skyfall</td>
+       <th scope="row">Skyfall</td>
        <td>7.8</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Tangled</td>
+       <th scope="row">Tangled</td>
        <td>7.8</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>The Hangover</td>
+       <th scope="row">The Hangover</td>
        <td>7.8</td>
        <td>84</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Prisoner of Azkaban</td>
+       <th scope="row">Harry Potter and the Prisoner of Azkaban</td>
        <td>7.8</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Ocean's Eleven</td>
+       <th scope="row">Ocean's Eleven</td>
        <td>7.8</td>
        <td>79</td>
      </tr>
      <tr>
-       <td>As Good as It Gets</td>
+       <th scope="row">As Good as It Gets</td>
        <td>7.8</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>The Fugitive</td>
+       <th scope="row">The Fugitive</td>
        <td>7.8</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Back to the Future Part II</td>
+       <th scope="row">Back to the Future Part II</td>
        <td>7.8</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>The Color Purple</td>
+       <th scope="row">The Color Purple</td>
        <td>7.8</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>The Goonies</td>
+       <th scope="row">The Goonies</td>
        <td>7.8</td>
        <td>91</td>
      </tr>
      <tr>
-       <td>Ghostbusters</td>
+       <th scope="row">Ghostbusters</td>
        <td>7.8</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>Airplane!</td>
+       <th scope="row">Airplane!</td>
        <td>7.8</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Kramer vs. Kramer</td>
+       <th scope="row">Kramer vs. Kramer</td>
        <td>7.8</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Gravity</td>
+       <th scope="row">Gravity</td>
        <td>7.9</td>
        <td>80</td>
      </tr>
      <tr>
-       <td>Avatar</td>
+       <th scope="row">Avatar</td>
        <td>7.9</td>
        <td>82</td>
      </tr>
      <tr>
-       <td>Iron Man</td>
+       <th scope="row">Iron Man</td>
        <td>7.9</td>
        <td>91</td>
      </tr>
      <tr>
-       <td>Shrek</td>
+       <th scope="row">Shrek</td>
        <td>7.9</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Toy Story 2</td>
+       <th scope="row">Toy Story 2</td>
        <td>7.9</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>E.T. the Extra-Terrestrial</td>
+       <th scope="row">E.T. the Extra-Terrestrial</td>
        <td>7.9</td>
        <td>71</td>
      </tr>
      <tr>
-       <td>The Hobbit: The Desolation of Smaug</td>
+       <th scope="row">The Hobbit: The Desolation of Smaug</td>
        <td>8</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>The Hobbit: An Unexpected Journey</td>
+       <th scope="row">The Hobbit: An Unexpected Journey</td>
        <td>8</td>
        <td>83</td>
      </tr>
      <tr>
-       <td>Ratatouille</td>
+       <th scope="row">Ratatouille</td>
        <td>8</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>Casino Royale</td>
+       <th scope="row">Casino Royale</td>
        <td>8</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>The Incredibles</td>
+       <th scope="row">The Incredibles</td>
        <td>8</td>
        <td>74</td>
      </tr>
      <tr>
-       <td>Jurassic Park</td>
+       <th scope="row">Jurassic Park</td>
        <td>8</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Aladdin</td>
+       <th scope="row">Aladdin</td>
        <td>8</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Beauty and the Beast</td>
+       <th scope="row">Beauty and the Beast</td>
        <td>8</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>JFK</td>
+       <th scope="row">JFK</td>
        <td>8</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>Dances with Wolves</td>
+       <th scope="row">Dances with Wolves</td>
        <td>8</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>Dead Poets Society</td>
+       <th scope="row">Dead Poets Society</td>
        <td>8</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Rain Man</td>
+       <th scope="row">Rain Man</td>
        <td>8</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>The Untouchables</td>
+       <th scope="row">The Untouchables</td>
        <td>8</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>The Blues Brothers</td>
+       <th scope="row">The Blues Brothers</td>
        <td>8</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>Dawn of the Dead</td>
+       <th scope="row">Dawn of the Dead</td>
        <td>8</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>All the President's Men</td>
+       <th scope="row">All the President's Men</td>
        <td>8</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Guardians of the Galaxy</td>
+       <th scope="row">Guardians of the Galaxy</td>
        <td>8.1</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>X-Men: Days of Future Past</td>
+       <th scope="row">X-Men: Days of Future Past</td>
        <td>8.1</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Harry Potter and the Deathly Hallows - Part 2</td>
+       <th scope="row">Harry Potter and the Deathly Hallows - Part 2</td>
        <td>8.1</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>Pirates of the Caribbean: The Curse of the Black Pearl</td>
+       <th scope="row">Pirates of the Caribbean: The Curse of the Black Pearl</td>
        <td>8.1</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Monsters, Inc.</td>
+       <th scope="row">Monsters, Inc.</td>
        <td>8.1</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Platoon</td>
+       <th scope="row">Platoon</td>
        <td>8.1</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>The Terminator</td>
+       <th scope="row">The Terminator</td>
        <td>8.1</td>
        <td>88</td>
      </tr>
      <tr>
-       <td>Annie Hall</td>
+       <th scope="row">Annie Hall</td>
        <td>8.1</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>Rocky</td>
+       <th scope="row">Rocky</td>
        <td>8.1</td>
        <td>68</td>
      </tr>
      <tr>
-       <td>Dog Day Afternoon</td>
+       <th scope="row">Dog Day Afternoon</td>
        <td>8.1</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>The Avengers</td>
+       <th scope="row">The Avengers</td>
        <td>8.2</td>
        <td>91</td>
      </tr>
      <tr>
-       <td>How to Train Your Dragon</td>
+       <th scope="row">How to Train Your Dragon</td>
        <td>8.2</td>
        <td>91</td>
      </tr>
      <tr>
-       <td>Finding Nemo</td>
+       <th scope="row">Finding Nemo</td>
        <td>8.2</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>The Sixth Sense</td>
+       <th scope="row">The Sixth Sense</td>
        <td>8.2</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>The Deer Hunter</td>
+       <th scope="row">The Deer Hunter</td>
        <td>8.2</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Up</td>
+       <th scope="row">Up</td>
        <td>8.3</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Batman Begins</td>
+       <th scope="row">Batman Begins</td>
        <td>8.3</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Toy Story</td>
+       <th scope="row">Toy Story</td>
        <td>8.3</td>
        <td>92</td>
      </tr>
      <tr>
-       <td>Indiana Jones and the Last Crusade</td>
+       <th scope="row">Indiana Jones and the Last Crusade</td>
        <td>8.3</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Die Hard</td>
+       <th scope="row">Die Hard</td>
        <td>8.3</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Toy Story 3</td>
+       <th scope="row">Toy Story 3</td>
        <td>8.4</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>WALL-E</td>
+       <th scope="row">WALL-E</td>
        <td>8.4</td>
        <td>89</td>
      </tr>
      <tr>
-       <td>American Beauty</td>
+       <th scope="row">American Beauty</td>
        <td>8.4</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>Aliens</td>
+       <th scope="row">Aliens</td>
        <td>8.4</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Star Wars Episode VI: Return of the Jedi</td>
+       <th scope="row">Star Wars Episode VI: Return of the Jedi</td>
        <td>8.4</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>The Dark Knight Rises</td>
+       <th scope="row">The Dark Knight Rises</td>
        <td>8.5</td>
        <td>90</td>
      </tr>
      <tr>
-       <td>Gladiator</td>
+       <th scope="row">Gladiator</td>
        <td>8.5</td>
        <td>87</td>
      </tr>
      <tr>
-       <td>The Lion King</td>
+       <th scope="row">The Lion King</td>
        <td>8.5</td>
        <td>93</td>
      </tr>
      <tr>
-       <td>Terminator 2: Judgment Day</td>
+       <th scope="row">Terminator 2: Judgment Day</td>
        <td>8.5</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Back to the Future</td>
+       <th scope="row">Back to the Future</td>
        <td>8.5</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Alien</td>
+       <th scope="row">Alien</td>
        <td>8.5</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Apocalypse Now</td>
+       <th scope="row">Apocalypse Now</td>
        <td>8.5</td>
        <td>94</td>
      </tr>
      <tr>
-       <td>Saving Private Ryan</td>
+       <th scope="row">Saving Private Ryan</td>
        <td>8.6</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>The Silence of the Lambs</td>
+       <th scope="row">The Silence of the Lambs</td>
        <td>8.6</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>Raiders of the Lost Ark</td>
+       <th scope="row">Raiders of the Lost Ark</td>
        <td>8.6</td>
        <td>96</td>
      </tr>
      <tr>
-       <td>Interstellar</td>
+       <th scope="row">Interstellar</td>
        <td>8.7</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>The Lord of the Rings: The Two Towers</td>
+       <th scope="row">The Lord of the Rings: The Two Towers</td>
        <td>8.7</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>The Matrix</td>
+       <th scope="row">The Matrix</td>
        <td>8.7</td>
        <td>85</td>
      </tr>
      <tr>
-       <td>Seven</td>
+       <th scope="row">Seven</td>
        <td>8.7</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>Star Wars</td>
+       <th scope="row">Star Wars</td>
        <td>8.7</td>
        <td>96</td>
      </tr>
      <tr>
-       <td>Inception</td>
+       <th scope="row">Inception</td>
        <td>8.8</td>
        <td>91</td>
      </tr>
      <tr>
-       <td>The Lord of the Rings: The Fellowship of the Ring</td>
+       <th scope="row">The Lord of the Rings: The Fellowship of the Ring</td>
        <td>8.8</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>Forrest Gump</td>
+       <th scope="row">Forrest Gump</td>
        <td>8.8</td>
        <td>95</td>
      </tr>
      <tr>
-       <td>Star Wars Episode V: The Empire Strikes Back</td>
+       <th scope="row">Star Wars Episode V: The Empire Strikes Back</td>
        <td>8.8</td>
        <td>97</td>
      </tr>
      <tr>
-       <td>The Lord of the Rings: The Return of the King</td>
+       <th scope="row">The Lord of the Rings: The Return of the King</td>
        <td>8.9</td>
        <td>86</td>
      </tr>
      <tr>
-       <td>Schindler's List</td>
+       <th scope="row">Schindler's List</td>
        <td>8.9</td>
        <td>97</td>
      </tr>
      <tr>
-       <td>The Dark Knight</td>
+       <th scope="row">The Dark Knight</td>
        <td>9</td>
        <td>94</td>
      </tr>
    </tbody>
  </table>
-
-</div>
 
 <pre id="csv" style="display:none">Rotten Tomatoes,IMDB,Title
 92,7.8,Captain America: The Winter Soldier

@@ -51,19 +51,95 @@ function getTrendDataForSeries(series, xBinSize, seriesMetrics) {
     return data;
 }
 
+function getDescribedTrendData(data, chartExtremes) {
+    let min = Infinity;
+    let max = -Infinity;
+    let i = data.length;
+    while (i--) {
+        min = Math.min(min, data[i][1]);
+        max = Math.max(max, data[i][1]);
+    }
+
+    let minCount = 0;
+    let maxCount = 0;
+    data.forEach(values => {
+        if (values[1] === min) {
+            ++minCount;
+        }
+        if (values[1] === max) {
+            ++maxCount;
+        }
+    });
+
+    const describedData = [];
+    data.forEach((values, ix) => {
+        const nextValues = data[ix + 1];
+        const yVal = values[1];
+        const nextYVal = nextValues && nextValues[1];
+        let desc = '';
+
+        if (ix === 0) {
+            desc = `First of ${data.length} trend segments.`;
+        } else if (!nextValues) {
+            desc = 'End of trend line.';
+        } else {
+            desc = `${ix + 1}.`;
+        }
+
+        if (yVal === min && minCount < 2) {
+            desc += ' This is the lowest point.';
+        }
+
+        if (yVal === max && maxCount < 2) {
+            desc += ' This is the highest point.';
+        }
+
+        if (nextYVal !== undefined) {
+            const totalDiff = chartExtremes.dataMax - chartExtremes.dataMin;
+            const diffToNext = nextYVal - yVal;
+            const absDiff = Math.abs(diffToNext);
+            const neutralThreshold = totalDiff / data.length;
+
+            if (absDiff < neutralThreshold / 25) {
+                desc += ' Trending flat.';
+            } else {
+                const direction = diffToNext > 0 ? 'up' : 'down';
+                if (absDiff > neutralThreshold / 0.8) {
+                    desc += ` Trending ${direction} sharply.`;
+                } else if (absDiff < neutralThreshold / 5) {
+                    desc += ` Trending ${direction} slightly.`;
+                } else {
+                    desc += ` Trending ${direction}.`;
+                }
+            }
+        }
+
+        describedData.push({
+            x: values[0],
+            y: values[1],
+            trendDesc: desc
+        });
+    });
+
+    return describedData;
+}
+
 function updateTrends(chart, detail) {
     chart.series.forEach(series => {
         const seriesMetrics = getSeriesDataMetrics(series);
         const xBinSize = getXBinSize(seriesMetrics, detail);
         const data = getTrendDataForSeries(series, xBinSize, seriesMetrics);
+        const describedData = getDescribedTrendData(data, {
+            dataMin: chart.yAxis[0].dataMin,
+            dataMax: chart.yAxis[0].dataMax
+        });
+
         chart.addSeries({
-            data,
+            data: describedData,
             color: '#222',
             type: 'spline',
-            includeInDataExport: false,
-            marker: { enabled: false },
             xBinSize,
-            name: 'Trend average for Movie ratings'
+            name: 'Trend description for Movie ratings'
         });
     });
     chart.redraw();
@@ -167,23 +243,10 @@ const chart = Highcharts.chart('container', {
             }
         },
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line. The scatter plot has 392 data points, and the trend line series has 7 data points.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line. The chart has two data series, displaying Movie ratings and Trend description for Movie ratings.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         },
         series: {
             pointDescriptionEnabledThreshold: false
-        },
-        point: {
-            descriptionFormatter: function (point) {
-                const rt = Math.round(point.y);
-                const imdb = point.x.toFixed(1);
-                if (point.series.type !== 'scatter') {
-                    const imdbSegmentStart = (point.x - point.series.options.xBinSize / 2).toFixed(1);
-                    const imdbSegmentEnd = (point.x + point.series.options.xBinSize / 2).toFixed(1);
-                    return `${rt} Rotten Tomatoes score, averaged of all movies between IMDB ratings ${imdbSegmentStart} and ${imdbSegmentEnd}.`;
-                }
-
-                return `${point.options.title}, ${rt} Rotten Tomatoes, ${imdb} IMDB.`;
-            }
         }
     },
     lang: {
@@ -238,11 +301,29 @@ const chart = Highcharts.chart('container', {
                 }
             }
         },
+        scatter: {
+            accessibility: {
+                point: {
+                    descriptionFormatter: function (point) {
+                        return `${point.options.title}. IMDB rating ${point.options.x}. Rotten Tomatoes score ${point.options.y}.`;
+                    }
+                }
+            }
+        },
         spline: {
             tooltip: {
                 enabled: false
             },
-            enableMouseInteraction: false
+            includeInDataExport: false,
+            marker: { enabled: false },
+            enableMouseInteraction: false,
+            accessibility: {
+                point: {
+                    descriptionFormatter: function (point) {
+                        return point.options.trendDesc;
+                    }
+                }
+            }
         }
     }
 });

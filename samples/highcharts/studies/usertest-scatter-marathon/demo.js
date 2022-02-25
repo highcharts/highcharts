@@ -51,21 +51,94 @@ function getTrendDataForSeries(series, xBinSize, seriesMetrics) {
     return data;
 }
 
+function getDescribedTrendData(data, chartExtremes) {
+    let min = Infinity;
+    let max = -Infinity;
+    let i = data.length;
+    while (i--) {
+        min = Math.min(min, data[i][1]);
+        max = Math.max(max, data[i][1]);
+    }
+
+    let minCount = 0;
+    let maxCount = 0;
+    data.forEach(values => {
+        if (values[1] === min) {
+            ++minCount;
+        }
+        if (values[1] === max) {
+            ++maxCount;
+        }
+    });
+
+    const describedData = [];
+    data.forEach((values, ix) => {
+        const nextValues = data[ix + 1];
+        const yVal = values[1];
+        const nextYVal = nextValues && nextValues[1];
+        let desc = '';
+
+        if (ix === 0) {
+            desc = `First of ${data.length} trend segments.`;
+        } else if (!nextValues) {
+            desc = 'End of trend line.';
+        } else {
+            desc = `${ix + 1}.`;
+        }
+
+        if (yVal === min && minCount < 2) {
+            desc += ' This is the lowest point.';
+        }
+
+        if (yVal === max && maxCount < 2) {
+            desc += ' This is the highest point.';
+        }
+
+        if (nextYVal !== undefined) {
+            const totalDiff = chartExtremes.dataMax - chartExtremes.dataMin;
+            const diffToNext = nextYVal - yVal;
+            const absDiff = Math.abs(diffToNext);
+            const neutralThreshold = totalDiff / data.length;
+
+            if (absDiff < neutralThreshold / 25) {
+                desc += ' Trending flat.';
+            } else {
+                const direction = diffToNext > 0 ? 'up' : 'down';
+                if (absDiff > neutralThreshold / 0.8) {
+                    desc += ` Trending ${direction} sharply.`;
+                } else if (absDiff < neutralThreshold / 5) {
+                    desc += ` Trending ${direction} slightly.`;
+                } else {
+                    desc += ` Trending ${direction}.`;
+                }
+            }
+        }
+
+        describedData.push({
+            x: values[0],
+            y: values[1],
+            trendDesc: desc
+        });
+    });
+
+    return describedData;
+}
+
 function updateTrends(chart, detail) {
     chart.series.forEach(series => {
         const seriesMetrics = getSeriesDataMetrics(series);
         const xBinSize = getXBinSize(seriesMetrics, detail);
         const data = getTrendDataForSeries(series, xBinSize, seriesMetrics);
+        const describedData = getDescribedTrendData(data, {
+            dataMin: chart.yAxis[0].dataMin,
+            dataMax: chart.yAxis[0].dataMax
+        });
         chart.addSeries({
-            data,
+            data: describedData,
             color: '#222',
             type: 'spline',
-            showInLegend: false,
-            enableMouseInteraction: false,
-            includeInDataExport: false,
-            marker: { enabled: false },
             xBinSize,
-            name: 'Trend average for ' + series.name
+            name: 'Trend description for ' + series.name
         });
     });
     chart.redraw();
@@ -82,7 +155,7 @@ function sonifyChart(chart, firstSeriesIx, secondSeriesIx) {
     const firstSeries = chart.series[firstSeriesIx === undefined ? 2 : firstSeriesIx];
     const secondSeries = chart.series[secondSeriesIx === undefined ? 3 : secondSeriesIx];
 
-    announce('Play ' + firstSeries.name);
+    announce('Playing ' + firstSeries.name);
 
     firstSeries.update({
         accessibility: {
@@ -98,7 +171,7 @@ function sonifyChart(chart, firstSeriesIx, secondSeriesIx) {
     setTimeout(function () {
         firstSeries.sonify({
             onEnd: function () {
-                setTimeout(() => announce('Play ' + secondSeries.name), 300);
+                setTimeout(() => announce('Playing ' + secondSeries.name), 300);
                 setTimeout(function () {
                     secondSeries.sonify({
                         onEnd: function () {
@@ -202,26 +275,13 @@ function makeChart(container, detail, title) {
             series: {
                 pointDescriptionEnabledThreshold: false
             },
-            point: {
-                descriptionFormatter: function (point) {
-                    const time = Highcharts.dateFormat('%H:%M:%S', point.y);
-                    const year = Math.round(point.x);
-                    if (point.series.type === 'scatter') {
-                        return `${year}, ${time} winning time, ${point.custom.name}`;
-                    }
-                    const periodSize = point.series.options.xBinSize;
-                    const yearStart = Math.round(point.x - periodSize / 2);
-                    const yearEnd = Math.round(point.x + periodSize / 2);
-                    return `${time} winning time, averaged between ${yearStart} and ${yearEnd}.`;
-                }
-            },
             keyboardNavigation: {
                 seriesNavigation: {
                     mode: 'serialize'
                 }
             },
             screenReaderSection: {
-                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The chart plots winning time data for male and female competition classes. The X axis, displaying years, has data ranging from 1897 to 2018. The Y axis, displaying winning times, has data ranging from 2:02:57 to 3:30:00.'
+                beforeChartFormat: 'Marathon winning times 1897-2018, interactive scatter plot with trend lines. The chart has 4 data series, displaying Male class, Trend description for Male class, Female class, and Trend description for Female class. The X axis, displaying years, has data ranging from 1897 to 2018. The Y axis, displaying winning times, has data ranging from 2:02:57 to 3:30:00.'
             }
         },
         lang: {
@@ -276,6 +336,30 @@ function makeChart(container, detail, title) {
                         enabled: false
                     }
                 }
+            },
+            spline: {
+                showInLegend: false,
+                enableMouseInteraction: false,
+                includeInDataExport: false,
+                marker: { enabled: false },
+                accessibility: {
+                    point: {
+                        descriptionFormatter: function (point) {
+                            return point.options.trendDesc;
+                        }
+                    }
+                }
+            },
+            scatter: {
+                accessibility: {
+                    point: {
+                        descriptionFormatter: function (point) {
+                            const time = Highcharts.dateFormat('%H:%M:%S', point.y);
+                            const year = Math.round(point.x);
+                            return `${year}, winning time ${time}. ${point.custom.name}`;
+                        }
+                    }
+                }
             }
         },
         series: [{
@@ -302,7 +386,7 @@ const highestChart = makeChart('highestContainer', 20, 'Highest detail');
 
 function setChartDuration() {
     const speed = parseFloat(document.getElementById('speed').value);
-    const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 40, 350);
+    const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 60, 350);
     lowestChart.update({ sonification: { duration: getDuration(3) } });
     lowChart.update({ sonification: { duration: getDuration(5) } });
     mediumChart.update({ sonification: { duration: getDuration(8) } });
