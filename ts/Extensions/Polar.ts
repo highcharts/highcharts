@@ -1300,25 +1300,28 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 addEvent(Pointer, 'afterGetSelectionBox', function (event):void {
     const marker = (event as any).marker,
         xAxis = this.chart.xAxis[0],
-        yAxis = this.chart.yAxis[0];
+        yAxis = this.chart.yAxis[0],
+        inverted = this.chart.inverted,
+        radialAxis = inverted ? yAxis : xAxis,
+        linearAxis = inverted ? xAxis : yAxis;
 
     if (this.chart.polar) {
         let start = (
             marker.attr ? marker.attr('start') : marker.start
-        ) - (xAxis as any).startAngleRad;
+        ) - (radialAxis as any).startAngleRad;
 
         let r = (marker.attr ? marker.attr('r') : marker.r);
 
         let end = (
             marker.attr ? marker.attr('end') : marker.end
-        ) - (xAxis as any).startAngleRad;
+        ) - (radialAxis as any).startAngleRad;
 
         let innerR = (marker.attr ? marker.attr('innerR') : marker.innerR);
 
-        (event as any).x = start + xAxis.pos;
+        (event as any).x = start + radialAxis.pos;
         (event as any).width = end - start;
         // innerR goes from pane's center but toValue computes values from top
-        (event as any).y = yAxis.len + yAxis.pos - innerR;
+        (event as any).y = linearAxis.len + linearAxis.pos - innerR;
         (event as any).height = innerR - r;
     }
 });
