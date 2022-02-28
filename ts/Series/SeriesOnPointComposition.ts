@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Rafal Sebestjanski, Piotr Madej
+ *  (c) 2010-2022 Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -29,23 +29,19 @@ const { getCenter } = CU;
 
 const drawPointsFunctions = {
     pieDrawPoints: pie.prototype.drawPoints,
-    sunburstDrawPoints: (): void => {}
+    sunburstDrawPoints: sunburst && sunburst.prototype.drawPoints
 };
 
 const translateFunctions = {
     pieTranslate: pie.prototype.translate,
-    sunburstTranslate: (): void => {}
+    sunburstTranslate: sunburst && sunburst.prototype.translate
 };
-
-if (sunburst) {
-    drawPointsFunctions.sunburstDrawPoints = sunburst.prototype.drawPoints;
-    translateFunctions.sunburstTranslate = sunburst.prototype.translate;
-}
 
 import U from '../Core/Utilities.js';
 import Chart from '../Core/Chart/Chart';
 const {
     addEvent,
+    defined,
     isNumber
 } = U;
 
@@ -157,6 +153,7 @@ namespace SeriesOnPointComposition {
             pie.prototype.drawPoints = seriesDrawPoints;
             pie.prototype.translate = seriesTranslate;
             pie.prototype.bubblePadding = true;
+            pie.prototype.useMapGeometry = true;
             pie.prototype.getRadius = bubbleProto.getRadius;
             pie.prototype.getRadii = bubbleProto.getRadii;
             pie.prototype.getZExtremes = bubbleProto.getZExtremes;
@@ -167,6 +164,7 @@ namespace SeriesOnPointComposition {
                 sunburst.prototype.drawPoints = seriesDrawPoints;
                 sunburst.prototype.translate = seriesTranslate;
                 sunburst.prototype.bubblePadding = true;
+                sunburst.prototype.useMapGeometry = true;
                 sunburst.prototype.getRadius = bubbleProto.getRadius;
                 sunburst.prototype.getRadii = bubbleProto.getRadii;
                 sunburst.prototype.getZExtremes = bubbleProto.getZExtremes;
@@ -255,8 +253,8 @@ namespace SeriesOnPointComposition {
 
             if (
                 connectedPoint instanceof Point &&
-                connectedPoint.plotX &&
-                connectedPoint.plotY
+                defined(connectedPoint.plotX) &&
+                defined(connectedPoint.plotY)
             ) {
                 ret[0] = connectedPoint.plotX;
                 ret[1] = connectedPoint.plotY;
@@ -265,11 +263,11 @@ namespace SeriesOnPointComposition {
             const position = onPointOptions.position;
 
             if (position) {
-                if (position.x) {
+                if (defined(position.x)) {
                     ret[0] = position.x;
                 }
 
-                if (position.y) {
+                if (defined(position.y)) {
                     ret[1] = position.y;
                 }
 
@@ -312,29 +310,34 @@ namespace SeriesOnPointComposition {
             if (
                 connectedPoint instanceof Point &&
                 position &&
-                connectedPoint.plotX &&
-                connectedPoint.plotY
+                connectorOpts &&
+                defined(connectedPoint.plotX) &&
+                defined(connectedPoint.plotY)
             ) {
-                const xFrom = position.x || connectedPoint.plotX,
-                    yFrom = position.y || connectedPoint.plotY,
+                const xFrom = defined(position.x) ?
+                        position.x :
+                        connectedPoint.plotX,
+                    yFrom = defined(position.y) ?
+                        position.y :
+                        connectedPoint.plotY,
                     xTo = xFrom + (position.offsetX || 0),
-                    yTo = yFrom + (position.offsetY || 0);
+                    yTo = yFrom + (position.offsetY || 0),
+                    width = connectorOpts.width || 1,
+                    color = (connectorOpts as any).color || this.color,
+                    dashStyle = (connectorOpts as any).dashStyle;
 
                 let attribs: SVGAttributes = {
                     d: SVGRenderer.prototype.crispLine([
                         ['M', xFrom, yFrom],
                         ['L', xTo, yTo]
-                    ], connectorOpts.width || 1, 'ceil')
+                    ], width, 'ceil')
                 };
 
-                attribs['stroke-width'] = connectorOpts.width;
+                attribs['stroke-width'] = width;
 
                 if (!chart.styledMode) {
-                    attribs.stroke = (connectorOpts as any).color;
-
-                    if ((connectorOpts as any).dashStyle) {
-                        attribs.dashstyle = (connectorOpts as any).dashStyle;
-                    }
+                    attribs.stroke = color;
+                    attribs.dashstyle = dashStyle;
                 }
 
                 return attribs;

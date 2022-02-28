@@ -5,8 +5,8 @@
  *
  * Series on point module
  *
- * (c) 2010-2021 Highsoft AS
- * Author: Rafal and Pjoter
+ * (c) 2010-2022 Highsoft AS
+ * Author: Rafal Sebestjanski and Piotr Madej
  *
  * License: www.highcharts.com/license
  */
