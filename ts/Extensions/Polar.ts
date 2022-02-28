@@ -1220,43 +1220,58 @@ addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
 addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
     const chart = this.chart;
 
-    if (chart.polar && chart.pane && chart.pane[0]) {
+    if (chart.polar && chart.pane && chart.pane[0] && chart.pane[0].axis) {
         const center = chart.pane[0].center,
             mouseDownX = (this.mouseDownX || 0),
             mouseDownY = (this.mouseDownY || 0),
             chartY = (event as any).chartY,
             chartX = (event as any).chartX,
-            fullCircle = Math.PI * 2;
+            fullCircle = Math.PI * 2,
+            startAngleRad = chart.pane[0].axis.startAngleRad,
+            endAngleRad = chart.pane[0].axis.endAngleRad;
 
         let attrs: SVGAttributes = {};
 
         // Adjust the width of the selection marker
         if (this.zoomHor) {
-            let startAngleRad = (chart as any).xAxis[0].startAngleRad,
-                sAngle = Math.atan2(
+            const paneRadRange = Math.abs(startAngleRad) +
+                Math.abs(endAngleRad);
+            let startAngle = Math.atan2(
                     mouseDownY - chart.plotTop - center[1],
                     mouseDownX - chart.plotLeft - center[0]
                 ) - startAngleRad,
-                eAngle = Math.atan2(
+                endAngle = Math.atan2(
                     chartY - chart.plotTop - center[1],
                     chartX - chart.plotLeft - center[0]
                 ) - startAngleRad;
 
-            if (sAngle <= 0) {
-                sAngle += fullCircle;
+            if (startAngle <= 0) {
+                startAngle += fullCircle;
             }
 
-            if (eAngle <= 0) {
-                eAngle += fullCircle;
+            if (endAngle <= 0) {
+                endAngle += fullCircle;
             }
 
-            if (eAngle < sAngle) {
+            if (endAngle < startAngle) {
                 // Swapping angles
-                eAngle = [sAngle, sAngle = eAngle][0];
+                endAngle = [startAngle, startAngle = endAngle][0];
             }
 
-            attrs.start = sAngle + startAngleRad;
-            attrs.end = eAngle + startAngleRad;
+            // If pane is not a full circle we need to let users zoom to the min
+            // We do this by swapping angles after pointer crosses
+            // middle angle (swapAngle) of the missing slice of the pane
+            if (paneRadRange < fullCircle) {
+                const swapAngle = endAngleRad + (fullCircle - paneRadRange) / 2;
+
+                if (endAngle + startAngleRad > swapAngle) {
+                    endAngle = startAngle;
+                    startAngle = startAngleRad;
+                }
+            }
+
+            attrs.start = Math.max(startAngle + startAngleRad, startAngleRad);
+            attrs.end = Math.min(endAngle + startAngleRad, endAngleRad);
         }
 
         // Adjust the height of the selection marker
@@ -1282,6 +1297,11 @@ addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
 
             if (innerR < center[3] / 2) {
                 innerR = center[3] / 2;
+            }
+
+            if (!this.zoomHor) {
+                attrs.start = startAngleRad;
+                attrs.end = endAngleRad;
             }
 
             attrs.r = r;
