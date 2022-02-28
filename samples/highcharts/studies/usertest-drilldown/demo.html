@@ -5,53 +5,36 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/themes/high-contrast-light.js"></script>
 
+<main>
+
 <h1>
-    Drilldown visualization user test
+    Drill down visualization user test
 </h1>
 
 <p>
-    In this example we are testing different ways to access drill down interactivity in visualizations using screen readers.
+    In this example we are testing three different ways to access drill down interactivity in visualizations using screen readers.
     The goal is to find out which SVG/HTML semantics are accessibility supported for interactivity, and which are most intuitive.
+    The below charts all display the same data - exported goods by countries.
 </p>
 
-<h2>Points have role="img"</h2>
+<h2>Version A - Expandable</h2>
 
 <figure>
     <div id="containerA" class="chart-container"></div>
 </figure>
 
-<h2>Points have role="button"</h2>
+<h2>Version B - Clickable</h2>
 
 <figure>
     <div id="containerB" class="chart-container"></div>
 </figure>
 
-<h2>Points have roledescription</h2>
+<h2>Version C - Button</h2>
 
 <figure>
     <div id="containerC" class="chart-container"></div>
 </figure>
 
-<h2>ARIA graphics roles</h2>
+</main>
 
-<figure>
-    <div id="containerD" class="chart-container"></div>
-</figure>
-
-<h2>SVG links wrapping the data points</h2>
-
-<figure>
-    <div id="containerE" class="chart-container"></div>
-</figure>
-
-<h2>SVG links without destination</h2>
-
-<figure>
-    <div id="containerF" class="chart-container"></div>
-</figure>
-
-<h2>HTML buttons inside SVG</h2>
-
-<figure>
-    <div id="containerG" class="chart-container"></div>
-</figure>
+<div id="announce" aria-live="assertive"></div>

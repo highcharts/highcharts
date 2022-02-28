@@ -1,58 +1,23 @@
-function makeRoleButton(chart) {
+function makeLinkWraps(chart, role, desc) {
     chart.series.forEach(s => {
-        if (s.name === 'Things') {
-            s.points.forEach(p => {
-                const el = p.graphic.element;
-                el.setAttribute('role', 'button');
-            });
-        }
-    });
-}
+        s.group.element.setAttribute('role', 'group');
 
-function makeRoledescription(chart) {
-    chart.series.forEach(s => {
-        if (s.name === 'Things') {
-            s.points.forEach(p => {
-                p.graphic.element.setAttribute('role', 'button');
-                p.graphic.element.setAttribute('aria-roledescription', 'Expandable datapoint');
-            });
-        }
-    });
-}
-
-function makeGraphicsRoles(chart) {
-    chart.renderer.box.setAttribute('role', 'graphics-document');
-    chart.series.forEach(s => {
-        s.group.element.setAttribute('role', 'graphics-object');
-        s.group.element.setAttribute('aria-roledescription', 'Data series');
-        if (s.name === 'Things') {
-            s.points.forEach(p => {
-                p.graphic.element.setAttribute('role', 'graphics-symbol');
-                p.graphic.element.setAttribute('aria-roledescription', 'Expandable datapoint');
-            });
-        }
-    });
-}
-
-function makeLinkWraps(chart, noHref) {
-    chart.series.forEach(s => {
-        if (s.name === 'Things') {
+        if (s.name === 'Country exports') {
             s.points.forEach(p => {
                 const graphic = p.graphic.element;
                 const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
 
-                if (!graphic.id) {
-                    graphic.setAttribute('id', Highcharts.uniqueKey());
-                }
-
                 link.setAttribute('tabindex', '-1');
                 link.setAttribute('aria-hidden', false);
+                link.setAttribute('aria-label', graphic.getAttribute('aria-label'));
 
-                if (!noHref) {
-                    link.setAttribute('href', '#' + graphic.id);
+                if (role) {
+                    link.setAttribute('role', role);
+                }
+                if (desc) {
+                    link.setAttribute('aria-roledescription', desc);
                 }
 
-                link.setAttribute('aria-label', graphic.getAttribute('aria-label'));
                 link.addEventListener('click', function (e) {
                     e.point = p;
                     Highcharts.fireEvent(s, 'click', e);
@@ -61,6 +26,7 @@ function makeLinkWraps(chart, noHref) {
                     e.preventDefault();
                     return false;
                 });
+
                 graphic.parentNode.appendChild(link);
                 link.appendChild(graphic);
                 graphic.setAttribute('aria-hidden', true);
@@ -69,78 +35,128 @@ function makeLinkWraps(chart, noHref) {
     });
 }
 
-function makeHTMLOverlay(chart) {
-    chart.series.forEach(s => {
-        if (s.name === 'Things') {
-
-            const btnContainer = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-
-            s.points.forEach(p => {
-                const graphic = p.graphic.element;
-                graphic.setAttribute('aria-hidden', true);
-                const btn = document.createElement('button');
-                btn.onclick = function (e) {
-                    e.point = p;
-                    Highcharts.fireEvent(s, 'click', e);
-                    p.firePointEvent('click');
-                    e.stopPropagation();
-                    e.preventDefault();
-                    return false;
-                };
-                btn.setAttribute('aria-label', graphic.getAttribute('aria-label'));
-                btn.setAttribute('tabindex', '-1');
-                btnContainer.appendChild(btn);
-            });
-
-            s.group.element.appendChild(btnContainer);
-        }
-    });
-}
-
-
 Highcharts.addEvent(Highcharts.Chart.prototype, 'render', function () {
     setTimeout(() => {
-        const containerId = this.container.parentNode.id;
-        if (containerId === 'containerB') {
-            makeRoleButton(this);
-        } else if (containerId === 'containerC') {
-            makeRoledescription(this);
-        } else if (containerId === 'containerD') {
-            makeGraphicsRoles(this);
-        } else if (containerId === 'containerE') {
-            makeLinkWraps(this);
-        } else if (containerId === 'containerF') {
-            makeLinkWraps(this, true);
-        } else if (containerId === 'containerG') {
-            makeHTMLOverlay(this);
+        switch (this.container.parentNode.id) {
+        case 'containerA':
+            makeLinkWraps(this, null, 'Expandable datapoint');
+            break;
+        case 'containerB':
+            makeLinkWraps(this, null, 'Clickable datapoint');
+            break;
+        case 'containerC':
+            makeLinkWraps(this, 'button');
+            break;
+        default:
+            break;
         }
     }, 1);
+});
+
+Highcharts.addEvent(Highcharts.Chart, 'aftergetTableAST', function (e) {
+    const tree = e.tree;
+    const tbody = tree.children[2];
+    const rows = tbody.children;
+
+    rows.forEach(row => {
+        const dataCell = row.children[1];
+        const num = parseFloat(dataCell.textContent);
+        dataCell.textContent = Highcharts.numberFormat(num, -1, '.', ',') + ' billion USD';
+    });
+});
+
+let clearTimer = null;
+function announce(text) {
+    const div = document.getElementById('announce');
+    if (clearTimer) {
+        clearTimeout(clearTimer);
+    }
+    div.textContent = text;
+    clearTimer = setTimeout(() => (div.textContent = ''), 10000);
+}
+
+Highcharts.addEvent(Highcharts.Chart, 'afterApplyDrilldown', function () {
+    const series = this.series[0];
+    series.group.element.focus();
+    announce('Navigated to details for ' + series.name + '. New bar series with ' + series.points.length + ' bars.');
+
+    // Fix drillup btn
+    setTimeout(() => {
+        const chart = this;
+        this.accessibility.components.zoom.drillUpProxyButton.remove();
+        const btnGroup = this.drillUpButton.element;
+        const parentGroup = btnGroup.parentNode;
+        parentGroup.setAttribute('aria-hidden', false);
+        btnGroup.setAttribute('aria-hidden', true);
+
+        const link = chart.drillUpLink = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+
+        link.setAttribute('tabindex', '-1');
+        link.setAttribute('aria-hidden', false);
+        link.setAttribute('aria-label', 'Back to Country exports');
+        link.setAttribute('role', 'button');
+
+        link.addEventListener('click', function () {
+            chart.drillUp();
+        });
+
+        parentGroup.appendChild(link);
+        link.appendChild(btnGroup);
+    }, 10);
+});
+
+Highcharts.addEvent(Highcharts.Chart, 'drillupall', function () {
+    const series = this.series[0];
+    series.group.element.focus();
+    if (this.drillUpLink) {
+        this.drillUpLink.remove();
+    }
+    announce('Navigated back to ' + series.name + '. Bar series with ' + series.points.length + ' bars.');
+});
+
+document.addEventListener('keydown', function (e) {
+    if (e.keyCode === 27) {
+        Highcharts.charts.forEach(chart => {
+            chart.drillUp();
+        });
+    }
 });
 
 function makeChart(container, title, expandableLabel) {
     return Highcharts.chart(container, {
         chart: {
-            type: 'column'
+            type: 'bar'
         },
         title: {
-            text: title
+            text: 'Exports by country - ' + title
+        },
+        subtitle: {
+            text: 'Click each country for details'
         },
         xAxis: {
-            type: 'category'
+            type: 'category',
+            accessibility: {
+                description: 'Countries'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Billion USD'
+            }
         },
         accessibility: {
             announceNewData: {
-                enabled: true
+                enabled: false
             },
-            landmarkVerbosity: 'one',
+            landmarkVerbosity: 'disabled',
             screenReaderSection: {
                 beforeChartFormat: '<div>{chartTitle}, {typeDescription}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
             },
             point: {
                 descriptionFormatter: function (point) {
-                    let label = point.name + ', ' + point.y + '.';
-                    if (point.series.name === 'Things' && expandableLabel) {
-                        label += ' Expandable.';
+                    let label = point.name + ', ' + point.y + ' billion USD.';
+                    if (point.series.name === 'Country exports' && expandableLabel) {
+                        label += ' Click to load detailed data.';
                     }
                     return label;
                 }
@@ -152,9 +168,6 @@ function makeChart(container, title, expandableLabel) {
         legend: {
             enabled: false
         },
-        exporting: {
-            enabled: false
-        },
         plotOptions: {
             series: {
                 borderWidth: 0,
@@ -163,26 +176,34 @@ function makeChart(container, title, expandableLabel) {
                 }
             }
         },
+        tooltip: {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            valueSuffix: ' billion USD'
+        },
         series: [{
-            name: 'Things',
+            name: 'Country exports',
             colorByPoint: true,
             accessibility: {
                 point: {
-                    valueDescriptionFormat: expandableLabel ? '{xDescription}{separator}{value}. Expandable.' : '{xDescription}{separator}{value}.'
+                    valueDescriptionFormat: '{xDescription}{separator}{value}. Expandable.'
                 }
             },
             data: [{
-                name: 'Animals',
-                y: 5,
-                drilldown: 'animals'
+                name: 'China',
+                y: 2591,
+                drilldown: 'china'
             }, {
-                name: 'Fruits',
-                y: 2,
-                drilldown: 'fruits'
+                name: 'USA',
+                y: 1431,
+                drilldown: 'usa'
             }, {
-                name: 'Cars',
-                y: 4,
-                drilldown: 'cars'
+                name: 'Germany',
+                y: 1378,
+                drilldown: 'germany'
+            }, {
+                name: 'Turkey',
+                y: 169.5,
+                drilldown: 'turkey'
             }]
         }],
         drilldown: {
@@ -200,39 +221,50 @@ function makeChart(container, title, expandableLabel) {
                 }
             },
             series: [{
-                id: 'animals',
-                name: 'Animals',
+                id: 'china',
+                name: 'China',
                 data: [
-                    ['Cats', 4],
-                    ['Dogs', 2],
-                    ['Cows', 1],
-                    ['Sheep', 2],
-                    ['Pigs', 1]
+                    ['Phone system devices', 223.2],
+                    ['Computers and optical readers', 170.2],
+                    ['Integrated circuits', 117.1],
+                    ['Miscellaneous articles', 55.2],
+                    ['Lamps and lighting', 37.6]
                 ]
             }, {
-                id: 'fruits',
-                name: 'Fruits',
+                id: 'usa',
+                name: 'USA',
                 data: [
-                    ['Apples', 4],
-                    ['Oranges', 2]
+                    ['Oil and gas', 144.3],
+                    ['Cars and car parts', 78.9],
+                    ['Integrated circuits', 44.2],
+                    ['Phone system devices', 28.1],
+                    ['Electro-medical devices', 28.0]
                 ]
             }, {
-                id: 'cars',
-                name: 'Cars',
+                id: 'germany',
+                name: 'Germany',
                 data: [
-                    ['Toyota', 4],
-                    ['Opel', 2],
-                    ['Volkswagen', 2]
+                    ['Cars and car parts', 176.4],
+                    ['Medication', 60.1],
+                    ['Blood fractions', 31.8],
+                    ['Aircraft and spacecraft', 20.7],
+                    ['Electro-medical devices', 16.7]
+                ]
+            }, {
+                id: 'turkey',
+                name: 'Turkey',
+                data: [
+                    ['Cars and car parts', 16.3],
+                    ['Trucks', 4.4],
+                    ['Oil and gas', 6.1],
+                    ['Jewelry', 5.1],
+                    ['Gold', 2.0]
                 ]
             }]
         }
     });
 }
 
-makeChart('containerA', 'Drilldown with image points', true);
-makeChart('containerB', 'Drilldown with button points', true);
-makeChart('containerC', 'Drilldown with roledescription points');
-makeChart('containerD', 'Drilldown with ARIA graphics roles and roledescription');
-makeChart('containerE', 'Drilldown with SVG links');
-makeChart('containerF', 'Drilldown with SVG links without destination');
-makeChart('containerG', 'Drilldown with HTML overlay');
+makeChart('containerA', 'version A');
+makeChart('containerB', 'version B');
+makeChart('containerC', 'version C', true);
