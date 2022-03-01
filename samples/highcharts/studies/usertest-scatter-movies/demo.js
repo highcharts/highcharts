@@ -51,7 +51,9 @@ function getTrendDataForSeries(series, xBinSize, seriesMetrics) {
     return data;
 }
 
-function getDescribedTrendData(data, chartExtremes) {
+function buildDescTreeFromData(data, chartExtremes, xAxis, yAxis) {
+    const xValueDecimals = chartExtremes.xMax - chartExtremes.xMin > 10 ? 0 : 1;
+    const yValueDecimals = chartExtremes.dataMax - chartExtremes.dataMin > 10 ? 0 : 1;
     let min = Infinity;
     let max = -Infinity;
     let i = data.length;
@@ -71,27 +73,39 @@ function getDescribedTrendData(data, chartExtremes) {
         }
     });
 
-    const describedData = [];
+    const descItems = [];
     data.forEach((values, ix) => {
         const nextValues = data[ix + 1];
         const yVal = values[1];
         const nextYVal = nextValues && nextValues[1];
-        let desc = '';
+        const descItem = {};
+        const xValRounded = Math.round((values[0] + Number.EPSILON) * Math.pow(1, xValueDecimals)) / Math.pow(1, xValueDecimals);
+        const yValRounded = Math.round((values[1] + Number.EPSILON) * Math.pow(1, yValueDecimals)) / Math.pow(1, yValueDecimals);
+        const dateFormat = (val, axis) => (axis.options.type === 'datetime' ? Highcharts.dateFormat('%H:%M:%S', val) : val);
+
+        descItem.x = dateFormat(xValRounded, xAxis);
+        descItem.y = dateFormat(yValRounded, yAxis);
 
         if (ix === 0) {
-            desc = `First of ${data.length} trend segments.`;
+            descItem.isStart = true;
+            descItem.x = chartExtremes.xMin;
         } else if (!nextValues) {
-            desc = 'End of trend line.';
-        } else {
-            desc = `${ix + 1}.`;
+            descItem.isEnd = true;
+            descItem.x = chartExtremes.xMax;
         }
 
-        if (yVal === min && minCount < 2) {
-            desc += ' This is the lowest point.';
+        if (yVal === min) {
+            descItem.isLowest = true;
+            if (minCount > 1) {
+                descItem.hasMultipleLowest = true;
+            }
         }
 
-        if (yVal === max && maxCount < 2) {
-            desc += ' This is the highest point.';
+        if (yVal === max) {
+            descItem.isHighest = true;
+            if (maxCount > 1) {
+                descItem.hasMultipleHighest = true;
+            }
         }
 
         if (nextYVal !== undefined) {
@@ -101,49 +115,192 @@ function getDescribedTrendData(data, chartExtremes) {
             const neutralThreshold = totalDiff / data.length;
 
             if (absDiff < neutralThreshold / 25) {
-                desc += ' Trending flat.';
+                descItem.trend = 0;
             } else {
-                const direction = diffToNext > 0 ? 'up' : 'down';
+                const up = diffToNext > 0;
                 if (absDiff > neutralThreshold / 0.8) {
-                    desc += ` Trending ${direction} sharply.`;
+                    descItem.trend = up ? 3 : -3;
                 } else if (absDiff < neutralThreshold / 5) {
-                    desc += ` Trending ${direction} slightly.`;
+                    descItem.trend = up ? 1 : -1;
                 } else {
-                    desc += ` Trending ${direction}.`;
+                    descItem.trend = up ? 2 : -2;
                 }
             }
         }
 
-        describedData.push({
-            x: values[0],
-            y: values[1],
-            trendDesc: desc
-        });
+        descItems.push(descItem);
     });
 
-    return describedData;
+    return descItems;
 }
 
+function compressDescTree(descItems) {
+    const compressed = [];
+
+    descItems.forEach((desc, ix) => {
+        if (desc.isEnd) {
+            compressed.push(desc);
+        } else {
+            const prev = descItems[ix - 1];
+            if (!prev || desc.trend !== prev.trend) {
+                compressed.push(desc);
+            }
+        }
+    });
+
+    return compressed;
+}
+
+function describeSeriesTrend(series, descItems) {
+    let desc;
+    const getAxisName = axis =>
+        axis.options.accessibility && axis.options.accessibility.description ||
+        axis.options.title && axis.options.title.text ||
+        (axis.coll === 'xAxis' ? 'x axis value' : 'y axis value');
+
+    const xAxisName = getAxisName(series.xAxis);
+    const yAxisName = getAxisName(series.yAxis);
+
+    let orderDenomination;
+    switch (series.index) {
+    case 0:
+        orderDenomination = 'first';
+        break;
+    case 1:
+        orderDenomination = 'second';
+        break;
+    default:
+        orderDenomination = 'next';
+        break;
+    }
+
+    desc = `<p>The ${orderDenomination} data series is showing ${series.name}, with ${series.points.length} data points.</p><ul role="list">`;
+
+    descItems.forEach((point, ix) => {
+        if (point.isEnd) {
+            return;
+        }
+
+        desc += '<li>';
+        const nextPoint = descItems[ix + 1];
+        const nextX = nextPoint && nextPoint.x;
+
+        if (point.isStart) {
+            desc += `It starts at ${xAxisName} ${point.x}`;
+            if (point.isHighest || point.isLowest) {
+                desc += `, where it is ${point.isHighest ? 'highest' : 'lowest'} on average`;
+            }
+            desc += `, with ${yAxisName} averaging around ${point.y}.`;
+            desc += '</li><li>';
+        }
+
+        desc += ix % 2 === 0 ? 'From there ' : 'Then ';
+
+        const trend = point.trend;
+        if (trend === 0) {
+            desc += ` it stays flat until around ${xAxisName} ${nextX}`;
+        } else {
+            let trendModifier;
+            const absTrend = Math.abs(trend);
+            if (absTrend === 1) {
+                trendModifier = ' slightly';
+            } else if (absTrend === 2) {
+                trendModifier = '';
+            } else if (absTrend === 3) {
+                trendModifier = ' sharply';
+            }
+            desc += ` it goes ${trend > 0 ? 'up' : 'down'}${trendModifier} until around ${xAxisName} ${nextX}`;
+        }
+
+        if (nextPoint && nextPoint.isEnd) {
+            desc += ', where it ends';
+        }
+
+        if (nextPoint && (nextPoint.isHighest || nextPoint.isLowest)) {
+            desc += nextPoint.isEnd ? ', and is ' : ', where it is ';
+            desc += `${nextPoint.isHighest ? 'highest' : 'lowest'} on average, with ${yAxisName} averaging around ${nextPoint.y}`;
+        } else if (nextPoint.isEnd) {
+            desc += `, with ${yAxisName} averaging around ${nextPoint.y}`;
+        }
+
+        desc += '.';
+        desc += '</li>';
+    });
+
+    desc += '</ul>';
+
+    return desc;
+}
+
+function getSeriesStats(series) {
+    const getAxisName = axis =>
+        axis.options.accessibility && axis.options.accessibility.description ||
+        axis.options.title && axis.options.title.text ||
+        (axis.coll === 'xAxis' ? 'x axis value' : 'y axis value');
+    const dateFormat = (val, axis) => (axis.options.type === 'datetime' ? Highcharts.dateFormat('%H:%M:%S', val) : val);
+    let min = Infinity;
+    let max = -Infinity;
+    let curMin;
+    let curMax;
+
+    series.points.forEach(p => {
+        if (p.y < min) {
+            min = p.y;
+            curMin = p;
+        } else if (p.y > max) {
+            max = p.y;
+            curMax = p;
+        }
+    });
+
+    const yMinDesc = dateFormat(min, series.yAxis);
+    const yMaxDesc = dateFormat(max, series.yAxis);
+
+    return `<p>Overall, the minimum ${getAxisName(series.yAxis)} for ${series.name} is ${yMinDesc}, at ${getAxisName(series.xAxis)} ${curMin.x}. ` +
+        `The maximum is ${yMaxDesc}, at ${getAxisName(series.xAxis)} ${curMax.x}.</p>`;
+}
+
+
 function updateTrends(chart, detail) {
+    let computerDesc = '<p>Computer generated description:</p>';
     chart.series.forEach(series => {
         const seriesMetrics = getSeriesDataMetrics(series);
         const xBinSize = getXBinSize(seriesMetrics, detail);
         const data = getTrendDataForSeries(series, xBinSize, seriesMetrics);
-        const describedData = getDescribedTrendData(data, {
+        const descItems = buildDescTreeFromData(data, {
             dataMin: chart.yAxis[0].dataMin,
-            dataMax: chart.yAxis[0].dataMax
-        });
+            dataMax: chart.yAxis[0].dataMax,
+            xMin: seriesMetrics.xMin,
+            xMax: seriesMetrics.xMax
+        }, series.xAxis, series.yAxis);
+        const trendDesc = describeSeriesTrend(series, compressDescTree(descItems));
+        const statsDesc = getSeriesStats(series);
 
         chart.addSeries({
-            data: describedData,
+            data,
             color: '#222',
             type: 'spline',
             xBinSize,
-            name: 'Trend description for Movie ratings'
+            name: 'Trend line for ' + series.name,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
         });
+
+        computerDesc += trendDesc + statsDesc;
     });
     chart.redraw();
+
+    setTimeout(() => {
+        const beforeRegion = chart.accessibility.components.infoRegions.screenReaderSections.before.element;
+        const div = document.createElement('div');
+        div.setAttribute('aria-hidden', false);
+        div.classList.add('sr-only');
+        div.innerHTML = computerDesc;
+        beforeRegion.parentNode.insertBefore(div, beforeRegion.nextSibling);
+    }, 10);
 }
+
 
 function sonifySeries(series) {
     const chart = series.chart;
@@ -243,7 +400,7 @@ const chart = Highcharts.chart('container', {
             }
         },
         screenReaderSection: {
-            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line. The chart has two data series, displaying Movie ratings and Trend description for Movie ratings.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
+            beforeChartFormat: '<{headingTagName}>{chartTitle}</{headingTagName}><div>Scatter plot with trend line. The chart has two data series, displaying Movie ratings and Trend line for Movie ratings.</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>'
         },
         series: {
             pointDescriptionEnabledThreshold: false
