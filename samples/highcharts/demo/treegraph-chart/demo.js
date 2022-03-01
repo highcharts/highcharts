@@ -45,6 +45,7 @@ Highcharts.chart('container', {
     series: [
         {
             type: 'treegraph',
+            keys: ['id', 'parent'],
 
             data: [
                 {
@@ -118,7 +119,7 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                { id: 'Borin', parent: 'Nain II' },
+                ['Borin', 'Nain II'],
                 {
                     id: 'Thror',
                     parent: 'Dain I',
@@ -127,8 +128,8 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                { id: 'Fror', parent: 'Dain I' },
-                { id: 'Gror', parent: 'Dain I' },
+                ['Fror', 'Dain I'],
+                ['Gror', 'Dain I'],
                 {
                     id: 'Thrain II',
                     parent: 'Thror',
@@ -156,8 +157,8 @@ Highcharts.chart('container', {
                         fillColor: expeditionColor
                     }
                 },
-                { id: 'Frerin', parent: 'Thrain II' },
-                { id: 'Dis', parent: 'Thrain II' },
+                ['Frerin', 'Thrain II'],
+                ['Dis', 'Thrain II'],
                 {
                     id: 'Kili',
                     parent: 'Dis',
@@ -176,7 +177,7 @@ Highcharts.chart('container', {
                         fillColor: expeditionColor
                     }
                 },
-                { id: 'Nain', parent: 'Gror' },
+                ['Nain', 'Gror'],
                 {
                     id: 'Dain II IronFoot',
                     parent: 'Nain',
@@ -202,8 +203,8 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                { id: 'Farin', parent: 'Borin' },
-                { id: 'Fundin', parent: 'Farin' },
+                ['Farin', 'Borin'],
+                ['Fundin', 'Farin'],
                 {
                     id: 'Balin',
                     parent: 'Fundin',

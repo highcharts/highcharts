@@ -15,6 +15,7 @@
  * */
 
 import TreemapPointOptions from '../Treemap/TreemapPointOptions';
+import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 
 /* *
  *
@@ -23,8 +24,8 @@ import TreemapPointOptions from '../Treemap/TreemapPointOptions';
  * */
 
 export interface TreegraphPointOptions extends TreemapPointOptions {
-    borderRadius: any;
-    link: any;
+    borderRadius: number;
+    link: LinkOptions;
 }
 
 export default TreegraphPointOptions;

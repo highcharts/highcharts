@@ -381,7 +381,7 @@ function cbSetTreeValuesBefore(
         chart = series.chart,
         points = series.points,
         point = points[node.i],
-        colors = series.options.colors || (chart && chart.options.colors),
+        colors = series.options.colors || chart && chart.options.colors,
         colorInfo = getColor(node, {
             colors: colors,
             colorIndex: series.colorIndex,

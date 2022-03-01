@@ -20,7 +20,6 @@
  *
  * */
 
-import type SunburstSeries from './SunburstSeries';
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -29,7 +28,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import SunburstNode from './SunburstNode.js';
+import type SunburstNode from './SunburstNode.js';
 const {
     isNumber,
     isObject,

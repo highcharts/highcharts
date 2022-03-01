@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         keys: ['id', 'parent', 'level'],
         data: [
             ['A'],
-            ['D', 'A', 3, 3],
+            ['D', 'A', 3],
             ['B', 'A']
         ]
     }]

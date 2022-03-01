@@ -1,9 +1,10 @@
+import type SunburstSeriesOptions from './SunburstSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type SunburstSeries from './SunburstSeries.js';
+import type CU from '../CenteredUtilities.js';
+import type TU from '../TreeUtilities.js';
+
 import TreemapNode from '../Treemap/TreemapNode.js';
-import SunburstSeriesOptions from './SunburstSeriesOptions.js';
-import ColorType from '../../Core/Color/ColorType.js';
-import SunburstSeries from './SunburstSeries.js';
-import CU from '../CenteredUtilities.js';
-import TU from '../TreeUtilities.js';
 namespace SunburstNode {
     export interface NodeValuesObject
         extends CU.RadianAngles,
