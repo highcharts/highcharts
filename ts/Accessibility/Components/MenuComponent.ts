@@ -105,8 +105,6 @@ class MenuComponent extends AccessibilityComponent {
 
     public exportButtonProxy?: ProxyElement;
 
-    public isExportMenuShown?: boolean;
-
 
     /* *
      *
@@ -146,7 +144,6 @@ class MenuComponent extends AccessibilityComponent {
             menu.setAttribute('aria-hidden', 'true');
         }
 
-        this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
     }
 
@@ -163,7 +160,6 @@ class MenuComponent extends AccessibilityComponent {
             unhideChartElementFromAT(chart, menu);
         }
 
-        this.isExportMenuShown = true;
         this.setExportButtonExpandedState('true');
     }
 
@@ -434,7 +430,7 @@ class MenuComponent extends AccessibilityComponent {
             getExportMenuButtonElement(chart) as any
         ).element;
 
-        if (this.isExportMenuShown) {
+        if (chart.openMenu) {
             this.fakeClickEvent(curHighlightedItem);
         } else {
             this.fakeClickEvent(exportButtonElement);
@@ -556,7 +552,7 @@ namespace MenuComponent {
         const chart = this,
             exportList = chart.exportDivElements;
 
-        if (exportList && chart.exportContextMenu) {
+        if (exportList && chart.exportContextMenu && chart.openMenu) {
             // Reset hover states etc.
             exportList.forEach((el): void => {
                 if (

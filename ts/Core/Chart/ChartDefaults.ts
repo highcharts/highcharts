@@ -95,7 +95,6 @@ const ChartDefaults: ChartOptions = {
      * When using multiple axes, align the thresholds. When this is true, other
      * ticks will also be aligned.
      *
-     *
      * Note that for line series and some other series types, the `threshold`
      * option is set to `null` by default. This will in turn cause their y-axis
      * to not have a threshold. In order to avoid that, set the series
@@ -966,9 +965,10 @@ const ChartDefaults: ChartOptions = {
      *         Y
      * @sample {highstock} stock/chart/zoomtype-xy/
      *         Xy
+     * @sample {highmaps} maps/chart/zoomtype-xy/
+     *         Map with selection zoom
      *
      * @type       {string}
-     * @product    highcharts highstock gantt
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.zoomType
      */

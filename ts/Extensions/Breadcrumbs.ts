@@ -21,6 +21,7 @@ import type {
     CSSObject
 } from '../Core/Renderer/CSSObject';
 import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
+import type NavigationOptions from '../Extensions/Exporting/NavigationOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -71,6 +72,11 @@ declare module '../Core/LangOptions' {
 }
 declare module '../Series/Treemap/TreemapSeriesOptions' {
     interface TreemapSeriesOptions {
+        breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
+    }
+}
+declare module '../Extensions/Exporting/NavigationOptions' {
+    interface NavigationOptions {
         breadcrumbs?: Breadcrumbs.BreadcrumbsOptions;
     }
 }
@@ -140,11 +146,14 @@ extend(
  */
 class Breadcrumbs {
     /**
-     * Options for breadcrumbs
+     * Options for breadcrumbs. Breadcrumbs general options are defined in
+     * `navigation.breadcrumbs`. Specific options for drilldown are set in
+     * `drilldown.breadcrumbs` and for tree-like series traversing, in
+     * `plotOptions[series].breadcrumbs`.
      *
      * @since   next
      * @product highcharts
-     * @optionparent breadcrumbs
+     * @optionparent navigation.breadcrumbs
      */
     public static defaultBreadcrumbsOptions = {
         /**
@@ -209,7 +218,7 @@ class Breadcrumbs {
          *
          * @type      {Highcharts.BreadcrumbsClickCallbackFunction}
          * @since     next
-         * @apioption breadcrumbs.events.click
+         * @apioption navigation.breadcrumbs.events.click
          */
 
         /**
@@ -243,7 +252,7 @@ class Breadcrumbs {
          * @type      {Highcharts.BreadcrumbsFormatterCallbackFunction}
          * @since     next
          * @default   undefined
-         * @apioption breadcrumbs.formatter
+         * @apioption navigation.breadcrumbs.formatter
          */
 
         /**
@@ -339,7 +348,7 @@ class Breadcrumbs {
          * CSS styles for all breadcrumbs.
          *
          * In styled mode, the breadcrumbs buttons are styled by the
-         * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+         * `.highcharts-breadcrumbs-buttons .highcharts-button` rule with its
          * different states.
          *  @type {Highcharts.SVGAttributes}
          *  @since     next
@@ -355,7 +364,7 @@ class Breadcrumbs {
         useHTML: false,
 
         /**
-         * The zIndex of the group.
+         * The z index of the breadcrumbs group.
          *
          * @type      {number}
          * @since     next
@@ -383,6 +392,7 @@ class Breadcrumbs {
             chart.options.drilldown &&
                 chart.options.drilldown.drillUpButton,
             Breadcrumbs.defaultBreadcrumbsOptions,
+            chart.options.navigation && chart.options.navigation.breadcrumbs,
             userOptions
         );
 
@@ -1246,7 +1256,7 @@ export default Breadcrumbs;
 /**
  * Button theme.
  * @name Highcharts.BreadcrumbsOptions#buttonTheme
- * @type { SVGAttributes | BreadcrumbsButtonThemeOptions | undefined }
+ * @type { SVGAttributes | undefined }
  */
 
 (''); // Keeps doclets above in JS file

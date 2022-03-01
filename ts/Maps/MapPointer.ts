@@ -50,11 +50,35 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
+const normalize = Pointer.prototype.normalize;
 let totalWheelDelta = 0;
 let totalWheelDeltaTimer: number;
 
 // Extend the Pointer
 extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
+
+    // Add lon and lat information to pointer events
+    normalize: function <T extends PointerEvent> (
+        e: (T|MouseEvent|PointerEvent|TouchEvent),
+        chartPosition?: Pointer.ChartPositionObject
+    ): T {
+        const chart = this.chart;
+
+        e = normalize.call(this, e, chartPosition);
+
+        if (chart && chart.mapView) {
+            const lonLat = chart.mapView.pixelsToLonLat({
+                x: (e as any).chartX - chart.plotLeft,
+                y: (e as any).chartY - chart.plotTop
+            });
+            if (lonLat) {
+                extend(e, lonLat);
+            }
+        }
+
+        return e as any;
+
+    },
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (

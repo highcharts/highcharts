@@ -195,7 +195,7 @@ class MapBubbleSeries extends BubbleSeries {
          */
 
         animationLimit: 500,
-
+        joinBy: 'hc-key',
         tooltip: {
             pointFormat: '{point.name}: {point.z}'
         }
@@ -243,6 +243,7 @@ interface MapBubbleSeries {
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
     processData: typeof MapSeries.prototype['processData'];
+    projectPoint: typeof MapPointSeries.prototype['projectPoint'];
     setOptions: typeof MapSeries.prototype['setOptions'];
     xyFromShape: boolean;
 }
@@ -261,6 +262,8 @@ extend(MapBubbleSeries.prototype, {
     pointClass: MapBubblePoint,
 
     processData: MapSeries.prototype.processData,
+
+    projectPoint: MapPointSeries.prototype.projectPoint,
 
     setData: MapSeries.prototype.setData,
 

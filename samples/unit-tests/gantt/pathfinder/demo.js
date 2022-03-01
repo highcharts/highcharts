@@ -149,7 +149,7 @@
             x,
             y;
 
-        Highcharts.each(points, function (point) {
+        points.forEach(point => {
             var connection = connectionFromPoint(point);
             if (point.id !== 'center' && connection) {
                 // All but the center point
@@ -243,7 +243,7 @@
             x,
             y;
 
-        Highcharts.each(points, function (point) {
+        points.forEach(point => {
             var connection = connectionFromPoint(point);
             if (point.id !== 'center' && connection) {
                 // All but the center point
@@ -311,7 +311,7 @@
                 allPoints = chart.series[0].points,
                 connectorPoints = [allPoints[2]];
 
-            Highcharts.each(connectorPoints, function (point) {
+            connectorPoints.forEach(point => {
                 var pointBox = point.graphic.getBBox(),
                     connection = connectionFromPoint(point),
                     graphic = connection.graphics,
@@ -377,9 +377,9 @@
         }
 
         // Combine all verticalAligns...
-        Highcharts.each(verticalAligns, function (verticalAlign) {
+        verticalAligns.forEach(verticalAlign => {
             // ... with all (horizontal) aligns
-            Highcharts.each(aligns, function (align) {
+            aligns.forEach(align => {
                 // Set them on the config...
                 opts.marker.verticalAlign = verticalAlign;
                 opts.marker.align = align;
