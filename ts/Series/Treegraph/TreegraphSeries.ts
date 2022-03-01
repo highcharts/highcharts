@@ -100,7 +100,7 @@ class TreegraphSeries extends TreemapSeries {
              * @default 'Walker'
              * @product highcharts
              */
-            layout: 'Walker',
+            layout: 'Walker' as const,
             /**
              * Whether the first node should be placed on the opposite side of
              * the `plotArea`. By default, the oldest child is positioned on the
@@ -169,7 +169,7 @@ class TreegraphSeries extends TreemapSeries {
                  * @product highcharts
                  *
                  */
-                type: 'curved'
+                type: 'curved' as const
                 /**
                  * Modifier of the shape of the curved link. Works best for
                  * values between 0 and 1, where 0 is a straight line, and 1 is

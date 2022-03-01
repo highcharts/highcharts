@@ -20,6 +20,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
+import { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 
 /* *
  *
@@ -29,9 +30,6 @@ import type Point from '../../Core/Series/Point';
 
 
 export type TreegraphLayoutTypes = 'Walker';
-export type linkOptions = {
-
-};
 export interface TreegraphDataLabelFormatterCallback {
     (
         this: (
@@ -50,8 +48,8 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
 }
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels?: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
-    link?: any;
-    layout?: string;
+    link?: LinkOptions;
+    layout?: TreegraphLayoutTypes;
     reversed?: boolean;
     marker?: PointMarkerOptions;
 }
