@@ -15,7 +15,11 @@
  * */
 
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
+import type TreemapSeriesOptions from '../Treemap/TreemapSeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
+import type TreegraphPoint from './TreegraphPoint';
+import type Point from '../../Core/Series/Point';
 
 /* *
  *
@@ -28,11 +32,28 @@ export type TreegraphLayoutTypes = 'Walker';
 export type linkOptions = {
 
 };
+export interface TreegraphDataLabelFormatterCallback {
+    (
+        this: (
+            TreegraphDataLabelFormatterContext|
+            Point.PointLabelObject
+        )
+    ): (string|undefined);
+}
+export interface TreegraphDataLabelFormatterContext {
+    point: TreegraphPoint
+}
+export interface TreegraphDataLabelOptions extends DataLabelOptions {
+    linkFormat?: string;
+    linkFormatter?: TreegraphDataLabelFormatterCallback;
+    linkTextPath?: DataLabelTextPathOptions;
+}
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
-    link: any;
-    layout: string;
-    reversed: boolean;
-    marker: PointMarkerOptions;
+    dataLabels?: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
+    link?: any;
+    layout?: string;
+    reversed?: boolean;
+    marker?: PointMarkerOptions;
 }
 
 

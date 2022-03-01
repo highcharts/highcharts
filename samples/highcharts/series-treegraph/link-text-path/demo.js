@@ -6,7 +6,12 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: '#222',
-                linkFormat: '{point.id} \u2192 {point.parent}'
+                linkFormat: '{point.id} \u2192 {point.parent}',
+                linkTextPath: {
+                    attributes: {
+                        startOffset: '30%'
+                    }
+                }
             },
             type: 'treegraph',
             keys: ['id', 'parent'],

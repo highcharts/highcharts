@@ -31,17 +31,15 @@ const { getLevelOptions } = TU;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, pick, addEvent, stableSort, error } = U;
+const { merge, pick, addEvent } = U;
 
 import './TreegraphLayout.js';
 import Point from '../../Core/Series/Point';
 import TreemapSeries from '../Treemap/TreemapSeries.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
-import seriesDefaults from '../../Core/Series/SeriesDefaults.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import { DataLabelFormatterCallback } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -73,10 +71,9 @@ class TreegraphSeries extends TreemapSeries {
 
     /**
      * A treegraph series is a diagram, which shows a relation between ancestors
-     * and descendants with a clear parent - child relation. Our treegraph
-     * algorythm accepts the data, where each point (apart from the root of the
-     * tree) has a single parent. The best examples of the dataStructures, which
-     * best reflect this chart are e.g. genealogy tree or directory scructure.
+     * and descendants with a clear parent - child relation.
+     * The best examples of the dataStructures, which best reflect this chart
+     * are e.g. genealogy tree or directory scructure.
      *
      *
      * @extends      plotOptions.treegraph
@@ -232,11 +229,6 @@ class TreegraphSeries extends TreemapSeries {
              * @private
              */
             dataLabels: {
-                enabled: true,
-                formatter: function (this: Point.PointLabelObject): string {
-                    return this.point.id;
-                },
-                linkFormat: '',
                 /**
                  * Options for a _link_ label text which should follow link
                  * connection. Border and background are disabled for a label
@@ -257,11 +249,11 @@ class TreegraphSeries extends TreemapSeries {
                         startOffset: '50%'
                     }
                 },
-                /**
-                 * @default 'curved'
-                 *
-                 */
-                useHTML: false
+                enabled: true,
+                formatter: function (this: Point.PointLabelObject): string {
+                    return this.point.id;
+                },
+                linkFormat: ''
             }
         }
     );
@@ -299,7 +291,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public init(): void {
         super.init.apply(this, arguments);
-        if (H.treeLayouts[this.options.layout]) {
+        if (this.options.layout && H.treeLayouts[this.options.layout]) {
             this.layoutAlgorythm = new H.treeLayouts[this.options.layout]();
         } else {
             this.layoutAlgorythm = new H.treeLayouts.Walker();
@@ -476,7 +468,8 @@ class TreegraphSeries extends TreemapSeries {
      */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
-            const textPath = (this as any).options.dataLabels.textPath;
+
+            const textPath = (this.options.dataLabels as any).textPath;
 
             // Render node labels.
             super.drawDataLabels.apply(this, arguments);

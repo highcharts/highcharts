@@ -525,6 +525,7 @@ class SankeySeries extends ColumnSeries {
      * @private
      */
     public getNodePadding(): number {
+
         let nodePadding = this.options.nodePadding || 0;
 
         // If the number of columns is so great that they will overflow with
