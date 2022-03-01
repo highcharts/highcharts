@@ -56,7 +56,7 @@ type BubbleZExtremes = { zMin: number; zMax: number };
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        seriesDrawConnector(): void;
+        onPoint?: SeriesOnPointComposition.Additions;
         getConnectorAttributes(): SVGAttributes|void;
         getRadii(
             zMin: number,
@@ -74,14 +74,21 @@ declare module '../Core/Series/SeriesLike' {
         ): (number|null);
         getPxExtremes(): BubblePxExtremes;
         getZExtremes(): BubbleZExtremes|undefined;
-        onPoint?: SeriesOnPointComposition.Additions;
+        seriesDrawConnector(): void;
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        onPoint?: SeriesOnPointComposition.Additions;
+        onPoint?: OnPoint;
     }
+}
+
+interface OnPoint {
+    connectorOptions?: SVGAttributes;
+    id: string;
+    position?: Position;
+    z?: number;
 }
 
 interface Position {
@@ -193,9 +200,9 @@ namespace SeriesOnPointComposition {
         const zData: Array<number|null> = [];
 
         this.series.forEach((series: Series): void => {
-            const onPoint = series.options.onPoint;
+            const onPointOpts = series.options.onPoint;
 
-            zData.push(onPoint ? onPoint.z : null);
+            zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
         });
 
         this.series.forEach((series: Series): void => {
@@ -310,7 +317,6 @@ namespace SeriesOnPointComposition {
             if (
                 connectedPoint instanceof Point &&
                 position &&
-                connectorOpts &&
                 defined(connectedPoint.plotX) &&
                 defined(connectedPoint.plotY)
             ) {
@@ -322,9 +328,12 @@ namespace SeriesOnPointComposition {
                         connectedPoint.plotY,
                     xTo = xFrom + (position.offsetX || 0),
                     yTo = yFrom + (position.offsetY || 0),
-                    width = connectorOpts.width || 1,
-                    color = (connectorOpts as any).color || this.color,
-                    dashStyle = (connectorOpts as any).dashStyle;
+                    width = (connectorOpts && connectorOpts.width) || 1,
+                    color =
+                        (connectorOpts && (connectorOpts as any).color) ||
+                        this.color,
+                    dashStyle =
+                        connectorOpts && (connectorOpts as any).dashStyle;
 
                 let attribs: SVGAttributes = {
                     d: SVGRenderer.prototype.crispLine([
@@ -395,7 +404,7 @@ namespace SeriesOnPointComposition {
          */
         public constructor(series: SeriesComposition) {
             this.series = series;
-            this.position = {};
+            this.options = series.options.onPoint;
         }
 
         /* *
@@ -408,13 +417,7 @@ namespace SeriesOnPointComposition {
 
         public connector?: SVGElement = void 0 as any;
 
-        public connectorOptions: SVGAttributes = void 0 as any;
-
-        public id: string = void 0 as any;
-
-        public position: Position;
-
-        z: number = void 0 as any;
+        public options?: OnPoint;
     }
 
 }
