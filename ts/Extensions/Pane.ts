@@ -528,11 +528,21 @@ class Pane {
 function isInsidePane(
     x: number,
     y: number,
-    center: Array<number>
+    center: Array<number>,
+    startAngleRad?: number,
+    endAngleRad?: number
 ): boolean {
-    return Math.sqrt(
+    let insideSlice = true;
+    const distance = Math.sqrt(
         Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
-    ) <= center[2] / 2;
+    );
+
+    if (defined(startAngleRad) && defined(endAngleRad)) {
+        const angle = Math.atan2(y - center[1], x - center[0]);
+        insideSlice = angle >= startAngleRad && angle <= endAngleRad;
+    }
+
+    return distance <= center[2] / 2 && insideSlice;
 }
 
 Chart.prototype.getHoverPane = function (
@@ -589,9 +599,16 @@ addEvent(Chart, 'afterIsInsidePlot', function (
     }
 ): void {
     const chart = this;
+
     if (chart.polar) {
         e.isInsidePlot = (chart as Highcharts.PaneChart).pane.some(
-            (pane): boolean => isInsidePane(e.x, e.y, pane.center)
+            (pane): boolean => isInsidePane(
+                e.x,
+                e.y,
+                pane.center,
+                pane.axis && pane.axis.startAngleRad,
+                pane.axis && pane.axis.endAngleRad
+            )
         );
     }
 });
