@@ -1,3 +1,11 @@
+#announce {
+    opacity: 0.1%;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .chart-container {
     min-width: 350px;
     height: 450px;
