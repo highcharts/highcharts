@@ -20,7 +20,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type DataLabelTextPathOptions from '../../Core/Series/DataLabelOptions';
 import type TreegraphPoint from './TreegraphPoint';
 import type Point from '../../Core/Series/Point';
-import { LinkOptions } from '../Organization/OrganizationSeriesOptions';
+import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 
 /* *
  *

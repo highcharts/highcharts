@@ -304,7 +304,7 @@ class TreegraphSeries extends TreemapSeries {
      *
      * @return {LayoutModifiers} `a` and `b` parameter for x and y direction.
      */
-    private getLayoutModifier(): LayoutModifiers {
+    private getLayoutModifiers(): LayoutModifiers {
         const chart = this.chart,
             plotSizeX = chart.plotSizeX as number,
             plotSizeY = chart.plotSizeY as number;
@@ -377,12 +377,10 @@ class TreegraphSeries extends TreemapSeries {
             if (point.node.parent) {
                 const link = new series.LinkClass().init(
                     series,
-                    point.options
-                ) as TreegraphLink;
-                link.fromNode = point.node.parentNode.point;
-                link.toNode = point;
-                link.formatPrefix = 'link';
-                link.dataLabelOnNull = true;
+                    point.options,
+                    void 0,
+                    point
+                );
                 links.push(link);
                 point.linkToParent = link;
             }
@@ -444,7 +442,7 @@ class TreegraphSeries extends TreemapSeries {
         series.setTreeValues(tree);
 
         this.layoutAlgorythm.calculatePositions(series);
-        series.layoutModifier = this.getLayoutModifier();
+        series.layoutModifier = this.getLayoutModifiers();
 
         this.points.forEach((point): void => {
             this.translateNode(point);
@@ -524,7 +522,7 @@ class TreegraphSeries extends TreemapSeries {
                 series.options.link && series.options.link.lineWidth
             );
 
-        if ((point as any).isLink) {
+        if (point.isLink) {
             attribs.stroke = linkColor;
             attribs['stroke-width'] = linkLineWidth;
             delete attribs.fill;
