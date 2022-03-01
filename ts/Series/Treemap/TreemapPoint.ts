@@ -44,7 +44,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import TreemapNode from './TreemapNode.js';
+import type TreemapNode from './TreemapNode.js';
 const {
     extend,
     isNumber,

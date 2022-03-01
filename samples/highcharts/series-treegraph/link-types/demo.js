@@ -1,30 +1,24 @@
-Highcharts.chart(
-    'container',
-    {
-        title: {
-            text: 'Treegraph: Different type of links'
-        },
-        series: [
-            {
-                marker: {
-                    radius: 30
-                },
-                link: {
-                    type: 'straight'
-                },
-                type: 'treegraph',
-                keys: ['id', 'parent', 'link.type'],
-                data: [
-                    ['A'],
-                    ['B', 'A', 'curved'],
-                    ['C', 'B', 'default'],
-                    ['E', 'B'],
-                    ['D', 'A']
-                ]
-            }
-        ]
+Highcharts.chart('container', {
+    title: {
+        text: 'Treegraph: Different type of links'
     },
-    function (chart) {
-        console.log(chart.series[0].points);
-    }
-);
+    series: [
+        {
+            marker: {
+                radius: 30
+            },
+            link: {
+                type: 'straight'
+            },
+            type: 'treegraph',
+            keys: ['id', 'parent', 'link.type'],
+            data: [
+                ['A'],
+                ['B', 'A', 'curved'],
+                ['C', 'B', 'default'],
+                ['E', 'B'],
+                ['D', 'A']
+            ]
+        }
+    ]
+});

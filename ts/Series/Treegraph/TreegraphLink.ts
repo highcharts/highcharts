@@ -1,6 +1,4 @@
 import Point from '../../Core/Series/Point.js';
-import TreegraphSeries from './TreegraphSeries.js';
-import PointOptions from '../../Core/Series/PointOptions.js';
 
 
 class LinkPoint extends Point {

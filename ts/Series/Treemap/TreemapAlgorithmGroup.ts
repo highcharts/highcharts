@@ -19,7 +19,7 @@
  * */
 
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import TreemapNode from './TreemapNode.js';
+import type TreemapNode from './TreemapNode.js';
 
 /* *
  *
