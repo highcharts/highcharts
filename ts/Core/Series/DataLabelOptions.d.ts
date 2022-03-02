@@ -33,9 +33,9 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 export type DataLabelFilterOperatorValue = ('>'|'<'|'>='|'<='|'=='|'===');
 
-export interface textPathAttributes extends SVGAttributes {
+export interface TextPathAttributes extends SVGAttributes {
     startOffset?: string;
-    textAnchor?: 'strig';
+    textAnchor?: 'start'|'middle'|'end';
     dy?: number;
 }
 
@@ -84,7 +84,7 @@ export interface DataLabelOptions {
 export type DataLabelOverflowValue = ('allow'|'justify');
 
 export interface DataLabelTextPathOptions {
-    attributes?: textPathAttributes;
+    attributes?: TextPathAttributes;
     enabled?: boolean;
 }
 

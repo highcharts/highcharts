@@ -14,7 +14,7 @@
  *
  * */
 
-import TreemapPointOptions from '../Treemap/TreemapPointOptions';
+import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
 import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
 
 /* *
