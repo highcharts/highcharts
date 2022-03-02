@@ -1,72 +1,3 @@
-// New map-pie series type that also allows lat/lon as center option.
-// Also adds a sizeFormatter option to the series, to allow dynamic sizing
-// of the pies.
-Highcharts.seriesType('mappie', 'pie', {
-    center: null, // Can't be array by default anymore
-    states: {
-        hover: {
-            halo: {
-                size: 5
-            }
-        }
-    },
-    linkedMap: null, // id of linked map
-    dataLabels: {
-        enabled: false
-    }
-}, {
-    init: function () {
-        Highcharts.Series.prototype.init.apply(this, arguments);
-        // Respond to zooming and dragging the base map
-        Highcharts.addEvent(this.chart.mapView, 'afterSetView', () => {
-            this.isDirty = true;
-        });
-    },
-    render: function () {
-        const series = this,
-            chart = series.chart,
-            linkedSeries = chart.get(series.options.linkedMap);
-        Highcharts.seriesTypes.pie.prototype.render.apply(series, arguments);
-        if (series.group && linkedSeries.is('map')) {
-            series.group.add(linkedSeries.group);
-        }
-    },
-    getCenter: function () {
-        const options = this.options,
-            chart = this.chart,
-            slicingRoom = 2 * (options.slicedOffset || 0);
-        if (!options.center) {
-            options.center = [null, null]; // Do the default here instead
-        }
-        // Handle lat/lon support
-        if (options.center.lat !== undefined) {
-            const projectedPos = chart.fromLatLonToPoint(options.center),
-                pixelPos = chart.mapView.projectedUnitsToPixels(projectedPos);
-
-            options.center = [
-                pixelPos.x - chart.plotLeft,
-                pixelPos.y - chart.plotTop
-            ];
-        }
-        // Handle dynamic size
-        if (options.sizeFormatter) {
-            options.size = options.sizeFormatter.call(this);
-        }
-        // Call parent function
-        var result = Highcharts.seriesTypes.pie.prototype.getCenter.call(this);
-        // Must correct for slicing room to get exact pixel pos
-        result[0] -= slicingRoom;
-        result[1] -= slicingRoom;
-        return result;
-    },
-    translate: function (p) {
-        this.options.center = this.userOptions.center;
-        this.center = this.getCenter();
-        return Highcharts.seriesTypes.pie.prototype.translate.call(this, p);
-    }
-});
-
-
 const data = [
         // state, demVotes, repVotes, libVotes, grnVotes, sumVotes, winner, offset config for pies
         ['Alabama', 729547, 1318255, 44467, 9391, 2101660, -1],
@@ -167,10 +98,6 @@ const chart = Highcharts.mapChart('container', {
     mapNavigation: {
         enabled: true
     },
-    // Limit zoom range
-    yAxis: {
-        minRange: 2300
-    },
 
     tooltip: {
         useHTML: true
@@ -178,9 +105,19 @@ const chart = Highcharts.mapChart('container', {
 
     // Default options for the pies
     plotOptions: {
-        mappie: {
+        pie: {
             borderColor: 'rgba(255,255,255,0.4)',
             borderWidth: 1,
+            dataLabels: {
+                enabled: false
+            },
+            states: {
+                hover: {
+                    halo: {
+                        size: 5
+                    }
+                }
+            },
             tooltip: {
                 headerFormat: ''
             }
@@ -274,28 +211,24 @@ chart.legend.allItems.forEach(function (item) {
 
 // Add the pies after chart load, optionally with offset and connectors
 chart.series[0].points.forEach(function (state) {
-    if (!state.id) {
-        return; // Skip points with no data, if any
-    }
-
-    const pieOffset = state.pieOffset || {},
-        centerLat = parseFloat(state.properties.latitude),
-        centerLon = parseFloat(state.properties.longitude);
-
     // Add the pie for this state
     chart.addSeries({
-        type: 'mappie',
+        type: 'pie',
         name: state.id,
-        linkedMap: 'us-all',
         zIndex: 6, // Keep pies above connector lines
-        sizeFormatter: function () {
-            const zoomFactor = chart.mapView.zoom / chart.mapView.minZoom;
+        minSize: 15,
+        maxSize: 55,
+        onPoint: {
+            id: state.id,
+            z: (function () {
+                const zoomFactor = chart.mapView.zoom / chart.mapView.minZoom;
 
-            return Math.max(
-                this.chart.chartWidth / 45 * zoomFactor, // Min size
-                this.chart.chartWidth /
+                return Math.max(
+                    chart.chartWidth / 45 * zoomFactor, // Min size
+                    chart.chartWidth /
                     11 * zoomFactor * state.sumVotes / maxVotes
-            );
+                );
+            }())
         },
         tooltip: {
             // Use the state tooltip for the pies as well
@@ -327,29 +260,9 @@ chart.series[0].points.forEach(function (state) {
             name: 'Green',
             y: state.grnVotes,
             color: grnColor
-        }],
-        center: {
-            lat: centerLat + (pieOffset.lat || 0),
-            lon: centerLon + (pieOffset.lon || 0)
-        }
+        }]
     }, false);
-
-    // Draw connector to state center if the pie has been offset
-    if (pieOffset.drawConnector !== false) {
-        const centerPoint = chart.fromLatLonToPoint({
-                lat: centerLat,
-                lon: centerLon
-            }),
-            offsetPoint = chart.fromLatLonToPoint({
-                lat: centerLat + (pieOffset.lat || 0),
-                lon: centerLon + (pieOffset.lon || 0)
-            });
-        chart.series[2].addPoint({
-            name: state.id,
-            path: 'M' + offsetPoint.x + ' ' + offsetPoint.y +
-                'L' + centerPoint.x + ' ' + centerPoint.y
-        }, false);
-    }
 });
+
 // Only redraw once all pies and connectors have been added
 chart.redraw();
