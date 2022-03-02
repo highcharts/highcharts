@@ -31,10 +31,10 @@ const { getLevelOptions } = TU;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { merge, pick, addEvent } = U;
+const { merge, pick, addEvent, isArray } = U;
 
 import './TreegraphLayout.js';
-import Point from '../../Core/Series/Point';
+import type Point from '../../Core/Series/Point';
 import TreemapSeries from '../Treemap/TreemapSeries.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
@@ -255,7 +255,7 @@ class TreegraphSeries extends TreemapSeries {
                 },
                 linkFormat: ''
             }
-        }
+        } as TreegraphSeriesOptions
     );
 
     /* *
@@ -466,6 +466,11 @@ class TreegraphSeries extends TreemapSeries {
      */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
+
+            let originalDataLabelsOptions = this.options.dataLabels;
+            if (!isArray(this.options.dataLabels)) {
+                this.options.dataLabels = [this.options.dataLabels];
+            }
 
             const textPath = (this.options.dataLabels as any).textPath;
 
