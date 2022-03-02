@@ -135,7 +135,7 @@ const chart = Highcharts.mapChart('container', {
             'sumVotes', 'value', 'pieOffset'],
         tooltip: {
             headerFormat: '',
-            pointFormatter: function () {
+            pointFormatter() {
                 const hoverVotes = this.hoverVotes; // Used by pie only
                 return '<b>' + this.id + ' votes</b><br/>' +
                     [
@@ -144,20 +144,16 @@ const chart = Highcharts.mapChart('container', {
                         ['Libertarians', this.libVotes, libColor],
                         ['Green', this.grnVotes, grnColor]
                     ]
-                        .sort(function (a, b) {
-                            return b[1] - a[1]; // Sort tooltip by most votes
-                        })
-                        .map(function (line) {
-                            return '<span style="color:' + line[2] +
-                                // Colorized bullet
-                                '">\u25CF</span> ' +
-                                // Party and votes
-                                (line[0] === hoverVotes ? '<b>' : '') +
-                                line[0] + ': ' +
-                                Highcharts.numberFormat(line[1], 0) +
-                                (line[0] === hoverVotes ? '</b>' : '') +
-                                '<br/>';
-                        })
+                        .sort((a, b) => b[1] - a[1]) // Sort tooltip by most votes
+                        .map(line => '<span style="color:' + line[2] +
+                            // Colorized bullet
+                            '">\u25CF</span> ' +
+                            // Party and votes
+                            (line[0] === hoverVotes ? '<b>' : '') +
+                            line[0] + ': ' +
+                            Highcharts.numberFormat(line[1], 0) +
+                            (line[0] === hoverVotes ? '</b>' : '') +
+                            '<br/>')
                         .join('') +
                     '<hr/>Total: ' + Highcharts.numberFormat(this.sumVotes, 0);
             }
@@ -181,28 +177,19 @@ const chart = Highcharts.mapChart('container', {
 });
 
 // When clicking legend items, also toggle connectors and pies
-chart.legend.allItems.forEach(function (item) {
+chart.legend.allItems.forEach(item => {
     const setVisible = item.setVisible;
     item.setVisible = function () {
         const legendItem = this;
         setVisible.call(legendItem);
-        chart.series[0].points.forEach(function (point) {
+        chart.series[0].points.forEach(point => {
             if (
                 chart.colorAxis[0].dataClasses[point.dataClass].name ===
                 legendItem.name
             ) {
                 // Find this state's pie and set visibility
-                Highcharts.find(chart.series, function (item) {
-                    return item.name === point.id;
-                }).setVisible(legendItem.visible, false);
-                // Do the same for the connector point if it exists
-                const connector = Highcharts.find(
-                    chart.series[2].points,
-                    item => item.name === point.id
-                );
-                if (connector) {
-                    connector.setVisible(legendItem.visible, false);
-                }
+                Highcharts.find(chart.series, item => item.name === point.id)
+                    .setVisible(legendItem.visible, false);
             }
         });
         chart.redraw();
@@ -210,7 +197,7 @@ chart.legend.allItems.forEach(function (item) {
 });
 
 // Add the pies after chart load, optionally with offset and connectors
-chart.series[0].points.forEach(function (state) {
+chart.series[0].points.forEach(state => {
     // Add the pie for this state
     chart.addSeries({
         type: 'pie',
@@ -232,7 +219,7 @@ chart.series[0].points.forEach(function (state) {
         },
         tooltip: {
             // Use the state tooltip for the pies as well
-            pointFormatter: function () {
+            pointFormatter() {
                 return state.series.tooltipOptions.pointFormatter.call({
                     id: state.id,
                     hoverVotes: this.name,
