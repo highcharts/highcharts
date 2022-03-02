@@ -11,7 +11,7 @@
     Data source: <a href="https://data.world/newns92/abbott-world-marathon-majors-winners">data.world</a>.
 </p>
 <p>
-    Here we are user testing a concept where we simplify scatter plots into trend lines. Below are three charts with different trend line detail. The charts all display the same data, major marathon winning times throughout history, each with two plots - one for the male competition class and one for the female competition class.
+    Here we are user testing a concept where we simplify scatter plots into trend lines. The chart displays major marathon winning times throughout history, with two plots - one for the male competition class and one for the female competition class.
 </p>
 
 <h2>
@@ -25,39 +25,17 @@
     <input id="speed" type="range" min="1" max="10" value="5">
 </label>
 
-
-<h2>Low detail trend</h2>
-<button id="lowDetailSonifyMale">
-    Play trend for male class using 8 tones
+<h2>Chart with trend lines example</h2>
+<button id="sonifyTrendMale">
+    Play trend for male class
 </button>
-<button id="lowDetailSonifyFemale">
-    Play trend for female class using 8 tones
-</button>
-<figure class="highcharts-figure">
-    <div class="container" id="lowContainer"></div>
-</figure>
-
-<h2>Medium detail trend</h2>
-<button id="mediumDetailSonifyMale">
-    Play trend for male class using 12 tones
-</button>
-<button id="mediumDetailSonifyFemale">
-    Play trend for female class using 12 tones
+<button id="sonifyTrendFemale">
+    Play trend for female class
 </button>
 <figure class="highcharts-figure">
-    <div class="container" id="mediumContainer"></div>
+    <div class="container" id="container"></div>
 </figure>
 
-<h2>High detail trend</h2>
-<button id="highDetailSonifyMale">
-    Play trend for male class using 20 tones
-</button>
-<button id="highDetailSonifyFemale">
-    Play trend for female class using 20 tones
-</button>
-<figure class="highcharts-figure">
-    <div class="container" id="highContainer"></div>
-</figure>
 
 <h2>Sonify the plot</h2>
 <p>

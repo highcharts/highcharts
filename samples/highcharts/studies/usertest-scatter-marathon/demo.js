@@ -5,51 +5,162 @@ let focusResetElement = null;
 function getSeriesDataMetrics(series) {
     let xMin = Infinity;
     let xMax = -Infinity;
-    let i = series.xData.length;
+    let yMin = Infinity;
+    let yMax = -Infinity;
+    let i = series.data.length;
     while (i--) {
-        const x = series.xData[i];
-        xMin = x < xMin ? x : xMin;
-        xMax = x > xMax ? x : xMax;
+        const p = series.data[i];
+        xMin = p.x < xMin ? p.x : xMin;
+        xMax = p.x > xMax ? p.x : xMax;
+        yMin = p.y < yMin ? p.y : yMin;
+        yMax = p.y > yMax ? p.y : yMax;
     }
     return {
         xMin,
-        xMax
+        xMax,
+        yMin,
+        yMax,
+        numPoints: series.data.length
     };
 }
 
-function getXBinSize(seriesMetrics, detail) {
-    const dataMin = seriesMetrics.xMin;
-    const dataMax = seriesMetrics.xMax;
-    const range = dataMax - dataMin;
-    return range / detail;
+function getDeciBinnedData(data, dataMetrics) {
+    const deciBinStart = dataMetrics.xMin;
+    const xDiff = dataMetrics.xMax - deciBinStart;
+    const deciBinSize = xDiff / 10;
+    const deciBinMaxIx = 9;
+
+    const deciBins = [];
+    for (let i = 0; i < 10; ++i) {
+        deciBins.push({
+            binStart: deciBinStart + deciBinSize * i,
+            numPoints: 0,
+            minY: Infinity,
+            maxY: -Infinity
+        });
+    }
+
+    data.forEach(point => {
+        const deciBinIx = Math.min(deciBinMaxIx, Math.floor((point.x - deciBinStart) / deciBinSize));
+        deciBins[deciBinIx].numPoints++;
+        deciBins[deciBinIx].maxY = Math.max(deciBins[deciBinIx].maxY, point.y);
+        deciBins[deciBinIx].minY = Math.min(deciBins[deciBinIx].minY, point.y);
+    });
+
+    return deciBins;
 }
 
-function getTrendDataForSeries(series, xBinSize, seriesMetrics) {
-    const xBins = [];
+function getBinPoints(binnedData, dataMetrics, detail) {
+    const binPoints = [];
+    const dataSpan = dataMetrics.yMax - dataMetrics.yMin;
+    let carryMod = 0;
+    binnedData.forEach((bin, ix) => {
+        const nextBin = binnedData[ix + 1];
+        const binSpreadRatio = (bin.maxY - bin.minY) / dataSpan;
+        const binPointRatio = bin.numPoints / dataMetrics.numPoints;
+
+        let mod = carryMod;
+        if (bin.numPoints < 3) {
+            mod = -1; // expand bin by removing bin point
+        } else {
+            if (bin.numPoints < 5) {
+                mod -= 1;
+            }
+            if (binPointRatio < 0.03 / detail) {
+                mod -= 2;
+            } else if (binPointRatio < 0.05 / detail) {
+                mod -= 1;
+            } else if (binPointRatio > 0.30 / detail) {
+                mod += 2;
+            } else if (binPointRatio > 0.18 / detail) {
+                mod += 1;
+            }
+            if (binSpreadRatio < 0.05 / detail) {
+                mod -= 2;
+            } else if (binSpreadRatio < 0.15 / detail) {
+                mod -= 1;
+            } else if (binSpreadRatio > 0.35 / detail) {
+                mod += 2;
+            } else if (binSpreadRatio > 0.25 / detail) {
+                mod += 1;
+            }
+        }
+
+        if (mod < 0 && bin.binStart === dataMetrics.xMin) {
+            carryMod = mod;
+            binPoints.push(bin.binStart);
+        } else {
+            carryMod = 0;
+        }
+
+        if (mod >= 0) {
+            binPoints.push(bin.binStart);
+        }
+
+        if (mod > 0) {
+            const nextStart = nextBin ? nextBin.binStart : dataMetrics.xMax;
+            binPoints.push((bin.binStart + nextStart) / 2);
+        }
+    });
+    return binPoints;
+}
+
+function binToPoints(binPoints, data, dataMetrics) {
+    const bins = [];
+    binPoints.forEach(binPoint => {
+        if (bins[bins.length - 1]) {
+            bins[bins.length - 1].end = binPoint;
+        }
+        bins.push({
+            start: binPoint,
+            yData: []
+        });
+    });
+    if (bins[bins.length - 1]) {
+        bins[bins.length - 1].end = dataMetrics.xMax;
+    }
+
+    function getBinIx(point) {
+        const x = point.x;
+        let n = bins.length;
+        while (n--) {
+            if (x >= bins[n].start && x <= bins[n].end) {
+                return n;
+            }
+        }
+        return 0;
+    }
+
+    let i = data.length;
+    while (i--) {
+        const point = data[i];
+        const binIx = getBinIx(point);
+        bins[binIx].yData.push(point.y);
+    }
+
+    return bins;
+}
+
+function getTrendDataForSeries(series, detail, seriesMetrics) {
     if (series.points.length < 3) {
         return series.points.slice(0);
     }
 
-    const xBinStart = seriesMetrics.xMin;
-    const xBinMaxIx = Math.ceil((seriesMetrics.xMax - xBinStart) / xBinSize - 1);
+    const deciBins = getDeciBinnedData(series.points, seriesMetrics);
 
-    series.points.forEach(point => {
-        const pointBinIx = Math.min(xBinMaxIx, Math.floor((point.x - xBinStart) / xBinSize));
-        xBins[pointBinIx] = xBins[pointBinIx] || [];
-        xBins[pointBinIx].push(point.y);
-    });
-
-    const data = [];
+    console.log(series.name);
+    const binPoints = getBinPoints(deciBins, seriesMetrics, detail);
     const avg = arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
-    xBins.forEach((binContent, ix) => {
-        data.push({
-            x: xBinStart + ix * xBinSize + xBinSize / 2,
-            y: avg(binContent),
-            numPointsAveraged: binContent.length
-        });
-    });
 
-    return data;
+    const binnedData = binToPoints(binPoints, series.points, seriesMetrics);
+
+    const trendData = binnedData.map(bin => ({
+        x: (bin.end - bin.start) / 2 + bin.start,
+        y: avg(bin.yData),
+        numPoints: bin.yData.length
+    }));
+
+    return trendData;
 }
 
 function buildDescTreeFromData(data, chartExtremes, xAxis, yAxis) {
@@ -299,8 +410,7 @@ function updateTrends(chart, detail) {
     let computerDesc = '<p>Computer generated description:</p>';
     chart.series.forEach(series => {
         const seriesMetrics = getSeriesDataMetrics(series);
-        const xBinSize = getXBinSize(seriesMetrics, detail);
-        const data = getTrendDataForSeries(series, xBinSize, seriesMetrics);
+        const data = getTrendDataForSeries(series, detail, seriesMetrics);
         const descItems = buildDescTreeFromData(data, {
             dataMin: chart.yAxis[0].dataMin,
             dataMax: chart.yAxis[0].dataMax,
@@ -316,8 +426,12 @@ function updateTrends(chart, detail) {
             data,
             color: '#222',
             type: 'spline',
-            xBinSize,
             name: 'Trend line for ' + series.name,
+            marker: {
+                enabled: true,
+                fillColor: '#4c4',
+                lineColor: '#000'
+            },
             accessibility: {
                 point: {
                     descriptionFormatter: function (point) {
@@ -394,7 +508,7 @@ function sonifyChart(chart, seriesIx) {
     }, 1200);
 }
 
-function makeChart(container, detail, title) {
+function makeChart(container, detailFactor) {
 
     // Parse CSV to desired format
     const csv = document.getElementById('csv').innerHTML;
@@ -489,9 +603,6 @@ function makeChart(container, detail, title) {
             sourceHeight: 500
         },
         title: {
-            text: title
-        },
-        subtitle: {
             text: 'Marathon winning times 1897-2018'
         },
         tooltip: {
@@ -565,39 +676,30 @@ function makeChart(container, detail, title) {
         }]
     });
 
-    updateTrends(chart, detail);
+    updateTrends(chart, detailFactor);
 
     return chart;
 }
 
-const lowChart = makeChart('lowContainer', 8, 'Low detail');
-const mediumChart = makeChart('mediumContainer', 12, 'Medium detail');
-const highChart = makeChart('highContainer', 20, 'High detail');
+
+const chart = makeChart('container', 0.7);
 
 function setChartDuration() {
     const speed = parseFloat(document.getElementById('speed').value);
     const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 70, 350);
-    lowChart.update({ sonification: { duration: getDuration(8) } });
-    mediumChart.update({ sonification: { duration: getDuration(12) } });
-    highChart.update({ sonification: { duration: getDuration(20) } });
+    chart.update({ sonification: { duration: getDuration(20) } });
 }
 
 setChartDuration();
 
-document.getElementById('lowDetailSonifyMale').onclick = () => sonifyChart(lowChart, 2);
-document.getElementById('lowDetailSonifyFemale').onclick = () => sonifyChart(lowChart, 3);
-document.getElementById('mediumDetailSonifyMale').onclick = () => sonifyChart(mediumChart, 2);
-document.getElementById('mediumDetailSonifyFemale').onclick = () => sonifyChart(mediumChart, 3);
-document.getElementById('highDetailSonifyMale').onclick = () => sonifyChart(highChart, 2);
-document.getElementById('highDetailSonifyFemale').onclick = () => sonifyChart(highChart, 3);
-document.getElementById('plotSonifyMale').onclick = () => sonifyChart(highChart, 0);
-document.getElementById('plotSonifyFemale').onclick = () => sonifyChart(highChart, 1);
+document.getElementById('sonifyTrendMale').onclick = () => sonifyChart(chart, 2);
+document.getElementById('sonifyTrendFemale').onclick = () => sonifyChart(chart, 3);
+document.getElementById('plotSonifyMale').onclick = () => sonifyChart(chart, 0);
+document.getElementById('plotSonifyFemale').onclick = () => sonifyChart(chart, 1);
 document.getElementById('speed').onchange = setChartDuration;
 
 document.addEventListener('keydown', function (e) {
     if (e.keyCode === 27) {
-        lowChart.cancelSonify();
-        mediumChart.cancelSonify();
-        highChart.cancelSonify();
+        chart.cancelSonify();
     }
 });
