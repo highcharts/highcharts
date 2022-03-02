@@ -14,7 +14,7 @@ series: [{
 
 Note: The series object is an array, meaning it can contain several series.
 
-The name attribute gives the series a name, which show up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
+The name attribute gives the series a name, which shows up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
 
 The data in a series
 --------------------
