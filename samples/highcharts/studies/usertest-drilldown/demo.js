@@ -134,15 +134,15 @@ Highcharts.chart('container', {
         },
         landmarkVerbosity: 'disabled',
         screenReaderSection: {
-            beforeChartFormat: '<div>{chartTitle}, {typeDescription}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div>',
             beforeChartFormatter: function (chart) {
                 const chartTitle = chart.options.title.text;
-                const typeDesc = 'Bar chart with ' + chart.series[0].points.length + ' bars.';
+                const chartSubtitle = chart.options.subtitle.text;
+                const typeDesc = 'Bar chart with ' + chart.series[0].points.length + ' bars';
                 const xAxisDescription = 'The chart has 1 X axis displaying ' +
                     (chart.series[0].name === 'Country exports' ? 'countries.' : 'export categories.');
                 const yAxisDescription = 'The chart has 1 Y axis displaying billion USD. Data ranges from ' +
                     chart.yAxis[0].dataMin + ' billion USD to ' + chart.yAxis[0].dataMax + ' billion USD.';
-                return `<div>${chartTitle}, ${typeDesc}</div><div>${xAxisDescription}</div><div>${yAxisDescription}</div>`; // eslint-disable-line
+                return `<div>${chartTitle}, ${typeDesc}. ${chartSubtitle}.</div><div>${xAxisDescription}</div><div>${yAxisDescription}</div>`; // eslint-disable-line
             }
         },
         point: {
