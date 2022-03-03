@@ -738,7 +738,7 @@ class OrganizationSeries extends SankeySeries {
                 )
             };
         }
-        point.tooltipPos = [(x1 + x2) / 2, (y1 + y2) / 2];
+        // point.tooltipPos = [(x1 + x2) / 2, (y1 + y2) / 2];
         point.dlBox = {
             x: (x1 + x2) / 2,
             y: (y1 + y2) / 2,

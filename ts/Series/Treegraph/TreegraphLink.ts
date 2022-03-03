@@ -6,9 +6,10 @@ import TreegraphPoint from './TreegraphPoint.js';
 class LinkPoint extends Point {
     fromNode: Point = void 0 as any;
     toNode: Point = void 0 as any;
-    node = {};
     isLink = true;
+    node = {};
     formatPrefix = 'link';
+    dataLabelOnNull = true;
 
     public init(
         series: TreegraphSeries,
@@ -17,8 +18,6 @@ class LinkPoint extends Point {
         point?: TreegraphPoint
     ): LinkPoint {
         const link = super.init.apply(this, arguments) as LinkPoint;
-        link.formatPrefix = 'link';
-        link.dataLabelOnNull = true;
         if (point) {
             link.fromNode = point.node.parentNode.point;
             link.toNode = point;

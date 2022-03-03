@@ -456,6 +456,13 @@ class TreegraphSeries extends TreemapSeries {
     public translateLink(link: TreegraphLink): void {
         OrganizationSeries.prototype.translateLink.apply(this, arguments);
         if (link.dlBox) {
+            link.tooltipPos = this.chart.inverted ? [
+                (this.chart.plotSizeY as any) - link.dlBox.y,
+                (this.chart.plotSizeX as any) - link.dlBox.x
+            ] : [
+                link.dlBox.x,
+                link.dlBox.y
+            ];
             link.dlBox.centerX = link.dlBox.x;
         }
     }
@@ -502,30 +509,42 @@ class TreegraphSeries extends TreemapSeries {
         const series = this,
             attribs = Series.prototype.pointAttribs.call(series, point, state),
             levelOptions =
-                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
-            options = point.options,
+                (series.mapOptionsToLevel as any)[
+                    (point.node && point.node.level) || 0
+                ] || {},
+            pointOptions = point.options,
             stateOptions =
-                (levelOptions.states &&
-                    (levelOptions.states as any)[state as any]) ||
-                {},
-            borderRadius = pick(
-                stateOptions.borderRadius,
-                options.borderRadius,
-                levelOptions.borderRadius,
-                series.options.borderRadius
-            ),
-            linkColor = pick(
-                stateOptions.link && stateOptions.link.color,
-                options.link && options.link.color,
-                levelOptions.link && levelOptions.link.color,
-                series.options.link && series.options.link.color
-            ),
-            linkLineWidth = pick(
-                stateOptions.link && stateOptions.link.lineWidth,
-                options.link && options.link.lineWidth,
-                levelOptions.link && levelOptions.link.lineWidth,
-                series.options.link && series.options.link.lineWidth
-            );
+                (levelOptions.states && levelOptions.states[state as any]) ||
+                {};
+        function getPropFromOptions(...args: string[]): unknown {
+            let returnValues = [] as any;
+            [
+                stateOptions,
+                pointOptions,
+                levelOptions,
+                series.options
+            ].forEach((option): void => {
+                let value = option;
+                for (let i = 0; i < args.length; i++) {
+                    if (
+                        typeof value[args[i]] !== 'undefined' &&
+                        value[args[i]] !== null
+                    ) {
+                        value = value[args[i]];
+                    } else {
+                        value = void 0;
+                        return;
+                    }
+                }
+                returnValues.push(value);
+            });
+
+            return pick.apply({}, returnValues);
+        }
+
+        const borderRadius = getPropFromOptions('borderRadius') as number,
+            linkColor = getPropFromOptions('link', 'color') as string,
+            linkLineWidth = getPropFromOptions('link', 'lineWidth') as number;
 
         if (point.isLink) {
             attribs.stroke = linkColor;
@@ -563,10 +582,10 @@ class TreegraphSeries extends TreemapSeries {
             height = node.nodeSizeY,
             width = node.nodeSizeX,
             reversed = this.options.reversed,
-            nodeX = (node.x = chart.inverted ?
+            nodeX = node.x = (chart.inverted ?
                 plotSizeX - width / 2 - x :
                 x - width / 2),
-            nodeY = (node.y = !reversed ?
+            nodeY = node.y = (!reversed ?
                 plotSizeY - y - height / 2 :
                 y - height / 2);
 
@@ -583,7 +602,7 @@ class TreegraphSeries extends TreemapSeries {
 
         // Set the anchor position for tooltip.
         point.tooltipPos = chart.inverted ?
-            [plotSizeY - y, x] :
+            [nodeY, x] :
             [nodeX + width / 2, nodeY];
         // To prevent error in generatePoints this property needs to be reset
         // to false.
