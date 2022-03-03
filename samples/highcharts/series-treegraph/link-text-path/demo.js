@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    chart: {
+        inverted: true
+    },
     series: [
         {
             marker: {
