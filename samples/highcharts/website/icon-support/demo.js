@@ -23,6 +23,7 @@ Math.easeOutBounce = pos => {
 };
 
 const big = window.matchMedia("(min-width: 500px)").matches;
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 Highcharts.theme = {
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
@@ -143,32 +144,34 @@ const support = {
 
                 }, 3000);
 
+                if (!reduced) {
 
-                setTimeout(function () {
+                    setTimeout(function () {
 
-                    head.style.transition = 'all 3s';
-                    face.style.transition = 'all 3s';
+                        head.style.transition = 'all 3s';
+                        face.style.transition = 'all 3s';
 
-                    if (big) {
+                        if (big) {
 
-                        head.style.transform = 'rotate(315deg)';
-                        face.style.transform = 'rotate(315deg)';
-                        p1.style.transform = 'translate(-20px,4px) rotate(320deg)';
-                        p6.style.transform = 'translate(40px,4px) rotate(0deg)';
-                        p5.style.transform = 'translate(0px,0px) rotate(-30deg)';
-                        p3.style.transform = 'translate(0px,0px) rotate(50deg)';
+                            head.style.transform = 'rotate(315deg)';
+                            face.style.transform = 'rotate(315deg)';
+                            p1.style.transform = 'translate(-20px,4px) rotate(320deg)';
+                            p6.style.transform = 'translate(40px,4px) rotate(0deg)';
+                            p5.style.transform = 'translate(0px,0px) rotate(-30deg)';
+                            p3.style.transform = 'translate(0px,0px) rotate(50deg)';
 
-                    } else {
+                        } else {
 
-                        head.style.transform = 'rotate(315deg) scale(1.2)';
-                        face.style.transform = 'rotate(315deg) scale(.5)';
-                        p1.style.transform = 'translate(-20px,32px) rotate(320deg) scale(.5)';
-                        p6.style.transform = 'translate(20px,26px) rotate(0deg) scale(.5)';
-                        p5.style.transform = 'translate(-55px,30px) rotate(-30deg) scale(.5)';
-                        p3.style.transform = 'translate(55px,20px) rotate(50deg) scale(.5)';
+                            head.style.transform = 'rotate(315deg) scale(1.2)';
+                            face.style.transform = 'rotate(315deg) scale(.5)';
+                            p1.style.transform = 'translate(-20px,32px) rotate(320deg) scale(.5)';
+                            p6.style.transform = 'translate(20px,26px) rotate(0deg) scale(.5)';
+                            p5.style.transform = 'translate(-55px,30px) rotate(-30deg) scale(.5)';
+                            p3.style.transform = 'translate(55px,20px) rotate(50deg) scale(.5)';
 
-                    }
-                }, 5000);
+                        }
+                    }, 5000);
+                }
 
 
             }
@@ -240,7 +243,7 @@ const support = {
         enabled: false
     },
     tooltip: {
-        enabled: true
+        enabled: false
     },
     plotOptions: {
         series: {

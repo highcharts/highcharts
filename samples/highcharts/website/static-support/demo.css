@@ -19,7 +19,7 @@
     height: 250px;
 }
 
-.title-container {
+#support .title-container {
     padding: 10px;
     width: 200px;
     text-align: center;
@@ -27,21 +27,29 @@
     font-size: 14px;
 }
 
-.title-container h1 {
+#support .title-container h1 {
     margin: 2px 0 0 -90px;
     font-weight: bold;
     font-size: 24px;
 }
 
-.title-container p {
+#support .title-container p {
     margin: 2px 2px 2px -30px;
     padding-left: 0;
 }
 
-.title-container p:nth-of-type(2) {
+#support .title-container p:nth-of-type(2) {
     font-size: 18px;
     padding-left: 130px;
     margin-top: -20px;
+}
+
+#support .tip {
+    padding: 10px;
+    border-radius: 2px;
+    font-size: 16px;
+    background-color: #ffefec;
+    color: #b73c28;
 }
 
 @media screen  and (min-width: 300px) {
@@ -76,6 +84,7 @@
         text-align: center;
         color: #fff;
         font-size: 18px;
+        font-family: "IBM Plex Sans", Arial, Helvetica, sans-serif;
     }
 
     .title-container h1 {
