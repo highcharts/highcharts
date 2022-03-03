@@ -695,7 +695,7 @@ function makeChart(container, detailFactor, regularIntervals) {
     return chart;
 }
 
-const chart = makeChart('container', 1, !document.getElementById('regularIntervals').checked);
+const chart = makeChart('container', 1, !document.getElementById('experimentalAlgo').checked);
 function setChartDuration() {
     const speed = parseFloat(document.getElementById('speed').value);
     const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 70, 350);
@@ -709,11 +709,11 @@ document.getElementById('sonifyTrendFemale').onclick = () => sonifyChart(chart, 
 document.getElementById('plotSonifyMale').onclick = () => sonifyChart(chart, 0);
 document.getElementById('plotSonifyFemale').onclick = () => sonifyChart(chart, 1);
 document.getElementById('speed').onchange = setChartDuration;
-document.getElementById('regularIntervals').onchange = document.getElementById('detail').onchange = function () {
+document.getElementById('experimentalAlgo').onchange = document.getElementById('detail').onchange = function () {
     const detail = parseFloat(document.getElementById('detail').value);
     chart.series[3].remove();
     chart.series[2].remove();
-    updateTrends(chart, detail, !document.getElementById('regularIntervals').checked);
+    updateTrends(chart, detail, !document.getElementById('experimentalAlgo').checked);
     document.getElementById('detailValueLabel').textContent = '(' + detail.toFixed(1) + ')';
 };
 

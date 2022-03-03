@@ -22,7 +22,16 @@
 <button id="sonifyPlot">Play plot as sound</button>
 
 <h2>Visualization</h2>
-<a href="#dataTable">Go to data table</a>
+<label>
+  Trend detail level <span aria-hidden="true" id="detailValueLabel">(0.7)</span>
+  <input id="detail" type="range" min="0.3" max="1.7" value="0.7" step="0.1">
+</label>
+<label>
+  Experimental trend algorithm <input id="experimentalAlgo" type="checkbox">
+</label>
+<p>
+  <a href="#dataTable">Go to data table</a>
+</p>
 <figure>
     <div id="container"></div>
 </figure>
