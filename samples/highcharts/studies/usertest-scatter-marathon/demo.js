@@ -24,16 +24,16 @@ function getSeriesDataMetrics(series) {
     };
 }
 
-function getDeciBinnedData(data, dataMetrics) {
-    const deciBinStart = dataMetrics.xMin;
-    const xDiff = dataMetrics.xMax - deciBinStart;
-    const deciBinSize = xDiff / 10;
-    const deciBinMaxIx = 9;
+function getBinnedData(data, dataMetrics, numBins) {
+    const binStart = dataMetrics.xMin;
+    const xDiff = dataMetrics.xMax - binStart;
+    const binXSize = xDiff / numBins;
+    const binMaxIx = numBins - 1;
 
-    const deciBins = [];
-    for (let i = 0; i < 10; ++i) {
-        deciBins.push({
-            binStart: deciBinStart + deciBinSize * i,
+    const bins = [];
+    for (let i = 0; i < numBins; ++i) {
+        bins.push({
+            binStart: binStart + binXSize * i,
             numPoints: 0,
             minY: Infinity,
             maxY: -Infinity
@@ -41,18 +41,19 @@ function getDeciBinnedData(data, dataMetrics) {
     }
 
     data.forEach(point => {
-        const deciBinIx = Math.min(deciBinMaxIx, Math.floor((point.x - deciBinStart) / deciBinSize));
-        deciBins[deciBinIx].numPoints++;
-        deciBins[deciBinIx].maxY = Math.max(deciBins[deciBinIx].maxY, point.y);
-        deciBins[deciBinIx].minY = Math.min(deciBins[deciBinIx].minY, point.y);
+        const binIx = Math.min(binMaxIx, Math.floor((point.x - binStart) / binXSize));
+        bins[binIx].numPoints++;
+        bins[binIx].maxY = Math.max(bins[binIx].maxY, point.y);
+        bins[binIx].minY = Math.min(bins[binIx].minY, point.y);
     });
 
-    return deciBins;
+    return bins;
 }
 
-function getBinPoints(binnedData, dataMetrics, detail) {
+function getRefinedBinPoints(binnedData, dataMetrics, detail) {
     const binPoints = [];
     const dataSpan = dataMetrics.yMax - dataMetrics.yMin;
+    const detailModifier = Math.sqrt(detail);
     let carryMod = 0;
     binnedData.forEach((bin, ix) => {
         const nextBin = binnedData[ix + 1];
@@ -63,25 +64,26 @@ function getBinPoints(binnedData, dataMetrics, detail) {
         if (bin.numPoints < 3) {
             mod = -1; // expand bin by removing bin point
         } else {
+            // Determine add/remove by a points system
             if (bin.numPoints < 5) {
                 mod -= 1;
             }
-            if (binPointRatio < 0.03 / detail) {
+            if (binPointRatio < 0.03 / detailModifier) {
                 mod -= 2;
-            } else if (binPointRatio < 0.05 / detail) {
+            } else if (binPointRatio < 0.05 / detailModifier) {
                 mod -= 1;
-            } else if (binPointRatio > 0.30 / detail) {
+            } else if (binPointRatio > 0.30 / detailModifier) {
                 mod += 2;
-            } else if (binPointRatio > 0.18 / detail) {
+            } else if (binPointRatio > 0.18 / detailModifier) {
                 mod += 1;
             }
-            if (binSpreadRatio < 0.05 / detail) {
+            if (binSpreadRatio < 0.05 / detailModifier) {
                 mod -= 2;
-            } else if (binSpreadRatio < 0.15 / detail) {
+            } else if (binSpreadRatio < 0.15 / detailModifier) {
                 mod -= 1;
-            } else if (binSpreadRatio > 0.35 / detail) {
+            } else if (binSpreadRatio > 0.35 / detailModifier) {
                 mod += 2;
-            } else if (binSpreadRatio > 0.25 / detail) {
+            } else if (binSpreadRatio > 0.25 / detailModifier) {
                 mod += 1;
             }
         }
@@ -105,7 +107,7 @@ function getBinPoints(binnedData, dataMetrics, detail) {
     return binPoints;
 }
 
-function binToPoints(binPoints, data, dataMetrics) {
+function binDataBySegments(binPoints, data, dataMetrics) {
     const bins = [];
     binPoints.forEach(binPoint => {
         if (bins[bins.length - 1]) {
@@ -141,19 +143,21 @@ function binToPoints(binPoints, data, dataMetrics) {
     return bins;
 }
 
-function getTrendDataForSeries(series, detail, seriesMetrics) {
+function getTrendDataForSeries(series, detail, seriesMetrics, regularIntervals) {
     if (series.points.length < 3) {
         return series.points.slice(0);
     }
 
-    const deciBins = getDeciBinnedData(series.points, seriesMetrics);
+    const numInitialBins = Math.max(3, Math.round(10 * detail));
+    const numInitialBinsRegularInterval = numInitialBins + Math.ceil(detail * detail);
+    const initialBins = getBinnedData(
+        series.points, seriesMetrics, regularIntervals ? numInitialBinsRegularInterval : numInitialBins
+    );
+    const binPoints = regularIntervals ?
+        initialBins.map(b => b.binStart) : getRefinedBinPoints(initialBins, seriesMetrics, detail);
 
-    console.log(series.name);
-    const binPoints = getBinPoints(deciBins, seriesMetrics, detail);
+    const binnedData = binDataBySegments(binPoints, series.points, seriesMetrics);
     const avg = arr => arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
-
-    const binnedData = binToPoints(binPoints, series.points, seriesMetrics);
-
     const trendData = binnedData.map(bin => ({
         x: (bin.end - bin.start) / 2 + bin.start,
         y: avg(bin.yData),
@@ -310,7 +314,7 @@ function describeSeriesTrend(series, descItems) {
         break;
     }
 
-    desc = `<p>The ${orderDenomination} data series is showing ${series.name}, with ${series.points.length} data points.</p><ul role="list">`;
+    desc = `<p>The ${orderDenomination} data series is showing ${series.name}, with ${series.points.length} data points.</p><ul role="list" style="list-style-type:none">`;
 
     descItems.forEach((point, ix) => {
         if (point.isEnd) {
@@ -406,11 +410,11 @@ function getSeriesStats(series) {
 }
 
 
-function updateTrends(chart, detail) {
+function updateTrends(chart, detail, regularIntervals) {
     let computerDesc = '<p>Computer generated description:</p>';
     chart.series.forEach(series => {
         const seriesMetrics = getSeriesDataMetrics(series);
-        const data = getTrendDataForSeries(series, detail, seriesMetrics);
+        const data = getTrendDataForSeries(series, detail, seriesMetrics, regularIntervals);
         const descItems = buildDescTreeFromData(data, {
             dataMin: chart.yAxis[0].dataMin,
             dataMax: chart.yAxis[0].dataMax,
@@ -449,12 +453,16 @@ function updateTrends(chart, detail) {
     chart.redraw();
 
     setTimeout(() => {
-        const beforeRegion = chart.accessibility.components.infoRegions.screenReaderSections.before.element;
-        const div = document.createElement('div');
-        div.setAttribute('aria-hidden', false);
-        div.classList.add('sr-only');
-        div.innerHTML = computerDesc;
-        beforeRegion.parentNode.insertBefore(div, beforeRegion.nextSibling);
+        if (!chart.accessibility.computerGeneratedDescContainer) {
+            const div = document.createElement('div');
+            div.setAttribute('aria-hidden', false);
+            div.classList.add('sr-only', 'highcharts-computer-desc');
+            chart.accessibility.computerGeneratedDescContainer = div;
+
+            const beforeRegion = chart.accessibility.components.infoRegions.screenReaderSections.before.element;
+            beforeRegion.parentNode.insertBefore(div, beforeRegion.nextSibling);
+        }
+        chart.accessibility.computerGeneratedDescContainer.innerHTML = computerDesc;
     }, 10);
 }
 
@@ -475,6 +483,8 @@ function sonifyChart(chart, seriesIx) {
             enabled: false
         }
     });
+    series.group.element.setAttribute('aria-hidden', true);
+    series.points.forEach(p => p.graphic.element.setAttribute('role', 'presentation'));
 
     setTimeout(function () {
         series.sonify({
@@ -502,13 +512,15 @@ function sonifyChart(chart, seriesIx) {
                             enabled: true
                         }
                     });
+                    series.group.element.setAttribute('aria-hidden', false);
+                    series.points.forEach(p => p.graphic.element.setAttribute('role', 'img'));
                 }, 400);
             }
         });
     }, 1200);
 }
 
-function makeChart(container, detailFactor) {
+function makeChart(container, detailFactor, regularIntervals) {
 
     // Parse CSV to desired format
     const csv = document.getElementById('csv').innerHTML;
@@ -543,7 +555,8 @@ function makeChart(container, detailFactor) {
     const chart = Highcharts.chart(container, {
         chart: {
             type: 'scatter',
-            marginRight: 125
+            marginRight: 125,
+            animation: false
         },
         sonification: {
             duration: 600,
@@ -638,7 +651,8 @@ function makeChart(container, detailFactor) {
                     inactive: {
                         enabled: false
                     }
-                }
+                },
+                animation: false
             },
             spline: {
                 showInLegend: false,
@@ -676,14 +690,12 @@ function makeChart(container, detailFactor) {
         }]
     });
 
-    updateTrends(chart, detailFactor);
+    updateTrends(chart, detailFactor, regularIntervals);
 
     return chart;
 }
 
-
-const chart = makeChart('container', 0.7);
-
+const chart = makeChart('container', 1, !document.getElementById('regularIntervals').checked);
 function setChartDuration() {
     const speed = parseFloat(document.getElementById('speed').value);
     const getDuration = numPoints => Math.max(numPoints * (11 - speed) * 70, 350);
@@ -697,6 +709,13 @@ document.getElementById('sonifyTrendFemale').onclick = () => sonifyChart(chart, 
 document.getElementById('plotSonifyMale').onclick = () => sonifyChart(chart, 0);
 document.getElementById('plotSonifyFemale').onclick = () => sonifyChart(chart, 1);
 document.getElementById('speed').onchange = setChartDuration;
+document.getElementById('regularIntervals').onchange = document.getElementById('detail').onchange = function () {
+    const detail = parseFloat(document.getElementById('detail').value);
+    chart.series[3].remove();
+    chart.series[2].remove();
+    updateTrends(chart, detail, !document.getElementById('regularIntervals').checked);
+    document.getElementById('detailValueLabel').textContent = '(' + detail.toFixed(1) + ')';
+};
 
 document.addEventListener('keydown', function (e) {
     if (e.keyCode === 27) {
