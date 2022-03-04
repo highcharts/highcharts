@@ -24,6 +24,7 @@ Math.easeOutBounce = pos => {
 
 const big = window.matchMedia("(min-width: 500px)").matches;
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const imgPath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@32a8c3ea661ebe4bb3d5e1c62dc3dd1bc77451a9/samples/graphics/';
 
 Highcharts.theme = {
     colors: ['#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
@@ -438,7 +439,7 @@ const support = {
             data: [{ x: 10, y: 8 }],
             marker: {
                 enabled: true,
-                symbol: 'url(face.svg)',
+                symbol: 'url(' + imgPath + 'face.svg)',
                 width: 75
             },
             zIndex: 15,
@@ -469,7 +470,7 @@ const support = {
                     className: 'particle-3',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p3.svg)',
+                        symbol: 'url(' + imgPath + 'p3.svg)',
                         width: 23,
                         height: 34
                     }
@@ -481,7 +482,7 @@ const support = {
                     className: 'particle-5',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p5.svg)',
+                        symbol: 'url(' + imgPath + 'p5.svg)',
                         width: 35,
                         height: 50
                     }
@@ -507,7 +508,7 @@ const support = {
                     className: 'particle-6',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p6.svg)',
+                        symbol: 'url(' + imgPath + 'p6.svg)',
                         width: 45,
                         height: 45
                     }
@@ -519,7 +520,7 @@ const support = {
                     className: 'particle-1',
                     marker: {
                         enabled: true,
-                        symbol: 'url(p1.svg)',
+                        symbol: 'url(' + imgPath + 'p1.svg)',
                         width: 40,
                         height: 52
                     }
