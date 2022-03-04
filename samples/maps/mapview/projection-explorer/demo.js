@@ -285,16 +285,24 @@
             });
         }
 
-
+        // Toggle buttons
         document.querySelectorAll('#projection-buttons button').forEach(btn =>
             btn.classList.remove('active')
         );
-
         const button = document.querySelector(
             `#projection-buttons #${projectionKey}`
         );
-
         button.classList.add('active');
+
+        // Toggle descriptions
+        document.querySelectorAll('#descriptions div').forEach(div => {
+            div.style.display = 'none';
+        });
+        const div = document.querySelector(
+            `#descriptions #description-${projectionKey}`
+        );
+        div.style.display = 'block';
+
 
         // Toggle projection-dependent panels
         const panels = (button.getAttribute('data-panels') || '').split(',');

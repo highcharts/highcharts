@@ -17,10 +17,7 @@ Description of data saved on the export server
 
 Almost all requests to the export server are handled and converted in memory, where nothing is stored on the server at all.
 
-The two exceptions are PDF conversion and asynchronous requests. For this we store data on the export server, but the storage time is kept to a minimum period of time. 
-
-1.  For a conversion to PDF is the resulting file saved to a temporary folder which is emptied every minute. 
-2.  The export server supports asynchronous requests. The converted files are stored on the server in a temporary folder and are waiting to get called by the client. This folder is checked every minute and deletes files older than 30 seconds.
+The exception to this is PDF conversion. For this we store data on the export server, but the storage time is kept to a minimum period of time. The resulting file is saved to a temporary folder which is emptied every minute. 
 
 License
 -------
