@@ -597,10 +597,8 @@ class TreegraphSeries extends TreemapSeries {
 
         // Set the anchor position for tooltip.
         point.tooltipPos = chart.inverted ?
-            [nodeY, x] :
+            [plotSizeY - nodeY - height / 2, plotSizeX - nodeX - width / 2] :
             [nodeX + width / 2, nodeY];
-        // To prevent error in generatePoints this property needs to be reset
-        // to false.
     }
 }
 
