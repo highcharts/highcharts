@@ -56,7 +56,52 @@ QUnit.test('MapBubble', function (assert) {
     assert.strictEqual(
         chart.series[1].joinBy[0],
         'hc-key',
-        `The value of joinBy in the mapbubble series 
+        `The value of joinBy in the mapbubble series
         should be 'hc-key' by default.`
+    );
+});
+
+QUnit.test('AddPoint', function (assert) {
+
+    const data = [
+        ['gb-ay', 0],
+        ['gb-3270', 1]
+    ];
+
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            map: 'countries/gb/gb-all'
+        },
+        series: [{
+            type: 'map',
+            data: data,
+            dataLabels: {
+                enabled: false
+            }
+        }, {
+            type: 'mapbubble',
+            joinBy: ['iso_3166_2', 'name'],
+            minSize: 15,
+            maxSize: 50,
+            data: [{
+                name: 'GB-ORK',
+                z: 2,
+                color: 'red',
+                id: 'GB'
+            }]
+        }]
+    });
+
+    chart.series[1].addPoint({
+        name: 'GB-AGY',
+        z: 1000,
+        color: 'red',
+        id: 'US'
+    });
+
+    const addedPoint = chart.series[1].data[1];
+    assert.ok(
+        (addedPoint.plotX !== undefined && addedPoint.plotY !== undefined),
+        'Added point should be drawn (#16598).'
     );
 });
