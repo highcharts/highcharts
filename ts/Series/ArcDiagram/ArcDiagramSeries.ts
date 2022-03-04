@@ -633,6 +633,15 @@ class ArcDiagramSeries extends SankeySeries {
         }
         return super.pointAttribs.apply(this, arguments);
     }
+
+    public markerAttribs(
+        point: ArcDiagramPoint
+    ): SVGAttributes {
+        if (point.isNode) {
+            return super.markerAttribs.apply(this, arguments);
+        }
+        return {};
+    }
     /* eslint-enable valid-jsdoc */
 }
 
