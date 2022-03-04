@@ -1195,8 +1195,9 @@ addEvent(Series, 'afterInit', function (): void {
  */
 addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
     const chart = this.chart;
-    if (chart.polar && chart.pane && chart.pane[0]) {
-        const center = chart.pane[0].center;
+
+    if (chart.polar && chart.hoverPane) {
+        const center = chart.hoverPane.center;
 
         let selectionMarker;
 
@@ -1220,15 +1221,15 @@ addEvent(Pointer, 'afterCreateSelectionMarker', function (event): void {
 addEvent(Pointer, 'afterGetSelectionMarkerAttrs', function (event):void {
     const chart = this.chart;
 
-    if (chart.polar && chart.pane && chart.pane[0] && chart.pane[0].axis) {
-        const center = chart.pane[0].center,
+    if (chart.polar && chart.hoverPane && chart.hoverPane.axis) {
+        const center = chart.hoverPane.center,
             mouseDownX = (this.mouseDownX || 0),
             mouseDownY = (this.mouseDownY || 0),
             chartY = (event as any).chartY,
             chartX = (event as any).chartX,
             fullCircle = Math.PI * 2,
-            startAngleRad = chart.pane[0].axis.startAngleRad,
-            endAngleRad = chart.pane[0].axis.endAngleRad;
+            startAngleRad = chart.hoverPane.axis.startAngleRad,
+            endAngleRad = chart.hoverPane.axis.endAngleRad;
 
         let attrs: SVGAttributes = {};
 

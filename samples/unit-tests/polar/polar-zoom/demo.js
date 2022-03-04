@@ -23,7 +23,8 @@ QUnit.test('Arc shape', function (assert) {
 
     centerX += chart.plotLeft;
     centerY += chart.plotTop;
-
+    // start with mouseMove to make sure that chart.hoverPane exists
+    controller.mouseMove(centerX - 50, centerY);
     controller.mouseDown(centerX - 50, centerY);
     controller.mouseMove(centerX + 100, centerY);
     controller.mouseUp();
@@ -65,6 +66,7 @@ QUnit.test('Axes zoom', function (assert) {
         minPosY = chart.yAxis[0].toPixels(minY) + centerY - diameter / 2,
         maxPosY = chart.yAxis[0].toPixels(maxY) + centerY - diameter / 2;
 
+    controller.mouseMove(xPos, minPosY);
     controller.mouseDown(xPos, minPosY);
     controller.mouseMove(xPos, maxPosY);
     controller.mouseUp();
