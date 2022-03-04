@@ -18,6 +18,9 @@ class LinkPoint extends Point {
         point?: TreegraphPoint
     ): LinkPoint {
         const link = super.init.apply(this, arguments) as LinkPoint;
+        this.formatPrefix = 'link';
+        this.dataLabelOnNull = true;
+
         if (point) {
             link.fromNode = point.node.parentNode.point;
             link.toNode = point;
