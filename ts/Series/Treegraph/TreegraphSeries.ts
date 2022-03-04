@@ -40,6 +40,7 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import { support } from 'jquery';
 
 interface LayoutModifiers {
     ax: number;
@@ -456,7 +457,8 @@ class TreegraphSeries extends TreemapSeries {
     public translateLink(link: TreegraphLink): void {
         OrganizationSeries.prototype.translateLink.apply(this, arguments);
         if (link.dlBox) {
-            link.tooltipPos = this.chart.inverted ? [
+            const inverted = this.chart.inverted;
+            link.tooltipPos = inverted ? [
                 (this.chart.plotSizeY as any) - link.dlBox.y,
                 (this.chart.plotSizeX as any) - link.dlBox.x
             ] : [
@@ -464,6 +466,12 @@ class TreegraphSeries extends TreemapSeries {
                 link.dlBox.y
             ];
             link.dlBox.centerX = link.dlBox.x;
+            if (inverted) {
+                link.dlBox.y = 0;
+                link.dlBox.x = 0;
+                // link.dlBox.y = (this.chart.plotSizeY as any) - link.dlBox.y,
+                // link.dlBox.x =  (this.chart.plotSizeX as any) - link.dlBox.x
+            }
         }
     }
 
@@ -504,42 +512,30 @@ class TreegraphSeries extends TreemapSeries {
         const series = this,
             attribs = Series.prototype.pointAttribs.call(series, point, state),
             levelOptions =
-                (series.mapOptionsToLevel as any)[
-                    (point.node && point.node.level) || 0
-                ] || {},
-            pointOptions = point.options,
+                (series.mapOptionsToLevel as any)[point.node.level || 0] || {},
+            options = point.options,
             stateOptions =
-                (levelOptions.states && levelOptions.states[state as any]) ||
-                {};
-        function getPropFromOptions(...args: string[]): unknown {
-            let returnValues = [] as any;
-            [
-                stateOptions,
-                pointOptions,
-                levelOptions,
-                series.options
-            ].forEach((option): void => {
-                let value = option;
-                for (let i = 0; i < args.length; i++) {
-                    if (
-                        typeof value[args[i]] !== 'undefined' &&
-                        value[args[i]] !== null
-                    ) {
-                        value = value[args[i]];
-                    } else {
-                        value = void 0;
-                        return;
-                    }
-                }
-                returnValues.push(value);
-            });
-
-            return pick.apply({}, returnValues);
-        }
-
-        const borderRadius = getPropFromOptions('borderRadius') as number,
-            linkColor = getPropFromOptions('link', 'color') as string,
-            linkLineWidth = getPropFromOptions('link', 'lineWidth') as number;
+                (levelOptions.states &&
+                    (levelOptions.states as any)[state as any]) ||
+                {},
+            borderRadius = pick(
+                stateOptions.borderRadius,
+                options.borderRadius,
+                levelOptions.borderRadius,
+                series.options.borderRadius
+            ),
+            linkColor = pick(
+                stateOptions.link && stateOptions.link.color,
+                options.link && options.link.color,
+                levelOptions.link && levelOptions.link.color,
+                series.options.link && series.options.link.color
+            ),
+            linkLineWidth = pick(
+                stateOptions.link && stateOptions.link.lineWidth,
+                options.link && options.link.lineWidth,
+                levelOptions.link && levelOptions.link.lineWidth,
+                series.options.link && series.options.link.lineWidth
+            );
 
         if (point.isLink) {
             attribs.stroke = linkColor;
