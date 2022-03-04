@@ -524,24 +524,63 @@ class Pane {
  * Element's y coordinate
  * @param  {Array<number>} center
  * Pane's center (x, y) and diameter
+ * @param  {number} start
+ * Pane's start angle in radians
+ * @param  {number} end
+ * Pane's end angle in radians
  */
 function isInsidePane(
     x: number,
     y: number,
     center: Array<number>,
-    startAngleRad?: number,
-    endAngleRad?: number
+    start?: number,
+    end?: number
 ): boolean {
     let insideSlice = true;
     const distance = Math.sqrt(
         Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
     );
 
-    if (defined(startAngleRad) && defined(endAngleRad)) {
-        const angle = Math.atan2(y - center[1], x - center[0]);
-        insideSlice = angle >= startAngleRad && angle <= endAngleRad;
-    }
+    if (defined(start) && defined(end)) {
+        const fullCircle = Math.PI * 2;
 
+        let angle = Math.atan2(y - center[1], x - center[0]),
+            // Normalize Start and End to <0, 2*PI> range
+            // (in degrees: <0,360>)
+            normalizedStart = (start % fullCircle + fullCircle) % fullCircle,
+            normalizedEnd = (end % fullCircle + fullCircle) % fullCircle;
+
+        // Move normalized angles to <-PI, PI> range (<-180, 180>)
+        // to match values returned by Math.atan2()
+        if (normalizedStart > Math.PI) {
+            normalizedStart -= fullCircle;
+        }
+
+        if (normalizedEnd > Math.PI) {
+            normalizedEnd -= fullCircle;
+        }
+
+        // Ignore full circle panes:
+        if (normalizedEnd !== normalizedStart) {
+            // If normalized start angle is bigger than normalized end,
+            // it means angles have different signs. In such situation we
+            // check the <-PI, startAngle> and <endAngle, PI> ranges.
+            if (normalizedStart > normalizedEnd) {
+                insideSlice = (
+                    angle >= normalizedStart &&
+                    angle <= Math.PI
+                ) || (
+                    angle <= normalizedEnd &&
+                    angle >= -Math.PI
+                );
+            } else {
+                // In this case, we simple check if angle is within the
+                // <startAngle, endAngle> range
+                insideSlice = angle >= normalizedStart &&
+                    angle <= normalizedEnd;
+            }
+        }
+    }
     return distance <= center[2] / 2 && insideSlice;
 }
 
