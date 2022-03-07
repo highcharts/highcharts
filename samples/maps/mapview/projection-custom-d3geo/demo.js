@@ -2,22 +2,24 @@
  * Define and add a custom projection for Highcharts. This definition relays to
  * d3-geo to do the math.
  */
-class RobinsonProjectionDefinition {
-    constructor() {
-        this.projection = window.d3
-            .geoRobinson()
-            .reflectY(true);
-    }
+if (window.d3) {
+    class RobinsonProjectionDefinition {
+        constructor() {
+            this.projection = window.d3
+                .geoRobinson()
+                .reflectY(true);
+        }
 
-    forward(lonLat) {
-        return this.projection(lonLat);
-    }
+        forward(lonLat) {
+            return this.projection(lonLat);
+        }
 
-    inverse(point) {
-        return this.projection.invert(point);
+        inverse(point) {
+            return this.projection.invert(point);
+        }
     }
+    Highcharts.Projection.add('Robinson', RobinsonProjectionDefinition);
 }
-Highcharts.Projection.add('Robinson', RobinsonProjectionDefinition);
 
 (async () => {
 
