@@ -509,6 +509,9 @@ class WaterfallSeries extends ColumnSeries {
                     point.tooltipPos[1] = tooltipY;
                 }
             }
+
+            // Check point position after recalculation (#16788)
+            point.isInside = this.isPointInside(point);
         }
     }
 
