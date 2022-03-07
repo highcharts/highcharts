@@ -1,5 +1,5 @@
 ---
- name: New Brunswick - Highmaps
- description: Highmaps demo
+ name: New Brunswick - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['td-ma', 0],
-    ['td-sa', 1],
-    ['td-nj', 2],
-    ['td-lo', 3],
-    ['td-mw', 4],
-    ['td-br', 5],
-    ['td-ti', 6],
-    ['td-en', 7],
-    ['td-cg', 8],
-    ['td-bg', 9],
-    ['td-si', 10],
-    ['td-mo', 11],
-    ['td-hd', 12],
-    ['td-km', 13],
-    ['td-lc', 14],
-    ['td-bi', 15],
-    ['td-ba', 16],
-    ['td-gr', 17],
-    ['td-oa', 18],
-    ['td-lr', 19],
-    ['td-me', 20],
-    ['td-ta', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/td/td-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/td/td-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['td-ma', 10], ['td-sa', 11], ['td-nj', 12], ['td-lo', 13],
+        ['td-mw', 14], ['td-br', 15], ['td-ti', 16], ['td-en', 17],
+        ['td-cg', 18], ['td-bg', 19], ['td-si', 20], ['td-mo', 21],
+        ['td-hd', 22], ['td-km', 23], ['td-lc', 24], ['td-bi', 25],
+        ['td-ba', 26], ['td-gr', 27], ['td-oa', 28], ['td-lr', 29],
+        ['td-me', 30], ['td-ta', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/td/td-all.js">Chad</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/td/td-all.topo.json">Chad</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

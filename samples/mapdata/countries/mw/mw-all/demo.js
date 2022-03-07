@@ -1,73 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['mw-6970', 0],
-    ['mw-ma', 1],
-    ['mw-de', 2],
-    ['mw-li', 3],
-    ['mw-do', 4],
-    ['mw-mg', 5],
-    ['mw-mc', 6],
-    ['mw-nu', 7],
-    ['mw-ni', 8],
-    ['mw-sa', 9],
-    ['mw-ba', 10],
-    ['mw-ck', 11],
-    ['mw-th', 12],
-    ['mw-cr', 13],
-    ['mw-ns', 14],
-    ['mw-zo', 15],
-    ['mw-bl', 16],
-    ['mw-1649', 17],
-    ['mw-mj', 18],
-    ['mw-ph', 19],
-    ['mw-mw', 20],
-    ['mw-1011', 21],
-    ['mw-ct', 22],
-    ['mw-ks', 23],
-    ['mw-mz', 24],
-    ['mw-na', 25],
-    ['mw-nk', 26],
-    ['mw-ru', 27]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/mw/mw-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/mw/mw-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['mw-6970', 10], ['mw-ma', 11], ['mw-de', 12], ['mw-li', 13],
+        ['mw-do', 14], ['mw-mg', 15], ['mw-mc', 16], ['mw-nu', 17],
+        ['mw-ni', 18], ['mw-sa', 19], ['mw-ba', 20], ['mw-ck', 21],
+        ['mw-th', 22], ['mw-cr', 23], ['mw-ns', 24], ['mw-zo', 25],
+        ['mw-bl', 26], ['mw-1649', 27], ['mw-mj', 28], ['mw-ph', 29],
+        ['mw-mw', 30], ['mw-1011', 31], ['mw-ct', 32], ['mw-ks', 33],
+        ['mw-mz', 34], ['mw-na', 35], ['mw-nk', 36], ['mw-ru', 37]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mw/mw-all.js">Malawi</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mw/mw-all.topo.json">Malawi</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

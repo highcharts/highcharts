@@ -1,71 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ch-fr', 0],
-    ['ch-lu', 1],
-    ['ch-ni', 2],
-    ['ch-vs', 3],
-    ['ch-sg', 4],
-    ['ch-ar', 5],
-    ['ch-ti', 6],
-    ['ch-gl', 7],
-    ['ch-gr', 8],
-    ['ch-sz', 9],
-    ['ch-tg', 10],
-    ['ch-sh', 11],
-    ['ch-ur', 12],
-    ['ch-zh', 13],
-    ['ch-zg', 14],
-    ['ch-vd', 15],
-    ['ch-bl', 16],
-    ['ch-be', 17],
-    ['ch-bs', 18],
-    ['ch-so', 19],
-    ['ch-nw', 20],
-    ['ch-ai', 21],
-    ['ch-ge', 22],
-    ['ch-ju', 23],
-    ['ch-ne', 24],
-    ['ch-ag', 25]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ch/ch-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ch/ch-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ch-fr', 10], ['ch-lu', 11], ['ch-ni', 12], ['ch-vs', 13],
+        ['ch-sg', 14], ['ch-ar', 15], ['ch-ti', 16], ['ch-gl', 17],
+        ['ch-gr', 18], ['ch-sz', 19], ['ch-tg', 20], ['ch-sh', 21],
+        ['ch-ur', 22], ['ch-zh', 23], ['ch-zg', 24], ['ch-vd', 25],
+        ['ch-bl', 26], ['ch-be', 27], ['ch-bs', 28], ['ch-so', 29],
+        ['ch-nw', 30], ['ch-ai', 31], ['ch-ge', 32], ['ch-ju', 33],
+        ['ch-ne', 34], ['ch-ag', 35]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ch/ch-all.js">Switzerland</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ch/ch-all.topo.json">Switzerland</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -536,7 +536,7 @@ function topo2geo(topology: TopoJSON, objectName?: string): GeoJSON {
  * @requires modules/map
  *
  * @sample maps/demo/geojson/ Simple areas
- * @sample maps/demo/geojson-multiple-types/ Multiple types
+ * @sample maps/demo/mapline-mappoint/ Multiple types
  * @sample maps/series/mapdata-multiple/ Multiple map sources
  *
  * @function Highcharts.geojson
