@@ -90,8 +90,10 @@ const defaultOptions: MapViewOptions = {
          * @type   {string}
          * @sample maps/mapview/projection-explorer
          *         Projection explorer
-         * @sample maps/mapview/projection-custom
+         * @sample maps/mapview/projection-custom-proj4js
          *         Custom UTM projection definition
+         * @sample maps/mapview/projection-custom-d3geo
+         *         Custom Robinson projection definition
          * @sample maps/demo/topojson-projection
          *         Orthographic projection
          */
