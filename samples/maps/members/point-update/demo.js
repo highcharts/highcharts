@@ -43,17 +43,16 @@
         });
 
         // Set button text
-        const country = 76,  // Needed in case the API changes
+        const point = chart.series[0].points.find(p => p.name === 'Greenland'),
             button = document.getElementById('update');
-        button.textContent = "Update population of " + chart.series[0].points[country].name;
+        button.textContent = "Update population of " + point.name;
 
         // Activate the button
         button.disabled = false;
 
         // When the button is clicked
         button.onclick = () => {
-            chart.series[0].points[country].update(10000000);
-            console.log(chart.series[0].points[country]);
+            point.update(10000000);
         };
     });
 
