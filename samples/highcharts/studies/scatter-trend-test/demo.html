@@ -1,0 +1,34 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<main>
+<h1>Scatter plot trend computation testing</h1>
+<p>Calculates Average Distance to Line (ADL) for the plot as a metric of how fitting the trend line is.</p>
+<p>The ADL is represented as a percentage of the y-axis height.</p>
+
+<label id="delayLabel">
+  Simulation delay <input type="range" min="100" max="2000" step="100" value="800" id="delay">
+</label>
+<button id="simulation">
+  Run simulation
+</button>
+<button id="randomize">
+  Random plot
+</button>
+
+<div id="columns">
+  <div id="chartWrapper">
+    <figure>
+      <div id="chart"></div>
+    </figure>
+
+    <output id="output">
+    </output>
+  </div>
+  <div id="historyContainer">
+      <h2>History</h2>
+      <p id="history"></p>
+  </div>
+</div>
+
+</main>

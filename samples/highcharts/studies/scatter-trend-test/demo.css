@@ -1,0 +1,31 @@
+#chart {
+    height: 500px;
+    width: 100%;
+}
+
+#columns {
+    display: flex;
+    width: 100%;
+}
+
+#chartWrapper {
+    min-width: 700px;
+}
+
+#historyContainer {
+    border-left: 1px solid #ccc;
+    min-width: 300px;
+    padding: 20px;
+    max-height: 575px;
+    overflow: auto;
+}
+
+#output {
+    display: block;
+    width: 300px;
+    margin: 1em auto;
+    border: 1px solid #ccc;
+    font-size: 1.4rem;
+    text-align: center;
+    padding: 20px;
+}
