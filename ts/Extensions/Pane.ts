@@ -524,63 +524,48 @@ class Pane {
  * Element's y coordinate
  * @param  {Array<number>} center
  * Pane's center (x, y) and diameter
- * @param  {number} start
- * Pane's start angle in radians
- * @param  {number} end
- * Pane's end angle in radians
+ * @param  {number} startAngle
+ * Pane's normalized start angle in radians (<-PI, PI>)
+ * @param  {number} endAngle
+ * Pane's normalized end angle in radians (<-PI, PI>)
  */
 function isInsidePane(
     x: number,
     y: number,
     center: Array<number>,
-    start?: number,
-    end?: number
+    startAngle?: number,
+    endAngle?: number
 ): boolean {
     let insideSlice = true;
     const distance = Math.sqrt(
         Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
     );
 
-    if (defined(start) && defined(end)) {
-        const fullCircle = Math.PI * 2;
-
-        let angle = Math.atan2(y - center[1], x - center[0]),
-            // Normalize Start and End to <0, 2*PI> range
-            // (in degrees: <0,360>)
-            normalizedStart = (start % fullCircle + fullCircle) % fullCircle,
-            normalizedEnd = (end % fullCircle + fullCircle) % fullCircle;
-
-        // Move normalized angles to <-PI, PI> range (<-180, 180>)
-        // to match values returned by Math.atan2()
-        if (normalizedStart > Math.PI) {
-            normalizedStart -= fullCircle;
-        }
-
-        if (normalizedEnd > Math.PI) {
-            normalizedEnd -= fullCircle;
-        }
+    if (defined(startAngle) && defined(endAngle)) {
+        const angle = Math.atan2(y - center[1], x - center[0]);
 
         // Ignore full circle panes:
-        if (normalizedEnd !== normalizedStart) {
+        if (endAngle !== startAngle) {
             // If normalized start angle is bigger than normalized end,
             // it means angles have different signs. In such situation we
             // check the <-PI, startAngle> and <endAngle, PI> ranges.
-            if (normalizedStart > normalizedEnd) {
+            if (startAngle > endAngle) {
                 insideSlice = (
-                    angle >= normalizedStart &&
+                    angle >= startAngle &&
                     angle <= Math.PI
                 ) || (
-                    angle <= normalizedEnd &&
+                    angle <= endAngle &&
                     angle >= -Math.PI
                 );
             } else {
                 // In this case, we simple check if angle is within the
                 // <startAngle, endAngle> range
-                insideSlice = angle >= normalizedStart &&
-                    angle <= normalizedEnd;
+                insideSlice = angle >= startAngle &&
+                    angle <= endAngle;
             }
         }
     }
+
     return distance <= center[2] / 2 && insideSlice;
 }
 
@@ -645,8 +630,8 @@ addEvent(Chart, 'afterIsInsidePlot', function (
                 e.x,
                 e.y,
                 pane.center,
-                pane.axis && pane.axis.startAngleRad,
-                pane.axis && pane.axis.endAngleRad
+                pane.axis && pane.axis.normalizedStartAngleRad,
+                pane.axis && pane.axis.normalizedEndAngleRad
             )
         );
     }
