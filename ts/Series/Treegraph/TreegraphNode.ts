@@ -89,14 +89,25 @@ namespace TreegraphNode {
             if (parent) {
                 const children = parent.children;
                 for (let i = 0; i < children.length; i++) {
-                    if (children[i] && !children[i].hidden) {
+                    if (children[i] && !children[i].point.hidden) {
                         return children[i];
                     }
                 }
             }
         }
+        /**
+         * Check if the node is a leaf (if it has any children).
+         *
+         * @return {boolean} If the node has no visible children return true.
+         */
+
         public hasChildren(): boolean | undefined {
-            return !!this.children.length;
+            for (let i = 0; i < this.children.length; i++) {
+                if (!this.children[i].point.hidden) {
+                    return true;
+                }
+            }
+            return false;
         }
         /**
          * Get node's left sibling (if it exists).
@@ -108,7 +119,7 @@ namespace TreegraphNode {
             if (parent) {
                 const children = parent.children;
                 for (let i = this.relativeXPosition - 1; i >= 0; i--) {
-                    if (children[i] && !children[i].hidden) {
+                    if (children[i] && !children[i].point.hidden) {
                         return children[i];
                     }
                 }
@@ -124,7 +135,7 @@ namespace TreegraphNode {
         public getLeftMostChild(this: Node): Node | undefined {
             const children = this.children;
             for (let i = 0; i < children.length; i++) {
-                if (!children[i].hidden) {
+                if (!children[i].point.hidden) {
                     return children[i];
                 }
             }
@@ -139,7 +150,7 @@ namespace TreegraphNode {
         public getRightMostChild(this: Node): Node | undefined {
             const children = this.children;
             for (let i = children.length - 1; i >= 0; i--) {
-                if (!children[i].hidden) {
+                if (!children[i].point.hidden) {
                     return children[i];
                 }
             }
@@ -155,11 +166,6 @@ namespace TreegraphNode {
             return this.parentNode;
         }
 
-        /**
-         * Check if the node is a leaf (if it has any children).
-         *
-         * @return {boolean} If the node has no visible children return true.
-         */
 
         /**
          * Get node's first child which is not hidden.
@@ -168,7 +174,7 @@ namespace TreegraphNode {
          */
         public getFirstChild(this: Node): Node | undefined {
             for (let i = 0; i < this.children.length; i++) {
-                if (!this.children[i].hidden) {
+                if (!this.children[i].point.hidden) {
                     return this.children[i];
                 }
             }

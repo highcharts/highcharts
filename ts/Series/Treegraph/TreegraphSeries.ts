@@ -40,7 +40,6 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import { support } from 'jquery';
 
 interface LayoutModifiers {
     ax: number;
@@ -601,29 +600,27 @@ class TreegraphSeries extends TreemapSeries {
 // Handle showing and hiding of the points
 addEvent(TreegraphSeries, 'click', function (e: any): void {
     const node = e.point.node as TreegraphNode.Node;
-    node.collapsed = !node.collapsed;
+    node.point.collapsed = !node.point.collapsed;
 
-    collapseTreeFromPoint(node, node.collapsed);
+    collapseTreeFromPoint(node, node.point.collapsed);
     this.redraw();
 });
 
 /**
  * Recurive function, which sets node's  and each nodes' children parameter
- * 'hidden' to be equal to passed `collapsed` value.
+ * 'hidden' to be equal to passed `hidden` value.
 
- * @param point {TreegraphNode} point which should be collapsed
- * @param collapsed {boolean}
+ * @param point {TreegraphNode} point which should be hidden
+ * @param hidden {boolean}
  */
 function collapseTreeFromPoint(
     node: TreegraphNode.Node,
-    collapsed: boolean
+    hidden: boolean
 ): void {
     node.children.forEach(function (child: TreegraphNode.Node): void {
-        child.hidden = collapsed;
-        if (child.point.linkToParent) {
-            child.point.update({ visible: false }, false);
-            collapseTreeFromPoint(child.point.node, child.collapsed);
-        }
+        child.point.hidden = hidden;
+        child.point.update({ visible: !hidden }, false);
+        collapseTreeFromPoint(child, child.point.hidden);
     });
 }
 

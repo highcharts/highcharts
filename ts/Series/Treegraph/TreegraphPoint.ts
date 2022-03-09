@@ -31,15 +31,13 @@ const { extend } = U;
 
 class TreegraphPoint extends TreemapPoint {
     public options: TreegraphPointOptions = void 0 as any;
-
     public isLink = false;
     public series: TreegraphSeries = void 0 as any;
-
-    public collapsed: boolean = void 0 as any;
-
+    public collapsed: boolean = false;
     public node: TreegraphNode.Node = void 0 as any;
     public level?: number;
     public linkToParent?: TreegraphLink;
+    hidden: boolean = false;
 }
 
 /* *

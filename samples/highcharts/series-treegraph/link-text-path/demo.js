@@ -1,7 +1,4 @@
 Highcharts.chart('container', {
-    chart: {
-        inverted: true
-    },
     series: [
         {
             marker: {
@@ -9,21 +6,22 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: '#222',
-                linkFormat: '{point.id} \u2192 {point.parent}',
-                linkTextPath: {
-                    attributes: {
-                        startOffset: '30%'
-                    }
-                }
+                linkFormat: '{point.id} \u2192 {point.parent}'
             },
             type: 'treegraph',
             keys: ['id', 'parent'],
             data: [
-                ['A'],
-                ['B', 'A'],
-                ['C', 'B'],
-                ['E', 'B'],
-                ['D', 'A']
+                {
+                    id: 'A'
+                },
+                {
+                    id: 'B',
+                    parent: 'A'
+                },
+                {
+                    id: 'C',
+                    parent: 'A'
+                }
             ]
         }
     ]
