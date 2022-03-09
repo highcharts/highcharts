@@ -40,6 +40,7 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -481,22 +482,25 @@ class TreegraphSeries extends TreemapSeries {
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
 
-            const textPath = (this.options.dataLabels as any).textPath;
+            if (!isArray(this.options.dataLabels)) {
+                this.options.dataLabels = [this.options.dataLabels];
+            }
 
+            const dataLabelOptions = this.options.dataLabels;
             // Render node labels.
             super.drawDataLabels.apply(this, arguments);
 
             // Render link labels.
             const points = this.points;
             this.points = this.links as any;
-            (this as any).options.dataLabels.textPath = (
-                this as any
-            ).options.dataLabels.linkTextPath;
+            this.options.dataLabels.forEach((label): void => {
+                label.textPath = label.linkTextPath;
+            });
             Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Restore nodes.
             this.points = this.points.concat(points);
-            (this as any).options.dataLabels.textPath = textPath;
+            this.options.dataLabels = dataLabelOptions;
         }
     }
 
