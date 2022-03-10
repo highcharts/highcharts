@@ -40,6 +40,7 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
@@ -339,21 +340,26 @@ class TreegraphSeries extends TreemapSeries {
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
+            let lineWidth;
             if (node.xPosition <= minX) {
                 minX = node.xPosition;
-                minXSize = Math.max(nodeSizeX as number, minXSize);
+                lineWidth = markerOptions.lineWidth || 0;
+                minXSize = Math.max(nodeSizeX as number + lineWidth, minXSize);
             }
             if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
-                maxXSize = Math.max(nodeSizeX as number, maxXSize);
+                lineWidth = markerOptions.lineWidth || 0;
+                maxXSize = Math.max(nodeSizeX as number + lineWidth, maxXSize);
             }
             if (node.yPosition <= minY) {
                 minY = node.yPosition;
-                minYSize = Math.max(nodeSizeY as number, minYSize);
+                lineWidth = markerOptions.lineWidth || 0;
+                minYSize = Math.max(nodeSizeY as number + lineWidth, minYSize);
             }
             if (node.yPosition >= maxY) {
                 maxY = node.yPosition;
-                maxYSize = Math.max(nodeSizeY as number, maxYSize);
+                lineWidth = markerOptions.lineWidth || 0;
+                maxYSize = Math.max(nodeSizeY as number + lineWidth, maxYSize);
             }
         });
 
@@ -479,6 +485,27 @@ class TreegraphSeries extends TreemapSeries {
      * Treegraph has two separate collecions of nodes and lines,
      * render dataLabels for both sets.
      */
+    //  public drawDataLabels(): void {
+    //     if (this.options.dataLabels) {
+
+    //         const textPath = (this.options.dataLabels as any).textPath;
+
+    //         // Render node labels.
+    //         super.drawDataLabels.apply(this, arguments);
+
+    //         // Render link labels.
+    //         const points = this.points;
+    //         this.points = this.links as any;
+    //         (this as any).options.dataLabels.textPath = (
+    //             this as any
+    //         ).options.dataLabels.linkTextPath;
+    //         Series.prototype.drawDataLabels.apply(this, arguments);
+
+    //         // Restore nodes.
+    //         this.points = this.points.concat(points);
+    //         (this as any).options.dataLabels.textPath = textPath;
+    //     }
+    // }
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
 
@@ -486,7 +513,10 @@ class TreegraphSeries extends TreemapSeries {
                 this.options.dataLabels = [this.options.dataLabels];
             }
 
-            const dataLabelOptions = this.options.dataLabels;
+            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+            const dataLabelOptions = this.options.dataLabels.map(option =>
+                option.textPath
+            );
             // Render node labels.
             super.drawDataLabels.apply(this, arguments);
 
@@ -499,8 +529,10 @@ class TreegraphSeries extends TreemapSeries {
             Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Restore nodes.
-            this.points = this.points.concat(points);
-            this.options.dataLabels = dataLabelOptions;
+            this.points = points;
+            this.options.dataLabels.forEach((option, index): void => {
+                option.textPath = dataLabelOptions[index];
+            });
         }
     }
 
@@ -605,7 +637,6 @@ class TreegraphSeries extends TreemapSeries {
 addEvent(TreegraphSeries, 'click', function (e: any): void {
     const node = e.point.node as TreegraphNode.Node;
     node.point.collapsed = !node.point.collapsed;
-
     collapseTreeFromPoint(node, node.point.collapsed);
     this.redraw();
 });
