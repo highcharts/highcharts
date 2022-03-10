@@ -45,8 +45,6 @@ Highcharts.chart('container', {
     series: [
         {
             type: 'treegraph',
-            keys: ['id', 'parent'],
-
             data: [
                 {
                     id: 'Durin the Deathless',
@@ -119,7 +117,10 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                ['Borin', 'Nain II'],
+                {
+                    id: 'Borin',
+                    parent: 'Nain II'
+                },
                 {
                     id: 'Thror',
                     parent: 'Dain I',
@@ -128,8 +129,14 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                ['Fror', 'Dain I'],
-                ['Gror', 'Dain I'],
+                {
+                    id: 'Fror',
+                    parent: 'Dain I'
+                },
+                {
+                    id: 'Gror',
+                    parent: 'Dain I'
+                },
                 {
                     id: 'Thrain II',
                     parent: 'Thror',
@@ -157,8 +164,14 @@ Highcharts.chart('container', {
                         fillColor: expeditionColor
                     }
                 },
-                ['Frerin', 'Thrain II'],
-                ['Dis', 'Thrain II'],
+                {
+                    id: 'Frerin',
+                    parent: 'Thrain II'
+                },
+                {
+                    id: 'Dis',
+                    parent: 'Thrain II'
+                },
                 {
                     id: 'Kili',
                     parent: 'Dis',
@@ -177,7 +190,10 @@ Highcharts.chart('container', {
                         fillColor: expeditionColor
                     }
                 },
-                ['Nain', 'Gror'],
+                {
+                    id: 'Nain',
+                    parent: 'Gror'
+                },
                 {
                     id: 'Dain II IronFoot',
                     parent: 'Nain',
@@ -203,8 +219,14 @@ Highcharts.chart('container', {
                         lineWidth: 3
                     }
                 },
-                ['Farin', 'Borin'],
-                ['Fundin', 'Farin'],
+                {
+                    id: 'Farin',
+                    parent: 'Borin'
+                },
+                {
+                    id: 'Fundin',
+                    parent: 'Farin'
+                },
                 {
                     id: 'Balin',
                     parent: 'Fundin',
