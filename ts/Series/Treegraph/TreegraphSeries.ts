@@ -485,27 +485,6 @@ class TreegraphSeries extends TreemapSeries {
      * Treegraph has two separate collecions of nodes and lines,
      * render dataLabels for both sets.
      */
-    //  public drawDataLabels(): void {
-    //     if (this.options.dataLabels) {
-
-    //         const textPath = (this.options.dataLabels as any).textPath;
-
-    //         // Render node labels.
-    //         super.drawDataLabels.apply(this, arguments);
-
-    //         // Render link labels.
-    //         const points = this.points;
-    //         this.points = this.links as any;
-    //         (this as any).options.dataLabels.textPath = (
-    //             this as any
-    //         ).options.dataLabels.linkTextPath;
-    //         Series.prototype.drawDataLabels.apply(this, arguments);
-
-    //         // Restore nodes.
-    //         this.points = this.points.concat(points);
-    //         (this as any).options.dataLabels.textPath = textPath;
-    //     }
-    // }
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
 
