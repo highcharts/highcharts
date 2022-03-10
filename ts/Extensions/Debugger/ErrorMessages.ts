@@ -104,6 +104,10 @@ const errorMessages: Record<string, Record<string, string>> = {
     "32": {
         "title": "Deprecated function or property",
         "text": "<h1>Deprecated function or property</h1><p>This error occurs when using a deprecated function or property. Consult the <a href=\"https://api.highcharts.com/\">API documentation</a> for alternatives, if no replacement is mentioned by the error itself.</p>"
+    },
+    "33": {
+        "title": "Invalid attribute or tagName",
+        "text": "<h1>Invalid attribute or tagName</h1><p>This error occurs in the following situations for SVG and HTML attributes or tagNames in a chart configuration. One, if the attribute or tagName is unknown; for example, linearGradient is a known SVG tagName but lineargradient is unknown because it is a misspelling. Two, if the attribute or tagName is not allowed; for example, onclick is a known HTML element but it is not allowed in a chart configuration.</p><p>This error occurs because attributes and tagNames are sanitized of potentially harmful content from the chart configuration before being added to the DOM. Consult the <a href=\"https://www.highcharts.com/docs/chart-concepts/security\">security documentation</a> for more information.</p>"
     }
 };
 
