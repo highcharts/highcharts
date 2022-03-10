@@ -1,13 +1,16 @@
 # Invalid attribute or tagName
 
-This error occurs in the following situations for SVG and HTML attributes or
-tagNames in a chart configuration. One, if the attribute or tagName is unknown;
-for example, linearGradient is a known SVG tagName but lineargradient is
-unknown because it is a misspelling. Two, if the attribute or tagName is not
-allowed; for example, onclick is a known HTML element but it is not allowed
-in a chart configuration.
+This error occurs if HTML in the chart configuration contains unknown tag names
+or attributes. Unkown tag names or attributes are thos not present in the _allow
+lists_.
 
-This error occurs because attributes and tagNames are sanitized of potentially
+To fix the error, consider
+* Is your tag name or attribute spelled correctly? For example, `lineargradient`
+  would be blocked as it is a misspelling for `linearGradient`.
+* Is it allowed in Highcharts? For example, `onclick` attributes are blocked as
+  they pose a real security threat.
+
+This error occurs because attributes and tag names are sanitized of potentially
 harmful content from the chart configuration before being added to the DOM.
 Consult the [security documentation](https://www.highcharts.com/docs/chart-concepts/security)
 for more information.
