@@ -505,7 +505,7 @@ class TreegraphSeries extends TreemapSeries {
             Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Restore nodes.
-            this.points = points;
+            this.points = this.points.concat(points);
             this.options.dataLabels.forEach((option, index): void => {
                 option.textPath = dataLabelOptions[index];
             });

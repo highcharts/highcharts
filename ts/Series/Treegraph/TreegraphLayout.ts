@@ -8,10 +8,10 @@
  *
  * */
 
-import TreegraphSeries from './TreegraphSeries';
+import type TreegraphSeries from './TreegraphSeries';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { extend, merge } = U;
+const { extend } = U;
 import TreegraphNode from './TreegraphNode.js';
 
 declare global {
