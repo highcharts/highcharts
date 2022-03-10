@@ -40,8 +40,6 @@ import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import ScatterSeries from '../Scatter/ScatterSeries.js';
-import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -102,7 +100,7 @@ class TreegraphSeries extends TreemapSeries {
              * @default 'Walker'
              * @product highcharts
              */
-            layout: 'Walker' as const,
+            layout: 'Walker',
             /**
              * Whether the first node should be placed on the opposite side of
              * the `plotArea`. By default, the oldest child is positioned on the
@@ -171,7 +169,7 @@ class TreegraphSeries extends TreemapSeries {
                  * @product highcharts
                  *
                  */
-                type: 'curved' as const
+                type: 'curved'
                 /**
                  * Modifier of the shape of the curved link. Works best for
                  * values between 0 and 1, where 0 is a straight line, and 1 is
@@ -252,17 +250,17 @@ class TreegraphSeries extends TreemapSeries {
                     }
                 },
                 enabled: true,
+                linkFormatter: (): string => '',
                 formatter: function (this: Point.PointLabelObject): string {
                     return this.point.id;
-                },
-                linkFormat: ''
+                }
             }
         } as TreegraphSeriesOptions
     );
 
     /* *
      *
-     *  Static Functions
+     *  Properties
      *
      * */
 
@@ -471,7 +469,6 @@ class TreegraphSeries extends TreemapSeries {
                 link.dlBox.x,
                 link.dlBox.y
             ];
-            link.dlBox.centerX = link.dlBox.x;
             if (inverted) {
                 link.dlBox.y = 0;
                 link.dlBox.x = 0;

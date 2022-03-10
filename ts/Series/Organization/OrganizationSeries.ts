@@ -708,7 +708,8 @@ class OrganizationSeries extends SankeySeries {
             ) + crisp;
         }
 
-        point.plotY = 1;
+        point.plotX = xMiddle;
+        point.plotY = (y1 + y2) / 2;
         point.shapeType = 'path';
         if (type === 'straight') {
             point.shapeArgs = {
