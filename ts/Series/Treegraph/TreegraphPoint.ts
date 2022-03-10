@@ -38,6 +38,10 @@ class TreegraphPoint extends TreemapPoint {
     public level?: number;
     public linkToParent?: TreegraphLink;
     hidden: boolean = false;
+
+    shouldDraw(): boolean {
+        return super.shouldDraw() && this.visible;
+    }
 }
 
 /* *
