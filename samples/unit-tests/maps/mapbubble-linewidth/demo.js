@@ -63,26 +63,15 @@ QUnit.test('MapBubble', function (assert) {
 
 QUnit.test('AddPoint', function (assert) {
 
-    const data = [
-        ['gb-ay', 0],
-        ['gb-3270', 1]
-    ];
-
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: 'countries/gb/gb-all'
         },
         series: [{
-            type: 'map',
-            data: data,
-            dataLabels: {
-                enabled: false
-            }
+
         }, {
             type: 'mapbubble',
             joinBy: ['iso_3166_2', 'name'],
-            minSize: 15,
-            maxSize: 50,
             data: [{
                 name: 'GB-ORK',
                 z: 2,

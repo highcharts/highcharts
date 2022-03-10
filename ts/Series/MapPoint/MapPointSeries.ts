@@ -161,7 +161,7 @@ class MapPointSeries extends ScatterSeries {
         }
         this.generatePoints();
 
-        if (this.bounds && this.getProjectedBounds) {
+        if (this.getProjectedBounds && this.isDirtyData) {
             delete this.bounds;
             this.getProjectedBounds(); // Added point needs bounds(#16598)
         }
