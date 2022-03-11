@@ -1,8 +1,8 @@
 # Invalid attribute or tagName
 
 This error occurs if HTML in the chart configuration contains unknown tag names
-or attributes. Unkown tag names or attributes are thos not present in the _allow
-lists_.
+or attributes. Unknown tag names or attributes are those not present in the
+_allow lists_.
 
 To fix the error, consider
 * Is your tag name or attribute spelled correctly? For example, `lineargradient`
