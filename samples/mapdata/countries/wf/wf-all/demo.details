@@ -1,5 +1,5 @@
 ---
- name: Wallis and Futuna - Highmaps
- description: Highmaps demo
+ name: Wallis and Futuna - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

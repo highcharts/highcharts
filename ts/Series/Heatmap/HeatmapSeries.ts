@@ -505,15 +505,14 @@ class HeatmapSeries extends ScatterSeries {
         symbols.ellipse = symbols.circle;
 
         // @todo
-        // Setting the border radius here is a workaround. It should
-        // be set in the shapeArgs or returned from `markerAttribs`.
-        // However, Series.drawPoints does not pick up markerAttribs
-        // to be passed over to `renderer.symbol`. Also, image
-        // symbols are not positioned by their top left corner like
-        // other symbols are. This should be refactored, then we
-        // could save ourselves some tests for .hasImage etc. And
-        // the evaluation of borderRadius would be moved to
-        // `markerAttribs`.
+        //
+        // Setting the border radius here is a workaround. It should be set in
+        // the shapeArgs or returned from `markerAttribs`. However,
+        // Series.drawPoints does not pick up markerAttribs to be passed over to
+        // `renderer.symbol`. Also, image symbols are not positioned by their
+        // top left corner like other symbols are. This should be refactored,
+        // then we could save ourselves some tests for .hasImage etc. And the
+        // evaluation of borderRadius would be moved to `markerAttribs`.
         if (options.marker) {
             (options.marker as any).r = options.borderRadius;
         }

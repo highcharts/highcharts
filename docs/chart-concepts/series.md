@@ -14,7 +14,7 @@ series: [{
 
 Note: The series object is an array, meaning it can contain several series.
 
-The name attribute gives the series a name, which show up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
+The name attribute gives the series a name, which shows up when hovering over the series in a chart and in the [legend](https://highcharts.com/docs/chart-concepts/legend).
 
 The data in a series
 --------------------
@@ -37,7 +37,7 @@ data: [[5, 2], [6, 3], [8, 2]]
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-arrays/)
 
-3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
+3.  A list of objects with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
 ```js
 data: [{
@@ -57,7 +57,7 @@ data: [{
 Point and marker
 ----------------
 
-For cartesian charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart the point represents (x, low, high). In an OHLC chart the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
+For cartesian charts, a point represents a (x, y) pair on the chart. Points can be given separate options inside the series data. For other chart types, the point represents other values than (x, y). For instance, in a range chart, the point represents (x, low, high). In an OHLC chart, the point represents (x, open, high, low, close). In a pie chart or gauge, the point represents a single value.
 
 The point option can be applied to all charts. Here is an example showing how to edit the color of a specific point:
 
@@ -171,7 +171,7 @@ plotOptions: {
 
 Note: You may wish to disable mouse tracking, which highlights the series and points the mouse hovers over (tooltips will not show if mouse tracking is disabled).
 
-The text displayed on datalabels may also be be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
+The text displayed on datalabels may also be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
 
 ### Dash style
 
@@ -181,7 +181,7 @@ Allows to use dashed lines instead of solid, there are several different dash op
 
 [Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle/)
 
-Code to set dashed lines for a individual series (the dashStyle can also be set in plotOptions):
+Code to set dashed lines for an individual series (the dashStyle can also be set in plotOptions):
 
 ```js
 series: [{
@@ -192,7 +192,7 @@ series: [{
 
 ### Zones
 
-In some cases, you would want to display certain sections of the graph different, a common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes.  The settings that can be overwritten for each zone are color, fillColor and dashStyle.
+In some cases, you would want to display certain sections of the graph different. A common example is to use different colors when data falls in a certain range.  This effect can be achieved by using `zones`.  By default zoning is done on the yAxis, but this can be easily changed by setting the `zoneAxis` variable on the series.  For the zoning itself, you have to define an array called `zones` where each entry corresponds to a zone, delimited by a parameter `value`, which is the point up to which the zones goes. The settings that can be overwritten for each zone are color, fillColor and dashStyle.
 
 <iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/series/color-zones-simple allow="fullscreen"></iframe>
 

@@ -341,11 +341,14 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
             }
             ]
         }],
+        navigation: {
+            breadcrumbs: {
+                buttonSpacing: 0
+            }
+        },
         drilldown: {
             animation: false,
             breadcrumbs: {
-                showFullPath: true,
-                buttonSpacing: 0,
                 theme: {
                     padding: 0
                 },
@@ -422,5 +425,11 @@ QUnit.test('Breadcrumbs button positioning.', function (assert) {
         chart.plotWidth / 2 + chart.plotLeft,
         3,
         'After each iteration, the breadcrumbs group should stay in the middle.'
+    );
+
+    assert.strictEqual(
+        chart.breadcrumbs.options.buttonSpacing,
+        0,
+        'Options from navigation.breadcrumbs should be handled'
     );
 });

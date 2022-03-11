@@ -1,5 +1,5 @@
 ---
- name: Turkey - Highmaps
- description: Highmaps demo
+ name: Turkey - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,5 +1,5 @@
 ---
- name: Argentina - Highmaps
- description: Highmaps demo
+ name: Argentina - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

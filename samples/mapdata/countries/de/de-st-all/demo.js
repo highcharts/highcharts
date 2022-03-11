@@ -1,60 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['de-st-15002000', 0],
-    ['de-st-15001000', 1],
-    ['de-st-15082000', 2],
-    ['de-st-15090000', 3],
-    ['de-st-15081000', 4],
-    ['de-st-14730000', 5],
-    ['de-st-15085000', 6],
-    ['de-st-15086000', 7],
-    ['de-st-15088000', 8],
-    ['de-st-15089000', 9],
-    ['de-st-15087000', 10],
-    ['de-st-15083000', 11],
-    ['de-st-15003000', 12],
-    ['de-st-15084000', 13],
-    ['de-st-15091000', 14]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/de/de-st-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/de/de-st-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['de-st-15002000', 10], ['de-st-15001000', 11], ['de-st-15082000', 12],
+        ['de-st-15090000', 13], ['de-st-15081000', 14], ['de-st-14730000', 15],
+        ['de-st-15085000', 16], ['de-st-15086000', 17], ['de-st-15088000', 18],
+        ['de-st-15089000', 19], ['de-st-15087000', 20], ['de-st-15083000', 21],
+        ['de-st-15003000', 22], ['de-st-15084000', 23], ['de-st-15091000', 24]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-st-all.js">Sachsen-Anhalt</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-st-all.topo.json">Sachsen-Anhalt</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

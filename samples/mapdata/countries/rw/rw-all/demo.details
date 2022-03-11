@@ -1,5 +1,5 @@
 ---
- name: Rwanda - Highmaps
- description: Highmaps demo
+ name: Rwanda - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

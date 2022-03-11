@@ -1,69 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['tn-4431', 0],
-    ['tn-sf', 1],
-    ['tn-me', 2],
-    ['tn-to', 3],
-    ['tn-mn', 4],
-    ['tn-bj', 5],
-    ['tn-ba', 6],
-    ['tn-bz', 7],
-    ['tn-je', 8],
-    ['tn-nb', 9],
-    ['tn-tu', 10],
-    ['tn-kf', 11],
-    ['tn-ks', 12],
-    ['tn-gb', 13],
-    ['tn-gf', 14],
-    ['tn-sz', 15],
-    ['tn-sl', 16],
-    ['tn-mh', 17],
-    ['tn-ms', 18],
-    ['tn-kr', 19],
-    ['tn-ss', 20],
-    ['tn-za', 21],
-    ['tn-kb', 22],
-    ['tn-ta', 23]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/tn/tn-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/tn/tn-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['tn-4431', 10], ['tn-sf', 11], ['tn-me', 12], ['tn-to', 13],
+        ['tn-mn', 14], ['tn-bj', 15], ['tn-ba', 16], ['tn-bz', 17],
+        ['tn-je', 18], ['tn-nb', 19], ['tn-tu', 20], ['tn-kf', 21],
+        ['tn-ks', 22], ['tn-gb', 23], ['tn-gf', 24], ['tn-sz', 25],
+        ['tn-sl', 26], ['tn-mh', 27], ['tn-ms', 28], ['tn-kr', 29],
+        ['tn-ss', 30], ['tn-za', 31], ['tn-kb', 32], ['tn-ta', 33]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tn/tn-all.js">Tunisia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tn/tn-all.topo.json">Tunisia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

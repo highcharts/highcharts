@@ -1,5 +1,5 @@
 ---
- name: Oceania - Highmaps
- description: Highmaps demo
+ name: Oceania - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

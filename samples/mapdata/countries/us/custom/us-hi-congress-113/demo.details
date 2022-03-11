@@ -1,5 +1,5 @@
 ---
- name: Hawaii congressional districts - Highmaps
- description: Highmaps demo
+ name: Hawaii congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

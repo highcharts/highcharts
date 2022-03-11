@@ -1,129 +1,74 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['mk-vv', 0],
-    ['mk-ar', 1],
-    ['mk-li', 2],
-    ['mk-cz', 3],
-    ['mk-dm', 4],
-    ['mk-od', 5],
-    ['mk-3086', 6],
-    ['mk-pp', 7],
-    ['mk-aj', 8],
-    ['mk-st', 9],
-    ['mk-pt', 10],
-    ['mk-pe', 11],
-    ['mk-su', 12],
-    ['mk-sl', 13],
-    ['mk-pn', 14],
-    ['mk-vc', 15],
-    ['mk-bu', 16],
-    ['mk-ci', 17],
-    ['mk-ng', 18],
-    ['mk-rm', 19],
-    ['mk-ce', 20],
-    ['mk-zr', 21],
-    ['mk-ch', 22],
-    ['mk-cs', 23],
-    ['mk-gb', 24],
-    ['mk-gr', 25],
-    ['mk-lo', 26],
-    ['mk-dk', 27],
-    ['mk-kn', 28],
-    ['mk-kx', 29],
-    ['mk-ca', 30],
-    ['mk-av', 31],
-    ['mk-ad', 32],
-    ['mk-ss', 33],
-    ['mk-vd', 34],
-    ['mk-ky', 35],
-    ['mk-tl', 36],
-    ['mk-ks', 37],
-    ['mk-um', 38],
-    ['mk-ze', 39],
-    ['mk-md', 40],
-    ['mk-gp', 41],
-    ['mk-kh', 42],
-    ['mk-os', 43],
-    ['mk-vh', 44],
-    ['mk-vj', 45],
-    ['mk-et', 46],
-    ['mk-bn', 47],
-    ['mk-gt', 48],
-    ['mk-jg', 49],
-    ['mk-ru', 50],
-    ['mk-va', 51],
-    ['mk-bg', 52],
-    ['mk-ns', 53],
-    ['mk-br', 54],
-    ['mk-ni', 55],
-    ['mk-rv', 56],
-    ['mk-dr', 57],
-    ['mk-ug', 58],
-    ['mk-db', 59],
-    ['mk-re', 60],
-    ['mk-kz', 61],
-    ['mk-kb', 62],
-    ['mk-na', 63],
-    ['mk-nv', 64],
-    ['mk-mr', 65],
-    ['mk-tr', 66],
-    ['mk-gv', 67],
-    ['mk-sd', 68],
-    ['mk-dl', 69],
-    ['mk-oc', 70],
-    ['mk-mk', 71],
-    ['mk-ph', 72],
-    ['mk-rn', 73],
-    ['mk-il', 74],
-    ['mk-ve', 75],
-    ['mk-zk', 76],
-    ['mk-so', 77],
-    ['mk-de', 78],
-    ['mk-kg', 79],
-    ['mk-mg', 80],
-    ['mk-za', 81],
-    ['mk-vl', 82],
-    ['mk-bs', 83]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/mk/mk-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/mk/mk-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['mk-vv', 10], ['mk-ar', 11], ['mk-li', 12], ['mk-cz', 13],
+        ['mk-dm', 14], ['mk-od', 15], ['mk-3086', 16], ['mk-pp', 17],
+        ['mk-aj', 18], ['mk-st', 19], ['mk-pt', 20], ['mk-pe', 21],
+        ['mk-su', 22], ['mk-sl', 23], ['mk-pn', 24], ['mk-vc', 25],
+        ['mk-bu', 26], ['mk-ci', 27], ['mk-ng', 28], ['mk-rm', 29],
+        ['mk-ce', 30], ['mk-zr', 31], ['mk-ch', 32], ['mk-cs', 33],
+        ['mk-gb', 34], ['mk-gr', 35], ['mk-lo', 36], ['mk-dk', 37],
+        ['mk-kn', 38], ['mk-kx', 39], ['mk-ca', 40], ['mk-av', 41],
+        ['mk-ad', 42], ['mk-ss', 43], ['mk-vd', 44], ['mk-ky', 45],
+        ['mk-tl', 46], ['mk-ks', 47], ['mk-um', 48], ['mk-ze', 49],
+        ['mk-md', 50], ['mk-gp', 51], ['mk-kh', 52], ['mk-os', 53],
+        ['mk-vh', 54], ['mk-vj', 55], ['mk-et', 56], ['mk-bn', 57],
+        ['mk-gt', 58], ['mk-jg', 59], ['mk-ru', 60], ['mk-va', 61],
+        ['mk-bg', 62], ['mk-ns', 63], ['mk-br', 64], ['mk-ni', 65],
+        ['mk-rv', 66], ['mk-dr', 67], ['mk-ug', 68], ['mk-db', 69],
+        ['mk-re', 70], ['mk-kz', 71], ['mk-kb', 72], ['mk-na', 73],
+        ['mk-nv', 74], ['mk-mr', 75], ['mk-tr', 76], ['mk-gv', 77],
+        ['mk-sd', 78], ['mk-dl', 79], ['mk-oc', 80], ['mk-mk', 81],
+        ['mk-ph', 82], ['mk-rn', 83], ['mk-il', 84], ['mk-ve', 85],
+        ['mk-zk', 86], ['mk-so', 87], ['mk-de', 88], ['mk-kg', 89],
+        ['mk-mg', 90], ['mk-za', 91], ['mk-vl', 92], ['mk-bs', 93]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mk/mk-all.js">Macedonia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mk/mk-all.topo.json">Macedonia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

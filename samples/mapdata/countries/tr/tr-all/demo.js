@@ -1,127 +1,74 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['tr-or', 0],
-    ['tr-ss', 1],
-    ['tr-ga', 2],
-    ['tr-4409', 3],
-    ['tr-kc', 4],
-    ['tr-bk', 5],
-    ['tr-ck', 6],
-    ['tr-tt', 7],
-    ['tr-gi', 8],
-    ['tr-en', 9],
-    ['tr-bg', 10],
-    ['tr-ht', 11],
-    ['tr-aa', 12],
-    ['tr-cm', 13],
-    ['tr-kk', 14],
-    ['tr-ng', 15],
-    ['tr-ak', 16],
-    ['tr-kh', 17],
-    ['tr-yz', 18],
-    ['tr-am', 19],
-    ['tr-ms', 20],
-    ['tr-bm', 21],
-    ['tr-ka', 22],
-    ['tr-ig', 23],
-    ['tr-du', 24],
-    ['tr-zo', 25],
-    ['tr-kb', 26],
-    ['tr-yl', 27],
-    ['tr-sk', 28],
-    ['tr-ci', 29],
-    ['tr-bl', 30],
-    ['tr-ed', 31],
-    ['tr-es', 32],
-    ['tr-ko', 33],
-    ['tr-bu', 34],
-    ['tr-kl', 35],
-    ['tr-ib', 36],
-    ['tr-kr', 37],
-    ['tr-al', 38],
-    ['tr-af', 39],
-    ['tr-bd', 40],
-    ['tr-ip', 41],
-    ['tr-ay', 42],
-    ['tr-mn', 43],
-    ['tr-dy', 44],
-    ['tr-ad', 45],
-    ['tr-km', 46],
-    ['tr-ky', 47],
-    ['tr-eg', 48],
-    ['tr-ic', 49],
-    ['tr-sp', 50],
-    ['tr-av', 51],
-    ['tr-ri', 52],
-    ['tr-tb', 53],
-    ['tr-an', 54],
-    ['tr-su', 55],
-    ['tr-bb', 56],
-    ['tr-em', 57],
-    ['tr-mr', 58],
-    ['tr-sr', 59],
-    ['tr-si', 60],
-    ['tr-hk', 61],
-    ['tr-va', 62],
-    ['tr-ar', 63],
-    ['tr-ki', 64],
-    ['tr-br', 65],
-    ['tr-tg', 66],
-    ['tr-iz', 67],
-    ['tr-ks', 68],
-    ['tr-mg', 69],
-    ['tr-ku', 70],
-    ['tr-nv', 71],
-    ['tr-sv', 72],
-    ['tr-tc', 73],
-    ['tr-ml', 74],
-    ['tr-ag', 75],
-    ['tr-bt', 76],
-    ['tr-gu', 77],
-    ['tr-os', 78],
-    ['tr-bc', 79],
-    ['tr-dn', 80],
-    ['tr-us', 81]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/tr/tr-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/tr/tr-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['tr-or', 10], ['tr-ss', 11], ['tr-ga', 12], ['tr-4409', 13],
+        ['tr-kc', 14], ['tr-bk', 15], ['tr-ck', 16], ['tr-tt', 17],
+        ['tr-gi', 18], ['tr-en', 19], ['tr-bg', 20], ['tr-ht', 21],
+        ['tr-aa', 22], ['tr-cm', 23], ['tr-kk', 24], ['tr-ng', 25],
+        ['tr-ak', 26], ['tr-kh', 27], ['tr-yz', 28], ['tr-am', 29],
+        ['tr-ms', 30], ['tr-bm', 31], ['tr-ka', 32], ['tr-ig', 33],
+        ['tr-du', 34], ['tr-zo', 35], ['tr-kb', 36], ['tr-yl', 37],
+        ['tr-sk', 38], ['tr-ci', 39], ['tr-bl', 40], ['tr-ed', 41],
+        ['tr-es', 42], ['tr-ko', 43], ['tr-bu', 44], ['tr-kl', 45],
+        ['tr-ib', 46], ['tr-kr', 47], ['tr-al', 48], ['tr-af', 49],
+        ['tr-bd', 50], ['tr-ip', 51], ['tr-ay', 52], ['tr-mn', 53],
+        ['tr-dy', 54], ['tr-ad', 55], ['tr-km', 56], ['tr-ky', 57],
+        ['tr-eg', 58], ['tr-ic', 59], ['tr-sp', 60], ['tr-av', 61],
+        ['tr-ri', 62], ['tr-tb', 63], ['tr-an', 64], ['tr-su', 65],
+        ['tr-bb', 66], ['tr-em', 67], ['tr-mr', 68], ['tr-sr', 69],
+        ['tr-si', 70], ['tr-hk', 71], ['tr-va', 72], ['tr-ar', 73],
+        ['tr-ki', 74], ['tr-br', 75], ['tr-tg', 76], ['tr-iz', 77],
+        ['tr-ks', 78], ['tr-mg', 79], ['tr-ku', 80], ['tr-nv', 81],
+        ['tr-sv', 82], ['tr-tc', 83], ['tr-ml', 84], ['tr-ag', 85],
+        ['tr-bt', 86], ['tr-gu', 87], ['tr-os', 88], ['tr-bc', 89],
+        ['tr-dn', 90], ['tr-us', 91]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tr/tr-all.js">Turkey</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tr/tr-all.topo.json">Turkey</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

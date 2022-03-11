@@ -1,5 +1,5 @@
 ---
- name: East Timor - Highmaps
- description: Highmaps demo
+ name: East Timor - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

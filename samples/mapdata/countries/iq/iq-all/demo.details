@@ -1,5 +1,5 @@
 ---
- name: Iraq - Highmaps
- description: Highmaps demo
+ name: Iraq - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

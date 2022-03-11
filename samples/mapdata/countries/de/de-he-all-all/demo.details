@@ -1,5 +1,5 @@
 ---
- name: Hessen - Highmaps
- description: Highmaps demo
+ name: Hessen - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
