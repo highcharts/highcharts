@@ -223,7 +223,6 @@ interface MapPointSeries {
 }
 extend(MapPointSeries.prototype, {
     type: 'mappoint',
-    bounds: MapSeries.prototype.bounds,
     axisTypes: ['colorAxis'],
     forceDL: true,
     isCartesian: false,
