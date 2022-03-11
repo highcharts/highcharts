@@ -482,7 +482,7 @@ class PieSeries extends Series {
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.
          * Percentages are relative to the pie size. Pixel values are given as
-         * integers.
+         * integers. Setting overridden by thickness.
          *
          *
          * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
