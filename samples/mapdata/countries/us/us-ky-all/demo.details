@@ -1,5 +1,5 @@
 ---
- name: Kentucky - Highmaps
- description: Highmaps demo
+ name: Kentucky - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

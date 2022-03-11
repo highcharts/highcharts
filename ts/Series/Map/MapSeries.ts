@@ -174,7 +174,7 @@ class MapSeries extends ScatterSeries {
          * @sample maps/series/affectsmapview/
          *         US map with world map backdrop
          *
-         * @since next
+         * @since 10.0.0
          */
         affectsMapView: true,
 

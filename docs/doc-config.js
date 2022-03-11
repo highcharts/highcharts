@@ -8,6 +8,7 @@ module.exports = {
     unlisted: [
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
+        'maps/latlon',
         'stock/compare',
         'stock/cumulative-sum'
     ],

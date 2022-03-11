@@ -1,5 +1,5 @@
 ---
- name: Croatia - Highmaps
- description: Highmaps demo
+ name: Croatia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

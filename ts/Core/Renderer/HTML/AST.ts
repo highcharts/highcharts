@@ -347,7 +347,9 @@ class AST {
                 );
             }
             if (!valid) {
-                error(`Highcharts warning: Invalid attribute '${key}' in config`);
+                error(33, false, void 0, {
+                    'Invalid attribute in config': `${key}`
+                });
                 delete attributes[key];
             }
         });
@@ -514,10 +516,9 @@ class AST {
                         node = element;
 
                     } else {
-                        error(
-                            'Highcharts warning: Invalid tagName ' +
-                            tagName + ' in config'
-                        );
+                        error(33, false, void 0, {
+                            'Invalid tagName in config': tagName
+                        });
                     }
                 }
 

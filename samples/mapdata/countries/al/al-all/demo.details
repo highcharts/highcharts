@@ -1,5 +1,5 @@
 ---
- name: Albania - Highmaps
- description: Highmaps demo
+ name: Albania - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,5 +1,5 @@
 ---
- name: Agder - Highmaps
- description: Highmaps demo
+ name: Agder - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
