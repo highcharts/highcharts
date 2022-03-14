@@ -805,8 +805,7 @@ class MapSeries extends ScatterSeries {
     public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds && this.chart.mapView) {
 
-            const MAX_VALUE = Number.MAX_VALUE,
-                { insets, projection } = this.chart.mapView,
+            const { insets, projection } = this.chart.mapView,
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
@@ -934,10 +933,25 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
+     * Sort data by the joinBy property to match new data with proper points
+     * (regions).
+     * @private
+     */
+    public sortDataToMatch(data: (PointOptions|PointShortOptions)[]): void {
+        const joinBy = this.joinBy[0],
+            sortArr = (this.points || [])
+                .map((point: any): void => point[joinBy]);
+
+        (data || []).sort((a: any, b: any): number =>
+            sortArr.indexOf(a[joinBy]) - sortArr.indexOf(b[joinBy]));
+    }
+
+    /**
      * Extend setData to call processData and generatePoints immediately.
      * @private
      */
-    public setData(): void {
+    public setData(data: (PointOptions|PointShortOptions)[]): void {
+        this.sortDataToMatch(data);
 
         super.setData.apply(this, arguments);
 

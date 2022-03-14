@@ -23,8 +23,6 @@ import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
 const {
     seriesTypes: {
         mappoint: MapPointSeries
@@ -245,6 +243,7 @@ interface MapBubbleSeries {
     processData: typeof MapSeries.prototype['processData'];
     projectPoint: typeof MapPointSeries.prototype['projectPoint'];
     setOptions: typeof MapSeries.prototype['setOptions'];
+    sortDataToMatch: typeof MapSeries.prototype['sortDataToMatch'];
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -268,6 +267,8 @@ extend(MapBubbleSeries.prototype, {
     setData: MapSeries.prototype.setData,
 
     setOptions: MapSeries.prototype.setOptions,
+
+    sortDataToMatch: MapSeries.prototype.sortDataToMatch,
 
     useMapGeometry: true,
 

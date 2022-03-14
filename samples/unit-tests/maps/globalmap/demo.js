@@ -86,4 +86,28 @@ QUnit.test('Set basemap on chart object', function (assert) {
         `When updating mapData with empty data, the first point should have
         a null color, #11636.`
     );
+
+    chart.series[0].setData(
+        [{
+            'hc-key': 'bn-be',
+            value: 0
+        }, {
+            'hc-key': 'bn-te',
+            value: 1
+        }, {
+            'hc-key': 'bn-bm',
+            value: 2
+        }, {
+            'hc-key': 'bn-tu',
+            value: 3
+        }]
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].properties['hc-key'],
+        'bn-te', // not bn-be
+        `Points should be matched correctly (by joinBy) with unsorted data,
+        #16782`
+    );
+
 });
