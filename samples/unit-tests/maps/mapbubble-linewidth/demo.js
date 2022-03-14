@@ -49,7 +49,7 @@ QUnit.test('MapBubble', function (assert) {
 
     chart.series[1].update({
         joinBy: ['iso_3166_2', 'name']
-    });
+    }, false);
 
     chart.series[1].addPoint({
         name: 'GB-AGY',
@@ -59,7 +59,7 @@ QUnit.test('MapBubble', function (assert) {
 
     const addedPoint = chart.series[1].data[4];
     assert.ok(
-        (addedPoint.plotX !== undefined && addedPoint.plotY !== undefined),
+        addedPoint.plotX !== undefined && addedPoint.plotY !== undefined,
         'Added point should be drawn (#16598).'
     );
 
