@@ -316,6 +316,9 @@ namespace DataLabel {
                 negRotation = normRotation > 180 && normRotation < 360;
 
                 if (align === 'left') {
+                    // Compensate X so that the bounding box does not spill out
+                    // to the right side (#9687)
+                    alignAttr.x -= negRotation ? 3 * rotCorr.x : 0;
                     alignAttr.y -= negRotation ? bBox.height : 0;
                 } else if (align === 'center') {
                     alignAttr.x -= bBox.width / 2;
@@ -346,6 +349,28 @@ namespace DataLabel {
 
             // Now check that the data label is within the plot area
             } else if (pick(options.crop, true)) {
+                // Uncomment this block to visualize the bounding boxes used for
+                // determining visibility
+                /*
+                chart.renderer.rect(
+                    chart.plotLeft + alignAttr.x,
+                    chart.plotTop + alignAttr.y,
+                    bBox.width,
+                    bBox.height
+                ).attr({
+                    stroke: 'rgba(0, 0, 0, 0.3)',
+                    'stroke-width': 0.5
+                }).add();
+                chart.renderer.circle(
+                    chart.plotLeft + alignAttr.x,
+                    chart.plotTop + alignAttr.y,
+                    2
+                ).attr({
+                    fill: 'red',
+                    zIndex: 20
+                }).add();
+                // */
+
                 visible =
                     chart.isInsidePlot(
                         alignAttr.x,
