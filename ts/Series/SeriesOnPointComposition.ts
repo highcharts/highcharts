@@ -22,17 +22,18 @@ import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 const { bubble, pie, sunburst } = SeriesRegistry.seriesTypes;
 import CU from './CenteredUtilities.js';
 const { getCenter } = CU;
 
-const drawPointsFunctions = {
+const drawPointsFunctions: { [key: string]: Function; } = {
     pieDrawPoints: pie.prototype.drawPoints,
     sunburstDrawPoints: sunburst && sunburst.prototype.drawPoints
 };
 
-const translateFunctions = {
+const translateFunctions: { [key: string]: Function; } = {
     pieTranslate: pie.prototype.translate,
     sunburstTranslate: sunburst && sunburst.prototype.translate
 };
@@ -156,26 +157,30 @@ namespace SeriesOnPointComposition {
             seriesProto.getConnectorAttributes = getConnectorAttributes;
             seriesProto.seriesDrawConnector = seriesDrawConnector;
 
-            pie.prototype.getCenter = seriesGetCenter;
-            pie.prototype.drawPoints = seriesDrawPoints;
-            pie.prototype.translate = seriesTranslate;
-            pie.prototype.bubblePadding = true;
-            pie.prototype.useMapGeometry = true;
-            pie.prototype.getRadius = bubbleProto.getRadius;
-            pie.prototype.getRadii = bubbleProto.getRadii;
-            pie.prototype.getZExtremes = bubbleProto.getZExtremes;
-            pie.prototype.getPxExtremes = bubbleProto.getPxExtremes;
+            const pieProto = pie.prototype;
+
+            pieProto.getCenter = seriesGetCenter;
+            pieProto.drawPoints = seriesDrawPoints;
+            pieProto.translate = seriesTranslate;
+            pieProto.bubblePadding = true;
+            pieProto.useMapGeometry = true;
+            pieProto.getRadius = bubbleProto.getRadius;
+            pieProto.getRadii = bubbleProto.getRadii;
+            pieProto.getZExtremes = bubbleProto.getZExtremes;
+            pieProto.getPxExtremes = bubbleProto.getPxExtremes;
 
             if (sunburst) {
-                sunburst.prototype.getCenter = seriesGetCenter;
-                sunburst.prototype.drawPoints = seriesDrawPoints;
-                sunburst.prototype.translate = seriesTranslate;
-                sunburst.prototype.bubblePadding = true;
-                sunburst.prototype.useMapGeometry = true;
-                sunburst.prototype.getRadius = bubbleProto.getRadius;
-                sunburst.prototype.getRadii = bubbleProto.getRadii;
-                sunburst.prototype.getZExtremes = bubbleProto.getZExtremes;
-                sunburst.prototype.getPxExtremes = bubbleProto.getPxExtremes;
+                const sunburstProto = sunburst.prototype;
+
+                sunburstProto.getCenter = seriesGetCenter;
+                sunburstProto.drawPoints = seriesDrawPoints;
+                sunburstProto.translate = seriesTranslate;
+                sunburstProto.bubblePadding = true;
+                sunburstProto.useMapGeometry = true;
+                sunburstProto.getRadius = bubbleProto.getRadius;
+                sunburstProto.getRadii = bubbleProto.getRadii;
+                sunburstProto.getZExtremes = bubbleProto.getZExtremes;
+                sunburstProto.getPxExtremes = bubbleProto.getPxExtremes;
             }
 
             addEvent(SeriesClass, 'afterInit', afterInit);
@@ -185,30 +190,11 @@ namespace SeriesOnPointComposition {
         if (composedClasses.indexOf(ChartClass) === -1) {
             composedClasses.push(ChartClass);
 
-            addEvent(ChartClass, 'beforeRender', getZData);
-            addEvent(ChartClass, 'beforeRedraw', getZData);
+            addEvent(ChartClass, 'beforeRender', Additions.prototype.getZData);
+            addEvent(ChartClass, 'beforeRedraw', Additions.prototype.getZData);
         }
 
         return SeriesClass as (typeof SeriesComposition&T);
-    }
-
-    /**
-     * @ignore
-     * @function Highcharts.Chart#getZData
-     */
-    function getZData(this: Chart): void {
-        const zData: Array<number|null> = [];
-
-        this.series.forEach((series: Series): void => {
-            const onPointOpts = series.options.onPoint;
-
-            zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
-        });
-
-        this.series.forEach((series: Series): void => {
-            // Save z values of all the series
-            series.zData = zData;
-        });
     }
 
     /**
@@ -241,7 +227,7 @@ namespace SeriesOnPointComposition {
     function seriesTranslate(this: Series): void {
         this.getRadii(0, 0, 0, 0);
 
-        (translateFunctions as any)[this.type + 'Translate'].call(this);
+        translateFunctions[this.type + 'Translate'].call(this);
     }
 
     /**
@@ -309,49 +295,46 @@ namespace SeriesOnPointComposition {
         const chart = this.chart,
             onPointOptions = this.options.onPoint;
 
-        if (onPointOptions) {
-            const connectorOpts = onPointOptions.connectorOptions,
-                position = onPointOptions.position,
-                connectedPoint = chart.get(onPointOptions.id);
-
-            if (
-                connectedPoint instanceof Point &&
-                position &&
-                defined(connectedPoint.plotX) &&
-                defined(connectedPoint.plotY)
-            ) {
-                const xFrom = defined(position.x) ?
-                        position.x :
-                        connectedPoint.plotX,
-                    yFrom = defined(position.y) ?
-                        position.y :
-                        connectedPoint.plotY,
-                    xTo = xFrom + (position.offsetX || 0),
-                    yTo = yFrom + (position.offsetY || 0),
-                    width = (connectorOpts && connectorOpts.width) || 1,
-                    color =
-                        (connectorOpts && (connectorOpts as any).color) ||
-                        this.color,
-                    dashStyle =
-                        connectorOpts && (connectorOpts as any).dashStyle;
-
-                let attribs: SVGAttributes = {
-                    d: SVGRenderer.prototype.crispLine([
-                        ['M', xFrom, yFrom],
-                        ['L', xTo, yTo]
-                    ], width, 'ceil')
-                };
-
-                attribs['stroke-width'] = width;
-
-                if (!chart.styledMode) {
-                    attribs.stroke = color;
-                    attribs.dashstyle = dashStyle;
-                }
-
-                return attribs;
-            }
+        if (!onPointOptions) {
+            return;
         }
+
+        const connectorOpts = onPointOptions.connectorOptions || {},
+            position = onPointOptions.position,
+            connectedPoint = chart.get(onPointOptions.id);
+
+        if (
+            !(connectedPoint instanceof Point) ||
+            !position ||
+            !defined(connectedPoint.plotX) ||
+            !defined(connectedPoint.plotY)
+        ) {
+            return;
+        }
+
+        const xFrom = defined(position.x) ? position.x : connectedPoint.plotX,
+            yFrom = defined(position.y) ? position.y : connectedPoint.plotY,
+            xTo = xFrom + (position.offsetX || 0),
+            yTo = yFrom + (position.offsetY || 0),
+            width = connectorOpts.width || 1,
+            color = (connectorOpts as any).color || this.color,
+            dashStyle = (connectorOpts as any).dashStyle;
+
+        let attribs: SVGAttributes = {
+            d: SVGRenderer.prototype.crispLine([
+                ['M', xFrom, yFrom],
+                ['L', xTo, yTo]
+            ], width, 'ceil')
+        };
+
+        attribs['stroke-width'] = width;
+
+        if (!chart.styledMode) {
+            attribs.stroke = color;
+            attribs.dashstyle = dashStyle;
+        }
+
+        return attribs;
     }
 
     /**
@@ -361,8 +344,8 @@ namespace SeriesOnPointComposition {
     function seriesDrawConnector(this: Series): void {
         if (this.onPoint) {
             if (!this.onPoint.connector) {
-                (this.onPoint.connector as any) = this.chart.renderer.path()
-                    .addClass('highcharts-connector-seriespoint')
+                this.onPoint.connector = this.chart.renderer.path()
+                    .addClass('highcharts-connector-seriesonpoint')
                     .attr({
                         zIndex: -1
                     })
@@ -370,14 +353,13 @@ namespace SeriesOnPointComposition {
             }
 
             const attribs = this.getConnectorAttributes();
-            if (this.onPoint.connector) {
-                (this.onPoint.connector as any)['attr'](attribs);
-            }
+
+            attribs && this.onPoint.connector.attr(attribs);
         }
     }
 
     function seriesDrawPoints(this: Series): void {
-        (drawPointsFunctions as any)[this.type + 'DrawPoints'].call(this);
+        drawPointsFunctions[this.type + 'DrawPoints'].call(this);
 
         this.seriesDrawConnector();
     }
@@ -415,9 +397,28 @@ namespace SeriesOnPointComposition {
 
         public series: SeriesComposition;
 
-        public connector?: SVGElement = void 0 as any;
+        public connector?: SVGElement;
 
         public options?: OnPoint;
+
+        /**
+         * @ignore
+         * @function Highcharts.Chart#getZData
+         */
+        public getZData(this: Chart): void {
+            const zData: Array<number|null> = [];
+
+            this.series.forEach((series: Series): void => {
+                const onPointOpts = series.options.onPoint;
+
+                zData.push(onPointOpts && onPointOpts.z ? onPointOpts.z : null);
+            });
+
+            this.series.forEach((series: Series): void => {
+                // Save z values of all the series
+                series.zData = zData;
+            });
+        }
     }
 
 }
@@ -437,6 +438,28 @@ export default SeriesOnPointComposition;
  * */
 
 /**
+ * Options for the `Series on point` feature. Only `pie` and `sunburst` series
+ * are supported at this moment.
+ *
+ * @requires    modules/series-on-point
+ * @since       next
+ * @type        {object}
+ * @apioption   plotOptions.series.onPoint
+ */
+
+/**
+ * Options for the connector in the `Series on point` feature.
+ *
+ * In styled mode, the connector can be styled with the
+ * `.highcharts-connector-seriesonpoint` class name.
+ *
+ * @requires    modules/series-on-point
+ * @since       next
+ * @type        {object}
+ * @apioption   plotOptions.series.onPoint.connectorOptions
+ */
+
+/**
  * Color of a connector line. By default it's the series' color.
  *
  * @requires    modules/series-on-point
@@ -450,7 +473,7 @@ export default SeriesOnPointComposition;
  *
  * @requires    modules/series-on-point
  * @since       next
- * @type        string
+ * @type        {string}
  * @apioption   plotOptions.series.onPoint.connectorOptions.dashStyle
  */
 
@@ -461,17 +484,27 @@ export default SeriesOnPointComposition;
  * @requires    modules/series-on-point
  * @type        {number}
  * @since       next
- * @product     highcharts highstock
  * @apioption   plotOptions.series.onPoint.connectorOptions.width
 */
 
 /**
- * An id of the point that we connect series to.
-
+ * An id of the point that we connect series to. Only points with a given
+ * `plotX` and `plotY` values and map points are valid.
+ *
  * @requires   modules/series-on-point
  * @since      next
  * @type       {string}
  * @apioption  plotOptions.series.onPoint.id
+ */
+
+/**
+ * Options allowing to set a position and an offset of the series in the
+ * `Series on point` feature.
+ *
+ * @requires    modules/series-on-point
+ * @since       next
+ * @type        {object}
+ * @apioption   plotOptions.series.onPoint.position
  */
 
 /**
