@@ -16,11 +16,19 @@
 
 import type TreegraphPointOptions from './TreegraphPointOptions';
 import type TreegraphSeries from './TreegraphSeries';
-import type TreegraphNode from './TreegraphNode.js';
-import type TreegraphLink from './TreegraphLink.js';
-import U from '../../Core/Utilities.js';
-import TreemapPoint from '../Treemap/TreemapPoint.js';
-const { extend } = U;
+import type TreegraphNode from './TreegraphNode';
+import type TreegraphLink from './TreegraphLink';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+const {
+    seriesTypes: {
+        treemap: {
+            prototype: {
+                pointClass: TreemapPoint
+            }
+        }
+    }
+} = SeriesRegistry;
 
 
 /* *

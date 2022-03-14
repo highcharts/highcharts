@@ -19,6 +19,7 @@
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type Point from '../../Core/Series/Point';
 
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -28,18 +29,21 @@ import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
+const {
+    seriesTypes: {
+        treemap: TreemapSeries,
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { merge, pick, addEvent, isArray } = U;
 
 import './TreegraphLayout.js';
-import type Point from '../../Core/Series/Point';
-import TreemapSeries from '../Treemap/TreemapSeries.js';
 import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -469,12 +473,6 @@ class TreegraphSeries extends TreemapSeries {
                 link.dlBox.x,
                 link.dlBox.y
             ];
-            if (inverted) {
-                link.dlBox.y = 0;
-                link.dlBox.x = 0;
-                // link.dlBox.y = (this.chart.plotSizeY as any) - link.dlBox.y,
-                // link.dlBox.x =  (this.chart.plotSizeX as any) - link.dlBox.x
-            }
         }
     }
 
@@ -494,7 +492,7 @@ class TreegraphSeries extends TreemapSeries {
                 option.textPath
             );
             // Render node labels.
-            super.drawDataLabels.apply(this, arguments);
+            Series.prototype.drawDataLabels.apply(this, arguments);
 
             // Render link labels.
             const points = this.points;
@@ -576,6 +574,7 @@ class TreegraphSeries extends TreemapSeries {
             node = point.node,
             plotSizeY = chart.plotSizeY as number,
             plotSizeX = chart.plotSizeX as number,
+            // Get the layout modifiers which are common for all nodes.
             { ax, bx, ay, by } = this.layoutModifier,
             x = ax * node.xPosition + bx,
             y = ay * node.yPosition + by,
