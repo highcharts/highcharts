@@ -1266,6 +1266,9 @@ class Series {
      * points, or a different amount of points, as handled by the
      * `updatePoints` parameter.
      *
+     * In Highcharts Maps new data is sorted by the `joinBy` property to match
+     * points (regions) properly.
+     *
      * @sample highcharts/members/series-setdata/
      *         Set new data from a button
      * @sample highcharts/members/series-setdata-pie/

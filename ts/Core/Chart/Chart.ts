@@ -102,7 +102,6 @@ const {
     fireEvent,
     getStyle,
     isArray,
-    isFunction,
     isNumber,
     isObject,
     isString,
@@ -3383,9 +3382,7 @@ class Chart {
         if (updateAllSeries) {
             chart.getSeriesOrderByLinks().forEach(function (series): void {
                 // Avoid removed navigator series
-                if (series.chart) {
-                    series.update({}, false);
-                }
+                series.update({}, false);
             }, this);
         }
 

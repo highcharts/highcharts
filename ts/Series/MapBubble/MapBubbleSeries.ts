@@ -292,6 +292,7 @@ interface MapBubbleSeries {
     processData: typeof MapSeries.prototype['processData'];
     projectPoint: typeof MapPointSeries.prototype['projectPoint'];
     setOptions: typeof MapSeries.prototype['setOptions'];
+    sortDataToMatch: typeof MapSeries.prototype['sortDataToMatch'];
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -315,6 +316,8 @@ extend(MapBubbleSeries.prototype, {
     setData: MapSeries.prototype.setData,
 
     setOptions: MapSeries.prototype.setOptions,
+
+    sortDataToMatch: MapSeries.prototype.sortDataToMatch,
 
     useMapGeometry: true,
 
