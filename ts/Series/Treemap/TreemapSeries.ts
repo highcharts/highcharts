@@ -152,12 +152,13 @@ class TreemapSeries extends ScatterSeries {
         borderRadius: 0,
 
         /**
-         * Breadcrumbs options.
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the traversed levels.
          *
          *
-         * @since     next
+         * @since 10.0.0
          * @product   highcharts
-         * @extends breadcrumbs
+         * @extends   navigation.breadcrumbs
          * @optionparent plotOptions.treemap.breadcrumbs
          */
         /**

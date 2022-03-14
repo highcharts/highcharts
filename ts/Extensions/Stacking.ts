@@ -121,6 +121,7 @@ declare global {
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
+            stackKey?: string;
             x: number;
         }
         interface StackItemObject {
@@ -872,12 +873,13 @@ Series.prototype.getStackIndicator = function (
     // changed:
     if (!defined(stackIndicator) ||
         stackIndicator.x !== x ||
-        (key && stackIndicator.key !== key)
+        (key && stackIndicator.stackKey !== key)
     ) {
         stackIndicator = {
             x: x,
             index: 0,
-            key: key
+            key: key,
+            stackKey: key
         };
     } else {
         (stackIndicator).index++;

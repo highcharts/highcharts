@@ -42,3 +42,50 @@ describe('Adding custom indicator on a separate axis through indicator popup, #1
         );
     });
 });
+
+describe('Axis height recalculation.', () => {
+    beforeEach(() => {
+        cy.viewport(1000, 500);
+    });
+
+    before(() => {
+        cy.visit('/stock/demo/stock-tools-gui');
+    });
+
+    it('Axes should scale after removing indicators through Stock Tools GUI, 15735.', () => {
+        const addATR = function(period) {
+            cy.openIndicators()
+            cy.get('.highcharts-indicator-list')
+                .contains('ATR')
+                .click()
+            cy.get('input[name="highcharts-atr-period"]')
+                .eq(0)
+                .clear()
+                .type(period);
+            cy.addIndicator();
+        }
+
+        addATR(20)
+        addATR(25)
+        addATR(30)
+        addATR(35)
+        addATR(45)
+
+        cy.openIndicators()
+        cy.get('.highcharts-tab-item')
+            .eq(1)
+            .click(); // Open EDIT bookmark.
+        cy.get('.highcharts-indicator-list')
+            .contains('ATR (35)')
+            .click();
+        cy.get('.highcharts-popup-rhs-col')
+            .children('.highcharts-popup button')
+            .eq(2)
+            .click(); // Remove that indicator.
+
+        cy.chart().should(chart =>{
+            const yAxis = chart.yAxis;
+            // Assert for axis height.
+        });
+    });
+});

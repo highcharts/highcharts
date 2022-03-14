@@ -1,70 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['lk-bc', 0],
-    ['lk-mb', 1],
-    ['lk-ja', 2],
-    ['lk-kl', 3],
-    ['lk-ky', 4],
-    ['lk-mt', 5],
-    ['lk-nw', 6],
-    ['lk-ap', 7],
-    ['lk-pr', 8],
-    ['lk-tc', 9],
-    ['lk-ad', 10],
-    ['lk-va', 11],
-    ['lk-mp', 12],
-    ['lk-kg', 13],
-    ['lk-px', 14],
-    ['lk-rn', 15],
-    ['lk-gl', 16],
-    ['lk-hb', 17],
-    ['lk-mh', 18],
-    ['lk-bd', 19],
-    ['lk-mj', 20],
-    ['lk-ke', 21],
-    ['lk-co', 22],
-    ['lk-gq', 23],
-    ['lk-kt', 24]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/lk/lk-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/lk/lk-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['lk-bc', 10], ['lk-mb', 11], ['lk-ja', 12], ['lk-kl', 13],
+        ['lk-ky', 14], ['lk-mt', 15], ['lk-nw', 16], ['lk-ap', 17],
+        ['lk-pr', 18], ['lk-tc', 19], ['lk-ad', 20], ['lk-va', 21],
+        ['lk-mp', 22], ['lk-kg', 23], ['lk-px', 24], ['lk-rn', 25],
+        ['lk-gl', 26], ['lk-hb', 27], ['lk-mh', 28], ['lk-bd', 29],
+        ['lk-mj', 30], ['lk-ke', 31], ['lk-co', 32], ['lk-gq', 33],
+        ['lk-kt', 34]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lk/lk-all.js">Sri Lanka</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lk/lk-all.topo.json">Sri Lanka</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

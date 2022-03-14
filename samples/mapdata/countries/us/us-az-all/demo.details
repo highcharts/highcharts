@@ -1,5 +1,5 @@
 ---
- name: Arizona - Highmaps
- description: Highmaps demo
+ name: Arizona - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

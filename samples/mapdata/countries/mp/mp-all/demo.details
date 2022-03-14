@@ -1,5 +1,5 @@
 ---
- name: Northern Mariana Islands - Highmaps
- description: Highmaps demo
+ name: Northern Mariana Islands - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

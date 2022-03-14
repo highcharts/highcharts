@@ -1,5 +1,5 @@
 ---
- name: Mississippi - Highmaps
- description: Highmaps demo
+ name: Mississippi - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -650,9 +650,11 @@ namespace OrdinalAxis {
                 // how many ordinal units did we move?
                 movedUnits = ((mouseDownX as any) - chartX) / pointPixelWidth,
                 // get index of all the chart's points
+                extendedOrdinalPositions = xAxis.ordinal.getExtendedPositions(),
                 extendedAxis = {
                     ordinal: {
-                        positions: xAxis.ordinal.getExtendedPositions()
+                        positions: extendedOrdinalPositions,
+                        extendedOrdinalPositions: extendedOrdinalPositions
                     }
                 },
                 index2val = xAxis.index2val,

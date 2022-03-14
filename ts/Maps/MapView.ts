@@ -491,7 +491,7 @@ class MapView {
      * Convert map coordinates in longitude/latitude to pixels
      *
      * @function Highcharts.MapView#lonLatToPixels
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject|undefined}
@@ -515,7 +515,7 @@ class MapView {
      *
      * @function Highcharts.MapView#lonLatToProjectedUnits
      *
-     * @since next
+     * @since 10.0.0
      * @sample maps/series/latlon-to-point/ Find a point from lon/lat
      *
      * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
@@ -589,7 +589,7 @@ class MapView {
      *
      * @function Highcharts.MapView#projectedUnitsToLonLat
      *
-     * @since next
+     * @since 10.0.0
      *
      * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
      *
@@ -795,7 +795,7 @@ class MapView {
      * Convert pixel position to longitude and latitude.
      *
      * @function Highcharts.MapView#pixelsToLonLat
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.PositionObject} pos
      *         The position in pixels
      * @return {Highcharts.MapLonLatObject|undefined}

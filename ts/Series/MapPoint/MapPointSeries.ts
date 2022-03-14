@@ -378,9 +378,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number}
@@ -389,9 +389,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number|null}

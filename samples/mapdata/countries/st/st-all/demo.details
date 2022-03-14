@@ -1,5 +1,5 @@
 ---
- name: Sao Tome and Principe - Highmaps
- description: Highmaps demo
+ name: Sao Tome and Principe - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

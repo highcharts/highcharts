@@ -1,5 +1,5 @@
 ---
- name: Mali - Highmaps
- description: Highmaps demo
+ name: Mali - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -356,8 +356,14 @@
 	{
 		"code3": "ETH",
 		"name": "Ethiopia",
-		"value": 102.4,
+		"value": 115,
 		"code": "ET"
+	},
+	{
+		"code3": "ERI",
+		"name": "Eritrea",
+		"value": 35,
+		"code": "ER"
 	},
 	{
 		"code3": "FIN",
@@ -998,7 +1004,7 @@
 	{
 		"code3": "SDN",
 		"name": "Sudan",
-		"value": 16.66,
+		"value": 25,
 		"code": "SD"
 	},
 	{
@@ -1048,6 +1054,12 @@
 		"name": "Serbia",
 		"value": 80.7,
 		"code": "RS"
+	},
+	{
+		"code3": "SSD",
+		"name": "South Sudan",
+		"value": 18,
+		"code": "SS"
 	},
 	{
 		"code3": "STP",
