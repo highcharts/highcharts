@@ -9,12 +9,23 @@
  * */
 
 import type TreegraphSeries from './TreegraphSeries.js';
-import TreemapNode from '../Treemap/TreemapNode.js';
+import type TreemapNodeNS from '../Treemap/TreemapNode.js';
+
 import TreegraphPoint from './TreegraphPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        treemap: {
+            prototype: {
+                NodeClass: TreemapNode
+            }
+        }
+    }
+} = SeriesRegistry;
 
 namespace TreegraphNode {
-    export interface NodeValuesObject extends TreemapNode.NodeValuesObject {}
-    export class Node extends TreemapNode.Node {
+    export interface NodeValuesObject extends TreemapNodeNS.NodeValuesObject {}
+    export class Node extends TreemapNode {
         public mod: number = 0;
         public thread?: Node;
         public ancestor: Node = void 0 as any;
