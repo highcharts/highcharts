@@ -68,17 +68,10 @@
 
     // Build the chart
     const chart = Highcharts.mapChart('container', {
-        title: {
-            text: 'USA 2016 Presidential Election Results'
-        },
 
-        mapNavigation: {
-            enabled: true
+        chart: {
+            animation: false // Disable animation, especially for zooming
         },
-
-        // chart: {
-        //     animation: false // Disable animation, especially for zooming
-        // },
 
         colorAxis: {
             dataClasses: [{
@@ -102,6 +95,14 @@
                 name: 'Green',
                 color: grnColor
             }]
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+
+        title: {
+            text: 'USA 2016 Presidential Election Results'
         },
 
         // Default options for the pies
