@@ -11,7 +11,7 @@
         ['Beijing', 'China', '2008', 39.92, 116.38, 9, 3, 5, 1],
         ['London', 'Great Britain', '2012', 51.5, -0.12, 4, 2, 1, 1],
         ['Rio de Janeiro', 'Brasil', '2016', -22.91, -43.20, 4, 0, 0, 4],
-        ['Tokio', 'Japan', '2020', 35.69, 139.69, 8, 4, 2, 2]
+        ['Tokyo', 'Japan', '2020', 35.69, 139.69, 8, 4, 2, 2]
     ];
 
     Highcharts.mapChart('container', {
