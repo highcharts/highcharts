@@ -1,59 +1,70 @@
-const data = [
-    ['Atlanta', 'USA', '1996', 33.75, -84.38, 7, 2, 2, 3],
-    ['Sydney', 'Australia', '2020', -33.87, 151.20, 10, 4, 3, 3],
-    ['Athens', 'Greece', '2004', 38, 23.72, 6, 5, 0, 1],
-    ['Beijing', 'China', '2008', 39.92, 116.38, 9, 3, 5, 1],
-    ['London', 'Great Britain', '2012', 51.5, -0.12, 4, 2, 1, 1],
-    ['Rio de Janeiro', 'Brasil', '2016', -22.91, -43.20, 4, 0, 0, 4],
-    ['Tokio', 'Japan', '2020', 35.69, 139.69, 8, 4, 2, 2]
-];
+(async () => {
 
-Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-    legend: {
-        enabled: false
-    },
+    const data = [
+        ['Atlanta', 'USA', '1996', 33.75, -84.38, 7, 2, 2, 3],
+        ['Sydney', 'Australia', '2020', -33.87, 151.20, 10, 4, 3, 3],
+        ['Athens', 'Greece', '2004', 38, 23.72, 6, 5, 0, 1],
+        ['Beijing', 'China', '2008', 39.92, 116.38, 9, 3, 5, 1],
+        ['London', 'Great Britain', '2012', 51.5, -0.12, 4, 2, 1, 1],
+        ['Rio de Janeiro', 'Brasil', '2016', -22.91, -43.20, 4, 0, 0, 4],
+        ['Tokio', 'Japan', '2020', 35.69, 139.69, 8, 4, 2, 2]
+    ];
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom',
-            alignTo: 'spacingBox'
-        }
-    },
+    Highcharts.mapChart('container', {
 
-    title: {
-        text: 'Norwegian medals on the Summer Olympics (1996 - 2020)'
-    },
+        chart: {
+            map: topology
+        },
 
-    subtitle: {
-        text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>'
-    },
+        legend: {
+            enabled: false
+        },
 
-    tooltip: {
-        headerFormat: '',
-        pointFormatter() {
-            return this.city + ' (' + this.country + ', ' + this.year + ')<br/>' +
-                'Total medals: ' + this.z + '<br/>' +
-                '<span style="color: #ffd700;">\u25CF</span> ' + this.gold + '<br/>' +
-                '<span style="color: #c0c0c0;">\u25CF</span> ' + this.silver + '<br/>' +
-                '<span style="color: #cd7f32;">\u25CF</span> ' + this.bronze + '<br/>';
-        }
-    },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom',
+                alignTo: 'spacingBox'
+            }
+        },
 
-    series: [{
-        name: 'Basemap',
-        mapData: Highcharts.maps['custom/world'],
-        nullColor: '#fad3cf'
-    }, {
-        type: 'mapbubble',
-        color: '#fe5f55',
-        lineWidth: 1,
-        lineColor: '#ffd700',
-        keys: ['city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
-        data: data,
-        minSize: '5%',
-        maxSize: '12.5%'
-    }]
+        title: {
+            text: 'Norwegian medals on the Summer Olympics (1996 - 2020)'
+        },
 
-});
+        subtitle: {
+            text: 'Source: <a href="https://en.wikipedia.org/wiki/Norway_at_the_Olympics">Wikipedia</a>'
+        },
+
+        tooltip: {
+            headerFormat: '',
+            pointFormatter() {
+                return this.city + ' (' + this.country + ', ' + this.year + ')<br/>' +
+                    'Total medals: ' + this.z + '<br/>' +
+                    '<span style="color: #ffd700;">\u25CF</span> ' + this.gold + '<br/>' +
+                    '<span style="color: #c0c0c0;">\u25CF</span> ' + this.silver + '<br/>' +
+                    '<span style="color: #cd7f32;">\u25CF</span> ' + this.bronze + '<br/>';
+            }
+        },
+
+        series: [{
+            name: 'Basemap',
+            nullColor: '#fad3cf'
+        }, {
+            type: 'mapbubble',
+            color: '#fe5f55',
+            lineWidth: 1,
+            lineColor: '#ffd700',
+            keys: ['city', 'country', 'year', 'lat', 'lon', 'z', 'gold', 'silver', 'bronze'],
+            data: data,
+            minSize: '5%',
+            maxSize: '12.5%'
+        }]
+
+    });
+
+})();
