@@ -382,16 +382,26 @@ class TreegraphSeries extends TreemapSeries {
     getLinks(): TreegraphLink[] {
         const series = this;
         const links = [] as TreegraphLink[];
-        this.data.forEach((point): void => {
+        this.data.forEach((point, index): void => {
             if (point.node.parent) {
-                const link = new series.LinkClass().init(
-                    series,
-                    point.options,
-                    void 0,
-                    point
-                );
-                links.push(link);
-                point.linkToParent = link;
+                if (!point.linkToParent) {
+                    const link = new series.LinkClass().init(
+                        series,
+                        point.options,
+                        void 0,
+                        point
+                    );
+                    point.linkToParent = link;
+                } else {
+                    point.linkToParent.update(point.options, false);
+                }
+                point.linkToParent.index = links.push(point.linkToParent) - 1;
+            } else {
+                if (point.linkToParent) {
+                    series.links.splice(point.linkToParent.index);
+                    point.linkToParent.destroy();
+                    delete point.linkToParent;
+                }
             }
         });
         return links;
@@ -426,9 +436,6 @@ class TreegraphSeries extends TreemapSeries {
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 
-        series.links.forEach((link): void => {
-            link.destroy();
-        });
         series.links = series.getLinks();
         rootNode = series.nodeMap[rootId];
 
@@ -446,7 +453,7 @@ class TreegraphSeries extends TreemapSeries {
                 levelIsConstant: series.options.levelIsConstant,
                 colorByPoint: options.colorByPoint
             }
-        }) as any;
+        });
 
         series.setTreeValues(tree);
 
@@ -457,15 +464,88 @@ class TreegraphSeries extends TreemapSeries {
             this.translateNode(point);
         });
 
-        this.links.forEach((link): void => {
-            this.translateLink(link);
+        this.points.forEach((point): void => {
+            if (point.linkToParent) {
+                this.translateLink(point.linkToParent);
+            }
         });
     }
 
     public translateLink(link: TreegraphLink): void {
-        OrganizationSeries.prototype.translateLink.apply(this, arguments);
-        if (link.dlBox) {
-            const inverted = this.chart.inverted;
+        let fromNode = link.fromNode,
+            toNode = link.toNode,
+            linkWidth = this.options.link.lineWidth,
+            crisp = (Math.round(linkWidth) % 2) / 2,
+            factor = pick(this.options.link.offset, 0.5),
+            type = pick(
+                link.options.link && link.options.link.type,
+                this.options.link.type
+            );
+        if (fromNode.shapeArgs && toNode.shapeArgs) {
+
+            let x1 = Math.floor(
+                    (fromNode.shapeArgs.x || 0) +
+                    (fromNode.shapeArgs.width || 0)
+                ) + crisp,
+                y1 = Math.floor(
+                    (fromNode.shapeArgs.y || 0) +
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp,
+                y2 = Math.floor(
+                    (toNode.shapeArgs.y || 0) +
+                    (toNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                xMiddle,
+                inverted = this.chart.inverted;
+
+            if (inverted) {
+                x1 -= (fromNode.shapeArgs.width || 0);
+                x2 += (toNode.shapeArgs.width || 0);
+            }
+            xMiddle = Math.floor((x2 + x1) / 2) + crisp;
+
+            // Put the link on the side of the node when an offset is given. HR
+            // node in the main demo.
+
+            link.plotX = xMiddle;
+            link.plotY = (y1 + y2) / 2;
+            link.shapeType = 'path';
+            if (type === 'straight') {
+                link.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        ['L', x2, y2]
+                    ]
+                };
+            } else if (type === 'curved') {
+                const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
+                link.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
+                    ]
+                };
+            } else {
+                link.shapeArgs = {
+                    d: this.chart.renderer.curvedPath(
+                        [
+                            ['M', x1, y1],
+                            ['L', xMiddle, y1],
+                            ['L', xMiddle, y2],
+                            ['L', x2, y2]
+                        ],
+                        this.options.link.radius
+                    )
+                };
+            }
+
+            link.dlBox = {
+                x: (x1 + x2) / 2,
+                y: (y1 + y2) / 2,
+                height: linkWidth,
+                width: 0
+            };
             link.tooltipPos = inverted ? [
                 (this.chart.plotSizeY as any) - link.dlBox.y,
                 (this.chart.plotSizeX as any) - link.dlBox.x
@@ -473,9 +553,9 @@ class TreegraphSeries extends TreemapSeries {
                 link.dlBox.x,
                 link.dlBox.y
             ];
+
         }
     }
-
     /**
      * Treegraph has two separate collecions of nodes and lines,
      * render dataLabels for both sets.

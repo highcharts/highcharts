@@ -6,7 +6,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: '#222',
-                linkFormat: '{point.id} \u2192 {point.parent}'
+                linkFormat: '{point.parent} \u2192 {point.toNode.id}'
             },
             type: 'treegraph',
             keys: ['id', 'parent'],
