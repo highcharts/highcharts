@@ -34,11 +34,11 @@ import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelO
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import OrganizationPoint from './OrganizationPoint.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PathUtilities from '../PathUtilities.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
@@ -652,7 +652,7 @@ class OrganizationSeries extends SankeySeries {
             };
         } else {
             point.shapeArgs = {
-                d: this.chart.renderer.curvedPath(
+                d: PathUtilities.curvedPath(
                     [
                         ['M', x1, y1],
                         ['L', xMiddle, y1],
