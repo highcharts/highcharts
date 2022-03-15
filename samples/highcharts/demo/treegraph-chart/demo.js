@@ -34,6 +34,7 @@ Highcharts.chart('container', {
             dataLabels: {
                 color: dataLabelColor,
                 format: '{point.id} \n {point.description}',
+                linkFormat: '',
                 style: {
                     width: 70,
                     textOverflow: 'clip'
