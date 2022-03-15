@@ -1,5 +1,5 @@
 ---
- name: North Atlantic Treaty Organization - Highmaps
- description: Highmaps demo
+ name: North Atlantic Treaty Organization - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

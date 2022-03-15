@@ -105,7 +105,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample {highcharts} highcharts/chart/alignthresholds/ Set to true
      *
-     * @since next
+     * @since 10.0.0
      * @product   highcharts highstock gantt
      * @apioption chart.alignThresholds
      */

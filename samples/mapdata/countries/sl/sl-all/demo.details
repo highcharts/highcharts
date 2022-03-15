@@ -1,5 +1,5 @@
 ---
- name: Sierra Leone - Highmaps
- description: Highmaps demo
+ name: Sierra Leone - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

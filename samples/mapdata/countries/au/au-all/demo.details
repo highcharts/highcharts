@@ -1,5 +1,5 @@
 ---
- name: Australia - Highmaps
- description: Highmaps demo
+ name: Australia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

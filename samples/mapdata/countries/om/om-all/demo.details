@@ -1,5 +1,5 @@
 ---
- name: Oman - Highmaps
- description: Highmaps demo
+ name: Oman - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

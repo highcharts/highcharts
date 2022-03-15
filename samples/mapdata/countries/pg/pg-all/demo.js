@@ -1,66 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['pg-4773', 0],
-    ['pg-es', 1],
-    ['pg-md', 2],
-    ['pg-ns', 3],
-    ['pg-we', 4],
-    ['pg-en', 5],
-    ['pg-mn', 6],
-    ['pg-mb', 7],
-    ['pg-mr', 8],
-    ['pg-ni', 9],
-    ['pg-wn', 10],
-    ['pg-eh', 11],
-    ['pg-gu', 12],
-    ['pg-eg', 13],
-    ['pg-ch', 14],
-    ['pg-1041', 15],
-    ['pg-ce', 16],
-    ['pg-no', 17],
-    ['pg-sa', 18],
-    ['pg-sh', 19],
-    ['pg-wh', 20]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/pg/pg-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/pg/pg-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['pg-4773', 10], ['pg-es', 11], ['pg-md', 12], ['pg-ns', 13],
+        ['pg-we', 14], ['pg-en', 15], ['pg-mn', 16], ['pg-mb', 17],
+        ['pg-mr', 18], ['pg-ni', 19], ['pg-wn', 20], ['pg-eh', 21],
+        ['pg-gu', 22], ['pg-eg', 23], ['pg-ch', 24], ['pg-1041', 25],
+        ['pg-ce', 26], ['pg-no', 27], ['pg-sa', 28], ['pg-sh', 29],
+        ['pg-wh', 30]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pg/pg-all.js">Papua New Guinea</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pg/pg-all.topo.json">Papua New Guinea</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

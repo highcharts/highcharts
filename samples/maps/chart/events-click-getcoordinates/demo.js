@@ -1,15 +1,6 @@
 let chart;
 
-function getScript(url, cb) {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = cb;
-    document.head.appendChild(script);
-}
-
-function showMap(mapKey) {
-    const supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
-
+function showMap(topology) {
     // Initialize the chart
     chart = Highcharts.mapChart('container', {
         chart: {
@@ -21,21 +12,7 @@ function showMap(mapKey) {
                             .value
                     );
 
-                    let p = { lon: e.lon, lat: e.lat };
-
-                    // @todo Legacy, remove after launching v10
-                    if (p.lon === undefined || p.lat === undefined) {
-                        const pos = this.mapView.pixelsToProjectedUnits({
-                            x: Math.round(e.chartX - this.plotLeft),
-                            y: Math.round(e.chartY - this.plotTop)
-                        });
-
-                        p = supportsLatLon ?
-                            this.fromPointToLatLon(pos) :
-                            pos;
-                    }
-
-                    series.addPoint(p);
+                    series.addPoint({ lon: e.lon, lat: e.lat });
                 }
             },
             animation: false
@@ -45,8 +22,7 @@ function showMap(mapKey) {
             text: 'Draw your own points or lines'
         },
 
-        subtitle: supportsLatLon ? {} : {
-            text: 'This map does not support latitude/longitude - x/y coordinates will be used',
+        subtitle: {
             style: {
                 color: 'red'
             }
@@ -64,9 +40,7 @@ function showMap(mapKey) {
         },
 
         tooltip: {
-            pointFormat: supportsLatLon ?
-                'Lat: {point.lat:.2f}, Lon: {point.lon:.2f}' :
-                'x: {point.x:.0f}, y: {point.y:.0f}'
+            pointFormat: 'Lon: {point.lon:.2f}, Lat: {point.lat:.2f}'
         },
 
         plotOptions: {
@@ -76,13 +50,10 @@ function showMap(mapKey) {
                     events: {
                         // Update lat/lon properties after dragging point
                         drop: function () {
-                            var newLatLon;
-                            if (supportsLatLon) {
-                                newLatLon = this.series.chart
-                                    .fromPointToLatLon(this);
-                                this.lat = newLatLon.lat;
-                                this.lon = newLatLon.lon;
-                            }
+                            const newLatLon = this.series.chart
+                                .fromPointToLatLon(this);
+                            this.lat = newLatLon.lat;
+                            this.lon = newLatLon.lon;
                         }
                     }
                 }
@@ -90,7 +61,7 @@ function showMap(mapKey) {
         },
 
         series: [{
-            mapData: Highcharts.maps[mapKey]
+            mapData: topology
         }, {
             type: 'mappoint',
             id: 'points',
@@ -131,8 +102,12 @@ function showMap(mapKey) {
     });
 }
 
-(function () {
-    showMap('custom/world');
+(async () => {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
+
+    showMap(topology);
 
     const container = document.getElementById('container');
 
@@ -200,11 +175,11 @@ function showMap(mapKey) {
         }
     }
 
-    select.addEventListener('change', () => {
+    select.addEventListener('change', async () => {
         const mapKey = select.value.replace(/\.js$/, '');
-        getScript(
-            `https://code.highcharts.com/mapdata/${mapKey}.js`,
-            () => showMap(mapKey)
-        );
+        const topology = await fetch(
+            `https://code.highcharts.com/mapdata/${mapKey}.topo.json`
+        ).then(response => response.json());
+        showMap(topology);
     });
-}());
+})();

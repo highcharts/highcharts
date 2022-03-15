@@ -1,5 +1,5 @@
 ---
- name: Cook Islands - Highmaps
- description: Highmaps demo
+ name: Cook Islands - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,109 +1,69 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['vn-3655', 0],
-    ['vn-qn', 1],
-    ['vn-kh', 2],
-    ['vn-tg', 3],
-    ['vn-bv', 4],
-    ['vn-bu', 5],
-    ['vn-hc', 6],
-    ['vn-br', 7],
-    ['vn-st', 8],
-    ['vn-pt', 9],
-    ['vn-yb', 10],
-    ['vn-hd', 11],
-    ['vn-bn', 12],
-    ['vn-317', 13],
-    ['vn-nb', 14],
-    ['vn-hm', 15],
-    ['vn-ho', 16],
-    ['vn-vc', 17],
-    ['vn-318', 18],
-    ['vn-bg', 19],
-    ['vn-tb', 20],
-    ['vn-ld', 21],
-    ['vn-bp', 22],
-    ['vn-py', 23],
-    ['vn-bd', 24],
-    ['vn-724', 25],
-    ['vn-qg', 26],
-    ['vn-331', 27],
-    ['vn-dt', 28],
-    ['vn-la', 29],
-    ['vn-3623', 30],
-    ['vn-337', 31],
-    ['vn-bl', 32],
-    ['vn-vl', 33],
-    ['vn-tn', 34],
-    ['vn-ty', 35],
-    ['vn-li', 36],
-    ['vn-311', 37],
-    ['vn-hg', 38],
-    ['vn-nd', 39],
-    ['vn-328', 40],
-    ['vn-na', 41],
-    ['vn-qb', 42],
-    ['vn-723', 43],
-    ['vn-nt', 44],
-    ['vn-6365', 45],
-    ['vn-299', 46],
-    ['vn-300', 47],
-    ['vn-qt', 48],
-    ['vn-tt', 49],
-    ['vn-da', 50],
-    ['vn-ag', 51],
-    ['vn-cm', 52],
-    ['vn-tv', 53],
-    ['vn-cb', 54],
-    ['vn-kg', 55],
-    ['vn-lo', 56],
-    ['vn-db', 57],
-    ['vn-ls', 58],
-    ['vn-th', 59],
-    ['vn-307', 60],
-    ['vn-tq', 61],
-    ['vn-bi', 62],
-    ['vn-333', 63]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/vn/vn-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/vn/vn-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['vn-3655', 10], ['vn-qn', 11], ['vn-kh', 12], ['vn-tg', 13],
+        ['vn-bv', 14], ['vn-bu', 15], ['vn-hc', 16], ['vn-br', 17],
+        ['vn-st', 18], ['vn-pt', 19], ['vn-yb', 20], ['vn-hd', 21],
+        ['vn-bn', 22], ['vn-317', 23], ['vn-nb', 24], ['vn-hm', 25],
+        ['vn-ho', 26], ['vn-vc', 27], ['vn-318', 28], ['vn-bg', 29],
+        ['vn-tb', 30], ['vn-ld', 31], ['vn-bp', 32], ['vn-py', 33],
+        ['vn-bd', 34], ['vn-724', 35], ['vn-qg', 36], ['vn-331', 37],
+        ['vn-dt', 38], ['vn-la', 39], ['vn-3623', 40], ['vn-337', 41],
+        ['vn-bl', 42], ['vn-vl', 43], ['vn-tn', 44], ['vn-ty', 45],
+        ['vn-li', 46], ['vn-311', 47], ['vn-hg', 48], ['vn-nd', 49],
+        ['vn-328', 50], ['vn-na', 51], ['vn-qb', 52], ['vn-723', 53],
+        ['vn-nt', 54], ['vn-6365', 55], ['vn-299', 56], ['vn-300', 57],
+        ['vn-qt', 58], ['vn-tt', 59], ['vn-da', 60], ['vn-ag', 61],
+        ['vn-cm', 62], ['vn-tv', 63], ['vn-cb', 64], ['vn-kg', 65],
+        ['vn-lo', 66], ['vn-db', 67], ['vn-ls', 68], ['vn-th', 69],
+        ['vn-307', 70], ['vn-tq', 71], ['vn-bi', 72], ['vn-333', 73]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/vn/vn-all.js">Vietnam</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/vn/vn-all.topo.json">Vietnam</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

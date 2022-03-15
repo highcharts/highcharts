@@ -1,69 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ar-tf', 0],
-    ['ar-ba', 1],
-    ['ar-sj', 2],
-    ['ar-mz', 3],
-    ['ar-nq', 4],
-    ['ar-lp', 5],
-    ['ar-rn', 6],
-    ['ar-sl', 7],
-    ['ar-cb', 8],
-    ['ar-ct', 9],
-    ['ar-lr', 10],
-    ['ar-sa', 11],
-    ['ar-se', 12],
-    ['ar-tm', 13],
-    ['ar-cc', 14],
-    ['ar-fm', 15],
-    ['ar-cn', 16],
-    ['ar-er', 17],
-    ['ar-ch', 18],
-    ['ar-sf', 19],
-    ['ar-mn', 20],
-    ['ar-df', 21],
-    ['ar-sc', 22],
-    ['ar-jy', 23]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ar/ar-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ar/ar-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ar-tf', 10], ['ar-ba', 11], ['ar-sj', 12], ['ar-mz', 13],
+        ['ar-nq', 14], ['ar-lp', 15], ['ar-rn', 16], ['ar-sl', 17],
+        ['ar-cb', 18], ['ar-ct', 19], ['ar-lr', 20], ['ar-sa', 21],
+        ['ar-se', 22], ['ar-tm', 23], ['ar-cc', 24], ['ar-fm', 25],
+        ['ar-cn', 26], ['ar-er', 27], ['ar-ch', 28], ['ar-sf', 29],
+        ['ar-mn', 30], ['ar-df', 31], ['ar-sc', 32], ['ar-jy', 33]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ar/ar-all.js">Argentina</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ar/ar-all.topo.json">Argentina</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

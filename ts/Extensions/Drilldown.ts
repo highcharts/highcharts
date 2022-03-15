@@ -436,7 +436,7 @@ defaultOptions.drilldown = {
      * Options for the breadcrumbs, the navigation at the top leading the way
      * up through the drilldown levels.
      *
-     * @since     next
+     * @since 10.0.0
      * @product   highcharts
      * @extends   navigation.breadcrumbs
      * @optionparent drilldown.breadcrumbs
