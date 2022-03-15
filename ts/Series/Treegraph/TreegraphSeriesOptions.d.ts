@@ -48,7 +48,7 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
 }
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
     dataLabels?: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
-    link?: LinkOptions;
+    link: LinkOptions;
     layout?: TreegraphLayoutTypes;
     reversed?: boolean;
     marker?: PointMarkerOptions;
