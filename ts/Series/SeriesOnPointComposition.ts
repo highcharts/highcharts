@@ -43,6 +43,7 @@ import Chart from '../Core/Chart/Chart';
 const {
     addEvent,
     defined,
+    find,
     isNumber
 } = U;
 
@@ -185,6 +186,8 @@ namespace SeriesOnPointComposition {
 
             addEvent(SeriesClass, 'afterInit', afterInit);
             addEvent(SeriesClass, 'update', update);
+            addEvent(SeriesClass, 'hide', Additions.prototype.showOrHide);
+            addEvent(SeriesClass, 'show', Additions.prototype.showOrHide);
         }
 
         if (composedClasses.indexOf(ChartClass) === -1) {
@@ -403,7 +406,6 @@ namespace SeriesOnPointComposition {
 
         /**
          * @ignore
-         * @function Highcharts.Chart#getZData
          */
         public getZData(this: Chart): void {
             const zData: Array<number|null> = [];
@@ -419,8 +421,33 @@ namespace SeriesOnPointComposition {
                 series.zData = zData;
             });
         }
-    }
 
+        /**
+         * @ignore
+         */
+        public showOrHide(this: Series): void {
+            const allSeries = this.chart.series;
+
+            // When toggling a series visibility, loop through all points
+            this.points.forEach((point): void => {
+                // Find all series that are on toggled points
+                const series = find(allSeries, (series): boolean => {
+                    const id = ((series.onPoint || {}).options || {}).id;
+
+                    if (!id) {
+                        return false;
+                    }
+
+                    return id === point.id;
+                });
+
+                // And also toggle series that are on toggled points.
+                // Redraw is not needed because it's fired later
+                // after showOrhide event
+                series && series.setVisible(void 0, false);
+            });
+        }
+    }
 }
 
 /* *
