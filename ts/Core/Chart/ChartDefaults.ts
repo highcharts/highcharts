@@ -528,33 +528,16 @@ const ChartDefaults: ChartOptions = {
     colorCount: 10,
 
     /**
-     * By default, (because of memory and performance reasons) the chart
-     * does not copy the data but keeps it as a reference.
-     * In some cases, this might result in mutating the original data source.
-     * In order to prevent that set that property to false.
-     * Please note that changing that might decrease performance,
-     * especially with bigger sets of data.
-     * If your data contains any callback function please use some alternative
-     * method of copying.
+     * By default, (because of memory and performance reasons) the chart does
+     * not copy the data but keeps it as a reference. In some cases, this might
+     * result in mutating the original data source. In order to prevent that,
+     * set that property to false. Please note that changing that might decrease
+     * performance, especially with bigger sets of data.
      *
      * @type       {boolean}
-     * @see        [chart.cloningMethod](#chart.cloningMethod)
      * @since      next
      */
     allowMutatingData: true,
-
-    /**
-     * Allows defining your own method of copying the data.
-     * Helpful especially if the declared data contains some functions
-     * which the default method of copying `JSON.parse(JSON.stringify(...))`
-     * won't handle. In a case like this, some recursive method of copying
-     * or another external library to handle this should be used.
-     *
-     * @type       {Highcharts.ChartCloningnCallbackFunction}
-     * @since      next
-     * @return     {Array<(PointOptions|PointShortOptions)>}
-     * @apioption  chart.cloningMethod
-     */
 
     /**
      * Alias of `type`.
