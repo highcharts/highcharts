@@ -41,7 +41,6 @@ import U from '../../Core/Utilities.js';
 const { merge, pick, addEvent, isArray } = U;
 
 import './TreegraphLayout.js';
-import OrganizationSeries from '../Organization/OrganizationSeries.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -328,7 +327,7 @@ class TreegraphSeries extends TreemapSeries {
                 ),
                 symbol = markerOptions.symbol,
                 nodeSizeY = symbol === 'circle' ?
-                    (pick(markerOptions.radius) as number) * 2 :
+                    (pick(markerOptions.radius), 0) * 2 :
                     (pick(
                         markerOptions.height as number,
                         (markerOptions.radius as number) * 2)
@@ -336,7 +335,7 @@ class TreegraphSeries extends TreemapSeries {
                 nodeSizeX = symbol === 'circle' ?
                     (markerOptions.radius as number) * 2 :
                     (pick(
-                        markerOptions.width as number,
+                        markerOptions.width,
                         (markerOptions.radius as any) * 2)
                     );
             node.nodeSizeX = nodeSizeX;
@@ -346,22 +345,22 @@ class TreegraphSeries extends TreemapSeries {
             if (node.xPosition <= minX) {
                 minX = node.xPosition;
                 lineWidth = markerOptions.lineWidth || 0;
-                minXSize = Math.max(nodeSizeX as number + lineWidth, minXSize);
+                minXSize = Math.max(nodeSizeX + lineWidth, minXSize);
             }
             if (node.xPosition >= maxX) {
                 maxX = node.xPosition;
                 lineWidth = markerOptions.lineWidth || 0;
-                maxXSize = Math.max(nodeSizeX as number + lineWidth, maxXSize);
+                maxXSize = Math.max(nodeSizeX + lineWidth, maxXSize);
             }
             if (node.yPosition <= minY) {
                 minY = node.yPosition;
                 lineWidth = markerOptions.lineWidth || 0;
-                minYSize = Math.max(nodeSizeY as number + lineWidth, minYSize);
+                minYSize = Math.max(nodeSizeY + lineWidth, minYSize);
             }
             if (node.yPosition >= maxY) {
                 maxY = node.yPosition;
                 lineWidth = markerOptions.lineWidth || 0;
-                maxYSize = Math.max(nodeSizeY as number + lineWidth, maxYSize);
+                maxYSize = Math.max(nodeSizeY + lineWidth, maxYSize);
             }
         });
 
@@ -547,8 +546,8 @@ class TreegraphSeries extends TreemapSeries {
                 width: 0
             };
             link.tooltipPos = inverted ? [
-                (this.chart.plotSizeY as any) - link.dlBox.y,
-                (this.chart.plotSizeX as any) - link.dlBox.x
+                (this.chart.plotSizeY || 0) - link.dlBox.y,
+                (this.chart.plotSizeX || 0) - link.dlBox.x
             ] : [
                 link.dlBox.x,
                 link.dlBox.y
