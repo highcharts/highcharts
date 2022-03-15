@@ -328,17 +328,17 @@ class TreegraphSeries extends TreemapSeries {
                 ),
                 symbol = markerOptions.symbol,
                 nodeSizeY = symbol === 'circle' ?
-                    (pick(markerOptions.radius), 0) * 2 :
-                    (pick(
-                        markerOptions.height as number,
-                        (markerOptions.radius as number) * 2)
-                    ),
+                    pick(markerOptions.radius, 0) * 2 :
+                    pick(
+                        markerOptions.height,
+                        markerOptions.radius,
+                        0) * 2,
                 nodeSizeX = symbol === 'circle' ?
-                    (markerOptions.radius as number) * 2 :
-                    (pick(
+                    pick(markerOptions.radius, 0) * 2 :
+                    pick(
                         markerOptions.width,
-                        (markerOptions.radius as any) * 2)
-                    );
+                        markerOptions.radius,
+                        0) * 2;
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
