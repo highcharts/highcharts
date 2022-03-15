@@ -107,7 +107,6 @@
 
             chart = Highcharts.mapChart('container', {
                 chart: {
-                    map: topology,
                     height: '65%'
                 },
 
@@ -151,6 +150,9 @@
                 plotOptions: {
                     series: {
                         animationLimit: 500
+                    },
+                    mapline: {
+                        enableMouseTracking: false
                     }
                 },
 
@@ -162,6 +164,7 @@
                     color: '#e8e8e8'
                 }, {
                     data,
+                    mapData: topology,
                     joinBy: null,
                     name: 'Random data',
                     states: {
@@ -282,16 +285,24 @@
             });
         }
 
-
+        // Toggle buttons
         document.querySelectorAll('#projection-buttons button').forEach(btn =>
             btn.classList.remove('active')
         );
-
         const button = document.querySelector(
             `#projection-buttons #${projectionKey}`
         );
-
         button.classList.add('active');
+
+        // Toggle descriptions
+        document.querySelectorAll('#descriptions div').forEach(div => {
+            div.style.display = 'none';
+        });
+        const div = document.querySelector(
+            `#descriptions #description-${projectionKey}`
+        );
+        div.style.display = 'block';
+
 
         // Toggle projection-dependent panels
         const panels = (button.getAttribute('data-panels') || '').split(',');
@@ -337,18 +348,30 @@
                 const rotation = input.getAttribute('data-rotation')
                     .split(',')
                     .map(Number);
-                chart.mapView.update({
-                    projection: {
-                        rotation
-                    }
-                }, true, false);
-
                 rotation.push(0);
-                rotation.forEach((value, i) => {
-                    const name = ['lambda', 'phi', 'gamma'][i];
-                    document.getElementById(`rotation-${name}`).value = value;
-                    document.getElementById(`rotation-${name}-output`)
-                        .innerText = value;
+
+                const geodesic = Highcharts.Projection.greatCircle(
+                    chart.mapView.projection.options.rotation,
+                    rotation
+                );
+
+                geodesic.forEach((rotationStep, i) => {
+                    setTimeout(() => {
+                        rotationStep.push(0);
+                        chart.mapView.update({
+                            projection: {
+                                rotation: rotationStep
+                            }
+                        }, true, false);
+
+                        rotationStep.forEach((value, i) => {
+                            const name = ['lambda', 'phi', 'gamma'][i];
+                            document.getElementById(`rotation-${name}`)
+                                .value = Math.round(value);
+                            document.getElementById(`rotation-${name}-output`)
+                                .innerText = Math.round(value);
+                        });
+                    }, 25 * i);
                 });
             });
         });

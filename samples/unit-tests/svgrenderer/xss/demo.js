@@ -36,7 +36,7 @@ QUnit.module('XSS', function () {
 
             text = ren
                 .text(
-                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`,
+                    `javascript:/*--></title></style></textarea><\/script></xmp><svg/onload='+/"/+/onmouseover=1/+/[*/[]/+alert(1)//'>`, // eslint-disable-line
                     x,
                     y += lineHeight,
                     useHTML
@@ -215,13 +215,13 @@ QUnit.module('XSS', function () {
                     [
                         '<customTag></customTag>',
                         '<span id="elemWithCustomAttribute" customAttribute="testValue"></span>',
-                        '<a href="javascript:alert(\'XSS\')">a simple JS directive</a>',
+                        '<a href="javascript:alert(\'XSS\')">a simple JS directive</a>'
                     ].join(',<br>'),
                     x,
                     y += lineHeight,
                     useHTML
                 )
-                .add();
+                    .add();
 
                 assert.ok(
                     document.querySelector('customTag'),

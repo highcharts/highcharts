@@ -17,7 +17,11 @@
  * */
 
 import type MapChart from '../../Core/Chart/MapChart';
+import MapSeries from '../Map/MapSeries.js';
+import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import type { MapBounds } from '../../Maps/MapViewOptions';
+import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
@@ -118,6 +122,37 @@ class MapPointSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * Resolve `lon`, `lat` or `geometry` options and project the resulted
+     * coordinates.
+     *
+     * @private
+     */
+    public projectPoint(
+        pointOptions: MapPointPointOptions
+    ): ProjectedXY|undefined {
+        const mapView = this.chart.mapView;
+        if (mapView) {
+            const { geometry, lon, lat } = pointOptions;
+            let coordinates = (
+                geometry &&
+                geometry.type === 'Point' &&
+                geometry.coordinates
+            );
+
+            if (isNumber(lon) && isNumber(lat)) {
+                coordinates = [lon, lat];
+            }
+
+            if (coordinates) {
+                return mapView.lonLatToProjectedUnits({
+                    lon: coordinates[0],
+                    lat: coordinates[1]
+                });
+            }
+        }
+    }
+
     public translate(): void {
         const mapView = this.chart.mapView;
 
@@ -126,25 +161,22 @@ class MapPointSeries extends ScatterSeries {
         }
         this.generatePoints();
 
+        if (this.getProjectedBounds && this.isDirtyData) {
+            delete this.bounds;
+            this.getProjectedBounds(); // Added point needs bounds(#16598)
+        }
+
         // Create map based translation
         if (mapView) {
-            const { forward, hasCoordinates } = mapView.projection;
+            const { hasCoordinates } = mapView.projection;
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
 
-                const geometry = p.options.geometry,
-                    coordinates = (
-                        geometry &&
-                        geometry.type === 'Point' &&
-                        geometry.coordinates
-                    );
-                if (coordinates) {
-                    const xy = forward(coordinates);
-                    if (!xy.outside) {
-                        x = xy[0];
-                        y = xy[1];
-                    }
+                const xy = this.projectPoint(p.options);
+                if (xy) {
+                    x = xy.x;
+                    y = xy.y;
 
                 // Map bubbles getting geometry from shape
                 } else if (p.bounds) {
@@ -153,14 +185,16 @@ class MapPointSeries extends ScatterSeries {
                 }
 
                 if (isNumber(x) && isNumber(y)) {
+
+                    // Establish plotX and plotY
                     const plotCoords = mapView.projectedUnitsToPixels({ x, y });
                     p.plotX = plotCoords.x;
                     p.plotY = hasCoordinates ?
                         plotCoords.y :
                         this.chart.plotHeight - plotCoords.y;
+
                 } else {
-                    p.plotX = void 0;
-                    p.plotY = void 0;
+                    p.y = p.plotX = p.plotY = void 0;
                 }
 
                 p.isInside = this.isPointInside(p);
@@ -184,6 +218,7 @@ class MapPointSeries extends ScatterSeries {
  * */
 
 interface MapPointSeries {
+    bounds: MapBounds | undefined;
     pointClass: typeof MapPointPoint;
 }
 extend(MapPointSeries.prototype, {
@@ -351,9 +386,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number}
@@ -362,9 +397,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number|null}

@@ -1,5 +1,5 @@
 ---
- name: Honduras - Highmaps
- description: Highmaps demo
+ name: Honduras - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

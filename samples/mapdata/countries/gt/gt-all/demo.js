@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['gt-qc', 0],
-    ['gt-pe', 1],
-    ['gt-hu', 2],
-    ['gt-qz', 3],
-    ['gt-re', 4],
-    ['gt-sm', 5],
-    ['gt-bv', 6],
-    ['gt-av', 7],
-    ['gt-es', 8],
-    ['gt-cm', 9],
-    ['gt-gu', 10],
-    ['gt-su', 11],
-    ['gt-sa', 12],
-    ['gt-so', 13],
-    ['gt-to', 14],
-    ['gt-pr', 15],
-    ['gt-sr', 16],
-    ['gt-iz', 17],
-    ['gt-cq', 18],
-    ['gt-ja', 19],
-    ['gt-ju', 20],
-    ['gt-za', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/gt/gt-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/gt/gt-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['gt-qc', 10], ['gt-pe', 11], ['gt-hu', 12], ['gt-qz', 13],
+        ['gt-re', 14], ['gt-sm', 15], ['gt-bv', 16], ['gt-av', 17],
+        ['gt-es', 18], ['gt-cm', 19], ['gt-gu', 20], ['gt-su', 21],
+        ['gt-sa', 22], ['gt-so', 23], ['gt-to', 24], ['gt-pr', 25],
+        ['gt-sr', 26], ['gt-iz', 27], ['gt-cq', 28], ['gt-ja', 29],
+        ['gt-ju', 30], ['gt-za', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gt/gt-all.js">Guatemala</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gt/gt-all.topo.json">Guatemala</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

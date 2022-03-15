@@ -1,5 +1,5 @@
 ---
- name: Yemen - Highmaps
- description: Highmaps demo
+ name: Yemen - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

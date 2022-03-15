@@ -1,5 +1,5 @@
 ---
- name: United States of America, small - Highmaps
- description: Highmaps demo
+ name: United States of America, small - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

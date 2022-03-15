@@ -1,56 +1,56 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['lc-6591', 0],
-    ['lc-6585', 1],
-    ['lc-6586', 2],
-    ['lc-3607', 3],
-    ['lc-6590', 4],
-    ['lc-6588', 5],
-    ['lc-6587', 6],
-    ['lc-6592', 7],
-    ['lc-6589', 8],
-    ['lc-6593', 9],
-    ['lc-6594', 10]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/lc/lc-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/lc/lc-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['lc-6591', 10], ['lc-6585', 11], ['lc-6586', 12], ['lc-3607', 13],
+        ['lc-6590', 14], ['lc-6588', 15], ['lc-6587', 16], ['lc-6592', 17],
+        ['lc-6589', 18], ['lc-6593', 19], ['lc-6594', 20]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lc/lc-all.js">Saint Lucia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/lc/lc-all.topo.json">Saint Lucia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

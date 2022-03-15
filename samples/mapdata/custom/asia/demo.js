@@ -1,98 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ir', 0],
-    ['ph', 1],
-    ['sa', 2],
-    ['jp', 3],
-    ['th', 4],
-    ['om', 5],
-    ['ye', 6],
-    ['in', 7],
-    ['kr', 8],
-    ['bd', 9],
-    ['sp', 10],
-    ['cn', 11],
-    ['bh', 12],
-    ['mm', 13],
-    ['id', 14],
-    ['sg', 15],
-    ['ru', 16],
-    ['sh', 17],
-    ['my', 18],
-    ['az', 19],
-    ['am', 20],
-    ['vn', 21],
-    ['tj', 22],
-    ['uz', 23],
-    ['tl', 24],
-    ['kh', 25],
-    ['bt', 26],
-    ['ge', 27],
-    ['kz', 28],
-    ['il', 29],
-    ['sy', 30],
-    ['jo', 31],
-    ['tm', 32],
-    ['cnm', 33],
-    ['mn', 34],
-    ['kw', 35],
-    ['iq', 36],
-    ['ae', 37],
-    ['la', 38],
-    ['pk', 39],
-    ['jk', 40],
-    ['qa', 41],
-    ['tr', 42],
-    ['bn', 43],
-    ['af', 44],
-    ['kp', 45],
-    ['lb', 46],
-    ['nc', 47],
-    ['cy', 48],
-    ['tw', 49],
-    ['np', 50],
-    ['lk', 51],
-    ['kg', 52]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'custom/asia'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/asia.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ir', 10], ['ph', 11], ['sa', 12], ['jp', 13], ['th', 14], ['om', 15],
+        ['ye', 16], ['in', 17], ['kr', 18], ['bd', 19], ['sp', 20], ['cn', 21],
+        ['bh', 22], ['mm', 23], ['id', 24], ['sg', 25], ['ru', 26], ['sh', 27],
+        ['my', 28], ['az', 29], ['am', 30], ['vn', 31], ['tj', 32], ['uz', 33],
+        ['tl', 34], ['kh', 35], ['bt', 36], ['ge', 37], ['kz', 38], ['il', 39],
+        ['sy', 40], ['jo', 41], ['tm', 42], ['cnm', 43], ['mn', 44], ['kw', 45],
+        ['iq', 46], ['ae', 47], ['la', 48], ['pk', 49], ['jk', 50], ['qa', 51],
+        ['tr', 52], ['bn', 53], ['af', 54], ['kp', 55], ['lb', 56], ['nc', 57],
+        ['cy', 58], ['tw', 59], ['np', 60], ['lk', 61], ['kg', 62]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/asia.js">Asia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/asia.topo.json">Asia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

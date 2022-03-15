@@ -1,79 +1,62 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['id-3700', 0],
-    ['id-ac', 1],
-    ['id-ki', 2],
-    ['id-jt', 3],
-    ['id-be', 4],
-    ['id-bt', 5],
-    ['id-kb', 6],
-    ['id-bb', 7],
-    ['id-ba', 8],
-    ['id-ji', 9],
-    ['id-ks', 10],
-    ['id-nt', 11],
-    ['id-se', 12],
-    ['id-kr', 13],
-    ['id-ib', 14],
-    ['id-su', 15],
-    ['id-ri', 16],
-    ['id-sw', 17],
-    ['id-la', 18],
-    ['id-sb', 19],
-    ['id-ma', 20],
-    ['id-nb', 21],
-    ['id-sg', 22],
-    ['id-st', 23],
-    ['id-pa', 24],
-    ['id-jr', 25],
-    ['id-1024', 26],
-    ['id-jk', 27],
-    ['id-go', 28],
-    ['id-yo', 29],
-    ['id-kt', 30],
-    ['id-sl', 31],
-    ['id-sr', 32],
-    ['id-ja', 33]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'historical/countries/id-2011/id-all-2011'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/historical/countries/id-2011/id-all-2011.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['id-3700', 10], ['id-ac', 11], ['id-ki', 12], ['id-jt', 13],
+        ['id-be', 14], ['id-bt', 15], ['id-kb', 16], ['id-bb', 17],
+        ['id-ba', 18], ['id-ji', 19], ['id-ks', 20], ['id-nt', 21],
+        ['id-se', 22], ['id-kr', 23], ['id-ib', 24], ['id-su', 25],
+        ['id-ri', 26], ['id-sw', 27], ['id-la', 28], ['id-sb', 29],
+        ['id-ma', 30], ['id-nb', 31], ['id-sg', 32], ['id-st', 33],
+        ['id-pa', 34], ['id-jr', 35], ['id-1024', 36], ['id-jk', 37],
+        ['id-go', 38], ['id-yo', 39], ['id-kt', 40], ['id-sl', 41],
+        ['id-sr', 42], ['id-ja', 43]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/id-2011/id-all-2011.js">Indonesia (2011)</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/historical/countries/id-2011/id-all-2011.topo.json">Indonesia (2011)</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

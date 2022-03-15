@@ -1,5 +1,5 @@
 ---
- name: Grand Est - Highmaps
- description: Highmaps demo
+ name: Grand Est - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

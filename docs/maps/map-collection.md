@@ -15,26 +15,31 @@ Using the map collection
 
 ### Install from our CDN
 
-In the [map collection reference](https://code.highcharts.com/mapdata/), each map name is followed by a link to an example. View the source of this example to get started. In short, the GeoJSON version of the map is loaded in a script tag in the page. This GeoJSON object is then registered to the Highcharts.maps object, and applied to the mapData option in the chart setup.
+In the [map collection reference](https://code.highcharts.com/mapdata/), each map name is followed by links to demos and data. Click the TopoJSON link and copy the URL.
 
-1. Add the map as a JavaScript element:
+1. Load the map and parse the JSON
 
-```html
-<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
+```js
+const topology = await fetch(
+    'https://code.highcharts.com/mapdata/custom/world.topo.json'
+).then(response => response.json());
 ```
 
-<p>You can alternatively link to a specific version or subversion of the map at <code>https://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.js</code>.</p>
+<p>You can alternatively link to a specific version or subversion of the map at <code>https://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.topo.json</code>.</p>
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
-2. Load it in `series.mapData`:
+2. Apply it in [`chart.map`](https://api.highcharts.com/highmaps/chart.map) to make it the default map for all series:
 ```js
-mapData: Highcharts.maps['custom/world'],
+map: topology
 ```
-Alternatively, you can set the default map for all series with the [`chart.map`](https://api.highcharts.com/highmaps/chart.map) option:
+Alternatively, you can apply different maps for different series ([view demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/affectsmapview/)):
 ```js
-map: 'custom/world'
+series: [{
+    mapData: topology,
+    ...
 ```
+
 
 3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key` property of the map collection, allowing you to define your data like this:
 ```js
@@ -110,9 +115,9 @@ Using parts of a map
 If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/).
 
 Combine maps
-____________
+------------
 
-Another way to approach the same problem, is to combine two or more map sources into the same chart. This is supported since Highcharts v9.3, where client-side projection is available. To achive this, the unprojected TopoJSON maps must be used. See the [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/mapdata-multiple/).
+Another way to approach the same problem, is to combine two or more map sources into the same chart. This is supported since Highcharts v9.3, where client-side projection is available. To achieve this, the unprojected TopoJSON maps must be used. See the [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/mapdata-multiple/). See also the demo for the [series.affectsMapView](https://api.highcharts.com/highmaps/series.map.affectsMapView) feature, which lets you load one map as a [backdrop that doesn't affect the map view](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/affectsmapview/).
 
 Modify our maps
 ---------------
