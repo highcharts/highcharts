@@ -27,6 +27,7 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
+import PathUtilities from '../PathUtilities.js';
 const { prototype: { symbols } } = SVGRenderer;
 const { getLevelOptions } = TU;
 const {
@@ -527,7 +528,7 @@ class TreegraphSeries extends TreemapSeries {
                 };
             } else {
                 link.shapeArgs = {
-                    d: this.chart.renderer.curvedPath(
+                    d: PathUtilities.curvedPath(
                         [
                             ['M', x1, y1],
                             ['L', xMiddle, y1],
