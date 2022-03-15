@@ -444,7 +444,7 @@ namespace SeriesOnPointComposition {
                 // And also toggle series that are on toggled points.
                 // Redraw is not needed because it's fired later
                 // after showOrhide event
-                series && series.setVisible(void 0, false);
+                series && series.setVisible(!series.visible, false);
             });
         }
     }

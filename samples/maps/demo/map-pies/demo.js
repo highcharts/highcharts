@@ -131,7 +131,6 @@
             data: data,
             name: 'States',
             borderColor: '#FFF',
-            showInLegend: false,
             joinBy: ['name', 'id'],
             keys: ['id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
                 'sumVotes', 'value', 'pieOffset'],
@@ -165,7 +164,6 @@
             type: 'mapline',
             color: 'rgba(130, 130, 130, 0.5)',
             zIndex: 5,
-            showInLegend: false,
             enableMouseTracking: false
         }]
     });
@@ -211,7 +209,8 @@
             onPoint: {
                 id: state.id,
                 z: (function () {
-                    const zoomFactor = chart.mapView.zoom / chart.mapView.minZoom;
+                    const mapView = chart.mapView,
+                        zoomFactor = mapView.zoom / mapView.minZoom;
 
                     return Math.max(
                         chart.chartWidth / 45 * zoomFactor, // Min size
