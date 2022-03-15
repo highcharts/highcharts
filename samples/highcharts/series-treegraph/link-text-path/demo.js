@@ -9,7 +9,6 @@ Highcharts.chart('container', {
                 linkFormat: '{point.parent} \u2192 {point.toNode.id}'
             },
             type: 'treegraph',
-            keys: ['id', 'parent'],
             data: [
                 {
                     id: 'A'
