@@ -331,14 +331,14 @@ class TreegraphSeries extends TreemapSeries {
                     pick(markerOptions.radius, 0) * 2 :
                     pick(
                         markerOptions.height,
-                        markerOptions.radius,
-                        0) * 2,
+                        ((markerOptions.radius || 0) * 2)
+                    ),
                 nodeSizeX = symbol === 'circle' ?
                     pick(markerOptions.radius, 0) * 2 :
                     pick(
                         markerOptions.width,
-                        markerOptions.radius,
-                        0) * 2;
+                        ((markerOptions.radius || 0) * 2)
+                    );
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
@@ -728,6 +728,9 @@ interface TreegraphSeries {
 
 }
 
+namespace TreegraphSeries {
+
+}
 /* *
  *
  *  Registry
