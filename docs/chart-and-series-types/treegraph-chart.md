@@ -35,8 +35,6 @@ Algorithms decide on posiitoning of the points. Currently there is only 1 algori
 API options
 -----------
 
-For the full set of available options, [see the API](https://api.highcharts.com/highcharts/series.organization).
-
 ### Links
 
 In contrast to treemap series, the connections between the nodes are represented as links.  The links are generated from the options of the child. The shape of the link is the same as in the organization chart, and the same options apply.  To apply the general options to all links, you can define the link options like this:
@@ -74,7 +72,7 @@ To change the configuraiton of the specific link, you have to specify the link o
 
 ### Options
 
-For an overview over the options for the treemap, see the [API](https://api.highcharts.com/highcharts/plotOptions.treemap).
+For an overview over the options for the treegraph, see the [API](https://api.highcharts.com/highcharts/plotOptions.treegraph).
 
 
 
