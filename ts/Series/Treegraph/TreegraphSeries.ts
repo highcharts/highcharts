@@ -96,6 +96,7 @@ class TreegraphSeries extends TreemapSeries {
      *
      * @since        next
      * @product      highcharts
+     * @requires     modules/treemap.js
      * @requires     modules/treegraph.js
      * @optionparent plotOptions.treegraph
      */
@@ -776,7 +777,8 @@ export default TreegraphSeries;
  *            pointStart, relativeXValue, softThreshold, stack,
  *            stacking, step, xAxis, yAxis
  * @product   highcharts
- * @requires  modules/treegraph
+ * @requires  modules/treemap.js
+ * @requires  modules/treegraph.js
  * @apioption series.treegraph
  */
 
