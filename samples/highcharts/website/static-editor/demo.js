@@ -16367,9 +16367,7 @@ highed.highchartsErrors = {
         text: 'This happens when your browser does not support WebGL, and the canvas fallback module (boost-canvas.js) has not been included OR if the fallback module was included after the boost module.'
     },
     // Browser does not support SVG
-    27: { title: 'This browser does not support SVG.', text: 'This happens in old IE when the oldie.js module is not loaded.' },
-    // Data has circular dependency.
-    28: { title: 'Circular dependency detected.', text: 'The treegraph algorithm expects the data to have no circular dependencies.' }
+    27: { title: 'This browser does not support SVG.', text: 'This happens in old IE when the oldie.js module is not loaded.' }
 };
 
 /******************************************************************************

@@ -20,6 +20,7 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type Point from '../../Core/Series/Point';
+import type PointerEvent from '../../Core/PointerEvent';
 
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -152,18 +153,12 @@ class TreegraphSeries extends TreemapSeries {
                  * The line width of the links connecting nodes, in pixels.
                  * @type {number}
                  *
-                 * @sample   highcharts/series-organization/link-options
-                 *           Square links
-                 *
                  * @private
                  */
                 lineWidth: 1,
                 /**
                  * Radius for the rounded corners of the links between nodes.
                  * Works for `default` link type.
-                 *
-                 * @sample   highcharts/series-organization/link-options
-                 *           Square links
                  *
                  * @private
                  */
@@ -172,7 +167,7 @@ class TreegraphSeries extends TreemapSeries {
                 /**
                  * Type of the link shape.
                  *
-                 * @sample   highcharts/series-organization/different-link-types
+                 * @sample   highcharts/series-treegraph/link-types
                  *           Different link types
                  *
                  * @type {'default' | 'curved' | 'straight'}
@@ -195,7 +190,6 @@ class TreegraphSeries extends TreemapSeries {
             },
             /**
              * @extends plotOptions.series.tooltip
-             * @exclude pointFormat, pointFormatter
              */
             tooltip: {
                 /**
@@ -211,7 +205,6 @@ class TreegraphSeries extends TreemapSeries {
                  *
                  * @type {string}
                  * @since next
-                 * @default '{point.fromNode.name} \u2192 {point.toNode.name}'
                  * @product highcharts
                  *
                  */
@@ -219,7 +212,7 @@ class TreegraphSeries extends TreemapSeries {
                 pointFormat: '{point.id}'
                 /**
                  * A callback function for formatting the HTML output for a
-                 * single point in the tooltip. Like the `linkFormatter` string,
+                 * single link in the tooltip. Like the `linkFormat` string,
                  * but with more flexibility.
                  *
                  * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
@@ -685,7 +678,7 @@ class TreegraphSeries extends TreemapSeries {
             y: nodeY,
             width,
             height,
-            cursor: point.node.hasChildren() ? 'pointer' : 'default'
+            cursor: !point.node.isLeaf ? 'pointer' : 'default'
         };
 
         // Set the anchor position for tooltip.
@@ -696,11 +689,14 @@ class TreegraphSeries extends TreemapSeries {
 }
 
 // Handle showing and hiding of the points
-addEvent(TreegraphSeries, 'click', function (e: any): void {
-    const node = e.point.node as TreegraphNode.Node;
-    node.point.collapsed = !node.point.collapsed;
-    collapseTreeFromPoint(node, node.point.collapsed);
-    this.redraw();
+addEvent(TreegraphSeries, 'click', function (e: PointerEvent): void {
+    if (e && e.point && e.point) {
+        const point = e.point as TreegraphPoint,
+            node = point.node;
+        node.point.collapsed = !node.point.collapsed;
+        collapseTreeFromPoint(node, node.point.collapsed);
+        this.redraw();
+    }
 });
 
 /**
@@ -831,7 +827,7 @@ export default TreegraphSeries;
  * @type      {Array<*>}
  * @extends   series.treemap.data
  * @product   highcharts
- * @excluding outgoing, dataLabels, weight
+ * @excluding outgoing, weight, value
  * @apioption series.treegraph.data
  */
 ''; // gets doclets above into transpiled version
