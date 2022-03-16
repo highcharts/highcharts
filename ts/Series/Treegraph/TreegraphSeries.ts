@@ -77,15 +77,25 @@ class TreegraphSeries extends TreemapSeries {
      * A treegraph series is a diagram, which shows a relation between ancestors
      * and descendants with a clear parent - child relation.
      * The best examples of the dataStructures, which best reflect this chart
-     * are e.g. genealogy tree or directory scructure.
+     * are e.g. genealogy tree or directory structure.
      *
+     * @sample highcharts/demo/treegraph-chart
+     *          Treegraph Chart
      *
-     * @extends      plotOptions.treegraph
+     * @extends      plotOptions.treemap
+     * @excluding    layoutAlgorithm, dashStyle, linecap, lineWidth,
+     *               negativeColor, threshold, zones, zoneAxis, colorAxis,
+     *               colorKey, compare, dataGrouping, endAgle, gapSize, gapUnit,
+     *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
+     *               minSize, navigatorOptions, pointRange, allowTraversingTree,
+     *               alternateStartingDirection, borderRadius, breadcrumbs,
+     *               interactByLeaf, layoutStartingDirection, levelIsConstant,
+     *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
+     *               zones
+     *
      * @since        next
      * @product      highcharts
-     * @requires     modules/treegraph
-     * @exclude     layoutAlgorithm, dashStyle, linecap, lineWidth, negativeColor,
-     *              threshold, zones, zoneAxis
+     * @requires     modules/treegraph.js
      * @optionparent plotOptions.treegraph
      */
     public static defaultOptions: TreegraphSeriesOptions = merge(
@@ -124,9 +134,6 @@ class TreegraphSeries extends TreemapSeries {
              * @excluding enabled, enabledThreshold
              */
             marker: {
-                style: {
-                    cursor: 'pointer'
-                },
                 radius: 10,
                 lineWidth: 0,
                 symbol: 'circle',
@@ -143,8 +150,7 @@ class TreegraphSeries extends TreemapSeries {
                 color: Palette.neutralColor60,
                 /**
                  * The line width of the links connecting nodes, in pixels.
-                 * @type {number} width in pixels
-                 * @default 1
+                 * @type {number}
                  *
                  * @sample   highcharts/series-organization/link-options
                  *           Square links
@@ -162,6 +168,7 @@ class TreegraphSeries extends TreemapSeries {
                  * @private
                  */
                 radius: 10,
+                cursor: 'default',
                 /**
                  * Type of the link shape.
                  *
@@ -169,7 +176,6 @@ class TreegraphSeries extends TreemapSeries {
                  *           Different link types
                  *
                  * @type {'default' | 'curved' | 'straight'}
-                 * @default 'default'
                  * @product highcharts
                  *
                  */
@@ -183,7 +189,7 @@ class TreegraphSeries extends TreemapSeries {
                  * @type {number}
                  * @since next
                  * @product highcharts
-                 * @apioption series.organization.link.offset
+                 * @apioption series.treegraph.link.offset
                  *
                  */
             },
@@ -678,7 +684,8 @@ class TreegraphSeries extends TreemapSeries {
             x: nodeX,
             y: nodeY,
             width,
-            height
+            height,
+            cursor: point.node.hasChildren() ? 'pointer' : 'default'
         };
 
         // Set the anchor position for tooltip.
@@ -790,13 +797,6 @@ export default TreegraphSeries;
  * @apioption series.treegraph.data.dataLabels
  */
 
-/**
- *
- *
- * @sample highcharts/series-treegraph/node-level
- *         Treegraph series with node's level modified.
- * @apioption series.treegraph.nodes.level
- */
 
 /**
  * An array of data points for the series. For the `treegraph` series type,
@@ -805,10 +805,10 @@ export default TreegraphSeries;
  * 1. The array of arrays, with `keys` property, which defines how the fields in
  *     array should be interpretated
  *    ```js
- *       keys: ['from', 'to'],
+ *       keys: ['id', 'parent'],
  *       data: [
- *           ['Category1', 'Category2'],
- *           ['Category2', 'Category3']
+ *           ['Category1'],
+ *           ['Category1', 'Category2']
  *       ]
  *
  * 2. An array of objects with named values. The following snippet shows only a
@@ -817,15 +817,14 @@ export default TreegraphSeries;
  *    series' [turboThreshold](#series.area.turboThreshold),
  *    this option is not available.
  *    The data of the treegraph series needs to be formatted in such a way, that
- *    there are no circular dependencies on the nodes, and there is a single
- *    root node.
+ *    there are no circular dependencies on the nodes
+ *
  *  ```js
  *     data: [{
- *         from: 'Category1',
- *         to: 'Category2'
+ *         id: 'Category1'
  *     }, {
- *         from: 'Category1',
- *         to: 'Category3',
+ *         id: 'Category1',
+ *         parent: 'Category2',
  *     }]
  *  ```
  *
