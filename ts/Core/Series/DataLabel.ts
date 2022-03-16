@@ -332,7 +332,7 @@ namespace DataLabel {
 
                 let { x, y } = alignAttr;
                 x += bBox.x;
-                y += bBox.y + 9999;
+                y += bBox.y + (bBox.y <= -9999 ? 9999 : 0);
 
                 // Uncomment this block to visualize the bounding boxes used for
                 // determining visibility
