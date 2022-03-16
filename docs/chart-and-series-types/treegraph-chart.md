@@ -5,9 +5,10 @@ A Tree graph is a way of visualizing the tree data structure. In mathematics, th
 <li>directories in computer science</li>
 <li>decision tree</li>
 </ul>
-Our tree representation is a oriented rooted tree, which means, that direction of the connections matter, and there is one node, which does not have a parent (is a root of the tree).
+Our tree representation is a oriented rooted tree, which means, that direction of the connections matter, and there is one node in each, which does not have a parent (is a root of the tree).
+In contrast to treemap and sunburst, this series type does not require the value property, because each point position is based solely on its relation with other nodes in the tree.
 
-In order to use it, you need to load the `modules/treegraph.js` module.
+In order to use this series type, you need to load the `modules/treegraph.js` module.
 
 <iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treegraph-chart allow="fullscreen"></iframe>
 
@@ -32,6 +33,7 @@ The following is an example of how the tree is built in Highcharts:
 ### Algorithms
 
 Algorithms decide on posiitoning of the points. Currently there is only 1 algorithm available, which is [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
+
 API options
 -----------
 
