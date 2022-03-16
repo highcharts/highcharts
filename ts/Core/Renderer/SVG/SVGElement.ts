@@ -1453,12 +1453,17 @@ class SVGElement implements SVGElementLike {
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
-            renderer = wrapper.renderer,
-            element = wrapper.element,
-            styles = wrapper.styles,
-            textStr = wrapper.textStr,
-            cache = renderer.cache,
-            cacheKeys = renderer.cacheKeys,
+            {
+                alignValue,
+                element,
+                renderer,
+                styles,
+                textStr
+            } = wrapper,
+            {
+                cache,
+                cacheKeys
+            } = renderer,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
             rotation = pick(rot, wrapper.rotation, 0),
             fontSize = renderer.styledMode ? (
@@ -1468,7 +1473,7 @@ class SVGElement implements SVGElementLike {
                 styles && styles.fontSize
             );
 
-        let bBox: any, // = wrapper.bBox,
+        let bBox: BBoxObject|undefined,
             width,
             height,
             toggleTextShadowShim,
@@ -1493,6 +1498,7 @@ class SVGElement implements SVGElementLike {
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
+                alignValue,
                 styles && styles.textOverflow, // #5968
                 styles && styles.fontWeight // #12163
             ].join(',');
@@ -1552,7 +1558,7 @@ class SVGElement implements SVGElementLike {
                 // other condition is for Opera that returns a width of
                 // -Infinity on hidden elements.
                 if (!bBox || bBox.width < 0) {
-                    bBox = { width: 0, height: 0 } as any;
+                    bBox = { x: 0, y: 0, width: 0, height: 0 };
                 }
 
 
@@ -1591,11 +1597,49 @@ class SVGElement implements SVGElementLike {
 
                 // Adjust for rotated text
                 if (rotation) {
-                    const rad = rotation * deg2rad;
-                    bBox.width = Math.abs(height * Math.sin(rad)) +
-                        Math.abs(width * Math.cos(rad));
-                    bBox.height = Math.abs(height * Math.cos(rad)) +
-                        Math.abs(width * Math.sin(rad));
+
+                    const baseline = Number(
+                            element.getAttribute('y') || 0
+                        ) - bBox.y,
+                        alignFactor = ({
+                            'right': 1,
+                            'center': 0.5
+                        } as Record<string, number>)[alignValue || 0] || 0,
+                        rad = rotation * deg2rad,
+                        rad90 = (rotation - 90) * deg2rad,
+                        wCosRad = width * Math.cos(rad),
+                        wSinRad = width * Math.sin(rad),
+                        cosRad90 = Math.cos(rad90),
+                        sinRad90 = Math.sin(rad90);
+
+
+                    // Find the starting point on the left side baseline of
+                    // the text
+                    let pX = bBox.x,
+                        pY = bBox.y + baseline;
+
+                    if (alignFactor) {
+                        pX += alignFactor * width;
+                        pX -= alignFactor * wCosRad;
+                        pY -= alignFactor * wSinRad;
+                    }
+
+                    // Find all corners
+                    const aX = pX + baseline * cosRad90,
+                        bX = aX + wCosRad,
+                        cX = bX - height * cosRad90,
+                        dX = cX - wCosRad,
+
+                        aY = pY + baseline * sinRad90,
+                        bY = aY + wSinRad,
+                        cY = bY - height * sinRad90,
+                        dY = cY - wSinRad;
+
+                    // Deduct the bounding box from the corners
+                    bBox.x = Math.min(aX, bX, cX, dX);
+                    bBox.y = Math.min(aY, bY, cY, dY);
+                    bBox.width = Math.max(aX, bX, cX, dX) - bBox.x;
+                    bBox.height = Math.max(aY, bY, cY, dY) - bBox.y;
                 }
             }
 

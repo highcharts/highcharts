@@ -200,7 +200,6 @@ namespace DataLabel {
                 -9999
             ),
             plotY = pick(point.plotY, -9999),
-            bBox = dataLabel.getBBox(),
             rotation = options.rotation,
             align = options.align,
             isInsidePlot = chart.isInsidePlot(
@@ -225,8 +224,6 @@ namespace DataLabel {
             };
 
         let baseline,
-            normRotation,
-            negRotation,
             rotCorr, // rotation correction
             // Math.round for rounding errors (#2683), alignTo to allow column
             // labels (#2700)
@@ -264,6 +261,11 @@ namespace DataLabel {
                 );
 
         if (visible) {
+
+            if (rotation) {
+                dataLabel.attr({ align });
+            }
+            const bBox = dataLabel.getBBox();
 
             baseline = chart.renderer.fontMetrics(
                 chart.styledMode ? void 0 : (options.style as any).fontSize,
@@ -306,29 +308,7 @@ namespace DataLabel {
                     )
                 };
                 setStartPos(alignAttr); // data sorting
-                dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
-                    .attr({ // #3003
-                        align: align
-                    });
-
-                // Compensate for the rotated label sticking out on the sides
-                normRotation = (rotation + 720) % 360;
-                negRotation = normRotation > 180 && normRotation < 360;
-
-                if (align === 'left') {
-                    // Compensate X so that the bounding box does not spill out
-                    // to the right side (#9687)
-                    alignAttr.x -= negRotation ? 3 * rotCorr.x : 0;
-                    alignAttr.y -= negRotation ? bBox.height : 0;
-                } else if (align === 'center') {
-                    alignAttr.x -= bBox.width / 2;
-                    alignAttr.y -= bBox.height / 2;
-                } else if (align === 'right') {
-                    alignAttr.x -= bBox.width;
-                    alignAttr.y -= negRotation ? 0 : bBox.height;
-                }
-                dataLabel.placed = true;
-                dataLabel.alignAttr = alignAttr;
+                dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
 
             } else {
                 setStartPos(alignTo); // data sorting
@@ -349,12 +329,17 @@ namespace DataLabel {
 
             // Now check that the data label is within the plot area
             } else if (pick(options.crop, true)) {
+
+                let { x, y } = alignAttr;
+                x += bBox.x;
+                y += bBox.y + 9999;
+
                 // Uncomment this block to visualize the bounding boxes used for
                 // determining visibility
                 /*
                 chart.renderer.rect(
-                    chart.plotLeft + alignAttr.x,
-                    chart.plotTop + alignAttr.y,
+                    chart.plotLeft + alignAttr.x + bBox.x,
+                    chart.plotTop + alignAttr.y + bBox.y + 9999,
                     bBox.width,
                     bBox.height
                 ).attr({
@@ -373,16 +358,16 @@ namespace DataLabel {
 
                 visible =
                     chart.isInsidePlot(
-                        alignAttr.x,
-                        alignAttr.y,
+                        x,
+                        y,
                         {
                             paneCoordinates: true,
                             series
                         }
                     ) &&
                     chart.isInsidePlot(
-                        alignAttr.x + bBox.width,
-                        alignAttr.y + bBox.height,
+                        x + bBox.width,
+                        y + bBox.height,
                         {
                             paneCoordinates: true,
                             series
