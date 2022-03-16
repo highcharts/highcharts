@@ -9,24 +9,78 @@ Our tree representation is a oriented rooted tree, which means, that direction o
 
 In order to use it, you need to load the `modules/treegraph.js` module.
 
-
 <iframe style="width: 100%; height: 700px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/treegraph-chart allow="fullscreen"></iframe>
 
-Options structure
------------------
+### Data structure
 
-In Highcharts, the treegraph chart resembles the sankey chart in the way it is built `around nodes and links` with only one restriction: Each point have to have a single parent (a link that directs to it).
+The data is structured as a [Tree](https://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.  The tree automatically has one node at the top representing the root node. If a point has an undefined parent, or the parent is not matching any id, the parent will be automatically set to the root node.
 
-The nodes of a treegraph chart are the positions or persons, while the links are the lines showing the relations between them. The `data` structure of the options defines the links.
+The following is an example of how the tree is built in Highcharts:
 
-In the `nodes` array of the series, each node is identified by an `id` refering to the id in the link. Additional properties like `title`, `description` and some marker options may be set in the individual node options.
 
-Levels
-------
+    data: [{
+        name: 'I have children',
+        id: 'id-1'
+    }, {
+        name: 'I am a child',
+        parent: 'id-1'
+    }, {
+        name: 'I am a smaller child',
+        parent: 'id-1'
+    }]
 
-In an org chart typically, we may want to define specific styling for all nodes on a specific level, for example having all C-level positions in the same color. For this, we can use the [[levels option](https://api.highcharts.com/highcharts/plotOptions.organization.levels) and set the properties there. An example can be seen in the main demo above.
+### Algorithms
 
+Algorithms decide on posiitoning of the points. Currently there is only 1 algorithm available, which is [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
 API options
 -----------
 
 For the full set of available options, [see the API](https://api.highcharts.com/highcharts/series.organization).
+
+### Links
+
+In contrast to treemap series, the connections between the nodes are represented as links.  The links are generated from the options of the child. The shape of the link is the same as in the organization chart, and the same options apply.  To apply the general options to all links, you can define the link options like this:
+
+series: [{
+    type: 'treegraph',
+    link: {
+        type: 'curved',
+        lineWidth: 3
+    },
+    data: [{
+        name: 'I have children',
+        id: 'id-1'
+    }, {
+        name: 'I am a child',
+        parent: 'id-1'
+    }, {
+        name: 'I am a smaller child',
+        parent: 'id-1'
+    }]
+}]
+
+To change the configuraiton of the specific link, you have to specify the link object in the point configuration, like this:
+    data: [{
+        name: 'parent',
+        id: 'id-1
+    }, {
+        name: 'child',
+        parent: 'id-1',
+        link: {
+            type: 'curved',
+            lineWidth: 5
+        }
+    }]
+
+### Options
+
+For an overview over the options for the treemap, see the [API](https://api.highcharts.com/highcharts/plotOptions.treemap).
+
+
+
+### Mode demos
+
+*   [Treegraph chart with different link types](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-types)
+*   [Treegraph chart with text path on dataLabels for links](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/link-text-path)
+*   [Treegraph chart with different node level for nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/node-level)
+*   [Treegraph chart with reversed order of nodes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-treegraph/reversed)
