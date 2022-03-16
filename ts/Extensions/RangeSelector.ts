@@ -2492,7 +2492,7 @@ class RangeSelector {
             if (button.state !== 2) {
                 button.hide();
             } else {
-                button.show();
+                button.show(true);
                 button.attr(getAttribs(rangeOptions.text));
 
                 hasActiveButton = true;
@@ -2504,7 +2504,7 @@ class RangeSelector {
                 dropdown.selectedIndex = 0;
             }
 
-            buttons[0].show();
+            buttons[0].show(true);
             buttons[0].attr(getAttribs(this.zoomText && this.zoomText.textStr));
         }
 
@@ -2539,7 +2539,7 @@ class RangeSelector {
         this.hideDropdown();
 
         if (zoomText) {
-            zoomText.show();
+            zoomText.show(true);
         }
 
         buttonOptions.forEach((
@@ -2548,7 +2548,7 @@ class RangeSelector {
         ): void => {
             const button = buttons[i];
 
-            button.show();
+            button.show(true);
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
