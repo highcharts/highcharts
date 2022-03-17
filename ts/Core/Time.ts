@@ -741,12 +741,14 @@ class Time {
                 time.set(
                     'Date',
                     minDate,
-                    (
-                        time.get('Date', minDate) -
-                        minDay + startOfWeek +
-                        // We don't want to skip days that are before
-                        // startOfWeek (#7051)
-                        (minDay < startOfWeek ? -7 : 0)
+                    Math.max(1,
+                        (
+                            time.get('Date', minDate) -
+                            minDay + startOfWeek +
+                            // We don't want to skip days that are before
+                            // startOfWeek (#7051)
+                            (minDay < startOfWeek ? -7 : 0)
+                        )
                     )
                 );
             }
