@@ -1610,22 +1610,15 @@ class SVGElement implements SVGElementLike {
                         wCosRad = width * Math.cos(rad),
                         wSinRad = width * Math.sin(rad),
                         cosRad90 = Math.cos(rad90),
-                        sinRad90 = Math.sin(rad90);
+                        sinRad90 = Math.sin(rad90),
 
+                        // Find the starting point on the left side baseline of
+                        // the text
+                        pX = bBox.x + alignFactor * (width - wCosRad),
+                        pY = bBox.y + baseline - alignFactor * wSinRad,
 
-                    // Find the starting point on the left side baseline of
-                    // the text
-                    let pX = bBox.x,
-                        pY = bBox.y + baseline;
-
-                    if (alignFactor) {
-                        pX += alignFactor * width;
-                        pX -= alignFactor * wCosRad;
-                        pY -= alignFactor * wSinRad;
-                    }
-
-                    // Find all corners
-                    const aX = pX + baseline * cosRad90,
+                        // Find all corners
+                        aX = pX + baseline * cosRad90,
                         bX = aX + wCosRad,
                         cX = bX - height * cosRad90,
                         dX = cX - wCosRad,
