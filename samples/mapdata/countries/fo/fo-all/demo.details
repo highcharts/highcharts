@@ -1,5 +1,5 @@
 ---
- name: Faroe Islands - Highmaps
- description: Highmaps demo
+ name: Faroe Islands - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,5 +1,5 @@
 ---
- name: World, Miller projection, high resolution - Highmaps
- description: Highmaps demo
+ name: World, high resolution - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

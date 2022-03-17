@@ -1,73 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['eg-5847', 0],
-    ['eg-ba', 1],
-    ['eg-js', 2],
-    ['eg-uq', 3],
-    ['eg-is', 4],
-    ['eg-gh', 5],
-    ['eg-mf', 6],
-    ['eg-qh', 7],
-    ['eg-ql', 8],
-    ['eg-sq', 9],
-    ['eg-ss', 10],
-    ['eg-sw', 11],
-    ['eg-dq', 12],
-    ['eg-bs', 13],
-    ['eg-dt', 14],
-    ['eg-bh', 15],
-    ['eg-mt', 16],
-    ['eg-ik', 17],
-    ['eg-jz', 18],
-    ['eg-fy', 19],
-    ['eg-wj', 20],
-    ['eg-mn', 21],
-    ['eg-bn', 22],
-    ['eg-ks', 23],
-    ['eg-at', 24],
-    ['eg-an', 25],
-    ['eg-qn', 26],
-    ['eg-sj', 27]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/eg/eg-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/eg/eg-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['eg-5847', 10], ['eg-ba', 11], ['eg-js', 12], ['eg-uq', 13],
+        ['eg-is', 14], ['eg-gh', 15], ['eg-mf', 16], ['eg-qh', 17],
+        ['eg-ql', 18], ['eg-sq', 19], ['eg-ss', 20], ['eg-sw', 21],
+        ['eg-dq', 22], ['eg-bs', 23], ['eg-dt', 24], ['eg-bh', 25],
+        ['eg-mt', 26], ['eg-ik', 27], ['eg-jz', 28], ['eg-fy', 29],
+        ['eg-wj', 30], ['eg-mn', 31], ['eg-bn', 32], ['eg-ks', 33],
+        ['eg-at', 34], ['eg-an', 35], ['eg-qn', 36], ['eg-sj', 37]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/eg/eg-all.js">Egypt</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/eg/eg-all.topo.json">Egypt</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

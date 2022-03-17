@@ -1,56 +1,57 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ca-nl-1009', 0],
-    ['ca-nl-1008', 1],
-    ['ca-nl-1007', 2],
-    ['ca-nl-1003', 3],
-    ['ca-nl-1001', 4],
-    ['ca-nl-1002', 5],
-    ['ca-nl-1010', 6],
-    ['ca-nl-1011', 7],
-    ['ca-nl-1006', 8],
-    ['ca-nl-1005', 9],
-    ['ca-nl-1004', 10]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ca/ca-nf-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ca/ca-nf-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ca-nl-1009', 10], ['ca-nl-1008', 11], ['ca-nl-1007', 12],
+        ['ca-nl-1003', 13], ['ca-nl-1001', 14], ['ca-nl-1002', 15],
+        ['ca-nl-1010', 16], ['ca-nl-1011', 17], ['ca-nl-1006', 18],
+        ['ca-nl-1005', 19], ['ca-nl-1004', 20]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nf-all.js">Newfoundland and Labrador</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nf-all.topo.json">Newfoundland and Labrador</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

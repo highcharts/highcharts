@@ -1,5 +1,5 @@
 ---
- name: Saudi Arabia - Highmaps
- description: Highmaps demo
+ name: Saudi Arabia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

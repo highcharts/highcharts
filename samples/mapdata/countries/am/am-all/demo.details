@@ -1,5 +1,5 @@
 ---
- name: Armenia - Highmaps
- description: Highmaps demo
+ name: Armenia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...
