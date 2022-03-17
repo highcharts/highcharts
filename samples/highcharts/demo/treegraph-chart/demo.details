@@ -3,7 +3,7 @@ name: Treegraph chart
 authors:
   - Pawel Lysy
 js_wrap: b
-new_until: 2022-04-31
+new_until: 2022-06-31
 tags:
   - Highcharts demo
 categories:
