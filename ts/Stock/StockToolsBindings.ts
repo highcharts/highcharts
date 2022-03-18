@@ -69,7 +69,7 @@ declare global {
                 yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number,
-                removedYAxisHeight?: string
+                removedYAxisProps?: AxisPositionsObject
             ): YAxisPositions;
             /** @requires modules/stock-tools */
             getYAxisResizers(
@@ -83,7 +83,9 @@ declare global {
                 adder?: number
             ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
-            resizeYAxes (removedYAxisHeight?: string): void;
+            resizeYAxes(
+                removedYAxisProps?: Highcharts.AxisPositionsObject
+            ): void;
         }
         interface NavigationBindingsAttractionObject {
             x: number;
@@ -97,6 +99,10 @@ declare global {
         interface YAxisPositions {
             positions: Array<Record<string, number>>;
             allAxesHeight: number;
+        }
+        interface AxisPositionsObject {
+            top: string;
+            height: string;
         }
         interface NavigationBindingsResizerObject {
             controlledAxis?: Record<string, Array<number>>;
@@ -348,9 +354,12 @@ bindingsUtils.manageIndicators = function (
             series.remove(false);
 
             if (indicatorsWithAxes.indexOf(series.type) >= 0) {
-                const removedYAxisHeight = yAxis.options.height;
+                const removedYAxisProps = {
+                    height: yAxis.options.height,
+                    top: yAxis.options.top
+                } as Highcharts.AxisPositionsObject;
                 yAxis.remove(false);
-                navigation.resizeYAxes(removedYAxisHeight as string);
+                navigation.resizeYAxes(removedYAxisProps);
             }
         }
     } else {
@@ -613,7 +622,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @param {string} removedYAxisHeight
+     * @param {Highcharts.AxisPositionsObject} removedYAxisHeight
      *        Height of the removed yAxis in percents.
      *
      * @return {Highcharts.YAxisPositions}
@@ -625,20 +634,24 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number,
-        removedYAxisHeight?: string
+        removedYAxisProps?: Highcharts.AxisPositionsObject
     ): Highcharts.YAxisPositions {
         let positions: Array<Record<string, number>>|undefined,
             allAxesHeight = 0,
             previousAxisHeight: number,
-            removedHeight: number;
+            removedHeight: number,
+            removedTop: number;
         /** @private */
         function isPercentage(prop: number | string | undefined): boolean {
             return defined(prop) && !isNumber(prop) && (prop.match('%') as any);
         }
 
-        if (removedYAxisHeight) {
+        if (removedYAxisProps) {
+            removedTop = correctFloat(
+                (parseFloat(removedYAxisProps.top) / 100)
+            );
             removedHeight = correctFloat(
-                (parseFloat(removedYAxisHeight) / 100)
+                (parseFloat(removedYAxisProps.height) / 100)
             );
         }
 
@@ -650,9 +663,9 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                     parseFloat(yAxis.options.top as any) / 100 :
                     (yAxis.top - yAxis.chart.plotTop) / plotHeight);
 
-            // New axis' height is NaN so we can check if
-            // the axis is newly created this way
             if (!removedHeight) {
+                // New axis' height is NaN so we can check if
+                // the axis is newly created this way
                 if (!isNumber(height)) {
                     // Check if the previous axis is the
                     // indicator axis (every indicator inherits from sma)
@@ -672,10 +685,16 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                     (top || 0) + (height || 0)
                 ));
             } else {
-                if (top <= allAxesHeight) {
-                    allAxesHeight = correctFloat(Math.max(
-                        allAxesHeight,
-                        (top || 0) + (height || 0))
+                if (height + top >= removedTop + removedHeight) {
+                    top -= removedHeight;
+                }
+
+                if (
+                    top < allAxesHeight ||
+                    Math.abs(top - allAxesHeight) < 0.001
+                ) {
+                    allAxesHeight = correctFloat(
+                        Math.max(allAxesHeight, (top || 0) + (height || 0))
                     );
                 } else {
                     top = correctFloat(top - removedHeight);
@@ -756,7 +775,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
      */
     resizeYAxes: function (
         this: Highcharts.StockToolsNavigationBindings,
-        removedYAxisHeight?: string
+        removedYAxisProps?: Highcharts.AxisPositionsObject
     ): void {
         // The height of the new axis before rescalling. In %, but as a number.
         const defaultHeight = 20;
@@ -769,7 +788,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                 yAxes,
                 plotHeight,
                 defaultHeight,
-                removedYAxisHeight
+                removedYAxisProps
             ),
             resizers = this.getYAxisResizers(yAxes);
 
@@ -777,7 +796,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         // if the new indicator axis will fit under existing axes.
         // if so, there is no need to scale them.
         if (
-            !removedYAxisHeight &&
+            !removedYAxisProps &&
             allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)
         ) {
             positions[positions.length - 1] = {
