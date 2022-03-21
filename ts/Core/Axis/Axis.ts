@@ -2452,7 +2452,37 @@ class Axis {
 
             // We have too many ticks, run second pass to try to reduce ticks
             } else if (currentTickAmount > tickAmount) {
-                axis.tickInterval *= 2;
+                /**
+                 * @todo #17100
+                 * - Refactor to avoid duplication with the code block in
+                 *   `setTickInterval`
+                 * - Guard for dateTime, log axis and tick interval option (like
+                 *   the original)
+                 */
+                if (
+                    !axis.dateTime &&
+                    !axis.logarithmic &&
+                    !axis.options.tickInterval
+                ) {
+                    axis.tickInterval = normalizeTickInterval(
+                        axis.tickInterval * 1.1,
+                        void 0,
+                        getMagnitude(axis.tickInterval * 1.1),
+                        pick(
+                            options.allowDecimals,
+                            // If the tick interval is greather than 0.5, avoid
+                            // decimals, as linear axes are often used to render
+                            // discrete values. #3363. If a tick amount is set,
+                            // allow decimals by default, as it increases the
+                            // chances for a good fit.
+                            axis.tickInterval < 0.5 ||
+                                this.tickAmount !== void 0
+                        ),
+                        true
+                    );
+                } else {
+                    axis.tickInterval *= 2;
+                }
                 axis.setTickPositions();
             }
 
