@@ -27,8 +27,7 @@
         mapNavigation: {
             enabled: true,
             buttonOptions: {
-                verticalAlign: 'bottom',
-                alignTo: 'spacingBox'
+                verticalAlign: 'bottom'
             }
         },
 
@@ -42,13 +41,11 @@
 
         tooltip: {
             headerFormat: '',
-            pointFormatter() {
-                return this.city + ' (' + this.country + ', ' + this.year + ')<br/>' +
-                    'Total medals: ' + this.z + '<br/>' +
-                    '<span style="color: #ffd700;">\u25CF</span> ' + this.gold + '<br/>' +
-                    '<span style="color: #c0c0c0;">\u25CF</span> ' + this.silver + '<br/>' +
-                    '<span style="color: #cd7f32;">\u25CF</span> ' + this.bronze + '<br/>';
-            }
+            pointFormat: '{point.city} ({point.country}, {point.year})<br/>' +
+                'Total medals: {point.z}<br/>' +
+                '<span style="color: #ffd700;">\u25CF</span> {point.gold}<br/>' +
+                '<span style="color: #c0c0c0;">\u25CF</span> {point.silver}<br/>' +
+                '<span style="color: #cd7f32;">\u25CF</span> {point.bronze}<br/>'
         },
 
         series: [{
