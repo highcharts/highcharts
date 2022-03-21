@@ -685,21 +685,17 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
                     (top || 0) + (height || 0)
                 ));
             } else {
-                if (height + top >= removedTop + removedHeight) {
+                // Move all axes which were below the removed axis up.
+                if (
+                    top > removedTop
+                ) {
                     top -= removedHeight;
                 }
 
-                if (
-                    top < allAxesHeight ||
-                    Math.abs(top - allAxesHeight) < 0.001
-                ) {
-                    allAxesHeight = correctFloat(
-                        Math.max(allAxesHeight, (top || 0) + (height || 0))
-                    );
-                } else {
-                    top = correctFloat(top - removedHeight);
-                    allAxesHeight = correctFloat(allAxesHeight + height);
-                }
+                allAxesHeight = Math.max(
+                    allAxesHeight,
+                    (top || 0) + (height || 0)
+                );
             }
 
             return {
