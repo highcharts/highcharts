@@ -69,7 +69,7 @@ declare global {
                 yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number,
-                removedYAxisProps?: AxisPositionsObject
+                removedYAxisProps?: AxisPositions
             ): YAxisPositions;
             /** @requires modules/stock-tools */
             getYAxisResizers(
@@ -84,7 +84,7 @@ declare global {
             ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
             resizeYAxes(
-                removedYAxisProps?: Highcharts.AxisPositionsObject
+                removedYAxisProps?: Highcharts.AxisPositions
             ): void;
         }
         interface NavigationBindingsAttractionObject {
@@ -100,7 +100,7 @@ declare global {
             positions: Array<Record<string, number>>;
             allAxesHeight: number;
         }
-        interface AxisPositionsObject {
+        interface AxisPositions {
             top: string;
             height: string;
         }
@@ -357,7 +357,7 @@ bindingsUtils.manageIndicators = function (
                 const removedYAxisProps = {
                     height: yAxis.options.height,
                     top: yAxis.options.top
-                } as Highcharts.AxisPositionsObject;
+                } as Highcharts.AxisPositions;
                 yAxis.remove(false);
                 navigation.resizeYAxes(removedYAxisProps);
             }
@@ -622,7 +622,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @param {Highcharts.AxisPositionsObject} removedYAxisHeight
+     * @param {Highcharts.AxisPositions} removedYAxisHeight
      *        Height of the removed yAxis in percents.
      *
      * @return {Highcharts.YAxisPositions}
@@ -634,7 +634,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number,
-        removedYAxisProps?: Highcharts.AxisPositionsObject
+        removedYAxisProps?: Highcharts.AxisPositions
     ): Highcharts.YAxisPositions {
         let positions: Array<Record<string, number>>|undefined,
             allAxesHeight = 0,
@@ -771,7 +771,7 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
      */
     resizeYAxes: function (
         this: Highcharts.StockToolsNavigationBindings,
-        removedYAxisProps?: Highcharts.AxisPositionsObject
+        removedYAxisProps?: Highcharts.AxisPositions
     ): void {
         // The height of the new axis before rescalling. In %, but as a number.
         const defaultHeight = 20;
