@@ -558,119 +558,122 @@ class OrganizationSeries extends SankeySeries {
             type = pick(
                 point.options.link && point.options.link.type,
                 this.options.link.type
-            ),
-            x1 = Math.floor(
-                (fromNode.shapeArgs as any).x +
-                (fromNode.shapeArgs as any).width
-            ) + crisp,
-            y1 = Math.floor(
-                (fromNode.shapeArgs as any).y +
-                (fromNode.shapeArgs as any).height / 2
-            ) + crisp,
-            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-            y2 = Math.floor(
-                (toNode.shapeArgs as any).y +
-                (toNode.shapeArgs as any).height / 2
-            ) + crisp,
-            xMiddle,
-            hangingIndent: number = this.options.hangingIndent as any,
-            toOffset = toNode.options.offset,
-            percentOffset =
-                /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-            inverted = this.chart.inverted;
+            );
+        if (fromNode.shapeArgs && toNode.shapeArgs) {
 
-        if (inverted) {
-            x1 -= (fromNode.shapeArgs as any).width;
-            x2 += (toNode.shapeArgs as any).width;
-        }
-        xMiddle = this.colDistance ?
-            Math.floor(
-                x2 +
-                    ((inverted ? 1 : -1) *
-                        (this.colDistance - this.nodeWidth)) /
-                        2
-            ) + crisp :
-            Math.floor((x2 + x1) / 2) + crisp;
-
-        // Put the link on the side of the node when an offset is given. HR
-        // node in the main demo.
-        if (
-            percentOffset &&
-            (percentOffset >= 50 || percentOffset <= -50)
-        ) {
-            xMiddle = x2 = Math.floor(
-                x2 + (inverted ? -0.5 : 0.5) *
-                (toNode.shapeArgs as any).width
-            ) + crisp;
-            y2 = (toNode.shapeArgs as any).y;
-            if (percentOffset > 0) {
-                y2 += (toNode.shapeArgs as any).height;
-            }
-        }
-
-        if (toNode.hangsFrom === fromNode) {
-            if (this.chart.inverted) {
+            let x1 = Math.floor(
+                    (fromNode.shapeArgs.x || 0) +
+                    (fromNode.shapeArgs.width || 0)
+                ) + crisp,
                 y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    (fromNode.shapeArgs as any).height -
-                    hangingIndent / 2
-                ) + crisp;
-                y2 = (
-                    (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height
-                );
-            } else {
-                y1 = Math.floor(
-                    (fromNode.shapeArgs as any).y +
-                    hangingIndent / 2
-                ) + crisp;
+                    (fromNode.shapeArgs.y || 0) +
+                    (fromNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                x2 = Math.floor(toNode.shapeArgs.x || 0) + crisp,
+                y2 = Math.floor(
+                    (toNode.shapeArgs.y || 0) +
+                    (toNode.shapeArgs.height || 0) / 2
+                ) + crisp,
+                xMiddle,
+                hangingIndent: number = this.options.hangingIndent as any,
+                toOffset = toNode.options.offset,
+                percentOffset =
+                    /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
+                inverted = this.chart.inverted;
 
+            if (inverted) {
+                x1 -= (fromNode.shapeArgs.width || 0);
+                x2 += (toNode.shapeArgs.width || 0);
             }
-            xMiddle = x2 = Math.floor(
-                (toNode.shapeArgs as any).x +
-                (toNode.shapeArgs as any).width / 2
-            ) + crisp;
-        }
+            xMiddle = this.colDistance ?
+                Math.floor(
+                    x2 +
+                        ((inverted ? 1 : -1) *
+                            (this.colDistance - this.nodeWidth)) /
+                            2
+                ) + crisp :
+                Math.floor((x2 + x1) / 2) + crisp;
 
-        point.plotX = xMiddle;
-        point.plotY = (y1 + y2) / 2;
-        point.shapeType = 'path';
-        if (type === 'straight') {
-            point.shapeArgs = {
-                d: [
-                    ['M', x1, y1],
-                    ['L', x2, y2]
-                ]
-            };
-        } else if (type === 'curved') {
-            const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
-            point.shapeArgs = {
-                d: [
-                    ['M', x1, y1],
-                    ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
-                ]
-            };
-        } else {
-            point.shapeArgs = {
-                d: PathUtilities.curvedPath(
-                    [
+            // Put the link on the side of the node when an offset is given. HR
+            // node in the main demo.
+            if (
+                percentOffset &&
+                (percentOffset >= 50 || percentOffset <= -50)
+            ) {
+                xMiddle = x2 = Math.floor(
+                    x2 + (inverted ? -0.5 : 0.5) *
+                    (toNode.shapeArgs.width || 0)
+                ) + crisp;
+                y2 = toNode.shapeArgs.y || 0;
+                if (percentOffset > 0) {
+                    y2 += toNode.shapeArgs.height || 0;
+                }
+            }
+
+            if (toNode.hangsFrom === fromNode) {
+                if (this.chart.inverted) {
+                    y1 = Math.floor(
+                        (fromNode.shapeArgs.y || 0) +
+                        (fromNode.shapeArgs.height || 0) -
+                        hangingIndent / 2
+                    ) + crisp;
+                    y2 = (
+                        (toNode.shapeArgs.y || 0) +
+                        (toNode.shapeArgs.height || 0)
+                    );
+                } else {
+                    y1 = Math.floor(
+                        (fromNode.shapeArgs.y || 0) +
+                        hangingIndent / 2
+                    ) + crisp;
+
+                }
+                xMiddle = x2 = Math.floor(
+                    (toNode.shapeArgs.x || 0) +
+                    (toNode.shapeArgs.width || 0) / 2
+                ) + crisp;
+            }
+
+            point.plotX = xMiddle;
+            point.plotY = (y1 + y2) / 2;
+            point.shapeType = 'path';
+            if (type === 'straight') {
+                point.shapeArgs = {
+                    d: [
                         ['M', x1, y1],
-                        ['L', xMiddle, y1],
-                        ['L', xMiddle, y2],
                         ['L', x2, y2]
-                    ],
-                    pick(this.options.linkRadius, this.options.link.radius)
-                )
+                    ]
+                };
+            } else if (type === 'curved') {
+                const offset = Math.abs(x2 - x1) * factor * (inverted ? -1 : 1);
+                point.shapeArgs = {
+                    d: [
+                        ['M', x1, y1],
+                        ['C', x1 + offset, y1, x2 - offset, y2, x2, y2]
+                    ]
+                };
+            } else {
+                point.shapeArgs = {
+                    d: PathUtilities.curvedPath(
+                        [
+                            ['M', x1, y1],
+                            ['L', xMiddle, y1],
+                            ['L', xMiddle, y2],
+                            ['L', x2, y2]
+                        ],
+                        pick(this.options.linkRadius, this.options.link.radius)
+                    )
+                };
+            }
+
+            point.dlBox = {
+                x: (x1 + x2) / 2,
+                y: (y1 + y2) / 2,
+                height: linkWidth,
+                width: 0
             };
+
         }
-
-        point.dlBox = {
-            x: (x1 + x2) / 2,
-            y: (y1 + y2) / 2,
-            height: linkWidth,
-            width: 0
-        };
-
     }
 
     public translateNode(

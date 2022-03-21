@@ -432,10 +432,7 @@ class TreegraphSeries extends TreemapSeries {
             tree: TreegraphNode.Node;
         // Call prototype function
         Series.prototype.translate.call(series);
-
-        // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
-
         series.links = series.getLinks();
         rootNode = series.nodeMap[rootId];
 
@@ -766,7 +763,7 @@ export default TreegraphSeries;
  * */
 
 /**
- * An `treegraph` series. If the [type](#series.treegraph.type)
+ * A `treegraph` series. If the [type](#series.treegraph.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treegraph
