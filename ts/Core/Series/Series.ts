@@ -1330,10 +1330,7 @@ class Series {
             firstPoint = null,
             copiedData;
 
-        // If this is the first time we're writing back to options, and
-        // allowMutatingData enabled createa copy so that we don't mutate the
-        // source array. (#4259)
-        if (!chart.options.chart.allowMutatingData) {
+        if (!chart.options.chart.allowMutatingData) { // #4259
             // Remove old reference
             if (options.data) {
                 delete series.options.data;
