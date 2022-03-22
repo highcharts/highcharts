@@ -556,12 +556,6 @@ class SunburstSeries extends TreemapSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-    public getDlOptions(
-        params: SunburstSeries.DlOptionsParams
-    ): SunburstDataLabelOptions {
-        return void 0 as any;
-    }
-
     public alignDataLabel(
         _point: SunburstPoint,
         _dataLabel: SVGLabel,
@@ -983,6 +977,9 @@ class SunburstSeries extends TreemapSeries {
 interface SunburstSeries {
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
+    getDlOptions: (
+        params: SunburstSeries.DlOptionsParams
+    ) => CircularDataLabels.CicrularDlOptions
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop, // drawDataLabels is called in drawPoints

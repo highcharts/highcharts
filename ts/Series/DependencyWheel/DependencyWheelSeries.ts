@@ -35,6 +35,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import SunburstPoint from '../Sunburst/SunburstPoint';
+import SunburstPointOptions from '../Sunburst/SunburstPointOptions';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import DependencyWheelPointOptions from './DependencyWheelPointOptions';
 const {
     extend,
     merge,
@@ -118,12 +122,6 @@ class DependencyWheelSeries extends SankeySeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-
-    public getDlOptions(
-        params: any
-    ): any {
-        return void 0 as any;
-    }
 
     public animate(init?: boolean): void {
         if (!init) {
@@ -262,7 +260,7 @@ class DependencyWheelSeries extends SankeySeries {
      * functions instead of the whole translate function.
      */
     public translate(): void {
-        const dependecyWheel = this,
+        const series = this,
             options = this.options,
             factor = 2 * Math.PI /
                 (this.chart.plotHeight + this.getNodePadding()),
@@ -295,7 +293,7 @@ class DependencyWheelSeries extends SankeySeries {
                     innerR: innerR,
                     start: start,
                     end: end
-                } as any;
+                };
 
                 node.dlBox = {
                     x: centerX + Math.cos((start + end) / 2) * (r + innerR) / 2,
@@ -314,14 +312,14 @@ class DependencyWheelSeries extends SankeySeries {
                     node.outerArcLength = radians * node.shapeArgs.r;
                 }
 
-                node.dlOptions = dependecyWheel.getDlOptions({
+                node.dlOptions = series.getDlOptions({
                     point: node,
                     optionsPoint: node.options,
                     shapeArgs: node.shapeArgs
                 });
 
                 // Draw the links from this node
-                node.linksFrom.forEach(function (point: any): void {
+                node.linksFrom.forEach(function (point): void {
                     if (point.linkBase) {
                         let distance;
                         const corners = point.linkBase.map(function (
@@ -408,11 +406,34 @@ interface DependencyWheelSeries {
     getCenter: typeof PieSeries.prototype.getCenter;
     orderNodes: boolean;
     pointClass: typeof DependencyWheelPoint;
+    getDlOptions: (
+        params: DependencyWheelSeries.DlOptionsParams
+    ) => CircularDataLabels.CicrularDlOptions
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     getCenter: PieSeries.prototype.getCenter
 });
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+namespace DependencyWheelSeries {
+
+    /* *
+     *
+     *  Declarations
+     *
+     * */
+
+    export interface DlOptionsParams {
+        point: DependencyWheelPoint,
+        optionsPoint: DependencyWheelPointOptions,
+        shapeArgs: SVGAttributes
+    }
+}
 
 /* *
  *
@@ -497,12 +518,11 @@ export default DependencyWheelSeries;
  */
 
 /**
- * Decides how the data label will be rotated relative to the
- * perimeter of the dependencywheel. Valid values are `auto`,
- * `parallel` and `perpendicular`.
- * The `perpendicular` option works similar to `auto` and position
- * labels perpendicularly to the circumference.
- * The `parallel` option fits the labels inside of the node.
+ * Decides how the data label will be rotated relative to the perimeter of the
+ * dependencywheel. Valid values are `auto`, `parallel` and `perpendicular`.
+ * The `perpendicular` option works similar to `auto` and position labels
+ * perpendicularly to the circumference. The `parallel` option fits the labels
+ * inside of the node.
  *
  * The `rotation` and `textPath` option takes precedence over `rotationMode`.
  *
