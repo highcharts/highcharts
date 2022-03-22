@@ -933,25 +933,22 @@ class MapSeries extends ScatterSeries {
     }
 
     /**
-     * Sort data by the joinBy property to match new data with proper points
-     * (regions).
      * @private
      */
-    public sortDataToMatch(data: (PointOptions|PointShortOptions)[]): void {
-        const joinBy = this.joinBy[0],
-            sortArr = (this.points || [])
-                .map((point: any): void => point[joinBy]);
+    public updateData(): boolean {
+        // #16782
+        if (this.processedData) {
+            return false;
+        }
 
-        (data || []).sort((a: any, b: any): number =>
-            sortArr.indexOf(a[joinBy]) - sortArr.indexOf(b[joinBy]));
+        return super.updateData.apply(this, arguments);
     }
 
     /**
      * Extend setData to call processData and generatePoints immediately.
      * @private
      */
-    public setData(data: (PointOptions|PointShortOptions)[]): void {
-        this.sortDataToMatch(data);
+    public setData(): void {
 
         super.setData.apply(this, arguments);
 
