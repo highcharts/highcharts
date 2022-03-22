@@ -74,6 +74,7 @@ class SunburstPoint extends TreemapPoint {
 
     public sliced?: boolean;
 
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = void 0 as any;
     /* *
      *
      *  Functions

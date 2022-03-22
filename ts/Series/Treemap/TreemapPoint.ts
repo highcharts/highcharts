@@ -77,6 +77,8 @@ class TreemapPoint extends ScatterPoint {
 
     public series: TreemapSeries = void 0 as any;
 
+    public shapeType: 'arc'|'circle'|'path'|'rect'|'text' = 'rect';
+
     public sortIndex?: number;
 
     public value: (number|null) = void 0 as any;
