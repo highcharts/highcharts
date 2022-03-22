@@ -87,6 +87,27 @@ QUnit.test('Set basemap on chart object', function (assert) {
         a null color, #11636.`
     );
 
+    assert.strictEqual(
+        chart.series[0].points[0].options.name,
+        'Temburong',
+        `The first point from a map source should be bn-te, its name should
+        be taken from a map source.`
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            enabled: true,
+            format: '{point.hc-key}'
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.textStr,
+        'bn-te',
+        `The first point from a map source should be bn-te, its name should
+        be taken from a map source.`
+    );
+
     chart.series[0].setData(
         [{
             'hc-key': 'bn-be',
@@ -104,10 +125,25 @@ QUnit.test('Set basemap on chart object', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].points[0].properties['hc-key'],
-        'bn-te', // not bn-be
-        `Points should be matched correctly (by joinBy) with unsorted data,
-        #16782`
+        chart.series[0].points[0].options.name,
+        undefined,
+        `After setData with unsorted data without a points' name, the points
+        should be cleared and the first point should be matched correctly
+        (by joinBy), #16782.`
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0]['hc-key'],
+        'bn-be',
+        `After setData with unsorted data the first point should be matched
+        correctly (by joinBy).`
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.textStr,
+        'bn-be',
+        `The first point from a map source should be bn-te, its name should
+        be taken from a map source, #16782.`
     );
 
 });
