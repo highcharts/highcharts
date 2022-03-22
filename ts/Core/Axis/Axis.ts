@@ -70,7 +70,6 @@ const {
     error,
     extend,
     fireEvent,
-    getMagnitude,
     isArray,
     isNumber,
     isString,
@@ -83,6 +82,24 @@ const {
     splat,
     syncTimeout
 } = U;
+
+const getNormalizedTickInterval = (
+    axis: Axis,
+    tickInterval: number
+): number => normalizeTickInterval(
+    tickInterval,
+    void 0,
+    void 0,
+    pick(
+        axis.options.allowDecimals,
+        // If the tick interval is greather than 0.5, avoid decimals, as
+        // linear axes are often used to render discrete values (#3363). If
+        // a tick amount is set, allow decimals by default, as it increases
+        // the chances for a good fit.
+        tickInterval < 0.5 || axis.tickAmount !== void 0
+    ),
+    !!axis.tickAmount
+);
 
 /* *
  *
@@ -1889,22 +1906,11 @@ class Axis {
             axis.tickInterval = minTickInterval;
         }
 
-        // for linear axes, get magnitude and normalize the interval
+        // For linear axes, normalize the interval
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
-            axis.tickInterval = normalizeTickInterval(
-                axis.tickInterval,
-                void 0,
-                getMagnitude(axis.tickInterval),
-                pick(
-                    options.allowDecimals,
-                    // If the tick interval is greather than 0.5, avoid
-                    // decimals, as linear axes are often used to render
-                    // discrete values. #3363. If a tick amount is set, allow
-                    // decimals by default, as it increases the chances for a
-                    // good fit.
-                    axis.tickInterval < 0.5 || this.tickAmount !== void 0
-                ),
-                !!this.tickAmount
+            axis.tickInterval = getNormalizedTickInterval(
+                axis,
+                axis.tickInterval
             );
         }
 
@@ -2025,14 +2031,9 @@ class Axis {
                     this.max as any
                 );
             } else {
-                tickPositions = this.getLinearTickPositions(
-                    this.tickInterval,
-                    this.min as any,
-                    this.max as any
-                );
                 const startingTickInterval = this.tickInterval;
-                let adjustedTickInterval = this.tickInterval;
-                while (adjustedTickInterval < startingTickInterval * 2) {
+                let adjustedTickInterval = startingTickInterval;
+                while (adjustedTickInterval <= startingTickInterval * 2) {
                     tickPositions = this.getLinearTickPositions(
                         this.tickInterval,
                         this.min as any,
@@ -2046,16 +2047,9 @@ class Axis {
                         this.tickAmount &&
                         tickPositions.length > this.tickAmount
                     ) {
-                        adjustedTickInterval *= 1.1;
-                        this.tickInterval = normalizeTickInterval(
-                            adjustedTickInterval,
-                            void 0,
-                            getMagnitude(adjustedTickInterval),
-                            pick(
-                                options.allowDecimals,
-                                true
-                            ),
-                            true
+                        this.tickInterval = getNormalizedTickInterval(
+                            this,
+                            adjustedTickInterval *= 1.1
                         );
                     } else {
                         break;
