@@ -15,7 +15,7 @@ Highcharts.chart('container', {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in a Quest to the Lonely Mountain marked in brighter color. <br> Drarf kings marked with golden border.'
+        text: 'Dwarfs participating in a Quest to the Lonely Mountain marked in brighter color. <br> Dwarf kings marked with golden border.'
     },
 
     plotOptions: {
