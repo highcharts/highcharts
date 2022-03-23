@@ -3382,7 +3382,9 @@ class Chart {
         if (updateAllSeries) {
             chart.getSeriesOrderByLinks().forEach(function (series): void {
                 // Avoid removed navigator series
-                series.update({}, false);
+                if (series.chart) {
+                    series.update({}, false);
+                }
             }, this);
         }
 
