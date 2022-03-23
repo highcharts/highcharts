@@ -129,7 +129,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
-    "@highcharts/map-collection": "^1.1.4",
+    "@highcharts/map-collection": "^2.0.0",
     "jspdf": "^2.5.0",
     "svg2pdf.js": "^2.2.0"
   }
