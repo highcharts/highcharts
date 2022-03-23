@@ -622,8 +622,11 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @param {Highcharts.AxisPositions} removedYAxisHeight
+     * @param {string} removedHeight
      *        Height of the removed yAxis in percents.
+     *
+     * @param {string} removedTop
+     *        Top value of the removed yAxis in percents.
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
