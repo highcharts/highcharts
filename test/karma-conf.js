@@ -330,6 +330,7 @@ module.exports = function (config) {
             // Maps
             'samples/maps/demo/map-pies/demo.js', // advanced data
             'samples/maps/demo/us-counties/demo.js', // advanced data
+            'samples/maps/plotoptions/series-animation-true/demo.js', // animation
 
             // Unknown error
             'samples/highcharts/boost/scatter-smaller/demo.js',
@@ -637,7 +638,16 @@ function createVisualTestTemplate(argv, path, js, assertion) {
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
     // Force enableSimulation: false
-    scriptBody = scriptBody.replace('enableSimulation: true','enableSimulation: false');
+    scriptBody = scriptBody.replace(
+        'enableSimulation: true',
+        'enableSimulation: false'
+    );
+
+    // Disable explicit animation
+    scriptBody = scriptBody.replace(
+        /(\s?)animation: /,
+        '$1_animation: '
+    );
 
     let html = getHTML(path);
     let resets = [];
