@@ -12,10 +12,7 @@ QUnit.test(
             },
 
             mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    align: 'right'
-                }
+                enabled: false
             },
 
             colorAxis: {
