@@ -265,7 +265,8 @@ namespace DataLabel {
             if (rotation) {
                 dataLabel.attr({ align });
             }
-            const bBox = dataLabel.getBBox();
+            let bBox = dataLabel.getBBox(true),
+                bBoxCorrection = [0, 0];
 
             baseline = chart.renderer.fontMetrics(
                 chart.styledMode ? void 0 : (options.style as any).fontSize,
@@ -307,6 +308,11 @@ namespace DataLabel {
                         alignTo.height
                     )
                 };
+
+                bBoxCorrection = [
+                    bBox.x - Number(dataLabel.attr('x')),
+                    bBox.y - Number(dataLabel.attr('y'))
+                ];
                 setStartPos(alignAttr); // data sorting
                 dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
 
@@ -331,8 +337,8 @@ namespace DataLabel {
             } else if (pick(options.crop, true)) {
 
                 let { x, y } = alignAttr;
-                x += bBox.x;
-                y += bBox.y + (bBox.y <= -9999 ? 9999 : 0);
+                x += bBoxCorrection[0];
+                y += bBoxCorrection[1];
 
                 // Uncomment this block to visualize the bounding boxes used for
                 // determining visibility
