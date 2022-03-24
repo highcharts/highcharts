@@ -661,8 +661,7 @@ class Scrollbar {
             size = scroller.size,
             styledMode = scroller.chart.styledMode,
             group = renderer.g('scrollbar').attr({
-                zIndex: options.zIndex,
-                translateY: -99999
+                zIndex: options.zIndex
             }).add();
 
         // Draw the scrollbar group
