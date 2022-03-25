@@ -1,0 +1,11 @@
+---
+name: Demo which is a base for cypress tests
+requiresManualTesting: true
+skipTest: true
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - General:
+      priority: 11
+...
