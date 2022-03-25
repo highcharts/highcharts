@@ -1,6 +1,9 @@
 describe('Stock Tools annotation popup, #15725', () => {
     beforeEach(() => {
         cy.viewport(1000, 500);
+        cy.chart().then((chart) => {
+            chart.yAxis[0].setExtremes(25, 175);
+        });
     });
 
     before(() => {
