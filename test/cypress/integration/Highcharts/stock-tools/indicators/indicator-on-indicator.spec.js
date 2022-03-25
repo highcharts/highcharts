@@ -4,7 +4,7 @@ describe('An indicator on indicator, #15696.', () => {
     });
 
     before(() => {
-        cy.visit('/cypress/stock-tools-gui/');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('There should be a possibility to add indicators based on other indicator, #15696.', () => {

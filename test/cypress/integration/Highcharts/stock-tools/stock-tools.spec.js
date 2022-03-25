@@ -4,7 +4,7 @@ describe('Stock Tools annotation popup, #15725', () => {
     });
 
     before(() => {
-        cy.visit('/cypress/stock-tools-gui/');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Adding annotation after deselecting the button should not be allowed, #16485.', () => {
@@ -107,7 +107,7 @@ describe('Indicator popup searchbox, #16019.', () => {
     });
 
     before(() => {
-        cy.visit('/cypress/stock-tools-gui/');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Search indicator input should filter and sort the list, #16019.', () => {

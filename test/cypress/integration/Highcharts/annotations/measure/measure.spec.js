@@ -4,7 +4,7 @@ describe('Measure annotation.', () => {
     });
 
     before(() => {
-        cy.visit('/cypress/stock-tools-gui/');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
     it('Measure y annotation should have the width of the chart, #15696', () => {
         cy.selectRange('3m')
