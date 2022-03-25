@@ -4,14 +4,14 @@ describe('Stock Tools Time Cicles, #15826', () => {
     });
 
     before(() => {
-        cy.visit('/cypress/stock-tools-gui/');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it(`Should create an annotation and check the shape's coordinates.`, () => {
         cy.selectAnnotation('highcharts-time-cycles', 'highcharts-fibonacci');
         cy.get('.highcharts-container')
-            .click(120, 150, { force: true })
-            .click(220, 150, { force: true })
+            .click(125, 150, { force: true })
+            .click(225, 150, { force: true })
 
         cy.chart().then(chart => {
 
@@ -21,13 +21,13 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 point2 = annotation.points[1];
             assert.closeTo(
                 xAxis.toPixels(point1.x),
-                120,
+                125,
                 4,
                 'First point should be close to the place, where the mouse clicked.'
             );
             assert.closeTo(
                 xAxis.toPixels(point2.x),
-                220,
+                225,
                 4,
                 'Second point should be close to the place, where the mouse clicked.'
             );
@@ -58,7 +58,7 @@ describe('Stock Tools Time Cicles, #15826', () => {
 
             assert.closeTo(
                 xAxis.toPixels(point1.x),
-                120,
+                125,
                 4,
                 'First point should be close to the place, where it was dragged.'
             );
@@ -70,7 +70,7 @@ describe('Stock Tools Time Cicles, #15826', () => {
             );
             assert.closeTo(
                 annotation.pixelInterval,
-                250,
+                245,
                 4,
                 'Pixel interval should be adjusted to new value.'
             );
@@ -89,13 +89,13 @@ describe('Stock Tools Time Cicles, #15826', () => {
                 point2 = annotation.points[1];
             assert.closeTo(
                 xAxis.toPixels(point1.x),
-                75,
+                85,
                 4,
                 'The point1 should change its place.'
             );
             assert.closeTo(
                 xAxis.toPixels(point2.x),
-                325,
+                330,
                 4,
                 'The point1 should change its place.'
             );
