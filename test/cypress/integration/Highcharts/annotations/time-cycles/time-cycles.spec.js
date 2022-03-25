@@ -4,7 +4,7 @@ describe('Stock Tools Time Cicles, #15826', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/cypress/stock-tools-gui/');
     });
 
     it(`Should create an annotation and check the shape's coordinates.`, () => {
