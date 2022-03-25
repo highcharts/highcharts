@@ -1160,7 +1160,8 @@ class Tooltip {
                         plotY: y,
                         negative: point.negative,
                         ttBelow: point.ttBelow,
-                        h: anchor[2] || 0
+                        h: anchor[2] || 0,
+                        point
                     } as any);
                 } else {
                     tooltip.hide();
