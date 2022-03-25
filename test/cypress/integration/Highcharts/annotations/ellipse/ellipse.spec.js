@@ -5,6 +5,9 @@ describe('Stock tools Ellipse Annotation, #15008', () => {
 
     before(() => {
         cy.visit('/stock/demo/stock-tools-gui');
+        cy.chart().then((chart) => {
+            chart.yAxis[0].setExtremes(25, 175);
+        })
     });
 
     it('Should create Ellipse annotation via stock tools and test its params.', () => {
