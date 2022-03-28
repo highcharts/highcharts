@@ -596,6 +596,10 @@ class Scrollbar {
         let xOffset = height,
             yOffset = 0;
 
+        // Make the scrollbar visible when it is repositioned, #15763.
+        scroller.group.attr({
+            visibility: 'visible'
+        });
         scroller.x = x;
         scroller.y = y + this.trackBorderWidth;
         scroller.width = width; // width with buttons
@@ -661,6 +665,7 @@ class Scrollbar {
             size = scroller.size,
             styledMode = scroller.chart.styledMode,
             group = renderer.g('scrollbar').attr({
+                visibility: 'hidden',
                 zIndex: options.zIndex
             }).add();
 
