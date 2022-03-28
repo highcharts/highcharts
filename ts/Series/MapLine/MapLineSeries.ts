@@ -16,6 +16,7 @@
  *
  * */
 
+import MapView from '../../Maps/MapView.js';
 import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -105,11 +106,23 @@ class MapLineSeries extends MapSeries {
         point: MapLinePoint,
         state: StatesOptionsKey
     ): SVGAttributes {
+        const { mapView } = point.series.chart;
         const attr = MapSeries.prototype.pointAttribs.call(
             this,
             point,
             state
         );
+
+        if (state === 'hover') {
+            if (point.series.options.states &&
+                point.series.options.states.hover) {
+                let lineWidth = point.series.options.states.hover.lineWidth;
+
+                if (mapView && lineWidth) {
+                    attr['stroke-width'] = lineWidth / mapView.getScale();
+                }
+            }
+        }
 
         // The difference from a map series is that the stroke takes the
         // point color
