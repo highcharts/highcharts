@@ -102,7 +102,6 @@ const {
     fireEvent,
     getStyle,
     isArray,
-    isFunction,
     isNumber,
     isObject,
     isString,

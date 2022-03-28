@@ -1,5 +1,5 @@
 ---
- name: Portugal - Highmaps
- description: Highmaps demo
+ name: Portugal - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

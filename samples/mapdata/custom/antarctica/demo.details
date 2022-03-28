@@ -1,5 +1,5 @@
 ---
- name: Antarctica - Highmaps
- description: Highmaps demo
+ name: Antarctica - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -43,4 +43,4 @@ Breadcrumbs might also be used as a standalone element. To do so, a list of leve
 
 ## API
 
-For more information see the API reference for [drilldown breadcrumbs](https://api.highcharts.com/highcharts/drilldown/breadcrumbs) and [treemap breadcrumbs](https://api.highcharts.com/highcharts/plotOptions.treemap.breadcrumbs).
+For more information see the API reference for [drilldown breadcrumbs](https://api.highcharts.com/highcharts/drilldown.breadcrumbs) and [treemap breadcrumbs](https://api.highcharts.com/highcharts/plotOptions.treemap.breadcrumbs).

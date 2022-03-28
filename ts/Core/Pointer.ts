@@ -2052,7 +2052,7 @@ class Pointer {
             hoverChart !== chart
         ) {
             hoverChart.pointer.onContainerMouseLeave(
-                { relatedTarget: true } as any
+                { relatedTarget: chart.container } as any
             );
         }
 

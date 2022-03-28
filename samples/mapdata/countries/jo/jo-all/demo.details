@@ -1,5 +1,5 @@
 ---
- name: Jordan - Highmaps
- description: Highmaps demo
+ name: Jordan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

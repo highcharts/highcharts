@@ -1,5 +1,5 @@
 ---
- name: Taiwan - Highmaps
- description: Highmaps demo
+ name: Taiwan - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

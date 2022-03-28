@@ -1,63 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['ca-sk-4711', 0],
-    ['ca-sk-4708', 1],
-    ['ca-sk-4706', 2],
-    ['ca-sk-4707', 3],
-    ['ca-sk-4705', 4],
-    ['ca-sk-4714', 5],
-    ['ca-sk-4704', 6],
-    ['ca-sk-4715', 7],
-    ['ca-sk-4703', 8],
-    ['ca-sk-4702', 9],
-    ['ca-sk-4716', 10],
-    ['ca-sk-4701', 11],
-    ['ca-sk-4717', 12],
-    ['ca-sk-4710', 13],
-    ['ca-sk-4712', 14],
-    ['ca-sk-4713', 15],
-    ['ca-sk-4718', 16],
-    ['ca-sk-4709', 17]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/ca/ca-sk-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/ca/ca-sk-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['ca-sk-4711', 10], ['ca-sk-4708', 11], ['ca-sk-4706', 12],
+        ['ca-sk-4707', 13], ['ca-sk-4705', 14], ['ca-sk-4714', 15],
+        ['ca-sk-4704', 16], ['ca-sk-4715', 17], ['ca-sk-4703', 18],
+        ['ca-sk-4702', 19], ['ca-sk-4716', 20], ['ca-sk-4701', 21],
+        ['ca-sk-4717', 22], ['ca-sk-4710', 23], ['ca-sk-4712', 24],
+        ['ca-sk-4713', 25], ['ca-sk-4718', 26], ['ca-sk-4709', 27]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-sk-all.js">Saskatchewan</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-sk-all.topo.json">Saskatchewan</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

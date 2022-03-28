@@ -1,5 +1,5 @@
 ---
- name: Auvergne-Rhône-Alpes - Highmaps
- description: Highmaps demo
+ name: Auvergne-Rhône-Alpes - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -17,8 +17,10 @@
  * */
 
 import type MapChart from '../../Core/Chart/MapChart';
+import MapSeries from '../Map/MapSeries.js';
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -159,6 +161,11 @@ class MapPointSeries extends ScatterSeries {
         }
         this.generatePoints();
 
+        if (this.getProjectedBounds && this.isDirtyData) {
+            delete this.bounds;
+            this.getProjectedBounds(); // Added point needs bounds(#16598)
+        }
+
         // Create map based translation
         if (mapView) {
             const { hasCoordinates } = mapView.projection;
@@ -211,6 +218,7 @@ class MapPointSeries extends ScatterSeries {
  * */
 
 interface MapPointSeries {
+    bounds: MapBounds | undefined;
     pointClass: typeof MapPointPoint;
 }
 extend(MapPointSeries.prototype, {
@@ -378,9 +386,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number}
@@ -389,9 +397,9 @@ export default MapPointSeries;
  */
 
 /**
- * The x coordinate of the point in terms of the map path coordinates.
+ * The x coordinate of the point in terms of projected units.
  *
- * @sample {highmaps} maps/demo/mapline-mappoint/
+ * @sample {highmaps} maps/series/mapline-mappoint-path-xy/
  *         Map point demo
  *
  * @type      {number|null}

@@ -24,7 +24,7 @@ import { Palette } from '../Core/Color/Palettes.js';
  * Generic options for the placement and appearance of map insets like
  * non-contiguous territories.
  *
- * @since next
+ * @since 10.0.0
  * @product      highmaps
  * @optionparent mapView.insetOptions
  */

@@ -242,3 +242,54 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         when the point is in a 'normal' state, #16165.`
     );
 });
+
+QUnit.test(
+    'Animation tests',
+    assert => {
+        const chart = new Highcharts.Chart('container', {
+                chart: {
+                    type: 'heatmap'
+                },
+
+                series: [{
+                    data: [
+                        [0, 0, 1],
+                        [0, 1, 1],
+                        [0, 2, 1],
+                        [1, 0, 1],
+                        [1, 1, 1],
+                        [1, 2, 1]
+                    ],
+                    borderRadius: 39
+                }]
+            }),
+            point0 = chart.series[0].points[0],
+            point1 = chart.series[0].points[1],
+            done = assert.async();
+
+        let clock = null;
+
+        try {
+            clock = TestUtilities.lolexInstall();
+
+            chart.yAxis[0].setExtremes(0, 1, true, { duration: 50 });
+
+            setTimeout(function () {
+                point0.setState('hover');
+                point0.setState('');
+                assert.close(
+                    Math.round(point0.graphic.getBBox().height),
+                    Math.round(point1.graphic.getBBox().height),
+                    2,
+                    `Hovering points should not change the cell size (#16921)`
+                );
+
+                done();
+            }, 200);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);
