@@ -3984,7 +3984,7 @@ class Axis {
                 axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
                 axisTitle.isNew = false;
             } else {
-                axisTitle.attr('y', -9999 as any);
+                axisTitle.hide();
                 axisTitle.isNew = true;
             }
         }
