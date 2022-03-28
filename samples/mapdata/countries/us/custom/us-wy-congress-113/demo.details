@@ -1,5 +1,5 @@
 ---
- name: Wyoming congressional districts - Highmaps
- description: Highmaps demo
+ name: Wyoming congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

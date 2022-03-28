@@ -433,12 +433,12 @@ defaultOptions.drilldown = {
      */
 
     /**
-     * Breadcrumbs options.
+     * Options for the breadcrumbs, the navigation at the top leading the way
+     * up through the drilldown levels.
      *
-     *
-     * @since     next
+     * @since 10.0.0
      * @product   highcharts
-     * @extends breadcrumbs
+     * @extends   navigation.breadcrumbs
      * @optionparent drilldown.breadcrumbs
      */
 
@@ -1191,10 +1191,8 @@ addEvent(H.Breadcrumbs, 'up', function (
 addEvent(Chart, 'afterDrilldown', function (): void {
 
     const chart = this,
-        drilldownOptions = chart.options.drilldown;
-
-    const breadcrumbsOptions = drilldownOptions &&
-        drilldownOptions.breadcrumbs;
+        drilldownOptions = chart.options.drilldown,
+        breadcrumbsOptions = drilldownOptions && drilldownOptions.breadcrumbs;
 
     if (!chart.breadcrumbs) {
         chart.breadcrumbs = new Breadcrumbs(chart, breadcrumbsOptions);

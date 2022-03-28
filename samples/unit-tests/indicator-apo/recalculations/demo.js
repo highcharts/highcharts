@@ -44,9 +44,7 @@ QUnit.test(
         });
 
         function toFastAPOWithRound(arr) {
-            return Highcharts.map(arr, function (point) {
-                return parseFloat(point.toFixed(4));
-            });
+            return arr.map(point => parseFloat(point.toFixed(4)));
         }
 
         assert.strictEqual(

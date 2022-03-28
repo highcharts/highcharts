@@ -2112,18 +2112,20 @@ const defaultOptions: Options = {
          */
 
         /**
-         * A callback function to place the tooltip in a default position. The
+         * A callback function to place the tooltip in a custom position. The
          * callback receives three parameters: `labelWidth`, `labelHeight` and
          * `point`, where point contains values for `plotX` and `plotY` telling
          * where the reference point is in the plot area. Add `chart.plotLeft`
          * and `chart.plotTop` to get the full coordinates.
          *
+         * To find the actual hovered `Point` instance, use
+         * `this.chart.hoverPoint`. For shared or split tooltips, all the hover
+         * points are available in `this.chart.hoverPoints`.
+         *
          * Since v7, when [tooltip.split](#tooltip.split) option is enabled,
          * positioner is called for each of the boxes separately, including
          * xAxis header. xAxis header is not a point, instead `point` argument
-         * contains info:
-         * `{ plotX: Number, plotY: Number, isHeader: Boolean }`
-         *
+         * contains info: `{ plotX: Number, plotY: Number, isHeader: Boolean }`
          *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
@@ -2488,7 +2490,7 @@ const defaultOptions: Options = {
          *
          * @sample {highcharts} highcharts/tooltip/pointformat/
          *         A different point format with value suffix
-         * @sample {highcharts|highstock} highcharts/tooltip/pointformat-extra-infromation/
+         * @sample {highcharts|highstock} highcharts/tooltip/pointformat-extra-information/
          *         Show extra information about points in the tooltip
          * @sample {highmaps} maps/tooltip/format/
          *         Format demo

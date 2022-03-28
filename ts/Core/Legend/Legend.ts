@@ -1252,7 +1252,11 @@ class Legend {
             alignTo = merge(alignTo, { y });
         }
 
-        this.group.placed = chart.hasRendered;
+        if (!chart.hasRendered) {
+            // Avoid animation when adjusting alignment for responsiveness and
+            // colorAxis label layout
+            this.group.placed = false;
+        }
         this.group.align(merge(options, {
             width: this.legendWidth,
             height: this.legendHeight,

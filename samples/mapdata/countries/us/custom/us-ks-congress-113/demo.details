@@ -1,5 +1,5 @@
 ---
- name: Kansas congressional districts - Highmaps
- description: Highmaps demo
+ name: Kansas congressional districts - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

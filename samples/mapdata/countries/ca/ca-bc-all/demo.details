@@ -1,5 +1,5 @@
 ---
- name: British Columbia - Highmaps
- description: Highmaps demo
+ name: British Columbia - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['cv-br', 0],
-    ['cv-ma', 1],
-    ['cv-6566', 2],
-    ['cv-6567', 3],
-    ['cv-6570', 4],
-    ['cv-sf', 5],
-    ['cv-mo', 6],
-    ['cv-cf', 7],
-    ['cv-ta', 8],
-    ['cv-ca', 9],
-    ['cv-sm', 10],
-    ['cv-cr', 11],
-    ['cv-ss', 12],
-    ['cv-so', 13],
-    ['cv-sd', 14],
-    ['cv-rs', 15],
-    ['cv-pr', 16],
-    ['cv-6568', 17],
-    ['cv-6569', 18],
-    ['cv-6571', 19],
-    ['cv-6572', 20],
-    ['cv-6573', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/cv/cv-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/cv/cv-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['cv-br', 10], ['cv-ma', 11], ['cv-6566', 12], ['cv-6567', 13],
+        ['cv-6570', 14], ['cv-sf', 15], ['cv-mo', 16], ['cv-cf', 17],
+        ['cv-ta', 18], ['cv-ca', 19], ['cv-sm', 20], ['cv-cr', 21],
+        ['cv-ss', 22], ['cv-so', 23], ['cv-sd', 24], ['cv-rs', 25],
+        ['cv-pr', 26], ['cv-6568', 27], ['cv-6569', 28], ['cv-6571', 29],
+        ['cv-6572', 30], ['cv-6573', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cv/cv-all.js">Cape Verde</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cv/cv-all.topo.json">Cape Verde</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

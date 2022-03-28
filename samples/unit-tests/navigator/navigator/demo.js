@@ -584,16 +584,16 @@ QUnit.test(
                 }
             ];
 
-        Highcharts.each(series, function (s) {
+        series.forEach(s => {
             chart.addSeries(s, false);
         });
         chart.xAxis[0].setExtremes();
 
-        Highcharts.each(points, function (s, index) {
+        points.forEach((s, index) => {
             if (
                 chart.series[index].options.id !== 'highcharts-navigator-series'
             ) {
-                Highcharts.each(s.data, function (p) {
+                s.data.forEach(p => {
                     chart.series[index].addPoint(p, false);
                 });
             }

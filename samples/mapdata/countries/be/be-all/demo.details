@@ -1,5 +1,5 @@
 ---
- name: Belgium - Highmaps
- description: Highmaps demo
+ name: Belgium - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

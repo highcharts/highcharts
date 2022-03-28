@@ -1327,9 +1327,23 @@ class Series {
             updatedData,
             indexOfX = 0,
             indexOfY = 1,
-            firstPoint = null;
+            firstPoint = null,
+            copiedData;
 
-        data = data || [];
+        if (!chart.options.chart.allowMutatingData) { // #4259
+            // Remove old reference
+            if (options.data) {
+                delete series.options.data;
+            }
+            if (series.userOptions.data) {
+                delete series.userOptions.data;
+            }
+            copiedData = merge(true, data);
+
+        }
+        data = copiedData || data || [];
+
+
         const dataLength = data.length;
         redraw = pick(redraw, true);
 
@@ -1340,6 +1354,7 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
+            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&
@@ -2779,9 +2794,9 @@ class Series {
             );
         let seriesStateOptions: SeriesStateHoverOptions,
             pointStateOptions: PointStateHoverOptions,
-            radius = pick(
+            radius: number|undefined = pick(
                 pointMarkerOptions.radius,
-                (seriesMarkerOptions as any).radius
+                seriesMarkerOptions && seriesMarkerOptions.radius
             );
 
         // Handle hover and select states
@@ -2793,7 +2808,7 @@ class Series {
             radius = pick(
                 pointStateOptions && pointStateOptions.radius,
                 seriesStateOptions && seriesStateOptions.radius,
-                radius + (
+                radius && radius + (
                     seriesStateOptions && seriesStateOptions.radiusPlus ||
                     0
                 )
@@ -2805,13 +2820,13 @@ class Series {
         if (point.hasImage) {
             radius = 0; // and subsequently width and height is not set
         }
-        const attribs: SVGAttributes = {
+        const attribs: SVGAttributes = isNumber(radius) ? {
             // Math.floor for #1843:
             x: seriesOptions.crisp ?
                 Math.floor(point.plotX as any - radius) :
                 (point.plotX as any) - radius,
             y: (point.plotY as any) - radius
-        };
+        } : {};
 
         if (radius) {
             attribs.width = attribs.height = 2 * radius;
