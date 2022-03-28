@@ -4,7 +4,7 @@ describe('Stock tools rectangle annotatation.', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
     it('Rectangle annotation should have closed shape, 16449', () => {
         cy.get('.highcharts-label-annotation').children().eq(1).click();
