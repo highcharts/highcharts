@@ -215,9 +215,9 @@ jobs:
           name: Run cypress tests (Firefox)
           command: npx cypress run --browser firefox --headless
       - store_artifacts:
-          path: cypress/videos
+          path: /home/circleci/repo/highcharts/cypress/videos
       - store_artifacts:
-          path: cypress/screenshots
+          path: /home/circleci/repo/highcharts/cypress/screenshots
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
