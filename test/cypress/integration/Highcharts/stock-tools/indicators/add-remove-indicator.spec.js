@@ -4,7 +4,7 @@ describe('Axis height recalculation.', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it('Axes should scale after removing indicators through Stock Tools GUI, #15735.', () => {
