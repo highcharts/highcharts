@@ -389,6 +389,7 @@ QUnit.test('Axis title multiline', function (assert) {
         'The title should be on a single line'
     );
     assert.ok(chart.plotWidth > crammedPlotWidth, 'Plot width increased');
+
 });
 
 // Highcharts 4.0.1, Issue #3027
