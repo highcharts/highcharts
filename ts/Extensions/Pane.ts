@@ -582,10 +582,9 @@ Chart.prototype.getHoverPane = function (
     let hoverPane;
     if (eventArgs) {
         chart.pane.forEach((pane): void => {
-            const plotX = eventArgs.chartX - chart.plotLeft,
-                plotY = eventArgs.chartY - chart.plotTop,
-                x = chart.inverted ? plotY : plotX,
-                y = chart.inverted ? plotX : plotY;
+            const x = eventArgs.chartX - chart.plotLeft,
+                y = eventArgs.chartY - chart.plotTop;
+
             if (isInsidePane(x, y, pane.center)) {
                 hoverPane = pane;
             }
