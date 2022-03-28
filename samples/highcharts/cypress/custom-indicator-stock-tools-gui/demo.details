@@ -1,10 +1,7 @@
 ---
-name: Demo which is a base for cypress tests
+name: Stock tools gui with added custom indicator for cypress
+authors:
+  - Pawel Lysy
 skipTest: true
 js_wrap: b
-tags:
-  - Highcharts Stock demo
-categories:
-  - General:
-      priority: 11
 ...
