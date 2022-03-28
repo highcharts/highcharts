@@ -16,18 +16,23 @@
  *
  * */
 
-
-import type SunburstSeries from './Sunburst/SunburstSeries.js';
-import type SunburstDataLabelOptions from '../Series/Sunburst/SunburstDataLabelOptions';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type DependencyWheelSeries from './DependencyWheel/DependencyWheelSeries.js';
+import type SunburstDataLabelOptions from '../Series/Sunburst/SunburstDataLabelOptions';
+import type SunburstSeries from './Sunburst/SunburstSeries.js';
+import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 
 import U from '../Core/Utilities.js';
+import Series from '../Core/Series/Series.js';
+
 const {
     defined,
     isNumber,
     isObject,
     merge,
-    splat
+    splat,
+    wrap
 } = U;
 
 /* *
@@ -241,6 +246,41 @@ namespace CircularDataLabels {
         return options;
     }
 }
+
+wrap(Series.prototype, 'alignDataLabel', function (
+    this: Series,
+    proceed: Function,
+    point: any,
+    dataLabel: SVGLabel,
+    options: DataLabelOptions,
+    alignTo: BBoxObject
+): void {
+    if (point.shapeArgs) {
+        const rotation = (point.shapeArgs.end + point.shapeArgs.start) / 2;
+
+        if (
+            dataLabel.bBox &&
+            !defined(point.series.options.dataLabels.align) &&
+            !defined(point.series.options.dataLabels.rotationMode) &&
+            rotation
+        ) {
+            const dataLabelWidth = dataLabel.bBox.width;
+
+            // Shift 80% of the labels (leave the top and bottom part) that are
+            // oriented horizontally.
+            if (rotation > -Math.PI / 2 * 0.8 && rotation < Math.PI / 2 * 0.8) {
+                alignTo.x += dataLabelWidth / 2;
+            } else if (
+                rotation > Math.PI / 2 * 1.2 &&
+                rotation < 2 * Math.PI * 0.8
+            ) {
+                alignTo.x -= dataLabelWidth / 2;
+            }
+        }
+    }
+
+    proceed.apply(this, [].slice.call(arguments, 1));
+});
 
 /* *
  *
