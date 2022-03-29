@@ -45,6 +45,7 @@ const { merge, pick, addEvent, isArray } = U;
 import './TreegraphLayout.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
+import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -103,20 +104,6 @@ class TreegraphSeries extends TreemapSeries {
     public static defaultOptions: TreegraphSeriesOptions = merge(
         TreemapSeries.defaultOptions,
         {
-            /**
-             * The option to choose the layout alogrythm, which should be used
-             * to calculate the positions of the nodes.
-             *
-             *
-             * @sample highcharts/demo/treegraph-chart
-             *         Treegraph chart
-             *
-             * @type {'Walker'}
-             * @since next
-             * @default 'Walker'
-             * @product highcharts
-             */
-            layout: 'Walker',
             /**
              * Whether the first node should be placed on the opposite side of
              * the `plotArea`. By default, the oldest child is positioned on the
@@ -563,9 +550,9 @@ class TreegraphSeries extends TreemapSeries {
                 this.options.dataLabels = [this.options.dataLabels];
             }
 
-            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-            const dataLabelOptions = this.options.dataLabels.map(option =>
-                option.textPath
+            const dataLabelOptions = this.options.dataLabels.map(
+                (option): DataLabelTextPathOptions | undefined =>
+                    option.textPath
             );
             // Render node labels.
             Series.prototype.drawDataLabels.apply(this, arguments);
