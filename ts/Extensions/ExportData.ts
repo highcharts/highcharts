@@ -466,6 +466,9 @@ addEvent(Chart, 'render', function (): void {
         !this.dataTableDiv
     ) {
         this.viewData();
+    } else if (this.dataTableDiv) {
+        // Data table was not re-rendered after a data update, #14320.
+        AST.setElementHTML(this.dataTableDiv, this.getTable());
     }
 });
 
