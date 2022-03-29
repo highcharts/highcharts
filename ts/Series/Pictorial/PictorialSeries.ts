@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Kacper Madej
+ *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -19,19 +19,21 @@ import '../Column/ColumnSeries.js';
 import '../../Extensions/PatternFill.js';
 
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
-
-import PictorialPoint from './PictorialPoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+
+import PictorialPoint from './PictorialPoint.js';
+import U from '../../Core/Utilities.js';
+import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+
 const {
     extend,
     merge,
@@ -92,7 +94,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    public paths: string | SVGPath | undefined = void 0 as any;
+    public paths: Array<string | SVGPath> = void 0 as any;
 
     public data: Array<PictorialPoint> = void 0 as any;
 

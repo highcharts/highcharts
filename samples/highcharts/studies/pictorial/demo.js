@@ -10,69 +10,6 @@
  *   be dictated by the path's aspect ratio.
  */
 
-Highcharts.seriesType(
-    'pictorial',
-    'column',
-    {
-        borderWidth: 0
-    },
-    {
-        pointAttribs: function (point, selected) {
-            const pointAttribs = Highcharts.seriesTypes.column.prototype
-                .pointAttribs.call(this, point, selected);
-
-            pointAttribs.fill = {
-                pattern: {
-                    path: {
-                        d: point.series.options.paths[
-                            point.index % point.series.options.paths.length
-                        ],
-                        fill: pointAttribs.fill,
-                        strokeWidth: 0,
-                        stroke: pointAttribs.stroke
-                    },
-                    x: point.shapeArgs.x,
-                    y: 0,
-                    width: point.shapeArgs.width,
-                    height: point.series.yAxis.len,
-                    patternContentUnits: 'objectBoundingBox',
-                    backgroundColor: 'none'
-                }
-            };
-
-            delete pointAttribs.stroke;
-            delete pointAttribs.strokeWidth;
-
-            return pointAttribs;
-        }
-    }
-);
-
-Highcharts.addEvent(Highcharts.Series, 'afterRender', function () {
-    if (this instanceof Highcharts.seriesTypes.pictorial) {
-        this.points.forEach(point => {
-            const fill = point.graphic && point.graphic.attr('fill');
-            const match = fill && fill.match(/url\(([^)]+)\)/);
-            if (match) {
-                const patternPath = document.querySelector(`${match[1]} path`);
-                if (patternPath) {
-                    const bBox = patternPath.getBBox();
-                    const scaleX = 1 / bBox.width;
-                    const scaleY = this.yAxis.len /
-                        point.shapeArgs.height /
-                        bBox.height;
-
-                    patternPath.setAttribute(
-                        'transform',
-                        `scale(${scaleX} ${scaleY}) ` +
-                        `translate(${-bBox.x}, ${-bBox.y})`
-                    );
-                }
-            }
-
-        });
-    }
-});
 
 Highcharts.chart('container', {
     chart: {

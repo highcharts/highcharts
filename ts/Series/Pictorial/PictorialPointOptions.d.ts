@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *

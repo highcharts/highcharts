@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -24,8 +24,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
  * */
 
 export interface PictorialSeriesOptions extends ColumnSeriesOptions {
-    // Nothing here for the moment
-    paths: string | SVGPath | undefined;
+    paths?: Array <string | SVGPath>;
 }
 
 /* *

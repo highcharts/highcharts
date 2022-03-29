@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2021 Torstein Honsi
+ *  (c) 2010-2022 Torstein Honsi, Magdalena Gut
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,12 @@
 
 import type PictorialPointOptions from './PictorialPointOptions';
 import type PictorialSeries from './PictorialSeries';
-import ColumnSeries from '../Column/ColumnSeries.js';
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 
 /* *
  *
@@ -34,18 +38,6 @@ class PictorialPoint extends ColumnSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Destroys target graphic.
-     * @private
-     */
-    public destroy(): void {
-        super.destroy.apply(this, arguments);
-    }
-
-    /* eslint-enable valid-jsdoc */
 
 }
 
