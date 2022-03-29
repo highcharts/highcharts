@@ -1398,7 +1398,6 @@ class Navigator {
                     -(scrollbarHeight as any));
                 scrollbarLeft = navigator.left - (scrollbarHeight as any);
             }
-
             // Reposition scrollbar
             navigator.scrollbar.position(
                 scrollbarLeft,
