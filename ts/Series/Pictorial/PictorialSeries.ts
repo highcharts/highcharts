@@ -72,7 +72,7 @@ class PictorialSeries extends ColumnSeries {
      *         Pictorial graph
      *
      * @extends      plotOptions.column
-     * @since        6.0.0
+     * @since        next
      * @product      highcharts
      * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
      *               dataSorting, boostBlending
@@ -246,7 +246,7 @@ export default PictorialSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pictorial
- * @since     6.0.0
+ * @since     next
  * @product   highcharts
  * @excluding dataParser, dataURL, marker, dataSorting, boostThreshold,
  *            boostBlending
@@ -296,7 +296,7 @@ export default PictorialSeries;
  *
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
- * @since     6.0.0
+ * @since     next
  * @product   highcharts
  * @apioption series.bullet.data
  */
@@ -305,7 +305,7 @@ export default PictorialSeries;
  * The target value of a point.
  *
  * @type      {number}
- * @since     6.0.0
+ * @since     next
  * @product   highcharts
  * @apioption series.bullet.data.target
  */
