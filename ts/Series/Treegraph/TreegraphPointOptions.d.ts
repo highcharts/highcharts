@@ -24,7 +24,7 @@ import type { LinkOptions } from '../Organization/OrganizationSeriesOptions';
  * */
 
 export interface TreegraphPointOptions extends TreemapPointOptions {
-    borderRadius: number;
+    borderRadius?: number;
     link?: LinkOptions;
 }
 
