@@ -174,7 +174,7 @@ class MapSeries extends ScatterSeries {
          * @sample maps/series/affectsmapview/
          *         US map with world map backdrop
          *
-         * @since next
+         * @since 10.0.0
          */
         affectsMapView: true,
 
@@ -805,8 +805,7 @@ class MapSeries extends ScatterSeries {
     public getProjectedBounds(): MapBounds|undefined {
         if (!this.bounds && this.chart.mapView) {
 
-            const MAX_VALUE = Number.MAX_VALUE,
-                { insets, projection } = this.chart.mapView,
+            const { insets, projection } = this.chart.mapView,
                 allBounds: MapBounds[] = [];
 
             // Find the bounding box of each point
@@ -931,6 +930,18 @@ class MapSeries extends ScatterSeries {
         );
 
         return attr;
+    }
+
+    /**
+     * @private
+     */
+    public updateData(): boolean {
+        // #16782
+        if (this.processedData) {
+            return false;
+        }
+
+        return super.updateData.apply(this, arguments);
     }
 
     /**

@@ -1,5 +1,5 @@
 ---
- name: Rhode Island - Highmaps
- description: Highmaps demo
+ name: Rhode Island - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

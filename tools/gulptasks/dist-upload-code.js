@@ -42,6 +42,19 @@ const HTTP_EXPIRES = {
     fiveYears: addDays(TODAY, 365 * 5)
 };
 
+/*
+async function cloudflarePurgeCode(files) {
+
+    const props = getGitIgnoreMeProperties();
+    const cf = require('cloudflare')({
+        token: props['cloudflare.token']
+    });
+
+    const resp = await cf.zones.purgeCache(props['cloudflare.zone'], { files });
+
+    console.log('CloudFlare', resp);
+}
+*/
 
 /**
  * Transforms a filepath to a similar named S3 destination path. Specific for highcharts js upload.
@@ -76,6 +89,7 @@ function uploadProductPackage(productProps, options = {}) {
     const promises = [];
     const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
+    const cdnFiles = [];
 
     if (zipFilePaths.length < 1) {
         throw new Error('No zip files found. Did you forget to run gulp dist-compress?');
@@ -113,9 +127,13 @@ function uploadProductPackage(productProps, options = {}) {
         name: prettyName
     }));
 
+    const rootJSFiles = gzippedFilesToRootDir.filter(
+        path => !isDirectoryOrSystemFile(path.from)
+    );
+    cdnFiles.push.apply(cdnFiles, rootJSFiles);
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: gzippedFilesToRootDir.filter(path => !isDirectoryOrSystemFile(path.from)),
+        files: rootJSFiles,
         name: prettyName,
         s3Params: {
             ...options.s3Params,
@@ -125,9 +143,13 @@ function uploadProductPackage(productProps, options = {}) {
         }
     }));
 
+    const rootGfxFiles = gfxFilesToRootDir.filter(
+        path => !isDirectoryOrSystemFile(path.from)
+    );
+    cdnFiles.push.apply(cdnFiles, rootGfxFiles);
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: gfxFilesToRootDir.filter(path => !isDirectoryOrSystemFile(path.from)),
+        files: rootGfxFiles,
         name: prettyName,
         s3Params: {
             ...options.s3Params,
@@ -136,9 +158,13 @@ function uploadProductPackage(productProps, options = {}) {
         }
     }));
 
+    const versionJSFiles = gzippedFilesToVersionDir.filter(
+        path => !isDirectoryOrSystemFile(path.from)
+    );
+    cdnFiles.push.apply(cdnFiles, versionJSFiles);
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: gzippedFilesToVersionDir.filter(path => !isDirectoryOrSystemFile(path.from)),
+        files: versionJSFiles,
         name: prettyName,
         s3Params: {
             ...options.s3Params,
@@ -148,9 +174,13 @@ function uploadProductPackage(productProps, options = {}) {
         }
     }));
 
+    const versionGfxFiles = gfxFilesToVersionedDir.filter(
+        path => !isDirectoryOrSystemFile(path.from)
+    );
+    cdnFiles.push.apply(cdnFiles, versionGfxFiles);
     promises.push(uploadFiles({
         bucket: options.bucket,
-        files: gfxFilesToVersionedDir.filter(path => !isDirectoryOrSystemFile(path.from)),
+        files: versionGfxFiles,
         name: prettyName,
         s3Params: {
             ...options.s3Params,
@@ -158,6 +188,30 @@ function uploadProductPackage(productProps, options = {}) {
             Expires: HTTP_EXPIRES.fiveYears
         }
     }));
+
+
+    // Purge CloudFlare cache POC. Currently stopped by rate limiting (1200
+    // requests per 5 minutes)
+    //
+    // @todo: Filter what files are urgent. For example,
+    // maintenance versioned files can be skipped, .map files, possibly es
+    // modules etc.
+    /*
+    const cloudflarePaths = cdnFiles.reduce((paths, f) => {
+        if (
+            f.to.indexOf('es-modules') === -1 &&
+            f.to.indexOf('.js.map') === -1 &&
+            !/\/[0-9]+\.[0-9]+\.[0-9]+\//u.test(f.to)
+        ) {
+            paths.push(`https://code.highcharts.com/${f.to}`);
+        }
+        return paths;
+    }, []);
+
+    while (cloudflarePaths.length) {
+        promises.push(cloudflarePurgeCode(cloudflarePaths.splice(0, 30)));
+    }
+    */
 
     return Promise.all(promises);
 }

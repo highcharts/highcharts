@@ -1,63 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['py-ag', 0],
-    ['py-bq', 1],
-    ['py-cn', 2],
-    ['py-ph', 3],
-    ['py-cr', 4],
-    ['py-sp', 5],
-    ['py-ce', 6],
-    ['py-mi', 7],
-    ['py-ne', 8],
-    ['py-gu', 9],
-    ['py-pg', 10],
-    ['py-am', 11],
-    ['py-aa', 12],
-    ['py-cg', 13],
-    ['py-cz', 14],
-    ['py-cy', 15],
-    ['py-it', 16],
-    ['py-as', 17]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/py/py-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/py/py-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['py-ag', 10], ['py-bq', 11], ['py-cn', 12], ['py-ph', 13],
+        ['py-cr', 14], ['py-sp', 15], ['py-ce', 16], ['py-mi', 17],
+        ['py-ne', 18], ['py-gu', 19], ['py-pg', 20], ['py-am', 21],
+        ['py-aa', 22], ['py-cg', 23], ['py-cz', 24], ['py-cy', 25],
+        ['py-it', 26], ['py-as', 27]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/py/py-all.js">Paraguay</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/py/py-all.topo.json">Paraguay</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

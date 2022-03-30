@@ -1,5 +1,5 @@
 ---
- name: Ukraine - Highmaps
- description: Highmaps demo
+ name: Ukraine - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

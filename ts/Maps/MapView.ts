@@ -47,11 +47,9 @@ const {
 
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-import G from '../masters/highcharts.src';
 const {
     addEvent,
     clamp,
-    defined,
     fireEvent,
     isArray,
     isNumber,
@@ -326,7 +324,12 @@ class MapView {
 
                     this.fitToBounds(void 0, void 0, false);
 
-                    if (isNumber(this.userOptions.zoom)) {
+                    if (
+                        // Set zoom only when initializing the chart
+                        // (do not overwrite when zooming in/out, #17082)
+                        !this.chart.hasRendered &&
+                        isNumber(this.userOptions.zoom)
+                    ) {
                         this.zoom = this.userOptions.zoom;
                     }
                     if (this.userOptions.center) {
@@ -491,7 +494,7 @@ class MapView {
      * Convert map coordinates in longitude/latitude to pixels
      *
      * @function Highcharts.MapView#lonLatToPixels
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject|undefined}
@@ -515,7 +518,7 @@ class MapView {
      *
      * @function Highcharts.MapView#lonLatToProjectedUnits
      *
-     * @since next
+     * @since 10.0.0
      * @sample maps/series/latlon-to-point/ Find a point from lon/lat
      *
      * @param {Highcharts.MapLonLatObject} lonLat Coordinates.
@@ -589,7 +592,7 @@ class MapView {
      *
      * @function Highcharts.MapView#projectedUnitsToLonLat
      *
-     * @since next
+     * @since 10.0.0
      *
      * @sample maps/demo/latlon-advanced/ Advanced lat/lon demo
      *
@@ -795,7 +798,7 @@ class MapView {
      * Convert pixel position to longitude and latitude.
      *
      * @function Highcharts.MapView#pixelsToLonLat
-     * @since  next
+     * @since 10.0.0
      * @param  {Highcharts.PositionObject} pos
      *         The position in pixels
      * @return {Highcharts.MapLonLatObject|undefined}
