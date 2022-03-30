@@ -56,7 +56,7 @@ QUnit.test('Axes zoom', function (assert) {
         series: [{
             pointPlacement: 'between',
             type: 'column',
-            data: [2, 4, 6, 8]
+            data: [1, 2, 3, 4, 5, 6, 7, 8]
         }]
     });
 
@@ -188,6 +188,15 @@ QUnit.test('Axes zoom', function (assert) {
 
     chart.xAxis[0].setExtremes();
     chart.yAxis[0].setExtremes();
+
+    const pointsGraphics = chart.series[0].points.map(p => typeof p.graphic);
+
+    assert.deepEqual(
+        pointsGraphics,
+        new Array(8).fill('object'),
+        `All series' points should have defined SVG graphic element after zoom 
+        reset`
+    );
 
     chart.update({
         chart: {
