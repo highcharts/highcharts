@@ -104,9 +104,8 @@ class TreegraphSeries extends TreemapSeries {
         TreemapSeries.defaultOptions,
         {
             /**
-             * Whether the first node should be placed on the opposite side of
-             * the `plotArea`. By default, the oldest child is positioned on the
-             * bottom (left in the inverted chart).
+             * Flips the positions of the nodes along the horizontal axis.
+             * (vertical if chart is inverted)
              *
              * @type {boolean}
              * @since next
