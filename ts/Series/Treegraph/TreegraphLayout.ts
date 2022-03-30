@@ -33,7 +33,6 @@ declare global {
                 node: TreegraphNode.Node,
                 defaultAncestor: TreegraphNode.Node
             ): TreegraphNode.Node;
-            public setArea(x: number, y: number, w: number, h: number): void;
             public moveSubtree(
                 ancestor: TreegraphNode.Node,
                 node: TreegraphNode.Node,
@@ -391,28 +390,6 @@ extend(H.treeLayouts.Walker.prototype, {
         rightNode.preX += shift;
         rightNode.mod += shift;
         leftNode.change += shift / subtrees;
-    },
-    /**
-     * Set the area, in which the nodes should be positioned.
-     *
-     * @param x initial x position
-     * @param y initial y position
-     * @param w width of the area
-     * @param h height of the area
-     */
-    setArea: function (
-        this: Highcharts.TreegraphLayout,
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): void {
-        this.box = {
-            left: x,
-            top: y,
-            width: w,
-            height: h
-        };
     },
     /**
      * Clear values created in a beforeLayout.
