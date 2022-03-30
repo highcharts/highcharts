@@ -666,8 +666,8 @@ class Scrollbar {
                 .attr({
                     zIndex: options.zIndex
                 })
-                .add()
-                .hide(); // initially hide the scrollbar #15863
+                .hide() // initially hide the scrollbar #15863
+                .add();
 
         // Draw the scrollbar group
         scroller.group = group;
