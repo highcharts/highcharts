@@ -460,30 +460,33 @@ addEvent(Series, 'afterTranslate', function (): void {
         }
 
         // Postprocess plot coordinates
-        if (!series.preventPostTranslate) {
-            const points = series.points;
 
-            let i = points.length;
+        const points = series.points;
 
-            while (i--) {
-                // Translate plotX, plotY from angle and radius to true plot
-                // coordinates
+        let i = points.length;
+
+        while (i--) {
+            // Translate plotX, plotY from angle and radius to true plot
+            // coordinates
+            if (!series.preventPostTranslate) {
                 series.toXY(points[i]);
+            }
 
-                // Treat points below Y axis min as null (#10082)
+            // Treat points below Y axis min as null (#10082)
+            if (
+                !chart.hasParallelCoordinates &&
+                !series.yAxis.reversed
+            ) {
                 if (
-                    !chart.hasParallelCoordinates &&
-                    !series.yAxis.reversed
+                    (points[i].y as any) < series.yAxis.min ||
+                    (points[i].x as any) < series.xAxis.min ||
+                    (points[i].x as any) > series.xAxis.max
                 ) {
-                    if (
-                        (points[i].y as any) < series.yAxis.min ||
-                        (points[i].x as any) < series.xAxis.min ||
-                        (points[i].x as any) > series.xAxis.max
-                    ) {
-                        points[i].isNull = true;
-                    } else {
-                        points[i].isNull = points[i].determineIsNull();
-                    }
+                    points[i].isNull = true;
+                    points[i].visible = false;
+                } else {
+                    points[i].visible = pick(points[i].options.visible, true);
+                    points[i].isNull = points[i].determineIsNull();
                 }
             }
         }
