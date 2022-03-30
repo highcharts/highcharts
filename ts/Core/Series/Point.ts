@@ -339,10 +339,7 @@ class Point {
                 pointValKey
             ) as (number|null|undefined);
         }
-        point.isNull = pick(
-            point.isValid && !point.isValid(),
-            point.x === null || !isNumber(point.y)
-        ); // #3571, check for NaN
+        point.isNull = Point.prototype.determineIsNull.call(point);
 
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
@@ -439,6 +436,19 @@ class Point {
         }
 
         chart.pointCount--;
+    }
+
+    /**
+     * Determine if point is null.
+     *
+     * @private
+     * @function Highcharts.Point#determineIsNull
+     */
+    public determineIsNull(): boolean {
+        return pick(
+            this.isValid && !this.isValid(),
+            this.x === null || !isNumber(this.y)
+        ); // #3571, check for NaN
     }
 
     /**

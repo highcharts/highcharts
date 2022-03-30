@@ -473,10 +473,17 @@ addEvent(Series, 'afterTranslate', function (): void {
                 // Treat points below Y axis min as null (#10082)
                 if (
                     !chart.hasParallelCoordinates &&
-                    !series.yAxis.reversed &&
-                    (points[i].y as any) < (series.yAxis.min as any)
+                    !series.yAxis.reversed
                 ) {
-                    points[i].isNull = true;
+                    if (
+                        (points[i].y as any) < series.yAxis.min ||
+                        (points[i].x as any) < series.xAxis.min ||
+                        (points[i].x as any) > series.xAxis.max
+                    ) {
+                        points[i].isNull = true;
+                    } else {
+                        points[i].isNull = points[i].determineIsNull();
+                    }
                 }
             }
         }
