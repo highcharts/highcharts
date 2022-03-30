@@ -753,12 +753,12 @@ export default TreegraphSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treegraph
- * @exclude   dataSorting, boostThreshold, boostBlending, curveFactor,
- *            connectEnds, connectNulls, colorAxis, colorKey, dataSorting,
- *            dragDrop, getExtremesFromAll, nodePadding, centerInCategory,
- *            pointInterval, pointIntervalUnit, pointPlacement,
- *            pointStart, relativeXValue, softThreshold, stack,
- *            stacking, step, xAxis, yAxis
+ * @exclude   allowDrillToNode, boostBlending, boostThreshold, curveFactor,
+ * centerInCategory, connectEnds, connectNulls, colorAxis, colorKey,
+ * dataSorting, dragDrop, findNearestPointBy, getExtremesFromAll, layout,
+ * levels, nodePadding,  pointInterval, pointIntervalUnit, pointPlacement,
+ * pointStart, relativeXValue, softThreshold, stack, stacking, step,
+ * traverseUpButton, xAxis, yAxis, zoneAxis, zones
  * @product   highcharts
  * @requires  modules/treemap.js
  * @requires  modules/treegraph.js
