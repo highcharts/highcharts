@@ -43,15 +43,14 @@ export interface TreegraphDataLabelFormatterContext {
 }
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter?: TreegraphDataLabelFormatterCallback;
+    linkFormatter: TreegraphDataLabelFormatterCallback;
     linkTextPath?: DataLabelTextPathOptions;
 }
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
-    dataLabels?: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
+    dataLabels: TreegraphDataLabelOptions | Array<TreegraphDataLabelOptions>;
     link: LinkOptions;
-    layout?: TreegraphLayoutTypes;
     reversed?: boolean;
-    marker?: PointMarkerOptions;
+    marker: PointMarkerOptions;
 }
 
 

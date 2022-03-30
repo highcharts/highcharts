@@ -38,14 +38,13 @@ const {
     }
 } = SeriesRegistry;
 
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { merge, pick, addEvent, isArray } = U;
 
-import './TreegraphLayout.js';
 import TreegraphLink from './TreegraphLink.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import { DataLabelTextPathOptions } from '../../Core/Series/DataLabelOptions.js';
+import TreegraphLayout from './TreegraphLayout.js';
 
 interface LayoutModifiers {
     ax: number;
@@ -269,7 +268,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public nodeList: Array<TreegraphNode.Node> = [];
 
-    public layoutAlgorythm: Highcharts.TreegraphLayout = void 0 as any;
+    public layoutAlgorythm: TreegraphLayout = void 0 as any;
 
     public links: Array<TreegraphLink> = [];
 
@@ -281,11 +280,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public init(): void {
         super.init.apply(this, arguments);
-        if (this.options.layout && H.treeLayouts[this.options.layout]) {
-            this.layoutAlgorythm = new H.treeLayouts[this.options.layout]();
-        } else {
-            this.layoutAlgorythm = new H.treeLayouts.Walker();
-        }
+        this.layoutAlgorythm = new TreegraphLayout();
     }
 
     /**
