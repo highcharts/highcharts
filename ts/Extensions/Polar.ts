@@ -482,10 +482,12 @@ addEvent(Series, 'afterTranslate', function (): void {
                     (points[i].x as any) < series.xAxis.min ||
                     (points[i].x as any) > series.xAxis.max
                 ) {
+                    // Destroy markers
                     points[i].isNull = true;
-                    points[i].visible = false;
+                    // Destroy column's graphic
+                    points[i].plotY = NaN;
                 } else {
-                    points[i].visible = pick(points[i].options.visible, true);
+                    // Restore isNull flag
                     points[i].isNull = points[i].determineIsNull();
                 }
             }
