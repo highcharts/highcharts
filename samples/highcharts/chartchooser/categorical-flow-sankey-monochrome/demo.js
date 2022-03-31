@@ -1,3 +1,10 @@
+Highcharts.setOptions({
+    colors: [
+        '#989898'
+    ]
+});
+
+
 Highcharts.chart("container", {
     title: {
         text: "Estimated US Energy Consumption in 2017"
@@ -21,79 +28,63 @@ Highcharts.chart("container", {
             nodes: [
                 {
                     id: "Electricity & Heat",
-                    color: "#ffa500",
                     offset: -110
                 },
                 {
                     id: "Residential",
-                    color: "#74ffe7",
                     column: 2,
                     offset: 50
                 },
                 {
                     id: "Commercial",
-                    color: "#8cff74",
                     column: 2,
                     offset: 50
                 },
                 {
                     id: "Industrial",
-                    color: "#ff8da1",
                     column: 2,
                     offset: 50
                 },
                 {
                     id: "Transportation",
-                    color: "#f4c0ff",
                     column: 2,
                     offset: 50
                 },
                 {
                     id: "Rejected Energy",
-                    color: "#e6e6e6",
                     column: 3,
                     offset: -30
                 },
                 {
                     id: "Energy Services",
-                    color: "#F9E79F",
                     column: 3
                 },
                 {
-                    id: "Solar",
-                    color: "#009c00"
+                    id: "Solar"
                 },
                 {
-                    id: "Nuclear",
-                    color: "#1a8dff"
+                    id: "Nuclear"
                 },
                 {
-                    id: "Hydro",
-                    color: "#009c00"
+                    id: "Hydro"
                 },
                 {
-                    id: "Wind",
-                    color: "#009c00"
+                    id: "Wind"
                 },
                 {
-                    id: "Geothermal",
-                    color: "#009c00"
+                    id: "Geothermal"
                 },
                 {
-                    id: "Natural Gas",
-                    color: "#1a8dff"
+                    id: "Natural Gas"
                 },
                 {
-                    id: "Biomass",
-                    color: "#009c00"
+                    id: "Biomass"
                 },
                 {
-                    id: "Coal",
-                    color: "#989898"
+                    id: "Coal"
                 },
                 {
                     id: "Petroleum",
-                    color: "#989898",
                     offset: -1
                 }
             ],
