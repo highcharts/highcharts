@@ -276,7 +276,7 @@ export default PictorialSeries;
  * 2. An array of objects with named values. The following snippet shows only a
  *    few settings, see the complete options set below. If the total number of
  *    data points exceeds the series'
- *    [turboThreshold](#series.bullet.turboThreshold), this option is not
+ *    [turboThreshold](#series.pictorial.turboThreshold), this option is not
  *    available.
  *    ```js
  *    data: [{
@@ -298,36 +298,7 @@ export default PictorialSeries;
  * @extends   series.column.data
  * @since     next
  * @product   highcharts
- * @apioption series.bullet.data
- */
-
-/**
- * The target value of a point.
- *
- * @type      {number}
- * @since     next
- * @product   highcharts
- * @apioption series.bullet.data.target
- */
-
-/**
- * Individual target options for each point.
- *
- * @extends   plotOptions.bullet.targetOptions
- * @product   highcharts
- * @apioption series.bullet.data.targetOptions
- */
-
-/**
- * @product   highcharts
- * @excluding halo, lineWidth, lineWidthPlus, marker
- * @apioption series.bullet.states.hover
- */
-
-/**
- * @product   highcharts
- * @excluding halo, lineWidth, lineWidthPlus, marker
- * @apioption series.bullet.states.select
+ * @apioption series.pictorial.data
  */
 
 ''; // adds doclets above to transpiled file
