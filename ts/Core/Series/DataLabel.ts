@@ -384,8 +384,10 @@ namespace DataLabel {
         }
         // Show or hide based on the final aligned position
         if (!visible && (!enabledDataSorting || justify)) {
-            dataLabel.hide(true);
+            dataLabel.hide();
             dataLabel.placed = false; // don't animate back in
+        } else {
+            dataLabel.show(true);
         }
     }
 

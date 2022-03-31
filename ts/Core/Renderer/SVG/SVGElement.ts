@@ -1667,14 +1667,8 @@ class SVGElement implements SVGElementLike {
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    public hide(hideByTranslation?: boolean): this {
-
-        if (hideByTranslation) {
-            this.attr({ y: -9999 });
-        } else {
-            this.attr({ visibility: 'hidden' });
-        }
-
+    public hide(): this {
+        this.attr({ visibility: 'hidden' });
         return this;
     }
 
