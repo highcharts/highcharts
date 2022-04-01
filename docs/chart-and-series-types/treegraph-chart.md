@@ -1,12 +1,11 @@
 Treegraph chart
 ===
-A Tree graph is a way of visualizing the tree data structure. About this data structure you can read more [Here](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: <ul>
-<li>a genealogy tree </li>
+A Tree graph is a way of visualizing a tree or hierarchy data structure. You can read more about this data scructure [on Wikipedia](https://en.wikipedia.org/wiki/Tree_(data_structure)). The best examples of a tree data structure are: <ul>
+<li>genealogy trees</li>
 <li>directories in computer science</li>
-<li>decision tree</li>
+<li>decision trees</li>
 </ul>
-Our tree representation is a oriented rooted tree, which means, that direction of the connections matter, and there is one node in each set of data, which does not have a parent (is a root of the tree).
-In contrast to treemap and sunburst, this series type does not require the value property, because each point position is based solely on its relation with other nodes in the tree.
+Our tree representation is an oriented rooted tree. This means that the direction of the connections matter, and there is one node in each set of data that does not have a parent (is the root of the tree). In contrast to treemap and sunburst, this series type does not require the `value` property, because each point position is based solely on its relation to other nodes in the tree.
 
 In order to use this series type, you need to load the `modules/treemap.js` and `modules/treegraph.js` modules.
 
@@ -14,7 +13,7 @@ In order to use this series type, you need to load the `modules/treemap.js` and 
 
 ### Data structure
 
-The data is structured as a [Tree](https://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.  The tree automatically has one node at the top representing the root node. If a point has an undefined parent, or the parent is not matching any id, the parent will be automatically set to the root node. There can be multiple nodes without parent, and they will be positioned as seperate trees.
+The data is structured as a [tree](https://en.wikipedia.org/wiki/Tree_(data_structure)), where each point represents a node. Each node can have its own children.  The tree automatically has one node at the top representing the root node. If a point has an undefined parent, or the parent is not matching any `id`, the parent will be automatically set to the root node. There can be multiple nodes without a parent, and they will be positioned as separate trees.
 
 The following is an example of how the tree is built in Highcharts:
 
@@ -32,14 +31,14 @@ The following is an example of how the tree is built in Highcharts:
 
 ### Algorithms
 
-Algorithms decide on posiitoning of the points. Currently there is only 1 algorithm available, which is [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
+Algorithms decide the positoning of the points. Currently there is one algorithm available, which is the [Walker](http://dirk.jivas.de/papers/buchheim02improving.pdf) algorithm for calculating the nodes position in the tree graph.
 
 API options
 -----------
 
 ### Links
 
-In contrast to treemap series, the connections between the nodes are represented as links.  The links are generated from the options of the child. The shape of the link is the same as in the organization chart, and the same options apply.  To apply the general options to all links, you can define the link options like this:
+In contrast to treemap series, the connections between the nodes are represented as links.  The links are generated from the options of the child. The shape of the link is the same as in the organization chart, and the same options apply.  To apply general options to all links, you can define the link options like this:
 
     series: [{
         type: 'treegraph',
@@ -59,7 +58,7 @@ In contrast to treemap series, the connections between the nodes are represented
         }]
     }]
 
-To change the configuraiton of the specific link, you have to specify the link object in the point configuration, like this:
+To change the configuraiton of a specific link, you have to specify the link object in the point configuration, like this:
 
     data: [{
         name: 'parent',
@@ -73,7 +72,7 @@ To change the configuraiton of the specific link, you have to specify the link o
         }
     }]
 
-This option will take effect on a link, which goes **to** the given node.
+This setting will take effect on the link that goes **to** the given node.
 
 ### Options
 
