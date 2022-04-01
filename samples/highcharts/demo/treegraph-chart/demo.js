@@ -6,11 +6,8 @@ const kingBorderColor = '#cf9700';
 Highcharts.chart('container', {
     chart: {
         inverted: true,
-        borderWidth: 1,
-        width: 800,
-        height: 1200
+        borderWidth: 1
     },
-
     title: {
         text: 'Durin Family Tree'
     },
@@ -33,7 +30,7 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 color: dataLabelColor,
-                format: '{point.id} \n {point.description}',
+                format: '{point.id} <br> {point.description}',
                 linkFormat: '',
                 style: {
                     width: 70,
