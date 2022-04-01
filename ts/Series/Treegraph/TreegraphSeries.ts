@@ -566,6 +566,16 @@ class TreegraphSeries extends TreemapSeries {
             });
         }
     }
+    public destroy(): void {
+        // Nodes and links must also be destroyed.
+        this.data = ([] as Array<TreegraphPoint>).concat(
+            this.points || [],
+            // TS doesn't allow to links cast to Array<TreegraphPoint> direcrly.
+            (this.links as unknown as Array<TreegraphPoint>)
+        );
+
+        return Series.prototype.destroy.apply(this, arguments);
+    }
 
     /**
      * Return the presentational attributes.
