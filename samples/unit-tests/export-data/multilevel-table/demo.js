@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 QUnit.test('Bullet chart', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -126,7 +127,7 @@ Bullet Series 3</th>
 <th class=\"text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
 Bullet Series 4</th>
 </tr>
-<tr>
+<tr class=\"highcharts-table-sort-row\">
 <th class=\"text\" scope=\"col\">
 y</th>
 <th class=\"text\" scope=\"col\">
@@ -257,7 +258,7 @@ target</th>
 <caption class=\"highcharts-table-caption\">
 Chart title</caption>
 <thead>
-<tr>
+<tr class=\"highcharts-table-sort-row\">
 <th class=\"text\" scope=\"col\">
 Year</th>
 <th class=\"text\" scope=\"col\">
@@ -416,7 +417,7 @@ QUnit.test('Pie chart', function (assert) {
 <caption class=\"highcharts-table-caption\">
 WEBAIM survey</caption>
 <thead>
-<tr>
+<tr class=\"highcharts-table-sort-row\">
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -522,7 +523,7 @@ Day</th>
 <th class=\"text highcharts-table-topheading\" scope=\"col\" colspan=\"3\">
 Temperature</th>
 </tr>
-<tr>
+<tr class=\"highcharts-table-sort-row\">
 <th class=\"empty\" scope=\"col\">
 </th>
 <th class=\"text\" scope=\"col\">
@@ -638,7 +639,7 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
 <caption class=\"highcharts-table-caption\">
 Chart title</caption>
 <thead>
-<tr>
+<tr class=\"highcharts-table-sort-row\">
 <th class=\"text\" scope=\"col\">
 Category</th>
 <th class=\"text\" scope=\"col\">
@@ -777,7 +778,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th><th class=\"text\" scope=\"col\">Annotations 2</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">Annotation I for pointI</td><td class=\"text\">Annotation II connected with axis</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"text\">Annotation II for pointII</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1.5</th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Annotation I connected with axis</td><td class=\"empty\"></td></tr><tr><th class=\"empty\" scope=\"row\"></th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Freestanding annotation</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">2.5</th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Annotation I connected with axis, and having the same point as other annotation.</td><td class=\"empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr class=\"highcharts-table-sort-row\"><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th><th class=\"text\" scope=\"col\">Annotations 2</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">Annotation I for pointI</td><td class=\"text\">Annotation II connected with axis</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"text\">Annotation II for pointII</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1.5</th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Annotation I connected with axis</td><td class=\"empty\"></td></tr><tr><th class=\"empty\" scope=\"row\"></th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Freestanding annotation</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">2.5</th><td class=\"empty\"></td><td class=\"empty\"></td><td class=\"text\">Annotation I connected with axis, and having the same point as other annotation.</td><td class=\"empty\"></td></tr></tbody></table>',
         'Table should look like this with annotations (12789).'
     );
 
@@ -815,7 +816,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">This is my annotation I</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr class=\"highcharts-table-sort-row\"><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">This is my annotation I</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td></tr></tbody></table>',
         'Table should look like this with includeInDataExport set (12789).'
     );
 
@@ -857,7 +858,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"text\">This is my annotation I for point II</td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr class=\"highcharts-table-sort-row\"><th class=\"text\" scope=\"col\">Category</th><th class=\"text\" scope=\"col\">Series 1</th><th class=\"text\" scope=\"col\">Series 2</th><th class=\"text\" scope=\"col\">Annotations 1</th></tr></thead><tbody><tr><th class=\"number\" scope=\"row\">0</th><td class=\"number\">29</td><td class=\"number\">2</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">1</th><td class=\"number\">71</td><td class=\"number\">11</td><td class=\"text\">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr><th class=\"number\" scope=\"row\">2</th><td class=\"number\">106</td><td class=\"number\">60</td><td class=\"empty\"></td></tr><tr><th class=\"number\" scope=\"row\">3</th><td class=\"number\">129</td><td class=\"number\">44</td><td class=\"text\">This is my annotation I for point II</td></tr><tr><th class=\"number\" scope=\"row\">4</th><td class=\"number\">144</td><td class=\"number\">44</td><td class=\"empty\"></td></tr></tbody></table>',
         'Table should look like this with set join and itemDelimiter (12789).'
     );
 });

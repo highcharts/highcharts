@@ -24,6 +24,7 @@ import type {
 } from '../Core/Series/PointOptions';
 import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -466,6 +467,67 @@ addEvent(Chart, 'render', function (): void {
         !this.dataTableDiv
     ) {
         this.viewData();
+    }
+});
+
+addEvent(Chart, 'afterViewData', function (): void {
+    const chart = this,
+        dataTableDiv = chart.dataTableDiv,
+        row = document.getElementsByClassName('highcharts-table-sort-row')[0],
+        getCellValue = function (
+            tr: HTMLDOMElement,
+            index: number
+        ): string|null {
+            return tr.children[index].textContent;
+        },
+        comparer = function (index: number, ascending: boolean) {
+            return function (a: HTMLDOMElement, b: HTMLDOMElement): number {
+                return (function (v1: any, v2: any): number {
+                    return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
+                        v1 - v2 :
+                        v1.toString().localeCompare(v2);
+                }(getCellValue(ascending ? a : b, index),
+                    getCellValue(ascending ? b : a, index)
+                ));
+            };
+        };
+
+    if (dataTableDiv) {
+        row.childNodes.forEach((th: any): void => {
+            const table = th.closest('table');
+
+            th.addEventListener('click', function (): void {
+                const thNodeList = dataTableDiv.querySelectorAll(
+                        'tr:not(.highcharts-table-sort-row)'
+                    ),
+                    thParentNodeList = th.parentNode.children,
+                    thArrayList = [] as Array<HTMLElement>,
+                    thParentArray = [] as Array<HTMLElement>;
+
+
+                [].forEach.call(
+                    thNodeList,
+                    function (node: HTMLElement): void {
+                        thArrayList.push(node);
+                    }
+                );
+                [].forEach.call(
+                    thParentNodeList,
+                    function (node: HTMLElement): void {
+                        thParentArray.push(node);
+                    }
+                );
+
+                thArrayList.sort(
+                    comparer(
+                        thParentArray.indexOf(th),
+                        (chart as any).ascending = !(chart as any).ascending
+                    )
+                ).forEach((tr: any): void => {
+                    table.appendChild(tr);
+                });
+            });
+        });
     }
 });
 
@@ -1147,6 +1209,9 @@ Chart.prototype.getTableAST = function (
                 }
 
                 theadChildren.push({
+                    attributes: {
+                        'class': 'highcharts-table-sort-row'
+                    },
                     tagName: 'tr',
                     children: trChildren
                 });
