@@ -91,7 +91,10 @@ QUnit.test('Top -90', function (assert) {
         },
         series: [
             {
-                data: [100, 200],
+                data: [
+                    1000, 2000, 1000, 2000, 1000, 2000, 1000, 2000, 1000,
+                    2000, 1000, 2000, 1000, 2000
+                ],
                 dataLabels: {
                     enabled: true,
                     defer: false,
@@ -129,6 +132,45 @@ QUnit.test('Top -90', function (assert) {
         ) < 12,
         'Label is top aligned to element'
     );
+
+    chart.series[0].update({
+        dataLabels: {
+            align: 'left'
+        }
+    });
+    const visibilities = chart.series[0].points.map(p =>
+        p.dataLabel.attr('y') > 0
+    );
+    assert.strictEqual(
+        visibilities.some(v => !v),
+        false,
+        'No elements should be hidden (#9687)'
+    );
+    chart.series[0].update({
+        dataLabels: {
+            rotation: 1
+        }
+    });
+
+    assert.ok(
+        chart.series[0].points[13].dataLabel.attr('y') < 0,
+        'Last element should be hidden'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            rotation: -90
+        }
+    });
+
+    assert.deepEqual(
+        visibilities,
+        chart.series[0].points.map(p =>
+            p.dataLabel.attr('y') > 0
+        ),
+        'Labels should be back to original visibility'
+    );
+
 });
 
 QUnit.test('Bottom 90', function (assert) {

@@ -4,7 +4,7 @@ describe('Stock Tools Fibonacci Tome Zones, #15825', () => {
     });
 
     before(() => {
-        cy.visit('/stock/demo/stock-tools-gui');
+        cy.visit('/highcharts/cypress/stock-tools-gui/');
     });
 
     it(`Create annotation and check the shape's coordinates.`, () => {
