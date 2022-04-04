@@ -196,22 +196,23 @@ namespace DataLabel {
             enabledDataSorting = this.enabledDataSorting,
             plotX = pick(
                 point.dlBox && (point.dlBox as any).centerX,
-                point.plotX,
-                -9999
+                point.plotX
             ),
-            plotY = pick(point.plotY, -9999),
+            plotY = pick(point.plotY),
             bBox = dataLabel.getBBox(),
             rotation = options.rotation,
             align = options.align,
-            isInsidePlot = chart.isInsidePlot(
-                plotX,
-                Math.round(plotY),
-                {
-                    inverted,
-                    paneCoordinates: true,
-                    series
-                }
-            ),
+            isInsidePlot = defined(plotX) &&
+                defined(plotY) &&
+                chart.isInsidePlot(
+                    plotX,
+                    Math.round(plotY),
+                    {
+                        inverted,
+                        paneCoordinates: true,
+                        series
+                    }
+                ),
             setStartPos = (alignOptions: AlignObject): void => {
                 if (enabledDataSorting && series.xAxis && !justify) {
                     series.setDataLabelStartPos(
@@ -263,7 +264,7 @@ namespace DataLabel {
                     )
                 );
 
-        if (visible) {
+        if (visible && defined(plotX) && defined(plotY)) {
 
             baseline = chart.renderer.fontMetrics(
                 chart.styledMode ? void 0 : (options.style as any).fontSize,
@@ -694,7 +695,7 @@ namespace DataLabel {
                                 renderer.text(
                                     labelText,
                                     0,
-                                    -9999,
+                                    0,
                                     labelOptions.useHTML)
                                     .addClass('highcharts-data-label') as any :
 
@@ -702,7 +703,7 @@ namespace DataLabel {
                                 renderer.label(
                                     labelText,
                                     0,
-                                    -9999,
+                                    0,
                                     labelOptions.shape as any,
                                     null as any,
                                     null as any,
@@ -773,6 +774,10 @@ namespace DataLabel {
                         series.alignDataLabel(
                             point, dataLabel, labelOptions, null as any, isNew
                         );
+                    } else {
+                        if (dataLabel) {
+                            dataLabel.hide();
+                        }
                     }
                 });
             });
