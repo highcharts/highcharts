@@ -52,6 +52,7 @@ const {
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
+        ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         /** @requires modules/export-data */
         downloadCSV(): void;
@@ -482,13 +483,16 @@ addEvent(Chart, 'afterViewData', function (): void {
         },
         comparer = function (index: number, ascending: boolean) {
             return function (a: HTMLDOMElement, b: HTMLDOMElement): number {
-                return (function (v1: any, v2: any): number {
+                const sort = function (v1: any, v2: any): number {
                     return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
                         v1 - v2 :
                         v1.toString().localeCompare(v2);
-                }(getCellValue(ascending ? a : b, index),
+                };
+
+                return sort(
+                    getCellValue(ascending ? a : b, index),
                     getCellValue(ascending ? b : a, index)
-                ));
+                );
             };
         };
 
@@ -521,9 +525,10 @@ addEvent(Chart, 'afterViewData', function (): void {
                 thArrayList.sort(
                     comparer(
                         thParentArray.indexOf(th),
-                        (chart as any).ascending = !(chart as any).ascending
+                        chart.ascendingOrderInTable =
+                            !chart.ascendingOrderInTable
                     )
-                ).forEach((tr: any): void => {
+                ).forEach((tr: HTMLDOMElement): void => {
                     table.appendChild(tr);
                 });
             });
