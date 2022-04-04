@@ -198,7 +198,7 @@ namespace DataLabel {
                 point.dlBox && (point.dlBox as any).centerX,
                 point.plotX
             ),
-            plotY = pick(point.plotY),
+            plotY = point.plotY,
             bBox = dataLabel.getBBox(),
             rotation = options.rotation,
             align = options.align,
