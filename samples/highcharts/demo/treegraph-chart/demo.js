@@ -12,16 +12,16 @@ Highcharts.chart('container', {
         text: 'Durin Family Tree'
     },
     subtitle: {
-        text: 'Dwarfs participating in the Quest to the Lonely Mountain marked in brighter color. <br> Dwarf kings marked with golden border.'
+        text: 'Dwarfs participating in the Quest to the Lonely Mountain marked in darker color. <br> Dwarf kings marked with golden border.'
     },
-
     plotOptions: {
         treegraph: {
             marker: {
                 symbol: 'rect',
-                height: 70,
-                width: 50,
-                fillColor: markerColor
+                height: 60,
+                width: 40,
+                fillColor: markerColor,
+                radius: 30
             },
 
             link: {
@@ -52,24 +52,8 @@ Highcharts.chart('container', {
                     }
                 },
                 {
-                    id: 'Durin VI',
-                    parent: 'Durin the Deathless',
-                    color: kingBorderColor,
-                    marker: {
-                        lineWidth: 3
-                    }
-                },
-                {
-                    id: 'Nain I',
-                    parent: 'Durin VI',
-                    color: kingBorderColor,
-                    marker: {
-                        lineWidth: 3
-                    }
-                },
-                {
                     id: 'Thrain I',
-                    parent: 'Nain I',
+                    parent: 'Durin the Deathless',
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -152,19 +136,14 @@ Highcharts.chart('container', {
                     color: kingBorderColor,
                     dataLabels: {
                         style: {
-                            width: 100
+                            width: 80
                         }
                     },
                     marker: {
                         lineWidth: 3,
-
-                        height: 100,
+                        height: 80,
                         fillColor: expeditionColor
                     }
-                },
-                {
-                    id: 'Frerin',
-                    parent: 'Thrain II'
                 },
                 {
                     id: 'Dis',
@@ -211,7 +190,7 @@ Highcharts.chart('container', {
                 {
                     id: 'Durin VII',
                     parent: 'Thorin II Stonehelm',
-                    level: 15,
+                    level: 13,
                     color: kingBorderColor,
                     marker: {
                         lineWidth: 3
@@ -268,8 +247,7 @@ Highcharts.chart('container', {
                     name: 'Gimli',
                     description: '2879 - 120FA?',
                     marker: {
-                        symbol: 'circle',
-                        radius: 35
+                        symbol: 'circle'
                     }
                 }
             ]
@@ -278,5 +256,36 @@ Highcharts.chart('container', {
     exporting: {
         sourceWidth: 800,
         sourceHeight: 1000
+    },
+    responsive: {
+        rules: [
+            {
+                condition: {
+                    maxWidth: 630
+                },
+                chartOptions: {
+                    plotOptions: {
+                        treegraph: {
+                            link: {
+                                lineWidth: 1
+                            },
+                            dataLabels: {
+                                style: {
+                                    width: 50,
+                                    textOverflow: 'clip'
+                                },
+                                format: '{point.id}'
+                            },
+                            marker: {
+                                symbol: 'rect',
+                                height: 50,
+                                width: 30,
+                                radius: 20
+                            }
+                        }
+                    }
+                }
+            }
+        ]
     }
 });
