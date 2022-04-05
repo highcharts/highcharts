@@ -335,6 +335,7 @@ SVGRenderer.prototype.addPattern = function (
     const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
+        patternTransform: 'scale(1, -1)', // #16810 prevents inverted images.
         patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
         width: width,
         height: height,
@@ -342,7 +343,8 @@ SVGRenderer.prototype.addPattern = function (
         y: options._y || options.y || 0
     };
     if (options.patternTransform) {
-        attrs.patternTransform = options.patternTransform;
+        attrs.patternTransform = attrs.patternTransform +
+            ' ' + options.patternTransform; // #16810
     }
 
     pattern = this.createElement('pattern').attr(attrs).add(this.defs);
