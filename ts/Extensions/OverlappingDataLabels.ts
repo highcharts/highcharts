@@ -268,7 +268,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 box2 &&
                 label1 !== label2 && // #6465, polar chart with connectEnds
                 label1.newOpacity !== 0 &&
-                label2.newOpacity !== 0
+                label2.newOpacity !== 0 &&
+                // #15863 dataLabels are no longer hidden by translation
+                label1.attr('visibility') !== 'hidden' &&
+                label2.attr('visibility') !== 'hidden'
             ) {
                 if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
