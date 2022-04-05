@@ -1913,14 +1913,11 @@ class RangeSelector {
         const renderer = chart.renderer;
 
         const buttonTheme = merge(options.buttonTheme);
-        const states = buttonTheme && buttonTheme.states;
 
         // Prevent the button from resetting the width when the button state
         // changes since we need more control over the width when collapsing
         // the buttons
         const width = buttonTheme.width || 28;
-        delete buttonTheme.width;
-        delete buttonTheme.states;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
@@ -2008,10 +2005,7 @@ class RangeSelector {
 
                         this.isActive = true;
                     },
-                    buttonTheme,
-                    states && states.hover,
-                    states && states.select,
-                    states && states.disabled
+                    buttonTheme
                 )
                 .attr({
                     'text-align': 'center',
