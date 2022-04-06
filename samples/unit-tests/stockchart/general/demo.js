@@ -10,6 +10,7 @@ QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) 
         },
         series: [
             {
+                animation: false,
                 type: 'pie',
                 data: [
                     {
@@ -177,4 +178,25 @@ QUnit.test('Default options for stock chart', function (assert) {
         'datetime',
         '#8603: Axis should have stock forced options applied'
     );
+});
+
+QUnit.test('The stock chart in hidden div, #16901.', function (assert) {
+    document.querySelector('#container').style.visibility = 'hidden';
+    Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-navigator')).visibility,
+        'hidden',
+        'Navigator should be hidden.'
+    );
+
+    assert.strictEqual(
+        getComputedStyle(document.querySelector('.highcharts-button-box')).visibility,
+        'hidden',
+        'Elements of range selector should be hidden.'
+    );
+    document.querySelector('#container').style.visibility = 'unset';
 });
