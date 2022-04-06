@@ -10,7 +10,6 @@ QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) 
         },
         series: [
             {
-                animation: false,
                 type: 'pie',
                 data: [
                     {
