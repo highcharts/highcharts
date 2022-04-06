@@ -3979,14 +3979,8 @@ class Axis {
 
         if (axisTitle && showAxis) {
             const titleXy = axis.getTitlePosition();
-
-            if (isNumber(titleXy.y) && isNumber(titleXy.x)) {
-                axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy).show();
-                axisTitle.isNew = false;
-            } else {
-                axisTitle.hide();
-                axisTitle.isNew = true;
-            }
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+            axisTitle.isNew = false;
         }
 
 
