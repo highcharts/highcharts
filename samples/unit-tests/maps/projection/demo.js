@@ -1,5 +1,3 @@
-const { assert } = require("qunit");
-
 QUnit.module('Projection', function () {
 
     const Projection = Highcharts._modules['Maps/Projection.js']; // eslint-disable-line no-underscore-dangle
