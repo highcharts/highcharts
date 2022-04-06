@@ -1,8 +1,13 @@
 QUnit.test('GeoJSON and map transforms', assert => {
 
+    // #17139
+    const proj4 = window.proj4;
+    window.proj4 = undefined;
+
     const chart = Highcharts.mapChart('container', {
         chart: {
-            map: 'custom/world'
+            map: 'custom/world',
+            proj4: proj4 // #17139
         },
         series: [{
         }]
@@ -33,4 +38,6 @@ QUnit.test('GeoJSON and map transforms', assert => {
                 'should result in the same lat value'
         );
     });
+
+    window.proj4 = proj4;
 });
