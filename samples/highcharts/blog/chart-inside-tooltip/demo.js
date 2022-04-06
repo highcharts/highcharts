@@ -32,9 +32,8 @@ Highcharts.chart('container', {
     },
     tooltip: {
         useHTML: true,
-        formatter: function () {
-            return '<div id="hc-tooltip"></div>';
-        }
+        headerFormat: '',
+        pointFormat: '<div id="hc-tooltip"></div>'
     },
     series: [{
         type: 'line',
