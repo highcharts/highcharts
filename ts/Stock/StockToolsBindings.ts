@@ -871,6 +871,8 @@ extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBin
  * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>}
  * @since        7.0.0
  * @optionparent navigation.bindings
+ *   @sample {highstock} stock/stocktools/custom-stock-tools-bindings
+ *     Custom stock tools bindings
  */
 const stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
