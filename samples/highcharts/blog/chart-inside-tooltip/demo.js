@@ -4,9 +4,6 @@ function renderChart(point) {
             type: 'pie'
         },
         title: {
-            text: null
-        },
-        subtitle: {
             text: 'Chart inside tooltip'
         },
         series: [{
