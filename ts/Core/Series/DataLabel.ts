@@ -790,10 +790,8 @@ namespace DataLabel {
                         series.alignDataLabel(
                             point, dataLabel, labelOptions, null as any, isNew
                         );
-                    } else {
-                        if (dataLabel) {
-                            dataLabel.hide();
-                        }
+                    } else if (dataLabel) {
+                        dataLabel.hide();
                     }
                 });
             });

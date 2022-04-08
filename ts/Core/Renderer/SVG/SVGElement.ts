@@ -1701,8 +1701,7 @@ class SVGElement implements SVGElementLike {
      *         Returns the SVGElement for chaining.
      */
     public hide(): this {
-        this.attr({ visibility: 'hidden' });
-        return this;
+        return this.attr({ visibility: 'hidden' });
     }
 
     /**
