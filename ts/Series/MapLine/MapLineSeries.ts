@@ -16,7 +16,6 @@
  *
  * */
 
-import MapView from '../../Maps/MapView.js';
 import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
@@ -26,6 +25,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     extend,
     merge
 } = U;
@@ -118,7 +118,7 @@ class MapLineSeries extends MapSeries {
                 point.series.options.states.hover) {
                 let lineWidth = point.series.options.states.hover.lineWidth;
 
-                if (mapView && lineWidth) {
+                if (mapView && defined(lineWidth)) {
                     attr['stroke-width'] = lineWidth / mapView.getScale();
                 }
             }
