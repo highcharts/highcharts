@@ -17,11 +17,6 @@ Highcharts.chart("container", {
         tickmarkPlacement: "on",
         title: {
             text: "Height (km)"
-        },
-        labels: {
-            formatter: function () {
-                return this.value * 100;
-            }
         }
     },
     yAxis: {
@@ -38,6 +33,7 @@ Highcharts.chart("container", {
         areaspline: {
             stacking: "normal",
             lineColor: "#666666",
+            pointInterval: 100,
             lineWidth: 1,
             marker: {
                 enabled: false
@@ -47,23 +43,27 @@ Highcharts.chart("container", {
     series: [
         {
             name: "N2",
-            data: [78, 78, 48, 10, 2, 0, 0, 0, 0, 0, 0]
+            data: [78, 76, 38, 10, 2.5, 0, 0, 0, 0, 0, 0]
         },
         {
             name: "O2",
-            data: [21, 21, 2, 1, 0, 0, 0, 0, 0, 0, 0]
+            data: [21, 20, 2, 0.5, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            name: "O",
+            data: [0, 3, 59, 84, 70, 32, 8, 3, 1, 0, 0]
         },
         {
             name: "Ar",
-            data: [0, 1, 60, 84, 71, 43, 8, 2, 0, 0, 0]
+            data: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-            name: "H2",
-            data: [0, 0, 1, 5, 25, 62, 82, 82, 82, 71, 64]
+            name: "He",
+            data: [0, 0, 1, 5, 25, 62, 82, 82, 78, 71, 62]
         },
         {
             name: "H",
-            data: [0, 0, 0, 1, 2, 5, 10, 15, 21, 29, 48]
+            data: [0, 0, 0, 0.5, 2.5, 6, 10, 15, 21, 29, 38]
         }
     ]
 });

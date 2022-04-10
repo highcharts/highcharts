@@ -1,6 +1,11 @@
 Highcharts.setOptions({
-    // eslint-disable-next-line max-len
-    colors: [{ patternIndex: 0 }, { patternIndex: 1 }, { patternIndex: 2 }, { patternIndex: 3 }, { patternIndex: 4 }]
+    colors: [
+        { patternIndex: 0 },
+        { patternIndex: 1 },
+        { patternIndex: 2 },
+        { patternIndex: 3 },
+        { patternIndex: 4 }
+    ]
 });
 
 Highcharts.chart("container", {

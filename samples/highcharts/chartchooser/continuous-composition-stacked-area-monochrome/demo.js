@@ -13,11 +13,6 @@ Highcharts.chart("container", {
         tickmarkPlacement: "on",
         title: {
             text: "Height (km)"
-        },
-        labels: {
-            formatter: function () {
-                return this.value * 100;
-            }
         }
     },
     yAxis: {
@@ -34,37 +29,44 @@ Highcharts.chart("container", {
         areaspline: {
             stacking: "normal",
             lineColor: "#808080",
+            pointInterval: 100,
             lineWidth: 1,
             marker: {
                 enabled: false
             }
         }
     },
+
     series: [
         {
             name: "N2",
             color: '#a0d9ff',
-            data: [78, 78, 48, 10, 2, 0, 0, 0, 0, 0, 0]
+            data: [78, 76, 38, 10, 2.5, 0, 0, 0, 0, 0, 0]
         },
         {
             name: "O2",
             clor: '#c4fdff',
-            data: [21, 21, 2, 1, 0, 0, 0, 0, 0, 0, 0]
+            data: [21, 20, 2, 0.5, 0, 0, 0, 0, 0, 0, 0]
+        },
+        {
+            name: "O",
+            color: '#5891c8',
+            data: [0, 3, 59, 84, 70, 32, 8, 3, 1, 0, 0]
         },
         {
             name: "Ar",
-            color: '#5891c8',
-            data: [0, 1, 60, 84, 71, 43, 8, 2, 0, 0, 0]
+            color: '#346da4',
+            data: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         },
         {
-            name: "H2",
-            color: '#346da4',
-            data: [0, 0, 1, 5, 25, 62, 82, 82, 82, 71, 64]
+            name: "He",
+            color: '#0f487f',
+            data: [0, 0, 1, 5, 25, 62, 82, 82, 78, 71, 62]
         },
         {
             name: "H",
-            color: '#0f487f',
-            data: [0, 0, 0, 1, 2, 5, 10, 15, 21, 29, 48]
+            color: "#0c3965",
+            data: [0, 0, 0, 0.5, 2.5, 6, 10, 15, 21, 29, 38]
         }
     ]
 });

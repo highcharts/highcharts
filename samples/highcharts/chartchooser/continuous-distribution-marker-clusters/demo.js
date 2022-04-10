@@ -39,7 +39,7 @@ Highcharts.chart("container", {
         scatter: {
             dataLabels: {
                 enabled: true,
-                color: "#DC7633",
+                color: "#ffffff",
                 formatter: function () {
                     if (typeof this.point.clusterPointsAmount === "undefined") {
                         return "";
@@ -76,7 +76,7 @@ Highcharts.chart("container", {
                         to: 4,
                         marker: {
                             radius: 13,
-                            fillColor: "#D6EAF8"
+                            fillColor: "#7695aa"
                         }
                     },
                     {

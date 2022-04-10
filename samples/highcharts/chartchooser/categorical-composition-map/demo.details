@@ -1,6 +1,0 @@
----
- name: "Provinces of China (map composition categorical data)"
- authors:
-   - Mustapha Mekhatria
- js_wrap: b
-...
