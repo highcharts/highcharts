@@ -44,7 +44,7 @@ Highcharts.chart("container", {
                 ["Non-Current Assets", "Other NCA", 42.52]
             ],
             type: "sankey",
-            name: "Appel Assets",
+            name: "Apple Assets",
             dataLabels: {
                 style: {
                     color: "#1a1a1a",

@@ -65,20 +65,34 @@ Highcharts.chart("container", {
             }
         }
     ],
-    yAxis: {
+    yAxis: [{
         title: {
             text: null
         },
         labels: {
-            formatter: function () {
-                return Math.abs(this.value) + "%";
-            }
+            format: '{value}%'
         },
         accessibility: {
             description: "Percentage population",
             rangeDescription: "Range: 0 to 5%"
-        }
-    },
+        },
+        width: '50%',
+        reversed: true
+    }, {
+        title: {
+            text: null
+        },
+        labels: {
+            format: '{value}%'
+        },
+        accessibility: {
+            description: "Percentage population",
+            rangeDescription: "Range: 0 to 5%"
+        },
+        offset: 0,
+        left: '50%',
+        width: '50%'
+    }],
 
     plotOptions: {
         series: {
@@ -89,18 +103,8 @@ Highcharts.chart("container", {
     },
 
     tooltip: {
-        formatter: function () {
-            return (
-                "<b>" +
-        this.series.name +
-        ", age " +
-        this.point.category +
-        "</b><br/>" +
-        "Population: " +
-        Highcharts.numberFormat(Math.abs(this.point.y), 1) +
-        "%"
-            );
-        }
+        headerFormat: '<b>{series.name}, age {point.key}</b><br>',
+        pointFormat: 'Population: {point.y:.1f} %'
     },
 
     series: [
@@ -108,13 +112,14 @@ Highcharts.chart("container", {
             name: "Male",
             color: maleColor,
             borderColor: "#000000",
-            data: [-8.42, -6.39, -12.47, -13.23, -8.44, -0.77]
+            data: [8.42, 6.39, 12.47, 13.23, 8.44, 0.77]
         },
         {
             name: "Female",
             color: femaleColor,
             borderColor: "#000000",
-            data: [7.98, 6.1, 12.21, 13.25, 9.34, 1.41]
+            data: [7.98, 6.1, 12.21, 13.25, 9.34, 1.41],
+            yAxis: 1
         }
     ]
 });
