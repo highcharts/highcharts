@@ -245,4 +245,13 @@ export default MapLineSeries;
  * @apioption series.mapline.data
  */
 
+/**
+ * Pixel width of the mapline line.
+ *
+ * @type      {number}
+ * @since     next
+ * @product   highmaps
+ * @apioption plotOptions.mapline.states.hover.lineWidth
+ */
+
 ''; // adds doclets above to transpiled file
