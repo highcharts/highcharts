@@ -4241,11 +4241,9 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
-            options.dataSorting &&
-                typeof options.dataSorting.enabled !== 'undefined' ||
             options.joinBy ||
             options.mapData || // #11636
-            series.hasOptionChanged('enabled', 'dataSorting') ||
+            series.hasOptionChanged('dataSorting') ||
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
@@ -4468,14 +4466,7 @@ class Series {
         }
 
         // If dataSorting was turned on, set the indexes
-        if (
-            options.dataSorting &&
-            options.dataSorting.enabled === true &&
-            (
-                !oldOptions.dataSorting ||
-                oldOptions.dataSorting.enabled === false
-            )
-        ) {
+        if (options.dataSorting) {
             chart.setSeriesData();
         }
 
@@ -4499,17 +4490,11 @@ class Series {
      * Check if the option has changed.
      * @private
      */
-    public hasOptionChanged(optionName: string, parentName?: string): boolean {
+    public hasOptionChanged(optionName: string): boolean {
         const chart = this.chart,
-            option = parentName && (this.options as any)[parentName] ?
-                (this.options as any)[parentName][optionName] :
-                (this.options as any)[optionName],
+            option = (this.options as any)[optionName],
             plotOptions = chart.options.plotOptions,
-            oldOption = parentName && (this.userOptions as any)[parentName] ?
-                (this.userOptions as any)[parentName][optionName] :
-                (this.userOptions as any)[optionName],
-            seriesPlotOptions = plotOptions && (plotOptions.series as any),
-            typePlotOptions = plotOptions && (plotOptions[this.type] as any);
+            oldOption = (this.userOptions as any)[optionName];
 
         if (oldOption) {
             return option !== oldOption;
@@ -4517,18 +4502,12 @@ class Series {
 
         return option !==
             pick(
-                typePlotOptions &&
-                (
-                    parentName && typePlotOptions[parentName] ?
-                        typePlotOptions[parentName][optionName] :
-                        typePlotOptions[optionName]
-                ),
-                seriesPlotOptions &&
-                (
-                    parentName && seriesPlotOptions[parentName] ?
-                        seriesPlotOptions[parentName][optionName] :
-                        seriesPlotOptions[optionName]
-                ),
+                plotOptions &&
+                    plotOptions[this.type] &&
+                    (plotOptions[this.type] as any)[optionName],
+                plotOptions &&
+                    plotOptions.series &&
+                    (plotOptions as any).series[optionName],
                 option
             );
     }

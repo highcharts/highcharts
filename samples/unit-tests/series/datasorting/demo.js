@@ -181,7 +181,6 @@ QUnit.test('Data sorting with sortKey', function (assert) {
             chart.update({
                 series: [
                     {
-                        data: chart.series[0].data,
                         dataSorting: {
                             sortKey: 'custom.myValue'
                         }
