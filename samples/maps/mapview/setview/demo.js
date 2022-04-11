@@ -1,44 +1,52 @@
-let chart;
-Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
+(async () => {
 
-    // Initialize the chart
-    chart = Highcharts.mapChart('container', {
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/custom/world.topo.json'
+    ).then(response => response.json());
 
-        chart: {
-            width: 600,
-            height: 500
-        },
+    let chart;
+    Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
-        title: {
-            text: 'Set map view'
-        },
+        // Initialize the chart
+        chart = Highcharts.mapChart('container', {
 
-        colorAxis: {
-            min: 1,
-            max: 1000,
-            type: 'logarithmic'
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world'],
-            joinBy: ['iso-a2', 'code'],
-            name: 'Population density',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
+            chart: {
+                width: 600,
+                height: 500
             },
-            tooltip: {
-                valueSuffix: '/km²'
-            }
-        }]
+
+            title: {
+                text: 'Set map view'
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data: data,
+                mapData: topology,
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: '/km²'
+                }
+            }]
+        });
     });
-});
 
-const zoomToEurope = () => chart.mapView.setView(
-    [4500, 8300], // In terms of pre-projected units
-    -1
-);
+    const zoomToEurope = () => chart.mapView.setView(
+        [10, 52],
+        3.8
+    );
 
-document.getElementById('setextremes').onclick = zoomToEurope;
+    document.getElementById('setextremes').onclick = zoomToEurope;
+
+})();

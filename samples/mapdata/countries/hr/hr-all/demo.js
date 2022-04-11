@@ -1,67 +1,59 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['hr-5926', 0],
-    ['hr-sb', 1],
-    ['hr-zd', 2],
-    ['hr-pg', 3],
-    ['hr-ka', 4],
-    ['hr-kz', 5],
-    ['hr-zg', 6],
-    ['hr-gz', 7],
-    ['hr-va', 8],
-    ['hr-is', 9],
-    ['hr-2228', 10],
-    ['hr-ob', 11],
-    ['hr-sp', 12],
-    ['hr-vs', 13],
-    ['hr-vp', 14],
-    ['hr-kk', 15],
-    ['hr-me', 16],
-    ['hr-dn', 17],
-    ['hr-sd', 18],
-    ['hr-ls', 19],
-    ['hr-sm', 20],
-    ['hr-bb', 21]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/hr/hr-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/hr/hr-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['hr-5926', 10], ['hr-sb', 11], ['hr-zd', 12], ['hr-pg', 13],
+        ['hr-ka', 14], ['hr-kz', 15], ['hr-zg', 16], ['hr-gz', 17],
+        ['hr-va', 18], ['hr-is', 19], ['hr-2228', 20], ['hr-ob', 21],
+        ['hr-sp', 22], ['hr-vs', 23], ['hr-vp', 24], ['hr-kk', 25],
+        ['hr-me', 26], ['hr-dn', 27], ['hr-sd', 28], ['hr-ls', 29],
+        ['hr-sm', 30], ['hr-bb', 31]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hr/hr-all.js">Croatia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hr/hr-all.topo.json">Croatia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

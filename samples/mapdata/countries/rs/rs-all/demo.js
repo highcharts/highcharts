@@ -1,70 +1,60 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['rs-jc', 0],
-    ['rs-bg', 1],
-    ['rs-jn', 2],
-    ['rs-sd', 3],
-    ['rs-pi', 4],
-    ['rs-bo', 5],
-    ['rs-zl', 6],
-    ['rs-zc', 7],
-    ['rs-sc', 8],
-    ['rs-sn', 9],
-    ['rs-br', 10],
-    ['rs-sm', 11],
-    ['rs-mr', 12],
-    ['rs-ns', 13],
-    ['rs-pd', 14],
-    ['rs-pm', 15],
-    ['rs-rn', 16],
-    ['rs-rs', 17],
-    ['rs-to', 18],
-    ['rs-kb', 19],
-    ['rs-ma', 20],
-    ['rs-su', 21],
-    ['rs-pc', 22],
-    ['rs-ja', 23],
-    ['rs-zj', 24]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/rs/rs-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/rs/rs-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['rs-jc', 10], ['rs-bg', 11], ['rs-jn', 12], ['rs-sd', 13],
+        ['rs-pi', 14], ['rs-bo', 15], ['rs-zl', 16], ['rs-zc', 17],
+        ['rs-sc', 18], ['rs-sn', 19], ['rs-br', 20], ['rs-sm', 21],
+        ['rs-mr', 22], ['rs-ns', 23], ['rs-pd', 24], ['rs-pm', 25],
+        ['rs-rn', 26], ['rs-rs', 27], ['rs-to', 28], ['rs-kb', 29],
+        ['rs-ma', 30], ['rs-su', 31], ['rs-pc', 32], ['rs-ja', 33],
+        ['rs-zj', 34]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/rs/rs-all.js">Republic of Serbia</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/rs/rs-all.topo.json">Republic of Serbia</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

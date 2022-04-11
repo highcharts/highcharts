@@ -24,7 +24,9 @@ const DEBUG_TARGET = 'tree-debug.json';
  */
 function task() {
 
-    const generator = require('highcharts-documentation-generators').TypeScript;
+    const generator = require(
+        '@highcharts/highcharts-documentation-generators'
+    ).TypeScript;
     const logLib = require('./lib/log');
 
     return Promise

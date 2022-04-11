@@ -14,7 +14,7 @@ QUnit.test('Pie borderColor null(#1828)', function (assert) {
         })
         .highcharts();
 
-    Highcharts.each(chart.series[0].points, function (point, i) {
+    chart.series[0].points.forEach((point, i) => {
         assert.equal(
             point.graphic.element.getAttribute('stroke'),
             point.graphic.element.getAttribute('fill'),

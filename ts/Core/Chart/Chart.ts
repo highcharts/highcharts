@@ -102,7 +102,6 @@ const {
     fireEvent,
     getStyle,
     isArray,
-    isFunction,
     isNumber,
     isObject,
     isString,
@@ -3473,7 +3472,6 @@ class Chart {
             lang = defaultOptions.lang,
             btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,
-            states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
@@ -3495,8 +3493,7 @@ class Chart {
                     null as any,
                     null as any,
                     zoomOut,
-                    theme,
-                    states && states.hover
+                    theme
                 )
                 .attr({
                     align: btnOptions.position.align,

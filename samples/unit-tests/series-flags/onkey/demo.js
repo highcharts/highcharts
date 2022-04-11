@@ -62,7 +62,7 @@ QUnit.test('Onkey option for flags on OHLC (#6478)', function (assert) {
         ohlcPoints = chart.series[0].points,
         series = chart.series;
 
-    Highcharts.each(['open', 'high', 'low', 'close'], function (verb, i) {
+    ['open', 'high', 'low', 'close'].forEach((verb, i) => {
         assert.strictEqual(
             series[i + 1].points[0].plotY + plotTop,
             axis.toPixels(ohlcPoints[i][verb]),

@@ -1,5 +1,5 @@
 ---
- name: Alaska - Highmaps
- description: Highmaps demo
+ name: Alaska - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

@@ -200,7 +200,6 @@ namespace DataLabel {
                 -9999
             ),
             plotY = pick(point.plotY, -9999),
-            bBox = dataLabel.getBBox(),
             rotation = options.rotation,
             align = options.align,
             isInsidePlot = chart.isInsidePlot(
@@ -225,8 +224,6 @@ namespace DataLabel {
             };
 
         let baseline,
-            normRotation,
-            negRotation,
             rotCorr, // rotation correction
             // Math.round for rounding errors (#2683), alignTo to allow column
             // labels (#2700)
@@ -264,6 +261,12 @@ namespace DataLabel {
                 );
 
         if (visible) {
+
+            if (rotation) {
+                dataLabel.attr({ align });
+            }
+            let bBox = dataLabel.getBBox(true),
+                bBoxCorrection = [0, 0];
 
             baseline = chart.renderer.fontMetrics(
                 chart.styledMode ? void 0 : (options.style as any).fontSize,
@@ -305,27 +308,13 @@ namespace DataLabel {
                         alignTo.height
                     )
                 };
+
+                bBoxCorrection = [
+                    bBox.x - Number(dataLabel.attr('x')),
+                    bBox.y - Number(dataLabel.attr('y'))
+                ];
                 setStartPos(alignAttr); // data sorting
-                dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
-                    .attr({ // #3003
-                        align: align
-                    });
-
-                // Compensate for the rotated label sticking out on the sides
-                normRotation = (rotation + 720) % 360;
-                negRotation = normRotation > 180 && normRotation < 360;
-
-                if (align === 'left') {
-                    alignAttr.y -= negRotation ? bBox.height : 0;
-                } else if (align === 'center') {
-                    alignAttr.x -= bBox.width / 2;
-                    alignAttr.y -= bBox.height / 2;
-                } else if (align === 'right') {
-                    alignAttr.x -= bBox.width;
-                    alignAttr.y -= negRotation ? 0 : bBox.height;
-                }
-                dataLabel.placed = true;
-                dataLabel.alignAttr = alignAttr;
+                dataLabel[isNew ? 'attr' : 'animate'](alignAttr);
 
             } else {
                 setStartPos(alignTo); // data sorting
@@ -346,18 +335,45 @@ namespace DataLabel {
 
             // Now check that the data label is within the plot area
             } else if (pick(options.crop, true)) {
+
+                let { x, y } = alignAttr;
+                x += bBoxCorrection[0];
+                y += bBoxCorrection[1];
+
+                // Uncomment this block to visualize the bounding boxes used for
+                // determining visibility
+                /*
+                chart.renderer.rect(
+                    chart.plotLeft + alignAttr.x + bBox.x,
+                    chart.plotTop + alignAttr.y + bBox.y + 9999,
+                    bBox.width,
+                    bBox.height
+                ).attr({
+                    stroke: 'rgba(0, 0, 0, 0.3)',
+                    'stroke-width': 0.5
+                }).add();
+                chart.renderer.circle(
+                    chart.plotLeft + alignAttr.x,
+                    chart.plotTop + alignAttr.y,
+                    2
+                ).attr({
+                    fill: 'red',
+                    zIndex: 20
+                }).add();
+                // */
+
                 visible =
                     chart.isInsidePlot(
-                        alignAttr.x,
-                        alignAttr.y,
+                        x,
+                        y,
                         {
                             paneCoordinates: true,
                             series
                         }
                     ) &&
                     chart.isInsidePlot(
-                        alignAttr.x + bBox.width,
-                        alignAttr.y + bBox.height,
+                        x + bBox.width,
+                        y + bBox.height,
                         {
                             paneCoordinates: true,
                             series
@@ -544,13 +560,13 @@ namespace DataLabel {
                         rotation,
                         attr: any,
                         dataLabel: SVGLabel = point.dataLabels ?
-                            point.dataLabels[i] : point.dataLabel as any;
+                            point.dataLabels[i] : point.dataLabel as any,
+                        isNew = !dataLabel;
 
                     const labelDistance = pick(
-                            (labelOptions as any).distance,
-                            point.labelDistance
-                        ),
-                        isNew = !dataLabel;
+                        (labelOptions as any).distance,
+                        point.labelDistance
+                    );
 
                     if (labelEnabled) {
                         // Create individual options structure that can be
@@ -635,9 +651,20 @@ namespace DataLabel {
                         dataLabel && (
                             !labelEnabled ||
                             !defined(labelText) ||
-                            !!dataLabel.div !== !!labelOptions.useHTML
+                            !!dataLabel.div !== !!labelOptions.useHTML ||
+                            (
+                                // Change from no rotation to rotation and
+                                // vice versa. Don't use defined() because
+                                // rotation = 0 means also rotation = undefined
+                                (
+                                    !dataLabel.rotation ||
+                                    !labelOptions.rotation
+                                ) &&
+                                dataLabel.rotation !== labelOptions.rotation
+                            )
                         )
                     ) {
+                        isNew = true;
                         point.dataLabel = dataLabel =
                             point.dataLabel && point.dataLabel.destroy() as any;
                         if (point.dataLabels) {

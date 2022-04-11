@@ -1,62 +1,58 @@
-// Prepare demo data
-// Data is joined to map using value of 'hc-key' property by default.
-// See API docs for 'joinBy' for more info on linking data and map.
-var data = [
-    ['cf-vk', 0],
-    ['cf-hk', 1],
-    ['cf-hm', 2],
-    ['cf-mb', 3],
-    ['cf-bg', 4],
-    ['cf-mp', 5],
-    ['cf-lb', 6],
-    ['cf-hs', 7],
-    ['cf-op', 8],
-    ['cf-se', 9],
-    ['cf-nm', 10],
-    ['cf-kg', 11],
-    ['cf-kb', 12],
-    ['cf-bk', 13],
-    ['cf-uk', 14],
-    ['cf-ac', 15],
-    ['cf-bb', 16]
-];
+(async () => {
 
-// Create the chart
-Highcharts.mapChart('container', {
-    chart: {
-        map: 'countries/cf/cf-all'
-    },
+    const topology = await fetch(
+        'https://code.highcharts.com/mapdata/countries/cf/cf-all.topo.json'
+    ).then(response => response.json());
 
-    title: {
-        text: 'Highmaps basic demo'
-    },
+    // Prepare demo data. The data is joined to map using value of 'hc-key'
+    // property by default. See API docs for 'joinBy' for more info on linking
+    // data and map.
+    const data = [
+        ['cf-vk', 10], ['cf-hk', 11], ['cf-hm', 12], ['cf-mb', 13],
+        ['cf-bg', 14], ['cf-mp', 15], ['cf-lb', 16], ['cf-hs', 17],
+        ['cf-op', 18], ['cf-se', 19], ['cf-nm', 20], ['cf-kg', 21],
+        ['cf-kb', 22], ['cf-bk', 23], ['cf-uk', 24], ['cf-ac', 25],
+        ['cf-bb', 26]
+    ];
 
-    subtitle: {
-        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cf/cf-all.js">Central African Republic</a>'
-    },
+    // Create the chart
+    Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
+        title: {
+            text: 'Highcharts Maps basic demo'
+        },
 
-    colorAxis: {
-        min: 0
-    },
+        subtitle: {
+            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cf/cf-all.topo.json">Central African Republic</a>'
+        },
 
-    series: [{
-        data: data,
-        name: 'Random data',
-        states: {
-            hover: {
-                color: '#BADA55'
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
             }
         },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}'
-        }
-    }]
-});
+
+        colorAxis: {
+            min: 0
+        },
+
+        series: [{
+            data: data,
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+
+})();

@@ -1,5 +1,5 @@
 ---
- name: Schleswig-Holstein - Highmaps
- description: Highmaps demo
+ name: Schleswig-Holstein - Highcharts Maps
+ description: Highcharts Maps demo
  js_wrap: b
 ...

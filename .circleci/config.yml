@@ -188,10 +188,10 @@ jobs:
           key: cypress-cache-{{ checksum "package-lock.json" }}
           paths:
             - /home/circleci/repo/highcharts/.cache
-      - run: npm i highcharts-utils
+      - run: npm i @highcharts/highcharts-utils
       - run:
           name: Run utils in background
-          command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/highcharts-utils/server --localOnly
+          command: sudo npx cross-env NODE_PATH=/home/circleci/repo/highcharts/node_modules node node_modules/@highcharts/highcharts-utils/server --localOnly
           background: true
       - run: npx cypress info
       - browser-tools/install-chrome
@@ -204,6 +204,17 @@ jobs:
       - run:
           name: Run cypress tests (Chrome)
           command: npx cypress run --browser chrome --headless
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/videos
+          destination: cypress-chrome
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/cypress/screenshots
+          destination: cypress-chrome
+      - run:
+          command: |
+            rm -rf /home/circleci/repo/highcharts/cypress/videos
+            rm -rf /home/circleci/repo/highcharts/cypress/screenshots
+          name: Clear Cypress videos and screenshots after storage (Chrome)
       - browser-tools/install-firefox
       - browser-tools/install-geckodriver
       - run:
@@ -215,9 +226,11 @@ jobs:
           name: Run cypress tests (Firefox)
           command: npx cypress run --browser firefox --headless
       - store_artifacts:
-          path: cypress/videos
+          path: /home/circleci/repo/highcharts/cypress/videos
+          destination: cypress-firefox
       - store_artifacts:
-          path: cypress/screenshots
+          path: /home/circleci/repo/highcharts/cypress/screenshots
+          destination: cypress-firefox
 
   check_for_docs_changes_and_deploy:
     <<: *defaults

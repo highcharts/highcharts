@@ -228,7 +228,7 @@ declare global {
  *            Sharper graphics in export
  *
  * @type      {number}
- * @since     next
+ * @since 10.0.0
  * @default   1
  * @apioption boost.pixelRatio
  */

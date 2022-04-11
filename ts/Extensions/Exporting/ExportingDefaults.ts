@@ -241,7 +241,7 @@ const exporting: ExportingOptions = {
      * @sample {highcharts} highcharts/exporting/offline-download-pdffont/
      *         Download PDF in a language containing non-Latin characters.
      *
-     * @since     next
+     * @since 10.0.0
      * @requires modules/offline-exporting
      */
     pdfFont: {

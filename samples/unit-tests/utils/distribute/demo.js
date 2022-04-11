@@ -1,7 +1,6 @@
 (function () {
     // Visualize
-    var each = Highcharts.each,
-        len = 600,
+    var len = 600,
         ren = new Highcharts.Renderer(
             document.getElementById('container'),
             len,
@@ -17,7 +16,7 @@
             })
             .add();
 
-        each(boxes, function (box, i) {
+        boxes.forEach((box, i) => {
             if (box.pos !== undefined) {
                 ren.rect(box.pos + 0.5, row + 10.5, box.size - 1, 20)
                     .attr({

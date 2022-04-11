@@ -30,6 +30,7 @@ export interface Projector {
 
 export declare class ProjectionDefinition {
     constructor(options: ProjectionOptions);
+    antimeridianCutting?: boolean;
     bounds?: MapBounds;
     forward: ProjectionForwardFunction;
     inverse: ProjectionInverseFunction;
