@@ -4394,14 +4394,8 @@ class Series {
             (series as any)[prop] = (preserve as any)[prop];
         });
 
-        // When switching back from sorted data to unsorted, reset indexes:
-        if (
-            options.data &&
-            options.dataSorting &&
-            options.dataSorting.enabled === false &&
-            oldOptions.dataSorting &&
-            oldOptions.dataSorting.enabled === true
-        ) {
+        // In case of dataSorting, reset indexes
+        if (options.data && options.dataSorting) {
             options.data.forEach((point): void => {
                 if (isObject(point, true)) {
                     point.x = point.index = void 0;
