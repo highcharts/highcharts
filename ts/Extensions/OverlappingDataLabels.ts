@@ -109,13 +109,9 @@ addEvent(Chart, 'render', function collectAndHide(): void {
                                 point.shapeArgs && point.shapeArgs.height
                             ); // #4118
 
-                            if (
-                                !options.allowOverlap &&
-                                label.attr('visibility') !== 'hidden'
-                            ) {
+                            if (!options.allowOverlap) {
                                 labels.push(label);
-                            } else {
-                                // #13449
+                            } else { // #13449
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;
                                 hideOrShow(label, chart);
@@ -272,7 +268,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 box2 &&
                 label1 !== label2 && // #6465, polar chart with connectEnds
                 label1.newOpacity !== 0 &&
-                label2.newOpacity !== 0
+                label2.newOpacity !== 0 &&
+                // #15863 dataLabels are no longer hidden by translation
+                label1.visibility !== 'hidden' &&
+                label2.visibility !== 'hidden'
             ) {
                 if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
