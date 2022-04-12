@@ -1444,7 +1444,14 @@ dateFormats.E = function (this: Time, timestamp: number): string {
 
 // Adds week date format
 dateFormats.W = function (this: Time, timestamp: number): string {
-    const d = new this.Date(timestamp);
+    const time = this,
+        d = new this.Date(timestamp),
+        unitsToOmmit = (['Hours', 'Milliseconds', 'Minutes', 'Seconds'] as Array<Time.TimeUnitValue>);
+
+    unitsToOmmit.forEach(function (format): void { // #16550
+        time.set(format, d, 0);
+    }
+    );
     const firstDay = (this.get('Day', d) + 6) % 7;
     const thursday = new this.Date(d.valueOf());
     this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
