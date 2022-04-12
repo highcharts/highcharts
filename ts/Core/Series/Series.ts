@@ -4241,9 +4241,9 @@ class Series {
             typeof options.pointStart !== 'undefined' ||
             typeof options.pointInterval !== 'undefined' ||
             typeof options.relativeXValue !== 'undefined' ||
+            typeof options.dataSorting !== 'undefined' ||
             options.joinBy ||
             options.mapData || // #11636
-            series.hasOptionChanged('dataSorting') ||
             // Changes to data grouping requires new points in new group
             series.hasOptionChanged('dataGrouping') ||
             series.hasOptionChanged('pointStart') ||
